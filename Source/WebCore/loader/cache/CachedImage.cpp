@@ -57,8 +57,8 @@
 #include "PDFDocumentImage.h"
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-#include "MultiRepresentationHEICMetrics.h"
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+#include "AdaptiveImageGlyphMetrics.h"
 #endif
 
 namespace WebCore {
@@ -318,9 +318,9 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     if (!image)
         return { };
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC()) {
-        auto metrics = renderImage->style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isAdaptiveImageGlyph()) {
+        auto metrics = renderImage->style().fontCascade().primaryFont()->metricsForAdaptiveImageGlyph();
         return metrics.size();
     }
 #endif

@@ -6365,10 +6365,10 @@ bool WebViewImpl::isContentRichlyEditable() const
     return m_page->editorState().isContentRichlyEditable;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebViewImpl::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+void WebViewImpl::insertAdaptiveImageGlyph(NSData *data, NSString *altText)
 {
-    m_page->insertMultiRepresentationHEIC(data, altText);
+    m_page->insertAdaptiveImageGlyph(data, altText);
 }
 #endif
 

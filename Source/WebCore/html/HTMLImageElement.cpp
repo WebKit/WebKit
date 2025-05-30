@@ -907,8 +907,8 @@ void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachm
 
 #if ENABLE(SERVICE_CONTROLS)
     bool shouldEnableImageMenu = true;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    shouldEnableImageMenu = !isMultiRepresentationHEIC();
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    shouldEnableImageMenu = !isAdaptiveImageGlyph();
 #endif
     setImageMenuEnabled(shouldEnableImageMenu);
 #endif // ENABLE(SERVICE_CONTROLS)
@@ -954,8 +954,8 @@ bool HTMLImageElement::isSystemPreviewImage() const
 }
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-bool HTMLImageElement::isMultiRepresentationHEIC() const
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+bool HTMLImageElement::isAdaptiveImageGlyph() const
 {
     if (!m_sourceElement)
         return false;

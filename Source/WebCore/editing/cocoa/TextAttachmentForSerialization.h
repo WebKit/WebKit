@@ -46,19 +46,19 @@ struct TextAttachmentFileWrapper {
     String accessibilityLabel;
 };
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-struct MultiRepresentationHEICAttachmentSingleImage {
+struct AdaptiveImageGlyphAttachmentSingleImage {
     RefPtr<Image> image;
     FloatSize size;
 };
 
-struct MultiRepresentationHEICAttachmentData {
+struct AdaptiveImageGlyphAttachmentData {
     String identifier;
     String description;
     String credit;
     String digitalSourceType;
-    Vector<MultiRepresentationHEICAttachmentSingleImage> images;
+    Vector<AdaptiveImageGlyphAttachmentSingleImage> images;
 
     // Not serialized.
     // FIXME: Remove this once same-process AttributedString to NSAttributeedString conversion

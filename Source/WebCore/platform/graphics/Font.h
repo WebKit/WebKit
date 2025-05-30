@@ -62,8 +62,8 @@ class FontDescription;
 class GlyphPage;
 
 struct GlyphData;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-struct MultiRepresentationHEICMetrics;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+struct AdaptiveImageGlyphMetrics;
 #endif
 
 enum FontVariant : uint8_t { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
@@ -234,8 +234,8 @@ public:
     bool supportsPetiteCaps() const;
     bool supportsAllPetiteCaps() const;
     bool supportsOpenTypeAlternateHalfWidths() const;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    AdaptiveImageGlyphMetrics metricsForAdaptiveImageGlyph() const;
 #endif
 #endif
 

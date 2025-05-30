@@ -14076,11 +14076,11 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 - (BOOL)supportsAdaptiveImageGlyph
 {
-    if (self.webView._isEditable || self.webView.configuration._multiRepresentationHEICInsertionEnabled)
+    if (self.webView._isEditable || self.webView.configuration.supportsAdaptiveImageGlyph)
         return _page->editorState().isContentRichlyEditable;
 
     return NO;
@@ -14088,7 +14088,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 - (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(UITextRange *)replacementRange
 {
-    _page->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+    _page->insertAdaptiveImageGlyph(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
 }
 
 #endif

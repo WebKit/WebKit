@@ -871,15 +871,15 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data, const String& altText)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+void WebPage::insertAdaptiveImageGlyph(std::span<const uint8_t> data, const String& altText)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     if (frame->selection().isNone())
         return;
-    frame->editor().insertMultiRepresentationHEIC(data, altText);
+    frame->editor().insertAdaptiveImageGlyph(data, altText);
 }
 #endif
 

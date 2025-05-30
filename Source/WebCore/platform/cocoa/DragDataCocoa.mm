@@ -173,7 +173,7 @@ bool DragData::canSmartReplace() const
 
 bool DragData::shouldMatchStyleOnDrop() const
 {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
     Vector<String> types;
     auto context = createPasteboardContext();
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName, context.get());

@@ -286,10 +286,10 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element.get() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is " << imageLoading << " new image " << newImage.get());
         }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
         // Adaptive image glyphs need to load both the high fidelity HEIC and the
         // fallback PNG resource, as both resources are treated as an atomic unit.
-        if (imageElement && imageElement->isMultiRepresentationHEIC()) {
+        if (imageElement && imageElement->isAdaptiveImageGlyph()) {
             auto fallbackURL = imageElement->src();
             if (!fallbackURL.isNull()) {
                 ResourceRequest resourceRequest(WTFMove(fallbackURL));

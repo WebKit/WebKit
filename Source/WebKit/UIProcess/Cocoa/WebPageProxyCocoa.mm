@@ -1062,11 +1062,11 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 }
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
+void WebPageProxy::insertAdaptiveImageGlyph(NSData *data, NSString *altText)
 {
-    protectedLegacyMainFrameProcess()->send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), altText), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::InsertAdaptiveImageGlyph(span(data), altText), webPageIDInMainFrameProcess());
 }
 
 #endif

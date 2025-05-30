@@ -401,9 +401,9 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
 #endif
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-static RetainPtr<CGImageRef> fallbackImageForMultiRepresentationHEIC(std::span<const uint8_t> data)
+static RetainPtr<CGImageRef> fallbackImageForAdaptiveImageGlyph(std::span<const uint8_t> data)
 {
     static constexpr size_t fallbackSize = 24;
 
@@ -439,7 +439,7 @@ static RetainPtr<CGImageRef> fallbackImageForMultiRepresentationHEIC(std::span<c
     return adoptCF(CGBitmapContextCreateImage(context.get()));
 }
 
-void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, const String& altText)
+void Editor::insertAdaptiveImageGlyph(const std::span<const uint8_t>& data, const String& altText)
 {
     auto document = protectedDocument();
 
@@ -447,7 +447,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     auto primaryBuffer = FragmentedSharedBuffer::create(data);
 
     String fallbackType = "image/png"_s;
-    auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
+    auto fallbackData = encodeData(fallbackImageForAdaptiveImageGlyph(data).get(), fallbackType, std::nullopt);
     auto fallbackBuffer = FragmentedSharedBuffer::create(WTFMove(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);

@@ -1530,8 +1530,8 @@ public:
     void makeFirstResponder();
     void assistiveTechnologyMakeFirstResponder();
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *, NSString *);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    void insertAdaptiveImageGlyph(NSData *, NSString *);
 #endif
 #endif
 

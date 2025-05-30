@@ -75,8 +75,8 @@
 #include "SelectionGeometry.h"
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-#include "MultiRepresentationHEICMetrics.h"
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+#include "AdaptiveImageGlyphMetrics.h"
 #endif
 
 #if USE(CG)
@@ -267,8 +267,8 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         if (oldStyle->imageOrientation() != style().imageOrientation())
             return repaintOrMarkForLayout(ImageSizeChangeNone);
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-        if (isMultiRepresentationHEIC() && oldStyle->fontCascade() != style().fontCascade())
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+        if (isAdaptiveImageGlyph() && oldStyle->fontCascade() != style().fontCascade())
             return repaintOrMarkForLayout(ImageSizeChangeNone);
 #endif
     }
@@ -309,9 +309,9 @@ LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> e
 LayoutUnit RenderImage::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     LayoutUnit offset;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (isMultiRepresentationHEIC()) {
-        auto metrics = style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    if (isAdaptiveImageGlyph()) {
+        auto metrics = style().fontCascade().primaryFont()->metricsForAdaptiveImageGlyph();
         offset = LayoutUnit::fromFloatRound(metrics.descent);
     }
 #endif
@@ -462,14 +462,14 @@ bool RenderImage::shouldDisplayBrokenImageIcon() const
     return imageResource().errorOccurred();
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-bool RenderImage::isMultiRepresentationHEIC() const
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+bool RenderImage::isAdaptiveImageGlyph() const
 {
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
     if (!imageElement)
         return false;
 
-    return imageElement->isMultiRepresentationHEIC();
+    return imageElement->isAdaptiveImageGlyph();
 }
 #endif
 
@@ -745,9 +745,9 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     };
 
     auto drawResult = ImageDrawResult::DidNothing;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (isMultiRepresentationHEIC())
-        drawResult = paintInfo.context().drawMultiRepresentationHEIC(*img, style().fontCascade().primaryFont(), rect, options);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    if (isAdaptiveImageGlyph())
+        drawResult = paintInfo.context().drawAdaptiveImageGlyph(*img, style().fontCascade().primaryFont(), rect, options);
 #endif
 
     if (drawResult == ImageDrawResult::DidNothing)

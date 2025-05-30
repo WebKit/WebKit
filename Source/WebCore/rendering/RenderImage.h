@@ -81,8 +81,8 @@ public:
 
     String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    bool isMultiRepresentationHEIC() const;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    bool isAdaptiveImageGlyph() const;
 #endif
 
 protected:

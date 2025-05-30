@@ -259,11 +259,11 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
     return mutableStyle;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachmentData(NSAdaptiveImageGlyph *attachment)
+static AdaptiveImageGlyphAttachmentData toAdaptiveImageGlyphAttachmentData(NSAdaptiveImageGlyph *attachment)
 {
-    MultiRepresentationHEICAttachmentData attachmentData;
+    AdaptiveImageGlyphAttachmentData attachmentData;
     attachmentData.identifier = attachment.contentIdentifier;
     attachmentData.description = attachment.contentDescription;
 
@@ -275,7 +275,7 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
 #endif
 
     for (NSEmojiImageStrike *strike in attachment.strikes) {
-        MultiRepresentationHEICAttachmentSingleImage image;
+        AdaptiveImageGlyphAttachmentSingleImage image;
         RefPtr nativeImage = NativeImage::create(strike.cgImage);
         image.image = BitmapImage::create(WTFMove(nativeImage));
         image.size = FloatSize { strike.alignmentInset };
@@ -288,7 +288,7 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
     return attachmentData;
 }
 
-static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(const MultiRepresentationHEICAttachmentData& attachmentData)
+static RetainPtr<NSAdaptiveImageGlyph> toWebAdaptiveImageGlyphAttachment(const AdaptiveImageGlyphAttachmentData& attachmentData)
 {
     if (RetainPtr<NSData> data = attachmentData.data ? bridge_cast((attachmentData.data).get()) : nil) {
         RetainPtr attachment = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:data.get()]);
@@ -314,11 +314,12 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
 
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
+        RefPtr image = singleImage.image;
 #if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
 #else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
@@ -374,9 +375,9 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
             ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = value.accessibilityLabel.createNSString().get();
 
         return textAttachment;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    }, [] (const MultiRepresentationHEICAttachmentData& value) -> RetainPtr<id> {
-        return toWebMultiRepresentationHEICAttachment(value);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    }, [] (const AdaptiveImageGlyphAttachmentData& value) -> RetainPtr<id> {
+        return toWebAdaptiveImageGlyphAttachment(value);
 #endif
     }, [] (const RetainPtr<NSShadow>& value) -> RetainPtr<id> {
         return value;
@@ -712,10 +713,10 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     }
     if ([value isKindOfClass:PlatformNSPresentationIntent])
         return { { { RetainPtr { (NSPresentationIntent *)value } } } };
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
     if ([value isKindOfClass:PlatformNSAdaptiveImageGlyph]) {
         auto attachment = static_cast<NSAdaptiveImageGlyph *>(value);
-        return { { toMultiRepresentationHEICAttachmentData(attachment) } };
+        return { { toAdaptiveImageGlyphAttachmentData(attachment) } };
     }
 #endif
     if ([value isKindOfClass:PlatformNSTextAttachment]) {

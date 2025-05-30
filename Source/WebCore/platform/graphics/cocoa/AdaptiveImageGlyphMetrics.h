@@ -25,13 +25,13 @@
 
 #pragma once
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 #include "FloatSize.h"
 
 namespace WebCore {
 
-struct MultiRepresentationHEICMetrics {
+struct AdaptiveImageGlyphMetrics {
     float width;
     float ascent;
     float descent;
@@ -41,4 +41,4 @@ struct MultiRepresentationHEICMetrics {
 
 }
 
-#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+#endif // ENABLE(ADAPTIVE_IMAGE_GLYPH)

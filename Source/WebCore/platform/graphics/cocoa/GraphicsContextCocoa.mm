@@ -40,8 +40,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-#import "MultiRepresentationHEICMetrics.h"
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+#import "AdaptiveImageGlyphMetrics.h"
 #endif
 
 #if USE(APPKIT)
@@ -66,12 +66,12 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const Font& font, const FloatRect& destination, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawAdaptiveImageGlyph(Image& image, const Font& font, const FloatRect& destination, ImagePaintingOptions options)
 {
-    RetainPtr multiRepresentationHEIC = image.adapter().multiRepresentationHEIC();
-    if (!multiRepresentationHEIC)
+    RetainPtr adaptiveImageGlyph = image.adapter().adaptiveImageGlyph();
+    if (!adaptiveImageGlyph)
         return ImageDrawResult::DidNothing;
 
     RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
@@ -84,9 +84,9 @@ ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const
     CGContextTranslateCTM(cgContext, 0, -destination.height());
 
     // FIXME (rdar://123044459): This needs to account for vertical writing modes.
-    CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
+    CGContextSetTextPosition(cgContext, 0, font.metricsForAdaptiveImageGlyph().descent);
 
-    CTFontDrawImageFromAdaptiveImageProviderAtPoint(font.getCTFont(), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
+    CTFontDrawImageFromAdaptiveImageProviderAtPoint(font.getCTFont(), adaptiveImageGlyph.get(), CGContextGetTextPosition(cgContext), cgContext);
 
     auto orientation = options.orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)

@@ -1105,11 +1105,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #pragma mark – NSAdaptiveImageGlyph
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 - (BOOL)supportsAdaptiveImageGlyph
 {
-    if ([self _isEditable] || [_configuration _multiRepresentationHEICInsertionEnabled])
+    if ([self _isEditable] || [_configuration supportsAdaptiveImageGlyph])
         return _impl->isContentRichlyEditable();
 
     return NO;
@@ -1117,7 +1117,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(NSRange)replacementRange
 {
-    _impl->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+    _impl->insertAdaptiveImageGlyph(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
 }
 
 #endif

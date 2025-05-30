@@ -234,9 +234,9 @@ void InsertTextCommand::doApply()
 
     RefPtr typingStyle = document().selection().typingStyle();
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
     if (!typingStyle && document().selection().isCaret()) {
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(document().selection().selection().start().deprecatedNode()); imageElement && imageElement->isMultiRepresentationHEIC())
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(document().selection().selection().start().deprecatedNode()); imageElement && imageElement->isAdaptiveImageGlyph())
             typingStyle = EditingStyle::create(imageElement.get());
     }
 #endif

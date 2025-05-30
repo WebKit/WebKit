@@ -220,8 +220,8 @@ struct WEBCORE_EXPORT AttributedString {
             RetainPtr<NSDate>,
             ColorFromCGColor,
             ColorFromPlatformColor,
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-            MultiRepresentationHEICAttachmentData,
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+            AdaptiveImageGlyphAttachmentData,
 #endif
             TextAttachmentFileWrapper,
             TextAttachmentMissingImage
