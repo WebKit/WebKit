@@ -8,7 +8,7 @@ How do I...
 
 ...add a new field on a bug?
   Use :ref:`custom-fields` or, if you just want new form fields on bug entry
-  but don't need Bugzilla to track the field seperately thereafter, you can
+  but don't need Bugzilla to track the field separately thereafter, you can
   use a :ref:`custom bug entry form <custom-bug-entry>`.
 
 ...change the name of a built-in bug field?
