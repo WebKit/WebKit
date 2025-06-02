@@ -6966,7 +6966,7 @@ ShadowRootReferenceTargetEnabled:
 
 ShadowRootReferenceTargetEnabledForAriaOwns:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "referenceTarget support for aria-owns"
   humanReadableDescription: "Enable referenceTarget support for aria-owns and ariaOwnsElements"
