@@ -40,6 +40,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/PolicyChecker.h>
+#include <WebCore/RenderWidget.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -98,6 +99,15 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
 
     RefPtr coreLocalFrame = m_frame->coreLocalFrame();
     RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+    RefPtr coreFrame = m_frame->coreFrame();
+    RefPtr frameView = coreFrame ? coreFrame->virtualView() : nullptr;
+
+    // FIXME: This is a super hacky way to call RenderWidget::updateWidgetGeometry.
+    // Otherwise, WebFrame::loadDidCommitInAnotherProcess does basically the same thing and that sends an update.
+    if (RefPtr corePage = webPage->corePage(); corePage && corePage->settings().siteIsolationEnabled()) {
+        if (auto* renderer = coreFrame ? coreFrame->ownerRenderer() : nullptr)
+            renderer->setWidget(frameView.get());
+    }
 
     auto originator = webPage->takeMainFrameNavigationInitiator();
 
@@ -172,6 +182,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         WTFMove(originatingFrameInfoData),
         originatingPageID,
         m_frame->info(),
+        frameView ? std::optional(frameView->frameRect().size()) : std::nullopt,
         navigationID,
         navigationAction.originalRequest(),
         request

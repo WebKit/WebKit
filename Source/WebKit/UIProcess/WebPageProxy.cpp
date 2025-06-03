@@ -7838,6 +7838,9 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (navigationID)
         navigation = navigationState->navigation(*navigationID);
 
+    if (navigationActionData.frameSize)
+        frame.setFrameSize(*navigationActionData.frameSize);
+
     // When process-swapping on a redirect, the navigationActionData / originatingFrameInfoData provided by the fresh new WebProcess are inaccurate since
     // the new process does not have sufficient information. To address the issue, we restore the information we stored on the NavigationAction during the original request
     // policy decision.

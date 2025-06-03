@@ -1,0 +1,6 @@
+
+Resize event: 600x800
+Size after entering fullscreen: 600x800
+Resize event: 150x300
+Size after exiting fullscreen: 150x300
+

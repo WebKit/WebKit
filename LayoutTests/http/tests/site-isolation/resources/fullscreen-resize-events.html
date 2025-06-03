@@ -1,0 +1,23 @@
+<script>
+    window.addEventListener("resize", ()=>{
+        window.parent.postMessage("Resize event: " + window.innerHeight + "x" + window.innerWidth, "*");
+    });
+    async function enterFullScreen() {
+        await document.documentElement.requestFullscreen();
+        if (window.testRunner) { await testRunner.updatePresentation() }
+        window.parent.postMessage("Size after entering fullscreen: " + document.body.clientHeight + "x" + document.body.clientWidth, "*");
+    }
+    async function exitFullScreen() {
+        await document.exitFullscreen();
+        if (window.testRunner) { await testRunner.updatePresentation() }
+        window.parent.postMessage("Size after exiting fullscreen: " + document.body.clientHeight + "x" + document.body.clientWidth, "*");
+    }
+    if (window.internals) {
+        internals.withUserGesture(async () => {
+            await enterFullScreen();
+            await exitFullScreen();
+        });
+    }
+</script>
+<button onclick="enterFullScreen()">Enter</button>
+<button onclick="exitFullScreen()">Exit</button>

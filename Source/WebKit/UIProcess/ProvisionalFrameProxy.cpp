@@ -52,7 +52,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
         frame.layerHostingContextIdentifier(),
         frame.effectiveSandboxFlags(),
         frame.scrollingMode(),
-        frame.remoteFrameSize()
+        frame.frameSize()
     }), frame.frameID());
 }
 

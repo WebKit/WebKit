@@ -391,6 +391,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         webFrame->page()->webPageProxyIdentifier(),
         webFrame->info(), /* frameInfo */
         std::nullopt, /* navigationID */
+        std::nullopt, // FIXME this should have the frame size.
         navigationAction.originalRequest(), /* originalRequest */
         navigationAction.originalRequest() /* request */
     };

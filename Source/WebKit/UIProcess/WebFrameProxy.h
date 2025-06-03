@@ -251,7 +251,8 @@ public:
     WebFrameProxy* opener() { return m_opener.get(); }
     void disownOpener() { m_opener = nullptr; }
 
-    std::optional<WebCore::IntSize> remoteFrameSize() const { return m_remoteFrameSize; }
+    std::optional<WebCore::IntSize> frameSize() const { return m_frameSize; }
+    void setFrameSize(WebCore::IntSize size) { m_frameSize = size; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
@@ -293,7 +294,7 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
     bool m_isPendingInitialHistoryItem { false };
-    std::optional<WebCore::IntSize> m_remoteFrameSize;
+    std::optional<WebCore::IntSize> m_frameSize;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     WebCore::ScrollbarMode m_scrollingMode;
 };

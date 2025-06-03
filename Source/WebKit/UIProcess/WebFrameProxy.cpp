@@ -766,7 +766,7 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::updateRemoteFrameSize(WebCore::IntSize size)
 {
-    m_remoteFrameSize = size;
+    m_frameSize = size;
     send(Messages::WebFrame::UpdateFrameSize(size));
 }
 

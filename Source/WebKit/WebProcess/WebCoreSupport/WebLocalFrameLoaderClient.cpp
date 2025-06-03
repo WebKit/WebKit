@@ -522,6 +522,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         std::nullopt, /* originatingPageID */
         m_frame->info(),
         { }, /* navigationID */
+        std::nullopt, // FIXME this should have the frame size.
         { }, /* originalRequest */
         { } /* request */
     };
@@ -1028,6 +1029,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         std::nullopt, /* originatingPageID */
         m_frame->info(),
         { }, /* navigationID */
+        std::nullopt, // FIXME this should have the frame size.
         { }, /* originalRequest */
         request
     };

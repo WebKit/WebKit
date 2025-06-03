@@ -33,6 +33,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -85,6 +86,7 @@ struct NavigationActionData {
     FrameInfoData originatingFrameInfoData;
     std::optional<WebPageProxyIdentifier> originatingPageID;
     FrameInfoData frameInfo;
+    std::optional<WebCore::IntSize> frameSize;
     std::optional<WebCore::NavigationIdentifier> navigationID;
     WebCore::ResourceRequest originalRequest;
     WebCore::ResourceRequest request;
