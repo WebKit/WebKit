@@ -140,11 +140,15 @@ static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
 static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
 {
     // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
-    for (RenderBox* box = block.nextSiblingBox(); box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
-        if (box->style().position() == newStyle->position())
+    for (auto& box : childrenOfType<RenderBox>(block)) {
+        if (dynamicDowncast<RenderBox>(box) == nullptr)
+            break;
+        if (!box.isAnonymousBlock())
+            break;
+        if (box.style().position() == newStyle->position())
             continue;
 
-        CheckedPtr block = dynamicDowncast<RenderBlock>(*box);
+        CheckedPtr block = dynamicDowncast<RenderBlock>(box);
         if (!block)
             continue;
 
@@ -158,7 +162,7 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
             continue;
         auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(block->style(), DisplayType::Block);
         blockStyle.setPosition(newStyle->position());
-        block->setStyle(WTFMove(blockStyle));
+        const_cast<RenderBlock*>(block.get())->setStyle(WTFMove(blockStyle));
     }
 }
 
