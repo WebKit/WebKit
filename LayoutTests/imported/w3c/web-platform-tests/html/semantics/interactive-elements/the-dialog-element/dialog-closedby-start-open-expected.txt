@@ -1,0 +1,4 @@
+
+FAIL Dialogs that start open and have closedby should still function promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Opening and closing a dialog during the dialog focus fixup should still leave closedby functional assert_true: expected true got false
+

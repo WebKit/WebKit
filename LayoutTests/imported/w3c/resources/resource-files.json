@@ -11028,6 +11028,7 @@
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-pseudo-invalidation-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialogs-with-no-backdrop-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dont-share-style-to-top-layer-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/element-removed-from-top-layer-has-original-position-ref.html",

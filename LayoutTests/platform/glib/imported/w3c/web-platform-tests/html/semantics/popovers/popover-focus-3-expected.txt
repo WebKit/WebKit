@@ -1,0 +1,14 @@
+Invoker  after
+Show popover
+Toggle popover Other focusable element
+
+FAIL Circular reference tab navigation with popovertarget invocation assert_equals: circular reference: Step 5 (backwards) expected Element node <button id="circular4" tabindex="0">after</button> but got Element node <button tabindex="0">Show popover</button>
+FAIL Circular reference tab navigation with command/commandfor invocation assert_equals: circular reference: Step 2 expected Element node <button id="circular1" autofocus="" tabindex="0" commandf... but got Element node <button id="circular4" tabindex="0">after</button>
+FAIL Circular reference tab navigation with imperative invocation assert_equals: circular reference: Step 5 (backwards) expected Element node <button id="circular4" tabindex="0">after</button> but got Element node <button tabindex="0">Show popover</button>
+PASS Popover focus returns when popover is hidden by invoker with popovertarget invocation
+PASS Popover focus returns when popover is hidden by invoker with commandfor invocation
+PASS Popover focus returns when popover is hidden by invoker with imperative invocation
+PASS Popover focus only returns to invoker when focus is within the popover with popovertarget invocation
+PASS Popover focus only returns to invoker when focus is within the popover with command/commandfor invocation
+PASS Popover focus only returns to invoker when focus is within the popover with imperative invocation
+

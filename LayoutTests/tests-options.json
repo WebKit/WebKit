@@ -3860,6 +3860,15 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-bounds-clicking.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-corner-cases.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-start-open.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby.html": [
         "slow"
     ],
@@ -3917,6 +3926,15 @@
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-3.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-4.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-tabindex.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html": [
         "slow"
     ],
@@ -3924,6 +3942,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.html": [

@@ -1,7 +1,8 @@
 
 PASS click the form submission button should close the dialog
 PASS form submission should return correct value
-PASS no returnValue when there's no result.
+PASS returnValue doesn't update when there's no value attribute.
+PASS returnValue does update when there's an empty value attribute.
 PASS input image button should return the coordinates
 PASS formmethod attribute should use dialog form submission
 PASS closing the dialog while submitting should stop the submission

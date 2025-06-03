@@ -1,0 +1,10 @@
+popovertarget source command source
+
+FAIL ToggleEvent.source on popover elements: showPopover() without source. assert_equals: Opening beforetoggle.source. expected (object) null but got (undefined) undefined
+FAIL ToggleEvent.source on popover elements: showPopover() with source. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on popover elements: Calling click() on a popovertarget button. assert_equals: beforetoggle newState should be open. expected "open" but got "closed"
+FAIL ToggleEvent.source on popover elements: Calling click() on a command button. assert_equals: Opening beforetoggle.source. expected (object) Element node <button id="commandsource" commandfor="popover" command="... but got (undefined) undefined
+FAIL ToggleEvent.source on popover elements: showPopover() then popovertarget button. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on popover elements: showPopover(invoker) then popovertarget button. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on popover elements: popovertarget button then hidePopover(). assert_equals: beforetoggle newState should be open. expected "open" but got "closed"
+

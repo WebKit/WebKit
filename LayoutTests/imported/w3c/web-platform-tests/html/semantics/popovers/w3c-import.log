@@ -64,7 +64,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-document-open.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-tabindex.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-ref.html
@@ -76,6 +79,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoker-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute-hint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.html
@@ -98,6 +102,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-overlay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-removal-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadow-dom-anchor.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadowhost-focus.html
@@ -107,6 +112,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-target-element-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-toggle-source.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-anchor.tentative.html

@@ -7614,6 +7614,9 @@ imported/w3c/web-platform-tests/css/css-scoping/host-multiple-006.html [ ImageOn
 
 webkit.org/b/250795 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusability.html [ Skip ]
 
+# Dialog reftest failure
+webkit.org/b/284398 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-pseudo-invalidation.html [ ImageOnlyFailure ]
+
 # web-platform-tests/svg/painting/reftests failures
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-implicit-subpaths.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003.svg [ ImageOnlyFailure ]

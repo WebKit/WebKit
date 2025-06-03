@@ -1,0 +1,4 @@
+Button1  Button2  Invoker0  Invoker1  Button3  Button4
+
+FAIL Popover focus navigation with imperative invocation assert_equals: Hidden popover should be skipped backwards expected Element node <button id="button1" tabindex="0">Button1</button> but got Element node <button id="button2" tabindex="0">Button2</button>
+
