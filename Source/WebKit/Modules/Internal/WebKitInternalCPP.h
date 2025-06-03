@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// Add project-level C++ header files here to be able to access them from within Swift sources.
 
-#import <WebCore/CocoaView.h>
-#import <WebCore/ColorCocoa.h>
-#import <WKWebViewInternal.h>
-
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIKit.h>
-#else
-#import <AppKit/AppKit.h>
-#endif
-
-@class WKColorExtensionView;
-
-@protocol WKColorExtensionViewDelegate <NSObject>
-- (void)colorExtensionViewWillDisappear:(WKColorExtensionView *)view;
-- (void)colorExtensionViewDidAppear:(WKColorExtensionView *)view;
-@end
-
-@interface WKColorExtensionView : CocoaView
-
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id<WKColorExtensionViewDelegate>)delegate;
-- (void)updateColor:(WebCore::CocoaColor *)color;
-- (void)fadeOut;
-- (void)cancelFadeAnimation;
-
-@property (nonatomic, readonly, getter=isHiddenOrFadingOut) BOOL hiddenOrFadingOut;
-
-@end
+#import "UIProcess/SwiftDemoLogoConfirmation.h"

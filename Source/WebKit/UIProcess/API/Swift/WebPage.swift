@@ -27,6 +27,8 @@ import Foundation
 import Observation
 internal import WebKit_Private
 internal import WebKit_Internal
+import struct Swift.String
+import struct Foundation.URL
 
 /// A ``WebPage`` is an ``Observable`` type, which you use to access various properties of web content
 /// and track changes to them. Use ``WebPage`` to interact with web content, like evaluating JavaScript

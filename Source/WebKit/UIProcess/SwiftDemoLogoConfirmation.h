@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,13 @@
 
 #pragma once
 
-#import <WebCore/CocoaView.h>
-#import <WebCore/ColorCocoa.h>
-#import <WKWebViewInternal.h>
+// For now, this file needs to include no other headers, since the
+// swiftc invocation that parses this file is not fed a complete
+// header include path.
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIKit.h>
-#else
-#import <AppKit/AppKit.h>
-#endif
+namespace WebKit {
 
-@class WKColorExtensionView;
+// See SwiftDemoLogo.swift for the rationale here
+bool shouldShowSwiftDemoLogo();
 
-@protocol WKColorExtensionViewDelegate <NSObject>
-- (void)colorExtensionViewWillDisappear:(WKColorExtensionView *)view;
-- (void)colorExtensionViewDidAppear:(WKColorExtensionView *)view;
-@end
-
-@interface WKColorExtensionView : CocoaView
-
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id<WKColorExtensionViewDelegate>)delegate;
-- (void)updateColor:(WebCore::CocoaColor *)color;
-- (void)fadeOut;
-- (void)cancelFadeAnimation;
-
-@property (nonatomic, readonly, getter=isHiddenOrFadingOut) BOOL hiddenOrFadingOut;
-
-@end
+} // namespace WebKit

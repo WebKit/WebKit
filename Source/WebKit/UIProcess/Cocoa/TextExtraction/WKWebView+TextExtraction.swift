@@ -36,6 +36,8 @@ internal import WebKit_Internal
 @_spi(UIIntelligenceSupport) import AppKit
 #endif
 
+import struct Foundation.URL
+
 private func createEditable(for editable: WKTextExtractionEditable?) -> IntelligenceElement.Text.Editable? {
     guard let editable else {
         return nil

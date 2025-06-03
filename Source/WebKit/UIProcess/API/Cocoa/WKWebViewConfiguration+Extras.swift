@@ -25,6 +25,7 @@
 
 import Foundation
 internal import WebKit_Internal
+import struct Swift.String
 
 extension WKWebViewConfiguration {
     convenience init(_ wrapped: WebPage.Configuration) {

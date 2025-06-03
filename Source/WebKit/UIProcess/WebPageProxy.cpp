@@ -127,6 +127,7 @@
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
 #include "SuspendedPageProxy.h"
+#include "SwiftDemoLogoConfirmation.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -449,6 +450,10 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 #include "ModelPresentationManagerProxy.h"
+#endif
+
+#if ENABLE(SWIFT_DEMO_URI_SCHEME)
+#include "WebKit-Swift-CPP.h"
 #endif
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -8133,6 +8138,27 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     protectedWebsiteDataStore()->beginAppBoundDomainCheck(host.toString(), protocol.toString(), listener);
 #endif
 
+#if ENABLE(SWIFT_DEMO_URI_SCHEME)
+    if (navigationAction->request().url().protocolIs("x-swift-demo"_s) && !m_shouldSuppressSwiftDemoInNextNavigationPolicyDecision) {
+        auto logo = getSwiftLogoData();
+        WTF::Vector<uint8_t> logo2;
+        logo2.reserveCapacity(logo.getCount());
+        for (swift::Int i=0;i<logo.getCount();i++) {
+            // Perhaps there's a better (safe) way to get to the logo's data
+            // but it's not yet clear.
+            logo2.append(logo[i]);
+        }
+        auto mimeType = "image/png"_s;
+        auto charset = "US-ASCII"_s;
+        auto baseURL = "x-swift-demo://"_s;
+        auto data2 = SharedBuffer::create(WTFMove(logo2));
+        m_shouldSuppressSwiftDemoInNextNavigationPolicyDecision = true;
+        loadData(WTFMove(data2), mimeType, charset, baseURL);
+        listener->ignore(WasNavigationIntercepted::Yes);
+        return;
+    }
+#endif
+
     auto wasPotentiallyInitiatedByUser = navigation->isLoadedWithNavigationShared() || navigation->wasUserInitiated();
     if (!sessionID().isEphemeral())
         logFrameNavigation(frame, URL { internals().pageLoadState.url() }, request, navigationAction->data().redirectResponse.url(), wasPotentiallyInitiatedByUser);
@@ -10503,7 +10529,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
 #endif
         return;
 
-#if ENABLE(TOP_LEVEL_WRITING_TOOLS_CONTEXT_MENU_ITEMS)
+#if ENABLE(TOP_LEVEL_WRITING_TOOLS_CONTEXT_MENU_ITEMS) && ENABLE(WRITING_TOOLS)
     case ContextMenuItemTagWritingTools:
     case ContextMenuItemTagProofread:
     case ContextMenuItemTagRewrite:
@@ -16696,6 +16722,17 @@ bool WebPageProxy::canStartNavigationSwipeAtLastInteractionLocation() const
 Ref<AboutSchemeHandler> WebPageProxy::protectedAboutSchemeHandler()
 {
     return m_aboutSchemeHandler;
+}
+
+// See SwiftDemoLogo.swift for the rationale here
+bool shouldShowSwiftDemoLogo() {
+#if ENABLE(SWIFT_DEMO_URI_SCHEME)
+    return true;
+#else
+    // This shouldn't even be called if ENABLE_SWIFT_DEMO_URI_SCHEME
+    // isn't enabled, but we'll return false for good measure.
+    return false;
+#endif
 }
 
 } // namespace WebKit

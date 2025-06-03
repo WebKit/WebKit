@@ -30,6 +30,7 @@
 #include "ReceiverMatcher.h"
 #include "SyncRequestID.h"
 #include <memory>
+#include <span>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -39,6 +40,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+#include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"

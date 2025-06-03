@@ -27,6 +27,7 @@
 #include "WebProcessActivityState.h"
 
 #include "APIPageConfiguration.h"
+#include "ProcessThrottler.h"
 #include "RemotePageProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"

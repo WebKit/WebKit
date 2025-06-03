@@ -86,6 +86,7 @@
 #import "_WKThumbnailViewInternal.h"
 #import "_WKWarningView.h"
 #import "_WKWebViewTextInputNotifications.h"
+#import <AppKit/NSPasteboard.h>
 #import <Carbon/Carbon.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>

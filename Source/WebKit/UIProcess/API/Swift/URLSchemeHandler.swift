@@ -25,6 +25,7 @@
 
 import Foundation
 internal import WebKit_Internal
+import struct Swift.String
 
 /// A type representing a valid URL scheme.
 ///

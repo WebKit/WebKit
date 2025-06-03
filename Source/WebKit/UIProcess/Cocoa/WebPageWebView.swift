@@ -25,6 +25,7 @@
 
 import Foundation
 internal import WebKit_Internal
+import struct Swift.String
 
 // SPI for the cross-import overlay.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation

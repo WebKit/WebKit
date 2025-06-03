@@ -25,6 +25,7 @@
 
 public import Foundation
 internal import WebKit_Internal
+import struct Foundation.URL
 
 // SPI for the cross-import overlay.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation

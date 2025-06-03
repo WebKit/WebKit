@@ -32,6 +32,7 @@
 #include "StreamClientConnection.h"
 #include <WebCore/LogClient.h>
 #include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 #if __has_include("WebCoreLogDefinitions.h")
 #include "WebCoreLogDefinitions.h"

@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WKColorExtensionView.h"
+#import <QuartzCore/CAAnimation.h>
 
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/RetainPtr.h>

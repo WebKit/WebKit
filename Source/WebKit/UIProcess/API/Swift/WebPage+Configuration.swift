@@ -25,6 +25,7 @@
 
 import Foundation
 internal import WebKit_Internal
+import struct Swift.String
 
 extension WebPage {
     /// A configuration type that specifies the preferences and behaviors of a webpage.

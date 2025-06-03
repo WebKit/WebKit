@@ -35,6 +35,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TranslatedProcess.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 #if ENABLE(SANDBOX_EXTENSIONS)

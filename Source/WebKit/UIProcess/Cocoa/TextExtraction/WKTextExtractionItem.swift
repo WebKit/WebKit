@@ -30,6 +30,9 @@ internal import WebKit_Internal
 @_implementationOnly import WebKit_Internal
 #endif
 
+import struct Foundation.URL
+import struct Swift.String
+
 // FIXME: Adopt `@objc @implementation` when support for macOS Sonoma is no longer needed.
 // FIXME: (rdar://110719676) Remove all `@objc deinit`s when support for macOS Sonoma is no longer needed.
 

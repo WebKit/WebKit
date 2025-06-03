@@ -32,6 +32,7 @@
 #include "EditorState.h"
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
+#include "WebPageProxy.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>

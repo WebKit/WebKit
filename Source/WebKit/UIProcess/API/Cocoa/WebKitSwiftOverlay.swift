@@ -25,6 +25,9 @@
 
 #if !os(tvOS) && !os(watchOS)
 
+import struct Swift.String
+import struct Foundation.URL
+
 // Older versions of the Swift compiler fail to import WebKit_Private. Can be
 // removed when WebKit drops support for macOS Sonoma.
 #if ENABLE_WK_WEB_EXTENSIONS && compiler(>=6.1)

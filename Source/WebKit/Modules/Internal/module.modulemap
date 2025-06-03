@@ -1,4 +1,10 @@
 module WebKit_Internal {
     header "WebKitInternal.h"
     export *
+    requires objc
+}
+
+module WebKit_InternalCPP {
+    header "WebKitInternalCPP.h"
+    export *
 }
