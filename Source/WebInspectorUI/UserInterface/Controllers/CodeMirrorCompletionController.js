@@ -844,7 +844,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             var completion = this._completions[i];
             var lastIndex = Math.min(commonPrefix.length, completion.length);
             for (var j = prefixLength; j < lastIndex; ++j) {
-                if (commonPrefix[j] !== completion[j]) {
+                if (commonPrefix[j].toLowerCase() !== completion[j].toLowerCase()) {
                     commonPrefix = commonPrefix.substr(0, j);
                     break;
                 }
