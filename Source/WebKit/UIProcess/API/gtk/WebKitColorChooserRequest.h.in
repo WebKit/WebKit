@@ -57,6 +57,9 @@ WEBKIT_API void
 webkit_color_chooser_request_set_rgba              (WebKitColorChooserRequest *request,
                                                     const GdkRGBA             *rgba);
 
+WEBKIT_API gboolean
+webkit_color_chooser_request_get_allow_alpha       (WebKitColorChooserRequest *request);
+
 WEBKIT_API void
 webkit_color_chooser_request_get_element_rectangle (WebKitColorChooserRequest *request,
                                                     GdkRectangle              *rect);

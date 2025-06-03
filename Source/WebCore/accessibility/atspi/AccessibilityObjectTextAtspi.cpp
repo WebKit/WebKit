@@ -278,7 +278,10 @@ String AccessibilityObjectAtspi::text() const
 
     if (m_coreObject->roleValue() == AccessibilityRole::ColorWell) {
         auto color = convertColor<SRGBA<float>>(m_coreObject->colorValue()).resolved();
-        GUniquePtr<char> colorString(g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue));
+        GUniquePtr<char> colorString(color.alpha == 1.0f
+            ? g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue)
+            : g_strdup_printf("rgb %7.5f %7.5f %7.5f %7.5f", color.red, color.green, color.blue, color.alpha)
+        );
         return String::fromUTF8(colorString.get());
     }
 

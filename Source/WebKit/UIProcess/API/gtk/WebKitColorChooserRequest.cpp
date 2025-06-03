@@ -58,6 +58,7 @@ using namespace WebCore;
 enum {
     PROP_0,
     PROP_RGBA,
+    PROP_ALLOW_ALPHA,
     N_PROPERTIES,
 };
 
@@ -73,6 +74,7 @@ struct _WebKitColorChooserRequestPrivate {
     WebKitColorChooser* colorChooser;
     GdkRGBA rgba;
     bool handled;
+    bool allowAlpha;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -95,6 +97,9 @@ static void webkitColorChooserRequestGetProperty(GObject* object, guint property
     switch (propertyID) {
     case PROP_RGBA:
         g_value_set_boxed(value, &request->priv->rgba);
+        break;
+    case PROP_ALLOW_ALPHA:
+        g_value_set_boxed(value, &request->priv->allowAlpha);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, paramSpec);
@@ -133,6 +138,19 @@ static void webkit_color_chooser_request_class_init(WebKitColorChooserRequestCla
             nullptr, nullptr,
             GDK_TYPE_RGBA,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+    /**
+     * WebKitColorChooserRequest:allow-alpha:
+     *
+     * The #gboolean allow-alpha of the request
+     *
+     * Since: 2.50
+     */
+    sObjProperties[PROP_ALLOW_ALPHA] =
+        g_param_spec_boolean("allow-alpha",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
@@ -194,6 +212,21 @@ void webkit_color_chooser_request_get_rgba(WebKitColorChooserRequest* request, G
     g_return_if_fail(rgba);
 
     *rgba = request->priv->rgba;
+}
+
+/**
+ * webkit_color_chooser_request_get_allow_alpha:
+ * @request: a #WebKitColorChooserRequest
+ *
+ * Returns: %TRUE if the request allows alpha, %FALSE otherwise
+ *
+ * Since: 2.50
+ */
+gboolean webkit_color_chooser_request_get_allow_alpha(WebKitColorChooserRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_COLOR_CHOOSER_REQUEST(request), FALSE);
+
+    return request->priv->allowAlpha;
 }
 
 /**
@@ -267,6 +300,7 @@ WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKitColorChooser* c
 {
     WebKitColorChooserRequest* request = WEBKIT_COLOR_CHOOSER_REQUEST(
         g_object_new(WEBKIT_TYPE_COLOR_CHOOSER_REQUEST, "rgba", colorChooser->initialColor(), nullptr));
+    request->priv->allowAlpha = colorChooser->supportsAlpha();
     request->priv->colorChooser = colorChooser;
     return request;
 }

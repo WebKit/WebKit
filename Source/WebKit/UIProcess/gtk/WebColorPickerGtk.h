@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ColorControlSupportsAlpha.h"
 #include "WebColorPicker.h"
 #include <gdk/gdk.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
 
 class WebColorPickerGtk : public WebColorPicker {
 public:
-    static Ref<WebColorPickerGtk> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
+    static Ref<WebColorPickerGtk> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha);
     virtual ~WebColorPickerGtk();
 
     void endPicker() override;
@@ -48,9 +49,10 @@ public:
     void cancel();
 
     const GdkRGBA* initialColor() const { return &m_initialColor; }
+    bool supportsAlpha() const { return m_supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes; }
 
 protected:
-    WebColorPickerGtk(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
+    WebColorPickerGtk(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha);
 
     void didChooseColor(const WebCore::Color&);
 
@@ -62,6 +64,7 @@ private:
     static void colorChooserDialogResponseCallback(GtkColorChooser*, int /*responseID*/, WebColorPickerGtk*);
 
     GtkWidget* m_colorChooser;
+    WebKit::ColorControlSupportsAlpha m_supportsAlpha { WebKit::ColorControlSupportsAlpha::No };
 };
 
 } // namespace WebKit
