@@ -3464,14 +3464,12 @@ JSC_DEFINE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobalO
     OPERATION_RETURN(scope, JSBoundFunction::createRaw(vm, globalObject, function, boundArgsLength, boundThis, arg0, arg1, arg2));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSingleCharacterString, JSString*, (VM* vmPointer, int32_t character))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSingleCharacterString, JSString*, (VM* vmPointer, int32_t character))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    
-    OPERATION_RETURN(scope, jsSingleCharacterString(vm, static_cast<UChar>(character)));
+    return jsSingleCharacterString(vm, static_cast<UChar>(character));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewSymbol, Symbol*, (VM* vmPointer))

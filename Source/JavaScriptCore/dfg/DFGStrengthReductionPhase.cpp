@@ -1247,8 +1247,20 @@ private:
             }
 
             String string = stringNode->tryGetString(m_graph);
-            if (!string)
+            if (!string) {
+                if (m_node->op() == StringSlice && !m_node->child3() && startValue == -1) {
+                    m_changed = true;
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+                    stringNode = m_insertionSet.insertNode(m_nodeIndex, SpecNone, ResolveRope, m_node->origin, Edge(stringNode, KnownStringUse));
+                    Node* length = m_insertionSet.insertNode(m_nodeIndex, SpecNone, GetArrayLength, m_node->origin, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), Edge(stringNode, KnownCellUse));
+                    Node* negativeOne = m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, jsNumber(-1));
+                    Node* index = m_insertionSet.insertNode(m_nodeIndex, SpecNone, ArithAdd, m_node->origin, OpInfo(Arith::Unchecked), Edge(length, Int32Use), Edge(negativeOne, Int32Use));
+
+                    Node* result = m_insertionSet.insertNode(m_nodeIndex, SpecNone, StringCharAt, m_node->origin, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), Edge(stringNode, KnownStringUse), Edge(index, Int32Use));
+                    m_node->convertToIdentityOn(result);
+                }
                 break;
+            }
 
             int32_t length = string.length();
             int32_t start = 0;

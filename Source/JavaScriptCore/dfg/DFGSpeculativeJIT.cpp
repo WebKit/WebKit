@@ -1759,7 +1759,7 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     addPtr(TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), tempGPR);
     loadPtr(Address(tempGPR), tempGPR);
 
-    addSlowPathGenerator(slowPathCall(bigCharacter, this, operationSingleCharacterString, tempGPR, TrustedImmPtr(&vm), tempGPR));
+    addSlowPathGenerator(slowPathCall(bigCharacter, this, operationSingleCharacterString, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, tempGPR, TrustedImmPtr(&vm), tempGPR));
 
     addSlowPathGenerator(slowPathCall(slowCases, this, operationStringSubstr, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startIndexGPR, tempGPR));
 
@@ -2618,7 +2618,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
 
     addSlowPathGenerator(
         slowPathCall(
-            bigCharacter, this, operationSingleCharacterString, scratchReg, TrustedImmPtr(&vm), scratchReg));
+            bigCharacter, this, operationSingleCharacterString, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, scratchReg, TrustedImmPtr(&vm), scratchReg));
 
     if (node->op() != StringCharAt && node->op() != StringAt && node->arrayMode().isOutOfBounds()) {
         ASSERT(format == DataFormatJS);

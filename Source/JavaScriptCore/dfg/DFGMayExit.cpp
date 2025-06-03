@@ -123,6 +123,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CompareBelow:
     case CompareBelowEq:
     case CompareEqPtr:
+    case StringCharAt:
         break;
 
     case Int52Rep:
@@ -277,6 +278,10 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
             break;
         if (node->isBinaryUseKind(OtherUse) || node->isSymmetricBinaryUseKind(OtherUse, UntypedUse))
             break;
+        if (node->isBinaryUseKind(StringUse)) {
+            result = ExitsForExceptions;
+            break;
+        }
         [[fallthrough]];
     case CompareEq:
     case CompareLess:
@@ -350,7 +355,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         }
         break;
 
-    case MakeRope: {
+    case MakeRope:
+    case ResolveRope: {
         result = ExitsForExceptions;
         break;
     }
