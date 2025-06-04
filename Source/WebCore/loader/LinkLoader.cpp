@@ -62,6 +62,7 @@
 #include "Settings.h"
 #include "SizesAttributeParser.h"
 #include "StyleResolver.h"
+#include "UserContentProvider.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -277,15 +278,32 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
 
 void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& document)
 {
-    const URL href = params.href;
-    if (!params.relAttribute.isLinkPreconnect || !href.isValid() || !params.href.protocolIsInHTTPFamily() || !document.frame())
+    if (!params.relAttribute.isLinkPreconnect || !params.href.isValid() || !params.href.protocolIsInHTTPFamily() || !document.frame())
         return;
+
+    ResourceRequest request { URL { params.href } };
+#if ENABLE(CONTENT_EXTENSIONS)
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
+    RefPtr documentLoader = document.loader();
+    if (!documentLoader)
+        return;
+
+    auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, params.href, ContentExtensions::ResourceType::Ping, *documentLoader);
+    if (results.summary.blockedLoad)
+        return;
+
+    ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);
+#endif
+
     ASSERT(document.settings().linkPreconnectEnabled());
     StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
-    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(href)))
+    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(params.href)))
         storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     ASSERT(document.frame()->loader().networkingContext());
-    platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->protectedLoader(), href, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href](ResourceError error) {
+    platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->protectedLoader(), WTFMove(request), storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href = params.href](ResourceError error) {
         RefPtr document = weakDocument.get();
         if (!document)
             return;
@@ -417,13 +435,11 @@ void LinkLoader::cancelLoad()
 void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
 {
     if (params.relAttribute.isDNSPrefetch) {
-        if (params.href.isValid() && !params.href.isEmpty() && params.href.protocolIsInHTTPFamily() && document.frame())
-            document.protectedFrame()->protectedLoader()->client().prefetchDNS(params.href.host().toString());
-    }
-
-    preconnectIfNeeded(params, document);
-
-    if (params.relAttribute.isLinkPrefetch) {
+        if (RefPtr frame = document.frame())
+            frame->loader().prefetchDNSIfNeeded(params.href);
+    } else if (params.relAttribute.isLinkPreconnect)
+        preconnectIfNeeded(params, document);
+    else if (params.relAttribute.isLinkPrefetch) {
         prefetchIfNeeded(params, document);
         return;
     }

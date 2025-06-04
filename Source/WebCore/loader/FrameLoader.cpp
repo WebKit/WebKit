@@ -4841,6 +4841,26 @@ RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDo
     return loader;
 }
 
+void FrameLoader::prefetchDNSIfNeeded(const URL& url)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+
+    RefPtr documentLoader = m_documentLoader;
+    if (!documentLoader)
+        return;
+
+    auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, url, ContentExtensions::ResourceType::Ping, *documentLoader);
+    if (results.summary.blockedLoad)
+        return;
+#endif
+
+    if (url.isValid() && !url.isEmpty() && url.protocolIsInHTTPFamily())
+        client().prefetchDNS(url.host().toString());
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID
