@@ -7753,9 +7753,6 @@
                     "height"
                 ],
                 "shorthand-pattern": "CoalescingPair",
-                "parser-function": "consumeSizeShorthand",
-                "parser-grammar-unused": "<width-or-height> || <width-or-height>",
-                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "specification": {
                 "category": "css-22",
