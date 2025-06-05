@@ -2178,7 +2178,7 @@ inline bool PropertyParserCustom::consumeSizeShorthand(CSSParserTokenRange& rang
     ASSERT(state.currentProperty == shorthand.id());
     ASSERT(shorthand.length() == 2);
     auto longhands = shorthand.properties();
-    
+
     // Parse the first value (width)
     RefPtr width = CSSPropertyParsing::parseStylePropertyLonghand(range, longhands[0], state);
     if (!width)
