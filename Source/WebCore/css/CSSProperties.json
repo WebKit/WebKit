@@ -7752,7 +7752,7 @@
                     "width",
                     "height"
                 ],
-                "shorthand-pattern": "CoalescingPair",
+                "shorthand-pattern": "CoalescingPair"
             },
             "specification": {
                 "category": "css-22",

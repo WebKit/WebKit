@@ -2171,5 +2171,6 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
     result.addPropertyForCurrentShorthand(state, CSSPropertyMarkerEnd, WTFMove(markerRef));
     return true;
 }
+
 } // namespace CSS
 } // namespace WebCore
