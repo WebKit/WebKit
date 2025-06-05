@@ -7734,6 +7734,34 @@
                 "url": "https://www.w3.org/TR/css-speech-1/#propdef-speak-as"
             }
         },
+        "size": {
+            "animation-type": "not animatable",
+            "inherited": false,
+            "initial": "auto",
+            "values": [
+                "auto",
+                "min-content",
+                "max-content",
+                {
+                    "value": "<length-percentage>",
+                    "comment": "Accepts any <length> or <percentage> (e.g. 100px, 50%)"
+                }
+            ],
+            "codegen-properties": {
+                "longhands": [
+                    "width",
+                    "height"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-function": "consumeSizeShorthand",
+                "parser-grammar-unused": "<width-or-height> || <width-or-height>",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-22",
+                "url": "https://drafts.csswg.org/css-sizing-4/#the-size-shorthand"
+            }
+        },
         "table-layout": {
             "animation-type": "discrete",
             "initial": "auto",

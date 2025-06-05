@@ -181,6 +181,7 @@ public:
     static bool consumeWhiteSpaceShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumePositionTryShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeMarkerShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
+    static bool consumeSizeShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
 };
 
 struct BorderShorthandComponents {
@@ -2172,6 +2173,28 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
     return true;
 }
 
+inline bool PropertyParserCustom::consumeSizeShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
+{
+    ASSERT(state.currentProperty == shorthand.id());
+    ASSERT(shorthand.length() == 2);
+    auto longhands = shorthand.properties();
+    
+    // Parse the first value (width)
+    RefPtr width = CSSPropertyParsing::parseStylePropertyLonghand(range, longhands[0], state);
+    if (!width)
+        return false;
+
+    // Parse the second value (height) if present
+    RefPtr height = CSSPropertyParsing::parseStylePropertyLonghand(range, longhands[1], state);
+    auto heightImplicit = !height ? IsImplicit::Yes : IsImplicit::No;
+    if (heightImplicit == IsImplicit::Yes)
+        height = width;
+
+    // Add both properties to the result
+    result.addPropertyForCurrentShorthand(state, longhands[0], width.releaseNonNull());
+    result.addPropertyForCurrentShorthand(state, longhands[1], height.releaseNonNull(), heightImplicit);
+    return range.atEnd();
+}
 
 } // namespace CSS
 } // namespace WebCore
