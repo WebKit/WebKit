@@ -1444,7 +1444,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     if (fileName.isNull() && attachmentType.isNull() && title.isNull())
-        return IconAndSize { nil, FloatSize() };
+        return { };
 
     if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title)) {
         auto image = icon->image();
@@ -1452,7 +1452,7 @@ RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fi
         return IconAndSize { image, FloatSize(size) };
     }
 
-    return IconAndSize { nil, FloatSize() };
+    return { };
 }
 
 static void paintAttachmentIconBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
