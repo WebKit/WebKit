@@ -2175,10 +2175,6 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
 
 inline bool PropertyParserCustom::consumeSizeShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
 {
-    if (state.currentRule == StyleRuleType::Page) {
-        // Do not parse size shorthand in @page context; let it be handled as a page-size descriptor.
-        return false;
-    }
     ASSERT(state.currentProperty == shorthand.id());
     ASSERT(shorthand.length() == 2);
     auto longhands = shorthand.properties();
