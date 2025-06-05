@@ -2172,5 +2172,6 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
     return true;
 }
 
+
 } // namespace CSS
 } // namespace WebCore
