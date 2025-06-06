@@ -93,15 +93,6 @@ static_assert(areCanonicallyEquivalentCharArgReg == GPRInfo::returnValueGPR);
 #endif
 #endif
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-// This enhancement allows us to advance the index by 2 when we read a non-BMP surrogate pair, but fail to match.
-// The way it works is that we initialize the firstCharacterAdditionalReadSize register to an initial sentinal value.
-// When reading a possible surrogate pair, we change firstCharacterAdditionalReadSize from the sentinal to 0 if we read
-// a BMP (16-bit) character or 1 if the read value is a non-BMP. Once changed from the sentinel value, we don't change
-// again during the next read. We add firstCharacterAdditionalReadSize to index for the next iteration on a failed
-// match and when setting the the possible new match start location.
-constexpr static int32_t additionalReadSizeSentinel = 0x4;
-#endif
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreBitmap);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreFastCandidates);
@@ -378,11 +369,8 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
 #endif
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 1 because we got a non-BMP code point.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-        jit.addOneConditionally32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, regs.firstCharacterAdditionalReadSize);
-    }
+    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization)
+        jit.move(MacroAssembler::TrustedImm32(1), regs.firstCharacterAdditionalReadSize);
 #endif
 
     if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
@@ -400,13 +388,6 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
 
     isBMP.link(jit);
     jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
-
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 0.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-    }
-#endif
 
     if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
         jit.ret();
@@ -443,13 +424,6 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
     jit.branch32(MacroAssembler::Equal, regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0xdc00)).linkTo(checkForDanglingSurrogatesLabel, jit);
 
     bmpDone.link(&jit);
-
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 0.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-    }
-#endif
 
     haveResult.link(&jit);
 }
@@ -3192,6 +3166,12 @@ class YarrGenerator final : public YarrJITInfo {
 
                 termMatchTargets.append(MatchTargets());
 
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+                // Always set to zero.
+                if (m_useFirstNonBMPCharacterOptimization)
+                    m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
+#endif
+
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
@@ -3200,11 +3180,6 @@ class YarrGenerator final : public YarrJITInfo {
                 // set as appropriate to this alternative.
                 op.m_reentry = m_jit.label();
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                // Clear first character read size so it can be set on the first read.
-                if (m_useFirstNonBMPCharacterOptimization)
-                    m_jit.move(MacroAssembler::TrustedImm32(additionalReadSizeSentinel), m_regs.firstCharacterAdditionalReadSize);
-#endif
 
                 // Emit fast skip path with stride if we have BoyerMooreInfo.
                 if (op.m_bmInfo) {
