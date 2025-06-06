@@ -42169,8 +42169,6 @@
 				411945A92D3E3D4F00C40F6B /* InstallEvent.h in Headers */,
 				F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */,
 				2D550A1429C30F3F00BD0C1F /* IntDegrees.h in Headers */,
-				BA79DEF12DDDF89D000DB04C /* IntegrityPolicy.h in Headers */,
-				BA5AA81B2DDF59210038722C /* IntegrityPolicyViolationReportBody.h in Headers */,
 				077FD1B32CC82C5D00C5D9E0 /* IntelligenceTextEffectsSupport.h in Headers */,
 				2DC05CA827D80956004ED403 /* InteractionRegion.h in Headers */,
 				0F4710DC1DB6FE22002DCEC3 /* IntersectionObserver.h in Headers */,

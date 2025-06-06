@@ -33,4 +33,14 @@ PASS e.style['object-position'] = "y-end" should set the property value
 PASS e.style['object-position'] = "10px y-end" should set the property value
 PASS e.style['object-position'] = "left 10px y-end 20%" should set the property value
 PASS e.style['object-position'] = "y-end 20% left 10px" should set the property value
+PASS e.style['object-position'] = "block-start" should set the property value
+PASS e.style['object-position'] = "block-end" should set the property value
+PASS e.style['object-position'] = "inline-start" should set the property value
+PASS e.style['object-position'] = "inline-end" should set the property value
+PASS e.style['object-position'] = "block-start 10px inline-start 20px" should set the property value
+PASS e.style['object-position'] = "block-end 10px inline-start 20px" should set the property value
+PASS e.style['object-position'] = "start start" should set the property value
+PASS e.style['object-position'] = "end end" should set the property value
+PASS e.style['object-position'] = "start end" should set the property value
+PASS e.style['object-position'] = "end start" should set the property value
 

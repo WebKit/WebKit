@@ -85,6 +85,7 @@ struct CSSParserContext {
     bool cssTreeCountingFunctionsEnabled : 1 { false };
     bool cssURLModifiersEnabled : 1 { false };
     bool cssAxisRelativePositionKeywordsEnabled : 1 { false };
+    bool cssLogicalPositionKeywordsEnabled : 1 { false };
     bool cssDynamicRangeLimitMixEnabled : 1 { false };
     bool cssConstrainedDynamicRangeLimitEnabled : 1 { false };
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };

@@ -112,6 +112,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssTreeCountingFunctionsEnabled { document.settings().cssTreeCountingFunctionsEnabled() }
     , cssURLModifiersEnabled { document.settings().cssURLModifiersEnabled() }
     , cssAxisRelativePositionKeywordsEnabled { document.settings().cssAxisRelativePositionKeywordsEnabled() }
+    , cssLogicalPositionKeywordsEnabled { document.settings().cssLogicalPositionKeywordsEnabled() }
     , cssDynamicRangeLimitMixEnabled { document.settings().cssDynamicRangeLimitMixEnabled() }
     , cssConstrainedDynamicRangeLimitEnabled { document.settings().cssConstrainedDynamicRangeLimitEnabled() }
     , webkitMediaTextTrackDisplayQuirkEnabled { document.quirks().needsWebKitMediaTextTrackDisplayQuirk() }
@@ -154,8 +155,9 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssTreeCountingFunctionsEnabled           << 26
         | context.cssURLModifiersEnabled                    << 27
         | context.cssAxisRelativePositionKeywordsEnabled    << 28
-        | context.cssDynamicRangeLimitMixEnabled            << 29
-        | context.cssConstrainedDynamicRangeLimitEnabled    << 30;
+        | context.cssLogicalPositionKeywordsEnabled         << 29
+        | context.cssDynamicRangeLimitMixEnabled            << 30
+        | context.cssConstrainedDynamicRangeLimitEnabled    << 31;
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits);
 }
 

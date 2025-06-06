@@ -45,6 +45,27 @@ struct TwoComponentPositionVertical {
 };
 DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionVertical, offset);
 
+struct TwoComponentPositionBlock {
+    Variant<Keyword::BlockStart, Keyword::Center, Keyword::BlockEnd> offset;
+
+    bool operator==(const TwoComponentPositionBlock&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionBlock, offset);
+
+struct TwoComponentPositionInline {
+    Variant<Keyword::InlineStart, Keyword::Center, Keyword::InlineEnd> offset;
+
+    bool operator==(const TwoComponentPositionInline&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionInline, offset);
+
+struct TwoComponentPositionLogical {
+    Variant<Keyword::Start, Keyword::Center, Keyword::End> offset;
+
+    bool operator==(const TwoComponentPositionLogical&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionLogical, offset);
+
 // MARK: Three Component Types
 
 struct ThreeComponentPositionHorizontal {
@@ -76,19 +97,58 @@ struct FourComponentPositionVertical {
 };
 DEFINE_TYPE_WRAPPER_GET(FourComponentPositionVertical, offset);
 
+struct FourComponentPositionBlock {
+    SpaceSeparatedTuple<Variant<Keyword::BlockStart, Keyword::BlockEnd>, LengthPercentage<>> offset;
+
+    bool operator==(const FourComponentPositionBlock&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(FourComponentPositionBlock, offset);
+
+struct FourComponentPositionInline {
+    SpaceSeparatedTuple<Variant<Keyword::InlineStart, Keyword::InlineEnd>, LengthPercentage<>> offset;
+
+    bool operator==(const FourComponentPositionInline&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(FourComponentPositionInline, offset);
+
+struct FourComponentPositionLogical {
+    SpaceSeparatedTuple<Variant<Keyword::Start, Keyword::End>, LengthPercentage<>> offset;
+
+    bool operator==(const FourComponentPositionLogical&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(FourComponentPositionLogical, offset);
+
 using TwoComponentPositionHorizontalVertical               = SpaceSeparatedTuple<TwoComponentPositionHorizontal, TwoComponentPositionVertical>;
+using TwoComponentPositionBlockInline                      = SpaceSeparatedTuple<TwoComponentPositionBlock, TwoComponentPositionInline>;
+using TwoComponentPositionStartEnd                         = SpaceSeparatedTuple<TwoComponentPositionLogical, TwoComponentPositionLogical>;
 
 using ThreeComponentPositionHorizontalVerticalLengthFirst  = SpaceSeparatedTuple<FourComponentPositionHorizontal, ThreeComponentPositionVertical>;
 using ThreeComponentPositionHorizontalVerticalLengthSecond = SpaceSeparatedTuple<ThreeComponentPositionHorizontal, FourComponentPositionVertical>;
+using ThreeComponentPositionBlockInlineLengthFirst         = SpaceSeparatedTuple<FourComponentPositionBlock, TwoComponentPositionInline>;
+using ThreeComponentPositionBlockInlineLengthSecond        = SpaceSeparatedTuple<TwoComponentPositionBlock, FourComponentPositionInline>;
+using ThreeComponentPositionStartEndLengthFirst            = SpaceSeparatedTuple<FourComponentPositionLogical, TwoComponentPositionLogical>;
+using ThreeComponentPositionStartEndLengthSecond           = SpaceSeparatedTuple<TwoComponentPositionLogical, FourComponentPositionLogical>;
 
 using FourComponentPositionHorizontalVertical              = SpaceSeparatedTuple<FourComponentPositionHorizontal, FourComponentPositionVertical>;
+using FourComponentPositionBlockInline                     = SpaceSeparatedTuple<FourComponentPositionBlock, FourComponentPositionInline>;
+using FourComponentPositionStartEnd                        = SpaceSeparatedTuple<FourComponentPositionLogical, FourComponentPositionLogical>;
 
 struct Position {
     using Kind = Variant<
         TwoComponentPositionHorizontalVertical,
+        TwoComponentPositionBlockInline,
+        TwoComponentPositionStartEnd,
+
         ThreeComponentPositionHorizontalVerticalLengthFirst,
         ThreeComponentPositionHorizontalVerticalLengthSecond,
-        FourComponentPositionHorizontalVertical
+        ThreeComponentPositionBlockInlineLengthFirst,
+        ThreeComponentPositionBlockInlineLengthSecond,
+        ThreeComponentPositionStartEndLengthFirst,
+        ThreeComponentPositionStartEndLengthSecond,
+
+        FourComponentPositionHorizontalVertical,
+        FourComponentPositionBlockInline,
+        FourComponentPositionStartEnd
     >;
 
     template<typename T>
@@ -111,7 +171,11 @@ DEFINE_TYPE_WRAPPER_GET(Position, value);
 struct PositionX {
     using Kind = Variant<
         TwoComponentPositionHorizontal,
-        FourComponentPositionHorizontal
+        TwoComponentPositionBlock,
+        TwoComponentPositionLogical,
+        FourComponentPositionHorizontal,
+        FourComponentPositionBlock,
+        FourComponentPositionLogical
     >;
 
     template<typename T>
@@ -134,7 +198,11 @@ DEFINE_TYPE_WRAPPER_GET(PositionX, value);
 struct PositionY {
     using Kind = Variant<
         TwoComponentPositionVertical,
-        FourComponentPositionVertical
+        TwoComponentPositionInline,
+        TwoComponentPositionLogical,
+        FourComponentPositionVertical,
+        FourComponentPositionInline,
+        FourComponentPositionLogical
     >;
 
     template<typename T>
@@ -163,10 +231,16 @@ std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&&);
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionHorizontal, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionVertical, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionBlock, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionInline, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionLogical, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ThreeComponentPositionHorizontal, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ThreeComponentPositionVertical, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FourComponentPositionHorizontal, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FourComponentPositionVertical, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FourComponentPositionBlock, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FourComponentPositionInline, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FourComponentPositionLogical, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Position, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PositionX, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PositionY, 1)
