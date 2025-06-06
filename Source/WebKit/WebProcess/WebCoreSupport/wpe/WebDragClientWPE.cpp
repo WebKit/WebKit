@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014-2015, 2025 Igalia S.L.
+ * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2025 Microsoft Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,27 +25,36 @@
  */
 
 #include "config.h"
-#include "Pasteboard.h"
+#include "WebDragClient.h"
 
-#if PLATFORM(WPE)
-#include "DragData.h"
-#include "PasteboardStrategy.h"
-#include "PlatformStrategies.h"
-#include "SelectionData.h"
-#include "SharedBuffer.h"
+#if ENABLE(DRAG_SUPPORT)
 
-namespace WebCore {
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include <WebCore/DataTransfer.h>
+#include <WebCore/DragData.h>
+#include <WebCore/ElementIdentifier.h>
+#include <WebCore/Pasteboard.h>
+#include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 
-bool Pasteboard::canSmartReplace()
+#include <optional>
+
+namespace WebKit {
+using namespace WebCore;
+
+void WebDragClient::didConcludeEditDrag()
 {
-    return false;
 }
 
-void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
+void WebDragClient::startDrag(DragItem, DataTransfer& dataTransfer, Frame&, const std::optional<ElementIdentifier>&)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain;charset=utf-8"_s);
+    m_page->willStartDrag();
+
+    std::optional<ShareableBitmap::Handle> handle;
+    m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), WTFMove(handle), dataTransfer.dragLocation()));
 }
 
-} // namespace WebCore
+}; // namespace WebKit.
 
-#endif // PLATFORM(WPE)
+#endif // ENABLE(DRAG_SUPPORT)

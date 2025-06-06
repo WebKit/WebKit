@@ -31,6 +31,10 @@
 #include "PlatformImage.h"
 #include <wtf/MallocSpan.h>
 
+#if USE(SKIA)
+#include <skia/core/SkImage.h>
+#endif
+
 namespace WebCore {
 
 class GraphicsContextGLImageExtractor {

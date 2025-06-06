@@ -46,7 +46,7 @@ OBJC_CLASS NSString;
 OBJC_CLASS NSArray;
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #include "SelectionData.h"
 #endif
 
@@ -188,16 +188,12 @@ public:
     Pasteboard(std::unique_ptr<PasteboardContext>&&);
     virtual ~Pasteboard();
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& name);
-    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&);
 #if ENABLE(DRAG_SUPPORT)
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&);
     explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&&);
 #endif
-#endif
-
-#if PLATFORM(WPE)
-    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& name);
 #endif
 
 #if PLATFORM(WIN)
@@ -261,8 +257,10 @@ public:
     void writeSelection(const std::optional<SimpleRange>&, bool canSmartCopyOrDelete, LocalFrame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
-#if PLATFORM(GTK)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && ENABLE(DRAG_SUPPORT)
     const SelectionData& selectionData() const;
+#endif
+#if PLATFORM(GTK)
     static std::unique_ptr<Pasteboard> createForGlobalSelection(std::unique_ptr<PasteboardContext>&&);
 #endif
 
@@ -357,7 +355,7 @@ private:
 
     std::unique_ptr<PasteboardContext> m_context;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<SelectionData> m_selectionData;
 #endif
 
@@ -396,7 +394,7 @@ extern const ASCIILiteral WebURLNamePboardType;
 extern const ASCIILiteral WebURLsWithTitlesPboardType;
 #endif
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
 
 inline Pasteboard::~Pasteboard()
 {

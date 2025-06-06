@@ -47,7 +47,7 @@ typedef void* DragDataRef;
 
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(WPE)
 namespace WebCore {
 class SelectionData;
 }

@@ -93,6 +93,14 @@ if (USE_SKIA AND ENABLE_DRAG_SUPPORT)
     )
 endif ()
 
+if (ENABLE_DRAG_SUPPORT)
+    list(APPEND WebCore_SOURCES
+        page/glib/DragControllerGLib.cpp
+
+        platform/glib/DragDataGLib.cpp
+    )
+endif ()
+
 if (USE_ATSPI)
     set(WebCore_AtspiInterfaceFiles
         ${WEBCORE_DIR}/accessibility/atspi/xml/Accessible.xml

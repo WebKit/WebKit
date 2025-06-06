@@ -305,6 +305,12 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float)
     return nullptr;
 }
 
+DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&)
+{
+    notImplemented();
+    return nullptr;
+}
+
 DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
 {
     notImplemented();

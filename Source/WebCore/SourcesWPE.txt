@@ -56,6 +56,8 @@ platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
 
+platform/glib/PasteboardGLib.cpp
+
 platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify

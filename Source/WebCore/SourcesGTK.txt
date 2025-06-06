@@ -46,7 +46,7 @@ editing/glib/WebContentReaderGLib.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
-page/gtk/DragControllerGtk.cpp
+page/glib/DragControllerGLib.cpp
 
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
@@ -55,6 +55,9 @@ platform/gamepad/manette/ManetteGamepad.cpp
 platform/gamepad/manette/ManetteGamepadProvider.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
+
+platform/glib/DragDataGLib.cpp
+platform/glib/PasteboardGLib.cpp
 
 platform/graphics/PlatformDisplay.cpp @no-unify
 
@@ -88,7 +91,6 @@ platform/graphics/opentype/OpenTypeVerticalData.cpp
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp
-platform/gtk/DragDataGtk.cpp
 platform/gtk/GRefPtrGtk.cpp
 platform/gtk/GtkUtilities.cpp @no-unify
 platform/gtk/LocalizedStringsGtk.cpp

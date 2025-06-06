@@ -286,6 +286,7 @@ WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
 
 WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
+WebProcess/WebCoreSupport/wpe/WebDragClientWPE.cpp
 WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
 
 WebProcess/WebPage/AcceleratedSurface.cpp

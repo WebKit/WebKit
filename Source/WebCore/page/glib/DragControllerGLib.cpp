@@ -32,7 +32,8 @@
 #include "Editor.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "NodeInlines.h"
 #include "Pasteboard.h"
 #include "markup.h"
 
