@@ -378,7 +378,7 @@ protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)
         : m_algorithm(algorithm) { }
 
-    virtual LayoutUnit minLogicalSizeForGridItem(RenderBox&, const Length& gridItemMinSize, std::optional<LayoutUnit> availableSize) const;
+    virtual LayoutUnit minLogicalSizeForGridItem(RenderBox&, const Style::MinimumSize&, std::optional<LayoutUnit> availableSize) const;
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForGridItem(RenderBox&, GridLayoutState&) const;

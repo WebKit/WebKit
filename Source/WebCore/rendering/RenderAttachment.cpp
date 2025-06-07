@@ -140,8 +140,8 @@ void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& of
 void RenderAttachment::layoutShadowContent(const LayoutSize& size)
 {
     for (auto& renderBox : childrenOfType<RenderBox>(*this)) {
-        renderBox.mutableStyle().setHeight(Length(size.height(), LengthType::Fixed));
-        renderBox.mutableStyle().setWidth(Length(size.width(), LengthType::Fixed));
+        renderBox.mutableStyle().setHeight(Style::PreferredSize::Fixed { size.height() });
+        renderBox.mutableStyle().setWidth(Style::PreferredSize::Fixed { size.width() });
         renderBox.setNeedsLayout(MarkOnlyThis);
         renderBox.layout();
     }

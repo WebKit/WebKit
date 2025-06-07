@@ -381,6 +381,9 @@ protected:
 
     virtual Style::PaddingBox controlPadding(StyleAppearance, const Style::PaddingBox&, float zoomFactor) const;
 
+    virtual Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float zoomFactor) const;
+    Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, const Style::PreferredSizePair&, float zoomFactor) const;
+
 private:
     OptionSet<ControlStyle::State> extractControlStyleStatesForRendererInternal(const RenderObject&) const;
 
@@ -436,6 +439,8 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
     virtual Color autocorrectionReplacementMarkerColor(const RenderText&) const;
+
+    virtual Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const;
 
 private:
     StyleAppearance autoAppearanceForElement(RenderStyle&, const Element*) const;

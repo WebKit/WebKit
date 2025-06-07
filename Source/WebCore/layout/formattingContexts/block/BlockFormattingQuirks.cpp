@@ -138,8 +138,8 @@ LayoutUnit BlockFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     auto bodyAndDocumentVerticalMarginPaddingAndBorder = LayoutUnit { };
     for (auto& containingBlock : containingBlockChain(layoutBox)) {
         auto containingBlockHeight = containingBlock.style().logicalHeight();
-        if (containingBlockHeight.isFixed())
-            return LayoutUnit(containingBlockHeight.value() - bodyAndDocumentVerticalMarginPaddingAndBorder);
+        if (auto fixedContainingBlockHeight = containingBlockHeight.tryFixed())
+            return LayoutUnit(fixedContainingBlockHeight->value - bodyAndDocumentVerticalMarginPaddingAndBorder);
 
         // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.

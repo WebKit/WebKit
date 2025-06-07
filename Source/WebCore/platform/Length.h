@@ -131,6 +131,8 @@ public:
 
     WEBCORE_EXPORT explicit Length(Ref<CalculationValue>&&);
 
+    explicit Length(WTF::HashTableEmptyValueType);
+
     Length(const Length&);
     Length(Length&&);
     Length& operator=(const Length&);
@@ -150,6 +152,12 @@ public:
     float percent() const;
     CalculationValue& calculationValue() const;
     Ref<CalculationValue> protectedCalculationValue() const;
+
+    struct Fixed { float value; };
+    std::optional<Fixed> tryFixed() const { return isFixed() ? std::make_optional(Fixed { value() }) : std::nullopt; }
+
+    struct Percentage { float value; };
+    std::optional<Percentage> tryPercentage() const { return isPercent() ? std::make_optional(Percentage { value() }) : std::nullopt; }
 
     LengthType type() const;
     WEBCORE_EXPORT IPCData ipcData() const;
@@ -186,7 +194,8 @@ public:
     bool isPercentOrCalculated() const; // Returns true for both Percent and Calculated.
 
     bool isIntrinsic() const;
-    bool isIntrinsicOrAuto() const;
+    bool isIntrinsicOrLegacyIntrinsic() const;
+    bool isIntrinsicOrLegacyIntrinsicOrAuto() const;
     bool isSpecified() const;
     bool isSpecifiedOrIntrinsic() const;
 
@@ -273,6 +282,12 @@ inline Length::Length(double value, LengthType type, bool hasQuirk)
     , m_isFloat(true)
 {
     ASSERT(type != LengthType::Calculated);
+}
+
+inline Length::Length(WTF::HashTableEmptyValueType)
+    : m_type(LengthType::Undefined)
+    , m_isEmptyValue(true)
+{
 }
 
 inline Length::Length(const Length& other)
@@ -573,9 +588,14 @@ inline bool Length::isIntrinsic() const
     return type() == LengthType::MinContent || type() == LengthType::MaxContent || type() == LengthType::FillAvailable || type() == LengthType::FitContent;
 }
 
-inline bool Length::isIntrinsicOrAuto() const
+inline bool Length::isIntrinsicOrLegacyIntrinsic() const
 {
-    return isAuto() || isIntrinsic() || isLegacyIntrinsic();
+    return isIntrinsic() || isLegacyIntrinsic();
+}
+
+inline bool Length::isIntrinsicOrLegacyIntrinsicOrAuto() const
+{
+    return isAuto() || isIntrinsicOrLegacyIntrinsic();
 }
 
 inline bool Length::isSpecified() const

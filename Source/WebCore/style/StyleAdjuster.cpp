@@ -104,11 +104,11 @@ Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, con
 static void addIntrinsicMargins(RenderStyle& style)
 {
     // Intrinsic margin value.
-    const auto intrinsicMargin = Style::Length<> { static_cast<float>(clampToInteger(2 * style.usedZoom())) };
+    const auto intrinsicMargin = Style::MarginEdge::Fixed { static_cast<float>(clampToInteger(2 * style.usedZoom())) };
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
-    if (style.width().isIntrinsicOrAuto()) {
+    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto()) {
         if (style.marginLeft().hasQuirk())
             style.setMarginLeft(intrinsicMargin);
         if (style.marginRight().hasQuirk())
@@ -640,7 +640,7 @@ void Adjuster::adjust(RenderStyle& style) const
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
-                style.setHeight(WebCore::Length(200, LengthType::Fixed));
+                style.setHeight(200_css_px);
         }
 
         if (m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree)) [[unlikely]]
@@ -950,15 +950,15 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle& parentSty
     if (style.containsSize()) {
         if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
             if (isOldWidthAuto)
-                style.setWidth(WebCore::Length(LengthType::Auto));
+                style.setWidth(CSS::Keyword::Auto { });
             if (isOldMinWidthAuto)
-                style.setMinWidth(WebCore::Length(LengthType::Auto));
+                style.setMinWidth(CSS::Keyword::Auto { });
         }
         if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
             if (isOldHeightAuto)
-                style.setHeight(WebCore::Length(LengthType::Auto));
+                style.setHeight(CSS::Keyword::Auto { });
             if (isOldMinHeightAuto)
-                style.setMinHeight(WebCore::Length(LengthType::Auto));
+                style.setMinHeight(CSS::Keyword::Auto { });
         }
     }
 }

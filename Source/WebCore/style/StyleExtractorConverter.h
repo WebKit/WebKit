@@ -102,11 +102,15 @@
 #include "StyleEasingFunction.h"
 #include "StyleExtractorState.h"
 #include "StyleFilterProperty.h"
+#include "StyleFlexBasis.h"
 #include "StyleInset.h"
 #include "StyleLineBoxContain.h"
 #include "StyleMargin.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePadding.h"
 #include "StylePathData.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleReflection.h"
@@ -183,6 +187,10 @@ public:
     static Ref<CSSValue> convertScrollPaddingEdge(ExtractorState&, const ScrollPaddingEdge&);
     static Ref<CSSValue> convertCornerShapeValue(ExtractorState&, const CornerShapeValue&);
     static Ref<CSSValue> convertDynamicRangeLimit(ExtractorState&, const DynamicRangeLimit&);
+    static Ref<CSSValue> convertPreferredSize(ExtractorState&, const PreferredSize&);
+    static Ref<CSSValue> convertMaximumSize(ExtractorState&, const MaximumSize&);
+    static Ref<CSSValue> convertMinimumSize(ExtractorState&, const MinimumSize&);
+    static Ref<CSSValue> convertFlexBasis(ExtractorState&, const FlexBasis&);
 #if ENABLE(DARK_MODE_CSS)
     static Ref<CSSValue> convertColorScheme(ExtractorState&, const ColorScheme&);
 #endif
@@ -664,6 +672,26 @@ inline Ref<CSSValue> ExtractorConverter::convertCornerShapeValue(ExtractorState&
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertDynamicRangeLimit(ExtractorState& state, const DynamicRangeLimit& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertPreferredSize(ExtractorState& state, const PreferredSize& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertMaximumSize(ExtractorState& state, const MaximumSize& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertMinimumSize(ExtractorState& state, const MinimumSize& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertFlexBasis(ExtractorState& state, const FlexBasis& value)
 {
     return createCSSValue(state.pool, state.style, value);
 }

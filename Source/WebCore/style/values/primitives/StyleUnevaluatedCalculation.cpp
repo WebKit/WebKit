@@ -26,6 +26,7 @@
 #include "StyleUnevaluatedCalculation.h"
 
 #include "CalculationValue.h"
+#include "Length.h"
 
 namespace WebCore {
 namespace Style {
@@ -43,6 +44,11 @@ UnevaluatedCalculationBase::UnevaluatedCalculationBase(Calculation::Child&& root
             Calculation::Tree { WTFMove(root) }
         )
     }
+{
+}
+
+UnevaluatedCalculationBase::UnevaluatedCalculationBase(const WebCore::Length& platformLength)
+    : calc { platformLength.protectedCalculationValue() }
 {
 }
 

@@ -547,7 +547,7 @@ static inline bool isLayoutBoundary(const RenderElement& renderer)
         return false;
     }
 
-    if (style.width().isIntrinsicOrAuto() || style.height().isIntrinsicOrAuto() || style.height().isPercentOrCalculated())
+    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto() || style.height().isIntrinsicOrLegacyIntrinsicOrAuto() || style.height().isPercentOrCalculated())
         return false;
 
     if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer())

@@ -121,9 +121,10 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     // margins with our children's margins. To do otherwise would be to risk odd visual
     // effects when the children overflow out of the parent block and yet still collapse
     // with it. We also don't collapse if we have any bottom border/padding.
-    m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && !afterBorderPadding
-        && blockStyle.logicalHeight().isAuto() && !blockStyle.logicalHeight().value();
-    
+    m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren
+        && !afterBorderPadding
+        && blockStyle.logicalHeight().isAuto();
+
     m_quirkContainer = block.isRenderTableCell() || block.isBody();
 
     m_positiveMargin = m_canCollapseMarginBeforeWithChildren ? block.maxPositiveMarginBefore() : 0_lu;
@@ -331,9 +332,9 @@ void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth,
     }
 
     if (auto* cell = dynamicDowncast<RenderTableCell>(*this)) {
-        Length tableCellWidth = cell->styleOrColLogicalWidth();
-        if (tableCellWidth.isFixed() && tableCellWidth.value() > 0)
-            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth));
+        auto tableCellWidth = cell->styleOrColLogicalWidth();
+        if (auto fixedTableCellWidth = tableCellWidth.tryFixed(); fixedTableCellWidth && fixedTableCellWidth->value > 0)
+            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedTableCellWidth));
     }
 
     int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
@@ -4194,7 +4195,7 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
     if (!renderer.isRenderBlock())
         return true;
     if (CheckedPtr renderListItem = dynamicDowncast<RenderListItem>(renderer))
-        return renderListItem->style().height().type() != LengthType::Fixed;
+        return !renderListItem->style().height().isFixed();
     return false;
 }
 
@@ -4610,13 +4611,16 @@ static inline LayoutUnit preferredWidth(LayoutUnit preferredWidth, float result)
 static inline std::optional<LayoutUnit> textIndentForBlockContainer(const RenderBlockFlow& renderer)
 {
     auto& style = renderer.style();
+    if (auto fixedTextIndent = style.textIndent().tryFixed())
+        return fixedTextIndent->value ? std::make_optional(LayoutUnit { fixedTextIndent->value }) : std::nullopt;
+
     auto indentValue = LayoutUnit { };
-    if (style.textIndent().isFixed())
-        indentValue = LayoutUnit { style.textIndent().value() };
-    else if (auto* containingBlock = renderer.containingBlock(); containingBlock && containingBlock->style().logicalWidth().isFixed()) {
-        // At this point of the shrink-to-fit computatation, we don't have a used value for the containing block width
-        // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-        indentValue = minimumValueForLength(style.textIndent(), containingBlock->style().logicalWidth().value());
+    if (auto* containingBlock = renderer.containingBlock()) {
+        if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
+            // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
+            // (that's exactly to what we try to contribute here) unless the computed value is fixed.
+            indentValue = minimumValueForLength(style.textIndent(), containingBlockFixedLogicalWidth->value);
+        }
     }
     return indentValue ? std::make_optional(indentValue) : std::nullopt;
 }
@@ -4640,7 +4644,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific cirucumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || !styleToUse.logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || !styleToUse.logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto();
 
     bool oldAutoWrap = styleToUse.autoWrap();
 

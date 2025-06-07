@@ -87,6 +87,10 @@ inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) {
 inline MarginEdge forwardInheritedValue(const MarginEdge& value) { auto copy = value; return copy; }
 inline PaddingEdge forwardInheritedValue(const PaddingEdge& value) { auto copy = value; return copy; }
 inline InsetEdge forwardInheritedValue(const InsetEdge& value) { auto copy = value; return copy; }
+inline PreferredSize forwardInheritedValue(const PreferredSize& value) { auto copy = value; return copy; }
+inline MinimumSize forwardInheritedValue(const MinimumSize& value) { auto copy = value; return copy; }
+inline MaximumSize forwardInheritedValue(const MaximumSize& value) { auto copy = value; return copy; }
+inline FlexBasis forwardInheritedValue(const FlexBasis& value) { auto copy = value; return copy; }
 inline DynamicRangeLimit forwardInheritedValue(const DynamicRangeLimit& value) { auto copy = value; return copy; }
 inline CornerShapeValue forwardInheritedValue(const CornerShapeValue& value) { auto copy = value; return copy; }
 inline URL forwardInheritedValue(const URL& value) { auto copy = value; return copy; }

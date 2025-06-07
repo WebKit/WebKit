@@ -94,11 +94,11 @@ void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
     // Use margin-block:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     if (isHorizontalWritingMode()) {
-        childStyle.setMinWidth(Length(0, LengthType::Fixed));
+        childStyle.setMinWidth(0_css_px);
         childStyle.setMarginTop(CSS::Keyword::Auto { });
         childStyle.setMarginBottom(CSS::Keyword::Auto { });
     } else {
-        childStyle.setMinHeight(Length(0, LengthType::Fixed));
+        childStyle.setMinHeight(0_css_px);
         childStyle.setMarginLeft(CSS::Keyword::Auto { });
         childStyle.setMarginRight(CSS::Keyword::Auto { });
     }

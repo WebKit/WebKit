@@ -547,7 +547,13 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
     IntSize thumbSize;
     if (const auto* thumbRenderer = input.sliderThumbElement()->renderer()) {
         const auto& thumbStyle = thumbRenderer->style();
-        thumbSize = IntSize { thumbStyle.width().intValue(), thumbStyle.height().intValue() };
+
+        auto fixedWidth = thumbStyle.width().tryFixed();
+        auto fixedHeight = thumbStyle.height().tryFixed();
+        auto thumbWidth = fixedWidth ? static_cast<int>(fixedWidth->value) : 0;
+        auto thumbHeight = fixedHeight ? static_cast<int>(fixedHeight->value) : 0;
+
+        thumbSize = { thumbWidth, thumbHeight };
     }
 
     IntRect trackBounds;
@@ -1313,6 +1319,34 @@ Style::PaddingBox RenderTheme::controlPadding(StyleAppearance appearance, const 
     }
 }
 
+Style::PreferredSizePair RenderTheme::controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair& zoomedSize, float) const
+{
+    return zoomedSize;
+}
+
+Style::MinimumSizePair RenderTheme::minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float) const
+{
+    return { 0_css_px, 0_css_px };
+}
+
+Style::MinimumSizePair RenderTheme::minimumControlSize(StyleAppearance appearance, const FontCascade& fontCascade, const Style::MinimumSizePair& minSize, const Style::PreferredSizePair& preferredSize, float zoom) const
+{
+    auto minimumControlSize = this->minimumControlSize(appearance, fontCascade, minSize, zoom);
+
+    auto resultWidth = minimumControlSize.width();
+    auto resultHeight = minimumControlSize.height();
+
+    // Other StyleAppearance types are composed controls with shadow subtree.
+    if (appearance == StyleAppearance::Radio || appearance == StyleAppearance::Checkbox) {
+        if (minSize.width().isIntrinsicOrLegacyIntrinsicOrAuto())
+            resultWidth = Style::MinimumSize { preferredSize.width() };
+        if (minSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+            resultHeight = Style::MinimumSize { preferredSize.height() };
+    }
+
+    return { WTFMove(resultWidth), WTFMove(resultHeight) };
+}
+
 // FIXME: iOS does not use this so arguably this should be better abstracted. Or maybe we should
 // investigate if we can bring the various ports closer together.
 void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
@@ -1374,18 +1408,63 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     // Width / Height
     // The width and height here are affected by the zoom.
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-    LengthSize controlSize = Theme::singleton().controlSize(appearance, style.fontCascade(), { style.width(), style.height() }, style.usedZoom());
-    if (controlSize.width != style.width())
-        style.setWidth(WTFMove(controlSize.width));
-    if (controlSize.height != style.height())
-        style.setHeight(WTFMove(controlSize.height));
+    auto controlSize = this->controlSize(appearance, style.fontCascade(), { style.width(), style.height() }, style.usedZoom());
+    if (controlSize.width() != style.width())
+        style.setWidth(Style::PreferredSize { controlSize.width() });
+    if (controlSize.height() != style.height())
+        style.setHeight(Style::PreferredSize { controlSize.height() });
 
     // Min-Width / Min-Height
-    LengthSize minControlSize = Theme::singleton().minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
-    if (minControlSize.width.value() > style.minWidth().value())
-        style.setMinWidth(WTFMove(minControlSize.width));
-    if (minControlSize.height.value() > style.minHeight().value())
-        style.setMinHeight(WTFMove(minControlSize.height));
+    auto minimumControlSize = this->minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
+
+    // FIXME: The min-width/min-heigh value should use `calc-size()` when supported to make non-specified overrides work.
+
+    if (auto fixedOverrideMinWidth = minimumControlSize.width().tryFixed()) {
+        if (auto fixedOriginalMinWidth = style.minWidth().tryFixed()) {
+            if (fixedOverrideMinWidth->value > fixedOriginalMinWidth->value)
+                style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        } else if (auto percentageOriginalMinWidth = style.minWidth().tryPercentage()) {
+            // FIXME: This really makes no sense but matches existing behavior. Should use a `calc(max(override, original))` here instead.
+            if (fixedOverrideMinWidth->value > percentageOriginalMinWidth->value)
+                style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        } else if (fixedOverrideMinWidth->value > 0) {
+            style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        }
+    } else if (auto percentageOverrideMinWidth = minimumControlSize.width().tryPercentage()) {
+        if (auto fixedOriginalMinWidth = style.minWidth().tryFixed()) {
+            // FIXME: This really makes no sense but matches existing behavior. Should use a `calc(max(override, original))` here instead.
+            if (percentageOverrideMinWidth->value > fixedOriginalMinWidth->value)
+                style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        } else if (auto percentageOriginalMinWidth = style.minWidth().tryPercentage()) {
+            if (percentageOverrideMinWidth->value > percentageOriginalMinWidth->value)
+                style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        } else if (percentageOverrideMinWidth->value > 0) {
+            style.setMinWidth(Style::MinimumSize(minimumControlSize.width()));
+        }
+    }
+    if (auto fixedOverrideMinHeight = minimumControlSize.height().tryFixed()) {
+        if (auto fixedOriginalMinHeight = style.minHeight().tryFixed()) {
+            if (fixedOverrideMinHeight->value > fixedOriginalMinHeight->value)
+                style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        } else if (auto percentageOriginalMinHeight = style.minHeight().tryPercentage()) {
+            // FIXME: This really makes no sense but matches existing behavior. Should use a `calc(max(override, original))` here instead.
+            if (fixedOverrideMinHeight->value > percentageOriginalMinHeight->value)
+                style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        } else if (fixedOverrideMinHeight->value > 0) {
+            style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        }
+    } else if (auto percentageOverrideMinHeight = minimumControlSize.height().tryPercentage()) {
+        if (auto fixedOriginalMinHeight = style.minHeight().tryFixed()) {
+            // FIXME: This really makes no sense but matches existing behavior. Should use a `calc(max(override, original))` here instead.
+            if (percentageOverrideMinHeight->value > fixedOriginalMinHeight->value)
+                style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        } else if (auto percentageOriginalMinHeight = style.minHeight().tryPercentage()) {
+            if (percentageOverrideMinHeight->value > percentageOriginalMinHeight->value)
+                style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        } else if (percentageOverrideMinHeight->value > 0) {
+            style.setMinHeight(Style::MinimumSize(minimumControlSize.height()));
+        }
+    }
 
     // Font
     if (auto themeFont = Theme::singleton().controlFont(appearance, style.fontCascade(), style.usedZoom())) {
@@ -1471,8 +1550,15 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
     IntSize thumbSize;
     if (CheckedPtr thumbRenderer = input->sliderThumbElement()->renderer()) {
         auto& thumbStyle = thumbRenderer->style();
-        int thumbWidth = thumbStyle.width().intValue();
-        int thumbHeight = thumbStyle.height().intValue();
+
+        int thumbWidth = 0;
+        if (auto fixedWidth = thumbStyle.width().tryFixed())
+            thumbWidth = static_cast<int>(fixedWidth->value);
+
+        int thumbHeight = 0;
+        if (auto fixedHeight = thumbStyle.height().tryFixed())
+            thumbHeight = static_cast<int>(fixedHeight->value);
+
         thumbSize.setWidth(isHorizontal ? thumbWidth : thumbHeight);
         thumbSize.setHeight(isHorizontal ? thumbHeight : thumbWidth);
     }
@@ -1604,9 +1690,9 @@ void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
     // FIXME: This probably has the same flaw as
     // RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle() by not taking
     // min-width/min-height into account.
-    auto controlSize = Theme::singleton().controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, style.usedZoom());
-    style.setLogicalWidth(WTFMove(controlSize.width));
-    style.setLogicalHeight(WTFMove(controlSize.height));
+    auto controlSize = this->controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, style.usedZoom());
+    style.setLogicalWidth(Style::PreferredSize { controlSize.width() });
+    style.setLogicalHeight(Style::PreferredSize { controlSize.height() });
 
     adjustSwitchStyleDisplay(style);
 }

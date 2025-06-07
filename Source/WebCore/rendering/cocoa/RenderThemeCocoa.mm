@@ -211,17 +211,17 @@ Seconds RenderThemeCocoa::animationRepeatIntervalForProgressBar(const RenderProg
 
 #if ENABLE(APPLE_PAY)
 
-static const auto applePayButtonMinimumWidth = 140;
-static const auto applePayButtonPlainMinimumWidth = 100;
-static const auto applePayButtonMinimumHeight = 30;
+static constexpr auto applePayButtonMinimumWidth = 140.0;
+static constexpr auto applePayButtonPlainMinimumWidth = 100.0;
+static constexpr auto applePayButtonMinimumHeight = 30.0;
 
 void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Element*) const
 {
     if (style.applePayButtonType() == ApplePayButtonType::Plain)
-        style.setMinWidth(Length(applePayButtonPlainMinimumWidth, LengthType::Fixed));
+        style.setMinWidth(Style::MinimumSize::Fixed { applePayButtonPlainMinimumWidth });
     else
-        style.setMinWidth(Length(applePayButtonMinimumWidth, LengthType::Fixed));
-    style.setMinHeight(Length(applePayButtonMinimumHeight, LengthType::Fixed));
+        style.setMinWidth(Style::MinimumSize::Fixed { applePayButtonMinimumWidth });
+    style.setMinHeight(Style::MinimumSize::Fixed { applePayButtonMinimumHeight });
 
     if (!style.hasExplicitlySetBorderRadius()) {
         auto cornerRadius = PKApplePayButtonDefaultCornerRadius;
@@ -873,8 +873,8 @@ void RenderThemeCocoa::adjustSwitchStyle(RenderStyle& style, const Element* elem
 
     // FIXME: Deduplicate sizing with the generic code somehow.
     if (style.width().isAuto() || style.height().isAuto()) {
-        style.setLogicalWidth({ logicalSwitchWidth * style.usedZoom(), LengthType::Fixed });
-        style.setLogicalHeight({ logicalSwitchHeight * style.usedZoom(), LengthType::Fixed });
+        style.setLogicalWidth(Style::PreferredSize::Fixed { logicalSwitchWidth * style.usedZoom() });
+        style.setLogicalHeight(Style::PreferredSize::Fixed { logicalSwitchHeight * style.usedZoom() });
     }
 
     adjustSwitchStyleDisplay(style);

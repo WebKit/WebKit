@@ -77,6 +77,8 @@ public:
     PopupMenuStyle::Size popupMenuSize(const RenderStyle&, IntRect&) const final;
 
     Style::PaddingBox controlPadding(StyleAppearance, const Style::PaddingBox&, float zoomFactor) const final;
+    Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float) const final;
+    Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair& zoomedSize, float zoomFactor) const final;
 
     bool popsMenuByArrowKeys() const final { return true; }
 

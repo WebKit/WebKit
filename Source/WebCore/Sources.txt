@@ -3182,6 +3182,7 @@ style/values/filter-effects/StyleInvertFunction.cpp
 style/values/filter-effects/StyleOpacityFunction.cpp
 style/values/filter-effects/StyleSaturateFunction.cpp
 style/values/filter-effects/StyleSepiaFunction.cpp
+style/values/flexbox/StyleFlexBasis.cpp
 style/values/images/StyleGradient.cpp
 style/values/position/StyleInset.cpp
 style/values/primitives/StyleLengthResolution.cpp
@@ -3200,6 +3201,9 @@ style/values/shapes/StylePolygonFunction.cpp
 style/values/shapes/StyleRectFunction.cpp
 style/values/shapes/StyleShapeFunction.cpp
 style/values/shapes/StyleXywhFunction.cpp
+style/values/sizing/StyleMaximumSize.cpp
+style/values/sizing/StyleMinimumSize.cpp
+style/values/sizing/StylePreferredSize.cpp
 style/values/text-decoration/StyleTextShadow.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp

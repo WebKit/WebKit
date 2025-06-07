@@ -33,6 +33,10 @@ struct Length;
 
 template<typename> class ExceptionOr;
 
+namespace Style {
+struct PreferredSize;
+}
+
 class SVGLengthContext {
 public:
     explicit SVGLengthContext(const SVGElement*);
@@ -49,6 +53,8 @@ public:
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
     float valueForLength(const Length&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::PreferredSize&, SVGLengthMode = SVGLengthMode::Other);
+
     ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;
 

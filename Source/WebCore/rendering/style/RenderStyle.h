@@ -293,11 +293,14 @@ struct Color;
 struct ColorScheme;
 struct CornerShapeValue;
 struct DynamicRangeLimit;
-struct PositionTryFallback;
+struct FlexBasis;
 struct InsetEdge;
 struct MarginEdge;
+struct MaximumSize;
+struct MinimumSize;
 struct PaddingEdge;
 struct PositionTryFallback;
+struct PreferredSize;
 struct ScopedName;
 struct ScrollMarginEdge;
 struct ScrollPaddingEdge;
@@ -486,25 +489,25 @@ public:
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
-    inline const Length& width() const;
-    inline const Length& height() const;
-    inline const Length& minWidth() const;
-    inline const Length& maxWidth() const;
-    inline const Length& minHeight() const;
-    inline const Length& maxHeight() const;
+    inline const Style::PreferredSize& width() const;
+    inline const Style::PreferredSize& height() const;
+    inline const Style::MinimumSize& minWidth() const;
+    inline const Style::MinimumSize& minHeight() const;
+    inline const Style::MaximumSize& maxWidth() const;
+    inline const Style::MaximumSize& maxHeight() const;
 
-    inline const Length& logicalWidth(const WritingMode) const;
-    inline const Length& logicalHeight(const WritingMode) const;
-    inline const Length& logicalMinWidth(const WritingMode) const;
-    inline const Length& logicalMaxWidth(const WritingMode) const;
-    inline const Length& logicalMinHeight(const WritingMode) const;
-    inline const Length& logicalMaxHeight(const WritingMode) const;
-    inline const Length& logicalWidth() const;
-    inline const Length& logicalHeight() const;
-    inline const Length& logicalMinWidth() const;
-    inline const Length& logicalMaxWidth() const;
-    inline const Length& logicalMinHeight() const;
-    inline const Length& logicalMaxHeight() const;
+    inline const Style::PreferredSize& logicalWidth(const WritingMode) const;
+    inline const Style::PreferredSize& logicalHeight(const WritingMode) const;
+    inline const Style::MinimumSize& logicalMinWidth(const WritingMode) const;
+    inline const Style::MinimumSize& logicalMinHeight(const WritingMode) const;
+    inline const Style::MaximumSize& logicalMaxWidth(const WritingMode) const;
+    inline const Style::MaximumSize& logicalMaxHeight(const WritingMode) const;
+    inline const Style::PreferredSize& logicalWidth() const;
+    inline const Style::PreferredSize& logicalHeight() const;
+    inline const Style::MinimumSize& logicalMinWidth() const;
+    inline const Style::MinimumSize& logicalMinHeight() const;
+    inline const Style::MaximumSize& logicalMaxWidth() const;
+    inline const Style::MaximumSize& logicalMaxHeight() const;
 
     inline const BorderData& border() const;
     inline const BorderValue& borderLeft() const;
@@ -846,7 +849,7 @@ public:
     inline int order() const;
     inline float flexGrow() const;
     inline float flexShrink() const;
-    inline const Length& flexBasis() const;
+    inline const Style::FlexBasis& flexBasis() const;
     inline const StyleContentAlignmentData& alignContent() const;
     inline const StyleSelfAlignmentData& alignItems() const;
     inline const StyleSelfAlignmentData& alignSelf() const;
@@ -1233,21 +1236,21 @@ public:
     inline void setTop(Style::InsetEdge&&);
     inline void setBottom(Style::InsetEdge&&);
 
-    inline void setWidth(Length&&);
-    inline void setHeight(Length&&);
+    inline void setWidth(Style::PreferredSize&&);
+    inline void setHeight(Style::PreferredSize&&);
 
-    inline void setLogicalWidth(Length&&);
-    inline void setLogicalHeight(Length&&);
+    inline void setLogicalWidth(Style::PreferredSize&&);
+    inline void setLogicalHeight(Style::PreferredSize&&);
 
-    inline void setMinWidth(Length&&);
-    inline void setMaxWidth(Length&&);
-    inline void setMinHeight(Length&&);
-    inline void setMaxHeight(Length&&);
+    inline void setMinWidth(Style::MinimumSize&&);
+    inline void setMinHeight(Style::MinimumSize&&);
+    inline void setMaxWidth(Style::MaximumSize&&);
+    inline void setMaxHeight(Style::MaximumSize&&);
 
-    inline void setLogicalMinWidth(Length&&);
-    inline void setLogicalMaxWidth(Length&&);
-    inline void setLogicalMinHeight(Length&&);
-    inline void setLogicalMaxHeight(Length&&);
+    inline void setLogicalMinWidth(Style::MinimumSize&&);
+    inline void setLogicalMinHeight(Style::MinimumSize&&);
+    inline void setLogicalMaxWidth(Style::MaximumSize&&);
+    inline void setLogicalMaxHeight(Style::MaximumSize&&);
 
     inline void resetBorder();
     inline void resetBorderExceptRadius();
@@ -1527,7 +1530,7 @@ public:
     inline void setBoxSizing(BoxSizing);
     inline void setFlexGrow(float);
     inline void setFlexShrink(float);
-    inline void setFlexBasis(Length&&);
+    inline void setFlexBasis(Style::FlexBasis&&);
     inline void setOrder(int);
     inline void setAlignContent(const StyleContentAlignmentData&);
     inline void setAlignItems(const StyleSelfAlignmentData&);
@@ -2004,9 +2007,9 @@ public:
     static float initialOutlineWidth() { return 3; }
     static inline Length initialLetterSpacing();
     static inline Length initialWordSpacing();
-    static inline Length initialSize();
-    static inline Length initialMinSize();
-    static inline Length initialMaxSize();
+    static inline Style::PreferredSize initialSize();
+    static inline Style::MinimumSize initialMinSize();
+    static inline Style::MaximumSize initialMaxSize();
     static inline Style::InsetEdge initialInset();
     static inline Length initialRadius();
     static inline Style::MarginEdge initialMargin();
@@ -2048,7 +2051,7 @@ public:
     static StyleReflection* initialBoxReflect() { return 0; }
     static float initialFlexGrow() { return 0; }
     static float initialFlexShrink() { return 1; }
-    static inline Length initialFlexBasis();
+    static inline Style::FlexBasis initialFlexBasis();
     static int initialOrder() { return 0; }
     static constexpr StyleSelfAlignmentData initialJustifyItems();
     static constexpr StyleSelfAlignmentData initialSelfAlignment();

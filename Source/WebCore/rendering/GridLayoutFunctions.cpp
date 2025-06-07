@@ -75,8 +75,8 @@ LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid& grid, GridTrack
 bool hasRelativeOrIntrinsicSizeForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
     if (direction == GridTrackSizingDirection::ForColumns)
-        return gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isIntrinsicOrAuto();
-    return gridItem.hasRelativeLogicalHeight() || gridItem.style().logicalHeight().isIntrinsicOrAuto();
+        return gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto();
+    return gridItem.hasRelativeLogicalHeight() || gridItem.style().logicalHeight().isIntrinsicOrLegacyIntrinsicOrAuto();
 }
 
 static ExtraMarginsFromSubgrids extraMarginForSubgrid(const RenderGrid& parent, unsigned startLine, unsigned endLine, GridTrackSizingDirection direction)
@@ -167,7 +167,7 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
         auto& rendererStyle = renderer.style();
         bool rendererHasAspectRatio = renderer.hasIntrinsicAspectRatio() || rendererStyle.hasAspectRatio();
 
-        return rendererHasAspectRatio && rendererStyle.logicalWidth().isAuto() && !rendererStyle.logicalHeight().isIntrinsicOrAuto();
+        return rendererHasAspectRatio && rendererStyle.logicalWidth().isAuto() && !rendererStyle.logicalHeight().isIntrinsicOrLegacyIntrinsicOrAuto();
     };
 
     for (auto& gridItemChild : childrenOfType<RenderBox>(gridItem)) {

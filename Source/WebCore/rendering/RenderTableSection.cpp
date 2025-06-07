@@ -74,21 +74,14 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     if (cell->rowSpan() != 1)
         return;
 
-    Length logicalHeight = cell->style().logicalHeight();
+    auto& logicalHeight = cell->style().logicalHeight();
     if (logicalHeight.isPositive()) {
-        Length cRowLogicalHeight = row.logicalHeight;
-        switch (logicalHeight.type()) {
-        case LengthType::Percent:
-            if (!cRowLogicalHeight.isPercent() || cRowLogicalHeight.percent() < logicalHeight.percent())
+        if (auto percentageLogicalHeight = logicalHeight.tryPercentage()) {
+            if (auto percentageRowLogicalHeight = row.logicalHeight.tryPercentage(); !percentageRowLogicalHeight || percentageRowLogicalHeight->value < percentageLogicalHeight->value)
                 row.logicalHeight = logicalHeight;
-            break;
-        case LengthType::Fixed:
-            if (cRowLogicalHeight.isAuto() || cRowLogicalHeight.isRelative()
-                || (cRowLogicalHeight.isFixed() && cRowLogicalHeight.value() < logicalHeight.value()))
+        } else if (auto fixedLogicalHeight = logicalHeight.tryFixed()) {
+            if (auto fixedRowLogicalHeight = row.logicalHeight.tryFixed(); row.logicalHeight.isAuto() || (fixedRowLogicalHeight && fixedRowLogicalHeight->value < fixedLogicalHeight->value))
                 row.logicalHeight = logicalHeight;
-            break;
-        default:
-            break;
         }
     }
 }
@@ -222,12 +215,12 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     cell->setCol(table()->effColToCol(col));
 }
 
-static LayoutUnit resolveLogicalHeightForRow(const Length& rowLogicalHeight)
+static LayoutUnit resolveLogicalHeightForRow(const Style::PreferredSize& rowLogicalHeight)
 {
-    if (rowLogicalHeight.isFixed())
-        return LayoutUnit(rowLogicalHeight.value());
+    if (auto fixedRowLogicalHeight = rowLogicalHeight.tryFixed())
+        return LayoutUnit(fixedRowLogicalHeight->value);
     if (rowLogicalHeight.isCalculated())
-        return LayoutUnit(rowLogicalHeight.nonNanCalculatedValue(0));
+        return LayoutUnit(Style::evaluate(rowLogicalHeight, 0));
     return 0;
 }
 
@@ -401,14 +394,14 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(LayoutUnit& e
     totalPercent = std::min(totalPercent, 100);
     LayoutUnit rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
-        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-            LayoutUnit toAdd = std::min(extraLogicalHeight, LayoutUnit((totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight));
+        if (auto percentageLogicalHeight = m_grid[r].logicalHeight.tryPercentage(); totalPercent > 0 && percentageLogicalHeight) {
+            LayoutUnit toAdd = std::min(extraLogicalHeight, LayoutUnit((totalHeight * percentageLogicalHeight->value / 100) - rowHeight));
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
             toAdd = std::max(0_lu, toAdd);
             totalLogicalHeightAdded += toAdd;
             extraLogicalHeight -= toAdd;
-            totalPercent -= m_grid[r].logicalHeight.percent();
+            totalPercent -= percentageLogicalHeight->value;
         }
         ASSERT(totalRows >= 1);
         if (r < totalRows - 1)
@@ -473,8 +466,8 @@ LayoutUnit RenderTableSection::distributeExtraLogicalHeightToRows(LayoutUnit ext
     for (unsigned r = 0; r < totalRows; r++) {
         if (m_grid[r].logicalHeight.isAuto())
             ++autoRowsCount;
-        else if (m_grid[r].logicalHeight.isPercent())
-            totalPercent += m_grid[r].logicalHeight.percent();
+        else if (auto percentageLogicalHeight = m_grid[r].logicalHeight.tryPercentage())
+            totalPercent += percentageLogicalHeight->value;
     }
 
     LayoutUnit remainingExtraLogicalHeight = extraLogicalHeight;

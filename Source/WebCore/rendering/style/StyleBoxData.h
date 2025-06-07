@@ -26,8 +26,11 @@
 
 #include "Length.h"
 #include "RenderStyleConstants.h"
-#include <wtf/RefCounted.h>
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
+#include "StylePreferredSize.h"
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WTF {
 class TextStream;
@@ -48,14 +51,14 @@ public:
     void dumpDifferences(TextStream&, const StyleBoxData&) const;
 #endif
 
-    const Length& width() const { return m_width; }
-    const Length& height() const { return m_height; }
+    const Style::PreferredSize& width() const { return m_width; }
+    const Style::PreferredSize& height() const { return m_height; }
     
-    const Length& minWidth() const { return m_minWidth; }
-    const Length& minHeight() const { return m_minHeight; }
+    const Style::MinimumSize& minWidth() const { return m_minWidth; }
+    const Style::MinimumSize& minHeight() const { return m_minHeight; }
     
-    const Length& maxWidth() const { return m_maxWidth; }
-    const Length& maxHeight() const { return m_maxHeight; }
+    const Style::MaximumSize& maxWidth() const { return m_maxWidth; }
+    const Style::MaximumSize& maxHeight() const { return m_maxHeight; }
     
     const Length& verticalAlignLength() const { return m_verticalAlignLength; }
     
@@ -75,14 +78,14 @@ private:
     StyleBoxData();
     StyleBoxData(const StyleBoxData&);
 
-    Length m_width;
-    Length m_height;
+    Style::PreferredSize m_width;
+    Style::PreferredSize m_height;
 
-    Length m_minWidth;
-    Length m_maxWidth;
+    Style::MinimumSize m_minWidth;
+    Style::MaximumSize m_maxWidth;
 
-    Length m_minHeight;
-    Length m_maxHeight;
+    Style::MinimumSize m_minHeight;
+    Style::MaximumSize m_maxHeight;
 
     Length m_verticalAlignLength;
 

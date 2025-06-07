@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TableFormattingContext.h"
 
+#include "CalculationValue.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderStyleInlines.h"

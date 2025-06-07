@@ -2963,8 +2963,8 @@ LayoutSize RenderLayer::minimumSizeForResizing(float zoomFactor) const
 {
     // Use the resizer size as the strict minimum size
     auto resizerRect = overflowControlsRects().resizer;
-    LayoutUnit minWidth = minimumValueForLength(renderer().style().minWidth(), renderer().containingBlock()->width());
-    LayoutUnit minHeight = minimumValueForLength(renderer().style().minHeight(), renderer().containingBlock()->height());
+    LayoutUnit minWidth = Style::evaluateMinimum(renderer().style().minWidth(), renderer().containingBlock()->width());
+    LayoutUnit minHeight = Style::evaluateMinimum(renderer().style().minHeight(), renderer().containingBlock()->height());
     minWidth = std::max(LayoutUnit(minWidth / zoomFactor), LayoutUnit(resizerRect.width()));
     minHeight = std::max(LayoutUnit(minHeight / zoomFactor), LayoutUnit(resizerRect.height()));
     return LayoutSize(minWidth, minHeight);

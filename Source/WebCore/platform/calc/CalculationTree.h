@@ -604,6 +604,14 @@ inline Child subtract(Child&& a, Child&& b)
     return add(WTFMove(a), makeChild(Negate { .a = WTFMove(b) }));
 }
 
+inline Child max(Child&& a, Child&& b)
+{
+    Vector<Child> maxChildren;
+    maxChildren.append(WTFMove(a));
+    maxChildren.append(WTFMove(b));
+    return makeChild(Max { .children = WTFMove(maxChildren) });
+}
+
 inline Child blend(Child&& from, Child&& to, double progress)
 {
     return makeChild(Blend { .progress = progress, .from = WTFMove(from), .to = WTFMove(to) });

@@ -41,6 +41,11 @@ class BuilderState;
 // <'padding-*'> = <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-box/#padding-physical
 struct PaddingEdge {
+    using Specified = LengthPercentage<CSS::Nonnegative>;
+    using Fixed = typename Specified::Dimension;
+    using Percentage = typename Specified::Percentage;
+    using Calc = typename Specified::Calc;
+
     explicit PaddingEdge(WebCore::Length&& value)
         : m_value { WTFMove(value) }
     {
@@ -57,12 +62,12 @@ struct PaddingEdge {
     {
     }
 
-    PaddingEdge(Style::Length<CSS::Nonnegative> pixels)
+    PaddingEdge(Fixed pixels)
         : m_value { pixels.value, WebCore::LengthType::Fixed }
     {
     }
 
-    PaddingEdge(Style::Percentage<CSS::Nonnegative> percentage)
+    PaddingEdge(Percentage percentage)
         : m_value { percentage.value, WebCore::LengthType::Percent }
     {
     }
@@ -73,19 +78,23 @@ struct PaddingEdge {
     bool isPercent() const { return m_value.isPercent(); }
     bool isCalculated() const { return m_value.isCalculated(); }
     bool isPercentOrCalculated() const { return m_value.isPercentOrCalculated(); }
+    bool isSpecified() const { return m_value.isSpecified(); }
 
-    std::optional<Length<CSS::Nonnegative>> tryFixed() const { return isFixed() ? std::make_optional(Length<CSS::Nonnegative> { m_value.value() }) : std::nullopt; }
-    std::optional<Percentage<CSS::Nonnegative>> tryPercentage() const { return isPercent() ? std::make_optional(Percentage<CSS::Nonnegative> { m_value.value() }) : std::nullopt; }
+    std::optional<Fixed> tryFixed() const { return isFixed() ? std::make_optional(Fixed { m_value.value() }) : std::nullopt; }
+    std::optional<Percentage> tryPercentage() const { return isPercent() ? std::make_optional(Percentage { m_value.value() }) : std::nullopt; }
+    std::optional<Calc> tryCalc() const { return isCalculated() ? std::make_optional(Calc { m_value }) : std::nullopt; }
 
-    template<typename F> decltype(auto) switchOn(F&& functor) const
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+
         switch (m_value.type()) {
         case WebCore::LengthType::Fixed:
-            return functor(LengthPercentage<CSS::Nonnegative>::Dimension { m_value.value() });
+            return visitor(Fixed { m_value.value() });
         case WebCore::LengthType::Percent:
-            return functor(LengthPercentage<CSS::Nonnegative>::Percentage { m_value.value() });
+            return visitor(Percentage { m_value.value() });
         case WebCore::LengthType::Calculated:
-            return functor(LengthPercentage<CSS::Nonnegative>::Calc { m_value.protectedCalculationValue() });
+            return visitor(Calc { m_value });
         default:
             break;
         }

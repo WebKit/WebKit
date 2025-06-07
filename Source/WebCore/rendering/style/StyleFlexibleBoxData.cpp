@@ -59,8 +59,11 @@ Ref<StyleFlexibleBoxData> StyleFlexibleBoxData::copy() const
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& other) const
 {
-    return flexGrow == other.flexGrow && flexShrink == other.flexShrink && flexBasis == other.flexBasis
-        && flexDirection == other.flexDirection && flexWrap == other.flexWrap;
+    return flexGrow == other.flexGrow
+        && flexShrink == other.flexShrink
+        && flexBasis == other.flexBasis
+        && flexDirection == other.flexDirection
+        && flexWrap == other.flexWrap;
 }
 
 #if !LOG_DISABLED

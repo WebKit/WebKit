@@ -88,10 +88,10 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
         containingBlockStyle.setPointerEvents(PointerEvents::None);
 
         auto containingBlockRect = activeViewTransition->containingBlockRect();
-        containingBlockStyle.setLeft(Style::Length<> { containingBlockRect.x() });
-        containingBlockStyle.setTop(Style::Length<> { containingBlockRect.y() });
-        containingBlockStyle.setWidth(Length(containingBlockRect.width(), LengthType::Fixed));
-        containingBlockStyle.setHeight(Length(containingBlockRect.height(), LengthType::Fixed));
+        containingBlockStyle.setLeft(Style::InsetEdge::Fixed { containingBlockRect.x() });
+        containingBlockStyle.setTop(Style::InsetEdge::Fixed { containingBlockRect.y() });
+        containingBlockStyle.setWidth(Style::PreferredSize::Fixed { containingBlockRect.width() });
+        containingBlockStyle.setHeight(Style::PreferredSize::Fixed { containingBlockRect.height() });
 
         auto newViewTransitionContainingBlock = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTFMove(containingBlockStyle), RenderObject::BlockFlowFlag::IsViewTransitionContainingBlock);
         newViewTransitionContainingBlock->initializeStyle();

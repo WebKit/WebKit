@@ -413,7 +413,7 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
     if (context.compositeOperation != CompositeOperation::Replace)
         return makeLength(Calculation::add(lengthCalculation(from), lengthCalculation(to)));
 
-    if (from.isIntrinsicOrAuto() || to.isIntrinsicOrAuto()) {
+    if (from.isIntrinsicOrLegacyIntrinsicOrAuto() || to.isIntrinsicOrLegacyIntrinsicOrAuto()) {
         ASSERT(context.isDiscrete);
         ASSERT(!context.progress || context.progress == 1);
         return context.progress ? to : from;

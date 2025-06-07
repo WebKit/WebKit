@@ -44,6 +44,8 @@ struct ExtractorState;
 // <'scroll-margin-*'> = <length>
 // https://drafts.csswg.org/css-scroll-snap-1/#margin-longhands-physical
 struct ScrollMarginEdge {
+    using Fixed = Length<>;
+
     explicit ScrollMarginEdge(WebCore::Length&& value)
         : m_value { WTFMove(value) }
     {
@@ -55,16 +57,17 @@ struct ScrollMarginEdge {
     {
     }
 
-    ScrollMarginEdge(Style::Length<> pixels)
+    ScrollMarginEdge(Fixed pixels)
         : m_value { pixels.value, WebCore::LengthType::Fixed }
     {
     }
 
     bool isZero() const { return m_value.isZero(); }
 
-    template<typename F> decltype(auto) switchOn(F&& functor) const
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
-        return functor(Style::Length<> { m_value.value() });
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        return visitor(Fixed { m_value.value() });
     }
 
     bool operator==(const ScrollMarginEdge&) const = default;

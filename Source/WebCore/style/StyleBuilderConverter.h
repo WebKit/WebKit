@@ -86,11 +86,15 @@
 #include "StyleCornerShapeValue.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
+#include "StyleFlexBasis.h"
 #include "StyleInset.h"
 #include "StyleLineBoxContain.h"
 #include "StyleMargin.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePadding.h"
 #include "StylePathData.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
@@ -272,6 +276,10 @@ public:
     static ScrollMarginEdge convertScrollMarginEdge(BuilderState&, const CSSValue&);
     static DynamicRangeLimit convertDynamicRangeLimit(BuilderState&, const CSSValue&);
     static CornerShapeValue convertCornerShapeValue(BuilderState&, const CSSValue&);
+    static PreferredSize convertPreferredSize(BuilderState&, const CSSValue&);
+    static MinimumSize convertMinimumSize(BuilderState&, const CSSValue&);
+    static MaximumSize convertMaximumSize(BuilderState&, const CSSValue&);
+    static FlexBasis convertFlexBasis(BuilderState&, const CSSValue&);
 
     static FixedVector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
@@ -2935,6 +2943,26 @@ inline ScrollPaddingEdge BuilderConverter::convertScrollPaddingEdge(BuilderState
 inline ScrollMarginEdge BuilderConverter::convertScrollMarginEdge(BuilderState& builderState, const CSSValue& value)
 {
     return scrollMarginEdgeFromCSSValue(value, builderState);
+}
+
+inline PreferredSize BuilderConverter::convertPreferredSize(BuilderState& builderState, const CSSValue& value)
+{
+    return preferredSizeFromCSSValue(value, builderState);
+}
+
+inline MinimumSize BuilderConverter::convertMinimumSize(BuilderState& builderState, const CSSValue& value)
+{
+    return minimumSizeFromCSSValue(value, builderState);
+}
+
+inline MaximumSize BuilderConverter::convertMaximumSize(BuilderState& builderState, const CSSValue& value)
+{
+    return maximumSizeFromCSSValue(value, builderState);
+}
+
+inline FlexBasis BuilderConverter::convertFlexBasis(BuilderState& builderState, const CSSValue& value)
+{
+    return flexBasisFromCSSValue(value, builderState);
 }
 
 inline DynamicRangeLimit BuilderConverter::convertDynamicRangeLimit(BuilderState& builderState, const CSSValue& value)

@@ -606,14 +606,14 @@ void RenderReplaced::computeAspectRatioAdjustedIntrinsicLogicalWidths(LayoutUnit
     auto computedAspectRatio = computeIntrinsicAspectRatio();
     auto computedIntrinsicLogicalWidth = minLogicalWidth;
 
-    if (style.logicalHeight().isFixed())
-        computedIntrinsicLogicalWidth = style.logicalHeight().value() * computedAspectRatio;
+    if (auto fixedLogicalHeight = style.logicalHeight().tryFixed())
+        computedIntrinsicLogicalWidth = fixedLogicalHeight->value * computedAspectRatio;
 
-    if (style.logicalMaxHeight().isFixed())
-        computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { style.logicalMaxHeight().value() * computedAspectRatio });
+    if (auto fixedLogicalMaxHeight = style.logicalMaxHeight().tryFixed())
+        computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMaxHeight->value * computedAspectRatio });
 
-    if (style.logicalMinHeight().isFixed())
-        computedIntrinsicLogicalWidth = std::max(computedIntrinsicLogicalWidth, LayoutUnit { style.logicalMinHeight().value() * computedAspectRatio });
+    if (auto fixedLogicalMinHeight = style.logicalMinHeight().tryFixed())
+        computedIntrinsicLogicalWidth = std::max(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMinHeight->value * computedAspectRatio });
 
     minLogicalWidth = computedIntrinsicLogicalWidth;
     maxLogicalWidth = minLogicalWidth;
@@ -638,9 +638,9 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
     if (style().logicalWidth().isSpecified())
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(RenderBox::SizeType::MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style().logicalWidth()), shouldComputePreferred);
     if (style().logicalWidth().isIntrinsic())
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(RenderBox::SizeType::MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style().logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -719,7 +719,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(RenderBox::SizeType::MainOrPreferredSize, style().logicalHeight()));
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight()));
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -780,14 +780,14 @@ void RenderReplaced::computePreferredLogicalWidths()
     if (styleToUse.logicalWidth().isPercentOrCalculated() || styleToUse.logicalMaxWidth().isPercentOrCalculated())
         m_minPreferredLogicalWidth = 0;
 
-    if (!ignoreMinMaxSizes && styleToUse.logicalMinWidth().isFixed() && styleToUse.logicalMinWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth()));
-        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth()));
+    if (auto fixedLogicalMinWidth = styleToUse.logicalMinWidth().tryFixed(); !ignoreMinMaxSizes && fixedLogicalMinWidth && fixedLogicalMinWidth->value > 0) {
+        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth));
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth));
     }
     
-    if (!ignoreMinMaxSizes && styleToUse.logicalMaxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth()));
-        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth()));
+    if (auto fixedLogicalMaxWidth = styleToUse.logicalMaxWidth().tryFixed(); !ignoreMinMaxSizes && fixedLogicalMaxWidth) {
+        m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth));
+        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth));
     }
 
     LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
@@ -954,8 +954,8 @@ void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
         // and this method might be called many times per second during video playback, use a LayoutStateMaintainer:
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
         renderBox.setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
-        renderBox.mutableStyle().setHeight(Length(newSize.height(), LengthType::Fixed));
-        renderBox.mutableStyle().setWidth(Length(newSize.width(), LengthType::Fixed));
+        renderBox.mutableStyle().setHeight(Style::PreferredSize::Fixed { newSize.height() });
+        renderBox.mutableStyle().setWidth(Style::PreferredSize::Fixed { newSize.width() });
         renderBox.setNeedsLayout(MarkOnlyThis);
         renderBox.layout();
     }

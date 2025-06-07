@@ -204,9 +204,13 @@ float NumberInputType::decorationWidth() const
     RefPtr spinButton = protectedElement()->innerSpinButtonElement();
     if (CheckedPtr spinRenderer = spinButton ? spinButton->renderBox() : nullptr) {
         width += spinRenderer->borderAndPaddingLogicalWidth();
+
         // Since the width of spinRenderer is not calculated yet, spinRenderer->logicalWidth() returns 0.
         // So computedStyle()->logicalWidth() is used instead.
-        width += spinButton->computedStyle()->logicalWidth().value();
+
+        // FIXME: Handle non-fixed widths.
+        if (auto fixedLogicalWidth = spinButton->computedStyle()->logicalWidth().tryFixed())
+            width += fixedLogicalWidth->value;
     }
     return width;
 }

@@ -2402,7 +2402,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     if (hasAutofillStrongPasswordButton() && isMutable()) {
         textBlockStyle.setDisplay(DisplayType::InlineBlock);
-        textBlockStyle.setLogicalMaxWidth(Length { 100, LengthType::Percent });
+        textBlockStyle.setLogicalMaxWidth(100_css_percentage);
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
         textBlockStyle.setMaskImage(autoFillStrongPasswordMaskImage());

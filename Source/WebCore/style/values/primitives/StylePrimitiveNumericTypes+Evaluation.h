@@ -51,7 +51,7 @@ template<auto R, typename V> struct Evaluation<Percentage<R, V>> {
     }
 };
 
-template<auto R> constexpr LayoutUnit evaluate(const Percentage<R>& percentage, LayoutUnit referenceLength)
+template<auto R, typename V> constexpr LayoutUnit evaluate(const Percentage<R, V>& percentage, LayoutUnit referenceLength)
 {
     // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
     return LayoutUnit(static_cast<float>(percentage.value / 100.0 * referenceLength));

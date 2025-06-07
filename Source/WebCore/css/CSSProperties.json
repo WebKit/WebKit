@@ -4655,10 +4655,9 @@
                     "resolver": "vertical"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialSize",
-                "style-builder-converter": "LengthSizing",
+                "style-builder-converter": "PreferredSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<width-or-height>"
             },
@@ -6060,10 +6059,9 @@
                     "resolver": "vertical"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialMaxSize",
-                "style-builder-converter": "LengthMaxSizing",
+                "style-builder-converter": "MaximumSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<max-width-or-height>"
             },
@@ -6195,10 +6193,9 @@
                     "resolver": "horizontal"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialMaxSize",
-                "style-builder-converter": "LengthMaxSizing",
+                "style-builder-converter": "MaximumSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<max-width-or-height>"
             },
@@ -6311,10 +6308,9 @@
                     "resolver": "vertical"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialMinSize",
-                "style-builder-converter": "LengthSizing",
+                "style-builder-converter": "MinimumSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<width-or-height>"
             },
@@ -6427,10 +6423,9 @@
                     "resolver": "horizontal"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialMinSize",
-                "style-builder-converter": "LengthSizing",
+                "style-builder-converter": "MinimumSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<width-or-height>"
             },
@@ -8414,10 +8409,9 @@
                     "resolver": "horizontal"
                 },
                 "accepts-quirky-length": true,
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
+                "animation-wrapper": "StyleTypeWrapper",
                 "render-style-initial": "initialSize",
-                "style-builder-converter": "LengthSizing",
+                "style-builder-converter": "PreferredSize",
                 "style-extractor-custom": true,
                 "parser-grammar": "<width-or-height>"
             },
@@ -9677,11 +9671,8 @@
                 "aliases": [
                     "-webkit-flex-basis"
                 ],
-                "animation-wrapper": "LengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
-                "style-builder-converter": "LengthSizing",
-                "style-extractor-converter": "LengthWithoutApplyingZoom",
-                "style-extractor-converter-comment": "FIXME: Add explanation (or remove) for why extractor does not apply zoom",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "FlexBasis",
                 "parser-grammar": "auto | content | <width-or-height-keyword> | <length-percentage [0,inf]>"
             },
             "specification": {

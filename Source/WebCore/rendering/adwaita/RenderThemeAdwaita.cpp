@@ -335,10 +335,10 @@ Style::PaddingBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle&
     int rightPadding = menuListButtonPadding + (style.writingMode().isBidiLTR() ? zoomedArrowSize : 0);
 
     return {
-        Style::Length<CSS::Nonnegative> { static_cast<float>(menuListButtonPadding) },
-        Style::Length<CSS::Nonnegative> { static_cast<float>(rightPadding) },
-        Style::Length<CSS::Nonnegative> { static_cast<float>(menuListButtonPadding) },
-        Style::Length<CSS::Nonnegative> { static_cast<float>(leftPadding) },
+        Style::PaddingEdge::Fixed { static_cast<float>(menuListButtonPadding) },
+        Style::PaddingEdge::Fixed { static_cast<float>(rightPadding) },
+        Style::PaddingEdge::Fixed { static_cast<float>(menuListButtonPadding) },
+        Style::PaddingEdge::Fixed { static_cast<float>(leftPadding) },
     };
 }
 
@@ -359,8 +359,8 @@ void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element
     if (appearance != StyleAppearance::SliderThumbHorizontal && appearance != StyleAppearance::SliderThumbVertical)
         return;
 
-    style.setWidth(Length(sliderThumbSize, LengthType::Fixed));
-    style.setHeight(Length(sliderThumbSize, LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(sliderThumbSize) });
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(sliderThumbSize) });
 }
 
 IntSize RenderThemeAdwaita::sliderTickSize() const
@@ -380,6 +380,54 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
         style.setMarginRight(-2_css_px);
     else
         style.setMarginLeft(-2_css_px);
+}
+
+Style::PreferredSizePair RenderThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const Style::PreferredSizePair& zoomedSize, float zoomFactor) const
+{
+    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+        return RenderTheme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
+
+    switch (appearance) {
+    case StyleAppearance::Checkbox:
+    case StyleAppearance::Radio: {
+        auto buttonSizeWidth = zoomedSize.width();
+        auto buttonSizeHeight = zoomedSize.height();
+        if (buttonSizeWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+            buttonSizeWidth = 12_css_px * zoomFactor;
+        if (buttonSizeHeight.isIntrinsicOrLegacyIntrinsicOrAuto())
+            buttonSizeHeight = 12_css_px * zoomFactor;
+        return { WTFMove(buttonSizeWidth), WTFMove(buttonSizeHeight) };
+    }
+    case StyleAppearance::InnerSpinButton: {
+        auto spinButtonSizeWidth = zoomedSize.width();
+        auto spinButtonSizeHeight = zoomedSize.height();
+        if (spinButtonSizeWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+            spinButtonSizeWidth = Style::PreferredSize::Fixed { static_cast<float>(static_cast<int>(arrowSize * zoomFactor)) };
+        if (spinButtonSizeHeight.isIntrinsicOrLegacyIntrinsicOrAuto() || fontCascade.size() > arrowSize)
+            spinButtonSizeHeight = Style::PreferredSize::Fixed { fontCascade.size() };
+        return { WTFMove(spinButtonSizeWidth), WTFMove(spinButtonSizeHeight) };
+    }
+    default:
+        break;
+    }
+
+    return RenderTheme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
+}
+
+Style::MinimumSizePair RenderThemeAdwaita::minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair& zoomedSize, float) const
+{
+    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+        return zoomedSize;
+
+    auto resultWidth = zoomedSize.width();
+    auto resultHeight = zoomedSize.height();
+
+    if (resultWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+        resultWidth = 0_css_px;
+    if (resultHeight.isIntrinsicOrLegacyIntrinsicOrAuto())
+        resultHeight = 0_css_px;
+
+    return { WTFMove(resultWidth), WTFMove(resultHeight) };
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

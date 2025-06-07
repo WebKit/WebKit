@@ -97,9 +97,9 @@ LayoutUnit GridMasonryLayout::calculateMasonryIntrinsicLogicalWidth(RenderBox& g
 {
     switch (layoutPhase) {
     case MasonryLayoutPhase::MinContentPhase:
-        return gridItem.computeIntrinsicLogicalWidthUsing(Length(LengthType::MinContent), { }, gridItem.borderAndPaddingLogicalWidth());
+        return gridItem.computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
     case MasonryLayoutPhase::MaxContentPhase:
-        return gridItem.computeIntrinsicLogicalWidthUsing(Length(LengthType::MaxContent), { }, gridItem.borderAndPaddingLogicalWidth());
+        return gridItem.computeIntrinsicLogicalWidthUsing(CSS::Keyword::MaxContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
     case MasonryLayoutPhase::LayoutPhase:
         ASSERT_NOT_REACHED();
         return { };

@@ -62,9 +62,8 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // context. If we can't resolve it within the table subtree, we default it to 0.
     // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
     for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox, formattingContext().root())) {
-        auto height = ancestor.style().logicalHeight();
-        if (height.isFixed())
-            return LayoutUnit { height.value() };
+        if (auto fixedHeight = ancestor.style().logicalHeight().tryFixed())
+            return LayoutUnit { fixedHeight->value };
     }
     return { };
 }

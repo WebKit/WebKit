@@ -60,7 +60,7 @@ public:
     RenderTableSection* section() const;
     RenderTable* table() const;
     unsigned rowIndex() const;
-    inline Length styleOrColLogicalWidth() const;
+    inline Style::PreferredSize styleOrColLogicalWidth() const;
     inline LayoutUnit logicalHeightForRowSizing() const;
 
     void setCellLogicalWidth(LayoutUnit constrainedLogicalWidth);
@@ -183,7 +183,7 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    Length logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const;
+    Style::PreferredSize logicalWidthFromColumns(RenderTableCol* firstColForThisCell, const Style::PreferredSize& widthFromStyle) const;
 
     void updateColAndRowSpanFlags();
 

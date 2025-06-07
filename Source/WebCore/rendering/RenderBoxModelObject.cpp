@@ -248,7 +248,7 @@ static inline bool isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelO
     return child.isOutOfFlowPositioned() && !child.style().logicalTop().isAuto() && !child.style().logicalBottom().isAuto();
 }
     
-RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length logicalHeight) const
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const
 {
     // For percentage heights: The percentage is calculated with respect to the
     // height of the generated box's containing block. If the height of the
@@ -257,7 +257,7 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     // calculated as if 'auto' was specified.
     if (!logicalHeight.isPercentOrCalculated() || isOutOfFlowPositioned())
         return nullptr;
-    
+
     // Anonymous block boxes are ignored when resolving percentage values that
     // would refer to it: the closest non-anonymous ancestor box is used instead.
     auto* cb = containingBlock();
@@ -272,16 +272,31 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     // if the cell specified a height or not.
     if (cb->isRenderTableCell())
         return nullptr;
-    
+
     // Match RenderBox::availableLogicalHeightUsing by special casing the layout
     // view. The available height is taken from the frame.
     if (cb->isRenderView())
         return nullptr;
-    
+
     if (isOutOfFlowPositionedWithImplicitHeight(*cb))
         return nullptr;
-    
+
     return cb;
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
 }
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const

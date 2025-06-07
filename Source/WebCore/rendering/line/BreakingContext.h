@@ -76,7 +76,7 @@ public:
         , m_autoWrap(false)
         , m_autoWrapWasEverTrueOnLine(false)
         , m_collapseWhiteSpace(false)
-        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrAuto())
+        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto())
         , m_atEnd(false)
         , m_hadUncommittedWidthBeforeCurrent(false)
         , m_lineWhitespaceCollapsingState(resolver.whitespaceCollapsingState())

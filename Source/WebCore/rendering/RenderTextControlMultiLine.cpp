@@ -111,7 +111,7 @@ void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayou
     if (!placeholderRenderer)
         return;
     if (CheckedPtr placeholderBox = dynamicDowncast<RenderBox>(placeholderRenderer)) {
-        placeholderBox->mutableStyle().setLogicalWidth(Length(contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth(), LengthType::Fixed));
+        placeholderBox->mutableStyle().setLogicalWidth(Style::PreferredSize::Fixed { contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth() });
         placeholderBox->layoutIfNeeded();
         placeholderBox->setX(borderLeft() + paddingLeft());
         placeholderBox->setY(borderTop() + paddingTop());

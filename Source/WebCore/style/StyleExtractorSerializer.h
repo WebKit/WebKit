@@ -97,6 +97,10 @@ public:
     static void serializeScrollPaddingEdge(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollPaddingEdge&);
     static void serializeCornerShapeValue(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const CornerShapeValue&);
     static void serializeDynamicRangeLimit(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const DynamicRangeLimit&);
+    static void serializePreferredSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const PreferredSize&);
+    static void serializeMaximumSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const MaximumSize&);
+    static void serializeMinimumSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const MinimumSize&);
+    static void serializeFlexBasis(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FlexBasis&);
 #if ENABLE(DARK_MODE_CSS)
     static void serializeColorScheme(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ColorScheme&);
 #endif
@@ -779,6 +783,29 @@ inline void ExtractorSerializer::serializeCornerShapeValue(ExtractorState& state
 }
 
 inline void ExtractorSerializer::serializeDynamicRangeLimit(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const DynamicRangeLimit& value)
+{
+    serializationForCSS(builder, context, state.style, value);
+}
+
+
+
+
+inline void ExtractorSerializer::serializePreferredSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const PreferredSize& value)
+{
+    serializationForCSS(builder, context, state.style, value);
+}
+
+inline void ExtractorSerializer::serializeMaximumSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const MaximumSize& value)
+{
+    serializationForCSS(builder, context, state.style, value);
+}
+
+inline void ExtractorSerializer::serializeMinimumSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const MinimumSize& value)
+{
+    serializationForCSS(builder, context, state.style, value);
+}
+
+inline void ExtractorSerializer::serializeFlexBasis(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FlexBasis& value)
 {
     serializationForCSS(builder, context, state.style, value);
 }

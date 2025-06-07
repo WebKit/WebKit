@@ -247,7 +247,9 @@ public:
     enum class ScaleByUsedZoom : bool { No, Yes };
     LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByUsedZoom) const;
 
-    RenderBlock* containingBlockForAutoHeightDetection(Length logicalHeight) const;
+    RenderBlock* containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const;
+    RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;
+    RenderBlock* containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const;
 
     struct ContinuationChainNode {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -272,8 +274,10 @@ protected:
 
 private:
     ContinuationChainNode& ensureContinuationChainNode();
-    
+
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
+
+    RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
 };
 
 } // namespace WebCore

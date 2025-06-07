@@ -162,7 +162,7 @@ inline void RenderStyle::setUsedTouchActions(OptionSet<TouchAction> touchActions
 inline void RenderStyle::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
 inline void RenderStyle::setFieldSizing(FieldSizing value) { SET_NESTED(m_nonInheritedData, rareData, fieldSizing, static_cast<unsigned>(value)); }
 inline void RenderStyle::setFilter(FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, filter, operations, WTFMove(ops)); }
-inline void RenderStyle::setFlexBasis(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexBasis, WTFMove(length)); }
+inline void RenderStyle::setFlexBasis(Style::FlexBasis&& basis) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexBasis, WTFMove(basis)); }
 inline void RenderStyle::setFlexDirection(FlexDirection direction) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexDirection, static_cast<unsigned>(direction)); }
 inline void RenderStyle::setFlexWrap(FlexWrap wrap) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexWrap, static_cast<unsigned>(wrap)); }
 inline void RenderStyle::setGridAutoColumns(Vector<GridTrackSize>&& trackSizeList) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridAutoColumns, WTFMove(trackSizeList)); }
@@ -196,7 +196,7 @@ inline void RenderStyle::setHasExplicitlySetStrokeColor(bool value) { SET(m_rare
 inline void RenderStyle::setHasExplicitlySetStrokeWidth(bool value) { SET(m_rareInheritedData, hasSetStrokeWidth, static_cast<unsigned>(value)); }
 inline void RenderStyle::setHasPseudoStyles(PseudoIdSet set) { m_nonInheritedFlags.setHasPseudoStyles(set); }
 inline void RenderStyle::setHasVisitedLinkAutoCaretColor() { SET_PAIR(m_rareInheritedData, hasVisitedLinkAutoCaretColor, true, visitedLinkCaretColor, Style::Color::currentColor()); }
-inline void RenderStyle::setHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_height, WTFMove(length)); }
+inline void RenderStyle::setHeight(Style::PreferredSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_height, WTFMove(length)); }
 inline void RenderStyle::setHyphenationLimitAfter(short limit) { SET(m_rareInheritedData, hyphenationLimitAfter, limit); }
 inline void RenderStyle::setHyphenationLimitBefore(short limit) { SET(m_rareInheritedData, hyphenationLimitBefore, limit); }
 inline void RenderStyle::setHyphenationLimitLines(short limit) { SET(m_rareInheritedData, hyphenationLimitLines, limit); }
@@ -241,11 +241,11 @@ inline void RenderStyle::setMaskSize(LengthSize size) { SET_DOUBLY_NESTED(m_nonI
 inline void RenderStyle::setMaskXPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, mask, m_xPosition, WTFMove(length)); }
 inline void RenderStyle::setMaskYPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, mask, m_yPosition, WTFMove(length)); }
 inline void RenderStyle::setMathStyle(const MathStyle& style) { SET(m_rareInheritedData, mathStyle, static_cast<unsigned>(style)); }
-inline void RenderStyle::setMaxHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxHeight, WTFMove(length)); }
+inline void RenderStyle::setMaxHeight(Style::MaximumSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxHeight, WTFMove(length)); }
 inline void RenderStyle::setMaxLines(size_t value) { SET_NESTED(m_nonInheritedData, rareData, maxLines, value); }
-inline void RenderStyle::setMaxWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxWidth, WTFMove(length)); }
-inline void RenderStyle::setMinHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minHeight, WTFMove(length)); }
-inline void RenderStyle::setMinWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minWidth, WTFMove(length)); }
+inline void RenderStyle::setMaxWidth(Style::MaximumSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxWidth, WTFMove(length)); }
+inline void RenderStyle::setMinHeight(Style::MinimumSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minHeight, WTFMove(length)); }
+inline void RenderStyle::setMinWidth(Style::MinimumSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minWidth, WTFMove(length)); }
 inline void RenderStyle::setNBSPMode(NBSPMode mode) { SET(m_rareInheritedData, nbspMode, static_cast<unsigned>(mode)); }
 inline void RenderStyle::setNamedGridArea(const NamedGridAreaMap& map) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, namedGridArea, map); }
 inline void RenderStyle::setNamedGridAreaColumnCount(size_t columnCount) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, namedGridAreaColumnCount, columnCount); }
@@ -368,7 +368,7 @@ inline void RenderStyle::setVisitedLinkTextDecorationColor(Style::Color&& value)
 inline void RenderStyle::setVisitedLinkTextEmphasisColor(Style::Color&& value) { SET(m_rareInheritedData, visitedLinkTextEmphasisColor, WTFMove(value)); }
 inline void RenderStyle::setVisitedLinkTextFillColor(Style::Color&& value) { SET(m_rareInheritedData, visitedLinkTextFillColor, WTFMove(value)); }
 inline void RenderStyle::setVisitedLinkTextStrokeColor(Style::Color&& value) { SET(m_rareInheritedData, visitedLinkTextStrokeColor, WTFMove(value)); }
-inline void RenderStyle::setWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_width, WTFMove(length)); }
+inline void RenderStyle::setWidth(Style::PreferredSize&& length) { SET_NESTED(m_nonInheritedData, boxData, m_width, WTFMove(length)); }
 inline void RenderStyle::setWordBreak(WordBreak rule) { SET(m_rareInheritedData, wordBreak, static_cast<unsigned>(rule)); }
 
 inline void RenderStyle::setCornerBottomLeftShape(Style::CornerShapeValue&& shape) { SET_NESTED(m_nonInheritedData, surroundData, border.m_cornerShapes.bottomLeft(), WTFMove(shape)); }
@@ -541,7 +541,7 @@ inline void RenderStyle::setHasExplicitlySetWritingMode()
     SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetWritingMode, true);
 }
 
-inline void RenderStyle::setLogicalHeight(Length&& height)
+inline void RenderStyle::setLogicalHeight(Style::PreferredSize&& height)
 {
     if (writingMode().isHorizontal())
         setHeight(WTFMove(height));
@@ -549,7 +549,7 @@ inline void RenderStyle::setLogicalHeight(Length&& height)
         setWidth(WTFMove(height));
 }
 
-inline void RenderStyle::setLogicalWidth(Length&& width)
+inline void RenderStyle::setLogicalWidth(Style::PreferredSize&& width)
 {
     if (writingMode().isHorizontal())
         setWidth(WTFMove(width));
@@ -557,7 +557,7 @@ inline void RenderStyle::setLogicalWidth(Length&& width)
         setHeight(WTFMove(width));
 }
 
-inline void RenderStyle::setLogicalMinWidth(Length&& width)
+inline void RenderStyle::setLogicalMinWidth(Style::MinimumSize&& width)
 {
     if (writingMode().isHorizontal())
         setMinWidth(WTFMove(width));
@@ -565,7 +565,7 @@ inline void RenderStyle::setLogicalMinWidth(Length&& width)
         setMinHeight(WTFMove(width));
 }
 
-inline void RenderStyle::setLogicalMaxWidth(Length&& width)
+inline void RenderStyle::setLogicalMaxWidth(Style::MaximumSize&& width)
 {
     if (writingMode().isHorizontal())
         setMaxWidth(WTFMove(width));
@@ -573,7 +573,7 @@ inline void RenderStyle::setLogicalMaxWidth(Length&& width)
         setMaxHeight(WTFMove(width));
 }
 
-inline void RenderStyle::setLogicalMinHeight(Length&& height)
+inline void RenderStyle::setLogicalMinHeight(Style::MinimumSize&& height)
 {
     if (writingMode().isHorizontal())
         setMinHeight(WTFMove(height));
@@ -581,7 +581,7 @@ inline void RenderStyle::setLogicalMinHeight(Length&& height)
         setMinWidth(WTFMove(height));
 }
 
-inline void RenderStyle::setLogicalMaxHeight(Length&& height)
+inline void RenderStyle::setLogicalMaxHeight(Style::MaximumSize&& height)
 {
     if (writingMode().isHorizontal())
         setMaxHeight(WTFMove(height));

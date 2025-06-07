@@ -41,6 +41,11 @@ class BuilderState;
 // <'margin-*'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-box/#margin-physical
 struct MarginEdge {
+    using Specified = LengthPercentage<>;
+    using Fixed = typename Specified::Dimension;
+    using Percentage = typename Specified::Percentage;
+    using Calc = typename Specified::Calc;
+
     explicit MarginEdge(WebCore::Length&& value)
         : m_value { WTFMove(value) }
     {
@@ -62,12 +67,12 @@ struct MarginEdge {
     {
     }
 
-    MarginEdge(Style::Length<> pixels)
+    MarginEdge(Fixed pixels)
         : m_value { pixels.value, WebCore::LengthType::Fixed }
     {
     }
 
-    MarginEdge(Style::Percentage<> percentage)
+    MarginEdge(Percentage percentage)
         : m_value { percentage.value, WebCore::LengthType::Percent }
     {
     }
@@ -81,21 +86,25 @@ struct MarginEdge {
     bool isPercent() const { return m_value.isPercent(); }
     bool isCalculated() const { return m_value.isCalculated(); }
     bool isPercentOrCalculated() const { return m_value.isPercentOrCalculated(); }
+    bool isSpecified() const { return m_value.isSpecified(); }
 
-    std::optional<Length<>> tryFixed() const { return isFixed() ? std::make_optional(Length<> { m_value.value() }) : std::nullopt; }
-    std::optional<Percentage<>> tryPercentage() const { return isPercent() ? std::make_optional(Percentage<> { m_value.value() }) : std::nullopt; }
+    std::optional<Fixed> tryFixed() const { return isFixed() ? std::make_optional(Fixed { m_value.value() }) : std::nullopt; }
+    std::optional<Percentage> tryPercentage() const { return isPercent() ? std::make_optional(Percentage { m_value.value() }) : std::nullopt; }
+    std::optional<Calc> tryCalc() const { return isCalculated() ? std::make_optional(Calc { m_value }) : std::nullopt; }
 
-    template<typename F> decltype(auto) switchOn(F&& functor) const
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+
         switch (m_value.type()) {
         case WebCore::LengthType::Auto:
-            return functor(CSS::Keyword::Auto { });
+            return visitor(CSS::Keyword::Auto { });
         case WebCore::LengthType::Fixed:
-            return functor(LengthPercentage<>::Dimension { m_value.value() });
+            return visitor(Fixed { m_value.value() });
         case WebCore::LengthType::Percent:
-            return functor(LengthPercentage<>::Percentage { m_value.value() });
+            return visitor(Percentage { m_value.value() });
         case WebCore::LengthType::Calculated:
-            return functor(LengthPercentage<>::Calc { m_value.protectedCalculationValue() });
+            return visitor(Calc { m_value });
         default:
             break;
         }

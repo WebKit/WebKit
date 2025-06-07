@@ -301,8 +301,8 @@ bool BlockMarginCollapse::marginAfterCollapsesWithParentMarginAfter(const Elemen
         return false;
 
     // nor (if the box's min-height is non-zero) with the box's top margin.
-    auto computedMinHeight = containingBlock.style().logicalMinHeight();
-    if (!computedMinHeight.isAuto() && computedMinHeight.value() && marginAfterCollapsesWithParentMarginBefore(layoutBox))
+    auto& computedMinHeight = containingBlock.style().logicalMinHeight();
+    if (!computedMinHeight.isAuto() && !computedMinHeight.isZero() && marginAfterCollapsesWithParentMarginBefore(layoutBox))
         return false;
 
     return true;
@@ -340,8 +340,8 @@ bool BlockMarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter(con
         return false;
 
     // nor (if the box's min-height is non-zero) with the box's top margin.
-    auto computedMinHeight = layoutBox.style().logicalMinHeight();
-    if (!computedMinHeight.isAuto() && computedMinHeight.value()
+    auto& computedMinHeight = layoutBox.style().logicalMinHeight();
+    if (!computedMinHeight.isAuto() && !computedMinHeight.isZero()
         && (marginAfterCollapsesWithParentMarginBefore(*lastInFlowChild) || hasClearance(*lastInFlowChild)))
         return false;
 
@@ -385,8 +385,8 @@ bool BlockMarginCollapse::marginsCollapseThrough(const ElementBox& layoutBox) co
         return false;
 
     auto& style = layoutBox.style();
-    auto computedHeightValueIsZero = style.height().isFixed() && !style.height().value();
-    if (!(style.height().isAuto() || computedHeightValueIsZero))
+    auto& height = style.height();
+    if (auto fixedHeight = height.tryFixed(); !(style.height().isAuto() || (fixedHeight && !fixedHeight->value)))
         return false;
 
     // FIXME: Check for computed 0 height.

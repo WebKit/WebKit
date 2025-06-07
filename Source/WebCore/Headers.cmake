@@ -2762,6 +2762,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/color-adjust/StyleColorScheme.h
 
+    style/values/flexbox/StyleFlexBasis.h
+
     style/values/images/StyleGradient.h
 
     style/values/inline/StyleLineBoxContain.h
@@ -2793,6 +2795,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/shapes/StyleShapeFunction.h
     style/values/shapes/StyleWindRuleComputation.h
     style/values/shapes/StyleXywhFunction.h
+
+    style/values/sizing/StyleMaximumSize.h
+    style/values/sizing/StyleMinimumSize.h
+    style/values/sizing/StylePreferredSize.h
 
     style/values/text-decoration/StyleTextShadow.h
 

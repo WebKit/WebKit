@@ -454,13 +454,13 @@ void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox& r
             if (renderBox->isInFlowPositioned())
                 staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
         }
-        m_insetBefore = Style::Length<> { staticPosition };
+        m_insetBefore = Style::InsetEdge::Fixed { staticPosition };
     } else {
         ASSERT(!haveOrthogonalWritingModes);
         LayoutUnit staticPosition = renderer.layer()->staticInlinePosition() + containingSize() + m_container->borderLogicalLeft();
         auto& enclosingBox = parent->enclosingBox();
         if (&enclosingBox != m_container.get() && m_container->isDescendantOf(&enclosingBox)) {
-            m_insetAfter = Style::Length<> { staticPosition };
+            m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
             return;
         }
         staticPosition -= enclosingBox.logicalWidth();
@@ -477,7 +477,7 @@ void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox& r
             if (current == m_container.get())
                 break;
         }
-        m_insetAfter = Style::Length<> { staticPosition };
+        m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
     }
 }
 
@@ -508,9 +508,9 @@ void PositionedLayoutConstraints::computeBlockStaticDistance(const RenderBox& re
     // If the parent is RTL then we need to flip the coordinate by setting the logical bottom instead of the logical top. That only needs
     // to be done in case of orthogonal writing modes, for horizontal ones the text direction of the parent does not affect the block position.
     if (haveOrthogonalWritingModes && parent->writingMode().isInlineFlipped())
-        m_insetAfter = Style::Length<> { staticLogicalTop };
+        m_insetAfter = Style::InsetEdge::Fixed { staticLogicalTop };
     else
-        m_insetBefore = Style::Length<> { staticLogicalTop };
+        m_insetBefore = Style::InsetEdge::Fixed { staticLogicalTop };
 }
 
 void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues& computedValues) const

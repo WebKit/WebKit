@@ -32,14 +32,10 @@
 
 namespace WebCore {
 
-class FloatRect;
 class FloatSize;
 class FontCascade;
 class FontCascadeDescription;
 class GraphicsContext;
-class ScrollView;
-
-struct LengthSize;
 
 class Theme {
 public:
@@ -48,12 +44,6 @@ public:
     // The font description result should have a zoomed font size.
     virtual std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float) const;
 
-    // The size here is in zoomed coordinates already. If a new size is returned, it also needs to be in zoomed coordinates.
-    virtual LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const;
-
-    // Returns the minimum size for a control in zoomed coordinates.
-    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoomFactor) const;
-    
     // Allows the theme to modify the existing border.
     virtual LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
 
@@ -70,8 +60,6 @@ public:
 protected:
     Theme() = default;
     virtual ~Theme() = default;
-
-    virtual LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
 
 private:
     Theme(const Theme&) = delete;
