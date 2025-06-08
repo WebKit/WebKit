@@ -79,8 +79,7 @@ using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
 
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
-    self = [super init];
-    return self;
+    return [super init];
 }
 
 - (instancetype)initWithDecision:(Decision)decision decisionPoint:(DecisionPoint)decisionPoint

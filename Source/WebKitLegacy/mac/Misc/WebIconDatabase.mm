@@ -120,8 +120,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache

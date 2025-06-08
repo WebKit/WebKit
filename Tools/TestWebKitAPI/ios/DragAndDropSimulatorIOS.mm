@@ -197,8 +197,7 @@ InteractionType *findInteractionOfType(UIView *view)
     for (NSItemProvider *itemProvider in providers)
         [items addObject:adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]).get()];
 
-    self = [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
-    return self;
+    return [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
 }
 
 - (BOOL)isLocal
@@ -256,8 +255,7 @@ InteractionType *findInteractionOfType(UIView *view)
 
 - (instancetype)initWithWindow:(UIWindow *)window allowMove:(BOOL)allowMove
 {
-    self = [super initWithItems:@[] location:CGPointZero window:window allowMove:allowMove];
-    return self;
+    return [super initWithItems:@[] location:CGPointZero window:window allowMove:allowMove];
 }
 
 - (NSUInteger)localOperationMask

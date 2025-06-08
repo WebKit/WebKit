@@ -409,8 +409,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
     case WebKit::InputType::Week:
 #endif
-        self = [super initWithView:view control:adoptNS([[WKDateTimePicker alloc] initWithView:view inputType:controlType])];
-        return self;
+        return [super initWithView:view control:adoptNS([[WKDateTimePicker alloc] initWithView:view inputType:controlType])];
     default:
         [self release];
         return nil;
