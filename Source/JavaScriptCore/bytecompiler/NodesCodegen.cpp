@@ -4577,22 +4577,18 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLoad(dst, jsUndefined());
 
     Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
-    Ref<Label> topOfLoop = generator.newLabel();
-
-    generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
-
-    generator.emitLabel(topOfLoop.get());
-    generator.emitLoopHint();
-    
-    generator.emitProfileControlFlow(m_statement->startOffset());
-    generator.emitNodeInTailPosition(dst, m_statement);
+    Ref<Label> loopBody = generator.newLabel();
 
     generator.emitLabel(*scope->continueTarget());
+    generator.emitLoopHint();
+    generator.emitNodeInConditionContext(m_expr, loopBody.get(), scope->breakTarget(), FallThroughMeansTrue);
 
-    generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
+    generator.emitLabel(loopBody.get());
+    generator.emitProfileControlFlow(m_statement->startOffset());
+    generator.emitNodeInTailPosition(dst, m_statement);
+    generator.emitJump(*scope->continueTarget());
 
     generator.emitLabel(scope->breakTarget());
-
     generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));
 }
 
@@ -4615,11 +4611,13 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     }
 
     Ref<Label> topOfLoop = generator.newLabel();
-    if (m_expr2)
-        generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
-
+    Ref<Label> loopBody = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
     generator.emitLoopHint();
+    if (m_expr2)
+        generator.emitNodeInConditionContext(m_expr2, loopBody.get(), scope->breakTarget(), FallThroughMeansTrue);
+
+    generator.emitLabel(loopBody.get());
     generator.emitProfileControlFlow(m_statement->startOffset());
 
     generator.emitNodeInTailPosition(dst, m_statement);
@@ -4628,11 +4626,7 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
     if (m_expr3)
         generator.emitNodeInIgnoreResultPosition(m_expr3);
-
-    if (m_expr2)
-        generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
-    else
-        generator.emitJump(topOfLoop.get());
+    generator.emitJump(topOfLoop.get());
 
     generator.emitLabel(scope->breakTarget());
     generator.popLexicalScope(this);
