@@ -8809,5 +8809,15 @@
          "zdobersek"
       ],
       "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "edison.cao@apple.com"
+      ],
+      "github" : "Yuncong-Cao",
+      "name" : "Edison Cao",
+      "nicks" : [
+         "edison_cao"
+      ]
    }
 ]
