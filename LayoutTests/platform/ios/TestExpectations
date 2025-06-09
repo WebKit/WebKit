@@ -7903,3 +7903,7 @@ webkit.org/b/294142 fast/canvas/webgl/gl-teximage.html [ Failure ]
 webkit.org/b/294152 http/tests/misc/timer-vs-loading.html [ Timeout ]
 
 webkit.org/b/293761 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
+
+# webkit.org/b/293827 [macOS] 2x tests in webgl are constant failures (flaky in EWS)
+webgl/1.0.x/conformance/textures/misc/gl-teximage.html [ Failure ]
+webgl/2.0.y/conformance/textures/misc/gl-teximage.html [ Failure ]
