@@ -242,7 +242,6 @@ WI.settings = {
     experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
     experimentalShowCaseSensitiveAutocomplete: new WI.Setting("experimental-show-case-sensitive-auto-complete", false),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
-    experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
     experimentalVirtualizeSourcesNavigationSidebarTreeOutline: new WI.Setting("experimental-virtualize-sources-navigation-sidebar-tree-outline", false),
 
     // Protocol
