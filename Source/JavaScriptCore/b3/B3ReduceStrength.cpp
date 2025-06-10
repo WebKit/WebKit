@@ -3211,6 +3211,75 @@ private:
             break;
         }
 
+        case VectorShiftByVector: {
+            auto extractShiftAmount = [&](v128_t constant, SIMDLane lane) -> std::optional<int64_t> {
+                switch (lane) {
+                case SIMDLane::i8x16: {
+                    auto v = constant.u8x16[0];
+                    for (unsigned i = 1; i < elementCount(lane); ++i) {
+                        auto next = constant.u8x16[i];
+                        if (next != v)
+                            return std::nullopt;
+                    }
+                    return static_cast<int8_t>(v);
+                }
+                case SIMDLane::i16x8: {
+                    auto v = constant.u16x8[0];
+                    for (unsigned i = 1; i < elementCount(lane); ++i) {
+                        auto next = constant.u16x8[i];
+                        if (next != v)
+                            return std::nullopt;
+                    }
+                    return static_cast<int16_t>(v);
+                }
+                case SIMDLane::i32x4: {
+                    auto v = constant.u32x4[0];
+                    for (unsigned i = 1; i < elementCount(lane); ++i) {
+                        auto next = constant.u32x4[i];
+                        if (next != v)
+                            return std::nullopt;
+                    }
+                    return static_cast<int32_t>(v);
+                }
+                case SIMDLane::i64x2: {
+                    auto v = constant.u64x2[0];
+                    for (unsigned i = 1; i < elementCount(lane); ++i) {
+                        auto next = constant.u64x2[i];
+                        if (next != v)
+                            return std::nullopt;
+                    }
+                    return static_cast<int64_t>(v);
+                }
+                case SIMDLane::v128:
+                case SIMDLane::f32x4:
+                case SIMDLane::f64x2:
+                    return std::nullopt;
+                }
+                return std::nullopt;
+            };
+
+            SIMDValue* value = m_value->as<SIMDValue>();
+            if (value->child(1)->hasV128()) {
+                if (auto shiftAmount = extractShiftAmount(value->child(1)->asV128(), value->simdLane())) {
+                    int32_t maxShift = elementByteSize(value->simdLane()) * CHAR_BIT;
+                    if (shiftAmount.value() >= 0) {
+                        if (shiftAmount.value() < maxShift) {
+                            auto* shift = m_insertionSet.insertIntConstant(m_index, m_value->origin(), Int32, shiftAmount.value());
+                            replaceWithNew<SIMDValue>(m_value->origin(), VectorShl, B3::V128, value->simdInfo(), value->child(0), shift);
+                            break;
+                        }
+                    } else {
+                        if (shiftAmount.value() > - maxShift) {
+                            auto* shift = m_insertionSet.insertIntConstant(m_index, m_value->origin(), Int32, -shiftAmount.value());
+                            replaceWithNew<SIMDValue>(m_value->origin(), VectorShr, B3::V128, value->simdInfo(), value->child(0), shift);
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+
         default:
             break;
         }

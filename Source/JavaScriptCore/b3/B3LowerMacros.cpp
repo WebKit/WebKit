@@ -544,10 +544,17 @@ private:
             case VectorShl: {
                 if constexpr (!isARM64())
                     break;
+
                 SIMDValue* value = m_value->as<SIMDValue>();
                 SIMDLane lane = value->simdLane();
 
                 int32_t mask = (elementByteSize(lane) * CHAR_BIT) - 1;
+                if (value->child(1)->hasInt32()) {
+                    int32_t shift = value->child(1)->asInt32();
+                    if ((shift & mask) == shift)
+                        break;
+                }
+
                 Value* shiftAmount = m_insertionSet.insert<Value>(m_index, BitAnd, m_origin, value->child(1), m_insertionSet.insertIntConstant(m_index, m_origin, Int32, mask));
                 if (value->opcode() == VectorShr) {
                     // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to

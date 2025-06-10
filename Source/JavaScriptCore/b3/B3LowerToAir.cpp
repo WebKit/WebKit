@@ -4306,10 +4306,25 @@ private:
 
         case B3::VectorShr:
         case B3::VectorShl: {
-            ASSERT(!isARM64()); // In ARM64, they are macro.
             SIMDValue* value = m_value->as<SIMDValue>();
-            SIMDLane lane = value->simdLane();
+            if (isARM64()) {
+                if (value->opcode() == VectorShl) {
+                    ASSERT(isValidForm(VectorShl8, Arg::SIMDInfo, Arg::Tmp, Arg::Imm, Arg::Tmp));
+                    append(VectorShl8, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), imm(value->child(1)), tmp(value));
+                    return;
+                }
+                ASSERT(value->opcode() == VectorShr);
+                if (value->signMode() == SIMDSignMode::Signed) {
+                    ASSERT(isValidForm(VectorSshr8, Arg::SIMDInfo, Arg::Tmp, Arg::Imm, Arg::Tmp));
+                    append(VectorSshr8, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), imm(value->child(1)), tmp(value));
+                    return;
+                }
+                ASSERT(isValidForm(VectorUshr8, Arg::SIMDInfo, Arg::Tmp, Arg::Imm, Arg::Tmp));
+                append(VectorUshr8, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), imm(value->child(1)), tmp(value));
+                return;
+            }
 
+            SIMDLane lane = value->simdLane();
             int32_t mask = (elementByteSize(lane) * CHAR_BIT) - 1;
 
             auto v = tmp(value->child(0));

@@ -2028,16 +2028,43 @@ public:
         insn(0b01001110001000000100010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
+    ALWAYS_INLINE void shl_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
+    {
+        uint8_t maxShift = elementByteSize(lane) * 8;
+        ASSERT(shift < maxShift && shift < 64 && shift);
+        shift = shift & (maxShift - 1);
+        shift = shift + maxShift;
+        unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
+        unsigned immb = shift & 0b0111;
+        ASSERT(immh);
+        ASSERT(!(immh&(~0b1111)));
+        insn(0b010'011110'0000'000'010101'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
+    }
+
     ALWAYS_INLINE void sshr_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
     {
         uint8_t maxShift = elementByteSize(lane) * 8;
         ASSERT(shift < maxShift && shift < 64 && shift);
+        shift = shift & (maxShift - 1);
         shift = maxShift - shift;
         unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
         unsigned immb = shift & 0b0111;
         ASSERT(immh);
         ASSERT(!(immh&(~0b1111)));
         insn(0b010'011110'0000'000'000001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void ushr_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
+    {
+        uint8_t maxShift = elementByteSize(lane) * 8;
+        ASSERT(shift < maxShift && shift < 64 && shift);
+        shift = shift & (maxShift - 1);
+        shift = maxShift - shift;
+        unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
+        unsigned immb = shift & 0b0111;
+        ASSERT(immh);
+        ASSERT(!(immh&(~0b1111)));
+        insn(0b011'011110'0000'000'000001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
     }
 
     ALWAYS_INLINE void sqadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)

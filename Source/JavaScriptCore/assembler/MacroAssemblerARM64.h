@@ -6211,10 +6211,22 @@ public:
         m_assembler.sshl(dest, input, shift, simdInfo.lane);
     }
 
+    void vectorShl8(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.shl_vi(dest, input, shift.m_value, simdInfo.lane);
+    }
+
     void vectorSshr8(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         m_assembler.sshr_vi(dest, input, shift.m_value, simdInfo.lane);
+    }
+
+    void vectorUshr8(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.ushr_vi(dest, input, shift.m_value, simdInfo.lane);
     }
 
     void vectorHorizontalAdd(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
