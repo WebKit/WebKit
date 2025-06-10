@@ -526,9 +526,8 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
 
 const MediaTime& MediaSource::currentTimeFudgeFactor()
 {
-    // Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames
-    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
-    return fudgeFactor;
+    // Constant centralized in PlatformTimeRanges.
+    return PlatformTimeRanges::timeFudgeFactor();
 }
 
 bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& contentType)

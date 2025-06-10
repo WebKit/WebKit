@@ -61,9 +61,12 @@ const PlatformTimeRanges& PlatformTimeRanges::emptyRanges()
     return emptyRanges.get();
 }
 
-MediaTime PlatformTimeRanges::timeFudgeFactor()
+const MediaTime& PlatformTimeRanges::timeFudgeFactor()
 {
-    return { 2002, 24000 };
+    // Allow hasCurrentTime() to be off by as much as 0.083416s.
+    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
+
+    return fudgeFactor;
 }
 
 void PlatformTimeRanges::invert()

@@ -38,8 +38,8 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     , m_presentationSize(presentationSize)
 {
     ASSERT(sample);
-    m_sample = WTFMove(sample);
     const GstClockTime minimumDuration = 1000; // 1 us
+    m_sample = sample;
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
 
@@ -64,6 +64,8 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     }
 
     m_size = gst_buffer_get_size(buffer);
+    m_sample = adoptGRef(gst_sample_new(buffer, gst_sample_get_caps(m_sample.get()), nullptr,
+        gst_sample_get_info(m_sample.get()) ? gst_structure_copy(gst_sample_get_info(m_sample.get())) : nullptr));
 
     if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
         m_flags = MediaSample::None;
@@ -89,15 +91,6 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, const
     gstreamerMediaSample->m_duration = duration;
     gstreamerMediaSample->m_flags = MediaSample::IsNonDisplaying;
     return adoptRef(*gstreamerMediaSample);
-}
-
-void MediaSampleGStreamer::extendToTheBeginning()
-{
-    // Only to be used with the first sample, as a hack for lack of support for edit lists.
-    // See AppendPipeline::appsinkNewSample()
-    ASSERT(m_dts == MediaTime::zeroTime());
-    m_duration += m_pts;
-    m_pts = MediaTime::zeroTime();
 }
 
 void MediaSampleGStreamer::setTimestamps(const MediaTime& presentationTime, const MediaTime& decodeTime)

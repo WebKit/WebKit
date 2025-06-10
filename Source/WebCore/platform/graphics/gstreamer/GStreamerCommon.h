@@ -28,13 +28,10 @@
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
 #include <wtf/Logger.h>
+#include <wtf/MediaTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-namespace WTF {
-class MediaTime;
-}
 
 namespace WebCore {
 
@@ -98,6 +95,10 @@ uint64_t toGstUnsigned64Time(const WTF::MediaTime&);
 
 inline GstClockTime toGstClockTime(const WTF::MediaTime& mediaTime)
 {
+    if (mediaTime.isInvalid())
+        return GST_CLOCK_TIME_NONE;
+    if (mediaTime < MediaTime::zeroTime())
+        return 0;
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 

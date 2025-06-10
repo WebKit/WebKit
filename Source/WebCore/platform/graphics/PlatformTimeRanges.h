@@ -53,7 +53,7 @@ public:
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
 
     static const PlatformTimeRanges& emptyRanges();
-    static MediaTime timeFudgeFactor();
+    static const MediaTime& timeFudgeFactor();
 
     MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
