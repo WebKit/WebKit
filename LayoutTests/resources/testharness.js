@@ -88,10 +88,15 @@
                                                  status: harness_status.structured_clone(),
                                                  asserts: asserts.map(assert => assert.structured_clone())});
                          }]
-        }
+        };
 
         on_event(window, 'load', function() {
+          setTimeout(() => {
             this_obj.all_loaded = true;
+            if (tests.all_done()) {
+              tests.complete();
+            }
+          },0);
         });
 
         on_event(window, 'message', function(event) {
@@ -126,7 +131,7 @@
                             } catch (e) {}
                         }
                     }
-                    if (supports_post_message(w) && w !== self) {
+                    if (w !== self) {
                         w.postMessage(message_arg, "*");
                     }
                 });
@@ -198,7 +203,7 @@
             }
         });
         this.message_events = new_events;
-    }
+    };
 
     WindowTestEnvironment.prototype.next_default_test_name = function() {
         var suffix = this.name_counter > 0 ? " " + this.name_counter : "";
@@ -220,8 +225,8 @@
     WindowTestEnvironment.prototype.test_timeout = function() {
         var metas = document.getElementsByTagName("meta");
         for (var i = 0; i < metas.length; i++) {
-            if (metas[i].name == "timeout") {
-                if (metas[i].content == "long") {
+            if (metas[i].name === "timeout") {
+                if (metas[i].content === "long") {
                     return settings.harness_timeout.long;
                 }
                 break;
@@ -425,6 +430,53 @@
     };
 
     /*
+     * Shadow realms.
+     * https://github.com/tc39/proposal-shadowrealm
+     *
+     * This class is used as the test_environment when testharness is running
+     * inside a shadow realm.
+     */
+    function ShadowRealmTestEnvironment() {
+        WorkerTestEnvironment.call(this);
+        this.all_loaded = false;
+        this.on_loaded_callback = null;
+    }
+
+    ShadowRealmTestEnvironment.prototype = Object.create(WorkerTestEnvironment.prototype);
+
+    /**
+     * Signal to the test environment that the tests are ready and the on-loaded
+     * callback should be run.
+     *
+     * Shadow realms are not *really* a DOM context: they have no `onload` or similar
+     * event for us to use to set up the test environment; so, instead, this method
+     * is manually triggered from the incubating realm
+     *
+     * @param {Function} message_destination - a function that receives JSON-serializable
+     * data to send to the incubating realm, in the same format as used by RemoteContext
+     */
+    ShadowRealmTestEnvironment.prototype.begin = function(message_destination) {
+        if (this.all_loaded) {
+            throw new Error("Tried to start a shadow realm test environment after it has already started");
+        }
+        var fakeMessagePort = {};
+        fakeMessagePort.postMessage = message_destination;
+        this._add_message_port(fakeMessagePort);
+        this.all_loaded = true;
+        if (this.on_loaded_callback) {
+            this.on_loaded_callback();
+        }
+    };
+
+    ShadowRealmTestEnvironment.prototype.add_on_loaded_callback = function(callback) {
+        if (this.all_loaded) {
+            callback();
+        } else {
+            this.on_loaded_callback = callback;
+        }
+    };
+
+    /*
      * JavaScript shells.
      *
      * This class is used as the test_environment when testharness is running
@@ -435,7 +487,7 @@
         this.all_loaded = false;
         this.on_loaded_callback = null;
         Promise.resolve().then(function() {
-            this.all_loaded = true
+            this.all_loaded = true;
             if (this.on_loaded_callback) {
                 this.on_loaded_callback();
             }
@@ -447,7 +499,7 @@
     ShellTestEnvironment.prototype.next_default_test_name = function() {
         var suffix = this.name_counter > 0 ? " " + this.name_counter : "";
         this.name_counter++;
-        return "Untitled" + suffix;
+        return get_title() + suffix;
     };
 
     ShellTestEnvironment.prototype.on_new_harness_properties = function() {};
@@ -488,6 +540,15 @@
             global_scope instanceof WorkerGlobalScope) {
             return new DedicatedWorkerTestEnvironment();
         }
+        /* Shadow realm global objects are _ordinary_ objects (i.e. their prototype is
+         * Object) so we don't have a nice `instanceof` test to use; instead, we
+         * check if the there is a GLOBAL.isShadowRealm() property
+         * on the global object. that was set by the test harness when it
+         * created the ShadowRealm.
+         */
+        if (global_scope.GLOBAL && global_scope.GLOBAL.isShadowRealm()) {
+            return new ShadowRealmTestEnvironment();
+        }
 
         return new ShellTestEnvironment();
     }
@@ -502,7 +563,7 @@
         // The worker object may be from another execution context,
         // so do not use instanceof here.
         return 'ServiceWorker' in global_scope &&
-            Object.prototype.toString.call(worker) == '[object ServiceWorker]';
+            Object.prototype.toString.call(worker) === '[object ServiceWorker]';
     }
 
     var seen_func_name = Object.create(null);
@@ -542,8 +603,23 @@
         return test_environment.next_default_test_name();
     }
 
-    /*
-     * API functions
+    /**
+     * @callback TestFunction
+     * @param {Test} test - The test currnetly being run.
+     * @param {Any[]} args - Additional args to pass to function.
+     *
+     */
+
+    /**
+     * Create a synchronous test
+     *
+     * @param {TestFunction} func - Test function. This is executed
+     * immediately. If it returns without error, the test status is
+     * set to ``PASS``. If it throws an :js:class:`AssertionError`, or
+     * any other exception, the test status is set to ``FAIL``
+     * (typically from an `assert` function).
+     * @param {String} name - Test name. This must be unique in a
+     * given file and must be invariant between runs.
      */
     function test(func, name, properties)
     {
@@ -576,6 +652,17 @@
         }
     }
 
+    /**
+     * Create an asynchronous test
+     *
+     * @param {TestFunction|string} funcOrName - Initial step function
+     * to call immediately with the test name as an argument (if any),
+     * or name of the test.
+     * @param {String} name - Test name (if a test function was
+     * provided). This must be unique in a given file and must be
+     * invariant between runs.
+     * @returns {Test} An object representing the ongoing test.
+     */
     function async_test(func, name, properties)
     {
         if (tests.promise_setup_called) {
@@ -619,6 +706,19 @@
         return test_obj;
     }
 
+    /**
+     * Create a promise test.
+     *
+     * Promise tests are tests which are represented by a promise
+     * object. If the promise is fulfilled the test passes, if it's
+     * rejected the test fails, otherwise the test passes.
+     *
+     * @param {TestFunction} func - Test function. This must return a
+     * promise. The test is automatically marked as complete once the
+     * promise settles.
+     * @param {String} name - Test name. This must be unique in a
+     * given file and must be invariant between runs.
+     */
     function promise_test(func, name, properties) {
         if (typeof func !== "function") {
             properties = name;
@@ -678,11 +778,12 @@
      *                          realm
      * @returns {Promise}
      *
-     * An arbitrary promise provided by the caller may have originated in
-     * another frame that have since navigated away, rendering the frame's
-     * document inactive. Such a promise cannot be used with `await` or
-     * Promise.resolve(), as microtasks associated with it may be prevented
-     * from being run. See https://github.com/whatwg/html/issues/5319 for a
+     * An arbitrary promise provided by the caller may have originated
+     * in another frame that have since navigated away, rendering the
+     * frame's document inactive. Such a promise cannot be used with
+     * `await` or Promise.resolve(), as microtasks associated with it
+     * may be prevented from being run. See `issue
+     * 5319<https://github.com/whatwg/html/issues/5319>`_ for a
      * particular case.
      *
      * In functions we define here, there is an expectation from the caller
@@ -695,20 +796,27 @@
         return new Promise(promise.then.bind(promise));
     }
 
+    /**
+     * Assert that a Promise is rejected with the right ECMAScript exception.
+     *
+     * @param {Test} test - the `Test` to use for the assertion.
+     * @param {Function} constructor - The expected exception constructor.
+     * @param {Promise} promise - The promise that's expected to
+     * reject with the given exception.
+     * @param {string} [description] Error message to add to assert in case of
+     *                               failure.
+     */
     function promise_rejects_js(test, constructor, promise, description) {
         return bring_promise_to_current_realm(promise)
             .then(test.unreached_func("Should have rejected: " + description))
             .catch(function(e) {
-                assert_throws_js_impl(constructor, function() { throw e },
+                assert_throws_js_impl(constructor, function() { throw e; },
                                       description, "promise_rejects_js");
             });
     }
 
     /**
      * Assert that a Promise is rejected with the right DOMException.
-     *
-     * @param test the test argument passed to promise_test
-     * @param {number|string} type.  See documentation for assert_throws_dom.
      *
      * For the remaining arguments, there are two ways of calling
      * promise_rejects_dom:
@@ -721,8 +829,22 @@
      * third argument should be the DOMException constructor from that global,
      * the fourth argument the promise expected to reject, and the fifth,
      * optional, argument the assertion description.
+     *
+     * @param {Test} test - the `Test` to use for the assertion.
+     * @param {number|string} type - See documentation for
+     * `assert_throws_dom <#assert_throws_dom>`_.
+     * @param {Function} promiseOrConstructor - Either the constructor
+     * for the expected exception (if the exception comes from another
+     * global), or the promise that's expected to reject (if the
+     * exception comes from the current global).
+     * @param {Function|string} descriptionOrPromise - Either the
+     * promise that's expected to reject (if the exception comes from
+     * another global), or the optional description of the condition
+     * being tested (if the exception comes from the current global).
+     * @param {string} [description] - Description of the condition
+     * being tested (if the exception comes from another global).
+     *
      */
-
     function promise_rejects_dom(test, type, promiseOrConstructor, descriptionOrPromise, maybeDescription) {
         let constructor, promise, description;
         if (typeof promiseOrConstructor === "function" &&
@@ -735,33 +857,57 @@
             promise = promiseOrConstructor;
             description = descriptionOrPromise;
             assert(maybeDescription === undefined,
-                   "Too many args pased to no-constructor version of promise_rejects_dom");
+                   "Too many args passed to no-constructor version of promise_rejects_dom, or accidentally explicitly passed undefined");
         }
         return bring_promise_to_current_realm(promise)
             .then(test.unreached_func("Should have rejected: " + description))
             .catch(function(e) {
-                assert_throws_dom_impl(type, function() { throw e }, description,
+                assert_throws_dom_impl(type, function() { throw e; }, description,
                                        "promise_rejects_dom", constructor);
             });
     }
 
+    /**
+     * Assert that a Promise is rejected with the provided value.
+     *
+     * @param {Test} test - the `Test` to use for the assertion.
+     * @param {Any} exception - The expected value of the rejected promise.
+     * @param {Promise} promise - The promise that's expected to
+     * reject.
+     * @param {string} [description] Error message to add to assert in case of
+     *                               failure.
+     */
     function promise_rejects_exactly(test, exception, promise, description) {
         return bring_promise_to_current_realm(promise)
             .then(test.unreached_func("Should have rejected: " + description))
             .catch(function(e) {
-                assert_throws_exactly_impl(exception, function() { throw e },
+                assert_throws_exactly_impl(exception, function() { throw e; },
                                            description, "promise_rejects_exactly");
             });
     }
 
     /**
-     * This constructor helper allows DOM events to be handled using Promises,
-     * which can make it a lot easier to test a very specific series of events,
+     * Allow DOM events to be handled using Promises.
+     *
+     * This can make it a lot easier to test a very specific series of events,
      * including ensuring that unexpected events are not fired at any point.
+     *
+     * `EventWatcher` will assert if an event occurs while there is no `wait_for`
+     * created Promise waiting to be fulfilled, or if the event is of a different type
+     * to the type currently expected. This ensures that only the events that are
+     * expected occur, in the correct order, and with the correct timing.
+     *
+     * @constructor
+     * @param {Test} test - The `Test` to use for the assertion.
+     * @param {EventTarget} watchedNode - The target expected to receive the events.
+     * @param {string[]} eventTypes - List of events to watch for.
+     * @param {Promise} timeoutPromise - Promise that will cause the
+     * test to be set to `TIMEOUT` once fulfilled.
+     *
      */
     function EventWatcher(test, watchedNode, eventTypes, timeoutPromise)
     {
-        if (typeof eventTypes == 'string') {
+        if (typeof eventTypes === 'string') {
             eventTypes = [eventTypes];
         }
 
@@ -806,15 +952,13 @@
          * Returns a Promise that will resolve after the specified event or
          * series of events has occurred.
          *
-         * @param options An optional options object. If the 'record' property
-         *                on this object has the value 'all', when the Promise
-         *                returned by this function is resolved,  *all* Event
-         *                objects that were waited for will be returned as an
-         *                array.
+         * @param {Object} options An optional options object. If the 'record' property
+         *                 on this object has the value 'all', when the Promise
+         *                 returned by this function is resolved,  *all* Event
+         *                 objects that were waited for will be returned as an
+         *                 array.
          *
-         * For example,
-         *
-         * ```js
+         * @example
          * const watcher = new EventWatcher(t, div, [ 'animationstart',
          *                                            'animationiteration',
          *                                            'animationend' ]);
@@ -823,13 +967,12 @@
          *   assert_equals(evts[0].elapsedTime, 0.0);
          *   assert_equals(evts[1].elapsedTime, 2.0);
          * });
-         * ```
          */
         this.wait_for = function(types, options) {
             if (waitingFor) {
                 return Promise.reject('Already waiting for an event or events');
             }
-            if (typeof types == 'string') {
+            if (typeof types === 'string') {
                 types = [types];
             }
             if (options && options.record && options.record === 'all') {
@@ -844,7 +987,7 @@
 
                     // This should always fail, otherwise we should have
                     // resolved the promise.
-                    assert_true(waitingFor.types.length == 0,
+                    assert_true(waitingFor.types.length === 0,
                                 'Timed out waiting for ' + waitingFor.types.join(', '));
                     var result = recordedEvents;
                     recordedEvents = null;
@@ -865,18 +1008,61 @@
             });
         };
 
-        function stop_watching() {
+        /**
+         * Stop listening for events
+         */
+        this.stop_watching = function() {
             for (var i = 0; i < eventTypes.length; i++) {
                 watchedNode.removeEventListener(eventTypes[i], eventHandler, false);
             }
         };
 
-        test._add_cleanup(stop_watching);
+        test._add_cleanup(this.stop_watching);
 
         return this;
     }
     expose(EventWatcher, 'EventWatcher');
 
+    /**
+     * @typedef {Object} SettingsObject
+     * @property {bool} single_test - Use the single-page-test
+     * mode. In this mode the Document represents a single
+     * `async_test`. Asserts may be used directly without requiring
+     * `Test.step` or similar wrappers, and any exceptions set the
+     * status of the test rather than the status of the harness.
+     * @property {bool} allow_uncaught_exception - don't treat an
+     * uncaught exception as an error; needed when e.g. testing the
+     * `window.onerror` handler.
+     * @property {boolean} explicit_done - Wait for a call to `done()`
+     * before declaring all tests complete (this is always true for
+     * single-page tests).
+     * @property hide_test_state - hide the test state output while
+     * the test is running; This is helpful when the output of the test state
+     * may interfere the test results.
+     * @property {bool} explicit_timeout - disable file timeout; only
+     * stop waiting for results when the `timeout()` function is
+     * called This should typically only be set for manual tests, or
+     * by a test runner that providees its own timeout mechanism.
+     * @property {number} timeout_multiplier - Multiplier to apply to
+     * per-test timeouts. This should only be set by a test runner.
+     * @property {Document} output_document - The document to which
+     * results should be logged. By default this is the current
+     * document but could be an ancestor document in some cases e.g. a
+     * SVG test loaded in an HTML wrapper
+     *
+     */
+
+    /**
+     * Configure the harness
+     *
+     * @param {Function|SettingsObject} funcOrProperties - Either a
+     * setup function to run, or a set of properties. If this is a
+     * function that function is run synchronously. Any exception in
+     * the function will set the overall harness status to `ERROR`.
+     * @param {SettingsObject} maybeProperties - An object containing
+     * the settings to use, if the first argument is a function.
+     *
+     */
     function setup(func_or_properties, maybe_properties)
     {
         var func = null;
@@ -893,11 +1079,22 @@
         test_environment.on_new_harness_properties(properties);
     }
 
-    function promise_setup(func, maybe_properties)
+    /**
+     * Configure the harness, waiting for a promise to resolve
+     * before running any `promise_test` tests.
+     *
+     * @param {Function} func - Function returning a promise that's
+     * run synchronously. Promise tests are not run until after this
+     * function has resolved.
+     * @param {SettingsObject} [properties] - An object containing
+     * the harness settings to use.
+     *
+     */
+    function promise_setup(func, properties={})
     {
         if (typeof func !== "function") {
             tests.set_status(tests.status.ERROR,
-                             "promise_test invoked without a function");
+                             "`promise_setup` invoked without a function");
             tests.complete();
             return;
         }
@@ -910,7 +1107,6 @@
         tests.promise_tests = tests.promise_tests
             .then(function()
                   {
-                      var properties = maybe_properties || {};
                       var result;
 
                       tests.setup(null, properties);
@@ -931,6 +1127,17 @@
                    });
     }
 
+    /**
+     * Mark test loading as complete.
+     *
+     * Typically this function is called implicitly on page load; it's
+     * only necessary for users to call this when either the
+     * ``explicit_done`` or ``single_page`` properties have been set
+     * via the :js:func:`setup` function.
+     *
+     * For single page tests this marks the test as complete and sets its status.
+     * For other tests, this marks test loading as complete, but doesn't affect ongoing tests.
+     */
     function done() {
         if (tests.tests.length === 0) {
             // `done` is invoked after handling uncaught exceptions, so if the
@@ -952,6 +1159,20 @@
         tests.end_wait();
     }
 
+    /**
+     * @deprecated generate a list of tests from a function and list of arguments
+     *
+     * This is deprecated because it runs all the tests outside of the test functions
+     * and as a result any test throwing an exception will result in no tests being
+     * run. In almost all cases, you should simply call test within the loop you would
+     * use to generate the parameter list array.
+     *
+     * @param {Function} func - The function that will be called for each generated tests.
+     * @param {Any[][]} args - An array of arrays. Each nested array
+     * has the structure `[testName, ...testArgs]`. For each of these nested arrays
+     * array, a test is generated with name `testName` and test function equivalent to
+     * `func(..testArgs)`.
+     */
     function generate_tests(func, args, properties) {
         forEach(args, function(x, i)
                 {
@@ -965,23 +1186,53 @@
                 });
     }
 
-    /*
-     * Register a function as a DOM event listener to the given object for the
-     * event bubbling phase.
+    /**
+     * @deprecated
      *
-     * This function was deprecated in November of 2019.
+     * Register a function as a DOM event listener to the
+     * given object for the event bubbling phase.
+     *
+     * @param {EventTarget} object - Event target
+     * @param {string} event - Event name
+     * @param {Function} callback - Event handler.
      */
     function on_event(object, event, callback)
     {
         object.addEventListener(event, callback, false);
     }
 
-    function step_timeout(f, t) {
+    // Internal helper function to provide timeout-like functionality in
+    // environments where there is no setTimeout(). (No timeout ID or
+    // clearTimeout().)
+    function fake_set_timeout(callback, delay) {
+        var p = Promise.resolve();
+        var start = Date.now();
+        var end = start + delay;
+        function check() {
+            if ((end - Date.now()) > 0) {
+                p.then(check);
+            } else {
+                callback();
+            }
+        }
+        p.then(check);
+    }
+
+    /**
+     * Global version of :js:func:`Test.step_timeout` for use in single page tests.
+     *
+     * @param {Function} func - Function to run after the timeout
+     * @param {number} timeout - Time in ms to wait before running the
+     * test step. The actual wait time is ``timeout`` x
+     * ``timeout_multiplier``.
+     */
+    function step_timeout(func, timeout) {
         var outer_this = this;
         var args = Array.prototype.slice.call(arguments, 2);
-        return setTimeout(function() {
-            f.apply(outer_this, args);
-        }, t * tests.timeout_multiplier);
+        var local_set_timeout = typeof global_scope.setTimeout === "undefined" ? fake_set_timeout : setTimeout;
+        return local_set_timeout(function() {
+            func.apply(outer_this, args);
+        }, timeout * tests.timeout_multiplier);
     }
 
     expose(test, 'test');
@@ -1079,8 +1330,39 @@
         "0xffff": "uffff",
     };
 
-    /*
+    const formatEscapeMap = {
+        "\\": "\\\\",
+        '"': '\\"'
+    };
+    for (const p in replacements) {
+        formatEscapeMap[String.fromCharCode(p)] = "\\" + replacements[p];
+    }
+    const formatEscapePattern = new RegExp(`[${Object.keys(formatEscapeMap).map(k => k === "\\" ? "\\\\" : k).join("")}]`, "g");
+
+    /**
      * Convert a value to a nice, human-readable string
+     *
+     * When many JavaScript Object values are coerced to a String, the
+     * resulting value will be ``"[object Object]"``. This obscures
+     * helpful information, making the coerced value unsuitable for
+     * use in assertion messages, test names, and debugging
+     * statements. `format_value` produces more distinctive string
+     * representations of many kinds of objects, including arrays and
+     * the more important DOM Node types. It also translates String
+     * values containing control characters to include human-readable
+     * representations.
+     *
+     * @example
+     * // "Document node with 2 children"
+     * format_value(document);
+     * @example
+     * // "\"foo\\uffffbar\""
+     * format_value("foo\uffffbar");
+     * @example
+     * // "[-0, Infinity]"
+     * format_value([-0, Infinity]);
+     * @param {Any} val - The value to convert to a string.
+     * @returns {string} - A string representation of ``val``, optimised for human readability.
      */
     function format_value(val, seen)
     {
@@ -1107,12 +1389,7 @@
 
         switch (typeof val) {
         case "string":
-            val = val.replace(/\\/g, "\\\\");
-            for (var p in replacements) {
-                var replace = "\\" + replacements[p];
-                val = val.replace(RegExp(String.fromCharCode(p), "g"), replace);
-            }
-            return '"' + val.replace(/"/g, '\\"') + '"';
+            return '"' + val.replace(formatEscapePattern, match => formatEscapeMap[match]) + '"';
         case "boolean":
         case "undefined":
             return String(val);
@@ -1123,6 +1400,8 @@
                 return "-0";
             }
             return String(val);
+        case "bigint":
+            return String(val) + 'n';
         case "object":
             if (val === null) {
                 return "null";
@@ -1146,11 +1425,11 @@
                 case Node.COMMENT_NODE:
                     return "Comment node <!--" + truncate(val.data, 60) + "-->";
                 case Node.DOCUMENT_NODE:
-                    return "Document node with " + val.childNodes.length + (val.childNodes.length == 1 ? " child" : " children");
+                    return "Document node with " + val.childNodes.length + (val.childNodes.length === 1 ? " child" : " children");
                 case Node.DOCUMENT_TYPE_NODE:
                     return "DocumentType node";
                 case Node.DOCUMENT_FRAGMENT_NODE:
-                    return "DocumentFragment node with " + val.childNodes.length + (val.childNodes.length == 1 ? " child" : " children");
+                    return "DocumentFragment node with " + val.childNodes.length + (val.childNodes.length === 1 ? " child" : " children");
                 default:
                     return "Node object of unknown type";
                 }
@@ -1176,36 +1455,42 @@
         function assert_wrapper(...args) {
             let status = Test.statuses.TIMEOUT;
             let stack = null;
+            let new_assert_index = null;
             try {
                 if (settings.debug) {
                     console.debug("ASSERT", name, tests.current_test && tests.current_test.name, args);
                 }
                 if (tests.output) {
                     tests.set_assert(name, args);
+                    // Remember the newly pushed assert's index, because `apply`
+                    // below might push new asserts.
+                    new_assert_index = tests.asserts_run.length - 1;
                 }
                 const rv = f.apply(undefined, args);
                 status = Test.statuses.PASS;
                 return rv;
             } catch(e) {
-                if (e instanceof AssertionError) {
-                    status = Test.statuses.FAIL;
-                    stack = e.stack;
-                 } else {
-                    status = Test.statuses.ERROR;
-                 }
+                status = Test.statuses.FAIL;
+                stack = e.stack ? e.stack : null;
                 throw e;
             } finally {
                 if (tests.output && !stack) {
                     stack = get_stack();
                 }
                 if (tests.output) {
-                    tests.set_assert_status(status, stack);
+                    tests.set_assert_status(new_assert_index, status, stack);
                 }
             }
         }
         expose(assert_wrapper, name);
     }
 
+    /**
+     * Assert that ``actual`` is strictly true
+     *
+     * @param {Any} actual - Value that is asserted to be true
+     * @param {string} [description] - Description of the condition being tested
+     */
     function assert_true(actual, description)
     {
         assert(actual === true, "assert_true", description,
@@ -1213,6 +1498,12 @@
     }
     expose_assert(assert_true, "assert_true");
 
+    /**
+     * Assert that ``actual`` is strictly false
+     *
+     * @param {Any} actual - Value that is asserted to be false
+     * @param {string} [description] - Description of the condition being tested
+     */
     function assert_false(actual, description)
     {
         assert(actual === false, "assert_false", description,
@@ -1232,6 +1523,17 @@
         return x === y;
     }
 
+    /**
+     * Assert that ``actual`` is the same value as ``expected``.
+     *
+     * For objects this compares by object identity; for primitives
+     * this distinguishes between 0 and -0, and has correct handling
+     * of NaN.
+     *
+     * @param {Any} actual - Test value.
+     * @param {Any} expected - Expected value.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_equals(actual, expected, description)
     {
          /*
@@ -1250,18 +1552,32 @@
     }
     expose_assert(assert_equals, "assert_equals");
 
+    /**
+     * Assert that ``actual`` is not the same value as ``expected``.
+     *
+     * Comparison is as for :js:func:`assert_equals`.
+     *
+     * @param {Any} actual - Test value.
+     * @param {Any} expected - The value ``actual`` is expected to be different to.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_not_equals(actual, expected, description)
     {
-         /*
-          * Test if two primitives are unequal or two objects
-          * are different objects
-          */
         assert(!same_value(actual, expected), "assert_not_equals", description,
                                               "got disallowed value ${actual}",
                                               {actual:actual});
     }
     expose_assert(assert_not_equals, "assert_not_equals");
 
+    /**
+     * Assert that ``expected`` is an array and ``actual`` is one of the members.
+     * This is implemented using ``indexOf``, so doesn't handle NaN or ±0 correctly.
+     *
+     * @param {Any} actual - Test value.
+     * @param {Array} expected - An array that ``actual`` is expected to
+     * be a member of.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_in_array(actual, expected, description)
     {
         assert(expected.indexOf(actual) != -1, "assert_in_array", description,
@@ -1272,6 +1588,18 @@
 
     // This function was deprecated in July of 2015.
     // See https://github.com/web-platform-tests/wpt/issues/2033
+    /**
+     * @deprecated
+     * Recursively compare two objects for equality.
+     *
+     * See `Issue 2033
+     * <https://github.com/web-platform-tests/wpt/issues/2033>`_ for
+     * more information.
+     *
+     * @param {Object} actual - Test value.
+     * @param {Object} expected - Expected value.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_object_equals(actual, expected, description)
     {
          assert(typeof actual === "object" && actual !== null, "assert_object_equals", description,
@@ -1308,6 +1636,14 @@
     }
     expose_assert(assert_object_equals, "assert_object_equals");
 
+    /**
+     * Assert that ``actual`` and ``expected`` are both arrays, and that the array properties of
+     * ``actual`` and ``expected`` are all the same value (as for :js:func:`assert_equals`).
+     *
+     * @param {Array} actual - Test array.
+     * @param {Array} expected - Array that is expected to contain the same values as ``actual``.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_array_equals(actual, expected, description)
     {
         const max_array_length = 20;
@@ -1365,6 +1701,16 @@
     }
     expose_assert(assert_array_equals, "assert_array_equals");
 
+    /**
+     * Assert that each array property in ``actual`` is a number within
+     * ± `epsilon` of the corresponding property in `expected`.
+     *
+     * @param {Array} actual - Array of test values.
+     * @param {Array} expected - Array of values expected to be close to the values in ``actual``.
+     * @param {number} epsilon - Magnitude of allowed difference
+     * between each value in ``actual`` and ``expected``.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_array_approx_equals(actual, expected, epsilon, description)
     {
         /*
@@ -1393,6 +1739,14 @@
     }
     expose_assert(assert_array_approx_equals, "assert_array_approx_equals");
 
+    /**
+     * Assert that ``actual`` is within ± ``epsilon`` of ``expected``.
+     *
+     * @param {number} actual - Test value.
+     * @param {number} expected - Value number is expected to be close to.
+     * @param {number} epsilon - Magnitude of allowed difference between ``actual`` and ``expected``.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_approx_equals(actual, expected, epsilon, description)
     {
         /*
@@ -1416,15 +1770,27 @@
     }
     expose_assert(assert_approx_equals, "assert_approx_equals");
 
+    /**
+     * Assert that ``actual`` is a number less than ``expected``.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} expected - Value that ``actual`` must be less than.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_less_than(actual, expected, description)
     {
         /*
-         * Test if a primitive number is less than another
+         * Test if a primitive number (or bigint) is less than another
          */
-        assert(typeof actual === "number",
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_less_than", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof expected,
+               "assert_less_than", description,
+               "expected a ${type_expected} but got a ${type_actual}",
+               {type_expected:typeof expected, type_actual:typeof actual});
 
         assert(actual < expected,
                "assert_less_than", description,
@@ -1433,15 +1799,27 @@
     }
     expose_assert(assert_less_than, "assert_less_than");
 
+    /**
+     * Assert that ``actual`` is a number greater than ``expected``.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} expected - Value that ``actual`` must be greater than.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_greater_than(actual, expected, description)
     {
         /*
-         * Test if a primitive number is greater than another
+         * Test if a primitive number (or bigint) is greater than another
          */
-        assert(typeof actual === "number",
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_greater_than", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof expected,
+               "assert_greater_than", description,
+               "expected a ${type_expected} but got a ${type_actual}",
+               {type_expected:typeof expected, type_actual:typeof actual});
 
         assert(actual > expected,
                "assert_greater_than", description,
@@ -1450,15 +1828,34 @@
     }
     expose_assert(assert_greater_than, "assert_greater_than");
 
+    /**
+     * Assert that ``actual`` is a number greater than ``lower`` and less
+     * than ``upper`` but not equal to either.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} lower - Value that ``actual`` must be greater than.
+     * @param {number|bigint} upper - Value that ``actual`` must be less than.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_between_exclusive(actual, lower, upper, description)
     {
         /*
-         * Test if a primitive number is between two others
+         * Test if a primitive number (or bigint) is between two others
          */
-        assert(typeof actual === "number",
+        assert(typeof lower === typeof upper,
+               "assert_between_exclusive", description,
+               "expected lower (${type_lower}) and upper (${type_upper}) types to match (test error)",
+               {type_lower:typeof lower, type_upper:typeof upper});
+
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_between_exclusive", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof lower,
+               "assert_between_exclusive", description,
+               "expected a ${type_lower} but got a ${type_actual}",
+               {type_lower:typeof lower, type_actual:typeof actual});
 
         assert(actual > lower && actual < upper,
                "assert_between_exclusive", description,
@@ -1468,15 +1865,28 @@
     }
     expose_assert(assert_between_exclusive, "assert_between_exclusive");
 
+    /**
+     * Assert that ``actual`` is a number less than or equal to ``expected``.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} expected - Value that ``actual`` must be less
+     * than or equal to.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_less_than_equal(actual, expected, description)
     {
         /*
-         * Test if a primitive number is less than or equal to another
+         * Test if a primitive number (or bigint) is less than or equal to another
          */
-        assert(typeof actual === "number",
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_less_than_equal", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof expected,
+               "assert_less_than_equal", description,
+               "expected a ${type_expected} but got a ${type_actual}",
+               {type_expected:typeof expected, type_actual:typeof actual});
 
         assert(actual <= expected,
                "assert_less_than_equal", description,
@@ -1485,15 +1895,28 @@
     }
     expose_assert(assert_less_than_equal, "assert_less_than_equal");
 
+    /**
+     * Assert that ``actual`` is a number greater than or equal to ``expected``.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} expected - Value that ``actual`` must be greater
+     * than or equal to.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_greater_than_equal(actual, expected, description)
     {
         /*
-         * Test if a primitive number is greater than or equal to another
+         * Test if a primitive number (or bigint) is greater than or equal to another
          */
-        assert(typeof actual === "number",
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_greater_than_equal", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof expected,
+               "assert_greater_than_equal", description,
+               "expected a ${type_expected} but got a ${type_actual}",
+               {type_expected:typeof expected, type_actual:typeof actual});
 
         assert(actual >= expected,
                "assert_greater_than_equal", description,
@@ -1502,15 +1925,34 @@
     }
     expose_assert(assert_greater_than_equal, "assert_greater_than_equal");
 
+    /**
+     * Assert that ``actual`` is a number greater than or equal to ``lower`` and less
+     * than or equal to ``upper``.
+     *
+     * @param {number|bigint} actual - Test value.
+     * @param {number|bigint} lower - Value that ``actual`` must be greater than or equal to.
+     * @param {number|bigint} upper - Value that ``actual`` must be less than or equal to.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_between_inclusive(actual, lower, upper, description)
     {
         /*
-         * Test if a primitive number is between to two others or equal to either of them
+         * Test if a primitive number (or bigint) is between to two others or equal to either of them
          */
-        assert(typeof actual === "number",
+        assert(typeof lower === typeof upper,
+               "assert_between_inclusive", description,
+               "expected lower (${type_lower}) and upper (${type_upper}) types to match (test error)",
+               {type_lower:typeof lower, type_upper:typeof upper});
+
+        assert(typeof actual === "number" || typeof actual === "bigint",
                "assert_between_inclusive", description,
                "expected a number but got a ${type_actual}",
                {type_actual:typeof actual});
+
+        assert(typeof actual === typeof lower,
+               "assert_between_inclusive", description,
+               "expected a ${type_lower} but got a ${type_actual}",
+               {type_lower:typeof lower, type_actual:typeof actual});
 
         assert(actual >= lower && actual <= upper,
                "assert_between_inclusive", description,
@@ -1520,6 +1962,13 @@
     }
     expose_assert(assert_between_inclusive, "assert_between_inclusive");
 
+    /**
+     * Assert that ``actual`` matches the RegExp ``expected``.
+     *
+     * @param {String} actual - Test string.
+     * @param {RegExp} expected - RegExp ``actual`` must match.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_regexp_match(actual, expected, description) {
         /*
          * Test if a string (actual) matches a regexp (expected)
@@ -1531,6 +1980,14 @@
     }
     expose_assert(assert_regexp_match, "assert_regexp_match");
 
+    /**
+     * Assert that the class string of ``object`` as returned in
+     * ``Object.prototype.toString`` is equal to ``class_name``.
+     *
+     * @param {Object} object - Object to stringify.
+     * @param {string} class_string - Expected class string for ``object``.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_class_string(object, class_string, description) {
         var actual = {}.toString.call(object);
         var expected = "[object " + class_string + "]";
@@ -1540,6 +1997,13 @@
     }
     expose_assert(assert_class_string, "assert_class_string");
 
+    /**
+     * Assert that ``object`` has an own property with name ``property_name``.
+     *
+     * @param {Object} object - Object that should have the given property.
+     * @param {string} property_name - Expected property name.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_own_property(object, property_name, description) {
         assert(object.hasOwnProperty(property_name),
                "assert_own_property", description,
@@ -1547,6 +2011,13 @@
     }
     expose_assert(assert_own_property, "assert_own_property");
 
+    /**
+     * Assert that ``object`` does not have an own property with name ``property_name``.
+     *
+     * @param {Object} object - Object that should not have the given property.
+     * @param {string} property_name - Property name to test.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_not_own_property(object, property_name, description) {
         assert(!object.hasOwnProperty(property_name),
                "assert_not_own_property", description,
@@ -1579,23 +2050,74 @@
                    {p:property_name});
         };
     }
-    expose_assert(_assert_inherits("assert_inherits"), "assert_inherits");
-    expose_assert(_assert_inherits("assert_idl_attribute"), "assert_idl_attribute");
 
+    /**
+     * Assert that ``object`` does not have an own property with name
+     * ``property_name``, but inherits one through the prototype chain.
+     *
+     * @param {Object} object - Object that should have the given property in its prototype chain.
+     * @param {string} property_name - Expected property name.
+     * @param {string} [description] - Description of the condition being tested.
+     */
+    function assert_inherits(object, property_name, description) {
+        return _assert_inherits("assert_inherits")(object, property_name, description);
+    }
+    expose_assert(assert_inherits, "assert_inherits");
+
+    /**
+     * Alias for :js:func:`insert_inherits`.
+     *
+     * @param {Object} object - Object that should have the given property in its prototype chain.
+     * @param {string} property_name - Expected property name.
+     * @param {string} [description] - Description of the condition being tested.
+     */
+    function assert_idl_attribute(object, property_name, description) {
+        return _assert_inherits("assert_idl_attribute")(object, property_name, description);
+    }
+    expose_assert(assert_idl_attribute, "assert_idl_attribute");
+
+
+    /**
+     * Assert that ``object`` has a property named ``property_name`` and that the property is not writable or has no setter.
+     *
+     * @param {Object} object - Object that should have the given (not necessarily own) property.
+     * @param {string} property_name - Expected property name.
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_readonly(object, property_name, description)
     {
-         var initial_value = object[property_name];
-         try {
-             //Note that this can have side effects in the case where
-             //the property has PutForwards
-             object[property_name] = initial_value + "a"; //XXX use some other value here?
-             assert(same_value(object[property_name], initial_value),
-                    "assert_readonly", description,
-                    "changing property ${p} succeeded",
-                    {p:property_name});
-         } finally {
-             object[property_name] = initial_value;
-         }
+        assert(property_name in object,
+               "assert_readonly", description,
+               "property ${p} not found",
+               {p:property_name});
+
+        let desc;
+        while (object && (desc = Object.getOwnPropertyDescriptor(object, property_name)) === undefined) {
+            object = Object.getPrototypeOf(object);
+        }
+
+        assert(desc !== undefined,
+               "assert_readonly", description,
+               "could not find a descriptor for property ${p}",
+               {p:property_name});
+
+        if (desc.hasOwnProperty("value")) {
+            // We're a data property descriptor
+            assert(desc.writable === false, "assert_readonly", description,
+                   "descriptor [[Writable]] expected false got ${actual}", {actual:desc.writable});
+        } else if (desc.hasOwnProperty("get") || desc.hasOwnProperty("set")) {
+            // We're an accessor property descriptor
+            assert(desc.set === undefined, "assert_readonly", description,
+                   "property ${p} is an accessor property with a [[Set]] attribute, cannot test readonly-ness",
+                   {p:property_name});
+        } else {
+            // We're a generic property descriptor
+            // This shouldn't happen, because Object.getOwnPropertyDescriptor
+            // forwards the return value of [[GetOwnProperty]] (P), which must
+            // be a fully populated Property Descriptor or Undefined.
+            assert(false, "assert_readonly", description,
+                   "Object.getOwnPropertyDescriptor must return a fully populated property descriptor");
+        }
     }
     expose_assert(assert_readonly, "assert_readonly");
 
@@ -1604,7 +2126,7 @@
      *
      * @param {object} constructor The expected exception constructor.
      * @param {Function} func Function which should throw.
-     * @param {string} description Error description for the case that the error is not thrown.
+     * @param {string} [description] Error description for the case that the error is not thrown.
      */
     function assert_throws_js(constructor, func, description)
     {
@@ -1641,7 +2163,7 @@
                    {func:func});
 
             // Basic sanity-check on the passed-in constructor
-            assert(typeof constructor == "function",
+            assert(typeof constructor === "function",
                    assertion_type, description,
                    "${constructor} is not a constructor",
                    {constructor:constructor});
@@ -1669,20 +2191,13 @@
         }
     }
 
+    // TODO: Figure out how to document the overloads better.
+    // sphinx-js doesn't seem to handle @variation correctly,
+    // and only expects a single JSDoc entry per function.
     /**
      * Assert a DOMException with the expected type is thrown.
      *
-     * @param {number|string} type The expected exception name or code.  See the
-     *        table of names and codes at
-     *        https://heycam.github.io/webidl/#dfn-error-names-table
-     *        If a number is passed it should be one of the numeric code values
-     *        in that table (e.g. 3, 4, etc).  If a string is passed it can
-     *        either be an exception name (e.g. "HierarchyRequestError",
-     *        "WrongDocumentError") or the name of the corresponding error code
-     *        (e.g. "HIERARCHY_REQUEST_ERR", "WRONG_DOCUMENT_ERR").
-     *
-     * For the remaining arguments, there are two ways of calling
-     * promise_rejects_dom:
+     * There are two ways of calling assert_throws_dom:
      *
      * 1) If the DOMException is expected to come from the current global, the
      * second argument should be the function expected to throw and a third,
@@ -1692,6 +2207,22 @@
      * second argument should be the DOMException constructor from that global,
      * the third argument the function expected to throw, and the fourth, optional,
      * argument the assertion description.
+     *
+     * @param {number|string} type - The expected exception name or
+     * code.  See the `table of names and codes
+     * <https://webidl.spec.whatwg.org/#dfn-error-names-table>`_. If a
+     * number is passed it should be one of the numeric code values in
+     * that table (e.g. 3, 4, etc).  If a string is passed it can
+     * either be an exception name (e.g. "HierarchyRequestError",
+     * "WrongDocumentError") or the name of the corresponding error
+     * code (e.g. "``HIERARCHY_REQUEST_ERR``", "``WRONG_DOCUMENT_ERR``").
+     * @param {Function} descriptionOrFunc - The function expected to
+     * throw (if the exception comes from another global), or the
+     * optional description of the condition being tested (if the
+     * exception comes from the current global).
+     * @param {string} [description] - Description of the condition
+     * being tested (if the exception comes from another global).
+     *
      */
     function assert_throws_dom(type, funcOrConstructor, descriptionOrFunc, maybeDescription)
     {
@@ -1705,9 +2236,9 @@
             func = funcOrConstructor;
             description = descriptionOrFunc;
             assert(maybeDescription === undefined,
-                   "Too many args pased to no-constructor version of assert_throws_dom");
+                   "Too many args passed to no-constructor version of assert_throws_dom, or accidentally explicitly passed undefined");
         }
-        assert_throws_dom_impl(type, func, description, "assert_throws_dom", constructor)
+        assert_throws_dom_impl(type, func, description, "assert_throws_dom", constructor);
     }
     expose_assert(assert_throws_dom, "assert_throws_dom");
 
@@ -1740,8 +2271,8 @@
                    {func:func});
 
             // Sanity-check our type
-            assert(typeof type == "number" ||
-                   typeof type == "string",
+            assert(typeof type === "number" ||
+                   typeof type === "string",
                    assertion_type, description,
                    "${type} is not a number or string",
                    {type:type});
@@ -1804,7 +2335,8 @@
                 ReadOnlyError: 0,
                 VersionError: 0,
                 OperationError: 0,
-                NotAllowedError: 0
+                NotAllowedError: 0,
+                OptOutError: 0
             };
 
             var code_name_map = {};
@@ -1865,7 +2397,7 @@
      *
      * @param {value} exception The expected exception.
      * @param {Function} func Function which should throw.
-     * @param {string} description Error description for the case that the error is not thrown.
+     * @param {string} [description] Error description for the case that the error is not thrown.
      */
     function assert_throws_exactly(exception, func, description)
     {
@@ -1896,15 +2428,43 @@
         }
     }
 
+    /**
+     * Asserts if called. Used to ensure that a specific codepath is
+     * not taken e.g. that an error event isn't fired.
+     *
+     * @param {string} [description] - Description of the condition being tested.
+     */
     function assert_unreached(description) {
          assert(false, "assert_unreached", description,
                 "Reached unreachable code");
     }
     expose_assert(assert_unreached, "assert_unreached");
 
-    function assert_any(assert_func, actual, expected_array)
+    /**
+     * @callback AssertFunc
+     * @param {Any} actual
+     * @param {Any} expected
+     * @param {Any[]} args
+     */
+
+    /**
+     * Asserts that ``actual`` matches at least one value of ``expected``
+     * according to a comparison defined by ``assert_func``.
+     *
+     * Note that tests with multiple allowed pass conditions are bad
+     * practice unless the spec specifically allows multiple
+     * behaviours. Test authors should not use this method simply to
+     * hide UA bugs.
+     *
+     * @param {AssertFunc} assert_func - Function to compare actual
+     * and expected. It must throw when the comparison fails and
+     * return when the comparison passes.
+     * @param {Any} actual - Test value.
+     * @param {Array} expected_array - Array of possible expected values.
+     * @param {Any[]} args - Additional arguments to pass to ``assert_func``.
+     */
+    function assert_any(assert_func, actual, expected_array, ...args)
     {
-        var args = [].slice.call(arguments, 3);
         var errors = [];
         var passed = false;
         forEach(expected_array,
@@ -1936,12 +2496,12 @@
      *     assert_implements(window.Foo, 'Foo is not supported');
      *
      * @param {object} condition The truthy value to test
-     * @param {string} description Error description for the case that the condition is not truthy.
+     * @param {string} [description] Error description for the case that the condition is not truthy.
      */
     function assert_implements(condition, description) {
         assert(!!condition, "assert_implements", description);
     }
-    expose_assert(assert_implements, "assert_implements")
+    expose_assert(assert_implements, "assert_implements");
 
     /**
      * Assert that an optional feature is implemented, based on a 'truthy' condition.
@@ -1954,25 +2514,37 @@
      *                                "webm video playback not supported");
      *
      * @param {object} condition The truthy value to test
-     * @param {string} description Error description for the case that the condition is not truthy.
+     * @param {string} [description] Error description for the case that the condition is not truthy.
      */
     function assert_implements_optional(condition, description) {
         if (!condition) {
             throw new OptionalFeatureUnsupportedError(description);
         }
     }
-    expose_assert(assert_implements_optional, "assert_implements_optional")
+    expose_assert(assert_implements_optional, "assert_implements_optional");
 
+    /**
+     * @class
+     *
+     * A single subtest. A Test is not constructed directly but via the
+     * :js:func:`test`, :js:func:`async_test` or :js:func:`promise_test` functions.
+     *
+     * @param {string} name - This must be unique in a given file and must be
+     * invariant between runs.
+     *
+     */
     function Test(name, properties)
     {
         if (tests.file_is_test && tests.tests.length) {
             throw new Error("Tried to create a test with file_is_test");
         }
+        /** The test name. */
         this.name = name;
 
         this.phase = (tests.is_aborted || tests.phase === tests.phases.COMPLETE) ?
             this.phases.COMPLETE : this.phases.INITIAL;
 
+        /** The test status code.*/
         this.status = this.NOTRUN;
         this.timeout_id = null;
         this.index = null;
@@ -1983,7 +2555,9 @@
             this.timeout_length *= tests.timeout_multiplier;
         }
 
+        /** A message indicating the reason for test failure. */
         this.message = null;
+        /** Stack trace in case of failure. */
         this.stack = null;
 
         this.steps = [];
@@ -1992,6 +2566,10 @@
         this.cleanup_callbacks = [];
         this._user_defined_cleanup_count = 0;
         this._done_callbacks = [];
+
+        if (typeof AbortController === "function") {
+            this._abortController = new AbortController();
+        }
 
         // Tests declared following harness completion are likely an indication
         // of a programming error, but they cannot be reported
@@ -2003,6 +2581,16 @@
         tests.push(this);
     }
 
+    /**
+     * Enum of possible test statuses.
+     *
+     * :values:
+     *   - ``PASS``
+     *   - ``FAIL``
+     *   - ``TIMEOUT``
+     *   - ``NOTRUN``
+     *   - ``PRECONDITION_FAILED``
+     */
     Test.statuses = {
         PASS:0,
         FAIL:1,
@@ -2027,11 +2615,11 @@
         2: "Timeout",
         3: "Not Run",
         4: "Optional Feature Unsupported",
-    }
+    };
 
     Test.prototype.format_status = function() {
         return this.status_formats[this.status];
-    }
+    };
 
     Test.prototype.structured_clone = function()
     {
@@ -2052,6 +2640,15 @@
         return this._structured_clone;
     };
 
+    /**
+     * Run a single step of an ongoing test.
+     *
+     * @param {string} func - Callback function to run as a step. If
+     * this throws an :js:func:`AssertionError`, or any other
+     * exception, the :js:class:`Test` status is set to ``FAIL``.
+     * @param {Object} [this_obj] - The object to use as the this
+     * value when calling ``func``. Defaults to the  :js:class:`Test` object.
+     */
     Test.prototype.step = function(func, this_obj)
     {
         if (this.phase > this.phases.STARTED) {
@@ -2101,6 +2698,26 @@
         }
     };
 
+    /**
+     * Wrap a function so that it runs as a step of the current test.
+     *
+     * This allows creating a callback function that will run as a
+     * test step.
+     *
+     * @example
+     * let t = async_test("Example");
+     * onload = t.step_func(e => {
+     *   assert_equals(e.name, "load");
+     *   // Mark the test as complete.
+     *   t.done();
+     * })
+     *
+     * @param {string} func - Function to run as a step. If this
+     * throws an :js:func:`AssertionError`, or any other exception,
+     * the :js:class:`Test` status is set to ``FAIL``.
+     * @param {Object} [this_obj] - The object to use as the this
+     * value when calling ``func``. Defaults to the :js:class:`Test` object.
+     */
     Test.prototype.step_func = function(func, this_obj)
     {
         var test_this = this;
@@ -2116,6 +2733,18 @@
         };
     };
 
+    /**
+     * Wrap a function so that it runs as a step of the current test,
+     * and automatically marks the test as complete if the function
+     * returns without error.
+     *
+     * @param {string} func - Function to run as a step. If this
+     * throws an :js:func:`AssertionError`, or any other exception,
+     * the :js:class:`Test` status is set to ``FAIL``. If it returns
+     * without error the status is set to ``PASS``.
+     * @param {Object} [this_obj] - The object to use as the this
+     * value when calling `func`. Defaults to the :js:class:`Test` object.
+     */
     Test.prototype.step_func_done = function(func, this_obj)
     {
         var test_this = this;
@@ -2134,6 +2763,14 @@
         };
     };
 
+    /**
+     * Return a function that automatically sets the current test to
+     * ``FAIL`` if it's called.
+     *
+     * @param {string} [description] - Error message to add to assert
+     * in case of failure.
+     *
+     */
     Test.prototype.unreached_func = function(description)
     {
         return this.step_func(function() {
@@ -2141,112 +2778,158 @@
         });
     };
 
-    Test.prototype.step_timeout = function(f, timeout) {
+    /**
+     * Run a function as a step of the test after a given timeout.
+     *
+     * This multiplies the timeout by the global timeout multiplier to
+     * account for the expected execution speed of the current test
+     * environment. For example ``test.step_timeout(f, 2000)`` with a
+     * timeout multiplier of 2 will wait for 4000ms before calling ``f``.
+     *
+     * In general it's encouraged to use :js:func:`Test.step_wait` or
+     * :js:func:`step_wait_func` in preference to this function where possible,
+     * as they provide better test performance.
+     *
+     * @param {Function} func - Function to run as a test
+     * step.
+     * @param {number} timeout - Time in ms to wait before running the
+     * test step. The actual wait time is ``timeout`` x
+     * ``timeout_multiplier``.
+     *
+     */
+    Test.prototype.step_timeout = function(func, timeout) {
         var test_this = this;
         var args = Array.prototype.slice.call(arguments, 2);
-        return setTimeout(this.step_func(function() {
-            return f.apply(test_this, args);
+        var local_set_timeout = typeof global_scope.setTimeout === "undefined" ? fake_set_timeout : setTimeout;
+        return local_set_timeout(this.step_func(function() {
+            return func.apply(test_this, args);
         }), timeout * tests.timeout_multiplier);
     };
 
+    /**
+     * Poll for a function to return true, and call a callback
+     * function once it does, or assert if a timeout is
+     * reached. This is preferred over a simple step_timeout
+     * whenever possible since it allows the timeout to be longer
+     * to reduce intermittents without compromising test execution
+     * speed when the condition is quickly met.
+     *
+     * @param {Function} cond A function taking no arguments and
+     *                        returning a boolean or a Promise. The callback is
+     *                        called when this function returns true, or the
+     *                        returned Promise is resolved with true.
+     * @param {Function} func A function taking no arguments to call once
+     *                        the condition is met.
+     * @param {string} [description] Error message to add to assert in case of
+     *                               failure.
+     * @param {number} timeout Timeout in ms. This is multiplied by the global
+     *                         timeout_multiplier
+     * @param {number} interval Polling interval in ms
+     *
+     */
     Test.prototype.step_wait_func = function(cond, func, description,
                                              timeout=3000, interval=100) {
-        /**
-         * Poll for a function to return true, and call a callback
-         * function once it does, or assert if a timeout is
-         * reached. This is preferred over a simple step_timeout
-         * whenever possible since it allows the timeout to be longer
-         * to reduce intermittents without compromising test execution
-         * speed when the condition is quickly met.
-         *
-         * @param {Function} cond A function taking no arguments and
-         *                        returning a boolean. The callback is called
-         *                        when this function returns true.
-         * @param {Function} func A function taking no arguments to call once
-         *                        the condition is met.
-         * @param {string} description Error message to add to assert in case of
-         *                             failure.
-         * @param {number} timeout Timeout in ms. This is multiplied by the global
-         *                         timeout_multiplier
-         * @param {number} interval Polling interval in ms
-         *
-         **/
-
         var timeout_full = timeout * tests.timeout_multiplier;
         var remaining = Math.ceil(timeout_full / interval);
         var test_this = this;
+        var local_set_timeout = typeof global_scope.setTimeout === 'undefined' ? fake_set_timeout : setTimeout;
 
-        var wait_for_inner = test_this.step_func(() => {
-            if (cond()) {
+        const step = test_this.step_func((result) => {
+            if (result) {
                 func();
             } else {
-                if(remaining === 0) {
+                if (remaining === 0) {
                     assert(false, "step_wait_func", description,
                            "Timed out waiting on condition");
                 }
                 remaining--;
-                setTimeout(wait_for_inner, interval);
+                local_set_timeout(wait_for_inner, interval);
             }
+        });
+
+        var wait_for_inner = test_this.step_func(() => {
+            Promise.resolve(cond()).then(
+                step,
+                test_this.unreached_func("step_wait_func"));
         });
 
         wait_for_inner();
     };
 
+    /**
+     * Poll for a function to return true, and invoke a callback
+     * followed by this.done() once it does, or assert if a timeout
+     * is reached. This is preferred over a simple step_timeout
+     * whenever possible since it allows the timeout to be longer
+     * to reduce intermittents without compromising test execution speed
+     * when the condition is quickly met.
+     *
+     * @example
+     * async_test(t => {
+     *  const popup = window.open("resources/coop-coep.py?coop=same-origin&coep=&navigate=about:blank");
+     *  t.add_cleanup(() => popup.close());
+     *  assert_equals(window, popup.opener);
+     *
+     *  popup.onload = t.step_func(() => {
+     *    assert_true(popup.location.href.endsWith("&navigate=about:blank"));
+     *    // Use step_wait_func_done as about:blank cannot message back.
+     *    t.step_wait_func_done(() => popup.location.href === "about:blank");
+     *  });
+     * }, "Navigating a popup to about:blank");
+     *
+     * @param {Function} cond A function taking no arguments and
+     *                        returning a boolean or a Promise. The callback is
+     *                        called when this function returns true, or the
+     *                        returned Promise is resolved with true.
+     * @param {Function} func A function taking no arguments to call once
+     *                        the condition is met.
+     * @param {string} [description] Error message to add to assert in case of
+     *                               failure.
+     * @param {number} timeout Timeout in ms. This is multiplied by the global
+     *                         timeout_multiplier
+     * @param {number} interval Polling interval in ms
+     *
+     */
     Test.prototype.step_wait_func_done = function(cond, func, description,
                                                   timeout=3000, interval=100) {
-        /**
-         * Poll for a function to return true, and invoke a callback
-         * followed by this.done() once it does, or assert if a timeout
-         * is reached. This is preferred over a simple step_timeout
-         * whenever possible since it allows the timeout to be longer
-         * to reduce intermittents without compromising test execution speed
-         * when the condition is quickly met.
-         *
-         * @param {Function} cond A function taking no arguments and
-         *                        returning a boolean. The callback is called
-         *                        when this function returns true.
-         * @param {Function} func A function taking no arguments to call once
-         *                        the condition is met.
-         * @param {string} description Error message to add to assert in case of
-         *                             failure.
-         * @param {number} timeout Timeout in ms. This is multiplied by the global
-         *                         timeout_multiplier
-         * @param {number} interval Polling interval in ms
-         *
-         **/
-
          this.step_wait_func(cond, () => {
             if (func) {
                 func();
             }
             this.done();
          }, description, timeout, interval);
-    }
+    };
 
+    /**
+     * Poll for a function to return true, and resolve a promise
+     * once it does, or assert if a timeout is reached. This is
+     * preferred over a simple step_timeout whenever possible
+     * since it allows the timeout to be longer to reduce
+     * intermittents without compromising test execution speed
+     * when the condition is quickly met.
+     *
+     * @example
+     * promise_test(async t => {
+     *  // …
+     * await t.step_wait(() => frame.contentDocument === null, "Frame navigated to a cross-origin document");
+     * // …
+     * }, "");
+     *
+     * @param {Function} cond A function taking no arguments and
+     *                        returning a boolean or a Promise.
+     * @param {string} [description] Error message to add to assert in case of
+     *                              failure.
+     * @param {number} timeout Timeout in ms. This is multiplied by the global
+     *                         timeout_multiplier
+     * @param {number} interval Polling interval in ms
+     * @returns {Promise} Promise resolved once cond is met.
+     *
+     */
     Test.prototype.step_wait = function(cond, description, timeout=3000, interval=100) {
-        /**
-         * Poll for a function to return true, and resolve a promise
-         * once it does, or assert if a timeout is reached. This is
-         * preferred over a simple step_timeout whenever possible
-         * since it allows the timeout to be longer to reduce
-         * intermittents without compromising test execution speed
-         * when the condition is quickly met.
-         *
-         * @param {Function} cond A function taking no arguments and
-         *                        returning a boolean.
-         * @param {string} description Error message to add to assert in case of
-         *                             failure.
-         * @param {number} timeout Timeout in ms. This is multiplied by the global
-         *                         timeout_multiplier
-         * @param {number} interval Polling interval in ms
-         * @returns {Promise} Promise resolved once cond is met.
-         *
-         **/
-
         return new Promise(resolve => {
             this.step_wait_func(cond, resolve, description, timeout, interval);
         });
-    }
+    };
 
     /*
      * Private method for registering cleanup functions. `testharness.js`
@@ -2258,11 +2941,16 @@
         this.cleanup_callbacks.push(callback);
     };
 
-    /*
+    /**
      * Schedule a function to be run after the test result is known, regardless
-     * of passing or failing state. The behavior of this function will not
+     * of passing or failing state.
+     *
+     * The behavior of this function will not
      * influence the result of the test, but if an exception is thrown, the
      * test harness will report an error.
+     *
+     * @param {Function} callback - The cleanup function to run. This
+     * is called with no arguments.
      */
     Test.prototype.add_cleanup = function(callback) {
         this._user_defined_cleanup_count += 1;
@@ -2287,6 +2975,9 @@
         this.stack = stack ? stack : null;
     };
 
+    /**
+     * Manually set the test status to ``TIMEOUT``.
+     */
     Test.prototype.timeout = function()
     {
         this.timeout_id = null;
@@ -2295,11 +2986,24 @@
         this.done();
     };
 
-    Test.prototype.force_timeout = Test.prototype.timeout;
+    /**
+     * Manually set the test status to ``TIMEOUT``.
+     *
+     * Alias for `Test.timeout <#Test.timeout>`_.
+     */
+    Test.prototype.force_timeout = function() {
+        return this.timeout();
+    };
 
     /**
-     * Update the test status, initiate "cleanup" functions, and signal test
-     * completion.
+     * Mark the test as complete.
+     *
+     * This sets the test status to ``PASS`` if no other status was
+     * already recorded. Any subsequent attempts to run additional
+     * test steps will be ignored.
+     *
+     * After setting the test status any test cleanup functions will
+     * be run.
      */
     Test.prototype.done = function()
     {
@@ -2318,7 +3022,7 @@
         if (settings.debug) {
             console.log("TEST DONE",
                         this.status,
-                        this.name,)
+                        this.name);
         }
 
         this.cleanup();
@@ -2340,10 +3044,10 @@
      * be cancelled.
      */
     Test.prototype.cleanup = function() {
-        var error_count = 0;
+        var errors = [];
         var bad_value_count = 0;
-        function on_error() {
-            error_count += 1;
+        function on_error(e) {
+            errors.push(e);
             // Abort tests immediately so that tests declared within subsequent
             // cleanup functions are not run.
             tests.abort();
@@ -2353,6 +3057,10 @@
 
         this.phase = this.phases.CLEANING;
 
+        if (this._abortController) {
+            this._abortController.abort("Test cleanup");
+        }
+
         forEach(this.cleanup_callbacks,
                 function(cleanup_callback) {
                     var result;
@@ -2360,7 +3068,7 @@
                     try {
                         result = cleanup_callback();
                     } catch (e) {
-                        on_error();
+                        on_error(e);
                         return;
                     }
 
@@ -2375,7 +3083,7 @@
                 });
 
         if (!this._is_promise_test) {
-            cleanup_done(this_obj, error_count, bad_value_count);
+            cleanup_done(this_obj, errors, bad_value_count);
         } else {
             all_async(results,
                       function(result, done) {
@@ -2388,12 +3096,12 @@
                           }
                       },
                       function() {
-                          cleanup_done(this_obj, error_count, bad_value_count);
+                          cleanup_done(this_obj, errors, bad_value_count);
                       });
         }
     };
 
-    /**
+    /*
      * Determine if the return value of a cleanup function is valid for a given
      * test. Any test may return the value `undefined`. Tests created with
      * `promise_test` may alternatively return "thenable" object values.
@@ -2410,17 +3118,21 @@
         return false;
     }
 
-    function cleanup_done(test, error_count, bad_value_count) {
-        if (error_count || bad_value_count) {
+    function cleanup_done(test, errors, bad_value_count) {
+        if (errors.length || bad_value_count) {
             var total = test._user_defined_cleanup_count;
 
             tests.status.status = tests.status.ERROR;
+            tests.status.stack = null;
             tests.status.message = "Test named '" + test.name +
                 "' specified " + total +
                 " 'cleanup' function" + (total > 1 ? "s" : "");
 
-            if (error_count) {
-                tests.status.message += ", and " + error_count + " failed";
+            if (errors.length) {
+                tests.status.message += ", and " + errors.length + " failed";
+                tests.status.stack = ((typeof errors[0] === "object" &&
+                                       errors[0].hasOwnProperty("stack")) ?
+                                      errors[0].stack : null);
             }
 
             if (bad_value_count) {
@@ -2431,8 +3143,6 @@
             }
 
             tests.status.message += ".";
-
-            tests.status.stack = null;
         }
 
         test.phase = test.phases.COMPLETE;
@@ -2444,7 +3154,17 @@
         test._done_callbacks.length = 0;
     }
 
-    /*
+    /**
+     * Gives an AbortSignal that will be aborted when the test finishes.
+     */
+    Test.prototype.get_signal = function() {
+        if (!this._abortController) {
+            throw new Error("AbortController is not supported in this browser");
+        }
+        return this._abortController.signal;
+    };
+
+    /**
      * A RemoteTest object mirrors a Test object on a remote worker. The
      * associated RemoteWorker updates the RemoteTest object in response to
      * received events. In turn, the RemoteTest object replicates these events
@@ -2518,11 +3238,11 @@
                 function(callback) {
                     callback();
                 });
-    }
+    };
 
     RemoteTest.prototype.format_status = function() {
         return Test.prototype.status_formats[this.status];
-    }
+    };
 
     /*
      * A RemoteContext listens for test events from a remote test context, such
@@ -2629,7 +3349,7 @@
     RemoteContext.prototype.remote_done = function(data) {
         if (tests.status.status === null &&
             data.status.status !== data.status.OK) {
-            tests.set_status(data.status.status, data.status.message, data.status.sack);
+            tests.set_status(data.status.status, data.status.message, data.status.stack);
         }
 
         for (let assert of data.asserts) {
@@ -2671,17 +3391,29 @@
         complete: RemoteContext.prototype.remote_done
     };
 
-    /*
-     * Harness
+    /**
+     * @class
+     * Status of the overall harness
      */
-
     function TestsStatus()
     {
+        /** The status code */
         this.status = null;
+        /** Message in case of failure */
         this.message = null;
+        /** Stack trace in case of an exception. */
         this.stack = null;
     }
 
+    /**
+     * Enum of possible harness statuses.
+     *
+     * :values:
+     *   - ``OK``
+     *   - ``ERROR``
+     *   - ``TIMEOUT``
+     *   - ``PRECONDITION_FAILED``
+     */
     TestsStatus.statuses = {
         OK:0,
         ERROR:1,
@@ -2696,8 +3428,7 @@
         1: "Error",
         2: "Timeout",
         3: "Optional Feature Unsupported"
-    }
-
+    };
 
     TestsStatus.prototype.structured_clone = function()
     {
@@ -2715,13 +3446,25 @@
 
     TestsStatus.prototype.format_status = function() {
         return this.formats[this.status];
-    }
+    };
 
+    /**
+     * @class
+     * Record of an assert that ran.
+     *
+     * @param {Test} test - The test which ran the assert.
+     * @param {string} assert_name - The function name of the assert.
+     * @param {Any} args - The arguments passed to the assert function.
+     */
     function AssertRecord(test, assert_name, args = []) {
+        /** Name of the assert that ran */
         this.assert_name = assert_name;
+        /** Test that ran the assert */
         this.test = test;
         // Avoid keeping complex objects alive
+        /** Stringification of the arguments that were passed to the assert function */
         this.args = args.map(x => format_value(x).replace(/\n/g, " "));
+        /** Status of the assert */
         this.status = null;
     }
 
@@ -2731,8 +3474,8 @@
             test: this.test ? this.test.structured_clone() : null,
             args: this.args,
             status: this.status,
-        }
-    }
+        };
+    };
 
     function Tests()
     {
@@ -2771,7 +3514,7 @@
         this.all_done_callbacks = [];
 
         this.hide_test_state = false;
-        this.pending_remotes = [];
+        this.remotes = [];
 
         this.current_test = null;
         this.asserts_run = [];
@@ -2813,26 +3556,26 @@
         for (var p in properties) {
             if (properties.hasOwnProperty(p)) {
                 var value = properties[p];
-                if (p == "allow_uncaught_exception") {
+                if (p === "allow_uncaught_exception") {
                     this.allow_uncaught_exception = value;
-                } else if (p == "explicit_done" && value) {
+                } else if (p === "explicit_done" && value) {
                     this.wait_for_finish = true;
-                } else if (p == "explicit_timeout" && value) {
+                } else if (p === "explicit_timeout" && value) {
                     this.timeout_length = null;
                     if (this.timeout_id)
                     {
                         clearTimeout(this.timeout_id);
                     }
-                } else if (p == "single_test" && value) {
+                } else if (p === "single_test" && value) {
                     this.set_file_is_test();
-                } else if (p == "timeout_multiplier") {
+                } else if (p === "timeout_multiplier") {
                     this.timeout_multiplier = value;
                     if (this.timeout_length) {
                          this.timeout_length *= this.timeout_multiplier;
                     }
-                } else if (p == "hide_test_state") {
+                } else if (p === "hide_test_state") {
                     this.hide_test_state = value;
-                } else if (p == "output") {
+                } else if (p === "output") {
                     this.output = value;
                 } else if (p === "debug") {
                     settings.debug = value;
@@ -2925,11 +3668,14 @@
 
     Tests.prototype.push = function(test)
     {
+        if (this.phase === this.phases.COMPLETE) {
+            return;
+        }
         if (this.phase < this.phases.HAVE_TESTS) {
             this.start();
         }
         this.num_pending++;
-        test.index = this.tests.push(test);
+        test.index = this.tests.push(test) - 1;
         this.notify_test_state(test);
     };
 
@@ -2942,10 +3688,11 @@
     };
 
     Tests.prototype.all_done = function() {
-        return this.tests.length > 0 && test_environment.all_loaded &&
+        return (this.tests.length > 0 || this.remotes.length > 0) &&
+                test_environment.all_loaded &&
                 (this.num_pending === 0 || this.is_aborted) && !this.wait_for_finish &&
                 !this.processing_callbacks &&
-                !this.pending_remotes.some(function(w) { return w.running; });
+                !this.remotes.some(function(w) { return w.running; });
     };
 
     Tests.prototype.start = function() {
@@ -3014,7 +3761,8 @@
                   function(test, testDone)
                   {
                       if (test.phase === test.phases.INITIAL) {
-                          test.phase = test.phases.COMPLETE;
+                          test.phase = test.phases.HAS_RESULT;
+                          test.done();
                           testDone();
                       } else {
                           add_test_done_callback(test, testDone);
@@ -3025,14 +3773,14 @@
     };
 
     Tests.prototype.set_assert = function(assert_name, args) {
-        this.asserts_run.push(new AssertRecord(this.current_test, assert_name, args))
-    }
+        this.asserts_run.push(new AssertRecord(this.current_test, assert_name, args));
+    };
 
-    Tests.prototype.set_assert_status = function(status, stack) {
-        let assert_record = this.asserts_run[this.asserts_run.length - 1];
+    Tests.prototype.set_assert_status = function(index, status, stack) {
+        let assert_record = this.asserts_run[index];
         assert_record.status = status;
         assert_record.stack = stack;
-    }
+    };
 
     /**
      * Update the harness status to reflect an unrecoverable harness error that
@@ -3174,10 +3922,18 @@
         }
 
         var remoteContext = this.create_remote_worker(worker);
-        this.pending_remotes.push(remoteContext);
+        this.remotes.push(remoteContext);
         return remoteContext.done;
     };
 
+    /**
+     * Get test results from a worker and include them in the current test.
+     *
+     * @param {Worker|SharedWorker|ServiceWorker|MessagePort} port -
+     * Either a worker object or a port connected to a worker which is
+     * running tests..
+     * @returns {Promise} - A promise that's resolved once all the remote tests are complete.
+     */
     function fetch_tests_from_worker(port) {
         return tests.fetch_tests_from_worker(port);
     }
@@ -3188,14 +3944,73 @@
             return;
         }
 
-        this.pending_remotes.push(this.create_remote_window(remote));
+        var remoteContext = this.create_remote_window(remote);
+        this.remotes.push(remoteContext);
+        return remoteContext.done;
     };
 
+    /**
+     * Aggregate tests from separate windows or iframes
+     * into the current document as if they were all part of the same test file.
+     *
+     * The document of the second window (or iframe) should include
+     * ``testharness.js``, but not ``testharnessreport.js``, and use
+     * :js:func:`test`, :js:func:`async_test`, and :js:func:`promise_test` in
+     * the usual manner.
+     *
+     * @param {Window} window - The window to fetch tests from.
+     */
     function fetch_tests_from_window(window) {
-        tests.fetch_tests_from_window(window);
+        return tests.fetch_tests_from_window(window);
     }
     expose(fetch_tests_from_window, 'fetch_tests_from_window');
 
+    /**
+     * Get test results from a shadow realm and include them in the current test.
+     *
+     * @param {ShadowRealm} realm - A shadow realm also running the test harness
+     * @returns {Promise} - A promise that's resolved once all the remote tests are complete.
+     */
+    function fetch_tests_from_shadow_realm(realm) {
+        var chan = new MessageChannel();
+        function receiveMessage(msg_json) {
+            chan.port1.postMessage(JSON.parse(msg_json));
+        }
+        var done = tests.fetch_tests_from_worker(chan.port2);
+        realm.evaluate("begin_shadow_realm_tests")(receiveMessage);
+        chan.port2.start();
+        return done;
+    }
+    expose(fetch_tests_from_shadow_realm, 'fetch_tests_from_shadow_realm');
+
+    /**
+     * Begin running tests in this shadow realm test harness.
+     *
+     * To be called after all tests have been loaded; it is an error to call
+     * this more than once or in a non-Shadow Realm environment
+     *
+     * @param {Function} postMessage - A function to send test updates to the
+     * incubating realm-- accepts JSON-encoded messages in the format used by
+     * RemoteContext
+     */
+    function begin_shadow_realm_tests(postMessage) {
+        if (!(test_environment instanceof ShadowRealmTestEnvironment)) {
+            throw new Error("begin_shadow_realm_tests called in non-Shadow Realm environment");
+        }
+
+        test_environment.begin(function (msg) {
+            postMessage(JSON.stringify(msg));
+        });
+    }
+    expose(begin_shadow_realm_tests, 'begin_shadow_realm_tests');
+
+    /**
+     * Timeout the tests.
+     *
+     * This only has an effect when ``explicit_timeout`` has been set
+     * in :js:func:`setup`. In other cases any call is a no-op.
+     *
+     */
     function timeout() {
         if (tests.timeout_length === null) {
             tests.timeout();
@@ -3203,18 +4018,49 @@
     }
     expose(timeout, 'timeout');
 
+    /**
+     * Add a callback that's triggered when the first :js:class:`Test` is created.
+     *
+     * @param {Function} callback - Callback function. This is called
+     * without arguments.
+     */
     function add_start_callback(callback) {
         tests.start_callbacks.push(callback);
     }
 
+    /**
+     * Add a callback that's triggered when a test state changes.
+     *
+     * @param {Function} callback - Callback function, called with the
+     * :js:class:`Test` as the only argument.
+     */
     function add_test_state_callback(callback) {
         tests.test_state_callbacks.push(callback);
     }
 
+    /**
+     * Add a callback that's triggered when a test result is received.
+     *
+     * @param {Function} callback - Callback function, called with the
+     * :js:class:`Test` as the only argument.
+     */
     function add_result_callback(callback) {
         tests.test_done_callbacks.push(callback);
     }
 
+    /**
+     * Add a callback that's triggered when all tests are complete.
+     *
+     * @param {Function} callback - Callback function, called with an
+     * array of :js:class:`Test` objects, a :js:class:`TestsStatus`
+     * object and an array of :js:class:`AssertRecord` objects. If the
+     * debug setting is ``false`` the final argument will be an empty
+     * array.
+     *
+     * For performance reasons asserts are only tracked when the debug
+     * setting is ``true``. In other cases the array of asserts will be
+     * empty.
+     */
     function add_completion_callback(callback) {
         tests.all_done_callbacks.push(callback);
     }
@@ -3311,8 +4157,8 @@
             } else {
                 var root = output_document.documentElement;
                 var is_html = (root &&
-                               root.namespaceURI == "http://www.w3.org/1999/xhtml" &&
-                               root.localName == "html");
+                               root.namespaceURI === "http://www.w3.org/1999/xhtml" &&
+                               root.localName === "html");
                 var is_svg = (output_document.defaultView &&
                               "SVGSVGElement" in output_document.defaultView &&
                               root instanceof output_document.defaultView.SVGSVGElement);
@@ -3336,7 +4182,7 @@
 
     Output.prototype.show_status = function() {
         if (this.phase < this.STARTED) {
-            this.init();
+            this.init({});
         }
         if (!this.enabled || this.phase === this.COMPLETE) {
             return;
@@ -3413,7 +4259,8 @@
                                                 ["span", {"class":status_class(status)},
                                                  status
                                                 ],
-                                               ]
+                                               ],
+                                               ["button", {"id":"rerun"}, "Rerun"]
                                               ]];
 
                                     if (harness_status.status === harness_status.ERROR) {
@@ -3445,6 +4292,13 @@
 
         log.appendChild(render(summary_template, {num_tests:tests.length}, output_document));
 
+        output_document.getElementById("rerun").addEventListener("click",
+            function() {
+                let evt = new Event('__test_restart');
+                let canceled = !window.dispatchEvent(evt);
+                if (!canceled) { location.reload(); }
+            });
+
         forEach(output_document.querySelectorAll("section#summary label"),
                 function(element)
                 {
@@ -3468,18 +4322,6 @@
                                  }
                              });
                 });
-
-        // This use of innerHTML plus manual escaping is not recommended in
-        // general, but is necessary here for performance.  Using textContent
-        // on each individual <td> adds tens of seconds of execution time for
-        // large test suites (tens of thousands of tests).
-        function escape_html(s)
-        {
-            return s.replace(/\&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
 
         function has_assertions()
         {
@@ -3511,81 +4353,63 @@
         });
 
         function get_asserts_output(test) {
+            const asserts_output = render(
+                ["details", {},
+                    ["summary", {}, "Asserts run"],
+                    ["table", {}, ""] ]);
+
             var asserts = asserts_run_by_test.get(test);
             if (!asserts) {
-                return "No asserts ran";
+                asserts_output.querySelector("summary").insertAdjacentText("afterend", "No asserts ran");
+                return asserts_output;
             }
-            rv = "<table>";
-            rv += asserts.map(assert => {
-                var output_fn = "<strong>" + escape_html(assert.assert_name) + "</strong>(";
-                var prefix_len = output_fn.length;
-                var output_args = assert.args;
-                var output_len = output_args.reduce((prev, current) => prev+current, prefix_len);
-                if (output_len[output_len.length - 1] > 50) {
-                    output_args = output_args.map((x, i) =>
-                    (i > 0 ? "  ".repeat(prefix_len) : "" )+ x + (i < output_args.length - 1 ? ",\n" : ""));
-                } else {
-                    output_args = output_args.map((x, i) => x + (i < output_args.length - 1 ? ", " : ""));
-                }
-                output_fn += escape_html(output_args.join(""));
-                output_fn += ')';
-                var output_location;
+
+            const table = asserts_output.querySelector("table");
+            for (const assert of asserts) {
+                const status_class_name = status_class(Test.prototype.status_formats[assert.status]);
+                var output_fn = "(" + assert.args.join(", ") + ")";
                 if (assert.stack) {
-                    output_location = assert.stack.split("\n", 1)[0].replace(/@?\w+:\/\/[^ "\/]+(?::\d+)?/g, " ");
+                    output_fn += "\n";
+                    output_fn += assert.stack.split("\n", 1)[0].replace(/@?\w+:\/\/[^ "\/]+(?::\d+)?/g, " ");
                 }
-                return "<tr class='overall-" +
-                    status_class(Test.prototype.status_formats[assert.status]) + "'>" +
-                    "<td class='" +
-                    status_class(Test.prototype.status_formats[assert.status]) + "'>" +
-                    Test.prototype.status_formats[assert.status] + "</td>" +
-                    "<td><pre>" +
-                    output_fn +
-                    (output_location ? "\n" + escape_html(output_location) : "") +
-                    "</pre></td></tr>";
+                table.appendChild(render(
+                    ["tr", {"class":"overall-" + status_class_name},
+                        ["td", {"class":status_class_name}, Test.prototype.status_formats[assert.status]],
+                        ["td", {}, ["pre", {}, ["strong", {}, assert.assert_name], output_fn]] ]));
             }
-            ).join("\n");
-            rv += "</table>";
-            return rv;
+            return asserts_output;
         }
 
-        log.appendChild(document.createElementNS(xhtml_ns, "section"));
         var assertions = has_assertions();
-        var html = "<h2>Details</h2><table id='results' " + (assertions ? "class='assertions'" : "" ) + ">" +
-            "<thead><tr><th>Result</th><th>Test Name</th>" +
-            (assertions ? "<th>Assertion</th>" : "") +
-            "<th>Message</th></tr></thead>" +
-            "<tbody>";
-        for (var i = 0; i < tests.length; i++) {
-            var test = tests[i];
-            html += '<tr class="overall-' +
-                status_class(test.format_status()) +
-                '">' +
-                '<td class="' +
-                status_class(test.format_status()) +
-                '">' +
-                test.format_status() +
-                "</td><td>" +
-                escape_html(test.name) +
-                "</td><td>" +
-                (assertions ? escape_html(get_assertion(test)) + "</td><td>" : "") +
-                escape_html(test.message ? tests[i].message : " ") +
-                (tests[i].stack ? "<pre>" +
-                 escape_html(tests[i].stack) +
-                 "</pre>": "");
+        const section = render(
+            ["section", {},
+                ["h2", {}, "Details"],
+                ["table", {"id":"results", "class":(assertions ? "assertions" : "")},
+                    ["thead", {},
+                        ["tr", {},
+                            ["th", {}, "Result"],
+                            ["th", {}, "Test Name"],
+                            (assertions ? ["th", {}, "Assertion"] : ""),
+                            ["th", {}, "Message" ]]],
+                    ["tbody", {}]]]);
+
+        const tbody = section.querySelector("tbody");
+        for (const test of tests) {
+            const status = test.format_status();
+            const status_class_name = status_class(status);
+            tbody.appendChild(render(
+                ["tr", {"class":"overall-" + status_class_name},
+                    ["td", {"class":status_class_name}, status],
+                    ["td", {}, test.name],
+                    (assertions ? ["td", {}, get_assertion(test)] : ""),
+                    ["td", {},
+                        test.message ?? "",
+                        ["pre", {}, test.stack ?? ""]]]));
             if (!(test instanceof RemoteTest)) {
-                 html += "<details><summary>Asserts run</summary>" + get_asserts_output(test) + "</details>"
+                tbody.lastChild.lastChild.appendChild(get_asserts_output(test));
             }
-            html += "</td></tr>";
         }
-        html += "</tbody></table>";
-        try {
-            log.lastChild.innerHTML = html;
-        } catch (e) {
-            log.appendChild(document.createElementNS(xhtml_ns, "p"))
-               .textContent = "Setting innerHTML for the log threw an exception.";
-            log.appendChild(document.createElementNS(xhtml_ns, "pre"))
-               .textContent = html;
-        }
+        log.appendChild(section);
     };
 
     /*
@@ -3650,13 +4474,20 @@
     {
         var substitution_re = /\$\{([^ }]*)\}/g;
 
-        function do_substitution(input) {
+        function do_substitution(input)
+        {
             var components = input.split(substitution_re);
             var rv = [];
-            for (var i = 0; i < components.length; i += 2) {
-                rv.push(components[i]);
-                if (components[i + 1]) {
-                    rv.push(String(substitutions[components[i + 1]]));
+            if (components.length === 1) {
+                rv = components;
+            } else if (substitutions) {
+                for (var i = 0; i < components.length; i += 2) {
+                    if (components[i]) {
+                        rv.push(components[i]);
+                    }
+                    if (substitutions[components[i + 1]]) {
+                        rv.push(String(substitutions[components[i + 1]]));
+                    }
                 }
             }
             return rv;
@@ -3764,9 +4595,15 @@
         }
     }
 
+    /**
+     * @class
+     * Exception type that represents a failing assert.
+     *
+     * @param {string} message - Error message.
+     */
     function AssertionError(message)
     {
-        if (typeof message == "string") {
+        if (typeof message === "string") {
             message = sanitize_unpaired_surrogates(message);
         }
         this.message = message;
@@ -3778,14 +4615,6 @@
 
     const get_stack = function() {
         var stack = new Error().stack;
-        // IE11 does not initialize 'Error.stack' until the object is thrown.
-        if (!stack) {
-            try {
-                throw new Error();
-            } catch (e) {
-                stack = e.stack;
-            }
-        }
 
         // 'Error.stack' is not supported in all browsers/versions
         if (!stack) {
@@ -3820,7 +4649,7 @@
         }
 
         return lines.slice(i).join("\n");
-    }
+    };
 
     function OptionalFeatureUnsupportedError(message)
     {
@@ -3888,21 +4717,23 @@
      * invocations have signaled completion.
      *
      * If all callbacks complete synchronously (or if no callbacks are
-     * specified), the `done_callback` will be invoked synchronously. It is the
+     * specified), the ``done_callback`` will be invoked synchronously. It is the
      * responsibility of the caller to ensure asynchronicity in cases where
      * that is desired.
      *
      * @param {array} value Zero or more values to use in the invocation of
-     *                      `iter_callback`
-     * @param {function} iter_callback A function that will be invoked once for
-     *                                 each of the provided `values`. Two
-     *                                 arguments will be available in each
-     *                                 invocation: the value from `values` and
-     *                                 a function that must be invoked to
-     *                                 signal completion
+     *                      ``iter_callback``
+     * @param {function} iter_callback A function that will be invoked
+     *                                 once for each of the values min
+     *                                 ``value``. Two arguments will
+     *                                 be available in each
+     *                                 invocation: the value from
+     *                                 ``value`` and a function that
+     *                                 must be invoked to signal
+     *                                 completion
      * @param {function} done_callback A function that will be invoked after
      *                                 all operations initiated by the
-     *                                 `iter_callback` function have signaled
+     *                                 ``iter_callback`` function have signaled
      *                                 completion
      */
     function all_async(values, iter_callback, done_callback)
@@ -4006,47 +4837,20 @@
         if ('META_TITLE' in global_scope && META_TITLE) {
             return META_TITLE;
         }
-        if ('location' in global_scope) {
-            return location.pathname.substring(location.pathname.lastIndexOf('/') + 1, location.pathname.indexOf('.'));
+        if ('location' in global_scope && 'pathname' in location) {
+            var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+            return filename.substring(0, filename.indexOf('.'));
         }
         return "Untitled";
     }
 
-    function supports_post_message(w)
-    {
-        var supports;
-        var type;
-        // Given IE implements postMessage across nested iframes but not across
-        // windows or tabs, you can't infer cross-origin communication from the presence
-        // of postMessage on the current window object only.
-        //
-        // Touching the postMessage prop on a window can throw if the window is
-        // not from the same origin AND post message is not supported in that
-        // browser. So just doing an existence test here won't do, you also need
-        // to wrap it in a try..catch block.
-        try {
-            type = typeof w.postMessage;
-            if (type === "function") {
-                supports = true;
-            }
-
-            // IE8 supports postMessage, but implements it as a host object which
-            // returns "object" as its `typeof`.
-            else if (type === "object") {
-                supports = true;
-            }
-
-            // This is the case where postMessage isn't supported AND accessing a
-            // window property across origins does NOT throw (e.g. old Safari browser).
-            else {
-                supports = false;
-            }
-        } catch (e) {
-            // This is the case where postMessage isn't supported AND accessing a
-            // window property across origins throws (e.g. old Firefox browser).
-            supports = false;
-        }
-        return supports;
+    /** Fetches a JSON resource and parses it */
+    async function fetch_json(resource) {
+        const response = await fetch(resource);
+        return await response.json();
+    }
+    if (!global_scope.GLOBAL || !global_scope.GLOBAL.isShadowRealm()) {
+        expose(fetch_json, 'fetch_json');
     }
 
     /**
