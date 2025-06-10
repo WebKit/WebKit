@@ -180,6 +180,7 @@ void Plan::cancel()
     m_identifiers = DesiredIdentifiers();
     m_weakReferences = DesiredWeakReferences();
     m_transitions = DesiredTransitions();
+    m_constantProperties = DesiredConstantProperties();
     m_callback = nullptr;
 }
 
@@ -556,6 +557,8 @@ bool Plan::reallyAdd(CommonData* commonData)
     m_weakReferences.reallyAdd(*m_vm, commonData);
     m_transitions.reallyAdd(*m_vm, commonData);
     if (!m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData))
+        return false;
+    if (!m_constantProperties.reallyAdd(*m_vm, commonData))
         return false;
 
     commonData->recordedStatuses = WTFMove(m_recordedStatuses);

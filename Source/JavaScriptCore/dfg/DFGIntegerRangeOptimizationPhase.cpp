@@ -1420,22 +1420,49 @@ public:
                     auto iter = m_relationships.find(node->child1().node());
                     if (iter == m_relationships.end())
                         break;
-                    
+
                     bool nonNegative = false;
                     bool lessThanLength = false;
                     for (Relationship relationship : iter->value) {
                         if (relationship.minValueOfLeft() >= 0)
                             nonNegative = true;
-                        
+
                         if (relationship.right() == node->child2().node()) {
-                            if (relationship.kind() == Relationship::Equal
-                                && relationship.offset() < 0)
-                                lessThanLength = true;
-                            
-                            if (relationship.kind() == Relationship::LessThan
-                                && relationship.offset() <= 0)
-                                lessThanLength = true;
+                            if (relationship.kind() == Relationship::Equal) {
+                                if (relationship.offset() < 0)
+                                    lessThanLength = true;
+                            }
+
+                            if (relationship.kind() == Relationship::LessThan) {
+                                if (relationship.offset() <= 0)
+                                    lessThanLength = true;
+                            }
                         }
+
+                        if (relationship.right()->isInt32Constant() && node->child2()->isInt32Constant()) {
+                            int32_t right = relationship.right()->asInt32();
+                            int32_t bound = node->child2()->asInt32();
+                            // CheckInBounds: n < $bound
+                            //     where n == $right + $offset
+                            // Then, we can remove CheckInBounds if $right + $offset < $bound
+                            if (relationship.kind() == Relationship::Equal) {
+                                auto sum = checkedSum<int32_t>(right, relationship.offset());
+                                if (!sum.hasOverflowed() && sum.value() >= 0 && sum.value() < bound)
+                                    lessThanLength = true;
+                            }
+
+                            // CheckInBounds: n < $bound
+                            //     where n < $right + $offset
+                            // Then, we can remove CheckInBounds if $right + $offset <= $bound
+                            if (relationship.kind() == Relationship::LessThan) {
+                                auto sum = checkedSum<int32_t>(right, relationship.offset());
+                                if (!sum.hasOverflowed() && sum.value() >= 0 && sum.value() <= bound)
+                                    lessThanLength = true;
+                            }
+                        }
+
+                        if (nonNegative && lessThanLength)
+                            break;
                     }
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
@@ -1622,6 +1649,26 @@ private:
                             std::numeric_limits<int>::max() - offset + 1),
                         0);
                 }
+            }
+            break;
+        }
+
+        case ArithBitAnd: {
+            // We're only interested in int32 additions and we currently only know how to
+            // handle the non-wrapping ones.
+            if (!node->isBinaryInt32UseKind())
+                break;
+
+            // Handle bitAnd: @value & constant.
+            if (!node->child2()->isInt32Constant())
+                break;
+
+            int32_t mask = node->child2()->asInt32();
+            if (mask >= 0) {
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+                if (mask != INT32_MAX)
+                    setRelationship(Relationship(node, m_zero, Relationship::LessThan, mask + 1));
+                break;
             }
             break;
         }

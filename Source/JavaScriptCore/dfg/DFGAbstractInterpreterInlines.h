@@ -34,6 +34,7 @@
 #include "CheckPrivateBrandStatus.h"
 #include "DFGAbstractInterpreter.h"
 #include "DFGAbstractInterpreterClobberState.h"
+#include "DFGDesiredConstantProperties.h"
 #include "DOMJITGetterSetter.h"
 #include "DOMJITSignature.h"
 #include "FunctionPrototype.h"
@@ -4374,6 +4375,71 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
             if (constant.isString() && node->arrayMode().type() == Array::String) {
                 setConstant(node, jsNumber(asString(constant)->length()));
+                break;
+            }
+
+            if (auto result =
+                ([&]() -> std::optional<JSValue> {
+                    // Check the structure set is finite. This means that this constant's structure is watched and guaranteed the one of this set.
+                    // When the structure is changed, this code should be invalidated. This is important since the following code relies on the
+                    // constant object's is not changed.
+                    if (!abstractValue.m_structure.isFinite())
+                        return std::nullopt;
+
+                    JSValue arrayConstant = abstractValue.value();
+                    if (!arrayConstant)
+                        return std::nullopt;
+
+                    JSArray* array = jsDynamicCast<JSArray*>(arrayConstant);
+                    if (!array)
+                        return std::nullopt;
+
+                    // Check that the early StructureID is not nuked, get the butterfly, and check the late StructureID again.
+                    // And we check the indexing mode of the structure. If the indexing mode is CoW, the butterfly is
+                    // definitely JSImmutableButterfly.
+                    StructureID structureIDEarly = array->structureID();
+                    if (structureIDEarly.isNuked())
+                        return std::nullopt;
+
+                    if (arrayMode.arrayClass() != Array::OriginalCopyOnWriteArray)
+                        return std::nullopt;
+
+                    WTF::loadLoadFence();
+                    Butterfly* butterfly = array->butterfly();
+
+                    WTF::loadLoadFence();
+                    StructureID structureIDLate = array->structureID();
+
+                    if (structureIDEarly != structureIDLate)
+                        return std::nullopt;
+
+                    if (!butterfly)
+                        return std::nullopt;
+
+                    Structure* structure = structureIDLate.decode();
+                    switch (arrayMode.type()) {
+                    case Array::Int32:
+                    case Array::Contiguous:
+                    case Array::Double:
+                        if (structure->indexingMode() != (toIndexingShape(arrayMode.type()) | CopyOnWrite | IsArray))
+                            return std::nullopt;
+                        break;
+                    default:
+                        return std::nullopt;
+                    }
+                    ASSERT(isCopyOnWrite(structure->indexingMode()));
+                    if (abstractValue.m_structure.onlyStructure() != m_graph.registerStructure(structure))
+                        return std::nullopt;
+
+                    JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::fromButterfly(butterfly);
+                    unsigned length = immutableButterfly->length();
+                    if (length > INT32_MAX)
+                        return std::nullopt;
+                    JSValue lengthValue = jsNumber(length);
+                    m_graph.m_plan.constantProperties().add(DesiredConstantProperties::Type::ImmutableButterflyLength, m_graph.freeze(immutableButterfly), m_graph.freeze(lengthValue));
+                    return lengthValue;
+                }())) {
+                setConstant(node, result.value());
                 break;
             }
         }

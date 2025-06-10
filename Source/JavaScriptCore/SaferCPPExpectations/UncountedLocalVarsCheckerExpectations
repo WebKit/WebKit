@@ -33,6 +33,7 @@ dfg/DFGClobberize.h
 dfg/DFGCommonData.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGDesiredGlobalProperties.cpp
+dfg/DFGDesiredConstantProperties.cpp
 dfg/DFGDesiredIdentifiers.cpp
 dfg/DFGDesiredWatchpoints.cpp
 dfg/DFGFixupPhase.cpp

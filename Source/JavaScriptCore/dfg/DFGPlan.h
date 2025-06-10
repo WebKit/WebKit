@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompilationResult.h"
+#include "DFGDesiredConstantProperties.h"
 #include "DFGDesiredGlobalProperties.h"
 #include "DFGDesiredIdentifiers.h"
 #include "DFGDesiredTransitions.h"
@@ -92,6 +93,7 @@ public:
     DesiredIdentifiers& identifiers() { return m_identifiers; }
     DesiredWeakReferences& weakReferences() { return m_weakReferences; }
     DesiredTransitions& transitions() { return m_transitions; }
+    DesiredConstantProperties& constantProperties() { return m_constantProperties; }
     RecordedStatuses& recordedStatuses() { return *m_recordedStatuses.get(); }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
@@ -132,6 +134,7 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
+    DesiredConstantProperties m_constantProperties;
     std::unique_ptr<RecordedStatuses> m_recordedStatuses;
 
     UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;

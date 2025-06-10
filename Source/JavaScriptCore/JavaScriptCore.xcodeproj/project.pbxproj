@@ -2002,6 +2002,7 @@
 		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E355D38F22446877008F1AD6 /* GlobalExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = E355D38D2244686B008F1AD6 /* GlobalExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E356987222841187008CDCCB /* PackedCellPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = E356987122841183008CDCCB /* PackedCellPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E359BBD92DF8CA6F0019830F /* DFGDesiredConstantProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = E359BBD62DF8CA6F0019830F /* DFGDesiredConstantProperties.h */; };
 		E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35B36072A2E981E004EC264 /* StringReplaceCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */; };
 		E35B36082A2E981E004EC264 /* StringReplaceCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E35B36062A2E981E004EC264 /* StringReplaceCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5710,6 +5711,8 @@
 		E355D38D2244686B008F1AD6 /* GlobalExecutable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalExecutable.h; sourceTree = "<group>"; };
 		E355D38E2244686C008F1AD6 /* GlobalExecutable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalExecutable.cpp; sourceTree = "<group>"; };
 		E356987122841183008CDCCB /* PackedCellPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackedCellPtr.h; sourceTree = "<group>"; };
+		E359BBD62DF8CA6F0019830F /* DFGDesiredConstantProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGDesiredConstantProperties.h; path = dfg/DFGDesiredConstantProperties.h; sourceTree = "<group>"; };
+		E359BBD72DF8CA6F0019830F /* DFGDesiredConstantProperties.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredConstantProperties.cpp; path = dfg/DFGDesiredConstantProperties.cpp; sourceTree = "<group>"; };
 		E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBaseInlines.h; sourceTree = "<group>"; };
 		E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCacheInlines.h; sourceTree = "<group>"; };
 		E35B36062A2E981E004EC264 /* StringReplaceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCache.h; sourceTree = "<group>"; };
@@ -9201,6 +9204,8 @@
 				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0F2FC77016E12F6F0038D976 /* DFGDCEPhase.cpp */,
 				0F2FC77116E12F6F0038D976 /* DFGDCEPhase.h */,
+				E359BBD72DF8CA6F0019830F /* DFGDesiredConstantProperties.cpp */,
+				E359BBD62DF8CA6F0019830F /* DFGDesiredConstantProperties.h */,
 				E3BFA5CB21E853A0009C0EBA /* DFGDesiredGlobalProperties.cpp */,
 				E3BFA5CC21E853A0009C0EBA /* DFGDesiredGlobalProperties.h */,
 				E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */,
@@ -10747,6 +10752,7 @@
 				A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */,
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
 				0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */,
+				E359BBD92DF8CA6F0019830F /* DFGDesiredConstantProperties.h in Headers */,
 				E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */,
 				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
 				C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */,
