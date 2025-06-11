@@ -1088,7 +1088,6 @@ end
     move cfr, a1
     move wasmInstance, a2
     cCall3(_operationWasmToJSExitMarshalReturnValues)
-    btpnz r0, .handleException
     jmp .end
 
 .unpack:
