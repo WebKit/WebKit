@@ -1516,6 +1516,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     // FIXME: Think about what to do if the provisional page didn't get its browsing context group from the SuspendedPageProxy.
     // We do need to clear it at some point for navigations that aren't from back/forward navigations. Probably in the same place as PSON?
     setBrowsingContextGroup(provisionalPage->protectedBrowsingContextGroup());
+    m_browsingContextGroup->commitProvisionalPage(provisionalPage.get());
 
     protectedLegacyMainFrameProcess()->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();

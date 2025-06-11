@@ -157,6 +157,8 @@ public:
 
     bool needsMainFrameObserver() const { return m_needsMainFrameObserver; }
 
+    URL requestURL() const { return m_request.url(); }
+
 private:
     ProvisionalPageProxy(WebPageProxy&, Ref<FrameProcess>&&, BrowsingContextGroup&, RefPtr<SuspendedPageProxy>&&, API::Navigation&, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*, WebsiteDataStore* replacedDataStoreForWebArchiveLoad = nullptr);
 

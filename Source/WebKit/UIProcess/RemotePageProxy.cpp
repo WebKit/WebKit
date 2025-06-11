@@ -35,6 +35,7 @@
 #include "NavigationActionData.h"
 #include "PageLoadState.h"
 #include "ProvisionalFrameProxy.h"
+#include "ProvisionalPageProxy.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageFullscreenManagerProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
@@ -59,15 +60,16 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageProxy);
 
-Ref<RemotePageProxy> RemotePageProxy::create(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
+Ref<RemotePageProxy> RemotePageProxy::create(WebPageProxy& page, WebCore::PageIdentifier trackingWebPageID, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
 {
-    return adoptRef(*new RemotePageProxy(page, process, site, registrationToTransfer, pageIDToTransfer));
+    return adoptRef(*new RemotePageProxy(page, trackingWebPageID, process, site, registrationToTransfer, pageIDToTransfer));
 }
 
-RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
+RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebCore::PageIdentifier trackingWebPageID, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
     : m_webPageID(pageIDToTransfer.value_or(WebCore::PageIdentifier::generate()))
     , m_process(process)
     , m_page(page)
+    , m_trackingWebPageID(trackingWebPageID)
     , m_site(site)
     , m_processActivityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
@@ -108,6 +110,44 @@ void RemotePageProxy::injectPageIntoNewProcess()
                 page->protectedMainFrame()->frameTreeCreationParameters(),
                 page->mainFrameWebsitePoliciesData() ? std::make_optional(*page->mainFrameWebsitePoliciesData()) : std::nullopt
             })
+        ), 0
+    );
+}
+
+void RemotePageProxy::injectProvisionalPageIntoProcess(ProvisionalPageProxy& provisionalPage)
+{
+    RefPtr page = m_page.get();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr provisionalMainFrame = provisionalPage.mainFrame();
+    if (!provisionalMainFrame)
+        return;
+
+    CheckedPtr provisionalDrawingArea = provisionalPage.drawingArea();
+    if (!provisionalDrawingArea)
+        return;
+
+    if (m_drawingArea && m_drawingArea->identifier() == provisionalDrawingArea->identifier())
+        return;
+
+    m_drawingArea = RemotePageDrawingAreaProxy::create(*provisionalDrawingArea, m_process);
+#if ENABLE(FULLSCREEN_API)
+    m_fullscreenManager = RemotePageFullscreenManagerProxy::create(m_webPageID, page->protectedFullScreenManager().get(), m_process);
+#endif
+    m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
+
+    RemotePageParameters remotePageParameters {
+        provisionalPage.requestURL(),
+        provisionalMainFrame->frameTreeCreationParameters(),
+        provisionalPage.mainFrameWebsitePoliciesData() ? std::make_optional(*provisionalPage.mainFrameWebsitePoliciesData()) : std::nullopt
+    };
+    m_process->send(
+        Messages::WebProcess::CreateWebPage(
+            m_webPageID,
+            page->creationParameters(m_process, *provisionalDrawingArea, provisionalMainFrame->frameID(), WTFMove(remotePageParameters), true)
         ), 0
     );
 }

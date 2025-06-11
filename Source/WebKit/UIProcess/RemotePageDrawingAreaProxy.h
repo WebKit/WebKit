@@ -47,6 +47,7 @@ public:
 
     WebProcessProxy& process() { return m_process; }
     Ref<WebProcessProxy> protectedProcess();
+    DrawingAreaIdentifier identifier() const { return m_identifier; }
 
 private:
     RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);

@@ -4942,4 +4942,38 @@ TEST(SiteIsolation, FramesDuringProvisionalNavigation)
     });
 }
 
+TEST(SiteIsolation, DoAfterNextPresentationUpdate)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://webkit2.org/text'></iframe></iframe><iframe src='https://webkit3.org/text'></iframe>"_s } },
+        { "/navigatefrom"_s, { "<script>window.location='https://webkit2.org/navigateto'</script>"_s } },
+        { "/navigateto"_s, { "<iframe src='https://webkit1.org/alert'></iframe>"_s } },
+        { "/alert"_s, { "<script>alert('loaded')</script>"_s } },
+        { "/text"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webViewAndDelegates = makeWebViewAndDelegates(server);
+    RetainPtr webView = webViewAndDelegates.webView;
+    RetainPtr navigationDelegate = webViewAndDelegates.navigationDelegate;
+    RetainPtr uiDelegate = webViewAndDelegates.uiDelegate;
+    RetainPtr<WKWebView> openedWebView;
+    uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView.get().navigationDelegate = navigationDelegate.get();
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        return openedWebView.get();
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit1.org/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.open('https://webkit1.org/navigatefrom')" completionHandler:nil];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
+
+    __block bool done = false;
+    [openedWebView _doAfterNextPresentationUpdate:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 }

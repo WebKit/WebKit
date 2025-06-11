@@ -36,6 +36,7 @@ class Connection;
 
 namespace WebKit {
 
+class DrawingAreaProxy;
 class FrameProcess;
 class ProvisionalPageProxy;
 class RemotePageProxy;
@@ -60,6 +61,9 @@ public:
     void addPage(WebPageProxy&);
     void addRemotePage(WebPageProxy&, Ref<RemotePageProxy>&&);
     void removePage(WebPageProxy&);
+    void addProvisionalPage(ProvisionalPageProxy&);
+    void removeProvisionalPage(ProvisionalPageProxy&);
+    void commitProvisionalPage(ProvisionalPageProxy&);
     void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
 
     RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
@@ -76,6 +80,7 @@ private:
     HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
+    WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_provisionalRemotePages;
 };
 
 }

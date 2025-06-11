@@ -60,6 +60,7 @@ using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 namespace WebKit {
 
 class NativeWebMouseEvent;
+class ProvisionalPageProxy;
 class RemotePageDrawingAreaProxy;
 class RemotePageFullscreenManagerProxy;
 class RemotePageVisitedLinkStoreRegistration;
@@ -78,7 +79,7 @@ enum class ProcessTerminationReason : uint8_t;
 class RemotePageProxy : public IPC::MessageReceiver, public RefCounted<RemotePageProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
-    static Ref<RemotePageProxy> create(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr, std::optional<WebCore::PageIdentifier> = std::nullopt);
+    static Ref<RemotePageProxy> create(WebPageProxy&, WebCore::PageIdentifier trackingWebPageID, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr, std::optional<WebCore::PageIdentifier> = std::nullopt);
     ~RemotePageProxy();
 
     void ref() const final { RefCounted::ref(); }
@@ -88,6 +89,7 @@ public:
     RefPtr<WebPageProxy> protectedPage() const;
 
     void injectPageIntoNewProcess();
+    void injectProvisionalPageIntoProcess(ProvisionalPageProxy&);
     void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
@@ -96,6 +98,7 @@ public:
     Ref<WebProcessProxy> protectedProcess() const;
     WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
+    WebCore::PageIdentifier trackingWebPageID() const { return m_trackingWebPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
     const WebCore::Site& site() const { return m_site; }
 
@@ -104,7 +107,7 @@ public:
     WebCore::MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
 
 private:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*, std::optional<WebCore::PageIdentifier>);
+    RemotePageProxy(WebPageProxy&, WebCore::PageIdentifier trackingWebPageID, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*, std::optional<WebCore::PageIdentifier>);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
@@ -112,6 +115,7 @@ private:
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     const WeakPtr<WebPageProxy> m_page;
+    const WebCore::PageIdentifier m_trackingWebPageID;
     const WebCore::Site m_site;
     const UniqueRef<WebProcessActivityState> m_processActivityState;
     RefPtr<RemotePageDrawingAreaProxy> m_drawingArea;
