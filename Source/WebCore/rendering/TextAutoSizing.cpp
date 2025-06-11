@@ -178,9 +178,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         if (!block)
             continue;
 
-        RenderObject* firstLetterRenderer;
-        RenderElement* dummy;
-        block->getFirstLetter(firstLetterRenderer, dummy);
+        auto firstLetterRenderer = block->findFirstLetterRenderer();
         if (firstLetterRenderer && firstLetterRenderer->parent() && firstLetterRenderer->parent()->parent()) {
             auto& parentStyle = firstLetterRenderer->parent()->parent()->style();
             auto* firstLetterStyle = parentStyle.getCachedPseudoStyle({ PseudoId::FirstLetter });

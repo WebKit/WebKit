@@ -1,0 +1,7 @@
+,,mac-wk2,,,
+Directory,Total,Pass,Skip,Flaky,Fail
+__root__,1291,1194,4,3,90
+imported,1291,1194,4,3,90
+imported/w3c,1291,1194,4,3,90
+imported/w3c/web-platform-tests,1291,1194,4,3,90
+imported/w3c/web-platform-tests/css,1291,1194,4,3,90

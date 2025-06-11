@@ -2630,9 +2630,9 @@ static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
     return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
 }
 
-static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
+RenderBlock* RenderBlock::findFirstLetterBlock(RenderBlock& start)
 {
-    RenderBlock* firstLetterBlock = start;
+    RenderBlock* firstLetterBlock = &start;
     while (true) {
         bool canHaveFirstLetterRenderer = firstLetterBlock->style().hasPseudoStyle(PseudoId::FirstLetter)
             && firstLetterBlock->canHaveGeneratedChildren()
@@ -2650,56 +2650,52 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
     return nullptr;
 }
 
-void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& firstLetterContainer, RenderObject* skipObject)
+RenderObject* RenderBlock::findFirstLetterRenderer(RenderObject* skipObject)
 {
-    firstLetter = nullptr;
-    firstLetterContainer = nullptr;
-
     // Don't recur
     if (style().pseudoElementType() == PseudoId::FirstLetter)
-        return;
+        return { };
     
     // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
     // an efficient way to check for that situation though before implementing anything.
-    firstLetterContainer = findFirstLetterBlock(this);
+    auto firstLetterContainer = findFirstLetterBlock(*this);
     if (!firstLetterContainer)
-        return;
+        return { };
     
     // Drill into inlines looking for our first text descendant.
-    firstLetter = firstLetterContainer->firstChild();
-    while (firstLetter) {
-        if (is<RenderText>(*firstLetter)) {
-            if (firstLetter == skipObject) {
-                firstLetter = firstLetter->nextSibling();
+    auto firstLetterRenderer = firstLetterContainer->firstChild();
+    while (firstLetterRenderer) {
+        if (is<RenderText>(*firstLetterRenderer)) {
+            if (firstLetterRenderer == skipObject) {
+                firstLetterRenderer = firstLetterRenderer->nextSibling();
                 continue;
             }
             
             break;
         }
 
-        RenderElement& current = downcast<RenderElement>(*firstLetter);
+        RenderElement& current = downcast<RenderElement>(*firstLetterRenderer);
         if (is<RenderListMarker>(current))
-            firstLetter = current.nextSibling();
+            firstLetterRenderer = current.nextSibling();
         else if (current.isFloatingOrOutOfFlowPositioned()) {
             if (current.style().pseudoElementType() == PseudoId::FirstLetter) {
-                firstLetter = current.firstChild();
+                firstLetterRenderer = current.firstChild();
                 break;
             }
-            firstLetter = current.nextSibling();
+            firstLetterRenderer = current.nextSibling();
         } else if (current.isReplacedOrAtomicInline() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
-            firstLetter = current.nextSibling();
+            firstLetterRenderer = current.nextSibling();
         else if (current.style().hasPseudoStyle(PseudoId::FirstLetter) && current.canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style
-            firstLetterContainer = &current;
-            firstLetter = current.firstChild();
+            firstLetterContainer = dynamicDowncast<RenderBlock>(current);
+            firstLetterRenderer = current.firstChild();
         } else
-            firstLetter = current.firstChild();
+            firstLetterRenderer = current.firstChild();
     }
     
-    if (!firstLetter)
-        firstLetterContainer = nullptr;
+    return firstLetterRenderer;
 }
 
 RenderFragmentedFlow* RenderBlock::cachedEnclosingFragmentedFlow() const

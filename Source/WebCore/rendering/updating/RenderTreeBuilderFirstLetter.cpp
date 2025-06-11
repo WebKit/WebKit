@@ -132,15 +132,13 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
         return;
 
     // FIXME: This should be refactored, firstLetterContainer is not needed.
-    RenderObject* firstLetterRenderer;
-    RenderElement* firstLetterContainer;
-    block.getFirstLetter(firstLetterRenderer, firstLetterContainer);
+    auto firstLetterRenderer = block.findFirstLetterRenderer();
 
     if (!firstLetterRenderer)
         return;
 
     // Other containers are handled when updating their renderers.
-    if (&block != firstLetterContainer)
+    if (&block != RenderBlock::findFirstLetterBlock(block))
         return;
 
     // If the child already has style, then it has already been created, so we just want
@@ -150,7 +148,7 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
         return;
     }
 
-    if (!is<RenderText>(firstLetterRenderer))
+    if (!is<RenderText>(*firstLetterRenderer))
         return;
 
     createRenderers(downcast<RenderText>(*firstLetterRenderer));
