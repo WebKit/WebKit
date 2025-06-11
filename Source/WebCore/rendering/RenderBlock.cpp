@@ -2661,10 +2661,25 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
     
     // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
     // an efficient way to check for that situation though before implementing anything.
-    firstLetterContainer = findFirstLetterBlock(this);
-    if (!firstLetterContainer)
-        return;
+    auto initialContainer = [&] -> RenderElement* {
+        auto* currentBlockContainer = findFirstLetterBlock(this);
+        if (!currentBlockContainer)
+            return { };
+        while (!currentBlockContainer->childrenInline()) {
+            auto* firstInFlowBlockLevelChild = dynamicDowncast<RenderBlock>(currentBlockContainer->firstInFlowChild());
+            if (!firstInFlowBlockLevelChild || firstInFlowBlockLevelChild->isFlexibleBoxIncludingDeprecated()
+                || firstInFlowBlockLevelChild->isRenderGrid())
+                return { };
+            currentBlockContainer = firstInFlowBlockLevelChild;
+        }
+        return currentBlockContainer;
+    };
+
     
+
+    firstLetterContainer = initialContainer();
+    ASSERT(firstLetterContainer->childrenInline());
+
     // Drill into inlines looking for our first text descendant.
     firstLetter = firstLetterContainer->firstChild();
     while (firstLetter) {
@@ -2688,8 +2703,6 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
             firstLetter = current.nextSibling();
         } else if (current.isReplacedOrAtomicInline() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
-        else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
-            firstLetter = current.nextSibling();
         else if (current.style().hasPseudoStyle(PseudoId::FirstLetter) && current.canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style
             firstLetterContainer = &current;
