@@ -1468,7 +1468,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
         modified_tests = set()
         log_text = self.log_observer.getStdout()
         match = re.findall(r'\+(.*\.html)', log_text) + re.findall(r'\+(.*\.svg)', log_text) + re.findall(r'\+(.*\.xml)', log_text)
-        yield self._addToLog('stdio', '\nLooking for test expectation changes...\n')
+        yield self._addToLog('stdio', 'Looking for test expectation changes...\n')
         for test in match:
             yield self._addToLog('stdio', f'    LayoutTests/{test}\n')
             modified_tests.add(f'LayoutTests/{test}')
@@ -1485,7 +1485,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
                 )], WARNINGS)
             return defer.returnValue(self.results)
 
-        yield self._addToLog('stdio', '\nLooking for layout test changes...\n')
+        yield self._addToLog('stdio', 'Looking for layout test changes...\n')
         tests_from_patch = self.find_test_names_from_patch(patch)
         modified_tests += tests_from_patch
 
