@@ -20,4 +20,8 @@ PASS e.style['object-position'] = "right top 5px" should not set the property va
 PASS e.style['object-position'] = "bottom 6% center" should not set the property value
 PASS e.style['object-position'] = "bottom 7% left" should not set the property value
 PASS e.style['object-position'] = "bottom right 8%" should not set the property value
+PASS e.style['object-position'] = "x-start block-end" should not set the property value
+PASS e.style['object-position'] = "inline-start end" should not set the property value
+PASS e.style['object-position'] = "inline-end 10px" should not set the property value
+PASS e.style['object-position'] = "10px end" should not set the property value
 

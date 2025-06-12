@@ -59,7 +59,7 @@ using namespace CSS::Literals;
 
 // Sub-productions
 
-// <position-one> = [ left | center | right | top | bottom | x-start | x-end | y-start | y-end | <length-percentage> ]
+// <position-one> = [ left | center | right | top | bottom | x-start | x-end | y-start | y-end | block-start | block-end | inline-start | inline-end | <length-percentage> ]
 //
 // <position-two> = [
 //   [ left | center | right | x-start | x-end ] &&
@@ -67,6 +67,11 @@ using namespace CSS::Literals;
 // |
 //   [ left | center | right | x-start | x-end | <length-percentage> ]
 //   [ top | center | bottom | y-start | y-end | <length-percentage> ]
+// |
+//   [ block-start | center | block-end ] &&
+//   [ inline-start | center | inline-end ]
+// |
+//   [ start | center | end ]{2}
 // ]
 //
 // <bg-position-three> = [
@@ -75,11 +80,28 @@ using namespace CSS::Literals;
 // |
 //   [ center | left |  right | x-start | x-end ] &&
 //   [ [         top | bottom | y-start | y-end ] <length-percentage> ]
+// |
+//   [ [         block-start |  block-end ] <length-percentage> ] &&
+//   [ center | inline-start | inline-end ]
+// |
+//   [ center |  block-start |  block-end ] &&
+//   [ [        inline-start | inline-end ] <length-percentage> ]
+// |
+//   [ [        start | end ] <length-percentage> ]
+//   [ center | start | end ]
+// |
+//   [ center | start | end ]
+//   [ [        start | end ] <length-percentage> ]
 // ]
 //
 // <position-four> = [
 //   [ [ left | right | x-start | x-end ] <length-percentage> ] &&
 //   [ [ top | bottom | y-start | y-end ] <length-percentage> ]
+// |
+//   [ [ block-start | block-end ] <length-percentage> ] &&
+//   [ [ inline-start | inline-end ] <length-percentage> ]
+// |
+//   [ [ start | end ] <length-percentage> ]{2}
 // ]
 
 // MARK: Unresolved Position
@@ -96,6 +118,14 @@ using PositionUnresolvedComponent = Variant<
     CSS::Keyword::Bottom,
     CSS::Keyword::YStart,
     CSS::Keyword::YEnd,
+
+    // Flow
+    CSS::Keyword::BlockStart,
+    CSS::Keyword::BlockEnd,
+    CSS::Keyword::InlineStart,
+    CSS::Keyword::InlineEnd,
+    CSS::Keyword::Start,
+    CSS::Keyword::End,
 
     // Any Axis
     CSS::Keyword::Center,
@@ -124,6 +154,30 @@ template<typename T> concept IsVerticalSecondComponent =
        IsVerticalOnlyComponent<T>
     || std::same_as<T, CSS::Keyword::Center>
     || std::same_as<T, CSS::LengthPercentage<>>;
+
+template<typename T> concept IsBlockOnlyComponent =
+       std::same_as<T, CSS::Keyword::BlockStart>
+    || std::same_as<T, CSS::Keyword::BlockEnd>;
+
+template<typename T> concept IsBlockSecondComponent =
+       IsBlockOnlyComponent<T>
+    || std::same_as<T, CSS::Keyword::Center>;
+
+template<typename T> concept IsInlineOnlyComponent =
+       std::same_as<T, CSS::Keyword::InlineStart>
+    || std::same_as<T, CSS::Keyword::InlineEnd>;
+
+template<typename T> concept IsInlineSecondComponent =
+       IsInlineOnlyComponent<T>
+    || std::same_as<T, CSS::Keyword::Center>;
+
+template<typename T> concept IsStartEndOnlyComponent =
+       std::same_as<T, CSS::Keyword::Start>
+    || std::same_as<T, CSS::Keyword::End>;
+
+template<typename T> concept IsStartEndSecondComponent =
+       IsStartEndOnlyComponent<T>
+    || std::same_as<T, CSS::Keyword::Center>;
 
 static std::optional<PositionUnresolvedComponent> consumePositionUnresolvedComponent(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -161,6 +215,36 @@ static std::optional<PositionUnresolvedComponent> consumePositionUnresolvedCompo
                 return { };
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::YEnd { } };
+        case CSSValueBlockStart:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::BlockStart { } };
+        case CSSValueBlockEnd:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::BlockEnd { } };
+        case CSSValueInlineStart:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::InlineStart { } };
+        case CSSValueInlineEnd:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::InlineEnd { } };
+        case CSSValueStart:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::Start { } };
+        case CSSValueEnd:
+            if (!state.context.cssLogicalPositionKeywordsEnabled)
+                return { };
+            range.consumeIncludingWhitespace();
+            return PositionUnresolvedComponent { CSS::Keyword::End { } };
         case CSSValueCenter:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Center { } };
@@ -176,7 +260,7 @@ static std::optional<PositionUnresolvedComponent> consumePositionUnresolvedCompo
 
 static std::optional<CSS::Position> positionUnresolvedFromOneComponent(PositionUnresolvedComponent&& component)
 {
-    // <position-one> = [ left | center | right | top | bottom | x-start | x-end | y-start | y-end | <length-percentage> ]
+    // <position-one> = [ left | center | right | top | bottom | x-start | x-end | y-start | y-end | block-start | block-end | inline-start | inline-end | <length-percentage> ]
 
     return WTF::switchOn(WTFMove(component),
         []<IsHorizontalOnlyComponent C>(C&& component) -> std::optional<CSS::Position> {
@@ -184,6 +268,16 @@ static std::optional<CSS::Position> positionUnresolvedFromOneComponent(PositionU
         },
         []<IsVerticalOnlyComponent C>(C&& component) -> std::optional<CSS::Position> {
             return CSS::TwoComponentPositionHorizontalVertical { { CSS::Keyword::Center { } }, { WTFMove(component) } };
+        },
+        []<IsBlockOnlyComponent C>(C&& component) -> std::optional<CSS::Position> {
+            return CSS::TwoComponentPositionBlockInline { { WTFMove(component) }, { CSS::Keyword::Center { } } };
+        },
+        []<IsInlineOnlyComponent C>(C&& component) -> std::optional<CSS::Position> {
+            return CSS::TwoComponentPositionBlockInline { { CSS::Keyword::Center { } }, { WTFMove(component) } };
+        },
+        []<IsStartEndOnlyComponent C>(C&&) -> std::optional<CSS::Position> {
+            // `start` and `end` are invalid for single component position values.
+            return { };
         },
         [](CSS::Keyword::Center&&) -> std::optional<CSS::Position> {
             return CSS::TwoComponentPositionHorizontalVertical { { CSS::Keyword::Center { } }, { CSS::Keyword::Center { } } };
@@ -202,6 +296,11 @@ static std::optional<CSS::Position> positionUnresolvedFromTwoComponents(Position
     // |
     //   [ left | center | right | x-start | x-end | <length-percentage> ]
     //   [ top | center | bottom | y-start | y-end | <length-percentage> ]
+    // |
+    //   [ block-start | center | block-end ] &&
+    //   [ inline-start | center | inline-end ]
+    // |
+    //   [ start | center | end ]{2}
     // ]
 
     return WTF::switchOn(WTFMove(component1),
@@ -227,6 +326,39 @@ static std::optional<CSS::Position> positionUnresolvedFromTwoComponents(Position
                 }
             );
         },
+        [&]<IsBlockOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ inline-start | center | inline-end ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsInlineSecondComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionBlockInline { { WTFMove(component1) }, { WTFMove(component2) } };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsInlineOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ block-start | center | block-end ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsBlockSecondComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionBlockInline { { WTFMove(component2) }, { WTFMove(component1) } };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsStartEndOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ start | center | end ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsStartEndSecondComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionStartEnd { { WTFMove(component1) }, { WTFMove(component2) } };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
         [&](CSS::Keyword::Center&& component1) -> std::optional<CSS::Position> {
             // `component2` can be anything.
             return WTF::switchOn(WTFMove(component2),
@@ -235,6 +367,15 @@ static std::optional<CSS::Position> positionUnresolvedFromTwoComponents(Position
                 },
                 [&]<IsVerticalOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
                     return CSS::TwoComponentPositionHorizontalVertical { { WTFMove(component1) }, { WTFMove(component2) } };
+                },
+                [&]<IsBlockOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionBlockInline { { WTFMove(component2) }, { WTFMove(component1) } };
+                },
+                [&]<IsInlineOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionBlockInline { { WTFMove(component1) }, { WTFMove(component2) } };
+                },
+                [&]<IsStartEndOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::TwoComponentPositionStartEnd { { WTFMove(component1) }, { WTFMove(component2) } };
                 },
                 [&](CSS::Keyword::Center&& component2) -> std::optional<CSS::Position> {
                     return CSS::TwoComponentPositionHorizontalVertical { { WTFMove(component1) }, { WTFMove(component2) } };
@@ -268,6 +409,18 @@ static std::optional<CSS::Position> positionUnresolvedFromThreeComponents(Positi
     // |
     //   [ center | left |  right | x-start | x-end ] &&
     //   [ [         top | bottom | y-start | y-end ] <length-percentage> ]
+    // |
+    //   [ [         block-start |  block-end ] <length-percentage> ] &&
+    //   [ center | inline-start | inline-end ]
+    // |
+    //   [ center |  block-start |  block-end ] &&
+    //   [ [        inline-start | inline-end ] <length-percentage> ]
+    // |
+    //   [ [        start | end ] <length-percentage> ]
+    //   [ center | start | end ]
+    // |
+    //   [ center | start | end ]
+    //   [ [        start | end ] <length-percentage> ]
     // ]
 
     return WTF::switchOn(WTFMove(component1),
@@ -345,12 +498,123 @@ static std::optional<CSS::Position> positionUnresolvedFromThreeComponents(Positi
                 }
             );
         },
+        [&]<IsBlockOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ inline-start | inline-end | <length-percentage> ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsInlineOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be <length-percentage>
+                    if (!WTF::holdsAlternative<CSS::LengthPercentage<>>(component3))
+                        return { };
+                    return CSS::ThreeComponentPositionBlockInlineLengthSecond {
+                        { { WTFMove(component1) } },
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                    };
+                },
+                [&](CSS::LengthPercentage<>&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be in the set [ center | inline-start | inline-end ]
+                    return WTF::switchOn(WTFMove(component3),
+                        [&]<IsInlineOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionBlockInlineLengthFirst {
+                                { { WTFMove(component1), WTFMove(component2) } },
+                                { { WTFMove(component3) } },
+                            };
+                        },
+                        [&](CSS::Keyword::Center&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionBlockInlineLengthFirst {
+                                { { WTFMove(component1), WTFMove(component2) } },
+                                { { WTFMove(component3) } },
+                            };
+                        },
+                        [](auto&&) -> std::optional<CSS::Position> {
+                            return { };
+                        }
+                    );
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsInlineOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ block-start | block-end | <length-percentage> ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsBlockOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be <length-percentage>
+                    if (!WTF::holdsAlternative<CSS::LengthPercentage<>>(component3))
+                        return { };
+                    return CSS::ThreeComponentPositionBlockInlineLengthFirst {
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                        { { WTFMove(component1) } },
+                    };
+                },
+                [&](CSS::LengthPercentage<>&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be in the set [ center | block-start | block-end ]
+                    return WTF::switchOn(WTFMove(component3),
+                        [&]<IsBlockOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionBlockInlineLengthSecond {
+                                { { WTFMove(component3) } },
+                                { { WTFMove(component1), WTFMove(component2) } },
+                            };
+                        },
+                        [&](CSS::Keyword::Center&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionBlockInlineLengthSecond {
+                                { { WTFMove(component3) } },
+                                { { WTFMove(component1), WTFMove(component2) } },
+                            };
+                        },
+                        [](auto&&) -> std::optional<CSS::Position> {
+                            return { };
+                        }
+                    );
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsStartEndOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component2` must be in the set [ start | end | <length-percentage> ]
+            return WTF::switchOn(WTFMove(component2),
+                [&]<IsStartEndOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be <length-percentage>
+                    if (!WTF::holdsAlternative<CSS::LengthPercentage<>>(component3))
+                        return { };
+                    return CSS::ThreeComponentPositionStartEndLengthSecond {
+                        { { WTFMove(component1) } },
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                    };
+                },
+                [&](CSS::LengthPercentage<>&& component2) -> std::optional<CSS::Position> {
+                    // `component3` must be in the set [ center | start | end ]
+                    return WTF::switchOn(WTFMove(component3),
+                        [&]<IsStartEndOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionStartEndLengthFirst {
+                                { { WTFMove(component1), WTFMove(component2) } },
+                                { { WTFMove(component3) } },
+                            };
+                        },
+                        [&](CSS::Keyword::Center&& component3) -> std::optional<CSS::Position> {
+                            return CSS::ThreeComponentPositionStartEndLengthFirst {
+                                { { WTFMove(component1), WTFMove(component2) } },
+                                { { WTFMove(component3) } },
+                            };
+                        },
+                        [](auto&&) -> std::optional<CSS::Position> {
+                            return { };
+                        }
+                    );
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
         [&](CSS::Keyword::Center&& component1) -> std::optional<CSS::Position> {
             // `component3` must be <length-percentage>
             if (!WTF::holdsAlternative<CSS::LengthPercentage<>>(component3))
                 return { };
 
-            // `component2` must be in the set [ left | right | x-start | x-end | top | bottom | y-start | y-end ]
+            // `component2` must be in the set [ left | right | x-start | x-end | top | bottom | y-start | y-end | block-start | block-end inline-start | inline-end | start | end ]
             return WTF::switchOn(WTFMove(component2),
                 [&]<IsHorizontalOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
                     return CSS::ThreeComponentPositionHorizontalVerticalLengthFirst {
@@ -360,6 +624,24 @@ static std::optional<CSS::Position> positionUnresolvedFromThreeComponents(Positi
                 },
                 [&]<IsVerticalOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
                     return CSS::ThreeComponentPositionHorizontalVerticalLengthSecond {
+                        { { WTFMove(component1) } },
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                    };
+                },
+                [&]<IsBlockOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::ThreeComponentPositionBlockInlineLengthFirst {
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                        { { WTFMove(component1) } },
+                    };
+                },
+                [&]<IsInlineOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::ThreeComponentPositionBlockInlineLengthSecond {
+                        { { WTFMove(component1) } },
+                        { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
+                    };
+                },
+                [&]<IsStartEndOnlyComponent C2>(C2&& component2) -> std::optional<CSS::Position> {
+                    return CSS::ThreeComponentPositionStartEndLengthSecond {
                         { { WTFMove(component1) } },
                         { { WTFMove(component2), std::get<CSS::LengthPercentage<>>(component3) } },
                     };
@@ -381,6 +663,11 @@ static std::optional<CSS::Position> positionUnresolvedFromFourComponents(Positio
     // <position-four> = [
     //   [ [ left | right | x-start | x-end ] <length-percentage> ] &&
     //   [ [ top | bottom | y-start | y-end ] <length-percentage> ]
+    // |
+    //   [ [ block-start | block-end ] <length-percentage> ] &&
+    //   [ [ inline-start | inline-end ] <length-percentage> ]
+    // |
+    //   [ [ start | end ] <length-percentage> ]{2}
     // ]
 
     // `component2` and `component4` must be <length-percentage>
@@ -409,6 +696,48 @@ static std::optional<CSS::Position> positionUnresolvedFromFourComponents(Positio
                     return CSS::FourComponentPositionHorizontalVertical {
                         { { WTFMove(component3), std::get<CSS::LengthPercentage<>>(component4) } },
                         { { WTFMove(component1), std::get<CSS::LengthPercentage<>>(component2) } },
+                    };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsBlockOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component3` must be in the set [ inline-start | inline-end ]
+            return WTF::switchOn(WTFMove(component3),
+                [&]<IsInlineOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                    return CSS::FourComponentPositionBlockInline {
+                        { { WTFMove(component1), std::get<CSS::LengthPercentage<>>(component2) } },
+                        { { WTFMove(component3), std::get<CSS::LengthPercentage<>>(component4) } },
+                    };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsInlineOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component3` must be in the set [ block-start | block-end ]
+            return WTF::switchOn(WTFMove(component3),
+                [&]<IsBlockOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                    return CSS::FourComponentPositionBlockInline {
+                        { { WTFMove(component3), std::get<CSS::LengthPercentage<>>(component4) } },
+                        { { WTFMove(component1), std::get<CSS::LengthPercentage<>>(component2) } },
+                    };
+                },
+                [](auto&&) -> std::optional<CSS::Position> {
+                    return { };
+                }
+            );
+        },
+        [&]<IsStartEndOnlyComponent C1>(C1&& component1) -> std::optional<CSS::Position> {
+            // `component3` must be in the set [ start | end ]
+            return WTF::switchOn(WTFMove(component3),
+                [&]<IsStartEndOnlyComponent C3>(C3&& component3) -> std::optional<CSS::Position> {
+                    return CSS::FourComponentPositionStartEnd {
+                        { { WTFMove(component1), std::get<CSS::LengthPercentage<>>(component2) } },
+                        { { WTFMove(component3), std::get<CSS::LengthPercentage<>>(component4) } },
                     };
                 },
                 [](auto&&) -> std::optional<CSS::Position> {
