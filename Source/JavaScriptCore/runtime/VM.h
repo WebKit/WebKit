@@ -562,8 +562,8 @@ public:
         return emptyPropertyNameEnumeratorSlow();
     }
 
-    WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
-    WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> atomStringToJSStringMap;
+    WeakGCMap<SymbolImpl*, Symbol, WeakReferenceMode::Value, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
+    WeakGCMap<StringImpl*, JSString, WeakReferenceMode::Value, PtrHash<StringImpl*>> atomStringToJSStringMap;
 
     enum class DeletePropertyMode {
         // Default behaviour of deleteProperty, matching the spec.

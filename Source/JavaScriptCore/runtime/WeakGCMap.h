@@ -32,16 +32,25 @@
 
 namespace JSC {
 
-// A UncheckedKeyHashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
+// A UncheckedKeyHashMap that weakly references either keys or values (but not both), 
+// and automatically removes entries when the weakly referenced side is garbage collected.
+enum class WeakReferenceMode {
+    Key,
+    Value
+};
 
-template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode = WeakReferenceMode::Value, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCHashTable {
     WTF_MAKE_FAST_ALLOCATED;
-    typedef Weak<ValueArg> ValueType;
-    typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
+    using WeakKeyType = Weak<KeyArg>;
+    using WeakValueType = Weak<ValueArg>;
+    using KeyType = std::conditional_t<Mode == WeakReferenceMode::Key, WeakKeyType, KeyArg>;
+    using ValueType = std::conditional_t<Mode == WeakReferenceMode::Key, ValueArg, WeakValueType>;
+    using HashMapType = UncheckedKeyHashMap<KeyType, ValueType, HashArg, KeyTraitsArg>;
 
+    static_assert(!(Mode == WeakReferenceMode::Key && is_instantiation_of_weak_v<ValueArg>),
+    "WeakGCMap should not weakify both key and value. Use either WeakReferenceMode::Key or a non-Weak ValueArg.");
 public:
-    typedef typename HashMapType::KeyType KeyType;
     typedef typename HashMapType::AddResult AddResult;
     typedef typename HashMapType::iterator iterator;
     typedef typename HashMapType::const_iterator const_iterator;
@@ -62,11 +71,16 @@ public:
     template<typename Functor>
     ValueArg* ensureValue(const KeyType& key, Functor&& functor)
     {
-        // If functor invokes GC, GC can prune WeakGCMap, and manipulate UncheckedKeyHashMap while we are touching it in ensure function.
-        // The functor must not invoke GC.
+        // IMPORTANT: The provided functor must not invoke GC. 
+        // During ensure(), GC may prune stale entries in WeakGCMap,
+        // which mutates the underlying UncheckedKeyHashMap during iteration or insertion.
         AssertNoGC assertNoGC;
         AddResult result = m_map.ensure(key, functor);
-        ValueArg* value = result.iterator->value.get();
+        ValueArg* value;
+        if constexpr (Mode == WeakReferenceMode::Value)
+            value = result.iterator->value.get();
+        else
+            value = std::addressof(result.iterator->value);
         if (!result.isNewEntry && !value) {
             value = functor();
             result.iterator->value = WTFMove(value);
@@ -86,13 +100,12 @@ public:
 
     bool isEmpty() const
     {
-        const_iterator it = m_map.begin();
-        const_iterator end = m_map.end();
-        while (it != end) {
-            if (it->value)
-                return true;
-        }
-        return false;
+        return std::any_of(m_map.begin(), m_map.end(), [](const auto& entry) {
+            if constexpr (Mode == WeakReferenceMode::Key)
+                return !!entry.key;
+            else
+                return !!entry.value;
+        });
     }
 
     inline iterator find(const KeyType& key);

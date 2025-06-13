@@ -91,6 +91,30 @@ private:
     WeakImpl* m_impl { nullptr };
 };
 
+template<typename T>
+struct WeakHash {
+    static unsigned hash(const JSC::Weak<T>& value)
+    {
+        return DefaultHash<T*>::Hash::hash(value.get());
+    }
+
+    static bool equal(const JSC::Weak<T>& a, const JSC::Weak<T>& b)
+    {
+        return a.get() == b.get();
+    }
+
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<typename T>
+struct is_instantiation_of_weak : std::false_type { };
+
+template<typename U>
+struct is_instantiation_of_weak<Weak<U>> : std::true_type { };
+
+template<typename T>
+inline constexpr bool is_instantiation_of_weak_v = is_instantiation_of_weak<T>::value;
+
 } // namespace JSC
 
 namespace WTF {
@@ -112,5 +136,7 @@ template<typename T> struct HashTraits<JSC::Weak<T>> : SimpleClassHashTraits<JSC
     static PeekType peek(const StorageType& value) { return value.get(); }
     static PeekType peek(EmptyValueType) { return PeekType(); }
 };
+
+template<typename T> struct DefaultHash<JSC::Weak<T>> : JSC::WeakHash<T> { };
 
 } // namespace WTF

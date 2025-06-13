@@ -32,58 +32,75 @@
 
 namespace JSC {
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-inline WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::WeakGCMap(VM& vm)
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+inline WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::WeakGCMap(VM& vm)
     : m_vm(vm)
 {
     vm.heap.registerWeakGCHashTable(this);
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-inline WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::~WeakGCMap()
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+inline WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::~WeakGCMap()
 {
     m_vm.heap.unregisterWeakGCHashTable(this);
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-inline typename WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::iterator WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::find(const KeyType& key)
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+inline typename WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::iterator WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::find(const KeyType& key)
 {
     iterator it = m_map.find(key);
     iterator end = m_map.end();
-    if (it != end && !it->value) // Found a zombie value.
-        return end;
+    if (it != end) {
+        if constexpr (Mode == WeakReferenceMode::Key) {
+            if (!it->key)
+                return end;
+        } else {
+            if (!it->value)
+                return end;
+        }
+    }
     return it;
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-inline typename WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::const_iterator WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::find(const KeyType& key) const
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+inline typename WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::const_iterator WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::find(const KeyType& key) const
 {
     return const_cast<WeakGCMap*>(this)->find(key);
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-inline bool WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::contains(const KeyType& key) const
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+inline bool WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::contains(const KeyType& key) const
 {
     return find(key) != m_map.end();
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
-NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::pruneStaleEntries()
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
+NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::pruneStaleEntries()
 {
     m_map.removeIf([](const typename HashMapType::KeyValuePairType& entry) {
-        return !entry.value;
+        if constexpr (Mode == WeakReferenceMode::Key)
+            return !entry.key;
+        else
+            return !entry.value;
     });
 }
 
-template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+template<typename KeyArg, typename ValueArg, WeakReferenceMode Mode, typename HashArg, typename KeyTraitsArg>
 template<typename Func>
-inline void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::forEach(Func func)
+inline void WeakGCMap<KeyArg, ValueArg, Mode, HashArg, KeyTraitsArg>::forEach(Func func)
 {
     ASSERT(m_vm.heap.isDeferred());
     for (auto& entry : m_map) {
-        if (entry.value) {
-            if (func(entry.value.get()) == IterationStatus::Done)
-                return;
+        if constexpr (Mode == WeakReferenceMode::Key) {
+            if (entry.key) {
+                if (func(entry.key.get()) == IterationStatus::Done)
+                    return;
+            }
+        } else {
+            if (entry.value) {
+                if (func(entry.value.get()) == IterationStatus::Done)
+                    return;
+            }
         }
     }
 }
