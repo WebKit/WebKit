@@ -436,7 +436,7 @@ union yyalloc
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
-static const yytype_uint8 yytranslate[] =
+static constexpr auto yytranslate = std::to_array<yytype_uint8>(
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -466,12 +466,12 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23
-};
+});
 
 #if YYDEBUG
 /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
    YYRHS.  */
-static const yytype_uint8 yyprhs[] =
+static constexpr auto yyprhs = std::to_array<yytype_uint8>(
 {
        0,     0,     3,     5,     7,     9,    11,    13,    16,    19,
       21,    25,    29,    32,    35,    39,    43,    45,    47,    49,
@@ -480,10 +480,10 @@ static const yytype_uint8 yyprhs[] =
      111,   115,   117,   119,   123,   125,   127,   131,   135,   137,
      140,   142,   146,   148,   152,   154,   158,   160,   164,   166,
      170,   174,   176,   180,   182
-};
+});
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
-static const yytype_int8 yyrhs[] =
+static constexpr auto yyrhs = std::to_array<yytype_uint8>(
 {
       34,     0,    -1,    35,    -1,    54,    -1,    37,    -1,    38,
       -1,    24,    -1,    24,    38,    -1,    45,    38,    -1,    39,
@@ -504,10 +504,10 @@ static const yytype_int8 yyrhs[] =
       57,     4,    58,    -1,    59,    -1,    58,     7,    59,    -1,
       58,     6,    59,    -1,    60,    -1,    59,     3,    60,    -1,
       51,    -1,     6,    60,    -1
-};
+});
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static constexpr auto yyrline = std::to_array<yytype_uint16>(
 {
        0,   113,   113,   120,   124,   130,   134,   139,   144,   152,
      158,   164,   173,   183,   201,   212,   230,   234,   236,   243,
@@ -516,14 +516,13 @@ static const yytype_uint16 yyrline[] =
      374,   382,   386,   388,   395,   400,   402,   408,   417,   419,
      427,   429,   436,   438,   445,   447,   454,   456,   463,   465,
      470,   477,   479,   486,   488
-};
+});
 #endif
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
-static const char *const yytname[] =
-{
+static constexpr std::array yytname {
   "$end", "error", "$undefined", "MULOP", "RELOP", "EQOP", "MINUS",
   "PLUS", "AND", "OR", "FUNCTIONNAME", "LITERAL", "NAMETEST", "NUMBER",
   "NODETYPE", "VARIABLEREFERENCE", "AXISNAME", "COMMENT", "DOTDOT", "PI",
@@ -541,17 +540,17 @@ static const char *const yytname[] =
 # ifdef YYPRINT
 /* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
    token YYLEX-NUM.  */
-static const yytype_uint16 yytoknum[] =
+static constexpr yytoknum = std::to_array<yytype_uint16>(
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,    47,    64,    40,    41,    91,    93,
       46,    44,   124
-};
+});
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
+static constexpr auto yyr1 = std::to_array<yytype_uint8>(
 {
        0,    33,    34,    35,    36,    36,    37,    37,    37,    38,
       38,    38,    39,    39,    39,    39,    39,    40,    40,    41,
@@ -560,10 +559,10 @@ static const yytype_uint8 yyr1[] =
       49,    50,    51,    51,    52,    52,    52,    52,    53,    53,
       54,    54,    55,    55,    56,    56,    57,    57,    58,    58,
       58,    59,    59,    60,    60
-};
+});
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
+static constexpr auto yyr2 = std::to_array<yytype_uint8>(
 {
        0,     2,     1,     1,     1,     1,     1,     2,     2,     1,
        3,     3,     2,     2,     3,     3,     1,     1,     1,     3,
@@ -572,12 +571,12 @@ static const yytype_uint8 yyr2[] =
        3,     1,     1,     3,     1,     1,     3,     3,     1,     2,
        1,     3,     1,     3,     1,     3,     1,     3,     1,     3,
        3,     1,     3,     1,     2
-};
+});
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
    STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+static constexpr auto yydefact = std::to_array<yytype_uint8>(
 {
        0,     0,     0,    34,    24,    35,    32,    17,     0,    31,
        0,     0,    29,     0,     6,    18,     0,    30,     0,     2,
@@ -590,20 +589,20 @@ static const yytype_uint8 yydefact[] =
       20,    33,    10,    11,    15,    14,    43,    46,    47,    51,
       53,    55,    57,    60,    59,    62,    38,     0,    28,    23,
       40
-};
+});
 
 /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int8 yydefgoto[] =
+static constexpr auto yydefgoto = std::to_array<yytype_int8>(
 {
       -1,    18,    71,    20,    21,    22,    23,    24,    25,    43,
       44,    45,    26,    27,    28,    29,    72,    73,    30,    31,
       32,    33,    34,    35,    36,    37,    38,    39
-};
+});
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
 #define YYPACT_NINF -37
-static const yytype_int8 yypact[] =
+static constexpr auto yypact = std::to_array<yytype_int8>(
 {
       81,    81,    -8,   -37,    -7,   -37,   -37,   -37,    14,   -37,
       17,    20,   -37,    21,     8,   -37,    81,   -37,    48,   -37,
@@ -616,22 +615,22 @@ static const yytype_int8 yypact[] =
      -37,   -37,   -37,   -37,   -37,   -37,   -37,   -17,   -17,    45,
       49,    52,    10,    54,    54,   -37,   -37,    81,   -37,   -37,
      -37
-};
+});
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int8 yypgoto[] =
+static constexpr auto yypgoto = std::to_array<yytype_int8>(
 {
      -37,   -37,     3,   -37,   -37,   -12,   -22,   -37,    38,   -20,
       60,   -36,   -21,   -37,   -37,   -37,   -37,   -24,   -37,    30,
      -37,   -37,    19,    40,    43,    29,   -16,    -1
-};
+});
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
 #define YYTABLE_NINF -1
-static const yytype_uint8 yytable[] =
+static constexpr auto yytable = std::to_array<yytype_uint8>(
 {
       40,    54,    50,    19,    12,    57,    77,    53,    75,    96,
       63,    62,    12,    97,    58,    61,    67,    68,    41,    51,
@@ -647,9 +646,9 @@ static const yytype_uint8 yytable[] =
        0,    17,     2,     3,     4,     5,     0,     6,     7,     8,
        9,    10,    11,    12,    13,     0,    14,    15,    16,     0,
        0,     0,    17
-};
+});
 
-static const yytype_int8 yycheck[] =
+static constexpr auto yycheck = std::to_array<yytype_int8>(
 {
        1,    22,    14,     0,    21,    25,    11,    24,    44,    27,
        9,    32,    21,    31,    26,    24,     6,     7,    26,    16,
@@ -665,11 +664,11 @@ static const yytype_int8 yycheck[] =
       -1,    30,    10,    11,    12,    13,    -1,    15,    16,    17,
       18,    19,    20,    21,    22,    -1,    24,    25,    26,    -1,
       -1,    -1,    30
-};
+});
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+static constexpr auto yystos = std::to_array<yytype_uint8>(
 {
        0,     6,    10,    11,    12,    13,    15,    16,    17,    18,
       19,    20,    21,    22,    24,    25,    26,    30,    34,    35,
@@ -682,7 +681,7 @@ static const yytype_uint8 yystos[] =
       27,    27,    39,    39,    42,    42,    52,    38,    38,    55,
       56,    57,    58,    59,    59,    60,    27,    31,    29,    27,
       50
-};
+});
 
 #define yyerrok		(yyerrstatus = 0)
 #define yyclearin	(yychar = YYEMPTY)
@@ -1080,7 +1079,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       YYSIZE_T yysize1;
       int yysize_overflow = 0;
       enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-      char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
+      std::array<char const *, YYERROR_VERBOSE_ARGS_MAXIMUM> yyarg;
       int yyx;
 
 # if 0
@@ -1097,10 +1096,10 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       static char const yyunexpected[] = "syntax error, unexpected %s";
       static char const yyexpecting[] = ", expecting %s";
       static char const yyor[] = " or %s";
-      char yyformat[sizeof yyunexpected
-		    + sizeof yyexpecting - 1
-		    + ((YYERROR_VERBOSE_ARGS_MAXIMUM - 2)
-		       * (sizeof yyor - 1))];
+      std::array<char, sizeof yyunexpected
+              + sizeof yyexpecting - 1
+              + ((YYERROR_VERBOSE_ARGS_MAXIMUM - 2)
+                 * (sizeof yyor - 1))> yyformat;
       char const *yyprefix = yyexpecting;
 
       /* Start YYX at -YYN if negative to avoid negative indexes in
@@ -1113,7 +1112,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       int yycount = 1;
 
       yyarg[0] = yytname[yytype];
-      yyfmt = yystpcpy (yyformat, yyunexpected);
+      yyfmt = yystpcpy (yyformat.data(), yyunexpected);
 
       for (yyx = yyxbegin; yyx < yyxend; ++yyx)
 	if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
@@ -1133,7 +1132,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 	    yyprefix = yyor;
 	  }
 
-      yyf = YY_(yyformat);
+      yyf = YY_(yyformat.data());
       yysize1 = yysize + yystrlen (yyf);
       yysize_overflow |= (yysize1 < yysize);
       yysize = yysize1;
@@ -1421,8 +1420,8 @@ YYSTYPE yylval;
   int yytoken = 0;
 #if YYERROR_VERBOSE
   /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
+  std::array<char, 128> yymsgbuf;
+  char *yymsg = yymsgbuf.data();
   YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
 #endif
 
@@ -1435,13 +1434,13 @@ YYSTYPE yylval;
      to reallocate them elsewhere.  */
 
   /* The state stack.  */
-  yytype_int16 yyssa[YYINITDEPTH];
-  yytype_int16 *yyss = yyssa;
+  std::array<yytype_int16, YYINITDEPTH> yyssa;
+  yytype_int16 *yyss = yyssa.data();
   yytype_int16 *yyssp;
 
   /* The semantic value stack.  */
-  YYSTYPE yyvsa[YYINITDEPTH];
-  YYSTYPE *yyvs = yyvsa;
+  std::array<YYSTYPE, YYINITDEPTH> yyvsa;
+  YYSTYPE *yyvs = yyvsa.data();
   YYSTYPE *yyvsp;
 
 
@@ -1534,7 +1533,7 @@ YYSTYPE yylval;
 	YYSTACK_RELOCATE (yyvs);
 
 #  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
+    if (yyss1 != yyssa.data())
 	  YYSTACK_FREE (yyss1);
       }
 # endif
@@ -2243,11 +2242,11 @@ yyreturn:
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
-  if (yyss != yyssa)
+  if (yyss != yyssa.data())
     YYSTACK_FREE (yyss);
 #endif
 #if YYERROR_VERBOSE
-  if (yymsg != yymsgbuf)
+  if (yymsg != yymsgbuf.data())
     YYSTACK_FREE (yymsg);
 #endif
   /* Make sure YYID is used.  */
