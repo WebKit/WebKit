@@ -281,6 +281,7 @@ struct PerWebProcessState {
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
     BOOL _usesAutomaticContentInsetBackgroundFill;
+    BOOL _shouldSuppressTopFixedColorExtensionView;
 
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;

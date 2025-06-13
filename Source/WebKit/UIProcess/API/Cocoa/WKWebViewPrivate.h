@@ -216,6 +216,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) pid_t _modelProcessIdentifier WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 @property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_API_AVAILABLE(macos(10.11), ios(9.0));
+@property (nonatomic, setter=_setShouldSuppressTopFixedColorExtensionView:) BOOL _shouldSuppressTopFixedColorExtensionView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL _prefersHardScrollPocketStyle WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract A Boolean value indicating whether any resource on the page
 has been loaded over a connection using TLS 1.0 or TLS 1.1.

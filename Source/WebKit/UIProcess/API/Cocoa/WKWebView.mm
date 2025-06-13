@@ -3201,8 +3201,12 @@ static WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::Fixe
             _fixedColorExtensionViews.setAt(side, extensionView);
         }
 
-        RetainPtr predominantColor = cocoaColorOrNil(_fixedContainerEdges.predominantColor(side));
-        [extensionView updateColor:predominantColor.get() ?: self.underPageBackgroundColor];
+        if (_shouldSuppressTopFixedColorExtensionView || side != WebCore::BoxSide::Top) {
+            RetainPtr predominantColor = cocoaColorOrNil(_fixedContainerEdges.predominantColor(side));
+            [extensionView updateColor:predominantColor.get() ?: self.underPageBackgroundColor];
+        } else
+            [extensionView fadeOut];
+
         return;
     };
 
@@ -3660,6 +3664,29 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
             return completionHandler(nil);
         completionHandler(wrapper(API::FrameInfo::create(WTFMove(*data), WTFMove(page))).get());
     });
+}
+
+- (BOOL)_shouldSuppressTopFixedColorExtensionView
+{
+    return _shouldSuppressTopFixedColorExtensionView;
+}
+
+- (void)_setShouldSuppressTopFixedColorExtensionView:(BOOL)shouldSuppressTopFixedColorExtensionView
+{
+    if (_shouldSuppressTopFixedColorExtensionView == shouldSuppressTopFixedColorExtensionView)
+        return;
+
+    _shouldSuppressTopFixedColorExtensionView = shouldSuppressTopFixedColorExtensionView;
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    [self _updateFixedColorExtensionViews];
+    [self _updateTopScrollPocketCaptureColor];
+#endif
+}
+
+- (BOOL)_prefersHardScrollPocketStyle
+{
+    return !self._usesAutomaticContentInsetBackgroundFill && !self._shouldSuppressTopFixedColorExtensionView;
 }
 
 - (BOOL)_isEditable

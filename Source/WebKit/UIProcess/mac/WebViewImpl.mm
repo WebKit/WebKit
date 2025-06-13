@@ -2421,6 +2421,15 @@ void WebViewImpl::updateScrollPocketVisibilityWhenScrolledToTop()
 void WebViewImpl::updateTopScrollPocketCaptureColor()
 {
     RetainPtr view = m_view.get();
+    if (![view _shouldSuppressTopFixedColorExtensionView]) {
+        if (topScrollPocket().captureColor) {
+            // FIXME: This works around a bug where the scroll pocket's captureColor can't be cleared: rdar://153231250.
+            m_topScrollPocket = nil;
+            updateScrollPocket();
+        }
+        return;
+    }
+
     RetainPtr captureColor = [view _sampledTopFixedPositionContentColor];
     if (!captureColor && (m_pageIsScrolledToTop || [view _hasVisibleColorExtensionView:BoxSide::Top]))
         captureColor = cocoaColor(m_page->underPageBackgroundColor());
@@ -7015,7 +7024,7 @@ void WebViewImpl::updateScrollPocket()
 
 void WebViewImpl::updateTopScrollPocketStyle()
 {
-    [m_topScrollPocket setStyle:[m_view _usesAutomaticContentInsetBackgroundFill] ? NSScrollPocketStyleAutomatic : NSScrollPocketStyleHard];
+    [m_topScrollPocket setStyle:[m_view _prefersHardScrollPocketStyle] ? NSScrollPocketStyleHard : NSScrollPocketStyleAutomatic];
 }
 
 void WebViewImpl::registerViewAboveScrollPocket(NSView *containerView)
