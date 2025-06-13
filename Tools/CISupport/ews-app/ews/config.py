@@ -34,7 +34,7 @@ PATCH_FOLDER = '/tmp/'
 if is_test_mode_enabled:
     BUILDBOT_SERVER_HOST = 'localhost'
 else:
-    BUILDBOT_SERVER_HOST = f'ews-build.webkit{custom_suffix}.org'
+    BUILDBOT_SERVER_HOST = util.load_passowrd('BUILDBOT_SERVER_HOST')
 
 BUILDBOT_TRY_HOST = util.load_password('BUILDBOT_TRY_HOST', default=BUILDBOT_SERVER_HOST)
 
