@@ -2282,6 +2282,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
+- (NSString *)accessibilityIdentifier
+{
+    RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"]);
+    if ([userDefaults boolForKey:@"AXEnableWebKitDOMIdentifier"]) {
+        auto* backingObject = self.updateObjectBackingStore;
+        return backingObject ? backingObject->identifierAttribute().createNSString().autorelease() : nil;
+    }
+
+    return nil;
+}
+
 - (void)accessibilityPerformPressAction
 {
     // In case anything we do by performing the press action causes an alert or other modal
