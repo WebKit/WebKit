@@ -30,7 +30,7 @@ import traceback
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
 from ews.common.github import GitHubEWS
-from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_CHANGE, ERR_UNABLE_TO_FETCH_CHANGE
+from ews.config import is_bugzilla_not_enabled,  ERR_BUG_CLOSED, ERR_OBSOLETE_CHANGE, ERR_UNABLE_TO_FETCH_CHANGE
 from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 
@@ -54,6 +54,8 @@ class FetchLoop():
         custom_suffix = util.get_custom_suffix()
         if custom_suffix != '':
             _log.info(f'Skipping automatic Bugzilla patch sending on testing environment. custom_suffix: {custom_suffix}')
+            return
+        if is_bugzilla_not_enabled:
             return
         while True:
             Buildbot.update_icons_for_queues_mapping()
