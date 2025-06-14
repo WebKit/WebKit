@@ -27,21 +27,13 @@
 #include "config.h"
 #include "HTMLEntitySearch.h"
 
-#include "HTMLEntityTable.h"
 #include <numeric>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
-static const HTMLEntityTableEntry* midpoint(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
-{
-    return std::midpoint(left, right);
-}
-
 HTMLEntitySearch::HTMLEntitySearch()
-    : m_first(HTMLEntityTable::firstEntry())
-    , m_last(HTMLEntityTable::lastEntry())
+    : m_entries(HTMLEntityTable::entries())
 {
 }
 
@@ -61,74 +53,71 @@ HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableE
 
 const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) const
 {
-    auto* left = m_first;
-    auto* right = m_last;
-    if (left == right)
-        return left;
-    CompareResult result = compare(left, nextCharacter);
+    auto span = m_entries;
+    if (span.size() == 1)
+        return &span.front();
+    CompareResult result = compare(&span.front(), nextCharacter);
     if (result == Prefix)
-        return left;
+        return &span.front();
     if (result == After)
-        return right;
-    while (left + 1 < right) {
-        auto* probe = midpoint(left, right);
+        return &span.back();
+    while (span.size() > 2) {
+        auto* probe = std::midpoint(&span.front(), &span.back());
         result = compare(probe, nextCharacter);
         if (result == Before)
-            left = probe;
+            span = span.subspan(probe - span.data());
         else {
             ASSERT(result == After || result == Prefix);
-            right = probe;
+            span = span.first(probe - span.data() + 1);
         }
     }
-    ASSERT(left + 1 == right);
-    return right;
+    ASSERT(span.size() == 2);
+    return &span.back();
 }
 
 const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) const
 {
-    auto* left = m_first;
-    auto* right = m_last;
-    if (left == right)
-        return right;
-    CompareResult result = compare(right, nextCharacter);
+    auto span = m_entries;
+    if (span.size() == 1)
+        return &span.back();
+    CompareResult result = compare(&span.back(), nextCharacter);
     if (result == Prefix)
-        return right;
+        return &span.back();
     if (result == Before)
-        return left;
-    while (left + 1 < right) {
-        auto* probe = midpoint(left, right);
+        return &span.front();
+    while (span.size() > 2) {
+        auto* probe = std::midpoint(&span.front(), &span.back());
         result = compare(probe, nextCharacter);
         if (result == After)
-            right = probe;
+            span = span.first(probe - span.data() + 1);
         else {
             ASSERT(result == Before || result == Prefix);
-            left = probe;
+            span = span.subspan(probe - span.data());
         }
     }
-    ASSERT(left + 1 == right);
-    return left;
+    ASSERT(span.size() == 2);
+    return &span.front();
 }
 
 void HTMLEntitySearch::advance(UChar nextCharacter)
 {
     ASSERT(isEntityPrefix());
     if (!m_currentLength) {
-        m_first = HTMLEntityTable::firstEntryStartingWith(nextCharacter);
-        m_last = HTMLEntityTable::lastEntryStartingWith(nextCharacter);
-        if (!m_first || !m_last)
-            return fail();
+        m_entries = HTMLEntityTable::entriesStartingWith(nextCharacter);
+        if (m_entries.empty())
+            return;
     } else {
-        m_first = findFirst(nextCharacter);
-        m_last = findLast(nextCharacter);
-        if (m_first == m_last && compare(m_first, nextCharacter) != Prefix)
+        auto* first = findFirst(nextCharacter);
+        m_entries = m_entries.subspan(first - m_entries.data());
+        auto* last = findLast(nextCharacter);
+        m_entries = m_entries.first(last - m_entries.data() + 1);
+        if (first == last && compare(first, nextCharacter) != Prefix)
             return fail();
     }
     ++m_currentLength;
-    if (m_first->nameLength() != m_currentLength)
+    if (m_entries[0].nameLength() != m_currentLength)
         return;
-    m_mostRecentMatch = m_first;
+    m_mostRecentMatch = &m_entries.front();
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

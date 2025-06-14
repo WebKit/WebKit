@@ -32,7 +32,7 @@ namespace WebCore {
 
 // Optimize packing since there are over 2000 of these.
 struct HTMLEntityTableEntry {
-    const char* nameCharacters() const;
+    std::span<const char> nameCharacters() const;
     unsigned nameLength() const { return nameLengthExcludingSemicolon + nameIncludesTrailingSemicolon; }
 
     unsigned firstCharacter : 21; // All Unicode characters fit in 21 bits.
@@ -44,11 +44,8 @@ struct HTMLEntityTableEntry {
 
 class HTMLEntityTable {
 public:
-    static const HTMLEntityTableEntry* firstEntry();
-    static const HTMLEntityTableEntry* lastEntry();
-
-    static const HTMLEntityTableEntry* firstEntryStartingWith(UChar);
-    static const HTMLEntityTableEntry* lastEntryStartingWith(UChar);
+    static std::span<const HTMLEntityTableEntry> entries();
+    static std::span<const HTMLEntityTableEntry> entriesStartingWith(UChar);
 };
 
 } // namespace WebCore
