@@ -795,6 +795,7 @@ runtime/DirectEvalExecutable.cpp
 runtime/DisposableStackConstructor.cpp
 runtime/DisposableStackPrototype.cpp
 runtime/DoublePredictionFuzzerAgent.cpp
+runtime/DoubleToStringCache.cpp
 runtime/DumpContext.cpp
 runtime/ECMAMode.cpp
 runtime/Error.cpp

@@ -998,6 +998,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DisposableStackConstructor.h
     runtime/DisposableStackPrototype.h
     runtime/DisposableStackPrototypeInlines.h
+    runtime/DoubleToStringCache.h
     runtime/DumpContext.h
     runtime/ECMAMode.h
     runtime/EnsureStillAliveHere.h

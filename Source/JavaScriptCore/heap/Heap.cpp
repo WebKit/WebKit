@@ -1709,6 +1709,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         sweepArrayBuffers();
         snapshotUnswept();
         finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
+        vm().numericStrings.finalizeUnconditionally(vm());
         removeDeadCompilerWorklistEntries();
     }
 
@@ -2266,7 +2267,7 @@ void Heap::finalize()
 
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full) {
         vm().jsonAtomStringCache.clear();
-        vm().numericStrings.clearOnGarbageCollection();
+        vm().numericStrings.clearOnGarbageCollection(vm());
         vm().stringReplaceCache.clear();
     }
     vm().keyAtomStringCache.clear();
