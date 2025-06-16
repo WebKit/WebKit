@@ -33,8 +33,13 @@ class SVGPolyElement : public SVGGeometryElement {
 public:
     const SVGPointList& points() const { return m_points->currentValue(); }
 
+    // per SVG 2 https://svgwg.org/svg2-draft/shapes.html#InterfaceSVGAnimatedPoints
+    // The points and animatedPoints IDL attributes represent the current
+    // non-animated value of the reflected attribute.
+    // On getting points or animatedPoints, an SVGPointList object is returned that
+    // reflects the base value of the reflected attribute.
     SVGPointList& points() { return m_points->baseVal(); }
-    SVGPointList& animatedPoints() { return *m_points->animVal(); }
+    SVGPointList& animatedPoints() { return m_points->baseVal(); }
 
     size_t approximateMemoryCost() const override;
 
