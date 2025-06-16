@@ -2349,17 +2349,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 auto contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength);
                 auto contentLengthFromResponse = gstStructureGet<uint64_t>(responseHeaders.get(), contentLengthHeaderName);
-                uint64_t contentLength = 0;
-                if (!contentLengthFromResponse) {
-                    // souphttpsrc sets a string for Content-Length, so
-                    // handle it here, until we remove the webkit+ protocol
-                    // prefix from webkitwebsrc.
-                    if (auto contentLengthValue = gstStructureGetString(responseHeaders.get(), contentLengthHeaderName)) {
-                        if (auto parsedContentLength = parseInteger<uint64_t>(contentLengthValue.span()))
-                            contentLength = *parsedContentLength;
-                    }
-                } else
-                    contentLength = *contentLengthFromResponse;
+                uint64_t contentLength = contentLengthFromResponse.value_or(0);
                 if (!isRangeRequest) {
                     m_isLiveStream = !contentLength;
                     if (*m_isLiveStream && WEBKIT_IS_WEB_SRC(m_source.get()) && webKitSrcIsSeekable(WEBKIT_WEB_SRC_CAST(m_source.get())))

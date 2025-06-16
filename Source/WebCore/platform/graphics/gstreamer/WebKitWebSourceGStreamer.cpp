@@ -543,8 +543,10 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         members->responseCondition.wait(members.mutex(), [&] {
             return members->isFlushing || gst_adapter_available(members->adapter.get()) || members->doesHaveEOS;
         });
-        if (members->isFlushing)
+        if (members->isFlushing) {
+            GST_TRACE_OBJECT(src, "Still flushing");
             return GST_FLOW_FLUSHING;
+        }
 
         queueSize = gst_adapter_available(members->adapter.get());
         GST_TRACE_OBJECT(src, "available %" G_GSIZE_FORMAT, queueSize);
@@ -850,6 +852,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
         RunLoop::mainSingleton().dispatch([resource = WTF::move(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->shutdown();
+            GST_DEBUG("Stopping resource request R%u DONE", requestNumber);
         });
     }
     ASSERT(!members->resource);
@@ -1081,8 +1084,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     members->pendingHttpHeadersMessage = adoptGRef(gst_message_new_element(GST_OBJECT_CAST(src.get()), gst_structure_copy(httpHeaders.get())));
     members->pendingHttpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders.release()));
 
-    if (response.httpStatusCode() >= 400) {
-        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
+    auto httpStatusCode = response.httpStatusCode();
+    if (httpStatusCode >= 400) {
+        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, httpStatusCode), (nullptr));
         members->doesHaveEOS = true;
         members->responseCondition.notifyOne();
         completionHandler(ShouldContinuePolicyCheck::No);
@@ -1091,9 +1095,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     if (members->requestedPosition) {
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
-        if (response.httpStatusCode() != 206) {
+        if (httpStatusCode && httpStatusCode != 206) {
             // Range request completely failed.
-            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
+            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, httpStatusCode), (nullptr));
             members->doesHaveEOS = true;
             members->responseCondition.notifyOne();
             completionHandler(ShouldContinuePolicyCheck::No);
