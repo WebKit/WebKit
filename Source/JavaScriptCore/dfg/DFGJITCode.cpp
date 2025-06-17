@@ -48,6 +48,7 @@ JITData::JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode& jitCod
         case LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet:
         case LinkerIR::Type::ArrayBufferDetachWatchpointSet:
         case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet:
+        case LinkerIR::Type::TimeZoneChangeWatchpointSet:
         case LinkerIR::Type::NumberToStringWatchpointSet:
         case LinkerIR::Type::StructureCacheClearedWatchpointSet:
         case LinkerIR::Type::StringToStringWatchpointSet:
@@ -138,6 +139,11 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
         case LinkerIR::Type::ArrayBufferDetachWatchpointSet: {
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
             success &= attemptToWatch(codeBlock, m_globalObject->arrayBufferDetachWatchpointSet(), watchpoint);
+            break;
+        }
+        case LinkerIR::Type::TimeZoneChangeWatchpointSet: {
+            auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
+            success &= attemptToWatch(codeBlock, m_globalObject->vm().timeZoneChangeWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet: {

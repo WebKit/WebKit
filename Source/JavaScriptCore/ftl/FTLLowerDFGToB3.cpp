@@ -19742,6 +19742,14 @@ IGNORE_CLANG_WARNINGS_END
             emitGetCodeWithCallback(cachedDoubleOffset, cachedDataOffset, operation, [] (LValue value) { return value; });
         };
 
+        auto emitGetCodeFast = [&] (const AbstractHeap& cachedDoubleOffset, const AbstractHeap& cachedDataOffset, auto* operation, const AbstractHeap& localCacheOffset) {
+            if (m_graph.isWatchingTimeZoneChangeWatchpoint(m_node)) {
+                setJSValue(m_out.load64(base, localCacheOffset));
+                return;
+            }
+            emitGetCode(cachedDoubleOffset, cachedDataOffset, operation);
+        };
+
         switch (m_node->intrinsic()) {
         case DatePrototypeGetTimeIntrinsic:
             setDouble(m_out.loadDouble(base, m_heaps.DateInstance_internalNumber));
@@ -19758,43 +19766,43 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         case DatePrototypeGetFullYearIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_year, operationDateGetFullYear);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_year, operationDateGetFullYear, m_heaps.DateInstance_year);
             break;
         case DatePrototypeGetUTCFullYearIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_year, operationDateGetUTCFullYear);
             break;
         case DatePrototypeGetMonthIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_month, operationDateGetMonth);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_month, operationDateGetMonth, m_heaps.DateInstance_month);
             break;
         case DatePrototypeGetUTCMonthIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_month, operationDateGetUTCMonth);
             break;
         case DatePrototypeGetDateIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_monthDay, operationDateGetDate);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_monthDay, operationDateGetDate, m_heaps.DateInstance_monthDay);
             break;
         case DatePrototypeGetUTCDateIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_monthDay, operationDateGetUTCDate);
             break;
         case DatePrototypeGetDayIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_weekDay, operationDateGetDay);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_weekDay, operationDateGetDay, m_heaps.DateInstance_weekDay);
             break;
         case DatePrototypeGetUTCDayIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_weekDay, operationDateGetUTCDay);
             break;
         case DatePrototypeGetHoursIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_hour, operationDateGetHours);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_hour, operationDateGetHours, m_heaps.DateInstance_hour);
             break;
         case DatePrototypeGetUTCHoursIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_hour, operationDateGetUTCHours);
             break;
         case DatePrototypeGetMinutesIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_minute, operationDateGetMinutes);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_minute, operationDateGetMinutes, m_heaps.DateInstance_minute);
             break;
         case DatePrototypeGetUTCMinutesIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_minute, operationDateGetUTCMinutes);
             break;
         case DatePrototypeGetSecondsIntrinsic:
-            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_second, operationDateGetSeconds);
+            emitGetCodeFast(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_second, operationDateGetSeconds, m_heaps.DateInstance_second);
             break;
         case DatePrototypeGetUTCSecondsIntrinsic:
             emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_second, operationDateGetUTCSeconds);
@@ -19821,9 +19829,9 @@ IGNORE_CLANG_WARNINGS_END
     {
         LValue base = lowDateObject(m_node->child1());
         LValue arg = lowDouble(m_node->child2());
-        LValue time = m_out.add(m_out.doubleTrunc(arg), m_out.constDouble(0));
-        LValue result = m_out.select(m_out.doubleGreaterThanOrUnordered(m_out.doubleAbs(arg), m_out.constDouble(WTF::maxECMAScriptTime)), m_out.constDouble(PNaN), time);
-        m_out.storeDouble(result, base, m_heaps.DateInstance_internalNumber);
+
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue result = vmCall(Double, operationDateSetAndCache, weakPointer(globalObject), base, arg);
         setDouble(result);
     }
 

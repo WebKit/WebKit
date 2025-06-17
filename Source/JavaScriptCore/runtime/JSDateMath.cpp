@@ -72,8 +72,11 @@
 #include "config.h"
 #include "JSDateMath.h"
 
+#include "DateInstance.h"
 #include "ExceptionHelpers.h"
+#include "JSCJSValueInlines.h"
 #include "VM.h"
+#include "VMInspector.h"
 #include <limits>
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
@@ -361,6 +364,30 @@ std::tuple<int32_t, int32_t, int32_t> DateCache::yearMonthDayFromDaysWithCache(i
     return std::tuple { year, month, day };
 }
 
+void DateCache::msToLocalTimeCache(double milliseconds, DateInstance& dateInstance)
+{
+    ASSERT(!std::isnan(milliseconds) && std::isfinite(milliseconds));
+
+    LocalTimeOffset localTime = localTimeOffset(static_cast<int64_t>(milliseconds));
+    milliseconds += localTime.offset;
+
+    WTF::Int64Milliseconds timeClipped(static_cast<int64_t>(milliseconds));
+    int32_t days = WTF::msToDays(timeClipped);
+    int32_t timeInDayMS = WTF::timeInDay(timeClipped, days);
+    auto [year, month, day] = yearMonthDayFromDaysWithCache(days);
+    int32_t hour = timeInDayMS / (60 * 60 * 1000);
+    int32_t minute = (timeInDayMS / (60 * 1000)) % 60;
+    int32_t second = (timeInDayMS / 1000) % 60;
+
+    dateInstance.setYear(year);
+    dateInstance.setMonth(month);
+    dateInstance.setMonthDay(day);
+    dateInstance.setWeekDay(WTF::weekDay(days));
+    dateInstance.setHour(hour);
+    dateInstance.setMinute(minute);
+    dateInstance.setSecond(second);
+}
+
 // input is UTC
 void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime& tm)
 {
@@ -377,9 +404,9 @@ void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, TimeType out
         int32_t hour = timeInDayMS / (60 * 60 * 1000);
         int32_t minute = (timeInDayMS / (60 * 1000)) % 60;
         int32_t second = (timeInDayMS / 1000) % 60;
-        tm = GregorianDateTime(year, month, dayInYear(year, month, day), day, WTF::weekDay(days), hour, minute, second, localTime.offset / WTF::Int64Milliseconds::msPerMinute, localTime.isDST);
+        tm = GregorianDateTime(outputTimeType, year, month, dayInYear(year, month, day), day, WTF::weekDay(days), hour, minute, second, localTime.offset / WTF::Int64Milliseconds::msPerMinute, localTime.isDST);
     } else
-        tm = GregorianDateTime(millisecondsFromEpoch, localTime);
+        tm = GregorianDateTime(outputTimeType, millisecondsFromEpoch, localTime);
 }
 
 double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
@@ -461,6 +488,10 @@ static void timeZoneChangeNotification(CFNotificationCenterRef, void*, CFStringR
     Locker locker { timeZoneCacheLock };
     ASSERT(isMainThread());
     ++lastTimeZoneID;
+    VMInspector::forEachVM([&] (VM& vm) {
+        vm.timeZoneChangeWatchpointSet().invalidate(vm, "Time zone changed");
+        return IterationStatus::Continue;
+    });
 }
 #endif
 

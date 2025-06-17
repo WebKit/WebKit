@@ -842,6 +842,8 @@ public:
     
     InlineWatchpointSet& primitiveGigacageEnabled() { return m_primitiveGigacageEnabled; }
 
+    WatchpointSet& timeZoneChangeWatchpointSet() { return m_timeZoneChangeWatchpointSet.get(); }
+
     BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
     bool enableTypeProfiler();
@@ -1075,6 +1077,7 @@ private:
     size_t m_sizeOfLastScratchBuffer { 0 };
     Vector<std::unique_ptr<CheckpointOSRExitSideState>, expectedMaxActiveSideStateCount> m_checkpointSideState;
     InlineWatchpointSet m_primitiveGigacageEnabled { IsWatched };
+    Ref<WatchpointSet> m_timeZoneChangeWatchpointSet;
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
     unsigned m_controlFlowProfilerEnabledCount { 0 };

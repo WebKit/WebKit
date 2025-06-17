@@ -38,7 +38,7 @@ void DateInstance::finishCreation(VM& vm, double time)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    m_internalNumber = timeClip(time);
+    setAndCache(vm, time);
 }
 
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(DateCache& cache) const
@@ -71,6 +71,32 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(DateCache& 
         m_data->m_gregorianDateTimeUTCCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTimeUTC;
+}
+
+JSValue DateInstance::setNaN()
+{
+    m_internalNumber = PNaN;
+    m_year = jsNaN();
+    m_month = jsNaN();
+    m_monthDay = jsNaN();
+    m_weekDay = jsNaN();
+    m_hour = jsNaN();
+    m_minute = jsNaN();
+    m_second = jsNaN();
+    return jsNaN();
+}
+
+double DateInstance::setAndCache(VM& vm, double time)
+{
+    double clipped = timeClip(time);
+    if (std::isnan(clipped)) {
+        setNaN();
+        return PNaN;
+    }
+
+    setInternalNumber(clipped);
+    vm.dateCache.msToLocalTimeCache(clipped, *this);
+    return clipped;
 }
 
 } // namespace JSC

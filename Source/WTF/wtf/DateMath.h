@@ -54,7 +54,8 @@ namespace WTF {
 
 enum class TimeType : uint8_t {
     UTCTime = 0,
-    LocalTime
+    LocalTime,
+    None, // For invalid/uninitialized state only
 };
 
 struct LocalTimeOffset {

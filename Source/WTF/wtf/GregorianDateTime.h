@@ -36,9 +36,10 @@ class GregorianDateTime final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GregorianDateTime() = default;
-    WTF_EXPORT_PRIVATE explicit GregorianDateTime(double ms, LocalTimeOffset);
-    explicit GregorianDateTime(int year, int month, int yearDay, int monthDay, int weekDay, int hour, int minute, int second, int utcOffsetInMinute, bool isDST)
-        : m_year(year)
+    WTF_EXPORT_PRIVATE explicit GregorianDateTime(TimeType, double ms, LocalTimeOffset);
+    explicit GregorianDateTime(TimeType timeType, int year, int month, int yearDay, int monthDay, int weekDay, int hour, int minute, int second, int utcOffsetInMinute, bool isDST)
+        : m_timeType(timeType)
+        , m_year(year)
         , m_month(month)
         , m_yearDay(yearDay)
         , m_monthDay(monthDay)
@@ -108,7 +109,10 @@ public:
         return ret;
     }
 
+    inline TimeType timeType() const { return m_timeType; }
+
 private:
+    TimeType m_timeType { TimeType::None };
     int m_year { 0 };
     int m_month { 0 };
     int m_yearDay { 0 };

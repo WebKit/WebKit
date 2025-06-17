@@ -36,7 +36,8 @@
 
 namespace WTF {
 
-GregorianDateTime::GregorianDateTime(double ms, LocalTimeOffset localTime)
+GregorianDateTime::GregorianDateTime(TimeType timeType, double ms, LocalTimeOffset localTime)
+    : m_timeType(timeType)
 {
     if (std::isfinite(ms)) {
         WTF::Int64Milliseconds timeClipped(static_cast<int64_t>(ms));

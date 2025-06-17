@@ -55,7 +55,11 @@ public:
     }
 
     double internalNumber() const { return m_internalNumber; }
-    void setInternalNumber(double value) { m_internalNumber = value; }
+    void setInternalNumber(double value)
+    {
+        ASSERT(!std::isnan(value) && std::isfinite(value));
+        m_internalNumber = value;
+    }
 
     DECLARE_EXPORT_INFO;
 
@@ -77,6 +81,32 @@ public:
 
     static constexpr ptrdiff_t offsetOfInternalNumber() { return OBJECT_OFFSETOF(DateInstance, m_internalNumber); }
     static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
+    static constexpr ptrdiff_t offsetOfYear() { return OBJECT_OFFSETOF(DateInstance, m_year); }
+    static constexpr ptrdiff_t offsetOfMonth() { return OBJECT_OFFSETOF(DateInstance, m_month); }
+    static constexpr ptrdiff_t offsetOfMonthDay() { return OBJECT_OFFSETOF(DateInstance, m_monthDay); }
+    static constexpr ptrdiff_t offsetOfWeekDay() { return OBJECT_OFFSETOF(DateInstance, m_weekDay); }
+    static constexpr ptrdiff_t offsetOfHour() { return OBJECT_OFFSETOF(DateInstance, m_hour); }
+    static constexpr ptrdiff_t offsetOfMinute() { return OBJECT_OFFSETOF(DateInstance, m_minute); }
+    static constexpr ptrdiff_t offsetOfSecond() { return OBJECT_OFFSETOF(DateInstance, m_second); }
+
+    inline void setYear(int year) { m_year = jsNumber(year); }
+    inline void setMonth(int month) { m_month = jsNumber(month); }
+    inline void setMonthDay(int monthDay) { m_monthDay = jsNumber(monthDay); }
+    inline void setWeekDay(int weekDay) { m_weekDay = jsNumber(weekDay); }
+    inline void setHour(int hour) { m_hour = jsNumber(hour); }
+    inline void setMinute(int minute) { m_minute = jsNumber(minute); }
+    inline void setSecond(int second) { m_second = jsNumber(second); }
+
+    inline JSValue year() { return m_year; }
+    inline JSValue month() { return m_month; }
+    inline JSValue monthDay() { return m_monthDay; }
+    inline JSValue weekDay() { return m_weekDay; }
+    inline JSValue hour() { return m_hour; }
+    inline JSValue minute() { return m_minute; }
+    inline JSValue second() { return m_second; }
+
+    JSValue setNaN();
+    double setAndCache(VM&, double);
 
 private:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
@@ -88,6 +118,14 @@ private:
 
     double m_internalNumber { PNaN };
     mutable RefPtr<DateInstanceData> m_data;
+
+    JSValue m_year { };
+    JSValue m_month { };
+    JSValue m_monthDay { };
+    JSValue m_weekDay { };
+    JSValue m_hour { };
+    JSValue m_minute { };
+    JSValue m_second { };
 };
 
 } // namespace JSC

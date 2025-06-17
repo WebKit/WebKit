@@ -39,6 +39,7 @@
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
 #include "TemporalTimeZone.h"
+#include <wtf/DateMath.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -388,7 +389,7 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalinstanttostring
 String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZone, PrecisionData precision)
 {
-    GregorianDateTime gregorianDateTime { static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
+    GregorianDateTime gregorianDateTime { TimeType::UTCTime, static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
     StringBuilder builder;
 
     // If the year is outside the bounds of 0 and 9999 inclusive we want to

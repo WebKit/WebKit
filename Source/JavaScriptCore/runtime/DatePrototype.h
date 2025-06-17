@@ -54,4 +54,22 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+bool hasFastLocalCache(Intrinsic);
+inline bool hasFastLocalCache(Intrinsic intrinsic)
+{
+    switch (intrinsic) {
+    case DatePrototypeGetFullYearIntrinsic:
+    case DatePrototypeGetMonthIntrinsic:
+    case DatePrototypeGetDateIntrinsic:
+    case DatePrototypeGetDayIntrinsic:
+    case DatePrototypeGetHoursIntrinsic:
+    case DatePrototypeGetMinutesIntrinsic:
+    case DatePrototypeGetSecondsIntrinsic:
+        return true;
+    default:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

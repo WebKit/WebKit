@@ -53,6 +53,7 @@
 #include "DFGGraphSafepoint.h"
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DOMJITGetterSetter.h"
+#include "DatePrototype.h"
 #include "DeleteByStatus.h"
 #include "FunctionCodeBlock.h"
 #include "GetByStatus.h"
@@ -3886,6 +3887,10 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         case DatePrototypeGetYearIntrinsic: {
             if (!is64Bit())
                 return CallOptimizationResult::DidNothing;
+
+            if (hasFastLocalCache(intrinsic) && m_vm->timeZoneChangeWatchpointSet().isStillValid())
+                m_graph.watchpoints().addLazily(m_vm->timeZoneChangeWatchpointSet());
+
             insertChecks();
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             setResult(addToGraph(DateGetInt32OrNaN, OpInfo(intrinsic), OpInfo(prediction), base));

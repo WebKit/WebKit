@@ -113,6 +113,7 @@ public:
     String timeZoneDisplayName(bool isDST);
     Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
 
+    void msToLocalTimeCache(double millisecondsFromEpoch, DateInstance&);
     void msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime&);
     double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, TimeType);
     double localTimeToMS(double milliseconds, TimeType);

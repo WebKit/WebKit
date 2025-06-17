@@ -58,6 +58,13 @@ namespace JSC { namespace FTL {
     macro(ClonedArguments_callee, ClonedArguments::offsetOfCallee()) \
     macro(DateInstance_internalNumber, DateInstance::offsetOfInternalNumber()) \
     macro(DateInstance_data, DateInstance::offsetOfData()) \
+    macro(DateInstance_year, DateInstance::offsetOfYear()) \
+    macro(DateInstance_month, DateInstance::offsetOfMonth()) \
+    macro(DateInstance_monthDay, DateInstance::offsetOfMonthDay()) \
+    macro(DateInstance_weekDay, DateInstance::offsetOfWeekDay()) \
+    macro(DateInstance_hour, DateInstance::offsetOfHour()) \
+    macro(DateInstance_minute, DateInstance::offsetOfMinute()) \
+    macro(DateInstance_second, DateInstance::offsetOfSecond()) \
     macro(DateInstanceData_gregorianDateTimeCachedForMS, DateInstanceData::offsetOfGregorianDateTimeCachedForMS()) \
     macro(DateInstanceData_gregorianDateTimeUTCCachedForMS, DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS()) \
     macro(DateInstanceData_cachedGregorianDateTime_year, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfYear()) \

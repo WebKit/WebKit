@@ -5189,6 +5189,18 @@ JSC_DEFINE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM* vmPointer, D
     OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->year() - 1900)));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationDateSetAndCache, double, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, double value))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue base = JSValue::decode(encodedBase);
+    auto* thisDateObj = jsDynamicCast<DateInstance*>(base);
+    OPERATION_RETURN(scope, thisDateObj->setAndCache(vm, value));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject* globalObject, int64_t value))
 {
     VM& vm = globalObject->vm();
