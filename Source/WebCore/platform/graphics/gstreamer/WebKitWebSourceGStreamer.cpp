@@ -1204,7 +1204,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
         members->downloadStartTime = WallTime::now();
     }
 
-    int length = data.size();
+    int length = data.size() - members->requestedPosition;
     GST_LOG_OBJECT(src.get(), "R%u: Have %d bytes of data", m_requestNumber, length);
 
     members->readPosition += length;
@@ -1214,7 +1214,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
         gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, members->readPosition, "size", G_TYPE_UINT64, members->size.value_or(0), nullptr)));
 
     checkUpdateBlocksize(length);
-    auto dataSpan = data.span();
+    auto dataSpan = data.span().subspan(members->requestedPosition);
     GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(dataSpan.data(), dataSpan.size()), length);
     gst_adapter_push(members->adapter.get(), buffer);
 
