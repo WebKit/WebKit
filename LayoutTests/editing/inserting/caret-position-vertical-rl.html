@@ -1,0 +1,67 @@
+<html style="writing-mode: vertical-rl">
+<style>
+#test {
+    /* If this test ends up being flaky, consider using Ahem. */
+    outline: solid gray 1px;
+    padding: 1em;
+    width: 10em;
+    height: 20ch;
+    font: 20px/1 monospace;
+    background: /* Create a 10px grid to help with debugging. */
+        repeating-linear-gradient(transparent 0em 9px, #8F88 9px 10px),
+        repeating-linear-gradient(to left, transparent 0px 9px, #8F88 9px 10px);
+}
+</style>
+
+<div id=test contenteditable>
+This is a test <span id=first>of writingsideways in vertical text</span><br>
+withseverallines of <span>text</span> and alongwordthat'slong andanotherword.
+</div>
+
+<hr>
+
+<ul id="console"></ul>
+
+<script>
+
+var test = document.getElementById('test');
+var testRightEdge = test.offsetLeft + test.offsetWidth;
+var testTopEdge = test.offsetTop;
+
+function stringifyCaret(caretRect) {
+    // Convert to box-relative coords and stringify
+    return (caretRect.x - testRightEdge) + ","
+        + (caretRect.y - testTopEdge) + ","
+        + caretRect.width + ","
+        + caretRect.height;
+}
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function testCaretPosition(testID, element)
+{
+    element.focus();
+    var caretRect = window.internals.absoluteCaretBounds();
+    log(testID + " " + stringifyCaret(caretRect));
+}
+
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Bug XXX
+    var first = document.getElementById('first');
+    window.getSelection().collapse(first.firstChild, 24);
+    testCaretPosition("Test 1", first);
+
+}
+
+runTest();
+
+</script>

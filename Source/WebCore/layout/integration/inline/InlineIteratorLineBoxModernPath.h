@@ -63,13 +63,13 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
+        if (!m_lineIndex)
             return contentLogicalTop();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        if (m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
     }
@@ -78,7 +78,7 @@ public:
     {
         auto writingMode = formattingContextRoot().writingMode();
         if (writingMode.isLogicalLeftLineLeft())
-            return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection();
+            return line().lineBoxLogicalRect().x() + line().contentLogicalLeftIgnoringInlineDirection();
         ASSERT(writingMode.isVertical()); // Currently only sideways-lr gets this far.
         return line().bottom() - (line().contentLogicalLeftIgnoringInlineDirection() + line().contentLogicalWidth());
     }
