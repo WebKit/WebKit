@@ -527,7 +527,7 @@ void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filenam
         FileSystem::deleteFile(filename);
 }
 
-bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler& completionHandler)
+bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, NOESCAPE ChallengeCompletionHandler& completionHandler)
 {
     if (!challenge.protectionSpace().isPasswordBased())
         return false;

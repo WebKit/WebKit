@@ -47,7 +47,7 @@ class NetworkTaskCocoa {
 public:
     virtual ~NetworkTaskCocoa() = default;
 
-    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, NOESCAPE RedirectCompletionHandler&&);
     virtual std::optional<WebCore::FrameIdentifier> frameID() const = 0;
     virtual std::optional<WebCore::PageIdentifier> pageID() const = 0;
     virtual std::optional<WebPageProxyIdentifier> webPageProxyID() const = 0;
