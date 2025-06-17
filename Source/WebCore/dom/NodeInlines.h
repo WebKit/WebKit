@@ -40,10 +40,11 @@ inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() co
 
 inline WebCoreOpaqueRoot Node::opaqueRoot() const
 {
+    if (isConnected()) {
+        Locker locker { TreeScope::treeScopeMutationLock() };
+        return WebCoreOpaqueRoot { &treeScope().documentScope() };
+    }
     // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return WebCoreOpaqueRoot { &document() };
     return traverseToOpaqueRoot();
 }
 
@@ -242,6 +243,12 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());
     return parentNode();
+}
+
+inline void Node::setTreeScope(TreeScope& scope)
+{
+    Locker locker { TreeScope::treeScopeMutationLock() };
+    m_treeScope = &scope;
 }
 
 template<typename NodeClass>
