@@ -49,10 +49,8 @@ DragImageRef DataTransfer::createDragImage(const Document*, IntPoint& location) 
             IntRect imageRect;
             IntRect elementRect;
             result = createDragImageForImage(*frame, dragImageElement().releaseNonNull(), imageRect, elementRect);
-            // Client specifies point relative to element, not the whole image, which may include child
-            // layers spread out all over the place.
-            location.setX(elementRect.x() - imageRect.x() + m_dragLocation.x());
-            location.setY(imageRect.height() - (elementRect.y() - imageRect.y() + m_dragLocation.y()));
+            location.setX(m_dragLocation.x() - elementRect.x());
+            location.setY(m_dragLocation.y() - elementRect.y());
         }
     } else if (m_dragImage) {
         result = m_dragImage->protectedImage()->adapter().snapshotNSImage();
