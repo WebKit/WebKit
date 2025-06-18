@@ -1,4 +1,4 @@
-// Copyright 2022 The Abseil Authors
+// Copyright 2025 The Abseil Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "absl/strings/cord_buffer.h"
+#ifndef ABSL_HASH_INTERNAL_WEAKLY_MIXED_INTEGER_H_
+#define ABSL_HASH_INTERNAL_WEAKLY_MIXED_INTEGER_H_
 
 #include <cstddef>
 
@@ -20,11 +21,18 @@
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
+namespace hash_internal {
 
-#ifdef ABSL_INTERNAL_NEED_REDUNDANT_CONSTEXPR_DECL
-constexpr size_t CordBuffer::kDefaultLimit;
-constexpr size_t CordBuffer::kCustomLimit;
-#endif
+// Contains an integer that will be mixed into a hash state more weakly than
+// regular integers. It is useful for cases in which an integer is a part of a
+// larger object and needs to be mixed as a supplement. E.g., absl::string_view
+// and absl::Span are mixing their size wrapped with WeaklyMixedInteger.
+struct WeaklyMixedInteger {
+  size_t value;
+};
 
+}  // namespace hash_internal
 ABSL_NAMESPACE_END
 }  // namespace absl
+
+#endif  // ABSL_HASH_INTERNAL_WEAKLY_MIXED_INTEGER_H_

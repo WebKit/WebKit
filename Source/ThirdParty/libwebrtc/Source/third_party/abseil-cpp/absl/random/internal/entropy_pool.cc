@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "absl/random/internal/pool_urbg.h"
+#include "absl/random/internal/entropy_pool.h"
 
 #include <algorithm>
 #include <atomic>
@@ -23,15 +23,14 @@
 #include "absl/base/attributes.h"
 #include "absl/base/call_once.h"
 #include "absl/base/config.h"
-#include "absl/base/internal/endian.h"
-#include "absl/base/internal/raw_logging.h"
 #include "absl/base/internal/spinlock.h"
-#include "absl/base/internal/sysinfo.h"
-#include "absl/base/internal/unaligned_access.h"
 #include "absl/base/optimization.h"
+#include "absl/base/thread_annotations.h"
 #include "absl/random/internal/randen.h"
+#include "absl/random/internal/randen_traits.h"
 #include "absl/random/internal/seed_material.h"
 #include "absl/random/seed_gen_exception.h"
+#include "absl/types/span.h"
 
 using absl::base_internal::SpinLock;
 using absl::base_internal::SpinLockHolder;
@@ -45,9 +44,11 @@ namespace {
 // single generator within a RandenPool<T>. It is an internal implementation
 // detail, and does not aim to conform to [rand.req.urng].
 //
-// NOTE: There are alignment issues when used on ARM, for instance.
-// See the allocation code in PoolAlignedAlloc().
-class RandenPoolEntry {
+// At least 32-byte alignment is required for the state_ array on some ARM
+// platforms.  We also want this aligned to a cacheline to eliminate false
+// sharing.
+class alignas(std::max(size_t{ABSL_CACHELINE_SIZE}, size_t{32}))
+    RandenPoolEntry {
  public:
   static constexpr size_t kState = RandenTraits::kStateBytes / sizeof(uint32_t);
   static constexpr size_t kCapacity =
@@ -62,10 +63,6 @@ class RandenPoolEntry {
   // Copy bytes into out.
   void Fill(uint8_t* out, size_t bytes) ABSL_LOCKS_EXCLUDED(mu_);
 
-  // Returns random bits from the buffer in units of T.
-  template <typename T>
-  inline T Generate() ABSL_LOCKS_EXCLUDED(mu_);
-
   inline void MaybeRefill() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_) {
     if (next_ >= kState) {
       next_ = kCapacity;
@@ -73,55 +70,24 @@ class RandenPoolEntry {
     }
   }
 
+  inline size_t available() const ABSL_SHARED_LOCKS_REQUIRED(mu_) {
+    return kState - next_;
+  }
+
  private:
   // Randen URBG state.
-  uint32_t state_[kState] ABSL_GUARDED_BY(mu_);  // First to satisfy alignment.
+  // At least 32-byte alignment is required by ARM platform code.
+  alignas(32) uint32_t state_[kState] ABSL_GUARDED_BY(mu_);
   SpinLock mu_;
   const Randen impl_;
   size_t next_ ABSL_GUARDED_BY(mu_);
 };
 
-template <>
-inline uint8_t RandenPoolEntry::Generate<uint8_t>() {
-  SpinLockHolder l(&mu_);
-  MaybeRefill();
-  return static_cast<uint8_t>(state_[next_++]);
-}
-
-template <>
-inline uint16_t RandenPoolEntry::Generate<uint16_t>() {
-  SpinLockHolder l(&mu_);
-  MaybeRefill();
-  return static_cast<uint16_t>(state_[next_++]);
-}
-
-template <>
-inline uint32_t RandenPoolEntry::Generate<uint32_t>() {
-  SpinLockHolder l(&mu_);
-  MaybeRefill();
-  return state_[next_++];
-}
-
-template <>
-inline uint64_t RandenPoolEntry::Generate<uint64_t>() {
-  SpinLockHolder l(&mu_);
-  if (next_ >= kState - 1) {
-    next_ = kCapacity;
-    impl_.Generate(state_);
-  }
-  auto p = state_ + next_;
-  next_ += 2;
-
-  uint64_t result;
-  std::memcpy(&result, p, sizeof(result));
-  return result;
-}
-
 void RandenPoolEntry::Fill(uint8_t* out, size_t bytes) {
   SpinLockHolder l(&mu_);
   while (bytes > 0) {
     MaybeRefill();
-    size_t remaining = (kState - next_) * sizeof(state_[0]);
+    size_t remaining = available() * sizeof(state_[0]);
     size_t to_copy = std::min(bytes, remaining);
     std::memcpy(out, &state_[next_], to_copy);
     out += to_copy;
@@ -185,38 +151,17 @@ size_t GetPoolID() {
 #endif
 }
 
-// Allocate a RandenPoolEntry with at least 32-byte alignment, which is required
-// by ARM platform code.
-RandenPoolEntry* PoolAlignedAlloc() {
-  constexpr size_t kAlignment =
-      ABSL_CACHELINE_SIZE > 32 ? ABSL_CACHELINE_SIZE : 32;
-
-  // Not all the platforms that we build for have std::aligned_alloc, however
-  // since we never free these objects, we can over allocate and munge the
-  // pointers to the correct alignment.
-  uintptr_t x = reinterpret_cast<uintptr_t>(
-      new char[sizeof(RandenPoolEntry) + kAlignment]);
-  auto y = x % kAlignment;
-  void* aligned = reinterpret_cast<void*>(y == 0 ? x : (x + kAlignment - y));
-  return new (aligned) RandenPoolEntry();
-}
-
 // Allocate and initialize kPoolSize objects of type RandenPoolEntry.
-//
-// The initialization strategy is to initialize one object directly from
-// OS entropy, then to use that object to seed all of the individual
-// pool instances.
 void InitPoolURBG() {
   static constexpr size_t kSeedSize =
       RandenTraits::kStateBytes / sizeof(uint32_t);
-  // Read the seed data from OS entropy once.
+  // Read OS entropy once, and use it to initialize each pool entry.
   uint32_t seed_material[kPoolSize * kSeedSize];
-  if (!random_internal::ReadSeedMaterialFromOSEntropy(
-          absl::MakeSpan(seed_material))) {
-    random_internal::ThrowSeedGenException();
+  if (!ReadSeedMaterialFromOSEntropy(absl::MakeSpan(seed_material))) {
+    ThrowSeedGenException();
   }
   for (size_t i = 0; i < kPoolSize; i++) {
-    shared_pools[i] = PoolAlignedAlloc();
+    shared_pools[i] = new RandenPoolEntry();
     shared_pools[i]->Init(
         absl::MakeSpan(&seed_material[i * kSeedSize], kSeedSize));
   }
@@ -230,23 +175,10 @@ RandenPoolEntry* GetPoolForCurrentThread() {
 
 }  // namespace
 
-template <typename T>
-typename RandenPool<T>::result_type RandenPool<T>::Generate() {
+void GetEntropyFromRandenPool(void* dest, size_t bytes) {
   auto* pool = GetPoolForCurrentThread();
-  return pool->Generate<T>();
+  pool->Fill(reinterpret_cast<uint8_t*>(dest), bytes);
 }
-
-template <typename T>
-void RandenPool<T>::Fill(absl::Span<result_type> data) {
-  auto* pool = GetPoolForCurrentThread();
-  pool->Fill(reinterpret_cast<uint8_t*>(data.data()),
-             data.size() * sizeof(result_type));
-}
-
-template class RandenPool<uint8_t>;
-template class RandenPool<uint16_t>;
-template class RandenPool<uint32_t>;
-template class RandenPool<uint64_t>;
 
 }  // namespace random_internal
 ABSL_NAMESPACE_END

@@ -12,16 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "absl/base/internal/inline_variable_testing.h"
+#ifndef ABSL_RANDOM_INTERNAL_ENTROPY_POOL_H_
+#define ABSL_RANDOM_INTERNAL_ENTROPY_POOL_H_
+
+#include <cstddef>
+
+#include "absl/base/config.h"
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
-namespace inline_variable_testing_internal {
+namespace random_internal {
 
-const Foo& get_foo_b() { return inline_variable_foo; }
+// GetEntropyFromRandenPool() is a helper function that fills a memory region
+// with random bytes from the RandenPool.  This is used by the absl::BitGen
+// implementation to fill the internal buffer.
+void GetEntropyFromRandenPool(void* dest, size_t bytes);
 
-const int& get_int_b() { return inline_variable_int; }
-
-}  // namespace inline_variable_testing_internal
+}  // namespace random_internal
 ABSL_NAMESPACE_END
 }  // namespace absl
+
+#endif  // ABSL_RANDOM_INTERNAL_ENTROPY_POOL_H_

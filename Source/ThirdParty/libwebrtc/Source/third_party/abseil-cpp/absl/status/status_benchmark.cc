@@ -1,4 +1,4 @@
-// Copyright 2017 The Abseil Authors.
+// Copyright 2025 The Abseil Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "absl/base/internal/inline_variable_testing.h"
+#include <utility>
+#include "absl/status/status.h"
+#include "benchmark/benchmark.h"
 
-namespace absl {
-ABSL_NAMESPACE_BEGIN
-namespace inline_variable_testing_internal {
+namespace {
 
-const Foo& get_foo_a() { return inline_variable_foo; }
+void BM_CreateOk(benchmark::State& state) {
+  for (auto _ : state) {
+    absl::Status s;  // ok.
+    benchmark::DoNotOptimize(s);
+  }
+}
+BENCHMARK(BM_CreateOk);
 
-const int& get_int_a() { return inline_variable_int; }
+void BM_CreateBad(benchmark::State& state) {
+  for (auto _ : state) {
+    absl::Status s(absl::StatusCode::kInvalidArgument, "message");
+    benchmark::DoNotOptimize(s);
+  }
+}
+BENCHMARK(BM_CreateBad);
 
-}  // namespace inline_variable_testing_internal
-ABSL_NAMESPACE_END
-}  // namespace absl
+}  // namespace
