@@ -755,7 +755,7 @@ protected:
     NodeRareData& ensureRareData();
     void clearRareData();
 
-    void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
+    void setTreeScope(TreeScope&);
 
     void invalidateStyle(Style::Validity, Style::InvalidationMode = Style::InvalidationMode::Normal);
     void updateAncestorsForStyleRecalc();

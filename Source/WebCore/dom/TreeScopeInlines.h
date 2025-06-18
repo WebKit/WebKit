@@ -27,6 +27,8 @@
 
 #include "ContainerNode.h"
 #include "TreeScopeOrderedMap.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -65,6 +67,18 @@ inline bool TreeScope::hasElementWithName(const AtomString& id) const
 inline bool TreeScope::containsMultipleElementsWithName(const AtomString& name) const
 {
     return m_elementsByName && !name.isEmpty() && m_elementsByName->containsMultiple(name);
+}
+
+inline void TreeScope::setDocumentScope(Document& document)
+{
+    Locker locker { treeScopeMutationLock() };
+    m_documentScope = document;
+}
+
+ALWAYS_INLINE Lock& TreeScope::treeScopeMutationLock()
+{
+    static Lock s_treeScopeMutationLock;
+    return s_treeScopeMutationLock;
 }
 
 } // namespace WebCore

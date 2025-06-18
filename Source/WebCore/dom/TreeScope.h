@@ -157,16 +157,16 @@ public:
     void markPendingSVGResourcesForRemoval(const AtomString&);
     RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
 
+    // FIXME: Add a ThreadSafetyAnalysis annotated Lock subclass that allows for asserted reads from the mutator
+    static ALWAYS_INLINE Lock& treeScopeMutationLock();
+
 protected:
     TreeScope(ShadowRoot&, Document&, RefPtr<CustomElementRegistry>&&);
     explicit TreeScope(Document&);
     ~TreeScope();
 
     void destroyTreeScopeData();
-    void setDocumentScope(Document& document)
-    {
-        m_documentScope = document;
-    }
+    inline void setDocumentScope(Document&);
 
     RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint, HitTestSource);
 
