@@ -46,7 +46,7 @@ private:
 
     void initializeMeasurementWithTextRenderer(RenderSVGInlineText&);
     void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData&);
-    std::tuple<unsigned, UChar> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, UChar>);
+    std::tuple<unsigned, char16_t> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, char16_t>);
 
     SingleThreadWeakPtr<RenderSVGInlineText> m_text;
     TextRun m_run;

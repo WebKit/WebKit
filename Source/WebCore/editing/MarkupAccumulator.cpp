@@ -191,7 +191,7 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
     if (source.is8Bit())
         appendCharactersReplacingEntitiesInternal<LChar>(result, source, entityMask);
     else
-        appendCharactersReplacingEntitiesInternal<UChar>(result, source, entityMask);
+        appendCharactersReplacingEntitiesInternal<char16_t>(result, source, entityMask);
 }
 
 MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)

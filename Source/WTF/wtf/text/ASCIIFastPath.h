@@ -77,7 +77,7 @@ template<typename T> inline T* alignToMachineWord(T* pointer)
 }
 
 template<size_t size, typename CharacterType> struct NonASCIIMask;
-template<> struct NonASCIIMask<4, UChar> {
+template<> struct NonASCIIMask<4, char16_t> {
     static inline uint32_t value() { return 0xFF80FF80U; }
 };
 template<> struct NonASCIIMask<4, LChar> {
@@ -86,7 +86,7 @@ template<> struct NonASCIIMask<4, LChar> {
 template<> struct NonASCIIMask<4, char8_t> {
     static inline uint32_t value() { return 0x80808080U; }
 };
-template<> struct NonASCIIMask<8, UChar> {
+template<> struct NonASCIIMask<8, char16_t> {
     static inline uint64_t value() { return 0xFF80FF80FF80FF80ULL; }
 };
 template<> struct NonASCIIMask<8, LChar> {
@@ -97,10 +97,10 @@ template<> struct NonASCIIMask<8, char8_t> {
 };
 
 template<size_t size, typename CharacterType> struct NonLatin1Mask;
-template<> struct NonLatin1Mask<4, UChar> {
+template<> struct NonLatin1Mask<4, char16_t> {
     static inline uint32_t value() { return 0xFF00FF00U; }
 };
-template<> struct NonLatin1Mask<8, UChar> {
+template<> struct NonLatin1Mask<8, char16_t> {
     static inline uint64_t value() { return 0xFF00FF00FF00FF00ULL; }
 };
 

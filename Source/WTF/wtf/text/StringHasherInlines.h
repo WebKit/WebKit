@@ -54,7 +54,7 @@ constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&cha
 #endif
 }
 
-inline void StringHasher::addCharacter(UChar character)
+inline void StringHasher::addCharacter(char16_t character)
 {
 #if ENABLE(WYHASH_STRING_HASHER)
     if (m_bufferSize == smallStringThreshold) {
@@ -65,9 +65,9 @@ inline void StringHasher::addCharacter(UChar character)
             m_see2 = m_seed;
             m_pendingHashValue = true;
         }
-        UChar* p = m_buffer.data();
+        char16_t* p = m_buffer.data();
         while (m_bufferSize >= 24) {
-            WYHash::consume24Characters(p, WYHash::Reader16Bit<UChar>::wyr8, m_seed, m_see1, m_see2);
+            WYHash::consume24Characters(p, WYHash::Reader16Bit<char16_t>::wyr8, m_seed, m_see1, m_see2);
             p += 24;
             m_bufferSize -= 24;
         }
@@ -88,14 +88,14 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
     unsigned hashValue;
     if (!m_pendingHashValue) {
         ASSERT(m_bufferSize <= smallStringThreshold);
-        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<UChar>(std::span { m_buffer }.first(m_bufferSize));
+        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<char16_t>(std::span { m_buffer }.first(m_bufferSize));
     } else {
         // This algorithm must stay in sync with WYHash::hash function.
-        auto wyr8 = WYHash::Reader16Bit<UChar>::wyr8;
+        auto wyr8 = WYHash::Reader16Bit<char16_t>::wyr8;
         unsigned i = m_bufferSize;
         if (i <= 24)
             m_seed ^= m_see1 ^ m_see2;
-        UChar* p = m_buffer.data();
+        char16_t* p = m_buffer.data();
         WYHash::handleGreaterThan8CharactersCase(p, i, wyr8, m_seed, m_see1, m_see2);
 
         uint64_t a = 0;
@@ -104,14 +104,14 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
             a = wyr8(p + i - 8);
             b = wyr8(p + i - 4);
         } else {
-            UChar tmp[8];
+            char16_t tmp[8];
             unsigned bufferIndex = smallStringThreshold - (8 - i);
             for (unsigned tmpIndex = 0; tmpIndex < 8; tmpIndex++) {
                 tmp[tmpIndex] = m_buffer[bufferIndex];
                 bufferIndex = (bufferIndex + 1) % smallStringThreshold;
             }
 
-            UChar* tmpPtr = tmp;
+            char16_t* tmpPtr = tmp;
             a = wyr8(tmpPtr);
             b = wyr8(tmpPtr + 4);
         }

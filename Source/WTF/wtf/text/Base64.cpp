@@ -168,7 +168,7 @@ static Vector<uint8_t> base64EncodeInternal(std::span<const std::byte> input, Op
     return destinationVector;
 }
 
-void base64Encode(std::span<const std::byte> input, std::span<UChar> destination, OptionSet<Base64EncodeOption> options)
+void base64Encode(std::span<const std::byte> input, std::span<char16_t> destination, OptionSet<Base64EncodeOption> options)
 {
     if (!destination.size())
         return;
@@ -310,7 +310,7 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
 
     if (input.is8Bit())
         return toString(base64DecodeInternal<LChar, StringImplMalloc>(input.span8(), options));
-    return toString(base64DecodeInternal<UChar, StringImplMalloc>(input.span16(), options));
+    return toString(base64DecodeInternal<char16_t, StringImplMalloc>(input.span16(), options));
 }
 
 template<typename CharacterType>
@@ -323,11 +323,11 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl
     if (!output.size())
         return { FromBase64ShouldThrowError::No, 0, 0 };
 
-    std::array<UChar, 4> chunk { 0, 0, 0, 0 };
+    std::array<char16_t, 4> chunk { 0, 0, 0, 0 };
     size_t chunkLength = 0;
 
     for (size_t i = 0; i < length;) {
-        UChar c = span[i++];
+        char16_t c = span[i++];
 
         if (isASCIIWhitespace(c))
             continue;

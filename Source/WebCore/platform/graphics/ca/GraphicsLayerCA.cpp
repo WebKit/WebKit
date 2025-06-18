@@ -3343,15 +3343,15 @@ GraphicsLayerCA::CloneID GraphicsLayerCA::ReplicaState::cloneID() const
 {
     size_t depth = m_replicaBranches.size();
 
-    const size_t bitsPerUChar = sizeof(UChar) * 8;
+    const size_t bitsPerUChar = sizeof(char16_t) * 8;
     size_t vectorSize = (depth + bitsPerUChar - 1) / bitsPerUChar;
     
-    Vector<UChar> result(vectorSize, 0);
+    Vector<char16_t> result(vectorSize, 0);
 
     // Create a string from the bit sequence which we can use to identify the clone.
     // Note that the string may contain embedded nulls, but that's OK.
     for (size_t i = 0; i < depth; ++i) {
-        UChar& currChar = result[i / bitsPerUChar];
+        char16_t& currChar = result[i / bitsPerUChar];
         currChar = (currChar << 1) | m_replicaBranches[i];
     }
     

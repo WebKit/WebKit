@@ -44,7 +44,7 @@ public:
 
     // Gets the char in the stream. Will return (NUL) kEndOfFileMarker when at the
     // end of the stream.
-    UChar nextInputChar() const
+    char16_t nextInputChar() const
     {
         if (m_offset >= m_stringLength)
             return kEndOfFileMarker;
@@ -53,7 +53,7 @@ public:
 
     // Gets the char at lookaheadOffset from the current stream position. Will
     // return NUL (kEndOfFileMarker) if the stream position is at the end.
-    UChar peek(unsigned lookaheadOffset) const
+    char16_t peek(unsigned lookaheadOffset) const
     {
         if ((m_offset + lookaheadOffset) >= m_stringLength)
             return kEndOfFileMarker;
@@ -61,7 +61,7 @@ public:
     }
 
     void advance(unsigned offset = 1) { m_offset += offset; }
-    void pushBack(UChar cc)
+    void pushBack(char16_t cc)
     {
         --m_offset;
         ASSERT_UNUSED(cc, nextInputChar() == cc);
@@ -69,7 +69,7 @@ public:
 
     double getDouble(unsigned start, unsigned end) const;
 
-    template<bool characterPredicate(UChar)>
+    template<bool characterPredicate(char16_t)>
     unsigned skipWhilePredicate(unsigned offset)
     {
         if (m_string->is8Bit()) {

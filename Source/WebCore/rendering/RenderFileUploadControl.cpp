@@ -280,7 +280,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     }
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
-    const UChar character = '0';
+    const char16_t character = '0';
     const String characterAsString = span(character);
     const FontCascade& font = style().fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.

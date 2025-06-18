@@ -93,7 +93,7 @@ ALWAYS_INLINE auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
 }
 
 template<>
-ALWAYS_INLINE char32_t CodePointIterator<UChar>::operator*() const
+ALWAYS_INLINE char32_t CodePointIterator<char16_t>::operator*() const
 {
     ASSERT(!atEnd());
     char32_t c;
@@ -102,7 +102,7 @@ ALWAYS_INLINE char32_t CodePointIterator<UChar>::operator*() const
 }
 
 template<>
-ALWAYS_INLINE auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
+ALWAYS_INLINE auto CodePointIterator<char16_t>::operator++() -> CodePointIterator&
 {
     unsigned i = 0;
     size_t length = m_data.size();

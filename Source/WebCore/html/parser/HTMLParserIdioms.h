@@ -35,8 +35,8 @@ class QualifiedName;
 
 template<typename CharacterType> bool isComma(CharacterType);
 template<typename CharacterType> bool isHTMLSpaceOrComma(CharacterType);
-bool isHTMLLineBreak(UChar);
-bool isHTMLSpaceButNotLineBreak(UChar);
+bool isHTMLLineBreak(char16_t);
+bool isHTMLSpaceButNotLineBreak(char16_t);
 
 // 2147483647 is 2^31 - 1.
 static const unsigned maxHTMLNonNegativeInteger = 2147483647;
@@ -94,7 +94,7 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView);
 
 // Inline implementations of some of the functions declared above.
 
-inline bool isHTMLLineBreak(UChar character)
+inline bool isHTMLLineBreak(char16_t character)
 {
     return character <= '\r' && (character == '\n' || character == '\r');
 }
@@ -103,7 +103,7 @@ ALWAYS_INLINE bool containsHTMLLineBreak(StringView view)
 {
     if (view.is8Bit())
         return charactersContain<LChar, '\r', '\n'>(view.span8());
-    return charactersContain<UChar, '\r', '\n'>(view.span16());
+    return charactersContain<char16_t, '\r', '\n'>(view.span16());
 }
 
 template<typename CharacterType> inline bool isComma(CharacterType character)
@@ -116,7 +116,7 @@ template<typename CharacterType> inline bool isHTMLSpaceOrComma(CharacterType ch
     return isComma(character) || isASCIIWhitespace(character);
 }
 
-inline bool isHTMLSpaceButNotLineBreak(UChar character)
+inline bool isHTMLSpaceButNotLineBreak(char16_t character)
 {
     return isASCIIWhitespace(character) && !isHTMLLineBreak(character);
 }

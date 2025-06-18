@@ -999,8 +999,8 @@ TEST_F(FileSystemTest, isAncestor)
         EXPECT_EQ(
             input.second,
                 FileSystem::isAncestor(
-                    std::span<const UChar> { static_cast<const UChar *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
-                    std::span<const UChar> { static_cast<const UChar*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
+                    std::span<const char16_t> { static_cast<const char16_t *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
+                    std::span<const char16_t> { static_cast<const char16_t*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
                 )
             );
         }

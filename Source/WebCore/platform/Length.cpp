@@ -48,7 +48,7 @@ struct SameSizeAsLength {
 };
 static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
-static Length parseLength(std::span<const UChar> data)
+static Length parseLength(std::span<const char16_t> data)
 {
     if (data.empty())
         return Length(1, LengthType::Relative);
@@ -70,7 +70,7 @@ static Length parseLength(std::span<const UChar> data)
         ++i;
 
     bool ok;
-    UChar next = (i < data.size()) ? data[i] : ' ';
+    char16_t next = (i < data.size()) ? data[i] : ' ';
     if (next == '%') {
         // IE quirk: accept decimal fractions for percentages.
         double r = charactersToDouble(data.first(doubleLength), &ok);
@@ -86,7 +86,7 @@ static Length parseLength(std::span<const UChar> data)
     return Length(0, LengthType::Relative);
 }
 
-static unsigned countCharacter(StringImpl& string, UChar character)
+static unsigned countCharacter(StringImpl& string, char16_t character)
 {
     unsigned count = 0;
     unsigned length = string.length();

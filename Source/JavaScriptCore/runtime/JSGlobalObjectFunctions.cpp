@@ -158,7 +158,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
 
     StringBuilder builder(OverflowPolicy::RecordOverflow);
     size_t k = 0;
-    UChar u = 0;
+    char16_t u = 0;
     while (k < characters.size()) {
         const CharType* p = characters.data() + k;
         CharType c = *p;
@@ -193,7 +193,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
                             u = U16_TRAIL(character);
                         } else {
                             ASSERT(!U_IS_SURROGATE(character));
-                            u = static_cast<UChar>(character);
+                            u = static_cast<char16_t>(character);
                         }
                     }
                 }
@@ -207,7 +207,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
                         && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
                         && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
                     charLen = 6;
-                    u = Lexer<UChar>::convertUnicode(p[2], p[3], p[4], p[5]);
+                    u = Lexer<char16_t>::convertUnicode(p[2], p[3], p[4], p[5]);
                 }
             }
             if (charLen && (u >= 128 || !doNotUnescape.get(static_cast<LChar>(u)))) {
@@ -420,7 +420,7 @@ double jsToNumber(StringView s)
 static double parseFloat(StringView s)
 {
     if (s.length() == 1) {
-        UChar c = s[0];
+        char16_t c = s[0];
         if (isASCIIDigit(c))
             return c - '0';
         return PNaN;
@@ -508,7 +508,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
         LiteralParser<LChar, JSONReviverMode::Disabled> preparser(globalObject, programSource.span8(), SloppyJSON, nullptr);
         parsedValue = preparser.tryEval();
     } else {
-        LiteralParser<UChar, JSONReviverMode::Disabled> preparser(globalObject, programSource.span16(), SloppyJSON, nullptr);
+        LiteralParser<char16_t, JSONReviverMode::Disabled> preparser(globalObject, programSource.span16(), SloppyJSON, nullptr);
         parsedValue = preparser.tryEval();
     }
     RETURN_IF_EXCEPTION(scope, { });
@@ -665,7 +665,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncUnescape, (JSGlobalObject* globalObject, Call
                 auto c = characters.subspan(k);
                 if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
-                        builder.append(Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]));
+                        builder.append(Lexer<char16_t>::convertUnicode(c[2], c[3], c[4], c[5]));
                         k += 6;
                         continue;
                     }
@@ -682,15 +682,15 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncUnescape, (JSGlobalObject* globalObject, Call
 
             while (k < length) {
                 auto c = characters.subspan(k);
-                UChar convertedUChar;
+                char16_t convertedUChar;
                 if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
-                        convertedUChar = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
+                        convertedUChar = Lexer<char16_t>::convertUnicode(c[2], c[3], c[4], c[5]);
                         c = span(convertedUChar);
                         k += 5;
                     }
                 } else if (c[0] == '%' && k <= length - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
-                    convertedUChar = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
+                    convertedUChar = char16_t(Lexer<char16_t>::convertHex(c[1], c[2]));
                     c = span(convertedUChar);
                     k += 2;
                 }

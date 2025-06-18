@@ -48,7 +48,7 @@ namespace XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
-static inline bool isWhitespace(UChar c)
+static inline bool isWhitespace(char16_t c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
@@ -611,10 +611,10 @@ Value FunNormalizeSpace::evaluate() const
     // https://www.w3.org/TR/1999/REC-xpath-19991116/#function-normalize-space
     if (!argumentCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
-        return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<UChar>);
+        return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<char16_t>);
     }
     String s = argument(0).evaluate().toString();
-    return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<UChar>);
+    return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<char16_t>);
 }
 
 Value FunTranslate::evaluate() const
@@ -636,7 +636,7 @@ Value FunTranslate::evaluate() const
     StringBuilder result;
 
     for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
-        UChar ch = s1[i1];
+        char16_t ch = s1[i1];
         size_t i2 = s2.find(ch);
         
         if (i2 == notFound)

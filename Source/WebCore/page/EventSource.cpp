@@ -382,7 +382,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         m_eventName = m_receiveBuffer.subspan(position, valueLength);
     else if (field == "id"_s) {
         StringView parsedEventId = m_receiveBuffer.subspan(position, valueLength);
-        constexpr UChar nullCharacter = '\0';
+        constexpr char16_t nullCharacter = '\0';
         if (!parsedEventId.contains(nullCharacter))
             m_currentlyParsedEventId = parsedEventId.toString();
     } else if (field == "retry"_s) {

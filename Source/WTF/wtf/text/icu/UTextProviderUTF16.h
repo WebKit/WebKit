@@ -29,6 +29,6 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE UText* openUTF16ContextAwareUTextProvider(UText*, std::span<const UChar>, std::span<const UChar> priorContext, UErrorCode*);
+WTF_EXPORT_PRIVATE UText* openUTF16ContextAwareUTextProvider(UText*, std::span<const char16_t>, std::span<const char16_t> priorContext, UErrorCode*);
 
 } // namespace WTF

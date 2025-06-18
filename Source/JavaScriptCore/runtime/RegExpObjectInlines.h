@@ -131,11 +131,11 @@ inline unsigned advanceStringUnicode(StringView s, unsigned length, unsigned cur
     if (currentIndex + 1 >= length)
         return currentIndex + 1;
 
-    UChar first = s[currentIndex];
+    char16_t first = s[currentIndex];
     if (!U16_IS_LEAD(first))
         return currentIndex + 1;
 
-    UChar second = s[currentIndex + 1];
+    char16_t second = s[currentIndex + 1];
     if (!U16_IS_TRAIL(second))
         return currentIndex + 1;
 

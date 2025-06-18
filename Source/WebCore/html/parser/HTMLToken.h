@@ -34,8 +34,8 @@ namespace WebCore {
 struct DoctypeData {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DoctypeData);
 public:
-    Vector<UChar> publicIdentifier;
-    Vector<UChar> systemIdentifier;
+    Vector<char16_t> publicIdentifier;
+    Vector<char16_t> systemIdentifier;
     bool hasPublicIdentifier { false };
     bool hasSystemIdentifier { false };
     bool forceQuirks { false };
@@ -55,12 +55,12 @@ public:
     };
 
     struct Attribute {
-        Vector<UChar, 32> name;
-        Vector<UChar, 64> value;
+        Vector<char16_t, 32> name;
+        Vector<char16_t, 64> value;
     };
 
     typedef Vector<Attribute, 10> AttributeList;
-    typedef Vector<UChar, 256> DataVector;
+    typedef Vector<char16_t, 256> DataVector;
 
     HTMLToken() = default;
 
@@ -76,20 +76,20 @@ public:
 
     const DataVector& name() const;
 
-    void appendToName(UChar);
+    void appendToName(char16_t);
 
     // DOCTYPE.
 
     void beginDOCTYPE();
-    void beginDOCTYPE(UChar);
+    void beginDOCTYPE(char16_t);
 
     void setForceQuirks();
 
     void setPublicIdentifierToEmptyString();
     void setSystemIdentifierToEmptyString();
 
-    void appendToPublicIdentifier(UChar);
-    void appendToSystemIdentifier(UChar);
+    void appendToPublicIdentifier(char16_t);
+    void appendToSystemIdentifier(char16_t);
 
     std::unique_ptr<DoctypeData> releaseDoctypeData();
 
@@ -104,8 +104,8 @@ public:
     void beginEndTag(const Vector<LChar, 32>&);
 
     void beginAttribute();
-    void appendToAttributeName(UChar);
-    void appendToAttributeValue(UChar);
+    void appendToAttributeName(char16_t);
+    void appendToAttributeValue(char16_t);
     void appendToAttributeValue(unsigned index, StringView value);
     template<typename CharacterType> void appendToAttributeValue(std::span<const CharacterType>);
     void endAttribute();
@@ -122,7 +122,7 @@ public:
     bool charactersIsAll8BitData() const;
 
     void appendToCharacter(LChar);
-    void appendToCharacter(UChar);
+    void appendToCharacter(char16_t);
     void appendToCharacter(const Vector<LChar, 32>&);
     template<typename CharacterType> void appendToCharacter(std::span<const CharacterType>);
 
@@ -134,11 +134,11 @@ public:
     void beginComment();
     void appendToComment(char);
     void appendToComment(ASCIILiteral);
-    void appendToComment(UChar);
+    void appendToComment(char16_t);
 
 private:
     DataVector m_data;
-    UChar m_data8BitCheck { 0 };
+    char16_t m_data8BitCheck { 0 };
     Type m_type { Type::Uninitialized };
 
     // For StartTag and EndTag
@@ -176,7 +176,7 @@ inline const HTMLToken::DataVector& HTMLToken::name() const
     return m_data;
 }
 
-inline void HTMLToken::appendToName(UChar character)
+inline void HTMLToken::appendToName(char16_t character)
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag || m_type == Type::DOCTYPE);
     ASSERT(character);
@@ -197,7 +197,7 @@ inline void HTMLToken::beginDOCTYPE()
     m_doctypeData = makeUnique<DoctypeData>();
 }
 
-inline void HTMLToken::beginDOCTYPE(UChar character)
+inline void HTMLToken::beginDOCTYPE(char16_t character)
 {
     ASSERT(character);
     beginDOCTYPE();
@@ -219,7 +219,7 @@ inline void HTMLToken::setSystemIdentifierToEmptyString()
     m_doctypeData->systemIdentifier.clear();
 }
 
-inline void HTMLToken::appendToPublicIdentifier(UChar character)
+inline void HTMLToken::appendToPublicIdentifier(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::DOCTYPE);
@@ -227,7 +227,7 @@ inline void HTMLToken::appendToPublicIdentifier(UChar character)
     m_doctypeData->publicIdentifier.append(character);
 }
 
-inline void HTMLToken::appendToSystemIdentifier(UChar character)
+inline void HTMLToken::appendToSystemIdentifier(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::DOCTYPE);
@@ -310,7 +310,7 @@ inline void HTMLToken::endAttribute()
 #endif
 }
 
-inline void HTMLToken::appendToAttributeName(UChar character)
+inline void HTMLToken::appendToAttributeName(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
@@ -318,7 +318,7 @@ inline void HTMLToken::appendToAttributeName(UChar character)
     m_currentAttribute->name.append(character);
 }
 
-inline void HTMLToken::appendToAttributeValue(UChar character)
+inline void HTMLToken::appendToAttributeValue(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
@@ -366,7 +366,7 @@ inline void HTMLToken::appendToCharacter(LChar character)
     m_data.append(character);
 }
 
-inline void HTMLToken::appendToCharacter(UChar character)
+inline void HTMLToken::appendToCharacter(char16_t character)
 {
     ASSERT(m_type == Type::Uninitialized || m_type == Type::Character);
     m_type = Type::Character;
@@ -386,7 +386,7 @@ inline void HTMLToken::appendToCharacter(std::span<const CharacterType> characte
 {
     m_type = Type::Character;
     m_data.append(characters);
-    if constexpr (std::is_same_v<CharacterType, UChar>) {
+    if constexpr (std::is_same_v<CharacterType, char16_t>) {
         if (!charactersIsAll8BitData())
             return;
         for (auto character : characters)
@@ -425,7 +425,7 @@ inline void HTMLToken::appendToComment(ASCIILiteral literal)
     m_data.append(literal.span8());
 }
 
-inline void HTMLToken::appendToComment(UChar character)
+inline void HTMLToken::appendToComment(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::Comment);
@@ -433,7 +433,7 @@ inline void HTMLToken::appendToComment(UChar character)
     m_data8BitCheck |= character;
 }
 
-inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, std::span<const UChar> name)
+inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, std::span<const char16_t> name)
 {
     for (auto& attribute : attributes) {
         // FIXME: The one caller that uses this probably wants to ignore letter case.

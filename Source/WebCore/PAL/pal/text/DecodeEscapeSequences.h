@@ -60,7 +60,7 @@ struct Unicode16BitEscapeSequence {
         StringBuilder builder;
         builder.reserveCapacity(numberOfSequences);
         while (numberOfSequences--) {
-            UChar codeUnit = (toASCIIHexValue(run[2]) << 12) | (toASCIIHexValue(run[3]) << 8) | (toASCIIHexValue(run[4]) << 4) | toASCIIHexValue(run[5]);
+            char16_t codeUnit = (toASCIIHexValue(run[2]) << 12) | (toASCIIHexValue(run[3]) << 8) | (toASCIIHexValue(run[4]) << 4) | toASCIIHexValue(run[5]);
             builder.append(codeUnit);
             run = run.substring(SequenceSize);
         }

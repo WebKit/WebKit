@@ -97,7 +97,7 @@ ASCIILiteral convertModifierToString(Modifier);
 std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions&);
 String generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions&);
 String escapePatternString(StringView input);
-bool isValidNameCodepoint(UChar codepoint, URLPatternUtilities::IsFirst);
+bool isValidNameCodepoint(char16_t codepoint, URLPatternUtilities::IsFirst);
 
 
 } // namespace URLPatternUtilities

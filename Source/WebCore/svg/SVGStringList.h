@@ -51,7 +51,7 @@ public:
             m_items.append(emptyString());
     }
 
-    bool parse(StringView, UChar delimiter);
+    bool parse(StringView, char16_t delimiter);
     String valueAsString() const override;
 };
 

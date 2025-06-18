@@ -45,7 +45,7 @@ struct HTMLEntityTableEntry {
 class HTMLEntityTable {
 public:
     static std::span<const HTMLEntityTableEntry> entries();
-    static std::span<const HTMLEntityTableEntry> entriesStartingWith(UChar);
+    static std::span<const HTMLEntityTableEntry> entriesStartingWith(char16_t);
 };
 
 } // namespace WebCore

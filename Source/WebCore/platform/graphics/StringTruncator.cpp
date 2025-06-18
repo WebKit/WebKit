@@ -42,7 +42,7 @@ namespace WebCore {
 
 constexpr size_t stringBufferSize = 2048;
 
-typedef unsigned TruncationFunction(const String&, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool shouldInsertEllipsis);
+typedef unsigned TruncationFunction(const String&, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis);
 
 static inline int textBreakAtOrPreceding(UBreakIterator* it, int offset)
 {
@@ -59,7 +59,7 @@ static inline int boundedTextBreakFollowing(UBreakIterator* it, int offset, int 
     return result == UBRK_DONE ? length : result;
 }
 
-static unsigned centerTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool shouldInsertEllipsis)
+static unsigned centerTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < stringBufferSize);
@@ -100,7 +100,7 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     return truncatedLength;
 }
 
-static unsigned rightTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool shouldInsertEllipsis)
+static unsigned rightTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < stringBufferSize);
@@ -130,7 +130,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     return truncatedLength;
 }
 
-static unsigned rightClipToCharacterBuffer(const String& string, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool)
+static unsigned rightClipToCharacterBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -142,7 +142,7 @@ static unsigned rightClipToCharacterBuffer(const String& string, unsigned length
     return keepLength;
 }
 
-static unsigned rightClipToWordBuffer(const String& string, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool)
+static unsigned rightClipToWordBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -164,7 +164,7 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     return keepLength;
 }
 
-static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<UChar> buffer, bool shouldInsertEllipsis)
+static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -193,7 +193,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
     return length - adjustedStartIndex;
 }
 
-static float stringWidth(const FontCascade& renderer, std::span<const UChar> characters)
+static float stringWidth(const FontCascade& renderer, std::span<const char16_t> characters)
 {
     TextRun run(StringView { characters });
     return renderer.width(run);
@@ -211,7 +211,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
 
     float currentEllipsisWidth = shouldInsertEllipsis ? stringWidth(font, span(horizontalEllipsis)) : customTruncationElementWidth;
 
-    std::array<UChar, stringBufferSize> stringBuffer;
+    std::array<char16_t, stringBufferSize> stringBuffer;
     unsigned truncatedLength;
     unsigned keepCount;
     unsigned length = string.length();
@@ -224,7 +224,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = centerTruncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     } else {
         keepCount = length;
-        StringView(string).getCharacters(std::span<UChar> { stringBuffer });
+        StringView(string).getCharacters(std::span<char16_t> { stringBuffer });
         truncatedLength = length;
     }
 
@@ -291,7 +291,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     }
     
-    return std::span<const UChar> { stringBuffer }.first(truncatedLength);
+    return std::span<const char16_t> { stringBuffer }.first(truncatedLength);
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font)

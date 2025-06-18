@@ -32,15 +32,15 @@ namespace TestWebKitAPI {
 using namespace WebCore;
 using CodePath = FontCascade::CodePath;
 
-static void testCodePath(UChar codePoint, CodePath codePath)
+static void testCodePath(char16_t codePoint, CodePath codePath)
 {
-    std::array<UChar, 1> target = { codePoint };
-    EXPECT_EQ(codePath, FontCascade::characterRangeCodePath(std::span<UChar>(target))) << "target: " << static_cast<int>(target[0]);
+    std::array<char16_t, 1> target = { codePoint };
+    EXPECT_EQ(codePath, FontCascade::characterRangeCodePath(std::span<char16_t>(target))) << "target: " << static_cast<int>(target[0]);
 }
 
 struct CodePathRange {
-    UChar start;
-    UChar end;
+    char16_t start;
+    char16_t end;
     CodePath path;
     CodePath belowPath { CodePath::Simple };
     CodePath abovePath { CodePath::Simple };
@@ -48,17 +48,17 @@ struct CodePathRange {
 
 static void testCodePathRange(CodePathRange range)
 {
-    std::array<UChar, 1> below = { static_cast<UChar>(range.start - 1) };
-    std::array<UChar, 1> start = { range.start };
-    std::array<UChar, 1> middle = { static_cast<UChar>((range.start + range.end) / 2) };
-    std::array<UChar, 1> end = { range.end };
-    std::array<UChar, 1> above = { static_cast<UChar>(range.end + 1) };
+    std::array<char16_t, 1> below = { static_cast<char16_t>(range.start - 1) };
+    std::array<char16_t, 1> start = { range.start };
+    std::array<char16_t, 1> middle = { static_cast<char16_t>((range.start + range.end) / 2) };
+    std::array<char16_t, 1> end = { range.end };
+    std::array<char16_t, 1> above = { static_cast<char16_t>(range.end + 1) };
 
-    EXPECT_EQ(range.belowPath, FontCascade::characterRangeCodePath(std::span<UChar>(below))) << "below: " << std::hex << static_cast<int>(below[0]);
-    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<UChar>(start))) << "start: " << std::hex << static_cast<int>(start[0]);
-    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<UChar>(middle))) << "middle: " << std::hex << static_cast<int>(middle[0]);
-    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<UChar>(end))) << "end: " << std::hex << static_cast<int>(end[0]);
-    EXPECT_EQ(range.abovePath, FontCascade::characterRangeCodePath(std::span<UChar>(above))) << "above: " << std::hex << static_cast<int>(above[0]);
+    EXPECT_EQ(range.belowPath, FontCascade::characterRangeCodePath(std::span<char16_t>(below))) << "below: " << std::hex << static_cast<int>(below[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(start))) << "start: " << std::hex << static_cast<int>(start[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(middle))) << "middle: " << std::hex << static_cast<int>(middle[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(end))) << "end: " << std::hex << static_cast<int>(end[0]);
+    EXPECT_EQ(range.abovePath, FontCascade::characterRangeCodePath(std::span<char16_t>(above))) << "above: " << std::hex << static_cast<int>(above[0]);
 }
 
 // Testing characterRangeCodePath for non-surrogate codepoints

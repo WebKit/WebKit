@@ -98,7 +98,7 @@ public:
 
     bool hasEmptyText() const { return m_text.isEmpty(); }
 
-    UChar characterAt(unsigned) const;
+    char16_t characterAt(unsigned) const;
     size_t length() const { return text().length(); }
 
     float width(unsigned from, unsigned length, const FontCascade&, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
@@ -127,7 +127,7 @@ public:
     float hangablePunctuationEndWidth(unsigned index) const;
     unsigned firstCharacterIndexStrippingSpaces() const;
     unsigned lastCharacterIndexStrippingSpaces() const;
-    static bool isHangableStopOrComma(UChar);
+    static bool isHangableStopOrComma(char16_t);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
@@ -200,7 +200,7 @@ protected:
     void willBeDestroyed() override;
 
     virtual void setRenderedText(const String&);
-    virtual Vector<UChar> previousCharacter() const;
+    virtual Vector<char16_t> previousCharacter() const;
 
     virtual void setTextInternal(const String&, bool force);
 
@@ -226,7 +226,7 @@ private:
     float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
     bool computeUseBackslashAsYenSymbol() const;
 
-    void secureText(UChar mask);
+    void secureText(char16_t mask);
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>*);
 
@@ -269,14 +269,14 @@ private:
     unsigned m_fontCodePath : 2 { 0 };
 };
 
-String applyTextTransform(const RenderStyle&, const String&, Vector<UChar> previousCharacter);
+String applyTextTransform(const RenderStyle&, const String&, Vector<char16_t> previousCharacter);
 String applyTextTransform(const RenderStyle&, const String&);
-String capitalize(const String&, Vector<UChar> previousCharacter);
+String capitalize(const String&, Vector<char16_t> previousCharacter);
 String capitalize(const String&);
 TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
 TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak);
 
-inline UChar RenderText::characterAt(unsigned i) const
+inline char16_t RenderText::characterAt(unsigned i) const
 {
     return i >= length() ? 0 : text()[i];
 }

@@ -86,12 +86,12 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
     ASSERT(!textNode() || textNode()->renderer() == this);
 }
 
-Vector<UChar> RenderTextFragment::previousCharacter() const
+Vector<char16_t> RenderTextFragment::previousCharacter() const
 {
     if (start()) {
         String original = textNode() ? textNode()->data() : contentString();
         if (!original.isNull() && start() <= original.length()) {
-            Vector<UChar> previous;
+            Vector<char16_t> previous;
             previous.append(original[start() - 1]);
             return previous;
         }

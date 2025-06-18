@@ -49,18 +49,18 @@ public:
     // The hasher hashes two characters at a time, and thus an "aligned" hasher is one
     // where an even number of characters have been added. Callers that always add
     // characters two at a time can use the "assuming aligned" functions.
-    void addCharactersAssumingAligned(UChar a, UChar b)
+    void addCharactersAssumingAligned(char16_t a, char16_t b)
     {
         ASSERT(!m_hasPendingCharacter);
         addCharactersAssumingAlignedImpl(a, b, m_hash);
     }
 
-    void addCharacter(UChar character)
+    void addCharacter(char16_t character)
     {
         addCharacterImpl(character, m_hasPendingCharacter, m_pendingCharacter, m_hash);
     }
 
-    void addCharacters(UChar a, UChar b)
+    void addCharacters(char16_t a, char16_t b)
     {
         if (m_hasPendingCharacter) {
 #if ASSERT_ENABLED
@@ -187,12 +187,12 @@ public:
 private:
     friend class StringHasher;
 
-    static void addCharactersAssumingAlignedImpl(UChar a, UChar b, unsigned& hash)
+    static void addCharactersAssumingAlignedImpl(char16_t a, char16_t b, unsigned& hash)
     {
         hash = calculateWithTwoCharacters(hash, a, b);
     }
 
-    static void addCharacterImpl(UChar character, bool& hasPendingCharacter, UChar& pendingCharacter, unsigned& hash)
+    static void addCharacterImpl(char16_t character, bool& hasPendingCharacter, char16_t& pendingCharacter, unsigned& hash)
     {
         if (hasPendingCharacter) {
             hasPendingCharacter = false;
@@ -255,12 +255,12 @@ private:
         return processPendingCharacterImpl(m_hasPendingCharacter, m_pendingCharacter, m_hash);
     }
 
-    static unsigned hashWithTop8BitsMaskedImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
+    static unsigned hashWithTop8BitsMaskedImpl(const bool hasPendingCharacter, const char16_t pendingCharacter, const unsigned hash)
     {
         return StringHasher::finalizeAndMaskTop8Bits(processPendingCharacterImpl(hasPendingCharacter, pendingCharacter, hash));
     }
 
-    static unsigned processPendingCharacterImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
+    static unsigned processPendingCharacterImpl(const bool hasPendingCharacter, const char16_t pendingCharacter, const unsigned hash)
     {
         unsigned result = hash;
 
@@ -271,7 +271,7 @@ private:
     }
 
     unsigned m_hash { stringHashingStartValue };
-    UChar m_pendingCharacter { 0 };
+    char16_t m_pendingCharacter { 0 };
     bool m_hasPendingCharacter { false };
 };
 

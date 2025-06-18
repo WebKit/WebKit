@@ -687,7 +687,7 @@ public:
     inline bool preserveNewline() const;
     static constexpr bool collapseWhiteSpace(WhiteSpaceCollapse);
     inline bool collapseWhiteSpace() const;
-    inline bool isCollapsibleWhiteSpace(UChar) const;
+    inline bool isCollapsibleWhiteSpace(char16_t) const;
     inline bool breakOnlyAfterWhiteSpace() const;
     inline bool breakWords() const;
 

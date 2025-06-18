@@ -102,14 +102,14 @@ public:
     inline bool atTextParagraphSeparator() const;
     inline bool atParagraphSeparator() const;
 
-    UChar current() const;
-    UChar previousInSameNode() const;
+    char16_t current() const;
+    char16_t previousInSameNode() const;
     ALWAYS_INLINE UCharDirection direction() const;
 
 private:
-    UChar characterAt(unsigned) const;
+    char16_t characterAt(unsigned) const;
 
-    UCharDirection surrogateTextDirection(UChar currentCodeUnit) const;
+    UCharDirection surrogateTextDirection(char16_t currentCodeUnit) const;
 
     RenderElement* m_root { nullptr };
     RenderObject* m_renderer { nullptr };
@@ -331,7 +331,7 @@ inline bool LegacyInlineIterator::atEnd() const
     return !m_renderer;
 }
 
-inline UChar LegacyInlineIterator::characterAt(unsigned index) const
+inline char16_t LegacyInlineIterator::characterAt(unsigned index) const
 {
     auto* textRenderer = dynamicDowncast<RenderText>(m_renderer);
     if (!textRenderer)
@@ -339,12 +339,12 @@ inline UChar LegacyInlineIterator::characterAt(unsigned index) const
     return textRenderer->characterAt(index);
 }
 
-inline UChar LegacyInlineIterator::current() const
+inline char16_t LegacyInlineIterator::current() const
 {
     return characterAt(m_pos);
 }
 
-inline UChar LegacyInlineIterator::previousInSameNode() const
+inline char16_t LegacyInlineIterator::previousInSameNode() const
 {
     return characterAt(m_pos - 1);
 }
@@ -355,7 +355,7 @@ ALWAYS_INLINE UCharDirection LegacyInlineIterator::direction() const
         return U_OTHER_NEUTRAL;
 
     if (auto* textRenderer = dynamicDowncast<RenderText>(*m_renderer); textRenderer) [[likely]] {
-        UChar codeUnit = textRenderer->characterAt(m_pos);
+        char16_t codeUnit = textRenderer->characterAt(m_pos);
         if (U16_IS_SINGLE(codeUnit)) [[likely]]
             return u_charDirection(codeUnit);
         return surrogateTextDirection(codeUnit);

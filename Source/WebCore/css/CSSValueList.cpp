@@ -176,7 +176,7 @@ Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<C
     return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(value1), WTFMove(value2), WTFMove(value3), WTFMove(value4)));
 }
 
-Ref<CSSValueList> CSSValueList::create(UChar separator, CSSValueListBuilder builder)
+Ref<CSSValueList> CSSValueList::create(char16_t separator, CSSValueListBuilder builder)
 {
     switch (separator) {
     case ',':

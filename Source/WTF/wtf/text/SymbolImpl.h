@@ -75,7 +75,7 @@ protected:
     friend class StringImpl;
 
     inline SymbolImpl(std::span<const LChar>, Ref<StringImpl>&&, Flags = s_flagDefault);
-    inline SymbolImpl(std::span<const UChar>, Ref<StringImpl>&&, Flags = s_flagDefault);
+    inline SymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&, Flags = s_flagDefault);
     inline SymbolImpl(Flags = s_flagDefault);
 
     // The pointer to the owner string should be immediately following after the StringImpl layout,
@@ -95,7 +95,7 @@ inline SymbolImpl::SymbolImpl(std::span<const LChar> characters, Ref<StringImpl>
     static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
 }
 
-inline SymbolImpl::SymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base, Flags flags)
+inline SymbolImpl::SymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, Flags flags)
     : UniquedStringImpl(CreateSymbol, characters)
     , m_owner(&base.leakRef())
     , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
@@ -139,7 +139,7 @@ private:
     {
     }
 
-    PrivateSymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base)
+    PrivateSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base)
         : SymbolImpl(characters, WTFMove(base), s_flagIsPrivate)
     {
     }
@@ -163,7 +163,7 @@ private:
     {
     }
 
-    RegisteredSymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
+    RegisteredSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
         : SymbolImpl(characters, WTFMove(base), flags)
         , m_symbolRegistry(&registry)
     {

@@ -170,7 +170,7 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
 
     ListFormatInput input(WTFMove(stringList));
 
-    Vector<UChar, 32> result;
+    Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
@@ -209,7 +209,7 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
         return throwOutOfMemoryError(globalObject, scope);
 
     int32_t formattedStringLength = 0;
-    const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
     StringView resultStringView(std::span(formattedStringPointer, formattedStringLength));

@@ -61,12 +61,12 @@ size_t WKStringGetLength(WKStringRef stringRef)
 
 size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t bufferLength)
 {
-    static_assert(sizeof(WKChar) == sizeof(UChar), "Size of WKChar must match size of UChar");
+    static_assert(sizeof(WKChar) == sizeof(char16_t), "Size of WKChar must match size of char16_t");
 
     unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
     auto substring = WebKit::toProtectedImpl(stringRef)->stringView().left(unsignedBufferLength);
 
-    substring.getCharacters(unsafeMakeSpan(reinterpret_cast<UChar*>(buffer), bufferLength));
+    substring.getCharacters(unsafeMakeSpan(reinterpret_cast<char16_t*>(buffer), bufferLength));
     return substring.length();
 }
 

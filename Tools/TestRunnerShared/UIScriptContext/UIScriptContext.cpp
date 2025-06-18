@@ -166,7 +166,7 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
         return;
 
     JSStringRef result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
-    String scriptResult({ reinterpret_cast<const UChar*>(JSStringGetCharactersPtr(result)), JSStringGetLength(result) });
+    String scriptResult({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(result)), JSStringGetLength(result) });
     if (result)
         JSStringRelease(result);
 

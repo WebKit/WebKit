@@ -68,7 +68,7 @@ struct Parser::Token {
 
 enum XMLCat { NameStart, NameCont, NotPartOfName };
 
-static XMLCat charCat(UChar character)
+static XMLCat charCat(char16_t character)
 {
     if (character == '_')
         return NameStart;
@@ -168,7 +168,7 @@ char Parser::peekAheadHelper()
 {
     if (m_nextPos + 1 >= m_data.length())
         return 0;
-    UChar next = m_data[m_nextPos + 1];
+    char16_t next = m_data[m_nextPos + 1];
     if (next >= 0xff)
         return 0;
     return next;
@@ -178,7 +178,7 @@ char Parser::peekCurHelper()
 {
     if (m_nextPos >= m_data.length())
         return 0;
-    UChar next = m_data[m_nextPos];
+    char16_t next = m_data[m_nextPos];
     if (next >= 0xff)
         return 0;
     return next;
@@ -186,7 +186,7 @@ char Parser::peekCurHelper()
 
 Parser::Token Parser::lexString()
 {
-    UChar delimiter = m_data[m_nextPos];
+    char16_t delimiter = m_data[m_nextPos];
     int startPos = m_nextPos + 1;
 
     for (m_nextPos = startPos; m_nextPos < m_data.length(); ++m_nextPos) {
@@ -210,7 +210,7 @@ Parser::Token Parser::lexNumber()
 
     // Go until end or a non-digits character.
     for (; m_nextPos < m_data.length(); ++m_nextPos) {
-        UChar aChar = m_data[m_nextPos];
+        char16_t aChar = m_data[m_nextPos];
         if (aChar >= 0xff) break;
 
         if (!isASCIIDigit(aChar)) {

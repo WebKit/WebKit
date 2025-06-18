@@ -841,7 +841,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = spanReinterpretCast<const UChar>(keyURIArray->span().first(keyURILength));
+    keyURI = spanReinterpretCast<const char16_t>(keyURIArray->span().first(keyURILength));
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -853,7 +853,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = spanReinterpretCast<const UChar>(keyIDArray->span().first(keyIDLength));
+    keyID = spanReinterpretCast<const char16_t>(keyIDArray->span().first(keyIDLength));
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);

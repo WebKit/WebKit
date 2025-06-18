@@ -123,7 +123,7 @@ public:
     {
     }
 
-    int32_t frequency(UChar character) const
+    int32_t frequency(char16_t character) const
     {
         if (!m_size)
             return 1;
@@ -155,7 +155,7 @@ public:
     bool is8Bit() const { return m_is8Bit; }
 
 private:
-    inline void add(UChar character)
+    inline void add(char16_t character)
     {
         ++m_size;
         ++m_samples[character & BoyerMooreBitmap::mapMask];
@@ -1125,7 +1125,7 @@ class YarrGenerator final : public YarrJITInfo {
         if (m_charSize == CharSize::Char8)
             return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
 
-        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(UChar)));
+        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
     }
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)

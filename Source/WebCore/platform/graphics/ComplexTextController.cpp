@@ -303,7 +303,7 @@ void ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     unsigned remainingCharacters = m_end - currentIndex;
     ASSERT(remainingCharacters);
 
-    std::array<UChar, 2> buffer;
+    std::array<char16_t, 2> buffer;
     unsigned bufferLength = 1;
     buffer[0] = m_run.get()[currentIndex];
     buffer[1] = 0;
@@ -333,7 +333,7 @@ void ComplexTextController::collectComplexTextRuns()
 
     // We break up glyph run generation for the string by Font.
 
-    std::span<const UChar> baseOfString = [&] {
+    std::span<const char16_t> baseOfString = [&] {
         // We need a 16-bit string to pass to Core Text.
         if (!m_run->is8Bit())
             return m_run->span16();
@@ -718,7 +718,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (characterIndex > previousCharacterIndex)
                     isMonotonic = false;
             }
-            UChar character = charactersSpan[characterIndex];
+            char16_t character = charactersSpan[characterIndex];
 
             bool treatAsSpace = FontCascade::treatAsSpace(character);
             CGGlyph glyph = glyphs[glyphIndex];
@@ -884,7 +884,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
     : m_font(font)
     , m_characters(characters)
     , m_indexBegin(indexBegin)
@@ -917,7 +917,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::spa
     m_baseAdvances.fill(FloatSize(m_font->widthForGlyph(0, Font::SyntheticBoldInclusion::Exclude), 0), m_glyphCount);
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
     : m_baseAdvances(advances)
     , m_glyphOrigins(origins)
     , m_glyphs(glyphs)

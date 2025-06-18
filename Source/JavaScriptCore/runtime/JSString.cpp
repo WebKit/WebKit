@@ -173,9 +173,9 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToAtomString(JSGlobal
             resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
             atomString = std::span<const LChar> { buffer }.first(length());
         } else {
-            std::array<UChar, maxLengthForOnStackResolve> buffer;
+            std::array<char16_t, maxLengthForOnStackResolve> buffer;
             resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
-            atomString = std::span<const UChar> { buffer }.first(length());
+            atomString = std::span<const char16_t> { buffer }.first(length());
         }
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
@@ -213,7 +213,7 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToExistingAtomString(
             resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
             existingAtomString = AtomStringImpl::lookUp(std::span { buffer }.first(length()));
         } else {
-            std::array<UChar, maxLengthForOnStackResolve> buffer;
+            std::array<char16_t, maxLengthForOnStackResolve> buffer;
             resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
             existingAtomString = AtomStringImpl::lookUp(std::span { buffer }.first(length()));
         }
@@ -255,7 +255,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         return valueInternal();
     }
     
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer);
     if (!newImpl) {
         outOfMemory(nullOrGlobalObjectForOOM);

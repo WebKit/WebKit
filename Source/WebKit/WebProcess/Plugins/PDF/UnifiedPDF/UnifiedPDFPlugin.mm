@@ -2312,7 +2312,7 @@ void UnifiedPDFPlugin::revealFragmentIfNeeded()
         fragmentView = fragmentView.left(endOfFirstComponentLocation);
 
     // Ignore leading hashes.
-    auto isNotHash = [](UChar character) {
+    auto isNotHash = [](char16_t character) {
         return character != '#';
     };
     if (auto firstNonHashLocation = fragmentView.find(isNotHash); firstNonHashLocation != notFound)

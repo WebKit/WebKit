@@ -199,7 +199,7 @@ template<typename CharacterTypeA, typename CharacterTypeB> bool equalInternal(st
     return offsetA == a.size() && offsetB == b.size();
 }
 
-bool equal(std::span<const UChar> a, std::span<const char8_t> b)
+bool equal(std::span<const char16_t> a, std::span<const char8_t> b)
 {
     return equalInternal(a, b);
 }

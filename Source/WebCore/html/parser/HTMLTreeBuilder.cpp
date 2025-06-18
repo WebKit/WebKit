@@ -82,7 +82,7 @@ CustomElementConstructionData::~CustomElementConstructionData() = default;
 
 namespace {
 
-inline bool isASCIIWhitespaceOrReplacementCharacter(UChar character)
+inline bool isASCIIWhitespaceOrReplacementCharacter(char16_t character)
 {
     return isASCIIWhitespace(character) || character == replacementCharacter;
 }
@@ -202,7 +202,7 @@ public:
         ASSERT(!isEmpty());
         Vector<LChar, 8> whitespace;
         do {
-            UChar character = m_text[0];
+            char16_t character = m_text[0];
             if (isASCIIWhitespace(character))
                 whitespace.append(character);
             m_text = m_text.substring(1);
@@ -218,7 +218,7 @@ public:
     }
 
 private:
-    template<bool characterPredicate(UChar)> void skipLeading()
+    template<bool characterPredicate(char16_t)> void skipLeading()
     {
         ASSERT(!isEmpty());
         while (characterPredicate(m_text[0])) {
@@ -228,7 +228,7 @@ private:
         }
     }
 
-    template<bool characterPredicate(UChar)> String takeLeading()
+    template<bool characterPredicate(char16_t)> String takeLeading()
     {
         ASSERT(!isEmpty());
         StringView start = m_text;

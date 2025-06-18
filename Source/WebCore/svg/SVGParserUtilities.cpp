@@ -155,7 +155,7 @@ std::optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkipp
     return genericParseNumber(buffer, skip);
 }
 
-std::optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<char16_t>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
@@ -198,7 +198,7 @@ std::optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
     return genericParseArcFlag(buffer);
 }
 
-std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<char16_t>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
@@ -422,7 +422,7 @@ std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
     return genericParseFloatPoint(buffer);
 }
 
-std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<char16_t>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }

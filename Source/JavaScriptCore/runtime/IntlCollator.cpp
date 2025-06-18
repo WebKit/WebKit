@@ -446,8 +446,8 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
                 for (unsigned y = 0; y < 128; ++y) {
                     if (canUseASCIIUCADUCETComparison(static_cast<LChar>(x)) && canUseASCIIUCADUCETComparison(static_cast<LChar>(y))) {
                         UErrorCode status = U_ZERO_ERROR;
-                        UChar xstring[] = { static_cast<UChar>(x), 0 };
-                        UChar ystring[] = { static_cast<UChar>(y), 0 };
+                        char16_t xstring[] = { static_cast<char16_t>(x), 0 };
+                        char16_t ystring[] = { static_cast<char16_t>(y), 0 };
                         auto resultICU = ucol_strcoll(&collator, xstring, 1, ystring, 1);
                         ASSERT(U_SUCCESS(status));
                         auto resultJSC = compareASCIIWithUCADUCET(span(*xstring), span(*ystring));
@@ -489,7 +489,7 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
         // Contractions and Expansions are defined as a rule. If there is no tailoring rule, then they should be UCA DUCET's default.
 
         auto ensureNotIncludingASCII = [&](USet& set) {
-            Vector<UChar, 32> buffer;
+            Vector<char16_t, 32> buffer;
             for (int32_t index = 0, count = uset_getItemCount(&set); index < count; ++index) {
                 // start and end are inclusive.
                 UChar32 start = 0;

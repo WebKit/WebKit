@@ -97,7 +97,7 @@ BuiltinNames::BuiltinNames(VM& vm, CommonIdentifiers* commonIdentifiers)
 
 
 using LCharBuffer = WTF::HashTranslatorCharBuffer<LChar>;
-using UCharBuffer = WTF::HashTranslatorCharBuffer<UChar>;
+using UCharBuffer = WTF::HashTranslatorCharBuffer<char16_t>;
 
 template<typename CharacterType>
 struct CharBufferSeacher {
@@ -141,7 +141,7 @@ PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const LChar> charac
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
-PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const UChar> characters) const
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const char16_t> characters) const
 {
     UCharBuffer buffer { characters };
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
@@ -163,7 +163,7 @@ SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const LChar> character
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 
-SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const UChar> characters) const
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const char16_t> characters) const
 {
     UCharBuffer buffer { characters };
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);

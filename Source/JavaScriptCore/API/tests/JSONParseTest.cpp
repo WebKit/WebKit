@@ -48,7 +48,7 @@ int testJSONParse()
     JSValue v0 = JSONParse(globalObject, ""_s);
     JSValue v1 = JSONParse(globalObject, "#$%^"_s);
     JSValue v2 = JSONParse(globalObject, String());
-    UChar emptyUCharArray[1] = { '\0' };
+    char16_t emptyUCharArray[1] = { '\0' };
     unsigned zeroLength = 0;
     JSValue v3 = JSONParse(globalObject, String({ emptyUCharArray, zeroLength }));
     JSValue v4;

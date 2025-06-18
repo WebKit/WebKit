@@ -40,7 +40,7 @@ public:
         if constexpr (std::is_same<T, LChar>::value)
             m_code = wgsl.span8();
         else {
-            static_assert(std::is_same<T, UChar>::value, "The lexer expects its template parameter to be either LChar or UChar");
+            static_assert(std::is_same<T, char16_t>::value, "The lexer expects its template parameter to be either LChar or char16_t");
             m_code = wgsl.span16();
             ASSERT(!(wgsl.sizeInBytes() % 2));
         }

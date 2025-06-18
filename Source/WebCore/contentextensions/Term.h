@@ -74,7 +74,7 @@ public:
     bool isValid() const;
 
     // CharacterSet terms only.
-    void addCharacter(UChar character, bool isCaseSensitive);
+    void addCharacter(char16_t character, bool isCaseSensitive);
 
     // Group terms only.
     void extendGroupSubpattern(const Term&);
@@ -133,13 +133,13 @@ private:
 
     class CharacterSet {
     public:
-        void set(UChar character)
+        void set(char16_t character)
         {
             RELEASE_ASSERT(character < 128);
             m_characters[character / 64] |= (uint64_t(1) << (character % 64));
         }
         
-        bool get(UChar character) const
+        bool get(char16_t character) const
         {
             RELEASE_ASSERT(character < 128);
             return m_characters[character / 64] & (uint64_t(1) << (character % 64));
@@ -238,7 +238,7 @@ inline String Term::toString() const
     case TermType::CharacterSet: {
         StringBuilder builder;
         builder.append('[');
-        for (UChar c = 0; c < 128; c++) {
+        for (char16_t c = 0; c < 128; c++) {
             if (m_atomData.characterSet.get(c)) {
                 if (isASCIIPrintable(c) && !isUnicodeCompatibleASCIIWhitespace(c))
                     builder.append(c);
@@ -278,7 +278,7 @@ inline Term::Term(UniversalTransitionTag)
     : m_termType(TermType::CharacterSet)
 {
     new (NotNull, &m_atomData.characterSet) CharacterSet();
-    for (UChar i = 1; i < 128; ++i)
+    for (char16_t i = 1; i < 128; ++i)
         m_atomData.characterSet.set(i);
 }
 
@@ -350,7 +350,7 @@ inline bool Term::isValid() const
     return m_termType != TermType::Empty;
 }
 
-inline void Term::addCharacter(UChar character, bool isCaseSensitive)
+inline void Term::addCharacter(char16_t character, bool isCaseSensitive)
 {
     ASSERT(isASCII(character));
 
@@ -583,28 +583,28 @@ inline void Term::generateSubgraphForAtom(NFA& nfa, ImmutableCharNFANodeBuilder&
         break;
     case TermType::CharacterSet: {
         if (!m_atomData.characterSet.inverted()) {
-            UChar i = 0;
+            char16_t i = 0;
             while (true) {
                 while (i < 128 && !m_atomData.characterSet.get(i))
                     ++i;
                 if (i == 128)
                     break;
 
-                UChar start = i;
+                char16_t start = i;
                 ++i;
                 while (i < 128 && m_atomData.characterSet.get(i))
                     ++i;
                 source.addTransition(start, i - 1, destination);
             }
         } else {
-            UChar i = 1;
+            char16_t i = 1;
             while (true) {
                 while (i < 128 && m_atomData.characterSet.get(i))
                     ++i;
                 if (i == 128)
                     break;
 
-                UChar start = i;
+                char16_t start = i;
                 ++i;
                 while (i < 128 && !m_atomData.characterSet.get(i))
                     ++i;

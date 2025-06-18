@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT WindowsKeyNames();
 
     WEBCORE_EXPORT String domKeyFromParams(WPARAM, LPARAM);
-    WEBCORE_EXPORT String domKeyFromChar(UChar);
+    WEBCORE_EXPORT String domKeyFromChar(char16_t);
     WEBCORE_EXPORT String domCodeFromLParam(LPARAM);
 
     enum class KeyModifier : uint8_t;

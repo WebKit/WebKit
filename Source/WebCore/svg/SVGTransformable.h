@@ -40,7 +40,7 @@ public:
 
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<LChar>&);
-    static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<UChar>&);
+    static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<char16_t>&);
 
     AffineTransform localCoordinateSpaceTransform(CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;

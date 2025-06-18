@@ -85,7 +85,7 @@ static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
 {
     // https://w3c.github.io/webcodecs/#valid-videodecoderconfig
     // 1. If codec is empty after stripping leading and trailing ASCII whitespace, return false.
-    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+    if (StringView(config.codec).trim(isASCIIWhitespace<char16_t>).isEmpty())
         return false;
 
     // 2. If one of codedWidth or codedHeight is provided but the other isn’t, return false.

@@ -40,7 +40,7 @@ static String fontsPath()
     DWORD size = GetEnvironmentVariable(fontsEnvironmentVariable, nullptr, 0);
     if (!size)
         return { };
-    Vector<UChar> buffer(size);
+    Vector<char16_t> buffer(size);
     // The return size doesn't include the terminating null character.
     if (GetEnvironmentVariable(fontsEnvironmentVariable, wcharFrom(buffer.mutableSpan().data()), size) != size - 1)
         return { };

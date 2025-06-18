@@ -366,7 +366,7 @@ int lastOffsetForEditing(const Node& node)
     return editingIgnoresContent(node) ? 1 : 0;
 }
 
-bool isAmbiguousBoundaryCharacter(UChar character)
+bool isAmbiguousBoundaryCharacter(char16_t character)
 {
     // These are characters that can behave as word boundaries, but can appear within words.
     // If they are just typed, i.e. if they are immediately followed by a caret, we want to delay text checking until the next character has been typed.

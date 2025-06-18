@@ -92,7 +92,7 @@ double Value::toNumber() const
         // String::toDouble() supports exponential notation, which is not allowed in XPath.
         unsigned len = str.length();
         for (unsigned i = 0; i < len; ++i) {
-            UChar c = str[i];
+            char16_t c = str[i];
             if (!isASCIIDigit(c) && c != '.'  && c != '-')
                 return std::numeric_limits<double>::quiet_NaN();
         }

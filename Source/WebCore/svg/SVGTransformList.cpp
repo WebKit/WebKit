@@ -127,7 +127,7 @@ bool SVGTransformList::parse(StringParsingBuffer<LChar>& buffer)
     return parseGeneric(buffer, ListReplacement::Append);
 }
 
-bool SVGTransformList::parse(StringParsingBuffer<UChar>& buffer)
+bool SVGTransformList::parse(StringParsingBuffer<char16_t>& buffer)
 {
     return parseGeneric(buffer, ListReplacement::Append);
 }

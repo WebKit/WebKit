@@ -335,7 +335,7 @@ std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
     if (shaderModule.source().is8Bit())
         return parse<Lexer<LChar>>(shaderModule);
-    return parse<Lexer<UChar>>(shaderModule);
+    return parse<Lexer<char16_t>>(shaderModule);
 }
 
 template<typename Lexer>

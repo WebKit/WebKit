@@ -3398,7 +3398,7 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
+                signature="char16_t CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",

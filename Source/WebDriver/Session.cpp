@@ -2105,7 +2105,7 @@ void Session::setInputFileUploadFiles(const String& elementID, const String& tex
     });
 }
 
-String Session::virtualKeyForKey(UChar key, KeyModifier& modifier)
+String Session::virtualKeyForKey(char16_t key, KeyModifier& modifier)
 {
     // §17.4.2 Keyboard Actions.
     // https://www.w3.org/TR/webdriver/#keyboard-actions

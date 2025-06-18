@@ -38,19 +38,19 @@ enum class SuffixSkippingPolicy {
 };
 
 std::optional<float> parseNumber(StringParsingBuffer<LChar>&, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
-std::optional<float> parseNumber(StringParsingBuffer<UChar>&, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
+std::optional<float> parseNumber(StringParsingBuffer<char16_t>&, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
 std::optional<float> parseNumber(StringView, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
 
 std::optional<std::pair<float, float>> parseNumberOptionalNumber(StringView);
 
 std::optional<bool> parseArcFlag(StringParsingBuffer<LChar>&);
-std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>&);
+std::optional<bool> parseArcFlag(StringParsingBuffer<char16_t>&);
 
 std::optional<FloatPoint> parsePoint(StringView);
 std::optional<FloatRect> parseRect(StringView);
 
 std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>&);
-std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>&);
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<char16_t>&);
 
 std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(StringView);
 std::optional<HashSet<String>> parseGlyphName(StringView);

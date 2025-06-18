@@ -100,7 +100,7 @@ static ASCIILiteral toFeatureNameForLogging(PermissionsPolicy::Feature feature)
 // https://w3c.github.io/webappsec-permissions-policy/#serialized-policy-directive
 static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(StringView value)
 {
-    value = value.trim(isASCIIWhitespace<UChar>);
+    value = value.trim(isASCIIWhitespace<char16_t>);
 
     PermissionsPolicy::Feature feature = PermissionsPolicy::Feature::Invalid;
     StringView remainingValue;
@@ -268,8 +268,8 @@ static bool checkPermissionsPolicy(const PermissionsPolicy& permissionsPolicy, P
 // Similar to https://infra.spec.whatwg.org/#split-on-ascii-whitespace but only extract one token at a time.
 static std::pair<StringView, StringView> splitOnAsciiWhiteSpace(StringView input)
 {
-    input = input.trim(isASCIIWhitespace<UChar>);
-    auto position = input.find(isASCIIWhitespace<UChar>);
+    input = input.trim(isASCIIWhitespace<char16_t>);
+    auto position = input.find(isASCIIWhitespace<char16_t>);
     if (position == notFound)
         return { input, StringView { } };
 

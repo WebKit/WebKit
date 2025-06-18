@@ -500,7 +500,7 @@ int AccessibilityObjectAtspi::characterAtOffset(int offset) const
     return g_utf8_get_char(g_utf8_offset_to_pointer(utf8Text.data(), offset));
 }
 
-std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar character, int index) const
+std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(char16_t character, int index) const
 {
     auto utf16Text = text();
     unsigned start = 0;
@@ -519,7 +519,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar characte
     return UTF16OffsetToUTF8(mapping, offset);
 }
 
-std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(UChar character, unsigned offset) const
+std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(char16_t character, unsigned offset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();

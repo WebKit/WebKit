@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-bool SVGStringList::parse(StringView data, UChar delimiter)
+bool SVGStringList::parse(StringView data, char16_t delimiter)
 {
     clearItems();
 

@@ -34,13 +34,13 @@ namespace WebCore {
 
 class UnicodeCodebook {
 public:
-    static int codeWord(UChar c) { return c; }
-    enum { codeSize = 1 << 8 * sizeof(UChar) };
+    static int codeWord(char16_t c) { return c; }
+    enum { codeSize = 1 << 8 * sizeof(char16_t) };
 };
 
 class ASCIICodebook {
 public:
-    static int codeWord(UChar c) { return c & (codeSize - 1); }
+    static int codeWord(char16_t c) { return c & (codeSize - 1); }
     enum { codeSize = 1 << (8 * sizeof(char) - 1) };
 };
 

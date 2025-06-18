@@ -53,7 +53,7 @@ std::optional<String> BufferedLineReader::nextLine()
     bool shouldReturnLine = false;
     bool checkForLF = false;
     while (!m_buffer.isEmpty()) {
-        UChar character = m_buffer.currentCharacter();
+        char16_t character = m_buffer.currentCharacter();
         m_buffer.advance();
 
         if (character == newlineCharacter || character == carriageReturn) {

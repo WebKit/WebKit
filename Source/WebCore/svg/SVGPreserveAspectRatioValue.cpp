@@ -77,7 +77,7 @@ bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<LChar>& buffer, bool
     return parseInternal(buffer, validate);
 }
 
-bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<UChar>& buffer, bool validate)
+bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<char16_t>& buffer, bool validate)
 {
     return parseInternal(buffer, validate);
 }

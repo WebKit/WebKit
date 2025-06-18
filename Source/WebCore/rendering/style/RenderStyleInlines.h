@@ -976,7 +976,7 @@ inline Length RenderStyle::initialLineHeight()
     return LengthType::Normal;
 }
 
-inline bool RenderStyle::isCollapsibleWhiteSpace(UChar character) const
+inline bool RenderStyle::isCollapsibleWhiteSpace(char16_t character) const
 {
     switch (character) {
     case ' ':

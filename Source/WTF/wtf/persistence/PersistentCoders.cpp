@@ -139,7 +139,7 @@ std::optional<String> Coder<String>::decodeForPersistence(Decoder& decoder)
 
     if (*is8Bit)
         return decodeStringText<LChar>(decoder, *length);
-    return decodeStringText<UChar>(decoder, *length);
+    return decodeStringText<char16_t>(decoder, *length);
 }
 
 void Coder<URL>::encodeForPersistence(Encoder& encoder, const URL& url)

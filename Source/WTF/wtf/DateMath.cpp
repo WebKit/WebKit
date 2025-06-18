@@ -95,9 +95,9 @@
 namespace WTF {
 
 static Lock innerTimeZoneOverrideLock;
-static Vector<UChar>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
+static Vector<char16_t>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
 {
-    static NeverDestroyed<Vector<UChar>> timeZoneOverride;
+    static NeverDestroyed<Vector<char16_t>> timeZoneOverride;
     return timeZoneOverride;
 }
 
@@ -1003,11 +1003,11 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     return stringBuilder.toString();
 }
 
-static std::optional<Vector<UChar, 32>> validateTimeZone(StringView timeZone)
+static std::optional<Vector<char16_t, 32>> validateTimeZone(StringView timeZone)
 {
     auto buffer = timeZone.upconvertedCharacters();
-    const UChar* characters = buffer;
-    Vector<UChar, 32> canonicalBuffer;
+    const char16_t* characters = buffer;
+    Vector<char16_t, 32> canonicalBuffer;
     auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, characters, timeZone.length(), canonicalBuffer, nullptr);
     if (!U_SUCCESS(status))
         return std::nullopt;
@@ -1038,7 +1038,7 @@ bool setTimeZoneOverride(StringView timeZone)
     return true;
 }
 
-void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID)
+void getTimeZoneOverride(Vector<char16_t, 32>& timeZoneID)
 {
     Locker locker { innerTimeZoneOverrideLock };
     timeZoneID = innerTimeZoneOverride();

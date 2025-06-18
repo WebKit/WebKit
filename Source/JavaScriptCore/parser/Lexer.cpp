@@ -758,7 +758,7 @@ static ALWAYS_INLINE bool isIdentStart(CharacterType c)
     return typesOfLatin1Characters[static_cast<LChar>(c)] == CharacterLatin1IdentifierStart;
 }
 
-static ALWAYS_INLINE UNUSED_FUNCTION bool isSingleCharacterIdentStart(UChar c)
+static ALWAYS_INLINE UNUSED_FUNCTION bool isSingleCharacterIdentStart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return isIdentStart(static_cast<LChar>(c));
@@ -770,11 +770,11 @@ static ALWAYS_INLINE bool cannotBeIdentStart(LChar c)
     return !isIdentStart(c) && c != '\\';
 }
 
-static ALWAYS_INLINE bool cannotBeIdentStart(UChar c)
+static ALWAYS_INLINE bool cannotBeIdentStart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return cannotBeIdentStart(static_cast<LChar>(c));
-    return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
+    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
 }
 
 static NEVER_INLINE bool isNonLatin1IdentPart(char32_t c)
@@ -795,7 +795,7 @@ static ALWAYS_INLINE bool isIdentPart(CharacterType c)
     return typesOfLatin1Characters[static_cast<LChar>(c)] <= CharacterOtherIdentifierPart;
 }
 
-static ALWAYS_INLINE bool isSingleCharacterIdentPart(UChar c)
+static ALWAYS_INLINE bool isSingleCharacterIdentPart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return isIdentPart(static_cast<LChar>(c));
@@ -809,11 +809,11 @@ static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar c)
 
 // NOTE: This may give give false negatives (for non-ascii) but won't give false posititves.
 // This means it can be used to detect the end of a keyword (all keywords are ascii)
-static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar c)
+static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return cannotBeIdentPartOrEscapeStart(static_cast<LChar>(c));
-    return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
+    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
 }
 
 
@@ -824,13 +824,13 @@ ALWAYS_INLINE char32_t Lexer<LChar>::currentCodePoint() const
 }
 
 template<>
-ALWAYS_INLINE char32_t Lexer<UChar>::currentCodePoint() const
+ALWAYS_INLINE char32_t Lexer<char16_t>::currentCodePoint() const
 {
     ASSERT_WITH_MESSAGE(!isIdentStart(errorCodePoint), "error values shouldn't appear as a valid identifier start code point");
     if (!U16_IS_SURROGATE(m_current))
         return m_current;
 
-    UChar trail = peek(1);
+    char16_t trail = peek(1);
     if (!U16_IS_LEAD(m_current) || !U16_IS_SURROGATE_TRAIL(trail)) [[unlikely]]
         return errorCodePoint;
 
@@ -896,7 +896,7 @@ inline void Lexer<T>::append16(std::span<const LChar> span)
 {
     size_t currentSize = m_buffer16.size();
     m_buffer16.grow(currentSize + span.size());
-    UChar* rawBuffer = m_buffer16.mutableSpan().data() + currentSize;
+    char16_t* rawBuffer = m_buffer16.mutableSpan().data() + currentSize;
 
     for (size_t i = 0; i < span.size(); i++)
         rawBuffer[i] = span[i];
@@ -913,16 +913,16 @@ inline void Lexer<T>::record16(int c)
 {
     ASSERT(c >= 0);
     ASSERT(c <= static_cast<int>(USHRT_MAX));
-    m_buffer16.append(static_cast<UChar>(c));
+    m_buffer16.append(static_cast<char16_t>(c));
 }
     
 template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicodeCodePoint(char32_t codePoint)
 {
     ASSERT(codePoint <= UCHAR_MAX_VALUE);
     if (U_IS_BMP(codePoint))
-        record16(static_cast<UChar>(codePoint));
+        record16(static_cast<char16_t>(codePoint));
     else {
-        UChar codeUnits[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
+        char16_t codeUnits[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
         append16(codeUnits);
     }
 }
@@ -1031,7 +1031,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
 }
 
 template <>
-template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::parseIdentifier(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<char16_t>::parseIdentifier(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     ASSERT(!m_parsingBuiltinFunction);
     tokenData->escaped = false;
@@ -1045,12 +1045,12 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     }
 
     bool isPrivateName = m_current == '#';
-    const UChar* identifierStart = currentSourcePtr();
+    const char16_t* identifierStart = currentSourcePtr();
 
     if (isPrivateName)
         shift();
 
-    UChar orAllChars = 0;
+    char16_t orAllChars = 0;
     ASSERT(isSingleCharacterIdentStart(m_current) || U16_IS_SURROGATE(m_current) || m_current == '\\');
     while (isSingleCharacterIdentPart(m_current)) {
         orAllChars |= m_current;
@@ -1192,7 +1192,7 @@ static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(LChar character)
     return character < 0xE;
 }
 
-static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(UChar character)
+static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(char16_t character)
 {
     return character < 0xE || !isLatin1(character);
 }
@@ -1859,10 +1859,10 @@ IGNORE_WARNINGS_BEGIN("unused-but-set-variable")
 template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::parseCommentDirectiveValue()
 {
     skipWhitespace();
-    UChar mergedCharacterBits = 0;
+    char16_t mergedCharacterBits = 0;
     auto stringStart = currentSourcePtr();
     while (!isWhiteSpace(m_current) && !isLineTerminator(m_current) && m_current != '"' && m_current != '\'' && !atEnd()) {
-        if constexpr (std::is_same_v<CharacterType, UChar>)
+        if constexpr (std::is_same_v<CharacterType, char16_t>)
             mergedCharacterBits |= m_current;
         shift();
     }
@@ -1872,7 +1872,7 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
     if (!isLineTerminator(m_current) && !atEnd())
         return String();
 
-    if constexpr (std::is_same_v<CharacterType, UChar>) {
+    if constexpr (std::is_same_v<CharacterType, char16_t>) {
         if (isLatin1(mergedCharacterBits))
             return String::make8Bit(commentDirective);
     }
@@ -2641,26 +2641,26 @@ returnError:
 }
 
 template <typename T>
-static inline void orCharacter(UChar&, UChar);
+static inline void orCharacter(char16_t&, char16_t);
 
 template <>
-inline void orCharacter<LChar>(UChar&, UChar) { }
+inline void orCharacter<LChar>(char16_t&, char16_t) { }
 
 template <>
-inline void orCharacter<UChar>(UChar& orAccumulator, UChar character)
+inline void orCharacter<char16_t>(char16_t& orAccumulator, char16_t character)
 {
     orAccumulator |= character;
 }
 
 template <typename T>
-JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, UChar patternPrefix)
+JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     ASSERT(m_buffer16.isEmpty());
 
     bool lastWasEscape = false;
     bool inBrackets = false;
-    UChar charactersOredTogether = 0;
+    char16_t charactersOredTogether = 0;
 
     if (patternPrefix) {
         ASSERT(!isLineTerminator(patternPrefix));
@@ -2776,10 +2776,10 @@ void Lexer<T>::clear()
     Vector<LChar> newBuffer8;
     m_buffer8.swap(newBuffer8);
 
-    Vector<UChar> newBuffer16;
+    Vector<char16_t> newBuffer16;
     m_buffer16.swap(newBuffer16);
 
-    Vector<UChar> newBufferForRawTemplateString16;
+    Vector<char16_t> newBufferForRawTemplateString16;
     m_bufferForRawTemplateString16.swap(newBufferForRawTemplateString16);
 
     m_isReparsingFunction = false;
@@ -2787,7 +2787,7 @@ void Lexer<T>::clear()
 
 // Instantiate the two flavors of Lexer we need instead of putting most of this file in Lexer.h
 template class Lexer<LChar>;
-template class Lexer<UChar>;
+template class Lexer<char16_t>;
 
 } // namespace JSC
 

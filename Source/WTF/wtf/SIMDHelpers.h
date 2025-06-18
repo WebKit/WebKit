@@ -476,7 +476,7 @@ ALWAYS_INLINE simde_uint8x16_t equal(simde_uint8x16_t input)
         return merge(result, equal<characters...>(input));
 }
 
-template<UChar character, UChar... characters>
+template<char16_t character, char16_t... characters>
 ALWAYS_INLINE simde_uint16x8_t equal(simde_uint16x8_t input)
 {
     auto result = simde_vceqq_u16(input, simde_vmovq_n_u16(character));

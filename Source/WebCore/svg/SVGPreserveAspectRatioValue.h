@@ -74,7 +74,7 @@ public:
 
     bool parse(StringView);
     bool parse(StringParsingBuffer<LChar>&, bool validate);
-    bool parse(StringParsingBuffer<UChar>&, bool validate);
+    bool parse(StringParsingBuffer<char16_t>&, bool validate);
 
     String valueAsString() const;
 

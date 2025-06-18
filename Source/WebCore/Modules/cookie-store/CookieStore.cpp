@@ -237,7 +237,7 @@ CookieStore::~CookieStore()
 static bool containsInvalidCharacters(const String& string)
 {
     // The invalid characters are specified at https://wicg.github.io/cookie-store/#set-a-cookie.
-    return string.contains([](UChar character) {
+    return string.contains([](char16_t character) {
         return character == 0x003B || character == 0x007F || (character <= 0x001F && character != 0x0009);
     });
 }

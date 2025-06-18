@@ -174,9 +174,9 @@ void TextCodecICU::createICUConverter() const
         ucnv_setFallback(m_converter.get(), true);
 }
 
-int TextCodecICU::decodeToBuffer(std::span<UChar> targetSpan, std::span<const uint8_t>& sourceSpan, int32_t* offsets, bool flush, UErrorCode& error)
+int TextCodecICU::decodeToBuffer(std::span<char16_t> targetSpan, std::span<const uint8_t>& sourceSpan, int32_t* offsets, bool flush, UErrorCode& error)
 {
-    UChar* targetStart = targetSpan.data();
+    char16_t* targetStart = targetSpan.data();
     error = U_ZERO_ERROR;
     auto* source = byteCast<char>(sourceSpan.data());
     auto* sourceLimit = byteCast<char>(std::to_address(sourceSpan.end()));
@@ -235,7 +235,7 @@ String TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool st
 
     StringBuilder result;
 
-    std::array<UChar, ConversionBufferSize> buffer;
+    std::array<char16_t, ConversionBufferSize> buffer;
     auto target = std::span { buffer };
     int32_t* offsets = nullptr;
     UErrorCode err = U_ZERO_ERROR;
@@ -260,7 +260,7 @@ String TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool st
 
 // Invalid character handler when writing escaped entities for unrepresentable
 // characters. See the declaration of TextCodec::encode for more.
-static void urlEscapedEntityCallback(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
+static void urlEscapedEntityCallback(const void* context, UConverterFromUnicodeArgs* fromUArgs, const char16_t* codeUnits, int32_t length,
     UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* error)
 {
     if (reason == UCNV_UNASSIGNED) {

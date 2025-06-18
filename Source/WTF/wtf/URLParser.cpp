@@ -42,10 +42,10 @@ namespace WTF {
 #define URL_PARSER_LOG(...)
 #endif
 
-ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, char32_t codePoint)
+ALWAYS_INLINE static void appendCodePoint(Vector<char16_t>& destination, char32_t codePoint)
 {
     if (U_IS_BMP(codePoint)) {
-        destination.append(static_cast<UChar>(codePoint));
+        destination.append(static_cast<char16_t>(codePoint));
         return;
     }
     destination.appendList({ U16_LEAD(codePoint), U16_TRAIL(codePoint) });
@@ -320,7 +320,7 @@ static constexpr std::array<uint8_t, 256> characterClassTable {
     QueryEncode, // 0xFF
 };
 
-bool isForbiddenHostCodePoint(UChar character)
+bool isForbiddenHostCodePoint(char16_t character)
 {
     return character <= 0x7F && characterClassTable[character] & ForbiddenHost;
 }
@@ -360,12 +360,12 @@ ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool&
     return false;
 }
 
-bool URLParser::isInUserInfoEncodeSet(UChar c)
+bool URLParser::isInUserInfoEncodeSet(char16_t c)
 {
     return WTF::isInUserInfoEncodeSet(c);
 }
 
-bool URLParser::isSpecialCharacterForFragmentDirective(UChar c)
+bool URLParser::isSpecialCharacterForFragmentDirective(char16_t c)
 {
     return WTF::isSpecialCharacterForFragmentDirective(c);
 }
@@ -559,7 +559,7 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
 }
 
 template<typename CharacterType>
-void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding& encoding, CodePointIterator<CharacterType> iterator)
+void URLParser::encodeNonUTF8Query(const Vector<char16_t>& source, const URLTextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
     auto encoded = encoding.encodeForURLParsing(source.span());
     size_t length = encoded.size();
@@ -1056,7 +1056,7 @@ bool URLParser::isLocalhost(StringView view)
 {
     if (view.is8Bit())
         return isAtLocalhost<LChar>(view.span8());
-    return isAtLocalhost<UChar>(view.span16());
+    return isAtLocalhost<char16_t>(view.span16());
 }
 
 ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
@@ -1069,7 +1069,7 @@ ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
     return StringView(m_inputString).substring(start, length);
 }
 
-ALWAYS_INLINE UChar URLParser::parsedDataView(size_t position)
+ALWAYS_INLINE char16_t URLParser::parsedDataView(size_t position)
 {
     if (m_didSeeSyntaxViolation) [[unlikely]]
         return m_asciiBuffer[position];
@@ -1132,7 +1132,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
 
-    Vector<UChar> queryBuffer;
+    Vector<char16_t> queryBuffer;
 
     auto endIndex = input.size();
     if (nonUTF8QueryEncoding == URLTextEncodingSentinelAllowingC0AtEnd) [[unlikely]]
@@ -2595,7 +2595,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
         return ascii;
     }
 
-    std::array<UChar, hostnameBufferLength> hostnameBuffer;
+    std::array<char16_t, hostnameBufferLength> hostnameBuffer;
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
     size_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer.data(), hostnameBufferLength, &processingDetails, &error);
@@ -2739,7 +2739,7 @@ bool URLParser::subdomainStartsWithXNDashDash(StringImpl& host)
 {
     if (host.is8Bit())
         return subdomainStartsWithXNDashDash<LChar>(host.span8());
-    return subdomainStartsWithXNDashDash<UChar>(host.span16());
+    return subdomainStartsWithXNDashDash<char16_t>(host.span16());
 }
 
 static bool dnsNameEndsInNumber(StringView name)
@@ -2756,8 +2756,8 @@ static bool dnsNameEndsInNumber(StringView name)
             return true;
         auto secondCodeUnit = segment[1];
         if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0')
-            return segment.find(std::not_fn(isASCIIHexDigit<UChar>), 2) == notFound;
-        return !segment.contains(std::not_fn(isASCIIDigit<UChar>));
+            return segment.find(std::not_fn(isASCIIHexDigit<char16_t>), 2) == notFound;
+        return !segment.contains(std::not_fn(isASCIIDigit<char16_t>));
     };
 
     size_t lastDotLocation = name.reverseFind('.');

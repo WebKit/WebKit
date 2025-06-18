@@ -71,14 +71,14 @@ int64_t ApplicationCacheResource::estimatedSizeInStorage()
     m_estimatedSizeInStorage = data().size();
 
     for (const auto& headerField : response().httpHeaderFields())
-        m_estimatedSizeInStorage += (headerField.key.length() + headerField.value.length() + 2) * sizeof(UChar);
+        m_estimatedSizeInStorage += (headerField.key.length() + headerField.value.length() + 2) * sizeof(char16_t);
 
-    m_estimatedSizeInStorage += url().string().length() * sizeof(UChar);
+    m_estimatedSizeInStorage += url().string().length() * sizeof(char16_t);
     m_estimatedSizeInStorage += sizeof(int); // response().m_httpStatusCode
-    m_estimatedSizeInStorage += response().url().string().length() * sizeof(UChar);
+    m_estimatedSizeInStorage += response().url().string().length() * sizeof(char16_t);
     m_estimatedSizeInStorage += sizeof(unsigned); // dataId
-    m_estimatedSizeInStorage += response().mimeType().length() * sizeof(UChar);
-    m_estimatedSizeInStorage += response().textEncodingName().length() * sizeof(UChar);
+    m_estimatedSizeInStorage += response().mimeType().length() * sizeof(char16_t);
+    m_estimatedSizeInStorage += response().textEncodingName().length() * sizeof(char16_t);
 
     return m_estimatedSizeInStorage;
 }

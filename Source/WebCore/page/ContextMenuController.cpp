@@ -284,7 +284,7 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
 
 #if PLATFORM(GTK)
 
-static void insertUnicodeCharacter(UChar character, LocalFrame& frame)
+static void insertUnicodeCharacter(char16_t character, LocalFrame& frame)
 {
     String text(span(character));
     if (!frame.protectedEditor()->shouldInsertText(text, frame.selection().selection().toNormalizedRange(), EditorInsertAction::Typed))

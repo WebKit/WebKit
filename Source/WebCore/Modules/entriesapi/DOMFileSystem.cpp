@@ -94,7 +94,7 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
 }
 
 // https://wicg.github.io/entries-api/#name
-static bool isValidPathNameCharacter(UChar c)
+static bool isValidPathNameCharacter(char16_t c)
 {
     return c != '\0' && c != '/' && c != '\\';
 }

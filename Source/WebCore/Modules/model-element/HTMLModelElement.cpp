@@ -1035,7 +1035,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 
     if (hasAttributeWithoutSynchronization(environmentmapAttr)) {
         const auto& attr = attributeWithoutSynchronization(environmentmapAttr).string().trim(isASCIIWhitespace);
-        if (StringView(attr).containsOnly<isASCIIWhitespace<UChar>>())
+        if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>())
             return { };
         return getURLAttribute(environmentmapAttr);
     }

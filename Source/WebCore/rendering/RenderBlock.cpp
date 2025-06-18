@@ -3206,7 +3206,7 @@ TextRun RenderBlock::constructTextRun(std::span<const LChar> characters, const R
     return constructTextRun(StringView { characters }, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(std::span<const UChar> characters, const RenderStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(std::span<const char16_t> characters, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRun(StringView { characters }, style, expansion);
 }
@@ -3580,16 +3580,16 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
     if (style.textSecurity() == TextSecurity::None)
         return WTFMove(string);
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
-    constexpr UChar textSecurityDiscPUACodePoint = 0xF79A;
+    constexpr char16_t textSecurityDiscPUACodePoint = 0xF79A;
     Ref font = style.fontCascade().primaryFont();
     if (!(font->platformData().isSystemFont() && font->glyphForCharacter(textSecurityDiscPUACodePoint)))
         return WTFMove(string);
 
     // See RenderText::setRenderedText()
 #if PLATFORM(IOS_FAMILY)
-    constexpr UChar discCharacterToReplace = blackCircle;
+    constexpr char16_t discCharacterToReplace = blackCircle;
 #else
-    constexpr UChar discCharacterToReplace = bullet;
+    constexpr char16_t discCharacterToReplace = bullet;
 #endif
 
     return makeStringByReplacingAll(string, discCharacterToReplace, textSecurityDiscPUACodePoint);

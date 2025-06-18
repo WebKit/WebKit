@@ -94,7 +94,7 @@ private:
     bool m_skipLF { false };
     
     size_t m_size { 254 };
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
     size_t m_destIndex { 0 };
     StringBuilder m_carryOver;
     
@@ -355,7 +355,7 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     m_destIndex = 0;
     SegmentedString string { String { WTFMove(inputSource) } };
     while (!string.isEmpty()) {
-        UChar c = string.currentCharacter();
+        char16_t c = string.currentCharacter();
 
         if (c == '\r') {
             m_buffer[m_destIndex++] = '\n';

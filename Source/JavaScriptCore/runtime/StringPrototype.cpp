@@ -192,7 +192,7 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
         if (i + 1 == replacement.length())
             break;
 
-        UChar ref = replacement[i + 1];
+        char16_t ref = replacement[i + 1];
         if (ref == '$') {
             // "$$" -> "$"
             ++i;
@@ -307,7 +307,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* global
     auto view = string->view(globalObject);
     ASSERT(view->length() == 1);
     scope.assertNoException();
-    UChar character = view[0];
+    char16_t character = view[0];
     scope.release();
     if (isLatin1(character))
         return JSValue::encode(repeatCharacter(globalObject, static_cast<LChar>(character), repeatCount));
@@ -616,7 +616,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSlice, (JSGlobalObject* globalObject, Ca
 
 // Return true in case of early return (resultLength got to limitLength).
 template<typename CharacterType, typename Indice>
-static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringImpl* string, UChar separatorCharacter, unsigned limitLength)
+static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringImpl* string, char16_t separatorCharacter, unsigned limitLength)
 {
     // 12. Let q = p.
     size_t matchPosition;
@@ -643,7 +643,7 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringIm
     return false;
 }
 
-static bool isASCIIIdentifierStart(UChar ch)
+static bool isASCIIIdentifierStart(char16_t ch)
 {
     return isASCIIAlpha(ch) || ch == '_' || ch == '$';
 }
@@ -830,12 +830,12 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     StringImpl* separatorImpl = separator.data.impl();
 
     if (separatorLength == 1) {
-        UChar separatorCharacter = separatorImpl->at(0);
+        char16_t separatorCharacter = separatorImpl->at(0);
         if (stringImpl->is8Bit()) {
             if (splitStringByOneCharacterImpl<LChar>(result, stringImpl, separatorCharacter, limit))
                 RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
         } else {
-            if (splitStringByOneCharacterImpl<UChar>(result, stringImpl, separatorCharacter, limit))
+            if (splitStringByOneCharacterImpl<char16_t>(result, stringImpl, separatorCharacter, limit))
                 RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
         }
     } else {
@@ -1146,7 +1146,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     // 17. Let L be a String whose elements are, in order, the elements of cuList.
 
     // Most strings lower/upper case will be the same size as original, so try that first.
-    Vector<UChar> buffer;
+    Vector<char16_t> buffer;
     buffer.reserveInitialCapacity(s->length());
     auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
     auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters().get(), s->length(), locale.utf8().data());
@@ -1432,7 +1432,7 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     int32_t normalizedStringLength = unorm2_normalize(normalizer, characters, view->length(), nullptr, 0, &status);
     ASSERT(needsToGrowToProduceBuffer(status));
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto result = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);
     if (!result)
         return throwOutOfMemoryError(globalObject, scope);
@@ -1476,10 +1476,10 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(normalize(globalObject, string, form)));
 }
 
-static inline std::optional<unsigned> illFormedIndex(std::span<const UChar> characters)
+static inline std::optional<unsigned> illFormedIndex(std::span<const char16_t> characters)
 {
     for (unsigned index = 0; index < characters.size(); ++index) {
-        UChar character = characters[index];
+        char16_t character = characters[index];
         if (!U16_IS_SURROGATE(character))
             continue;
 
@@ -1489,7 +1489,7 @@ static inline std::optional<unsigned> illFormedIndex(std::span<const UChar> char
         ASSERT(U16_IS_SURROGATE_LEAD(character));
         if ((index + 1) == characters.size())
             return index;
-        UChar nextCharacter = characters[index + 1];
+        char16_t nextCharacter = characters[index + 1];
 
         if (!U16_IS_SURROGATE(nextCharacter))
             return index;
@@ -1553,11 +1553,11 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     if (!firstIllFormedIndex)
         return JSValue::encode(stringValue);
 
-    Vector<UChar> buffer;
+    Vector<char16_t> buffer;
     buffer.reserveInitialCapacity(characters.size());
     buffer.append(characters.first(*firstIllFormedIndex));
     for (unsigned index = firstIllFormedIndex.value(); index < characters.size(); ++index) {
-        UChar character = characters[index];
+        char16_t character = characters[index];
 
         if (!U16_IS_SURROGATE(character)) {
             buffer.append(character);
@@ -1574,7 +1574,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
             buffer.append(replacementCharacter);
             continue;
         }
-        UChar nextCharacter = characters[index + 1];
+        char16_t nextCharacter = characters[index + 1];
 
         if (!U16_IS_SURROGATE(nextCharacter)) {
             buffer.append(replacementCharacter);

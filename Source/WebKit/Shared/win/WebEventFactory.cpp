@@ -215,7 +215,7 @@ static String textFromEvent(WPARAM wparam, WebEventType type)
     if (type != WebEventType::Char)
         return String();
 
-    UChar c = static_cast<UChar>(wparam);
+    char16_t c = static_cast<char16_t>(wparam);
     return span(c);
 }
 
@@ -224,7 +224,7 @@ static String unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
     if (type != WebEventType::Char)
         return String();
 
-    UChar c = static_cast<UChar>(wparam);
+    char16_t c = static_cast<char16_t>(wparam);
     return span(c);
 }
 

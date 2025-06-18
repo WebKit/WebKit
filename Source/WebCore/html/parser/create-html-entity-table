@@ -194,7 +194,7 @@ std::span<const char> HTMLEntityTableEntry::nameCharacters() const
     return staticEntityStringStorage.span().subspan(nameCharactersOffset);
 }
 
-std::span<const HTMLEntityTableEntry> HTMLEntityTable::entriesStartingWith(UChar c)
+std::span<const HTMLEntityTableEntry> HTMLEntityTable::entriesStartingWith(char16_t c)
 {
     if (c >= 'A' && c <= 'Z') {
         auto* start = &staticEntityTable[uppercaseOffset[c - 'A']];

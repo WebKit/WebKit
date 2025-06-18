@@ -51,7 +51,7 @@ static String escapeStringForRegularExpressionSource(const String& text)
     StringBuilder result;
 
     for (unsigned i = 0; i < text.length(); i++) {
-        UChar character = text[i];
+        char16_t character = text[i];
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (isASCII(character) && strchr(regexSpecialCharacters, character))
             result.append('\\');

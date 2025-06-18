@@ -50,7 +50,7 @@ String::String(CFStringRef str)
         }
     }
 
-    StringBuffer<UChar> ucharBuffer(size);
+    StringBuffer<char16_t> ucharBuffer(size);
     CFStringGetCharacters(str, CFRangeMake(0, size), reinterpret_cast<UniChar *>(ucharBuffer.characters()));
     m_impl = StringImpl::adopt(WTFMove(ucharBuffer));
 }

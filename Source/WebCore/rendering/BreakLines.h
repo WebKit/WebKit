@@ -69,10 +69,10 @@ private:
     // Helper functions.
     enum BreakClass : uint16_t;
     template<LineBreakRules, NoBreakSpaceBehavior>
-    static inline BreakClass classify(UChar character);
+    static inline BreakClass classify(char16_t character);
 
     template<NoBreakSpaceBehavior>
-    static inline bool isBreakableSpace(UChar character);
+    static inline bool isBreakableSpace(char16_t character);
 
     // Data types.
     enum BreakClass : uint16_t {
@@ -115,12 +115,12 @@ private:
 
     class LineBreakTable {
     public:
-        static constexpr UChar firstCharacter = '!';
-        static constexpr UChar lastCharacter = 0xFF;
+        static constexpr char16_t firstCharacter = '!';
+        static constexpr char16_t lastCharacter = 0xFF;
         static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
         static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
 
-        static inline bool unsafeLookup(UChar before, UChar after) // Must range check before calling.
+        static inline bool unsafeLookup(char16_t before, char16_t after) // Must range check before calling.
         {
             const unsigned beforeIndex = before - firstCharacter;
             const unsigned afterIndex = after - firstCharacter;
@@ -134,7 +134,7 @@ private:
 
 
 template<BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-inline bool BreakLines::isBreakableSpace(UChar character)
+inline bool BreakLines::isBreakableSpace(char16_t character)
 {
     switch (character) {
     case ' ':
@@ -293,8 +293,8 @@ inline unsigned BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory
             : nextBreakablePosition<LChar, rules, words, spaces>(lineBreakIteratorFactory, stringView.span8(), startPosition);
     }
     return words == WordBreakBehavior::KeepAll
-        ? nextBreakableSpace<UChar, spaces>(stringView.span16(), startPosition)
-        : nextBreakablePosition<UChar, rules, words, spaces>(lineBreakIteratorFactory, stringView.span16(), startPosition);
+        ? nextBreakableSpace<char16_t, spaces>(stringView.span16(), startPosition)
+        : nextBreakablePosition<char16_t, rules, words, spaces>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 
@@ -325,16 +325,16 @@ inline bool BreakLines::isBreakable(CachedLineBreakIteratorFactory& lineBreakIte
 }
 
 template<BreakLines::LineBreakRules rules, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-inline BreakLines::BreakClass BreakLines::classify(UChar character)
+inline BreakLines::BreakClass BreakLines::classify(char16_t character)
 {
     // This function is optimized for letters and NBSP.
     // See LineBreak.txt for classification.
 
-    static constexpr UChar blockLast3 = ~0x07;
-    static constexpr UChar blockLast4 = ~0x0F;
-    static constexpr UChar blockLast6 = ~0x3F;
-    static constexpr UChar blockLast7 = ~0x7F;
-    static constexpr UChar blockLast8 = ~0xFF;
+    static constexpr char16_t blockLast3 = ~0x07;
+    static constexpr char16_t blockLast4 = ~0x0F;
+    static constexpr char16_t blockLast6 = ~0x3F;
+    static constexpr char16_t blockLast7 = ~0x7F;
+    static constexpr char16_t blockLast8 = ~0xFF;
 
     switch ((character & blockLast7) / 0x80) {
         // Compilers are not smart enough to make a jump table if the step is not 1.

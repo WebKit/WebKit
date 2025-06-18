@@ -251,7 +251,7 @@ SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(ASCIILit
     ASSERT(length <= maxLength);
     if (length > this->length())
         return NotEnoughCharacters;
-    std::array<UChar, maxLength> consumedCharacters;
+    std::array<char16_t, maxLength> consumedCharacters;
     for (unsigned i = 0; i < length; ++i) {
         auto character = m_currentCharacter;
         if (characterMismatch(character, literal[i], lettersIgnoringASCIICase)) {

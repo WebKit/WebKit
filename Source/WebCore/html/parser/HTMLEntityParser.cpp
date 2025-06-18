@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static constexpr std::array<UChar, 32> windowsLatin1ExtensionArray {
+static constexpr std::array<char16_t, 32> windowsLatin1ExtensionArray {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
     0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
@@ -45,19 +45,19 @@ static constexpr std::array<UChar, 32> windowsLatin1ExtensionArray {
 
 constexpr DecodedHTMLEntity::DecodedHTMLEntity() = default;
 
-constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first)
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(char16_t first)
     : m_length { 1 }
     , m_characters { first }
 {
 }
 
-constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first, UChar second)
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(char16_t first, char16_t second)
     : m_length { 2 }
     , m_characters { first, second }
 {
 }
 
-constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first, UChar second, UChar third)
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(char16_t first, char16_t second, char16_t third)
     : m_length { 3 }
     , m_characters { first, second, third }
 {
@@ -74,7 +74,7 @@ static constexpr DecodedHTMLEntity makeEntity(char32_t character)
         return { replacementCharacter };
     if ((character & ~0x1F) != 0x80) {
         if (U_IS_BMP(character)) {
-            UChar codeUnit = character;
+            char16_t codeUnit = character;
             return { codeUnit };
         }
         return { U16_LEAD(character), U16_TRAIL(character) };
@@ -91,9 +91,9 @@ static DecodedHTMLEntity makeEntity(const Checked<uint32_t, RecordOverflow>& cha
 
 static constexpr DecodedHTMLEntity makeEntity(HTMLEntityTableEntry entry)
 {
-    UChar second = entry.optionalSecondCharacter;
+    char16_t second = entry.optionalSecondCharacter;
     if (U_IS_BMP(entry.firstCharacter)) {
-        UChar first = entry.firstCharacter;
+        char16_t first = entry.firstCharacter;
         if (!second)
             return { first };
         return { first, second };
@@ -108,14 +108,14 @@ public:
     explicit SegmentedStringSource(SegmentedString&);
 
     bool isEmpty() const { return m_source.isEmpty(); }
-    UChar currentCharacter() const { return m_source.currentCharacter(); }
+    char16_t currentCharacter() const { return m_source.currentCharacter(); }
     void advance();
     void pushEverythingBack();
     void pushBackButKeep(unsigned keepCount);
 
 private:
     SegmentedString& m_source;
-    Vector<UChar, 64> m_consumedCharacters;
+    Vector<char16_t, 64> m_consumedCharacters;
 };
 
 template<typename CharacterType> class StringParsingBufferSource {
@@ -123,7 +123,7 @@ public:
     explicit StringParsingBufferSource(StringParsingBuffer<CharacterType>&);
 
     static bool isEmpty() { return false; }
-    UChar currentCharacter() const { return m_source.atEnd() ? 0 : *m_source; }
+    char16_t currentCharacter() const { return m_source.atEnd() ? 0 : *m_source; }
     void advance() { m_source.advance(); }
     void pushEverythingBack() { m_source.setPosition(m_startPosition); }
     void pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition.subspan(keepCount)); }
@@ -167,7 +167,7 @@ void SegmentedStringSource::pushBackButKeep(unsigned keepCount)
 template<typename SourceType> DecodedHTMLEntity consumeDecimalHTMLEntity(SourceType& source)
 {
     Checked<uint32_t, RecordOverflow> result = 0;
-    UChar character = source.currentCharacter();
+    char16_t character = source.currentCharacter();
     do {
         source.advance();
         if (source.isEmpty()) {
@@ -185,7 +185,7 @@ template<typename SourceType> DecodedHTMLEntity consumeDecimalHTMLEntity(SourceT
 template<typename SourceType> DecodedHTMLEntity consumeHexHTMLEntity(SourceType& source)
 {
     Checked<uint32_t, RecordOverflow> result = 0;
-    UChar character = source.currentCharacter();
+    char16_t character = source.currentCharacter();
     do {
         source.advance();
         if (source.isEmpty()) {
@@ -201,10 +201,10 @@ template<typename SourceType> DecodedHTMLEntity consumeHexHTMLEntity(SourceType&
     return makeEntity(result);
 }
 
-template<typename SourceType> DecodedHTMLEntity consumeNamedHTMLEntity(SourceType& source, UChar additionalAllowedCharacter)
+template<typename SourceType> DecodedHTMLEntity consumeNamedHTMLEntity(SourceType& source, char16_t additionalAllowedCharacter)
 {
     HTMLEntitySearch entitySearch;
-    UChar character;
+    char16_t character;
     do {
         character = source.currentCharacter();
         entitySearch.advance(character);
@@ -237,12 +237,12 @@ template<typename SourceType> DecodedHTMLEntity consumeNamedHTMLEntity(SourceTyp
     return { };
 }
 
-template<typename SourceType> DecodedHTMLEntity consumeHTMLEntity(SourceType source, UChar additionalAllowedCharacter)
+template<typename SourceType> DecodedHTMLEntity consumeHTMLEntity(SourceType source, char16_t additionalAllowedCharacter)
 {
     if (source.isEmpty())
         return DecodedHTMLEntity::ConstructNotEnoughCharacters;
 
-    UChar character = source.currentCharacter();
+    char16_t character = source.currentCharacter();
     if (isASCIIAlpha(character))
         return consumeNamedHTMLEntity(source, additionalAllowedCharacter);
     if (character != '#')
@@ -276,7 +276,7 @@ template<typename SourceType> DecodedHTMLEntity consumeHTMLEntity(SourceType sou
     return { };
 }
 
-DecodedHTMLEntity consumeHTMLEntity(SegmentedString& source, UChar additionalAllowedCharacter)
+DecodedHTMLEntity consumeHTMLEntity(SegmentedString& source, char16_t additionalAllowedCharacter)
 {
     return consumeHTMLEntity(SegmentedStringSource { source }, additionalAllowedCharacter);
 }
@@ -286,9 +286,9 @@ DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<LChar>& source)
     return consumeHTMLEntity(StringParsingBufferSource<LChar> { source }, 0);
 }
 
-DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>& source)
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<char16_t>& source)
 {
-    return consumeHTMLEntity(StringParsingBufferSource<UChar> { source }, 0);
+    return consumeHTMLEntity(StringParsingBufferSource<char16_t> { source }, 0);
 }
 
 DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)

@@ -122,7 +122,7 @@ const LChar* find8NonASCIIAlignedImpl(std::span<const LChar> data)
 }
 
 SUPPRESS_ASAN
-const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
+const char16_t* find16NonASCIIAlignedImpl(std::span<const char16_t> data)
 {
     auto* pointer = data.data();
     auto length = data.size();
@@ -144,7 +144,7 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
         if (simde_vget_lane_u64(simde_vreinterpret_u64_u8(simde_vmovn_u16(mask)), 0)) {
             simde_uint16x8_t ranked = simde_vornq_u16(indexMask, mask);
             uint16_t index = simde_vminvq_u16(ranked);
-            return std::bit_cast<const UChar*>((index < length) ? cursor + index : nullptr);
+            return std::bit_cast<const char16_t*>((index < length) ? cursor + index : nullptr);
         }
         if (length <= stride)
             return nullptr;

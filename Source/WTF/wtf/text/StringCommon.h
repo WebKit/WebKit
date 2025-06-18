@@ -45,7 +45,7 @@ inline std::span<const LChar> span(const LChar& character)
     return unsafeMakeSpan(&character, 1);
 }
 
-inline std::span<const UChar> span(const UChar& character)
+inline std::span<const char16_t> span(const char16_t& character)
 {
     return unsafeMakeSpan(&character, 1);
 }
@@ -86,7 +86,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline std::span<const UChar> unsafeSpan(const UChar* string)
+inline std::span<const char16_t> unsafeSpan(const char16_t* string)
 {
     if (!string)
         return { };
@@ -125,7 +125,7 @@ template<> ALWAYS_INLINE constexpr bool isLatin1(LChar)
     return true;
 }
 
-using CodeUnitMatchFunction = bool (*)(UChar);
+using CodeUnitMatchFunction = bool (*)(char16_t);
 
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(std::span<const CharacterTypeA>, std::span<const CharacterTypeB>);
 
@@ -193,7 +193,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     }
 }
 
-ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
+ALWAYS_INLINE bool equal(const char16_t* aUChar, std::span<const char16_t> bUChar)
 {
     ASSERT(bUChar.size() <= std::numeric_limits<unsigned>::max());
     unsigned length = bUChar.size();
@@ -272,7 +272,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     return true;
 }
 
-ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
+ALWAYS_INLINE bool equal(const char16_t* aUChar, std::span<const char16_t> bUChar)
 {
     ASSERT(bUChar.size() <= std::numeric_limits<unsigned>::max());
     unsigned length = bUChar.size();
@@ -288,17 +288,17 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
         b += sizeof(uint32_t);
     }
 
-    if (length & 1 && *reinterpret_cast<const UChar*>(a) != *reinterpret_cast<const UChar*>(b))
+    if (length & 1 && *reinterpret_cast<const char16_t*>(a) != *reinterpret_cast<const char16_t*>(b))
         return false;
 
     return true;
 }
 #else
 ALWAYS_INLINE bool equal(const LChar* a, std::span<const LChar> b) { return !memcmp(a, b.data(), b.size()); }
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> b) { return !memcmp(a, b.data(), b.size_bytes()); }
+ALWAYS_INLINE bool equal(const char16_t* a, std::span<const char16_t> b) { return !memcmp(a, b.data(), b.size_bytes()); }
 #endif
 
-ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
+ALWAYS_INLINE bool equal(const LChar* a, std::span<const char16_t> b)
 {
 #if CPU(ARM64)
     ASSERT(b.size() <= std::numeric_limits<unsigned>::max());
@@ -349,7 +349,7 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
 #endif
 }
 
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const LChar> b)
+ALWAYS_INLINE bool equal(const char16_t* a, std::span<const LChar> b)
 {
     return equal(b.data(), { a, b.size() });
 }
@@ -399,7 +399,7 @@ ALWAYS_INLINE bool equalCommon(const StringClassA* a, const StringClassB* b)
     return equal(*a, *b);
 }
 
-template<typename StringClass, unsigned length> bool equal(const StringClass& a, const UChar (&codeUnits)[length])
+template<typename StringClass, unsigned length> bool equal(const StringClass& a, const char16_t (&codeUnits)[length])
 {
     if (a.length() != length)
         return false;
@@ -643,7 +643,7 @@ ALWAYS_INLINE const double* findDouble(const double* pointer, double target, siz
 #endif
 
 WTF_EXPORT_PRIVATE const LChar* find8NonASCIIAlignedImpl(std::span<const LChar>);
-WTF_EXPORT_PRIVATE const UChar* find16NonASCIIAlignedImpl(std::span<const UChar>);
+WTF_EXPORT_PRIVATE const char16_t* find16NonASCIIAlignedImpl(std::span<const char16_t>);
 
 #if CPU(ARM64)
 ALWAYS_INLINE const LChar* find8NonASCII(std::span<const LChar> data)
@@ -667,16 +667,16 @@ ALWAYS_INLINE const LChar* find8NonASCII(std::span<const LChar> data)
     return find8NonASCIIAlignedImpl({ pointer + index, length - index });
 }
 
-ALWAYS_INLINE const UChar* find16NonASCII(std::span<const UChar> data)
+ALWAYS_INLINE const char16_t* find16NonASCII(std::span<const char16_t> data)
 {
     constexpr size_t thresholdLength = 16;
-    static_assert(!(thresholdLength % (16 / sizeof(UChar))), "length threshold should be 16-byte aligned to make find16NonASCIIAlignedImpl simpler");
+    static_assert(!(thresholdLength % (16 / sizeof(char16_t))), "length threshold should be 16-byte aligned to make find16NonASCIIAlignedImpl simpler");
     auto* pointer = data.data();
     auto length = data.size();
     uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
 
     size_t index = 0;
-    size_t runway = std::min(thresholdLength - (unaligned / sizeof(UChar)), length);
+    size_t runway = std::min(thresholdLength - (unaligned / sizeof(char16_t)), length);
     for (; index < runway; ++index) {
         if (!isASCII(pointer[index]))
             return pointer + index;
@@ -720,12 +720,12 @@ inline size_t find(std::span<const CharacterType1> characters, CharacterType2 ma
     return notFound;
 }
 
-ALWAYS_INLINE size_t find(std::span<const UChar> characters, LChar matchCharacter, size_t index = 0)
+ALWAYS_INLINE size_t find(std::span<const char16_t> characters, LChar matchCharacter, size_t index = 0)
 {
-    return find(characters, static_cast<UChar>(matchCharacter), index);
+    return find(characters, static_cast<char16_t>(matchCharacter), index);
 }
 
-inline size_t find(std::span<const LChar> characters, UChar matchCharacter, size_t index = 0)
+inline size_t find(std::span<const LChar> characters, char16_t matchCharacter, size_t index = 0)
 {
     if (!isLatin1(matchCharacter))
         return notFound;
@@ -1132,12 +1132,12 @@ inline void copyElements(std::span<float> destinationSpan, std::span<const doubl
 }
 
 #ifndef __swift__ // FIXME: rdar://136156228
-inline void copyElements(std::span<UChar> destination, std::span<const LChar> source)
+inline void copyElements(std::span<char16_t> destination, std::span<const LChar> source)
 {
     copyElements(spanReinterpretCast<uint16_t>(destination), byteCast<uint8_t>(source));
 }
 
-inline void copyElements(std::span<LChar> destination, std::span<const UChar> source)
+inline void copyElements(std::span<LChar> destination, std::span<const char16_t> source)
 {
     copyElements(byteCast<uint8_t>(destination), spanReinterpretCast<const uint16_t>(source));
 }

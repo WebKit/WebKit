@@ -68,9 +68,9 @@ private:
     char m_character;
 };
 
-template<> class StringTypeAdapter<UChar, void> {
+template<> class StringTypeAdapter<char16_t, void> {
 public:
-    StringTypeAdapter(UChar character)
+    StringTypeAdapter(char16_t character)
         : m_character { character }
     {
     }
@@ -84,10 +84,10 @@ public:
         destination[0] = m_character;
     }
 
-    void writeTo(std::span<UChar> destination) const { destination[0] = m_character; }
+    void writeTo(std::span<char16_t> destination) const { destination[0] = m_character; }
 
 private:
-    UChar m_character;
+    char16_t m_character;
 };
 
 template<> class StringTypeAdapter<char32_t, void> {
@@ -106,7 +106,7 @@ public:
         destination[0] = m_character;
     }
 
-    void writeTo(std::span<UChar> destination) const
+    void writeTo(std::span<char16_t> destination) const
     {
         if (U_IS_BMP(m_character)) {
             destination[0] = m_character;
@@ -136,9 +136,9 @@ private:
     std::span<const LChar> m_characters;
 };
 
-template<> class StringTypeAdapter<const UChar*, void> {
+template<> class StringTypeAdapter<const char16_t*, void> {
 public:
-    StringTypeAdapter(const UChar* characters)
+    StringTypeAdapter(const char16_t* characters)
         : m_characters { unsafeSpan(characters) }
     {
         RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
@@ -147,10 +147,10 @@ public:
     unsigned length() const { return m_characters.size(); }
     bool is8Bit() const { return m_characters.empty(); }
     void writeTo(std::span<LChar>) const { ASSERT(m_characters.empty()); }
-    void writeTo(std::span<UChar> destination) const { StringImpl::copyCharacters(destination, m_characters); }
+    void writeTo(std::span<char16_t> destination) const { StringImpl::copyCharacters(destination, m_characters); }
 
 private:
-    std::span<const UChar> m_characters;
+    std::span<const char16_t> m_characters;
 };
 
 template<typename CharacterType, size_t Extent> class StringTypeAdapter<std::span<CharacterType, Extent>, void> {
@@ -166,7 +166,7 @@ public:
 
     template<typename DestinationCharacterType> void writeTo(std::span<DestinationCharacterType> destination) const
     {
-        using CharacterTypeForString = std::conditional_t<sizeof(CharacterType) == sizeof(LChar), LChar, UChar>;
+        using CharacterTypeForString = std::conditional_t<sizeof(CharacterType) == sizeof(LChar), LChar, char16_t>;
         static_assert(sizeof(CharacterTypeForString) == sizeof(CharacterType));
         StringImpl::copyCharacters(destination, spanReinterpretCast<const CharacterTypeForString>(m_characters));
     }
@@ -282,7 +282,7 @@ public:
     bool is8Bit() const { return m_characters.isAllASCII; }
     void writeTo(std::span<LChar> destination) const { memcpySpan(destination, unsafeMakeSpan(m_characters.characters.data(), m_characters.lengthUTF16)); }
 #ifndef __swift__ // FIXME: This fails to compile because of rdar://136156228
-    void writeTo(std::span<UChar> destination) const { Unicode::convert(m_characters.characters, destination.first(m_characters.lengthUTF16)); }
+    void writeTo(std::span<char16_t> destination) const { Unicode::convert(m_characters.characters, destination.first(m_characters.lengthUTF16)); }
 #endif
 
 private:

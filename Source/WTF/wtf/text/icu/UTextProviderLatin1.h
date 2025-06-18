@@ -35,10 +35,10 @@ const int UTextWithBufferInlineCapacity = 16;
 struct UTextWithBuffer {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     UText text;
-    UChar buffer[UTextWithBufferInlineCapacity];
+    char16_t buffer[UTextWithBufferInlineCapacity];
 };
 
 UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, UErrorCode* status);
-WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, std::span<const UChar> priorContext, UErrorCode* status);
+WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, std::span<const char16_t> priorContext, UErrorCode* status);
 
 } // namespace WTF

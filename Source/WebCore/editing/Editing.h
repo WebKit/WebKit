@@ -214,12 +214,12 @@ Position adjustedSelectionStartForStyleComputation(const VisibleSelection&);
 // -------------------------------------------------------------------------
 
 // FIXME: This is only one of many definitions of whitespace. Possibly never the right one to use.
-bool deprecatedIsEditingWhitespace(UChar);
+bool deprecatedIsEditingWhitespace(char16_t);
 
 // FIXME: Can't answer this question correctly without being passed the white-space mode.
-bool deprecatedIsCollapsibleWhitespace(UChar);
+bool deprecatedIsCollapsibleWhitespace(char16_t);
 
-bool isAmbiguousBoundaryCharacter(UChar);
+bool isAmbiguousBoundaryCharacter(char16_t);
 
 String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
 const String& nonBreakingSpaceString();
@@ -233,18 +233,18 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
 
 // -------------------------------------------------------------------------
 
-inline bool deprecatedIsEditingWhitespace(UChar c)
+inline bool deprecatedIsEditingWhitespace(char16_t c)
 {
     return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
 }
 
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
-inline bool deprecatedIsCollapsibleWhitespace(UChar c)
+inline bool deprecatedIsCollapsibleWhitespace(char16_t c)
 {
     return c == ' ' || c == '\n';
 }
 
-bool isAmbiguousBoundaryCharacter(UChar);
+bool isAmbiguousBoundaryCharacter(char16_t);
 
 inline bool editingIgnoresContent(const Node& node)
 {

@@ -37,7 +37,7 @@
 
 namespace WGSL {
 
-static unsigned isIdentifierStart(UChar character, std::span<const UChar> code)
+static unsigned isIdentifierStart(char16_t character, std::span<const char16_t> code)
 {
     if (character == '_')
         return 1;
@@ -50,7 +50,7 @@ static unsigned isIdentifierStart(UChar character, std::span<const UChar> code)
     return 0;
 }
 
-static unsigned isIdentifierContinue(UChar character, std::span<const UChar> code)
+static unsigned isIdentifierContinue(char16_t character, std::span<const char16_t> code)
 {
     if (auto length = isIdentifierStart(character, code))
         return length;
@@ -1037,6 +1037,6 @@ Token Lexer<T>::lexNumber()
 }
 
 template class Lexer<LChar>;
-template class Lexer<UChar>;
+template class Lexer<char16_t>;
 
 }

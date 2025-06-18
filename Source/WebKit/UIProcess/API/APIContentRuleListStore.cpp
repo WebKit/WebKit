@@ -308,7 +308,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
                 m_sourceWritten += sourceJSON.length();
             } else {
                 writeToFile(WebKit::NetworkCache::Data(asBytes(sourceJSON.span16())));
-                m_sourceWritten += sourceJSON.length() * sizeof(UChar);
+                m_sourceWritten += sourceJSON.length() * sizeof(char16_t);
             }
         }
 
@@ -511,13 +511,13 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     if (is8Bit)
         return dataSpan.subspan(start, length);
 
-    if (length % sizeof(UChar)) {
+    if (length % sizeof(char16_t)) {
         ASSERT_NOT_REACHED();
-        WTFLogAlways("Content Rule List source recovery failed: Length is not a multiple of UChar size; data is corrupted.");
+        WTFLogAlways("Content Rule List source recovery failed: Length is not a multiple of char16_t size; data is corrupted.");
         return { };
     }
 
-    return spanReinterpretCast<const UChar>(dataSpan.subspan(start, length));
+    return spanReinterpretCast<const char16_t>(dataSpan.subspan(start, length));
 }
 
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)

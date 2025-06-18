@@ -73,12 +73,12 @@ static double parseIntOverflow(std::span<const LChar> s, int radix)
     return number;
 }
 
-static double parseIntOverflow(std::span<const UChar> s, int radix)
+static double parseIntOverflow(std::span<const char16_t> s, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const UChar* p = s.data() + s.size() - 1; p >= s.data(); p--) {
+    for (const char16_t* p = s.data() + s.size() - 1; p >= s.data(); p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -101,7 +101,7 @@ ALWAYS_INLINE static bool isStrWhiteSpace(CharacterType c)
     // https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type
     if constexpr (sizeof(c) == 1)
         return Lexer<LChar>::isWhiteSpace(c) || Lexer<LChar>::isLineTerminator(c);
-    return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
+    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
 }
 
 inline static std::optional<double> parseIntDouble(double n)

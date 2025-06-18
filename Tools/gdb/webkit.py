@@ -95,7 +95,7 @@ class StringPrinter(object):
 
 
 class UCharStringPrinter(StringPrinter):
-    "Print a UChar*; we must guess at the length"
+    "Print a char16_t*; we must guess at the length"
     def to_string(self):
         return ustring_to_string(self.val)
 
@@ -323,7 +323,7 @@ def add_pretty_printers():
 
         if type.code == gdb.TYPE_CODE_PTR:
             name = str(type.target().unqualified())
-            if name == 'UChar':
+            if name == 'char16_t':
                 return UCharStringPrinter(val)
             if name == 'LChar':
                 return LCharStringPrinter(val)

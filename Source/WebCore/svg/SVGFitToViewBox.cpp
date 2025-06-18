@@ -100,7 +100,7 @@ std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar
     return parseViewBoxGeneric(buffer, validate);
 }
 
-std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<char16_t>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }

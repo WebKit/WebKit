@@ -199,7 +199,7 @@ ALWAYS_INLINE JSString* LiteralParser<CharType, reviverMode>::makeJSString(VM& v
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-[[maybe_unused]] static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar)
+[[maybe_unused]] static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(char16_t)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -888,7 +888,7 @@ ALWAYS_INLINE void setParserTokenString<LChar>(LiteralParserToken<LChar>& token,
 }
 
 template <>
-ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token, const UChar* string)
+ALWAYS_INLINE void setParserTokenString<char16_t>(LiteralParserToken<char16_t>& token, const char16_t* string)
 {
     token.stringIs8Bit = 0;
     token.stringStart16 = string;
@@ -906,7 +906,7 @@ static ALWAYS_INLINE bool isSafeStringCharacter(LChar c, LChar terminator)
 }
 
 template <SafeStringCharacterSet set>
-static ALWAYS_INLINE bool isSafeStringCharacter(UChar c, UChar terminator)
+static ALWAYS_INLINE bool isSafeStringCharacter(char16_t c, char16_t terminator)
 {
     if constexpr (set == SafeStringCharacterSet::Strict) {
         if (!isLatin1(c))
@@ -917,7 +917,7 @@ static ALWAYS_INLINE bool isSafeStringCharacter(UChar c, UChar terminator)
 }
 
 template <SafeStringCharacterSet set>
-static ALWAYS_INLINE bool isSafeStringCharacterForIdentifier(UChar c, UChar terminator)
+static ALWAYS_INLINE bool isSafeStringCharacterForIdentifier(char16_t c, char16_t terminator)
 {
     if constexpr (set == SafeStringCharacterSet::Strict)
         return isSafeStringCharacter<set>(static_cast<LChar>(c), static_cast<LChar>(terminator)) || !isLatin1(c);
@@ -1887,9 +1887,9 @@ JSValue LiteralParser<CharType, reviverMode>::parse(VM& vm, ParserState initialS
 
 // Instantiate the two flavors of LiteralParser we need instead of putting most of this file in LiteralParser.h
 template class LiteralParser<LChar, JSONReviverMode::Enabled>;
-template class LiteralParser<UChar, JSONReviverMode::Enabled>;
+template class LiteralParser<char16_t, JSONReviverMode::Enabled>;
 template class LiteralParser<LChar, JSONReviverMode::Disabled>;
-template class LiteralParser<UChar, JSONReviverMode::Disabled>;
+template class LiteralParser<char16_t, JSONReviverMode::Disabled>;
 
 }
 

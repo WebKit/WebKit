@@ -2606,7 +2606,7 @@ static AXTextChangeContext secureContext(AccessibilityObject& object, AXTextChan
         if (text.isEmpty())
             return;
 
-        std::span<UChar> characters;
+        std::span<char16_t> characters;
         text = String::createUninitialized(text.length(), characters);
         for (unsigned i = 0; i < text.length(); ++i)
             characters[i] = maskingCharacter;
@@ -4175,7 +4175,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
 
     auto searchRange = rangeForNodeContents(*boundary);
 
-    Vector<UChar, 1024> string;
+    Vector<char16_t, 1024> string;
     unsigned prefixLength = 0;
     
     if (requiresContextForWordBoundary(characterAfter(characterOffset))) {
@@ -4220,7 +4220,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         return CharacterOffset();
     
     auto searchRange = rangeForNodeContents(*boundary);
-    Vector<UChar, 1024> string;
+    Vector<char16_t, 1024> string;
     unsigned suffixLength = 0;
 
     if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && startCharacterOffsetOfParagraph(characterOffset).isEqual(characterOffset)) {

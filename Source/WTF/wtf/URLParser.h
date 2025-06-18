@@ -65,8 +65,8 @@ public:
     WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(StringView scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
-    static bool isInUserInfoEncodeSet(UChar);
-    static bool isSpecialCharacterForFragmentDirective(UChar);
+    static bool isInUserInfoEncodeSet(char16_t);
+    static bool isSpecialCharacterForFragmentDirective(char16_t);
 
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);
@@ -125,11 +125,11 @@ private:
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(char32_t);
     void appendToASCIIBuffer(std::span<const LChar>);
-    template<typename CharacterType> void encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
+    template<typename CharacterType> void encodeNonUTF8Query(const Vector<char16_t>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length) LIFETIME_BOUND;
-    UChar parsedDataView(size_t position);
+    char16_t parsedDataView(size_t position);
     template<typename CharacterType> bool subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
     bool subdomainStartsWithXNDashDash(StringImpl&);
 
@@ -158,6 +158,6 @@ private:
     bool shouldPopPath(unsigned);
 };
 
-WTF_EXPORT_PRIVATE bool isForbiddenHostCodePoint(UChar);
+WTF_EXPORT_PRIVATE bool isForbiddenHostCodePoint(char16_t);
 
 }

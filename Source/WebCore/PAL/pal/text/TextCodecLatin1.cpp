@@ -34,7 +34,7 @@
 
 namespace PAL {
 
-static constexpr std::array<UChar, 256> latin1ConversionTable = {
+static constexpr std::array<char16_t, 256> latin1ConversionTable = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, // 00-07
     0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, // 08-0F
     0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017, // 10-17
@@ -153,7 +153,7 @@ useLookupTable:
     return result;
     
 upConvertTo16Bit:
-    std::span<UChar> characters16;
+    std::span<char16_t> characters16;
     String result16 = String::createUninitialized(bytes.size(), characters16);
 
     auto destination16 = characters16;
@@ -232,7 +232,7 @@ Vector<uint8_t> TextCodecLatin1::encode(StringView string, UnencodableHandling h
         size_t index = 0;
 
         // Convert and simultaneously do a check to see if it's all ASCII.
-        UChar ored = 0;
+        char16_t ored = 0;
         for (auto character : string.codeUnits()) {
             result[index++] = character;
             ored |= character;

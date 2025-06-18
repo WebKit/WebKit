@@ -57,7 +57,7 @@ WTF_EXPORT_PRIVATE unsigned calculateBase64EncodedSize(unsigned inputLength, Opt
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType);
 
-WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<UChar>, OptionSet<Base64EncodeOption> = { });
+WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<char16_t>, OptionSet<Base64EncodeOption> = { });
 WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<LChar>, OptionSet<Base64EncodeOption> = { });
 
 WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });

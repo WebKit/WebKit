@@ -97,7 +97,7 @@ static bool isSupportedEncoderCodec(const WebCodecsAudioEncoderConfig& config)
 
 static bool isValidEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 {
-    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+    if (StringView(config.codec).trim(isASCIIWhitespace<char16_t>).isEmpty())
         return false;
 
     if (!config.sampleRate || !config.numberOfChannels)

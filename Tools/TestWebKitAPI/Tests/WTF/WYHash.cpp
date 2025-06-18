@@ -61,7 +61,7 @@ TEST(WTF, WYHasher)
     };
 
     auto generateUCharArray = [&](size_t size) {
-        auto array = std::unique_ptr<UChar[]>(new UChar[size]);
+        auto array = std::unique_ptr<char16_t[]>(new char16_t[size]);
         for (size_t i = 0; i < size; i++)
             array[i] = i;
         return array;
@@ -70,7 +70,7 @@ TEST(WTF, WYHasher)
     unsigned max8Bit = std::numeric_limits<uint8_t>::max();
     for (size_t size = 0; size <= max8Bit; size++) {
         std::unique_ptr<const LChar[]> arr1 = generateLCharArray(size);
-        std::unique_ptr<const UChar[]> arr2 = generateUCharArray(size);
+        std::unique_ptr<const char16_t[]> arr2 = generateUCharArray(size);
         unsigned left = WYHash::computeHashAndMaskTop8Bits(std::span { arr1.get(), size });
         unsigned right = WYHash::computeHashAndMaskTop8Bits(std::span { arr2.get(), size });
         ASSERT_EQ(left, right);

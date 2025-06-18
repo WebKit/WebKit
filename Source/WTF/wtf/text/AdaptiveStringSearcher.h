@@ -65,7 +65,7 @@ public:
     static constexpr int bmMinPatternLength = 7;
 
     static constexpr bool exceedsOneByte(LChar) { return false; }
-    static constexpr bool exceedsOneByte(UChar c) { return c > 0xff; }
+    static constexpr bool exceedsOneByte(char16_t c) { return c > 0xff; }
 
     template <typename PatternChar, typename SubjectChar>
     static inline int findFirstCharacter(std::span<const PatternChar> pattern, std::span<const SubjectChar> subject, int index)

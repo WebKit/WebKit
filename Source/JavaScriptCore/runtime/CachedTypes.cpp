@@ -784,7 +784,7 @@ public:
     }
 
     std::span<const LChar> span8() const { return { this->template buffer<LChar>(), m_length }; }
-    std::span<const UChar> span16() const { return { this->template buffer<UChar>(), m_length }; }
+    std::span<const char16_t> span16() const { return { this->template buffer<char16_t>(), m_length }; }
 
 private:
     bool m_is8Bit : 1;

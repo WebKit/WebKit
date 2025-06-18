@@ -75,7 +75,7 @@ String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, 
     StringBuilder result;
     result.reserveCapacity(bytes.size() / 2);
 
-    auto processCodeUnit = [&] (UChar codeUnit) {
+    auto processCodeUnit = [&] (char16_t codeUnit) {
         if (std::exchange(m_shouldStripByteOrderMark, false) && codeUnit == byteOrderMark)
             return;
         if (m_leadSurrogate) {

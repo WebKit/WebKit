@@ -1043,7 +1043,7 @@ CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& 
     if (range.peek().type() != DelimiterToken)
         return fallbackResult;
 
-    UChar delimiter = range.peek().delimiter();
+    char16_t delimiter = range.peek().delimiter();
 
     if (delimiter == '+' || delimiter == '~' || delimiter == '>') {
         range.consumeIncludingWhitespace();

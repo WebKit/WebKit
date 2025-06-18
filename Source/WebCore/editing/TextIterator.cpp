@@ -118,7 +118,7 @@ public:
 #if !UCONFIG_NO_COLLATION
 
 private:
-    bool isBadMatch(const UChar*, size_t length) const;
+    bool isBadMatch(const char16_t*, size_t length) const;
     bool isWordStartMatch(size_t start, size_t length) const;
     bool isWordEndMatch(size_t start, size_t length) const;
 
@@ -126,26 +126,26 @@ private:
     const StringView::UpconvertedCharacters m_targetCharacters;
     FindOptions m_options;
 
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
     size_t m_overlap;
     size_t m_prefixLength;
     bool m_atBreak;
     bool m_needsMoreContext;
 
     const bool m_targetRequiresKanaWorkaround;
-    Vector<UChar> m_normalizedTarget;
-    mutable Vector<UChar> m_normalizedMatch;
+    Vector<char16_t> m_normalizedTarget;
+    mutable Vector<char16_t> m_normalizedMatch;
 
 #else
 
 private:
-    void append(UChar, bool isCharacterStart);
+    void append(char16_t, bool isCharacterStart);
     size_t length() const;
 
     String m_target;
     FindOptions m_options;
 
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
     Vector<bool> m_isCharacterStartBuffer;
     bool m_isBufferFull;
     size_t m_cursor;
@@ -334,7 +334,7 @@ inline void TextIteratorCopyableText::set(String&& string, unsigned offset, unsi
     m_length = length;
 }
 
-inline void TextIteratorCopyableText::set(UChar singleCharacter)
+inline void TextIteratorCopyableText::set(char16_t singleCharacter)
 {
     m_singleCharacter = singleCharacter;
     m_string = String();
@@ -693,7 +693,7 @@ void TextIterator::handleTextRun()
         // Determine what the next text run will be, but don't advance yet
         auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
         if (runStart < runEnd) {
-            auto isNewlineOrTab = [&](UChar character) {
+            auto isNewlineOrTab = [&](char16_t character) {
                 return character == '\n' || character == '\t';
             };
             // Handle either a single newline or tab character (which becomes a space),
@@ -1173,7 +1173,7 @@ void TextIterator::exitNode(Node* exitedNode)
     }
 }
 
-void TextIterator::emitCharacter(UChar character, RefPtr<Node>&& characterNode, RefPtr<Node>&& offsetBaseNode, int textStartOffset, int textEndOffset)
+void TextIterator::emitCharacter(char16_t character, RefPtr<Node>&& characterNode, RefPtr<Node>&& offsetBaseNode, int textStartOffset, int textEndOffset)
 {
     ASSERT(characterNode);
     m_hasEmitted = true;
@@ -1480,7 +1480,7 @@ void SimplifiedBackwardsTextIterator::exitNode()
     }
 }
 
-void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, RefPtr<Node>&& node, int startOffset, int endOffset)
+void SimplifiedBackwardsTextIterator::emitCharacter(char16_t c, RefPtr<Node>&& node, int startOffset, int endOffset)
 {
     ASSERT(node);
     m_positionNode = WTFMove(node);
@@ -1709,7 +1709,7 @@ StringView WordAwareIterator::text() const
 
 // --------
 
-static inline UChar foldQuoteMarkAndReplaceNoBreakSpace(UChar c)
+static inline char16_t foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
 {
     switch (c) {
     case hebrewPunctuationGershayim:
@@ -1843,7 +1843,7 @@ static inline void unlockSearcher()
 // We refer to the above technique as the "kana workaround". The next few
 // functions are helper functinos for the kana workaround.
 
-static inline bool isKanaLetter(UChar character)
+static inline bool isKanaLetter(char16_t character)
 {
     // Hiragana letters.
     if (character >= 0x3041 && character <= 0x3096)
@@ -1862,7 +1862,7 @@ static inline bool isKanaLetter(UChar character)
     return false;
 }
 
-static inline bool isSmallKanaLetter(UChar character)
+static inline bool isSmallKanaLetter(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -1923,7 +1923,7 @@ static inline bool isSmallKanaLetter(UChar character)
 
 enum VoicedSoundMarkType { NoVoicedSoundMark, VoicedSoundMark, SemiVoicedSoundMark };
 
-static inline VoicedSoundMarkType composedVoicedSoundMark(UChar character)
+static inline VoicedSoundMarkType composedVoicedSoundMark(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -1990,7 +1990,7 @@ static inline VoicedSoundMarkType composedVoicedSoundMark(UChar character)
     return NoVoicedSoundMark;
 }
 
-static inline bool isCombiningVoicedSoundMark(UChar character)
+static inline bool isCombiningVoicedSoundMark(char16_t character)
 {
     switch (character) {
     case 0x3099: // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK
@@ -2011,7 +2011,7 @@ static inline bool containsKanaLetters(const String& pattern)
     return false;
 }
 
-static void normalizeCharacters(const UChar* characters, unsigned length, Vector<UChar>& buffer)
+static void normalizeCharacters(const char16_t* characters, unsigned length, Vector<char16_t>& buffer)
 {
     UErrorCode status = U_ZERO_ERROR;
     auto* normalizer = unorm2_getNFCInstance(&status);
@@ -2193,7 +2193,7 @@ inline void SearchBuffer::reachedBreak()
     m_atBreak = true;
 }
 
-inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) const
+inline bool SearchBuffer::isBadMatch(const char16_t* match, size_t matchLength) const
 {
     // This function implements the kana workaround. If usearch treats
     // it as a match, but we do not want to, then it's a "bad match".
@@ -2411,7 +2411,7 @@ inline bool SearchBuffer::atBreak() const
     return !m_cursor && !m_isBufferFull;
 }
 
-inline void SearchBuffer::append(UChar c, bool isStart)
+inline void SearchBuffer::append(char16_t c, bool isStart)
 {
     m_buffer[m_cursor] = foldQuoteMarkAndReplaceNoBreakSpace(c);
     m_isCharacterStartBuffer[m_cursor] = isStart;
@@ -2421,7 +2421,7 @@ inline void SearchBuffer::append(UChar c, bool isStart)
     }
 }
 
-inline size_t SearchBuffer::append(const UChar* characters, size_t length)
+inline size_t SearchBuffer::append(const char16_t* characters, size_t length)
 {
     ASSERT(length);
     if (!(m_options & CaseInsensitive)) {
@@ -2429,7 +2429,7 @@ inline size_t SearchBuffer::append(const UChar* characters, size_t length)
         return 1;
     }
     constexpr int maxFoldedCharacters = 16; // sensible maximum is 3, this should be more than enough
-    UChar foldedCharacters[maxFoldedCharacters];
+    char16_t foldedCharacters[maxFoldedCharacters];
     UErrorCode status = U_ZERO_ERROR;
     int numFoldedCharacters = u_strFoldCase(foldedCharacters, maxFoldedCharacters, characters, 1, U_FOLD_CASE_DEFAULT, &status);
     ASSERT(U_SUCCESS(status));
@@ -2449,7 +2449,7 @@ inline bool SearchBuffer::needsMoreContext() const
     return false;
 }
 
-void SearchBuffer::prependContext(const UChar*, size_t)
+void SearchBuffer::prependContext(const char16_t*, size_t)
 {
     ASSERT_NOT_REACHED();
 }
@@ -2462,9 +2462,9 @@ inline size_t SearchBuffer::search(size_t& start)
         return 0;
 
     size_t tailSpace = m_target.length() - m_cursor;
-    if (memcmp(&m_buffer[m_cursor], m_target.characters(), tailSpace * sizeof(UChar)) != 0)
+    if (memcmp(&m_buffer[m_cursor], m_target.characters(), tailSpace * sizeof(char16_t)) != 0)
         return 0;
-    if (memcmp(&m_buffer[0], m_target.characters() + tailSpace, m_cursor * sizeof(UChar)) != 0)
+    if (memcmp(&m_buffer[0], m_target.characters() + tailSpace, m_cursor * sizeof(char16_t)) != 0)
         return 0;
 
     start = length();

@@ -95,7 +95,7 @@ void StringBuilder::shrink(unsigned newLength)
         if (m_buffer->is8Bit())
             allocateBuffer<LChar>(m_buffer->span8().first(m_length), newLength);
         else
-            allocateBuffer<UChar>(m_buffer->span16().first(m_length), newLength);
+            allocateBuffer<char16_t>(m_buffer->span16().first(m_length), newLength);
         return;
     }
 
@@ -108,7 +108,7 @@ void StringBuilder::reallocateBuffer(unsigned requiredCapacity)
     if (is8Bit())
         reallocateBuffer<LChar>(requiredCapacity);
     else
-        reallocateBuffer<UChar>(requiredCapacity);
+        reallocateBuffer<char16_t>(requiredCapacity);
 }
 
 void StringBuilder::reserveCapacity(unsigned newCapacity)
@@ -126,7 +126,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
             else if (m_string.is8Bit())
                 allocateBuffer<LChar>(m_string.span8(), newCapacity);
             else
-                allocateBuffer<UChar>(m_string.span16(), newCapacity);
+                allocateBuffer<char16_t>(m_string.span16(), newCapacity);
         }
     }
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);
@@ -138,18 +138,18 @@ std::span<LChar> StringBuilder::extendBufferForAppendingLChar(unsigned requiredL
     return extendBufferForAppending<LChar>(requiredLength);
 }
 
-std::span<UChar> StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLength)
+std::span<char16_t> StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLength)
 {
     if (is8Bit()) {
-        allocateBuffer<UChar>(span8(), expandedCapacity(capacity(), requiredLength));
+        allocateBuffer<char16_t>(span8(), expandedCapacity(capacity(), requiredLength));
         if (hasOverflowed()) [[unlikely]]
             return { };
-        return spanConstCast<UChar>(m_buffer->span16().subspan(std::exchange(m_length, requiredLength)));
+        return spanConstCast<char16_t>(m_buffer->span16().subspan(std::exchange(m_length, requiredLength)));
     }
-    return extendBufferForAppending<UChar>(requiredLength);
+    return extendBufferForAppending<char16_t>(requiredLength);
 }
 
-void StringBuilder::append(std::span<const UChar> characters)
+void StringBuilder::append(std::span<const char16_t> characters)
 {
     if (characters.empty() || hasOverflowed())
         return;
@@ -171,7 +171,7 @@ void StringBuilder::append(std::span<const LChar> characters)
         if (auto destination = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
             StringImpl::copyCharacters(destination, characters);
     } else {
-        if (auto destination = extendBufferForAppending<UChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
+        if (auto destination = extendBufferForAppending<char16_t>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
             StringImpl::copyCharacters(destination, characters);
     }
 }

@@ -94,7 +94,7 @@ void RegExpFunctionalTestCollector::outputEscapedString(StringView s, bool escap
     int len = s.length();
     
     for (int i = 0; i < len; ++i) {
-        UChar c = s[i];
+        char16_t c = s[i];
 
         switch (c) {
         case '\0':
@@ -588,7 +588,7 @@ inline void appendLineTerminatorEscape<LChar>(StringBuilder& builder, LChar line
 }
 
 template <>
-inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar lineTerminator)
+inline void appendLineTerminatorEscape<char16_t>(StringBuilder& builder, char16_t lineTerminator)
 {
     if (lineTerminator == '\n')
         builder.append('n');

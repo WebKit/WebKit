@@ -198,7 +198,7 @@ ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* opt
     return { };
 }
 
-ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)
+ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(char16_t character)
 {
     return isASCII(character) && ducetLevel1Weights[character];
 }
@@ -208,7 +208,7 @@ ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(LChar character)
     return ducetLevel1Weights[character];
 }
 
-ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const UChar> characters, size_t index)
+ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const char16_t> characters, size_t index)
 {
     size_t nextIndex = index + 1;
     if (characters.size() > nextIndex)
@@ -363,12 +363,12 @@ public:
     }
 
     int32_t size() const { return m_stringPointers.size(); }
-    const UChar* const* stringPointers() const { return m_stringPointers.span().data(); }
+    const char16_t* const* stringPointers() const { return m_stringPointers.span().data(); }
     const int32_t* stringLengths() const { return m_stringLengths.span().data(); }
 
 private:
     Vector<String, 4> m_strings;
-    Vector<const UChar*, 4> m_stringPointers;
+    Vector<const char16_t*, 4> m_stringPointers;
     Vector<int32_t, 4> m_stringLengths;
 };
 

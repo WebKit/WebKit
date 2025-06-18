@@ -56,7 +56,7 @@ RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool a
         return result;
     }
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     RefPtr result = StringImpl::tryCreateUninitialized(length, buffer);
     if (!result)
         return nullptr;
@@ -126,9 +126,9 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
                 stringTypeAdapterAccumulator(std::span<LChar> { buffer }, adapters...);
                 return std::span<const LChar> { buffer }.first(length);
             }
-            std::array<UChar, maxLengthToUseStackVariable> buffer;
-            stringTypeAdapterAccumulator(std::span<UChar> { buffer }, adapters...);
-            return std::span<const UChar> { buffer }.first(length);
+            std::array<char16_t, maxLengthToUseStackVariable> buffer;
+            stringTypeAdapterAccumulator(std::span<char16_t> { buffer }, adapters...);
+            return std::span<const char16_t> { buffer }.first(length);
         }
         return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
     }

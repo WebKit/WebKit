@@ -41,8 +41,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // You might think we should put these find functions elsewhere, perhaps with the
-// similar functions that operate on UChar, but arguably only the decoder has
-// a reason to process strings of char rather than UChar.
+// similar functions that operate on char16_t, but arguably only the decoder has
+// a reason to process strings of char rather than char16_t.
 
 static size_t find(std::span<const uint8_t> subject, std::span<const uint8_t> target)
 {

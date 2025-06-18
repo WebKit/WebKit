@@ -151,6 +151,6 @@ JSC_DECLARE_HOST_FUNCTION(uint8ArrayConstructorFromBase64);
 JSC_DECLARE_HOST_FUNCTION(uint8ArrayConstructorFromHex);
 
 WARN_UNUSED_RETURN size_t decodeHex(std::span<const LChar>, std::span<uint8_t> result);
-WARN_UNUSED_RETURN size_t decodeHex(std::span<const UChar>, std::span<uint8_t> result);
+WARN_UNUSED_RETURN size_t decodeHex(std::span<const char16_t>, std::span<uint8_t> result);
 
 } // namespace JSC

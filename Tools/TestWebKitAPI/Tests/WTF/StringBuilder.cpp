@@ -46,7 +46,7 @@ static String builderContent(const StringBuilder& builder)
     // change internal state of builder.
     if (builder.is8Bit())
         return builder.span<LChar>();
-    return builder.span<UChar>();
+    return builder.span<char16_t>();
 }
 
 void expectEmpty(const StringBuilder& builder)
@@ -102,13 +102,13 @@ TEST(StringBuilderTest, Append)
     EXPECT_EQ(2U, builderForUChar32Append.length());
     builderForUChar32Append.append(U'A');
     EXPECT_EQ(3U, builderForUChar32Append.length());
-    const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
+    const char16_t resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
     EXPECT_EQ(String({ resultArray, std::size(resultArray) }), builderContent(builderForUChar32Append));
     {
         StringBuilder builder;
         StringBuilder builder2;
         char32_t frakturAChar = 0x1D504;
-        const UChar data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
+        const char16_t data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         builder2.append(std::span { data });
         EXPECT_EQ(2U, builder2.length());
         String result2 = builder2.toString();
@@ -116,7 +116,7 @@ TEST(StringBuilderTest, Append)
         builder.append(builder2);
         builder.append(std::span { data });
         EXPECT_EQ(4U, builder.length());
-        const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
+        const char16_t resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         EXPECT_EQ(String({ resultArray, std::size(resultArray) }), builderContent(builder));
     }
 }

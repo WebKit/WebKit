@@ -639,7 +639,7 @@ const WTF::BitSet<cssPropertyIDEnumValueCount> CSSProperty::physicalProperties =
     return result;
 })();
 
-UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)
+char16_t CSSProperty::listValuedPropertySeparator(CSSPropertyID id)
 {
     switch (id) {
     default:

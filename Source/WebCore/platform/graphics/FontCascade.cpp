@@ -606,7 +606,7 @@ String FontCascade::normalizeSpaces(std::span<const LChar> characters)
     return normalizeSpacesInternal(characters);
 }
 
-String FontCascade::normalizeSpaces(std::span<const UChar> characters)
+String FontCascade::normalizeSpaces(std::span<const char16_t> characters)
 {
     return normalizeSpacesInternal(characters);
 }
@@ -672,7 +672,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
     return characterRangeCodePath(run.span16());
 }
 
-FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar> span)
+FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const char16_t> span)
 {
     // FIXME: Should use a UnicodeSet in ports where ICU is used. Note that we 
     // can't simply use UnicodeCharacter Property/class because some characters
@@ -807,7 +807,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar>
             if (i + 1 == size)
                 continue;
 
-            UChar next = span[++i];
+            char16_t next = span[++i];
             if (!U16_IS_TRAIL(next))
                 continue;
 
@@ -1149,7 +1149,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::sp
     return std::make_pair(count, isAfterExpansion);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::span<const UChar> characters, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::span<const char16_t> characters, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     unsigned count = 0;
     bool isAfterExpansion = expansionBehavior.left == ExpansionBehavior::Behavior::Forbid;

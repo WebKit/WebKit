@@ -72,7 +72,7 @@ static void determineDirectionality(TextDirection& dir, LegacyInlineIterator ite
     while (!iter.atEnd()) {
         if (iter.atParagraphSeparator())
             return;
-        if (UChar current = iter.current()) {
+        if (char16_t current = iter.current()) {
             UCharDirection charDirection = u_charDirection(current);
             if (charDirection == U_LEFT_TO_RIGHT) {
                 dir = TextDirection::LTR;

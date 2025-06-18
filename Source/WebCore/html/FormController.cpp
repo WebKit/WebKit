@@ -117,7 +117,7 @@ private:
 
 FormController::SavedFormState FormController::SavedFormState::consumeSerializedState(AtomStringVectorReader& reader)
 {
-    auto isNotFormControlTypeCharacter = [](UChar character) {
+    auto isNotFormControlTypeCharacter = [](char16_t character) {
         return !(character == '-' || isASCIILower(character));
     };
 

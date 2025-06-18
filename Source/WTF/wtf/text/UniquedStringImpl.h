@@ -36,7 +36,7 @@ private:
     UniquedStringImpl() = delete;
 protected:
     inline UniquedStringImpl(CreateSymbolTag, std::span<const LChar>);
-    inline UniquedStringImpl(CreateSymbolTag, std::span<const UChar>);
+    inline UniquedStringImpl(CreateSymbolTag, std::span<const char16_t>);
     inline UniquedStringImpl(CreateSymbolTag);
 };
 
@@ -44,7 +44,7 @@ inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const LCh
     : StringImpl(CreateSymbol, characters)
 { }
 
-inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const UChar> characters)
+inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const char16_t> characters)
     : StringImpl(CreateSymbol, characters)
 { }
 

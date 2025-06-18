@@ -565,7 +565,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
             if (textRenderer->hasRenderedText()) {
                 Vector<Token> tokens;
                 for (auto token : textRenderer->text().simplifyWhiteSpace(isASCIIWhitespace).split(' ')) {
-                    auto candidate = token.removeCharacters([](UChar character) {
+                    auto candidate = token.removeCharacters([](char16_t character) {
                         return !u_isalpha(character) && !u_isdigit(character);
                     });
                     if (!candidate.isEmpty())
@@ -664,7 +664,7 @@ static Vector<std::pair<String, FloatRect>> extractAllTextAndRectsRecursive(Docu
         if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
             frameOwners.add(frameOwner.releaseNonNull());
 
-        auto trimmedText = iterator.text().trim(isASCIIWhitespace<UChar>);
+        auto trimmedText = iterator.text().trim(isASCIIWhitespace<char16_t>);
         if (trimmedText.isEmpty())
             continue;
 

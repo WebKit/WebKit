@@ -103,7 +103,7 @@ public:
     CSSParserToken(CSSParserTokenType, StringView, BlockType = NotBlock);
 
     explicit CSSParserToken(unsigned nonNewlineWhitespaceCount); // NonNewlineWhitespaceToken
-    CSSParserToken(CSSParserTokenType, UChar); // for DelimiterToken
+    CSSParserToken(CSSParserTokenType, char16_t); // for DelimiterToken
     CSSParserToken(double, NumericValueType, NumericSign, StringView originalText); // for NumberToken
 
     CSSParserToken(HashTokenType, StringView);
@@ -121,7 +121,7 @@ public:
     CSSParserTokenType type() const { return static_cast<CSSParserTokenType>(m_type); }
     StringView value() const { return { m_valueDataCharRaw, m_valueLength, m_valueIs8Bit }; }
 
-    UChar delimiter() const;
+    char16_t delimiter() const;
     NumericSign numericSign() const;
     NumericValueType numericValueType() const;
     double numericValue() const;
@@ -174,10 +174,10 @@ private:
     bool m_valueIs8Bit : 1 { false };
     bool m_isBackedByStringLiteral : 1 { false };
     unsigned m_valueLength { 0 };
-    const void* m_valueDataCharRaw { nullptr }; // Either LChar* or UChar*.
+    const void* m_valueDataCharRaw { nullptr }; // Either LChar* or char16_t*.
 
     union {
-        UChar m_delimiter;
+        char16_t m_delimiter;
         HashTokenType m_hashTokenType;
         double m_numericValue;
         mutable int m_id;

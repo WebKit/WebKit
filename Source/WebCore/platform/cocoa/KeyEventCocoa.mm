@@ -191,7 +191,7 @@ String keyForCharCode(unichar charCode)
     case NSNextFunctionKey:
         return "Unidentified"_s;
     default:
-        return span(*reinterpret_cast<const UChar*>(&charCode));
+        return span(*reinterpret_cast<const char16_t*>(&charCode));
     }
 }
 

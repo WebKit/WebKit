@@ -307,7 +307,7 @@ TEST(URLExtras, URLExtras_ParsingError)
     WTF::URL url2 { utf16String(u"http://\u2267\u222E\uFE63\u0661\u06F1") };
     EXPECT_NULL([url2.createNSURL() absoluteString]);
 
-    std::array<UChar, 2> utf16 { 0xC2, 0xB6 };
+    std::array<char16_t, 2> utf16 { 0xC2, 0xB6 };
     WTF::URL url3 { String(utf16) };
     EXPECT_FALSE(url3.string().is8Bit());
     EXPECT_FALSE(url3.isValid());

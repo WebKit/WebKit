@@ -55,7 +55,7 @@ template<> inline void StringTypeAdapter<CFStringRef>::writeTo<LChar>(std::span<
         memcpySpan(destination, CFStringGetLatin1CStringSpan(m_string));
 }
 
-template<> inline void StringTypeAdapter<CFStringRef>::writeTo<UChar>(std::span<UChar> destination) const
+template<> inline void StringTypeAdapter<CFStringRef>::writeTo<char16_t>(std::span<char16_t> destination) const
 {
     if (m_string)
         CFStringGetCharacters(m_string, CFRangeMake(0, CFStringGetLength(m_string)), reinterpret_cast<UniChar*>(destination.data()));

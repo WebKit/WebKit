@@ -263,7 +263,7 @@ private:
         Alternate = 1 << 2,
         Meta = 1 << 3,
     };
-    String virtualKeyForKey(UChar, KeyModifier&);
+    String virtualKeyForKey(char16_t, KeyModifier&);
     void performKeyboardInteractions(Vector<KeyboardInteraction>&&, Function<void(CommandResult&&)>&&);
 
     struct InputSourceState {

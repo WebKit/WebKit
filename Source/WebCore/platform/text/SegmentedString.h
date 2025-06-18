@@ -69,7 +69,7 @@ public:
 
     String toString() const;
 
-    UChar currentCharacter() const { return m_currentCharacter; }
+    char16_t currentCharacter() const { return m_currentCharacter; }
 
     OrdinalNumber currentColumn() const;
     OrdinalNumber currentLine() const;
@@ -84,8 +84,8 @@ private:
         Substring(String&&);
         explicit Substring(StringView);
 
-        UChar currentCharacter() const;
-        UChar currentCharacterPreIncrement();
+        char16_t currentCharacter() const;
+        char16_t currentCharacterPreIncrement();
 
         unsigned numberOfCharactersConsumed() const;
         void appendTo(StringBuilder&) const;
@@ -100,7 +100,7 @@ private:
                 : currentCharacter8()
             { }
             std::span<const LChar> currentCharacter8;
-            std::span<const UChar> currentCharacter16;
+            std::span<const char16_t> currentCharacter16;
         } s;
         bool is8Bit { true };
         bool doNotExcludeLineNumbers { true };
@@ -139,7 +139,7 @@ private:
 
     bool m_isClosed { false };
 
-    UChar m_currentCharacter { 0 };
+    char16_t m_currentCharacter { 0 };
 
     unsigned m_numberOfCharactersConsumedPriorToCurrentSubstring { 0 };
     unsigned m_numberOfCharactersConsumedPriorToCurrentLine { 0 };
@@ -180,13 +180,13 @@ inline unsigned SegmentedString::Substring::numberOfCharactersConsumed() const
     return originalLength - length();
 }
 
-ALWAYS_INLINE UChar SegmentedString::Substring::currentCharacter() const
+ALWAYS_INLINE char16_t SegmentedString::Substring::currentCharacter() const
 {
     ASSERT(length());
     return is8Bit ? s.currentCharacter8.front() : s.currentCharacter16.front();
 }
 
-ALWAYS_INLINE UChar SegmentedString::Substring::currentCharacterPreIncrement()
+ALWAYS_INLINE char16_t SegmentedString::Substring::currentCharacterPreIncrement()
 {
     ASSERT(length());
     if (is8Bit) {

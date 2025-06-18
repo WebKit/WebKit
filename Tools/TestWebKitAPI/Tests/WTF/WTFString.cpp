@@ -262,12 +262,12 @@ TEST(WTF, StringReplaceWithLiteral)
     // Cases for 16Bit source.
     testString = String::fromUTF8("résumé");
     EXPECT_FALSE(testString.is8Bit());
-    testString = makeStringByReplacingAll(testString, UChar(0x00E9 /*U+00E9 is 'é'*/), "e"_s);
+    testString = makeStringByReplacingAll(testString, char16_t(0x00E9 /*U+00E9 is 'é'*/), "e"_s);
     EXPECT_STREQ("resume", testString.utf8().data());
 
     testString = String::fromUTF8("résumé");
     EXPECT_FALSE(testString.is8Bit());
-    testString = makeStringByReplacingAll(testString, UChar(0x00E9 /*U+00E9 is 'é'*/), ""_s);
+    testString = makeStringByReplacingAll(testString, char16_t(0x00E9 /*U+00E9 is 'é'*/), ""_s);
     EXPECT_STREQ("rsum", testString.utf8().data());
 
     testString = String::fromUTF8("résumé");
@@ -368,10 +368,10 @@ TEST(WTF, StringUnicodeEqualUCharArray)
     String string1("abc"_s);
     EXPECT_FALSE(string1.isNull());
     EXPECT_TRUE(string1.is8Bit());
-    UChar ab[] = { 'a', 'b' };
-    UChar abc[] = { 'a', 'b', 'c' };
-    UChar abcd[] = { 'a', 'b', 'c', 'd' };
-    UChar aBc[] = { 'a', 'B', 'c' };
+    char16_t ab[] = { 'a', 'b' };
+    char16_t abc[] = { 'a', 'b', 'c' };
+    char16_t abcd[] = { 'a', 'b', 'c', 'd' };
+    char16_t aBc[] = { 'a', 'B', 'c' };
     EXPECT_FALSE(equal(string1, ab));
     EXPECT_TRUE(equal(string1, abc));
     EXPECT_FALSE(equal(string1, abcd));

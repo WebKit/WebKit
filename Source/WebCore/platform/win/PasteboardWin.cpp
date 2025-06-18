@@ -607,13 +607,13 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
 {
     static const size_t fsPathMaxLengthExcludingNullTerminator = MAX_PATH - 1;
     bool usedURL = false;
-    std::array<UChar, MAX_PATH> fsPathBuffer;
+    std::array<char16_t, MAX_PATH> fsPathBuffer;
     fsPathBuffer[0] = 0;
     int fsPathMaxLengthExcludingExtension = fsPathMaxLengthExcludingNullTerminator - extension.length();
 
     if (!title.isEmpty()) {
         size_t len = std::min<size_t>(title.length(), fsPathMaxLengthExcludingExtension);
-        StringView(title).left(len).getCharacters(std::span<UChar> { fsPathBuffer });
+        StringView(title).left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer.data()), len);
     }
@@ -628,10 +628,10 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
         auto lastComponent = url.lastPathComponent();
         if (url.protocolIsFile() || (!isLink && !lastComponent.isEmpty())) {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
-            lastComponent.left(len).getCharacters(std::span<UChar> { fsPathBuffer });
+            lastComponent.left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         } else {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, urlString.length());
-            StringView(urlString).left(len).getCharacters(std::span<UChar> { fsPathBuffer });
+            StringView(urlString).left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         }
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer.data()), len);
@@ -645,7 +645,7 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
         return String(wcharFrom(fsPathBuffer.data()));
     }
 
-    return makeString(const_cast<const UChar*>(fsPathBuffer.data()), extension);
+    return makeString(const_cast<const char16_t*>(fsPathBuffer.data()), extension);
 }
 
 // writeFileToDataObject takes ownership of fileDescriptor and fileContent
@@ -729,7 +729,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     fgd->fgd[0].nFileSizeLow = content.length();
 
     unsigned maxSize = std::min<unsigned>(fsPath.length(), std::size(fgd->fgd[0].cFileName));
-    StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<UChar>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
+    StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
     GlobalUnlock(urlFileDescriptor);
 
     char* fileContents = static_cast<char*>(GlobalLock(urlFileContent));
@@ -967,7 +967,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     }
 
     int maxSize = std::min<int>(fsPath.length(), std::size(fgd->fgd[0].cFileName));
-    StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<UChar>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
+    StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
     GlobalUnlock(memObj);
 
     return memObj;

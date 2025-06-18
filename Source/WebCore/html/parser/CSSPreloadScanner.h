@@ -57,14 +57,14 @@ private:
         DoneParsingImportRules,
     };
 
-    inline void tokenize(UChar);
+    inline void tokenize(char16_t);
     void emitRule();
     bool hasFinishedRuleValue() const;
 
     State m_state;
-    Vector<UChar> m_rule;
-    Vector<UChar> m_ruleValue;
-    Vector<UChar> m_ruleConditions;
+    Vector<char16_t> m_rule;
+    Vector<char16_t> m_ruleValue;
+    Vector<char16_t> m_ruleConditions;
 
     // Only non-zero during scan()
     PreloadRequestStream* m_requests;

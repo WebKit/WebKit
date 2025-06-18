@@ -114,13 +114,13 @@ public:
         // formatTypeStart might be at the begining of "base64" or "charset=...".
         size_t formatTypeStart = mediaTypeEnd + 1;
         auto formatType = header.substring(formatTypeStart, header.length() - formatTypeStart);
-        formatType = formatType.trim(isASCIIWhitespaceWithoutFF<UChar>);
+        formatType = formatType.trim(isASCIIWhitespaceWithoutFF<char16_t>);
 
         isBase64 = equalLettersIgnoringASCIICase(formatType, "base64"_s);
 
         // If header does not end with "base64", mediaType should be the whole header.
         auto mediaType = (isBase64 ? header.left(mediaTypeEnd) : header).toString();
-        mediaType = mediaType.trim(isASCIIWhitespaceWithoutFF<UChar>);
+        mediaType = mediaType.trim(isASCIIWhitespaceWithoutFF<char16_t>);
         if (mediaType.startsWith(';'))
             mediaType = makeString("text/plain"_s, mediaType);
 

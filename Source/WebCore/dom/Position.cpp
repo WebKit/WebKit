@@ -1121,7 +1121,7 @@ Position Position::leadingWhitespacePosition(Affinity affinity, bool considerNon
     RefPtr previousNode = prev.deprecatedNode();
     if (prev != *this && inSameEnclosingBlockFlowElement(node.get(), previousNode.get())) {
         if (auto* previousText = dynamicDowncast<Text>(*previousNode)) {
-            UChar c = previousText->data()[prev.deprecatedEditingOffset()];
+            char16_t c = previousText->data()[prev.deprecatedEditingOffset()];
             if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c)) {
                 if (isEditablePosition(prev))
                     return prev;
@@ -1140,7 +1140,7 @@ Position Position::trailingWhitespacePosition(Affinity, bool considerNonCollapsi
         return { };
     
     VisiblePosition v(*this);
-    UChar c = v.characterAfter();
+    char16_t c = v.characterAfter();
     // The space must not be in another paragraph and it must be editable.
     if (!isEndOfParagraph(v) && v.next(CannotCrossEditingBoundary).isNotNull())
         if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))

@@ -43,7 +43,7 @@ static String utf16String(const char16_t (&string)[length])
     StringBuilder builder;
     builder.reserveCapacity(length - 1);
     for (auto c : string)
-        builder.append(static_cast<UChar>(c));
+        builder.append(static_cast<char16_t>(c));
     return builder.toString();
 }
 

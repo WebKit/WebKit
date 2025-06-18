@@ -60,14 +60,14 @@ public:
             m_data.characters8 = data;
         }
 
-        explicit Run(std::span<const UChar> data)
+        explicit Run(std::span<const char16_t> data)
             : m_is8Bit(false)
         {
             m_data.characters16 = data;
         }
 
         std::span<const LChar> span8() const { RELEASE_ASSERT(m_is8Bit); return m_data.characters8; }
-        std::span<const UChar> span16() const { RELEASE_ASSERT(!m_is8Bit); return m_data.characters16; }
+        std::span<const char16_t> span16() const { RELEASE_ASSERT(!m_is8Bit); return m_data.characters16; }
 
         Position start() const
         {
@@ -91,7 +91,7 @@ public:
                 : characters8()
             { }
             std::span<const LChar> characters8;
-            std::span<const UChar> characters16;
+            std::span<const char16_t> characters16;
         } m_data;
         bool m_is8Bit;
     };
@@ -110,21 +110,21 @@ public:
     // Skip (advance the input pointer) as long as the specified
     // |characterPredicate| returns true, and the input pointer is not passed
     // the end of the input.
-    template<bool characterPredicate(UChar)>
+    template<bool characterPredicate(char16_t)>
     void skipWhile();
 
     // Like skipWhile, but using a negated predicate.
-    template<bool characterPredicate(UChar)>
+    template<bool characterPredicate(char16_t)>
     void skipUntil();
 
     // Return the run of characters for which the specified
     // |characterPredicate| returns true. The start of the run will be the
     // current input pointer.
-    template<bool characterPredicate(UChar)>
+    template<bool characterPredicate(char16_t)>
     Run collectWhile();
 
     // Like collectWhile, but using a negated predicate.
-    template<bool characterPredicate(UChar)>
+    template<bool characterPredicate(char16_t)>
     Run collectUntil();
 
     // Scan the string |toMatch|, using the specified |run| as the sequence to
@@ -166,20 +166,20 @@ protected:
         return std::to_address(m_data.characters16.end());
     }
     void seekTo(Position);
-    UChar currentChar() const;
+    char16_t currentChar() const;
     void advance(size_t amount = 1);
     union Characters {
         Characters()
             : characters8()
         { }
         std::span<const LChar> characters8;
-        std::span<const UChar> characters16;
+        std::span<const char16_t> characters16;
     } m_data;
     const String m_source;
     bool m_is8Bit;
 };
 
-template<bool characterPredicate(UChar)>
+template<bool characterPredicate(char16_t)>
 inline void VTTScanner::skipWhile()
 {
     if (m_is8Bit)
@@ -188,7 +188,7 @@ inline void VTTScanner::skipWhile()
         WTF::skipWhile<characterPredicate>(m_data.characters16);
 }
 
-template<bool characterPredicate(UChar)>
+template<bool characterPredicate(char16_t)>
 inline void VTTScanner::skipUntil()
 {
     if (m_is8Bit)
@@ -197,7 +197,7 @@ inline void VTTScanner::skipUntil()
         WTF::skipUntil<characterPredicate>(m_data.characters16);
 }
 
-template<bool characterPredicate(UChar)>
+template<bool characterPredicate(char16_t)>
 inline VTTScanner::Run VTTScanner::collectWhile()
 {
     if (m_is8Bit) {
@@ -210,7 +210,7 @@ inline VTTScanner::Run VTTScanner::collectWhile()
     return Run { m_data.characters16.first(current.data() - m_data.characters16.data()) };
 }
 
-template<bool characterPredicate(UChar)>
+template<bool characterPredicate(char16_t)>
 inline VTTScanner::Run VTTScanner::collectUntil()
 {
     if (m_is8Bit) {
@@ -232,13 +232,13 @@ inline void VTTScanner::seekTo(Position position)
         m_data.characters8 = span8.subspan(position8 - span8.data());
     } else {
         auto span16 = m_source.span16();
-        auto* position16 = static_cast<const UChar*>(position);
+        auto* position16 = static_cast<const char16_t*>(position);
         RELEASE_ASSERT(position16 >= span16.data());
         m_data.characters16 = span16.subspan(position16 - span16.data());
     }
 }
 
-inline UChar VTTScanner::currentChar() const
+inline char16_t VTTScanner::currentChar() const
 {
     return m_is8Bit ? m_data.characters8.front() : m_data.characters16.front();
 }

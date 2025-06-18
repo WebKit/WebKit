@@ -110,8 +110,8 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     // String::characters() returns 0 for the empty string, which SQLite
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
-    UChar anyCharacter = 0;
-    std::span<const UChar> characters;
+    char16_t anyCharacter = 0;
+    std::span<const char16_t> characters;
     if (text.isEmpty() && !text.isNull())
         characters = unsafeMakeSpan(&anyCharacter, 0);
     else
@@ -278,7 +278,7 @@ String SQLiteStatement::columnBlobAsString(int col)
     if (columnCount() <= col)
         return String();
 
-    auto blob = sqliteColumnBlob<UChar>(m_statement, col);
+    auto blob = sqliteColumnBlob<char16_t>(m_statement, col);
     if (!blob.data())
         return emptyString();
     return StringImpl::create8BitIfPossible(blob);

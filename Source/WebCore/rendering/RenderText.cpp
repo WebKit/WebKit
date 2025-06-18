@@ -160,7 +160,7 @@ static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<Render
     return map;
 }
 
-static constexpr UChar convertNoBreakSpaceToSpace(UChar character)
+static constexpr char16_t convertNoBreakSpaceToSpace(char16_t character)
 {
     return character == noBreakSpace ? ' ' : character;
 }
@@ -172,7 +172,7 @@ static inline size_t capitalizeCharacter(String textContent, unsigned startChara
         return 0;
     }
 
-    auto capitalize = [&](const UChar* contentToCapitalize, size_t length) -> size_t {
+    auto capitalize = [&](const char16_t* contentToCapitalize, size_t length) -> size_t {
         if (length == 1) {
             if ((*contentToCapitalize >= 'A' && *contentToCapitalize <= 'Z') || *contentToCapitalize == ' ')
                 return 0;
@@ -183,7 +183,7 @@ static inline size_t capitalizeCharacter(String textContent, unsigned startChara
             }
         }
 
-        UChar capitalizedCharacter;
+        char16_t capitalizedCharacter;
         UErrorCode status = U_ZERO_ERROR;
         auto realLength = u_strToTitle(&capitalizedCharacter, 1, contentToCapitalize, length, nullptr, "", &status);
         if (U_SUCCESS(status) && realLength == 1) {
@@ -192,7 +192,7 @@ static inline size_t capitalizeCharacter(String textContent, unsigned startChara
         }
 
         // Decomposed ligatures may need more space.
-        std::span<UChar> capitalizedStringData;
+        std::span<char16_t> capitalizedStringData;
         auto capitalizedString = String::createUninitialized(realLength, capitalizedStringData);
         status = U_ZERO_ERROR;
         u_strToTitle(capitalizedStringData.data(), capitalizedStringData.size(), contentToCapitalize, length, nullptr, "", &status);
@@ -222,11 +222,11 @@ static inline size_t capitalizeCharacter(String textContent, unsigned startChara
 
 String capitalize(const String& string)
 {
-    Vector<UChar> previousCharacter(1, ' ');
+    Vector<char16_t> previousCharacter(1, ' ');
     return capitalize(string, previousCharacter);
 }
 
-String capitalize(const String& string, Vector<UChar> previousCharacter)
+String capitalize(const String& string, Vector<char16_t> previousCharacter)
 {
     int32_t length = string.length();
     int32_t previousCharacterLength = previousCharacter.size();
@@ -235,7 +235,7 @@ String capitalize(const String& string, Vector<UChar> previousCharacter)
     static_assert(String::MaxLength < std::numeric_limits<unsigned>::max(), "Must be able to add one without overflowing unsigned");
 
     // Replace NO BREAK SPACE with a normal spaces since ICU does not treat it as a word separator.
-    Vector<UChar> stringWithPrevious(previousCharacterLength + length);
+    Vector<char16_t> stringWithPrevious(previousCharacterLength + length);
     for (int32_t i = 0; i < previousCharacterLength; ++i)
         stringWithPrevious[i] = convertNoBreakSpaceToSpace(previousCharacter[i]);
     for (int32_t i = previousCharacterLength; i < length + previousCharacterLength; ++i)
@@ -954,12 +954,12 @@ ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(c
     });
 }
 
-inline bool isHangablePunctuationAtLineStart(UChar c)
+inline bool isHangablePunctuationAtLineStart(char16_t c)
 {
     return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
 
-inline bool isHangablePunctuationAtLineEnd(UChar c)
+inline bool isHangablePunctuationAtLineEnd(char16_t c)
 {
     return U_GET_GC_MASK(c) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
@@ -990,7 +990,7 @@ float RenderText::hangablePunctuationEndWidth(unsigned index) const
     return widthFromCache(style.fontCascade(), index, 1, 0, 0, 0, style);
 }
 
-bool RenderText::isHangableStopOrComma(UChar c)
+bool RenderText::isHangableStopOrComma(char16_t c)
 {
     return c == 0x002C || c == 0x002E || c == 0x060C || c == 0x06D4 || c == 0x3001
         || c == 0x3002 || c == 0xFF0C || c == 0xFF0E || c == 0xFE50 || c == 0xFE51
@@ -1108,7 +1108,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     return widths;
 }
 
-static inline bool isSpaceAccordingToStyle(UChar c, const RenderStyle& style)
+static inline bool isSpaceAccordingToStyle(char16_t c, const RenderStyle& style)
 {
     return c == ' ' || (c == noBreakSpace && style.nbspMode() == NBSPMode::Space);
 }
@@ -1293,7 +1293,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
         && contentAnalysis == TextBreakIterator::ContentAnalysis::Mechanical;
 
     for (unsigned i = 0; i < length; i++) {
-        UChar c = string[i];
+        char16_t c = string[i];
 
         bool previousCharacterIsSpace = isSpace;
 
@@ -1340,7 +1340,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
         bool betweenWords = true;
         unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && c != zeroWidthSpace && (c != softHyphen || style.hyphens() == Hyphens::None)) {
-            UChar previousCharacter = c;
+            char16_t previousCharacter = c;
             j++;
             if (j == length)
                 break;
@@ -1545,7 +1545,7 @@ static inline bool isInlineFlowOrEmptyText(const RenderObject& renderer)
     return textRenderer && textRenderer->text().isEmpty();
 }
 
-Vector<UChar> RenderText::previousCharacter() const
+Vector<char16_t> RenderText::previousCharacter() const
 {
     const RenderObject* previousText = this;
     while ((previousText = previousText->previousInPreOrder())) {
@@ -1555,7 +1555,7 @@ Vector<UChar> RenderText::previousCharacter() const
             break;
     }
     auto* renderText = dynamicDowncast<RenderText>(previousText);
-    Vector<UChar> previous;
+    Vector<char16_t> previous;
     if (!renderText)
         previous.append(' ');
     else {
@@ -1586,7 +1586,7 @@ Vector<UChar> RenderText::previousCharacter() const
 static String convertToFullSizeKana(const String& string)
 {
     // https://www.w3.org/TR/css-text-3/#small-kana
-    static constexpr std::pair<char32_t, UChar> kanasMap[] = {
+    static constexpr std::pair<char32_t, char16_t> kanasMap[] = {
         { 0x3041, 0x3042 },
         { 0x3043, 0x3044 },
         { 0x3045, 0x3046 },
@@ -1673,11 +1673,11 @@ static String convertToFullSizeKana(const String& string)
 
 String applyTextTransform(const RenderStyle& style, const String& text)
 {
-    Vector<UChar> previousCharacter(1, ' ');
+    Vector<char16_t> previousCharacter(1, ' ');
     return applyTextTransform(style, text, previousCharacter);
 }
 
-String applyTextTransform(const RenderStyle& style, const String& text, Vector<UChar> previousCharacter)
+String applyTextTransform(const RenderStyle& style, const String& text, Vector<char16_t> previousCharacter)
 {
     auto transform = style.textTransform();
 
@@ -1759,7 +1759,7 @@ void RenderText::setRenderedText(const String& newText)
     }
 }
 
-void RenderText::secureText(UChar maskingCharacter)
+void RenderText::secureText(char16_t maskingCharacter)
 {
     // This hides the text by replacing all the characters with the masking character.
     // Offsets within the hidden text have to match offsets within the original text
@@ -1771,7 +1771,7 @@ void RenderText::secureText(UChar maskingCharacter)
     if (!length)
         return;
 
-    UChar characterToReveal = 0;
+    char16_t characterToReveal = 0;
     unsigned revealedCharactersOffset = 0;
 
     if (m_hasSecureTextTimer) {
@@ -1784,7 +1784,7 @@ void RenderText::secureText(UChar maskingCharacter)
         }
     }
 
-    std::span<UChar> characters;
+    std::span<char16_t> characters;
     m_text = String::createUninitialized(length, characters);
 
     for (unsigned i = 0; i < length; ++i)

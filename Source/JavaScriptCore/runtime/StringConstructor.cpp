@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
     unsigned length = callFrame->argumentCount();
     if (length == 1) [[likely]] {
         scope.release();
-        UChar code = callFrame->uncheckedArgument(0).toUInt32(globalObject);
+        char16_t code = callFrame->uncheckedArgument(0).toUInt32(globalObject);
         // Not checking for an exception here is ok because jsSingleCharacterString will just fetch an unused string if there's an exception.
         return JSValue::encode(jsSingleCharacterString(vm, code));
     }
@@ -92,16 +92,16 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
     std::span<LChar> buf8Bit;
     auto impl8Bit = StringImpl::createUninitialized(length, buf8Bit);
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = static_cast<UChar>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
+        char16_t character = static_cast<char16_t>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!isLatin1(character)) [[unlikely]] {
-            std::span<UChar> buf16Bit;
+            std::span<char16_t> buf16Bit;
             auto impl16Bit = StringImpl::createUninitialized(length, buf16Bit);
             StringImpl::copyCharacters(buf16Bit, buf8Bit.first(i));
             buf16Bit[i] = character;
             ++i;
             for (; i < length; ++i) {
-                buf16Bit[i] = static_cast<UChar>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
+                buf16Bit[i] = static_cast<char16_t>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
             RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(impl16Bit))));
@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
 
 JSString* stringFromCharCode(JSGlobalObject* globalObject, int32_t arg)
 {
-    return jsSingleCharacterString(globalObject->vm(), static_cast<UChar>(arg));
+    return jsSingleCharacterString(globalObject->vm(), static_cast<char16_t>(arg));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -135,7 +135,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, Cal
             return throwVMError(globalObject, scope, createRangeError(globalObject, "Arguments contain a value that is out of range of code points"_s));
 
         if (U_IS_BMP(codePoint))
-            builder.append(static_cast<UChar>(codePoint));
+            builder.append(static_cast<char16_t>(codePoint));
         else {
             builder.append(U16_LEAD(codePoint));
             builder.append(U16_TRAIL(codePoint));

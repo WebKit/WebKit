@@ -52,7 +52,7 @@ Vector<unsigned> breakingLocationsFromICU(const Vector<UInt16>& testString, cons
     uloc_setKeywordValue("lb", icuValue.data(), buffer, bufferSize, &status);
     ASSERT(U_SUCCESS(status));
 
-    UBreakIterator* iterator = ubrk_open(UBRK_LINE, buffer.data(), reinterpret_cast<const UChar*>(testString.data()), testString.size(), &status);
+    UBreakIterator* iterator = ubrk_open(UBRK_LINE, buffer.data(), reinterpret_cast<const char16_t*>(testString.data()), testString.size(), &status);
     ASSERT(U_SUCCESS(status));
     ASSERT(iterator);
 

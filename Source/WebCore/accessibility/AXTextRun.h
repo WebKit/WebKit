@@ -108,7 +108,7 @@ struct AXTextRun {
     bool startsWithLineBreak() const { return text.startsWith('\n'); }
     bool endsWithLineBreak() const { return text.endsWith('\n'); }
 
-    UChar characterAt(unsigned index) const { return text.characterAt(index); }
+    char16_t characterAt(unsigned index) const { return text.characterAt(index); }
     unsigned textLength() const { return text.length(); }
 };
 

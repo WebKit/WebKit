@@ -82,7 +82,7 @@ String RTCDTMFSender::toneBuffer() const
     return m_tones;
 }
 
-static inline bool isToneCharacterInvalid(UChar character)
+static inline bool isToneCharacterInvalid(char16_t character)
 {
     if (character >= '0' && character <= '9')
         return false;

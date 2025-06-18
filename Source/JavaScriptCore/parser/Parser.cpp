@@ -5746,6 +5746,6 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
 
 // Instantiate the two flavors of Parser we need instead of putting most of this file in Parser.h
 template class Parser<Lexer<LChar>>;
-template class Parser<Lexer<UChar>>;
+template class Parser<Lexer<char16_t>>;
     
 } // namespace JSC

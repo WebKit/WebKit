@@ -88,7 +88,7 @@ static inline Ref<AtomStringImpl> addToStringTable(const T& value)
     return addToStringTable<T, HashTranslator>(locker, stringTable(), value);
 }
 
-using UCharBuffer = HashTranslatorCharBuffer<UChar>;
+using UCharBuffer = HashTranslatorCharBuffer<char16_t>;
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
@@ -141,7 +141,7 @@ struct HashedUTF8CharactersTranslator {
 
     static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)
     {
-        std::span<UChar> target;
+        std::span<char16_t> target;
         auto newString = StringImpl::createUninitialized(characters.length.lengthUTF16, target);
 
         auto result = Unicode::convert(characters.characters, target);
@@ -157,7 +157,7 @@ struct HashedUTF8CharactersTranslator {
     }
 };
 
-RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const UChar> characters)
+RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char16_t> characters)
 {
     if (!characters.data())
         return nullptr;
@@ -169,7 +169,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const UChar> characters)
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
-RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<UChar>& buffer)
+RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<char16_t>& buffer)
 {
     if (!buffer.characters.data())
         return nullptr;
@@ -343,7 +343,7 @@ static Ref<AtomStringImpl> addStatic(AtomStringTableLocker& locker, StringTableI
         return addToStringTable<LCharBuffer, BufferFromStaticDataTranslator<LChar>>(locker, atomStringTable, buffer);
     }
     UCharBuffer buffer { base.span16(), base.hash() };
-    return addToStringTable<UCharBuffer, BufferFromStaticDataTranslator<UChar>>(locker, atomStringTable, buffer);
+    return addToStringTable<UCharBuffer, BufferFromStaticDataTranslator<char16_t>>(locker, atomStringTable, buffer);
 }
 
 static inline Ref<AtomStringImpl> addStatic(const StringImpl& base)
@@ -494,7 +494,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const LChar> characters)
     return nullptr;
 }
 
-RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const UChar> characters)
+RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const char16_t> characters)
 {
     AtomStringTableLocker locker;
     auto& table = stringTable();

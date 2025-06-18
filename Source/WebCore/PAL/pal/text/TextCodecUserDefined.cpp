@@ -53,7 +53,7 @@ String TextCodecUserDefined::decode(std::span<const uint8_t> bytes, bool, bool, 
     StringBuilder result;
     result.reserveCapacity(bytes.size());
     for (char byte : bytes)
-        result.append(static_cast<UChar>(byte & 0xF7FF));
+        result.append(static_cast<char16_t>(byte & 0xF7FF));
     return result.toString();
 }
 
@@ -82,7 +82,7 @@ Vector<uint8_t> TextCodecUserDefined::encode(StringView string, UnencodableHandl
         size_t index = 0;
 
         // Convert and simultaneously do a check to see if it's all ASCII.
-        UChar ored = 0;
+        char16_t ored = 0;
         for (auto character : string.codeUnits()) {
             result[index++] = character;
             ored |= character;

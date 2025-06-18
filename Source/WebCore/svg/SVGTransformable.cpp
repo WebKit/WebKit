@@ -259,7 +259,7 @@ std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransf
     return parseTransformTypeGeneric(buffer);
 }
 
-std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<char16_t>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }

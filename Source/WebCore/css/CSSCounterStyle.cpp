@@ -155,7 +155,7 @@ String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
 enum class Formality : bool { Informal, Formal };
 
 // This table format was derived from an old draft of the CSS specification: 3 group markers, 3 digit markers, 10 digits, negative sign.
-static String counterForSystemCJK(int number, const std::array<UChar, 17>& table, Formality formality)
+static String counterForSystemCJK(int number, const std::array<char16_t, 17>& table, Formality formality)
 {
     enum AbstractCJKCharacter {
         NoChar,
@@ -222,7 +222,7 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
 
     // Convert into characters, omitting consecutive runs of digit0 and trailing digit0.
     unsigned length = 0;
-    std::array<UChar, bufferLength + 1> characters;
+    std::array<char16_t, bufferLength + 1> characters;
     auto last = NoChar;
     if (needsNegativeSign)
         characters[length++] = table[NegativeSign - 1];
@@ -237,7 +237,7 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     if (last == Digit0)
         --length;
 
-    return std::span<const UChar> { characters }.first(length);
+    return std::span<const char16_t> { characters }.first(length);
 }
 
 String CSSCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
@@ -265,7 +265,7 @@ String CSSCounterStyle::counterForSystemDisclosureOpen(WritingMode writingMode)
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
 {
-    static constexpr std::array<UChar, 17> simplifiedChineseInformalTable {
+    static constexpr std::array<char16_t, 17> simplifiedChineseInformalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x5341, 0x767E, 0x5343,
         0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
@@ -277,7 +277,7 @@ String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseFormal(int value)
 {
-    static constexpr std::array<UChar, 17> simplifiedChineseFormalTable {
+    static constexpr std::array<char16_t, 17> simplifiedChineseFormalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x62FE, 0x4F70, 0x4EDF,
         0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086,
@@ -289,7 +289,7 @@ String CSSCounterStyle::counterForSystemSimplifiedChineseFormal(int value)
 
 String CSSCounterStyle::counterForSystemTraditionalChineseInformal(int value)
 {
-    static constexpr std::array<UChar, 17> traditionalChineseInformalTable {
+    static constexpr std::array<char16_t, 17> traditionalChineseInformalTable {
         0x842C, 0x5104, 0x5146,
         0x5341, 0x767E, 0x5343,
         0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
@@ -301,7 +301,7 @@ String CSSCounterStyle::counterForSystemTraditionalChineseInformal(int value)
 
 String CSSCounterStyle::counterForSystemTraditionalChineseFormal(int value)
 {
-    static constexpr std::array<UChar, 17> traditionalChineseFormalTable {
+    static constexpr std::array<char16_t, 17> traditionalChineseFormalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x62FE, 0x4F70, 0x4EDF,
         0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086,
@@ -316,7 +316,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
     ASSERT(value >= 1);
 
     if (value == 1) {
-        UChar ethiopicDigitOne = 0x1369;
+        char16_t ethiopicDigitOne = 0x1369;
         return span(ethiopicDigitOne);
     }
 
@@ -327,7 +327,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
         value /= 100;
     }
 
-    std::array<UChar, groups.size() * 3> buffer;
+    std::array<char16_t, groups.size() * 3> buffer;
     unsigned length = 0;
     bool isMostSignificantGroup = true;
     for (int i = groups.size() - 1; i >= 0; --i) {
@@ -350,7 +350,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
             isMostSignificantGroup = false;
     }
 
-    return std::span<const UChar> { buffer }.first(length);
+    return std::span<const char16_t> { buffer }.first(length);
 }
 
 String CSSCounterStyle::initialRepresentation(int value, WritingMode writingMode) const

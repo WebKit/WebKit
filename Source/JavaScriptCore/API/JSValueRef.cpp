@@ -700,7 +700,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
         LiteralParser<LChar, JSONReviverMode::Disabled> parser(globalObject, str.span8(), StrictJSON);
         return toRef(globalObject, parser.tryLiteralParse());
     }
-    LiteralParser<UChar, JSONReviverMode::Disabled> parser(globalObject, str.span16(), StrictJSON);
+    LiteralParser<char16_t, JSONReviverMode::Disabled> parser(globalObject, str.span16(), StrictJSON);
     return toRef(globalObject, parser.tryLiteralParse());
 }
 

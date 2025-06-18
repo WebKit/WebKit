@@ -41,7 +41,7 @@ double parseDouble(std::span<const LChar> string, size_t& parsedLength)
     return doubleValue;
 }
 
-double parseDouble(std::span<const UChar> string, size_t& parsedLength)
+double parseDouble(std::span<const char16_t> string, size_t& parsedLength)
 {
     double doubleValue = 0;
     auto stringData = reinterpret_cast<const char16_t*>(string.data());
@@ -59,7 +59,7 @@ double parseHexDouble(std::span<const LChar> string, size_t& parsedLength)
     return doubleValue;
 }
 
-double parseHexDouble(std::span<const UChar> string, size_t& parsedLength)
+double parseHexDouble(std::span<const char16_t> string, size_t& parsedLength)
 {
     double doubleValue = 0;
     auto stringData = reinterpret_cast<const char16_t*>(string.data());

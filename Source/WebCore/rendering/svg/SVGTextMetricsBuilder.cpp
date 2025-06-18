@@ -148,7 +148,7 @@ struct MeasureTextData {
     bool processRenderer { false };
 };
 
-std::tuple<unsigned, UChar> SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, const MeasureTextData& data, std::tuple<unsigned, UChar> state)
+std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, const MeasureTextData& data, std::tuple<unsigned, char16_t> state)
 {
     auto [valueListPosition, lastCharacter] = state;
     SVGTextLayoutAttributes* attributes = text.layoutAttributes();
@@ -185,7 +185,7 @@ std::tuple<unsigned, UChar> SVGTextMetricsBuilder::measureTextRenderer(RenderSVG
 
             // m_canUseSimplifiedTextMeasuring ensures that this does not include surrogate pairs. So we do not need to consider about them.
             for (unsigned i = 0; i < length; ++i) {
-                UChar currentCharacter = view.characterAt(i);
+                char16_t currentCharacter = view.characterAt(i);
                 ASSERT(!U16_IS_LEAD(currentCharacter));
                 if (currentCharacter == space && !preserveWhiteSpace && (!lastCharacter || lastCharacter == space)) {
                     if (data.processRenderer)
@@ -217,7 +217,7 @@ std::tuple<unsigned, UChar> SVGTextMetricsBuilder::measureTextRenderer(RenderSVG
     int surrogatePairCharacters = 0;
     unsigned skippedCharacters = 0;
     while (advance()) {
-        UChar currentCharacter = m_run[m_textPosition];
+        char16_t currentCharacter = m_run[m_textPosition];
         if (currentCharacter == space && !preserveWhiteSpace && (!lastCharacter || lastCharacter == space)) {
             if (data.processRenderer)
                 textMetricsValues->append(SVGTextMetrics(SVGTextMetrics::SkippedSpaceMetrics));
@@ -250,7 +250,7 @@ std::tuple<unsigned, UChar> SVGTextMetricsBuilder::measureTextRenderer(RenderSVG
 void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* stopAtLeaf, MeasureTextData& data)
 {
     unsigned valueListPosition = 0;
-    UChar lastCharacter = 0;
+    char16_t lastCharacter = 0;
     CheckedPtr child = start.firstChild();
     while (child) {
         if (auto* text = dynamicDowncast<RenderSVGInlineText>(*child)) {

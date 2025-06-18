@@ -81,7 +81,7 @@ template<> inline void StringTypeAdapter<WKStringRef>::writeTo<LChar>(std::span<
 {
 }
 
-template<> inline void StringTypeAdapter<WKStringRef>::writeTo<UChar>(std::span<UChar> destination) const
+template<> inline void StringTypeAdapter<WKStringRef>::writeTo<char16_t>(std::span<char16_t> destination) const
 {
     if (m_string)
         WKStringGetCharacters(m_string, reinterpret_cast<WKChar*>(destination.data()), WKStringGetLength(m_string));

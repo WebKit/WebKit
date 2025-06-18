@@ -52,7 +52,7 @@ private:
     void createICUConverter() const;
     void releaseICUConverter() const;
 
-    int decodeToBuffer(std::span<UChar> buffer, std::span<const uint8_t>& source, int32_t* offsets, bool flush, UErrorCode&);
+    int decodeToBuffer(std::span<char16_t> buffer, std::span<const uint8_t>& source, int32_t* offsets, bool flush, UErrorCode&);
 
     ASCIILiteral m_encodingName;
     ASCIILiteral const m_canonicalConverterName;

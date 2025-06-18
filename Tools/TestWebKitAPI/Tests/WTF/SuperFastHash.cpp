@@ -29,14 +29,14 @@
 namespace TestWebKitAPI {
 
 static const LChar nullLChars[2] = { 0, 0 };
-static const UChar nullUChars[2] = { 0, 0 };
+static const char16_t nullUChars[2] = { 0, 0 };
 
 static const unsigned emptyStringHash = 0x4EC889EU;
 static const unsigned singleNullCharacterHash = 0x3D3ABF44U;
 
 static const LChar testALChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
-static const UChar testAUChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
-static const UChar testBUChars[6] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0 };
+static const char16_t testAUChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
+static const char16_t testBUChars[6] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0 };
 
 static const unsigned testAHash1 = 0xEA32B004;
 static const unsigned testAHash2 = 0x93F0F71E;
@@ -124,7 +124,7 @@ TEST(WTF, SuperFastHash_addCharacters)
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(static_cast<UChar*>(0), 0);
+    hasher.addCharacters(static_cast<char16_t*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
@@ -316,7 +316,7 @@ TEST(WTF, SuperFastHash_addCharactersAssumingAligned)
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(static_cast<UChar*>(0), 0);
+    hasher.addCharactersAssumingAligned(static_cast<char16_t*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
@@ -439,7 +439,7 @@ TEST(WTF, SuperFastHash_computeHash)
     static constexpr size_t zeroLength = 0;
     ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const LChar*>(0), zeroLength }));
     ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullLChars, zeroLength }));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const UChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const char16_t*>(0), zeroLength }));
     ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullUChars, zeroLength }));
 
     ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullLChars, 1 }));
@@ -458,7 +458,7 @@ TEST(WTF, SuperFastHash_computeHashAndMaskTop8Bits)
     static constexpr size_t zeroLength = 0;
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const LChar*>(0), zeroLength }));
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, zeroLength }));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const UChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const char16_t*>(0), zeroLength }));
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUChars, zeroLength }));
 
     ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, 1 }));

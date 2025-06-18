@@ -215,7 +215,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
             auto text = downcast<RenderText>(child).text();
-            auto textView = StringView { text }.trim(isASCIIWhitespace<UChar>);
+            auto textView = StringView { text }.trim(isASCIIWhitespace<char16_t>);
             auto length = std::min<size_t>(charactersLeft, textView.length());
             stream << textView.left(length);
             charactersLeft -= length;

@@ -38,7 +38,7 @@ inline Identifier::Identifier(VM& vm, std::span<const LChar> string)
     ASSERT(m_string.impl()->isAtom());
 }
 
-inline Identifier::Identifier(VM& vm, std::span<const UChar> string)
+inline Identifier::Identifier(VM& vm, std::span<const char16_t> string)
     : m_string(add(vm, string))
 {
     ASSERT(m_string.impl()->isAtom());
@@ -143,7 +143,7 @@ inline Identifier Identifier::fromString(VM& vm, std::span<const LChar> s)
     return Identifier(vm, s);
 }
 
-inline Identifier Identifier::fromString(VM& vm, std::span<const UChar> s)
+inline Identifier Identifier::fromString(VM& vm, std::span<const char16_t> s)
 {
     return Identifier(vm, s);
 }

@@ -607,7 +607,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
         if (it == componentInfo.end())
             continue;
 
-        auto component = (*it).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto component = (*it).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
 
         WTFLogChannelState logChannelState = WTFLogChannelState::On;
         if (component.startsWith('-')) {
@@ -622,7 +622,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 
         WTFLogLevel logChannelLevel = WTFLogLevel::Error;
         if (++it != componentInfo.end()) {
-            auto level = (*it).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+            auto level = (*it).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
             if (equalLettersIgnoringASCIICase(level, "error"_s))
                 logChannelLevel = WTFLogLevel::Error;
             else if (equalLettersIgnoringASCIICase(level, "warning"_s))

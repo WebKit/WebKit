@@ -53,10 +53,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderQuote);
 struct QuotesForLanguage {
     std::span<const char> language;
     uint8_t checkFurther { 0 };
-    UChar open1 { 0 };
-    UChar close1 { 0 };
-    UChar open2 { 0 };
-    UChar close2 { 0 };
+    char16_t open1 { 0 };
+    char16_t close1 { 0 };
+    char16_t open2 { 0 };
+    char16_t close2 { 0 };
 };
 
 // Table of quotes from http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#quotes
@@ -248,10 +248,10 @@ constexpr unsigned maxDistinctQuoteCharacters = 16;
 
 #if ASSERT_ENABLED
 
-static void checkNumberOfDistinctQuoteCharacters(UChar character)
+static void checkNumberOfDistinctQuoteCharacters(char16_t character)
 {
     ASSERT(character);
-    static std::array<UChar, maxDistinctQuoteCharacters> distinctQuoteCharacters;
+    static std::array<char16_t, maxDistinctQuoteCharacters> distinctQuoteCharacters;
     for (unsigned i = 0; i < maxDistinctQuoteCharacters; ++i) {
         if (distinctQuoteCharacters[i] == character)
             return;
@@ -401,7 +401,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
 
     Vector<char> languageKeyBuffer(length);
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = toASCIILower(language[i]);
+        char16_t character = toASCIILower(language[i]);
         if (!(isASCIILower(character) || character == '-'))
             return nullptr;
         languageKeyBuffer[i] = static_cast<char>(character);
@@ -410,12 +410,12 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     return binaryFindQuotes({ languageKeyBuffer.span() });
 }
 
-static StringImpl* stringForQuoteCharacter(UChar character)
+static StringImpl* stringForQuoteCharacter(char16_t character)
 {
     // Use linear search because there is a small number of distinct characters, thus binary search is unneeded.
     ASSERT(character);
     struct StringForCharacter {
-        UChar character;
+        char16_t character;
         StringImpl* string;
     };
     static std::array<StringForCharacter, maxDistinctQuoteCharacters> strings;

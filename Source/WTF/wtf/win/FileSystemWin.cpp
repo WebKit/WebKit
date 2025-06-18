@@ -102,7 +102,7 @@ CString fileSystemRepresentation(const String& path)
 
 static String storageDirectory(DWORD pathIdentifier)
 {
-    Vector<UChar> buffer(MAX_PATH);
+    Vector<char16_t> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.mutableSpan().data()))))
         return String();
 

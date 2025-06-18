@@ -99,7 +99,7 @@ private:
 
 class CSSValueList final : public CSSValueContainingVector {
 public:
-    static Ref<CSSValueList> create(UChar separator, CSSValueListBuilder);
+    static Ref<CSSValueList> create(char16_t separator, CSSValueListBuilder);
 
     static Ref<CSSValueList> createCommaSeparated(CSSValueListBuilder);
     static Ref<CSSValueList> createCommaSeparated(Ref<CSSValue>); // FIXME: Upgrade callers to not use a list at all.

@@ -463,7 +463,7 @@ bool FontCache::useBackslashAsYenSignForFamily(const AtomString& family)
         return false;
 
     if (m_familiesUsingBackslashAsYenSign.isEmpty()) {
-        auto add = [&] (ASCIILiteral name, std::initializer_list<UChar> unicodeName) {
+        auto add = [&] (ASCIILiteral name, std::initializer_list<char16_t> unicodeName) {
             m_familiesUsingBackslashAsYenSign.add(AtomString { name });
             m_familiesUsingBackslashAsYenSign.add(AtomString(std::span { unicodeName }));
         };

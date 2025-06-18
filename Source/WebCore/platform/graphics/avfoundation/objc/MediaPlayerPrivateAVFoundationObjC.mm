@@ -2146,7 +2146,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         // Create an initData with the following layout:
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
-        unsigned keyURISize = keyURI.length() * sizeof(UChar);
+        unsigned keyURISize = keyURI.length() * sizeof(char16_t);
         auto initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
         unsigned byteLength = initDataBuffer->byteLength();
         auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, byteLength);

@@ -400,7 +400,7 @@ struct ActionKey {
         , state(Valid)
     {
         SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
+        hasher.addCharactersAssumingAligned(reinterpret_cast<const char16_t*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(char16_t));
         hash = hasher.hash();
     }
 

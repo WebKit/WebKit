@@ -72,7 +72,7 @@ IDBKey::IDBKey(IndexedDB::KeyType type, double number)
 IDBKey::IDBKey(const String& value)
     : m_type(IndexedDB::KeyType::String)
     , m_value(value)
-    , m_sizeEstimate(OverheadSize + value.length() * sizeof(UChar))
+    , m_sizeEstimate(OverheadSize + value.length() * sizeof(char16_t))
 {
 }
 

@@ -34,7 +34,7 @@ class HTMLEntitySearch {
 public:
     HTMLEntitySearch();
 
-    void advance(UChar);
+    void advance(char16_t);
 
     bool isEntityPrefix() const { return m_entries.data(); }
     unsigned currentLength() const { return m_currentLength; }
@@ -43,9 +43,9 @@ public:
 
 private:
     enum CompareResult { Before, Prefix, After };
-    CompareResult compare(const HTMLEntityTableEntry*, UChar) const;
-    const HTMLEntityTableEntry* findFirst(UChar) const;
-    const HTMLEntityTableEntry* findLast(UChar) const;
+    CompareResult compare(const HTMLEntityTableEntry*, char16_t) const;
+    const HTMLEntityTableEntry* findFirst(char16_t) const;
+    const HTMLEntityTableEntry* findLast(char16_t) const;
 
     void fail() { m_entries = { }; }
 

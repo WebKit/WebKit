@@ -282,7 +282,7 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
     if (m_origin) {
         const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
         for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
-            auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<UChar>);
+            auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
             if (origin == "*"_s || origin == protectedOrigin()->toString())
                 return true;
         }
