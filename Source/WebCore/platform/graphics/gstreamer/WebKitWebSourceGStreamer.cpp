@@ -1095,7 +1095,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     if (members->requestedPosition) {
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
-        if (httpStatusCode && httpStatusCode != 206) {
+        if (httpStatusCode && (httpStatusCode != 206)) {
             // Range request completely failed.
             GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, httpStatusCode), (nullptr));
             members->doesHaveEOS = true;
