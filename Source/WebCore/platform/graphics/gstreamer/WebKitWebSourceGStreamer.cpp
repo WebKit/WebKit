@@ -800,9 +800,9 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
     if (!result)
         result = GST_BASE_SRC_CLASS(webkit_web_src_parent_class)->query(baseSrc, query);
 
-    URL url { String::fromLatin1(priv->originalURI.data()) };
-    if (url.protocolIsBlob() || url.protocolIsFile())
-        return result;
+    // URL url { String::fromLatin1(priv->originalURI.data()) };
+    // if (url.protocolIsBlob() || url.protocolIsFile())
+    //     return result;
 
     if (GST_QUERY_TYPE(query) == GST_QUERY_SCHEDULING) {
         GstSchedulingFlags flags;
