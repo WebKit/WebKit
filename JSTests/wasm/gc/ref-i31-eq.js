@@ -1,4 +1,3 @@
-//@ skip if $architecture == "arm"
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
