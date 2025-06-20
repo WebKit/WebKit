@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="UTF-8">
+      <title></title>
+      <style></style>
+      <script>
+            (async () => {
+                globalThis.testRunner?.waitUntilDone();
+                testRunner?.dumpAsText();
+                  
+                document.styleSheets[0].insertRule(`* {  vertical-align: 1rem; mix-blend-mode:hue }`);
+
+                history.back();
+                await navigator.locks.query();
+                await navigator.storage.estimate();
+                document.documentElement.computedStyleMap().has('vertical-align');
+
+                globalThis.testRunner?.notifyDone();
+            })();
+        </script>
+    </head>
+    <body>
+        <p>PASS if no assert or crash</p>
+    </body>
+</html>

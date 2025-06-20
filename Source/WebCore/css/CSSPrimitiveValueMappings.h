@@ -2160,8 +2160,10 @@ enum LengthConversion {
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if (!convertingToLengthHasRequiredConversionData(supported, conversionData))
-        return Length(LengthType::Undefined);
+    if (!convertingToLengthHasRequiredConversionData(supported, conversionData)) {
+        conversionData.styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+        return Length();
+    }
     if ((supported & FixedIntegerConversion) && isLength())
         return resolveAsLength<Length>(conversionData);
     if ((supported & FixedFloatConversion) && isLength())
