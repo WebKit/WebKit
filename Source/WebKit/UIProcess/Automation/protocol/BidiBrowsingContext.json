@@ -53,6 +53,75 @@
             "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-UserPromptType",
             "type": "string",
             "enum": [ "alert", "beforeunload", "confirm", "prompt" ]
+        },
+        {
+            "id": "AccessibilityLocator",
+            "description": "Locator for accessibility attributes (name and/or role).",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["accessibility"], "description": "The locator strategy type." },
+                {
+                    "name": "value",
+                    "type": "object",
+                    "description": "The accessibility attributes to match.",
+                    "properties": [
+                        { "name": "name", "type": "string", "optional": true, "description": "The accessible name to match." },
+                        { "name": "role", "type": "string", "optional": true, "description": "The computed role to match." }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "CssLocator",
+            "description": "Locator for CSS selectors.",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["css"], "description": "The locator strategy type." },
+                { "name": "value", "type": "string", "description": "The CSS selector string." }
+            ],
+            "required": ["type", "value"]
+        },
+        {
+            "id": "ContextLocator",
+            "description": "Locator for a child browsing context's container element.",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["context"], "description": "The locator strategy type." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The ID of the child browsing context." }
+            ]
+        },
+        {
+            "id": "InnerTextLocator",
+            "description": "Locator for inner text content.",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["innerText"], "description": "The locator strategy type." },
+                { "name": "value", "type": "string", "description": "The text string to search for." },
+                { "name": "ignoreCase", "type": "boolean", "optional": true, "description": "Whether the search should be case-insensitive. Defaults to false." },
+                { "name": "matchType", "type": "string", "enum": ["full", "partial"], "optional": true, "description": "How the text should match. 'full' for exact match, 'partial' for substring. Defaults to 'full'." },
+                { "name": "maxDepth", "type": "number", "optional": true, "description": "Maximum depth to traverse the DOM tree. Null for no limit. 0 means only the context node itself." }
+            ]
+        },
+        {
+            "id": "XPathLocator",
+            "description": "Locator for XPath expressions.",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["xpath"], "description": "The locator strategy type." },
+                { "name": "value", "type": "string", "description": "The XPath expression string." }
+            ]
+        },
+        {
+            "id": "Locator",
+            "description": "General Locator Object",
+            "type": "object",
+            "properties": [
+                {"name": "type", "type": "string", "enum": ["accessibility", "css", "context", "innerText", "xpath"]},
+                { "name": "value", "type": "any" },
+                { "name": "ignoreCase", "type": "boolean", "optional": true, "description": "Whether the search should be case-insensitive. Defaults to false." },
+                { "name": "matchType", "type": "string", "enum": ["full", "partial"], "optional": true, "description": "How the text should match. 'full' for exact match, 'partial' for substring. Defaults to 'full'." },
+                { "name": "maxDepth", "type": "number", "optional": true, "description": "Maximum depth to traverse the DOM tree. Null for no limit. 0 means only the context node itself." }
+            ]
         }
     ],
     "commands": [
@@ -149,6 +218,23 @@
             "returns": [
                 { "name": "url", "type": "string", "description": "The URL the browsing context navigated to." },
                 { "name": "navigation", "$ref": "BidiBrowsingContext.Navigation", "optional": true, "description": "The navigation ID, or null if not applicable." }
+            ]
+        },
+        {
+            "name": "locateNodes",
+            "description": "The browsingContext.locateNodes command returns a list of all nodes matching the specified locator.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/locate_nodes",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to search within." },
+                { "name": "locator", "$ref": "BidiBrowsingContext.Locator", "description": "The strategy and value for locating nodes." },
+                { "name": "maxNodeCount", "type": "number", "optional": true, "description": "Maximum number of nodes to return. Must be >= 1." },
+                { "name": "serializationOptions", "$ref": "BidiScript.SerializationOptions", "optional": true, "description": "Options for serializing the returned nodes." },
+                { "name": "startNodes", "type": "array", "items": { "$ref": "BidiScript.SharedReference" }, "optional": true, "description": "An array of nodes from which to start the search. If not provided, the search starts from the document root." }
+            ],
+            "returns": [
+                { "name": "nodes", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "description": "A list of found nodes." }
             ]
         }
     ],

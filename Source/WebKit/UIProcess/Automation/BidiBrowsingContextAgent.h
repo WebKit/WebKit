@@ -58,7 +58,7 @@ public:
     void handleUserPrompt(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalShouldAccept, const String& userText, Inspector::CommandCallback<void>&&) override;
     void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::Navigation>&&) override;
     void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&& optionalWait, Inspector::CommandCallbackOf<String, String>&&) override;
-
+    void locateNodes(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Ref<JSON::Object>&& locatorObject, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptionsObject, RefPtr<JSON::Array>&& optionalStartNodesArray, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&&) override;
 private:
     enum class IncludeParentID: bool { No, Yes };
 

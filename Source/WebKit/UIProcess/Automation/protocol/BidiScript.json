@@ -126,6 +126,22 @@
             ]
         },
         {
+            "id": "SharedReference",
+            "description": "Represents a reference to a JavaScript object with the shared object cache.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-scriptsharedreference",
+            "type": "object",
+            "properties": [
+                { "name": "sharedId", "type": "number"},
+                { "name": "handle", "type": "number", "optional": true }
+            ]
+        },
+        {
+            "id": "SharedId",
+            "description": "A unique identifier assigned to a JavaScript object.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-scriptsharedid",
+            "type": "string"
+        },
+        {
             "id": "StackFrame",
             "description": "Represents a single call frame within a <code>BidiScript.StackTrace</code>.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-StackFrame",

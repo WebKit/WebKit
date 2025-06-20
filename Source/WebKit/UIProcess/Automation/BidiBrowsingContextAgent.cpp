@@ -324,6 +324,225 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
     });
 }
 
+void BidiBrowsingContextAgent::locateNodes(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& context, Ref<JSON::Object>&& locatorObject, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptionsObject, RefPtr<JSON::Array>&& optionalStartNodesArray, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&& callback)
+{
+    RefPtr<WebAutomationSession> session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    auto page = session->webPageProxyForHandle(context);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    String locateNodeFunction = R"(
+        (function (locator, contextNodes, maxNodeCount) {
+            "use strict";
+
+            if (!Array.isArray(contextNodes) || contextNodes.length === 0) {
+                contextNodes = [document.documentElement];
+            }
+
+            function validateLimit(maxCount) {
+                if (maxCount == null) return Infinity;
+                if (typeof maxCount !== "number" || !Number.isInteger(maxCount) || maxCount < 1) {
+                    throw { name: "InvalidArgument", message: "maxNodeCount must be an integer ≥ 1." };
+                }
+                return maxCount;
+            }
+
+            function findByCss(selector, roots, limit) {
+                try {
+                    document.createDocumentFragment().querySelector(selector);
+                } catch (error) {
+                    throw { name: "InvalidSelector", message: error.message };
+                }
+                const nodes = [];
+                for (const root of roots) {
+                    let matches;
+                    try {
+                        matches = root.querySelectorAll(selector);
+                    } catch (error) {
+                        throw { name: "InvalidSelector", message: error.message };
+                    }
+                    for (let i = 0; i < matches.length && nodes.length < limit; i++) {
+                        nodes.push(matches[i]);
+                    }
+                    if (nodes.length >= limit) break;
+                }
+                return nodes;
+            }
+
+            function findByXPath(expression, roots, limit) {
+                const nodes = [];
+                for (const root of roots) {
+                    let result;
+                    try {
+                        result = document.evaluate(expression, root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                    } catch (e) {
+                        if (e instanceof DOMException && e.name === "SyntaxError") {
+                            throw { name: "InvalidSelector", message: e.message };
+                        }
+                        throw { name: "UnknownError", message: e.message };
+                    }
+                    for (let i = 0; i < result.snapshotLength && nodes.length < limit; i++) {
+                        const node = result.snapshotItem(i);
+                        nodes.push(node);
+                    }
+                }
+                return nodes;
+            }
+
+            function findByInnerText(selector, roots, maxDepth, matchType, ignoreCase, limit) {
+                if (typeof selector !== "string" || selector === "") {
+                    throw { name: "InvalidSelector", message: "Selector must be a non-empty string." };
+                }
+
+                const matches = [];
+                const searchText = ignoreCase ? selector.toUpperCase() : selector;
+
+                function recurse(nodes, depth) {
+                    for (const node of nodes) {
+                        if (node.nodeType !== 1) continue; // HTMLElement only
+                        let nodeText = node.innerText ?? "";
+                        if (ignoreCase) nodeText = nodeText.toUpperCase();
+
+                        const isMatch =
+                            matchType === "full" ? nodeText === searchText :
+                            matchType === "partial" ? nodeText.includes(searchText) : false;
+
+                        if (isMatch) {
+                            matches.push(node);
+                            if (matches.length >= limit) return;
+                        }
+
+                        if ((maxDepth === null || depth < maxDepth) && node.children.length > 0) {
+                            recurse(node.children, depth + 1);
+                            if (matches.length >= limit) return;
+                        }
+                    }
+                }
+
+                for (const root of roots) {
+                    recurse([root], 0);
+                    if (matches.length >= limit) break;
+                }
+
+                return matches;
+            }
+
+            function findByAccessibility(selector, roots, limit) {
+                const matches = [];
+
+                function getRole(el) {
+                    return el.getAttribute("role");
+                }
+
+                function getAccessibleName(el) {
+                    return el.getAttribute("aria-label") || el.getAttribute("aria-labelledby");
+                }
+
+                function recurse(nodes) {
+                    for (const node of nodes) {
+                        if (node.nodeType !== 1) continue;
+
+                        let match = true;
+                        if ("role" in selector) {
+                            match = getRole(node) === selector.role;
+                        }
+                        if (match && "name" in selector) {
+                            match = getAccessibleName(node) === selector.name;
+                        }
+
+                        if (match) {
+                            matches.push(node);
+                            if (matches.length >= limit) return;
+                        }
+
+                        if (node.children.length > 0) {
+                            recurse(Array.from(node.children));
+                            if (matches.length >= limit) return;
+                        }
+                    }
+                }
+
+                if (!("role" in selector || "name" in selector)) {
+                    throw { name: "InvalidSelector", message: "Accessibility selector must include 'role' or 'name'." };
+                }
+
+                for (const root of roots) {
+                    recurse([root]);
+                    if (matches.length >= limit) break;
+                }
+
+                return matches;
+            }
+
+            function findByContext(selector, roots, limit) {
+                return [];
+            }
+
+            const type = locator.type;
+            const value = locator.value;
+            const limit = validateLimit(maxNodeCount);
+
+            switch (type) {
+                case "css":
+                    return findByCss(value, contextNodes, limit);
+
+                case "xpath":
+                    return findByXPath(value, contextNodes, limit);
+
+                case "innerText":
+                    return findByInnerText(
+                        value,
+                        contextNodes,
+                        locator.maxDepth ?? null,
+                        locator.matchType || "full",
+                        !!locator.ignoreCase,
+                        limit
+                    );
+
+                case "accessibility":
+                    return findByAccessibility(value, contextNodes, limit);
+
+                case "context":
+                    return findByContext(value, contextNodes, limit);
+
+                default:
+                    throw { name: "InvalidArgument", message: `Unsupported locator type: ${type}.` };
+            }
+        })
+    )"_s;
+
+    RefPtr<JSON::Array> arguments = JSON::Array::create();
+
+    arguments->pushValue(WTFMove(locatorObject));
+
+    if (optionalStartNodesArray) {
+        Ref<JSON::Value> startNodesValue = *optionalStartNodesArray;
+        arguments->pushValue(WTFMove(startNodesValue));
+    } else {
+        Ref<JSON::Value> nullValue = JSON::Value::null();
+        arguments->pushValue(WTFMove(nullValue));
+    }
+
+    if (optionalMaxNodeCount) {
+        Ref<JSON::Value> numberValue = JSON::Value::create(*optionalMaxNodeCount);
+        arguments->pushValue(WTFMove(numberValue));
+    } else {
+        Ref<JSON::Value> nullValue = JSON::Value::null();
+        arguments->pushValue(WTFMove(nullValue));
+    }
+
+    std::optional<double> callbackTimeout = 250;
+
+    session->evaluateJavaScriptFunction(context, emptyString(), locateNodeFunction, *arguments, true, false, callbackTimeout.value(),
+    [callback = WTFMove(callback)](Inspector::CommandResult<String>&& result) mutable {
+
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!result, InternalError);
+
+        // FIXME: Await resolution of https://bugs.webkit.org/show_bug.cgi?id=294633 to implement a complete callback. Currently, we can't convert the result into objects due to uncertainty about its return format.
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBDRIVER_BIDI)
