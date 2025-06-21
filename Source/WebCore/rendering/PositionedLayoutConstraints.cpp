@@ -425,8 +425,6 @@ void PositionedLayoutConstraints::computeStaticPosition(const RenderBox& rendere
                 m_marginAfter = 0_css_px;
             return;
         }
-        // Rewind grid-area adjustments and fall through to the existing static position code.
-        m_containingRange.moveTo(m_originalContainingRange.min());
     }
 
     if (selfAxis == LogicalBoxAxis::Inline)
@@ -435,82 +433,14 @@ void PositionedLayoutConstraints::computeStaticPosition(const RenderBox& rendere
         computeBlockStaticDistance(renderer);
 }
 
-void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox& renderer)
+void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox&)
 {
-    auto* parent = renderer.parent();
-    auto parentWritingMode = parent->writingMode();
-
-    // For orthogonal flows we don't care whether the parent is LTR or RTL because it does not affect the position in our inline axis.
-    bool haveOrthogonalWritingModes = parentWritingMode.isOrthogonal(m_writingMode);
-    if (parentWritingMode.isLogicalLeftInlineStart() || haveOrthogonalWritingModes) {
-        LayoutUnit staticPosition = haveOrthogonalWritingModes
-            ? renderer.layer()->staticBlockPosition() - m_container->borderBefore()
-            : renderer.layer()->staticInlinePosition() - m_container->borderLogicalLeft();
-        for (auto* current = parent; current && current != m_container.get(); current = current->container()) {
-            CheckedPtr renderBox = dynamicDowncast<RenderBox>(*current);
-            if (!renderBox)
-                continue;
-            staticPosition += haveOrthogonalWritingModes ? renderBox->logicalTop() : renderBox->logicalLeft();
-            if (renderBox->isInFlowPositioned())
-                staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
-        }
-        m_insetBefore = Style::InsetEdge::Fixed { staticPosition };
-    } else {
-        ASSERT(!haveOrthogonalWritingModes);
-        LayoutUnit staticPosition = renderer.layer()->staticInlinePosition() + containingSize() + m_container->borderLogicalLeft();
-        auto& enclosingBox = parent->enclosingBox();
-        if (&enclosingBox != m_container.get() && m_container->isDescendantOf(&enclosingBox)) {
-            m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
-            return;
-        }
-        staticPosition -= enclosingBox.logicalWidth();
-        for (const RenderElement* current = &enclosingBox; current; current = current->container()) {
-            CheckedPtr renderBox = dynamicDowncast<RenderBox>(*current);
-            if (!renderBox)
-                continue;
-
-            if (current != m_container.get()) {
-                staticPosition -= renderBox->logicalLeft();
-                if (renderBox->isInFlowPositioned())
-                    staticPosition -= renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
-            }
-            if (current == m_container.get())
-                break;
-        }
-        m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
-    }
+    m_insetBefore = Style::InsetEdge::Fixed { LayoutUnit::max() };
 }
 
-void PositionedLayoutConstraints::computeBlockStaticDistance(const RenderBox& renderer)
+void PositionedLayoutConstraints::computeBlockStaticDistance(const RenderBox&)
 {
-    auto* parent = renderer.parent();
-    bool haveOrthogonalWritingModes = parent->writingMode().isOrthogonal(m_writingMode);
-    // The static positions from the child's layer are relative to the container block's coordinate space (which is determined
-    // by the writing mode and text direction), meaning that for orthogonal flows the logical top of the child (which depends on
-    // the child's writing mode) is retrieved from the static inline position instead of the static block position.
-    auto staticLogicalTop = haveOrthogonalWritingModes ? renderer.layer()->staticInlinePosition() : renderer.layer()->staticBlockPosition();
-    if (shouldFlipStaticPositionInParent(renderer, *m_container)) {
-        // Note that at this point we can't resolve static top position completely in flipped case as at this point the height of the child box has not been computed yet.
-        // What we can compute here is essentially the "bottom position".
-        staticLogicalTop = downcast<RenderBox>(*parent).flipForWritingMode(staticLogicalTop);
-    }
-    staticLogicalTop -= haveOrthogonalWritingModes ? m_container->borderLogicalLeft() : m_container->borderBefore();
-    for (RenderElement* container = parent; container && container != m_container.get(); container = container->container()) {
-        auto* renderBox = dynamicDowncast<RenderBox>(*container);
-        if (!renderBox)
-            continue;
-        if (!is<RenderTableRow>(*renderBox))
-            staticLogicalTop += haveOrthogonalWritingModes ? renderBox->logicalLeft() : renderBox->logicalTop();
-        if (renderBox->isInFlowPositioned())
-            staticLogicalTop += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().height() : renderBox->offsetForInFlowPosition().width();
-    }
-
-    // If the parent is RTL then we need to flip the coordinate by setting the logical bottom instead of the logical top. That only needs
-    // to be done in case of orthogonal writing modes, for horizontal ones the text direction of the parent does not affect the block position.
-    if (haveOrthogonalWritingModes && parent->writingMode().isInlineFlipped())
-        m_insetAfter = Style::InsetEdge::Fixed { staticLogicalTop };
-    else
-        m_insetBefore = Style::InsetEdge::Fixed { staticLogicalTop };
+    m_insetBefore = Style::InsetEdge::Fixed { LayoutUnit::max() };
 }
 
 void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues& computedValues) const
