@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<OffsetDistance>::operator()(BuilderState& state, const CSSValue& value) -> OffsetDistance
 {
-    return OffsetDistance { BuilderConverter::convertLength(state, value) };
+    return OffsetDistance { BuilderConverter::convertLengthPercentage<OffsetDistance::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

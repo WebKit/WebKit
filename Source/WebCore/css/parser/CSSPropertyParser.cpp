@@ -524,11 +524,10 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consume
 
     auto resolveSyntaxValue = [&, syntaxType = syntaxType](const CSSValue& value) -> std::optional<Style::CustomProperty::Value> {
         switch (syntaxType) {
+        case CSSCustomPropertySyntax::Type::Length:
+            return { Style::BuilderConverter::convertLength<CSS::All>(builderState, downcast<CSSPrimitiveValue>(value)) };
         case CSSCustomPropertySyntax::Type::LengthPercentage:
-        case CSSCustomPropertySyntax::Type::Length: {
-            auto length = Style::BuilderConverter::convertLength(builderState, downcast<CSSPrimitiveValue>(value));
-            return { WTFMove(length) };
-        }
+            return { Style::BuilderConverter::convertLengthPercentage<CSS::All>(builderState, downcast<CSSPrimitiveValue>(value)) };
         case CSSCustomPropertySyntax::Type::Integer:
         case CSSCustomPropertySyntax::Type::Number: {
             auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsNumber(builderState.cssToLengthConversionData());

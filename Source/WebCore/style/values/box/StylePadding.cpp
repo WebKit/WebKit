@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<PaddingEdge>::operator()(BuilderState& state, const CSSValue& value) -> PaddingEdge
 {
-    return PaddingEdge { BuilderConverter::convertLength(state, value) };
+    return PaddingEdge { BuilderConverter::convertLengthPercentage<PaddingEdge::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

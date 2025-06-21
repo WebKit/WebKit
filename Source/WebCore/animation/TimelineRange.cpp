@@ -124,7 +124,7 @@ SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type,
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // <length-percentage>
         if (SingleTimelineRange::isOffsetValue(*primitiveValue))
-            return { SingleTimelineRange::Name::Omitted, state ? Style::BuilderConverter::convertLength(*state, *primitiveValue) : lengthForCSSValue(primitiveValue, element) };
+            return { SingleTimelineRange::Name::Omitted, state ? Style::BuilderConverter::convertLengthPercentage<CSS::All>(*state, *primitiveValue) : lengthForCSSValue(primitiveValue, element) };
         // <timeline-range-name> or Normal
         return { SingleTimelineRange::timelineName(primitiveValue->valueID()), defaultValue(type) };
     }
@@ -136,7 +136,7 @@ SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type,
     Ref primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
     ASSERT(SingleTimelineRange::isOffsetValue(primitiveValue));
 
-    return { SingleTimelineRange::timelineName(pair->first().valueID()), state ? Style::BuilderConverter::convertLength(*state, primitiveValue) : lengthForCSSValue(RefPtr { primitiveValue.ptr() }, element) };
+    return { SingleTimelineRange::timelineName(pair->first().valueID()), state ? Style::BuilderConverter::convertLengthPercentage<CSS::All>(*state, primitiveValue) : lengthForCSSValue(RefPtr { primitiveValue.ptr() }, element) };
 }
 
 RefPtr<CSSValue> SingleTimelineRange::parse(TimelineRangeValue&& value, RefPtr<Element> element, Type type)

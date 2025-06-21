@@ -79,7 +79,7 @@ inline Color forwardInheritedValue(const Color& value) { auto copy = value; retu
 inline WebCore::Length forwardInheritedValue(const WebCore::Length& value) { auto copy = value; return copy; }
 inline LengthSize forwardInheritedValue(const LengthSize& value) { auto copy = value; return copy; }
 inline LengthBox forwardInheritedValue(const LengthBox& value) { auto copy = value; return copy; }
-inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = value; return copy; }
+inline GapGutter forwardInheritedValue(const GapGutter& value) { auto copy = value; return copy; }
 inline FilterOperations forwardInheritedValue(const FilterOperations& value) { auto copy = value; return copy; }
 inline TransformOperations forwardInheritedValue(const TransformOperations& value) { auto copy = value; return copy; }
 inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
@@ -270,7 +270,7 @@ inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, C
     if (primitiveValue->valueID() != CSSValueInvalid)
         builderState.style().setVerticalAlign(fromCSSValueID<VerticalAlign>(primitiveValue->valueID()));
     else
-        builderState.style().setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
+        builderState.style().setVerticalAlignLength(BuilderConverter::convertLengthPercentage<CSS::All>(builderState, builderState.cssToLengthConversionData(), *primitiveValue));
 }
 
 inline void BuilderCustom::applyInheritTextIndent(BuilderState& builderState)
@@ -289,13 +289,13 @@ inline void BuilderCustom::applyInitialTextIndent(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSValue& value)
 {
-    WebCore::Length lengthPercentageValue;
-    TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
-    TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
+    std::optional<WebCore::Length> lengthPercentageValue;
+    auto textIndentLineValue = RenderStyle::initialTextIndentLine();
+    auto textIndentTypeValue = RenderStyle::initialTextIndentType();
 
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSValueList.
-        lengthPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+        lengthPercentageValue = BuilderConverter::convertLengthPercentage<CSS::All>(builderState, builderState.cssToLengthConversionData(), *primitiveValue);
     } else {
         auto list = BuilderConverter::requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
         if (!list)
@@ -303,7 +303,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
 
         for (auto& primitiveValue : *list) {
             if (!primitiveValue.valueID())
-                lengthPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+                lengthPercentageValue = BuilderConverter::convertLengthPercentage<CSS::All>(builderState, builderState.cssToLengthConversionData(), primitiveValue);
             else if (primitiveValue.valueID() == CSSValueEachLine)
                 textIndentLineValue = TextIndentLine::EachLine;
             else if (primitiveValue.valueID() == CSSValueHanging)
@@ -311,10 +311,10 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         }
     }
 
-    if (lengthPercentageValue.isUndefined())
+    if (!lengthPercentageValue)
         return;
 
-    builderState.style().setTextIndent(WTFMove(lengthPercentageValue));
+    builderState.style().setTextIndent(WTFMove(*lengthPercentageValue));
     builderState.style().setTextIndentLine(textIndentLineValue);
     builderState.style().setTextIndentType(textIndentTypeValue);
 }
@@ -645,7 +645,6 @@ inline void BuilderCustom::applyInheritClip(BuilderState& builderState)
 inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& value)
 {
     if (value.isRect()) {
-        auto& conversionData = builderState.cssToLengthConversionData();
         auto primitiveValueTop = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value.rect().top());
         if (!primitiveValueTop)
             return;
@@ -659,10 +658,12 @@ inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& 
         if (!primitiveValueLeft)
             return;
 
-        auto top = primitiveValueTop->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto right = primitiveValueRight->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto bottom = primitiveValueBottom->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto left = primitiveValueLeft->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto& conversionData = builderState.cssToLengthConversionData();
+
+        auto top = BuilderConverter::convertLengthOrAuto<CSS::All>(builderState, conversionData, *primitiveValueTop);
+        auto right = BuilderConverter::convertLengthOrAuto<CSS::All>(builderState, conversionData, *primitiveValueRight);
+        auto bottom = BuilderConverter::convertLengthOrAuto<CSS::All>(builderState, conversionData, *primitiveValueBottom);
+        auto left = BuilderConverter::convertLengthOrAuto<CSS::All>(builderState, conversionData, *primitiveValueLeft);
 
         builderState.style().setClip(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
         builderState.style().setHasClip(true);
@@ -987,7 +988,7 @@ inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, C
         }
     } else {
         svgStyle.setBaselineShift(BaselineShift::Length);
-        svgStyle.setBaselineShiftValue(BuilderConverter::convertLength(builderState, *primitiveValue));
+        svgStyle.setBaselineShiftValue(BuilderConverter::convertLengthPercentage<CSS::All>(builderState, *primitiveValue));
     }
 }
 
@@ -1720,7 +1721,7 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
 {
-    builderState.style().setStrokeWidth(BuilderConverter::convertLengthAllowingNumber(builderState, value));
+    builderState.style().setStrokeWidth(BuilderConverter::convertLengthPercentageOrNumberConvertedToLength<CSS::Nonnegative>(builderState, value));
     builderState.style().setHasExplicitlySetStrokeWidth(true);
 }
 

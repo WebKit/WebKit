@@ -46,10 +46,6 @@ auto CSSValueConversion<Translate>::operator()(BuilderState& state, const CSSVal
     // https://drafts.csswg.org/css-transforms-2/#propdef-translate
     // none | <length-percentage> [ <length-percentage> <length>? ]?
 
-    auto conversionData = state.useSVGZoomRulesForLength()
-        ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : state.cssToLengthConversionData();
-
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
         return CSS::Keyword::None { };
@@ -59,14 +55,14 @@ auto CSSValueConversion<Translate>::operator()(BuilderState& state, const CSSVal
     if (!list)
         return CSS::Keyword::None { };
 
-    auto resolveAsFloatPercentOrCalculatedLength = [](const CSSPrimitiveValue& primitiveValue, const CSSToLengthConversionData& conversionData) -> WebCore::Length {
-        return primitiveValue.convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
-    };
+    auto conversionData = state.useSVGZoomRulesForLength()
+        ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : state.cssToLengthConversionData();
 
     auto type = list->size() > 2 ? TransformOperation::Type::Translate3D : TransformOperation::Type::Translate;
-    auto tx = resolveAsFloatPercentOrCalculatedLength(list->item(0), conversionData);
-    auto ty = list->size() > 1 ? resolveAsFloatPercentOrCalculatedLength(list->item(1), conversionData) : WebCore::Length(0, LengthType::Fixed);
-    auto tz = list->size() > 2 ? resolveAsFloatPercentOrCalculatedLength(list->item(2), conversionData) : WebCore::Length(0, LengthType::Fixed);
+    auto tx = BuilderConverter::convertLengthPercentage<CSS::All>(state, conversionData, list->item(0));
+    auto ty = list->size() > 1 ? BuilderConverter::convertLengthPercentage<CSS::All>(state, conversionData, list->item(1)) : WebCore::Length(0, LengthType::Fixed);
+    auto tz = list->size() > 2 ? BuilderConverter::convertLength<CSS::All>(state, conversionData, list->item(2)) : WebCore::Length(0, LengthType::Fixed);
 
     return Translate { TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type) };
 }

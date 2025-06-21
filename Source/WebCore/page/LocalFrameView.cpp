@@ -669,12 +669,12 @@ void LocalFrameView::applyPaginationToViewport()
     Overflow overflowY = documentOrBodyRenderer->effectiveOverflowY();
     if (overflowY == Overflow::PagedX || overflowY == Overflow::PagedY) {
         pagination.mode = WebCore::paginationModeForRenderStyle(documentOrBodyRenderer->style());
-        GapLength columnGapLength = documentOrBodyRenderer->style().columnGap();
+        auto columnGapGutter = documentOrBodyRenderer->style().columnGap();
         pagination.gap = 0;
-        if (!columnGapLength.isNormal()) {
+        if (!columnGapGutter.isNormal()) {
             auto* renderBox = dynamicDowncast<RenderBox>(documentOrBodyRenderer);
             if (auto* containerForPaginationGap = renderBox ? renderBox : documentOrBodyRenderer->containingBlock())
-                pagination.gap = valueForLength(columnGapLength.length(), containerForPaginationGap->contentBoxLogicalWidth()).toUnsigned();
+                pagination.gap = Style::evaluate(columnGapGutter, containerForPaginationGap->contentBoxLogicalWidth()).toUnsigned();
         }
     }
     setPagination(pagination);

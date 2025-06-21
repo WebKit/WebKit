@@ -2772,7 +2772,7 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
         return { };
 
     auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().value_or(0_lu) : contentBoxLogicalWidth();
-    return minimumValueForLength(gapLength.length(), availableSize);
+    return Style::evaluateMinimum(gapLength, availableSize);
 }
 
 bool RenderFlexibleBox::layoutUsingFlexFormattingContext()

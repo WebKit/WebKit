@@ -1078,8 +1078,8 @@ inline Ref<CSSValue> extractBorderRadiusShorthand(ExtractorState& state, CSSProp
     };
 
     auto extractBorderRadiusCornerValues = [&](auto& state, const auto& radius) {
-        auto x = ExtractorConverter::convertLength(state, radius.width);
-        auto y = radius.width == radius.height ? x.copyRef() : ExtractorConverter::convertLength(state, radius.height);
+        auto x = ExtractorConverter::convertLengthPercentage<CSS::Nonnegative>(state, radius.width);
+        auto y = radius.width == radius.height ? x.copyRef() : ExtractorConverter::convertLengthPercentage<CSS::Nonnegative>(state, radius.height);
         return std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>> { WTFMove(x), WTFMove(y) };
     };
 
@@ -1306,10 +1306,10 @@ inline Ref<CSSValue> ExtractorCustom::extractClip(ExtractorState& state)
         return CSSPrimitiveValue::create(CSSValueAuto);
 
     return CSSRectValue::create({
-        ExtractorConverter::convertLengthOrAuto(state, clip.top()),
-        ExtractorConverter::convertLengthOrAuto(state, clip.right()),
-        ExtractorConverter::convertLengthOrAuto(state, clip.bottom()),
-        ExtractorConverter::convertLengthOrAuto(state, clip.left())
+        ExtractorConverter::convertLengthOrAuto<CSS::All>(state, clip.top()),
+        ExtractorConverter::convertLengthOrAuto<CSS::All>(state, clip.right()),
+        ExtractorConverter::convertLengthOrAuto<CSS::All>(state, clip.bottom()),
+        ExtractorConverter::convertLengthOrAuto<CSS::All>(state, clip.left())
     });
 }
 
@@ -1328,13 +1328,13 @@ inline void ExtractorCustom::extractClipSerialization(ExtractorState& state, Str
     }
 
     builder.append(nameLiteral(CSSValueRect), '(');
-    ExtractorSerializer::serializeLengthOrAuto(state, builder, context, clip.top());
+    ExtractorSerializer::serializeLengthOrAuto<CSS::All>(state, builder, context, clip.top());
     builder.append(", "_s);
-    ExtractorSerializer::serializeLengthOrAuto(state, builder, context, clip.right());
+    ExtractorSerializer::serializeLengthOrAuto<CSS::All>(state, builder, context, clip.right());
     builder.append(", "_s);
-    ExtractorSerializer::serializeLengthOrAuto(state, builder, context, clip.bottom());
+    ExtractorSerializer::serializeLengthOrAuto<CSS::All>(state, builder, context, clip.bottom());
     builder.append(", "_s);
-    ExtractorSerializer::serializeLengthOrAuto(state, builder, context, clip.left());
+    ExtractorSerializer::serializeLengthOrAuto<CSS::All>(state, builder, context, clip.left());
     builder.append(')');
 }
 
@@ -1399,7 +1399,7 @@ inline Ref<CSSValue> ExtractorCustom::extractBaselineShift(ExtractorState& state
     case BaselineShift::Sub:
         return CSSPrimitiveValue::create(CSSValueSub);
     case BaselineShift::Length:
-        return ExtractorConverter::convertLength(state, state.style.svgStyle().baselineShiftValue());
+        return ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.svgStyle().baselineShiftValue());
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1417,7 +1417,7 @@ inline void ExtractorCustom::extractBaselineShiftSerialization(ExtractorState& s
         CSS::serializationForCSS(builder, context, CSS::Keyword::Sub { });
         return;
     case BaselineShift::Length:
-        ExtractorSerializer::serializeLength(state, builder, context, state.style.svgStyle().baselineShiftValue());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.svgStyle().baselineShiftValue());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1445,7 +1445,7 @@ inline Ref<CSSValue> ExtractorCustom::extractVerticalAlign(ExtractorState& state
     case VerticalAlign::BaselineMiddle:
         return CSSPrimitiveValue::create(CSSValueWebkitBaselineMiddle);
     case VerticalAlign::Length:
-        return ExtractorConverter::convertLengthWithoutApplyingZoom(state, state.style.verticalAlignLength());
+        return ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.verticalAlignLength());
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1481,7 +1481,7 @@ inline void ExtractorCustom::extractVerticalAlignSerialization(ExtractorState& s
         CSS::serializationForCSS(builder, context, CSS::Keyword::WebkitBaselineMiddle { });
         return;
     case VerticalAlign::Length:
-        ExtractorSerializer::serializeLengthWithoutApplyingZoom(state, builder, context, state.style.verticalAlignLength());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.verticalAlignLength());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1548,7 +1548,7 @@ inline void ExtractorCustom::extractTextEmphasisStyleSerialization(ExtractorStat
 
 inline Ref<CSSValue> ExtractorCustom::extractTextIndent(ExtractorState& state)
 {
-    auto textIndent = ExtractorConverter::convertLength(state, state.style.textIndent());
+    auto textIndent = ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.textIndent());
     auto textIndentLine = state.style.textIndentLine();
     auto textIndentType = state.style.textIndentType();
     if (textIndentLine == TextIndentLine::EachLine || textIndentType == TextIndentType::Hanging) {
@@ -1565,7 +1565,7 @@ inline Ref<CSSValue> ExtractorCustom::extractTextIndent(ExtractorState& state)
 
 inline void ExtractorCustom::extractTextIndentSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    ExtractorSerializer::serializeLength(state, builder, context, state.style.textIndent());
+    ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.textIndent());
 
     if (state.style.textIndentType() == TextIndentType::Hanging) {
         builder.append(' ');
@@ -1583,7 +1583,7 @@ inline Ref<CSSValue> ExtractorCustom::extractLetterSpacing(ExtractorState& state
     auto& spacing = state.style.computedLetterSpacing();
     if (spacing.isFixed() && spacing.isZero())
         return CSSPrimitiveValue::create(CSSValueNormal);
-    return ExtractorConverter::convertLength(state, spacing);
+    return ExtractorConverter::convertLengthPercentage<CSS::All>(state, spacing);
 }
 
 inline void ExtractorCustom::extractLetterSpacingSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -1593,17 +1593,17 @@ inline void ExtractorCustom::extractLetterSpacingSerialization(ExtractorState& s
         CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
         return;
     }
-    ExtractorSerializer::serializeLength(state, builder, context, spacing);
+    ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, spacing);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractWordSpacing(ExtractorState& state)
 {
-    return ExtractorConverter::convertLength(state, state.style.computedWordSpacing());
+    return ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.computedWordSpacing());
 }
 
 inline void ExtractorCustom::extractWordSpacingSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    ExtractorSerializer::serializeLength(state, builder, context, state.style.computedWordSpacing());
+    ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.computedWordSpacing());
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractLineHeight(ExtractorState& state)
@@ -2567,8 +2567,8 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBackgroundPositionShorthand(Extr
 {
     auto mapper = [](auto& state, auto& layer) -> Ref<CSSValue> {
         return CSSValueList::createSpaceSeparated(
-            ExtractorConverter::convertLength(state, layer.xPosition()),
-            ExtractorConverter::convertLength(state, layer.yPosition())
+            ExtractorConverter::convertLengthPercentage<CSS::All>(state, layer.xPosition()),
+            ExtractorConverter::convertLengthPercentage<CSS::All>(state, layer.yPosition())
         );
     };
     return extractFillLayerValue(state, state.style.backgroundLayers(), mapper);
@@ -2579,9 +2579,9 @@ inline void ExtractorCustom::extractBackgroundPositionShorthandSerialization(Ext
     auto mapper = [](auto& state, auto& builder, const auto& context, bool includeComma, auto& layer) {
         if (includeComma)
             builder.append(", "_s);
-        ExtractorSerializer::serializeLength(state, builder, context, layer.xPosition());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, layer.xPosition());
         builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, layer.yPosition());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, layer.yPosition());
     };
     extractFillLayerValueSerialization(state, builder, context, state.style.backgroundLayers(), mapper);
 }
@@ -2590,7 +2590,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBlockStepShorthand(ExtractorStat
 {
     CSSValueListBuilder list;
     if (auto blockStepSize = state.style.blockStepSize())
-        list.append(ExtractorConverter::convertLength(state, *blockStepSize));
+        list.append(ExtractorConverter::convertLength<CSS::Nonnegative>(state, *blockStepSize));
 
     if (auto blockStepInsert = state.style.blockStepInsert(); blockStepInsert != RenderStyle::initialBlockStepInsert())
         list.append(ExtractorConverter::convert(state, blockStepInsert));
@@ -2614,7 +2614,7 @@ inline void ExtractorCustom::extractBlockStepShorthandSerialization(ExtractorSta
     if (auto blockStepSize = state.style.blockStepSize()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, *blockStepSize);
+        ExtractorSerializer::serializeLength<CSS::Nonnegative>(state, builder, context, *blockStepSize);
         listEmpty = false;
     }
 
@@ -3013,8 +3013,8 @@ inline RefPtr<CSSValue> ExtractorCustom::extractMaskPositionShorthand(ExtractorS
 {
     auto mapper = [](auto& state, auto& layer) -> Ref<CSSValue> {
         return CSSValueList::createSpaceSeparated(
-            ExtractorConverter::convertLength(state, layer.xPosition()),
-            ExtractorConverter::convertLength(state, layer.yPosition())
+            ExtractorConverter::convertLengthPercentage<CSS::All>(state, layer.xPosition()),
+            ExtractorConverter::convertLengthPercentage<CSS::All>(state, layer.yPosition())
         );
     };
     return extractFillLayerValue(state, state.style.maskLayers(), mapper);
@@ -3025,9 +3025,9 @@ inline void ExtractorCustom::extractMaskPositionShorthandSerialization(Extractor
     auto mapper = [](auto& state, auto& builder, const auto& context, bool includeComma, auto& layer) {
         if (includeComma)
             builder.append(", "_s);
-        ExtractorSerializer::serializeLength(state, builder, context, layer.xPosition());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, layer.xPosition());
         builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, layer.yPosition());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, layer.yPosition());
     };
     extractFillLayerValueSerialization(state, builder, context, state.style.maskLayers(), mapper);
 }
@@ -3131,8 +3131,8 @@ inline RefPtr<CSSValue> ExtractorCustom::extractPerspectiveOriginShorthand(Extra
         list.append(ExtractorConverter::convertNumberAsPixels(state, minimumValueForLength(state.style.perspectiveOriginX(), box.width())));
         list.append(ExtractorConverter::convertNumberAsPixels(state, minimumValueForLength(state.style.perspectiveOriginY(), box.height())));
     } else {
-        list.append(ExtractorConverter::convertLength(state, state.style.perspectiveOriginX()));
-        list.append(ExtractorConverter::convertLength(state, state.style.perspectiveOriginY()));
+        list.append(ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.perspectiveOriginX()));
+        list.append(ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.perspectiveOriginY()));
     }
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -3145,9 +3145,9 @@ inline void ExtractorCustom::extractPerspectiveOriginShorthandSerialization(Extr
         builder.append(' ');
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, minimumValueForLength(state.style.perspectiveOriginY(), box.height()));
     } else {
-        ExtractorSerializer::serializeLength(state, builder, context, state.style.perspectiveOriginX());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.perspectiveOriginX());
         builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, state.style.perspectiveOriginY());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.perspectiveOriginY());
     }
 }
 
@@ -3324,8 +3324,8 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTransformOriginShorthand(Extract
         if (auto transformOriginZ = state.style.transformOriginZ())
             list.append(ExtractorConverter::convertNumberAsPixels(state, transformOriginZ));
     } else {
-        list.append(ExtractorConverter::convertLength(state, state.style.transformOriginX()));
-        list.append(ExtractorConverter::convertLength(state, state.style.transformOriginY()));
+        list.append(ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.transformOriginX()));
+        list.append(ExtractorConverter::convertLengthPercentage<CSS::All>(state, state.style.transformOriginY()));
         if (auto transformOriginZ = state.style.transformOriginZ())
             list.append(ExtractorConverter::convertNumberAsPixels(state, transformOriginZ));
     }
@@ -3344,9 +3344,9 @@ inline void ExtractorCustom::extractTransformOriginShorthandSerialization(Extrac
             ExtractorSerializer::serializeNumberAsPixels(state, builder, context, transformOriginZ);
         }
     } else {
-        ExtractorSerializer::serializeLength(state, builder, context, state.style.transformOriginX());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.transformOriginX());
         builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, state.style.transformOriginY());
+        ExtractorSerializer::serializeLengthPercentage<CSS::All>(state, builder, context, state.style.transformOriginY());
         if (auto transformOriginZ = state.style.transformOriginZ()) {
             builder.append(' ');
             ExtractorSerializer::serializeNumberAsPixels(state, builder, context, transformOriginZ);

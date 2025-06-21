@@ -198,6 +198,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/style"
     "${WEBCORE_DIR}/style/values"
+    "${WEBCORE_DIR}/style/values/align"
     "${WEBCORE_DIR}/style/values/borders"
     "${WEBCORE_DIR}/style/values/box"
     "${WEBCORE_DIR}/style/values/color-adjust"

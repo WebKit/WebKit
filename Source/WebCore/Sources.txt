@@ -2933,7 +2933,6 @@ rendering/style/BorderValue.cpp
 rendering/style/ContentData.cpp
 rendering/style/DropShadowFilterOperationWithStyleColor.cpp
 rendering/style/FillLayer.cpp
-rendering/style/GapLength.cpp
 rendering/style/GridPosition.cpp
 rendering/style/GridPositionsResolver.cpp
 rendering/style/GridSpan.cpp
@@ -3134,6 +3133,7 @@ style/StyleUpdate.cpp
 style/Styleable.cpp
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
+style/values/align/StyleGapGutter.cpp
 style/values/borders/StyleBorderRadius.cpp
 style/values/borders/StyleBoxShadow.cpp
 style/values/borders/StyleCornerShapeValue.cpp

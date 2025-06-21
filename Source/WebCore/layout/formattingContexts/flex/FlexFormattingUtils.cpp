@@ -95,7 +95,7 @@ LayoutUnit FlexFormattingUtils::mainAxisGapValue(const ElementBox& flexContainer
     auto& gapValue = isMainAxisInlineAxis ? flexContainer.style().columnGap() : flexContainer.style().rowGap();
     if (gapValue.isNormal())
         return { };
-    return valueForLength(gapValue.length(), flexContainerContentBoxWidth);
+    return Style::evaluate(gapValue, flexContainerContentBoxWidth);
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight)
@@ -106,7 +106,7 @@ LayoutUnit FlexFormattingUtils::crossAxisGapValue(const ElementBox& flexContaine
     auto& gapValue = isMainAxisInlineAxis ? flexContainer.style().rowGap() : flexContainer.style().columnGap();
     if (gapValue.isNormal())
         return { };
-    return valueForLength(gapValue.length(), flexContainerContentBoxHeight);
+    return Style::evaluate(gapValue, flexContainerContentBoxHeight);
 }
 
 // flex container  direction  flex item    main axis size

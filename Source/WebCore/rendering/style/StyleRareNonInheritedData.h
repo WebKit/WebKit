@@ -27,7 +27,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CounterDirectives.h"
-#include "GapLength.h"
 #include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NameScope.h"
@@ -42,6 +41,7 @@
 #include "ShapeValue.h"
 #include "StyleColor.h"
 #include "StyleContentAlignmentData.h"
+#include "StyleGapGutter.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
 #include "StyleOffsetPosition.h"
@@ -205,8 +205,8 @@ public:
     FixedVector<Style::ScopedName> viewTransitionClasses;
     Style::ViewTransitionName viewTransitionName;
 
-    GapLength columnGap;
-    GapLength rowGap;
+    Style::GapGutter columnGap;
+    Style::GapGutter rowGap;
 
     Style::OffsetDistance offsetDistance;
     Style::OffsetPosition offsetPosition;

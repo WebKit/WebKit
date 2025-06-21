@@ -98,7 +98,7 @@ float Evaluation<ScrollPaddingEdge>::operator()(const ScrollPaddingEdge& edge, f
 
 auto CSSValueConversion<ScrollPaddingEdge>::operator()(BuilderState& state, const CSSValue& value) -> ScrollPaddingEdge
 {
-    return ScrollPaddingEdge { BuilderConverter::convertLengthOrAuto(state, value) };
+    return ScrollPaddingEdge { BuilderConverter::convertLengthPercentageOrAuto<ScrollPaddingEdge::Specified::range>(state, value) };
 }
 
 LayoutBoxExtent extentForRect(const ScrollPaddingBox& padding, const LayoutRect& rect)

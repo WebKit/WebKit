@@ -38,7 +38,7 @@ auto CSSValueConversion<MaximumSize>::operator()(BuilderState& state, const CSSV
 {
     if (value.valueID() == CSSValueNone)
         return MaximumSize { CSS::Keyword::None { } };
-    return MaximumSize { BuilderConverter::convertLengthSizing(state, value) };
+    return MaximumSize { BuilderConverter::convertLengthPercentageOrSizeKeyword<MaximumSize::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

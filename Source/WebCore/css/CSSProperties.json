@@ -4328,7 +4328,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
-                "style-converter": "Length",
+                "style-converter": "LengthPercentage<CSS::All>",
                 "parser-grammar": "<length-percentage>"
             },
             "specification": {
@@ -4343,7 +4343,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
-                "style-converter": "Length",
+                "style-converter": "LengthPercentage<CSS::All>",
                 "parser-grammar": "<length-percentage>"
             },
             "specification": {
@@ -7331,7 +7331,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage, NegativeLengthsAreInvalid'",
                 "render-style-initial": "zeroLength",
-                "style-converter": "Length",
+                "style-converter": "LengthPercentage<CSS::Nonnegative>",
                 "parser-grammar": "<length-percentage [0,inf]>"
             },
             "specification": {
@@ -7436,7 +7436,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage, NegativeLengthsAreInvalid'",
                 "render-style-initial": "initialRadius",
-                "style-converter": "LengthOrAuto",
+                "style-converter": "LengthPercentageOrAuto<CSS::Nonnegative>",
                 "parser-grammar": "auto | <length-percentage [0,inf]>"
             },
             "specification": {
@@ -7454,7 +7454,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage, NegativeLengthsAreInvalid'",
                 "render-style-initial": "initialRadius",
-                "style-converter": "LengthOrAuto",
+                "style-converter": "LengthPercentageOrAuto<CSS::Nonnegative>",
                 "parser-grammar": "auto | <length-percentage [0,inf]>"
             },
             "specification": {
@@ -7576,7 +7576,7 @@
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
                 "render-style-name-for-methods": "StrokeDashOffset",
-                "style-converter": "LengthAllowingNumber",
+                "style-converter": "LengthPercentageOrNumberConvertedToLength<CSS::All>",
                 "parser-grammar": "<length-percentage> | <number>"
             },
             "specification": {
@@ -7689,7 +7689,7 @@
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "style-builder-custom": "Value",
                 "render-style-initial": "oneLength",
-                "style-converter": "LengthAllowingNumber",
+                "style-converter": "LengthPercentageOrNumberConvertedToLength<CSS::Nonnegative>",
                 "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>"
             },
             "status": "supported",
@@ -8494,7 +8494,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
-                "style-converter": "Length",
+                "style-converter": "LengthPercentage<CSS::All>",
                 "parser-grammar": "<length-percentage>"
             },
             "specification": {
@@ -8509,7 +8509,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
-                "style-converter": "Length",
+                "style-converter": "LengthPercentage<CSS::All>",
                 "parser-grammar": "<length-percentage>"
             },
             "specification": {
@@ -9183,10 +9183,9 @@
                     "grid-column-gap",
                     "-webkit-column-gap"
                 ],
-                "animation-wrapper": "LengthVariantWrapper<GapLength>",
-                "style-converter": "GapLength",
-                "parser-grammar": "<gap-gutter>",
-                "parser-exported": true
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<GapGutter>",
+                "parser-grammar": "<gap-gutter>"
             },
             "specification": {
                 "category": "css-align",
@@ -9200,10 +9199,9 @@
                 "aliases": [
                     "grid-row-gap"
                 ],
-                "animation-wrapper": "LengthVariantWrapper<GapLength>",
-                "style-converter": "GapLength",
-                "parser-grammar": "<gap-gutter>",
-                "parser-exported": true
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<GapGutter>",
+                "parser-grammar": "<gap-gutter>"
             },
             "specification": {
                 "category": "css-align",
@@ -10444,7 +10442,7 @@
             "initial": "6px",
             "codegen-properties": {
                 "accepts-quirky-length": true,
-                "style-builder-conditional-converter": "MarqueeIncrement",
+                "style-builder-converter": "LengthPercentage<CSS::All>",
                 "internal-only": true,
                 "parser-grammar": "<length-percentage>"
             },
@@ -12051,9 +12049,7 @@
                 ],
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage, LengthWrapper::Flags::NegativeLengthsAreInvalid }"],
-                "style-builder-converter": "Length",
-                "style-extractor-converter": "LengthWithoutApplyingZoom",
-                "style-extractor-converter-comment": "FIXME: Add explanation (or remove) for why extractor does not apply zoom",
+                "style-converter": "LengthPercentage<CSS::Nonnegative>",
                 "parser-grammar": "<length-percentage [0,inf]>"
             },
             "specification": {

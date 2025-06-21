@@ -62,11 +62,13 @@ public:
     static void serialize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, short);
     static void serialize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScopedName&);
 
-    static void serializeLength(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeLength(const RenderStyle&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeLengthAllowingNumber(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeLengthOrAuto(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeLengthWithoutApplyingZoom(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLength(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLength(const RenderStyle&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLengthPercentage(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLengthPercentage(const RenderStyle&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLengthPercentageOrNumberConvertedToLength(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLengthOrAuto(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
+    template<CSS::Range> static void serializeLengthPercentageOrAuto(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
 
     template<typename T> static void serializeNumber(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, T);
     template<typename T> static void serializeNumberAsPixels(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, T);
@@ -129,7 +131,6 @@ public:
     static void serializeWillChange(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WillChangeData*);
     static void serializeBlockEllipsis(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const BlockEllipsis&);
     static void serializeBlockStepSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, std::optional<WebCore::Length>);
-    static void serializeGapLength(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GapLength&);
     static void serializeTabSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TabSize&);
     static void serializeScrollSnapType(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapType&);
     static void serializeScrollSnapAlign(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapAlign&);
@@ -292,12 +293,22 @@ inline void ExtractorSerializer::serialize(ExtractorState& state, StringBuilder&
         serializationForCSS(builder, context, state.style, scopedName.name);
 }
 
-inline void ExtractorSerializer::serializeLength(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+template<CSS::Range range> inline void ExtractorSerializer::serializeLength(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
 {
-    serializeLength(state.style, builder, context, length);
+    serializeLengthPercentage<range>(state.style, builder, context, length);
 }
 
-inline void ExtractorSerializer::serializeLength(const RenderStyle& style, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+template<CSS::Range range> inline void ExtractorSerializer::serializeLength(const RenderStyle& style, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+{
+    serializeLengthPercentage<range>(style, builder, context, length);
+}
+
+template<CSS::Range range> inline void ExtractorSerializer::serializeLengthPercentage(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+{
+    serializeLengthPercentage<range>(state.style, builder, context, length);
+}
+
+template<CSS::Range range> inline void ExtractorSerializer::serializeLengthPercentage(const RenderStyle& style, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
 {
     switch (length.type()) {
     case LengthType::Auto:
@@ -328,10 +339,10 @@ inline void ExtractorSerializer::serializeLength(const RenderStyle& style, Strin
         serializationForCSS(builder, context, style, CSS::Keyword::Normal { });
         return;
     case LengthType::Fixed:
-        CSS::serializationForCSS(builder, context, CSS::LengthRaw<> { CSS::LengthUnit::Px, adjustFloatForAbsoluteZoom(length.value(), style) });
+        CSS::serializationForCSS(builder, context, CSS::LengthRaw<range> { CSS::LengthUnit::Px, adjustFloatForAbsoluteZoom(length.value(), style) });
         return;
     case LengthType::Percent:
-        CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { length.value() });
+        CSS::serializationForCSS(builder, context, CSS::PercentageRaw<range> { length.value() });
         return;
     case LengthType::Calculated:
         builder.append(CSSCalcValue::create(length.protectedCalculationValue(), style)->customCSSText(context));
@@ -343,60 +354,19 @@ inline void ExtractorSerializer::serializeLength(const RenderStyle& style, Strin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline void ExtractorSerializer::serializeLengthAllowingNumber(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+template<CSS::Range range> inline void ExtractorSerializer::serializeLengthPercentageOrNumberConvertedToLength(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
 {
-    serializeLength(state, builder, context, length);
+    serializeLengthPercentage<range>(state, builder, context, length);
 }
 
-inline void ExtractorSerializer::serializeLengthOrAuto(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+template<CSS::Range range> inline void ExtractorSerializer::serializeLengthOrAuto(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
 {
-    serializeLength(state, builder, context, length);
+    serializeLengthPercentage<range>(state, builder, context, length);
 }
 
-inline void ExtractorSerializer::serializeLengthWithoutApplyingZoom(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
+template<CSS::Range range> inline void ExtractorSerializer::serializeLengthPercentageOrAuto(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& length)
 {
-    switch (length.type()) {
-    case LengthType::Auto:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        return;
-    case LengthType::Content:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Content { });
-        return;
-    case LengthType::FillAvailable:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::WebkitFillAvailable { });
-        return;
-    case LengthType::FitContent:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::FitContent { });
-        return;
-    case LengthType::Intrinsic:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Intrinsic { });
-        return;
-    case LengthType::MinIntrinsic:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::MinIntrinsic { });
-        return;
-    case LengthType::MinContent:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::MinContent { });
-        return;
-    case LengthType::MaxContent:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::MaxContent { });
-        return;
-    case LengthType::Normal:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
-        return;
-    case LengthType::Fixed:
-        CSS::serializationForCSS(builder, context, CSS::LengthRaw<> { CSS::LengthUnit::Px, length.value() });
-        return;
-    case LengthType::Percent:
-        CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { length.value() });
-        return;
-    case LengthType::Calculated:
-        builder.append(CSSCalcValue::create(length.protectedCalculationValue(), state.style)->customCSSText(context));
-        return;
-    case LengthType::Relative:
-    case LengthType::Undefined:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    serializeLengthPercentage<range>(state, builder, context, length);
 }
 
 template<typename T> void ExtractorSerializer::serializeNumber(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, T number)
@@ -522,7 +492,7 @@ inline void ExtractorSerializer::serializeTransformOperation(const RenderStyle& 
             builder.append("0px"_s);
             return;
         }
-        serializeLength(style, builder, context, length);
+        serializeLengthPercentage<CSS::All>(style, builder, context, length);
     };
 
     auto translateAngle = [&](auto angle) {
@@ -682,7 +652,7 @@ inline void ExtractorSerializer::serializeTransformOperation(const RenderStyle& 
     case TransformOperation::Type::Perspective:
         if (auto perspective = uncheckedDowncast<PerspectiveTransformOperation>(operation).perspective()) {
             builder.append(nameLiteral(CSSValuePerspective), '(');
-            serializeLength(style, builder, context, *perspective);
+            serializeLength<CSS::Nonnegative>(style, builder, context, *perspective);
             builder.append(')');
             return;
         }
@@ -920,7 +890,7 @@ inline void ExtractorSerializer::serializeStrokeDashArray(ExtractorState& state,
     }
 
     builder.append(interleave(dashes, [&](auto& builder, auto& dash) {
-        serializeLength(state, builder, context, dash);
+        serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, dash);
     }, ", "_s));
 }
 
@@ -1190,13 +1160,13 @@ inline void ExtractorSerializer::serializeQuotes(ExtractorState& state, StringBu
 inline void ExtractorSerializer::serializeBorderRadiusCorner(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const LengthSize& radius)
 {
     if (radius.width == radius.height) {
-        serializeLength(state, builder, context, radius.width);
+        serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, radius.width);
         return;
     }
 
-    serializeLength(state, builder, context, radius.width);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, radius.width);
     builder.append(' ');
-    serializeLength(state, builder, context, radius.height);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, radius.height);
 }
 
 inline void ExtractorSerializer::serializeContainerNames(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ScopedName>& containerNames)
@@ -1347,17 +1317,7 @@ inline void ExtractorSerializer::serializeBlockStepSize(ExtractorState& state, S
         return;
     }
 
-    serializeLength(state, builder, context, *blockStepSize);
-}
-
-inline void ExtractorSerializer::serializeGapLength(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GapLength& gapLength)
-{
-    if (gapLength.isNormal()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
-        return;
-    }
-
-    serializeLength(state, builder, context, gapLength.length());
+    serializeLength<CSS::Nonnegative>(state, builder, context, *blockStepSize);
 }
 
 inline void ExtractorSerializer::serializeTabSize(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext& context, const TabSize& tabSize)
@@ -1470,9 +1430,9 @@ inline void ExtractorSerializer::serializeWebkitRubyPosition(ExtractorState& sta
 
 inline void ExtractorSerializer::serializePosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const LengthPoint& position)
 {
-    serializeLength(state, builder, context, position.x);
+    serializeLengthPercentage<CSS::All>(state, builder, context, position.x);
     builder.append(' ');
-    serializeLength(state, builder, context, position.y);
+    serializeLengthPercentage<CSS::All>(state, builder, context, position.y);
 }
 
 inline void ExtractorSerializer::serializeContainIntrinsicSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ContainIntrinsicSizeType& type, const std::optional<WebCore::Length>& containIntrinsicLength)
@@ -1482,12 +1442,12 @@ inline void ExtractorSerializer::serializeContainIntrinsicSize(ExtractorState& s
         CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
         return;
     case ContainIntrinsicSizeType::Length:
-        serializeLength(state, builder, context, *containIntrinsicLength);
+        serializeLength<CSS::Nonnegative>(state, builder, context, *containIntrinsicLength);
         return;
     case ContainIntrinsicSizeType::AutoAndLength:
         CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
         builder.append(' ');
-        serializeLength(state, builder, context, *containIntrinsicLength);
+        serializeLength<CSS::Nonnegative>(state, builder, context, *containIntrinsicLength);
         return;
     case ContainIntrinsicSizeType::AutoAndNone:
         CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
@@ -1595,7 +1555,7 @@ inline void ExtractorSerializer::serializeTextUnderlineOffset(ExtractorState& st
         return;
     }
 
-    serializeLength(state, builder, context, length);
+    serializeLengthPercentage<CSS::All>(state, builder, context, length);
 }
 
 inline void ExtractorSerializer::serializeTextUnderlinePosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<TextUnderlinePosition> textUnderlinePosition)
@@ -1639,12 +1599,7 @@ inline void ExtractorSerializer::serializeTextDecorationThickness(ExtractorState
     }
 
     ASSERT(textDecorationThickness.isLength());
-    auto& length = textDecorationThickness.length();
-    if (length.isPercent()) {
-        CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { length.percent() });
-        return;
-    }
-    return serializeLength(state, builder, context, length);
+    return serializeLengthPercentage<CSS::All>(state, builder, context, textDecorationThickness.length());
 }
 
 inline void ExtractorSerializer::serializeTextEmphasisPosition(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext&, OptionSet<TextEmphasisPosition> textEmphasisPosition)
@@ -1935,13 +1890,13 @@ inline void ExtractorSerializer::serializeSingleViewTimelineInsets(ExtractorStat
     ASSERT(insets.start);
 
     if (!insets.end || insets.start == insets.end) {
-        serializeLength(state, builder, context, *insets.start);
+        serializeLengthPercentage<CSS::All>(state, builder, context, *insets.start);
         return;
     }
 
-    serializeLength(state, builder, context, *insets.start);
+    serializeLengthPercentage<CSS::All>(state, builder, context, *insets.start);
     builder.append(' ');
-    serializeLength(state, builder, context, *insets.end);
+    serializeLengthPercentage<CSS::All>(state, builder, context, *insets.end);
 }
 
 inline void ExtractorSerializer::serializeViewTimelineInsets(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ViewTimelineInsets>& insets)
@@ -2029,12 +1984,12 @@ inline void ExtractorSerializer::serializeFillLayerOrigin(ExtractorState& state,
 
 inline void ExtractorSerializer::serializeFillLayerXPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& xPosition)
 {
-    serializeLength(state, builder, context, xPosition);
+    serializeLengthPercentage<CSS::All>(state, builder, context, xPosition);
 }
 
 inline void ExtractorSerializer::serializeFillLayerYPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& yPosition)
 {
-    serializeLength(state, builder, context, yPosition);
+    serializeLengthPercentage<CSS::All>(state, builder, context, yPosition);
 }
 
 inline void ExtractorSerializer::serializeFillLayerRepeat(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillRepeatXY repeat)
@@ -2072,13 +2027,13 @@ inline void ExtractorSerializer::serializeFillLayerBackgroundSize(ExtractorState
     }
 
     if (size.size.height.isAuto() && size.size.width.isAuto()) {
-        serializeLength(state, builder, context, size.size.width);
+        serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.width);
         return;
     }
 
-    serializeLength(state, builder, context, size.size.width);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.width);
     builder.append(' ');
-    serializeLength(state, builder, context, size.size.height);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.height);
 }
 
 inline void ExtractorSerializer::serializeFillLayerMaskSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillSize size)
@@ -2094,13 +2049,13 @@ inline void ExtractorSerializer::serializeFillLayerMaskSize(ExtractorState& stat
     }
 
     if (size.size.height.isAuto()) {
-        serializeLength(state, builder, context, size.size.width);
+        serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.width);
         return;
     }
 
-    serializeLength(state, builder, context, size.size.width);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.width);
     builder.append(' ');
-    serializeLength(state, builder, context, size.size.height);
+    serializeLengthPercentage<CSS::Nonnegative>(state, builder, context, size.size.height);
 }
 
 inline void ExtractorSerializer::serializeFillLayerMaskComposite(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext&, CompositeOperator composite)
@@ -2613,7 +2568,7 @@ inline void ExtractorSerializer::serializeAnimationSingleRange(ExtractorState& s
     if (!SingleTimelineRange::isDefault(range.offset, type)) {
         if (!listEmpty)
             builder.append(' ');
-        serializeLength(state, builder, context, range.offset);
+        serializeLengthPercentage<CSS::All>(state, builder, context, range.offset);
     }
 }
 
@@ -2887,7 +2842,7 @@ inline void ExtractorSerializer::serializeGridTrackBreadth(ExtractorState& state
         return;
     }
 
-    serializeLength(state, builder, context, trackBreadthLength);
+    serializeLengthPercentage<CSS::All>(state, builder, context, trackBreadthLength);
 }
 
 inline void ExtractorSerializer::serializeGridTrackSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridTrackSize& trackSize)
@@ -2898,7 +2853,7 @@ inline void ExtractorSerializer::serializeGridTrackSize(ExtractorState& state, S
         return;
     case FitContentTrackSizing:
         builder.append(nameLiteral(CSSValueFitContent), '(');
-        serializeLength(state, builder, context, trackSize.fitContentTrackBreadth().length());
+        serializeLengthPercentage<CSS::All>(state, builder, context, trackSize.fitContentTrackBreadth().length());
         builder.append(')');
         return;
     case MinMaxTrackSizing:

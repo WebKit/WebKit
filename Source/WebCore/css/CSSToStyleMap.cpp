@@ -183,15 +183,15 @@ static inline bool convertToLengthSize(const CSSValue& value, Style::BuilderStat
         auto pair = Style::BuilderConverter::requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
         if (!pair)
             return false;
-        size.width = pair->first.convertToLength<AnyConversion>(conversionData);
-        size.height = pair->second.convertToLength<AnyConversion>(conversionData);
+        size.width = Style::BuilderConverter::convertLengthPercentageOrAuto<CSS::Nonnegative>(builderState, conversionData, pair->first);
+        size.height = Style::BuilderConverter::convertLengthPercentageOrAuto<CSS::Nonnegative>(builderState, conversionData, pair->second);
     } else {
         auto primitiveValue = Style::BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value);
         if (!primitiveValue)
             return false;
-        size.width = primitiveValue->convertToLength<AnyConversion>(conversionData);
+        size.width = Style::BuilderConverter::convertLengthPercentageOrAuto<CSS::Nonnegative>(builderState, conversionData, *primitiveValue);
     }
-    return !size.width.isUndefined() && !size.height.isUndefined();
+    return true;
 }
 
 void CSSToStyleMap::mapFillSize(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -465,7 +465,7 @@ void CSSToStyleMap::mapAnimationTimeline(Animation& animation, const CSSValue& v
         auto convertInsetValue = [&](CSSValue* value) -> std::optional<Length> {
             if (!value)
                 return std::nullopt;
-            return Style::BuilderConverter::convertLengthOrAuto(m_builderState, *value);
+            return Style::BuilderConverter::convertLengthPercentageOrAuto<CSS::All>(m_builderState, *value);
         };
         auto startInset = convertInsetValue(cssViewValue.startInset().get());
         auto endInset = [&] {

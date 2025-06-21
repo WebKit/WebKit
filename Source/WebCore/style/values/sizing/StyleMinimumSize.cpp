@@ -47,7 +47,7 @@ MinimumSize::MinimumSize(const PreferredSize& other)
 
 auto CSSValueConversion<MinimumSize>::operator()(BuilderState& state, const CSSValue& value) -> MinimumSize
 {
-    return MinimumSize { BuilderConverter::convertLengthSizing(state, value) };
+    return MinimumSize { BuilderConverter::convertLengthPercentageOrSizeKeyword<MinimumSize::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

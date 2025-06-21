@@ -94,7 +94,7 @@ float Evaluation<ScrollMarginEdge>::operator()(const ScrollMarginEdge& edge, flo
 
 auto CSSValueConversion<ScrollMarginEdge>::operator()(BuilderState& state, const CSSValue& value) -> ScrollMarginEdge
 {
-    return ScrollMarginEdge { BuilderConverter::convertLength(state, value) };
+    return ScrollMarginEdge { BuilderConverter::convertLength<ScrollMarginEdge::Fixed::range>(state, value) };
 }
 
 LayoutBoxExtent extentForRect(const ScrollMarginBox& margin, const LayoutRect& rect)

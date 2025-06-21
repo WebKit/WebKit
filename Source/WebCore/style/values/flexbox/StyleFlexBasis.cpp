@@ -43,7 +43,7 @@ std::optional<PreferredSize> FlexBasis::tryPreferredSize() const
 
 auto CSSValueConversion<FlexBasis>::operator()(BuilderState& state, const CSSValue& value) -> FlexBasis
 {
-    return FlexBasis { BuilderConverter::convertLengthSizing(state, value) };
+    return FlexBasis { BuilderConverter::convertLengthPercentageOrSizeKeyword<FlexBasis::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<InsetEdge>::operator()(BuilderState& state, const CSSValue& value) -> InsetEdge
 {
-    return InsetEdge { BuilderConverter::convertLengthOrAuto(state, value) };
+    return InsetEdge { BuilderConverter::convertLengthPercentageOrAuto<InsetEdge::Specified::range>(state, value) };
 }
 
 // MARK: - Blending

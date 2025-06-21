@@ -104,26 +104,6 @@ inline WebCore::Length blendFunc(const WebCore::Length& from, const WebCore::Len
     return WebCore::blend(from, to, context, valueRange);
 }
 
-inline GapLength blendFunc(const GapLength& from, const GapLength& to, const Context& context)
-{
-    if (from.isNormal() || to.isNormal())
-        return context.progress < 0.5 ? from : to;
-    return WebCore::blend(from.length(), to.length(), context, ValueRange::NonNegative);
-}
-
-inline bool canInterpolateLengthVariants(const GapLength& from, const GapLength& to)
-{
-    if (from.isNormal() || to.isNormal())
-        return false;
-    bool isLengthPercentage = true;
-    return canInterpolateLengths(from.length(), to.length(), isLengthPercentage);
-}
-
-inline bool lengthVariantRequiresInterpolationForAccumulativeIteration(const GapLength& from, const GapLength& to)
-{
-    return from.isNormal() || to.isNormal() || lengthsRequireInterpolationForAccumulativeIteration(from.length(), to.length());
-}
-
 inline TabSize blendFunc(const TabSize& from, const TabSize& to, const Context& context)
 {
     auto blendedValue = WebCore::blend(from.value(), to.value(), context);

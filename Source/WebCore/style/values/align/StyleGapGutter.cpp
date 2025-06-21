@@ -23,8 +23,9 @@
  */
 
 #include "config.h"
-#include "StyleMargin.h"
+#include "StyleGapGutter.h"
 
+#include "LengthFunctions.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 #include <wtf/text/TextStream.h>
@@ -34,31 +35,45 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto CSSValueConversion<MarginEdge>::operator()(BuilderState& state, const CSSValue& value) -> MarginEdge
+auto CSSValueConversion<GapGutter>::operator()(BuilderState& state, const CSSValue& value) -> GapGutter
 {
-    return MarginEdge { BuilderConverter::convertLengthPercentageOrAuto<MarginEdge::Specified::range>(state, value) };
+    if (value.valueID() == CSSValueNormal)
+        return GapGutter { CSS::Keyword::Normal { } };
+    return GapGutter { BuilderConverter::convertLengthPercentage<GapGutter::Specified::range>(state, value) };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<GapGutter>::operator()(const GapGutter& gap, LayoutUnit referenceLength) -> LayoutUnit
+{
+    return valueForLength(gap.m_value, referenceLength);
+}
+
+auto evaluateMinimum(const GapGutter& gap, LayoutUnit maximumValue) -> LayoutUnit
+{
+    return minimumValueForLength(gap.m_value, maximumValue);
 }
 
 // MARK: - Blending
 
-auto Blending<MarginEdge>::canBlend(const MarginEdge& a, const MarginEdge& b) -> bool
+auto Blending<GapGutter>::canBlend(const GapGutter& a, const GapGutter& b) -> bool
 {
     return WebCore::canInterpolateLengths(a.m_value, b.m_value, true);
 }
 
-auto Blending<MarginEdge>::requiresInterpolationForAccumulativeIteration(const MarginEdge& a, const MarginEdge& b) -> bool
+auto Blending<GapGutter>::requiresInterpolationForAccumulativeIteration(const GapGutter& a, const GapGutter& b) -> bool
 {
     return WebCore::lengthsRequireInterpolationForAccumulativeIteration(a.m_value, b.m_value);
 }
 
-auto Blending<MarginEdge>::blend(const MarginEdge& a, const MarginEdge& b, const BlendingContext& context) -> MarginEdge
+auto Blending<GapGutter>::blend(const GapGutter& a, const GapGutter& b, const BlendingContext& context) -> GapGutter
 {
-    return MarginEdge { WebCore::blend(a.m_value, b.m_value, context, ValueRange::All) };
+    return GapGutter { WebCore::blend(a.m_value, b.m_value, context, ValueRange::NonNegative) };
 }
 
 // MARK: - Logging
 
-WTF::TextStream& operator<<(WTF::TextStream& ts, const MarginEdge& value)
+WTF::TextStream& operator<<(WTF::TextStream& ts, const GapGutter& value)
 {
     return ts << value.m_value;
 }

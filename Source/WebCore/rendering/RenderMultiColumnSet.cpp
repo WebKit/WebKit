@@ -441,10 +441,11 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
 {
     // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
     // go to the parent block to get the gap.
-    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
-    if (parentBlock.style().columnGap().isNormal())
+    auto& parentBlock = downcast<RenderBlockFlow>(*parent());
+    auto& parentBlockGap = parentBlock.style().columnGap();
+    if (parentBlockGap.isNormal())
         return LayoutUnit(parentBlock.style().fontDescription().computedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return valueForLength(parentBlock.style().columnGap().length(), parentBlock.contentBoxLogicalWidth());
+    return Style::evaluate(parentBlockGap, parentBlock.contentBoxLogicalWidth());
 }
 
 unsigned RenderMultiColumnSet::columnCount() const

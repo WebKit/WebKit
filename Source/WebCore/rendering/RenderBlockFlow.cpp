@@ -352,9 +352,10 @@ bool RenderBlockFlow::recomputeLogicalWidthAndColumnWidth()
 
 LayoutUnit RenderBlockFlow::columnGap() const
 {
-    if (style().columnGap().isNormal())
+    auto& gap = style().columnGap();
+    if (gap.isNormal())
         return LayoutUnit(style().fontDescription().computedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return valueForLength(style().columnGap().length(), contentBoxLogicalWidth());
+    return Style::evaluate(gap, contentBoxLogicalWidth());
 }
 
 void RenderBlockFlow::computeColumnCountAndWidth()

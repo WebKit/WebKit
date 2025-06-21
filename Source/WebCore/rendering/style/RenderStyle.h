@@ -61,7 +61,6 @@ class FontCascade;
 class FontCascadeDescription;
 class FontMetrics;
 class FontSelectionValue;
-class GapLength;
 class GridPosition;
 class GridTrackSize;
 class HitTestRequest;
@@ -293,6 +292,7 @@ struct ColorScheme;
 struct CornerShapeValue;
 struct DynamicRangeLimit;
 struct FlexBasis;
+struct GapGutter;
 struct InsetEdge;
 struct MarginEdge;
 struct MaximumSize;
@@ -967,8 +967,8 @@ public:
     inline bool hasAutoColumnCount() const;
     inline bool specifiesColumns() const;
     inline ColumnFill columnFill() const;
-    inline const GapLength& columnGap() const;
-    inline const GapLength& rowGap() const;
+    inline const Style::GapGutter& columnGap() const;
+    inline const Style::GapGutter& rowGap() const;
     inline BorderStyle columnRuleStyle() const;
     inline unsigned short columnRuleWidth() const;
     inline bool columnRuleIsTransparent() const;
@@ -1602,8 +1602,8 @@ public:
     inline void setColumnCount(unsigned short);
     inline void setHasAutoColumnCount();
     inline void setColumnFill(ColumnFill);
-    inline void setColumnGap(GapLength&&);
-    inline void setRowGap(GapLength&&);
+    inline void setColumnGap(Style::GapGutter&&);
+    inline void setRowGap(Style::GapGutter&&);
     inline void setColumnRuleColor(Style::Color&&);
     inline void setColumnRuleStyle(BorderStyle);
     inline void setColumnRuleWidth(unsigned short);
@@ -2112,8 +2112,8 @@ public:
     static unsigned short initialColumnCount() { return 1; }
     static constexpr ColumnFill initialColumnFill();
     static constexpr ColumnSpan initialColumnSpan();
-    static inline GapLength initialColumnGap();
-    static inline GapLength initialRowGap();
+    static inline Style::GapGutter initialColumnGap();
+    static inline Style::GapGutter initialRowGap();
     static inline TransformOperations initialTransform();
     static inline Length initialTransformOriginX();
     static inline Length initialTransformOriginY();

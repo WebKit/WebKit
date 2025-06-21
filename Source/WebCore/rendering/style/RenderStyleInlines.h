@@ -183,7 +183,7 @@ inline bool RenderStyle::collapseWhiteSpace() const { return collapseWhiteSpace(
 inline ColumnAxis RenderStyle::columnAxis() const { return static_cast<ColumnAxis>(m_nonInheritedData->miscData->multiCol->axis); }
 inline unsigned short RenderStyle::columnCount() const { return m_nonInheritedData->miscData->multiCol->count; }
 inline ColumnFill RenderStyle::columnFill() const { return static_cast<ColumnFill>(m_nonInheritedData->miscData->multiCol->fill); }
-inline const GapLength& RenderStyle::columnGap() const { return m_nonInheritedData->rareData->columnGap; }
+inline const Style::GapGutter& RenderStyle::columnGap() const { return m_nonInheritedData->rareData->columnGap; }
 inline ColumnProgression RenderStyle::columnProgression() const { return static_cast<ColumnProgression>(m_nonInheritedData->miscData->multiCol->progression); }
 inline const Style::Color& RenderStyle::columnRuleColor() const { return m_nonInheritedData->miscData->multiCol->rule.color(); }
 inline bool RenderStyle::columnRuleIsTransparent() const { return m_nonInheritedData->miscData->multiCol->rule.isTransparent(); }
@@ -398,7 +398,7 @@ constexpr Clear RenderStyle::initialClear() { return Clear::None; }
 inline Color RenderStyle::initialColor() { return Color::black; }
 constexpr ColumnAxis RenderStyle::initialColumnAxis() { return ColumnAxis::Auto; }
 constexpr ColumnFill RenderStyle::initialColumnFill() { return ColumnFill::Balance; }
-inline GapLength RenderStyle::initialColumnGap() { return { }; }
+inline Style::GapGutter RenderStyle::initialColumnGap() { return CSS::Keyword::Normal { }; }
 constexpr ColumnProgression RenderStyle::initialColumnProgression() { return ColumnProgression::Normal; }
 constexpr ColumnSpan RenderStyle::initialColumnSpan() { return ColumnSpan::None; }
 inline std::optional<Length> RenderStyle::initialContainIntrinsicHeight() { return std::nullopt; }
@@ -500,7 +500,7 @@ constexpr PrintColorAdjust RenderStyle::initialPrintColorAdjust() { return Print
 constexpr Order RenderStyle::initialRTLOrdering() { return Order::Logical; }
 inline Length RenderStyle::initialRadius() { return LengthType::Auto; }
 constexpr Resize RenderStyle::initialResize() { return Resize::None; }
-inline GapLength RenderStyle::initialRowGap() { return { }; }
+inline Style::GapGutter RenderStyle::initialRowGap() { return CSS::Keyword::Normal { }; }
 constexpr RubyPosition RenderStyle::initialRubyPosition() { return RubyPosition::Over; }
 constexpr RubyAlign RenderStyle::initialRubyAlign() { return RubyAlign::SpaceAround; }
 constexpr RubyOverhang RenderStyle::initialRubyOverhang() { return RubyOverhang::Auto; }
@@ -731,7 +731,7 @@ inline QuotesData* RenderStyle::quotes() const { return m_rareInheritedData->quo
 inline Resize RenderStyle::resize() const { return static_cast<Resize>(m_nonInheritedData->miscData->resize); }
 inline const Style::InsetEdge& RenderStyle::right() const { return m_nonInheritedData->surroundData->inset.right(); }
 inline const Style::Rotate& RenderStyle::rotate() const { return m_nonInheritedData->rareData->rotate; }
-inline const GapLength& RenderStyle::rowGap() const { return m_nonInheritedData->rareData->rowGap; }
+inline const Style::GapGutter& RenderStyle::rowGap() const { return m_nonInheritedData->rareData->rowGap; }
 inline RubyPosition RenderStyle::rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
 inline RubyAlign RenderStyle::rubyAlign() const { return static_cast<RubyAlign>(m_rareInheritedData->rubyAlign); }
 inline RubyOverhang RenderStyle::rubyOverhang() const { return static_cast<RubyOverhang>(m_rareInheritedData->rubyOverhang); }

@@ -2748,6 +2748,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/StyleValidity.h
     style/Styleable.h
 
+    style/values/align/StyleGapGutter.h
+
     style/values/borders/StyleBorderRadius.h
     style/values/borders/StyleBoxShadow.h
     style/values/borders/StyleCornerShapeValue.h

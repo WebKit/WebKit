@@ -152,11 +152,13 @@ public:
     static Ref<CSSPrimitiveValue> convert(ExtractorState&, short);
     static Ref<CSSPrimitiveValue> convert(ExtractorState&, const ScopedName&);
 
-    static Ref<CSSPrimitiveValue> convertLength(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLength(const RenderStyle&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLengthAllowingNumber(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLengthOrAuto(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLengthWithoutApplyingZoom(ExtractorState&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLength(ExtractorState&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLength(const RenderStyle&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLengthPercentage(ExtractorState&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLengthPercentage(const RenderStyle&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLengthPercentageOrNumberConvertedToLength(ExtractorState&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLengthOrAuto(ExtractorState&, const WebCore::Length&);
+    template<CSS::Range> static Ref<CSSPrimitiveValue> convertLengthPercentageOrAuto(ExtractorState&, const WebCore::Length&);
 
     template<typename T> static Ref<CSSPrimitiveValue> convertNumber(ExtractorState&, T);
     template<typename T> static Ref<CSSPrimitiveValue> convertNumberAsPixels(ExtractorState&, T);
@@ -219,7 +221,6 @@ public:
     static Ref<CSSValue> convertWillChange(ExtractorState&, const WillChangeData*);
     static Ref<CSSValue> convertBlockEllipsis(ExtractorState&, const BlockEllipsis&);
     static Ref<CSSValue> convertBlockStepSize(ExtractorState&, std::optional<WebCore::Length>);
-    static Ref<CSSValue> convertGapLength(ExtractorState&, const GapLength&);
     static Ref<CSSValue> convertTabSize(ExtractorState&, const TabSize&);
     static Ref<CSSValue> convertScrollSnapType(ExtractorState&, const ScrollSnapType&);
     static Ref<CSSValue> convertScrollSnapAlign(ExtractorState&, const ScrollSnapAlign&);
@@ -382,33 +383,46 @@ inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, const
     return CSSPrimitiveValue::create(scopedName.name);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(ExtractorState& state, const WebCore::Length& length)
+template<CSS::Range range> inline  Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(ExtractorState& state, const WebCore::Length& length)
 {
-    return convertLength(state.style, length);
+    return convertLength<range>(state.style, length);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(const RenderStyle& style, const WebCore::Length& length)
+template<CSS::Range> inline  Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(const RenderStyle& style, const WebCore::Length& length)
+{
+    ASSERT(length.isFixed());
+    return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(length.value(), style), CSSUnitType::CSS_PX);
+}
+
+template<CSS::Range range> inline  Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthPercentage(ExtractorState& state, const WebCore::Length& length)
+{
+    return convertLengthPercentage<range>(state.style, length);
+}
+
+template<CSS::Range> inline  Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthPercentage(const RenderStyle& style, const WebCore::Length& length)
 {
     if (length.isFixed())
         return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(length.value(), style), CSSUnitType::CSS_PX);
     return CSSPrimitiveValue::create(length, style);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthAllowingNumber(ExtractorState& state, const WebCore::Length& length)
+template<CSS::Range range> inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthPercentageOrNumberConvertedToLength(ExtractorState& state, const WebCore::Length& length)
 {
-    return convertLength(state, length);
+    return convertLengthPercentage<range>(state, length);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthOrAuto(ExtractorState& state, const WebCore::Length& length)
+template<CSS::Range range> inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthOrAuto(ExtractorState& state, const WebCore::Length& length)
 {
     if (length.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
-    return convertLength(state, length);
+    return convertLength<range>(state, length);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthWithoutApplyingZoom(ExtractorState& state, const WebCore::Length& length)
+template<CSS::Range range> inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthPercentageOrAuto(ExtractorState& state, const WebCore::Length& length)
 {
-    return CSSPrimitiveValue::create(length, state.style);
+    if (length.isAuto())
+        return CSSPrimitiveValue::create(CSSValueAuto);
+    return convertLengthPercentage<range>(state, length);
 }
 
 template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertNumber(ExtractorState& state, T number)
@@ -515,7 +529,7 @@ inline Ref<CSSValue> ExtractorConverter::convertTransformOperation(const RenderS
     auto translateLength = [&](const auto& length) -> Ref<CSSPrimitiveValue> {
         if (length.isZero())
             return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
-        return convertLength(style, length);
+        return convertLengthPercentage<CSS::All>(style, length);
     };
 
     auto includeLength = [](const auto& length) -> bool {
@@ -588,7 +602,7 @@ inline Ref<CSSValue> ExtractorConverter::convertTransformOperation(const RenderS
     }
     case TransformOperation::Type::Perspective:
         if (auto perspective = uncheckedDowncast<PerspectiveTransformOperation>(operation).perspective())
-            return CSSFunctionValue::create(CSSValuePerspective, convertLength(style, *perspective));
+            return CSSFunctionValue::create(CSSValuePerspective, convertLength<CSS::Nonnegative>(style, *perspective));
         return CSSFunctionValue::create(CSSValuePerspective, CSSPrimitiveValue::create(CSSValueNone));
     case TransformOperation::Type::Matrix:
     case TransformOperation::Type::Matrix3D: {
@@ -758,7 +772,7 @@ inline Ref<CSSValue> ExtractorConverter::convertStrokeDashArray(ExtractorState& 
         return CSSPrimitiveValue::create(CSSValueNone);
     CSSValueListBuilder list;
     for (auto& dash : dashes)
-        list.append(convertLength(state, dash));
+        list.append(convertLengthPercentage<CSS::Nonnegative>(state, dash));
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
@@ -964,8 +978,8 @@ inline Ref<CSSValue> ExtractorConverter::convertQuotes(ExtractorState&, const Qu
 
 inline Ref<CSSValue> ExtractorConverter::convertBorderRadiusCorner(ExtractorState& state, const LengthSize& radius)
 {
-    auto x = convertLength(state, radius.width);
-    auto y = radius.width == radius.height ? x.copyRef() : convertLength(state, radius.height);
+    auto x = convertLengthPercentage<CSS::Nonnegative>(state, radius.width);
+    auto y = radius.width == radius.height ? x.copyRef() : convertLengthPercentage<CSS::Nonnegative>(state, radius.height);
     return CSSValuePair::create(WTFMove(x), WTFMove(y));
 }
 
@@ -1097,15 +1111,8 @@ inline Ref<CSSValue> ExtractorConverter::convertBlockEllipsis(ExtractorState&, c
 inline Ref<CSSValue> ExtractorConverter::convertBlockStepSize(ExtractorState& state, std::optional<WebCore::Length> blockStepSize)
 {
     if (blockStepSize)
-        return convertLength(state, *blockStepSize);
+        return convertLength<CSS::Nonnegative>(state, *blockStepSize);
     return CSSPrimitiveValue::create(CSSValueNone);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertGapLength(ExtractorState& state, const GapLength& gapLength)
-{
-    if (gapLength.isNormal())
-        return CSSPrimitiveValue::create(CSSValueNormal);
-    return convertLength(state, gapLength.length());
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertTabSize(ExtractorState&, const TabSize& tabSize)
@@ -1192,8 +1199,8 @@ inline Ref<CSSValue> ExtractorConverter::convertWebkitRubyPosition(ExtractorStat
 inline Ref<CSSValue> ExtractorConverter::convertPosition(ExtractorState& state, const LengthPoint& position)
 {
     return CSSValueList::createSpaceSeparated(
-        convertLength(state, position.x),
-        convertLength(state, position.y)
+        convertLengthPercentage<CSS::All>(state, position.x),
+        convertLengthPercentage<CSS::All>(state, position.y)
     );
 }
 
@@ -1203,9 +1210,9 @@ inline Ref<CSSValue> ExtractorConverter::convertContainIntrinsicSize(ExtractorSt
     case ContainIntrinsicSizeType::None:
         return CSSPrimitiveValue::create(CSSValueNone);
     case ContainIntrinsicSizeType::Length:
-        return convertLength(state, *containIntrinsicLength);
+        return convertLength<CSS::Nonnegative>(state, *containIntrinsicLength);
     case ContainIntrinsicSizeType::AutoAndLength:
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), convertLength(state, *containIntrinsicLength));
+        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), convertLength<CSS::Nonnegative>(state, *containIntrinsicLength));
     case ContainIntrinsicSizeType::AutoAndNone:
         return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
     }
@@ -1780,12 +1787,12 @@ inline Ref<CSSValue> ExtractorConverter::convertFillLayerOrigin(ExtractorState& 
 
 inline Ref<CSSValue> ExtractorConverter::convertFillLayerXPosition(ExtractorState& state, const WebCore::Length& xPosition)
 {
-    return convertLength(state, xPosition);
+    return convertLengthPercentage<CSS::All>(state, xPosition);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertFillLayerYPosition(ExtractorState& state, const WebCore::Length& yPosition)
 {
-    return convertLength(state, yPosition);
+    return convertLengthPercentage<CSS::All>(state, yPosition);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertFillLayerRepeat(ExtractorState& state, FillRepeatXY repeat)
@@ -1814,11 +1821,11 @@ inline Ref<CSSValue> ExtractorConverter::convertFillLayerBackgroundSize(Extracto
         return CSSPrimitiveValue::create(CSSValueCover);
 
     if (size.size.height.isAuto() && size.size.width.isAuto())
-        return convertLength(state, size.size.width);
+        return convertLengthPercentage<CSS::Nonnegative>(state, size.size.width);
 
     return CSSValueList::createSpaceSeparated(
-        convertLength(state, size.size.width),
-        convertLength(state, size.size.height)
+        convertLengthPercentage<CSS::Nonnegative>(state, size.size.width),
+        convertLengthPercentage<CSS::Nonnegative>(state, size.size.height)
     );
 }
 
@@ -1831,11 +1838,11 @@ inline Ref<CSSValue> ExtractorConverter::convertFillLayerMaskSize(ExtractorState
         return CSSPrimitiveValue::create(CSSValueCover);
 
     if (size.size.height.isAuto())
-        return convertLength(state, size.size.width);
+        return convertLengthPercentage<CSS::Nonnegative>(state, size.size.width);
 
     return CSSValueList::createSpaceSeparated(
-        convertLength(state, size.size.width),
-        convertLength(state, size.size.height)
+        convertLengthPercentage<CSS::Nonnegative>(state, size.size.width),
+        convertLengthPercentage<CSS::Nonnegative>(state, size.size.height)
     );
 }
 
@@ -2292,7 +2299,7 @@ inline Ref<CSSValueList> ExtractorConverter::convertAnimationSingleRange(Extract
     if (range.name != SingleTimelineRange::Name::Omitted)
         list.append(CSSPrimitiveValue::create(SingleTimelineRange::valueID(range.name)));
     if (!SingleTimelineRange::isDefault(range.offset, type))
-        list.append(convertLength(state, range.offset));
+        list.append(convertLengthPercentage<CSS::All>(state, range.offset));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -2489,7 +2496,7 @@ inline Ref<CSSValue> ExtractorConverter::convertGridTrackBreadth(ExtractorState&
     auto& trackBreadthLength = trackBreadth.length();
     if (trackBreadthLength.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
-    return convertLength(state, trackBreadthLength);
+    return convertLengthPercentage<CSS::All>(state, trackBreadthLength);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertGridTrackSize(ExtractorState& state, const GridTrackSize& trackSize)
@@ -2500,7 +2507,7 @@ inline Ref<CSSValue> ExtractorConverter::convertGridTrackSize(ExtractorState& st
     case FitContentTrackSizing:
         return CSSFunctionValue::create(
             CSSValueFitContent,
-            convertLength(state, trackSize.fitContentTrackBreadth().length())
+            convertLengthPercentage<CSS::All>(state, trackSize.fitContentTrackBreadth().length())
         );
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
