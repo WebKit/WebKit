@@ -3187,7 +3187,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
     bool requireFullLayout = is<HTMLInputElement>(element);
     {
         CheckedPtr renderer = element.renderer();
-        if (renderer->selfNeedsLayout() || renderer->normalChildNeedsLayout() || renderer->posChildNeedsLayout() || renderer->needsPositionedMovementLayout())
+        if (renderer->selfNeedsLayout() || renderer->normalChildNeedsLayout() || renderer->needsPositionedMovementLayout())
             requireFullLayout = true;
         if (renderer->needsSimplifiedNormalFlowLayout()) {
             if (!dimensionsCheck.contains(DimensionsCheck::IgnoreOverflow))
