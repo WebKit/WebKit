@@ -100,6 +100,19 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
 }
 
 template<typename Adaptor>
+JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createForRecovery(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& buffer)
+{
+    size_t elementSize = sizeof(typename Adaptor::Type);
+    ASSERT(buffer);
+    // buffer may be already detached. But this is fine.
+    ConstructionContext context(vm, structure, WTFMove(buffer), 0, buffer->byteLength() / elementSize);
+    ASSERT(context);
+    JSGenericTypedArrayView* result = new (NotNull, allocateCell<JSGenericTypedArrayView>(vm)) JSGenericTypedArrayView(vm, context);
+    result->finishCreation(vm);
+    return result;
+}
+
+template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlobalObject* globalObject, Structure* structure, RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> length)
 {
     VM& vm = globalObject->vm();

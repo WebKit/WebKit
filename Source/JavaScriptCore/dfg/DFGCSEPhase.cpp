@@ -541,10 +541,10 @@ private:
                 } else {
                     // This rule only makes sense for local CSE, since in SSA form we have already
                     // factored the bounds check out of the PutByVal. It's kind of gross, but we
-                    // still have reason to believe that PutByValAlias is a good optimization and
+                    // still have reason to believe that PutByValAlias / PutByValAliasArrayBuffer is a good optimization and
                     // that it's better to do it with a single node rather than separating out the
                     // CheckInBounds.
-                    if (m_node->op() == PutByVal || m_node->op() == PutByValDirect) {
+                    if (m_node->op() == PutByVal || m_node->op() == PutByValArrayBuffer || m_node->op() == PutByValDirect) {
                         HeapLocation heap;
                         
                         Node* base = m_graph.varArgChild(m_node, 0).node();
@@ -582,19 +582,19 @@ private:
                         case Array::Uint32Array:
                         case Array::Float16Array:
                         case Array::Float32Array:
-                        case Array::Float64Array:
+                        case Array::Float64Array: {
                             if (!mode.isInBounds())
                                 break;
-                            heap = HeapLocation(
-                                indexedPropertyLoc, TypedArrayProperties, base, index);
+                            heap = HeapLocation(indexedPropertyLoc, TypedArrayProperties, base, index);
                             break;
-                            
+                        }
+
                         default:
                             break;
                         }
 
                         if (!!heap && m_maps.findReplacement(heap))
-                            m_node->setOp(PutByValAlias);
+                            m_node->setOp(m_node->op() == PutByValArrayBuffer ? PutByValAliasArrayBuffer : PutByValAlias);
                     }
 
                     clobberize(m_graph, m_node, *this);

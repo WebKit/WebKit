@@ -340,6 +340,9 @@ private:
                 node->convertToConstantStoragePointer(view->vector());
                 break;
             }
+
+            case GetArrayBufferPropertyStorage:
+                break;
                 
             case CheckStructureImmediate: {
                 AbstractValue& value = m_state.forNode(node->child1());
@@ -1682,6 +1685,7 @@ private:
             case PhantomNewArrayWithSpread:
             case PhantomNewArrayBuffer:
             case PhantomNewRegExp:
+            case PhantomNewTypedArrayFromSimpleArrayBuffer:
             case BottomValue:
                 alreadyHandled = true;
                 break;

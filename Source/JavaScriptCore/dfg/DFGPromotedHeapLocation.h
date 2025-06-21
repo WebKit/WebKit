@@ -70,6 +70,8 @@ enum PromotedLocationKind {
     NewArrayBufferPLoc,
     RegExpObjectRegExpPLoc,
     RegExpObjectLastIndexPLoc,
+    TypedArrayStructurePLoc,
+    TypedArraySimpleArrayBufferPLoc,
 };
 
 class PromotedLocationDescriptor {
@@ -201,8 +203,6 @@ struct PromotedHeapLocationHash {
 } } // namespace JSC::DFG
 
 namespace WTF {
-
-void printInternal(PrintStream&, JSC::DFG::PromotedLocationKind);
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::DFG::PromotedHeapLocation> : JSC::DFG::PromotedHeapLocationHash { };

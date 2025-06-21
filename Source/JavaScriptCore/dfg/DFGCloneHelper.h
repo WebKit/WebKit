@@ -234,6 +234,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(GetByIdWithThisMegamorphic, Common) \
     CLONE_STATUS(GetByOffset, Common) \
     CLONE_STATUS(GetByVal, Common) \
+    CLONE_STATUS(GetByValArrayBuffer, Common) \
     CLONE_STATUS(GetByValMegamorphic, Common) \
     CLONE_STATUS(GetByValWithThis, Common) \
     CLONE_STATUS(GetByValWithThisMegamorphic, Common) \
@@ -314,7 +315,9 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(PutByIdWithThis, Common) \
     CLONE_STATUS(PutByOffset, Common) \
     CLONE_STATUS(PutByVal, Common) \
+    CLONE_STATUS(PutByValArrayBuffer, Common) \
     CLONE_STATUS(PutByValAlias, Common) \
+    CLONE_STATUS(PutByValAliasArrayBuffer, Common) \
     CLONE_STATUS(PutByValDirect, Common) \
     CLONE_STATUS(PutByValWithThis, Common) \
     CLONE_STATUS(PutClosureVar, Common) \

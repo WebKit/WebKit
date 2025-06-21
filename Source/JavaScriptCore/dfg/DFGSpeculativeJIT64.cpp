@@ -4572,11 +4572,17 @@ void SpeculativeJIT::compile(Node* node)
         compileNewArrayBuffer(node);
         break;
     }
-        
+
     case NewTypedArray: {
         compileNewTypedArray(node);
         break;
     }
+
+    case NewTypedArrayFromSimpleArrayBuffer: {
+        compileNewTypedArrayFromSimpleArrayBuffer(node);
+        break;
+    }
+
     case NewTypedArrayBuffer: {
         compileNewTypedArrayBuffer(node);
         break;
@@ -4939,6 +4945,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetIndexedPropertyStorage: {
         compileGetIndexedPropertyStorage(node);
+        break;
+    }
+
+    case GetArrayBufferPropertyStorage: {
+        compileGetArrayBufferPropertyStorage(node);
         break;
     }
 
@@ -6583,6 +6594,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case GetVectorLength:
@@ -6602,6 +6614,9 @@ void SpeculativeJIT::compile(Node* node)
     case CallWasm:
     case MultiGetByVal:
     case MultiPutByVal:
+    case GetByValArrayBuffer:
+    case PutByValArrayBuffer:
+    case PutByValAliasArrayBuffer:
         DFG_CRASH(m_graph, node, "Unexpected node");
         break;
     }

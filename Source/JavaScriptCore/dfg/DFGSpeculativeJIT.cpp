@@ -7791,10 +7791,10 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
-    
+
     GPRTemporary storage(this);
     GPRReg storageReg = storage.gpr();
-    
+
     ASSERT(node->arrayMode().type() != Array::String);
     auto typedArrayType = node->arrayMode().typedArrayType();
     ASSERT_UNUSED(typedArrayType, isTypedView(typedArrayType));
@@ -7802,6 +7802,20 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
     loadPtr(Address(baseReg, JSArrayBufferView::offsetOfVector()), storageReg);
     cageTypedArrayStorage(baseReg, storageReg);
     storageResult(storageReg, node);
+}
+
+void SpeculativeJIT::compileGetArrayBufferPropertyStorage(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRReg baseGPR = base.gpr();
+
+    GPRTemporary storage(this);
+    GPRReg storageGPR = storage.gpr();
+
+    loadPtr(Address(baseGPR, JSArrayBuffer::offsetOfImpl()), storageGPR);
+    loadPtr(Address(storageGPR, ArrayBuffer::offsetOfData()), storageGPR);
+    cageTypedArrayStorage(baseGPR, storageGPR);
+    storageResult(storageGPR, node);
 }
 
 void SpeculativeJIT::compileResolveRope(Node* node)
@@ -14713,6 +14727,24 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+}
+
+void SpeculativeJIT::compileNewTypedArrayFromSimpleArrayBuffer(Node* node)
+{
+    DFG_ASSERT(m_graph, node, node->child1().useKind() == KnownCellUse);
+
+    SpeculateCellOperand argument(this, node->child1());
+    GPRReg argumentGPR = argument.gpr();
+
+    flushRegisters();
+
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+
+    TypedArrayType typedArrayType = JSC::typedArrayType(node->structure()->typeInfo().type());
+    callOperationWithoutExceptionCheck(operationNewTypedArrayForRecovery(typedArrayType), resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR);
+
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileNewTypedArrayBuffer(Node* node)

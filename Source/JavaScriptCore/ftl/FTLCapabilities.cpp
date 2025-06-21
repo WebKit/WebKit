@@ -86,6 +86,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Spread:
     case NewArrayBuffer:
     case NewTypedArray:
+    case NewTypedArrayFromSimpleArrayBuffer:
     case NewTypedArrayBuffer:
     case GetByOffset:
     case GetGetterSetterByOffset:
@@ -333,6 +334,7 @@ inline CapabilityLevel canCompile(Node* node)
     case BooleanToNumber:
     case HasIndexedProperty:
     case GetIndexedPropertyStorage:
+    case GetArrayBufferPropertyStorage:
     case ResolveRope:
     case GetPropertyEnumerator:
     case EnumeratorNextUpdateIndexAndMode:
@@ -351,6 +353,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
@@ -455,13 +458,16 @@ inline CapabilityLevel canCompile(Node* node)
     case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case GetByVal:
+    case GetByValArrayBuffer:
     case GetByValMegamorphic:
     case GetByValWithThis:
     case GetByValWithThisMegamorphic:
     case MultiGetByVal:
     case MultiPutByVal:
     case PutByVal:
+    case PutByValArrayBuffer:
     case PutByValAlias:
+    case PutByValAliasArrayBuffer:
     case PutByValMegamorphic:
     case PutByValDirect:
     case PutByValWithThis:

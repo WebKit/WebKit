@@ -1280,12 +1280,44 @@ private:
                     m_changed = true;
                 }
             }
+
+            if (m_graph.m_form == SSA) {
+                if (m_node->op() == GetByVal) {
+                    ArrayMode arrayMode = m_node->arrayMode();
+                    switch (arrayMode.type()) {
+                    case Array::Int8Array:
+                    case Array::Int16Array:
+                    case Array::Int32Array:
+                    case Array::Uint8Array:
+                    case Array::Uint16Array:
+                    case Array::Uint32Array:
+                    case Array::Float16Array:
+                    case Array::Float32Array:
+                    case Array::Float64Array: {
+                        if (!arrayMode.isOutOfBounds() && baseEdge.useKind() == KnownCellUse && baseEdge->op() == NewTypedArrayFromSimpleArrayBuffer) {
+                            if (baseEdge->child1()->op() == NewTypedArrayBuffer) {
+                                m_node->setOp(GetByValArrayBuffer);
+                                baseEdge = baseEdge->child1();
+                                m_changed = true;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                    break;
+                }
+            }
             break;
         }
 
         case PutByVal:
         case PutByValDirect:
         case PutByValAlias:
+        case PutByValArrayBuffer:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic: {
             Edge& baseEdge = m_graph.child(m_node, 0);
             Edge& keyEdge = m_graph.child(m_node, 1);
@@ -1302,7 +1334,7 @@ private:
             case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array: {
-                if (m_node->op() == PutByVal || m_node->op() == PutByValDirect || m_node->op() == PutByValAlias) {
+                if (m_node->op() != PutByValMegamorphic) {
                     Edge& valueEdge = m_graph.child(m_node, 2);
                     if (valueEdge.useKind() == DoubleRepUse) {
                         if (foldPurifyNaN(valueEdge))
@@ -1315,7 +1347,7 @@ private:
             case Array::Uint8Array:
             case Array::Uint16Array:
             case Array::Uint32Array: {
-                if (m_node->op() == PutByVal || m_node->op() == PutByValDirect || m_node->op() == PutByValAlias) {
+                if (m_node->op() != PutByValMegamorphic) {
                     Edge& valueEdge = m_graph.child(m_node, 2);
                     if (valueEdge.useKind() == Int32Use) {
                         if (valueEdge->op() == UInt32ToNumber && valueEdge->child1().useKind() == Int32Use) {
@@ -1329,6 +1361,37 @@ private:
 
             default:
                 break;
+            }
+
+            if (m_graph.m_form == SSA) {
+                if (m_node->op() == PutByVal || m_node->op() == PutByValAlias) {
+                    ArrayMode arrayMode = m_node->arrayMode().modeForPut();
+                    switch (arrayMode.type()) {
+                    case Array::Int8Array:
+                    case Array::Int16Array:
+                    case Array::Int32Array:
+                    case Array::Uint8Array:
+                    case Array::Uint16Array:
+                    case Array::Uint32Array:
+                    case Array::Float16Array:
+                    case Array::Float32Array:
+                    case Array::Float64Array: {
+                        // Both OutOfBounds / InBounds can be handled sinec we already got length outside of this node.
+                        if (baseEdge.useKind() == KnownCellUse && baseEdge->op() == NewTypedArrayFromSimpleArrayBuffer) {
+                            if (baseEdge->child1()->op() == NewTypedArrayBuffer) {
+                                m_node->setOp(m_node->op() == PutByVal ? PutByValArrayBuffer : PutByValAliasArrayBuffer);
+                                baseEdge = baseEdge->child1();
+                                m_changed = true;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                    break;
+                }
             }
             break;
         }
@@ -1351,6 +1414,75 @@ private:
             if (keyEdge->op() == MakeRope) {
                 keyEdge->setOp(MakeAtomString);
                 m_changed = true;
+            }
+            break;
+        }
+
+        case GetUndetachedTypeArrayLength: {
+            Edge& baseEdge = m_graph.child(m_node, 0);
+            DFG::ArrayMode arrayMode = m_node->arrayMode();
+            switch (arrayMode.type()) {
+            case Array::Int8Array:
+            case Array::Uint8Array:
+            case Array::Uint8ClampedArray: {
+                if (baseEdge->op() == NewTypedArrayFromSimpleArrayBuffer) {
+                    Edge& bufferEdge = m_graph.child(baseEdge.node(), 0);
+                    if (bufferEdge->op() == NewTypedArrayBuffer && bufferEdge->child1().useKind() == Int32Use) {
+                        if (m_graph.isWatchingArrayBufferDetachWatchpoint(bufferEdge.node())) {
+                            m_insertionSet.insertCheck(m_nodeIndex, m_node->origin, Edge(bufferEdge->child1().node(), Int32Use));
+                            m_node->convertToIdentityOn(bufferEdge->child1().node());
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+            }
+            break;
+        }
+
+        case GetIndexedPropertyStorage: {
+            Edge& baseEdge = m_graph.child(m_node, 0);
+            if (baseEdge->op() == NewTypedArrayFromSimpleArrayBuffer) {
+                Edge& bufferEdge = m_graph.child(baseEdge.node(), 0);
+                if (bufferEdge->op() == NewTypedArrayBuffer && bufferEdge->child1().useKind() == Int32Use) {
+                    if (m_graph.isWatchingArrayBufferDetachWatchpoint(bufferEdge.node())) {
+                        m_node->setOp(GetArrayBufferPropertyStorage);
+                        m_node->child1() = Edge(bufferEdge.node(), KnownCellUse);
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+
+        case NewTypedArray: {
+            Edge& bufferEdge = m_graph.child(m_node, 0);
+            if (bufferEdge.useKind() == UntypedUse && bufferEdge->op() == NewTypedArrayBuffer && bufferEdge->child1().useKind() == Int32Use) {
+                if (m_graph.globalObjectFor(bufferEdge.node()->origin.semantic) == m_graph.globalObjectFor(m_node->origin.semantic)) {
+                    switch (m_node->typedArrayType()) {
+                    // We only support 1-byte sized typed arrays here because ArrayBuffer length would be non-fitting for non 1-byte typed arrays.
+                    // For example,
+                    //
+                    //    let arrayBuffer = new ArrayBuffer(7);
+                    //    let typedArray = new Uint32Array(arrayBuffer);  // This throws an error.
+                    //
+                    case TypedArrayType::TypeInt8:
+                    case TypedArrayType::TypeUint8:
+                    case TypedArrayType::TypeUint8Clamped: {
+                        if (m_graph.isWatchingArrayBufferDetachWatchpoint(bufferEdge.node())) {
+                            m_node->convertToNewTypedArrayFromSimpleArrayBuffer(m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->typedArrayStructureConcurrently(m_node->typedArrayType(), /* * isResizableOrGrowableShared */ false)));
+                            m_changed = true;
+                            break;
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                }
             }
             break;
         }

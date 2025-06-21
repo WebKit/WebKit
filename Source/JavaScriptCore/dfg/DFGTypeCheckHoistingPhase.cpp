@@ -275,10 +275,13 @@ private:
                 case GetButterfly:
                 case EnumeratorGetByVal:
                 case GetByVal:
+                case GetByValArrayBuffer:
                 case MultiGetByVal:
                 case PutByValDirect:
                 case PutByVal:
+                case PutByValArrayBuffer:
                 case PutByValAlias:
+                case PutByValAliasArrayBuffer:
                 case PutByValMegamorphic:
                 case MultiPutByVal:
                 case EnumeratorPutByVal:
@@ -288,6 +291,7 @@ private:
                 case CheckArray:
                 case CheckDetached:
                 case GetIndexedPropertyStorage:
+                case GetArrayBufferPropertyStorage:
                 case ResolveRope:
                 case GetTypedArrayByteOffset:
                 case GetTypedArrayByteOffsetAsInt52:
@@ -363,16 +367,20 @@ private:
                 case GetButterfly:
                 case EnumeratorGetByVal:
                 case GetByVal:
+                case GetByValArrayBuffer:
                 case MultiGetByVal:
                 case PutByValDirect:
                 case PutByVal:
+                case PutByValArrayBuffer:
                 case PutByValAlias:
+                case PutByValAliasArrayBuffer:
                 case PutByValMegamorphic:
                 case EnumeratorPutByVal:
                 case GetArrayLength:
                 case GetUndetachedTypeArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case GetIndexedPropertyStorage:
+                case GetArrayBufferPropertyStorage:
                 case ResolveRope:
                 case Phantom:
                 case MovHint:

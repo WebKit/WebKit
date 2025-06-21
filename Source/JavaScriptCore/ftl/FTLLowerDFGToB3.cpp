@@ -1058,6 +1058,9 @@ private:
         case GetIndexedPropertyStorage:
             compileGetIndexedPropertyStorage();
             break;
+        case GetArrayBufferPropertyStorage:
+            compileGetArrayBufferPropertyStorage();
+            break;
         case ResolveRope:
             compileResolveRope();
             break;
@@ -1097,6 +1100,7 @@ private:
             compileCheckInBoundsInt52();
             break;
         case GetByVal:
+        case GetByValArrayBuffer:
             compileGetByVal();
             break;
         case MultiGetByVal:
@@ -1116,7 +1120,9 @@ private:
             compileGetByValWithThisMegamorphic();
             break;
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValDirect:
             compilePutByVal();
             break;
@@ -1269,6 +1275,9 @@ private:
             break;
         case NewTypedArray:
             compileNewTypedArray();
+            break;
+        case NewTypedArrayFromSimpleArrayBuffer:
+            compileNewTypedArrayFromSimpleArrayBuffer();
             break;
         case NewTypedArrayBuffer:
             compileNewTypedArrayBuffer();
@@ -1907,6 +1916,7 @@ private:
         case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
         case PhantomNewRegExp:
+        case PhantomNewTypedArrayFromSimpleArrayBuffer:
         case PutHint:
         case BottomValue:
         case KillStack:
@@ -5551,6 +5561,14 @@ private:
         setStorage(caged(Gigacage::Primitive, vector, cell));
     }
 
+    void compileGetArrayBufferPropertyStorage()
+    {
+        LValue cell = lowCell(m_node->child1());
+        LValue impl = m_out.loadPtr(cell, m_heaps.JSArrayBuffer_impl);
+        LValue data = m_out.loadPtr(impl, m_heaps.ArrayBuffer_data);
+        setStorage(caged(Gigacage::Primitive, data, cell));
+    }
+
     void compileResolveRope()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -7343,7 +7361,7 @@ IGNORE_CLANG_WARNINGS_END
                     }
                 };
 
-                if (arrayMode.isInBounds() || m_node->op() == PutByValAlias)
+                if (arrayMode.isInBounds() || m_node->op() == PutByValAlias || m_node->op() == PutByValAliasArrayBuffer)
                     storeValue(value, pointer);
                 else {
                     LValue isOutOfBoundsCondition;
@@ -10273,6 +10291,17 @@ IGNORE_CLANG_WARNINGS_END
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             return;
         }
+    }
+
+    void compileNewTypedArrayFromSimpleArrayBuffer()
+    {
+        TypedArrayType typedArrayType = JSC::typedArrayType(m_node->structure()->typeInfo().type());
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == KnownCellUse);
+
+        LValue argument = lowCell(m_node->child1());
+        LValue result = vmCall(pointerType(), operationNewTypedArrayForRecovery(typedArrayType), weakPointer(globalObject), argument);
+        setJSValue(result);
     }
 
     void compileNewTypedArrayBuffer()

@@ -153,6 +153,7 @@ public:
                             case FunctionActivationPLoc:
                             case FunctionExecutablePLoc:
                             case StructurePLoc:
+                            case TypedArrayStructurePLoc:
                                 if (heapPair.value.isDead()) {
                                     WTF::dataFile().atomically([&](auto&) {
                                         dataLogLn("PromotedHeapLocation is dead, but should not be: ", heapPair.key);

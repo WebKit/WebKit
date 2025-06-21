@@ -667,9 +667,9 @@ void LoopUnrollingPhase::LoopData::analyzeLoopNode(Graph& graph, Node* node)
     if (isMaterialNode(graph, node))
         ++materialNodeCount;
 
-    if (node->op() == PutByVal)
+    if (node->op() == PutByVal || node->op() == PutByValArrayBuffer)
         ++putByValCount;
-    if (node->op() == GetByVal)
+    if (node->op() == GetByVal || node->op() == GetByValArrayBuffer)
         ++getByValCount;
 
     if (isNumericComputationNode(node))
@@ -877,6 +877,7 @@ bool LoopUnrollingPhase::LoopData::isMaterialNode(Graph& graph, Node* node)
     case PhantomNewArrayBuffer:
     case PhantomClonedArguments:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case PutHint:
     case BottomValue:
     case KillStack:

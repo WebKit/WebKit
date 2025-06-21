@@ -3211,6 +3211,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewTypedArrayFromSimpleArrayBuffer: {
+        compileNewTypedArrayFromSimpleArrayBuffer(node);
+        break;
+    }
+
     case NewTypedArrayBuffer: {
         compileNewTypedArrayBuffer(node);
         break;
@@ -3524,6 +3529,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetIndexedPropertyStorage: {
         compileGetIndexedPropertyStorage(node);
+        break;
+    }
+
+    case GetArrayBufferPropertyStorage: {
+        compileGetArrayBufferPropertyStorage(node);
         break;
     }
 
@@ -4402,6 +4412,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomCreateActivation:
     case PhantomNewInternalFieldObject:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeCreateActivation:
@@ -4452,6 +4463,9 @@ void SpeculativeJIT::compile(Node* node)
     case InByValMegamorphic:
     case MultiGetByVal:
     case MultiPutByVal:
+    case GetByValArrayBuffer:
+    case PutByValArrayBuffer:
+    case PutByValAliasArrayBuffer:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

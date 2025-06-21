@@ -201,11 +201,12 @@ namespace JSC { namespace DFG {
     macro(StrCat, NodeResultJS | NodeMustGenerate) \
     \
     /* Property access. */\
-    /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
+    /* PutByValAlias / PutByValArrayBufferAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\
     /* this must be the directly subsequent property put. Note that PutByVal */\
     /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(GetByValArrayBuffer, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValMegamorphic, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValWithThis, NodeResultJS | NodeMustGenerate) \
     macro(GetByValWithThisMegamorphic, NodeResultJS | NodeMustGenerate) \
@@ -217,7 +218,9 @@ namespace JSC { namespace DFG {
     macro(ForwardVarargs, NodeMustGenerate) \
     macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutByValArrayBuffer, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutByValAliasArrayBuffer, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValMegamorphic, NodeMustGenerate | NodeHasVarArgs) \
     macro(MultiPutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutPrivateName, NodeMustGenerate) \
@@ -264,6 +267,7 @@ namespace JSC { namespace DFG {
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \
+    macro(GetArrayBufferPropertyStorage, NodeResultStorage) \
     macro(ResolveRope, NodeResultJS) \
     macro(ConstantStoragePointer, NodeResultStorage) \
     macro(GetGetter, NodeResultJS) \
@@ -411,6 +415,7 @@ namespace JSC { namespace DFG {
     macro(NewArrayBuffer, NodeResultJS) \
     macro(NewInternalFieldObject, NodeResultJS) \
     macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
+    macro(NewTypedArrayFromSimpleArrayBuffer, NodeResultJS) \
     macro(NewTypedArrayBuffer, NodeResultJS | NodeMustGenerate) \
     macro(NewRegExp, NodeResultJS) \
     macro(NewRegExpUntyped, NodeResultJS | NodeMustGenerate) \
@@ -439,6 +444,7 @@ namespace JSC { namespace DFG {
     macro(PhantomCreateActivation, NodeResultJS | NodeMustGenerate) \
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     macro(PhantomNewRegExp, NodeResultJS | NodeMustGenerate) \
+    macro(PhantomNewTypedArrayFromSimpleArrayBuffer, NodeResultJS | NodeMustGenerate) \
     \
     /* Nodes for misc operations. */\
     macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \

@@ -1619,6 +1619,7 @@ public:
     void compilePurifyNaN(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
+    void compileGetArrayBufferPropertyStorage(Node*);
     void compileResolveRope(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
     void compileGetTypedArrayByteOffset(Node*);
@@ -1764,6 +1765,7 @@ public:
     void compileNewArrayWithSpecies(Node*);
     void compileNewArrayWithSizeAndStructure(Node*);
     void compileNewTypedArray(Node*);
+    void compileNewTypedArrayFromSimpleArrayBuffer(Node*);
     void compileNewTypedArrayBuffer(Node*);
     void compileToThis(Node*);
     void compileOwnPropertyKeysVariant(Node*);

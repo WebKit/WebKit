@@ -75,6 +75,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case CountExecution:
     case SuperSamplerBegin:
     case SuperSamplerEnd:

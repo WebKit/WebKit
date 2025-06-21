@@ -41,6 +41,7 @@
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
+#include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
@@ -136,6 +137,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
     case PhantomNewArrayBuffer:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
         // Those are completely handled by operationMaterializeObjectInOSR
         break;
 
@@ -739,6 +741,40 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         }
 
         return result;
+    }
+
+    case PhantomNewTypedArrayFromSimpleArrayBuffer: {
+        JSArrayBuffer* arrayBufferValue = nullptr;
+        Structure* structure = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location() == PromotedLocationDescriptor(TypedArraySimpleArrayBufferPLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSArrayBuffer>());
+                arrayBufferValue = jsCast<JSArrayBuffer*>(JSValue::decode(values[i]));
+            }
+            if (property.location() == PromotedLocationDescriptor(TypedArrayStructurePLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>());
+                structure = jsCast<Structure*>(JSValue::decode(values[i]));
+            }
+        }
+        RELEASE_ASSERT(arrayBufferValue);
+        RELEASE_ASSERT(structure);
+
+        RefPtr arrayBuffer = arrayBufferValue->impl();
+        RELEASE_ASSERT(arrayBuffer);
+
+        switch (typedArrayType(structure->typeInfo().type())) {
+        case TypedArrayType::TypeInt8:
+            return JSInt8Array::createForRecovery(vm, structure, WTFMove(arrayBuffer));
+        case TypedArrayType::TypeUint8:
+            return JSUint8Array::createForRecovery(vm, structure, WTFMove(arrayBuffer));
+        case TypedArrayType::TypeUint8Clamped:
+            return JSUint8ClampedArray::createForRecovery(vm, structure, WTFMove(arrayBuffer));
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        return { };
     }
 
     case PhantomNewRegExp: {
