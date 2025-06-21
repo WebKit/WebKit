@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@ struct Options {
 #if PLATFORM(WPE)
     bool useWPELegacyAPI { false };
 #endif
+    bool useLocalDNSResolver { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;

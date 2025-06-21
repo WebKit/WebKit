@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2015-2019 Apple Inc. All rights reserved.
+# Copyright (c) 2015-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -582,6 +582,8 @@ class Driver(object):
             cmd.append('--show-window')
         if self._port.get_option('accessibility_isolated_tree'):
             cmd.append('--accessibility-isolated-tree')
+        if self._port.get_option('local_dns_resolver'):
+            cmd.append('--local-dns-resolver')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

@@ -160,6 +160,9 @@
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
+		D2D99AEE2A9EF3F500000BBF /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AED2A9EF3F500000BBF /* Network.framework */; };
+		D2D99AF72AA21E6800000BBF /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AF62AA21E6800000BBF /* NetworkExtension.framework */; platformFilters = (maccatalyst, macos, ); };
+		D2D99AFC2AA27BA800000BBF /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AED2A9EF3F500000BBF /* Network.framework */; };
 		DD4671AE2A6B136200E49DBD /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD4671AD2A6B136200E49DBD /* WebCore.framework */; };
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
@@ -486,6 +489,8 @@
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
+		D2D99AED2A9EF3F500000BBF /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/PrivateFrameworks/Network.framework; sourceTree = SDKROOT; };
+		D2D99AF62AA21E6800000BBF /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DD4671AD2A6B136200E49DBD /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerDraggingInfo.mm; sourceTree = "<group>"; };
 		E132AA3917CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerDraggingInfo.h; sourceTree = "<group>"; };
@@ -524,6 +529,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2D99AFC2AA27BA800000BBF /* Network.framework in Frameworks */,
 				57A0062F22976EF800AD08BD /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,6 +539,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */,
+				D2D99AEE2A9EF3F500000BBF /* Network.framework in Frameworks */,
+				D2D99AF72AA21E6800000BBF /* NetworkExtension.framework in Frameworks */,
 				57A0062E22976EEB00AD08BD /* Security.framework in Frameworks */,
 				DD4671AE2A6B136200E49DBD /* WebCore.framework in Frameworks */,
 				51058AD61D678825009A538C /* WebKit.framework in Frameworks */,
@@ -814,6 +822,8 @@
 				2EE52CE41890A9A80010ED21 /* CoreGraphics.framework */,
 				2EE52CE21890A9A80010ED21 /* Foundation.framework */,
 				0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */,
+				D2D99AED2A9EF3F500000BBF /* Network.framework */,
+				D2D99AF62AA21E6800000BBF /* NetworkExtension.framework */,
 				570E75A42152DA2C00324B6E /* Security.framework */,
 				DD4671AD2A6B136200E49DBD /* WebCore.framework */,
 			);
@@ -1515,6 +1525,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Debug;
 		};
@@ -1522,6 +1536,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Release;
 		};
@@ -1548,6 +1566,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1559,6 +1581,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1570,6 +1596,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Production;
@@ -1668,6 +1698,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Production;
 		};

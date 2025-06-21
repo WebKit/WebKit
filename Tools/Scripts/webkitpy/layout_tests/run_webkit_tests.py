@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2011, 2016, 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -377,6 +377,7 @@ def parse_args(args):
     option_group_definitions.append(("Web Platform Test Server Options", [
         optparse.make_option("--disable-wpt-hostname-aliases", action="store_true", default=False, help="Disable running tests from WPT against the web-platform.test domain, if the port supports it."),
         optparse.make_option("--wptserver-doc-root", type="string", help=("Set web platform server document root, relative to LayoutTests directory")),
+        optparse.make_option("--local-dns-resolver", action="store_true", default=False, help="Run and use a local DNS resolver, if the port supports it.")
     ]))
 
     option_group_definitions.append(('Upload Options', upload_options()))

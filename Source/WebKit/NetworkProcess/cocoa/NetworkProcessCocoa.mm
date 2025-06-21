@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,8 @@
 #import "ExtensionKitSPI.h"
 #import "WKProcessExtension.h"
 #endif
+
+#import <pal/spi/cocoa/NetworkSPI.h>
 
 namespace WebKit {
 
@@ -118,6 +120,18 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     m_enableModernDownloadProgress = parameters.enableModernDownloadProgress;
 
     increaseFileDescriptorLimit();
+
+#if PLATFORM(IOS_FAMILY)
+    // See TestController::cocoaPlatformInitialize for supporting a local DNS resolver on Mac.
+    if (!parameters.localhostAliasesForTesting.isEmpty()) {
+        nw_resolver_config_t resolverConfig = nw_resolver_config_create();
+        nw_resolver_config_set_protocol(resolverConfig, nw_resolver_protocol_dns53);
+        nw_resolver_config_set_class(resolverConfig, nw_resolver_class_designated_direct);
+        nw_resolver_config_add_name_server(resolverConfig, "127.0.0.1:8053");
+        nw_resolver_config_add_match_domain(resolverConfig, "test");
+        nw_privacy_context_require_encrypted_name_resolution(NW_DEFAULT_PRIVACY_CONTEXT, true, resolverConfig);
+    }
+#endif
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const

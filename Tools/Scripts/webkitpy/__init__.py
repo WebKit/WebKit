@@ -1,5 +1,5 @@
 # Copyright (C) 2008-2020 Andrey Petrov and contributors.
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -78,6 +78,7 @@ AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing'], aliases=['backports.configparser']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(7, 6, 1), wheel=True))
+AutoInstall.register(Package('dnslib', Version(0, 9, 26)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))

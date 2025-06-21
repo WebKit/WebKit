@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -497,6 +497,9 @@ private:
 
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize(const Options&);
+#if PLATFORM(MAC)
+    void localDNSInitialize();
+#endif
     void cocoaResetStateToConsistentValues(const TestOptions&);
     void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();

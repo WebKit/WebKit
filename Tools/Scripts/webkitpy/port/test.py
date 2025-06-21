@@ -30,7 +30,8 @@ import time
 
 from webkitcorepy import string_utils
 
-from webkitpy.port import Port, Driver, DriverOutput
+from webkitpy.port.base import Port
+from webkitpy.port.driver import Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap

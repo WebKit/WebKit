@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,6 +192,12 @@ static bool handleOptionWPELegacyAPI(Options& options, const char*, const char*)
 }
 #endif
 
+static bool handleOptionLocalDNSResolver(Options& options, const char*, const char*)
+{
+    options.useLocalDNSResolver = true;
+    return true;
+}
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -232,6 +238,7 @@ OptionsHandler::OptionsHandler(Options& o)
 #if PLATFORM(WPE)
     optionList.append(Option("--wpe-legacy-api", "Use the WPE legacy API (libwpe)", handleOptionWPELegacyAPI));
 #endif
+    optionList.append(Option("--local-dns-resolver", "Enable using a local DNS resolver, if the port supports it", handleOptionLocalDNSResolver));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
