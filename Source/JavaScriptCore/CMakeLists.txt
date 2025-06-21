@@ -991,6 +991,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DeferredWorkTimerInlines.h
     runtime/DefinePropertyAttributes.h
     runtime/DeletePropertySlot.h
+    runtime/DestructibleException.h
     runtime/DirectArguments.h
     runtime/DirectArgumentsOffset.h
     runtime/DirectEvalExecutable.h
@@ -1014,6 +1015,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ExceptionExpectation.h
     runtime/ExceptionHelpers.h
     runtime/ExceptionScope.h
+    runtime/ExceptionStack.h
     runtime/ExecutableBase.h
     runtime/ExecutableBaseInlines.h
     runtime/Float16Array.h

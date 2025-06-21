@@ -2857,6 +2857,20 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject* g
     OPERATION_RETURN(scope, constructRegExp(globalObject, ArgList { args, 2 }, globalObject->regExpConstructor()));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewError, JSObject*, (JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedMessage, EncodedJSValue encodedOptions))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue message = JSValue::decode(encodedMessage);
+    JSValue options = JSValue::decode(encodedOptions);
+
+    // Since this is just an operation, we should use `useCurrentFrame = true`.
+    OPERATION_RETURN(scope, ErrorInstance::create(globalObject, structure, message, options, nullptr, TypeNothing, ErrorType::Error, /* useCurrentFrame */ true));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationStringValueOf, JSString*, (JSGlobalObject* globalObject, EncodedJSValue encodedArgument))
 {
     VM& vm = globalObject->vm();
@@ -5213,6 +5227,19 @@ JSC_DEFINE_JIT_OPERATION(operationThrowDFG, void, (JSGlobalObject* globalObject,
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     scope.throwException(globalObject, JSValue::decode(valueToThrow));
+    OPERATION_RETURN(scope);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationThrowWithAdjustment, void, (JSGlobalObject* globalObject, ErrorInstance* error, uint32_t callDepth))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    LineColumn lineColumn = StackFrame::lineAndColumnForBytecodeIndex(codeBlock, callFrame->codeOrigin());
+    scope.throwException(globalObject, Exception::createWithFrameAdjustment(vm, error, lineColumn, callDepth));
     OPERATION_RETURN(scope);
 }
 

@@ -59,6 +59,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
 
     // FIXME: Make the InjectedScript a module itself.
     JSC::JSLockHolder locker(injectedScript.globalObject());
+    JSC::VM& vm = injectedScript.globalObject()->vm();
     ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "hasInjectedModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     auto hasInjectedModuleResult = injectedScript.callFunctionWithEvalEnabled(function);
@@ -67,9 +68,8 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         auto& error = hasInjectedModuleResult.error();
         ASSERT(error);
         JSC::LineColumn lineColumn;
-        auto& stack = error->stack();
-        if (stack.size() > 0)
-            lineColumn = stack[0].computeLineAndColumn();
+        if (auto stack = error->stack(); !stack.isEmpty())
+            lineColumn = stack.computeLineAndColumn(vm);
         WTFLogAlways("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -87,9 +87,8 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
             auto& error = injectModuleResult.error();
             ASSERT(error);
             JSC::LineColumn lineColumn;
-            auto& stack = error->stack();
-            if (stack.size() > 0)
-                lineColumn = stack[0].computeLineAndColumn();
+            if (auto stack = error->stack(); !stack.isEmpty())
+                lineColumn = stack.computeLineAndColumn(vm);
             WTFLogAlways("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), lineColumn.line, lineColumn.column);
             RELEASE_ASSERT_NOT_REACHED();
         }

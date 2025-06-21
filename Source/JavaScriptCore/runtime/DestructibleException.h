@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,43 @@
 
 #pragma once
 
+#include "Exception.h"
+#include "ExceptionStack.h"
+#include <wtf/Vector.h>
+
 namespace JSC {
 
-struct LineColumn {
-    bool operator==(const LineColumn& other) const
+class DestructibleException final : public Exception {
+public:
+    using Base = Exception;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return line == other.line && column == other.column;
+        return &vm.destructibleExceptionSpace();
     }
 
-    explicit operator bool() const { return !!line; }
+    JS_EXPORT_PRIVATE static DestructibleException* create(VM&, JSValue thrownValue);
 
-    unsigned line { 0 };
-    unsigned column { 0 };
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+    DECLARE_VISIT_CHILDREN;
+
+    DECLARE_EXPORT_INFO;
+
+    ~DestructibleException();
+
+    ExceptionStack stack() const;
+
+private:
+    DestructibleException(VM&, JSValue thrownValue);
+    void finishCreation(VM&);
+    static void destroy(JSCell*);
+
+    RefPtr<ExceptionStackContent> m_stack;
+
+    friend class LLIntOffsetsExtractor;
 };
 
 } // namespace JSC
-

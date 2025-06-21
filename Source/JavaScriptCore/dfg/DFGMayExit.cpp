@@ -206,6 +206,9 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         return Exits;
     }
 
+    case NewError:
+        return Exits;
+
     case SetRegExpObjectLastIndex:
         if (node->ignoreLastIndexIsWritable())
             break;

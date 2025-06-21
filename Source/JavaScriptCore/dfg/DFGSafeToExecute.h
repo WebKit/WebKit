@@ -679,6 +679,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SetFunctionName:
     case NewStringObject:
     case NewRegExpUntyped:
+    case NewError:
     case InByVal:
     case InByValMegamorphic:
     case InById:
@@ -709,6 +710,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case TailCallVarargs:
     case TailCallForwardVarargs:
     case Throw:
+    case ThrowWithAdjustment:
     case ThrowStaticError:
     case CountExecution:
     case SuperSamplerBegin:

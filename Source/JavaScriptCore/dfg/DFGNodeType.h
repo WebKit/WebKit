@@ -414,6 +414,7 @@ namespace JSC { namespace DFG {
     macro(NewTypedArrayBuffer, NodeResultJS | NodeMustGenerate) \
     macro(NewRegExp, NodeResultJS) \
     macro(NewRegExpUntyped, NodeResultJS | NodeMustGenerate) \
+    macro(NewError, NodeResultJS | NodeMustGenerate) \
     macro(NewSymbol, NodeResultJS | NodeMustGenerate) \
     macro(NewStringObject, NodeResultJS) \
     macro(NewMap, NodeResultJS) \
@@ -538,6 +539,7 @@ namespace JSC { namespace DFG {
     macro(TailCallForwardVarargs, NodeMustGenerate) \
     macro(Unreachable, NodeMustGenerate) \
     macro(Throw, NodeMustGenerate) \
+    macro(ThrowWithAdjustment, NodeMustGenerate) \
     macro(ThrowStaticError, NodeMustGenerate) \
     \
     /* Count execution. */\

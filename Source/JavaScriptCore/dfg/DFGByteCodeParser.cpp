@@ -54,6 +54,7 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DOMJITGetterSetter.h"
 #include "DeleteByStatus.h"
+#include "ErrorConstructor.h"
 #include "FunctionCodeBlock.h"
 #include "GetByStatus.h"
 #include "GetterSetter.h"
@@ -5076,7 +5077,6 @@ bool ByteCodeParser::handleConstantFunction(
     int argumentCountIncludingThis, CodeSpecializationKind kind, SpeculatedType prediction, Node* newTarget, const ChecksFunctor& insertChecks)
 {
     VERBOSE_LOG("    Handling constant function ", JSValue(function), "\n");
-    UNUSED_PARAM(newTarget);
     
     // It so happens that the code below assumes that the result operand is valid. It's extremely
     // unlikely that the result operand would be invalid - you'd have to call this via a setter call.
@@ -5183,6 +5183,53 @@ bool ByteCodeParser::handleConstantFunction(
                 set(result, resultNode);
                 return true;
             }
+        }
+    }
+
+    if (function->classInfo() == ErrorConstructor::info() && kind == CodeSpecializationKind::CodeForConstruct) {
+        Node* newTargetNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+        JSGlobalObject* globalObject = function->globalObject();
+        Structure* structure = nullptr;
+        if (newTargetNode != callTargetNode) {
+            JSFunction* derived = nullptr;
+            if (newTargetNode)
+                derived = newTargetNode->dynamicCastConstant<JSFunction*>();
+            if (!derived && newTarget)
+                derived = newTarget->dynamicCastConstant<JSFunction*>();
+
+            if (derived && derived->globalObject() == globalObject) {
+                if (FunctionRareData* rareData = derived->rareData()) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                        Structure* newStructure = rareData->internalFunctionAllocationStructure();
+                        if (newStructure
+                            && newStructure->classInfoForCells() == ErrorInstance::info()
+                            && newStructure->globalObject() == globalObject) {
+                            m_graph.freeze(rareData);
+                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            m_graph.freeze(globalObject);
+                            m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                            structure = newStructure;
+                        }
+                    }
+                }
+            }
+
+            if (!structure)
+                return false;
+        }
+
+        if (!structure)
+            structure = globalObject->errorStructureConcurrently();
+        if (structure) {
+            insertChecks();
+            Node* message = jsConstant(jsUndefined());
+            Node* options = jsConstant(jsUndefined());
+            if (argumentCountIncludingThis > 1)
+                message = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            if (argumentCountIncludingThis > 2)
+                options = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            set(result, addToGraph(NewError, OpInfo(m_graph.registerStructure(structure)), message, options));
+            return true;
         }
     }
 

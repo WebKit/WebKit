@@ -297,6 +297,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(NewObject, Common) \
     CLONE_STATUS(NewRegExp, Common) \
     CLONE_STATUS(NewRegExpUntyped, Common) \
+    CLONE_STATUS(NewError, Common) \
     CLONE_STATUS(NewSet, Common) \
     CLONE_STATUS(NormalizeMapKey, Common) \
     CLONE_STATUS(NumberToStringWithValidRadixConstant, Common) \

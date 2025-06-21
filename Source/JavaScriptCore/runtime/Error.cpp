@@ -34,59 +34,59 @@
 
 namespace JSC {
 
-JSObject* createError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(), message, JSValue(), appender, TypeNothing, ErrorType::Error, true);
 }
 
-JSObject* createEvalError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createEvalError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::EvalError), message, JSValue(), appender, TypeNothing, ErrorType::EvalError, true);
 }
 
-JSObject* createRangeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createRangeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::RangeError), message, JSValue(), appender, TypeNothing, ErrorType::RangeError, true);
 }
 
-JSObject* createReferenceError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createReferenceError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::ReferenceError), message, JSValue(), appender, TypeNothing, ErrorType::ReferenceError, true);
 }
 
-JSObject* createSyntaxError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createSyntaxError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::SyntaxError), message, JSValue(), appender, TypeNothing, ErrorType::SyntaxError, true);
 }
 
-JSObject* createTypeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender, RuntimeType type)
+ErrorInstance* createTypeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender, RuntimeType type)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, JSValue(), appender, type, ErrorType::TypeError, true);
 }
 
-JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject, ErrorInstance::SourceAppender appender)
+ErrorInstance* createNotEnoughArgumentsError(JSGlobalObject* globalObject, ErrorInstance::SourceAppender appender)
 {
     return createTypeError(globalObject, "Not enough arguments"_s, appender, TypeNothing);
 }
 
-JSObject* createURIError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createURIError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::URIError), message, JSValue(), appender, TypeNothing, ErrorType::URIError, true);
 }
 
-JSObject* createError(JSGlobalObject* globalObject, ErrorType errorType, const String& message)
+ErrorInstance* createError(JSGlobalObject* globalObject, ErrorType errorType, const String& message)
 {
     return createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), message);
 }
 
-JSObject* createError(JSGlobalObject* globalObject, ErrorTypeWithExtension errorType, const String& message)
+ErrorInstance* createError(JSGlobalObject* globalObject, ErrorTypeWithExtension errorType, const String& message)
 {
     switch (errorType) {
     case ErrorTypeWithExtension::Error:
@@ -114,7 +114,7 @@ JSObject* createError(JSGlobalObject* globalObject, ErrorTypeWithExtension error
     return nullptr;
 }
 
-static JSObject* createGetterTypeError(JSGlobalObject* globalObject, const String& message)
+static ErrorInstance* createGetterTypeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     auto* error = ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, JSValue(), nullptr, TypeNothing, ErrorType::TypeError);
@@ -188,41 +188,21 @@ std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM& vm, CallFrame* startC
     return { functor.codeBlock(), functor.bytecodeIndex() };
 }
 
-bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, LineColumn& lineColumn, String& sourceURL)
-{
-    lineColumn = { };
-    sourceURL = String();
-    
-    if (!stackTrace)
-        return false;
-    
-    for (unsigned i = 0 ; i < stackTrace->size(); ++i) {
-        StackFrame& frame = stackTrace->at(i);
-        if (frame.hasLineAndColumnInfo()) {
-            lineColumn = frame.computeLineAndColumn();
-            sourceURL = frame.sourceURLStripped(vm);
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
+bool addErrorInfo(VM& vm, RefPtr<ExceptionStackContent> stackTrace, JSObject* obj)
 {
     if (!stackTrace)
         return false;
 
     if (!stackTrace->isEmpty()) {
-        LineColumn lineColumn;
-        String sourceURL;
-        getLineColumnAndSource(vm, stackTrace, lineColumn, sourceURL);
+        stackTrace->computeErrorInfo(vm);
+        LineColumn lineColumn = stackTrace->lineColumn();
+        String sourceURL = stackTrace->sourceURL();
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(lineColumn.line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(lineColumn.column));
         if (!sourceURL.isEmpty())
             obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(sourceURL)));
 
-        obj->putDirect(vm, vm.propertyNames->stack, jsString(vm, Interpreter::stackTraceAsString(vm, *stackTrace)), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        obj->putDirect(vm, vm.propertyNames->stack, jsString(vm, stackTrace->stackString()), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
         return true;
     }
@@ -234,8 +214,7 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
 void addErrorInfo(JSGlobalObject* globalObject, JSObject* obj, bool useCurrentFrame)
 {
     VM& vm = globalObject->vm();
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, obj, useCurrentFrame);
-    addErrorInfo(vm, stackTrace.get(), obj);
+    addErrorInfo(vm, ExceptionStackContent::create(getStackTrace(vm, obj, useCurrentFrame)), obj);
 }
 
 JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& source)
@@ -262,7 +241,7 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     return error;
 }
 
-JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
+ErrorInstance* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -310,7 +289,7 @@ Exception* throwConstructorCannotBeCalledAsFunctionTypeError(JSGlobalObject* glo
 
 Exception* throwTypeError(JSGlobalObject* globalObject, ThrowScope& scope)
 {
-    return throwException(globalObject, scope, createTypeError(globalObject));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createTypeError(globalObject)));
 }
 
 Exception* throwTypeError(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILiteral errorMessage)
@@ -320,87 +299,87 @@ Exception* throwTypeError(JSGlobalObject* globalObject, ThrowScope& scope, ASCII
 
 Exception* throwTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& message)
 {
-    return throwException(globalObject, scope, createTypeError(globalObject, message));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createTypeError(globalObject, message)));
 }
 
 Exception* throwSyntaxError(JSGlobalObject* globalObject, ThrowScope& scope)
 {
-    return throwException(globalObject, scope, createSyntaxError(globalObject));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createSyntaxError(globalObject)));
 }
 
 Exception* throwSyntaxError(JSGlobalObject* globalObject, ThrowScope& scope, const String& message)
 {
-    return throwException(globalObject, scope, createSyntaxError(globalObject, message));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createSyntaxError(globalObject, message)));
 }
 
 JSValue throwDOMAttributeGetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
 {
-    return throwException(globalObject, scope, createGetterTypeError(globalObject, makeDOMAttributeGetterTypeErrorMessage(classInfo->className, String(propertyName.uid()))));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createGetterTypeError(globalObject, makeDOMAttributeGetterTypeErrorMessage(classInfo->className, String(propertyName.uid())))));
 }
 
 JSValue throwDOMAttributeSetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
 {
-    return throwException(globalObject, scope, createTypeError(globalObject, makeDOMAttributeSetterTypeErrorMessage(classInfo->className, String(propertyName.uid()))));
+    return throwException(globalObject, scope, Exception::createWithStackFromError(globalObject->vm(), createTypeError(globalObject, makeDOMAttributeSetterTypeErrorMessage(classInfo->className, String(propertyName.uid())))));
 }
 
-JSObject* createError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createError(JSGlobalObject* globalObject, const String& message)
 {
     return createError(globalObject, message, nullptr);
 }
 
-JSObject* createEvalError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createEvalError(JSGlobalObject* globalObject, const String& message)
 {
     return createEvalError(globalObject, message, nullptr);
 }
 
-JSObject* createRangeError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createRangeError(JSGlobalObject* globalObject, const String& message)
 {
     return createRangeError(globalObject, message, nullptr);
 }
 
-JSObject* createReferenceError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createReferenceError(JSGlobalObject* globalObject, const String& message)
 {
     return createReferenceError(globalObject, message, nullptr);
 }
 
-JSObject* createSyntaxError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createSyntaxError(JSGlobalObject* globalObject, const String& message)
 {
     return createSyntaxError(globalObject, message, nullptr);
 }
 
-JSObject* createSyntaxError(JSGlobalObject* globalObject)
+ErrorInstance* createSyntaxError(JSGlobalObject* globalObject)
 {
     return createSyntaxError(globalObject, "Syntax error"_s, nullptr);
 }
 
-JSObject* createTypeError(JSGlobalObject* globalObject)
+ErrorInstance* createTypeError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Type error"_s);
 }
 
-JSObject* createTypeError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createTypeError(JSGlobalObject* globalObject, const String& message)
 {
     return createTypeError(globalObject, message, nullptr, TypeNothing);
 }
 
-JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
+ErrorInstance* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
 {
     return createNotEnoughArgumentsError(globalObject, nullptr);
 }
 
-JSObject* createURIError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createURIError(JSGlobalObject* globalObject, const String& message)
 {
     return createURIError(globalObject, message, nullptr);
 }
 
-JSObject* createOutOfMemoryError(JSGlobalObject* globalObject)
+ErrorInstance* createOutOfMemoryError(JSGlobalObject* globalObject)
 {
     auto* error = createRangeError(globalObject, "Out of memory"_s, nullptr);
     jsCast<ErrorInstance*>(error)->setOutOfMemoryError();
     return error;
 }
 
-JSObject* createOutOfMemoryError(JSGlobalObject* globalObject, const String& message)
+ErrorInstance* createOutOfMemoryError(JSGlobalObject* globalObject, const String& message)
 {
     if (message.isEmpty())
         return createOutOfMemoryError(globalObject);

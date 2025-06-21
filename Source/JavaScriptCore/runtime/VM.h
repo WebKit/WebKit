@@ -491,6 +491,7 @@ public:
     WriteBarrier<Structure> propertyTableStructure;
     WriteBarrier<Structure> functionRareDataStructure;
     WriteBarrier<Structure> exceptionStructure;
+    WriteBarrier<Structure> destructibleExceptionStructure;
     WriteBarrier<Structure> programCodeBlockStructure;
     WriteBarrier<Structure> moduleProgramCodeBlockStructure;
     WriteBarrier<Structure> evalCodeBlockStructure;

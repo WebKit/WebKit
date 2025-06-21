@@ -3001,6 +3001,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ThrowWithAdjustment: {
+        compileThrowWithAdjustment(node);
+        break;
+    }
+
     case ThrowStaticError: {
         compileThrowStaticError(node);
         break;
@@ -3163,6 +3168,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewRegExpUntyped: {
         compileNewRegExpUntyped(node);
+        break;
+    }
+
+    case NewError: {
+        compileNewError(node);
         break;
     }
 

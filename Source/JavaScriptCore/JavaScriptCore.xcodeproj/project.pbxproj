@@ -2022,6 +2022,7 @@
 		E355D38F22446877008F1AD6 /* GlobalExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = E355D38D2244686B008F1AD6 /* GlobalExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E356987222841187008CDCCB /* PackedCellPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = E356987122841183008CDCCB /* PackedCellPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35A90B42E0624E1008AB6F1 /* ExceptionStack.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A90B22E0624E1008AB6F1 /* ExceptionStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35B36072A2E981E004EC264 /* StringReplaceCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */; };
 		E35B36082A2E981E004EC264 /* StringReplaceCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E35B36062A2E981E004EC264 /* StringReplaceCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2029,6 +2030,7 @@
 		E35E89FD25C50F870071EE1E /* BigInt64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E89FB25C50F860071EE1E /* BigInt64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35E89FE25C50F870071EE1E /* BigUint64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E89FC25C50F870071EE1E /* BigUint64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E364BE2F2E06242E00DA218E /* DestructibleException.h in Headers */ = {isa = PBXBuildFile; fileRef = E364BE2D2E06242E00DA218E /* DestructibleException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E366441E254409B30001876F /* IntlListFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E318CA69254406B5004DC129 /* IntlListFormat.cpp */; };
 		E367062A2A2705DB00CF892F /* StringSplitCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E36706282A2705DB00CF892F /* StringSplitCacheInlines.h */; };
 		E367062B2A2705DB00CF892F /* StringSplitCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E36706292A2705DB00CF892F /* StringSplitCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5790,6 +5792,8 @@
 		E355D38E2244686C008F1AD6 /* GlobalExecutable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalExecutable.cpp; sourceTree = "<group>"; };
 		E356987122841183008CDCCB /* PackedCellPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackedCellPtr.h; sourceTree = "<group>"; };
 		E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBaseInlines.h; sourceTree = "<group>"; };
+		E35A90B22E0624E1008AB6F1 /* ExceptionStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionStack.h; sourceTree = "<group>"; };
+		E35A90B32E0624E1008AB6F1 /* ExceptionStack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionStack.cpp; sourceTree = "<group>"; };
 		E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCacheInlines.h; sourceTree = "<group>"; };
 		E35B36062A2E981E004EC264 /* StringReplaceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCache.h; sourceTree = "<group>"; };
 		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
@@ -5800,6 +5804,8 @@
 		E35E89FC25C50F870071EE1E /* BigUint64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigUint64Array.h; sourceTree = "<group>"; };
 		E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkTimeConstant.h; sourceTree = "<group>"; };
 		E3637EE8236E56B00096BD0A /* LinkTimeConstant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkTimeConstant.cpp; sourceTree = "<group>"; };
+		E364BE2D2E06242E00DA218E /* DestructibleException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DestructibleException.h; sourceTree = "<group>"; };
+		E364BE2E2E06242E00DA218E /* DestructibleException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DestructibleException.cpp; sourceTree = "<group>"; };
 		E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNamesPrototype.lut.h; sourceTree = "<group>"; };
 		E365F33924AA621200C991B2 /* IntlDisplayNamesConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNamesConstructor.lut.h; sourceTree = "<group>"; };
 		E36706282A2705DB00CF892F /* StringSplitCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringSplitCacheInlines.h; sourceTree = "<group>"; };
@@ -8281,6 +8287,8 @@
 				FE9F3FC626163CA90069E89F /* DeferTermination.h */,
 				169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */,
 				734B655423F4A33100A069D1 /* DeletePropertySlot.h */,
+				E364BE2E2E06242E00DA218E /* DestructibleException.cpp */,
+				E364BE2D2E06242E00DA218E /* DestructibleException.h */,
 				0FE0500F1AA9091100D33B33 /* DirectArguments.cpp */,
 				0FE050101AA9091100D33B33 /* DirectArguments.h */,
 				0FE0500D1AA9091100D33B33 /* DirectArgumentsOffset.cpp */,
@@ -8335,6 +8343,8 @@
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */,
 				FE6491361D78F01300A694D4 /* ExceptionScope.h */,
+				E35A90B32E0624E1008AB6F1 /* ExceptionStack.cpp */,
+				E35A90B22E0624E1008AB6F1 /* ExceptionStack.h */,
 				147341E91DC2CF2500AA29BA /* ExecutableBase.cpp */,
 				147341CB1DC02D7200AA29BA /* ExecutableBase.h */,
 				E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */,
@@ -10814,6 +10824,7 @@
 				73AD062923FF662600F53593 /* DeleteByStatus.h in Headers */,
 				7311FA32240DB1D3003D48DB /* DeleteByVariant.h in Headers */,
 				734B655523F5C10400A069D1 /* DeletePropertySlot.h in Headers */,
+				E364BE2F2E06242E00DA218E /* DestructibleException.h in Headers */,
 				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
@@ -11037,6 +11048,7 @@
 				0F12DE101979D5FD0006FF4E /* ExceptionFuzz.h in Headers */,
 				BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */,
 				FE6491371D78F01D00A694D4 /* ExceptionScope.h in Headers */,
+				E35A90B42E0624E1008AB6F1 /* ExceptionStack.h in Headers */,
 				0FF054FA1AC35B4400E5BE57 /* ExecutableAllocationFuzz.h in Headers */,
 				A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */,
 				147341CC1DC02D7200AA29BA /* ExecutableBase.h in Headers */,

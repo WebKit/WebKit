@@ -25,17 +25,18 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
-#include "StackFrame.h"
+#include "ExceptionStack.h"
+#include "JSObject.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
-    
-class Exception final : public JSCell {
+
+class ErrorInstance;
+
+class Exception : public JSCell {
 public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -43,11 +44,13 @@ public:
         return &vm.exceptionSpace();
     }
 
-    enum StackCaptureAction {
+    enum StackCaptureAction : uint8_t {
         CaptureStack,
         DoNotCaptureStack
     };
     JS_EXPORT_PRIVATE static Exception* create(VM&, JSValue thrownValue, StackCaptureAction = CaptureStack);
+    JS_EXPORT_PRIVATE static Exception* createWithStackFromError(VM&, ErrorInstance*);
+    JS_EXPORT_PRIVATE static Exception* createWithFrameAdjustment(VM&, ErrorInstance*, LineColumn, unsigned callDepth);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
@@ -61,10 +64,9 @@ public:
     }
 
     JSValue value() const { return m_value.get(); }
-    const Vector<StackFrame>& stack() const { return m_stack; }
 
-    bool didNotifyInspectorOfThrow() const { return m_didNotifyInspectorOfThrow; }
-    void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }
+    bool didNotifyInspectorOfThrow() const { return perCellBit(); }
+    void setDidNotifyInspectorOfThrow() { setPerCellBit(true); }
 
 #if ENABLE(WEBASSEMBLY)
     void wrapValueForJSTag(JSGlobalObject*);
@@ -72,14 +74,14 @@ public:
 
     ~Exception();
 
-private:
-    Exception(VM&, JSValue thrownValue);
-    void finishCreation(VM&, StackCaptureAction);
-    static void destroy(JSCell*);
+    ExceptionStack stack() const;
+
+protected:
+    Exception(VM&, Structure*, JSValue thrownValue);
 
     WriteBarrier<Unknown> m_value;
-    Vector<StackFrame> m_stack;
-    bool m_didNotifyInspectorOfThrow { false };
+    LineColumn m_replacedLineColumn { };
+    unsigned m_callDepth { };
 
     friend class LLIntOffsetsExtractor;
 };

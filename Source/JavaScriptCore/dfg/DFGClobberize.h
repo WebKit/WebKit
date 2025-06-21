@@ -921,6 +921,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case Throw:
+    case ThrowWithAdjustment:
     case ThrowStaticError:
     case TailCall:
     case DirectTailCall:
@@ -2132,6 +2133,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(HeapObjectCount);
         } else
             clobberTop();
+        return;
+
+    case NewError:
+        clobberTop();
         return;
 
     case NewObject:

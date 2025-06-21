@@ -158,8 +158,16 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
         lineColumn->column = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(globalObject)) : 0;
         *sourceURL = sourceURLValue.toWTFString(globalObject);
         result = true;
-    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionObject))
-        result = getLineColumnAndSource(vm, error->stackTrace(), *lineColumn, *sourceURL);
+    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionObject)) {
+        if (auto stack = error->stackTrace(); !stack.isEmpty()) {
+            stack.computeErrorInfo(vm);
+            if (stack.lineColumn() != LineColumn { }) {
+                *lineColumn = stack.stack()->lineColumn();
+                *sourceURL = stack.stack()->sourceURL();
+                result = true;
+            }
+        }
+    }
 
     if (sourceURL->isEmpty())
         *sourceURL = "undefined"_s;
@@ -171,12 +179,17 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
 Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* globalObject, JSC::Exception* exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    auto& stackTrace = exception->stack();
     VM& vm = globalObject->vm();
-    for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
-        auto lineColumn = stackTrace[i].computeLineAndColumn();
-        String functionName = stackTrace[i].functionName(vm);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL(vm), stackTrace[i].sourceID(), lineColumn));
+    size_t stackSize = 0;
+    if (auto stackTrace = exception->stack(); !stackTrace.isEmpty()) {
+        stackTrace.computeErrorInfo(vm);
+        stackSize = stackTrace.size();
+        for (size_t i = 0; i < stackSize && i < maxStackSize; i++) {
+            auto frame = stackTrace.computedAt(i);
+            auto lineColumn = frame.m_lineColumn;
+            String functionName = frame.m_functionName;
+            frames.append(ScriptCallFrame(functionName, frame.m_sourceURL, frame.m_sourceID, lineColumn));
+        }
     }
 
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.
@@ -194,10 +207,14 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
             // example - it uses firstNonNativeCallFrame). This looks like it splats something else
             // over it. That something else is probably already at stackTrace[1].
             // https://bugs.webkit.org/show_bug.cgi?id=176663
-            if (!stackTrace[0].hasLineAndColumnInfo() || stackTrace[0].sourceURL(vm).isEmpty()) {
-                const ScriptCallFrame& firstCallFrame = frames.first();
-                if (extractSourceInformationFromException(globalObject, exceptionObject, &lineColumn, &exceptionSourceURL))
-                    frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineColumn);
+            if (auto stackTrace = exception->stack(); !stackTrace.isEmpty()) {
+                stackTrace.computeErrorInfo(vm);
+                auto frame = stackTrace.computedAt(0);
+                if (frame.m_lineColumn != LineColumn { } || frame.m_sourceURL.isEmpty()) {
+                    const ScriptCallFrame& firstCallFrame = frames.first();
+                    if (extractSourceInformationFromException(globalObject, exceptionObject, &lineColumn, &exceptionSourceURL))
+                        frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, frame.m_sourceID, lineColumn);
+                }
             }
         }
     }
@@ -207,7 +224,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
         if (auto* debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
             parentStackTrace = debuggerAgent->currentParentStackTrace();
     }
-    return ScriptCallStack::create(WTFMove(frames), stackTrace.size() > maxStackSize, parentStackTrace);
+    return ScriptCallStack::create(WTFMove(frames), stackSize > maxStackSize, parentStackTrace);
 }
 
 Ref<ScriptArguments> createScriptArguments(JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame, unsigned skipArgumentCount)

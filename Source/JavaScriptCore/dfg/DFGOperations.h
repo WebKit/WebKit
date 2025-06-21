@@ -40,6 +40,7 @@ namespace JSC {
 class ConcatKeyAtomStringCache;
 class DateInstance;
 class DirectCallLinkInfo;
+class ErrorInstance;
 class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
@@ -140,6 +141,7 @@ JSC_DECLARE_JIT_OPERATION(operationEnumeratorRecoverNameAndPutByVal, void, (JSGl
 JSC_DECLARE_JIT_OPERATION(operationNewRegExpWithLastIndex, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewRegExpUntyped, JSObject*, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject*, JSString*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationNewError, JSObject*, (JSGlobalObject*, Structure*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject*, Structure*, void*, size_t));
 JSC_DECLARE_JIT_OPERATION(operationNewEmptyArray, char*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, Butterfly*));
@@ -377,6 +379,7 @@ JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowForVarargs, void, (JSGlobal
 JSC_DECLARE_JIT_OPERATION(operationSizeOfVarargs, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum));
 JSC_DECLARE_JIT_OPERATION(operationThrowDFG, void, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationThrowWithAdjustment, void, (JSGlobalObject*, ErrorInstance*, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject*, JSString*, uint32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationHasOwnProperty, size_t, (JSGlobalObject*, JSObject*, EncodedJSValue));

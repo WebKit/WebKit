@@ -1228,6 +1228,9 @@ private:
         case NewRegExpUntyped:
             compileNewRegExpUntyped();
             break;
+        case NewError:
+            compileNewError();
+            break;
         case NewSymbol:
             compileNewSymbol();
             break;
@@ -1542,6 +1545,9 @@ private:
             break;
         case Throw:
             compileThrow();
+            break;
+        case ThrowWithAdjustment:
+            compileThrowWithAdjustment();
             break;
         case ThrowStaticError:
             compileThrowStaticError();
@@ -9443,6 +9449,12 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(vmCall(pointerType(), operationNewRegExpUntyped, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
 
+    void compileNewError()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setJSValue(vmCall(pointerType(), operationNewError, weakPointer(globalObject), weakStructure(m_node->structure()), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+    }
+
     void compileNewSymbol()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -14469,6 +14481,15 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue error = lowJSValue(m_node->child1());
         vmCall(Void, operationThrowDFG, weakPointer(globalObject), error);
+        // vmCall() does an exception check so we should never reach this.
+        m_out.unreachable();
+    }
+
+    void compileThrowWithAdjustment()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue error = lowCell(m_node->child1());
+        vmCall(Void, operationThrowWithAdjustment, weakPointer(globalObject), error, m_out.constInt32(m_node->callDepth()));
         // vmCall() does an exception check so we should never reach this.
         m_out.unreachable();
     }

@@ -182,13 +182,13 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         auto& error = createResult.error();
         ASSERT(error);
 
-        if (globalObject->vm().isTerminationException(error))
+        VM& vm = globalObject->vm();
+        if (vm.isTerminationException(error))
             return InjectedScript();
 
         LineColumn lineColumn;
-        auto& stack = error->stack();
-        if (stack.size() > 0)
-            lineColumn = stack[0].computeLineAndColumn();
+        if (auto stack = error->stack(); !stack.isEmpty())
+            lineColumn = stack.computeLineAndColumn(vm);
         WTFLogAlways("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(globalObject).utf8().data(), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }

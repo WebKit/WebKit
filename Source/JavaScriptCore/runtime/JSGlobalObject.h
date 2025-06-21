@@ -847,6 +847,7 @@ public:
     Structure* dateStructure() const { return m_dateStructure.get(this); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(this); }
+    Structure* errorStructureConcurrently() const { return m_errorStructure.getConcurrently(); }
     inline Structure* errorStructure(ErrorType) const;
     template<ErrorType errorType> Structure* errorStructureWithErrorType() const { return errorStructure(errorType); }
 

@@ -11434,6 +11434,21 @@ void SpeculativeJIT::compileNewRegExpUntyped(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewError(Node* node)
+{
+    JSValueOperand message(this, node->child1());
+    JSValueOperand options(this, node->child2());
+
+    JSValueRegs messageRegs = message.jsValueRegs();
+    JSValueRegs optionsRegs = options.jsValueRegs();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationNewError, resultGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(node->structure()), messageRegs, optionsRegs);
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 {
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
@@ -14283,6 +14298,16 @@ void SpeculativeJIT::compileThrow(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     flushRegisters();
     callOperation(operationThrowDFG, LinkableConstant::globalObject(*this, node), valueRegs);
+    breakpoint();
+    noResult(node);
+}
+
+void SpeculativeJIT::compileThrowWithAdjustment(Node* node)
+{
+    SpeculateCellOperand error(this, node->child1());
+    GPRReg errorGPR = error.gpr();
+    flushRegisters();
+    callOperation(operationThrowWithAdjustment, LinkableConstant::globalObject(*this, node), errorGPR, TrustedImm32(node->callDepth()));
     breakpoint();
     noResult(node);
 }

@@ -41,35 +41,34 @@ class JSObject;
 class SourceCode;
 class Structure;
 
-JSObject* createError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createEvalError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createRangeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createReferenceError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createSyntaxError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createTypeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender, RuntimeType);
-JSObject* createNotEnoughArgumentsError(JSGlobalObject*, ErrorInstance::SourceAppender);
-JSObject* createURIError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createEvalError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createRangeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createReferenceError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createSyntaxError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+ErrorInstance* createTypeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender, RuntimeType);
+ErrorInstance* createNotEnoughArgumentsError(JSGlobalObject*, ErrorInstance::SourceAppender);
+ErrorInstance* createURIError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
 
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createEvalError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createRangeError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createReferenceError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createURIError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createEvalError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createRangeError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createReferenceError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createSyntaxError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createSyntaxError(JSGlobalObject*);
+JS_EXPORT_PRIVATE ErrorInstance* createTypeError(JSGlobalObject*);
+JS_EXPORT_PRIVATE ErrorInstance* createTypeError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createNotEnoughArgumentsError(JSGlobalObject*);
+JS_EXPORT_PRIVATE ErrorInstance* createURIError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createOutOfMemoryError(JSGlobalObject*);
+JS_EXPORT_PRIVATE ErrorInstance* createOutOfMemoryError(JSGlobalObject*, const String&);
 
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String&);
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createError(JSGlobalObject*, ErrorType, const String&);
+JS_EXPORT_PRIVATE ErrorInstance* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(VM&, JSObject*, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr);
 std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
-bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, String& sourceURL);
-bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);
+bool addErrorInfo(VM&, RefPtr<ExceptionStackContent>, JSObject*);
 JS_EXPORT_PRIVATE void addErrorInfo(JSGlobalObject*, JSObject*, bool);
 JSObject* addErrorInfo(VM&, JSObject* error, int line, const SourceCode&);
 
@@ -79,7 +78,7 @@ JSObject* addErrorInfo(VM&, JSObject* error, int line, const SourceCode&);
 // without invoking any observable operations. It attempts to maintain the
 // error message of the original error, if possible, and may include additional
 // information.
-JSObject* createTypeErrorCopy(JSGlobalObject*, JSValue error);
+ErrorInstance* createTypeErrorCopy(JSGlobalObject*, JSValue error);
 
 // Methods to throw Errors.
 

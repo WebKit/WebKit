@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BytecodeIndex.h"
+#include "CodeOrigin.h"
 #include "Heap.h"
 #include "LineColumn.h"
 #include "SlotVisitorMacros.h"
@@ -41,6 +42,13 @@ class JSObject;
 
 class StackFrame {
 public:
+    struct ComputedStackFrame {
+        String m_functionName;
+        String m_sourceURL;
+        SourceID m_sourceID;
+        LineColumn m_lineColumn;
+    };
+
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
     StackFrame(VM&, JSCell* owner, CodeBlock*, BytecodeIndex);
@@ -50,6 +58,8 @@ public:
 
     bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
     CodeBlock* codeBlock() const { return m_codeBlock.get(); }
+
+    static LineColumn lineAndColumnForBytecodeIndex(CodeBlock*, CodeOrigin);
 
     LineColumn computeLineAndColumn() const;
     String functionName(VM&) const;
@@ -75,6 +85,8 @@ public:
     }
 
     bool isMarked(VM& vm) const { return (!m_callee || vm.heap.isMarked(m_callee.get())) && (!m_codeBlock || vm.heap.isMarked(m_codeBlock.get())); }
+
+    ComputedStackFrame computed(VM&) const;
 
 private:
     WriteBarrier<JSCell> m_callee { };
