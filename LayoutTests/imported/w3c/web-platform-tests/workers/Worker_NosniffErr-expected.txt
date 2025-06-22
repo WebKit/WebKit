@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Worker failed to load. Refused to execute http://localhost:8800/workers/support/nosiniff-error-worker.py as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
 
 PASS  Worker with nosniff X-Content-Type-Options header
 

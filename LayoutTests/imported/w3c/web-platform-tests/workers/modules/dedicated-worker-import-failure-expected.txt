@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Worker failed to load. Response is not 2xx
 CONSOLE MESSAGE: Importing a module script failed.
 
 PASS importScripts() on module worker should throw an exception.

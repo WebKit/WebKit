@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Worker failed to load. Response is not 2xx
 
 PASS worker
 PASS shared
