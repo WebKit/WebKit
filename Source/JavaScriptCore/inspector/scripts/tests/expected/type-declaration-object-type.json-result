@@ -1517,9 +1517,9 @@ __attribute__((visibility ("default")))
 /* optional */ @property (nonatomic, assign) TestProtocolDatabaseOptionalParameterBundleDirectionality directionality;
 /* optional */ @property (nonatomic, copy) NSString *notes;
 /* optional */ @property (nonatomic, assign) double timestamp;
-/* optional */ @property (nonatomic, retain) RWIProtocolJSONObject *values;
-/* optional */ @property (nonatomic, retain) RWIProtocolJSONObject *payload;
-/* optional */ @property (nonatomic, retain) TestProtocolDatabaseError *error;
+/* optional */ @property (nonatomic, strong) RWIProtocolJSONObject *values;
+/* optional */ @property (nonatomic, strong) RWIProtocolJSONObject *payload;
+/* optional */ @property (nonatomic, strong) TestProtocolDatabaseError *error;
 /* optional */ @property (nonatomic, copy) NSArray/*<TestProtocolDatabaseError>*/ *errorList;
 @end
 
@@ -1533,9 +1533,9 @@ __attribute__((visibility ("default")))
 /* required */ @property (nonatomic, assign) TestProtocolDatabaseParameterBundleDirectionality directionality;
 /* required */ @property (nonatomic, copy) NSString *notes;
 /* required */ @property (nonatomic, assign) double timestamp;
-/* required */ @property (nonatomic, retain) RWIProtocolJSONObject *values;
-/* required */ @property (nonatomic, retain) RWIProtocolJSONObject *payload;
-/* required */ @property (nonatomic, retain) TestProtocolDatabaseError *error;
+/* required */ @property (nonatomic, strong) RWIProtocolJSONObject *values;
+/* required */ @property (nonatomic, strong) RWIProtocolJSONObject *payload;
+/* required */ @property (nonatomic, strong) TestProtocolDatabaseError *error;
 /* required */ @property (nonatomic, copy) NSArray/*<TestProtocolDatabaseError>*/ *errorList;
 @end
 
@@ -1575,9 +1575,9 @@ __attribute__((visibility ("default")))
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* required */ @property (nonatomic, copy) NSString *notes;
 /* required */ @property (nonatomic, assign) double timestamp;
-/* required */ @property (nonatomic, retain) RWIProtocolJSONObject *values;
-/* required */ @property (nonatomic, retain) RWIProtocolJSONObject *payload;
-/* required */ @property (nonatomic, retain) TestProtocolDatabaseError *error;
+/* required */ @property (nonatomic, strong) RWIProtocolJSONObject *values;
+/* required */ @property (nonatomic, strong) RWIProtocolJSONObject *payload;
+/* required */ @property (nonatomic, strong) TestProtocolDatabaseError *error;
 @end
 
 

@@ -776,7 +776,7 @@ void ObjCInspectorNetworkBackendDispatcher::loadResource(long protocol_requestId
 __attribute__((visibility ("default")))
 @interface TestProtocolConfiguration : NSObject
 #if DOMAIN-MAC
-@property (nonatomic, retain, setter=setNetworkHandler:) id<TestProtocolNetworkDomainHandler> networkHandler;
+@property (nonatomic, strong, setter=setNetworkHandler:) id<TestProtocolNetworkDomainHandler> networkHandler;
 @property (nonatomic, readonly) TestProtocolNetworkDomainEventDispatcher *networkEventDispatcher;
 #endif // DOMAIN-MAC
 @end

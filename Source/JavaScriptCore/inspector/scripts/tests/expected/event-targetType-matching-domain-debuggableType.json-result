@@ -654,7 +654,7 @@ void ObjCInspectorDomainBackendDispatcher::Command(long protocol_requestId)
 
 __attribute__((visibility ("default")))
 @interface TestProtocolConfiguration : NSObject
-@property (nonatomic, retain, setter=setDomainHandler:) id<TestProtocolDomainDomainHandler> domainHandler;
+@property (nonatomic, strong, setter=setDomainHandler:) id<TestProtocolDomainDomainHandler> domainHandler;
 @property (nonatomic, readonly) TestProtocolDomainDomainEventDispatcher *domainEventDispatcher;
 @end
 

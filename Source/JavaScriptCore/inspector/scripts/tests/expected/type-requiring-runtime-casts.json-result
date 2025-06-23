@@ -1121,21 +1121,21 @@ __attribute__((visibility ("default")))
 /* required */ @property (nonatomic, assign) int number;
 /* required */ @property (nonatomic, assign) TestProtocolTestCastedAnimals animals;
 /* required */ @property (nonatomic, assign) int identifier;
-/* required */ @property (nonatomic, retain) TestProtocolTestRecursiveObject1 *tree;
+/* required */ @property (nonatomic, strong) TestProtocolTestRecursiveObject1 *tree;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject1 : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
-/* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject2 *obj;
+/* optional */ @property (nonatomic, strong) TestProtocolTestRecursiveObject2 *obj;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject2 : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
-/* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject1 *obj;
+/* optional */ @property (nonatomic, strong) TestProtocolTestRecursiveObject1 *obj;
 @end
 
 

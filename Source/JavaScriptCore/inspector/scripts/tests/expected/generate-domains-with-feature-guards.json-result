@@ -736,7 +736,7 @@ void ObjCInspectorNetwork1BackendDispatcher::loadResource(long protocol_requestI
 
 __attribute__((visibility ("default")))
 @interface TestProtocolConfiguration : NSObject
-@property (nonatomic, retain, setter=setNetwork1Handler:) id<TestProtocolNetwork1DomainHandler> network1Handler;
+@property (nonatomic, strong, setter=setNetwork1Handler:) id<TestProtocolNetwork1DomainHandler> network1Handler;
 @property (nonatomic, readonly) TestProtocolNetwork3DomainEventDispatcher *network3EventDispatcher;
 @end
 

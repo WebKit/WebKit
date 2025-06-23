@@ -207,7 +207,7 @@ class ObjCGenerator(Generator):
         if raw_name in ['integer', 'number', 'boolean']:
             return 'assign'
         if raw_name in ['any', 'object']:
-            return 'retain'
+            return 'strong'
         return None
 
     @staticmethod
@@ -315,7 +315,7 @@ class ObjCGenerator(Generator):
         if (isinstance(_type, EnumType)):
             return 'assign'
         if (isinstance(_type, ObjectType)):
-            return 'retain'
+            return 'strong'
         if (isinstance(_type, ArrayType)):
             return 'copy'
         return None

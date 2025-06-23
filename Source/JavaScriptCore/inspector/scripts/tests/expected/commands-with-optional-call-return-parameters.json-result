@@ -1002,7 +1002,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long pr
 
 __attribute__((visibility ("default")))
 @interface TestProtocolConfiguration : NSObject
-@property (nonatomic, retain, setter=setDatabaseHandler:) id<TestProtocolDatabaseDomainHandler> databaseHandler;
+@property (nonatomic, strong, setter=setDatabaseHandler:) id<TestProtocolDatabaseDomainHandler> databaseHandler;
 @end
 
 
