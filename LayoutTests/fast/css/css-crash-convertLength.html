@@ -1,0 +1,10 @@
+<div id=foo>
+</div>
+test passes if no crash
+<script>
+if (window.testRunner)
+     testRunner.dumpAsText();
+const node = document.getElementById("foo");
+node.attributeStyleMap.set('column-gap', ...node.computedStyleMap().getAll('mask-border-slice'));
+</script>
+
