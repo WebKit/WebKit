@@ -50,7 +50,7 @@ static String escapeStringForRegularExpressionSource(const String& text)
 {
     StringBuilder result;
 
-    for (unsigned i = 0; i < text.length(); i++) {
+    for (size_t i = 0; i < text.length(); i++) {
         UChar character = text[i];
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (isASCII(character) && strchr(regexSpecialCharacters, character))
@@ -180,13 +180,13 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     int result = 0;
     int position;
     unsigned start = 0;
-    int matchLength;
+    int matchLength = 0;
     while ((position = regex.match(content, start, &matchLength)) != -1) {
-        if (start >= content.length())
-            break;
         if (matchLength > 0)
             ++result;
         start = position + 1;
+        if (start >= content.length())
+            break;
     }
     return result;
 }
