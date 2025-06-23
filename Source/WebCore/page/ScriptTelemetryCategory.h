@@ -46,6 +46,7 @@ enum class ScriptTelemetryCategory : uint8_t {
     ScreenOrViewport,
     Speech,
     FormControls,
+    EventListeners
 };
 
 String makeLogMessage(const URL&, ScriptTelemetryCategory);
