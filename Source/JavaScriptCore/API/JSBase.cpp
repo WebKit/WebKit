@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "GCActivityCallback.h"
 #include "JSCInlines.h"
 #include "JSLock.h"
+#include "MachineStackMarker.h"
 #include "ObjectConstructor.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
@@ -137,6 +138,50 @@ void JSGarbageCollect(JSContextRef ctx)
     JSLockHolder locker(vm);
 
     vm.heap.reportAbandonedObjectGraph();
+}
+
+
+static InvalidJSValueRefCallback invalidJSValueRefCallback;
+void SetPotentiallyInvalidJSValueRefCallback(InvalidJSValueRefCallback callback)
+{
+    invalidJSValueRefCallback = callback;
+}
+
+void CheckJSValueRefIsVisibleToGC(const JSValueRef* valueLocation)
+{
+    JSValue value = toJS(*valueLocation);
+    if (!value || !value.isCell())
+        return;
+
+    JSCell* cell = value.asCell();
+    VM& vm = cell->vm();
+
+    {
+        // We want to check this first since taking the API lock will register our thread
+        // and hide errors copying a JSValue to a new thread before telling the VM about that thread.
+        MachineThreads& machineThreads = vm.heap.machineThreads();
+        Locker threadsLocker(machineThreads.getLock());
+
+        // This is the most likely case so let's get it out of the way.
+        auto& threads = machineThreads.threads(threadsLocker);
+        auto& current = Thread::current();
+        if (threads.contains(current) && current.stack().contains(valueLocation))
+            return;
+
+        for (auto& thread : threads) {
+            if (thread->stack().contains(valueLocation))
+                return;
+        }
+    }
+
+    JSLockHolder locker(vm);
+    if (vm.heap.isProtected(cell))
+        return;
+
+    if (invalidJSValueRefCallback)
+        invalidJSValueRefCallback(valueLocation, "JSValueRef stored to an address not visible to its JSContextGroupRef and is not protected.");
+    else
+        dataLogLn("JSValueRef, "_s, RawPointer(cell), "stored to an address "_s, RawPointer(valueLocation), " that is not visible to its JSContextGroupRef and is not protected."_s);
 }
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)

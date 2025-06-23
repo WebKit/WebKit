@@ -34,6 +34,70 @@
 #import <Foundation/Foundation.h>
 #endif
 
+/* Enable the Objective-C API for platforms with a modern runtime. NOTE: This is duplicated in VM.h. */
+#if !defined(JSC_OBJC_API_ENABLED)
+#if (defined(__clang__) && defined(__APPLE__) && (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)))
+#define JSC_OBJC_API_ENABLED 1
+#else
+#define JSC_OBJC_API_ENABLED 0
+#endif
+#endif
+
+#if JSC_OBJC_API_ENABLED
+#define JSC_CF_ENUM(enumName, ...)       \
+    typedef CF_ENUM(uint32_t, enumName) { \
+        __VA_ARGS__                       \
+    }
+#else
+#define JSC_CF_ENUM(enumName, ...) \
+    typedef enum {                  \
+        __VA_ARGS__                 \
+    } enumName
+#endif
+
+#if JSC_OBJC_API_ENABLED
+#define JSC_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define JSC_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
+#else
+#define JSC_ASSUME_NONNULL_BEGIN
+#define JSC_ASSUME_NONNULL_END
+#endif
+
+#if JSC_OBJC_API_ENABLED
+#define JSC_NULL_UNSPECIFIED _Null_unspecified
+#define JSC_NULLABLE _Nullable
+#define JSC_NONNULL _Nonnull
+#else
+#define JSC_NULL_UNSPECIFIED
+#define JSC_NULLABLE
+#define JSC_NONNULL
+#endif
+
+/* Clang's __has_declspec_attribute emulation */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute */
+
+#ifndef __has_declspec_attribute
+#define __has_declspec_attribute(x) 0
+#endif
+
+/* JavaScript symbol exports */
+/* These rules should stay the same as in WebKit/Shared/API/c/WKDeclarationSpecifiers.h */
+
+#undef JS_EXPORT
+#if defined(JS_NO_EXPORT)
+#define JS_EXPORT
+#elif defined(WIN32) || defined(_WIN32) || defined(__CC_ARM) || defined(__ARMCC__) || (__has_declspec_attribute(dllimport) && __has_declspec_attribute(dllexport))
+#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
+#define JS_EXPORT __declspec(dllexport)
+#else
+#define JS_EXPORT __declspec(dllimport)
+#endif
+#elif defined(__GNUC__)
+#define JS_EXPORT __attribute__((visibility("default")))
+#else /* !defined(JS_NO_EXPORT) */
+#define JS_EXPORT
+#endif /* defined(JS_NO_EXPORT) */
+
 /* JavaScript engine interface */
 
 /*! @typedef JSContextGroupRef A group that associates JavaScript contexts with one another. Contexts in the same group may share and exchange JavaScript objects. */
@@ -62,36 +126,57 @@ typedef void (*JSTypedArrayBytesDeallocator)(void* bytes, void* deallocatorConte
 
 /* JavaScript data types */
 
+#ifndef JSC_DEBUG_CHECK_FOR_UNPROTECTED_JSVALUEREF_STORES_TO_HEAP
+
 /*! @typedef JSValueRef A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them. */
 typedef const struct OpaqueJSValue* JSValueRef;
 
 /*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
 typedef struct OpaqueJSValue* JSObjectRef;
 
-/* Clang's __has_declspec_attribute emulation */
-/* https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute */
+#define JSC_JSVALUEREF_NULL_UNSPECIFIED JSC_NULL_UNSPECIFIED
+#define JSC_JSVALUEREF_NULLABLE JSC_NULLABLE
+#define JSC_JSVALUEREF_NONNULL JSC_NONNULL
 
-#ifndef __has_declspec_attribute
-#define __has_declspec_attribute(x) 0
-#endif
-
-/* JavaScript symbol exports */
-/* These rules should stay the same as in WebKit/Shared/API/c/WKDeclarationSpecifiers.h */
-
-#undef JS_EXPORT
-#if defined(JS_NO_EXPORT)
-#define JS_EXPORT
-#elif defined(WIN32) || defined(_WIN32) || defined(__CC_ARM) || defined(__ARMCC__) || (__has_declspec_attribute(dllimport) && __has_declspec_attribute(dllexport))
-#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
-#define JS_EXPORT __declspec(dllexport)
 #else
-#define JS_EXPORT __declspec(dllimport)
+// This assumes you are compiling with C++, Objective-C++ or Swift.
+
+struct OpaqueJSValue;
+struct JSValueRef;
+
+extern "C" JS_EXPORT void CheckJSValueRefIsVisibleToGC(const JSValueRef*);
+
+struct __attribute__((trivial_abi)) JSValueRef {
+    JSValueRef()
+        : m_value(NULL)
+    { }
+
+    JSValueRef(const JSValueRef& other)
+    {
+        *this = other;
+    }
+
+    JSValueRef& operator=(const JSValueRef& other)
+    {
+        m_value = other.m_value;
+        CheckJSValueRefIsVisibleToGC(this);
+        return *this;
+    }
+
+    const struct OpaqueJSValue* m_value;
+};
+
+struct __attribute__((trivial_abi)) JSObjectRef : public JSValueRef { };
+
+#define JSC_JSVALUEREF_NULL_UNSPECIFIED
+#define JSC_JSVALUEREF_NULLABLE
+#define JSC_JSVALUEREF_NONNULL
+
+// This warning is correct that we are returning a C++ type from a C linkage function
+// but the ARM64/X86_64 ABI for our debug C++ struct and the non-debug JSValueRef is the same.
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
+
 #endif
-#elif defined(__GNUC__)
-#define JS_EXPORT __attribute__((visibility("default")))
-#else /* !defined(JS_NO_EXPORT) */
-#define JS_EXPORT
-#endif /* defined(JS_NO_EXPORT) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,47 +224,14 @@ JS_EXPORT bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStrin
 */
 JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 
+/* Debugging */
+
+typedef void (*InvalidJSValueRefCallback)(const JSValueRef*, const char* reason);
+JS_EXPORT void SetPotentiallyInvalidJSValueRefCallback(InvalidJSValueRefCallback);
+JS_EXPORT void CheckJSValueRefIsVisibleToGC(const JSValueRef*);
+
 #ifdef __cplusplus
 }
-#endif
-
-/* Enable the Objective-C API for platforms with a modern runtime. NOTE: This is duplicated in VM.h. */
-#if !defined(JSC_OBJC_API_ENABLED)
-#if (defined(__clang__) && defined(__APPLE__) && (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)))
-#define JSC_OBJC_API_ENABLED 1
-#else
-#define JSC_OBJC_API_ENABLED 0
-#endif
-#endif
-
-#if JSC_OBJC_API_ENABLED
-#define JSC_CF_ENUM(enumName, ...)       \
-    typedef CF_ENUM(uint32_t, enumName) { \
-        __VA_ARGS__                       \
-    }
-#else
-#define JSC_CF_ENUM(enumName, ...) \
-    typedef enum {                  \
-        __VA_ARGS__                 \
-    } enumName
-#endif
-
-#if JSC_OBJC_API_ENABLED
-#define JSC_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
-#define JSC_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
-#else
-#define JSC_ASSUME_NONNULL_BEGIN
-#define JSC_ASSUME_NONNULL_END
-#endif
-
-#if JSC_OBJC_API_ENABLED
-#define JSC_NULL_UNSPECIFIED _Null_unspecified
-#define JSC_NULLABLE _Nullable
-#define JSC_NONNULL _Nonnull
-#else
-#define JSC_NULL_UNSPECIFIED
-#define JSC_NULLABLE
-#define JSC_NONNULL
 #endif
 
 #endif /* JSBase_h */
