@@ -318,10 +318,8 @@ void ScriptElement::updateTaintedOriginFromSourceURL()
     if (!page)
         return;
 
-    if (!page->requiresScriptTelemetryForURL(hasSourceAttribute() ? document->completeURL(sourceAttributeValue()) : document->url()))
-        return;
-
-    m_taintedOrigin = JSC::SourceTaintedOrigin::KnownTainted;
+    if (page->requiresScriptTelemetryForURL(hasSourceAttribute() ? document->completeURL(sourceAttributeValue()) : document->url()) || m_setFromDOMString)
+        m_taintedOrigin = JSC::SourceTaintedOrigin::KnownTainted;
 }
 
 bool ScriptElement::requestClassicScript(const String& sourceURL)
@@ -593,6 +591,7 @@ String ScriptElement::scriptContent() const
 
 void ScriptElement::setTrustedScriptText(const String& text)
 {
+    m_setFromDOMString = true;
     m_trustedScriptText = text;
 }
 
