@@ -3240,7 +3240,14 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
             // Only grid is expected to be in a state where it is calculating pref width and having unknown logical width.
             if (isRenderGrid() && needsPreferredLogicalWidthsUpdate() && !style.logicalWidth().isSpecified())
                 return { };
-            return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit { style.logicalAspectRatio() }, style.boxSizingForAspectRatio(), logicalWidth(), style.aspectRatioType(), isRenderReplaced());
+
+            auto logicalWidth = [&] {
+                if (auto overridingContainingBlockLogicalWidth = overridingContainingBlockContentLogicalWidth(); overridingContainingBlockLogicalWidth && *overridingContainingBlockLogicalWidth && isGridItem())
+                    return computeLogicalWidthInFragmentUsing(SizeType::MainOrPreferredSize, style.logicalWidth(), *overridingContainingBlockLogicalWidth.value(), *containingBlock(), nullptr);
+                return this->logicalWidth();
+            }();
+
+            return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit { style.logicalAspectRatio() }, style.boxSizingForAspectRatio(), logicalWidth, style.aspectRatioType(), isRenderReplaced());
         }
 
         // A positioned element that specified both top/bottom or that specifies
