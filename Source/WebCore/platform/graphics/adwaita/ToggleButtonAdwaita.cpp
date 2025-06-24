@@ -43,7 +43,7 @@ ToggleButtonAdwaita::ToggleButtonAdwaita(ControlPart& part, ControlFactoryAdwait
 
 void ToggleButtonAdwaita::draw(GraphicsContext& graphicsContext, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    if (m_owningPart.type() == StyleAppearance::Checkbox)
+    if (m_owningPart->type() == StyleAppearance::Checkbox)
         drawCheckbox(graphicsContext, borderRect, deviceScaleFactor, style);
     else
         drawRadio(graphicsContext, borderRect, deviceScaleFactor, style);

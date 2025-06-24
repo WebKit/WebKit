@@ -46,7 +46,7 @@ private:
 
     std::unique_ptr<PlatformControl> createPlatformControl() final
     {
-        return controlFactory().createPlatformSliderThumb(*this);
+        return protectedControlFactory()->createPlatformSliderThumb(*this);
     }
 };
 

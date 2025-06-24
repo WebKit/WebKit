@@ -37,13 +37,16 @@ class FloatRect;
 class GraphicsContext;
 class ControlFactory;
 
-class ControlPart : public ThreadSafeRefCounted<ControlPart> {
+class ControlPart : public ThreadSafeRefCounted<ControlPart>, public CanMakeThreadSafeCheckedPtr<ControlPart> {
+    WTF_MAKE_FAST_ALLOCATED(ControlPart);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ControlPart);
 public:
     virtual ~ControlPart() = default;
 
     StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
+    WEBCORE_EXPORT Ref<ControlFactory> protectedControlFactory() const;
     void setOverrideControlFactory(RefPtr<ControlFactory>&& controlFactory) { m_overrideControlFactory = WTFMove(controlFactory); }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);

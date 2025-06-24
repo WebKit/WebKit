@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ToggleButtonMac);
 ToggleButtonMac::ToggleButtonMac(ToggleButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)
 {
-    ASSERT(m_owningPart.type() == StyleAppearance::Checkbox || m_owningPart.type() == StyleAppearance::Radio);
+    ASSERT(m_owningPart->type() == StyleAppearance::Checkbox || m_owningPart->type() == StyleAppearance::Radio);
 }
 
 IntSize ToggleButtonMac::cellSize(NSControlSize controlSize, const ControlStyle& style) const
@@ -70,7 +70,7 @@ IntSize ToggleButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&
         IntSize { 16, 16 }
     };
 
-    if (m_owningPart.type() == StyleAppearance::Checkbox)
+    if (m_owningPart->type() == StyleAppearance::Checkbox)
         return checkboxSizes[controlSize];
 
     if (style.states.contains(ControlStyle::State::LargeControls))
@@ -95,7 +95,7 @@ IntOutsets ToggleButtonMac::cellOutsets(NSControlSize controlSize, const Control
         IntOutsets { 0, 0, 1, 1 },
         IntOutsets { 1, 0, 1, 2 },
     };
-    return (m_owningPart.type() == StyleAppearance::Checkbox ? checkboxOutsets : radioOutsets)[controlSize];
+    return (m_owningPart->type() == StyleAppearance::Checkbox ? checkboxOutsets : radioOutsets)[controlSize];
 }
 
 FloatRect ToggleButtonMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const

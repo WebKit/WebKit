@@ -43,7 +43,7 @@ SliderThumbMac::SliderThumbMac(SliderThumbPart& owningPart, ControlFactoryMac& c
     : ControlMac(owningPart, controlFactory)
     , m_sliderCell(sliderCell)
 {
-    ASSERT(m_owningPart.type() == StyleAppearance::SliderThumbHorizontal || m_owningPart.type() == StyleAppearance::SliderThumbVertical);
+    ASSERT(m_owningPart->type() == StyleAppearance::SliderThumbHorizontal || m_owningPart->type() == StyleAppearance::SliderThumbVertical);
 }
 
 SliderThumbMac::~SliderThumbMac() = default;
@@ -58,7 +58,7 @@ void SliderThumbMac::updateCellStates(const FloatRect& rect, const ControlStyle&
 
 FloatRect SliderThumbMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const
 {
-    if (m_owningPart.type() == StyleAppearance::SliderThumbHorizontal)
+    if (m_owningPart->type() == StyleAppearance::SliderThumbHorizontal)
         return bounds;
 
     // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.

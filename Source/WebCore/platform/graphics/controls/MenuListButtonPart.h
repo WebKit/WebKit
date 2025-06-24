@@ -45,7 +45,7 @@ private:
 
     std::unique_ptr<PlatformControl> createPlatformControl() final
     {
-        return controlFactory().createPlatformMenuListButton(*this);
+        return protectedControlFactory()->createPlatformMenuListButton(*this);
     }
 };
 

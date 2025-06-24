@@ -49,7 +49,7 @@ private:
 
     std::unique_ptr<PlatformControl> createPlatformControl() final
     {
-        return controlFactory().createPlatformButton(*this);
+        return protectedControlFactory()->createPlatformButton(*this);
     }
 };
 

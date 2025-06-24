@@ -62,7 +62,7 @@ private:
 
     std::unique_ptr<PlatformControl> createPlatformControl() final
     {
-        return controlFactory().createPlatformSwitchThumb(*this);
+        return protectedControlFactory()->createPlatformSwitchThumb(*this);
     }
 
     bool m_isOn;

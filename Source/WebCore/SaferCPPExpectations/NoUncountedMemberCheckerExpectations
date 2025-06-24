@@ -62,7 +62,6 @@ platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/TileController.h
-platform/graphics/controls/PlatformControl.h
 platform/graphics/coretext/DrawGlyphsRecorder.h
 platform/mac/VideoPresentationInterfaceMac.mm
 platform/mediarecorder/MediaRecorderPrivate.h

@@ -51,7 +51,7 @@ MeterPart::MeterPart(GaugeRegion gaugeRegion, double value, double minimum, doub
 
 std::unique_ptr<PlatformControl> MeterPart::createPlatformControl()
 {
-    return controlFactory().createPlatformMeter(*this);
+    return protectedControlFactory()->createPlatformMeter(*this);
 }
 
 } // namespace WebCore
