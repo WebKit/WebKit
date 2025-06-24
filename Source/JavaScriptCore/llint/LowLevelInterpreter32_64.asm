@@ -868,7 +868,6 @@ llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, 
     get(m_srcDst, t0)
     bineq TagOffset[cfr, t0, 8], CellTag, .opToThisSlow
     loadi PayloadOffset[cfr, t0, 8], t0
-    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
     metadata(t2, t3)
     loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
     bineq JSCell::m_structureID[t0], t2, .opToThisSlow

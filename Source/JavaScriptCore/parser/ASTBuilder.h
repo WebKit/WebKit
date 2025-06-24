@@ -438,7 +438,7 @@ public:
 
     ExpressionNode* createGeneratorFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, const Identifier& name)
     {
-        FuncExprNode* result = static_cast<FuncExprNode*>(createFunctionExpr(location, functionInfo));
+        auto* result = static_cast<ArrowFuncExprNode*>(createArrowFunctionExpr(location, functionInfo));
         if (!name.isNull())
             result->metadata()->setEcmaName(name);
         return result;
@@ -447,12 +447,13 @@ public:
     ExpressionNode* createAsyncFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, SourceParseMode parseMode)
     {
         if (parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {
+            usesArrowFunction();
             SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
-            FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *functionInfo.name, functionInfo.body, source);
+            auto* result = new (m_parserArena) ArrowFuncExprNode(location, *functionInfo.name, functionInfo.body, source);
             functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
             return result;
         }
-        return createFunctionExpr(location, functionInfo);
+        return createArrowFunctionExpr(location, functionInfo);
     }
 
     ExpressionNode* createMethodDefinition(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)

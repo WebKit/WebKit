@@ -187,7 +187,7 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
     @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
 
     try {
-        value = @getAsyncGeneratorInternalField(generator, @generatorFieldNext).@call(@getAsyncGeneratorInternalField(generator, @generatorFieldThis), generator, state, resumeValue, resumeMode, @getAsyncGeneratorInternalField(generator, @generatorFieldFrame));
+        value = @getAsyncGeneratorInternalField(generator, @generatorFieldNext).@call(generator, state, resumeValue, resumeMode, @getAsyncGeneratorInternalField(generator, @generatorFieldFrame));
         state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
         if (state === @AsyncGeneratorStateExecuting) {
             @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);

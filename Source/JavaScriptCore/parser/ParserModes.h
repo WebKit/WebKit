@@ -269,7 +269,10 @@ ALWAYS_INLINE bool isArrowFunctionParseMode(SourceParseMode parseMode)
     return SourceParseModeSet(
         SourceParseMode::ArrowFunctionMode,
         SourceParseMode::AsyncArrowFunctionMode,
-        SourceParseMode::AsyncArrowFunctionBodyMode).contains(parseMode);
+        SourceParseMode::AsyncArrowFunctionBodyMode,
+        SourceParseMode::GeneratorBodyMode,
+        SourceParseMode::AsyncFunctionBodyMode,
+        SourceParseMode::AsyncGeneratorBodyMode).contains(parseMode);
 }
 
 ALWAYS_INLINE bool isModuleParseMode(SourceParseMode parseMode) 
