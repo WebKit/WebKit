@@ -144,6 +144,8 @@ public:
 
     void invalidateAllActivitiesAndDropAssertion();
 
+    std::optional<ASCIILiteral> anyActivityName() const;
+
 private:
     friend class ProcessThrottlerActivity;
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);

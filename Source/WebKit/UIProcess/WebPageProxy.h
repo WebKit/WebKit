@@ -2658,6 +2658,7 @@ public:
 #endif
 
     bool hasAllowedToRunInTheBackgroundActivity() const;
+    void dropAllowedToRunInTheBackgroundActivities();
 
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, OptionSet<IPC::SendOption> = { });
     template<typename M, typename C> void sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(std::optional<WebCore::FrameIdentifier>, M&&, C&&, OptionSet<IPC::SendOption> = { });
@@ -2712,6 +2713,7 @@ public:
     WebProcessActivityState& processActivityState() { return m_mainFrameProcessActivityState; }
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    void dropRecentlyVisibleActivity();
     void updateWebProcessSuspensionDelay();
 #endif
 

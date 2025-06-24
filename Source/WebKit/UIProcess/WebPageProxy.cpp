@@ -734,6 +734,14 @@ bool WebPageProxy::hasValidOpeningAppLinkActivity() const
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
 
+void WebPageProxy::dropRecentlyVisibleActivity()
+{
+    m_mainFrameProcessActivityState->dropRecentlyVisibleActivity();
+    protectedBrowsingContextGroup()->forEachRemotePage(*this, [](auto& remotePageProxy) {
+        remotePageProxy.processActivityState().dropRecentlyVisibleActivity();
+    });
+}
+
 void WebPageProxy::updateWebProcessSuspensionDelay()
 {
     m_mainFrameProcessActivityState->updateWebProcessSuspensionDelay();
@@ -7663,6 +7671,12 @@ void WebPageProxy::isNoLongerAssociatedWithRemotePage(RemotePageProxy&)
 bool WebPageProxy::hasAllowedToRunInTheBackgroundActivity() const
 {
     return internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges || internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications;
+}
+
+void WebPageProxy::dropAllowedToRunInTheBackgroundActivities()
+{
+    internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = nullptr;
+    internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
 }
 
 void WebPageProxy::didReceiveTitleForFrame(IPC::Connection& connection, FrameIdentifier frameID, String&& title, const UserData& userData)

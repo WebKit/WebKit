@@ -248,6 +248,13 @@ header: <wtf/Variant.h>
 [AdditionalEncoder=StreamConnectionEncoder, Nested] struct std::monostate {
 }
 
+header: <wtf/MemoryPressureHandler.h>
+[CustomHeader] enum class WTF::WebsamFootprintLevel : uint8_t {
+    BelowInactiveKillThreshold,
+    BetweenInactiveAndActiveKillThreshold,
+    AboveActiveKillThreshold,
+}
+
 enum class WTFLogLevel : uint8_t {
     Always,
     Error,

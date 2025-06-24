@@ -52,7 +52,7 @@ static Seconds webProcessSuspensionDelay(const WebPageProxy* page)
 
 WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
     : m_page(page)
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(&page)))
 #endif
 {
@@ -60,7 +60,7 @@ WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
 
 WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
     : m_page(page)
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(page.protectedPage().get())))
 #endif
 {
@@ -69,7 +69,7 @@ WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
 void WebProcessActivityState::takeVisibleActivity()
 {
     m_isVisibleActivity = protectedProcess()->protectedThrottler()->foregroundActivity("View is visible"_s);
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     m_wasRecentlyVisibleActivity->setActivity(nullptr);
 #endif
 }
@@ -107,7 +107,7 @@ void WebProcessActivityState::takeMutedCaptureAssertion()
 void WebProcessActivityState::reset()
 {
     m_isVisibleActivity = nullptr;
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     m_wasRecentlyVisibleActivity->setActivity(nullptr);
 #endif
     m_isAudibleActivity = nullptr;
@@ -120,7 +120,7 @@ void WebProcessActivityState::reset()
 
 void WebProcessActivityState::dropVisibleActivity()
 {
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     if (WTF::numberOfProcessorCores() > 4)
         m_wasRecentlyVisibleActivity->setActivity(protectedProcess()->protectedThrottler()->backgroundActivity("View was recently visible"_s));
     else
@@ -128,6 +128,13 @@ void WebProcessActivityState::dropVisibleActivity()
 #endif
     m_isVisibleActivity = nullptr;
 }
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+void WebProcessActivityState::dropRecentlyVisibleActivity()
+{
+    m_wasRecentlyVisibleActivity->setActivity(nullptr);
+}
+#endif
 
 void WebProcessActivityState::dropAudibleActivity()
 {

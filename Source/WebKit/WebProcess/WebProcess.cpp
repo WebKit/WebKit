@@ -499,13 +499,13 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         // Let's be nice and not enable the memory kill mechanism.
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(isFastMallocEnabled() || JSC::Options::enableStrongRefTracker() || JSC::Options::dumpHeapOnLowMemory());
 #endif
-        memoryPressureHandler.setMemoryKillCallback([this, protectedThis = Ref { *this }] () {
+        memoryPressureHandler.setMemoryKillCallback([this, protectedThis = Ref { *this }] (auto state, auto footprintLevel) {
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::OutOfMemoryDeath);
             RefPtr parentProcessConnection = this->parentProcessConnection();
-            if (MemoryPressureHandler::singleton().processState() == WebsamProcessState::Active)
+            if (state == WebsamProcessState::Active)
                 parentProcessConnection->send(Messages::WebProcessProxy::DidExceedActiveMemoryLimit(), 0);
             else
-                parentProcessConnection->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
+                parentProcessConnection->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(footprintLevel), 0);
         });
         memoryPressureHandler.setMemoryFootprintNotificationThresholds(WTFMove(parameters.memoryFootprintNotificationThresholds), [this, protectedThis = Ref { *this }](size_t footprint) {
             protectedParentProcessConnection()->send(Messages::WebProcessProxy::DidExceedMemoryFootprintThreshold(footprint), 0);

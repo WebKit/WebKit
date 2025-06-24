@@ -65,6 +65,12 @@ enum class WebsamProcessState : uint8_t {
     Inactive,
 };
 
+enum class WebsamFootprintLevel : uint8_t {
+    BelowInactiveKillThreshold,
+    BetweenInactiveAndActiveKillThreshold,
+    AboveActiveKillThreshold,
+};
+
 enum class Critical : bool { No, Yes };
 enum class Synchronous : bool { No, Yes };
 
@@ -101,7 +107,7 @@ public:
     WTF_EXPORT_PRIVATE void triggerMemoryPressureEvent(bool isCritical);
 #endif
 
-    void setMemoryKillCallback(WTF::Function<void()>&& function) { m_memoryKillCallback = WTFMove(function); }
+    void setMemoryKillCallback(WTF::Function<void(WebsamProcessState, WebsamFootprintLevel)>&& function) { m_memoryKillCallback = WTFMove(function); }
     void setMemoryPressureStatusChangedCallback(WTF::Function<void()>&& function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
     void setDidExceedProcessMemoryLimitCallback(WTF::Function<void(ProcessMemoryLimit)>&& function) { m_didExceedProcessMemoryLimitCallback = WTFMove(function); }
 
@@ -219,6 +225,8 @@ public:
 
 private:
     std::optional<size_t> thresholdForMemoryKill();
+    std::optional<size_t> thresholdForMemoryKillOfInactiveProcess();
+    std::optional<size_t> thresholdForMemoryKillOfActiveProcess();
     size_t thresholdForPolicy(MemoryUsagePolicy);
     MemoryUsagePolicy policyForFootprint(size_t);
 
@@ -253,7 +261,7 @@ private:
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
 
     std::unique_ptr<RunLoop::Timer>m_measurementTimer;
-    WTF::Function<void()> m_memoryKillCallback;
+    WTF::Function<void(WebsamProcessState, WebsamFootprintLevel)> m_memoryKillCallback;
     WTF::Function<void()> m_memoryPressureStatusChangedCallback;
     WTF::Function<void(ProcessMemoryLimit)> m_didExceedProcessMemoryLimitCallback;
     LowMemoryHandler m_lowMemoryHandler;
@@ -285,3 +293,4 @@ using WTF::MemoryPressureHandler;
 using WTF::Synchronous;
 using WTF::SystemMemoryPressureStatus;
 using WTF::WebsamProcessState;
+using WTF::WebsamFootprintLevel;

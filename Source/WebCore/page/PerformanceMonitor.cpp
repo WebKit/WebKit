@@ -51,7 +51,7 @@ static constexpr const Seconds cpuUsageSamplingInterval { 10_min };
 
 static constexpr const Seconds memoryUsageMeasurementDelay { 10_s };
 
-static constexpr const Seconds delayBeforeProcessMayBecomeInactive { 8_min };
+static constexpr const Seconds delayBeforeProcessMayBecomeInactive { 1_min };
 
 static constexpr const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 #if !PLATFORM(IOS_FAMILY)

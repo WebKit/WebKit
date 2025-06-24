@@ -150,7 +150,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
         memoryPressureHandler.setConfiguration(*parameters.memoryPressureHandlerConfiguration);
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
-        memoryPressureHandler.setMemoryKillCallback([this] () {
+        memoryPressureHandler.setMemoryKillCallback([this] (auto&&, auto&&) {
             parentProcessConnection()->send(Messages::NetworkProcessProxy::DidExceedMemoryLimit(), 0);
         });
     }

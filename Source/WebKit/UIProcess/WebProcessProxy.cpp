@@ -2129,6 +2129,35 @@ void WebProcessProxy::memoryPressureStatusChanged(SystemMemoryPressureStatus sta
 #endif
 }
 
+bool WebProcessProxy::tryToForceSuspend()
+{
+#if USE(RUNNINGBOARD)
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "tryToForceSuspend:");
+
+#if PLATFORM(MAC)
+    if (!runningBoardThrottlingEnabled())
+        return false;
+#endif
+
+    for (Ref page : pages()) {
+        page->dropAllowedToRunInTheBackgroundActivities();
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+        page->dropRecentlyVisibleActivity();
+#endif
+    }
+
+    if (protectedThrottler()->shouldBeRunnable()) {
+        auto activityName = protectedThrottler()->anyActivityName();
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "tryToForceSuspend: could not force suspend due to outstanding activities (example: %" PUBLIC_LOG_STRING ")", activityName ? activityName->characters() : nullptr);
+        return false;
+    }
+
+    return true;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
 
 void WebProcessProxy::updateWebProcessSuspensionDelay()
@@ -2146,8 +2175,21 @@ void WebProcessProxy::didExceedActiveMemoryLimit()
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
-void WebProcessProxy::didExceedInactiveMemoryLimit()
+void WebProcessProxy::didExceedInactiveMemoryLimit(WebsamFootprintLevel level)
 {
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    if (level != WebsamFootprintLevel::AboveActiveKillThreshold) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedInactiveMemoryLimit: Attempting to suspend WebProcess because it has exceeded the inactive memory limit, but is not above the active memory limit");
+
+        if (tryToForceSuspend()) {
+            WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedInactiveMemoryLimit: Suspended WebProcess that exceeded the inactive memory limit, but is not above the active memory limit");
+            return;
+        }
+
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedInactiveMemoryLimit: Attempt to suspend WebProcess failed, killing instead.");
+    }
+#endif
+
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedInactiveMemoryLimit: Terminating WebProcess because it has exceeded the inactive memory limit");
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey());
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
@@ -2205,14 +2247,11 @@ void WebProcessProxy::didExceedCPULimit()
         }
     }
 
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
     // This background WebProcess is using too much CPU so we try to suspend it if possible.
-    if (runningBoardThrottlingEnabled() && !throttler().isSuspended() && !isRunningServiceWorkers()) {
-        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedCPULimit: Suspending background WebProcess that has exceeded the background CPU limit");
-        throttler().invalidateAllActivitiesAndDropAssertion();
+    if (tryToForceSuspend()) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedCPULimit: Suspended background WebProcess that has exceeded the background CPU limit");
         return;
     }
-#endif
 
     // We were unable to suspend the process or we are running service workers so we're terminating it.
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedCPULimit: Terminating background WebProcess that has exceeded the background CPU limit");

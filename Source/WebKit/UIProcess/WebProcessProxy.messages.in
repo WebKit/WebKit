@@ -47,7 +47,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
     DidExceedActiveMemoryLimit()
-    DidExceedInactiveMemoryLimit()
+    DidExceedInactiveMemoryLimit(WTF::WebsamFootprintLevel level)
     DidExceedMemoryFootprintThreshold(size_t footprint)
     DidExceedCPULimit()
 

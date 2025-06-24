@@ -615,6 +615,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WebKeyboardEvent',
         'WebKit::XRDeviceIdentifier',
         'WTF::SystemMemoryPressureStatus',
+        'WTF::WebsamFootprintLevel',
     ] + types_that_must_be_moved())
 
 
@@ -1417,6 +1418,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'WTF::UnixFileDescriptor': ['<wtf/unix/UnixFileDescriptor.h>'],
         'WTF::SystemMemoryPressureStatus': ['<wtf/MemoryPressureHandler.h>'],
+        'WTF::WebsamFootprintLevel': ['<wtf/MemoryPressureHandler.h>'],
         'webrtc::WebKitEncodedFrameInfo': ['"RTCWebKitEncodedFrameInfo.h"'],
     }
 

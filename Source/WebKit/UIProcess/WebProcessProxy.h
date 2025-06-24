@@ -337,6 +337,8 @@ public:
     SystemMemoryPressureStatus memoryPressureStatus() const { return m_memoryPressureStatus; }
     void memoryPressureStatusChanged(SystemMemoryPressureStatus);
 
+    bool tryToForceSuspend();
+
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     void updateWebProcessSuspensionDelay();
 #endif
@@ -345,7 +347,7 @@ public:
 
     void didExceedCPULimit();
     void didExceedActiveMemoryLimit();
-    void didExceedInactiveMemoryLimit();
+    void didExceedInactiveMemoryLimit(WebsamFootprintLevel);
     void didExceedMemoryFootprintThreshold(size_t);
 
     void didCommitProvisionalLoad() { m_hasCommittedAnyProvisionalLoads = true; }

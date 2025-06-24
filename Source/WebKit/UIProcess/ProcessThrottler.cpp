@@ -210,6 +210,17 @@ void ProcessThrottler::invalidateAllActivitiesAndDropAssertion()
     clearAssertion();
 }
 
+std::optional<ASCIILiteral> ProcessThrottler::anyActivityName() const
+{
+    for (auto& activity : m_foregroundActivities)
+        return activity.name();
+
+    for (auto& activity : m_backgroundActivities)
+        return activity.name();
+
+    return std::nullopt;
+}
+
 ProcessThrottleState ProcessThrottler::expectedThrottleState()
 {
     if (!m_foregroundActivities.isEmptyIgnoringNullReferences())
