@@ -1347,6 +1347,7 @@ public:
     bool requiresUserGestureForVideoPlayback() const;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
+    WEBCORE_EXPORT bool drawsHDRContent() const;
     Headroom displayEDRHeadroom() const { return m_displayEDRHeadroom; }
     void updateDisplayEDRHeadroom();
     void updateDisplayEDRSuppression();

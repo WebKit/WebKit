@@ -5801,6 +5801,16 @@ bool Page::requiresUserGestureForVideoPlayback() const
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
+bool Page::drawsHDRContent() const
+{
+    bool drawsHDRContent = false;
+    forEachDocument([&] (Document& document) {
+        if (document.drawsHDRContent())
+            drawsHDRContent = true;
+    });
+    return drawsHDRContent;
+}
+
 void Page::updateDisplayEDRHeadroom()
 {
     float headroom = currentEDRHeadroomForDisplay(m_displayID);
