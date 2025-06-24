@@ -157,6 +157,11 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "DisabledBySetting": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "DoNotCheckConstants": {
             "contextsAllowed": ["interface"]
         },

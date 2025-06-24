@@ -123,6 +123,7 @@ namespace WebCore {
     macro(ContactsManager) \
     macro(ContentVisibilityAutoStateChangeEvent) \
     macro(ConvolverNode) \
+    macro(Counter) \
     macro(CreateHTMLCallback) \
     macro(CreateScriptCallback) \
     macro(CreateScriptURLCallback) \
@@ -131,15 +132,15 @@ namespace WebCore {
     macro(CryptoKey) \
     macro(CSPViolationReportBody) \
     macro(CSSAnimation) \
-    macro(CSSCounterStyleRule) \
     macro(CSSColor) \
     macro(CSSColorValue) \
+    macro(CSSCounterStyleRule) \
     macro(CSSHSL) \
     macro(CSSHWB) \
     macro(CSSImageValue) \
     macro(CSSKeywordValue) \
-    macro(CSSLCH) \
     macro(CSSLab) \
+    macro(CSSLCH) \
     macro(CSSMathClamp) \
     macro(CSSMathInvert) \
     macro(CSSMathMax) \
@@ -151,12 +152,13 @@ namespace WebCore {
     macro(CSSMatrixComponent) \
     macro(CSSNumericArray) \
     macro(CSSNumericValue) \
-    macro(CSSOKLCH) \
     macro(CSSOKLab) \
+    macro(CSSOKLCH) \
     macro(CSSPaintSize) \
     macro(CSSPerspective) \
     macro(CSSPositionTryDescriptors) \
     macro(CSSPositionTryRule) \
+    macro(CSSPrimitiveValue) \
     macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
@@ -172,6 +174,8 @@ namespace WebCore {
     macro(CSSTranslate) \
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
+    macro(CSSValue) \
+    macro(CSSValueList) \
     macro(CSSVariableReferenceValue) \
     macro(CSSViewTransitionRule) \
     macro(CommandEvent) \
@@ -374,11 +378,13 @@ namespace WebCore {
     macro(PushSubscription) \
     macro(PushSubscriptionChangeEvent) \
     macro(PushSubscriptionOptions) \
+    macro(Rect) \
     macro(Report) \
     macro(ReportBody) \
     macro(ReportingObserver) \
     macro(ResizeObserver) \
     macro(ResizeObserverEntry) \
+    macro(RGBColor) \
     macro(RTCCertificate) \
     macro(RTCDTMFSender) \
     macro(RTCDTMFToneChangeEvent) \

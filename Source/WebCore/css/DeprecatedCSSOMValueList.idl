@@ -25,10 +25,10 @@
 
 // Introduced in DOM Level 2:
 [
+    DisabledBySetting=DeprecatedCSSOMValuesInJavaScriptDisabled,
     InterfaceName=CSSValueList,
     Exposed=Window
 ] interface DeprecatedCSSOMValueList : DeprecatedCSSOMValue {
     readonly attribute unsigned long length;
     getter DeprecatedCSSOMValue item(unsigned long index);
 };
-
