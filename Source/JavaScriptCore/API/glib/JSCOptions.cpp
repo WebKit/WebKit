@@ -651,10 +651,10 @@ void jsc_options_foreach(JSCOptionsFunc function, gpointer userData)
 #undef VISIT_OPTION
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static gboolean setOptionEntry(const char* optionNameFull, const char* value, gpointer, GError** error)
 {
-    const char* optionName = optionNameFull + 6; // Remove the --jsc- prefix.
+    constexpr size_t prefixLength = 6;
+    const char* optionName = unsafeSpan(optionNameFull).subspan(prefixLength).data(); // Remove the --jsc- prefix.
     GUniquePtr<char> option(g_strdup_printf("%s=%s", optionName, value));
     if (!Options::setOption(option.get())) {
         g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Failed parse value '%s' for %s", value, optionNameFull);
@@ -662,7 +662,6 @@ static gboolean setOptionEntry(const char* optionNameFull, const char* value, gp
     }
     return TRUE;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 /**
  * jsc_options_get_option_group:
