@@ -40,13 +40,13 @@ public:
 
     template<typename T>
     struct CacheEntry {
-        T key;
+        T key { };
         String value;
     };
 
     template<typename T>
     struct CacheEntryWithJSString {
-        T key;
+        T key { };
         String value;
         JSString* jsString { nullptr };
     };
@@ -60,10 +60,14 @@ public:
 
     ALWAYS_INLINE const String& add(double d)
     {
-        auto& entry = lookup(d);
-        if (d == entry.key && !entry.value.isNull())
+        uint64_t value = std::bit_cast<uint64_t>(d);
+        if (!value)
+            return lookupSmallString(0).value;
+
+        auto& entry = lookupDouble(value);
+        if (value == entry.key)
             return entry.value;
-        entry.key = d;
+        entry.key = value;
         entry.value = String::number(d);
         entry.jsString = nullptr;
         return entry.value;
@@ -71,10 +75,12 @@ public:
 
     ALWAYS_INLINE const String& add(int i)
     {
-        if (static_cast<unsigned>(i) < cacheSize)
+        if (static_cast<unsigned>(i) < m_smallIntCache.size())
             return lookupSmallString(static_cast<unsigned>(i)).value;
+
+        ASSERT(i);
         auto& entry = lookup(i);
-        if (i == entry.key && !entry.value.isNull())
+        if (i == entry.key)
             return entry.value;
         entry.key = i;
         entry.value = String::number(i);
@@ -84,10 +90,12 @@ public:
 
     ALWAYS_INLINE const String& add(unsigned i)
     {
-        if (i < cacheSize)
+        if (i < m_smallIntCache.size())
             return lookupSmallString(static_cast<unsigned>(i)).value;
+
+        ASSERT(i);
         auto& entry = lookup(i);
-        if (i == entry.key && !entry.value.isNull())
+        if (i == entry.key)
             return entry.value;
         entry.key = i;
         entry.value = String::number(i);
@@ -125,12 +133,12 @@ public:
     void initializeSmallIntCache(VM&);
 
 private:
-    CacheEntryWithJSString<double>& lookup(double d) { return m_doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
-    CacheEntryWithJSString<int>& lookup(int i) { return m_intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
-    CacheEntry<unsigned>& lookup(unsigned i) { return m_unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
+    CacheEntryWithJSString<uint64_t>& lookupDouble(uint64_t d) { return m_doubleCache[WTF::IntHash<uint64_t>::hash(d) & (m_doubleCache.size() - 1)]; }
+    CacheEntryWithJSString<int>& lookup(int i) { return m_intCache[WTF::IntHash<int>::hash(i) & (m_intCache.size() - 1)]; }
+    CacheEntry<unsigned>& lookup(unsigned i) { return m_unsignedCache[WTF::IntHash<unsigned>::hash(i) & (m_unsignedCache.size() - 1)]; }
     ALWAYS_INLINE StringWithJSString& lookupSmallString(unsigned i)
     {
-        ASSERT(i < cacheSize);
+        ASSERT(i < m_smallIntCache.size());
         if (m_smallIntCache[i].value.isNull())
             m_smallIntCache[i].value = String::number(i);
         return m_smallIntCache[i];
@@ -138,7 +146,7 @@ private:
 
     std::array<StringWithJSString, cacheSize> m_smallIntCache { };
     std::array<CacheEntryWithJSString<int>, cacheSize> m_intCache { };
-    std::array<CacheEntryWithJSString<double>, cacheSize> m_doubleCache { };
+    std::array<CacheEntryWithJSString<uint64_t>, cacheSize> m_doubleCache { };
     std::array<CacheEntry<unsigned>, cacheSize> m_unsignedCache { };
 };
 

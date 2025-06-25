@@ -495,8 +495,10 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
         entry.jsString = jsNontrivialString(vm, entry.value);
         return entry.jsString;
     }
+
+    ASSERT(i);
     auto& entry = lookup(i);
-    if (i != entry.key || entry.value.isNull()) {
+    if (i != entry.key) {
         entry.key = i;
         entry.value = String::number(i);
     } else {
@@ -507,12 +509,16 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
     return entry.jsString;
 }
 
-JSString* NumericStrings::addJSString(VM& vm, double value)
+JSString* NumericStrings::addJSString(VM& vm, double d)
 {
-    auto& entry = lookup(value);
-    if (value != entry.key || entry.value.isNull()) {
+    uint64_t value = std::bit_cast<uint64_t>(d);
+    if (!value)
+        return addJSString(vm, 0);
+
+    auto& entry = lookupDouble(value);
+    if (value != entry.key) {
         entry.key = value;
-        entry.value = String::number(value);
+        entry.value = String::number(d);
     } else {
         if (entry.jsString)
             return entry.jsString;
