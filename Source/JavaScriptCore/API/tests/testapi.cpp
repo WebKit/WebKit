@@ -720,6 +720,12 @@ void TestAPI::proxyReturnedWithJSSubclassing()
 
     check(scriptResultIs(evaluateScript("globalThis.triggeredProxy"), JSValueMakeUndefined(context)), "creating a subclass should not have triggered the proxy");
     check(functionReturnsTrue("(function (subclass, Superclass) { return subclass.__proto__ == Superclass.prototype; })", subclass, Superclass), "proxy's prototype should match Superclass.prototype");
+
+    JSValueRef exception = nullptr;
+    APIString proto("__proto__");
+    JSValueRef proto1 = JSObjectGetProperty(context, subclass, proto, &exception);
+    JSValueRef proto2 = JSObjectGetPrototype(context, subclass);
+    check(!exception && proto1 == proto2, "__proto__ property and JSObjectGetPrototype result should match");
 }
 
 void TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition()
