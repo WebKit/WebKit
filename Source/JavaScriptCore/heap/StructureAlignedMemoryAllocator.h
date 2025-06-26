@@ -36,8 +36,12 @@ namespace JSC {
 
 class StructureAlignedMemoryAllocator final : public AlignedMemoryAllocator {
 public:
-    StructureAlignedMemoryAllocator();
     ~StructureAlignedMemoryAllocator() final;
+
+    static Ref<StructureAlignedMemoryAllocator> create()
+    {
+        return adoptRef(*new StructureAlignedMemoryAllocator);
+    }
 
     void dump(PrintStream&) const final;
 
@@ -49,6 +53,9 @@ public:
     void freeAlignedMemory(void*) final;
 
     static void initializeStructureAddressSpace();
+
+private:
+    StructureAlignedMemoryAllocator();
 };
 
 } // namespace JSC

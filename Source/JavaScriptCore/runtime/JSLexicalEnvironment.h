@@ -46,7 +46,7 @@ public:
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         static_assert(CellType::needsDestruction == DoesNotNeedDestruction);
-        return &vm.variableSizedCellSpace();
+        return &vm.cellSpace();
     }
 
     using Base = JSSymbolTableObject;

@@ -37,17 +37,17 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Subspace);
 
-Subspace::Subspace(SubspaceKind kind, CString name, JSC::Heap& heap)
+Subspace::Subspace(SubspaceKind kind, CString name, JSC::Heap& heap, Ref<AlignedMemoryAllocator>&& allocator)
     : m_space(heap.objectSpace())
+    , m_alignedMemoryAllocator(WTFMove(allocator))
     , m_kind(kind)
     , m_name(name)
 {
 }
 
-void Subspace::initialize(const HeapCellType& heapCellType, AlignedMemoryAllocator* alignedMemoryAllocator)
+void Subspace::initialize(const HeapCellType& heapCellType)
 {
     m_heapCellType = &heapCellType;
-    m_alignedMemoryAllocator = alignedMemoryAllocator;
     m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 
     JSC::Heap& heap = m_space.heap();

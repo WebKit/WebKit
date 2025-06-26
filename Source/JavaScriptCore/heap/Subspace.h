@@ -59,7 +59,7 @@ public:
 
     CellAttributes attributes() const;
     const HeapCellType* heapCellType() const { return m_heapCellType; }
-    AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
+    AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator.ptr(); }
     
     void finishSweep(MarkedBlock::Handle&, FreeList*);
     void destroy(VM&, JSCell*);
@@ -110,14 +110,14 @@ public:
     bool isPreciseOnly() const { return kind() == SubspaceKind::PreciseSubspace; }
 
 protected:
-    Subspace(SubspaceKind, CString name, Heap&);
+    Subspace(SubspaceKind, CString name, Heap&, Ref<AlignedMemoryAllocator>&&);
 
-    void initialize(const HeapCellType&, AlignedMemoryAllocator*);
+    void initialize(const HeapCellType&);
     
     MarkedSpace& m_space;
     
     const HeapCellType* m_heapCellType { nullptr };
-    AlignedMemoryAllocator* m_alignedMemoryAllocator { nullptr };
+    const Ref<AlignedMemoryAllocator> m_alignedMemoryAllocator;
     
     BlockDirectory* m_firstDirectory { nullptr };
     BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.

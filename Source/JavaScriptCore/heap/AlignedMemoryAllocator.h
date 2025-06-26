@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/PrintStream.h>
+#include <wtf/RefCounted.h>
 #include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
@@ -34,7 +35,7 @@ class BlockDirectory;
 class Heap;
 class Subspace;
 
-class AlignedMemoryAllocator {
+class AlignedMemoryAllocator : public RefCounted<AlignedMemoryAllocator> {
     WTF_MAKE_NONCOPYABLE(AlignedMemoryAllocator);
     WTF_MAKE_FAST_ALLOCATED;
 public:

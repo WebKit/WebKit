@@ -25,6 +25,7 @@
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
 #include "WorkerThreadType.h"
+#include <JavaScriptCore/FastMallocAlignedMemoryAllocator.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>

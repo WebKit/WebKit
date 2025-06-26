@@ -43,7 +43,7 @@ class IsoSubspace;
 class IsoSubspace final : public Subspace {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IsoSubspace, JS_EXPORT_PRIVATE);
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<AlignedMemoryAllocator>&& = nullptr);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t, uint8_t numberOfLowerTierPreciseCells, Ref<AlignedMemoryAllocator>);
     JS_EXPORT_PRIVATE ~IsoSubspace() final;
 
     size_t cellSize() { return m_directory.cellSize(); }
@@ -67,7 +67,6 @@ private:
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) final;
 
     BlockDirectory m_directory;
-    std::unique_ptr<AlignedMemoryAllocator> m_allocator;
     SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_lowerTierPreciseFreeList;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
@@ -100,7 +99,7 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 
 } // namespace GCClient
 
-#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type ""_s, (heap), (heapCellType), sizeof(type), type::numberOfLowerTierPreciseCells)
+#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type ""_s, (heap), (heapCellType), sizeof(type), type::numberOfLowerTierPreciseCells, (heap).fastMallocAllocator)
 
 } // namespace JSC
 
