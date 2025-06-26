@@ -343,10 +343,6 @@ template<typename T> inline bool isGreaterThanNonZeroPowerOfTwo(T value, unsigne
     return !!((value >> 1) >> (power - 1));
 }
 
-template<typename T> constexpr bool isLessThan(const T& a, const T& b) { return a < b; }
-template<typename T> constexpr bool isLessThanEqual(const T& a, const T& b) { return a <= b; }
-template<typename T> constexpr bool isGreaterThan(const T& a, const T& b) { return a > b; }
-template<typename T> constexpr bool isGreaterThanEqual(const T& a, const T& b) { return a >= b; }
 template<typename T> constexpr bool isInRange(const T& a, const T& min, const T& max) { return a >= min && a <= max; }
 
 // decompose 'number' to its sign, exponent, and mantissa components.

@@ -107,7 +107,7 @@ struct CompareMove {
 
 TEST(WTF_PriorityQueue, MoveOnly)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&std::less<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -124,7 +124,7 @@ TEST(WTF_PriorityQueue, MoveOnly)
 
 TEST(WTF_PriorityQueue, DecreaseKey)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&std::less<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
