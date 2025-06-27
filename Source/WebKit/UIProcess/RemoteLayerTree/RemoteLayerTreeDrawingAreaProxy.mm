@@ -424,9 +424,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle, const WebCore::RenderingResourceIdentifier& identifier)
+void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle, WebCore::ContentsFormat contentsFormat, const WebCore::RenderingResourceIdentifier& identifier)
 {
-    m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle), identifier);
+    m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle), contentsFormat, identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)

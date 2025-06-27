@@ -48,6 +48,31 @@
 namespace WebKit {
 using namespace WebCore;
 
+constexpr ContentsFormat pixelFormatToContentsFormat(ImageBufferPixelFormat format)
+{
+    switch (format) {
+    case ImageBufferPixelFormat::BGRX8:
+    case ImageBufferPixelFormat::BGRA8:
+        return ContentsFormat::RGBA8;
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case ImageBufferPixelFormat::RGB10:
+        return ContentsFormat::RGBA10;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case ImageBufferPixelFormat::RGB10A8:
+        return ContentsFormat::RGBA10;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case ImageBufferPixelFormat::RGBA16F:
+        return ContentsFormat::RGBA16F;
+#endif
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return ContentsFormat::RGBA8;
+    }
+}
+
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayerCARemote);
 
 GraphicsLayerCARemote::GraphicsLayerCARemote(Type layerType, GraphicsLayerClient& client, RemoteLayerTreeContext& context)
@@ -162,9 +187,10 @@ public:
             Locker locker { m_surfaceLock };
             m_surfaceBackendHandle = ImageBufferBackendHandle { *backendHandle };
             m_surfaceIdentifier = clone->renderingResourceIdentifier();
+            m_contentsFormat = pixelFormatToContentsFormat(clone->pixelFormat());
         }
 
-        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTFMove(*backendHandle), clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTFMove(*backendHandle), m_contentsFormat, clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
 
         return true;
     }
@@ -172,9 +198,10 @@ public:
     void display(PlatformCALayer& layer) final
     {
         Locker locker { m_surfaceLock };
-        layer.setContentsFormat(m_contentsFormat);
-        if (m_surfaceBackendHandle)
+        if (m_surfaceBackendHandle) {
+            downcast<PlatformCALayerRemote>(layer).setContentsFormat(m_contentsFormat);
             downcast<PlatformCALayerRemote>(layer).setRemoteDelegatedContents({ ImageBufferBackendHandle { *m_surfaceBackendHandle }, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
+        }
     }
 
     void setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)
@@ -185,11 +212,6 @@ public:
     bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
 
 private:
-    void setContentsFormat(ContentsFormat contentsFormat) final
-    {
-        m_contentsFormat = contentsFormat;
-    }
-
     const Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
     Markable<WebCore::PlatformLayerIdentifier> m_layerID;

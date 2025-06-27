@@ -71,7 +71,6 @@ public:
 
     virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
     virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }
-    virtual void setContentsFormat(ContentsFormat) { }
 };
 
 }

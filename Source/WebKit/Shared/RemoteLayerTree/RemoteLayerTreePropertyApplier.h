@@ -39,6 +39,7 @@ public:
     
     static void applyHierarchyUpdates(RemoteLayerTreeNode&, const LayerProperties&, const RelatedLayerMap&);
     static void applyProperties(RemoteLayerTreeNode&, RemoteLayerTreeHost*, const LayerProperties&, const RelatedLayerMap&, LayerContentsType);
+    static void applyAsyncContentsUpdate(RemoteLayerTreeNode&, ImageBufferBackendHandle&&, ContentsFormat, const WebCore::RenderingResourceIdentifier& contentsIdentifier, LayerContentsType);
     static void applyPropertiesToLayer(CALayer *, RemoteLayerTreeNode*, RemoteLayerTreeHost*, const LayerProperties&, LayerContentsType);
 
 private:

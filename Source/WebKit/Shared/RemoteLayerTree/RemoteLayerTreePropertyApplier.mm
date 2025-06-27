@@ -378,6 +378,19 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
+static void applyContentsFormatToLayer(CALayer *layer, ContentsFormat contentsFormat)
+{
+    if (RetainPtr formatString = contentsFormatString(contentsFormat))
+        [layer setContentsFormat:formatString.get()];
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (contentsFormat == ContentsFormat::RGBA16F) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [layer setWantsExtendedDynamicRangeContent:true];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+#endif
+}
+
 void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, LayerContentsType layerContentsType)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
@@ -549,18 +562,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 #endif
 
-    if (properties.changedProperties & LayerChange::ContentsFormatChanged) {
-        auto contentsFormat = properties.contentsFormat;
-        if (RetainPtr formatString = contentsFormatString(contentsFormat))
-            [layer setContentsFormat:formatString.get()];
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-        if (contentsFormat == ContentsFormat::RGBA16F) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [layer setWantsExtendedDynamicRangeContent:true];
-            ALLOW_DEPRECATED_DECLARATIONS_END
-        }
-#endif
-    }
+    if (properties.changedProperties & LayerChange::ContentsFormatChanged)
+        applyContentsFormatToLayer(layer, properties.contentsFormat);
 
 #if HAVE(CORE_MATERIAL)
     if (properties.changedProperties & LayerChange::AppleVisualEffectChanged)
@@ -610,6 +613,15 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 #endif
 
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void RemoteLayerTreePropertyApplier::applyAsyncContentsUpdate(RemoteLayerTreeNode& node, ImageBufferBackendHandle&& contentsHandle, ContentsFormat contentsFormat, const WebCore::RenderingResourceIdentifier& contentsIdentifier, LayerContentsType layerContentsType)
+{
+    RetainPtr<id> contents = RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendHandle(WTFMove(contentsHandle), layerContentsType, true);
+    RetainPtr layer = node.layer();
+    layer.get().contents = contents.get();
+    applyContentsFormatToLayer(layer.get(), contentsFormat);
+    node.setAsyncContentsIdentifier(contentsIdentifier);
 }
 
 void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& node, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)

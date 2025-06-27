@@ -36,8 +36,6 @@ namespace WebCore {
 
 class PlaceholderRenderingContext;
 
-enum class ContentsFormat : uint8_t;
-
 // Thread-safe interface to submit frames from worker to the placeholder rendering context.
 class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
@@ -50,7 +48,7 @@ public:
     void setPlaceholderBuffer(ImageBuffer&);
 
     // Called by the placeholder context to attach to compositor layer.
-    void setContentsToLayer(GraphicsLayer&, ContentsFormat, ImageBuffer*);
+    void setContentsToLayer(GraphicsLayer&, ImageBuffer*);
 
 private:
     explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
@@ -81,7 +79,6 @@ private:
     ImageBufferPixelFormat pixelFormat() const final;
 
     const Ref<PlaceholderRenderingContextSource> m_source;
-    ImageBufferPixelFormat m_pixelFormat { ImageBufferPixelFormat::BGRA8 };
 };
 
 }

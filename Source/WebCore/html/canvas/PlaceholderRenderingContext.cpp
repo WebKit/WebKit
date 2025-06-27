@@ -89,12 +89,11 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
     });
 }
 
-void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer, ContentsFormat contentsFormat, ImageBuffer* buffer)
+void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer, ImageBuffer* buffer)
 {
     assertIsMainThread();
     Locker locker { m_lock };
     if ((m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get()))) {
-        m_delegate->setContentsFormat(contentsFormat);
         if (buffer) {
             m_delegate->tryCopyToLayer(*buffer);
             m_delegateBufferVersion = m_placeholderBufferVersion;
@@ -125,48 +124,24 @@ IntSize PlaceholderRenderingContext::size() const
     return canvas().size();
 }
 
-constexpr ContentsFormat pixelFormatToContentsFormat(ImageBufferPixelFormat format)
-{
-    switch (format) {
-    case ImageBufferPixelFormat::BGRX8:
-    case ImageBufferPixelFormat::BGRA8:
-        return ContentsFormat::RGBA8;
-#if ENABLE(PIXEL_FORMAT_RGB10)
-    case ImageBufferPixelFormat::RGB10:
-        return ContentsFormat::RGBA10;
-#endif
-#if ENABLE(PIXEL_FORMAT_RGB10A8)
-    case ImageBufferPixelFormat::RGB10A8:
-        return ContentsFormat::RGBA10;
-#endif
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    case ImageBufferPixelFormat::RGBA16F:
-        return ContentsFormat::RGBA16F;
-#endif
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return ContentsFormat::RGBA8;
-    }
-}
-
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
     RefPtr<ImageBuffer> buffer;
-    Ref canvas = this->canvas();
-    if (canvas->hasCreatedImageBuffer())
+    if (Ref canvas = this->canvas(); canvas->hasCreatedImageBuffer())
         buffer = canvas->buffer();
-    m_source->setContentsToLayer(layer, pixelFormatToContentsFormat(m_pixelFormat), buffer.get());
+    m_source->setContentsToLayer(layer, buffer.get());
 }
 
 void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& buffer)
 {
-    m_pixelFormat = buffer->pixelFormat();
     canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
 }
 
 ImageBufferPixelFormat PlaceholderRenderingContext::pixelFormat() const
 {
-    return m_pixelFormat;
+    if (Ref canvas = this->canvas(); canvas->hasCreatedImageBuffer())
+        return Ref { *canvas->buffer() }->pixelFormat();
+    return CanvasRenderingContext::pixelFormat();
 }
 
 }
