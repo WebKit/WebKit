@@ -47,7 +47,8 @@ void Connection::newConnectionWasInitialized() const
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
     auto xpcData = encoderToXPCData(WTFMove(encoder));
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 

@@ -92,7 +92,8 @@ OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
         blockEncoder.moveToUniquePtr();
     }));
 
-    return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 }
 
 } // namespace WebKit

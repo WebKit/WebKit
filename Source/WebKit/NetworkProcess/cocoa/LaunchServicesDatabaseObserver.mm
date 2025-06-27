@@ -71,7 +71,8 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
     [LSDatabaseContext.sharedDatabaseContext getSystemContentDatabaseObject4WebKit:makeBlockPtr([connection = connection] (xpc_object_t _Nullable object, NSError * _Nullable error) {
         if (!object)
             return;
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, object);
 

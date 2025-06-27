@@ -169,7 +169,8 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
-        m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
     RetainPtr group = m_clearCacheDispatchGroup.get();
     dispatch_group_async(group.get(), RetainPtr { dispatch_get_main_queue() }.get(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {

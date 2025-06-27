@@ -260,7 +260,8 @@ void ProcessLauncher::launchProcess()
     launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTFMove(handler));
 #else
     auto name = serviceName(m_launchOptions, m_client.get());
-    m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
 }
@@ -277,7 +278,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
 #if !USE(EXTENSIONKIT)
-    auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT  auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 #endif
@@ -310,7 +312,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
-    auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
@@ -319,7 +322,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
-        auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
         for (auto language : StringView(languagesIterator->value).split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
         xpc_dictionary_set_value(bootstrapMessage.get(), "OverrideLanguages", languages.get());
@@ -382,7 +386,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     
     auto sdkBehaviors = sdkAlignedBehaviors();
     auto sdkBehaviorBytes = sdkBehaviors.storageBytes();
-    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 

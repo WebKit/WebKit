@@ -79,7 +79,8 @@ IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue:
     }
 
     int fd = ::open(path.data(), oflag, mode);
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());

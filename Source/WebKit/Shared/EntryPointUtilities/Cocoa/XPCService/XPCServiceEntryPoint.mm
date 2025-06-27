@@ -182,7 +182,8 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // control our lifetime via process assertions instead of leaking this OS transaction.
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
-        globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
         dispatch_source_set_event_handler(globalSource.get().get(), ^{
             exitProcess(0);
         });

@@ -65,7 +65,8 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 
 void LaunchServicesDatabaseManager::didConnect()
 {
-    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+    SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName);
 
     auto connection = this->connection();

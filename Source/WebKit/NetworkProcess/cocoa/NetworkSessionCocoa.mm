@@ -2362,7 +2362,8 @@ void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8
         else
             zeroBytes(identifier);
 
-        auto nwProxyConfig = adoptNS(createProxyConfig(config.first.span().data(), config.first.size(), identifier));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto nwProxyConfig = adoptNS(createProxyConfig(config.first.span().data(), config.first.size(), identifier));
 
         if (requiresHTTPProtocols(nwProxyConfig.get()))
             recreateSessions = true;

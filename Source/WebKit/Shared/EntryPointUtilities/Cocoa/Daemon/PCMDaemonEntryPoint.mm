@@ -52,7 +52,8 @@ static CompletionHandler<void(PCM::EncodedMessage&&)> replySender(PCM::MessageTy
     if (!PCM::messageTypeSendsReply(messageType))
         return nullptr;
     return [request = WTFMove(request)] (PCM::EncodedMessage&& message) {
-        auto reply = adoptOSObject(xpc_dictionary_create_reply(request.get()));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(request.get()));
         PCM::addVersionAndEncodedMessageToDictionary(WTFMove(message), reply.get());
         xpc_connection_send_message(xpc_dictionary_get_remote_connection(request.get()), reply.get());
     };
@@ -80,7 +81,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_activity_register("com.apple.webkit.adattributiond.activity", XPC_ACTIVITY_CHECK_IN, ^(xpc_activity_t activity) {
         if (xpc_activity_get_state(activity) == XPC_ACTIVITY_STATE_CHECK_IN) {
             NSLog(@"Activity checking in");
-            auto criteria = adoptOSObject(xpc_activity_copy_criteria(activity));
+            // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+            SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto criteria = adoptOSObject(xpc_activity_copy_criteria(activity));
 
             // These values should align with values from com.apple.webkit.adattributiond.plist
             constexpr auto oneHourSeconds = 3600;

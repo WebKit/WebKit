@@ -41,7 +41,8 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
         if (m_connection)
             return;
 
-        m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
+        // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+        SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
 
         xpc_connection_set_target_queue(m_connection.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
         xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {

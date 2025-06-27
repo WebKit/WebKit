@@ -240,7 +240,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 return;
             }
 
-            auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
+            // FIXME: adoptOSObject() is not yet supported by the static analyzer.
+            SUPPRESS_UNRETAINED_ARG SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
             xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
             xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply.get());
 
