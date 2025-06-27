@@ -82,6 +82,9 @@ private:
     void captureAnchorGeometry(const RenderBox&);
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
 
+    bool supportsNewStaticPositionPath(const RenderBox&, LogicalBoxAxis selfAxis) const;
+    LayoutUnit newComputeInlineStaticPosition(const RenderBox&) const;
+
     void computeStaticPosition(const RenderBox&, LogicalBoxAxis selfAxis);
     void computeInlineStaticDistance(const RenderBox&);
     void computeBlockStaticDistance(const RenderBox&);

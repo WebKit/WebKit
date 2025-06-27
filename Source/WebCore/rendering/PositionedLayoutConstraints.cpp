@@ -393,6 +393,51 @@ bool PositionedLayoutConstraints::alignmentAppliesStretch(ItemPosition normalAli
 
 // MARK: - Static Position Computation
 
+
+bool PositionedLayoutConstraints::supportsNewStaticPositionPath(const RenderBox& renderer, LogicalBoxAxis selfAxis) const
+{
+    auto rendererWritingMode = renderer.writingMode();
+    if (!rendererWritingMode.isLogicalLeftInlineStart())
+        return false;
+
+    if (!rendererWritingMode.isHorizontal())
+        return false;
+
+    if (!m_containingWritingMode.isLogicalLeftInlineStart())
+        return false;
+
+    if (!m_containingWritingMode.isHorizontal())
+        return false;
+
+    // The parent sets the renderers static position so we need to set requirements based
+    // off that as well.
+    auto parentWritingMode = renderer.parent()->writingMode();
+    if (!parentWritingMode.isLogicalLeftInlineStart())
+        return false;
+
+    if (!parentWritingMode.isHorizontal())
+        return false;
+
+    if (selfAxis == LogicalBoxAxis::Block)
+        return false;
+    return true;
+}
+
+LayoutUnit PositionedLayoutConstraints::newComputeInlineStaticPosition(const RenderBox& renderer) const
+{
+    auto* parent = renderer.parent();
+    auto staticPosition = renderer.layer()->staticInlinePosition();
+    for (auto* current = parent; current && current != m_container.get(); current = current->container()) {
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(*current);
+        if (!renderBox)
+            continue;
+        staticPosition += renderBox->logicalLeft();
+        if (renderBox->isInFlowPositioned())
+            staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
+    }
+    return staticPosition;
+}
+
 void PositionedLayoutConstraints::computeStaticPosition(const RenderBox& renderer, LogicalBoxAxis selfAxis)
 {
     ASSERT(m_useStaticPosition);
@@ -426,17 +471,25 @@ void PositionedLayoutConstraints::computeStaticPosition(const RenderBox& rendere
             return;
         }
         // Rewind grid-area adjustments and fall through to the existing static position code.
-        m_containingRange.moveTo(m_originalContainingRange.min());
+        if (selfAxis != LogicalBoxAxis::Inline || !supportsNewStaticPositionPath(renderer, selfAxis))
+            m_containingRange.moveTo(m_originalContainingRange.min());
     }
 
-    if (selfAxis == LogicalBoxAxis::Inline)
-        computeInlineStaticDistance(renderer);
+    if (selfAxis == LogicalBoxAxis::Inline) {
+        if (supportsNewStaticPositionPath(renderer, LogicalBoxAxis::Inline)) {
+            auto staticPosition = newComputeInlineStaticPosition(renderer);
+            m_insetBefore = Style::InsetEdge::Fixed { staticPosition - m_containingRange.min() };
+        } else
+            computeInlineStaticDistance(renderer);
+    }
     else
         computeBlockStaticDistance(renderer);
 }
 
 void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox& renderer)
 {
+    ASSERT(!supportsNewStaticPositionPath(renderer, LogicalBoxAxis::Inline), "Should have taken modern static position path.");
+
     auto* parent = renderer.parent();
     auto parentWritingMode = parent->writingMode();
 

@@ -5253,9 +5253,7 @@ imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.gri
 imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.grid.no_filter.shadow.fillRect.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.grid.no_filter.shadow.pattern.html [ ImageOnlyFailure ]
 
-webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002.html [ ImageOnlyFailure ]
-webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-001.html [ ImageOnlyFailure ]
