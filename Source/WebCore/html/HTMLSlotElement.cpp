@@ -147,6 +147,43 @@ static void flattenAssignedNodes(Vector<Ref<Node>>& nodes, const HTMLSlotElement
     }
 }
 
+static bool containsAssignedNodeIgnoringSlots(const HTMLSlotElement& slot)
+{
+    if (!slot.containingShadowRoot())
+        return false;
+
+    auto* assignedNodes = slot.assignedNodes();
+    if (!assignedNodes) {
+        for (RefPtr<Node> child = slot.firstChild(); child; child = child->nextSibling()) {
+            if (auto* slot = dynamicDowncast<HTMLSlotElement>(*child)) {
+                if (containsAssignedNodeIgnoringSlots(*slot))
+                    return true;
+            } else if (is<Text>(*child) || is<Element>(*child))
+                return true;
+        }
+        return false;
+    }
+    for (auto& weakNode : *assignedNodes) {
+        if (!weakNode) [[unlikely]] {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        if (auto* slot = dynamicDowncast<HTMLSlotElement>(*weakNode)) {
+            if (containsAssignedNodeIgnoringSlots(*slot))
+                return true;
+        } else {
+            ASSERT(is<Text>(*weakNode) || is<Element>(*weakNode));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool HTMLSlotElement::hasFlattenedSlottedContent() const
+{
+    return containsAssignedNodeIgnoringSlots(*this);
+}
+
 Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& options) const
 {
     if (options.flatten) {
