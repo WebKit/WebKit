@@ -174,7 +174,7 @@ public:
 
     static LayoutUnit computeSlice(Length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent);
     static LayoutBoxExtent computeSlices(const LayoutSize&, const LengthBox& lengths, int scaleFactor);
-    static LayoutBoxExtent computeSlices(const LayoutSize&, const LengthBox& lengths, const FloatBoxExtent& widths, const LayoutBoxExtent& slices);
+    static LayoutBoxExtent computeSlices(const LayoutSize&, const LengthBox& lengths, const LayoutBoxExtent& widths, const LayoutBoxExtent& slices);
 
     static bool isEmptyPieceRect(ImagePiece, const LayoutBoxExtent& slices);
     static bool isEmptyPieceRect(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);

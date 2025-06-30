@@ -127,11 +127,11 @@ private:
 
 // MARK: - Typed Wrappers
 
-template<typename StyleType>
+template<typename StyleType, typename GetterType = StyleType, typename SetterType = StyleType>
 class StyleTypeWrapper : public WrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    StyleTypeWrapper(CSSPropertyID property, const StyleType& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(StyleType&&))
+    StyleTypeWrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType))
         : WrapperBase(property)
         , m_getter(getter)
         , m_setter(setter)
@@ -168,22 +168,31 @@ public:
 #endif
 
 private:
-    const StyleType& value(const RenderStyle& style) const
+    GetterType value(const RenderStyle& style) const
     {
         return (style.*m_getter)();
     }
 
-    const StyleType& (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(StyleType&&);
+    GetterType (RenderStyle::*m_getter)() const;
+    void (RenderStyle::*m_setter)(SetterType);
 };
 
-template<typename T> class VisitedAffectedStyleTypeWrapper : public WrapperBase {
+// Deduction guide for getter/setters that return and take values.
+template<typename T>
+StyleTypeWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T)) -> StyleTypeWrapper<T, T, T>;
+
+// Deduction guide for getter/setters that return const references and take r-value references.
+template<typename T>
+StyleTypeWrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, const T&, T&&>;
+
+template<typename StyleType, typename GetterType = StyleType, typename SetterType = StyleType>
+class VisitedAffectedStyleTypeWrapper : public WrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    VisitedAffectedStyleTypeWrapper(CSSPropertyID property, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&), const T& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(T&&))
+    VisitedAffectedStyleTypeWrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType), GetterType (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(SetterType))
         : WrapperBase(property)
-        , m_wrapper(StyleTypeWrapper<T>(property, getter, setter))
-        , m_visitedWrapper(StyleTypeWrapper<T>(property, visitedGetter, visitedSetter))
+        , m_wrapper(StyleTypeWrapper<StyleType, GetterType, SetterType>(property, getter, setter))
+        , m_visitedWrapper(StyleTypeWrapper<StyleType, GetterType, SetterType>(property, visitedGetter, visitedSetter))
     {
     }
 
@@ -211,9 +220,17 @@ public:
     }
 #endif
 
-    StyleTypeWrapper<T> m_wrapper;
-    StyleTypeWrapper<T> m_visitedWrapper;
+    StyleTypeWrapper<StyleType, GetterType, SetterType> m_wrapper;
+    StyleTypeWrapper<StyleType, GetterType, SetterType> m_visitedWrapper;
 };
+
+// Deduction guide for getter/setters that return and take values.
+template<typename T>
+VisitedAffectedStyleTypeWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), T (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(T)) -> VisitedAffectedStyleTypeWrapper<T, T, T>;
+
+// Deduction guide for getter/setters that return const references and take r-value references.
+template<typename T>
+VisitedAffectedStyleTypeWrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&), const T& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(T&&)) -> VisitedAffectedStyleTypeWrapper<T, const T&, T&&>;
 
 template<typename T>
 class AutoWrapper final : public Wrapper<T> {
@@ -1278,10 +1295,12 @@ private:
 class ScrollbarColorWrapper final : public WrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
+    using Underlying = StyleTypeWrapper<Color, const Color&, Color&&>;
+
     ScrollbarColorWrapper()
         : WrapperBase(CSSPropertyScrollbarColor)
-        , m_thumbWrapper(StyleTypeWrapper<Color>(CSSPropertyScrollbarColor, &RenderStyle::scrollbarThumbColor, &RenderStyle::setScrollbarThumbColor))
-        , m_trackWrapper(StyleTypeWrapper<Color>(CSSPropertyScrollbarColor, &RenderStyle::scrollbarTrackColor, &RenderStyle::setScrollbarTrackColor))
+        , m_thumbWrapper(Underlying { CSSPropertyScrollbarColor, &RenderStyle::scrollbarThumbColor, &RenderStyle::setScrollbarThumbColor })
+        , m_trackWrapper(Underlying { CSSPropertyScrollbarColor, &RenderStyle::scrollbarTrackColor, &RenderStyle::setScrollbarTrackColor })
     {
     }
 
@@ -1324,8 +1343,8 @@ public:
 #endif
 
 private:
-    StyleTypeWrapper<Color> m_thumbWrapper;
-    StyleTypeWrapper<Color> m_trackWrapper;
+    Underlying m_thumbWrapper;
+    Underlying m_trackWrapper;
 };
 
 class VisitedAffectedColorWrapper final : public WrapperBase {
@@ -1366,18 +1385,20 @@ public:
     ColorWrapper m_visitedWrapper;
 };
 
-class AccentColorWrapper final : public StyleTypeWrapper<Color> {
+class AccentColorWrapper final : public StyleTypeWrapper<Color, const Color&, Color&&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
+    using Base = StyleTypeWrapper<Color, const Color&, Color&&>;
+
     AccentColorWrapper()
-        : StyleTypeWrapper<Color>(CSSPropertyAccentColor, &RenderStyle::accentColor, &RenderStyle::setAccentColor)
+        : Base { CSSPropertyAccentColor, &RenderStyle::accentColor, &RenderStyle::setAccentColor }
     {
     }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         return a.hasAutoAccentColor() == b.hasAutoAccentColor()
-            && StyleTypeWrapper<Color>::equals(a, b);
+            && Base::equals(a, b);
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
@@ -1388,7 +1409,7 @@ public:
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
     {
         if (canInterpolate(from, to, context.compositeOperation)) {
-            StyleTypeWrapper<Color>::interpolate(destination, from, to, context);
+            Base::interpolate(destination, from, to, context);
             return;
         }
 
@@ -1401,11 +1422,13 @@ public:
     }
 };
 
-class CaretColorWrapper final : public VisitedAffectedStyleTypeWrapper<Color> {
+class CaretColorWrapper final : public VisitedAffectedStyleTypeWrapper<Color, const Color&, Color&&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
+    using Base = VisitedAffectedStyleTypeWrapper<Color, const Color&, Color&&>;
+
     CaretColorWrapper()
-        : VisitedAffectedStyleTypeWrapper<Color>(CSSPropertyCaretColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor)
+        : Base { CSSPropertyCaretColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor }
     {
     }
 
@@ -1413,7 +1436,7 @@ public:
     {
         return a.hasAutoCaretColor() == b.hasAutoCaretColor()
             && a.hasVisitedLinkAutoCaretColor() == b.hasVisitedLinkAutoCaretColor()
-            && VisitedAffectedStyleTypeWrapper<Color>::equals(a, b);
+            && Base::equals(a, b);
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final

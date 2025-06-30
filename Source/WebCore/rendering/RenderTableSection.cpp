@@ -697,15 +697,15 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& sb = style().borderBefore(table()->writingMode());
+    auto& sb = style().borderBefore(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
-    const BorderValue& rb = firstRow()->style().borderBefore(table()->writingMode());
+    auto& rb = firstRow()->style().borderBefore(table()->writingMode());
     if (rb.style() == BorderStyle::Hidden)
         return -1;
     if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
@@ -713,14 +713,14 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 
     bool allHidden = true;
     for (unsigned c = 0; c < totalCols; c++) {
-        const CellStruct& current = cellAt(0, c);
+        auto& current = cellAt(0, c);
         if (current.inColSpan || !current.hasCells())
             continue;
-        const BorderValue& cb = current.primaryCell()->style().borderBefore(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        auto& cb = current.primaryCell()->style().borderBefore(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
         // FIXME: Don't repeat for the same col group
-        RenderTableCol* colGroup = table()->colElement(c);
+        auto* colGroup = table()->colElement(c);
         if (colGroup) {
-            const BorderValue& gb = colGroup->style().borderBefore(table()->writingMode());
+            auto& gb = colGroup->style().borderBefore(table()->writingMode());
             if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
@@ -738,7 +738,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), false);
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), false);
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderAfter() const
@@ -747,15 +747,15 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& sb = style().borderAfter(table()->writingMode());
+    auto& sb = style().borderAfter(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
-    const BorderValue& rb = lastRow()->style().borderAfter(table()->writingMode());
+    auto& rb = lastRow()->style().borderAfter(table()->writingMode());
     if (rb.style() == BorderStyle::Hidden)
         return -1;
     if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
@@ -763,14 +763,14 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 
     bool allHidden = true;
     for (unsigned c = 0; c < totalCols; c++) {
-        const CellStruct& current = cellAt(m_grid.size() - 1, c);
+        auto& current = cellAt(m_grid.size() - 1, c);
         if (current.inColSpan || !current.hasCells())
             continue;
-        const BorderValue& cb = current.primaryCell()->style().borderAfter(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        auto& cb = current.primaryCell()->style().borderAfter(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
         // FIXME: Don't repeat for the same col group
-        RenderTableCol* colGroup = table()->colElement(c);
+        auto* colGroup = table()->colElement(c);
         if (colGroup) {
-            const BorderValue& gb = colGroup->style().borderAfter(table()->writingMode());
+            auto& gb = colGroup->style().borderAfter(table()->writingMode());
             if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
@@ -788,7 +788,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), true);
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), true);
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderStart() const
@@ -797,16 +797,16 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& sb = style().borderStart(table()->writingMode());
+    auto& sb = style().borderStart(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(0)) {
-        const BorderValue& gb = colGroup->style().borderStart(table()->writingMode());
+        auto& gb = colGroup->style().borderStart(table()->writingMode());
         if (gb.style() == BorderStyle::Hidden)
             return -1;
         if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
@@ -815,12 +815,12 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
 
     bool allHidden = true;
     for (unsigned r = 0; r < m_grid.size(); r++) {
-        const CellStruct& current = cellAt(r, 0);
+        auto& current = cellAt(r, 0);
         if (!current.hasCells())
             continue;
         // FIXME: Don't repeat for the same cell
-        const BorderValue& cb = current.primaryCell()->style().borderStart(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
-        const BorderValue& rb = current.primaryCell()->parent()->style().borderStart(table()->writingMode());
+        auto& cb = current.primaryCell()->style().borderStart(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        auto& rb = current.primaryCell()->parent()->style().borderStart(table()->writingMode());
         if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
@@ -831,7 +831,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), table()->writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), table()->writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderEnd() const
@@ -840,16 +840,16 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& sb = style().borderEnd(table()->writingMode());
+    auto& sb = style().borderEnd(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(totalCols - 1)) {
-        const BorderValue& gb = colGroup->style().borderEnd(table()->writingMode());
+        auto& gb = colGroup->style().borderEnd(table()->writingMode());
         if (gb.style() == BorderStyle::Hidden)
             return -1;
         if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
@@ -858,12 +858,12 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
 
     bool allHidden = true;
     for (unsigned r = 0; r < m_grid.size(); r++) {
-        const CellStruct& current = cellAt(r, totalCols - 1);
+        auto& current = cellAt(r, totalCols - 1);
         if (!current.hasCells())
             continue;
         // FIXME: Don't repeat for the same cell
-        const BorderValue& cb = current.primaryCell()->style().borderEnd(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
-        const BorderValue& rb = current.primaryCell()->parent()->style().borderEnd(table()->writingMode());
+        auto& cb = current.primaryCell()->style().borderEnd(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        auto& rb = current.primaryCell()->parent()->style().borderEnd(table()->writingMode());
         if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
@@ -874,7 +874,7 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), !table()->writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), !table()->writingMode().isInlineFlipped());
 }
 
 void RenderTableSection::recalcOuterBorder()
@@ -915,7 +915,7 @@ std::optional<LayoutUnit> RenderTableSection::baselineFromCellContentEdges(ItemP
     
     std::optional<LayoutUnit> result;
     for (size_t i = 0; i < row.size(); ++i) {
-        const CellStruct& cs = row.at(i);
+        auto& cs = row.at(i);
         const RenderTableCell* cell = cs.primaryCell();
         // Only cells with content have a baseline
         if (cell && cell->contentBoxLogicalHeight()) {
@@ -1177,18 +1177,18 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
     switch (borderSide) {
     case BoxSide::Top:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderTop().width())), BoxSide::Top, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), Style::to<LayoutUnit>(style.borderTop().width())), BoxSide::Top, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
         break;
     case BoxSide::Bottom:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y() + rowGroupRect.height(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderBottom().width())), BoxSide::Bottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), Style::to<LayoutUnit>(style.borderBottom().width())), BoxSide::Bottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
         break;
     case BoxSide::Left:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderLeft().width()),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), Style::to<LayoutUnit>(style.borderLeft().width()),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Left, CSSPropertyBorderLeftColor, style.borderLeftStyle(), table()->style().borderLeftStyle());
         break;
     case BoxSide::Right:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderRight().width()),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), Style::to<LayoutUnit>(style.borderRight().width()),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Right, CSSPropertyBorderRightColor, style.borderRightStyle(), table()->style().borderRightStyle());
         break;
     default:
@@ -1448,7 +1448,7 @@ unsigned RenderTableSection::numColumns() const
     
     for (unsigned r = 0; r < m_grid.size(); ++r) {
         for (unsigned c = result; c < table()->numEffCols(); ++c) {
-            const CellStruct& cell = cellAt(r, c);
+            auto& cell = cellAt(r, c);
             if (cell.hasCells() || cell.inColSpan)
                 result = c;
         }

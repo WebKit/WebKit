@@ -24,20 +24,77 @@
 
 #pragma once
 
-#include "BorderValue.h"
+#include "RenderStyleConstants.h"
+#include "StyleColor.h"
+#include "StyleLineWidth.h"
 
 namespace WebCore {
 
-class OutlineValue : public BorderValue {
-friend class RenderStyle;
+using namespace CSS::Literals;
+
+class RenderStyle;
+
+class OutlineValue final {
+    friend class RenderStyle;
 public:
-    float offset() const { return m_offset; }
-    bool isAuto() const { return static_cast<bool>(m_isAuto); }
+    OutlineValue()
+        : m_style(static_cast<unsigned>(OutlineStyle::None))
+    {
+    }
+
+    bool isVisible() const;
+
+    Style::Length<> size() const { return { m_width.value.value + m_offset.value }; }
+
+    const Style::Color& color() const { return m_color; }
+    Style::LineWidth width() const { return m_width; }
+    Style::Length<> offset() const { return m_offset; }
+    OutlineStyle style() const { return static_cast<OutlineStyle>(m_style); }
 
     bool operator==(const OutlineValue&) const = default;
 
 private:
-    float m_offset { 0 };
+    bool nonZero() const;
+    bool isTransparent() const;
+
+    Style::Color m_color { Style::Color::currentColor() };
+    Style::LineWidth m_width { CSS::Keyword::Medium { } };
+    Style::Length<> m_offset { 0_css_px };
+    PREFERRED_TYPE(OutlineStyle) unsigned m_style : 4;
 };
+
+inline bool OutlineValue::nonZero() const
+{
+    return !Style::isZero(width()) && style() != OutlineStyle::None;
+}
+
+inline std::optional<BorderStyle> toBorderStyle(OutlineStyle outlineStyle)
+{
+    switch (outlineStyle) {
+    case OutlineStyle::Auto:
+        break;
+    case OutlineStyle::None:
+        return BorderStyle::None;
+    case OutlineStyle::Inset:
+        return BorderStyle::Inset;
+    case OutlineStyle::Groove:
+        return BorderStyle::Groove;
+    case OutlineStyle::Outset:
+        return BorderStyle::Outset;
+    case OutlineStyle::Ridge:
+        return BorderStyle::Ridge;
+    case OutlineStyle::Dotted:
+        return BorderStyle::Dotted;
+    case OutlineStyle::Dashed:
+        return BorderStyle::Dashed;
+    case OutlineStyle::Solid:
+        return BorderStyle::Solid;
+    case OutlineStyle::Double:
+        return BorderStyle::Double;
+    }
+    return { };
+}
+
+TextStream& operator<<(TextStream&, const OutlineValue&);
 
 } // namespace WebCore

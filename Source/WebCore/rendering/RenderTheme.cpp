@@ -761,7 +761,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         if (isSpinUpButtonPartPressed(renderer))
             states.add(ControlStyle::State::SpinUp);
     }
-    if (isFocused(renderer) && renderer.style().hasAutoOutlineStyle())
+    if (isFocused(renderer) && renderer.style().outlineStyle() == OutlineStyle::Auto)
         states.add(ControlStyle::State::Focused);
     if (isEnabled(renderer))
         states.add(ControlStyle::State::Enabled);
@@ -837,7 +837,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorWithColorFilter(CSSPropertyColor),
-        style->borderWidth()
+        Style::to<FloatBoxExtent>(style->borderWidth()),
     };
 }
 
@@ -1362,7 +1362,7 @@ Style::MinimumSizePair RenderTheme::minimumControlSize(StyleAppearance appearanc
     return { WTFMove(resultWidth), WTFMove(resultHeight) };
 }
 
-LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float, const Element*) const
+RectEdges<Style::LineWidth> RenderTheme::controlBorder(StyleAppearance appearance, const FontCascade&, const RectEdges<Style::LineWidth>& zoomedBox, float, const Element*) const
 {
     switch (appearance) {
     case StyleAppearance::PushButton:
@@ -1370,7 +1370,7 @@ LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCasca
     case StyleAppearance::SearchField:
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio:
-        return LengthBox(0);
+        return RectEdges<Style::LineWidth> { 0_css_px };
     default:
         return zoomedBox;
     }
@@ -1381,10 +1381,9 @@ LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCasca
 void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
 {
     auto appearance = style.usedAppearance();
-
-    LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
     CheckedRef fontCascade = style.fontCascade();
-    borderBox = controlBorder(appearance, fontCascade.get(), borderBox, style.usedZoom(), element);
+
+    auto borderBox = controlBorder(appearance, fontCascade.get(), style.borderWidth(), style.usedZoom(), element);
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
@@ -1395,31 +1394,31 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     };
     // Transpose for vertical writing mode:
     if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
-        borderBox = LengthBox(borderBox.left().value(), borderBox.top().value(), borderBox.right().value(), borderBox.bottom().value());
+        borderBox = borderBox.transpose();
 
-    if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
-        if (borderBox.top().value())
-            style.setBorderTopWidth(borderBox.top().value());
+    if (borderBox.top().value != Style::to<int>(style.borderTopWidth())) {
+        if (!Style::isZero(borderBox.top()))
+            style.setBorderTopWidth(borderBox.top());
         else
             style.resetBorderTop();
     }
-    if (borderBox.right().value() != static_cast<int>(style.borderRightWidth())) {
-        if (borderBox.right().value())
-            style.setBorderRightWidth(borderBox.right().value());
+    if (borderBox.right().value != Style::to<int>(style.borderRightWidth())) {
+        if (!Style::isZero(borderBox.right()))
+            style.setBorderRightWidth(borderBox.right());
         else
             style.resetBorderRight();
     }
-    if (borderBox.bottom().value() != static_cast<int>(style.borderBottomWidth())) {
-        style.setBorderBottomWidth(borderBox.bottom().value());
-        if (borderBox.bottom().value())
-            style.setBorderBottomWidth(borderBox.bottom().value());
+    if (borderBox.bottom().value != Style::to<int>(style.borderBottomWidth())) {
+        style.setBorderBottomWidth(borderBox.bottom());
+        if (!Style::isZero(borderBox.bottom()))
+            style.setBorderBottomWidth(borderBox.bottom());
         else
             style.resetBorderBottom();
     }
-    if (borderBox.left().value() != static_cast<int>(style.borderLeftWidth())) {
-        style.setBorderLeftWidth(borderBox.left().value());
-        if (borderBox.left().value())
-            style.setBorderLeftWidth(borderBox.left().value());
+    if (borderBox.left().value != Style::to<int>(style.borderLeftWidth())) {
+        style.setBorderLeftWidth(borderBox.left());
+        if (!Style::isZero(borderBox.left()))
+            style.setBorderLeftWidth(borderBox.left());
         else
             style.resetBorderLeft();
     }
@@ -2061,6 +2060,16 @@ Color RenderTheme::defaultButtonTextColor(OptionSet<StyleColorOptions> options) 
 Color RenderTheme::platformDefaultButtonTextColor(OptionSet<StyleColorOptions> options) const
 {
     return systemColor(CSSValueActivebuttontext, options);
+}
+
+Style::LineWidth RenderTheme::platformFocusRingWidth()
+{
+    return CSS::Keyword::Medium { };
+}
+
+Style::Length<> RenderTheme::platformFocusRingOffset(Style::LineWidth outlineWidth)
+{
+    return { std::max(Style::to<float>(outlineWidth) - Style::to<float>(platformFocusRingWidth()), 0.0f) };
 }
 
 #if ENABLE(TOUCH_EVENTS)

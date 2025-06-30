@@ -1097,8 +1097,8 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         protectedFrame()->eventHandler().scheduleCursorUpdate();
 #endif
 
-    bool hadOutlineAuto = oldStyle && oldStyle->hasAutoOutlineStyle();
-    bool hasOutlineAuto = outlineStyleForRepaint().hasAutoOutlineStyle();
+    bool hadOutlineAuto = oldStyle && oldStyle->outlineStyle() == OutlineStyle::Auto;
+    bool hasOutlineAuto = outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
         issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().outlineSize() : oldStyle->outlineSize());
@@ -1476,7 +1476,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
 
     const RenderStyle& outlineStyle = outlineStyleForRepaint();
     auto& style = this->style();
-    auto outlineWidth = LayoutUnit { outlineStyle.outlineSize() };
+    auto outlineWidth = Style::to<LayoutUnit>(outlineStyle.outlineSize());
     auto insetShadowExtent = style.boxShadowInsetExtent();
     auto sizeDelta = LayoutSize { absoluteValue(newOutlineBoundsRect.width() - oldOutlineBoundsRect.width()), absoluteValue(newOutlineBoundsRect.height() - oldOutlineBoundsRect.height()) };
     if (sizeDelta.width()) {
@@ -1498,7 +1498,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineRightInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                auto offset = Style::to<LayoutUnit>(outlineStyle.outlineOffset());
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowRightInsetExtent = [&] {
@@ -1544,7 +1544,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineBottomInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                auto offset = Style::to<LayoutUnit>(outlineStyle.outlineOffset());
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowBottomInsetExtent = [&]() -> LayoutUnit {
@@ -2099,24 +2099,24 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 
 static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
 {
-    context.drawFocusRing(path, style.outlineWidth(), color);
+    context.drawFocusRing(path, Style::to<float>(style.outlineWidth()), color);
 }
 
 static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
 {
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, 0, style.outlineWidth(), color);
+    context.drawFocusRing(rects, 0, Style::to<float>(style.outlineWidth()), color);
 #else
-    context.drawFocusRing(rects, style.outlineOffset(), style.outlineWidth(), color);
+    context.drawFocusRing(rects, Style::to<float>(style.outlineOffset()), Style::to<float>(style.outlineWidth()), color);
 #endif
 }
 
 void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle& style, const Vector<LayoutRect>& focusRingRects) const
 {
-    ASSERT(style.hasAutoOutlineStyle());
-    float outlineOffset = style.outlineOffset();
+    ASSERT(style.outlineStyle() == OutlineStyle::Auto);
+    auto outlineOffset = Style::to<float>(style.outlineOffset());
     Vector<FloatRect> pixelSnappedFocusRingRects;
-    float deviceScaleFactor = document().deviceScaleFactor();
+    auto deviceScaleFactor = document().deviceScaleFactor();
     for (auto rect : focusRingRects) {
         rect.inflate(outlineOffset);
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
@@ -2146,13 +2146,13 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     BorderPainter { *this, paintInfo }.paintOutline(paintRect);
 }
 
-void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
+void RenderElement::issueRepaintForOutlineAuto(Style::Length<> outlineSize)
 {
     LayoutRect repaintRect;
     Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, LayoutPoint(), containerForRepaint().renderer.get());
     for (auto rect : focusRingRects) {
-        rect.inflate(outlineSize);
+        rect.inflate(Style::to<float>(outlineSize));
         repaintRect.unite(rect);
     }
     repaintRectangle(repaintRect);
@@ -2170,7 +2170,7 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
         if (hasOutlineAuto == child->hasOutlineAutoAncestor())
             continue;
         child->setHasOutlineAutoAncestor(hasOutlineAuto);
-        bool childHasOutlineAuto = child->outlineStyleForRepaint().hasAutoOutlineStyle();
+        bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
         if (childHasOutlineAuto)
             continue;
         if (auto* element = dynamicDowncast<RenderElement>(child.get()))

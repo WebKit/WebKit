@@ -466,6 +466,48 @@ struct ToPlatformInvoker {
 };
 inline constexpr ToPlatformInvoker toPlatform{};
 
+// MARK: - Conversion directly from "Style" to "[any type]"
+
+// All leaf types must implement the following:
+//
+//    template<> struct WebCore::Style::To<[any type], StyleType> {
+//        [any type] operator()(const StyleType&);
+//    };
+
+template<typename Target, typename From> struct To;
+
+template<typename Target> struct ToInvoker {
+    template<typename StyleType, typename... Rest> auto operator()(const StyleType& value, Rest&&... rest) const -> Target
+    {
+        return To<Target, StyleType>{}(value, std::forward<Rest>(rest)...);
+    }
+};
+template<typename Target> inline constexpr ToInvoker<Target> to{};
+
+// Constrained for `TreatAsVariantLike`.
+template<typename Target, VariantLike StyleType> struct To<Target, StyleType> {
+    template<typename... Rest> auto operator()(const StyleType& value, Rest&&... rest) -> Target
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) -> Target { return to<Target>(alternative, std::forward<Rest>(rest)...); });
+    }
+};
+
+// Specialization for `TupleLike` (wrapper).
+template<typename Target, TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct To<Target, StyleType> {
+    template<typename... Rest> auto operator()(const StyleType& value, Rest&&... rest) -> Target
+    {
+        return to<Target>(get<0>(value), std::forward<Rest>(rest)...);
+    }
+};
+
+// Specialization for `RectEdges`
+template<typename Target, typename StyleType> struct To<Target, RectEdges<StyleType>> {
+    template<typename... Rest> auto operator()(const RectEdges<StyleType>& value, Rest&&... rest) -> Target
+    {
+        return value.map([&](auto value) -> typename Target::value_type { return to<typename Target::value_type>(value, rest...); });
+    }
+};
+
 // MARK: - Serialization
 
 // All leaf types must implement the following:

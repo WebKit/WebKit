@@ -25,14 +25,10 @@
 #include "config.h"
 #include "BorderValue.h"
 
-namespace WebCore {
+#include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/text/TextStream.h>
 
-BorderValue::BorderValue()
-    : m_color(Style::Color::currentColor())
-    , m_style(static_cast<unsigned>(BorderStyle::None))
-    , m_isAuto(static_cast<unsigned>(false))
-{
-}
+namespace WebCore {
 
 bool BorderValue::isTransparent() const
 {
@@ -42,6 +38,12 @@ bool BorderValue::isTransparent() const
 bool BorderValue::isVisible() const
 {
     return nonZero() && !isTransparent() && style() != BorderStyle::Hidden;
+}
+
+TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
+{
+    ts << borderValue.width() << ' ' << borderValue.style() << ' ' << borderValue.color();
+    return ts;
 }
 
 } // namespace WebCore

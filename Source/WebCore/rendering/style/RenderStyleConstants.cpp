@@ -853,6 +853,23 @@ TextStream& operator<<(TextStream& ts, Order order)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, OutlineStyle outlineStyle)
+{
+    switch (outlineStyle) {
+    case OutlineStyle::Auto: ts << "auto"_s; break;
+    case OutlineStyle::None: ts << "none"_s; break;
+    case OutlineStyle::Inset: ts << "inset"_s; break;
+    case OutlineStyle::Groove: ts << "groove"_s; break;
+    case OutlineStyle::Outset: ts << "outset"_s; break;
+    case OutlineStyle::Ridge: ts << "ridge"_s; break;
+    case OutlineStyle::Dotted: ts << "dotted"_s; break;
+    case OutlineStyle::Dashed: ts << "dashed"_s; break;
+    case OutlineStyle::Solid: ts << "solid"_s; break;
+    case OutlineStyle::Double: ts << "double"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, Overflow overflow)
 {
     switch (overflow) {

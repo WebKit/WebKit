@@ -80,13 +80,13 @@ LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const Leng
     };
 }
 
-LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const LengthBox& lengths, const FloatBoxExtent& widths, const LayoutBoxExtent& slices)
+LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const LengthBox& lengths, const LayoutBoxExtent& widths, const LayoutBoxExtent& slices)
 {
     return {
-        computeSlice(lengths.top(), LayoutUnit(widths.top()), slices.top(), size.height()),
-        computeSlice(lengths.right(), LayoutUnit(widths.right()), slices.right(), size.width()),
-        computeSlice(lengths.bottom(), LayoutUnit(widths.bottom()), slices.bottom(), size.height()),
-        computeSlice(lengths.left(), LayoutUnit(widths.left()), slices.left(), size.width())
+        computeSlice(lengths.top(), widths.top(), slices.top(), size.height()),
+        computeSlice(lengths.right(), widths.right(), slices.right(), size.width()),
+        computeSlice(lengths.bottom(), widths.bottom(), slices.bottom(), size.height()),
+        computeSlice(lengths.left(), widths.left(), slices.left(), size.width())
     };
 }
 
@@ -201,20 +201,20 @@ Vector<FloatSize> NinePieceImage::computeTileScales(const Vector<FloatRect>& des
 
 void NinePieceImage::paint(GraphicsContext& graphicsContext, const RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator op) const
 {
-    StyleImage* styleImage = image();
+    auto* styleImage = image();
     ASSERT(styleImage);
     ASSERT(styleImage->isLoaded(renderer));
 
-    LayoutBoxExtent sourceSlices = computeSlices(source, imageSlices(), styleImage->imageScaleFactor());
-    LayoutBoxExtent destinationSlices = computeSlices(destination.size(), borderSlices(), style.borderWidth(), sourceSlices);
+    auto sourceSlices = computeSlices(source, imageSlices(), styleImage->imageScaleFactor());
+    auto destinationSlices = computeSlices(destination.size(), borderSlices(), Style::to<LayoutBoxExtent>(style.borderWidth()), sourceSlices);
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 
-    Vector<FloatRect> destinationRects = computeNineRects(destination, destinationSlices, deviceScaleFactor);
-    Vector<FloatRect> sourceRects = computeNineRects(FloatRect(FloatPoint(), source), sourceSlices, deviceScaleFactor);
-    Vector<FloatSize> tileScales = computeTileScales(destinationRects, sourceRects, horizontalRule(), verticalRule());
+    auto destinationRects = computeNineRects(destination, destinationSlices, deviceScaleFactor);
+    auto sourceRects = computeNineRects(FloatRect(FloatPoint(), source), sourceSlices, deviceScaleFactor);
+    auto tileScales = computeTileScales(destinationRects, sourceRects, horizontalRule(), verticalRule());
 
-    RefPtr<Image> image = styleImage->image(renderer, source);
+    auto image = styleImage->image(renderer, source);
     if (!image)
         return;
 

@@ -43,6 +43,15 @@
 #define COMPILER_HAS_ATTRIBUTE(x) 0
 #endif
 
+/* COMPILER_HAS_ATTRIBUTE() - whether the compiler supports a particular c++ attribute. */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-cpp-attribute */
+/* https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fcpp_005fattribute.html */
+#ifdef __has_cpp_attribute
+#define COMPILER_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
+#else
+#define COMPILER_HAS_CPP_ATTRIBUTE(x) 0
+#endif
+
 /* COMPILER_HAS_CLANG_BUILTIN() - whether the compiler supports a particular clang builtin. */
 #ifdef __has_builtin
 #define COMPILER_HAS_CLANG_BUILTIN(x) __has_builtin(x)
@@ -183,7 +192,7 @@
 /* ALWAYS_INLINE */
 
 /* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
- * Therefore we need to give up on the enforcement of ALWAYS_INLINE when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
+ * Therefore we need to give up on the enforcement of ALWAYS_INLINE when building with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
 #if !defined(ALWAYS_INLINE) && defined(NDEBUG) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
 #endif
@@ -195,7 +204,7 @@
 /* ALWAYS_INLINE_LAMBDA */
 
 /* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
- * Therefore we need to give up on the enforcement of ALWAYS_INLINE_LAMBDA when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
+ * Therefore we need to give up on the enforcement of ALWAYS_INLINE_LAMBDA when building with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
 #if !defined(ALWAYS_INLINE_LAMBDA) && defined(NDEBUG) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE_LAMBDA __attribute__((__always_inline__))
 #endif
@@ -231,11 +240,11 @@
 /* LIFETIME_BOUND */
 
 #if !defined(LIFETIME_BOUND) && defined(__cplusplus)
-#if __has_cpp_attribute(clang::lifetimebound)
+#if COMPILER_HAS_CPP_ATTRIBUTE(clang::lifetimebound)
 #define LIFETIME_BOUND [[clang::lifetimebound]]
-#elif __has_cpp_attribute(msvc::lifetimebound)
+#elif COMPILER_HAS_CPP_ATTRIBUTE(msvc::lifetimebound)
 #define LIFETIME_BOUND [[msvc::lifetimebound]]
-#elif __has_cpp_attribute(lifetimebound)
+#elif COMPILER_HAS_CPP_ATTRIBUTE(lifetimebound)
 #define LIFETIME_BOUND [[lifetimebound]]
 #endif
 #endif
@@ -268,15 +277,9 @@
 // written for 64-bit may fail to tail call on 32-bit.
 // It also doesn't work on ppc64le: https://github.com/llvm/llvm-project/issues/98859
 // and on Windows: https://github.com/llvm/llvm-project/issues/116568
-#if COMPILER(CLANG)
-#if __SIZEOF_POINTER__ == 8
-#if !defined(MUST_TAIL_CALL) && defined(__cplusplus) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(clang::musttail) && !defined(__powerpc__) && !defined(_WIN32)
+#if !defined(MUST_TAIL_CALL) && COMPILER(CLANG) && __SIZEOF_POINTER__ == 8 && defined(__cplusplus) && COMPILER_HAS_CPP_ATTRIBUTE(clang::musttail) && !defined(__powerpc__) && !defined(_WIN32)
 #define MUST_TAIL_CALL [[clang::musttail]]
 #define HAVE_MUST_TAIL_CALL 1
-#endif
-#endif
-#endif
 #endif
 
 #if !defined(MUST_TAIL_CALL)
@@ -309,6 +312,13 @@
 
 #if !defined(OBJC_PROTOCOL)
 #define OBJC_PROTOCOL(protocolName) class protocolName
+#endif
+
+// https://clang.llvm.org/docs/AttributeReference.html#preferred-type
+#if COMPILER_HAS_ATTRIBUTE(preferred_type)
+#define PREFERRED_TYPE(T) __attribute__((preferred_type(T)))
+#else
+#define PREFERRED_TYPE(T)
 #endif
 
 /* PURE_FUNCTION */
@@ -557,11 +567,11 @@
 #endif
 
 /* NOESCAPE */
-/* This attribute promises that a function argumemnt will only be used for the duration of the function,
+/* This attribute promises that a function argument will only be used for the duration of the function,
    and not stored to the heap or in a global state for later use. The compiler does not verify this claim. */
 
-#if !defined(NOESCAPE) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(clang::noescape)
+#if !defined(NOESCAPE)
+#if COMPILER_HAS_CPP_ATTRIBUTE(clang::noescape)
 #define NOESCAPE [[clang::noescape]]
 #else
 #define NOESCAPE
@@ -570,14 +580,12 @@
 
 /* NO_UNIQUE_ADDRESS */
 
-#if !defined(NO_UNIQUE_ADDRESS) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(no_unique_address)
-#define NO_UNIQUE_ADDRESS [[no_unique_address]] // NOLINT: check-webkit-style does not understand annotations.
-#endif
-#endif
-
 #if !defined(NO_UNIQUE_ADDRESS)
+#if COMPILER_HAS_CPP_ATTRIBUTE(no_unique_address)
+#define NO_UNIQUE_ADDRESS [[no_unique_address]] // NOLINT: check-webkit-style does not understand annotations.
+#else
 #define NO_UNIQUE_ADDRESS
+#endif
 #endif
 
 /* TLS_MODEL_INITIAL_EXEC */
@@ -614,18 +622,10 @@
 
 /* WTF_UNSAFE_BUFFER_USAGE */
 
-#ifndef __has_attribute
-#define __has_attribute(x) 0
-#endif
-
-#ifndef __has_cpp_attribute
-#define __has_cpp_attribute(x) 0
-#endif
-
 #if COMPILER(CLANG)
-#if __has_cpp_attribute(clang::unsafe_buffer_usage)
+#if COMPILER_HAS_CPP_ATTRIBUTE(clang::unsafe_buffer_usage)
 #define WTF_UNSAFE_BUFFER_USAGE [[clang::unsafe_buffer_usage]]
-#elif __has_attribute(unsafe_buffer_usage)
+#elif COMPILER_HAS_ATTRIBUTE(unsafe_buffer_usage)
 #define WTF_UNSAFE_BUFFER_USAGE __attribute__((__unsafe_buffer_usage__))
 #else
 #define WTF_UNSAFE_BUFFER_USAGE

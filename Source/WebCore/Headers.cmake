@@ -2751,6 +2751,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/align/StyleGapGutter.h
 
+    style/values/backgrounds/StyleLineWidth.h
+
     style/values/borders/StyleBorderRadius.h
     style/values/borders/StyleBoxShadow.h
     style/values/borders/StyleCornerShapeValue.h

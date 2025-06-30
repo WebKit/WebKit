@@ -2939,10 +2939,11 @@ rendering/style/GridSpan.cpp
 rendering/style/GridTrackSize.cpp
 rendering/style/ListStyleType.cpp
 rendering/style/NinePieceImage.cpp
-rendering/style/QuotesData.cpp
+rendering/style/OutlineValue.cpp
 rendering/style/PositionArea.cpp
 rendering/style/PositionTryFallback.cpp
 rendering/style/PositionTryOrder.cpp
+rendering/style/QuotesData.cpp
 rendering/style/ReferenceFilterOperation.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp

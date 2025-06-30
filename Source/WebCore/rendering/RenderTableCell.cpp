@@ -46,6 +46,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleBoxShadow.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleProperties.h"
 #include "TransformState.h"
 #include <ranges>
@@ -435,11 +436,11 @@ auto RenderTableCell::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBo
         return RenderBlockFlow::localRectsForRepaint(repaintOutlineBounds);
 
     bool flippedInline = tableWritingMode().isInlineFlipped();
-    LayoutUnit outlineSize { style().outlineSize() };
-    LayoutUnit left = std::max(borderHalfLeft(true), outlineSize);
-    LayoutUnit right = std::max(borderHalfRight(true), outlineSize);
-    LayoutUnit top = std::max(borderHalfTop(true), outlineSize);
-    LayoutUnit bottom = std::max(borderHalfBottom(true), outlineSize);
+    auto outlineSize = Style::to<LayoutUnit>(style().outlineSize());
+    auto left = std::max(borderHalfLeft(true), outlineSize);
+    auto right = std::max(borderHalfRight(true), outlineSize);
+    auto top = std::max(borderHalfTop(true), outlineSize);
+    auto bottom = std::max(borderHalfBottom(true), outlineSize);
     if ((left && !flippedInline) || (right && flippedInline)) {
         if (RenderTableCell* before = table()->cellBefore(this)) {
             top = std::max(top, before->borderHalfTop(true));
@@ -1039,7 +1040,7 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const W
 
 RectEdges<LayoutUnit> RenderTableCell::borderWidths() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderWidths();
 
@@ -1056,7 +1057,7 @@ RectEdges<LayoutUnit> RenderTableCell::borderWidths() const
 
 LayoutUnit RenderTableCell::borderLeft() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderLeft();
     return table->collapseBorders() ? borderHalfLeft(false) : RenderBlockFlow::borderLeft();
@@ -1064,7 +1065,7 @@ LayoutUnit RenderTableCell::borderLeft() const
 
 LayoutUnit RenderTableCell::borderRight() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderRight();
     return table->collapseBorders() ? borderHalfRight(false) : RenderBlockFlow::borderRight();
@@ -1072,7 +1073,7 @@ LayoutUnit RenderTableCell::borderRight() const
 
 LayoutUnit RenderTableCell::borderTop() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderTop();
     return table->collapseBorders() ? borderHalfTop(false) : RenderBlockFlow::borderTop();
@@ -1080,7 +1081,7 @@ LayoutUnit RenderTableCell::borderTop() const
 
 LayoutUnit RenderTableCell::borderBottom() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderBottom();
     return table->collapseBorders() ? borderHalfBottom(false) : RenderBlockFlow::borderBottom();
@@ -1090,7 +1091,7 @@ LayoutUnit RenderTableCell::borderBottom() const
 // work with different block flow values instead of being hard-coded to top-to-bottom.
 LayoutUnit RenderTableCell::borderStart() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderStart();
     return table->collapseBorders() ? borderHalfStart(false) : RenderBlockFlow::borderStart();
@@ -1098,7 +1099,7 @@ LayoutUnit RenderTableCell::borderStart() const
 
 LayoutUnit RenderTableCell::borderEnd() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderEnd();
     return table->collapseBorders() ? borderHalfEnd(false) : RenderBlockFlow::borderEnd();
@@ -1106,7 +1107,7 @@ LayoutUnit RenderTableCell::borderEnd() const
 
 LayoutUnit RenderTableCell::borderBefore() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderBefore();
     return table->collapseBorders() ? borderHalfBefore(false) : RenderBlockFlow::borderBefore();
@@ -1114,7 +1115,7 @@ LayoutUnit RenderTableCell::borderBefore() const
 
 LayoutUnit RenderTableCell::borderAfter() const
 {
-    RenderTable* table = this->table();
+    auto* table = this->table();
     if (!table)
         return RenderBlockFlow::borderAfter();
     return table->collapseBorders() ? borderHalfAfter(false) : RenderBlockFlow::borderAfter();
@@ -1122,7 +1123,7 @@ LayoutUnit RenderTableCell::borderAfter() const
 
 LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
 {
-    WritingMode writingMode = this->tableWritingMode();
+    auto writingMode = this->tableWritingMode();
     if (writingMode.isHorizontal())
         return writingMode.isInlineLeftToRight() ? borderHalfStart(outer) : borderHalfEnd(outer);
     return writingMode.isBlockLeftToRight() ? borderHalfBefore(outer) : borderHalfAfter(outer);
@@ -1130,7 +1131,7 @@ LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
 
 LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
 {
-    WritingMode writingMode = this->tableWritingMode();
+    auto writingMode = this->tableWritingMode();
     if (writingMode.isHorizontal())
         return writingMode.isInlineLeftToRight() ? borderHalfEnd(outer) : borderHalfStart(outer);
     return writingMode.isBlockLeftToRight() ? borderHalfAfter(outer) : borderHalfBefore(outer);
@@ -1138,7 +1139,7 @@ LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
 
 LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
 {
-    WritingMode writingMode = this->tableWritingMode();
+    auto writingMode = this->tableWritingMode();
     if (writingMode.isHorizontal())
         return writingMode.isBlockTopToBottom() ? borderHalfBefore(outer) : borderHalfAfter(outer);
     return writingMode.isInlineTopToBottom() ? borderHalfStart(outer) : borderHalfEnd(outer);
@@ -1146,7 +1147,7 @@ LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
 
 LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
 {
-    WritingMode writingMode = this->tableWritingMode();
+    auto writingMode = this->tableWritingMode();
     if (writingMode.isHorizontal())
         return writingMode.isBlockTopToBottom() ? borderHalfAfter(outer) : borderHalfBefore(outer);
     return writingMode.isInlineTopToBottom() ? borderHalfEnd(outer) : borderHalfStart(outer);
@@ -1154,24 +1155,21 @@ LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
 
 LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
 {
-    CollapsedBorderValue border = collapsedStartBorder(DoNotIncludeBorderColor);
-    if (border.exists())
+    if (auto border = collapsedStartBorder(DoNotIncludeBorderColor); border.exists())
         return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(tableWritingMode().isInlineFlipped() ^ outer));
     return 0;
 }
     
 LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
 {
-    CollapsedBorderValue border = collapsedEndBorder(DoNotIncludeBorderColor);
-    if (border.exists())
+    if (auto border = collapsedEndBorder(DoNotIncludeBorderColor); border.exists())
         return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), tableWritingMode().isInlineFlipped() ^ outer);
     return 0;
 }
 
 LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
 {
-    CollapsedBorderValue border = collapsedBeforeBorder(DoNotIncludeBorderColor);
-    if (border.exists())
+    if (auto border = collapsedBeforeBorder(DoNotIncludeBorderColor); border.exists())
         return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(tableWritingMode().isBlockFlipped() ^ outer));
     return 0;
 }
@@ -1272,36 +1270,36 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     if (!paintInfo.shouldPaintWithinRoot(*this) || style().usedVisibility() != Visibility::Visible)
         return;
 
-    LayoutRect localRepaintRect = paintInfo.rect;
-    LayoutRect paintRect = LayoutRect(paintOffset + location(), frameRect().size());
+    auto localRepaintRect = paintInfo.rect;
+    auto paintRect = LayoutRect(paintOffset + location(), frameRect().size());
     if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
         return;
 
     if (paintRect.maxY() + table()->outerBorderBottom() <= localRepaintRect.y())
         return;
 
-    GraphicsContext& graphicsContext = paintInfo.context();
+    auto& graphicsContext = paintInfo.context();
     if (!table()->currentBorderValue() || graphicsContext.paintingDisabled())
         return;
 
-    WritingMode writingMode = tableWritingMode();
-    CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(writingMode);
-    CollapsedBorderValue rightVal = cachedCollapsedRightBorder(writingMode);
-    CollapsedBorderValue topVal = cachedCollapsedTopBorder(writingMode);
-    CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(writingMode);
+    auto writingMode = tableWritingMode();
+    auto leftVal = cachedCollapsedLeftBorder(writingMode);
+    auto rightVal = cachedCollapsedRightBorder(writingMode);
+    auto topVal = cachedCollapsedTopBorder(writingMode);
+    auto bottomVal = cachedCollapsedBottomBorder(writingMode);
 
     // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
-    LayoutUnit topWidth = topVal.width();
-    LayoutUnit bottomWidth = bottomVal.width();
-    LayoutUnit leftWidth = leftVal.width();
-    LayoutUnit rightWidth = rightVal.width();
+    auto topWidth = topVal.width();
+    auto bottomWidth = bottomVal.width();
+    auto leftWidth = leftVal.width();
+    auto rightWidth = rightVal.width();
 
-    float deviceScaleFactor = document().deviceScaleFactor();
-    LayoutUnit leftHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(leftWidth , deviceScaleFactor, false);
-    LayoutUnit topHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(topWidth, deviceScaleFactor, false);
-    LayoutUnit righHalftCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(rightWidth, deviceScaleFactor, true);
-    LayoutUnit bottomHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(bottomWidth, deviceScaleFactor, true);
-    
+    auto deviceScaleFactor = document().deviceScaleFactor();
+    auto leftHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(leftWidth , deviceScaleFactor, false);
+    auto topHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(topWidth, deviceScaleFactor, false);
+    auto righHalftCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(rightWidth, deviceScaleFactor, true);
+    auto bottomHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(bottomWidth, deviceScaleFactor, true);
+
     LayoutRect borderRect = LayoutRect(paintRect.x() - leftHalfCollapsedBorder,
         paintRect.y() - topHalfCollapsedBorder,
         paintRect.width() + leftHalfCollapsedBorder + righHalftCollapsedBorder,

@@ -59,6 +59,7 @@
 #include "RenderView.h"
 #include "StyleBoxShadow.h"
 #include "StyleInheritedData.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -1243,17 +1244,17 @@ LayoutUnit RenderTable::calcBorderStart() const
     if (!numEffCols())
         return 0;
 
-    float borderWidth = 0;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& tableStartBorder = style().borderStart();
+    auto& tableStartBorder = style().borderStart();
     if (tableStartBorder.style() == BorderStyle::Hidden)
         return 0;
     if (tableStartBorder.style() > BorderStyle::Hidden)
         borderWidth = tableStartBorder.width();
 
-    if (RenderTableCol* column = colElement(0)) {
+    if (auto* column = colElement(0)) {
         // FIXME: We don't account for direction on columns and column groups.
-        const BorderValue& columnAdjoiningBorder = column->style().borderStart();
+        auto& columnAdjoiningBorder = column->style().borderStart();
         if (columnAdjoiningBorder.style() == BorderStyle::Hidden)
             return 0;
         if (columnAdjoiningBorder.style() > BorderStyle::Hidden)
@@ -1261,21 +1262,21 @@ LayoutUnit RenderTable::calcBorderStart() const
         // FIXME: This logic doesn't properly account for the first column in the first column-group case.
     }
 
-    if (const RenderTableSection* topNonEmptySection = this->topNonEmptySection()) {
-        const BorderValue& sectionAdjoiningBorder = topNonEmptySection->borderAdjoiningTableStart();
+    if (auto* topNonEmptySection = this->topNonEmptySection()) {
+        auto& sectionAdjoiningBorder = topNonEmptySection->borderAdjoiningTableStart();
         if (sectionAdjoiningBorder.style() == BorderStyle::Hidden)
             return 0;
 
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->cellAt(0, 0).primaryCell()) {
+        if (auto* adjoiningStartCell = topNonEmptySection->cellAt(0, 0).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
-            const BorderValue& startCellAdjoiningBorder = adjoiningStartCell->borderAdjoiningTableStart();
+            auto& startCellAdjoiningBorder = adjoiningStartCell->borderAdjoiningTableStart();
             if (startCellAdjoiningBorder.style() == BorderStyle::Hidden)
                 return 0;
 
-            const BorderValue& firstRowAdjoiningBorder = adjoiningStartCell->row()->borderAdjoiningTableStart();
+            auto& firstRowAdjoiningBorder = adjoiningStartCell->row()->borderAdjoiningTableStart();
             if (firstRowAdjoiningBorder.style() == BorderStyle::Hidden)
                 return 0;
 
@@ -1285,7 +1286,7 @@ LayoutUnit RenderTable::calcBorderStart() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTable::calcBorderEnd() const
@@ -1297,18 +1298,18 @@ LayoutUnit RenderTable::calcBorderEnd() const
     if (!numEffCols())
         return 0;
 
-    float borderWidth = 0;
+    Style::LineWidth borderWidth = 0_css_px;
 
-    const BorderValue& tableEndBorder = style().borderEnd();
+    auto& tableEndBorder = style().borderEnd();
     if (tableEndBorder.style() == BorderStyle::Hidden)
         return 0;
     if (tableEndBorder.style() > BorderStyle::Hidden)
         borderWidth = tableEndBorder.width();
 
     unsigned endColumn = numEffCols() - 1;
-    if (RenderTableCol* column = colElement(endColumn)) {
+    if (auto* column = colElement(endColumn)) {
         // FIXME: We don't account for direction on columns and column groups.
-        const BorderValue& columnAdjoiningBorder = column->style().borderEnd();
+        auto& columnAdjoiningBorder = column->style().borderEnd();
         if (columnAdjoiningBorder.style() == BorderStyle::Hidden)
             return 0;
         if (columnAdjoiningBorder.style() > BorderStyle::Hidden)
@@ -1316,21 +1317,21 @@ LayoutUnit RenderTable::calcBorderEnd() const
         // FIXME: This logic doesn't properly account for the last column in the last column-group case.
     }
 
-    if (const RenderTableSection* topNonEmptySection = this->topNonEmptySection()) {
-        const BorderValue& sectionAdjoiningBorder = topNonEmptySection->borderAdjoiningTableEnd();
+    if (auto* topNonEmptySection = this->topNonEmptySection()) {
+        auto& sectionAdjoiningBorder = topNonEmptySection->borderAdjoiningTableEnd();
         if (sectionAdjoiningBorder.style() == BorderStyle::Hidden)
             return 0;
 
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->cellAt(0, lastColumnIndex()).primaryCell()) {
+        if (auto* adjoiningEndCell = topNonEmptySection->cellAt(0, lastColumnIndex()).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
-            const BorderValue& endCellAdjoiningBorder = adjoiningEndCell->borderAdjoiningTableEnd();
+            auto& endCellAdjoiningBorder = adjoiningEndCell->borderAdjoiningTableEnd();
             if (endCellAdjoiningBorder.style() == BorderStyle::Hidden)
                 return 0;
 
-            const BorderValue& firstRowAdjoiningBorder = adjoiningEndCell->row()->borderAdjoiningTableEnd();
+            auto& firstRowAdjoiningBorder = adjoiningEndCell->row()->borderAdjoiningTableEnd();
             if (firstRowAdjoiningBorder.style() == BorderStyle::Hidden)
                 return 0;
 
@@ -1340,7 +1341,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), !writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(borderWidth), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 }
 
 void RenderTable::recalcBordersInRowDirection()
@@ -1373,16 +1374,16 @@ LayoutUnit RenderTable::outerBorderBefore() const
     if (!collapseBorders())
         return 0;
     LayoutUnit borderWidth;
-    if (RenderTableSection* topSection = this->topSection()) {
+    if (auto* topSection = this->topSection()) {
         borderWidth = topSection->outerBorderBefore();
         if (borderWidth < 0)
             return 0;   // Overridden by hidden
     }
-    const BorderValue& tb = style().borderBefore();
+    auto& tb = style().borderBefore();
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden) {
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit(tb.width() / 2));
+        auto collapsedBorderWidth = std::max(borderWidth, LayoutUnit(Style::to<float>(tb.width()) / 2));
         borderWidth = floorToDevicePixel(collapsedBorderWidth, document().deviceScaleFactor());
     }
     return borderWidth;
@@ -1393,18 +1394,17 @@ LayoutUnit RenderTable::outerBorderAfter() const
     if (!collapseBorders())
         return 0;
     LayoutUnit borderWidth;
-
-    if (RenderTableSection* section = bottomSection()) {
+    if (auto* section = bottomSection()) {
         borderWidth = section->outerBorderAfter();
         if (borderWidth < 0)
             return 0; // Overridden by hidden
     }
-    const BorderValue& tb = style().borderAfter();
+    auto& tb = style().borderAfter();
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden) {
-        float deviceScaleFactor = document().deviceScaleFactor();
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit((tb.width() + (1 / deviceScaleFactor)) / 2));
+        auto deviceScaleFactor = document().deviceScaleFactor();
+        auto collapsedBorderWidth = std::max(borderWidth, LayoutUnit((Style::to<float>(tb.width()) + (1 / deviceScaleFactor)) / 2));
         borderWidth = floorToDevicePixel(collapsedBorderWidth, deviceScaleFactor);
     }
     return borderWidth;
@@ -1415,17 +1415,16 @@ LayoutUnit RenderTable::outerBorderStart() const
     if (!collapseBorders())
         return 0;
 
-    LayoutUnit borderWidth;
-
-    const BorderValue& tb = style().borderStart();
+    auto& tb = style().borderStart();
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(tb.width()), document().deviceScaleFactor(), writingMode().isInlineFlipped());
 
+    LayoutUnit borderWidth;
     bool allHidden = true;
-    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
-        LayoutUnit sw = section->outerBorderStart();
+    for (auto* section = topSection(); section; section = sectionBelow(section)) {
+        auto sw = section->outerBorderStart();
         if (sw < 0)
             continue;
         allHidden = false;
@@ -1442,17 +1441,16 @@ LayoutUnit RenderTable::outerBorderEnd() const
     if (!collapseBorders())
         return 0;
 
-    LayoutUnit borderWidth;
-
-    const BorderValue& tb = style().borderEnd();
+    auto& tb = style().borderEnd();
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::to<float>(tb.width()), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 
+    LayoutUnit borderWidth;
     bool allHidden = true;
-    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
-        LayoutUnit sw = section->outerBorderEnd();
+    for (auto* section = topSection(); section; section = sectionBelow(section)) {
+        auto sw = section->outerBorderEnd();
         if (sw < 0)
             continue;
         allHidden = false;

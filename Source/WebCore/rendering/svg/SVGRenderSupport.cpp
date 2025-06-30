@@ -59,6 +59,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
 #include <numbers>
@@ -85,7 +86,7 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
         return FloatRect();
 
     FloatRect adjustedRect = rect;
-    adjustedRect.inflate(renderer.style().outlineWidth());
+    adjustedRect.inflate(Style::to<float>(renderer.style().outlineWidth()));
 
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);

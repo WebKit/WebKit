@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021, 2022, 2023 Igalia S.L.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,6 +40,7 @@
 #include "RenderSVGText.h"
 #include "SVGClipPathElement.h"
 #include "SVGLayerTransformComputation.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
@@ -289,7 +291,7 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     }
 
     if (options.contains(DecorationOption::IncludeOutline))
-        box.inflate(m_renderer->outlineStyleForRepaint().outlineSize());
+        box.inflate(Style::to<float>(m_renderer->outlineStyleForRepaint().outlineSize()));
 }
 
 LayoutRect SVGBoundingBoxComputation::computeVisualOverflowRect(const RenderLayerModelObject& renderer)

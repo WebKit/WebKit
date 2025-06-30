@@ -44,7 +44,7 @@ static bool hasBorder(const BorderValue& borderValue)
 {
     if (borderValue.style() == BorderStyle::None || borderValue.style() == BorderStyle::Hidden)
         return false;
-    return !!borderValue.width();
+    return !Style::isZero(borderValue.width());
 }
 
 static bool hasPadding(const Style::PaddingEdge& paddingValue)

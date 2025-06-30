@@ -174,8 +174,8 @@ public:
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
-    static float platformFocusRingWidth() { return 3; }
-    static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
+    static Style::LineWidth platformFocusRingWidth();
+    static Style::Length<> platformFocusRingOffset(Style::LineWidth outlineWidth);
 #if ENABLE(TOUCH_EVENTS)
     static Color tapHighlightColor();
     virtual Color platformTapHighlightColor() const;
@@ -392,7 +392,7 @@ protected:
     Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, const Style::PreferredSizePair&, float zoomFactor) const;
 
     // Allows the theme to modify the existing border.
-    virtual LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor, const Element*) const;
+    virtual RectEdges<Style::LineWidth> controlBorder(StyleAppearance, const FontCascade&, const RectEdges<Style::LineWidth>& zoomedBox, float zoomFactor, const Element*) const;
 
     // Whether or not whitespace: pre should be forced on always.
     virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const { return false; }

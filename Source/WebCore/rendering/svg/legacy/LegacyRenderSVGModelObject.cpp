@@ -44,6 +44,7 @@
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
 #include "ShadowRoot.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -95,7 +96,7 @@ static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& rend
         Style::adjustRectForShadow(shadowRect, boxShadow);
 
     auto outlineRect = rect;
-    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().outlineSize() };
+    auto outlineSize = Style::to<LayoutUnit>(renderer.outlineStyleForRepaint().outlineSize());
     if (outlineSize)
         outlineRect.inflate(outlineSize);
 

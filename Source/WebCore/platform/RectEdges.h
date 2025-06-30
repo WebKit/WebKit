@@ -35,6 +35,8 @@ namespace WebCore {
 
 template<typename T> class RectEdges {
 public:
+    using value_type = T;
+
     RectEdges() requires (std::is_default_constructible_v<T>)
         : m_sides { }
     {
@@ -48,9 +50,9 @@ public:
     RectEdges(const RectEdges&) = default;
     RectEdges& operator=(const RectEdges&) = default;
 
-    template<typename U>
-    RectEdges(U&& top, U&& right, U&& bottom, U&& left)
-        : m_sides({ { std::forward<U>(top), std::forward<U>(right), std::forward<U>(bottom), std::forward<U>(left) } })
+    template<typename U, typename V, typename W, typename X>
+    RectEdges(U&& top, V&& right, W&& bottom, X&& left)
+        : m_sides({ { std::forward<U>(top), std::forward<V>(right), std::forward<W>(bottom), std::forward<X>(left) } })
     {
     }
 
@@ -129,6 +131,11 @@ public:
         return yFlippedCopy();
     }
 
+    RectEdges<T> transpose() const
+    {
+        return { left(), top(), right(), bottom() };
+    }
+
     template<typename F> bool anyOf(F&& functor) const
     {
         return std::ranges::any_of(m_sides, std::forward<F>(functor));
@@ -142,6 +149,11 @@ public:
     template<typename F> bool noneOf(F&& functor) const
     {
         return std::ranges::none_of(m_sides, std::forward<F>(functor));
+    }
+
+    template<typename F> RectEdges<std::invoke_result_t<F, T>> map(F&& functor) const
+    {
+        return { functor(top()), functor(right()), functor(bottom()), functor(left()) };
     }
 
     bool isZero() const

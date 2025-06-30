@@ -497,7 +497,7 @@ void RenderThemeCocoa::inflateRectForControlRenderer(const RenderObject& rendere
     RenderTheme::inflateRectForControlRenderer(renderer, rect);
 }
 
-LengthBox RenderThemeCocoa::controlBorder(StyleAppearance appearance, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor, const Element* element) const
+RectEdges<Style::LineWidth> RenderThemeCocoa::controlBorder(StyleAppearance appearance, const FontCascade& font, const RectEdges<Style::LineWidth>& zoomedBox, float zoomFactor, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (formControlRefreshEnabled(element))
@@ -617,7 +617,7 @@ constexpr auto checkboxRadioBorderWidthForVectorBasedControls = 1.5f;
 
 static bool controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(const RenderObject& renderer)
 {
-    return RenderTheme::singleton().isFocused(renderer) && renderer.style().hasAutoOutlineStyle();
+    return RenderTheme::singleton().isFocused(renderer) && renderer.style().outlineStyle() == OutlineStyle::Auto;
 }
 
 static constexpr auto checkboxRadioBorderDisabledOpacityForVectorBasedControls = 0.5f;
@@ -4092,8 +4092,8 @@ void RenderThemeCocoa::adjustSwitchStyle(RenderStyle& style, const Element* elem
 
     adjustSwitchStyleDisplay(style);
 
-    if (style.hasAutoOutlineStyle())
-        style.setOutlineStyle(BorderStyle::None);
+    if (style.outlineStyle() == OutlineStyle::Auto)
+        style.setOutlineStyle(OutlineStyle::None);
 #endif
 }
 

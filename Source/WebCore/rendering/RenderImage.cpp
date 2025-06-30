@@ -66,6 +66,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "Settings.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextPainter.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -684,7 +685,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (!areaElementStyle)
         return;
 
-    float outlineWidth = areaElementStyle->outlineWidth();
+    auto outlineWidth = Style::to<float>(areaElementStyle->outlineWidth());
     if (!outlineWidth)
         return;
 

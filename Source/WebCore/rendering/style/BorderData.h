@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-class OutlineValue;
-
 using namespace CSS::Literals;
 
 class BorderData {
@@ -65,28 +63,27 @@ public:
     }
 
     template<BoxSide side>
-    float borderEdgeWidth() const
+    Style::LineWidth borderEdgeWidth() const
     {
         if (m_edges[side].style() == BorderStyle::None || m_edges[side].style() == BorderStyle::Hidden)
-            return 0;
+            return 0_css_px;
         if (m_image.overridesBorderWidths() && m_image.borderSlices()[side].isFixed())
-            return m_image.borderSlices()[side].value();
+            return Style::LineWidth { m_image.borderSlices()[side].value() };
         return m_edges[side].width();
     }
 
-    float borderLeftWidth() const { return borderEdgeWidth<BoxSide::Left>(); }
-    float borderRightWidth() const { return borderEdgeWidth<BoxSide::Right>(); }
-    float borderTopWidth() const { return borderEdgeWidth<BoxSide::Top>(); }
-    float borderBottomWidth() const { return borderEdgeWidth<BoxSide::Bottom>(); }
+    Style::LineWidth borderLeftWidth() const { return borderEdgeWidth<BoxSide::Left>(); }
+    Style::LineWidth borderRightWidth() const { return borderEdgeWidth<BoxSide::Right>(); }
+    Style::LineWidth borderTopWidth() const { return borderEdgeWidth<BoxSide::Top>(); }
+    Style::LineWidth borderBottomWidth() const { return borderEdgeWidth<BoxSide::Bottom>(); }
 
-    FloatBoxExtent borderWidth() const
+    RectEdges<Style::LineWidth> borderWidth() const
     {
-        return FloatBoxExtent(borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth());
+        return { borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth() };
     }
 
     bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
 
-    friend bool operator==(const BorderData&, const BorderData&) = default;
 
     const BorderValue& left() const { return m_edges.left(); }
     const BorderValue& right() const { return m_edges.right(); }
@@ -108,6 +105,8 @@ public:
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
+    bool operator==(const BorderData&) const = default;
+
 private:
     bool containsCurrentColor() const;
 
@@ -117,8 +116,6 @@ private:
     Style::CornerShape m_cornerShapes { Style::CornerShapeValue::round() };
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const BorderValue&);
-WTF::TextStream& operator<<(WTF::TextStream&, const OutlineValue&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BorderData&);
 
 } // namespace WebCore

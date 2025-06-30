@@ -300,7 +300,7 @@ void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (style().outlineWidth())
+    if (!Style::isZero(style().outlineWidth()))
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 

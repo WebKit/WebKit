@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,47 +22,29 @@
  *
  */
 
-#pragma once
+#include "config.h"
+#include "OutlineValue.h"
 
-#include "RenderStyleConstants.h"
-#include "StyleColor.h"
-#include "StyleLineWidth.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-class RenderStyle;
-
-class BorderValue {
-    friend class RenderStyle;
-public:
-    BorderValue()
-        : m_style(static_cast<unsigned>(BorderStyle::None))
-    {
-    }
-
-    const Style::Color& color() const { return m_color; }
-    Style::LineWidth width() const { return m_width; }
-    BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
-
-    bool nonZero() const;
-    bool isTransparent() const;
-    bool isVisible() const;
-
-
-    bool operator==(const BorderValue&) const = default;
-
-protected:
-    Style::Color m_color { Style::Color::currentColor() };
-    Style::LineWidth m_width { CSS::Keyword::Medium { } };
-    PREFERRED_TYPE(BorderStyle) unsigned m_style : 4;
-};
-
-inline bool BorderValue::nonZero() const
+bool OutlineValue::isTransparent() const
 {
-    return !Style::isZero(width()) && style() != BorderStyle::None;
+    return m_color.isResolvedColor() && m_color.resolvedColor().isValid() && !m_color.resolvedColor().isVisible();
 }
 
+bool OutlineValue::isVisible() const
+{
+    return nonZero() && !isTransparent();
+}
 
-TextStream& operator<<(TextStream&, const BorderValue&);
+TextStream& operator<<(TextStream& ts, const OutlineValue& outlineValue)
+{
+    ts << outlineValue.width() << ' ' << outlineValue.style() << ' ' << outlineValue.color();
+    ts.dumpProperty("outline-offset"_s, outlineValue.offset());
+    return ts;
+}
 
 } // namespace WebCore

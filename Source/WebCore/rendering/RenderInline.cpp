@@ -53,6 +53,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include "WillChangeData.h"
@@ -611,7 +612,7 @@ LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repai
             repaintRect.move(renderInline->layer()->offsetForInFlowPosition());
     }
 
-    LayoutUnit outlineSize { style().outlineSize() };
+    auto outlineSize = Style::to<LayoutUnit>(style().outlineSize());
     repaintRect.inflate(outlineSize);
 
     if (hitRepaintContainer || !containingBlock)
@@ -935,20 +936,20 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto& styleToUse = style();
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.hasAutoOutlineStyle() && !theme().supportsFocusRing(*this, styleToUse)) {
+    if (styleToUse.outlineStyle() == OutlineStyle::Auto && !theme().supportsFocusRing(*this, styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
         paintFocusRing(paintInfo, styleToUse, focusRingRects);
     }
 
-    if (hasOutlineAnnotation() && !styleToUse.hasAutoOutlineStyle() && !theme().supportsFocusRing(*this, styleToUse))
+    if (hasOutlineAnnotation() && styleToUse.outlineStyle() != OutlineStyle::Auto && !theme().supportsFocusRing(*this, styleToUse))
         addPDFURLRect(paintInfo, paintOffset);
 
     GraphicsContext& graphicsContext = paintInfo.context();
     if (graphicsContext.paintingDisabled())
         return;
 
-    if (styleToUse.hasAutoOutlineStyle() || !styleToUse.hasOutline())
+    if (styleToUse.outlineStyle() == OutlineStyle::Auto || !styleToUse.hasOutline())
         return;
 
     if (!containingBlock()) {

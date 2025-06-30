@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014, 2020 Igalia S.L.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -430,7 +431,7 @@ Style::MinimumSizePair RenderThemeAdwaita::minimumControlSize(StyleAppearance, c
     return { WTFMove(resultWidth), WTFMove(resultHeight) };
 }
 
-LengthBox RenderThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor, const Element* element) const
+RectEdges<Style::LineWidth> RenderThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCascade& font, const RectEdges<Style::LineWidth>& zoomedBox, float zoomFactor, const Element* element) const
 {
     switch (appearance) {
     case StyleAppearance::PushButton:

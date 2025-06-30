@@ -564,27 +564,6 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 
 #endif
 
-inline void BuilderCustom::applyInheritOutlineStyle(BuilderState& builderState)
-{
-    if (builderState.parentStyle().hasAutoOutlineStyle())
-        builderState.style().setHasAutoOutlineStyle();
-    else
-        builderState.style().setOutlineStyle(forwardInheritedValue(builderState.parentStyle().outlineStyle()));
-}
-
-inline void BuilderCustom::applyInitialOutlineStyle(BuilderState& builderState)
-{
-    builderState.style().setOutlineStyle(RenderStyle::initialBorderStyle());
-}
-
-inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto)
-        builderState.style().setHasAutoOutlineStyle();
-    else
-        builderState.style().setOutlineStyle(fromCSSValue<BorderStyle>(value));
-}
-
 inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
 {
     if (builderState.applyPropertyToRegularStyle())

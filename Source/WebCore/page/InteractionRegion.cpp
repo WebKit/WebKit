@@ -254,7 +254,7 @@ static bool hasTransparentContainerStyle(const RenderStyle& style)
         && !style.hasExplicitlySetBorderRadius()
         // No visible borders or borders that do not create a complete box.
         && (!style.hasVisibleBorder()
-            || !(style.borderTopWidth() && style.borderRightWidth() && style.borderBottomWidth() && style.borderLeftWidth()));
+            || !(!Style::isZero(style.borderTopWidth()) && !Style::isZero(style.borderRightWidth()) && !Style::isZero(style.borderBottomWidth()) && !Style::isZero(style.borderLeftWidth())));
 }
 
 static bool canTweakShapeForStyle(const RenderStyle& style)

@@ -34,6 +34,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "RenderStyleInlines.h"
 #include "RubyFormattingContext.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
@@ -118,7 +119,7 @@ static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style,
     auto inflateWithOutline = [&] {
         if (!style.hasOutlineInVisualOverflow())
             return;
-        inkOverflow.inflate(style.outlineSize());
+        inkOverflow.inflate(Style::to<float>(style.outlineSize()));
         hasInkOverflow = true;
     };
     inflateWithOutline();

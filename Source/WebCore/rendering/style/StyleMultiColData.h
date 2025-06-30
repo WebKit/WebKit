@@ -34,6 +34,8 @@ class TextStream;
 
 namespace WebCore {
 
+using namespace CSS::Literals;
+
 // CSS3 Multi Column Layout
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
@@ -49,10 +51,12 @@ public:
     void dumpDifferences(TextStream&, const StyleMultiColData&) const;
 #endif
 
-    unsigned short ruleWidth() const
+    // "Computed Value: absolute length, snapped as a border width; 0 if the column rule style is none or hidden"
+    // https://www.w3.org/TR/css-multicol-1/#propdef-column-rule-width
+    Style::LineWidth ruleWidth() const
     {
-        if (rule.style() == BorderStyle::None || rule.style() == BorderStyle::Hidden)
-            return 0; 
+        if (auto style = rule.style(); style == BorderStyle::None || style == BorderStyle::Hidden)
+            return 0_css_px;
         return rule.width();
     }
 

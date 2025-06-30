@@ -74,6 +74,7 @@ class LayoutUnit;
 class LengthBox;
 class LineClampValue;
 class NinePieceImage;
+class OutlineValue;
 class PathOperation;
 class PositionArea;
 class PseudoIdSet;
@@ -181,6 +182,7 @@ enum class NinePieceImageRule : uint8_t;
 enum class NonCJKGlyphOrientation : bool;
 enum class ObjectFit : uint8_t;
 enum class Order : bool;
+enum class OutlineStyle : uint8_t;
 enum class Overflow : uint8_t;
 enum class OverflowAnchor : bool;
 enum class OverflowContinue : bool;
@@ -297,6 +299,7 @@ struct DynamicRangeLimit;
 struct FlexBasis;
 struct GapGutter;
 struct InsetEdge;
+struct LineWidth;
 struct MarginEdge;
 struct MaximumSize;
 struct MinimumSize;
@@ -561,28 +564,28 @@ public:
     inline bool hasExplicitlySetBorderTopRightRadius() const;
     inline bool hasExplicitlySetBorderRadius() const;
 
-    inline float borderLeftWidth() const;
+    inline Style::LineWidth borderLeftWidth() const;
     inline BorderStyle borderLeftStyle() const;
     inline bool borderLeftIsTransparent() const;
-    inline float borderRightWidth() const;
+    inline Style::LineWidth borderRightWidth() const;
     inline BorderStyle borderRightStyle() const;
     inline bool borderRightIsTransparent() const;
-    inline float borderTopWidth() const;
+    inline Style::LineWidth borderTopWidth() const;
     inline BorderStyle borderTopStyle() const;
     inline bool borderTopIsTransparent() const;
-    inline float borderBottomWidth() const;
+    inline Style::LineWidth borderBottomWidth() const;
     inline BorderStyle borderBottomStyle() const;
     inline bool borderBottomIsTransparent() const;
-    inline FloatBoxExtent borderWidth() const;
+    inline RectEdges<Style::LineWidth> borderWidth() const;
 
-    float borderBeforeWidth(const WritingMode) const;
-    float borderAfterWidth(const WritingMode) const;
-    float borderStartWidth(const WritingMode) const;
-    float borderEndWidth(const WritingMode) const;
-    float borderBeforeWidth() const { return borderBeforeWidth(writingMode()); }
-    float borderAfterWidth() const { return borderAfterWidth(writingMode()); }
-    float borderStartWidth() const { return borderStartWidth(writingMode()); }
-    float borderEndWidth() const { return borderEndWidth(writingMode()); }
+    Style::LineWidth borderBeforeWidth(const WritingMode) const;
+    Style::LineWidth borderAfterWidth(const WritingMode) const;
+    Style::LineWidth borderStartWidth(const WritingMode) const;
+    Style::LineWidth borderEndWidth(const WritingMode) const;
+    inline Style::LineWidth borderBeforeWidth() const;
+    inline Style::LineWidth borderAfterWidth() const;
+    inline Style::LineWidth borderStartWidth() const;
+    inline Style::LineWidth borderEndWidth() const;
 
     inline bool borderIsEquivalentForPainting(const RenderStyle&) const;
 
@@ -596,11 +599,12 @@ public:
     void setCornerTopLeftShape(Style::CornerShapeValue&&);
     void setCornerTopRightShape(Style::CornerShapeValue&&);
 
-    float outlineSize() const { return std::max<float>(0, outlineWidth() + outlineOffset()); }
-    float outlineWidth() const;
+    inline const OutlineValue& outline() const;
+    Style::Length<> outlineOffset() const;
+    Style::LineWidth outlineWidth() const;
+    inline Style::Length<> outlineSize() const;
     inline bool hasOutline() const;
-    inline BorderStyle outlineStyle() const;
-    inline bool hasAutoOutlineStyle() const;
+    inline OutlineStyle outlineStyle() const;
     inline bool hasOutlineInVisualOverflow() const;
     
     Overflow overflowX() const { return static_cast<Overflow>(m_nonInheritedFlags.overflowX); }
@@ -802,7 +806,6 @@ public:
 
     OptionSet<HangingPunctuation> hangingPunctuation() const;
 
-    float outlineOffset() const;
 
     inline float textStrokeWidth() const;
     inline float opacity() const;
@@ -976,8 +979,9 @@ public:
     inline ColumnFill columnFill() const;
     inline const Style::GapGutter& columnGap() const;
     inline const Style::GapGutter& rowGap() const;
+    inline const BorderValue& columnRule() const;
     inline BorderStyle columnRuleStyle() const;
-    inline unsigned short columnRuleWidth() const;
+    inline Style::LineWidth columnRuleWidth() const;
     inline bool columnRuleIsTransparent() const;
     inline ColumnSpan columnSpan() const;
     inline bool columnSpanEqual(const RenderStyle&) const;
@@ -1316,22 +1320,22 @@ public:
     inline void setHasExplicitlySetBorderTopLeftRadius(bool);
     inline void setHasExplicitlySetBorderTopRightRadius(bool);
 
-    inline void setBorderLeftWidth(float);
+    inline void setBorderLeftWidth(Style::LineWidth);
     inline void setBorderLeftStyle(BorderStyle);
     inline void setBorderLeftColor(Style::Color&&);
-    inline void setBorderRightWidth(float);
+    inline void setBorderRightWidth(Style::LineWidth);
     inline void setBorderRightStyle(BorderStyle);
     inline void setBorderRightColor(Style::Color&&);
-    inline void setBorderTopWidth(float);
+    inline void setBorderTopWidth(Style::LineWidth);
     inline void setBorderTopStyle(BorderStyle);
     inline void setBorderTopColor(Style::Color&&);
-    inline void setBorderBottomWidth(float);
+    inline void setBorderBottomWidth(Style::LineWidth);
     inline void setBorderBottomStyle(BorderStyle);
     inline void setBorderBottomColor(Style::Color&&);
 
-    inline void setOutlineWidth(float);
-    inline void setOutlineStyle(BorderStyle);
-    inline void setHasAutoOutlineStyle();
+    inline void setOutlineOffset(Style::Length<>);
+    inline void setOutlineWidth(Style::LineWidth);
+    inline void setOutlineStyle(OutlineStyle);
     inline void setOutlineColor(Style::Color&&);
 
     void setOverflowX(Overflow v) { m_nonInheritedFlags.overflowX =  static_cast<unsigned>(v); }
@@ -1527,7 +1531,6 @@ public:
     inline void setHasAutoOrphans();
     inline void setOrphans(unsigned short);
 
-    inline void setOutlineOffset(float);
     inline void setTextShadow(FixedVector<Style::TextShadow>&&);
     inline void setTextStrokeColor(Style::Color&&);
     inline void setTextStrokeWidth(float);
@@ -1614,7 +1617,7 @@ public:
     inline void setRowGap(Style::GapGutter&&);
     inline void setColumnRuleColor(Style::Color&&);
     inline void setColumnRuleStyle(BorderStyle);
-    inline void setColumnRuleWidth(unsigned short);
+    inline void setColumnRuleWidth(Style::LineWidth);
     inline void resetColumnRule();
     inline void setColumnSpan(ColumnSpan);
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
@@ -2000,6 +2003,7 @@ public:
     static constexpr CaptionSide initialCaptionSide();
     static constexpr ColumnAxis initialColumnAxis();
     static constexpr ColumnProgression initialColumnProgression();
+    static inline Style::LineWidth initialColumnRuleWidth();
     static constexpr TextDirection initialDirection();
     static constexpr StyleWritingMode initialWritingMode();
     static constexpr TextCombine initialTextCombine();
@@ -2021,9 +2025,7 @@ public:
     static inline Style::Color initialTextStrokeColor();
     static inline Style::Color initialTextDecorationColor();
     static StyleImage* initialListStyleImage() { return 0; }
-    static float initialBorderWidth() { return 3; }
-    static unsigned short initialColumnRuleWidth() { return 3; }
-    static float initialOutlineWidth() { return 3; }
+    static inline Style::LineWidth initialBorderWidth();
     static inline Length initialLetterSpacing();
     static inline Length initialWordSpacing();
     static inline Style::PreferredSize initialSize();
@@ -2042,6 +2044,7 @@ public:
     static inline Length oneLength();
     static unsigned short initialWidows() { return 2; }
     static unsigned short initialOrphans() { return 2; }
+    static inline Style::LineWidth initialOutlineWidth();
     // Returning -100% percent here means the line-height is not set.
     static inline Length initialLineHeight();
     static constexpr TextAlignMode initialTextAlign();
@@ -2055,7 +2058,7 @@ public:
     static inline TextDecorationThickness initialTextDecorationThickness();
     static float initialZoom() { return 1.0f; }
     static constexpr TextZoom initialTextZoom();
-    static float initialOutlineOffset() { return 0; }
+    static constexpr Style::Length<> initialOutlineOffset();
     static float initialOpacity() { return 1.0f; }
     static constexpr BoxAlignment initialBoxAlign();
     static constexpr BoxDecorationBreak initialBoxDecorationBreak();
@@ -2090,6 +2093,7 @@ public:
     static constexpr TextWrapMode initialTextWrapMode();
     static constexpr TextWrapStyle initialTextWrapStyle();
     static constexpr WordBreak initialWordBreak();
+    static constexpr OutlineStyle initialOutlineStyle();
     static constexpr OverflowWrap initialOverflowWrap();
     static constexpr NBSPMode initialNBSPMode();
     static constexpr LineBreak initialLineBreak();

@@ -1175,8 +1175,8 @@ BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) cons
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
-        { LayoutUnit(style.borderLeftWidth()), LayoutUnit(style.borderRightWidth()) },
-        { LayoutUnit(style.borderTopWidth()), LayoutUnit(style.borderBottomWidth()) }
+        { Style::to<LayoutUnit>(style.borderLeftWidth()), Style::to<LayoutUnit>(style.borderRightWidth()) },
+        { Style::to<LayoutUnit>(style.borderTopWidth()), Style::to<LayoutUnit>(style.borderBottomWidth()) }
     };
 }
 

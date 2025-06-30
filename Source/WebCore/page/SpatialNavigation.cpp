@@ -45,6 +45,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
@@ -521,9 +522,9 @@ LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode& containerNode, boo
         // the rect of the focused element.
         if (ignoreBorder) {
             auto& style = renderer->style();
-            rect.move(style.borderLeftWidth(), style.borderTopWidth());
-            rect.setWidth(rect.width() - style.borderLeftWidth() - style.borderRightWidth());
-            rect.setHeight(rect.height() - style.borderTopWidth() - style.borderBottomWidth());
+            rect.move(Style::to<float>(style.borderLeftWidth()), Style::to<float>(style.borderTopWidth()));
+            rect.setWidth(rect.width() - Style::to<float>(style.borderLeftWidth()) - Style::to<float>(style.borderRightWidth()));
+            rect.setHeight(rect.height() - Style::to<float>(style.borderTopWidth()) - Style::to<float>(style.borderBottomWidth()));
         }
         return rect;
     }

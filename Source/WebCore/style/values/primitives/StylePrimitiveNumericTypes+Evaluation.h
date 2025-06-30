@@ -30,6 +30,7 @@
 #include "LayoutPoint.h"
 #include "LayoutSize.h"
 #include "LayoutUnit.h"
+#include "Length.h"
 #include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleValueTypes.h"
@@ -61,14 +62,27 @@ template<auto R, typename V> constexpr LayoutUnit evaluate(const Percentage<R, V
 // MARK: - Numeric
 
 template<NonCompositeNumeric StyleType> struct Evaluation<StyleType> {
-    constexpr double operator()(const StyleType& value)
+    constexpr auto operator()(const StyleType& value) -> typename StyleType::ResolvedValueType
     {
-        return static_cast<double>(value.value);
+        return static_cast<typename StyleType::ResolvedValueType>(value.value);
     }
     template<typename Reference> constexpr auto operator()(const StyleType& value, Reference) -> Reference
     {
         return static_cast<Reference>(value.value);
     }
+};
+
+template<NonCompositeNumeric StyleType> struct To<LayoutUnit, StyleType> {
+    auto operator()(const StyleType& value) -> LayoutUnit { return LayoutUnit(value.value); }
+};
+template<NonCompositeNumeric StyleType> struct To<WebCore::Length, StyleType> {
+    auto operator()(const StyleType& value) -> WebCore::Length { return WebCore::Length(value.value, WebCore::LengthType::Fixed); }
+};
+template<std::integral Target, NonCompositeNumeric StyleType> struct To<Target, StyleType> {
+    auto operator()(const StyleType& value) -> Target { return static_cast<Target>(value.value); }
+};
+template<std::floating_point Target, NonCompositeNumeric StyleType> struct To<Target, StyleType> {
+    auto operator()(const StyleType& value) -> Target { return static_cast<Target>(value.value); }
 };
 
 // MARK: - Calculation

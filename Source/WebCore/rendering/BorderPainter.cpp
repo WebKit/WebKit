@@ -291,7 +291,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     auto& styleToUse = m_renderer->style();
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
+    if (styleToUse.outlineStyle() == OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
         if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer.get()))
@@ -300,14 +300,15 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
         m_renderer->paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
     }
 
-    if (m_renderer->hasOutlineAnnotation() && !styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
+    if (m_renderer->hasOutlineAnnotation() && styleToUse.outlineStyle() != OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
         m_renderer->addPDFURLRect(m_paintInfo, paintRect.location());
 
-    if (styleToUse.hasAutoOutlineStyle() || styleToUse.outlineStyle() == BorderStyle::None)
+    auto borderStyle = toBorderStyle(styleToUse.outlineStyle());
+    if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
-    auto outlineWidth = LayoutUnit { styleToUse.outlineWidth() };
-    auto outlineOffset = LayoutUnit { styleToUse.outlineOffset() };
+    auto outlineWidth = Style::to<LayoutUnit>(styleToUse.outlineWidth());
+    auto outlineOffset = Style::to<LayoutUnit>(styleToUse.outlineOffset());
 
     auto outerRect = paintRect;
     outerRect.inflate(outlineOffset + outlineWidth);
@@ -323,7 +324,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
-    auto edges = borderEdgesForOutline(styleToUse, document().deviceScaleFactor());
+    auto edges = borderEdgesForOutline(styleToUse, *borderStyle, document().deviceScaleFactor());
     auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     paintSides(outlineShape, {
@@ -348,8 +349,8 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
     }
 
     auto& styleToUse = m_renderer->style();
-    auto outlineOffset = styleToUse.outlineOffset();
-    auto outlineWidth = styleToUse.outlineWidth();
+    auto outlineOffset = Style::to<float>(styleToUse.outlineOffset());
+    auto outlineWidth = Style::to<float>(styleToUse.outlineWidth());
     auto deviceScaleFactor = document().deviceScaleFactor();
 
     Vector<FloatRect> pixelSnappedRects;

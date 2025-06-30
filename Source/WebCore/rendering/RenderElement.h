@@ -432,7 +432,7 @@ private:
     void clearSubtreeLayoutRootIfNeeded() const;
     
     bool shouldWillChangeCreateStackingContext() const;
-    void issueRepaintForOutlineAuto(float outlineSize);
+    void issueRepaintForOutlineAuto(Style::Length<> outlineSize);
     
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();

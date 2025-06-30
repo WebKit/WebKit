@@ -54,6 +54,7 @@
 #include "StyleExtractor.h"
 #include "StyleImage.h"
 #include "StyleInheritedData.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
@@ -3135,7 +3136,7 @@ const BorderValue& RenderStyle::borderEnd(const WritingMode writingMode) const
     return writingMode.isInlineTopToBottom() ? borderBottom() : borderTop();
 }
 
-float RenderStyle::borderBeforeWidth(const WritingMode writingMode) const
+Style::LineWidth RenderStyle::borderBeforeWidth(const WritingMode writingMode) const
 {
     switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
@@ -3151,7 +3152,7 @@ float RenderStyle::borderBeforeWidth(const WritingMode writingMode) const
     return borderTopWidth();
 }
 
-float RenderStyle::borderAfterWidth(const WritingMode writingMode) const
+Style::LineWidth RenderStyle::borderAfterWidth(const WritingMode writingMode) const
 {
     switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
@@ -3167,14 +3168,14 @@ float RenderStyle::borderAfterWidth(const WritingMode writingMode) const
     return borderBottomWidth();
 }
 
-float RenderStyle::borderStartWidth(const WritingMode writingMode) const
+Style::LineWidth RenderStyle::borderStartWidth(const WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
         return writingMode.isInlineLeftToRight() ? borderLeftWidth() : borderRightWidth();
     return writingMode.isInlineTopToBottom() ? borderTopWidth() : borderBottomWidth();
 }
 
-float RenderStyle::borderEndWidth(const WritingMode writingMode) const
+Style::LineWidth RenderStyle::borderEndWidth(const WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
         return writingMode.isInlineLeftToRight() ? borderRightWidth() : borderLeftWidth();
@@ -3319,10 +3320,10 @@ Style::Color RenderStyle::initialTapHighlightColor()
 LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
 {
     return {
-        NinePieceImage::computeOutset(image.outset().top(), LayoutUnit(borderTopWidth())),
-        NinePieceImage::computeOutset(image.outset().right(), LayoutUnit(borderRightWidth())),
-        NinePieceImage::computeOutset(image.outset().bottom(), LayoutUnit(borderBottomWidth())),
-        NinePieceImage::computeOutset(image.outset().left(), LayoutUnit(borderLeftWidth()))
+        NinePieceImage::computeOutset(image.outset().top(), Style::to<LayoutUnit>(borderTopWidth())),
+        NinePieceImage::computeOutset(image.outset().right(), Style::to<LayoutUnit>(borderRightWidth())),
+        NinePieceImage::computeOutset(image.outset().bottom(), Style::to<LayoutUnit>(borderBottomWidth())),
+        NinePieceImage::computeOutset(image.outset().left(), Style::to<LayoutUnit>(borderLeftWidth()))
     };
 }
 
@@ -3752,21 +3753,21 @@ bool RenderStyle::hasReferenceFilterOnly() const
     return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::Type::Reference;
 }
 
-float RenderStyle::outlineWidth() const
+Style::LineWidth RenderStyle::outlineWidth() const
 {
     auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outline.style() == BorderStyle::None)
-        return 0;
-    if (hasAutoOutlineStyle())
+    if (outline.style() == OutlineStyle::None)
+        return 0_css_px;
+    if (outlineStyle() == OutlineStyle::Auto)
         return std::max(outline.width(), RenderTheme::platformFocusRingWidth());
     return outline.width();
 }
 
-float RenderStyle::outlineOffset() const
+Style::Length<> RenderStyle::outlineOffset() const
 {
     auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (hasAutoOutlineStyle())
-        return (outline.offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
+    if (outlineStyle() == OutlineStyle::Auto)
+        return { Style::to<float>(outline.offset()) + Style::to<float>(RenderTheme::platformFocusRingOffset(outlineWidth())) };
     return outline.offset();
 }
 

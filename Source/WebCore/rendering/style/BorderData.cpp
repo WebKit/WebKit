@@ -27,7 +27,6 @@
 #include "config.h"
 #include "BorderData.h"
 
-#include "OutlineValue.h"
 #include "RenderStyle.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
@@ -56,19 +55,6 @@ bool BorderData::isEquivalentForPainting(const BorderData& other, bool currentCo
         return true;
 
     return !containsCurrentColor();
-}
-
-TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
-{
-    ts << borderValue.width() << ' ' << borderValue.style() << ' ' << borderValue.color();
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const OutlineValue& outlineValue)
-{
-    ts << static_cast<const BorderValue&>(outlineValue);
-    ts.dumpProperty("outline-offset"_s, outlineValue.offset());
-    return ts;
 }
 
 void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const

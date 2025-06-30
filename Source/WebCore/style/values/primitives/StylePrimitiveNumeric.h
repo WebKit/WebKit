@@ -72,6 +72,11 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
 
     constexpr bool operator==(const PrimitiveNumeric&) const = default;
     constexpr bool operator==(ResolvedValueType other) const { return value == other; };
+    constexpr bool operator==(const WebCore::CSS::ValueLiteral<UnitTraits::canonical>& other) const { return value == clampTo<ResolvedValueType>(other.value); };
+
+    constexpr auto operator<=>(const PrimitiveNumeric&) const = default;
+    constexpr auto operator<=>(ResolvedValueType other) const { return value == other; };
+    constexpr auto operator<=>(const WebCore::CSS::ValueLiteral<UnitTraits::canonical>& other) const { return value <=> clampTo<ResolvedValueType>(other.value); };
 
 private:
     template<typename> friend struct PrimitiveNumericMarkableTraits;
