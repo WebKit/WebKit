@@ -41,7 +41,7 @@ inline LayoutSize RenderBox::contentBoxLogicalSize() const { return writingMode(
 inline LayoutUnit RenderBox::contentBoxLogicalWidth() const { return writingMode().isHorizontal() ? contentBoxWidth() : contentBoxHeight(); }
 inline LayoutUnit RenderBox::contentBoxLogicalWidth(LayoutUnit overridingBorderBoxWidth) const { return std::max(LayoutUnit(), overridingBorderBoxWidth - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth() - (style().scrollbarGutter().bothEdges ? scrollbarLogicalWidth() : 0)); }
 inline LayoutSize RenderBox::contentBoxSize() const { return { contentBoxWidth(), contentBoxHeight() }; }
-inline LayoutUnit RenderBox::contentBoxWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight() - (style().scrollbarGutter().bothEdges ? verticalScrollbarWidth() : 0)); }
+inline LayoutUnit RenderBox::contentBoxWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight() - (style().scrollbarGutter().bothEdges ? verticalScrollbarWidth() : 0) - scrollbarGutterWidth());}
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalHeight() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth(); }
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalWidth() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight(); }
 inline bool RenderBox::hasHorizontalOverflow() const { return scrollWidth() != roundToInt(paddingBoxWidth()); }

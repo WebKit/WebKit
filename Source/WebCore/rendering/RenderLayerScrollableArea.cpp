@@ -994,6 +994,22 @@ int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeReleva
     return vBar->width();
 }
 
+int RenderLayerScrollableArea::scrollbarGutterWidth()
+{
+    if (!m_gutterWidth) {
+        // Create a temporary scrollbar to determine the gutter width.
+        // This is necessary because the gutter width can depend on the scrollbar style.
+        RefPtr<Scrollbar> temp_bar = createScrollbar(ScrollbarOrientation::Vertical);
+        if (temp_bar) {
+            m_gutterWidth = temp_bar->width();
+            temp_bar->theme().unregisterScrollbar(*temp_bar);
+            willRemoveScrollbar(*temp_bar, ScrollbarOrientation::Vertical);
+            temp_bar = nullptr;
+        }
+    }
+    return (m_gutterWidth ? m_gutterWidth : ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle()));
+}
+
 int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy, bool isHorizontalWritingMode) const
 {
     RefPtr hBar = m_hBar;
@@ -1292,7 +1308,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderSty
 
 void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
 {
-    RenderBox* box = m_layer.renderBox();
+    CheckedPtr box = m_layer.renderBox();
     ASSERT(box);
 
     // List box parts handle the scrollbars by themselves so we have nothing to do.

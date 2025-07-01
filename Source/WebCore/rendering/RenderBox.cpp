@@ -960,6 +960,17 @@ bool RenderBox::includeHorizontalScrollbarSize() const
             || (style().overflowX() == Overflow::Hidden && !style().scrollbarGutter().isAuto));
 }
 
+bool RenderBox::shouldShowScrollbarGutter() const
+{
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (style().scrollbarWidth() != ScrollbarWidth::None && !style().scrollbarGutter().isAuto && 
+        (scrollableArea && scrollableArea->verticalScrollbar()==nullptr && scrollableArea->horizontalScrollbar() == nullptr) &&
+        hasNonVisibleOverflow() && layer() && !layer()->hasOverlayScrollbars()) {
+        return true;
+    }
+    return false;
+}
+
 int RenderBox::verticalScrollbarWidth() const
 {
     auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
@@ -991,6 +1002,15 @@ int RenderBox::intrinsicScrollbarLogicalWidthIncludingGutter() const
     if (!isHorizontalWritingMode() && ((style().overflowX() == Overflow::Scroll || shouldIncludeScrollbarGutter(style().scrollbarGutter(), hasScrollableOverflowX(), style().overflowX())) && !canUseOverlayScrollbars()))
         return style().scrollbarGutter().bothEdges ? horizontalScrollbarHeight() * 2 : horizontalScrollbarHeight();
 
+    return 0;
+}
+
+int RenderBox::scrollbarGutterWidth() const
+{
+    if (shouldShowScrollbarGutter()) {
+        auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+        return scrollableArea ? scrollableArea->scrollbarGutterWidth() : 0;
+    }
     return 0;
 }
 
