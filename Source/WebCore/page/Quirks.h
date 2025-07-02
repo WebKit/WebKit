@@ -123,6 +123,7 @@ public:
     bool needsZomatoEmailLoginLabelQuirk() const;
     bool needsGoogleMapsScrollingQuirk() const;
     bool needsGoogleTranslateScrollingQuirk() const;
+    bool shouldDisableCGStyleFiltersForGoogleMaps() const;
 
     bool needsPrimeVideoUserSelectNoneQuirk() const;
 

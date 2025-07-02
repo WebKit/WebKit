@@ -615,6 +615,15 @@ bool Quirks::needsGoogleMapsScrollingQuirk() const
 #endif
 }
 
+bool Quirks::shouldDisableCGStyleFiltersForGoogleMaps() const
+{
+#if PLATFORM(IOS_FAMILY) && HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    return needsQuirks() && m_quirksData.shouldDisableCGStyleFiltersQuirk;
+#else
+    return false;
+#endif
+}
+
 // translate.google.com rdar://106539018
 bool Quirks::needsGoogleTranslateScrollingQuirk() const
 {
@@ -2425,6 +2434,10 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
         quirksData.mayNeedToIgnoreContentObservation = true;
         // maps.google.com rdar://67358928
         quirksData.needsGoogleMapsScrollingQuirk = true;
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+        // maps.google.com - rdar://154317279
+        quirksData.shouldDisableCGStyleFiltersQuirk = true;
+#endif
 #endif
         // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
         quirksData.shouldAvoidResizingWhenInputViewBoundsChangeQuirk = true;

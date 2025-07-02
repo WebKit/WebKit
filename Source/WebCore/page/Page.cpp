@@ -138,6 +138,7 @@
 #include "ProcessSyncClient.h"
 #include "ProcessSyncData.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "RTCController.h"
 #include "Range.h"
 #include "RemoteFrame.h"
@@ -4787,7 +4788,12 @@ OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
         modes.add(FilterRenderingMode::Accelerated);
 #endif
 #if USE(GRAPHICS_CONTEXT_FILTERS)
-    modes.add(FilterRenderingMode::GraphicsContext);
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+        if (RefPtr document = localMainFrame->document()) {
+            if (!document->quirks().shouldDisableCGStyleFiltersForGoogleMaps())
+                modes.add(FilterRenderingMode::GraphicsContext);
+        }
+    }
 #endif
     return modes;
 }
