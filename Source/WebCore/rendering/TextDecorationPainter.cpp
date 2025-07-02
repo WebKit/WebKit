@@ -141,7 +141,7 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
         && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const FixedVector<Style::TextShadow>& shadow, const FilterOperations* colorFilter, bool isPrinting, WritingMode writingMode)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const Style::TextShadows& shadow, const FilterOperations* colorFilter, bool isPrinting, WritingMode writingMode)
     : m_context(context)
     , m_isPrinting(isPrinting)
     , m_writingMode(writingMode)
@@ -227,7 +227,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
             paintLineThrough({ boxOrigin, decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness, decorationGeometry.linethroughCenter, decorationGeometry.wavyStrokeParameters }, Color::transparentBlack, decorationStyle);
     };
 
-    if (m_shadow.isEmpty())
+    if (m_shadow.isNone())
         draw(nullptr);
     else {
         for (const auto& shadow : m_shadow) {
@@ -250,7 +250,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
 
     if (clipping)
         m_context.restore();
-    else if (!m_shadow.isEmpty())
+    else if (!m_shadow.isNone())
         m_context.clearDropShadow();
 }
 

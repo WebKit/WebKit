@@ -1357,7 +1357,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* elem
     // system font for the control size instead.
     setFontFromControlSize(style, controlSize);
 
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 static Style::PaddingEdge toTruncatedPaddingEdge(auto value)
@@ -1440,13 +1440,13 @@ int RenderThemeMac::minimumMenuListSize(const RenderStyle& style) const
 void RenderThemeMac::adjustSliderTrackStyle(RenderStyle& style, const Element* element) const
 {
     RenderThemeCocoa::adjustSliderTrackStyle(style, element);
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 void RenderThemeMac::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
     RenderThemeCocoa::adjustSliderThumbStyle(style, element);
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 std::span<const IntSize, 4> RenderThemeMac::searchFieldSizes() const
@@ -1499,7 +1499,7 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element* e
     // Override padding size to match AppKit text positioning.
     style.setPaddingBox({ toTruncatedPaddingEdge(1 * style.usedZoom()) });
 
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 std::span<const IntSize, 4> RenderThemeMac::cancelButtonSizes() const
@@ -1522,7 +1522,7 @@ void RenderThemeMac::adjustSearchFieldCancelButtonStyle(RenderStyle& style, cons
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
     style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width()) });
     style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 constexpr int resultsArrowWidth = 5;
@@ -1553,7 +1553,7 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
         heightOffset = emptyResultsOffset;
     style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() - widthOffset) });
     style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height() - heightOffset) });
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
@@ -1570,7 +1570,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& st
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width()) });
     style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* element) const
@@ -1587,7 +1587,7 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, con
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() + resultsArrowWidth) });
     style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 IntSize RenderThemeMac::sliderTickSize() const

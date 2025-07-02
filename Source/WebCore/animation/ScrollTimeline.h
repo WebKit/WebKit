@@ -44,8 +44,6 @@ class ScrollableArea;
 
 struct TimelineRange;
 
-TextStream& operator<<(TextStream&, Scroller);
-
 class ScrollTimeline : public AnimationTimeline {
 public:
     static Ref<ScrollTimeline> create(Document&, ScrollTimelineOptions&& = { });
@@ -125,6 +123,8 @@ private:
     CurrentTimeData m_cachedCurrentTimeData { };
     bool m_isInactiveStyleOriginatedTimeline { false };
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollTimeline&);
 
 } // namespace WebCore
 

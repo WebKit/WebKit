@@ -118,11 +118,14 @@ using TimelineRangeValue = Variant<TimelineRangeOffset, RefPtr<CSSNumericValue>,
 
 enum class Scroller : uint8_t { Nearest, Root, Self };
 
-struct ViewTimelineInsets {
+struct ViewTimelineInsetItem {
     std::optional<Length> start;
     std::optional<Length> end;
-    bool operator==(const ViewTimelineInsets&) const = default;
+    bool operator==(const ViewTimelineInsetItem&) const = default;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, Scroller);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewTimelineInsetItem&);
 
 } // namespace WebCore
 

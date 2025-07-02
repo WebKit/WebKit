@@ -43,7 +43,7 @@ struct StyledMarkedText final : MarkedText {
         Color backgroundColor;
         TextPaintStyle textStyles;
         TextDecorationPainter::Styles textDecorationStyles;
-        FixedVector<WebCore::Style::TextShadow> textShadow;
+        WebCore::Style::TextShadows textShadow { CSS::Keyword::None { } };
         float alpha { 1 };
     };
 

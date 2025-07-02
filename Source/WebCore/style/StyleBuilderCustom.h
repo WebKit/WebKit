@@ -74,7 +74,10 @@ namespace Style {
     static void applyValue##property(BuilderState&, CSSValue&)
 
 template<typename T> inline T forwardInheritedValue(T&& value) { return std::forward<T>(value); }
+inline AnchorNames forwardInheritedValue(const AnchorNames& value) { auto copy = value; return copy; }
 inline BorderRadiusValue forwardInheritedValue(const BorderRadiusValue& value) { auto copy = value; return copy; }
+inline BoxShadows forwardInheritedValue(const BoxShadows& value) { auto copy = value; return copy; }
+inline ContainerNames forwardInheritedValue(const ContainerNames& value) { auto copy = value; return copy; }
 inline WebCore::Color forwardInheritedValue(const WebCore::Color& value) { auto copy = value; return copy; }
 inline Color forwardInheritedValue(const Color& value) { auto copy = value; return copy; }
 inline WebCore::Length forwardInheritedValue(const WebCore::Length& value) { auto copy = value; return copy; }
@@ -105,19 +108,18 @@ inline OffsetPath forwardInheritedValue(const OffsetPath& value) { auto copy = v
 inline OffsetPosition forwardInheritedValue(const OffsetPosition& value) { auto copy = value; return copy; }
 inline OffsetRotate forwardInheritedValue(const OffsetRotate& value) { auto copy = value; return copy; }
 inline SVGPaint forwardInheritedValue(const SVGPaint& value) { auto copy = value; return copy; }
+inline TextShadows forwardInheritedValue(const TextShadows& value) { auto copy = value; return copy; }
 inline TextUnderlineOffset forwardInheritedValue(const TextUnderlineOffset& value) { auto copy = value; return copy; }
 inline URL forwardInheritedValue(const URL& value) { auto copy = value; return copy; }
-inline ViewTransitionName forwardInheritedValue(const ViewTransitionName& value) { auto copy = value; return copy; }
 inline FixedVector<WebCore::Length> forwardInheritedValue(const FixedVector<WebCore::Length>& value) { auto copy = value; return copy; }
-inline FixedVector<BoxShadow> forwardInheritedValue(const FixedVector<BoxShadow>& value) { auto copy = value; return copy; }
-inline FixedVector<TextShadow> forwardInheritedValue(const FixedVector<TextShadow>& value) { auto copy = value; return copy; }
-inline FixedVector<ScopedName> forwardInheritedValue(const FixedVector<ScopedName>& value) { auto copy = value; return copy; }
-inline FixedVector<PositionTryFallback> forwardInheritedValue(const FixedVector<PositionTryFallback>& value) { auto copy = value; return copy; }
-inline FixedVector<Ref<ScrollTimeline>> forwardInheritedValue(const FixedVector<Ref<ScrollTimeline>>& value) { auto copy = value; return copy; }
-inline FixedVector<Ref<ViewTimeline>> forwardInheritedValue(const FixedVector<Ref<ViewTimeline>>& value) { auto copy = value; return copy; }
-inline FixedVector<AtomString> forwardInheritedValue(const FixedVector<AtomString>& value) { auto copy = value; return copy; }
-inline FixedVector<ScrollAxis> forwardInheritedValue(const FixedVector<ScrollAxis>& value) { auto copy = value; return copy; }
-inline FixedVector<ViewTimelineInsets> forwardInheritedValue(const FixedVector<ViewTimelineInsets>& value) { auto copy = value; return copy; }
+inline PositionTryFallbacks forwardInheritedValue(const PositionTryFallbacks& value) { auto copy = value; return copy; }
+inline ProgressTimelineAxes forwardInheritedValue(const ProgressTimelineAxes& value) { auto copy = value; return copy; }
+inline ProgressTimelineNames forwardInheritedValue(const ProgressTimelineNames& value) { auto copy = value; return copy; }
+inline ScrollTimelines forwardInheritedValue(const ScrollTimelines& value) { auto copy = value; return copy; }
+inline ViewTimelineInsets forwardInheritedValue(const ViewTimelineInsets& value) { auto copy = value; return copy; }
+inline ViewTimelines forwardInheritedValue(const ViewTimelines& value) { auto copy = value; return copy; }
+inline ViewTransitionClasses forwardInheritedValue(const ViewTransitionClasses& value) { auto copy = value; return copy; }
+inline ViewTransitionName forwardInheritedValue(const ViewTransitionName& value) { auto copy = value; return copy; }
 inline Vector<GridTrackSize> forwardInheritedValue(const Vector<GridTrackSize>& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
@@ -732,78 +734,6 @@ inline void BuilderCustom::applyValueColorScheme(BuilderState& builderState, CSS
     builderState.style().setHasExplicitlySetColorScheme();
 }
 #endif
-
-inline void BuilderCustom::applyInitialTextShadow(BuilderState& builderState)
-{
-    builderState.style().setTextShadow({ });
-}
-
-inline void BuilderCustom::applyInheritTextShadow(BuilderState& builderState)
-{
-    builderState.style().setTextShadow(forwardInheritedValue(builderState.parentStyle().textShadow()));
-}
-
-inline void BuilderCustom::applyValueTextShadow(BuilderState& builderState, CSSValue& value)
-{
-    if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        ASSERT(primitive->valueID() == CSSValueNone);
-        builderState.style().setTextShadow({ });
-        return;
-    }
-
-    RefPtr shadow = requiredDowncast<CSSTextShadowPropertyValue>(builderState, value);
-    if (!shadow)
-        return;
-
-    WTF::switchOn(shadow->shadow(),
-        [&](CSS::Keyword::None) {
-            builderState.style().setTextShadow({ });
-        },
-        [&](const auto& list) {
-            builderState.style().setTextShadow(
-                FixedVector<TextShadow>::createWithSizeFromGenerator(list.size(), [&](auto index) {
-                    return Style::toStyle(list[list.size() - index - 1], builderState);
-                })
-            );
-        }
-    );
-}
-
-inline void BuilderCustom::applyInitialBoxShadow(BuilderState& builderState)
-{
-    builderState.style().setBoxShadow({ });
-}
-
-inline void BuilderCustom::applyInheritBoxShadow(BuilderState& builderState)
-{
-    builderState.style().setBoxShadow(forwardInheritedValue(builderState.parentStyle().boxShadow()));
-}
-
-inline void BuilderCustom::applyValueBoxShadow(BuilderState& builderState, CSSValue& value)
-{
-    if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        ASSERT(primitive->valueID() == CSSValueNone);
-        builderState.style().setBoxShadow({ });
-        return;
-    }
-
-    RefPtr shadow = requiredDowncast<CSSBoxShadowPropertyValue>(builderState, value);
-    if (!shadow)
-        return;
-
-    WTF::switchOn(shadow->shadow(),
-        [&](CSS::Keyword::None) {
-            builderState.style().setBoxShadow({ });
-        },
-        [&](const auto& list) {
-            builderState.style().setBoxShadow(
-                FixedVector<BoxShadow>::createWithSizeFromGenerator(list.size(), [&](auto index) {
-                    return Style::toStyle(list[list.size() - index - 1], builderState);
-                })
-            );
-        }
-    );
-}
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 {

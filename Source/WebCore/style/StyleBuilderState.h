@@ -31,11 +31,11 @@
 #include "Document.h"
 #include "FontTaggedSettings.h"
 #include "PositionArea.h"
-#include "PositionTryFallback.h"
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleForVisitedLink.h"
+#include "StylePositionTryFallback.h"
 #include "TreeResolutionState.h"
 #include "platform/text/TextFlags.h"
 #include <wtf/BitSet.h>

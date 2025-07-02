@@ -626,6 +626,7 @@ animation/TimelineRange.cpp
 animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationTime.cpp
+animation/WebAnimationTypes.cpp
 animation/WebAnimationUtilities.cpp
 automation/AutomationInstrumentation.cpp
 bindings/js/BindingsJSTZoneImpls.cpp
@@ -2941,8 +2942,6 @@ rendering/style/ListStyleType.cpp
 rendering/style/NinePieceImage.cpp
 rendering/style/QuotesData.cpp
 rendering/style/PositionArea.cpp
-rendering/style/PositionTryFallback.cpp
-rendering/style/PositionTryOrder.cpp
 rendering/style/ReferenceFilterOperation.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp
@@ -3110,6 +3109,7 @@ style/RuleData.cpp
 style/RuleFeature.cpp
 style/RuleSet.cpp
 style/RuleSetBuilder.cpp
+style/ScopedName.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
@@ -3133,6 +3133,8 @@ style/StyleUpdate.cpp
 style/Styleable.cpp
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
+style/values/anchor-position/StylePositionTryFallback.cpp
+style/values/anchor-position/StylePositionTryOrder.cpp
 style/values/borders/StyleBorderRadius.cpp
 style/values/borders/StyleBoxShadow.cpp
 style/values/borders/StyleCornerShapeValue.cpp
@@ -3181,6 +3183,7 @@ style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveNumericTypes+Conversions.cpp
 style/values/primitives/StyleURL.cpp
 style/values/primitives/StyleUnevaluatedCalculation.cpp
+style/values/scroll-animations/StyleViewTimelineInsets.cpp
 style/values/scroll-snap/StyleScrollMargin.cpp
 style/values/scroll-snap/StyleScrollPadding.cpp
 style/values/shapes/StyleBasicShape.cpp

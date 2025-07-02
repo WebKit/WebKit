@@ -54,7 +54,6 @@ using AppleColorFilterValueList = SpaceSeparatedVector<AppleColorFilter>;
 // but does not support `blur()`, `drop-shadow()` and reference filters, but adds support for the
 // non-standard function `-apple-invert-lightness-filter()`.
 // <'-apple-color-filter'> = none | <-apple-color-filter-value-list>
-// NOTE: Subclassing, rather than aliasing, is being used to allow easy forward declarations.
 struct AppleColorFilterProperty : ListOrNone<AppleColorFilterValueList> { using ListOrNone<AppleColorFilterValueList>::ListOrNone; };
 
 } // namespace CSS

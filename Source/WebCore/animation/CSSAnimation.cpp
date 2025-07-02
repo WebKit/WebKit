@@ -176,8 +176,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
             scrollTimeline->setSource(*owningElement());
             setTimeline(WTFMove(scrollTimeline));
         }, [&] (const Animation::AnonymousViewTimeline& anonymousViewTimeline) {
-            auto insets = anonymousViewTimeline.insets;
-            auto viewTimeline = ViewTimeline::create(nullAtom(), anonymousViewTimeline.axis, WTFMove(insets));
+            auto viewTimeline = ViewTimeline::create(nullAtom(), anonymousViewTimeline.axis, anonymousViewTimeline.insets);
             viewTimeline->setSubject(*owningElement());
             setTimeline(WTFMove(viewTimeline));
         }

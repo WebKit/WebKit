@@ -4594,8 +4594,12 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
         attributes.foregroundColor = foregroundColor;
 
-    if (auto& shadow = style->textShadow(); !shadow.isEmpty())
-        attributes.fontShadow = { style->colorWithColorFilter(shadow[0].color), { shadow[0].location.x().value, shadow[0].location.y().value }, shadow[0].blur.value };
+    WTF::switchOn(style->textShadow(),
+        [&](const CSS::Keyword::None&) { },
+        [&](const auto& shadows) {
+            attributes.fontShadow = { style->colorWithColorFilter(shadows[0].color), { shadows[0].location.x().value, shadows[0].location.y().value }, shadows[0].blur.value };
+        }
+    );
 
     switch (style->verticalAlign()) {
     case VerticalAlign::Baseline:

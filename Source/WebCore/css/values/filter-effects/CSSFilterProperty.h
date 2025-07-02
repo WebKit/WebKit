@@ -56,7 +56,6 @@ using FilterValueList = SpaceSeparatedVector<Filter>;
 
 // <'filter'> = none | <filter-value-list>
 // https://drafts.fxtf.org/filter-effects/#propdef-filter
-// NOTE: Subclassing, rather than aliasing, is being used to allow easy forward declarations.
 struct FilterProperty : ListOrNone<FilterValueList> { using ListOrNone<FilterValueList>::ListOrNone; };
 
 } // namespace CSS

@@ -1273,7 +1273,7 @@ AnchorPositionedKey AnchorPositionEvaluator::keyForElementOrPseudoElement(const 
 
 bool AnchorPositionEvaluator::isAnchor(const RenderStyle& style)
 {
-    if (!style.anchorNames().isEmpty())
+    if (!style.anchorNames().isNone())
         return true;
 
     return isImplicitAnchor(style);

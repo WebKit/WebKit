@@ -626,7 +626,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintTextWithShadows(const RenderStyle& sty
         return true;
     };
 
-    if (shadows.isEmpty()) {
+    if (shadows.isNone()) {
         draw(nullptr, false);
         return;
     }

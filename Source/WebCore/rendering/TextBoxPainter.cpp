@@ -514,7 +514,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
         m_style,
         markedText.style.textStyles,
         markedText.style.textShadow,
-        !markedText.style.textShadow.isEmpty() && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr,
+        !markedText.style.textShadow.isNone() && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr,
         emphasisMark,
         emphasisMarkOffset,
         m_isCombinedText ? &downcast<RenderCombineText>(m_renderer) : nullptr
@@ -555,7 +555,7 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
         context,
         fontCascade(),
         markedText.style.textShadow,
-        !markedText.style.textShadow.isEmpty() && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr,
+        !markedText.style.textShadow.isNone() && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr,
         m_document.printing(),
         writingMode()
     };

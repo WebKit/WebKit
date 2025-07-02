@@ -155,7 +155,7 @@ public:
     };
     struct AnonymousViewTimeline {
         ScrollAxis axis;
-        ViewTimelineInsets insets;
+        ViewTimelineInsetItem insets;
         bool operator==(const AnonymousViewTimeline& o) const { return axis == o.axis && insets == o.insets; }
     };
     using Timeline = Variant<TimelineKeyword, AtomString, AnonymousScrollTimeline, AnonymousViewTimeline>;

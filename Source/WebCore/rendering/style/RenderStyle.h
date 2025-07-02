@@ -266,7 +266,6 @@ struct ScrollSnapType;
 struct ScrollbarGutter;
 struct ScrollbarColor;
 struct NameScope;
-struct ViewTimelineInsets;
 
 struct TabSize;
 class TextAutospace;
@@ -288,11 +287,13 @@ class CustomProperty;
 class CustomPropertyData;
 class CustomPropertyRegistry;
 class ViewTransitionName;
-struct BoxShadow;
+struct AnchorNames;
 struct BorderRadius;
+struct BoxShadow;
 struct ClipPath;
 struct Color;
 struct ColorScheme;
+struct ContainerNames;
 struct CornerShapeValue;
 struct DynamicRangeLimit;
 struct FlexBasis;
@@ -308,28 +309,38 @@ struct OffsetPosition;
 struct OffsetRotate;
 struct PaddingEdge;
 struct Perspective;
-struct PositionTryFallback;
+struct PositionTryFallbacks;
 struct PreferredSize;
+struct ProgressTimelineAxes;
+struct ProgressTimelineNames;
 struct Rotate;
-struct SVGPaint;
 struct Scale;
 struct ScopedName;
 struct ScrollMarginEdge;
 struct ScrollPaddingEdge;
+struct ScrollTimelines;
+struct SVGPaint;
 struct TextShadow;
 struct TextUnderlineOffset;
 struct Translate;
+struct ViewTimelineInsets;
+struct ViewTimelines;
+struct ViewTransitionClasses;
 
 enum class Change : uint8_t;
 enum class LineBoxContain : uint8_t;
 enum class PositionTryOrder : uint8_t;
 
+template<typename> struct Shadows;
+
 using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
+using BoxShadows = Shadows<BoxShadow>;
 using InsetBox = MinimallySerializingSpaceSeparatedRectEdges<InsetEdge>;
 using MarginBox = MinimallySerializingSpaceSeparatedRectEdges<MarginEdge>;
 using PaddingBox = MinimallySerializingSpaceSeparatedRectEdges<PaddingEdge>;
 using ScrollMarginBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollMarginEdge>;
 using ScrollPaddingBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollPaddingEdge>;
+using TextShadows = Shadows<TextShadow>;
 }
 
 constexpr auto PublicPseudoIDBits = 17;
@@ -831,7 +842,7 @@ public:
     inline bool containsPaint() const;
     inline bool containsLayoutOrPaint() const;
     inline ContainerType containerType() const;
-    inline const FixedVector<Style::ScopedName>& containerNames() const;
+    inline const Style::ContainerNames& containerNames() const;
     inline bool containerTypeAndNamesEqual(const RenderStyle&) const;
 
     inline ContentVisibility contentVisibility() const;
@@ -924,10 +935,10 @@ public:
     inline const GridPosition& gridItemRowStart() const;
     inline const GridPosition& gridItemRowEnd() const;
 
-    inline const FixedVector<Style::TextShadow>& textShadow() const;
+    inline const Style::TextShadows& textShadow() const;
     inline bool hasTextShadow() const;
 
-    inline const FixedVector<Style::BoxShadow>& boxShadow() const;
+    inline const Style::BoxShadows& boxShadow() const;
     inline bool hasBoxShadow() const;
 
     inline BoxDecorationBreak boxDecorationBreak() const;
@@ -1065,21 +1076,21 @@ public:
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
     inline PointerEvents usedPointerEvents() const;
 
-    inline const FixedVector<Ref<ScrollTimeline>>& scrollTimelines() const;
-    inline const FixedVector<ScrollAxis>& scrollTimelineAxes() const;
-    inline const FixedVector<AtomString>& scrollTimelineNames() const;
+    inline const Style::ScrollTimelines& scrollTimelines() const;
+    inline const Style::ProgressTimelineAxes& scrollTimelineAxes() const;
+    inline const Style::ProgressTimelineNames& scrollTimelineNames() const;
     inline bool hasScrollTimelines() const;
-    inline void setScrollTimelineAxes(FixedVector<ScrollAxis>&&);
-    inline void setScrollTimelineNames(FixedVector<AtomString>&&);
+    inline void setScrollTimelineAxes(Style::ProgressTimelineAxes&&);
+    inline void setScrollTimelineNames(Style::ProgressTimelineNames&&);
 
-    inline const FixedVector<Ref<ViewTimeline>>& viewTimelines() const;
-    inline const FixedVector<ScrollAxis>& viewTimelineAxes() const;
-    inline const FixedVector<ViewTimelineInsets>& viewTimelineInsets() const;
-    inline const FixedVector<AtomString>& viewTimelineNames() const;
+    inline const Style::ViewTimelines& viewTimelines() const;
+    inline const Style::ViewTimelineInsets& viewTimelineInsets() const;
+    inline const Style::ProgressTimelineAxes& viewTimelineAxes() const;
+    inline const Style::ProgressTimelineNames& viewTimelineNames() const;
     inline bool hasViewTimelines() const;
-    inline void setViewTimelineAxes(FixedVector<ScrollAxis>&&);
-    inline void setViewTimelineInsets(FixedVector<ViewTimelineInsets>&&);
-    inline void setViewTimelineNames(FixedVector<AtomString>&&);
+    inline void setViewTimelineInsets(Style::ViewTimelineInsets&&);
+    inline void setViewTimelineAxes(Style::ProgressTimelineAxes&&);
+    inline void setViewTimelineNames(Style::ProgressTimelineNames&&);
 
     static inline const NameScope initialTimelineScope();
     inline const NameScope& timelineScope() const;
@@ -1234,7 +1245,7 @@ public:
 
     inline MathStyle mathStyle() const;
 
-    inline const FixedVector<Style::ScopedName>& viewTransitionClasses() const;
+    inline const Style::ViewTransitionClasses& viewTransitionClasses() const;
     inline const Style::ViewTransitionName& viewTransitionName() const;
 
     void setDisplay(DisplayType value)
@@ -1446,7 +1457,7 @@ public:
 
     inline void setContain(OptionSet<Containment>);
     inline void setContainerType(ContainerType);
-    inline void setContainerNames(FixedVector<Style::ScopedName>&&);
+    inline void setContainerNames(Style::ContainerNames&&);
 
     inline void setContainIntrinsicWidthType(ContainIntrinsicSizeType);
     inline void setContainIntrinsicHeightType(ContainIntrinsicSizeType);
@@ -1520,7 +1531,7 @@ public:
     inline void setOrphans(unsigned short);
 
     inline void setOutlineOffset(float);
-    inline void setTextShadow(FixedVector<Style::TextShadow>&&);
+    inline void setTextShadow(Style::TextShadows&&);
     inline void setTextStrokeColor(Style::Color&&);
     inline void setTextStrokeWidth(float);
     inline void setTextFillColor(Style::Color&&);
@@ -1539,7 +1550,7 @@ public:
     inline void setBoxOrdinalGroup(unsigned);
     inline void setBoxOrient(BoxOrient);
     inline void setBoxPack(BoxPack);
-    inline void setBoxShadow(FixedVector<Style::BoxShadow>&&);
+    inline void setBoxShadow(Style::BoxShadows&&);
     inline void setBoxReflect(RefPtr<StyleReflection>&&);
     inline void setBoxSizing(BoxSizing);
     inline void setFlexGrow(float);
@@ -1888,7 +1899,7 @@ public:
     inline QuotesData* quotes() const;
     void setQuotes(RefPtr<QuotesData>&&);
 
-    inline void setViewTransitionClasses(FixedVector<Style::ScopedName>&&);
+    inline void setViewTransitionClasses(Style::ViewTransitionClasses&&);
     inline void setViewTransitionName(Style::ViewTransitionName&&);
 
     inline WillChangeData* willChange() const;
@@ -2002,7 +2013,7 @@ public:
     static constexpr ListStylePosition initialListStylePosition();
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
-    static inline FixedVector<Style::ScopedName> initialViewTransitionClasses();
+    static inline Style::ViewTransitionClasses initialViewTransitionClasses();
     static inline Style::ViewTransitionName initialViewTransitionName();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
@@ -2058,6 +2069,7 @@ public:
     static float initialBoxFlex() { return 0.0f; }
     static unsigned initialBoxFlexGroup() { return 1; }
     static unsigned initialBoxOrdinalGroup() { return 1; }
+    static inline Style::BoxShadows initialBoxShadow();
     static constexpr BoxSizing initialBoxSizing();
     static StyleReflection* initialBoxReflect() { return 0; }
     static float initialFlexGrow() { return 0; }
@@ -2079,6 +2091,7 @@ public:
     static constexpr UserDrag initialUserDrag();
     static constexpr UserSelect initialUserSelect();
     static constexpr TextOverflow initialTextOverflow();
+    static inline Style::TextShadows initialTextShadow();
     static constexpr TextWrapMode initialTextWrapMode();
     static constexpr TextWrapStyle initialTextWrapStyle();
     static constexpr WordBreak initialWordBreak();
@@ -2099,7 +2112,7 @@ public:
     static constexpr OptionSet<Containment> contentContainment();
     static constexpr ContainerType initialContainerType();
     static constexpr ContentVisibility initialContentVisibility();
-    static FixedVector<Style::ScopedName> initialContainerNames();
+    static Style::ContainerNames initialContainerNames();
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
 
@@ -2178,12 +2191,12 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
-    static FixedVector<ScrollAxis> initialScrollTimelineAxes() { return { }; }
-    static FixedVector<AtomString> initialScrollTimelineNames() { return { }; }
+    static inline Style::ProgressTimelineAxes initialScrollTimelineAxes();
+    static inline Style::ProgressTimelineNames initialScrollTimelineNames();
 
-    static FixedVector<ScrollAxis> initialViewTimelineAxes() { return { }; }
-    static FixedVector<ViewTimelineInsets> initialViewTimelineInsets();
-    static FixedVector<AtomString> initialViewTimelineNames() { return { }; }
+    static inline Style::ProgressTimelineAxes initialViewTimelineAxes();
+    static inline Style::ProgressTimelineNames initialViewTimelineNames();
+    static inline Style::ViewTimelineInsets initialViewTimelineInsets();
 
     static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();
@@ -2368,9 +2381,9 @@ public:
     bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
     bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
 
-    static FixedVector<Style::ScopedName> initialAnchorNames();
-    inline const FixedVector<Style::ScopedName>& anchorNames() const;
-    inline void setAnchorNames(FixedVector<Style::ScopedName>&&);
+    static Style::AnchorNames initialAnchorNames();
+    inline const Style::AnchorNames& anchorNames() const;
+    inline void setAnchorNames(Style::AnchorNames&&);
 
     static inline NameScope initialAnchorScope();
     inline const NameScope& anchorScope() const;
@@ -2388,9 +2401,9 @@ public:
     inline Style::PositionTryOrder positionTryOrder() const;
     inline void setPositionTryOrder(Style::PositionTryOrder);
 
-    static FixedVector<Style::PositionTryFallback> initialPositionTryFallbacks();
-    const FixedVector<Style::PositionTryFallback>& positionTryFallbacks() const;
-    void setPositionTryFallbacks(FixedVector<Style::PositionTryFallback>&&);
+    static Style::PositionTryFallbacks initialPositionTryFallbacks();
+    const Style::PositionTryFallbacks& positionTryFallbacks() const;
+    void setPositionTryFallbacks(Style::PositionTryFallbacks&&);
 
     static constexpr OptionSet<PositionVisibility> initialPositionVisibility();
     inline OptionSet<PositionVisibility> positionVisibility() const;

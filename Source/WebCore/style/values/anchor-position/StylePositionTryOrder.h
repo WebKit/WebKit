@@ -23,42 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PositionTryOrder.h"
+#pragma once
+
+#include "BoxSides.h"
 
 namespace WebCore {
 namespace Style {
 
-LogicalBoxAxis boxAxisForPositionTryOrder(PositionTryOrder order, WritingMode writingMode)
-{
-    switch (order) {
-    case PositionTryOrder::MostWidth:
-        return mapAxisPhysicalToLogical(writingMode, BoxAxis::Horizontal);
-    case PositionTryOrder::MostHeight:
-        return mapAxisPhysicalToLogical(writingMode, BoxAxis::Vertical);
-    case PositionTryOrder::MostBlockSize:
-        return LogicalBoxAxis::Block;
-    case PositionTryOrder::MostInlineSize:
-        return LogicalBoxAxis::Inline;
-    case PositionTryOrder::Normal:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return LogicalBoxAxis::Inline;
-}
+// https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
+enum class PositionTryOrder : uint8_t {
+    Normal,
+    MostWidth,
+    MostHeight,
+    MostBlockSize,
+    MostInlineSize
+};
 
-WTF::TextStream& operator<<(WTF::TextStream& ts, PositionTryOrder order)
-{
-    switch (order) {
-    case PositionTryOrder::Normal: ts << "normal"_s; break;
-    case PositionTryOrder::MostWidth: ts << "most-width"_s; break;
-    case PositionTryOrder::MostHeight: ts << "most-height"_s; break;
-    case PositionTryOrder::MostBlockSize: ts << "most-block-size"_s; break;
-    case PositionTryOrder::MostInlineSize: ts << "most-inline-size"_s; break;
-    }
+LogicalBoxAxis boxAxisForPositionTryOrder(PositionTryOrder, WritingMode);
 
-    return ts;
-}
+WTF::TextStream& operator<<(WTF::TextStream&, PositionTryOrder);
 
-}
-}
+} // namespace Style
+} // namespace WebCore

@@ -2746,7 +2746,7 @@ inline void ExtractorCustom::extractColumnsShorthandSerialization(ExtractorState
 inline RefPtr<CSSValue> ExtractorCustom::extractContainerShorthand(ExtractorState& state)
 {
     auto name = [&]() -> Ref<CSSValue> {
-        if (state.style.containerNames().isEmpty())
+        if (state.style.containerNames().isNone())
             return CSSPrimitiveValue::create(CSSValueNone);
         return ExtractorGenerated::extractValue(state, CSSPropertyContainerName).releaseNonNull();
     }();
@@ -2762,7 +2762,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractContainerShorthand(ExtractorStat
 
 inline void ExtractorCustom::extractContainerShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.containerNames().isEmpty())
+    if (state.style.containerNames().isNone())
         CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
     else
         ExtractorGenerated::extractValueSerialization(state, builder, context, CSSPropertyContainerName);
@@ -3407,14 +3407,14 @@ inline RefPtr<CSSValue> ExtractorCustom::extractViewTimelineShorthand(ExtractorS
         if (hasDefaultAxis && hasDefaultInsets)
             list.append(WTFMove(nameCSSValue));
         else if (hasDefaultAxis)
-            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, ExtractorConverter::convertSingleViewTimelineInsets(state, insets)));
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createCSSValue(state.pool, state.style, insets)));
         else if (hasDefaultInsets)
             list.append(CSSValuePair::createNoncoalescing(nameCSSValue, ExtractorConverter::convert(state, axis)));
         else {
             list.append(CSSValueList::createSpaceSeparated(
                 WTFMove(nameCSSValue),
                 ExtractorConverter::convert(state, axis),
-                ExtractorConverter::convertSingleViewTimelineInsets(state, insets)
+                createCSSValue(state.pool, state.style, insets)
             ));
         }
     }

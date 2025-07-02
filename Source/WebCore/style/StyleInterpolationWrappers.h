@@ -1135,11 +1135,13 @@ inline const TextShadow& shadowForInterpolation(const TextShadow&)
     return defaultShadowData.get();
 }
 
-template<typename ShadowType> class ShadowWrapper final : public WrapperWithGetter<const FixedVector<ShadowType>&> {
+template<typename ShadowListType> class ShadowWrapper final : public WrapperWithGetter<const ShadowListType&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    ShadowWrapper(CSSPropertyID property, const FixedVector<ShadowType>& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FixedVector<ShadowType>&&))
-        : WrapperWithGetter<const FixedVector<ShadowType>&>(property, getter)
+    using ShadowType = typename ShadowListType::value_type;
+
+    ShadowWrapper(CSSPropertyID property, const ShadowListType& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(ShadowListType&&))
+        : WrapperWithGetter<const ShadowListType&>(property, getter)
         , m_setter(setter)
     {
     }
@@ -1188,7 +1190,7 @@ public:
 
         if (context.isDiscrete) {
             ASSERT(!context.progress || context.progress == 1.0);
-            (destination.*m_setter)(FixedVector<ShadowType> { context.progress ? toShadowList : fromShadowList });
+            (destination.*m_setter)(ShadowListType { context.progress ? toShadowList : fromShadowList });
             return;
         }
 
@@ -1196,41 +1198,41 @@ public:
         auto toLength = toShadowList.size();
 
         if (!fromLength && !toLength)
-            (destination.*m_setter)({ });
+            (destination.*m_setter)(CSS::Keyword::None { });
         else if (fromLength == toLength)
             (destination.*m_setter)(blendMatchedShadowLists(fromShadowList, toShadowList, fromLength, fromStyle, toStyle, context));
         else
             (destination.*m_setter)(blendMismatchedShadowLists(fromShadowList, toShadowList, fromLength, toLength, fromStyle, toStyle, context));
     }
 
-    FixedVector<ShadowType> addShadowLists(const FixedVector<ShadowType>& fromShadowList, const FixedVector<ShadowType>& toShadowList, size_t fromLength, size_t toLength) const
+    ShadowListType addShadowLists(const ShadowListType& fromShadowList, const ShadowListType& toShadowList, size_t fromLength, size_t toLength) const
     {
         auto combinedSize = fromLength + toLength;
-        return FixedVector<ShadowType>::createWithSizeFromGenerator(combinedSize, [&](auto index) -> ShadowType {
+        return { FixedVector<ShadowType>::createWithSizeFromGenerator(combinedSize, [&](auto index) -> ShadowType {
             if (index < toLength)
                 return toShadowList[index];
             return fromShadowList[index - toLength];
-        });
+        }) };
     }
 
-    FixedVector<ShadowType> blendMatchedShadowLists(const FixedVector<ShadowType>& fromShadowList, const FixedVector<ShadowType>& toShadowList, size_t length, const RenderStyle& fromStyle, const RenderStyle& toStyle, const Context& context) const
+    ShadowListType blendMatchedShadowLists(const ShadowListType& fromShadowList, const ShadowListType& toShadowList, size_t length, const RenderStyle& fromStyle, const RenderStyle& toStyle, const Context& context) const
     {
         // from or to might be empty in which case we don't want to do additivity, but do replace instead.
-        if (!fromShadowList.isEmpty() && !toShadowList.isEmpty() && context.compositeOperation == CompositeOperation::Add)
+        if (!fromShadowList.isNone() && !toShadowList.isNone() && context.compositeOperation == CompositeOperation::Add)
             return addShadowLists(fromShadowList, toShadowList, length, length);
 
-        return FixedVector<ShadowType>::createWithSizeFromGenerator(length, [&](auto index) -> ShadowType {
+        return { FixedVector<ShadowType>::createWithSizeFromGenerator(length, [&](auto index) -> ShadowType {
             return Style::blend(fromShadowList[index], toShadowList[index], fromStyle, toStyle, context);
-        });
+        }) };
     }
 
-    FixedVector<ShadowType> blendMismatchedShadowLists(const FixedVector<ShadowType>& fromShadowList, const FixedVector<ShadowType>& toShadowList, size_t fromLength, size_t toLength, const RenderStyle& fromStyle, const RenderStyle& toStyle, const Context& context) const
+    ShadowListType blendMismatchedShadowLists(const ShadowListType& fromShadowList, const ShadowListType& toShadowList, size_t fromLength, size_t toLength, const RenderStyle& fromStyle, const RenderStyle& toStyle, const Context& context) const
     {
-        if (!fromShadowList.isEmpty() && !toShadowList.isEmpty() && context.compositeOperation != CompositeOperation::Replace)
+        if (!fromShadowList.isNone() && !toShadowList.isNone() && context.compositeOperation != CompositeOperation::Replace)
             return addShadowLists(fromShadowList, toShadowList, fromLength, toLength);
 
         auto maxLength = std::max(fromLength, toLength);
-        return FixedVector<ShadowType>::createWithSizeFromGenerator(maxLength, [&](auto index) -> ShadowType {
+        return { FixedVector<ShadowType>::createWithSizeFromGenerator(maxLength, [&](auto index) -> ShadowType {
             auto indexFromEnd = maxLength - index - 1;
             bool hasFrom = indexFromEnd < fromLength;
             bool hasTo = indexFromEnd < toLength;
@@ -1250,11 +1252,11 @@ public:
             }
 
             RELEASE_ASSERT_NOT_REACHED();
-        });
+        }) };
     }
 
 private:
-    void (RenderStyle::*m_setter)(FixedVector<ShadowType>&&);
+    void (RenderStyle::*m_setter)(ShadowListType&&);
 };
 
 class ColorWrapper final : public WrapperWithGetter<const WebCore::Color&> {

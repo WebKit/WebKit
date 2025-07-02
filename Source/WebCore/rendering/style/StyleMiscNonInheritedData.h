@@ -87,7 +87,7 @@ public:
     RefPtr<AnimationList> animations;
     RefPtr<AnimationList> transitions;
     std::unique_ptr<ContentData> content;
-    FixedVector<Style::BoxShadow> boxShadow;
+    Style::BoxShadows boxShadow;
     String altText;
     double aspectRatioWidth;
     double aspectRatioHeight;

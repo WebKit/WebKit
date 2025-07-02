@@ -77,7 +77,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , rotate(RenderStyle::initialRotate())
     , scale(RenderStyle::initialScale())
     , translate(RenderStyle::initialTranslate())
-    // containerNames
+    , containerNames(RenderStyle::initialContainerNames())
     , viewTransitionClasses(RenderStyle::initialViewTransitionClasses())
     , viewTransitionName(RenderStyle::initialViewTransitionName())
     , columnGap(RenderStyle::initialColumnGap())
@@ -89,12 +89,12 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , offsetRotate(RenderStyle::initialOffsetRotate())
     , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
     // scrollTimelines
-    // scrollTimelineAxes
-    // scrollTimelineNames
+    , scrollTimelineAxes(RenderStyle::initialScrollTimelineAxes())
+    , scrollTimelineNames(RenderStyle::initialScrollTimelineNames())
     // viewTimelines
-    // viewTimelineAxes
-    // viewTimelineInsets
-    // viewTimelineNames
+    , viewTimelineInsets(RenderStyle::initialViewTimelineInsets())
+    , viewTimelineAxes(RenderStyle::initialViewTimelineAxes())
+    , viewTimelineNames(RenderStyle::initialViewTimelineNames())
     // timelineScope
     // scrollbarGutter
     // scrollSnapType
@@ -202,8 +202,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollTimelineAxes(o.scrollTimelineAxes)
     , scrollTimelineNames(o.scrollTimelineNames)
     , viewTimelines(o.viewTimelines)
-    , viewTimelineAxes(o.viewTimelineAxes)
     , viewTimelineInsets(o.viewTimelineInsets)
+    , viewTimelineAxes(o.viewTimelineAxes)
     , viewTimelineNames(o.viewTimelineNames)
     , timelineScope(o.timelineScope)
     , scrollbarGutter(o.scrollbarGutter)
@@ -317,8 +317,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollTimelineAxes == o.scrollTimelineAxes
         && scrollTimelineNames == o.scrollTimelineNames
         && viewTimelines == o.viewTimelines
-        && viewTimelineAxes == o.viewTimelineAxes
         && viewTimelineInsets == o.viewTimelineInsets
+        && viewTimelineAxes == o.viewTimelineAxes
         && viewTimelineNames == o.viewTimelineNames
         && timelineScope == o.timelineScope
         && scrollbarGutter == o.scrollbarGutter
@@ -476,8 +476,8 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT(scrollTimelineNames);
 
     LOG_IF_DIFFERENT(viewTimelines);
-    LOG_IF_DIFFERENT(viewTimelineAxes);
     LOG_IF_DIFFERENT(viewTimelineInsets);
+    LOG_IF_DIFFERENT(viewTimelineAxes);
     LOG_IF_DIFFERENT(viewTimelineNames);
 
     LOG_IF_DIFFERENT(timelineScope);

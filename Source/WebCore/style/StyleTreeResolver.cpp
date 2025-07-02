@@ -49,8 +49,6 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
-#include "PositionTryFallback.h"
-#include "PositionTryOrder.h"
 #include "PositionedLayoutConstraints.h"
 #include "Quirks.h"
 #include "RenderElement.h"
@@ -63,6 +61,8 @@
 #include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleOriginatedTimelinesController.h"
+#include "StylePositionTryFallback.h"
+#include "StylePositionTryOrder.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Text.h"
@@ -1425,7 +1425,7 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
 {
     // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
 
-    if (!resolvedStyle.style || resolvedStyle.style->positionTryFallbacks().isEmpty())
+    if (!resolvedStyle.style || resolvedStyle.style->positionTryFallbacks().isNone())
         return;
 
     if (!resolvedStyle.style->hasOutOfFlowPosition())
@@ -1655,8 +1655,10 @@ void TreeResolver::collectChangedAnchorNames(const RenderStyle& newStyle, const 
     if (!currentStyle || currentStyle->anchorNames() != newStyle.anchorNames()) {
         // This could check which individual names differ but usually there is just one.
         auto addChanged = [&](auto& style) {
-            for (auto& name : style.anchorNames())
-                m_changedAnchorNames.add(name.name);
+            if (auto list = style.anchorNames().tryList()) {
+                for (auto& name : *list)
+                    m_changedAnchorNames.add(name.name);
+            }
         };
         if (currentStyle)
             addChanged(*currentStyle);

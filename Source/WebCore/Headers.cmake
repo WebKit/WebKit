@@ -2676,8 +2676,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/NinePieceImage.h
     rendering/style/OutlineValue.h
     rendering/style/PositionArea.h
-    rendering/style/PositionTryFallback.h
-    rendering/style/PositionTryOrder.h
     rendering/style/RenderStyle.h
     rendering/style/RenderStyleConstants.h
     rendering/style/RenderStyleInlines.h
@@ -2751,6 +2749,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/align/StyleGapGutter.h
 
+    style/values/anchor-position/StyleAnchorName.h
+    style/values/anchor-position/StylePositionTryFallback.h
+    style/values/anchor-position/StylePositionTryOrder.h
+
     style/values/borders/StyleBorderRadius.h
     style/values/borders/StyleBoxShadow.h
     style/values/borders/StyleCornerShapeValue.h
@@ -2758,6 +2760,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/box/StyleMargin.h
     style/values/box/StylePadding.h
+
+    style/values/contain/StyleContainerName.h
 
     style/values/color/StyleColor.h
     style/values/color/StyleColorOptions.h
@@ -2796,6 +2800,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/primitives/StyleURL.h
     style/values/primitives/StyleUnevaluatedCalculation.h
 
+    style/values/scroll-animations/StyleProgressTimelineAxes.h
+    style/values/scroll-animations/StyleProgressTimelineName.h
+    style/values/scroll-animations/StyleScrollTimelines.h
+    style/values/scroll-animations/StyleViewTimelineInsets.h
+    style/values/scroll-animations/StyleViewTimelines.h
+
     style/values/scroll-snap/StyleScrollMargin.h
     style/values/scroll-snap/StyleScrollPadding.h
 
@@ -2827,6 +2837,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/transforms/StyleScale.h
     style/values/transforms/StyleTransformOperationWrapper.h
     style/values/transforms/StyleTranslate.h
+
+    style/values/view-transitions/StyleViewTransitionClass.h
 
     style/values/StyleValueTypes.h
 

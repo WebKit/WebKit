@@ -29,6 +29,17 @@
 
 namespace WTF {
 
+// Weaker form of std::ranges::range that does not require full compliance with std::ranges iterator concepts.
+template<typename T> concept Container = requires(T container) {
+    container.begin();
+    container.end();
+};
+
+// Weaker form of std::ranges::sized_range that does not require full compliance with std::ranges iterator concepts.
+template<typename T> concept SizedContainer = Container<T> && requires(T container) {
+    container.size();
+};
+
 template<typename Iterator>
 class IteratorRange {
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,24 +61,6 @@ private:
     Iterator m_begin;
     Iterator m_end;
 };
-
-template<typename Iterator>
-IteratorRange<Iterator> makeIteratorRange(Iterator&& begin, Iterator&& end)
-{
-    return IteratorRange<Iterator>(std::forward<Iterator>(begin), std::forward<Iterator>(end));
-}
-
-template<typename Container>
-IteratorRange<typename Container::reverse_iterator> makeReversedRange(Container& container)
-{
-    return makeIteratorRange(std::rbegin(container), std::rend(container));
-}
-
-template<typename Container>
-IteratorRange<typename Container::const_reverse_iterator> makeReversedRange(const Container& container)
-{
-    return makeIteratorRange(std::crbegin(container), std::crend(container));
-}
 
 template<typename Container, typename Iterator>
 class SizedIteratorRange {
@@ -91,10 +84,40 @@ private:
     Iterator m_end;
 };
 
-template<typename Container, typename Iterator>
+template<typename Iterator>
+IteratorRange<Iterator> makeIteratorRange(Iterator&& begin, Iterator&& end)
+{
+    return IteratorRange<Iterator>(std::forward<Iterator>(begin), std::forward<Iterator>(end));
+}
+
+template<SizedContainer Container, typename Iterator>
 SizedIteratorRange<Container, Iterator> makeSizedIteratorRange(const Container& container, Iterator&& begin, Iterator&& end)
 {
     return SizedIteratorRange<Container, Iterator>(container, std::forward<Iterator>(begin), std::forward<Iterator>(end));
+}
+
+template<typename Container>
+IteratorRange<typename Container::reverse_iterator> makeReversedRange(Container& container)
+{
+    return makeIteratorRange(std::rbegin(container), std::rend(container));
+}
+
+template<typename Container>
+IteratorRange<typename Container::const_reverse_iterator> makeReversedRange(const Container& container)
+{
+    return makeIteratorRange(std::crbegin(container), std::crend(container));
+}
+
+template<SizedContainer Container>
+SizedIteratorRange<Container, typename Container::reverse_iterator> makeReversedRange(Container& container)
+{
+    return makeSizedIteratorRange(container, std::rbegin(container), std::rend(container));
+}
+
+template<SizedContainer Container>
+SizedIteratorRange<Container, typename Container::const_reverse_iterator> makeReversedRange(const Container& container)
+{
+    return makeSizedIteratorRange(container, std::crbegin(container), std::crend(container));
 }
 
 } // namespace WTF

@@ -32,15 +32,14 @@
 #include "NameScope.h"
 #include "NinePieceImage.h"
 #include "PositionArea.h"
-#include "PositionTryFallback.h"
 #include "ScopedName.h"
-#include "ScrollAxis.h"
-#include "ScrollTimeline.h"
 #include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
+#include "StyleAnchorName.h"
 #include "StyleClipPath.h"
 #include "StyleColor.h"
+#include "StyleContainerName.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleGapGutter.h"
 #include "StyleOffsetAnchor.h"
@@ -49,22 +48,27 @@
 #include "StyleOffsetPosition.h"
 #include "StyleOffsetRotate.h"
 #include "StylePerspective.h"
+#include "StylePositionTryFallback.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StyleProgressTimelineAxes.h"
+#include "StyleProgressTimelineName.h"
 #include "StyleRotate.h"
 #include "StyleScale.h"
 #include "StyleScrollMargin.h"
 #include "StyleScrollPadding.h"
 #include "StyleScrollSnapPoints.h"
+#include "StyleScrollTimelines.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextEdge.h"
 #include "StyleTranslate.h"
+#include "StyleViewTimelineInsets.h"
+#include "StyleViewTimelines.h"
+#include "StyleViewTransitionClass.h"
 #include "TextDecorationThickness.h"
 #include "TouchAction.h"
-#include "ViewTimeline.h"
 #include "ViewTransitionName.h"
 #include <memory>
 #include <wtf/DataRef.h>
-#include <wtf/FixedVector.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 
@@ -128,16 +132,8 @@ public:
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
     bool hasBackdropFilters() const;
-
-    bool hasScrollTimelines() const
-    {
-        return scrollTimelines.size() || scrollTimelineNames.size();
-    }
-
-    bool hasViewTimelines() const
-    {
-        return viewTimelines.size() || viewTimelineNames.size();
-    }
+    bool hasScrollTimelines() const { return !scrollTimelines.isEmpty() || !scrollTimelineNames.isNone(); }
+    bool hasViewTimelines() const { return !viewTimelines.isEmpty() || !viewTimelineNames.isNone(); }
 
     OptionSet<Containment> usedContain() const;
 
@@ -201,9 +197,9 @@ public:
     Style::Scale scale;
     Style::Translate translate;
 
-    FixedVector<Style::ScopedName> containerNames;
+    Style::ContainerNames containerNames;
 
-    FixedVector<Style::ScopedName> viewTransitionClasses;
+    Style::ViewTransitionClasses viewTransitionClasses;
     Style::ViewTransitionName viewTransitionName;
 
     Style::GapGutter columnGap;
@@ -217,14 +213,14 @@ public:
 
     TextDecorationThickness textDecorationThickness;
 
-    FixedVector<Ref<ScrollTimeline>> scrollTimelines;
-    FixedVector<ScrollAxis> scrollTimelineAxes;
-    FixedVector<AtomString> scrollTimelineNames;
+    Style::ScrollTimelines scrollTimelines;
+    Style::ProgressTimelineAxes scrollTimelineAxes;
+    Style::ProgressTimelineNames scrollTimelineNames;
 
-    FixedVector<Ref<ViewTimeline>> viewTimelines;
-    FixedVector<ScrollAxis> viewTimelineAxes;
-    FixedVector<ViewTimelineInsets> viewTimelineInsets;
-    FixedVector<AtomString> viewTimelineNames;
+    Style::ViewTimelines viewTimelines;
+    Style::ViewTimelineInsets viewTimelineInsets;
+    Style::ProgressTimelineAxes viewTimelineAxes;
+    Style::ProgressTimelineNames viewTimelineNames;
 
     NameScope timelineScope;
 
@@ -236,11 +232,11 @@ public:
 
     AtomString pseudoElementNameArgument;
 
-    FixedVector<Style::ScopedName> anchorNames;
+    Style::AnchorNames anchorNames;
     NameScope anchorScope;
     std::optional<Style::ScopedName> positionAnchor;
     std::optional<PositionArea> positionArea;
-    FixedVector<Style::PositionTryFallback> positionTryFallbacks;
+    Style::PositionTryFallbacks positionTryFallbacks;
 
     std::optional<Length> blockStepSize;
     unsigned blockStepAlign : 2; // BlockStepAlign

@@ -27,10 +27,10 @@
 #include "CSSValueKeywords.h"
 #include "EventTarget.h"
 #include "LayoutUnit.h"
-#include "PositionTryOrder.h"
 #include "PseudoElementIdentifier.h"
 #include "ResolvedScopedName.h"
 #include "ScopedName.h"
+#include "StylePositionTryOrder.h"
 #include "WritingMode.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

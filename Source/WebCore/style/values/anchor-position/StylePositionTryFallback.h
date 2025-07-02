@@ -26,8 +26,7 @@
 #pragma once
 
 #include "ScopedName.h"
-#include <wtf/text/AtomString.h>
-#include <wtf/text/TextStream.h>
+#include "StyleValueTypes.h"
 
 namespace WebCore {
 
@@ -35,6 +34,7 @@ class StyleProperties;
 
 namespace Style {
 
+// <single-position-try-fallback> = [ [<dashed-ident> || <try-tactic>] | <position-area> ]
 struct PositionTryFallback {
     std::optional<ScopedName> positionTryRuleName { };
 
@@ -49,12 +49,31 @@ struct PositionTryFallback {
     RefPtr<const StyleProperties> positionAreaProperties { };
 
     ~PositionTryFallback();
+
     bool operator==(const PositionTryFallback&) const;
 };
 
+// <position-try-fallback-list> = <single-position-try-fallback>#
+using PositionTryFallbackList = CommaSeparatedFixedVector<PositionTryFallback>;
+
+// <'position-try-fallbacks'> = none | <position-try-fallback-list>
+// https://drafts.csswg.org/css-anchor-position-1/#propdef-position-try-fallbacks
+struct PositionTryFallbacks : ListOrNone<PositionTryFallbackList> { using ListOrNone<PositionTryFallbackList>::ListOrNone; };
+
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<PositionTryFallback> { auto operator()(BuilderState&, const CSSValue&) -> PositionTryFallback; };
+template<> struct CSSValueCreation<PositionTryFallback> { auto operator()(CSSValuePool&, const RenderStyle&, const PositionTryFallback&) -> Ref<CSSValue>; };
+
+// MARK: - Serialization
+
+template<> struct Serialize<PositionTryFallback> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const PositionTryFallback&); };
+
+// MARK: - Logging
+
 TextStream& operator<<(TextStream&, const PositionTryFallback&);
-TextStream& operator<<(TextStream&, const Vector<PositionTryFallback>&);
 
 } // namespace Style
 } // namespace WebCore
 
+template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::PositionTryFallbacks> = true;

@@ -24,50 +24,43 @@
  */
 
 #include "config.h"
-#include "PositionTryFallback.h"
+#include "StylePositionTryOrder.h"
 
-#include "StyleProperties.h"
-#include "StylePropertiesInlines.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 
-PositionTryFallback::~PositionTryFallback() = default;
-bool PositionTryFallback::operator==(const PositionTryFallback&) const = default;
-
-TextStream& operator<<(TextStream& ts, const PositionTryFallback& positionTryFallback)
+LogicalBoxAxis boxAxisForPositionTryOrder(PositionTryOrder order, WritingMode writingMode)
 {
-    auto separator = ""_s;
-    for (auto& tactic : positionTryFallback.tactics) {
-        ts << std::exchange(separator, " "_s);
-        switch (tactic) {
-        case PositionTryFallback::Tactic::FlipBlock:
-            ts << "flip-block"_s;
-            break;
-        case PositionTryFallback::Tactic::FlipInline:
-            ts << "flip-inline"_s;
-            break;
-        case PositionTryFallback::Tactic::FlipStart:
-            ts << "flip-start"_s;
-            break;
-        }
+    switch (order) {
+    case PositionTryOrder::MostWidth:
+        return mapAxisPhysicalToLogical(writingMode, BoxAxis::Horizontal);
+    case PositionTryOrder::MostHeight:
+        return mapAxisPhysicalToLogical(writingMode, BoxAxis::Vertical);
+    case PositionTryOrder::MostBlockSize:
+        return LogicalBoxAxis::Block;
+    case PositionTryOrder::MostInlineSize:
+        return LogicalBoxAxis::Inline;
+    case PositionTryOrder::Normal:
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return LogicalBoxAxis::Inline;
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, PositionTryOrder order)
+{
+    switch (order) {
+    case PositionTryOrder::Normal: ts << "normal"_s; break;
+    case PositionTryOrder::MostWidth: ts << "most-width"_s; break;
+    case PositionTryOrder::MostHeight: ts << "most-height"_s; break;
+    case PositionTryOrder::MostBlockSize: ts << "most-block-size"_s; break;
+    case PositionTryOrder::MostInlineSize: ts << "most-inline-size"_s; break;
+    }
+
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const Vector<PositionTryFallback>& positionTryFallbacks)
-{
-    if (positionTryFallbacks.isEmpty()) {
-        ts << "none"_s;
-        return ts;
-    }
-    auto separator = ""_s;
-    for (auto& item : positionTryFallbacks) {
-        ts << std::exchange(separator, ", "_s);
-        ts << item;
-    }
-    return ts;
-}
-
-}
-}
+} // namespace Style
+} // namespace WebCore

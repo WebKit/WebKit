@@ -38,6 +38,7 @@
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "Element.h"
+#include "EventTargetInlines.h"
 #include "KeyframeEffectStack.h"
 #include "ScriptExecutionContext.h"
 #include "StyleOriginatedAnimation.h"

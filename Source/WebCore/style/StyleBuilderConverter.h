@@ -99,6 +99,7 @@
 #include "StylePathData.h"
 #include "StylePerspective.h"
 #include "StylePreferredSize.h"
+#include "StylePrimitiveKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
@@ -112,6 +113,7 @@
 #include "StyleTextEdge.h"
 #include "StyleTranslate.h"
 #include "StyleURL.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 #include "TabSize.h"
 #include "TextSpacing.h"
 #include "TimelineRange.h"
@@ -182,7 +184,6 @@ public:
     static std::optional<GridTrackList> convertGridTrackList(BuilderState&, const CSSValue&);
     static GridPosition convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
-    static FixedVector<StyleContentAlignmentData> convertContentAlignmentDataList(BuilderState&, const CSSValue&);
     static FilterOperations convertFilterOperations(BuilderState&, const CSSValue&);
     static FilterOperations convertAppleColorFilterOperations(BuilderState&, const CSSValue&);
     static ListStyleType convertListStyleType(BuilderState&, const CSSValue&);
@@ -226,7 +227,6 @@ public:
     static OptionSet<SpeakAs> convertSpeakAs(BuilderState&, const CSSValue&);
 
     static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
-    static FixedVector<ScopedName> convertContainerNames(BuilderState&, const CSSValue&);
 
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
 
@@ -235,15 +235,9 @@ public:
 
     static std::optional<WebCore::Length> convertBlockStepSize(BuilderState&, const CSSValue&);
 
-    static FixedVector<ScopedName> convertViewTransitionClasses(BuilderState&, const CSSValue&);
     static ViewTransitionName convertViewTransitionName(BuilderState&, const CSSValue&);
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
-    
-    static FixedVector<AtomString> convertScrollTimelineNames(BuilderState&, const CSSValue&);
-    static FixedVector<ScrollAxis> convertScrollTimelineAxes(BuilderState&, const CSSValue&);
-    static FixedVector<ViewTimelineInsets> convertViewTimelineInsets(BuilderState&, const CSSValue&);
 
-    static FixedVector<ScopedName> convertAnchorNames(BuilderState&, const CSSValue&);
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
     static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
@@ -259,8 +253,6 @@ public:
 
     static SingleTimelineRange convertAnimationRangeStart(BuilderState&, const CSSValue&);
     static SingleTimelineRange convertAnimationRangeEnd(BuilderState&, const CSSValue&);
-
-    static FixedVector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -1322,17 +1314,6 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState& builderS
     return autoFlow;
 }
 
-inline FixedVector<StyleContentAlignmentData> BuilderConverter::convertContentAlignmentDataList(BuilderState& builderState, const CSSValue& value)
-{
-    auto list = requiredListDowncast<CSSValueList, CSSContentDistributionValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<StyleContentAlignmentData>::map(*list, [&](auto& value) {
-        return convertContentAlignmentData(builderState, value);
-    });
-}
-
 inline float zoomWithTextZoomFactor(BuilderState& builderState)
 {
     if (auto* frame = builderState.document().frame()) {
@@ -1755,24 +1736,6 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
     return result;
 }
 
-inline FixedVector<ScopedName> BuilderConverter::convertContainerNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
-        return { };
-    }
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<ScopedName>::map(*list, [&](auto& item) {
-        return ScopedName {
-            .name = AtomString { item.stringValue() },
-            .scopeOrdinal = builderState.styleScopeOrdinal()
-        };
-    });
-}
-
 inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(BuilderState&, const CSSValue& value)
 {
     // See if value is "block" or "inline" before trying to parse a list
@@ -1907,32 +1870,6 @@ inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState& bui
     return containment;
 }
 
-inline FixedVector<ScopedName> BuilderConverter::convertViewTransitionClasses(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-
-        return {
-            ScopedName {
-                .name = AtomString { primitiveValue->stringValue() },
-                .scopeOrdinal = builderState.styleScopeOrdinal()
-            }
-        };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<ScopedName>::map(*list, [&](auto& item) {
-        return ScopedName {
-            .name = AtomString { item.stringValue() },
-            .scopeOrdinal = builderState.styleScopeOrdinal()
-        };
-    });
-}
-
 inline ViewTransitionName BuilderConverter::convertViewTransitionName(BuilderState& state, const CSSValue& value)
 {
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
@@ -1985,93 +1922,11 @@ inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& 
     return willChange;
 }
 
-inline FixedVector<AtomString> BuilderConverter::convertScrollTimelineNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-        return { AtomString { primitiveValue->stringValue() } };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<AtomString>::map(*list, [&](auto& item) {
-        return AtomString { item.stringValue() };
-    });
-}
-
-inline FixedVector<ScrollAxis> BuilderConverter::convertScrollTimelineAxes(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value))
-        return { fromCSSValueID<ScrollAxis>(value.valueID()) };
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<ScrollAxis>::map(*list, [&](auto& item) {
-        return fromCSSValueID<ScrollAxis>(item.valueID());
-    });
-}
-
-inline FixedVector<ViewTimelineInsets> BuilderConverter::convertViewTimelineInsets(BuilderState& builderState, const CSSValue& value)
-{
-    // While parsing, consumeViewTimelineInset() and consumeViewTimelineShorthand() yield a CSSValueList exclusively.
-    auto list = requiredListDowncast<CSSValueList, CSSValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<ViewTimelineInsets>::map(*list, [&](auto& item) -> ViewTimelineInsets {
-        // Each item is either a single value or a CSSValuePair.
-        if (auto* pair = dynamicDowncast<CSSValuePair>(item))
-            return { convertLengthOrAuto(builderState, pair->first()), convertLengthOrAuto(builderState, pair->second()) };
-        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(item))
-            return { convertLengthOrAuto(builderState, *primitiveValue), std::nullopt };
-        return { };
-    });
-}
-
-inline FixedVector<ScopedName> BuilderConverter::convertAnchorNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-
-        return {
-            ScopedName {
-                .name = AtomString { primitiveValue->stringValue() },
-                .scopeOrdinal = builderState.styleScopeOrdinal()
-            }
-        };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return FixedVector<ScopedName>::map(*list, [&](auto& item) {
-        return ScopedName {
-            .name = AtomString { item.stringValue() },
-            .scopeOrdinal = builderState.styleScopeOrdinal()
-        };
-    });
-}
-
 inline std::optional<ScopedName> BuilderConverter::convertPositionAnchor(BuilderState& builderState, const CSSValue& value)
 {
     if (value.valueID() == CSSValueAuto)
         return { };
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    return ScopedName {
-        .name = AtomString { primitiveValue->stringValue() },
-        .scopeOrdinal = builderState.styleScopeOrdinal()
-    };
+    return convertStyleType<ScopedName>(builderState, value);
 }
 
 static std::optional<PositionAreaAxis> positionAreaKeywordToAxis(CSSValueID keyword)
@@ -2485,55 +2340,6 @@ inline NameScope BuilderConverter::convertNameScope(BuilderState& builderState, 
         nameHashSet.add(AtomString { name.stringValue() });
 
     return { NameScope::Type::Ident, WTFMove(nameHashSet) };
-}
-
-inline FixedVector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks(BuilderState& builderState, const CSSValue& value)
-{
-    auto convertFallback = [&](const CSSValue& fallbackValue) -> std::optional<PositionTryFallback> {
-        auto* valueList = dynamicDowncast<CSSValueList>(fallbackValue);
-        if (!valueList) {
-            // Turn the inlined position-area fallback into properties object that can be applied similarly to @position-try declarations.
-            auto property = CSSProperty { CSSPropertyPositionArea, Ref { const_cast<CSSValue&>(fallbackValue) } };
-            return PositionTryFallback {
-                .positionAreaProperties = ImmutableStyleProperties::create(std::span { &property, 1 }, HTMLStandardMode)
-            };
-        }
-
-        if (valueList->separator() != CSSValueList::SpaceSeparator)
-            return { };
-
-        auto fallback = PositionTryFallback { };
-
-        for (auto& item : *valueList) {
-            if (item.isCustomIdent())
-                fallback.positionTryRuleName = ScopedName { AtomString { item.customIdent() }, builderState.styleScopeOrdinal() };
-            else {
-                auto tacticValue = fromCSSValueID<PositionTryFallback::Tactic>(item.valueID());
-                if (fallback.tactics.contains(tacticValue)) {
-                    ASSERT_NOT_REACHED();
-                    return { };
-                }
-
-                fallback.tactics.append(tacticValue);
-            }
-        }
-        return fallback;
-    };
-
-    if (value.valueID() == CSSValueNone)
-        return { };
-
-    if (auto fallback = convertFallback(value))
-        return { *fallback };
-
-    auto* list = dynamicDowncast<CSSValueList>(value);
-    if (!list)
-        return { };
-
-    return FixedVector<PositionTryFallback>::map(*list, [&](auto& item) {
-        auto fallback = convertFallback(item);
-        return fallback ? *fallback : PositionTryFallback { };
-    });
 }
 
 } // namespace Style

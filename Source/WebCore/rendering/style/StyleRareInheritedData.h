@@ -100,7 +100,7 @@ public:
 
     Style::DynamicRangeLimit dynamicRangeLimit;
 
-    FixedVector<Style::TextShadow> textShadow;
+    Style::TextShadows textShadow;
 
     RefPtr<CursorList> cursorData;
     Length indent;

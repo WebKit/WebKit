@@ -303,7 +303,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const RenderStyle& parentStyle
         return;
 
     if (!supportsBoxShadow(style))
-        style.setBoxShadow({ });
+        style.setBoxShadow(CSS::Keyword::None { });
 
     switch (appearance) {
     case StyleAppearance::Checkbox:
@@ -1541,7 +1541,7 @@ void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
 
 void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const
 {
-    style.setBoxShadow({ });
+    style.setBoxShadow(CSS::Keyword::None { });
 }
 
 FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& bounds) const

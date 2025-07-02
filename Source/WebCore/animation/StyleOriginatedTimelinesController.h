@@ -38,7 +38,7 @@ namespace WebCore {
 class ScrollTimeline;
 class WebAnimation;
 
-struct ViewTimelineInsets;
+struct ViewTimelineInsetItem;
 
 // A style-originated timeline is a timeline that is assigned to a CSS Animation
 // via the `animation-timeline` property. These timelines may be created directly
@@ -63,7 +63,7 @@ public:
     ~StyleOriginatedTimelinesController() = default;
 
     void registerNamedScrollTimeline(const AtomString&, const Styleable&, ScrollAxis);
-    void registerNamedViewTimeline(const AtomString&, const Styleable&, ScrollAxis, ViewTimelineInsets&&);
+    void registerNamedViewTimeline(const AtomString&, const Styleable&, ScrollAxis, const ViewTimelineInsetItem&);
     void unregisterNamedTimeline(const AtomString&, const Styleable&);
     void attachAnimation(CSSAnimation&);
     void updateNamedTimelineMapForTimelineScope(const NameScope&, const Styleable&);

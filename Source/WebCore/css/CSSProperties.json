@@ -3689,9 +3689,8 @@
                 "inset"
             ],
             "codegen-properties": {
-                "animation-wrapper": "ShadowWrapper<BoxShadow>",
-                "style-builder-custom": "All",
-                "style-extractor-converter": "BoxShadow",
+                "animation-wrapper": "ShadowWrapper<BoxShadows>",
+                "style-converter": "StyleType<BoxShadows>",
                 "parser-function": "consumeBoxShadow",
                 "parser-grammar-unused": "none | <shadow>#",
                 "parser-grammar-unused-reason": "Needs support for the strong value representation."
@@ -7951,9 +7950,8 @@
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "ShadowWrapper<TextShadow>",
-                "style-builder-custom": "All",
-                "style-extractor-converter": "TextShadow",
+                "animation-wrapper": "ShadowWrapper<TextShadows>",
+                "style-converter": "StyleType<TextShadows>",
                 "parser-function": "consumeTextShadow",
                 "parser-grammar-unused": "none | [ <color>? && <length>{2,3} ]#",
                 "parser-grammar-unused-reason": "Needs support for the strong value representation.",
@@ -8749,7 +8747,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "style-converter": "ContainerNames",
+                "style-converter": "StyleType<ContainerNames>",
                 "render-style-name-for-methods": "ContainerNames",
                 "parser-grammar": "none | <single-container-name>+@(no-single-item-opt)"
             },
@@ -9047,8 +9045,8 @@
             "codegen-properties": {
                 "cascade-alias": "box-shadow",
                 "skip-style-builder": true,
-                "style-extractor-converter": "BoxShadow",
-                "animation-wrapper": "ShadowWrapper<BoxShadow>",
+                "style-extractor-converter": "StyleType<BoxShadows>",
+                "animation-wrapper": "ShadowWrapper<BoxShadows>",
                 "parser-function": "consumeWebkitBoxShadow",
                 "parser-grammar-unused": "none | <shadow>#",
                 "parser-grammar-unused-reason": "Needs support for the strong value representation.",
@@ -11927,7 +11925,7 @@
             "codegen-properties": {
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "render-style-name-for-methods": "ScrollTimelineAxes",
-                "style-converter": "ScrollTimelineAxes",
+                "style-converter": "StyleType<ProgressTimelineAxes>",
                 "parser-exported": true,
                 "parser-grammar": "<axis>#"
             },
@@ -11945,7 +11943,7 @@
             "codegen-properties": {
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "render-style-name-for-methods": "ScrollTimelineNames",
-                "style-converter": "ScrollTimelineNames",
+                "style-converter": "StyleType<ProgressTimelineNames>",
                 "parser-exported": true,
                 "parser-grammar": "<single-scroll-timeline-name>#"
             },
@@ -12118,7 +12116,7 @@
             "codegen-properties": {
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "render-style-name-for-methods": "ViewTimelineAxes",
-                "style-converter": "ScrollTimelineAxes",
+                "style-converter": "StyleType<ProgressTimelineAxes>",
                 "parser-exported": true,
                 "parser-grammar": "<axis>#"
             },
@@ -12137,7 +12135,7 @@
             "codegen-properties": {
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "render-style-name-for-methods": "ViewTimelineInsets",
-                "style-converter": "ViewTimelineInsets",
+                "style-converter": "StyleType<ViewTimelineInsets>",
                 "parser-grammar": "<single-view-timeline-inset-item>#@(no-single-item-opt)"
             },
             "specification": {
@@ -12154,7 +12152,7 @@
             "codegen-properties": {
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "render-style-name-for-methods": "ViewTimelineNames",
-                "style-converter": "ScrollTimelineNames",
+                "style-converter": "StyleType<ProgressTimelineNames>",
                 "parser-exported": true,
                 "parser-grammar": "<single-scroll-timeline-name>#"
             },
@@ -12171,7 +12169,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "viewTransitionClassesEnabled",
-                "style-converter": "ViewTransitionClasses",
+                "style-converter": "StyleType<ViewTransitionClasses>",
                 "render-style-name-for-methods": "ViewTransitionClasses",
                 "parser-grammar": "none | <custom-ident excluding=none>+@(no-single-item-opt)"
             },
@@ -12207,7 +12205,7 @@
             "codegen-properties": {
                 "settings-flag": "cssAnchorPositioningEnabled",
                 "render-style-name-for-methods": "AnchorNames",
-                "style-converter": "AnchorNames",
+                "style-converter": "StyleType<AnchorNames>",
                 "parser-grammar": "none | <dashed-ident>#"
             },
             "specification": {
@@ -12306,7 +12304,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssAnchorPositioningEnabled",
-                "style-converter": "PositionTryFallbacks",
+                "style-converter": "StyleType<PositionTryFallbacks>",
                 "parser-function": "consumePositionTryFallbacks",
                 "parser-grammar-unused": "none | [ [<dashed-ident> || <try-tactic>] | <position-area> ]#",
                 "parser-grammar-unused-reason": "Needs support for transforming parsed input to minimal form."

@@ -25,8 +25,8 @@
 #pragma once
 
 #include "StyleScopeOrdinal.h"
+#include "StyleValueTypes.h"
 #include <wtf/text/AtomString.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
@@ -39,11 +39,26 @@ struct ScopedName {
     bool operator==(const ScopedName&) const = default;
 };
 
-inline WTF::TextStream& operator<<(WTF::TextStream& ts, ScopedName scopedName)
-{
-    ts << scopedName.name;
-    return ts;
-}
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<ScopedName> {
+    ScopedName operator()(BuilderState&, const CSSPrimitiveValue&);
+    ScopedName operator()(BuilderState&, const CSSValue&);
+};
+
+template<> struct CSSValueCreation<ScopedName> {
+    auto operator()(CSSValuePool&, const RenderStyle&, const ScopedName&) -> Ref<CSSValue>;
+};
+
+// MARK: - Serialization
+
+template<> struct Serialize<ScopedName> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const ScopedName&);
+};
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ScopedName&);
 
 } // namespace Style
 } // namespace WebCore

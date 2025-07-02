@@ -382,17 +382,20 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
 
 static Vector<AtomString> effectiveViewTransitionClassList(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
 {
-    auto classList = renderer.style().viewTransitionClasses();
-    if (classList.isEmpty())
-        return { };
+    return WTF::switchOn(renderer.style().viewTransitionClasses(),
+        [](const CSS::Keyword::None&) -> Vector<AtomString> {
+            return { };
+        },
+        [&](const auto& list) -> Vector<AtomString> {
+            auto scope = Style::Scope::forOrdinal(originatingElement, list[0].scopeOrdinal);
+            if (!scope || scope != &documentScope)
+                return { };
 
-    auto scope = Style::Scope::forOrdinal(originatingElement, classList.first().scopeOrdinal);
-    if (!scope || scope != &documentScope)
-        return { };
-
-    return WTF::map(classList, [&](auto& item) {
-        return item.name;
-    });
+            return WTF::map(list, [&](auto& item) {
+                return item.name;
+            });
+        }
+    );
 }
 
 LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)

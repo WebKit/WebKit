@@ -3901,12 +3901,12 @@ UserSelect RenderStyle::usedUserSelect() const
     return value;
 }
 
-const FixedVector<Style::PositionTryFallback>& RenderStyle::positionTryFallbacks() const
+const Style::PositionTryFallbacks& RenderStyle::positionTryFallbacks() const
 {
     return m_nonInheritedData->rareData->positionTryFallbacks;
 }
 
-void RenderStyle::setPositionTryFallbacks(FixedVector<Style::PositionTryFallback>&& fallbacks)
+void RenderStyle::setPositionTryFallbacks(Style::PositionTryFallbacks&& fallbacks)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, positionTryFallbacks, WTFMove(fallbacks));
 }
@@ -3921,35 +3921,35 @@ std::optional<Style::PseudoElementIdentifier> RenderStyle::pseudoElementIdentifi
 void RenderStyle::adjustScrollTimelines()
 {
     auto& names = scrollTimelineNames();
-    if (!names.size() && !scrollTimelines().size())
+    if (names.isNone() && scrollTimelines().isEmpty())
         return;
 
     auto& axes = scrollTimelineAxes();
     auto numberOfAxes = axes.size();
+    ASSERT(numberOfAxes > 0);
 
-    m_nonInheritedData.access().rareData.access().scrollTimelines = FixedVector<Ref<ScrollTimeline>>::createWithSizeFromGenerator(names.size(), [&](auto i) {
-        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
-        return ScrollTimeline::create(names[i], axis);
-    });
+    m_nonInheritedData.access().rareData.access().scrollTimelines = { FixedVector<Ref<ScrollTimeline>>::createWithSizeFromGenerator(names.size(), [&](auto i) {
+        return ScrollTimeline::create(names[i].value, axes[i % numberOfAxes]);
+    }) };
 }
 
 void RenderStyle::adjustViewTimelines()
 {
     auto& names = viewTimelineNames();
-    if (!names.size() && !viewTimelines().size())
+    if (names.isNone() && viewTimelines().isEmpty())
         return;
 
     auto& axes = viewTimelineAxes();
     auto numberOfAxes = axes.size();
+    ASSERT(numberOfAxes > 0);
 
     auto& insets = viewTimelineInsets();
     auto numberOfInsets = insets.size();
+    ASSERT(numberOfInsets > 0);
 
-    m_nonInheritedData.access().rareData.access().viewTimelines = FixedVector<Ref<ViewTimeline>>::createWithSizeFromGenerator(names.size(), [&](auto i) {
-        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
-        auto inset = numberOfInsets ? insets[i % numberOfInsets] : ViewTimelineInsets();
-        return ViewTimeline::create(names[i], axis, WTFMove(inset));
-    });
+    m_nonInheritedData.access().rareData.access().viewTimelines = { FixedVector<Ref<ViewTimeline>>::createWithSizeFromGenerator(names.size(), [&](auto i) {
+        return ViewTimeline::create(names[i].value, axes[i % numberOfAxes], insets[i % numberOfInsets]);
+    }) };
 }
 
 #if !LOG_DISABLED

@@ -96,7 +96,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearDropShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const RenderStyle& renderStyle, const TextPaintStyle& textPaintStyle, const FixedVector<Style::TextShadow>& shadow, const FilterOperations* shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText* combinedText)
+TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const RenderStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const FilterOperations* shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText* combinedText)
     : m_context(context)
     , m_font(font)
     , m_renderStyle(renderStyle)
@@ -134,9 +134,9 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     }
 }
 
-void TextPainter::paintTextWithShadows(const FixedVector<Style::TextShadow>* shadows, const FilterOperations* colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
+void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const FilterOperations* colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
 {
-    if (!shadows || shadows->isEmpty()) {
+    if (!shadows || shadows->isNone()) {
         paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
         return;
     }
@@ -160,7 +160,7 @@ void TextPainter::paintTextWithShadows(const FixedVector<Style::TextShadow>* sha
 }
 
 void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-    const TextPaintStyle& paintStyle, const FixedVector<Style::TextShadow>& shadow, const FilterOperations* shadowColorFilter)
+    const TextPaintStyle& paintStyle, const Style::TextShadows& shadow, const FilterOperations* shadowColorFilter)
 {
     if (paintStyle.paintOrder == PaintOrder::Normal) {
         // FIXME: Truncate right-to-left text correctly.
