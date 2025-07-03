@@ -902,6 +902,9 @@ http/wpt/service-workers/mac [ Skip ]
 # TextMarkerRangeForElement is only implemented on Cocoa platforms.
 accessibility/full-size-kana-untransformed.html [ Skip ]
 
+# Static text are not exposed as accessibility elements on glib appointments.
+accessibility/element-outside-modal-with-zindex.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
