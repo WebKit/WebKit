@@ -3847,7 +3847,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'checkout', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '-b', 'pr_eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3899,7 +3899,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'checkout', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '-b', 'pr_eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3951,7 +3951,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'checkout', '-b', 'integration/ci/1234'],
+                command=['git', 'checkout', '-b', 'pr_integration/ci/1234'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -4004,7 +4004,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'checkout', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '-b', 'pr_eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
