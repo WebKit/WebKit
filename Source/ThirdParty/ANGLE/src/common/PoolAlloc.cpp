@@ -128,14 +128,10 @@ class Allocation
 class PageHeader
 {
   public:
-    PageHeader(PageHeader *nextPage, size_t pageCount)
-        : nextPage(nextPage),
-          pageCount(pageCount)
-#    if defined(ANGLE_POOL_ALLOC_GUARD_BLOCKS)
-          ,
-          lastAllocation(nullptr)
-#    endif
-    {}
+    PageHeader(PageHeader *nextPage)
+        : nextPage(nextPage)
+    {
+    }
 
     ~PageHeader()
     {
@@ -148,9 +144,8 @@ class PageHeader
     }
 
     PageHeader *nextPage;
-    size_t pageCount;
 #    if defined(ANGLE_POOL_ALLOC_GUARD_BLOCKS)
-    Allocation *lastAllocation;
+    Allocation *lastAllocation { nullptr };
 #    endif
 };
 #endif
@@ -163,7 +158,6 @@ PoolAllocator::PoolAllocator(int growthIncrement, int allocationAlignment)
     : mAlignment(allocationAlignment),
 #if !defined(ANGLE_DISABLE_POOL_ALLOC)
       mPageSize(growthIncrement),
-      mFreeList(nullptr),
       mInUseList(nullptr),
       mNumCalls(0),
       mTotalBytes(0),
@@ -209,9 +203,6 @@ void PoolAllocator::initialize(int pageSize, int alignment)
     // be obtained to allocate memory.
     //
     mCurrentPageOffset = mPageSize;
-
-#else  // !defined(ANGLE_DISABLE_POOL_ALLOC)
-    mStack.push_back({});
 #endif
 }
 
@@ -225,23 +216,10 @@ PoolAllocator::~PoolAllocator()
         delete[] reinterpret_cast<char *>(mInUseList);
         mInUseList = next;
     }
-    // We should not check the guard blocks
-    // here, because we did it already when the block was
-    // placed into the free list.
-    //
-    while (mFreeList)
-    {
-        PageHeader *next = mFreeList->nextPage;
-        delete[] reinterpret_cast<char *>(mFreeList);
-        mFreeList = next;
-    }
 #else  // !defined(ANGLE_DISABLE_POOL_ALLOC)
-    for (auto &allocs : mStack)
+    for (auto &alloc : mStack)
     {
-        for (auto alloc : allocs)
-        {
-            free(alloc);
-        }
+        free(alloc);
     }
     mStack.clear();
 #endif
@@ -267,84 +245,6 @@ void Allocation::checkGuardBlock(unsigned char *blockMem,
         }
     }
 #endif
-}
-
-void PoolAllocator::push()
-{
-#if !defined(ANGLE_DISABLE_POOL_ALLOC)
-    AllocState state = {mCurrentPageOffset, mInUseList};
-
-    mStack.push_back(state);
-
-    //
-    // Indicate there is no current page to allocate from.
-    //
-    mCurrentPageOffset = mPageSize;
-#else  // !defined(ANGLE_DISABLE_POOL_ALLOC)
-    mStack.push_back({});
-#endif
-}
-
-// Do a mass-deallocation of all the individual allocations that have occurred since the last
-// push(), or since the last pop(), or since the object's creation.
-//
-// Single-page allocations are saved for future use unless the release strategy is All.
-void PoolAllocator::pop(ReleaseStrategy releaseStrategy)
-{
-    if (mStack.size() < 1)
-    {
-        return;
-    }
-
-#if !defined(ANGLE_DISABLE_POOL_ALLOC)
-    PageHeader *page   = mStack.back().page;
-    mCurrentPageOffset = mStack.back().offset;
-
-    while (mInUseList != page)
-    {
-        // Grab the pageCount before calling the destructor.  While the destructor doesn't actually
-        // touch this variable, it's confusing MSAN.
-        const size_t pageCount = mInUseList->pageCount;
-        PageHeader *nextInUse  = mInUseList->nextPage;
-
-        // invoke destructor to free allocation list
-        mInUseList->~PageHeader();
-
-        if (pageCount > 1 || releaseStrategy == ReleaseStrategy::All)
-        {
-            delete[] reinterpret_cast<char *>(mInUseList);
-        }
-        else
-        {
-#    if defined(ANGLE_WITH_ASAN)
-            // Clear any container annotations left over from when the memory
-            // was last used. (crbug.com/1419798)
-            __asan_unpoison_memory_region(mInUseList, mPageSize);
-#    endif
-            mInUseList->nextPage = mFreeList;
-            mFreeList            = mInUseList;
-        }
-        mInUseList = nextInUse;
-    }
-
-    mStack.pop_back();
-#else  // !defined(ANGLE_DISABLE_POOL_ALLOC)
-    for (auto &alloc : mStack.back())
-    {
-        free(alloc);
-    }
-    mStack.pop_back();
-#endif
-}
-
-//
-// Do a mass-deallocation of all the individual allocations
-// that have occurred.
-//
-void PoolAllocator::popAll()
-{
-    while (mStack.size() > 0)
-        pop();
 }
 
 void *PoolAllocator::allocate(size_t numBytes)
@@ -399,7 +299,7 @@ void *PoolAllocator::allocate(size_t numBytes)
         }
 
         // Use placement-new to initialize header
-        new (memory) PageHeader(mInUseList, (numBytesToAlloc + mPageSize - 1) / mPageSize);
+        new (memory) PageHeader(mInUseList);
         mInUseList = memory;
 
         // Make next allocation come from a new page
@@ -418,7 +318,7 @@ void *PoolAllocator::allocate(size_t numBytes)
 #else  // !defined(ANGLE_DISABLE_POOL_ALLOC)
 
     void *alloc = malloc(numBytes + mAlignment - 1);
-    mStack.back().push_back(alloc);
+    mStack.push_back(alloc);
 
     intptr_t intAlloc = reinterpret_cast<intptr_t>(alloc);
     intAlloc          = rx::roundUpPow2<intptr_t>(intAlloc, mAlignment);
@@ -431,22 +331,13 @@ uint8_t *PoolAllocator::allocateNewPage(size_t numBytes)
 {
     // Need a simple page to allocate from.  Pick a page from the free list, if any.  Otherwise need
     // to make the allocation.
-    PageHeader *memory;
-    if (mFreeList)
+    PageHeader *memory = reinterpret_cast<PageHeader *>(::new char[mPageSize]);
+    if (memory == nullptr)
     {
-        memory    = mFreeList;
-        mFreeList = mFreeList->nextPage;
-    }
-    else
-    {
-        memory = reinterpret_cast<PageHeader *>(::new char[mPageSize]);
-        if (memory == nullptr)
-        {
-            return nullptr;
-        }
+        return nullptr;
     }
     // Use placement-new to initialize header
-    new (memory) PageHeader(mInUseList, 1);
+    new (memory) PageHeader(mInUseList);
     mInUseList = memory;
 
     // Leave room for the page header.

@@ -10,6 +10,8 @@
 #include "compiler/translator/PoolAlloc.h"
 #include "gtest/gtest.h"
 
+#include <optional>
+
 using namespace sh;
 
 class ImmutableStringBuilderTest : public testing::Test
@@ -20,17 +22,17 @@ class ImmutableStringBuilderTest : public testing::Test
   protected:
     void SetUp() override
     {
-        allocator.push();
-        SetGlobalPoolAllocator(&allocator);
+        allocator.emplace();
+        SetGlobalPoolAllocator(&*allocator);
     }
 
     void TearDown() override
     {
         SetGlobalPoolAllocator(nullptr);
-        allocator.pop();
+        allocator = std::nullopt;
     }
 
-    angle::PoolAllocator allocator;
+    std::optional<angle::PoolAllocator> allocator;
 };
 
 // Test writing a 32-bit signed int as hexadecimal using ImmutableStringBuilder.

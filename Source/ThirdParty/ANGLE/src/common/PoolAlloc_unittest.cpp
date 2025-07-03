@@ -26,14 +26,15 @@ TEST(PoolAllocatorTest, Interface)
     // Write to allocation to check later
     uint32_t *writePtr = static_cast<uint32_t *>(allocation);
     *writePtr          = kTestValue;
-    // Test push and creating a new allocation
-    poolAllocator.push();
-    allocation = poolAllocator.allocate(numBytes);
-    EXPECT_NE(nullptr, allocation);
-    // Make an allocation that spans multiple pages
-    allocation = poolAllocator.allocate(10 * 1024);
-    // pop previous two allocations
-    poolAllocator.pop();
+    // Test other allocator creating a new allocation
+    {
+        PoolAllocator poolAllocator2;
+        allocation = poolAllocator2.allocate(numBytes);
+        EXPECT_NE(nullptr, allocation);
+        // Make an allocation that spans multiple pages
+        allocation = poolAllocator2.allocate(10 * 1024);
+        // Free previous two allocations.
+    }
     // Verify first allocation still has data
     EXPECT_EQ(kTestValue, *writePtr);
     // Make a bunch of allocations
@@ -46,8 +47,6 @@ TEST(PoolAllocatorTest, Interface)
         //  overwrite any other allocation we get error.
         memset(allocation, 0xb8, numBytes);
     }
-    // Free everything
-    poolAllocator.popAll();
 }
 
 #if !defined(ANGLE_POOL_ALLOC_GUARD_BLOCKS)

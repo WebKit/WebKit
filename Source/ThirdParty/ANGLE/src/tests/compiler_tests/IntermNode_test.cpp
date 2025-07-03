@@ -15,6 +15,8 @@
 #include "compiler/translator/SymbolTable.h"
 #include "gtest/gtest.h"
 
+#include <optional>
+
 using namespace sh;
 
 class IntermNodeTest : public testing::Test
@@ -25,14 +27,14 @@ class IntermNodeTest : public testing::Test
   protected:
     void SetUp() override
     {
-        allocator.push();
-        SetGlobalPoolAllocator(&allocator);
+        allocator.emplace();
+        SetGlobalPoolAllocator(&*allocator);
     }
 
     void TearDown() override
     {
         SetGlobalPoolAllocator(nullptr);
-        allocator.pop();
+        allocator = std::nullopt;
     }
 
     TIntermSymbol *createTestSymbol(const TType &type)
@@ -131,7 +133,7 @@ class IntermNodeTest : public testing::Test
     }
 
   private:
-    angle::PoolAllocator allocator;
+    std::optional<angle::PoolAllocator> allocator;
     int mUniqueIndex;
 };
 

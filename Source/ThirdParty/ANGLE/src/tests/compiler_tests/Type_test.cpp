@@ -20,7 +20,6 @@ namespace sh
 TEST(Type, VectorAndMatrixMangledNameConsistent)
 {
     angle::PoolAllocator allocator;
-    allocator.push();
     SetGlobalPoolAllocator(&allocator);
 
     const TType *staticTypeScalar = StaticType::Get<EbtFloat, EbpMedium, EvqGlobal, 1, 1>();
@@ -37,7 +36,6 @@ TEST(Type, VectorAndMatrixMangledNameConsistent)
               std::string(typeMat2x4->getMangledName()));
 
     SetGlobalPoolAllocator(nullptr);
-    allocator.pop();
 }
 
 // Verify that basic type mangled names are unique.
