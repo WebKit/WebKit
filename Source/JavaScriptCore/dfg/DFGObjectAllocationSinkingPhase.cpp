@@ -141,7 +141,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Array, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject };
+    enum class Kind { Escaped, Array, ArrayButterfly, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject };
 
     using Fields = UncheckedKeyHashMap<PromotedLocationDescriptor, Node*>;
 
@@ -257,6 +257,11 @@ public:
         return m_kind == Kind::Array;
     }
 
+    bool isArrayButterfly() const
+    {
+        return m_kind == Kind::ArrayButterfly;
+    }
+
     bool isObjectAllocation() const
     {
         return m_kind == Kind::Object;
@@ -291,48 +296,7 @@ public:
 
     void dumpInContext(PrintStream& out, DumpContext* context) const
     {
-        switch (m_kind) {
-        case Kind::Array:
-            out.print("Array"_s);
-            break;
-
-        case Kind::Escaped:
-            out.print("Escaped"_s);
-            break;
-
-        case Kind::Object:
-            out.print("Object"_s);
-            break;
-
-        case Kind::Function:
-            out.print("Function"_s);
-            break;
-
-        case Kind::GeneratorFunction:
-            out.print("GeneratorFunction"_s);
-            break;
-
-        case Kind::AsyncFunction:
-            out.print("AsyncFunction"_s);
-            break;
-
-        case Kind::InternalFieldObject:
-            out.print("InternalFieldObject"_s);
-            break;
-
-        case Kind::AsyncGeneratorFunction:
-            out.print("AsyncGeneratorFunction"_s);
-            break;
-
-        case Kind::Activation:
-            out.print("Activation"_s);
-            break;
-
-        case Kind::RegExpObject:
-            out.print("RegExpObject"_s);
-            break;
-        }
-        out.print("Allocation("_s);
+        out.print(m_kind, "Allocation("_s);
         if (!m_structuresForMaterialization.isEmpty())
             out.print(inContext(m_structuresForMaterialization.toStructureSet(), context));
         if (!m_fields.isEmpty()) {
@@ -343,12 +307,15 @@ public:
         out.print(")"_s);
     }
 
+    unsigned arrayButterflyId() { return m_arrayButterflyId++; }
+
 private:
     Node* m_identifier; // This is the actual node that created the allocation
     Kind m_kind;
     Fields m_fields;
     IndexingType m_indexingType { NoIndexingShape };
     unsigned m_length { 0 };
+    unsigned m_arrayButterflyId { 0 };
 
     // This set of structures is the intersection of structures seen at control flow edges. It's used
     // for checks and speculation since it can't be widened.
@@ -1021,20 +988,62 @@ private:
                 goto escapeChildren;
             break;
 
-        case GetButterfly:
+        case GetButterfly: {
+            // D@2 (GetButterfly) is subtle because PutByVal/GetByVal can cause the associated Array to escape and be materialized.
+            // In such cases, GetButterfly must also be materialized at the same site as the Array, since it depends on the materialized Array.
+            // That is, when PutByVal/GetByVal triggers materialization, GetButterfly must be lowered at the same location and maintain
+            // a dependency on the materialized Array to ensure correctness.
+            //
+            // Below, we enumerate all possible interaction cases between GetButterfly and Array:
+            //
+            //         GetButterfly state (rows) vs Array state (columns)
+            //
+            //                   |     S     |    SEM    |     E     |
+            //           ---------------------------------------------
+            //            S      |    OK     |    OK     |    OK     |
+            //           SEM     |   Error   |    OK     |    OK     |
+            //            E      |    n/a    |   Error   |    OK     |
+            //
+            // Allocation Kinds:
+            //   Sink-only (S): Allocation is purely local and can be eliminated during optimization.
+            //   Escape-only (E): Allocation escapes the local context; cannot be sunk.
+            //   Sink + Escape + Materialize (SEM):
+            //      Allocation starts as sinkable but later escapes; it must be materialized at a specific point
+            //      while preserving dependency ordering.
+            //
+            // Cases:
+            //  (1)     S\S S\SEM: Fine. Let it sink. (e.g. [2])
+            //  (2) S\E SEM\E E/E: Fine. But not profitable to sink GetButterfly.
+            //  (3)       SEM\SEM: Fine iff they materialize at the same site due to PutByVal/GetByVal. (e.g. [1])
+            //
+            //  (4)         SEM\S: Not fine since GetButterfly(Array). (e.g. [4])
+            //  (5)         E\SEM: Not fine similar to (4). (e.g. [3])
+            //  (6)           E\S: Not possible since PutByVal/GetByVal can escape-only GetButterfly.
+            //
+            //
+            // [1] array-allocation-sink-escape-materialize-1.js
+            // [2] array-allocation-sink-escape-materialize-2.js
+            // [3] array-allocation-sink-escape-materialize-3.js
+            // [4] array-allocation-sink-upsilon-with-double-value.js
+            Node* base = node->child1().node();
+            Allocation* array = m_heap.onlyLocalAllocation(base);
+            if (array && array->isArrayAllocation()) {
+                // Treat GetButterfly as a separate allocation to track its dependency on the Array.
+                // 1. If PutByVal/GetByVal cause escape, materialize both at the same site.
+                // 2. If the Array escapes, also escape the ArrayButterfly since sinking it isn't beneficial.
+                m_heap.newAllocation(node, Allocation::Kind::ArrayButterfly);
+                array->set(PromotedLocationDescriptor(ArrayButterflyPropertyPLoc, array->arrayButterflyId()), node);
+            } else
+                goto escapeChildren;
+            break;
+        }
+
         case GetArrayLength: {
             Node* base = node->child1().node();
             target = m_heap.onlyLocalAllocation(base);
-            if (target && target->isArrayAllocation()) {
-                // No special handling is required for GetButterfly because:
-                // 1. If the array is a sink candidate, then all referrers of GetButterfly (i.e., GetArrayLength,
-                //    PutByVal, and GetByVal) will be eliminated. Consequently, GetButterfly itself
-                //    will have zero references and will be removed in a later phase.
-                // 2. If the array is not a sink candidate, then at least one node (GetByVal or PutByVal)
-                //    must have caused the array to escape.
-                if (node->op() == GetArrayLength)
-                    exactRead = PromotedLocationDescriptor(ArrayLengthPropertyPLoc);
-            } else
+            if (target && target->isArrayAllocation())
+                exactRead = PromotedLocationDescriptor(ArrayLengthPropertyPLoc);
+            else
                 goto escapeChildren;
             break;
         }
@@ -1518,6 +1527,31 @@ escapeChildren:
             }
         }
 
+        auto fixGetButterflyEscapees = [&](auto& escapees) {
+            // Case (4): Remove GetButterfly if its base Array didn’t escape.
+            escapees.removeIf([&] (const auto& entry) {
+                return entry.key->op() == GetButterfly && !escapees.contains(entry.key->child1().node());
+            });
+
+            // Case (5): Ensure ArrayButterfly SEM when its parent Array does.
+            Vector<std::pair<Node*, Allocation*>> toAdd;
+            for (const auto& entry : escapees) {
+                if (entry.value.kind() != Allocation::Kind::Array)
+                    continue;
+                for (const auto& field : entry.value.fields()) {
+                    if (field.key.kind() != ArrayButterflyPropertyPLoc)
+                        continue;
+                    if (Allocation* allocation = m_heap.onlyLocalAllocation(field.value))
+                        toAdd.append({ field.value, allocation });
+                }
+            }
+
+            for (const auto& pair : toAdd) {
+                m_sinkCandidates.add(pair.first);
+                escapees.add(pair.first, *pair.second);
+            }
+        };
+
         auto forEachEscapee = [&] (auto callback) {
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 m_heap = m_heapAtHead[block];
@@ -1532,6 +1566,7 @@ escapeChildren:
                         });
                     auto escapees = m_heap.takeEscapees();
                     escapees.removeIf([&] (const auto& entry) { return !m_sinkCandidates.contains(entry.key); });
+                    fixGetButterflyEscapees(escapees);
                     callback(escapees, node);
                 }
 
@@ -1553,6 +1588,7 @@ escapeChildren:
                         if (mustEscape && m_sinkCandidates.contains(entry.key))
                             escapingOnEdge.add(entry.key, entry.value);
                     }
+                    fixGetButterflyEscapees(escapingOnEdge);
                     callback(escapingOnEdge, block->terminal());
                 }
             }
@@ -1678,16 +1714,29 @@ escapeChildren:
         UncheckedKeyHashMap<Node*, NodeSet> dependencies;
         UncheckedKeyHashMap<Node*, NodeSet> reverseDependencies;
         UncheckedKeyHashMap<Node*, NodeSet> forMaterialization;
-        for (const auto& entry : escapees) {
-            auto& myDependencies = dependencies.add(entry.key, NodeSet()).iterator->value;
-            auto& myDependenciesForMaterialization = forMaterialization.add(entry.key, NodeSet()).iterator->value;
-            reverseDependencies.add(entry.key, NodeSet());
-            for (const auto& field : entry.value.fields()) {
-                if (escapees.contains(field.value) && field.value != entry.key) {
-                    myDependencies.addVoid(field.value);
-                    reverseDependencies.add(field.value, NodeSet()).iterator->value.addVoid(entry.key);
-                    if (field.key.neededForMaterialization())
-                        myDependenciesForMaterialization.addVoid(field.value);
+        auto addDependency = [&](Node* a, Node* b, bool neededForMaterialization) {
+            dependencies.add(a, NodeSet()).iterator->value.addVoid(b);
+            reverseDependencies.add(b, NodeSet()).iterator->value.addVoid(a);
+            if (neededForMaterialization)
+                forMaterialization.add(a, NodeSet()).iterator->value.addVoid(b);
+        };
+
+        auto requiresReverseDependency = [&] (Allocation::Kind allocationKind, PromotedLocationKind fieldKind) {
+            return allocationKind == Allocation::Kind::Array && fieldKind == ArrayButterflyPropertyPLoc;
+        };
+
+        for (auto& [escape, escapeAllocation] : escapees) {
+            dependencies.add(escape, NodeSet());
+            forMaterialization.add(escape, NodeSet());
+            reverseDependencies.add(escape, NodeSet());
+            for (auto& [fieldLocation, field] : escapeAllocation.fields()) {
+                if (escapees.contains(field) && field != escape) {
+                    Node* from = escape;
+                    Node* to = field;
+                    // Swap to ensure that Array is materialized before ArrayButterfly.
+                    if (requiresReverseDependency(escapeAllocation.kind(), fieldLocation.kind()))
+                        std::swap(from, to);
+                    addDependency(from, to, fieldLocation.neededForMaterialization());
                 }
             }
         }
@@ -1797,8 +1846,13 @@ escapeChildren:
             escaped.addVoid(allocation.identifier());
         for (const Allocation& allocation : toMaterialize) {
             for (const auto& field : allocation.fields()) {
-                if (escaped.contains(field.value) && !materialized.contains(field.value))
+                if (escaped.contains(field.value) && !materialized.contains(field.value)) {
+                    // Skip recovery for ArrayButterfly fields since they have reverse dependencies
+                    // and will be handled by their parent Array's materialization
+                    if (requiresReverseDependency(allocation.kind(), field.key.kind()))
+                        continue;
                     toRecover.append(PromotedHeapLocation(allocation.identifier(), field.key));
+                }
             }
             materialized.addVoid(allocation.identifier());
         }
@@ -1838,6 +1892,12 @@ escapeChildren:
                 node->prediction(), Node::VarArg, MaterializeNewArrayWithConstantSize,
                 where->origin.withSemantic(node->origin.semantic),
                 OpInfo(node->indexingType()), OpInfo(data), 0, 0);
+        }
+
+        case Allocation::Kind::ArrayButterfly: {
+            Node* node = allocation.identifier();
+            return m_graph.addNode(node->prediction(), GetButterfly,
+                where->origin.withSemantic(node->origin.semantic), node->child1());
         }
 
         case Allocation::Kind::Object: {
@@ -2498,6 +2558,13 @@ escapeChildren:
             node->children = AdjacencyList(
                 AdjacencyList::Variable,
                 firstChild, m_graph.m_varArgChildren.size() - firstChild);
+            break;
+        }
+
+        case GetButterfly: {
+            Edge& base = node->child1();
+            base.setNode(resolve(block, base.node()));
+            ASSERT(base->op() == MaterializeNewArrayWithConstantSize);
             break;
         }
 
