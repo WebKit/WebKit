@@ -980,7 +980,7 @@ private:
                     break;
 
                 case GetButterfly:
-                    VALIDATE((node), !node->child1()->isPhantomAllocation() || node->child1()->op() == PhantomNewArrayWithConstantSize);
+                    VALIDATE((node), !node->child1()->isPhantomAllocation());
                     break;
 
                 default:

@@ -55,6 +55,7 @@ enum PromotedLocationKind {
     ArgumentsCalleePLoc,
     ArrayPLoc,
     ArrayLengthPropertyPLoc,
+    ArrayButterflyPropertyPLoc,
     ArrayIndexedPropertyPLoc,
     ClosureVarPLoc,
     InternalFieldObjectPLoc,

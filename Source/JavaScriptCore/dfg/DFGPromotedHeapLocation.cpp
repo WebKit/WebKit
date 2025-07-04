@@ -99,6 +99,10 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
         out.print("ArrayLengthPropertyPLoc");
         return;
 
+    case ArrayButterflyPropertyPLoc:
+        out.print("ArrayButterflyPropertyPLoc");
+        return;
+
     case ArrayIndexedPropertyPLoc:
         out.print("ArrayIndexedPropertyPLoc");
         return;
