@@ -2162,7 +2162,7 @@ void RenderText::setInlineWrapperForDisplayContents(RenderInline* wrapper)
 std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& renderer, const RenderStyle& style)
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
-    if (style.textEmphasisMark() == TextEmphasisMark::None)
+    if (style.textEmphasisStyle().isNone())
         return std::nullopt;
 
     auto emphasisPosition = style.textEmphasisPosition();

@@ -816,11 +816,8 @@ static bool miscDataChangeRequiresLayout(const StyleMiscNonInheritedData& first,
     if (first.hasFilters() != second.hasFilters())
         return true;
 
-    if (first.aspectRatioType != second.aspectRatioType
-        || first.aspectRatioWidth != second.aspectRatioWidth
-        || first.aspectRatioHeight != second.aspectRatioHeight) {
+    if (first.aspectRatio != second.aspectRatio)
         return true;
-    }
 
     return false;
 }
@@ -933,10 +930,9 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 {
     ASSERT(&first != &second);
 
-    if (first.indent != second.indent
+    if (first.textIndent != second.textIndent
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
-        || first.textIndentLine != second.textIndentLine
         || first.textBoxEdge != second.textBoxEdge
         || first.lineFitEdge != second.lineFitEdge
         || first.usedZoom != second.usedZoom
@@ -956,9 +952,8 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.rubyPosition != second.rubyPosition
         || first.rubyAlign != second.rubyAlign
         || first.textCombine != second.textCombine
-        || first.textEmphasisMark != second.textEmphasisMark
+        || first.textEmphasisStyle != second.textEmphasisStyle
         || first.textEmphasisPosition != second.textEmphasisPosition
-        || first.textEmphasisCustomMark != second.textEmphasisCustomMark
         || first.tabSize != second.tabSize
         || first.lineBoxContain != second.lineBoxContain
         || first.lineGrid != second.lineGrid
@@ -1396,7 +1391,7 @@ bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSe
             || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
             || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
             || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
-            || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
+            || m_rareInheritedData->textEmphasisStyle != other.m_rareInheritedData->textEmphasisStyle
             || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
             || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor
             || m_rareInheritedData->textUnderlineOffset != other.m_rareInheritedData->textUnderlineOffset)
@@ -1821,9 +1816,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyWebkitBoxShadow);
         }
 
-        if (first.aspectRatioWidth != second.aspectRatioWidth || first.aspectRatioHeight != second.aspectRatioHeight || first.aspectRatioType != second.aspectRatioType)
+        if (first.aspectRatio != second.aspectRatio)
             changingProperties.m_properties.set(CSSPropertyAspectRatio);
-
         if (first.alignContent != second.alignContent)
             changingProperties.m_properties.set(CSSPropertyAlignContent);
         if (first.justifyContent != second.justifyContent)
@@ -1873,9 +1867,9 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBlockStepRound);
         if (first.blockStepSize != second.blockStepSize)
             changingProperties.m_properties.set(CSSPropertyBlockStepSize);
-        if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicWidthType != second.containIntrinsicWidthType)
+        if (first.containIntrinsicWidth != second.containIntrinsicWidth)
             changingProperties.m_properties.set(CSSPropertyContainIntrinsicWidth);
-        if (first.containIntrinsicHeight != second.containIntrinsicHeight || first.containIntrinsicHeightType != second.containIntrinsicHeightType)
+        if (first.containIntrinsicHeight != second.containIntrinsicHeight)
             changingProperties.m_properties.set(CSSPropertyContainIntrinsicHeight);
         if (first.perspectiveOriginX != second.perspectiveOriginX)
             changingProperties.m_properties.set(CSSPropertyPerspectiveOriginX);
@@ -2099,7 +2093,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyAccentColor);
         if (first.textShadow != second.textShadow)
             changingProperties.m_properties.set(CSSPropertyTextShadow);
-        if (first.indent != second.indent || first.textIndentLine != second.textIndentLine || first.textIndentType != second.textIndentType)
+        if (first.textIndent != second.textIndent)
             changingProperties.m_properties.set(CSSPropertyTextIndent);
         if (first.textUnderlineOffset != second.textUnderlineOffset)
             changingProperties.m_properties.set(CSSPropertyTextUnderlineOffset);
@@ -2129,7 +2123,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
 #endif
         if (first.dynamicRangeLimit != second.dynamicRangeLimit)
             changingProperties.m_properties.set(CSSPropertyDynamicRangeLimit);
-        if (first.textEmphasisFill != second.textEmphasisFill || first.textEmphasisMark != second.textEmphasisMark)
+        if (first.textEmphasisStyle != second.textEmphasisStyle)
             changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
         if (!arePointingToEqualData(first.quotes, second.quotes))
             changingProperties.m_properties.set(CSSPropertyQuotes);
@@ -2212,7 +2206,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // lineSnap
         // lineAlign
         // cursorData
-        // textEmphasisCustomMark
         // insideDefaultButton
         // insideDisabledSubmitButton
     };
@@ -2583,47 +2576,6 @@ const AtomString& RenderStyle::hyphenString() const
     static MainThreadNeverDestroyed<const AtomString> hyphenMinusString(span(hyphenMinus));
     static MainThreadNeverDestroyed<const AtomString> hyphenString(span(hyphen));
     return fontCascade().primaryFont()->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
-}
-
-const AtomString& RenderStyle::textEmphasisMarkString() const
-{
-    switch (textEmphasisMark()) {
-    case TextEmphasisMark::None:
-        return nullAtom();
-    case TextEmphasisMark::Custom:
-        return textEmphasisCustomMark();
-    case TextEmphasisMark::Dot: {
-        static MainThreadNeverDestroyed<const AtomString> filledDotString(span(bullet));
-        static MainThreadNeverDestroyed<const AtomString> openDotString(span(whiteBullet));
-        return textEmphasisFill() == TextEmphasisFill::Filled ? filledDotString : openDotString;
-    }
-    case TextEmphasisMark::Circle: {
-        static MainThreadNeverDestroyed<const AtomString> filledCircleString(span(blackCircle));
-        static MainThreadNeverDestroyed<const AtomString> openCircleString(span(whiteCircle));
-        return textEmphasisFill() == TextEmphasisFill::Filled ? filledCircleString : openCircleString;
-    }
-    case TextEmphasisMark::DoubleCircle: {
-        static MainThreadNeverDestroyed<const AtomString> filledDoubleCircleString(span(fisheye));
-        static MainThreadNeverDestroyed<const AtomString> openDoubleCircleString(span(bullseye));
-        return textEmphasisFill() == TextEmphasisFill::Filled ? filledDoubleCircleString : openDoubleCircleString;
-    }
-    case TextEmphasisMark::Triangle: {
-        static MainThreadNeverDestroyed<const AtomString> filledTriangleString(span(blackUpPointingTriangle));
-        static MainThreadNeverDestroyed<const AtomString> openTriangleString(span(whiteUpPointingTriangle));
-        return textEmphasisFill() == TextEmphasisFill::Filled ? filledTriangleString : openTriangleString;
-    }
-    case TextEmphasisMark::Sesame: {
-        static MainThreadNeverDestroyed<const AtomString> filledSesameString(span(sesameDot));
-        static MainThreadNeverDestroyed<const AtomString> openSesameString(span(whiteSesameDot));
-        return textEmphasisFill() == TextEmphasisFill::Filled ? filledSesameString : openSesameString;
-    }
-    case TextEmphasisMark::Auto:
-        ASSERT_NOT_REACHED();
-        return nullAtom();
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullAtom();
 }
 
 void RenderStyle::adjustAnimations()
@@ -3297,16 +3249,6 @@ void RenderStyle::setPaddingAfter(Style::PaddingEdge&& padding)
     case FlowDirection::RightToLeft:
         return setPaddingLeft(WTFMove(padding));
     }
-}
-
-TextEmphasisMark RenderStyle::textEmphasisMark() const
-{
-    auto mark = static_cast<TextEmphasisMark>(m_rareInheritedData->textEmphasisMark);
-    if (mark != TextEmphasisMark::Auto)
-        return mark;
-    if (writingMode().isVerticalTypographic())
-        return TextEmphasisMark::Sesame;
-    return TextEmphasisMark::Dot;
 }
 
 #if ENABLE(TOUCH_EVENTS)

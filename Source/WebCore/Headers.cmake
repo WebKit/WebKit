@@ -2824,12 +2824,17 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/shapes/StyleWindRuleComputation.h
     style/values/shapes/StyleXywhFunction.h
 
+    style/values/sizing/StyleAspectRatio.h
+    style/values/sizing/StyleContainIntrinsicSize.h
     style/values/sizing/StyleMaximumSize.h
     style/values/sizing/StyleMinimumSize.h
     style/values/sizing/StylePreferredSize.h
 
     style/values/svg/StyleSVGPaint.h
 
+    style/values/text/StyleTextIndent.h
+
+    style/values/text-decoration/StyleTextEmphasisStyle.h
     style/values/text-decoration/StyleTextShadow.h
     style/values/text-decoration/StyleTextUnderlineOffset.h
 

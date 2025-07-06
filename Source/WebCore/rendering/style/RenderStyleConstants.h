@@ -933,14 +933,11 @@ enum class TextEmphasisFill : bool {
 };
 
 enum class TextEmphasisMark : uint8_t {
-    None,
-    Auto,
     Dot,
     Circle,
     DoubleCircle,
     Triangle,
-    Sesame,
-    Custom
+    Sesame
 };
 
 enum class TextEmphasisPosition : uint8_t {

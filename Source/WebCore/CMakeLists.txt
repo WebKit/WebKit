@@ -219,6 +219,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/shapes"
     "${WEBCORE_DIR}/style/values/sizing"
     "${WEBCORE_DIR}/style/values/svg"
+    "${WEBCORE_DIR}/style/values/text"
     "${WEBCORE_DIR}/style/values/text-decoration"
     "${WEBCORE_DIR}/style/values/transforms"
     "${WEBCORE_DIR}/style/values/view-transitions"

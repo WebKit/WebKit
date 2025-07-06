@@ -3911,7 +3911,7 @@ static bool hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const 
 {
     if (rootStyle.textAlign() != TextAlignMode::Start)
         return false;
-    if (rootStyle.textIndent() != RenderStyle::zeroLength())
+    if (!rootStyle.textIndent().length.isZero())
         return false;
     return true;
 }
@@ -4634,7 +4634,7 @@ static inline LayoutUnit preferredWidth(LayoutUnit preferredWidth, float result)
 static inline std::optional<LayoutUnit> textIndentForBlockContainer(const RenderBlockFlow& renderer)
 {
     auto& style = renderer.style();
-    if (auto fixedTextIndent = style.textIndent().tryFixed())
+    if (auto fixedTextIndent = style.textIndent().length.tryFixed())
         return fixedTextIndent->value ? std::make_optional(LayoutUnit { fixedTextIndent->value }) : std::nullopt;
 
     auto indentValue = LayoutUnit { };
@@ -4642,7 +4642,7 @@ static inline std::optional<LayoutUnit> textIndentForBlockContainer(const Render
         if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
             // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
             // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-            indentValue = minimumValueForLength(style.textIndent(), containingBlockFixedLogicalWidth->value);
+            indentValue = Style::evaluate(style.textIndent().length, containingBlockFixedLogicalWidth->value);
         }
     }
     return indentValue ? std::make_optional(indentValue) : std::nullopt;

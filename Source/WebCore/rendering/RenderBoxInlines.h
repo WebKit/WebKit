@@ -193,4 +193,11 @@ inline bool RenderBox::backgroundIsKnownToBeObscured(const LayoutPoint& paintOff
     return boxDecorationState() == BoxDecorationState::IsKnownToBeObscured;
 }
 
+inline LayoutUnit RenderBox::blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatioValue, BoxSizing boxSizing, LayoutUnit inlineSize, const Style::AspectRatio& aspectRatio, bool isRenderReplaced)
+{
+    if (boxSizing == BoxSizing::BorderBox && aspectRatio.isRatio() && !isRenderReplaced)
+        return std::max(borderPaddingBlockSum, LayoutUnit(inlineSize / aspectRatioValue));
+    return LayoutUnit((inlineSize - borderPaddingInlineSum) / aspectRatioValue) + borderPaddingBlockSum;
+}
+
 } // namespace WebCore

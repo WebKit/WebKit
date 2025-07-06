@@ -504,7 +504,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     const FontCascade& font = fontCascade();
 
     float emphasisMarkOffset = 0;
-    const AtomString& emphasisMark = m_emphasisMarkExistsAndIsAbove ? m_style.textEmphasisMarkString() : nullAtom();
+    const AtomString& emphasisMark = m_emphasisMarkExistsAndIsAbove ? m_style.textEmphasisStyle().textEmphasisMarkString(m_style.writingMode()) : nullAtom();
     if (!emphasisMark.isEmpty())
         emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().intAscent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().intDescent() + font.emphasisMarkAscent(emphasisMark);
 

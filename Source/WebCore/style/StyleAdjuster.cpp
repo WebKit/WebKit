@@ -956,13 +956,13 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle& parentSty
     RenderTheme::singleton().adjustStyle(style, parentStyle, m_element.get());
 
     if (style.containsSize()) {
-        if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
+        if (!style.containIntrinsicWidth().isNone()) {
             if (isOldWidthAuto)
                 style.setWidth(CSS::Keyword::Auto { });
             if (isOldMinWidthAuto)
                 style.setMinWidth(CSS::Keyword::Auto { });
         }
-        if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
+        if (!style.containIntrinsicHeight().isNone()) {
             if (isOldHeightAuto)
                 style.setHeight(CSS::Keyword::Auto { });
             if (isOldMinHeightAuto)

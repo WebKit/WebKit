@@ -469,9 +469,9 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.clearDisplayContentsOrNoneStyle();
 
     if (!hasDisplayContentsOrNone) {
-        if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalWidth().hasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalHeight().hasAuto())
             element.clearLastRememberedLogicalHeight();
     }
 

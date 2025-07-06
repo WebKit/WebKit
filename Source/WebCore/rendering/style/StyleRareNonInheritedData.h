@@ -40,6 +40,7 @@
 #include "StyleAnchorName.h"
 #include "StyleClipPath.h"
 #include "StyleColor.h"
+#include "StyleContainIntrinsicSize.h"
 #include "StyleContainerName.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleGapGutter.h"
@@ -137,8 +138,8 @@ public:
 
     OptionSet<Containment> usedContain() const;
 
-    Markable<Length> containIntrinsicWidth;
-    Markable<Length> containIntrinsicHeight;
+    Style::ContainIntrinsicSize containIntrinsicWidth;
+    Style::ContainIntrinsicSize containIntrinsicHeight;
 
     Length perspectiveOriginX;
     Length perspectiveOriginY;
@@ -265,8 +266,6 @@ public:
     PREFERRED_TYPE(BreakBetween) unsigned breakBefore : 4;
     PREFERRED_TYPE(BreakBetween) unsigned breakAfter : 4;
     PREFERRED_TYPE(BreakInside) unsigned breakInside : 3;
-    PREFERRED_TYPE(ContainIntrinsicSizeType) unsigned containIntrinsicWidthType : 2;
-    PREFERRED_TYPE(ContainIntrinsicSizeType) unsigned containIntrinsicHeightType : 2;
     PREFERRED_TYPE(ContainerType) unsigned containerType : 2;
     PREFERRED_TYPE(TextBoxTrim) unsigned textBoxTrim : 2;
     PREFERRED_TYPE(OverflowAnchor) unsigned overflowAnchor : 1;

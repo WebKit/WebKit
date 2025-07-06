@@ -7889,10 +7889,8 @@
             ],
             "codegen-properties": {
                 "accepts-quirky-length": true,
-                "animation-wrapper": "TextIndentWrapper",
-                "animation-wrapper-requires-override-parameters": [],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<TextIndent>",
                 "parser-grammar": "<length-percentage> && hanging? && each-line?"
             },
             "specification": {
@@ -8596,10 +8594,9 @@
                 "auto"
             ],
             "codegen-properties": {
-                "animation-wrapper": "AspectRatioWrapper",
-                "animation-wrapper-requires-override-parameters": [],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-builder-custom": "Inherit",
+                "style-converter": "StyleType<AspectRatio>",
                 "parser-grammar": "auto || <ratio>"
             },
             "specification": {
@@ -8636,10 +8633,8 @@
                     "name": "contain-intrinsic-size",
                     "resolver": "vertical"
                 },
-                "animation-wrapper": "ContainIntrinsicLengthWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicHeight", "&RenderStyle::containIntrinsicHeight", "&RenderStyle::setContainIntrinsicHeight", "&RenderStyle::containIntrinsicHeightType", "&RenderStyle::setContainIntrinsicHeightType"],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<ContainIntrinsicSize>",
                 "parser-grammar": "[ auto? [ none | <length [0,inf]> ] ]@(type=CSSValuePair)",
                 "parser-exported": true
             },
@@ -8660,10 +8655,8 @@
                     "name": "contain-intrinsic-size",
                     "resolver": "horizontal"
                 },
-                "animation-wrapper": "ContainIntrinsicLengthWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicWidth", "&RenderStyle::containIntrinsicWidth", "&RenderStyle::setContainIntrinsicWidth", "&RenderStyle::containIntrinsicWidthType", "&RenderStyle::setContainIntrinsicWidthType"],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<ContainIntrinsicSize>",
                 "parser-grammar": "[ auto? [ none | <length [0,inf]> ] ]@(type=CSSValuePair)",
                 "parser-exported": true
              },
@@ -11064,10 +11057,7 @@
                     "-epub-text-emphasis-style",
                     "-webkit-text-emphasis-style"
                 ],
-                "animation-wrapper": "TextEmphasisStyleWrapper",
-                "animation-wrapper-requires-override-parameters": [],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "style-converter": "StyleType<TextEmphasisStyle>",
                 "parser-grammar": "none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string>"
             },
             "specification": {

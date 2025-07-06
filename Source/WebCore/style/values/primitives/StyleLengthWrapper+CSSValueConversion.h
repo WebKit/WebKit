@@ -33,37 +33,33 @@ namespace Style {
 // MARK: - Conversion
 
 template<LengthWrapperBaseDerived T> struct CSSValueConversion<T> {
-    auto operator()(BuilderState& state, const CSSValue& value) -> T
+    auto operator()(BuilderState& state, const CSSPrimitiveValue& primitiveValue) -> T
     {
         using namespace CSS::Literals;
-
-        RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-        if (!primitiveValue)
-            return 0_css_px;
 
         auto convertLengthPercentage = [&] -> T {
             auto conversionData = state.useSVGZoomRulesForLength()
                 ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : state.cssToLengthConversionData();
 
-            if (primitiveValue->isLength()) {
+            if (primitiveValue.isLength()) {
                 return T { WebCore::Length {
-                    CSS::clampToRange<T::Fixed::range, float>(primitiveValue->resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength),
+                    CSS::clampToRange<T::Fixed::range, float>(primitiveValue.resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength),
                     LengthType::Fixed,
-                    primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+                    primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM
                 } };
             }
 
-            if (primitiveValue->isPercentage()) {
+            if (primitiveValue.isPercentage()) {
                 return T { WebCore::Length {
-                    CSS::clampToRange<T::Percentage::range, float>(primitiveValue->resolveAsPercentage(conversionData)),
+                    CSS::clampToRange<T::Percentage::range, float>(primitiveValue.resolveAsPercentage(conversionData)),
                     LengthType::Percent
                 } };
             }
 
-            if (primitiveValue->isCalculatedPercentageWithLength()) {
+            if (primitiveValue.isCalculatedPercentageWithLength()) {
                 return T { WebCore::Length {
-                    primitiveValue->protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })
+                    primitiveValue.protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })
                 } };
             }
 
@@ -75,7 +71,7 @@ template<LengthWrapperBaseDerived T> struct CSSValueConversion<T> {
         if constexpr (!T::Keywords::count)
             return convertLengthPercentage();
         else {
-            switch (primitiveValue->valueID()) {
+            switch (primitiveValue.valueID()) {
             case CSSValueInvalid:
                 return convertLengthPercentage();
             case CSSValueIntrinsic:
@@ -139,6 +135,17 @@ template<LengthWrapperBaseDerived T> struct CSSValueConversion<T> {
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return 0_css_px;
         }
+    }
+
+    auto operator()(BuilderState& state, const CSSValue& value) -> T
+    {
+        using namespace CSS::Literals;
+
+        RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+        if (!primitiveValue)
+            return 0_css_px;
+
+        return this->operator()(state, *primitiveValue);
     }
 };
 

@@ -724,21 +724,6 @@ private:
     }
 };
 
-class TextEmphasisStyleWrapper final : public DiscreteWrapper<TextEmphasisMark> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    TextEmphasisStyleWrapper()
-        : DiscreteWrapper(CSSPropertyTextEmphasisStyle, &RenderStyle::textEmphasisMark, &RenderStyle::setTextEmphasisMark)
-    {
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        destination.setTextEmphasisFill((context.progress > 0.5 ? to : from).textEmphasisFill());
-        DiscreteWrapper::interpolate(destination, from, to, context);
-    }
-};
-
 // MARK: - Customized Wrappers
 
 class GridTemplateWrapper final : public Wrapper<const GridTrackList&> {
@@ -796,36 +781,6 @@ public:
 
     DiscreteWrapper<NinePieceImageRule> m_horizontalWrapper;
     DiscreteWrapper<NinePieceImageRule> m_verticalWrapper;
-};
-
-class ContainIntrinsicLengthWrapper final : public OptionalLengthWrapper {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    ContainIntrinsicLengthWrapper(CSSPropertyID property, std::optional<WebCore::Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<WebCore::Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
-        : OptionalLengthWrapper(property, getter, setter, { Flags::NegativeLengthsAreInvalid })
-        , m_containIntrinsicSizeTypeGetter(typeGetter)
-        , m_containIntrinsicSizeTypeSetter(typeSetter)
-    {
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation operation) const final
-    {
-        if ((from.*m_containIntrinsicSizeTypeGetter)() != (to.*m_containIntrinsicSizeTypeGetter)())
-            return false;
-        return OptionalLengthWrapper::canInterpolate(from, to, operation);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        auto type = context.progress < 0.5 ? (from.*m_containIntrinsicSizeTypeGetter)() : (to.*m_containIntrinsicSizeTypeGetter)();
-        (destination.*m_containIntrinsicSizeTypeSetter)(type);
-
-        OptionalLengthWrapper::interpolate(destination, from, to, context);
-    }
-
-private:
-    ContainIntrinsicSizeType (RenderStyle::*m_containIntrinsicSizeTypeGetter)() const;
-    void (RenderStyle::*m_containIntrinsicSizeTypeSetter)(ContainIntrinsicSizeType);
 };
 
 class LengthBoxWrapper : public WrapperWithGetter<const LengthBox&> {
@@ -1669,41 +1624,6 @@ public:
     }
 };
 
-class TextIndentWrapper final : public LengthWrapper {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    TextIndentWrapper()
-        : LengthWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthWrapper::Flags::IsLengthPercentage)
-    {
-    }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
-    {
-        if (a.textIndentLine() != b.textIndentLine())
-            return false;
-        if (a.textIndentType() != b.textIndentType())
-            return false;
-        return LengthWrapper::equals(a, b);
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
-    {
-        if (from.textIndentLine() != to.textIndentLine())
-            return false;
-        if (from.textIndentType() != to.textIndentType())
-            return false;
-        return LengthWrapper::canInterpolate(from, to, compositeOperation);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        auto& blendingStyle = context.isDiscrete && context.progress ? to : from;
-        destination.setTextIndentLine(blendingStyle.textIndentLine());
-        destination.setTextIndentType(blendingStyle.textIndentType());
-        LengthWrapper::interpolate(destination, from, to, context);
-    }
-};
-
 class TabSizeWrapper final : public Wrapper<const TabSize&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
@@ -1724,50 +1644,6 @@ public:
         else
             Wrapper::interpolate(destination, from, to, context);
     }
-};
-
-class AspectRatioWrapper final : public WrapperBase {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    AspectRatioWrapper()
-        : WrapperBase(CSSPropertyAspectRatio)
-    {
-    }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
-    {
-        if (&a == &b)
-            return true;
-
-        return a.aspectRatioType() == b.aspectRatioType() && a.aspectRatioWidth() == b.aspectRatioWidth() && a.aspectRatioHeight() == b.aspectRatioHeight();
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
-    {
-        return (from.aspectRatioType() == AspectRatioType::Ratio && to.aspectRatioType() == AspectRatioType::Ratio) || (from.aspectRatioType() == AspectRatioType::AutoAndRatio && to.aspectRatioType() == AspectRatioType::AutoAndRatio);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        destination.setAspectRatioType(context.progress < 0.5 ? from.aspectRatioType() : to.aspectRatioType());
-        if (!context.isDiscrete) {
-            auto aspectRatioDst = WebCore::blend(std::log(from.logicalAspectRatio()), std::log(to.logicalAspectRatio()), context);
-            destination.setAspectRatio(std::exp(aspectRatioDst), 1);
-            return;
-        }
-        // For auto/auto-zero aspect-ratio we use discrete values, we can't use general
-        // logic since logicalAspectRatio asserts on aspect-ratio type.
-        ASSERT(!context.progress || context.progress == 1);
-        auto& applicableStyle = context.progress ? to : from;
-        destination.setAspectRatio(applicableStyle.aspectRatioWidth(), applicableStyle.aspectRatioHeight());
-    }
-
-#if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
-    {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << from.logicalAspectRatio() << " to " << to.logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << destination.logicalAspectRatio());
-    }
-#endif
 };
 
 class CounterWrapper final : public WrapperBase {

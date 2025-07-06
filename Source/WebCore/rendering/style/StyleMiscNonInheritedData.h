@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LengthPoint.h"
+#include "StyleAspectRatio.h"
 #include "StyleBoxShadow.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
@@ -89,8 +90,7 @@ public:
     std::unique_ptr<ContentData> content;
     Style::BoxShadows boxShadow;
     String altText;
-    double aspectRatioWidth;
-    double aspectRatioHeight;
+    Style::AspectRatio aspectRatio;
     StyleContentAlignmentData alignContent;
     StyleContentAlignmentData justifyContent;
     StyleSelfAlignmentData alignItems;
@@ -108,7 +108,6 @@ public:
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetDirection : 1 { false };
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetWritingMode : 1 { false };
     PREFERRED_TYPE(TableLayoutType) unsigned tableLayout : 1;
-    PREFERRED_TYPE(AspectRatioType) unsigned aspectRatioType : 2;
     PREFERRED_TYPE(StyleAppearance) unsigned appearance : appearanceBitWidth;
     PREFERRED_TYPE(StyleAppearance) unsigned usedAppearance : appearanceBitWidth;
     PREFERRED_TYPE(bool) unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."

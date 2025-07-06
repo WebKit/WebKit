@@ -211,7 +211,6 @@ public:
     static Ref<CSSValue> convertLineBoxContain(ExtractorState&, OptionSet<Style::LineBoxContain>);
     static Ref<CSSValue> convertWebkitRubyPosition(ExtractorState&, RubyPosition);
     static Ref<CSSValue> convertPosition(ExtractorState&, const LengthPoint&);
-    static Ref<CSSValue> convertContainIntrinsicSize(ExtractorState&, const ContainIntrinsicSizeType&, const std::optional<WebCore::Length>&);
     static Ref<CSSValue> convertTouchAction(ExtractorState&, OptionSet<TouchAction>);
     static Ref<CSSValue> convertTextTransform(ExtractorState&, OptionSet<TextTransform>);
     static Ref<CSSValue> convertTextDecorationLine(ExtractorState&, OptionSet<TextDecorationLine>);
@@ -1066,22 +1065,6 @@ inline Ref<CSSValue> ExtractorConverter::convertPosition(ExtractorState& state, 
         convertLength(state, position.x),
         convertLength(state, position.y)
     );
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertContainIntrinsicSize(ExtractorState& state, const ContainIntrinsicSizeType& type, const std::optional<WebCore::Length>& containIntrinsicLength)
-{
-    switch (type) {
-    case ContainIntrinsicSizeType::None:
-        return CSSPrimitiveValue::create(CSSValueNone);
-    case ContainIntrinsicSizeType::Length:
-        return convertLength(state, *containIntrinsicLength);
-    case ContainIntrinsicSizeType::AutoAndLength:
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), convertLength(state, *containIntrinsicLength));
-    case ContainIntrinsicSizeType::AutoAndNone:
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueNone);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertTouchAction(ExtractorState&, OptionSet<TouchAction> touchActions)

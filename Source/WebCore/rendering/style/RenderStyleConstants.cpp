@@ -1204,14 +1204,11 @@ TextStream& operator<<(TextStream& ts, TextEmphasisFill fill)
 TextStream& operator<<(TextStream& ts, TextEmphasisMark mark)
 {
     switch (mark) {
-    case TextEmphasisMark::None: ts << "none"_s; break;
-    case TextEmphasisMark::Auto: ts << "auto"_s; break;
     case TextEmphasisMark::Dot: ts << "dot"_s; break;
     case TextEmphasisMark::Circle: ts << "circle"_s; break;
     case TextEmphasisMark::DoubleCircle: ts << "double-circle"_s; break;
     case TextEmphasisMark::Triangle: ts << "triangle"_s; break;
     case TextEmphasisMark::Sesame: ts << "sesame"_s; break;
-    case TextEmphasisMark::Custom: ts << "custom"_s; break;
     }
     return ts;
 }

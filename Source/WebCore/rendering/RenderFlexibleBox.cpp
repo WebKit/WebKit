@@ -1069,8 +1069,8 @@ double RenderFlexibleBox::preferredAspectRatioForFlexItem(const RenderBox& flexI
         auto flexItemIntrinsicSize = LayoutSize { flexItem.intrinsicLogicalWidth(), flexItem.intrinsicLogicalHeight() };
         if (flexItem.isRenderOrLegacyRenderSVGRoot())
             return downcast<RenderReplaced>(flexItem).computeIntrinsicAspectRatio();
-        if (flexItem.style().aspectRatioType() == AspectRatioType::Ratio || (flexItem.style().aspectRatioType() == AspectRatioType::AutoAndRatio && flexItemIntrinsicSize.isEmpty()))
-            return flexItem.style().aspectRatioLogicalWidth() / flexItem.style().aspectRatioLogicalHeight();
+        if (flexItem.style().aspectRatio().isRatio() || (flexItem.style().aspectRatio().isAutoAndRatio() && flexItemIntrinsicSize.isEmpty()))
+            return flexItem.style().logicalAspectRatio();
         if (auto* replacedElement = dynamicDowncast<RenderReplaced>(flexItem))
             return replacedElement->computeIntrinsicAspectRatio();
 
@@ -1120,7 +1120,7 @@ template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAsp
     auto crossSize = *crossSizeOptional;
     auto flexItemIntrinsicSize = flexItem.intrinsicSize();
     LayoutUnit borderAndPadding;
-    if (flexItem.style().aspectRatioType() == AspectRatioType::Ratio || (flexItem.style().aspectRatioType() == AspectRatioType::AutoAndRatio && flexItemIntrinsicSize.isEmpty())) {
+    if (flexItem.style().aspectRatio().isRatio() || (flexItem.style().aspectRatio().isAutoAndRatio() && flexItemIntrinsicSize.isEmpty())) {
         if (flexItem.style().boxSizingForAspectRatio() == BoxSizing::ContentBox)
             crossSize -= isHorizontalFlow() ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent();
         else

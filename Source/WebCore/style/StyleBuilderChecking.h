@@ -73,7 +73,7 @@ template<typename ListType, typename ValueType> struct TypedRequiredList {
     Ref<const ListType> list;
 };
 
-template<typename ListType, typename ValueType, unsigned minimumLength = 1>
+template<typename ListType, typename ValueType, unsigned minimumLength = 1, unsigned maximumSize = 0> // A maximumSize of `0` indicates no maximum.
 std::optional<TypedRequiredList<ListType, ValueType>> requiredListDowncast(BuilderState&, const CSSValue&);
 
 template<CSSValueID, typename ValueType, unsigned minimumLength = 1>
@@ -105,7 +105,7 @@ inline std::optional<std::pair<Ref<const ValueType>, Ref<const ValueType>>> requ
     return { { firstValue.releaseNonNull(), secondValue.releaseNonNull() } };
 }
 
-template<typename ListType, typename ValueType, unsigned minimumSize>
+template<typename ListType, typename ValueType, unsigned minimumSize, unsigned maximumSize>
 inline auto requiredListDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedRequiredList<ListType, ValueType>>
 {
     RefPtr listValue = requiredDowncast<ListType>(builderState, value);
@@ -114,6 +114,12 @@ inline auto requiredListDowncast(BuilderState& builderState, const CSSValue& val
     if (listValue->size() < minimumSize) [[unlikely]] {
         builderState.setCurrentPropertyInvalidAtComputedValueTime();
         return { };
+    }
+    if constexpr (maximumSize > 0) {
+        if (listValue->size() > maximumSize) [[unlikely]] {
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return { };
+        }
     }
     for (Ref value : *listValue) {
         if (!requiredDowncast<ValueType>(builderState, value)) [[unlikely]]
