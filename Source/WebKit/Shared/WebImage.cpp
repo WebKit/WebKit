@@ -41,22 +41,28 @@ Ref<WebImage> WebImage::createEmpty()
 
 Ref<WebImage> WebImage::create(const IntSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
 {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    ImageBufferPixelFormat pixelFormat = colorSpace.usesExtendedRange() ? ImageBufferPixelFormat::RGBA16F : ImageBufferPixelFormat::BGRA8;
+#else
+    ImageBufferPixelFormat pixelFormat = ImageBufferPixelFormat::BGRA8;
+#endif
+
     if (client) {
         auto purpose = options.contains(ImageOption::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
         purpose = options.contains(ImageOption::Local) ? RenderingPurpose::ShareableLocalSnapshot : purpose;
         
-        if (auto buffer = client->createImageBuffer(size, RenderingMode::Unaccelerated, purpose, 1, colorSpace, ImageBufferPixelFormat::BGRA8))
+        if (auto buffer = client->createImageBuffer(size, RenderingMode::Unaccelerated, purpose, 1, colorSpace, pixelFormat))
             return WebImage::create(buffer.releaseNonNull());
     }
 
     if (options.contains(ImageOption::Shareable)) {
-        auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
+        auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, pixelFormat, RenderingPurpose::ShareableSnapshot, { });
         if (!buffer)
             return createEmpty();
         return WebImage::create(buffer.releaseNonNull());
     }
 
-    auto buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, colorSpace, pixelFormat);
     if (!buffer)
         return createEmpty();
     return WebImage::create(buffer.releaseNonNull());
