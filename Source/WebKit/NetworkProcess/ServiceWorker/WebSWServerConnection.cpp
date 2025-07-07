@@ -240,9 +240,10 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
 
 RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
+    CheckedPtr session = this->session();
     if (loader.parameters().serviceWorkersMode == ServiceWorkersMode::None) {
         if (loader.parameters().request.requester() == ResourceRequestRequester::Fetch && isNavigationRequest(loader.parameters().options.destination)) {
-            if (auto task = ServiceWorkerFetchTask::fromNavigationPreloader(*this, loader, request, session()))
+            if (auto task = ServiceWorkerFetchTask::fromNavigationPreloader(*this, loader, request, session.get()))
                 return task;
         }
         return nullptr;
@@ -302,7 +303,7 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
     }
 
     bool isWorkerReady = worker->isRunning() && worker->state() == ServiceWorkerState::Activated;
-    Ref task = ServiceWorkerFetchTask::create(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *registration, session(), isWorkerReady);
+    Ref task = ServiceWorkerFetchTask::create(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *registration, session.get(), isWorkerReady);
     startFetch(task, *worker);
     return task;
 }
@@ -641,12 +642,13 @@ void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistr
         return;
     }
 
-    if (!session()) {
+    CheckedPtr session = this->session();
+    if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
-    session()->protectedNotificationManager()->subscribeToPushService(registration->scopeURLWithoutFragment(), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = RegistrableDomain(registration->data().scopeURL)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+    session->protectedNotificationManager()->subscribeToPushService(registration->scopeURLWithoutFragment(), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = RegistrableDomain(registration->data().scopeURL)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
         if (RefPtr resourceLoadStatistics = weakThis && weakThis->session() ? weakThis->session()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTFMove(registrableDomain), [result = WTFMove(result), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(WTFMove(result));
@@ -677,12 +679,13 @@ void WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerReg
         return;
     }
 
-    if (!session()) {
+    CheckedPtr session = this->session();
+    if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
-    session()->protectedNotificationManager()->unsubscribeFromPushService(registration->scopeURLWithoutFragment(), subscriptionIdentifier, WTFMove(completionHandler));
+    session->protectedNotificationManager()->unsubscribeFromPushService(registration->scopeURLWithoutFragment(), subscriptionIdentifier, WTFMove(completionHandler));
 #endif
 }
 
@@ -705,12 +708,13 @@ void WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrati
         return;
     }
 
-    if (!session()) {
+    CheckedPtr session = this->session();
+    if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
-    session()->protectedNotificationManager()->getPushSubscription(registration->scopeURLWithoutFragment(), WTFMove(completionHandler));
+    session->protectedNotificationManager()->getPushSubscription(registration->scopeURLWithoutFragment(), WTFMove(completionHandler));
 #endif
 }
 
@@ -733,12 +737,13 @@ void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
         return;
     }
 
-    if (!session()) {
+    CheckedPtr session = this->session();
+    if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
-    session()->protectedNotificationManager()->getPermissionState(SecurityOriginData::fromURL( registration->scopeURLWithoutFragment()), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+    session->protectedNotificationManager()->getPermissionState(SecurityOriginData::fromURL( registration->scopeURLWithoutFragment()), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
         completionHandler(static_cast<uint8_t>(state));
     });
 #endif
@@ -781,6 +786,12 @@ NetworkSession* WebSWServerConnection::session()
 {
     return protectedNetworkProcess()->networkSession(sessionID());
 }
+
+CheckedPtr<NetworkSession> WebSWServerConnection::checkedSession()
+{
+    return session();
+}
+
 
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
 {
@@ -973,12 +984,13 @@ void WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifi
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    if (!session()) {
+    CheckedPtr session = this->session();
+    if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
-    session()->protectedNotificationManager()->getNotifications(registrationURL, tag, WTFMove(completionHandler));
+    session->protectedNotificationManager()->getNotifications(registrationURL, tag, WTFMove(completionHandler));
 }
 #endif
 

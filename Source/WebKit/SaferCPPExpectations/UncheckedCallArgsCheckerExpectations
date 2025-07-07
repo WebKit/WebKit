@@ -7,11 +7,8 @@ NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp
-NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
-NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
 NetworkProcess/SharedWorker/WebSharedWorker.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
-NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 NetworkProcess/cocoa/WebSocketTaskCocoa.mm
 NetworkProcess/storage/LocalStorageManager.cpp
