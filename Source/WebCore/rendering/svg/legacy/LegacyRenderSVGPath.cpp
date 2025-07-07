@@ -86,8 +86,12 @@ FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLin
 {
     float strokeWidth = this->strokeWidth();
 
-    if (!m_markerPositions.isEmpty())
-        strokeBoundingBox.unite(markerRect(repaintRectCalculation, strokeWidth));
+    if (!m_markerPositions.isEmpty()) {
+        FloatRect markerRect = this->markerRect(repaintRectCalculation, strokeWidth);
+        if (!markerRect.isNaN())
+            strokeBoundingBox.unite(markerRect);
+
+    }
 
     if (style().svgStyle().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.

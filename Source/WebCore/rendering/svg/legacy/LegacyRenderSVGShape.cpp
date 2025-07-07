@@ -402,9 +402,11 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
                     strokeBoundingBox.unite(strokeBoundingRect);
             }
         } else {
-            strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+            FloatRect strokeBoundingRect = path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
                 SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-            } }));
+            } });
+            if (!strokeBoundingRect.isNaN())
+                strokeBoundingBox.unite(strokeBoundingRect);
         }
     }
 
