@@ -7934,3 +7934,5 @@ imported/w3c/web-platform-tests/css/css-ui/button-author-level-padding-applies.h
 imported/w3c/web-platform-tests/css/css-ui/select-author-level-padding-applies.html [ Skip ]
 
 webkit.org/b/295527 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Pass Failure ]
+
+webkit.org/b/295548 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
