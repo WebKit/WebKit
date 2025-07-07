@@ -297,8 +297,6 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
 #if ENABLE(WEBDRIVER_BIDI)
 const WebDriverService::BidiCommand WebDriverService::s_bidiCommands[] = {
     { "session.status"_s, &WebDriverService::bidiSessionStatus },
-    { "session.subscribe"_s, &WebDriverService::bidiSessionSubscribe },
-    { "session.unsubscribe"_s, &WebDriverService::bidiSessionUnsubscribe },
 };
 #endif
 
@@ -2737,95 +2735,6 @@ void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Fu
         result->setString("message"_s, "Maximum number of sessions created"_s);
 
     completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, WTF::move(result)));
-}
-
-void WebDriverService::bidiSessionSubscribe(unsigned id, RefPtr<JSON::Object>&&parameters, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
-{
-    // https://w3c.github.io/webdriver-bidi/#command-session-subscribe
-    auto eventNamesJSON = parameters->getArray("events"_s);
-
-    if (!eventNamesJSON) {
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Missing 'events' parameter"_s, id));
-        return;
-    }
-
-    // FIXME: Support event priorities.
-    // https://bugs.webkit.org/show_bug.cgi?id=282436
-    // FIXME: Support by-context subscriptions.
-    // https://bugs.webkit.org/show_bug.cgi?id=282981
-    Vector<String> eventNames;
-    for (auto& eventNameJS : *eventNamesJSON) {
-        auto eventName = eventNameJS->asString();
-        if (!eventName) {
-            completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Invalid event name"_s, id));
-            return;
-        }
-        eventNames.append(eventName);
-    }
-    m_session->subscribeForEvents(eventNames, { }, { }, [id, completionHandler = WTF::move(completionHandler)](CommandResult&& subscriptionResult) mutable {
-        if (subscriptionResult.isError()) {
-            auto errorMessage = subscriptionResult.errorMessage() ? subscriptionResult.errorMessage() : "Failed to subscribe"_s;
-            completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, errorMessage, id));
-            return;
-        }
-        auto result = JSON::Object::create();
-        result->setString("subscription"_s, subscriptionResult.result()->asString());
-
-        completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, WTF::move(result)));
-    });
-}
-
-void WebDriverService::bidiSessionUnsubscribe(unsigned id, RefPtr<JSON::Object>&&parameters, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
-{
-    // https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe
-    auto subscriptions = parameters->getArray("subscriptions"_s);
-    if (!subscriptions) {
-        auto events = parameters->getArray("events"_s);
-        if (!events) {
-            completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Missing either 'events' or 'subscriptions' parameter"_s, id));
-            return;
-        }
-
-        Vector<String> eventNames;
-        for (auto& event : *events) {
-            auto eventName = event->asString();
-            if (!eventName) {
-                completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Invalid event name"_s, id));
-                return;
-            }
-
-            eventNames.append(eventName);
-        }
-
-        m_session->unsubscribeByEventName(eventNames, [id, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
-            if (result.isError()) {
-                auto errorMessage = result.errorMessage() ? result.errorMessage() : "Failed to unsubscribe"_s;
-                completionHandler(WebSocketMessageHandler::Message::fail(result.errorCode(), std::nullopt, errorMessage, id));
-                return;
-            }
-            completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, JSON::Value::null()));
-        });
-        return;
-    }
-
-    Vector<String> subscriptionsIDs;
-    for (auto& subscription : *subscriptions) {
-        auto subscriptionID = subscription->asString();
-        if (!subscriptionID) {
-            completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Invalid subscription ID"_s, id));
-            return;
-        }
-        subscriptionsIDs.append(subscriptionID);
-    }
-
-    m_session->unsubscribeByIDs(WTF::move(subscriptionsIDs), [id, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
-        if (result.isError()) {
-            auto errorMessage = result.errorMessage() ? result.errorMessage() : "Failed to unsubscribe"_s;
-            completionHandler(WebSocketMessageHandler::Message::fail(result.errorCode(), std::nullopt, errorMessage, id));
-            return;
-        }
-        completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, JSON::Value::null()));
-    });
 }
 
 void WebDriverService::clientDisconnected(const WebSocketMessageHandler::Connection& connection)

@@ -49,22 +49,6 @@ namespace WebDriver {
 class CommandResult;
 class SessionHost;
 
-#if ENABLE(WEBDRIVER_BIDI)
-using EventSubscriptionID = String;
-
-struct EventSubscription {
-    EventSubscriptionID id;
-    Vector<AtomString> events;
-    Vector<String> browsingContextIDs;
-    Vector<String> userContextIDs;
-
-    bool isGlobal() const
-    {
-        return browsingContextIDs.isEmpty() && userContextIDs.isEmpty();
-    }
-};
-#endif
-
 class Session :
 #if ENABLE(WEBDRIVER_BIDI)
 public BidiMessageHandler // Inherits RefCounted
@@ -175,9 +159,6 @@ public:
     void takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void(CommandResult&&)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void subscribeForEvents(const Vector<String>& events, Vector<String>&& browsingContextIDs, Vector<String>&& userContextIDs, Function<void(CommandResult&&)>&&);
-    void unsubscribeByIDs(const Vector<EventSubscriptionID>&, Function<void(CommandResult&&)>&&);
-    void unsubscribeByEventName(const Vector<String>& events, Function<void(CommandResult&&)>&&);
     void dispatchBidiMessage(RefPtr<JSON::Object>&&);
     void relayBidiCommand(const String&, unsigned commandId, Function<void(WebSocketMessageHandler::Message&&)>&&);
 #endif
@@ -290,14 +271,7 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     bool m_hasBiDiEnabled { false };
 
-    // https://w3c.github.io/webdriver-bidi/#events
-    HashMap<AtomString, unsigned> m_eventSubscriptionCounts;
-    HashMap<EventSubscriptionID, EventSubscription> m_eventSubscriptions;
     WeakPtr<WebSocketServer> m_bidiServer;
-
-    bool eventIsEnabled(const String&, const Vector<String>&);
-    void emitEvent(const String&, RefPtr<JSON::Object>&&);
-    String toInternalEventName(const String&);
 
     // Actual event handlers
     RefPtr<JSON::Object> processLogEntryAdded(RefPtr<JSON::Object>&&);

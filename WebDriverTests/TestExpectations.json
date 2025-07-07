@@ -3973,7 +3973,12 @@
     "imported/w3c/webdriver/tests/bidi/session/subscribe/invalid.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286763"}},
         "subtests": {
+            "test_params_contexts_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_contexts_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_contexts_invalid_type[42]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_contexts_invalid_type[value3]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_empty": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_events_value_invalid_event_name[]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[None]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
@@ -3993,7 +3998,14 @@
             },
             "test_params_events_value_invalid_type[value4]": {
                 "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/286793"}}
-            }
+            },
+            "test_params_user_context_and_contexts": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/286793"}}
+            },
+            "test_params_user_context_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_user_context_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_user_context_invalid_type[42]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_user_context_invalid_type[value3]": {"expected": {"all": {"status": ["PASS"]}}}
         }
     },
     "imported/w3c/webdriver/tests/bidi/session/subscribe/user_contexts.py": {
@@ -4022,6 +4034,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287930"}},
         "subtests": {
             "test_params_empty": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_events_empty": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[None]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
