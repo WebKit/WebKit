@@ -224,7 +224,17 @@ inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSVa
 inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
 {
     // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
-    builderState.setUsedZoom(builderState.parentStyle().usedZoom());
+    float parentZoom = builderState.parentStyle().usedZoom();
+
+    constexpr float maxSafeZoom = 1000.0f;
+    constexpr float minSafeZoom = 0.001f;
+
+    if (!std::isnormal(parentZoom))
+        RELEASE_ASSERT("Invalid zoom value.");
+
+    parentZoom = std::clamp(parentZoom, minSafeZoom, maxSafeZoom);
+
+    builderState.setUsedZoom(parentZoom);
 }
 
 inline void BuilderCustom::applyInitialZoom(BuilderState& builderState)
