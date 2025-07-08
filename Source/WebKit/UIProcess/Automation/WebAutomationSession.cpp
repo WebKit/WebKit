@@ -2265,8 +2265,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 
     // Parse and validate Automation protocol arguments. By this point, the driver has
     // already performed the steps in §17.3 Processing Actions Requests.
-    if (!inputSources->length())
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'inputSources' was not found or empty."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!inputSources->length(), InvalidParameter, "The parameter 'inputSources' was not found or empty."_s);
 
     HashSet<String> sourceIdSet;
     for (const auto& inputSourceValue : inputSources.get()) {
@@ -2404,11 +2403,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             }
 
             if (auto duration = stateObject->getInteger("duration"_s)) {
-                if (!isValidSafeInteger(duration.value())) {
-                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid duration outside safe integer range"_s);
-                    return;
-                }
-                
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!isValidSafeInteger(duration.value()), InvalidParameter, "Invalid duration outside safe integer range"_s);
                 sourceState.duration = Seconds::fromMilliseconds(*duration);
             }
 
