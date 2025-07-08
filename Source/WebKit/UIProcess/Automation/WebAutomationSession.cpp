@@ -2241,6 +2241,14 @@ static std::optional<char32_t> pressedCharKey(const String& pressedCharKeyString
 #endif // !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
+static bool isValidSafeInteger(int value)
+{
+    // Defined in ECMA 2015, §20.1.2.6 Number.MAX_SAFE_INTEGER.
+    // https://www.ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer
+    int maximumSafeInteger = pow(2.0, 53.0) - 1;
+    return value > maximumSafeInteger * -1 && value <= maximumSafeInteger;
+}
+
 void WebAutomationSession::performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Ref<JSON::Array>&& inputSources, Ref<JSON::Array>&& steps, CommandCallback<void>&& callback)
 {
     // This command implements WebKit support for §17.5 Perform Actions.
@@ -2395,8 +2403,14 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                     sourceState.scrollDelta = WebCore::IntSize(*deltaX, *deltaY);
             }
 
-            if (auto duration = stateObject->getInteger("duration"_s))
+            if (auto duration = stateObject->getInteger("duration"_s)) {
+                if (!isValidSafeInteger(duration.value())) {
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid duration outside safe integer range"_s);
+                    return;
+                }
+                
                 sourceState.duration = Seconds::fromMilliseconds(*duration);
+            }
 
             entries.append(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });
         }
