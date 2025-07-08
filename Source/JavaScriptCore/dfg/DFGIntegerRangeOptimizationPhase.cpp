@@ -1455,7 +1455,8 @@ public:
                 }
 
                 case EnumeratorGetByVal:
-                case GetByVal: {
+                case GetByVal:
+                case GetByValArrayBuffer: {
                     if (node->arrayMode().type() != Array::Undecided)
                         break;
 
@@ -1669,7 +1670,8 @@ private:
             break;
         }
 
-        case GetByVal: {
+        case GetByVal:
+        case GetByValArrayBuffer: {
             ArrayMode arrayMode = node->arrayMode();
             if (!arrayMode.isOutOfBounds()) {
                 switch (arrayMode.type()) {

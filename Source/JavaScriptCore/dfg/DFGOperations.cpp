@@ -2271,6 +2271,17 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Struc
         Structure* structure = globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared); \
         OPERATION_RETURN(scope, reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JS##type##Array>(globalObject, structure, firstValue, 0, std::nullopt))); \
     } \
+    \
+    JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationNew##type##ArrayForRecovery, JSObject*, (JSGlobalObject* globalObject, JSArrayBuffer* arrayBuffer)) \
+    { \
+        VM& vm = globalObject->vm(); \
+        CallFrame* callFrame = DECLARE_CALL_FRAME(vm); \
+        JITOperationPrologueCallFrameTracer tracer(vm, callFrame); \
+        bool isResizableOrGrowableShared = false; \
+        Structure* structure = globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared); \
+        RefPtr buffer = arrayBuffer->impl(); \
+        return JS##type##Array::createForRecovery(vm, structure, WTFMove(buffer)); \
+    } \
 
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_OPERATIONS)
 #undef JSC_TYPED_ARRAY_OPERATIONS

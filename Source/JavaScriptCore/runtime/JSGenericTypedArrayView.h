@@ -99,6 +99,7 @@ public:
     static JSGenericTypedArrayView* create(VM&, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
     static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, RefPtr<typename Adaptor::ViewType>&& impl);
     static JSGenericTypedArrayView* tryCreate(JSGlobalObject*, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
+    static JSGenericTypedArrayView* createForRecovery(VM&, Structure*, RefPtr<ArrayBuffer>&&);
     
     inline size_t byteLength() const;
     inline size_t byteLengthRaw() const;

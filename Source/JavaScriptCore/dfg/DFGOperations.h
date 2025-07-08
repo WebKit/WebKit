@@ -144,30 +144,44 @@ JSC_DECLARE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject*, Structure*
 JSC_DECLARE_JIT_OPERATION(operationNewEmptyArray, char*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObject*, Structure*, int32_t, int32_t, Butterfly*));
+
 JSC_DECLARE_JIT_OPERATION(operationNewInt8ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt8ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewInt8ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt16ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt16ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewInt16ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt32ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt32ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewInt32ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint8ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint8ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewUint8ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint8ClampedArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint8ClampedArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewUint8ClampedArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint16ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint16ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewUint16ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint32ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint32ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewUint32ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat16ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat16ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewFloat16ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewFloat32ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat64ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat64ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewFloat64ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewBigInt64ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewBigInt64ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewBigInt64ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
 JSC_DECLARE_JIT_OPERATION(operationNewBigUint64ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewBigUint64ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewBigUint64ArrayForRecovery, JSObject*, (JSGlobalObject*, JSArrayBuffer*));
+
 JSC_DECLARE_JIT_OPERATION(operationNewTypedArrayBuffer, JSObject*, (JSGlobalObject*, Structure*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlobalObject*, Structure*, intptr_t));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM*, Structure*));
@@ -522,6 +536,41 @@ inline auto operationNewTypedArrayWithOneArgumentForType(TypedArrayType type) ->
         return operationNewBigInt64ArrayWithOneArgument;
     case TypeBigUint64:
         return operationNewBigUint64ArrayWithOneArgument;
+    case NotTypedArray:
+    case TypeDataView:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+inline auto operationNewTypedArrayForRecovery(TypedArrayType type) -> decltype(&operationNewInt8ArrayForRecovery)
+{
+    switch (type) {
+    case TypeInt8:
+        return operationNewInt8ArrayForRecovery;
+    case TypeInt16:
+        return operationNewInt16ArrayForRecovery;
+    case TypeInt32:
+        return operationNewInt32ArrayForRecovery;
+    case TypeUint8:
+        return operationNewUint8ArrayForRecovery;
+    case TypeUint8Clamped:
+        return operationNewUint8ClampedArrayForRecovery;
+    case TypeUint16:
+        return operationNewUint16ArrayForRecovery;
+    case TypeUint32:
+        return operationNewUint32ArrayForRecovery;
+    case TypeFloat16:
+        return operationNewFloat16ArrayForRecovery;
+    case TypeFloat32:
+        return operationNewFloat32ArrayForRecovery;
+    case TypeFloat64:
+        return operationNewFloat64ArrayForRecovery;
+    case TypeBigInt64:
+        return operationNewBigInt64ArrayForRecovery;
+    case TypeBigUint64:
+        return operationNewBigUint64ArrayForRecovery;
     case NotTypedArray:
     case TypeDataView:
         break;

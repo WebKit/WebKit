@@ -239,6 +239,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomSpread:
     case PhantomClonedArguments:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
@@ -431,6 +432,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewAsyncFunction:
     case NewBoundFunction:
     case NewTypedArray:
+    case NewTypedArrayFromSimpleArrayBuffer:
     case NewTypedArrayBuffer:
     case ThrowStaticError:
     case GetPropertyEnumerator:
@@ -566,6 +568,10 @@ bool doesGC(Graph& graph, Node* node)
         return true;
 
     case GetIndexedPropertyStorage:
+    case GetArrayBufferPropertyStorage:
+        return false;
+
+    case GetByValArrayBuffer:
         return false;
 
     case GetByVal:
@@ -585,6 +591,10 @@ bool doesGC(Graph& graph, Node* node)
         return true;
 
     case ExtractFromTuple:
+        return false;
+
+    case PutByValArrayBuffer:
+    case PutByValAliasArrayBuffer:
         return false;
 
     case PutByValDirect:

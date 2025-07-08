@@ -820,6 +820,21 @@ public:
         children = AdjacencyList();
     }
 
+    void convertToNewTypedArrayFromSimpleArrayBuffer(RegisteredStructure structure)
+    {
+        ASSERT(m_op == NewTypedArray);
+        setOpAndDefaultFlags(NewTypedArrayFromSimpleArrayBuffer);
+        child1().setUseKind(KnownCellUse);
+        m_opInfo = structure;
+    }
+
+    void convertToPhantomNewTypedArrayFromSimpleArrayBuffer()
+    {
+        ASSERT(m_op == NewTypedArrayFromSimpleArrayBuffer);
+        setOpAndDefaultFlags(PhantomNewTypedArrayFromSimpleArrayBuffer);
+        children = AdjacencyList();
+    }
+
     void convertPhantomToPhantomLocal()
     {
         ASSERT(m_op == Phantom && (child1()->op() == Phi || child1()->op() == SetLocal || child1()->op() == SetArgumentDefinitely));
@@ -2060,6 +2075,7 @@ public:
         case TryGetById:
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic:
         case GetByValWithThis:
         case GetByValWithThisMegamorphic:
@@ -2263,10 +2279,13 @@ public:
         case EnumeratorGetByVal:
         case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -2299,12 +2318,15 @@ public:
         switch (op()) {
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic:
             return 2;
         case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
             return 3;
         case AtomicsAdd:
@@ -2412,6 +2434,7 @@ public:
         case NewSet:
         case NewArrayWithSizeAndStructure:
         case NewTypedArrayBuffer:
+        case NewTypedArrayFromSimpleArrayBuffer:
             return true;
         default:
             return false;
@@ -2615,6 +2638,7 @@ public:
         case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomNewRegExp:
+        case PhantomNewTypedArrayFromSimpleArrayBuffer:
             return true;
         default:
             return false;
@@ -2659,10 +2683,13 @@ public:
         case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
         case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic:
         case MultiGetByVal:
         case MultiPutByVal:
@@ -2761,7 +2788,9 @@ public:
         case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
         case PutByValDirect:
         case PutByValWithThis:
@@ -2790,7 +2819,9 @@ public:
         case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
         case PutByValDirect:
         case EnumeratorPutByVal:

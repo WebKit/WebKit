@@ -57,7 +57,11 @@ public:
     // This is the default DOM unwrapping. It calls toUnsharedArrayBuffer().
     static ArrayBuffer* toWrapped(VM&, JSValue);
     static ArrayBuffer* toWrappedAllowShared(VM&, JSValue);
-    
+    static constexpr ptrdiff_t offsetOfImpl()
+    {
+        return OBJECT_OFFSETOF(JSArrayBuffer, m_impl);
+    }
+
 private:
     JSArrayBuffer(VM&, Structure*, RefPtr<ArrayBuffer>&&);
     void finishCreation(VM&, JSGlobalObject*);

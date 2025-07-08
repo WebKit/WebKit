@@ -516,6 +516,7 @@ private:
         case MultiGetByVal:
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsArrayIndex);
@@ -567,6 +568,7 @@ private:
         case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValMegamorphic: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsArrayIndex);

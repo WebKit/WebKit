@@ -430,6 +430,9 @@ public:
                         break;
                     }
                     break;
+                case GetByValArrayBuffer:
+                    VALIDATE((node), isTypedView(node->arrayMode().typedArrayType()));
+                    break;
                 case WeakMapGet:
                     VALIDATE((node), node->child2().useKind() == CellUse || node->child2().useKind() == ObjectUse || node->child2().useKind() == SymbolUse);
                     break;
@@ -685,6 +688,7 @@ private:
                 case PhantomNewAsyncGeneratorFunction:
                 case PhantomCreateActivation:
                 case PhantomNewRegExp:
+                case PhantomNewTypedArrayFromSimpleArrayBuffer:
                 case GetMyArgumentByVal:
                 case GetMyArgumentByValOutOfBounds:
                 case PutHint:
@@ -909,6 +913,7 @@ private:
                 case PhantomCreateRest:
                 case PhantomClonedArguments:
                 case PhantomNewRegExp:
+                case PhantomNewTypedArrayFromSimpleArrayBuffer:
                 case MovHint:
                 case Upsilon:
                 case ForwardVarargs:

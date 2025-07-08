@@ -2028,25 +2028,21 @@ private:
             watchHavingABadTime(node);
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateInt52()) {
                 fixEdge<Int52RepUse>(node->child1());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 
             if (!m_graph.hasExitSite(node->origin.semantic, BadType)) {
                 if (node->child1()->shouldSpeculateInt32OrOther() && !node->child1()->shouldSpeculateOther()) {
                     fixEdge<Int32Use>(node->child1());
-                    node->clearFlags(NodeMustGenerate);
                     break;
                 }
 
                 if (node->child1()->shouldSpeculateInt52OrOther() && !node->child1()->shouldSpeculateOther()) {
                     fixEdge<Int52RepUse>(node->child1());
-                    node->clearFlags(NodeMustGenerate);
                     break;
                 }
             }
@@ -2622,6 +2618,7 @@ private:
         case Upsilon:
         case EntrySwitch:
         case GetIndexedPropertyStorage:
+        case GetArrayBufferPropertyStorage:
         case ResolveRope:
         case LastNodeType:
         case CheckTierUpInLoop:
@@ -2655,6 +2652,7 @@ private:
         case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
         case PhantomNewRegExp:
+        case PhantomNewTypedArrayFromSimpleArrayBuffer:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case GetVectorLength:
@@ -2677,6 +2675,7 @@ private:
         case RegExpExecNonGlobalOrSticky:
         case RegExpMatchFastGlobal:
         case GetUndetachedTypeArrayLength:
+        case NewTypedArrayFromSimpleArrayBuffer:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
@@ -3527,6 +3526,9 @@ private:
         case CallCustomAccessorSetter:
         case MultiGetByVal:
         case MultiPutByVal:
+        case GetByValArrayBuffer:
+        case PutByValArrayBuffer:
+        case PutByValAliasArrayBuffer:
             break;
 #else // not ASSERT_ENABLED
         default:

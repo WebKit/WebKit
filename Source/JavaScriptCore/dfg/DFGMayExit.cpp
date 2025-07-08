@@ -112,6 +112,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NukeStructureAndSetButterfly:
     case GetButterfly:
     case GetIndexedPropertyStorage:
+    case GetArrayBufferPropertyStorage:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByStatus:
@@ -366,6 +367,11 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         default:
             return Exits;
         }
+        break;
+    }
+
+    case NewTypedArrayFromSimpleArrayBuffer: {
+        result = ExitsForExceptions;
         break;
     }
 

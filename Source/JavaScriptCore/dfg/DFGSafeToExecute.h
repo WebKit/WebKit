@@ -344,6 +344,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NumberIsFinite:
     case NumberIsSafeInteger:
     case StringIndexOf:
+    case GetArrayBufferPropertyStorage:
         return true;
 
     case GlobalIsFinite:
@@ -400,8 +401,13 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         // to capture "profiling" at the point in control flow here the user put them.
         return false;
 
-    case EnumeratorGetByVal:
     case GetByVal:
+        return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.child(node, 0)));
+
+    case GetByValArrayBuffer:
+        return true;
+
+    case EnumeratorGetByVal:
     case GetByValMegamorphic:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
@@ -434,8 +440,12 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetTypedArrayByteOffsetAsInt52:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
 
-    case PutByValDirect:
+    case PutByValArrayBuffer:
+    case PutByValAliasArrayBuffer:
+        return true;
+
     case PutByVal:
+    case PutByValDirect:
     case PutByValAlias:
     case PutByValMegamorphic:
         return node->arrayMode().modeForPut().alreadyChecked(
@@ -719,6 +729,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
     case NewTypedArray:
+    case NewTypedArrayFromSimpleArrayBuffer:
     case NewTypedArrayBuffer:
     case Unreachable:
     case ClearCatchLocals:
@@ -740,6 +751,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
     case PutHint:
     case MaterializeNewObject:
     case MaterializeNewArrayWithConstantSize:

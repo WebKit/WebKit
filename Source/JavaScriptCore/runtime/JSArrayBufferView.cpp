@@ -159,7 +159,8 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure
         ASSERT(!isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()));
 #endif
 
-    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset);
+    if (!arrayBuffer->isDetached())
+        m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset);
 }
 
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)

@@ -141,7 +141,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Array, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject };
+    enum class Kind { Escaped, Array, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject, TypedArray };
 
     using Fields = UncheckedKeyHashMap<PromotedLocationDescriptor, Node*>;
 
@@ -282,6 +282,11 @@ public:
         return m_kind == Kind::RegExpObject;
     }
 
+    bool isTypedArrayAllocation() const
+    {
+        return m_kind == Kind::TypedArray;
+    }
+
     friend bool operator==(const Allocation&, const Allocation&) = default;
 
     void dump(PrintStream& out) const
@@ -330,6 +335,10 @@ public:
 
         case Kind::RegExpObject:
             out.print("RegExpObject"_s);
+            break;
+
+        case Kind::TypedArray:
+            out.print("TypedArray"_s);
             break;
         }
         out.print("Allocation("_s);
@@ -1145,6 +1154,13 @@ private:
             break;
         }
 
+        case NewTypedArrayFromSimpleArrayBuffer: {
+            target = &m_heap.newAllocation(node, Allocation::Kind::TypedArray);
+            writes.add(TypedArrayStructurePLoc, LazyNode(m_graph.freeze(node->structure().get())));
+            writes.add(TypedArraySimpleArrayBufferPLoc, LazyNode(node->child1().node()));
+            break;
+        }
+
         case CreateActivation: {
             if (isStillValid(node->castOperand<SymbolTable*>())) {
                 m_heap.escape(node->child1().node());
@@ -1906,6 +1922,16 @@ escapeChildren:
                 OpInfo(regExp));
         }
 
+        case Allocation::Kind::TypedArray: {
+            RegisteredStructure structure = allocation.identifier()->structure();
+            return m_graph.addNode(
+                allocation.identifier()->prediction(), NewTypedArrayFromSimpleArrayBuffer,
+                where->origin.withSemantic(
+                    allocation.identifier()->origin.semantic),
+                OpInfo(structure));
+        }
+
+
         default:
             DFG_CRASH(m_graph, allocation.identifier(), "Bad allocation kind");
         }
@@ -2298,6 +2324,10 @@ escapeChildren:
                         node->convertToPhantomNewRegExp();
                         break;
 
+                    case NewTypedArrayFromSimpleArrayBuffer:
+                        node->convertToPhantomNewTypedArrayFromSimpleArrayBuffer();
+                        break;
+
                     default:
                         node->remove(m_graph);
                         break;
@@ -2661,6 +2691,20 @@ escapeChildren:
                 node->child1() = Edge(m_bottom);
             else
                 node->child1() = Edge(value);
+            break;
+        }
+
+        case NewTypedArrayFromSimpleArrayBuffer: {
+            Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
+            ASSERT(locations.size() == 2);
+
+            PromotedHeapLocation structure(TypedArrayStructurePLoc, allocation.identifier());
+            ASSERT_UNUSED(structure, locations.contains(structure));
+
+            PromotedHeapLocation arrayBuffer(TypedArraySimpleArrayBufferPLoc, allocation.identifier());
+            ASSERT(locations.contains(arrayBuffer));
+            Node* value = resolve(block, arrayBuffer);
+            node->child1() = Edge(value, KnownCellUse);
             break;
         }
 

@@ -231,6 +231,11 @@ private:
             }
             
             switch (m_node->op()) {
+            case PutByValArrayBuffer:
+            case PutByValAliasArrayBuffer:
+                // Does nothing requring barriers.
+                break;
+
             case PutByValDirect:
             case PutByVal:
             case PutByValAlias: {
@@ -386,6 +391,7 @@ private:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewTypedArray:
+            case NewTypedArrayFromSimpleArrayBuffer:
             case NewTypedArrayBuffer:
             case NewRegExp:
             case NewRegExpUntyped:

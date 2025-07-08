@@ -1276,7 +1276,8 @@ private:
         case GetButterfly:
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
-        case ReallocatePropertyStorage: {
+        case ReallocatePropertyStorage:
+        case GetArrayBufferPropertyStorage: {
             setPrediction(SpecOther);
             break;
         }
@@ -1324,6 +1325,7 @@ private:
             break;
 
         case NewInternalFieldObject:
+        case NewTypedArrayFromSimpleArrayBuffer:
             setPrediction(speculationFromStructure(m_currentNode->structure().get()));
             break;
             
@@ -1350,7 +1352,7 @@ private:
         case Spread:
             setPrediction(SpecCellOther);
             break;
-            
+
         case NewTypedArray: {
             setPrediction(speculationFromTypedArrayType(m_currentNode->typedArrayType()));
             break;
@@ -1607,6 +1609,7 @@ private:
         case PhantomNewInternalFieldObject:
         case PhantomClonedArguments:
         case PhantomNewRegExp:
+        case PhantomNewTypedArrayFromSimpleArrayBuffer:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case PutHint:
@@ -1625,7 +1628,10 @@ private:
         case GetRegExpObjectLastIndex:
         case SetRegExpObjectLastIndex:
         case RecordRegExpCachedResult:
-        case CallDOM: {
+        case CallDOM:
+        case GetByValArrayBuffer:
+        case PutByValArrayBuffer:
+        case PutByValAliasArrayBuffer: {
             // This node should never be visible at this stage of compilation.
             DFG_CRASH(m_graph, m_currentNode, "Unexpected node during prediction propagation");
             break;

@@ -145,6 +145,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case EnumeratorInByVal:
         case EnumeratorHasOwnProperty:
         case GetIndexedPropertyStorage:
+        case GetArrayBufferPropertyStorage:
         case DataViewGetByteLength:
         case DataViewGetByteLengthAsInt52:
         case GetArrayLength:
@@ -157,9 +158,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
+        case PutByValArrayBuffer:
         case PutByValAlias:
+        case PutByValAliasArrayBuffer:
         case PutByValMegamorphic:
         case GetByVal:
+        case GetByValArrayBuffer:
         case GetByValMegamorphic:
         case MultiGetByVal:
         case MultiPutByVal:
@@ -1020,6 +1024,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
         
     case GetByVal:
+    case GetByValArrayBuffer:
     case GetByValMegamorphic: {
         ArrayMode mode = node->arrayMode();
         LocationKind indexedPropertyLoc = indexedPropertyLocForResultType(node->result());
@@ -1140,7 +1145,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             } else {
                 if (mode.isOutOfBounds())
                     indexedPropertyLoc = indexedPropertyLocToOutOfBoundsSaneChain(indexedPropertyLoc);
-                def(HeapLocation(indexedPropertyLoc, TypedArrayProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                def(HeapLocation(indexedPropertyLoc, TypedArrayProperties, graph.child(node, 0), graph.child(node, 1)), LazyNode(node));
             }
             return;
         // We should not get an AnyTypedArray in a GetByVal as AnyTypedArray is only created from intrinsics, which
@@ -1230,7 +1235,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case PutByValDirect:
     case PutByVal:
+    case PutByValArrayBuffer:
     case PutByValAlias:
+    case PutByValAliasArrayBuffer:
     case PutByValMegamorphic: {
         ArrayMode mode = node->arrayMode();
         Node* base = graph.varArgChild(node, 0).node();
@@ -1607,6 +1614,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(IndexedPropertyStorageLoc, MiscFields, node->child1()), LazyNode(node));
         return;
 
+    case GetArrayBufferPropertyStorage:
+        read(MiscFields);
+        def(HeapLocation(IndexedPropertyStorageLoc, MiscFields, node->child1()), LazyNode(node));
+        return;
+
     case ResolveRope:
         def(PureValue(node));
         return;
@@ -1947,6 +1959,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         break;
 
+    case NewTypedArrayFromSimpleArrayBuffer:
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        return;
+
     case NewArrayWithSpread: {
         read(HeapObjectCount);
         // This appears to read nothing because it's only reading immutable butterfly data.
@@ -2153,6 +2170,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case PhantomNewRegExp:
+    case PhantomNewTypedArrayFromSimpleArrayBuffer:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
