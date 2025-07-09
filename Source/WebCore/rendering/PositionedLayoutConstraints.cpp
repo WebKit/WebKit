@@ -451,8 +451,6 @@ void PositionedLayoutConstraints::computeInlineStaticDistance(const RenderBox& r
             if (!renderBox)
                 continue;
             staticPosition += haveOrthogonalWritingModes ? renderBox->logicalTop() : renderBox->logicalLeft();
-            if (renderBox->isInFlowPositioned())
-                staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
         }
         m_insetBefore = Style::InsetEdge::Fixed { staticPosition };
     } else {
