@@ -28,7 +28,6 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommonData.h"
-#include "FTLLazySlowPath.h"
 #include "FTLOSRExit.h"
 #include "JITCode.h"
 #include "JITOpaqueByproducts.h"
@@ -87,7 +86,6 @@ public:
     Vector<OSRExit> m_osrExit;
     RegisterAtOffsetList m_calleeSaveRegisters;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
-    Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:
     CodeRef<JSEntryPtrTag> m_b3Code;

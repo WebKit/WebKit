@@ -969,7 +969,7 @@ void Output::addIncomingToPhi(LValue phi, ValueFromBlock value)
 void Output::entrySwitch(const Vector<LBasicBlock>& cases)
 {
     RELEASE_ASSERT(cases.size() == m_proc.numEntrypoints());
-    m_block->appendNew<Value>(m_proc, EntrySwitch, origin());
+    m_block->appendNew<Value>(m_proc, B3::EntrySwitch, origin());
     for (LBasicBlock block : cases)
         m_block->appendSuccessor(FrequentedBlock(block));
 }

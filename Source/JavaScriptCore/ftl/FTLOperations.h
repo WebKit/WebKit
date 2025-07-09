@@ -36,13 +36,9 @@ struct UnlinkedStringJumpTable;
 
 namespace FTL {
 
-class LazySlowPath;
-
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*));
-
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame*, unsigned));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationSwitchStringAndGetIndex, UCPUStrictInt32, (JSGlobalObject*, const UnlinkedStringJumpTable*, JSString*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTypeOfObjectAsTypeofType, UCPUStrictInt32, (JSGlobalObject*, JSCell*));

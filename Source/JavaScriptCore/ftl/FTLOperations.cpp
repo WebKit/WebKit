@@ -33,7 +33,6 @@
 #include "CommonSlowPaths.h"
 #include "DirectArguments.h"
 #include "FTLJITCode.h"
-#include "FTLLazySlowPath.h"
 #include "FrameTracers.h"
 #include "InlineCallFrame.h"
 #include "JSArrayIterator.h"
@@ -794,23 +793,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTypeOfObjectAsTypeofType, UCPUStrictI
     if (object->isCallable())
         return toUCPUStrictInt32(static_cast<int32_t>(TypeofType::Function));
     return toUCPUStrictInt32(static_cast<int32_t>(TypeofType::Object));
-}
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame* callFrame, unsigned index))
-{
-    VM& vm = callFrame->deprecatedVM();
-    // Don't need an ActiveScratchBufferScope here because we DeferGCForAWhile.
-
-    // We cannot GC. We've got pointers in evil places.
-    DeferGCForAWhile deferGC(vm);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    JITCode* jitCode = codeBlock->jitCode()->ftl();
-
-    LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
-    lazySlowPath.generate(codeBlock);
-
-    return lazySlowPath.stub().code().taggedPtr();
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckEliminationErrorAndCrash, NO_RETURN_DUE_TO_CRASH, void, (intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds))

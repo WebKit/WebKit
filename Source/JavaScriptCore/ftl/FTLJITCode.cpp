@@ -141,7 +141,6 @@ void JITCode::shrinkToFit()
     common.shrinkToFit();
     m_osrExit.shrinkToFit();
     osrExitDescriptors.shrinkToFit();
-    lazySlowPaths.shrinkToFit();
 }
 
 void JITCode::validateReferences(const TrackedReferences& trackedReferences)
@@ -164,19 +163,12 @@ RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(C
     return { };
 }
 
-std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
+std::optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
 {
     for (OSRExit& exit : m_osrExit) {
         if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
             if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
                 return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
-        }
-    }
-
-    for (std::unique_ptr<LazySlowPath>& lazySlowPath : lazySlowPaths) {
-        if (ExecutableMemoryHandle* handle = lazySlowPath->stub().executableMemory()) {
-            if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
-                return std::optional<CodeOrigin>(codeBlock->codeOrigin(lazySlowPath->callSiteIndex()));
         }
     }
 
