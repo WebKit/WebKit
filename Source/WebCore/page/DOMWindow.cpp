@@ -45,7 +45,6 @@
 #include "ScheduledAction.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
-#include "WebKitPoint.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -717,22 +716,6 @@ ExceptionOr<RefPtr<CSSRuleList>> DOMWindow::getMatchedCSSRules(Element* element,
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->getMatchedCSSRules(element, pseudoElt, authorOnly);
-}
-
-ExceptionOr<RefPtr<WebKitPoint>> DOMWindow::webkitConvertPointFromPageToNode(Node* node, const WebKitPoint* point) const
-{
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
-    if (!localThis)
-        return Exception { ExceptionCode::SecurityError };
-    return localThis->webkitConvertPointFromPageToNode(node, point);
-}
-
-ExceptionOr<RefPtr<WebKitPoint>> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* point) const
-{
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
-    if (!localThis)
-        return Exception { ExceptionCode::SecurityError };
-    return localThis->webkitConvertPointFromNodeToPage(node, point);
 }
 
 ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& node, const String& selectors)

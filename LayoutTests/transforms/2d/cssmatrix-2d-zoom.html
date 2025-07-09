@@ -35,10 +35,10 @@ function runTest() {
         var id2 = "b";
         var element1 = document.getElementById(id1);
         var element2 = document.getElementById(id2);
-        var x1 = webkitConvertPointFromNodeToPage(element1, new WebKitPoint(0,0)).x;
-        var y1 = webkitConvertPointFromNodeToPage(element1, new WebKitPoint(0,0)).y;
-        var x2 = webkitConvertPointFromNodeToPage(element2, new WebKitPoint(0,0)).x;
-        var y2 = webkitConvertPointFromNodeToPage(element2, new WebKitPoint(0,0)).y;
+        var x1 = element1.getBoundingClientRect().left;
+        var y1 = element1.getBoundingClientRect().top;
+        var x2 = element2.getBoundingClientRect().left;
+        var y2 = element2.getBoundingClientRect().top;
 
         var resultString = '';
         if (x1 == x2 && y1 == y2) {
