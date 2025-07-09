@@ -218,7 +218,7 @@ ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, double value)
     if (canBeStrictInt32(value))
         appendNumber(vm, static_cast<int32_t>(value));
     else
-        append8Bit(vm.numericStrings.add(value));
+        append8Bit(vm.numericStrings.add(vm, value));
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

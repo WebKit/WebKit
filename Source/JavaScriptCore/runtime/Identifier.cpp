@@ -52,7 +52,7 @@ Identifier Identifier::from(VM& vm, int value)
 
 Identifier Identifier::from(VM& vm, double value)
 {
-    return Identifier(vm, vm.numericStrings.add(value));
+    return Identifier(vm, vm.numericStrings.add(vm, value));
 }
 
 void Identifier::dump(PrintStream& out) const

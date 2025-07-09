@@ -486,6 +486,13 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
     return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, TrailingZerosPolicy::Keep)));
 }
 
+void NumericStrings::doubleToStringCacheSlow()
+{
+    auto cache = makeUnique<DoubleToStringCache>();
+    WTF::storeStoreFence();
+    m_doubleCache = WTFMove(cache);
+}
+
 JSString* NumericStrings::addJSString(VM& vm, int i)
 {
     if (static_cast<unsigned>(i) < cacheSize) {
@@ -509,16 +516,7 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
 
 JSString* NumericStrings::addJSString(VM& vm, double value)
 {
-    auto& entry = lookup(value);
-    if (value != entry.key || entry.value.isNull()) {
-        entry.key = value;
-        entry.value = String::number(value);
-    } else {
-        if (entry.jsString)
-            return entry.jsString;
-    }
-    entry.jsString = jsNontrivialString(vm, entry.value);
-    return entry.jsString;
+    return doubleToStringCache().addJSString(vm, value);
 }
 
 void NumericStrings::initializeSmallIntCache(VM& vm)
@@ -587,7 +585,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
         return int32ToString(vm, static_cast<int32_t>(value), radix);
 
     if (radix == 10)
-        return jsNontrivialString(vm, vm.numericStrings.add(static_cast<double>(value)));
+        return jsNontrivialString(vm, vm.numericStrings.add(vm, static_cast<double>(value)));
 
     // Position the decimal point at the center of the string, set
     // the startOfResultString pointer to point at the decimal point.
