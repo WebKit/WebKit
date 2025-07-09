@@ -336,7 +336,7 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long protocol
     if (!!out_opt_columnNames)
         protocol_jsonMessage->setArray("columnNames"_s, out_opt_columnNames.releaseNonNull());
     if (!!out_opt_notes)
-        protocol_jsonMessage->setString("notes"_s, out_opt_notes);
+        protocol_jsonMessage->setString("notes"_s, WTFMove(out_opt_notes));
     if (!!out_opt_timestamp)
         protocol_jsonMessage->setDouble("timestamp"_s, *out_opt_timestamp);
     if (!!out_opt_values)
@@ -352,7 +352,7 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long protocol
     if (!!out_opt_alternateColors)
         protocol_jsonMessage->setArray("alternateColors"_s, out_opt_alternateColors.releaseNonNull());
     if (!!out_opt_printColor)
-        protocol_jsonMessage->setString("printColor"_s, out_opt_printColor);
+        protocol_jsonMessage->setString("printColor"_s, WTFMove(out_opt_printColor));
     m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
 }
 
@@ -385,7 +385,7 @@ void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long protoco
         if (!!out_opt_columnNames)
             protocol_jsonMessage->setArray("columnNames"_s, out_opt_columnNames.releaseNonNull());
         if (!!out_opt_notes)
-            protocol_jsonMessage->setString("notes"_s, out_opt_notes);
+            protocol_jsonMessage->setString("notes"_s, WTFMove(out_opt_notes));
         if (!!out_opt_timestamp)
             protocol_jsonMessage->setDouble("timestamp"_s, *out_opt_timestamp);
         if (!!out_opt_values)
@@ -401,7 +401,7 @@ void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long protoco
         if (!!out_opt_alternateColors)
             protocol_jsonMessage->setArray("alternateColors"_s, out_opt_alternateColors.releaseNonNull());
         if (!!out_opt_printColor)
-            protocol_jsonMessage->setString("printColor"_s, out_opt_printColor);
+            protocol_jsonMessage->setString("printColor"_s, WTFMove(out_opt_printColor));
         backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     });
 }
@@ -433,7 +433,7 @@ void DatabaseBackendDispatcher::executeSQLSync(long protocol_requestId, RefPtr<J
 
     auto protocol_jsonMessage = JSON::Object::create();
     protocol_jsonMessage->setArray("columnNames"_s, WTFMove(out_columnNames));
-    protocol_jsonMessage->setString("notes"_s, out_notes);
+    protocol_jsonMessage->setString("notes"_s, WTFMove(out_notes));
     protocol_jsonMessage->setDouble("timestamp"_s, out_timestamp);
     protocol_jsonMessage->setObject("values"_s, WTFMove(out_values));
     protocol_jsonMessage->setValue("payload"_s, WTFMove(out_payload));
@@ -441,7 +441,7 @@ void DatabaseBackendDispatcher::executeSQLSync(long protocol_requestId, RefPtr<J
     protocol_jsonMessage->setObject("sqlError"_s, WTFMove(out_sqlError));
     protocol_jsonMessage->setArray("alternateColors"_s, WTFMove(out_alternateColors));
     protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
-    protocol_jsonMessage->setString("printColor"_s, out_printColor);
+    protocol_jsonMessage->setString("printColor"_s, WTFMove(out_printColor));
     m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
 }
 
@@ -472,7 +472,7 @@ void DatabaseBackendDispatcher::executeSQLAsync(long protocol_requestId, RefPtr<
 
         auto protocol_jsonMessage = JSON::Object::create();
         protocol_jsonMessage->setArray("columnNames"_s, WTFMove(out_columnNames));
-        protocol_jsonMessage->setString("notes"_s, out_notes);
+        protocol_jsonMessage->setString("notes"_s, WTFMove(out_notes));
         protocol_jsonMessage->setDouble("timestamp"_s, out_timestamp);
         protocol_jsonMessage->setObject("values"_s, WTFMove(out_values));
         protocol_jsonMessage->setValue("payload"_s, WTFMove(out_payload));
@@ -480,7 +480,7 @@ void DatabaseBackendDispatcher::executeSQLAsync(long protocol_requestId, RefPtr<
         protocol_jsonMessage->setObject("sqlError"_s, WTFMove(out_sqlError));
         protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
         protocol_jsonMessage->setArray("alternateColors"_s, WTFMove(out_alternateColors));
-        protocol_jsonMessage->setString("printColor"_s, out_printColor);
+        protocol_jsonMessage->setString("printColor"_s, WTFMove(out_printColor));
         backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     });
 }

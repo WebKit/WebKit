@@ -341,9 +341,9 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
     protocol_jsonMessage->setString("enumRequired"_s, Protocol::TestHelpers::getEnumConstantValue(out_enumRequired));
     if (!!out_opt_enumOptional)
         protocol_jsonMessage->setString("enumOptional"_s, Protocol::TestHelpers::getEnumConstantValue(*out_opt_enumOptional));
-    protocol_jsonMessage->setString("returnRequired"_s, out_returnRequired);
+    protocol_jsonMessage->setString("returnRequired"_s, WTFMove(out_returnRequired));
     if (!!out_opt_returnOptional)
-        protocol_jsonMessage->setString("returnOptional"_s, out_opt_returnOptional);
+        protocol_jsonMessage->setString("returnOptional"_s, WTFMove(out_opt_returnOptional));
     m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
 }
 

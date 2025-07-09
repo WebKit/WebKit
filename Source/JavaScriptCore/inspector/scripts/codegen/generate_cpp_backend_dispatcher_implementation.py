@@ -311,7 +311,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 parameter_value = parameter_value + '.releaseNonNull()'
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
                 parameter_value = '*' + parameter_value
-            elif CppGenerator.should_move_argument(_type, parameter.is_optional):
+            elif CppGenerator.should_move_argument(_type, parameter.is_optional) or _type.raw_name() == 'string':
                 parameter_value = 'WTFMove(%s)' % parameter_value
 
             param_args = {
