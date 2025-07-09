@@ -5,8 +5,6 @@ NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
 NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 NetworkProcess/cocoa/WebSocketTaskCocoa.mm
-NetworkProcess/storage/NetworkStorageManager.cpp
-NetworkProcess/storage/SQLiteStorageArea.cpp
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/Connection.cpp
 Platform/cocoa/_WKWebViewTextInputNotifications.mm

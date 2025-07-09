@@ -46,6 +46,7 @@ public:
 
     SQLiteStatement* get() { return m_statement.get(); }
     SQLiteStatement* operator->() { return m_statement.get(); }
+    WEBCORE_EXPORT CheckedPtr<SQLiteStatement> checkedGet();
 
 private:
     CheckedPtr<SQLiteStatement> m_statement;

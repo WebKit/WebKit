@@ -771,7 +771,7 @@ void NetworkStorageManager::estimate(const WebCore::ClientOrigin& origin, Comple
 {
     assertIsCurrent(workQueue());
 
-    completionHandler(originStorageManager(origin).estimate());
+    completionHandler(checkedOriginStorageManager(origin)->estimate());
 }
 
 void NetworkStorageManager::resetStoragePersistedState(CompletionHandler<void()>&& completionHandler)
@@ -840,7 +840,7 @@ void NetworkStorageManager::fetchSessionStorageForWebPage(WebPageProxyIdentifier
         StorageNamespaceIdentifier storageNameSpaceIdentifier { pageIdentifier.toUInt64() };
 
         for (auto& [origin, originStorageManager] : m_originStorageManagers) {
-            auto* sessionStorageManager = originStorageManager->existingSessionStorageManager();
+            auto* sessionStorageManager = CheckedRef { *originStorageManager }->existingSessionStorageManager();
             if (!sessionStorageManager)
                 continue;
 
@@ -1480,7 +1480,7 @@ void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, C
         if (m_originQuotaRatioEnabled != enabled) {
             m_originQuotaRatioEnabled = enabled;
             for (auto& [origin, manager] : m_originStorageManagers)
-                manager->protectedQuotaManager()->updateParametersForTesting(originQuotaManagerParameters(origin));
+                CheckedRef { *manager }->protectedQuotaManager()->updateParametersForTesting(originQuotaManagerParameters(origin));
         }
 
         RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
@@ -1616,17 +1616,19 @@ void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connecti
         return;
 
     auto connectionIdentifier = connection.uniqueID();
+    auto originStorageManager = CheckedRef { *(iterator->value) };
     switch (type) {
     case WebCore::StorageType::Local:
-        if (auto localStorageManager = iterator->value->existingLocalStorageManager())
+        if (auto localStorageManager = originStorageManager->existingLocalStorageManager())
             localStorageManager->cancelConnectToLocalStorageArea(connectionIdentifier);
         break;
     case WebCore::StorageType::TransientLocal:
-        if (auto localStorageManager = iterator->value->existingLocalStorageManager())
+        if (auto localStorageManager = originStorageManager->existingLocalStorageManager())
             localStorageManager->cancelConnectToTransientLocalStorageArea(connectionIdentifier);
+
         break;
     case WebCore::StorageType::Session:
-        if (auto sessionStorageManager = iterator->value->existingSessionStorageManager()) {
+        if (auto sessionStorageManager = originStorageManager->existingSessionStorageManager()) {
             if (!namespaceIdentifier)
                 return;
             sessionStorageManager->cancelConnectToSessionStorageArea(connectionIdentifier, *namespaceIdentifier);
@@ -1996,7 +1998,7 @@ void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const 
 
 void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
 {
-    if (RefPtr cacheStorageManager = originStorageManager(origin).existingCacheStorageManager())
+    if (RefPtr cacheStorageManager = checkedOriginStorageManager(origin)->existingCacheStorageManager())
         cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
@@ -2036,7 +2038,7 @@ void NetworkStorageManager::cacheStorageClearMemoryRepresentation(const WebCore:
 
     auto iterator = m_originStorageManagers.find(origin);
     if (iterator != m_originStorageManagers.end())
-        iterator->value->closeCacheStorageManager();
+        CheckedRef { *(iterator->value) }->closeCacheStorageManager();
 
     callback();
 }

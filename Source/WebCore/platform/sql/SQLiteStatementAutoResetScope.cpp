@@ -39,6 +39,11 @@ SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatement *st
 {
 }
 
+CheckedPtr<SQLiteStatement> SQLiteStatementAutoResetScope::checkedGet()
+{
+    return m_statement;
+}
+
 SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&) = default;
 SQLiteStatementAutoResetScope& SQLiteStatementAutoResetScope::operator=(SQLiteStatementAutoResetScope&&) = default;
 
