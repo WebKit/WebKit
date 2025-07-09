@@ -299,7 +299,10 @@ def message_to_struct_declaration(receiver, message):
     result.append('\n')
     result.append('private:\n')
     for parameter in function_parameters:
-        result.append('    %s m_%s;\n' % parameter)
+        if parameter[0].endswith('&'):
+            result.append('    SUPPRESS_UNCOUNTED_MEMBER %s m_%s;\n' % parameter)
+        else:
+            result.append('    %s m_%s;\n' % parameter)
     result.append('};\n')
     return surround_in_condition(''.join(result), message.condition)
 
@@ -517,7 +520,6 @@ def types_that_cannot_be_forward_declared():
         'String',
         'WebCore::ApplePayShippingMethodUpdate',
         'WebCore::ApplePayShippingContactUpdate',
-        'WebCore::ApplePayPaymentAuthorizationResult',
         'WebCore::ApplePayPaymentMethodUpdate',
         'WebCore::ApplePayCouponCodeUpdate',
         'WebCore::BackForwardFrameItemIdentifier',
@@ -587,8 +589,6 @@ def types_that_cannot_be_forward_declared():
         'WebKit::InputMethodState',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
-        'WebKit::PaymentSetupConfiguration',
-        'WebKit::PaymentSetupFeatures',
         'WebKit::PlaybackSessionContextIdentifier',
         'WebKit::RemoteImageBufferSetIdentifier',
         'WebKit::RemoteMediaSourceIdentifier',
