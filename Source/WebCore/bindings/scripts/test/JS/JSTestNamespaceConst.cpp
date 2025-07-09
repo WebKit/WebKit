@@ -54,7 +54,7 @@ static const std::array<HashTableValue, 2> JSTestNamespaceConstConstructorTableV
 static_assert(TestNamespaceConst::TEST_FLAG == false, "TEST_FLAG in TestNamespaceConst does not match value from IDL");
 static_assert(TestNamespaceConst::TEST_BIT_MASK == 0x0000fc00, "TEST_BIT_MASK in TestNamespaceConst does not match value from IDL");
 
-template<> const ClassInfo JSTestNamespaceConstDOMConstructor::s_info = { "TestNamespaceConst"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceConstDOMConstructor) };
+template<> constinit const ClassInfo JSTestNamespaceConstDOMConstructor::s_info = { "TestNamespaceConst"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceConstDOMConstructor) };
 
 template<> JSValue JSTestNamespaceConstDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -69,7 +69,7 @@ template<> void JSTestNamespaceConstDOMConstructor::initializeProperties(VM& vm,
     UNUSED_PARAM(globalObject);
 }
 
-const ClassInfo JSTestNamespaceConst::s_info = { "TestNamespaceConst"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceConst) };
+constinit const ClassInfo JSTestNamespaceConst::s_info = { "TestNamespaceConst"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceConst) };
 
 JSTestNamespaceConst::JSTestNamespaceConst(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSourceCode::s_info = { "JSSourceCode"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSSourceCode) };
+constinit const ClassInfo JSSourceCode::s_info = { "JSSourceCode"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSSourceCode) };
 
 void JSSourceCode::destroy(JSCell* cell)
 {

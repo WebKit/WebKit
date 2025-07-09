@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo Exception::s_info = { "Exception"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Exception) };
+constinit const ClassInfo Exception::s_info = { "Exception"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Exception) };
 
 Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {

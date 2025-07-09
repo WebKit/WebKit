@@ -40,7 +40,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ShadowRealmObject);
 
 namespace JSC {
 
-const ClassInfo ShadowRealmObject::s_info = { "ShadowRealm"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmObject) };
+constinit const ClassInfo ShadowRealmObject::s_info = { "ShadowRealm"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmObject) };
 
 ShadowRealmObject::ShadowRealmObject(VM& vm, Structure* structure)
     : Base(vm, structure)

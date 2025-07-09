@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSAsyncGenerator::s_info = { "AsyncGenerator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGenerator) };
+constinit const ClassInfo JSAsyncGenerator::s_info = { "AsyncGenerator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGenerator) };
 
 JSAsyncGenerator* JSAsyncGenerator::create(VM& vm, Structure* structure)
 {

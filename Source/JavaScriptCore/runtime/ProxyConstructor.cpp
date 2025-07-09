@@ -35,7 +35,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyConstructor);
 
-const ClassInfo ProxyConstructor::s_info = { "Proxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyConstructor) };
+constinit const ClassInfo ProxyConstructor::s_info = { "Proxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyConstructor) };
 
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {

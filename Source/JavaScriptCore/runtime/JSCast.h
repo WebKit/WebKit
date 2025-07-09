@@ -186,7 +186,7 @@ namespace JSCastingHelpers {
 template<bool isFinal>
 struct FinalTypeDispatcher {
     template<typename Target, typename From>
-    static inline bool inheritsGeneric(From* from)
+    static inline constexpr bool inheritsGeneric(From* from)
     {
         static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
         static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
@@ -198,7 +198,7 @@ struct FinalTypeDispatcher {
 template<>
 struct FinalTypeDispatcher</* isFinal */ true> {
     template<typename Target, typename From>
-    static inline bool inheritsGeneric(From* from)
+    static inline constexpr bool inheritsGeneric(From* from)
     {
         static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
         static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
@@ -211,7 +211,7 @@ struct FinalTypeDispatcher</* isFinal */ true> {
 };
 
 template<typename Target, typename From>
-inline bool inheritsJSTypeImpl(From* from, JSTypeRange range)
+inline constexpr bool inheritsJSTypeImpl(From* from, JSTypeRange range)
 {
     static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
     bool canCast = range.contains(from->type());
@@ -226,7 +226,7 @@ template<typename Target>
 struct InheritsTraits {
     static constexpr std::optional<JSTypeRange> typeRange { std::nullopt };
     template<typename From>
-    static inline bool inherits(From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(from); }
+    static inline constexpr bool inherits(From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(from); }
 };
 
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \
@@ -234,7 +234,7 @@ struct InheritsTraits {
     struct InheritsTraits<className> { \
         static constexpr std::optional<JSTypeRange> typeRange { { static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType) } }; \
         template<typename From> \
-        static inline bool inherits(From* from) { return inheritsJSTypeImpl<className, From>(from, *typeRange); } \
+        static inline constexpr bool inherits(From* from) { return inheritsJSTypeImpl<className, From>(from, *typeRange); } \
     }; \
 
 FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD)

@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSIteratorHelperPrototype::s_info = { "Iterator Helper"_s, &Base::s_info, &jsIteratorHelperPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSIteratorHelperPrototype) };
+constinit const ClassInfo JSIteratorHelperPrototype::s_info = { "Iterator Helper"_s, &Base::s_info, &jsIteratorHelperPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSIteratorHelperPrototype) };
 
 /* Source for JSIteratorHelperPrototype.lut.h
 @begin jsIteratorHelperPrototypeTable

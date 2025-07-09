@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSIteratorHelper::s_info = { "Iterator Helper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorHelper) };
+constinit const ClassInfo JSIteratorHelper::s_info = { "Iterator Helper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorHelper) };
 
 void JSIteratorHelper::finishCreation(VM& vm, JSValue generator, JSValue underlyingIterator)
 {

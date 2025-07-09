@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlDurationFormatPrototypeFuncResolvedOptions)
 
 namespace JSC {
 
-const ClassInfo IntlDurationFormatPrototype::s_info = { "Intl.DurationFormat"_s, &Base::s_info, &durationFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlDurationFormatPrototype) };
+constinit const ClassInfo IntlDurationFormatPrototype::s_info = { "Intl.DurationFormat"_s, &Base::s_info, &durationFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlDurationFormatPrototype) };
 
 /* Source for IntlDurationFormatPrototype.lut.h
 @begin durationFormatPrototypeTable

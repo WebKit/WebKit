@@ -27,7 +27,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanObject);
 
-const ClassInfo BooleanObject::s_info = { "Boolean"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanObject) };
+constinit const ClassInfo BooleanObject::s_info = { "Boolean"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanObject) };
 
 BooleanObject::BooleanObject(VM& vm, Structure* structure)
     : Base(vm, structure)

@@ -185,7 +185,7 @@ struct MatcherResult {
     size_t extensionIndex { 0 };
 };
 
-const ClassInfo IntlObject::s_info = { "Intl"_s, &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
+constinit const ClassInfo IntlObject::s_info = { "Intl"_s, &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
 
 void UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
 {

@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyArrayPrototype::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayPrototype) };
+constinit const ClassInfo WebAssemblyArrayPrototype::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayPrototype) };
 
 WebAssemblyArrayPrototype* WebAssemblyArrayPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

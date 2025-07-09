@@ -46,7 +46,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalInstantConstructorFuncCompare);
 
 namespace JSC {
 
-const ClassInfo TemporalInstantConstructor::s_info = { "Function"_s, &Base::s_info, &temporalInstantConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalInstantConstructor) };
+constinit const ClassInfo TemporalInstantConstructor::s_info = { "Function"_s, &Base::s_info, &temporalInstantConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalInstantConstructor) };
 
 /* Source for TemporalInstantConstructor.lut.h
 @begin temporalInstantConstructorTable

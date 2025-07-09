@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo StringIteratorPrototype::s_info = { "String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringIteratorPrototype) };
+constinit const ClassInfo StringIteratorPrototype::s_info = { "String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringIteratorPrototype) };
 
 void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

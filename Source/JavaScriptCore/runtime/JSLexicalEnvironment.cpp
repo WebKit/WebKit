@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
+constinit const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
 template<typename Visitor>
 void JSLexicalEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)

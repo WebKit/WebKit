@@ -62,7 +62,7 @@ FOR_EACH_ATOMICS_FUNC(DECLARE_FUNC_PROTO)
 static JSC_DECLARE_HOST_FUNCTION(atomicsFuncWaitAsync);
 static JSC_DECLARE_HOST_FUNCTION(atomicsFuncPause);
 
-const ClassInfo AtomicsObject::s_info = { "Atomics"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AtomicsObject) };
+constinit const ClassInfo AtomicsObject::s_info = { "Atomics"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AtomicsObject) };
 
 AtomicsObject::AtomicsObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

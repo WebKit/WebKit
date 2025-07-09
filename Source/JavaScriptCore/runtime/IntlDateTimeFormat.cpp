@@ -61,7 +61,7 @@ void UDateIntervalFormatDeleter::operator()(UDateIntervalFormat* formatter)
         udtitvfmt_close(formatter);
 }
 
-const ClassInfo IntlDateTimeFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
+constinit const ClassInfo IntlDateTimeFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 namespace IntlDateTimeFormatInternal {
 static constexpr bool verbose = false;

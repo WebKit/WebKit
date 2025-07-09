@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo EvalCodeBlock::s_info = {
+constinit const ClassInfo EvalCodeBlock::s_info = {
     "EvalCodeBlock"_s, &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(EvalCodeBlock)
 };

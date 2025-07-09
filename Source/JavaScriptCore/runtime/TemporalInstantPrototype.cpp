@@ -53,7 +53,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochNanoseconds)
 
 namespace JSC {
 
-const ClassInfo TemporalInstantPrototype::s_info = { "Temporal.Instant"_s, &Base::s_info, &instantPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalInstantPrototype) };
+constinit const ClassInfo TemporalInstantPrototype::s_info = { "Temporal.Instant"_s, &Base::s_info, &instantPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalInstantPrototype) };
 
 /* Source for TemporalInstantPrototype.lut.h
 @begin instantPrototypeTable

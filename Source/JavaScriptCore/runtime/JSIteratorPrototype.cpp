@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo JSIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorPrototype) };
+constinit const ClassInfo JSIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncIterator);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoConstructorGetter);

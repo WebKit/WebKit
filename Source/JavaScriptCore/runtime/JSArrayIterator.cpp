@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSArrayIterator::s_info = { "ArrayIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayIterator) };
+constinit const ClassInfo JSArrayIterator::s_info = { "ArrayIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayIterator) };
 
 JSArrayIterator* JSArrayIterator::create(VM& vm, Structure* structure, JSObject* iteratedObject, JSValue kind)
 {

@@ -33,7 +33,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSGlobalProxy);
 
-const ClassInfo JSGlobalProxy::s_info = { "JSGlobalProxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalProxy) };
+constinit const ClassInfo JSGlobalProxy::s_info = { "JSGlobalProxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalProxy) };
 
 template<typename Visitor>
 void JSGlobalProxy::visitChildrenImpl(JSCell* cell, Visitor& visitor)

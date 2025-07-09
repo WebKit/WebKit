@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGCObjectBase) };
+constinit const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGCObjectBase) };
 
 WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, WebAssemblyGCStructure* structure)
     : Base(vm, structure)

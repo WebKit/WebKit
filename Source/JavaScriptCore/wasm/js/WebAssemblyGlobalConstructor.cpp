@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
+constinit const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyGlobal);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyGlobal);

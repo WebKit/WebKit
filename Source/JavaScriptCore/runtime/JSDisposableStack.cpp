@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSDisposableStack::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDisposableStack) };
+constinit const ClassInfo JSDisposableStack::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDisposableStack) };
 
 JSDisposableStack* JSDisposableStack::create(VM& vm, Structure* structure)
 {

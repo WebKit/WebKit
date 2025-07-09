@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo ShadowRealmConstructor::s_info = { "Function"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmConstructor) };
+constinit const ClassInfo ShadowRealmConstructor::s_info = { "Function"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmConstructor) };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ShadowRealmConstructor);
 

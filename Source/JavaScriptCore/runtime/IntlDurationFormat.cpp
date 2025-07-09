@@ -54,7 +54,7 @@ static constexpr bool verbose = false;
 
 static constexpr unsigned fractionalDigitsUndefinedValue = std::numeric_limits<unsigned>::max();
 
-const ClassInfo IntlDurationFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDurationFormat) };
+constinit const ClassInfo IntlDurationFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDurationFormat) };
 
 IntlDurationFormat* IntlDurationFormat::create(VM& vm, Structure* structure)
 {

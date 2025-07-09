@@ -30,7 +30,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAPIValueWrapper);
 
-const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
+constinit const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
 
 Structure* JSAPIValueWrapper::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

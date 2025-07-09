@@ -23,6 +23,7 @@
 
 #include "InitializeThreading.h"
 #include "JSArrayBufferViewInlines.h"
+#include "JSGlobalObject.h"
 #include "JSCInlines.h"
 #include "YarrFlags.h"
 #include <stdio.h>
@@ -124,7 +125,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
 
-const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
+constinit const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& arguments)
     : JSGlobalObject(vm, structure)

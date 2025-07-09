@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyStructPrototype::s_info = { "WebAssembly.Struct"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyStructPrototype) };
+constinit const ClassInfo WebAssemblyStructPrototype::s_info = { "WebAssembly.Struct"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyStructPrototype) };
 
 WebAssemblyStructPrototype* WebAssemblyStructPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

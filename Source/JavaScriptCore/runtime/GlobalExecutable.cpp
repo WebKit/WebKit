@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
+constinit const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
 
 template<typename Visitor>
 void GlobalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
+constinit const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 
 void UnlinkedEvalCodeBlock::destroy(JSCell* cell)
 {

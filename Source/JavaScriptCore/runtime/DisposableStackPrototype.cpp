@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo DisposableStackPrototype::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackPrototype) };
+constinit const ClassInfo DisposableStackPrototype::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(disposableStackProtoDisposedGetter);
 

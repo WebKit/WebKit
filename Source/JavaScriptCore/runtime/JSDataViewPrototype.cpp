@@ -98,7 +98,7 @@ static JSC_DECLARE_CUSTOM_GETTER(dataViewProtoGetterByteOffset);
 
 namespace JSC {
 
-const ClassInfo JSDataViewPrototype::s_info = {
+constinit const ClassInfo JSDataViewPrototype::s_info = {
     "DataView"_s, &Base::s_info, &dataViewTable, nullptr,
     CREATE_METHOD_TABLE(JSDataViewPrototype)
 };

@@ -57,7 +57,7 @@ static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyModule);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyModule, nullptr, CREATE_METHOD_TABLE(WebAssemblyModuleConstructor) };
+constinit const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyModule, nullptr, CREATE_METHOD_TABLE(WebAssemblyModuleConstructor) };
 
 /* Source for WebAssemblyModuleConstructor.lut.h
  @begin constructorTableWebAssemblyModule

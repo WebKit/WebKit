@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
+constinit const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
 
 WebAssemblyCompileErrorPrototype* WebAssemblyCompileErrorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

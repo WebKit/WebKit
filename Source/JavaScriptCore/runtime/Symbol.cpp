@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo Symbol::s_info = { "symbol"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Symbol) };
+constinit const ClassInfo Symbol::s_info = { "symbol"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Symbol) };
 
 Symbol::Symbol(VM& vm)
     : Base(vm, vm.symbolStructure.get())

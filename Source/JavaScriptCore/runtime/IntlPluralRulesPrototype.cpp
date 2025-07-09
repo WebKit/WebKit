@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions);
 
 namespace JSC {
 
-const ClassInfo IntlPluralRulesPrototype::s_info = { "Intl.PluralRules"_s, &Base::s_info, &pluralRulesPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlPluralRulesPrototype) };
+constinit const ClassInfo IntlPluralRulesPrototype::s_info = { "Intl.PluralRules"_s, &Base::s_info, &pluralRulesPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlPluralRulesPrototype) };
 
 /* Source for IntlPluralRulesPrototype.lut.h
 @begin pluralRulesPrototypeTable

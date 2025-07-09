@@ -67,13 +67,13 @@ template<typename T> void* tryAllocateCell(VM&, GCDeferralContext*, size_t = siz
 
 #define DECLARE_EXPORT_INFO                                                  \
     protected:                                                               \
-        static JS_EXPORT_PRIVATE const ::JSC::ClassInfo s_info;              \
+        static JS_EXPORT_PRIVATE constinit const ::JSC::ClassInfo s_info;    \
     public:                                                                  \
         static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
 
 #define DECLARE_INFO                                                         \
     protected:                                                               \
-        static const ::JSC::ClassInfo s_info;                                \
+        static constinit const ::JSC::ClassInfo s_info;                      \
     public:                                                                  \
         static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
 
