@@ -189,7 +189,7 @@ void PageTimelineAgent::willLayout()
     pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Layout, true);
 }
 
-void PageTimelineAgent::didLayout(RenderObject& root)
+void PageTimelineAgent::setLayoutQuads(RenderObject& root)
 {
     auto* entry = lastRecordEntry();
     if (!entry)
@@ -202,7 +202,10 @@ void PageTimelineAgent::didLayout(RenderObject& root)
     ASSERT(quads.size() >= 1);
     if (quads.size() >= 1)
         TimelineRecordFactory::appendLayoutRoot(entry->data.get(), quads[0]);
+}
 
+void PageTimelineAgent::didLayout()
+{
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }
 
