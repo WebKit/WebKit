@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,42 @@
 
 #pragma once
 
-#include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 
-namespace WTF {
+namespace JSC {
 
-struct CPUTime {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    MonotonicTime cpuTime;
-    Seconds userTime;
-    Seconds systemTime;
-
-    WTF_EXPORT_PRIVATE double percentageCPUUsageSince(const CPUTime&) const;
-
-    WTF_EXPORT_PRIVATE static std::optional<CPUTime> get();
-
-    // Returns the current CPU time of the current thread.
-    // Precision varies depending on platform but is usually as good or better
-    // than a millisecond.
-    WTF_EXPORT_PRIVATE static Seconds forCurrentThread();
-    WTF_EXPORT_PRIVATE static Seconds forCurrentThreadSlow();
+class CPUTimingScope {
+public:
+    CPUTimingScope(const std::function<void(Seconds)>& notifier);
+    CPUTimingScope(CPUTimingScope&& other);
+    CPUTimingScope& operator=(CPUTimingScope&& other) noexcept;
+    CPUTimingScope(const CPUTimingScope&) = delete;
+    CPUTimingScope& operator=(const CPUTimingScope&) = delete;
+    ~CPUTimingScope();
+private:
+    Seconds m_before;
+    std::function<void(Seconds)> m_notifier;
+    bool m_cancelled { false };
 };
 
-} // namespace WTF
+class ParallelCPUTimer {
+public:
+    CPUTimingScope synchronousScope();
+    CPUTimingScope parallelMainScope();
 
-using WTF::CPUTime;
+    // This is the only method that should be called from parallel helper threads.
+    CPUTimingScope parallelHelperScope();
+
+    Seconds read();
+    void clear();
+private:
+    void accumulateParallelThreads();
+    void parallelDurationFetchMax(Seconds duration);
+
+    Atomic<Seconds> m_parallelDuration { 0_s };
+    Seconds m_duration { 0 };
+    bool m_inSychronousThreadScope { false };
+    bool m_inParrallelMainThreadScope { false };
+};
+
+} // namespace JSC

@@ -138,45 +138,6 @@ size_t minHeapSize(HeapType heapType, size_t ramSize)
     }
 }
 
-size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
-{
-    if (VM::isInMiniMode())
-        return Options::miniVMHeapGrowthFactor() * heapSize;
-
-    bool useNewHeapGrowthFactor = true;
-
-    // Use new heuristic function for machines >= 16GB RAM.
-    // https://www.mathway.com/en/Algebra?asciimath=2%20*%20e%5E(-1%20*%20x)%20%2B%201%20%3Dy
-    size_t heapGrowthFunctionThresholdInBytes = static_cast<size_t>(Options::heapGrowthFunctionThresholdInMB()) * MB;
-    if (ramSize < heapGrowthFunctionThresholdInBytes)
-        useNewHeapGrowthFactor = false;
-
-    // Disable it for Darwin Intel machine.
-#if OS(DARWIN) && CPU(X86_64)
-    useNewHeapGrowthFactor = false;
-#endif
-
-    if (useNewHeapGrowthFactor) {
-        double x = static_cast<double>(std::min(heapSize, ramSize)) / ramSize;
-        double ratio = Options::heapGrowthMaxIncrease() * std::exp(-(Options::heapGrowthSteepnessFactor() * x)) + 1;
-        return ratio * heapSize;
-    }
-
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-    size_t memoryFootprint = bmalloc::api::memoryFootprint();
-    if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
-        return Options::smallHeapGrowthFactor() * heapSize;
-    if (memoryFootprint < ramSize * Options::mediumHeapRAMFraction())
-        return Options::mediumHeapGrowthFactor() * heapSize;
-#else
-    if (heapSize < ramSize * Options::smallHeapRAMFraction())
-        return Options::smallHeapGrowthFactor() * heapSize;
-    if (heapSize < ramSize * Options::mediumHeapRAMFraction())
-        return Options::mediumHeapGrowthFactor() * heapSize;
-#endif
-    return Options::largeHeapGrowthFactor() * heapSize;
-}
-
 void recordType(TypeCountSet& set, JSCell* cell)
 {
     auto typeName = "[unknown]"_s;
@@ -309,6 +270,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_ramSize(Options::forceRAMSize() ? Options::forceRAMSize() : ramSize())
     , m_minBytesPerCycle(minHeapSize(m_heapType, m_ramSize))
     , m_maxEdenSize(m_minBytesPerCycle)
+    , m_maxOldSize(m_minBytesPerCycle)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_objectSpace(this)
     , m_machineThreads(makeUnique<MachineThreads>())
@@ -1423,6 +1385,7 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
 {
     m_currentGCStartTime = MonotonicTime::now();
+    CPUTimingScope scope = m_timer.synchronousScope();
     
     {
         Locker locker { *m_threadLock };
@@ -1495,7 +1458,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
 
             {
                 ParallelModeEnabler parallelModeEnabler(*visitor);
-                visitor->drainFromShared(SlotVisitor::HelperDrain);
+                visitor->drainFromShared(SlotVisitor::HelperDrain, MonotonicTime::infinity(), &m_timer);
             }
 
             {
@@ -1555,22 +1518,27 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         
         dataLog("v=", bytesVisited() / 1024, "kb (", perVisitorDump, ") o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
     }
-        
+
+    std::optional<CPUTimingScope> parallelScope;
     if (visitor.didReachTermination()) {
-        m_opaqueRoots.deleteOldTables();
-        
-        m_scheduler->didReachTermination();
-        
-        assertMarkStacksEmpty();
+        {
+            CPUTimingScope scope = m_timer.synchronousScope();
+            m_opaqueRoots.deleteOldTables();
             
+            m_scheduler->didReachTermination();
+
+            assertMarkStacksEmpty();
+        }
+
         // FIXME: Take m_mutatorDidRun into account when scheduling constraints. Most likely,
         // we don't have to execute root constraints again unless the mutator did run. At a
         // minimum, we could use this for work estimates - but it's probably more than just an
         // estimate.
         // https://bugs.webkit.org/show_bug.cgi?id=166828
-            
+
         // Wondering what this does? Look at Heap::addCoreConstraints(). The DOM and others can also
         // add their own using Heap::addMarkingConstraint().
+        parallelScope = m_timer.parallelMainScope();
         bool converged = m_constraintSet->executeConvergence(visitor);
         
         // FIXME: The visitor.isEmpty() check is most likely not needed.
@@ -1579,17 +1547,17 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             assertMarkStacksEmpty();
             return changePhase(conn, CollectorPhase::End);
         }
-            
+
         m_scheduler->didExecuteConstraints();
     }
-        
+
     dataLogIf(Options::logGC(), visitor.collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + visitor.mutatorMarkStack().size(), " ");
         
     {
         ParallelModeEnabler enabler(visitor);
         visitor.drainInParallel(m_scheduler->timeToResume());
     }
-        
+
     m_scheduler->synchronousDrainingDidStall();
 
     // This is kinda tricky. The termination check looks at:
@@ -1665,67 +1633,71 @@ NEVER_INLINE bool Heap::runReloopPhase(GCConductor conn)
 
 NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
 {
-    m_scheduler->endCollection();
-        
+    CollectionScope endingCollectionScope;
     {
-        Locker locker { m_markingMutex };
-        m_parallelMarkersShouldExit = true;
-        m_markingConditionVariable.notifyAll();
+        CPUTimingScope scope = m_timer.synchronousScope();
+        m_scheduler->endCollection();
+
+        {
+            Locker locker { m_markingMutex };
+            m_parallelMarkersShouldExit = true;
+            m_markingConditionVariable.notifyAll();
+        }
+        m_helperClient.finish();
+
+        ASSERT(m_mutatorMarkStack->isEmpty());
+        ASSERT(m_raceMarkStack->isEmpty());
+
+        SlotVisitor& visitor = *m_collectorSlotVisitor;
+        iterateExecutingAndCompilingCodeBlocks(visitor,
+            [&] (CodeBlock* codeBlock) {
+                writeBarrier(codeBlock);
+            });
+
+        updateObjectCounts();
+        endMarking();
+
+        if (Options::verifyGC()) [[unlikely]]
+            verifyGC();
+
+        if (m_verifier) [[unlikely]] {
+            m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
+            m_verifier->verify(HeapVerifier::Phase::AfterMarking);
+        }
+
+        {
+            auto* previous = Thread::currentSingleton().setCurrentAtomStringTable(nullptr);
+            auto scopeExit = makeScopeExit([&] {
+                Thread::currentSingleton().setCurrentAtomStringTable(previous);
+            });
+
+            if (vm().typeProfiler())
+                vm().typeProfiler()->invalidateTypeSetCache(vm());
+
+            cancelDeferredWorkIfNeeded();
+            reapWeakHandles();
+            pruneStaleEntriesFromWeakGCHashTables();
+            sweepArrayBuffers();
+            snapshotUnswept();
+            finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
+            removeDeadCompilerWorklistEntries();
+        }
+
+        // Keep in mind that we may use AtomStringTable, and this is totally OK since the main thread is suspended.
+        // End phase itself can run on main thread or concurrent collector thread. But whenever running this,
+        // mutator is suspended so there is no race condition.
+        deleteUnmarkedCompiledCode();
+
+        notifyIncrementalSweeper();
+
+        m_codeBlocks->iterateCurrentlyExecuting(
+            [&] (CodeBlock* codeBlock) {
+                writeBarrier(codeBlock);
+            });
+        m_codeBlocks->clearCurrentlyExecutingAndRemoveDeadCodeBlocks(vm());
+
+        m_objectSpace.prepareForAllocation();
     }
-    m_helperClient.finish();
-    
-    ASSERT(m_mutatorMarkStack->isEmpty());
-    ASSERT(m_raceMarkStack->isEmpty());
-
-    SlotVisitor& visitor = *m_collectorSlotVisitor;
-    iterateExecutingAndCompilingCodeBlocks(visitor,
-        [&] (CodeBlock* codeBlock) {
-            writeBarrier(codeBlock);
-        });
-
-    updateObjectCounts();
-    endMarking();
-
-    if (Options::verifyGC()) [[unlikely]]
-        verifyGC();
-
-    if (m_verifier) [[unlikely]] {
-        m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
-        m_verifier->verify(HeapVerifier::Phase::AfterMarking);
-    }
-        
-    {
-        auto* previous = Thread::currentSingleton().setCurrentAtomStringTable(nullptr);
-        auto scopeExit = makeScopeExit([&] {
-            Thread::currentSingleton().setCurrentAtomStringTable(previous);
-        });
-
-        if (vm().typeProfiler())
-            vm().typeProfiler()->invalidateTypeSetCache(vm());
-
-        cancelDeferredWorkIfNeeded();
-        reapWeakHandles();
-        pruneStaleEntriesFromWeakGCHashTables();
-        sweepArrayBuffers();
-        snapshotUnswept();
-        finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
-        removeDeadCompilerWorklistEntries();
-    }
-
-    // Keep in mind that we may use AtomStringTable, and this is totally OK since the main thread is suspended.
-    // End phase itself can run on main thread or concurrent collector thread. But whenever running this,
-    // mutator is suspended so there is no race condition.
-    deleteUnmarkedCompiledCode();
-
-    notifyIncrementalSweeper();
-    
-    m_codeBlocks->iterateCurrentlyExecuting(
-        [&] (CodeBlock* codeBlock) {
-            writeBarrier(codeBlock);
-        });
-    m_codeBlocks->clearCurrentlyExecutingAndRemoveDeadCodeBlocks(vm());
-
-    m_objectSpace.prepareForAllocation();
     updateAllocationLimits();
 
     if (m_verifier) [[unlikely]] {
@@ -1733,23 +1705,23 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
 
-    auto endingCollectionScope = *m_collectionScope;
+        endingCollectionScope = *m_collectionScope;
 
     didFinishCollection();
-    
+
     if (m_currentRequest.didFinishEndPhase)
         m_currentRequest.didFinishEndPhase->run();
-    
+
     if (HeapInternal::verbose) {
         dataLogLn(HeapInternal::verbose, "Heap state after GC:");
         m_objectSpace.dumpBits();
     }
-    
+
     if (Options::logGC()) [[unlikely]] {
         double thisPauseMS = (m_afterGC - m_stopTime).milliseconds();
         dataLog("p=", thisPauseMS, "ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (m_afterGC - m_beforeGC).milliseconds(), "ms END]\n");
     }
-    
+
     {
         Locker locker { *m_threadLock };
         m_requests.removeFirst();
@@ -1766,6 +1738,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
 
     setNeedFinalize();
 
+    m_timer.clear();
     m_lastGCStartTime = m_currentGCStartTime;
     m_lastGCEndTime = MonotonicTime::now();
     m_totalGCTime += m_lastGCEndTime - m_lastGCStartTime;
@@ -2437,6 +2410,43 @@ void Heap::notifyIncrementalSweeper()
     m_sweeper->startSweeping(*this);
 }
 
+void Heap::updateMaxEdenSize(size_t currentHeapSize)
+{
+    if (static_cast<double>(currentHeapSize) / static_cast<double>(m_ramSize) < Options::criticalGCMemoryThreshold()) {
+        // We try to pick m_maxEdenSize to tend towards idealProportionOfTimeSpentDoingGC,
+        // but have lower and upper limits to ensure our choice is sane.
+        size_t maxEdenSizeLowerLimit = minHeapSize(m_heapType, m_ramSize);
+        size_t maxEdenSizeUpperLimit = static_cast<size_t>(Options::maxEdenSizeLimitMultiplier()) * maxEdenSizeLowerLimit;
+        size_t prevEdenSize = m_maxEdenSize;
+        MonotonicTime monotonicNow = MonotonicTime::now();
+        Seconds gcCPUDuration = m_timer.read();
+        Seconds wallTimeSinceLastGC = monotonicNow - m_lastGCEndTime;
+        double actualGCTimeRatio = gcCPUDuration.milliseconds() / wallTimeSinceLastGC.milliseconds();
+        double scalingFactor = actualGCTimeRatio / Options::idealProportionOfTimeSpentDoingGC();
+        size_t projectedMaxEdenSize = prevEdenSize * scalingFactor;
+        m_maxEdenSize = std::max(maxEdenSizeLowerLimit, std::min(maxEdenSizeUpperLimit, projectedMaxEdenSize));
+    } else {
+        size_t maxEdenSizeLowerLimit = minHeapSize(m_heapType, m_ramSize);
+        m_maxEdenSize = maxEdenSizeLowerLimit;
+    }
+    m_maxHeapSize = currentHeapSize + m_maxEdenSize;
+}
+
+void Heap::updateMaxOldSize(size_t currentHeapSize)
+{
+    double x = std::min(static_cast<double>(currentHeapSize) / static_cast<double>(m_ramSize), Options::criticalGCMemoryThreshold()); // don't go past the curve
+    // We compute the scaling factor y like so:
+    // y = m * x + b
+    // where b = oldHeapGrowthMaxIncrease (set m_maxOldSize to currentHeapSize * oldHeapGrowthMaxIncrease for small currentHeapSize)
+    // we want y = 1 (set m_maxOldSize to currentHeapSize) at criticalGCMemoryThreshold, so:
+    // 1 = m * criticalGCMemoryThreshold + oldHeapGrowthMaxIncrease
+    // m = (1 - oldHeapGrowthMaxIncrease) / criticalGCMemoryThreshold
+    // y = (1 - oldHeapGrowthMaxIncrease) / criticalGCMemoryThreshold * x + oldHeapGrowthMaxIncrease
+    double scalingFactor = (1 - Options::oldHeapGrowthMaxIncrease()) / Options::criticalGCMemoryThreshold() * x + Options::oldHeapGrowthMaxIncrease();
+    size_t projectedMaxOldSize = scalingFactor * currentHeapSize;
+    m_maxOldSize = std::max(projectedMaxOldSize, minHeapSize(m_heapType, m_ramSize));
+}
+
 void Heap::updateAllocationLimits()
 {
     constexpr bool verbose = false;
@@ -2474,31 +2484,25 @@ void Heap::updateAllocationLimits()
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        if (!m_isInOpportunisticTask)
-            m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
-        dataLogLnIf(verbose, "Full: maxHeapSize = ", m_maxHeapSize);
-        m_maxEdenSize = m_maxHeapSize - currentHeapSize;
+        updateMaxEdenSize(currentHeapSize);
+        updateMaxOldSize(currentHeapSize);
         dataLogLnIf(verbose, "Full: maxEdenSize = ", m_maxEdenSize);
+        dataLogLnIf(verbose, "Full: maxOldSize = ", m_maxOldSize);
+        dataLogLnIf(verbose, "Full: maxHeapSize = ", m_maxHeapSize);
         m_sizeAfterLastFullCollect = currentHeapSize;
         dataLogLnIf(verbose, "Full: sizeAfterLastFullCollect = ", currentHeapSize);
         m_bytesAbandonedSinceLastFullCollect = 0;
         dataLogLnIf(verbose, "Full: bytesAbandonedSinceLastFullCollect = ", 0);
     } else {
         ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
-        // Theoretically, we shouldn't ever scan more memory than the heap size we planned to have.
-        // But we are sloppy, so we have to defend against the overflow.
-        m_maxEdenSize = currentHeapSize > m_maxHeapSize ? 0 : m_maxHeapSize - currentHeapSize;
-        dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
         m_sizeAfterLastEdenCollect = currentHeapSize;
         dataLogLnIf(verbose, "Eden: sizeAfterLastEdenCollect = ", currentHeapSize);
-        double edenToOldGenerationRatio = (double)m_maxEdenSize / (double)m_maxHeapSize;
-        double minEdenToOldGenerationRatio = 1.0 / 3.0;
-        if (edenToOldGenerationRatio < minEdenToOldGenerationRatio)
+        if (currentHeapSize > m_maxOldSize)
             m_shouldDoFullCollection = true;
-        // This seems suspect at first, but what it does is ensure that the nursery size is fixed.
-        m_maxHeapSize += currentHeapSize - m_sizeAfterLastCollect;
+        if (m_shouldDoFullCollection)
+            dataLogLnIf(verbose, "Eden: m_shouldDoFullCollection is set");
+        updateMaxEdenSize(currentHeapSize);
         dataLogLnIf(verbose, "Eden: maxHeapSize = ", m_maxHeapSize);
-        m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
         if (m_fullActivityCallback) {
             ASSERT(currentHeapSize >= m_sizeAfterLastFullCollect);

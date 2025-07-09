@@ -780,6 +780,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
+    heap/Timing.h
     heap/TinyBloomFilter.h
     heap/VerifierSlotVisitor.h
     heap/VisitRaceKey.h

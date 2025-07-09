@@ -26,9 +26,14 @@
 #include "config.h"
 #include <wtf/CPUTime.h>
 
+#if OS(DARWIN)
+#include <mach/thread_info.h>
+#endif
+#include <stdio.h>
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <time.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 
@@ -51,6 +56,20 @@ Seconds CPUTime::forCurrentThread()
     int ret = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
     RELEASE_ASSERT(!ret);
     return Seconds(ts.tv_sec) + Seconds::fromNanoseconds(ts.tv_nsec);
+}
+
+Seconds CPUTime::forCurrentThreadSlow()
+{
+#if OS(DARWIN)
+    mach_port_t thread = Thread::currentSingleton().machThread();
+    thread_basic_info_data_t threadInfo;
+    mach_msg_type_number_t threadInfoCount = THREAD_BASIC_INFO_COUNT;
+    kern_return_t kr = thread_info(thread, THREAD_BASIC_INFO, (thread_info_t)&threadInfo, &threadInfoCount);
+    RELEASE_ASSERT(kr == KERN_SUCCESS);
+    return Seconds(threadInfo.user_time.seconds + threadInfo.system_time.seconds) + Seconds::fromMicroseconds(threadInfo.user_time.microseconds + threadInfo.system_time.microseconds);
+#else
+    return forCurrentThread();
+#endif
 }
 
 }

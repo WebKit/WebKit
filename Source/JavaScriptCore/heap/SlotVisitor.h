@@ -27,6 +27,7 @@
 
 #include "AbstractSlotVisitor.h"
 #include "HandleTypes.h"
+#include "Timing.h"
 #include <wtf/Forward.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/MonotonicTime.h>
@@ -137,7 +138,7 @@ public:
     
     enum SharedDrainMode { HelperDrain, MainDrain };
     enum class SharedDrainResult { Done, TimedOut };
-    SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity());
+    SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity(), ParallelCPUTimer* = nullptr);
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());

@@ -611,7 +611,6 @@ static void overrideDefaults()
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
-    Options::mediumHeapRAMFraction() = 0.9;
 #endif
 
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)

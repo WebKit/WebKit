@@ -1243,6 +1243,7 @@
 		5C3A77B922F2480B003827FF /* testb3_3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3A77B122F247CB003827FF /* testb3_3.cpp */; };
 		5C3A77BA22F2480F003827FF /* testb3_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3A77B222F247CB003827FF /* testb3_2.cpp */; };
 		5C4E8E961DBEBE620036F1FC /* JSONParseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */; };
+		5C979E782DD5557100DCE436 /* Timing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C979E762DD5557100DCE436 /* Timing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
@@ -4428,6 +4429,8 @@
 		5C3A77BB22F24890003827FF /* testb3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testb3.h; path = b3/testb3.h; sourceTree = "<group>"; };
 		5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSONParseTest.cpp; path = API/tests/JSONParseTest.cpp; sourceTree = "<group>"; };
 		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
+		5C979E762DD5557100DCE436 /* Timing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Timing.h; sourceTree = "<group>"; };
+		5C979E772DD5557100DCE436 /* Timing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Timing.cpp; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
@@ -7250,6 +7253,8 @@
 				0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */,
 				0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */,
 				0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */,
+				5C979E772DD5557100DCE436 /* Timing.cpp */,
+				5C979E762DD5557100DCE436 /* Timing.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
 				FE2BD66E25C0DC8200999D3B /* VerifierSlotVisitor.cpp */,
 				FE287D01252FB2E800D723F9 /* VerifierSlotVisitor.h */,
@@ -11901,6 +11906,7 @@
 				FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
+				5C979E782DD5557100DCE436 /* Timing.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,

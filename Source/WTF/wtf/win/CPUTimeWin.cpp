@@ -70,4 +70,9 @@ Seconds CPUTime::forCurrentThread()
     return fileTimeToSeconds(userTime) + fileTimeToSeconds(kernelTime);
 }
 
+Seconds CPUTime::forCurrentThreadSlow()
+{
+    return CPUTime::forCurrentThread();
+}
+
 }

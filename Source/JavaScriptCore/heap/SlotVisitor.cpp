@@ -598,7 +598,7 @@ bool SlotVisitor::hasWork(const AbstractLocker&)
         || !m_heap.m_sharedMutatorMarkStack->isEmpty();
 }
 
-NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout)
+NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout, ParallelCPUTimer* timer)
 {
     ASSERT(m_isInParallelMode);
     
@@ -669,6 +669,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
             }
             
             if (!bonusTask && isEmpty()) {
+                std::optional<CPUTimingScope> scope = timer ? std::make_optional(timer->parallelHelperScope()) : std::nullopt;
                 forEachMarkStack(
                     [&] (MarkStackArray& stack) -> IterationStatus {
                         stack.stealSomeCellsFrom(
@@ -683,6 +684,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
         }
         
         if (bonusTask) {
+            std::optional<CPUTimingScope> scope = timer ? std::make_optional(timer->parallelHelperScope()) : std::nullopt;
             bonusTask->run(*this);
             
             // The main thread could still be running, and may run for a while. Unless we clear the task
@@ -695,6 +697,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 m_heap.m_markingConditionVariable.notifyAll();
             }
         } else {
+            std::optional<CPUTimingScope> scope = timer ? std::make_optional(timer->parallelHelperScope()) : std::nullopt;
             RELEASE_ASSERT(!isEmpty());
             drain(timeout);
         }

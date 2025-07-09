@@ -46,6 +46,7 @@
 #include "PreciseSubspace.h"
 #include "StructureID.h"
 #include "Synchronousness.h"
+#include "Timing.h"
 #include "WeakHandleOwner.h"
 #include <wtf/AutomaticThread.h>
 #include <wtf/Box.h>
@@ -757,6 +758,8 @@ private:
 
     void deleteUnmarkedCompiledCode();
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
+    void updateMaxEdenSize(size_t);
+    void updateMaxOldSize(size_t);
     void updateAllocationLimits();
     void didFinishCollection();
     void resumeCompilerThreads();
@@ -829,6 +832,7 @@ private:
     size_t m_bytesAbandonedSinceLastFullCollect { 0 };
     size_t m_maxEdenSize;
     size_t m_maxEdenSizeWhenCritical;
+    size_t m_maxOldSize;
     size_t m_maxHeapSize;
     size_t m_totalBytesVisitedAfterLastFullCollect { 0 };
     size_t m_totalBytesVisited { 0 };
@@ -974,6 +978,7 @@ private:
 
     RefPtr<Thread> m_collectContinuouslyThread { nullptr };
     
+    ParallelCPUTimer m_timer;
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
     MonotonicTime m_currentGCStartTime;
