@@ -124,7 +124,14 @@
 
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
 {
-    _page->getAccessibilityTreeData([completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
+    _page->getAccessibilityTreeData(false, [completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
+        completionHandler(wrapper(data), nil);
+    });
+}
+
+- (void)_retrieveLimitedAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
+{
+    _page->getAccessibilityTreeData(true, [completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
         completionHandler(wrapper(data), nil);
     });
 }

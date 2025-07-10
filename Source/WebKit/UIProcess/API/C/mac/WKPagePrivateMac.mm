@@ -172,3 +172,12 @@ id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page)
 #endif
 }
 
+bool WKPageAccessibilityIsEnabled(WKPageRef pageRef)
+{
+    return WebKit::toImpl(pageRef)->isAccessibilityEnabled();
+}
+
+bool WKPageAccesssibilityThreadInitialized(WKPageRef pageRef)
+{
+    return WebKit::toImpl(pageRef)->isAccessibilityThreadInitialized();
+}

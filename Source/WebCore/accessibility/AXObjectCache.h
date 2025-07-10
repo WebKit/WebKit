@@ -74,7 +74,7 @@ class Scrollbar;
 class ScrollView;
 class VisiblePosition;
 class Widget;
-enum class AXStreamOptions : uint8_t;
+enum class AXStreamOptions : uint16_t;
 
 struct CharacterOffset {
     RefPtr<Node> node;
@@ -651,7 +651,7 @@ public:
 
     static ASCIILiteral notificationPlatformName(AXNotification);
 
-    AXTreeData treeData(std::optional<OptionSet<AXStreamOptions>> = std::nullopt);
+    WEBCORE_EXPORT AXTreeData treeData(std::optional<OptionSet<AXStreamOptions>> = std::nullopt);
 
     enum class UpdateRelations : bool { No, Yes };
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
@@ -677,6 +677,7 @@ public:
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
+    WEBCORE_EXPORT static bool isAXThreadInitialized();
 private:
     static bool clientSupportsIsolatedTree();
     // Propagates the root of the isolated tree back into the Core and WebKit.

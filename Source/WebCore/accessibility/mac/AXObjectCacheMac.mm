@@ -724,9 +724,11 @@ bool AXObjectCache::isIsolatedTreeEnabled()
     return enabled;
 }
 
+
+static bool axThreadInitialized = false;
+
 void AXObjectCache::initializeAXThreadIfNeeded()
 {
-    static bool axThreadInitialized = false;
     if (axThreadInitialized || !isMainThread()) [[likely]]
         return;
 
@@ -739,6 +741,11 @@ void AXObjectCache::initializeAXThreadIfNeeded()
         _AXUIElementUseSecondaryAXThread(true);
         axThreadInitialized = true;
     }
+}
+
+bool AXObjectCache::isAXThreadInitialized()
+{
+    return axThreadInitialized;
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 

@@ -5727,6 +5727,31 @@ void WebPageProxy::enableAccessibilityForAllProcesses()
     });
 }
 
+bool WebPageProxy::isAccessibilityEnabled()
+{
+    const Seconds messageTimeout(2);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::IsAccessibilityEnabled(), webPageIDInMainFrameProcess(), messageTimeout);
+
+    if (!sendResult.succeeded())
+        return false;
+
+    auto [result] = sendResult.takeReplyOr(false);
+    return result;
+}
+
+bool WebPageProxy::isAccessibilityThreadInitialized()
+{
+    const Seconds messageTimeout(2);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::IsAccessibilityThreadInitialized(), webPageIDInMainFrameProcess(), messageTimeout);
+
+    if (!sendResult.succeeded())
+        return false;
+
+    auto [result] = sendResult.takeReplyOr(false);
+    return result;
+}
+
+
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     // This check is fine as the value is initialized in the web
@@ -6475,9 +6500,9 @@ void WebPageProxy::getWebArchive(CompletionHandler<void(API::Data*)>&& completio
 #endif
 }
 
-void WebPageProxy::getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&& callback)
+void WebPageProxy::getAccessibilityTreeData(bool limited, CompletionHandler<void(API::Data*)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::GetAccessibilityTreeData(), toAPIDataCallback(WTFMove(callback)));
+    sendWithAsyncReply(Messages::WebPage::GetAccessibilityTreeData(limited), toAPIDataCallback(WTFMove(callback)));
 }
 
 void WebPageProxy::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& callback)

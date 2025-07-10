@@ -53,7 +53,7 @@ class AXGeometryManager;
 class AXObjectCache;
 class AccessibilityObject;
 class Page;
-enum class AXStreamOptions : uint8_t;
+enum class AXStreamOptions : uint16_t;
 
 static constexpr uint16_t lastPropertyFlagIndex = 21;
 // The most common boolean properties are stored in a bitfield rather than in a HashMap.

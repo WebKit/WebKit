@@ -74,6 +74,9 @@ WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 WK_EXPORT bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef page);
 #endif
 
+WK_EXPORT bool WKPageAccessibilityIsEnabled(WKPageRef page);
+WK_EXPORT bool WKPageAccesssibilityThreadInitialized(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

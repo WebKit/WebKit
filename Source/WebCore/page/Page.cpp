@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Page.h"
 
+#include "AXLogger.h"
 #include "ActivityStateChangeObserver.h"
 #include "AdvancedPrivacyProtections.h"
 #include "AlternativeTextClient.h"
@@ -793,14 +794,14 @@ void Page::settingsDidChange()
 #endif
 }
 
-std::optional<AXTreeData> Page::accessibilityTreeData() const
+std::optional<AXTreeData> Page::accessibilityTreeData(bool limited) const
 {
     RefPtr localTopDocument = this->localTopDocument();
     if (!localTopDocument)
         return std::nullopt;
 
     if (CheckedPtr cache = localTopDocument->existingAXObjectCache())
-        return { cache->treeData() };
+        return { limited ? cache->treeData() : cache->treeData({ { AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::RendererOrNode } }) };
     return std::nullopt;
 }
 

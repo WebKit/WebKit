@@ -242,7 +242,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     RunJavaScriptInFrameInScriptWorld(struct WebKit::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, struct WebKit::ContentWorldData world, bool wantsResult) -> (Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result)
 
-    GetAccessibilityTreeData() -> (std::optional<IPC::SharedBufferReference> dataReference)
+    GetAccessibilityTreeData(bool limited) -> (std::optional<IPC::SharedBufferReference> dataReference)
     UpdateRenderingWithForcedRepaint() -> ()
     SelectAll()
     ScheduleFullEditorStateUpdate()
@@ -508,6 +508,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
     UpdateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset);
     ResolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier frameID, WebCore::IntPoint point) -> (String result)
     EnableAccessibility()
+
+    IsAccessibilityEnabled() -> (bool result) Synchronous
+    IsAccessibilityThreadInitialized() -> (bool result) Synchronous
 
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     InitializeAccessibility(Vector<WebKit::SandboxExtensionHandle> handles);

@@ -52,6 +52,7 @@
 - (NSSet<NSView *> *)_pdfHUDs;
 
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
+- (void)_retrieveLimitedAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
 
 - (void)_setSelectedColorForColorPicker:(NSColor *)color;
 

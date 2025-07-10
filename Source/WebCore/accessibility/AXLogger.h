@@ -36,7 +36,7 @@ enum class AXLoggingOptions : uint8_t {
     OffMainThread = 1 << 1, // Logs messages off the main thread.
 };
 
-enum class AXStreamOptions : uint8_t {
+enum class AXStreamOptions : uint16_t {
     ObjectID = 1 << 0,
     Role = 1 << 1,
     ParentID = 1 << 2,
@@ -47,6 +47,7 @@ enum class AXStreamOptions : uint8_t {
 #if ENABLE(AX_THREAD_TEXT_APIS)
     TextRuns = 1 << 7,
 #endif
+    RendererOrNode = 1 << 8,
 };
 
 #if !LOG_DISABLED

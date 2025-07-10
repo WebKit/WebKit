@@ -2736,6 +2736,16 @@ void WebPage::enableAccessibility()
         WebCore::AXObjectCache::enableAccessibility();
 }
 
+void WebPage::isAccessibilityEnabled(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(WebCore::AXObjectCache::accessibilityEnabled());
+}
+
+void WebPage::isAccessibilityThreadInitialized(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(WebCore::AXObjectCache::isAXThreadInitialized());
+}
+
 void WebPage::screenPropertiesDidChange()
 {
     protectedCorePage()->screenPropertiesDidChange();
@@ -4651,11 +4661,11 @@ void WebPage::getWebArchiveOfFrame(std::optional<FrameIdentifier> frameID, Compl
 #endif
 }
 
-void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getAccessibilityTreeData(bool limited, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
     IPC::SharedBufferReference dataBuffer;
 #if PLATFORM(COCOA)
-    if (auto treeData = protectedCorePage()->accessibilityTreeData()) {
+    if (auto treeData = protectedCorePage()->accessibilityTreeData(limited)) {
         auto stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
         CFWriteStreamOpen(stream.get());
 
