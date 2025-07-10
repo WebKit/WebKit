@@ -172,8 +172,7 @@ void lowerAfterRegAlloc(Code& code)
                 }
                 std::array<Arg, 2> gpScratch = getScratches(set, GP);
                 std::array<Arg, 2> fpScratch = getScratches(set, FP);
-                insertionSet.insertInsts(
-                    instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
+                emitShuffle({ insertionSet, instIndex }, pairs, gpScratch, fpScratch, inst.origin);
                 inst = Inst();
                 break;
             }
@@ -240,8 +239,7 @@ void lowerAfterRegAlloc(Code& code)
                 if (AirLowerAfterRegAllocInternal::verbose)
                     dataLog("Pre-call pairs for ", inst, ": ", listDump(pairs), "\n");
                 
-                insertionSet.insertInsts(
-                    instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
+                emitShuffle({ insertionSet, instIndex }, pairs, gpScratch, fpScratch, inst.origin);
 
                 inst = buildCCall(code, inst.origin, destinations);
                 if (oldKind.effects)
@@ -272,8 +270,7 @@ void lowerAfterRegAlloc(Code& code)
                 gpScratch = getScratches(postUsed, GP);
                 fpScratch = getScratches(postUsed, FP);
                 
-                insertionSet.insertInsts(
-                    instIndex + 1, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
+                emitShuffle({ insertionSet, instIndex + 1 }, pairs, gpScratch, fpScratch, inst.origin);
                 break;
             }
 

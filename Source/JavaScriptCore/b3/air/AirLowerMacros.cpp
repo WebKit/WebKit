@@ -75,29 +75,7 @@ void lowerMacros(Code& code)
                 }
                 ASSERT(offset = inst.args.size());
                 
-                if (hasRegisterSource) [[unlikely]]
-                    insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
-                else {
-                    // If none of the inputs are registers, then we can efficiently lower this
-                    // shuffle before register allocation. First we lower all of the moves to
-                    // memory, in the hopes that this is the last use of the operands. This
-                    // avoids creating interference between argument registers and arguments
-                    // that don't go into argument registers.
-                    for (ShufflePair& pair : shufflePairs) {
-                        if (pair.dst().isMemory())
-                            insertionSet.insertInsts(instIndex, pair.insts(code, inst.origin));
-                    }
-
-                    // Fill the argument registers by starting with the first one. This avoids
-                    // creating interference between things passed to low-numbered argument
-                    // registers and high-numbered argument registers. The assumption here is
-                    // that lower-numbered argument registers are more likely to be
-                    // incidentally clobbered.
-                    for (ShufflePair& pair : shufflePairs) {
-                        if (!pair.dst().isMemory())
-                            insertionSet.insertInsts(instIndex, pair.insts(code, inst.origin));
-                    }
-                }
+                insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
 
                 // Indicate that we're using our original callee argument.
                 destinations[0] = inst.args[1];
