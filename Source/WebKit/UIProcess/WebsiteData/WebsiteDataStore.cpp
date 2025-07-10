@@ -793,7 +793,7 @@ private:
         ScreenTimeWebsiteDataSupport::getScreenTimeURLs(configuration().identifier(), { [callbackAggregator](HashSet<URL> urls) {
             WebsiteData websiteData;
             websiteData.entries = WTF::map(urls, [](auto& url) {
-                return WebsiteData::Entry { SecurityOriginData::fromURL(url), WebsiteDataType::ScreenTime, 0 };
+                return WebsiteData::Entry { WebCore::SecurityOriginData::fromURL(url), WebsiteDataType::ScreenTime, 0 };
             });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         } });
