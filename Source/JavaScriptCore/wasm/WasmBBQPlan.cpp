@@ -50,11 +50,11 @@ namespace WasmBBQPlanInternal {
 static constexpr bool verbose = false;
 }
 
-BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation>&& moduleInformation, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
+BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation>&& moduleInformation, FunctionCodeIndex functionIndex, const LowerTierInformation& lowerTierInfo, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
     : Plan(vm, WTFMove(moduleInformation), WTFMove(completionTask))
     , m_calleeGroup(WTFMove(calleeGroup))
     , m_functionIndex(functionIndex)
-    , m_hasExceptionHandlers(hasExceptionHandlers)
+    , m_lowerTierInfo(lowerTierInfo)
 {
     ASSERT(Options::useBBQJIT());
     setMode(m_calleeGroup->mode());
@@ -186,7 +186,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex fun
 
     beginCompilerSignpost(callee);
     RELEASE_ASSERT(mode() == m_calleeGroup->mode());
-    parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX);
+    parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_lowerTierInfo, UINT32_MAX);
     endCompilerSignpost(callee);
 
     if (!parseAndCompileResult) [[unlikely]] {

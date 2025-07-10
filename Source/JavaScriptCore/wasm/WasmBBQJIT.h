@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "PCToCodeOriginMap.h"
+#include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationContext.h"
 #include "WasmFunctionParser.h"
@@ -859,7 +860,7 @@ public:
     static constexpr bool tierSupportsSIMD = true;
     static constexpr bool validateFunctionBodySize = true;
 
-    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
+    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, const LowerTierInformation& lowerTierInfo, unsigned loopIndexForOSREntry);
 
     ALWAYS_INLINE static Value emptyExpression()
     {
@@ -2247,8 +2248,6 @@ private:
 
     Location canonicalSlot(Value value);
 
-    Location allocateStack(Value value);
-
     constexpr static int tempSlotSize = 16; // Size of the stack slot for a stack temporary. Currently the size of the largest possible temporary (a v128).
 
     enum class ShiftI64HelperOp { Lshift, Urshift, Rshift };
@@ -2272,6 +2271,8 @@ private:
     MemoryMode m_mode;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls;
     FixedBitVector m_directCallees;
+    std::optional<unsigned> m_knownExpressionStackSize;
+    std::optional<unsigned> m_knownFrameSize;
     std::optional<bool> m_hasExceptionHandlers;
     FunctionParser<BBQJIT>* m_parser;
     Vector<uint32_t, 4> m_arguments;
@@ -2339,7 +2340,7 @@ using MinOrMax = BBQJIT::MinOrMax;
 class BBQCallee;
 
 using BBQJIT = BBQJITImpl::BBQJIT;
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex, const LowerTierInformation&, unsigned);
 
 } } // namespace JSC::Wasm
 

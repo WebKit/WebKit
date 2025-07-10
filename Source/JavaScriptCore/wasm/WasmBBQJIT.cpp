@@ -647,7 +647,7 @@ void ControlData::fillLabels(CCallHelpers::Label label)
         *box = label;
 }
 
-BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, const LowerTierInformation& lowerTierInfo, unsigned loopIndexForOSREntry)
     : m_jit(jit)
     , m_callee(callee)
     , m_function(function)
@@ -657,7 +657,8 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
     , m_mode(mode)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_directCallees(m_info.internalFunctionCount())
-    , m_hasExceptionHandlers(hasExceptionHandlers)
+    , m_knownExpressionStackSize(lowerTierInfo.maxExpressionStackSize)
+    , m_hasExceptionHandlers(lowerTierInfo.hasExceptionHandlers)
     , m_loopIndexForOSREntry(loopIndexForOSREntry)
     , m_gprLRU(jit.numberOfRegisters())
     , m_fprLRU(jit.numberOfFPRegisters())
@@ -716,7 +717,11 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
     ASSERT(callInfo.params.size() == m_functionSignature->argumentCount());
     for (unsigned i = 0; i < m_functionSignature->argumentCount(); i ++) {
         const Type& type = m_functionSignature->argumentType(i);
-        m_localSlots.append(allocateStack(Value::fromLocal(type.kind, i)));
+
+        unsigned typeSize = sizeOfType(type.kind);
+        m_localStorage = WTF::roundUpToMultipleOf(typeSize, m_localStorage);
+        m_localStorage += typeSize;
+        m_localSlots.append(Location::fromStack(-m_localStorage));
         m_locals.append(Location::none());
         m_localTypes.append(type.kind);
 
@@ -724,7 +729,6 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
         bind(parameter, Location::fromArgumentLocation(callInfo.params[i], type.kind));
         m_arguments.append(i);
     }
-    m_localStorage = m_frameSize; // All stack slots allocated so far are locals.
 }
 
 bool BBQJIT::canTierUpToOMG() const
@@ -815,9 +819,10 @@ PartialResult BBQJIT::addDrop(Value value)
 PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 {
     for (uint32_t i = 0; i < numberOfLocals; i ++) {
-        uint32_t localIndex = m_locals.size();
-        m_localSlots.append(allocateStack(Value::fromLocal(type.kind, localIndex)));
-        m_localStorage = m_frameSize;
+        unsigned typeSize = sizeOfType(type.kind);
+        m_localStorage = WTF::roundUpToMultipleOf(typeSize, m_localStorage);
+        m_localStorage += typeSize;
+        m_localSlots.append(Location::fromStack(-m_localStorage));
         m_locals.append(m_localSlots.last());
         m_localTypes.append(type.kind);
     }
@@ -3010,25 +3015,27 @@ ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(BlockSignature signature)
     } else
         m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
 
-    m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
-
     bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
     if (mayHaveExceptionHandlers)
         m_jit.store32(CCallHelpers::TrustedImm32(PatchpointExceptionHandle::s_invalidCallSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-    // Because we compile in a single pass, we always need to pessimistically check for stack underflow/overflow.
-    static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
-    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
+    if (m_knownExpressionStackSize) {
+        m_knownFrameSize = WTF::roundUpToMultipleOf<tempSlotSize>(m_localStorage) + *m_knownExpressionStackSize * tempSlotSize;
+        m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(*m_knownFrameSize), MacroAssembler::stackPointerRegister);
+    } else {
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
+        static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
+        m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
+    }
 
+    // Because we compile in a single pass, we always need to pessimistically check for stack underflow/overflow.
     MacroAssembler::JumpList overflow;
     JIT_COMMENT(m_jit, "Stack overflow check");
 #if !CPU(ADDRESS64)
-    overflow.append(m_jit.branchPtr(CCallHelpers::Above, wasmScratchGPR, GPRInfo::callFrameRegister));
+    overflow.append(m_jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
 #endif
-    overflow.append(m_jit.branchPtr(CCallHelpers::LessThan, wasmScratchGPR, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfSoftStackLimit())));
+    overflow.append(m_jit.branchPtr(CCallHelpers::LessThan, MacroAssembler::stackPointerRegister, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfSoftStackLimit())));
     overflow.linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()), &m_jit);
-
-    m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
 
     LocalOrTempIndex i = 0;
     for (; i < m_arguments.size(); ++i)
@@ -3307,8 +3314,6 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, Stack& enclosingStack)
             stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
         for (unsigned i = 0; i < data.argumentLocations().size(); i ++)
             stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
-
-
     } else {
         for (const ControlEntry& entry : m_parser->controlStack()) {
             for (const TypedExpression& expr : entry.enclosedExpressionStack)
@@ -4316,13 +4321,17 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
     }
 
     // Our callee could have tail called someone else and changed SP so we need to restore it. Do this before restoring our results since results are stored at the top of the reserved stack space.
-    m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
+
+    if (!m_knownFrameSize) {
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
 #if CPU(ARM_THUMB2)
-    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
-    m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
+        m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
+        m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #else
-    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
+        m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #endif
+    } else
+        m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(*m_knownFrameSize), MacroAssembler::stackPointerRegister);
 
     // Push return value(s) onto the expression stack
     returnValuesFromCall(results, functionType, callInfo);
@@ -4360,13 +4369,16 @@ void BBQJIT::emitIndirectCall(const char* opcode, const Value& callee, GPRReg ca
     m_jit.call(calleeCode, WasmEntryPtrTag);
 
     // Our callee could have tail called someone else and changed SP so we need to restore it. Do this before restoring our results since results are stored at the top of the reserved stack space.
-    m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
+    if (!m_knownFrameSize) {
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
 #if CPU(ARM_THUMB2)
-    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
-    m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
+        m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
+        m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #else
-    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
+        m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #endif
+    } else
+        m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(*m_knownFrameSize), MacroAssembler::stackPointerRegister);
 
     returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
@@ -5173,17 +5185,12 @@ Location BBQJIT::canonicalSlot(Value value)
 
     LocalOrTempIndex tempIndex = value.asTemp();
     int slotOffset = WTF::roundUpToMultipleOf<tempSlotSize>(m_localStorage) + (tempIndex + 1) * tempSlotSize;
-    if (m_frameSize < slotOffset)
+    if (m_frameSize < slotOffset) {
         m_frameSize = slotOffset;
+        if (m_knownFrameSize)
+            RELEASE_ASSERT(static_cast<unsigned>(m_frameSize) <= *m_knownFrameSize);
+    }
     return Location::fromStack(-slotOffset);
-}
-
-Location BBQJIT::allocateStack(Value value)
-{
-    // Align stack for value size.
-    m_frameSize = WTF::roundUpToMultipleOf(value.size(), m_frameSize);
-    m_frameSize += value.size();
-    return Location::fromStack(-m_frameSize);
 }
 
 void BBQJIT::emitArrayGetPayload(StorageType type, GPRReg arrayGPR, GPRReg payloadGPR)
@@ -5203,7 +5210,7 @@ void BBQJIT::emitArrayGetPayload(StorageType type, GPRReg arrayGPR, GPRReg paylo
 
 } // namespace JSC::Wasm::BBQJITImpl
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, FunctionCodeIndex functionIndex, const LowerTierInformation& lowerTierInfo, unsigned loopIndexForOSREntry)
 {
     CompilerTimingScope totalTime("BBQ"_s, "Total BBQ"_s);
 
@@ -5213,7 +5220,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
-    BBQJIT irGenerator(*compilationContext.wasmEntrypointJIT, signature, callee, function, functionIndex, info, unlinkedWasmToWasmCalls, mode, result.get(), hasExceptionHandlers, loopIndexForOSREntry);
+    BBQJIT irGenerator(*compilationContext.wasmEntrypointJIT, signature, callee, function, functionIndex, info, unlinkedWasmToWasmCalls, mode, result.get(), lowerTierInfo, loopIndexForOSREntry);
     FunctionParser<BBQJIT> parser(irGenerator, function.data, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
