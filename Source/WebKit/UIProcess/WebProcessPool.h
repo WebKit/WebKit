@@ -677,8 +677,10 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
 #if PLATFORM(COCOA)
-    void addCFNotificationObserver(CFNotificationCallback, CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenter());
-    void removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenter());
+    void addCFNotificationObserver(CFNotificationCallback, CFStringRef name, CFNotificationCenterRef);
+    void addCFNotificationObserver(CFNotificationCallback, CFStringRef name);
+    void removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef);
+    void removeCFNotificationObserver(CFStringRef name);
 
     void registerNotificationObservers();
     void unregisterNotificationObservers();

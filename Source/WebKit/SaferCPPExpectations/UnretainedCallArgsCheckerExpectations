@@ -179,7 +179,6 @@ UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
 UIProcess/WebAuthentication/Mock/MockNfcService.mm
 UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.mm
-UIProcess/WebProcessPool.h
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/PageClientImplMac.mm

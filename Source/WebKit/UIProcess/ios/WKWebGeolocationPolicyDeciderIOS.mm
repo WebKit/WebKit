@@ -128,14 +128,14 @@ struct PermissionRequest {
 
     _diskDispatchQueue = adoptNS(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(retainPtr(CFNotificationCenterGetDarwinNotifyCenter()).get(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
 
     return self;
 }
 
 - (void)dealloc
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), self, CLAppResetChangedNotification, NULL);
+    CFNotificationCenterRemoveObserver(retainPtr(CFNotificationCenterGetDarwinNotifyCenter()).get(), self, CLAppResetChangedNotification, NULL);
     [super dealloc];
 }
 
