@@ -21,10 +21,10 @@
 #pragma once
 
 #include "ScriptWrappable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,12 +45,12 @@ public:
 
     bool isSupportedPropertyName(const AtomString&) const;
 
-    Navigator* navigator() { return m_navigator.get(); }
+    Navigator& navigator() { return m_navigator; }
 
 private:
     explicit DOMMimeTypeArray(Navigator&, Vector<Ref<DOMMimeType>>&&);
     
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     Vector<Ref<DOMMimeType>> m_types;
 };
 

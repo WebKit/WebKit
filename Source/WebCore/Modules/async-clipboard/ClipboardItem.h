@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -75,7 +76,7 @@ private:
     ClipboardItem(Clipboard&, const PasteboardItemInfo&);
 
     WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_clipboard;
-    WeakPtr<Navigator> m_navigator;
+    const CheckedPtr<Navigator> m_navigator;
     const UniqueRef<ClipboardItemDataSource> m_dataSource;
     PresentationStyle m_presentationStyle { PresentationStyle::Unspecified };
 };

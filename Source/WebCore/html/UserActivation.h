@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ public:
     static Ref<UserActivation> create(Navigator&);
     ~UserActivation();
 
-    Navigator* navigator();
+    Navigator& navigator();
 
     bool hasBeenActive() const;
     bool isActive() const;
@@ -50,7 +50,7 @@ private:
 
     LocalDOMWindow* window() const;
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
 };
 
 } // namespace WebCore

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "PluginData.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -39,12 +40,12 @@ public:
     String description() const;
     RefPtr<DOMPlugin> enabledPlugin() const;
 
-    Navigator* navigator() { return m_navigator.get(); }
+    Navigator& navigator() { return m_navigator; }
 
 private:
     DOMMimeType(Navigator&, const MimeClassInfo&, DOMPlugin&);
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     MimeClassInfo m_info;
     WeakPtr<DOMPlugin> m_enabledPlugin;
 };

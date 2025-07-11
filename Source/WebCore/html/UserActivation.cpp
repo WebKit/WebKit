@@ -45,14 +45,14 @@ UserActivation::UserActivation(Navigator& navigator)
 
 UserActivation::~UserActivation() = default;
 
-Navigator* UserActivation::navigator()
+Navigator& UserActivation::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 LocalDOMWindow* UserActivation::window() const
 {
-    return m_navigator ? m_navigator->window() : nullptr;
+    return m_navigator->window();
 }
 
 bool UserActivation::hasBeenActive() const

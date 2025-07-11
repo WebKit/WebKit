@@ -42,6 +42,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -62,12 +63,12 @@ ContactsManager::~ContactsManager() = default;
 
 LocalFrame* ContactsManager::frame() const
 {
-    return m_navigator ? m_navigator->frame() : nullptr;
+    return m_navigator->frame();
 }
 
-Navigator* ContactsManager::navigator()
+Navigator& ContactsManager::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 void ContactsManager::getProperties(Ref<DeferredPromise>&& promise)

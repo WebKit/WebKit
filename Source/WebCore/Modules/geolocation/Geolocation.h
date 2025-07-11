@@ -82,7 +82,7 @@ public:
     void setError(GeolocationError&);
     bool shouldBlockGeolocationRequests();
 
-    Navigator* navigator();
+    Navigator& navigator();
     WEBCORE_EXPORT LocalFrame* frame() const;
 
 private:
@@ -158,7 +158,7 @@ private:
 
     void resumeTimerFired();
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;

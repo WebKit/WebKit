@@ -27,8 +27,8 @@
 
 #include "IDLTypes.h"
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class JSObject;
@@ -56,7 +56,7 @@ public:
     static Ref<Permissions> create(NavigatorBase&);
     ~Permissions();
 
-    NavigatorBase* navigator();
+    NavigatorBase& navigator();
     void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);
     WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
     WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);
@@ -64,7 +64,7 @@ public:
 private:
     explicit Permissions(NavigatorBase&);
 
-    WeakPtr<NavigatorBase> m_navigator;
+    const CheckedRef<NavigatorBase> m_navigator;
 };
 
 } // namespace WebCore

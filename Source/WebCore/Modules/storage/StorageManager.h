@@ -27,8 +27,8 @@
 
 #include "IDLTypes.h"
 #include "StorageEstimate.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +50,8 @@ public:
 
 private:
     explicit StorageManager(NavigatorBase&);
-    WeakPtr<NavigatorBase> m_navigator;
+
+    const CheckedRef<NavigatorBase> m_navigator;
 };
 
 } // namespace WebCore

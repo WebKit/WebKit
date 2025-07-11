@@ -21,9 +21,9 @@
 
 #include "PluginData.h"
 #include "ScriptWrappable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -52,12 +52,12 @@ public:
 
     const Vector<Ref<DOMMimeType>>& mimeTypes() const { return m_mimeTypes; }
 
-    Navigator* navigator() { return m_navigator.get(); }
+    Navigator& navigator() { return m_navigator; }
 
 private:
     DOMPlugin(Navigator&, const PluginInfo&);
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     PluginInfo m_info;
     Vector<Ref<DOMMimeType>> m_mimeTypes;
 };

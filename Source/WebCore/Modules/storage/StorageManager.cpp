@@ -92,7 +92,7 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator, Exce
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(m_navigator.ptr(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -104,7 +104,7 @@ void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 
 void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(m_navigator.ptr(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -116,7 +116,7 @@ void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 
 void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(m_navigator.ptr(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -128,12 +128,12 @@ void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>
 
 void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::SecurityError);
+    auto connectionInfoOrException = connectionInfo(m_navigator.ptr(), ExceptionCode::SecurityError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(WTFMove(connectionInfo.origin), [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
+    connectionInfo.connection.fileSystemGetDirectory(WTFMove(connectionInfo.origin), [promise = WTFMove(promise), weakNavigator = WeakPtr { m_navigator.get() }](auto&& result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

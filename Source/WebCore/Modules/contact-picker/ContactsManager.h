@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ public:
     ~ContactsManager();
 
     LocalFrame* frame() const;
-    Navigator* navigator();
+    Navigator& navigator();
 
     void getProperties(Ref<DeferredPromise>&&);
     void select(const Vector<ContactProperty>&, const ContactsSelectOptions&, Ref<DeferredPromise>&&);
@@ -56,7 +56,7 @@ public:
 private:
     ContactsManager(Navigator&);
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     bool m_contactPickerIsShowing { false };
 };
 

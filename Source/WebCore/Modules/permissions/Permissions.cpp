@@ -69,9 +69,9 @@ Permissions::Permissions(NavigatorBase& navigator)
 {
 }
 
-NavigatorBase* Permissions::navigator()
+NavigatorBase& Permissions::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 Permissions::~Permissions() = default;
@@ -121,7 +121,7 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
 
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
-    RefPtr context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+    RefPtr context = m_navigator->scriptExecutionContext();
     if (!context || !context->globalObject()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "The context is invalid"_s });
         return;

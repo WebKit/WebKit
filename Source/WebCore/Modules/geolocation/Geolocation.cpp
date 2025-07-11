@@ -763,14 +763,14 @@ void Geolocation::handlePendingPermissionNotifiers()
     }
 }
 
-Navigator* Geolocation::navigator()
+Navigator& Geolocation::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 LocalFrame* Geolocation::frame() const
 {
-    return m_navigator ? m_navigator->frame() : nullptr;
+    return m_navigator->frame();
 }
 
 } // namespace WebCore

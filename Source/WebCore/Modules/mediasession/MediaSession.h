@@ -34,6 +34,7 @@
 #include "MediaSessionActionHandler.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -129,7 +130,7 @@ public:
     WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return *m_logger.get(); }
+    const Logger& logger() const { return m_logger; }
 #endif
 
     bool hasObserver(MediaSessionObserver&) const;
@@ -171,7 +172,7 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
     RefPtr<MediaMetadata> m_defaultMetadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
@@ -179,7 +180,7 @@ private:
     std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers WTF_GUARDED_BY_LOCK(m_actionHandlersLock);
-    RefPtr<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     uint64_t m_logIdentifier { 0 };
 
     WeakHashSet<MediaSessionObserver> m_observers;

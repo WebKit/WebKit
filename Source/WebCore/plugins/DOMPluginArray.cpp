@@ -87,9 +87,6 @@ Vector<AtomString> DOMPluginArray::supportedPropertyNames() const
 
 void DOMPluginArray::refresh(bool reloadPages)
 {
-    if (!m_navigator)
-        return;
-
     RefPtr frame = m_navigator->frame();
     if (!frame)
         return;

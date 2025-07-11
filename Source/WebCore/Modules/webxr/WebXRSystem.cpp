@@ -73,9 +73,9 @@ WebXRSystem::WebXRSystem(Navigator& navigator)
 
 WebXRSystem::~WebXRSystem() = default;
 
-Navigator* WebXRSystem::navigator()
+Navigator& WebXRSystem::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 // https://immersive-web.github.io/webxr/#ensures-an-immersive-xr-device-is-selected

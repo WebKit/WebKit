@@ -151,13 +151,12 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(navigator)
+    , m_logger(Document::sharedLogger())
+    , m_logIdentifier(nextLogIdentifier())
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     , m_coordinator(MediaSessionCoordinator::create(navigator.scriptExecutionContext()))
 #endif
 {
-    m_logger = Document::sharedLogger();
-    m_logIdentifier = nextLogIdentifier();
-
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr frame = navigator.frame();
     auto* page = frame ? frame->page() : nullptr;
@@ -387,7 +386,7 @@ std::optional<double> MediaSession::currentPosition() const
 
 Document* MediaSession::document() const
 {
-    if (!m_navigator || !m_navigator->window())
+    if (!m_navigator->window())
         return nullptr;
     return m_navigator->window()->document();
 }

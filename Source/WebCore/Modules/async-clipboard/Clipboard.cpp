@@ -87,9 +87,9 @@ Clipboard::~Clipboard()
         writer->invalidate();
 }
 
-Navigator* Clipboard::navigator()
+Navigator& Clipboard::navigator()
 {
-    return m_navigator.get();
+    return m_navigator;
 }
 
 enum EventTargetInterfaceType Clipboard::eventTargetInterface() const
@@ -99,7 +99,7 @@ enum EventTargetInterfaceType Clipboard::eventTargetInterface() const
 
 ScriptExecutionContext* Clipboard::scriptExecutionContext() const
 {
-    return m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+    return m_navigator->scriptExecutionContext();
 }
 
 void Clipboard::readText(Ref<DeferredPromise>&& promise)
@@ -297,7 +297,7 @@ void Clipboard::didResolveOrReject(Clipboard::ItemWriter& writer)
 
 LocalFrame* Clipboard::frame() const
 {
-    return m_navigator ? m_navigator->frame() : nullptr;
+    return m_navigator->frame();
 }
 
 Pasteboard& Clipboard::activePasteboard()

@@ -22,10 +22,10 @@
 
 #include "Navigator.h"
 #include "ScriptWrappable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,13 +47,12 @@ public:
 
     void refresh(bool reloadPages);
 
-    Navigator* navigator() { return m_navigator.get(); }
-    
+    Navigator& navigator() { return m_navigator; }
+
 private:
     explicit DOMPluginArray(Navigator&, Vector<Ref<DOMPlugin>>&&, Vector<Ref<DOMPlugin>>&&);
 
-
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     Vector<Ref<DOMPlugin>> m_publiclyVisiblePlugins;
     Vector<Ref<DOMPlugin>> m_additionalWebVisibilePlugins;
 };

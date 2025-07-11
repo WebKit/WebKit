@@ -38,6 +38,7 @@
 #include "WebGLRenderingContextBase.h"
 #include "XRReferenceSpaceType.h"
 #include "XRSessionMode.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -83,7 +84,7 @@ public:
     WEBCORE_EXPORT void registerSimulatedXRDeviceForTesting(PlatformXR::Device&);
     WEBCORE_EXPORT void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device&);
 
-    Navigator* navigator();
+    Navigator& navigator();
 
 protected:
     // EventTarget
@@ -130,7 +131,7 @@ private:
         void deleteLayer(PlatformXR::LayerHandle) final { }
     };
 
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     const Ref<PlatformXR::Device> m_defaultInlineDevice;
 
     bool m_immersiveXRDevicesHaveBeenEnumerated { false };

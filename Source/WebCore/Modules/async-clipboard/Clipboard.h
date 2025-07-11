@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventTarget.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -49,7 +50,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     LocalFrame* frame() const;
-    Navigator* navigator();
+    Navigator& navigator();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -109,7 +110,7 @@ private:
     void didResolveOrReject(ItemWriter&);
 
     std::optional<Session> m_activeSession;
-    WeakPtr<Navigator> m_navigator;
+    const CheckedRef<Navigator> m_navigator;
     Vector<std::optional<PasteboardCustomData>> m_dataToWrite;
     RefPtr<ItemWriter> m_activeItemWriter;
 };
