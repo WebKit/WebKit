@@ -36,7 +36,6 @@ namespace JSC {
 
 class GigacageAlignedMemoryAllocator final : public AlignedMemoryAllocator {
 public:
-    GigacageAlignedMemoryAllocator(Gigacage::Kind);
     ~GigacageAlignedMemoryAllocator() final;
     
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
@@ -48,7 +47,14 @@ public:
     void freeMemory(void*) final;
     void* tryReallocateMemory(void*, size_t) final;
 
+    static Ref<GigacageAlignedMemoryAllocator> create(Gigacage::Kind kind)
+    {
+        return adoptRef(*new GigacageAlignedMemoryAllocator(kind));
+    }
+
 private:
+    GigacageAlignedMemoryAllocator(Gigacage::Kind);
+
     Gigacage::Kind m_kind;
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     WTF::DebugHeap m_heap;

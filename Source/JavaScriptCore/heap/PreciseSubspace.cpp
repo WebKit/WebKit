@@ -36,10 +36,10 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PreciseSubspace);
 
-PreciseSubspace::PreciseSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, AlignedMemoryAllocator* allocator)
-    : Subspace(SubspaceKind::PreciseSubspace, name, heap)
+PreciseSubspace::PreciseSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, Ref<AlignedMemoryAllocator> allocator)
+    : Subspace(SubspaceKind::PreciseSubspace, name, heap, WTFMove(allocator))
 {
-    initialize(heapCellType, allocator);
+    initialize(heapCellType);
 }
 
 PreciseSubspace::~PreciseSubspace() = default;

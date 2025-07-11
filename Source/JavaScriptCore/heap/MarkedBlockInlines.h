@@ -290,6 +290,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     auto setBits = [&] (bool isEmpty) ALWAYS_INLINE_LAMBDA {
         Locker locker { m_directory->bitvectorLock() };
+        bool wasUnswept = m_directory->isUnswept(this);
         m_directory->setIsUnswept(this, false);
         m_directory->setIsDestructible(this, m_attributes.destruction == DestructionMode::MayNeedDestruction && destructionMode != BlockHasNoDestructors && !isEmpty && m_directory->isDestructible(this));
         m_directory->setIsEmpty(this, false);
@@ -297,6 +298,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             m_isFreeListed = true;
         else if (isEmpty)
             m_directory->setIsEmpty(this, true);
+        return wasUnswept;
     };
     UNUSED_PARAM(setBits);
 
@@ -320,12 +322,18 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         char* payloadBegin = std::bit_cast<char*>(block.atoms() + m_startAtom);
         RELEASE_ASSERT(static_cast<size_t>(payloadEnd - payloadBegin) <= payloadSize, payloadBegin, payloadEnd, &block, cellSize, m_startAtom);
 
-        setBits(true);
+        bool wasUnswept = setBits(true);
         if (space()->isMarking())
             header.m_lock.unlock();
         if (destructionMode != BlockHasNoDestructors) {
-            for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
-                destroy(cell);
+            // If this block is empty and this block is already swept, then we do not need to sweep it again.
+            // When it is used for FreeList, FreeList will maintain newly allocated information / zapping.
+            // When it is not used yet, then it is kept empty and unswept, so this is fine.
+            // This happens when (1) the block is completely new or (2) incremental sweeper already swept it before and it becomes empty.
+            if (wasUnswept) {
+                for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
+                    destroy(cell);
+            }
         }
         if (sweepMode == SweepToFreeList) {
             if (scribbleMode == Scribble) [[unlikely]]

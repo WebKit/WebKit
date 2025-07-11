@@ -98,6 +98,7 @@ class RunningScope;
 class SlotVisitor;
 class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
+class StructureAlignedMemoryAllocator;
 class SweepingScope;
 class VM;
 class VerifierSlotVisitor;
@@ -1059,8 +1060,9 @@ public:
 #endif
 
     // AlignedMemoryAllocators
-    std::unique_ptr<FastMallocAlignedMemoryAllocator> fastMallocAllocator;
-    std::unique_ptr<GigacageAlignedMemoryAllocator> primitiveGigacageAllocator;
+    Ref<FastMallocAlignedMemoryAllocator> fastMallocAllocator;
+    Ref<GigacageAlignedMemoryAllocator> primitiveGigacageAllocator;
+    Ref<StructureAlignedMemoryAllocator> structureAllocator;
 
     // Subspaces
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
@@ -1087,7 +1089,6 @@ public:
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     CompleteSubspace cellSpace;
-    CompleteSubspace variableSizedCellSpace;
     CompleteSubspace destructibleObjectSpace;
 
 #define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \

@@ -31,7 +31,7 @@ namespace JSC {
 
 class CompleteSubspace final : public Subspace {
 public:
-    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, const HeapCellType&, AlignedMemoryAllocator*);
+    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, const HeapCellType&, Ref<AlignedMemoryAllocator>);
     JS_EXPORT_PRIVATE ~CompleteSubspace() final;
 
     // In some code paths, we need it to be a compile error to call the virtual version of one of
