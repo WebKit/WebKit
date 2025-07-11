@@ -98,7 +98,7 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
     ASSERT(!shouldApplySizeContainment());
 
     // https://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
-    intrinsicSize = calculateIntrinsicSize();
+    intrinsicSize = this->intrinsicSize();
 
     if (style().aspectRatio().isRatio()) {
         intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth().value, style().aspectRatioLogicalHeight().value);

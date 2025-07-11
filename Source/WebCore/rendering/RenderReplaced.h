@@ -50,6 +50,7 @@ public:
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const override;
 
     virtual bool paintsContent() const { return true; }
+    void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
 
 protected:
     RenderReplaced(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag> = { });
@@ -66,7 +67,6 @@ protected:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
     virtual bool hasRelativeIntrinsicLogicalWidth() const { return false; }
 
