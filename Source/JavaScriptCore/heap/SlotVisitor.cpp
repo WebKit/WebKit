@@ -373,7 +373,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     case StringType:
         JSString::visitChildren(const_cast<JSCell*>(cell), *this);
         break;
-        
+
     case FinalObjectType:
         JSFinalObject::visitChildren(const_cast<JSCell*>(cell), *this);
         break;

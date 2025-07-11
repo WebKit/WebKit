@@ -148,13 +148,13 @@ struct Atomic {
         return transaction(func, std::memory_order_relaxed);
     }
 
-    Atomic() = default;
+    constexpr Atomic() = default;
     constexpr Atomic(T initial)
         : value(std::forward<T>(initial))
     {
     }
 
-    std::atomic<T> value;
+    std::atomic<T> value { };
 };
 
 template<typename T>

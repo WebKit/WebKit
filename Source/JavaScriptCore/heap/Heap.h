@@ -143,7 +143,7 @@ class Heap;
     v(propertyTableSpace, destructibleCellHeapCellType, PropertyTable) \
     v(regExpSpace, destructibleCellHeapCellType, RegExp) \
     v(regExpObjectSpace, cellHeapCellType, RegExpObject) \
-    v(ropeStringSpace, ropeStringHeapCellType, JSRopeString) \
+    v(ropeStringSpace, cellHeapCellType, JSRopeString) \
     v(scopedArgumentsSpace, cellHeapCellType, ScopedArguments) \
     v(sparseArrayValueMapSpace, destructibleCellHeapCellType, SparseArrayValueMap) \
     v(stringSpace, stringHeapCellType, JSString) \
@@ -1018,7 +1018,6 @@ public:
     IsoHeapCellType moduleNamespaceObjectHeapCellType;
     IsoHeapCellType nativeStdFunctionHeapCellType;
     IsoInlinedHeapCellType<JSString> stringHeapCellType;
-    IsoInlinedHeapCellType<JSRopeString> ropeStringHeapCellType;
     IsoHeapCellType weakMapHeapCellType;
     IsoHeapCellType weakSetHeapCellType;
     JSDestructibleObjectHeapCellType destructibleObjectHeapCellType;

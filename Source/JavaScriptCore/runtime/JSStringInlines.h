@@ -197,17 +197,22 @@ inline JSString* repeatCharacter(JSGlobalObject* globalObject, CharacterType cha
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
-inline void JSRopeString::convertToNonRope(String&& string) const
+inline void JSRopeString::convertToNonRope(VM& vm, String&& string) const
 {
     // Concurrent compiler threads can access String held by JSString. So we always emit
     // store-store barrier here to ensure concurrent compiler threads see initialized String.
     ASSERT(JSString::isRope());
+    ASSERT(!isStringImplOwner());
+    auto* holder = jsString(vm, WTFMove(string));
     WTF::storeStoreFence();
-    new (&uninitializedValueInternal()) String(WTFMove(string));
+    // Do not ref / deref String here. Actual ownership is held by the holder.
+    m_fiber = std::bit_cast<uintptr_t>(holder->getValueImpl());
+    m_compactFibers.replaceFiber2(holder);
+    vm.writeBarrier(this, holder);
     static_assert(sizeof(String) == sizeof(RefPtr<StringImpl>), "JSString's String initialization must be done in one pointer move.");
     // We do not clear the trailing fibers and length information (fiber1 and fiber2) because we could be reading the length concurrently.
     ASSERT(!JSString::isRope());
-    notifyNeedsDestruction();
+    ASSERT(!isStringImplOwner());
 }
 
 inline StringImpl* JSRopeString::tryGetLHS(ASCIILiteral rhs) const
@@ -449,9 +454,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
 
     auto createFromRope = [&](VM& vm, auto& buffer) {
         auto impl = AtomStringImpl::add(buffer);
-        size_t sizeToReport = impl->hasOneRef() ? impl->cost() : 0;
-        ropeString->convertToNonRope(String { WTFMove(impl) });
-        vm.heap.reportExtraMemoryAllocated(ropeString, sizeToReport);
+        ropeString->convertToNonRope(vm, String { WTFMove(impl) });
         return ropeString;
     };
 

@@ -10863,7 +10863,7 @@ IGNORE_CLANG_WARNINGS_END
 
         Allocator allocator = allocatorForConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
 
-        LValue result = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
+        LValue result = allocateCell(m_out.constIntPtr(allocator.localAllocator()), m_graph.stringStructure.get(), slowPath);
 
         // This puts nullptr for the first fiber. It makes visitChildren safe even if this JSRopeString is discarded due to the speculation failure in the following path.
         m_out.storePtr(m_out.constIntPtr(JSString::isRopeInPointer), result, m_heaps.JSRopeString_fiber0);
