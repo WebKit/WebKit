@@ -80,6 +80,7 @@
 namespace WebCore {
 namespace SelectorCompiler {
 
+// Using UncheckedKeyHashSet instead of HashSet improves performance on Speedometer 3.
 using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>>;
 
 #if ENABLE(SELECTOR_OPERATION_STATS)
