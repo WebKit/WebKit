@@ -320,6 +320,8 @@ bool LegacyRenderSVGShape::isPointInFill(const FloatPoint& point)
 
 bool LegacyRenderSVGShape::isPointInStroke(const FloatPoint& point)
 {
+    updateShapeFromElement();
+
     if (!style().svgStyle().hasStroke())
         return false;
 

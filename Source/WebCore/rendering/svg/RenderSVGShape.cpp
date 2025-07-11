@@ -266,6 +266,8 @@ bool RenderSVGShape::isPointInFill(const FloatPoint& point)
 
 bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
 {
+    updateShapeFromElement();
+
     if (!style().svgStyle().hasStroke())
         return false;
 
