@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CommonIdentifiers.h"
 #include "GenericArgumentsImpl.h"
 #include "JSLexicalEnvironment.h"
 #include "Watchpoint.h"

@@ -36,6 +36,8 @@
 #include <mach/vm_param.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<Gigacage::Kind passedKind, typename T, typename PtrTraits = RawPtrTraits<T>>
@@ -128,3 +130,4 @@ protected:
 
 using WTF::CagedPtr;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

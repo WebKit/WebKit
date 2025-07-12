@@ -413,7 +413,7 @@ String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
     if (isInt32())
         return vm.numericStrings.add(asInt32());
     if (isDouble())
-        return vm.numericStrings.add(asDouble());
+        return vm.numericStrings.add(vm, asDouble());
     if (isTrue())
         return vm.propertyNames->trueKeyword.string();
     if (isFalse())
