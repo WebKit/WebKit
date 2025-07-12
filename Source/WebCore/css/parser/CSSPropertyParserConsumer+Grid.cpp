@@ -440,9 +440,9 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSS::PropertyP
     return CSSValueList::createSpaceSeparated(WTFMove(values));
 }
 
-RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+RefPtr<CSSValue> consumeGridTemplateList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    // none | <track-list> | <auto-track-list> | subgrid <line-name-list>?
+    // none | <track-list> | <auto-track-list> | subgrid <line-name-list>? | masonry
     // https://drafts.csswg.org/css-grid/#track-sizing
 
     if (range.peek().id() == CSSValueNone)

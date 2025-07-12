@@ -41,18 +41,18 @@ namespace GridLayoutFunctions {
 
 static inline bool marginStartIsAuto(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    return direction == GridTrackSizingDirection::ForColumns ? gridItem.style().marginStart().isAuto() : gridItem.style().marginBefore().isAuto();
+    return direction == GridTrackSizingDirection::Columns ? gridItem.style().marginStart().isAuto() : gridItem.style().marginBefore().isAuto();
 }
 
 static inline bool marginEndIsAuto(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    return direction == GridTrackSizingDirection::ForColumns ? gridItem.style().marginEnd().isAuto() : gridItem.style().marginAfter().isAuto();
+    return direction == GridTrackSizingDirection::Columns ? gridItem.style().marginEnd().isAuto() : gridItem.style().marginAfter().isAuto();
 }
 
 static bool gridItemHasMargin(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
     // Length::IsZero returns true for 'auto' margins, which is aligned with the purpose of this function.
-    if (direction == GridTrackSizingDirection::ForColumns)
+    if (direction == GridTrackSizingDirection::Columns)
         return !gridItem.style().marginStart().isZero() || !gridItem.style().marginEnd().isZero();
     return !gridItem.style().marginBefore().isZero() || !gridItem.style().marginAfter().isZero();
 }
@@ -65,7 +65,7 @@ LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid& grid, GridTrack
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
-    if (direction == GridTrackSizingDirection::ForColumns)
+    if (direction == GridTrackSizingDirection::Columns)
         gridItem.computeInlineDirectionMargins(grid, gridItem.containingBlockLogicalWidthForContent(), { }, gridItem.logicalWidth(), marginStart, marginEnd);
     else
         gridItem.computeBlockDirectionMargins(grid, marginStart, marginEnd);
@@ -74,7 +74,7 @@ LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid& grid, GridTrack
 
 bool hasRelativeOrIntrinsicSizeForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    if (direction == GridTrackSizingDirection::ForColumns)
+    if (direction == GridTrackSizingDirection::Columns)
         return gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto();
     return gridItem.hasRelativeLogicalHeight() || gridItem.style().logicalHeight().isIntrinsicOrLegacyIntrinsicOrAuto();
 }
@@ -92,12 +92,12 @@ static ExtraMarginsFromSubgrids extraMarginForSubgrid(const RenderGrid& parent, 
     RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
     ExtraMarginsFromSubgrids extraMargins;
     if (!startLine)
-        extraMargins.addTrackStartMargin((direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore());
+        extraMargins.addTrackStartMargin((direction == GridTrackSizingDirection::Columns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore());
     else
         extraMargins.addTrackStartMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
 
     if (endLine == numTracks)
-        extraMargins.addTrackEndMargin((direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter());
+        extraMargins.addTrackEndMargin((direction == GridTrackSizingDirection::Columns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter());
     else
         extraMargins.addTrackEndMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
 
@@ -180,22 +180,22 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
 
 GridTrackSizingDirection flowAwareDirectionForGridItem(const RenderGrid& grid, const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    return !isOrthogonalGridItem(grid, gridItem) ? direction : (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns);
+    return !isOrthogonalGridItem(grid, gridItem) ? direction : (direction == GridTrackSizingDirection::Columns ? GridTrackSizingDirection::Rows : GridTrackSizingDirection::Columns);
 }
 
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, const RenderElement& parent, GridTrackSizingDirection direction)
 {
-    return isOrthogonalParent(grid, parent) ? (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns) : direction;
+    return isOrthogonalParent(grid, parent) ? (direction == GridTrackSizingDirection::Columns ? GridTrackSizingDirection::Rows : GridTrackSizingDirection::Columns) : direction;
 }
 
 std::optional<RenderBox::GridAreaSize> overridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    return direction == GridTrackSizingDirection::ForColumns ? gridItem.gridAreaContentLogicalWidth() : gridItem.gridAreaContentLogicalHeight();
+    return direction == GridTrackSizingDirection::Columns ? gridItem.gridAreaContentLogicalWidth() : gridItem.gridAreaContentLogicalHeight();
 }
 
 bool isFlippedDirection(const RenderGrid& grid, GridTrackSizingDirection direction)
 {
-    if (direction == GridTrackSizingDirection::ForColumns)
+    if (direction == GridTrackSizingDirection::Columns)
         return grid.writingMode().isBidiRTL();
     return grid.writingMode().isBlockFlipped();
 }
@@ -218,17 +218,17 @@ unsigned alignmentContextForBaselineAlignment(const GridSpan& span, const ItemPo
 void setOverridingContentSizeForGridItem(const RenderGrid& renderGrid, RenderBox& gridItem, LayoutUnit logicalSize, GridTrackSizingDirection direction)
 {
     if (!isOrthogonalGridItem(renderGrid, gridItem))
-        direction == GridTrackSizingDirection::ForColumns ? gridItem.setOverridingBorderBoxLogicalWidth(logicalSize) : gridItem.setOverridingBorderBoxLogicalHeight(logicalSize);
+        direction == GridTrackSizingDirection::Columns ? gridItem.setOverridingBorderBoxLogicalWidth(logicalSize) : gridItem.setOverridingBorderBoxLogicalHeight(logicalSize);
     else
-        direction == GridTrackSizingDirection::ForColumns ? gridItem.setOverridingBorderBoxLogicalHeight(logicalSize) : gridItem.setOverridingBorderBoxLogicalWidth(logicalSize);
+        direction == GridTrackSizingDirection::Columns ? gridItem.setOverridingBorderBoxLogicalHeight(logicalSize) : gridItem.setOverridingBorderBoxLogicalWidth(logicalSize);
 }
 
 void clearOverridingContentSizeForGridItem(const RenderGrid& renderGrid, RenderBox &gridItem, GridTrackSizingDirection direction)
 {
     if (!isOrthogonalGridItem(renderGrid, gridItem))
-        direction == GridTrackSizingDirection::ForColumns ? gridItem.clearOverridingBorderBoxLogicalWidth() : gridItem.clearOverridingBorderBoxLogicalHeight();
+        direction == GridTrackSizingDirection::Columns ? gridItem.clearOverridingBorderBoxLogicalWidth() : gridItem.clearOverridingBorderBoxLogicalHeight();
     else
-        direction == GridTrackSizingDirection::ForColumns ? gridItem.clearOverridingBorderBoxLogicalHeight() : gridItem.clearOverridingBorderBoxLogicalWidth();
+        direction == GridTrackSizingDirection::Columns ? gridItem.clearOverridingBorderBoxLogicalHeight() : gridItem.clearOverridingBorderBoxLogicalWidth();
 }
 
 } // namespace GridLayoutFunctions

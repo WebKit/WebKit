@@ -1416,7 +1416,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
     if (!element)
         return { };
 
-    auto directionCSSPropertyID = direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
+    auto directionCSSPropertyID = direction == GridTrackSizingDirection::Columns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
     RefPtr<CSSValue> cssValue;
     if (auto* inlineStyle = element->inlineStyle())
         cssValue = inlineStyle->getPropertyCSSValue(directionCSSPropertyID);
@@ -1484,12 +1484,14 @@ static Style::GridOrderedNamedLinesMap gridLineNames(const RenderStyle* renderSt
             result.iterator->value.appendVector(newNames);
     };
 
-    auto orderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->orderedNamedGridColumnLines() : renderStyle->orderedNamedGridRowLines();
-    for (auto& [i, names] : orderedGridLineNames.map)
+    auto& gridList = renderStyle->gridTemplateListForDirection(direction);
+
+    for (auto& [i, names] : gridList.orderedNamedLines.map)
         appendLineNames(i, names);
 
-    auto& autoRepeatOrderedGridLineNames = (direction == GridTrackSizingDirection::ForColumns ? renderStyle->autoRepeatOrderedNamedGridColumnLines() : renderStyle->autoRepeatOrderedNamedGridRowLines()).map;
-    auto autoRepeatInsertionPoint = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridAutoRepeatColumnsInsertionPoint() : renderStyle->gridAutoRepeatRowsInsertionPoint();
+    auto& autoRepeatOrderedGridLineNames = gridList.autoRepeatOrderedNamedLines.map;
+    auto autoRepeatInsertionPoint = gridList.autoRepeatInsertionPoint;
+
     unsigned autoRepeatIndex = 0;
     while (autoRepeatOrderedGridLineNames.size() && autoRepeatIndex < expectedLineCount - autoRepeatInsertionPoint) {
         auto names = autoRepeatOrderedGridLineNames.get(autoRepeatIndex % autoRepeatOrderedGridLineNames.size());
@@ -1498,8 +1500,7 @@ static Style::GridOrderedNamedLinesMap gridLineNames(const RenderStyle* renderSt
         ++autoRepeatIndex;
     }
 
-    auto& implicitGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridTemplateAreas().implicitNamedGridColumnLines : renderStyle->gridTemplateAreas().implicitNamedGridRowLines;
-    for (auto& [name, indexes] : implicitGridLineNames.map) {
+    for (auto& [name, indexes] : renderStyle->gridTemplateAreas().implicitNamedGridLinesForDirection(direction).map) {
         for (auto i : indexes)
             appendLineNames(i, {name});
     }
@@ -1610,7 +1611,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     };
 
     auto correctedArrowDirection = [&](InspectorOverlayLabel::Arrow::Direction direction, GridTrackSizingDirection sizingDirection) -> InspectorOverlayLabel::Arrow::Direction {
-        if ((sizingDirection == GridTrackSizingDirection::ForColumns && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::ForRows && isDirectionFlipped)) {
+        if ((sizingDirection == GridTrackSizingDirection::Columns && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::Rows && isDirectionFlipped)) {
             switch (direction) {
             case InspectorOverlayLabel::Arrow::Direction::Down:
                 direction = InspectorOverlayLabel::Arrow::Direction::Up;
@@ -1652,7 +1653,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     };
 
     auto correctedArrowAlignment = [&](InspectorOverlayLabel::Arrow::Alignment alignment, GridTrackSizingDirection sizingDirection) -> InspectorOverlayLabel::Arrow::Alignment {
-        if ((sizingDirection == GridTrackSizingDirection::ForRows && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::ForColumns && isDirectionFlipped)) {
+        if ((sizingDirection == GridTrackSizingDirection::Rows && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::Columns && isDirectionFlipped)) {
             if (alignment == InspectorOverlayLabel::Arrow::Alignment::Leading)
                 return InspectorOverlayLabel::Arrow::Alignment::Trailing;
             if (alignment == InspectorOverlayLabel::Arrow::Alignment::Trailing)
@@ -1666,9 +1667,9 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     gridHighlightOverlay.color = gridOverlay.config.gridColor;
 
     // Draw columns and rows.
-    auto columnWidths = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
-    auto columnLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForColumns, columnPositions.size());
-    auto authoredTrackColumnSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForColumns, columnWidths.size());
+    auto columnWidths = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::Columns);
+    auto columnLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::Columns, columnPositions.size());
+    auto authoredTrackColumnSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::Columns, columnWidths.size());
     FloatLine previousColumnEndLine;
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
         auto columnStartLine = columnLineAt(columnPositions[i]);
@@ -1707,7 +1708,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             if (gridOverlay.config.showTrackSizes) {
                 auto authoredTrackSize = i < authoredTrackColumnSizes.size() ? authoredTrackColumnSizes[i] : "auto"_s;
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
-                gridHighlightOverlay.labels.append({ authoredTrackSize, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, GridTrackSizingDirection::ForColumns), InspectorOverlayLabel::Arrow::Alignment::Middle } });
+                gridHighlightOverlay.labels.append({ authoredTrackSize, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, GridTrackSizingDirection::Columns), InspectorOverlayLabel::Arrow::Alignment::Middle } });
             }
         } else
             previousColumnEndLine = columnStartLine;
@@ -1728,13 +1729,13 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
 
         if (!lineLabel.isEmpty()) {
             auto text = lineLabel.toString();
-            auto arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Down, GridTrackSizingDirection::ForColumns);
-            auto arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Middle, GridTrackSizingDirection::ForColumns);
+            auto arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Down, GridTrackSizingDirection::Columns);
+            auto arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Middle, GridTrackSizingDirection::Columns);
 
             if (!i)
-                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Leading, GridTrackSizingDirection::ForColumns);
+                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Leading, GridTrackSizingDirection::Columns);
             else if (i == columnPositions.size() - 1)
-                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Trailing, GridTrackSizingDirection::ForColumns);
+                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Trailing, GridTrackSizingDirection::Columns);
 
             auto expectedLabelSize = InspectorOverlayLabel::expectedSize(text, arrowDirection);
             auto gapLabelPosition = gapLabelLine.start();
@@ -1742,7 +1743,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             // The area under the window's toolbar is drawable, but not meaningfully visible, so we must account for that space.
             auto topEdgeInset = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset).top();
             if (gapLabelLine.start().y() - expectedLabelSize.height() - topEdgeInset + scrollPosition.y() - viewportBounds.y() < 0) {
-                arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, GridTrackSizingDirection::ForColumns);
+                arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, GridTrackSizingDirection::Columns);
 
                 // Special case for the first column to make sure the label will be out of the way of the first row's label.
                 // The label heights will be the same, as they use the same font, so moving down by this label's size will
@@ -1755,9 +1756,9 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         }
     }
 
-    auto rowHeights = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
-    auto rowLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForRows, rowPositions.size());
-    auto authoredTrackRowSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForRows, rowHeights.size());
+    auto rowHeights = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::Rows);
+    auto rowLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::Rows, rowPositions.size());
+    auto authoredTrackRowSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::Rows, rowHeights.size());
     FloatLine previousRowEndLine;
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
         auto rowStartLine = rowLineAt(rowPositions[i]);
@@ -1795,7 +1796,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             if (gridOverlay.config.showTrackSizes) {
                 auto authoredTrackSize = i < authoredTrackRowSizes.size() ? authoredTrackRowSizes[i] : "auto"_s;
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
-                gridHighlightOverlay.labels.append({ authoredTrackSize, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Left, GridTrackSizingDirection::ForRows), InspectorOverlayLabel::Arrow::Alignment::Middle } });
+                gridHighlightOverlay.labels.append({ authoredTrackSize, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Left, GridTrackSizingDirection::Rows), InspectorOverlayLabel::Arrow::Alignment::Middle } });
             }
         } else
             previousRowEndLine = rowStartLine;
@@ -1816,17 +1817,17 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
 
         if (!lineLabel.isEmpty()) {
             auto text = lineLabel.toString();
-            auto arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Right, GridTrackSizingDirection::ForRows);
-            auto arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Middle, GridTrackSizingDirection::ForRows);
+            auto arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Right, GridTrackSizingDirection::Rows);
+            auto arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Middle, GridTrackSizingDirection::Rows);
 
             if (!i)
-                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Leading, GridTrackSizingDirection::ForRows);
+                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Leading, GridTrackSizingDirection::Rows);
             else if (i == rowPositions.size() - 1)
-                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Trailing, GridTrackSizingDirection::ForRows);
+                arrowAlignment = correctedArrowAlignment(InspectorOverlayLabel::Arrow::Alignment::Trailing, GridTrackSizingDirection::Rows);
 
             auto expectedLabelSize = InspectorOverlayLabel::expectedSize(text, arrowDirection);
             if (gapLabelPosition.x() - expectedLabelSize.width() + scrollPosition.x() - viewportBounds.x() < 0)
-                arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Left, GridTrackSizingDirection::ForRows);
+                arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Left, GridTrackSizingDirection::Rows);
 
             gridHighlightOverlay.labels.append({ text, gapLabelPosition, translucentLabelBackgroundColor, { arrowDirection, arrowAlignment } });
         }

@@ -2673,7 +2673,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/GridPosition.h
     rendering/style/GridPositionsResolver.h
     rendering/style/GridSpan.h
-    rendering/style/GridTrackSize.h
+    rendering/style/GridTrackSizingDirection.h
     rendering/style/LineClampValue.h
     rendering/style/ListStyleType.h
     rendering/style/NameScope.h
@@ -2782,7 +2782,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/grid/StyleGridNamedLinesMap.h
     style/values/grid/StyleGridOrderedNamedLinesMap.h
     style/values/grid/StyleGridTemplateAreas.h
+    style/values/grid/StyleGridTemplateList.h
     style/values/grid/StyleGridTrackBreadth.h
+    style/values/grid/StyleGridTrackSize.h
 
     style/values/images/StyleGradient.h
 

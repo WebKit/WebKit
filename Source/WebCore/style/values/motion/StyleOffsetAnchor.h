@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "LengthPoint.h"
 #include "StylePosition.h"
 #include "StyleValueTypes.h"
 

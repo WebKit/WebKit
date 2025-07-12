@@ -1403,7 +1403,7 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
     if (rowsValue) {
         if (!consumeSlashIncludingWhitespace(range))
             return false;
-        RefPtr columnsValue = consumeGridTemplatesRowsOrColumns(range, state);
+        RefPtr columnsValue = consumeGridTemplateList(range, state);
         if (!columnsValue || !range.atEnd())
             return false;
 
@@ -1525,14 +1525,14 @@ inline bool PropertyParserCustom::consumeGridShorthand(CSSParserTokenRange& rang
         }
         if (range.atEnd())
             return false;
-        templateColumns = consumeGridTemplatesRowsOrColumns(range, state);
+        templateColumns = consumeGridTemplateList(range, state);
         if (!templateColumns)
             return false;
         templateRows = CSSPrimitiveValue::create(CSSValueNone);
         autoColumnsValue = CSSPrimitiveValue::create(CSSValueAuto);
     } else {
         // 3- <grid-template-rows> / [ auto-flow && dense? ] <grid-auto-columns>?
-        templateRows = consumeGridTemplatesRowsOrColumns(range, state);
+        templateRows = consumeGridTemplateList(range, state);
         if (!templateRows)
             return false;
         if (!consumeSlashIncludingWhitespace(range) || range.atEnd())

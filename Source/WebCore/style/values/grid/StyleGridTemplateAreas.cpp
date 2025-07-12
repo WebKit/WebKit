@@ -28,7 +28,6 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "GridPositionsResolver.h"
 #include "StyleBuilderChecking.h"
-#include "StylePrimitiveNumericTypes+Blending.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ static GridNamedLinesMap initializeImplicitNamedGridLines(const GridNamedAreaMap
     GridNamedLinesMap namedGridLines;
 
     for (auto& area : namedGridAreas.map) {
-        auto areaSpan = direction == GridTrackSizingDirection::ForRows ? area.value.rows : area.value.columns;
+        auto areaSpan = direction == GridTrackSizingDirection::Rows ? area.value.rows : area.value.columns;
         {
             auto& startVector = namedGridLines.map.add(makeString(area.key, "-start"_s), Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.startLine());
@@ -59,15 +58,15 @@ static GridNamedLinesMap initializeImplicitNamedGridLines(const GridNamedAreaMap
 
 GridTemplateAreas::GridTemplateAreas(GridNamedAreaMap&& map)
     : map { WTFMove(map) }
-    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::ForColumns) }
-    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::ForRows) }
+    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Columns) }
+    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Rows) }
 {
 }
 
 GridTemplateAreas::GridTemplateAreas(const GridNamedAreaMap& map)
     : map { map }
-    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::ForColumns) }
-    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::ForRows) }
+    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Columns) }
+    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Rows) }
 {
 }
 

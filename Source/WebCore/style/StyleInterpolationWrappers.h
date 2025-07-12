@@ -725,25 +725,6 @@ private:
 
 // MARK: - Customized Wrappers
 
-class GridTemplateWrapper final : public Wrapper<const GridTrackList&> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    GridTemplateWrapper(CSSPropertyID property, const GridTrackList& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const GridTrackList&))
-        : Wrapper(property, getter, setter)
-    {
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
-    {
-        return WebCore::Style::Interpolation::canInterpolate(this->value(from), this->value(to));
-    }
-};
-
 class NinePieceImageRepeatWrapper final : public WrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:

@@ -55,7 +55,7 @@ static inline bool isStartSide(GridPositionSide side)
 
 static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
 {
-    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::Columns : GridTrackSizingDirection::Rows;
 }
 
 static String implicitNamedGridLineForSide(const String& lineName, GridPositionSide side)
@@ -97,13 +97,15 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     auto direction = directionFromSide(side);
     const auto* grid = &initialGrid;
     const auto* gridContainerStyle = &grid->style();
-    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::Columns;
 
     m_lastLine = explicitGridSizeForSide(*grid, side);
 
-    auto& gridLineNames = (isRowAxis ? gridContainerStyle->namedGridColumnLines() : gridContainerStyle->namedGridRowLines()).map;
-    auto& autoRepeatGridLineNames = (isRowAxis ? gridContainerStyle->autoRepeatNamedGridColumnLines() : gridContainerStyle->autoRepeatNamedGridRowLines()).map;
-    auto& implicitGridLineNames = (isRowAxis ? gridContainerStyle->gridTemplateAreas().implicitNamedGridColumnLines : gridContainerStyle->gridTemplateAreas().implicitNamedGridRowLines).map;
+    auto& gridList = gridContainerStyle->gridTemplateListForDirection(direction);
+
+    auto& gridLineNames = gridList.namedLines.map;
+    auto& autoRepeatGridLineNames = gridList.autoRepeatNamedLines.map;
+    auto& implicitGridLineNames = gridContainerStyle->gridTemplateAreas().implicitNamedGridLinesForDirection(direction).map;
 
     auto linesIterator = gridLineNames.find(lineName);
     m_namedLinesIndices = linesIterator == gridLineNames.end() ? nullptr : &linesIterator->value;
@@ -116,12 +118,12 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     m_isSubgrid = grid->isSubgrid(direction);
 
     m_autoRepeatTotalTracks = grid->autoRepeatCountForDirection(direction);
-    m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle->gridAutoRepeatColumns().size() : gridContainerStyle->gridAutoRepeatRows().size();
+    m_autoRepeatTrackListLength = gridList.autoRepeatSizes.size();
     m_autoRepeatLines = 0;
-    m_insertionPoint = isRowAxis ? gridContainerStyle->gridAutoRepeatColumnsInsertionPoint() : gridContainerStyle->gridAutoRepeatRowsInsertionPoint();
+    m_insertionPoint = gridList.autoRepeatInsertionPoint;
 
     if (!m_isSubgrid) {
-        if (isRowAxis ? gridContainerStyle->gridSubgridColumns() : gridContainerStyle->gridSubgridRows()) {
+        if (gridList.subgrid) {
             // If subgrid was specified, but the grid wasn't able to actually become a subgrid, the used
             // value of the style should be the initial 'none' value.
             m_namedLinesIndices = nullptr;
@@ -160,9 +162,9 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     }
 
     ASSERT(!m_autoRepeatTotalTracks);
-    m_autoRepeatTrackListLength = (isRowAxis ? gridContainerStyle->autoRepeatOrderedNamedGridColumnLines() : gridContainerStyle->autoRepeatOrderedNamedGridRowLines()).map.size();
+    m_autoRepeatTrackListLength = gridList.autoRepeatOrderedNamedLines.map.size();
     if (m_autoRepeatTrackListLength) {
-        unsigned namedLines = (isRowAxis ? gridContainerStyle->orderedNamedGridColumnLines() : gridContainerStyle->orderedNamedGridRowLines()).map.size();
+        unsigned namedLines = gridList.orderedNamedLines.map.size();
         unsigned totalLines = m_lastLine + 1;
         if (namedLines < totalLines) {
             // auto repeat in a subgrid specifies the line names that should be repeated, not
@@ -236,7 +238,7 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     auto currentSide = side;
     auto direction = directionFromSide(currentSide);
     bool initialFlipped = GridLayoutFunctions::isFlippedDirection(initialGrid, direction);
-    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::Columns;
 
     // If we're a subgrid, we want to inherit the line names from any ancestor grids.
     if (initialGrid.isSubgrid(direction)) {
@@ -362,7 +364,7 @@ static bool isIndefiniteSpan(GridPosition& initialPosition, GridPosition& finalP
 
 static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
 {
-    bool isForColumns = direction == GridTrackSizingDirection::ForColumns;
+    bool isForColumns = direction == GridTrackSizingDirection::Columns;
     initialPosition = isForColumns ? gridItem.style().gridItemColumnStart() : gridItem.style().gridItemRowStart();
     finalPosition = isForColumns ? gridItem.style().gridItemColumnEnd() : gridItem.style().gridItemRowEnd();
 
@@ -381,7 +383,7 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
         auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem);
         if (renderGrid && renderGrid->isSubgrid(direction)) {
             // Indefinite span for an item that is subgridded in this axis.
-            int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).map.size();
+            int lineCount = gridItem.style().gridTemplateListForDirection(direction).orderedNamedLines.map.size();
 
             if (initialPosition.isAuto()) {
                 // Set initial position to span <line names - 1>
@@ -394,24 +396,30 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
     }
 }
 
+unsigned GridPositionsResolver::explicitGridCount(const RenderGrid& gridContainer, GridTrackSizingDirection direction)
+{
+    if (gridContainer.isSubgrid(direction)) {
+        auto& parent = *downcast<RenderGrid>(gridContainer.parent());
+        auto flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, direction);
+        return parent.gridSpanForGridItem(gridContainer, flowAwareDirection).integerSpan();
+    }
+    return std::min<unsigned>(
+        std::max(
+            gridContainer.style().gridTemplateListForDirection(direction).sizes.size() + gridContainer.autoRepeatCountForDirection(direction),
+            gridContainer.style().gridTemplateAreas().countForDirection(direction)
+        ),
+        GridPosition::max()
+    );
+}
+
 unsigned GridPositionsResolver::explicitGridColumnCount(const RenderGrid& gridContainer)
 {
-    if (gridContainer.isSubgridColumns()) {
-        const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, GridTrackSizingDirection::ForColumns);
-        return parent.gridSpanForGridItem(gridContainer, direction).integerSpan();
-    }
-    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForColumns), gridContainer.style().gridTemplateAreas().map.columnCount), GridPosition::max());
+    return explicitGridCount(gridContainer, GridTrackSizingDirection::Columns);
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridContainer)
 {
-    if (gridContainer.isSubgridRows()) {
-        const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, GridTrackSizingDirection::ForRows);
-        return parent.gridSpanForGridItem(gridContainer, direction).integerSpan();
-    }
-    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForRows), gridContainer.style().gridTemplateAreas().map.rowCount), GridPosition::max());
+    return explicitGridCount(gridContainer, GridTrackSizingDirection::Rows);
 }
 
 static unsigned lookAheadForNamedGridLine(int start, unsigned numberOfLines, NamedLineCollection& linesCollection)
@@ -517,12 +525,12 @@ static GridSpan resolveGridPositionAgainstOppositePosition(const RenderGrid& gri
 
 GridPositionSide GridPositionsResolver::initialPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnStartSide : GridPositionSide::RowStartSide;
+    return direction == GridTrackSizingDirection::Columns ? GridPositionSide::ColumnStartSide : GridPositionSide::RowStartSide;
 }
 
 GridPositionSide GridPositionsResolver::finalPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnEndSide : GridPositionSide::RowEndSide;
+    return direction == GridTrackSizingDirection::Columns ? GridPositionSide::ColumnEndSide : GridPositionSide::RowEndSide;
 }
 
 unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridItem, GridTrackSizingDirection direction)

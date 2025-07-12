@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSGridTemplateAreas.h"
+#include "GridTrackSizingDirection.h"
 #include "StyleGridNamedAreaMap.h"
 #include "StyleGridNamedLinesMap.h"
 
@@ -35,6 +36,9 @@ namespace Style {
 // https://drafts.csswg.org/css-grid/#propdef-grid-template-areas
 struct GridTemplateAreas {
     GridNamedAreaMap map { };
+
+    // Calculated from `map`.
+
     GridNamedLinesMap implicitNamedGridColumnLines { };
     GridNamedLinesMap implicitNamedGridRowLines { };
 
@@ -43,6 +47,16 @@ struct GridTemplateAreas {
     GridTemplateAreas(const GridNamedAreaMap&);
 
     bool isNone() const { return !map.rowCount; }
+
+    size_t countForDirection(GridTrackSizingDirection direction) const
+    {
+        return direction == GridTrackSizingDirection::Columns ? map.columnCount : map.rowCount;
+    }
+
+    const GridNamedLinesMap& implicitNamedGridLinesForDirection(GridTrackSizingDirection direction) const
+    {
+        return direction == GridTrackSizingDirection::Columns ? implicitNamedGridColumnLines : implicitNamedGridRowLines;
+    }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {

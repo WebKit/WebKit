@@ -134,6 +134,15 @@ public:
     bool isContentSized() const { return m_type == GridTrackBreadthType::Length && (m_length.isAuto() || m_length.isMinContent() || m_length.isMaxContent()); }
     bool isAuto() const { return m_type == GridTrackBreadthType::Length && m_length.isAuto(); }
 
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+
+        if (isFlex())
+            return visitor(m_flex);
+        return WTF::switchOn(m_length, [&](const auto& value) { return visitor(value); });
+    }
+
     bool operator==(const GridTrackBreadth&) const = default;
 
 private:
@@ -144,7 +153,18 @@ private:
     GridTrackBreadthType m_type;
 };
 
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<GridTrackBreadth> { auto operator()(BuilderState&, const CSSPrimitiveValue&) -> GridTrackBreadth; };
+
+// MARK: - Blending
+
+template<> struct Blending<GridTrackBreadth> {
+    auto blend(const GridTrackBreadth&, const GridTrackBreadth&, const BlendingContext&) -> GridTrackBreadth;
+};
+
 } // namespace Style
 } // namespace WebCore
 
-template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::GridTrackBreadthLength> = true;
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridTrackBreadthLength)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridTrackBreadth)

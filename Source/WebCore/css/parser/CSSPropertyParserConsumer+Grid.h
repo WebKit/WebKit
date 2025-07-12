@@ -53,7 +53,7 @@ RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange&, CSS::Pr
 RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange&, CSS::PropertyParserState&, TrackListType = TrackListType::GridAuto);
-RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange&, CSS::PropertyParserState&);
+RefPtr<CSSValue> consumeGridTemplateList(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&, CSS::PropertyParserState&);
 

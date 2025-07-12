@@ -30,6 +30,7 @@
 #include "Grid.h"
 #include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"
+#include "GridTrackSizingDirection.h"
 #include "LayoutRange.h"
 #include "RenderBlock.h"
 #include <wtf/TZoneMalloc.h>
@@ -86,6 +87,7 @@ public:
 
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
+    const Vector<LayoutUnit>& positions(GridTrackSizingDirection direction) const { return direction == GridTrackSizingDirection::Columns ? columnPositions() : rowPositions(); }
 
     unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTracks(direction); }
     unsigned explicitGridStartForDirection(GridTrackSizingDirection direction) const { return currentGrid().explicitGridStart(direction); }
@@ -116,14 +118,8 @@ public:
 
     bool isSubgrid() const;
     bool isSubgrid(GridTrackSizingDirection) const;
-    bool isSubgridRows() const
-    {
-        return isSubgrid(GridTrackSizingDirection::ForRows);
-    }
-    bool isSubgridColumns() const
-    {
-        return isSubgrid(GridTrackSizingDirection::ForColumns);
-    }
+    bool isSubgridRows() const { return isSubgrid(GridTrackSizingDirection::Rows); }
+    bool isSubgridColumns() const { return isSubgrid(GridTrackSizingDirection::Columns); }
     bool isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const;
 
     // Returns true if this grid is inheriting subgridded tracks for
@@ -133,8 +129,8 @@ public:
 
     bool isMasonry() const;
     bool isMasonry(GridTrackSizingDirection) const;
-    bool areMasonryRows() const;
-    bool areMasonryColumns() const;
+    bool areMasonryRows() const { return isMasonry(GridTrackSizingDirection::Rows); }
+    bool areMasonryColumns() const { return isMasonry(GridTrackSizingDirection::Columns); }
 
     const Grid& currentGrid() const;
     Grid& currentGrid();
@@ -209,7 +205,7 @@ private:
 
     static bool itemGridAreaIsWithinImplicitGrid(const GridArea& area, unsigned gridAxisLinesCount, GridTrackSizingDirection gridAxisDirection)
     {
-        auto itemSpan = gridAxisDirection == GridTrackSizingDirection::ForColumns ? area.columns : area.rows;
+        auto itemSpan = gridAxisDirection == GridTrackSizingDirection::Columns ? area.columns : area.rows;
         return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
     }
 
@@ -294,9 +290,9 @@ private:
 
     bool computeGridPositionsForOutOfFlowGridItem(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
-    AutoRepeatType autoRepeatColumnsType() const;
-    AutoRepeatType autoRepeatRowsType() const;
-    AutoRepeatType autoRepeatType(GridTrackSizingDirection direction) const { return direction == GridTrackSizingDirection::ForColumns ? autoRepeatColumnsType() : autoRepeatRowsType(); }
+    AutoRepeatType autoRepeatType(GridTrackSizingDirection) const;
+    AutoRepeatType autoRepeatColumnsType() const { return autoRepeatType(GridTrackSizingDirection::Columns); }
+    AutoRepeatType autoRepeatRowsType() const { return autoRepeatType(GridTrackSizingDirection::Rows); }
 
     bool canCreateIntrinsicLogicalHeightsForRowSizingFirstPassCache() const;
 

@@ -726,8 +726,6 @@ template<CSSPropertyID propertyID> void extractCounterSerialization(ExtractorSta
 
 template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateValue(ExtractorState& state)
 {
-    constexpr bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
-
     auto addValuesForNamedGridLinesAtIndex = [](auto& list, auto& collector, auto i, auto renderEmpty) {
         if (collector.isEmpty() && !renderEmpty)
             return;
@@ -738,23 +736,25 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
             list.append(CSSGridLineNamesValue::create(lineNames));
     };
 
-    auto* renderGrid = dynamicDowncast<RenderGrid>(state.renderer);
-    bool isSubgrid = isRowAxis ? state.style.gridSubgridColumns() : state.style.gridSubgridRows();
-    auto& trackSizes = isRowAxis ? state.style.gridColumnTrackSizes() : state.style.gridRowTrackSizes();
-    auto& autoRepeatTrackSizes = isRowAxis ? state.style.gridAutoRepeatColumns() : state.style.gridAutoRepeatRows();
+    auto& gridList = state.style.gridTemplateListForDirection(direction);
 
-    if ((direction == GridTrackSizingDirection::ForRows && state.style.gridMasonryRows())
-        || (direction == GridTrackSizingDirection::ForColumns && state.style.gridMasonryColumns()))
+    if (gridList.masonry)
         return CSSPrimitiveValue::create(CSSValueMasonry);
+
+    auto& trackSizes = gridList.sizes;
+    auto& autoRepeatTrackSizes = gridList.autoRepeatSizes;
+
+    auto* renderGrid = dynamicDowncast<RenderGrid>(state.renderer);
 
     // Handle the 'none' case.
     bool trackListIsEmpty = trackSizes.isEmpty() && autoRepeatTrackSizes.isEmpty();
     if (renderGrid && trackListIsEmpty) {
         // For grids we should consider every listed track, whether implicitly or explicitly
         // created. Empty grids have a sole grid line per axis.
-        auto& positions = isRowAxis ? renderGrid->columnPositions() : renderGrid->rowPositions();
-        trackListIsEmpty = positions.size() == 1;
+        trackListIsEmpty = renderGrid->positions(direction).size() == 1;
     }
+
+    bool isSubgrid = gridList.subgrid;
 
     if (trackListIsEmpty && !isSubgrid)
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -769,12 +769,13 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
         if (isSubgrid) {
             list.append(CSSPrimitiveValue::create(CSSValueSubgrid));
 
-            OrderedNamedLinesCollectorInSubgridLayout collector(state, isRowAxis, renderGrid->numTracks(direction));
+            OrderedNamedLinesCollectorInSubgridLayout collector(gridList, renderGrid->numTracks(direction));
             for (int i = 0; i < collector.namedGridLineCount(); i++)
                 addValuesForNamedGridLinesAtIndex(list, collector, i, true);
             return CSSValueList::createSpaceSeparated(WTFMove(list));
         }
-        OrderedNamedLinesCollectorInGridLayout collector(state, isRowAxis, renderGrid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
+
+        OrderedNamedLinesCollectorInGridLayout collector(gridList, renderGrid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
 
         auto tracks = renderGrid->trackSizesForComputedStyle(direction);
         // Named grid line indices are relative to the explicit grid, but we are including all tracks.
@@ -796,7 +797,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
     }
 
     // Otherwise, the resolved value is the computed value, preserving repeat().
-    auto& computedTracks = (isRowAxis ? state.style.gridColumnList() : state.style.gridRowList()).list;
+    auto& computedTracks = gridList.list;
 
     auto repeatVisitor = [&](CSSValueListBuilder& list, const RepeatEntry& entry) {
         if (std::holds_alternative<Vector<String>>(entry)) {
@@ -805,13 +806,13 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
                 return;
             list.append(CSSGridLineNamesValue::create(names));
         } else
-            list.append(ExtractorConverter::convertGridTrackSize(state, std::get<GridTrackSize>(entry)));
+            list.append(ExtractorConverter::convertStyleType(state, std::get<GridTrackSize>(entry)));
     };
 
     for (auto& entry : computedTracks) {
         WTF::switchOn(entry,
             [&](const GridTrackSize& size) {
-                list.append(ExtractorConverter::convertGridTrackSize(state, size));
+                list.append(ExtractorConverter::convertStyleType(state, size));
             },
             [&](const Vector<String>& names) {
                 // Subgrids don't have track sizes specified, so empty line names sets
@@ -2256,22 +2257,22 @@ inline void ExtractorCustom::extractGridAutoFlowSerialization(ExtractorState& st
 
 inline Ref<CSSValue> ExtractorCustom::extractGridTemplateColumns(ExtractorState& state)
 {
-    return WebCore::Style::extractGridTemplateValue<GridTrackSizingDirection::ForColumns>(state);
+    return WebCore::Style::extractGridTemplateValue<GridTrackSizingDirection::Columns>(state);
 }
 
 inline void ExtractorCustom::extractGridTemplateColumnsSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    WebCore::Style::extractGridTemplateSerialization<GridTrackSizingDirection::ForColumns>(state, builder, context);
+    WebCore::Style::extractGridTemplateSerialization<GridTrackSizingDirection::Columns>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractGridTemplateRows(ExtractorState& state)
 {
-    return WebCore::Style::extractGridTemplateValue<GridTrackSizingDirection::ForRows>(state);
+    return WebCore::Style::extractGridTemplateValue<GridTrackSizingDirection::Rows>(state);
 }
 
 inline void ExtractorCustom::extractGridTemplateRowsSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    WebCore::Style::extractGridTemplateSerialization<GridTrackSizingDirection::ForRows>(state, builder, context);
+    WebCore::Style::extractGridTemplateSerialization<GridTrackSizingDirection::Rows>(state, builder, context);
 }
 
 // MARK: - Shorthands

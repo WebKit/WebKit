@@ -10036,11 +10036,10 @@
             "animation-type": "see prose",
             "initial": "none",
             "codegen-properties": {
-                "animation-wrapper": "GridTemplateWrapper",
-                "render-style-name-for-methods": "GridColumnList",
-                "style-builder-conditional-converter": "GridTrackList",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-builder-converter": "StyleType<GridTemplateList>",
                 "style-extractor-custom": true,
-                "parser-function": "consumeGridTemplatesRowsOrColumns",
+                "parser-function": "consumeGridTemplateList",
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
                 "parser-grammar-unused-reason": "Needs investigation."
             },
@@ -10053,11 +10052,10 @@
             "animation-type": "see prose",
             "initial": "none",
             "codegen-properties": {
-                "animation-wrapper": "GridTemplateWrapper",
-                "render-style-name-for-methods": "GridRowList",
-                "style-builder-conditional-converter": "GridTrackList",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-builder-converter": "StyleType<GridTemplateList>",
                 "style-extractor-custom": true,
-                "parser-function": "consumeGridTemplatesRowsOrColumns",
+                "parser-function": "consumeGridTemplateList",
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
                 "parser-grammar-unused-reason": "Needs investigation."
             },
@@ -13840,7 +13838,7 @@
             }
         },
         "<track-size>": {
-            "grammar": "<track-breadth> | minmax( <inflexible-breadth> , <track-breadth> ) | fit-content( <length-percentage> )",
+            "grammar": "<track-breadth> | minmax( <inflexible-breadth> , <track-breadth> ) | fit-content( <length-percentage [0,inf]> )",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-track-size"
@@ -13854,21 +13852,21 @@
             }
         },
         "<track-breadth>": {
-            "grammar": "<length-percentage> | <flex> | min-content | max-content | auto",
+            "grammar": "<length-percentage [0,inf]> | <flex [0,inf]> | min-content | max-content | auto",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-track-breadth"
             }
         },
         "<inflexible-breadth>": {
-            "grammar": "<length-percentage> | min-content | max-content | auto",
+            "grammar": "<length-percentage [0,inf]> | min-content | max-content | auto",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-inflexible-breadth"
             }
         },
         "<fixed-breadth>": {
-            "grammar": "<length-percentage>",
+            "grammar": "<length-percentage [0,inf]>",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-fixed-breadth"
@@ -13882,7 +13880,7 @@
             }
         },
         "<grid-line>": {
-            "grammar": "auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]",
+            "grammar": "auto | <custom-ident> | [ [ <integer [-inf,-1]> | <integer [1,inf]> ] && <custom-ident>? ] | [ span && [ <integer [1,inf]> || <custom-ident> ] ]",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-grid-row-start-grid-line"

@@ -158,14 +158,14 @@ inline void RenderStyle::setFilter(FilterOperations&& ops) { SET_DOUBLY_NESTED(m
 inline void RenderStyle::setFlexBasis(Style::FlexBasis&& basis) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexBasis, WTFMove(basis)); }
 inline void RenderStyle::setFlexDirection(FlexDirection direction) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexDirection, static_cast<unsigned>(direction)); }
 inline void RenderStyle::setFlexWrap(FlexWrap wrap) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexWrap, static_cast<unsigned>(wrap)); }
-inline void RenderStyle::setGridAutoColumns(Vector<GridTrackSize>&& trackSizeList) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridAutoColumns, WTFMove(trackSizeList)); }
-inline void RenderStyle::setGridAutoFlow(GridAutoFlow flow) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridAutoFlow, flow); }
-inline void RenderStyle::setGridAutoRows(Vector<GridTrackSize>&& trackSizeList) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridAutoRows, WTFMove(trackSizeList)); }
+inline void RenderStyle::setGridAutoColumns(Vector<Style::GridTrackSize>&& trackSizeList) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, m_gridAutoColumns, WTFMove(trackSizeList)); }
+inline void RenderStyle::setGridAutoFlow(GridAutoFlow flow) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, m_gridAutoFlow, flow); }
+inline void RenderStyle::setGridAutoRows(Vector<Style::GridTrackSize>&& trackSizeList) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, m_gridAutoRows, WTFMove(trackSizeList)); }
 inline void RenderStyle::setGridItemColumnEnd(const GridPosition& columnEndPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridColumnEnd, columnEndPosition); }
 inline void RenderStyle::setGridItemColumnStart(const GridPosition& columnStartPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridColumnStart, columnStartPosition); }
 inline void RenderStyle::setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridRowEnd, rowEndPosition); }
 inline void RenderStyle::setGridItemRowStart(const GridPosition& rowStartPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridRowStart, rowStartPosition); }
-inline void RenderStyle::setGridTemplateAreas(Style::GridTemplateAreas&& areas) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridTemplateAreas, WTFMove(areas)); }
+inline void RenderStyle::setGridTemplateAreas(Style::GridTemplateAreas&& areas) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, m_gridTemplateAreas, WTFMove(areas)); }
 inline void RenderStyle::setHangingPunctuation(OptionSet<HangingPunctuation> punctuation) { SET(m_rareInheritedData, hangingPunctuation, punctuation.toRaw()); }
 inline void RenderStyle::setHasAutoAccentColor() { SET_PAIR(m_rareInheritedData, hasAutoAccentColor, true, accentColor, Style::Color::currentColor()); }
 inline void RenderStyle::setHasAutoCaretColor() { SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Style::Color::currentColor()); }
@@ -510,16 +510,16 @@ inline void RenderStyle::setPseudoElementNameArgument(const AtomString& identifi
     SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, identifier);
 }
 
-inline void RenderStyle::setGridColumnList(const GridTrackList& list)
+inline void RenderStyle::setGridTemplateColumns(Style::GridTemplateList&& list)
 {
-    if (!compareEqual(m_nonInheritedData->rareData->grid->columns(), list))
-        m_nonInheritedData.access().rareData.access().grid.access().setColumns(list);
+    if (!compareEqual(m_nonInheritedData->rareData->grid->m_gridTemplateColumns, list))
+        m_nonInheritedData.access().rareData.access().grid.access().m_gridTemplateColumns = WTFMove(list);
 }
 
-inline void RenderStyle::setGridRowList(const GridTrackList& list)
+inline void RenderStyle::setGridTemplateRows(Style::GridTemplateList&& list)
 {
-    if (!compareEqual(m_nonInheritedData->rareData->grid->rows(), list))
-        m_nonInheritedData.access().rareData.access().grid.access().setRows(list);
+    if (!compareEqual(m_nonInheritedData->rareData->grid->m_gridTemplateRows, list))
+        m_nonInheritedData.access().rareData.access().grid.access().m_gridTemplateRows = WTFMove(list);
 }
 
 inline void RenderStyle::setHasExplicitlySetDirection()

@@ -31,6 +31,7 @@
 #pragma once
 
 #include "GridPosition.h"
+#include "GridTrackSizingDirection.h"
 
 namespace WebCore {
 
@@ -38,11 +39,6 @@ class GridSpan;
 class RenderBox;
 class RenderGrid;
 class RenderStyle;
-
-enum class GridTrackSizingDirection : uint8_t {
-    ForColumns = 1 << 0,
-    ForRows = 1 << 1
-};
 
 class NamedLineCollectionBase {
     WTF_MAKE_NONCOPYABLE(NamedLineCollectionBase);
@@ -53,8 +49,8 @@ public:
     bool hasNamedLines() const;
     bool hasExplicitNamedLines() const;
     bool contains(unsigned line) const;
-protected:
 
+protected:
     void ensureInheritedNamedIndices();
 
     const Vector<unsigned>* m_namedLinesIndices { nullptr };
@@ -91,6 +87,7 @@ public:
     static GridPositionSide finalPositionSide(GridTrackSizingDirection);
     static unsigned spanSizeForAutoPlacedItem(const RenderBox&, GridTrackSizingDirection);
     static GridSpan resolveGridPositionsFromStyle(const RenderGrid& gridContainer, const RenderBox&, GridTrackSizingDirection);
+    static unsigned explicitGridCount(const RenderGrid&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderGrid&);
     static unsigned explicitGridRowCount(const RenderGrid&);
 };
