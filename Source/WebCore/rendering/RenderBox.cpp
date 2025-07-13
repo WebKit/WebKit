@@ -417,8 +417,8 @@ static bool hasEquivalentGridPositioningStyle(const RenderStyle& style, const Re
         && oldStyle.gridItemRowEnd() == style.gridItemRowEnd()
         && oldStyle.order() == style.order()
         && oldStyle.hasOutOfFlowPosition() == style.hasOutOfFlowPosition())
-        && (oldStyle.gridSubgridColumns() == style.gridSubgridColumns() || style.orderedNamedGridColumnLines().map.isEmpty())
-        && (oldStyle.gridSubgridRows() == style.gridSubgridRows() || style.orderedNamedGridRowLines().map.isEmpty());
+        && (oldStyle.gridTemplateColumns().subgrid == style.gridTemplateColumns().subgrid || style.gridTemplateColumns().orderedNamedLines.map.isEmpty())
+        && (oldStyle.gridTemplateRows().subgrid == style.gridTemplateRows().subgrid || style.gridTemplateRows().orderedNamedLines.map.isEmpty());
 }
 
 void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)

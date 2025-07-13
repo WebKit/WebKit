@@ -116,13 +116,13 @@ void GridTrack::setGrowthLimitCap(std::optional<LayoutUnit> growthLimitCap)
     m_growthLimitCap = growthLimitCap;
 }
 
-const GridTrackSize& GridTrack::cachedTrackSize() const
+const Style::GridTrackSize& GridTrack::cachedTrackSize() const
 {
     RELEASE_ASSERT(m_cachedTrackSize);
     return *m_cachedTrackSize;
 }
 
-void GridTrack::setCachedTrackSize(const GridTrackSize& cachedTrackSize)
+void GridTrack::setCachedTrackSize(const Style::GridTrackSize& cachedTrackSize)
 {
     m_cachedTrackSize = cachedTrackSize;
 }
@@ -189,14 +189,14 @@ void GridTrackSizingAlgorithm::setAvailableSpace(GridTrackSizingDirection direct
         m_availableSpaceRows = availableSpace;
 }
 
-const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
+const Style::GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
 {
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
     auto& renderStyle = m_renderGrid->style();
-    auto& trackStyles = isRowAxis ? renderStyle.gridColumnTrackSizes() : renderStyle.gridRowTrackSizes();
-    auto& autoRepeatTrackStyles = isRowAxis ? renderStyle.gridAutoRepeatColumns() : renderStyle.gridAutoRepeatRows();
+    auto& trackStyles = isRowAxis ? renderStyle.gridTemplateColumns().sizes : renderStyle.gridTemplateRows().sizes;
+    auto& autoRepeatTrackStyles = isRowAxis ? renderStyle.gridTemplateColumns().autoRepeatSizes : renderStyle.gridTemplateRows().autoRepeatSizes;
     auto& autoTrackStyles = isRowAxis ? renderStyle.gridAutoColumns() : renderStyle.gridAutoRows();
-    unsigned insertionPoint = isRowAxis ? renderStyle.gridAutoRepeatColumnsInsertionPoint() : renderStyle.gridAutoRepeatRowsInsertionPoint();
+    unsigned insertionPoint = isRowAxis ? renderStyle.gridTemplateColumns().autoRepeatInsertionPoint : renderStyle.gridTemplateRows().autoRepeatInsertionPoint;
     unsigned autoRepeatTracksCount = m_grid.autoRepeatTracks(direction);
 
     // We should not use GridPositionsResolver::explicitGridXXXCount() for this because the
@@ -254,7 +254,7 @@ LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
     return size;
 }
 
-LayoutUnit GridTrackSizingAlgorithm::initialBaseSize(const GridTrackSize& trackSize) const
+LayoutUnit GridTrackSizingAlgorithm::initialBaseSize(const Style::GridTrackSize& trackSize) const
 {
     auto& gridLength = trackSize.minTrackBreadth();
     if (gridLength.isFlex())
@@ -268,7 +268,7 @@ LayoutUnit GridTrackSizingAlgorithm::initialBaseSize(const GridTrackSize& trackS
     return 0;
 }
 
-LayoutUnit GridTrackSizingAlgorithm::initialGrowthLimit(const GridTrackSize& trackSize, LayoutUnit baseSize) const
+LayoutUnit GridTrackSizingAlgorithm::initialGrowthLimit(const Style::GridTrackSize& trackSize, LayoutUnit baseSize) const
 {
     auto& gridLength = trackSize.maxTrackBreadth();
     if (gridLength.isFlex())
@@ -402,7 +402,7 @@ LayoutUnit GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhaseMasonry
     return 0;
 }
 
-static bool shouldProcessTrackForTrackSizeComputationPhase(TrackSizeComputationPhase phase, const GridTrackSize& trackSize)
+static bool shouldProcessTrackForTrackSizeComputationPhase(TrackSizeComputationPhase phase, const Style::GridTrackSize& trackSize)
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
@@ -461,7 +461,7 @@ static void updateTrackSizeForTrackSizeComputationPhase(TrackSizeComputationPhas
     ASSERT_NOT_REACHED();
 }
 
-static bool trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase(TrackSizeComputationPhase phase, const GridTrackSize& trackSize)
+static bool trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase(TrackSizeComputationPhase phase, const Style::GridTrackSize& trackSize)
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
@@ -905,16 +905,16 @@ bool GridTrackSizingAlgorithm::isIntrinsicSizedGridArea(const RenderBox& gridIte
     return false;
 }
 
-GridTrackSize GridTrackSizingAlgorithm::calculateGridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
+Style::GridTrackSize GridTrackSizingAlgorithm::calculateGridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
 {
     ASSERT(wasSetup());
     // Collapse empty auto repeat tracks if auto-fit.
     if (m_grid.hasAutoRepeatEmptyTracks(direction) && m_grid.isEmptyAutoRepeatTrack(direction, translatedIndex))
-        return { 0_css_px, GridTrackSizeType::Length };
+        return { 0_css_px, Style::GridTrackSizeType::Length };
 
     auto& trackSize = rawGridTrackSize(direction, translatedIndex);
     if (trackSize.isFitContent())
-        return isRelativeGridTrackBreadthAsAuto(trackSize.fitContentTrackBreadth(), direction) ? GridTrackSize(CSS::Keyword::Auto { }, CSS::Keyword::MaxContent { }) : trackSize;
+        return isRelativeGridTrackBreadthAsAuto(trackSize.fitContentTrackBreadth(), direction) ? Style::GridTrackSize(CSS::Keyword::Auto { }, CSS::Keyword::MaxContent { }) : trackSize;
 
     auto minTrackBreadth = trackSize.minTrackBreadth();
     auto maxTrackBreadth = trackSize.maxTrackBreadth();
@@ -930,7 +930,7 @@ GridTrackSize GridTrackSizingAlgorithm::calculateGridTrackSize(GridTrackSizingDi
     if (minTrackBreadth.isFlex())
         minTrackBreadth = CSS::Keyword::Auto { };
 
-    return GridTrackSize(minTrackBreadth, maxTrackBreadth);
+    return Style::GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 
 double GridTrackSizingAlgorithm::computeFlexFactorUnitSize(const Vector<GridTrack>& tracks, double flexFactorSum, LayoutUnit& leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible) const
@@ -2223,7 +2223,7 @@ bool GridTrackSizingAlgorithm::hasAllLengthRowSizes() const
 {
     for (size_t rowIndex = 0; rowIndex < m_renderGrid->numTracks(GridTrackSizingDirection::ForRows); ++rowIndex) {
         auto trackSize = rawGridTrackSize(GridTrackSizingDirection::ForRows, rowIndex);
-        if (trackSize.type() != GridTrackSizeType::Length && !trackSize.minTrackBreadth().isLength())
+        if (trackSize.type() != Style::GridTrackSizeType::Length && !trackSize.minTrackBreadth().isLength())
             return false;
     }
     return true;

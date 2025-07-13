@@ -71,12 +71,12 @@ bool RenderGrid::isExtrinsicallySized() const
 {
     auto& gridStyle = style();
     auto allTracksAreExtrinsicallySized = [&] {
-        for (auto& column : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForColumns)) {
+        for (auto& column : gridStyle.gridTemplateColumns().sizes) {
             if (column.isContentSized())
                 return false;
         }
 
-        for (auto& row : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForRows)) {
+        for (auto& row : gridStyle.gridTemplateRows().sizes) {
             if (row.isContentSized())
                 return false;
         }
@@ -135,13 +135,10 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         return;
 
     m_intrinsicLogicalHeightsForRowSizingFirstPass.reset();
-    const RenderStyle& newStyle = this->style();
+    auto& newStyle = this->style();
 
-    auto hasDifferentTrackSizes = [&newStyle, &oldStyle](GridTrackSizingDirection direction) {
-        return newStyle.gridTrackSizes(direction) != oldStyle->gridTrackSizes(direction);
-    };
-
-    if (hasDifferentTrackSizes(GridTrackSizingDirection::ForColumns) || hasDifferentTrackSizes(GridTrackSizingDirection::ForRows)) {
+    if (newStyle.gridTemplateColumns().sizes != oldStyle->gridTemplateColumns().sizes
+        || newStyle.gridTemplateRows().sizes != oldStyle->gridTemplateRows().sizes) {
         for (auto& gridItem : childrenOfType<RenderBox>(*this))
             gridItem.setChildNeedsLayout();
     }
@@ -169,7 +166,7 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
     auto subgridDidChange = this->subgridDidChange(*oldStyle);
     auto isSubgridWithIndependentFormattingContextChange = [&] {
-        if (newStyle.gridSubgridRows() || newStyle.gridSubgridColumns())
+        if (newStyle.gridTemplateRows().subgrid || newStyle.gridTemplateColumns().subgrid)
             return establishesIndependentFormattingContextIgnoringDisplayType(*oldStyle) != establishesIndependentFormattingContextIgnoringDisplayType(style());
         return false;
     };
@@ -177,8 +174,8 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         || namedGridLinesDefinitionDidChange(*oldStyle)
         || implicitGridLinesDefinitionDidChange(*oldStyle)
         || oldStyle->gridAutoFlow() != style().gridAutoFlow()
-        || style().gridAutoRepeatColumns().size()
-        || style().gridAutoRepeatRows().size()
+        || style().gridTemplateColumns().autoRepeatSizes.size()
+        || style().gridTemplateRows().autoRepeatSizes.size()
         || subgridDidChange == SubgridDidChange::Yes
         || isSubgridWithIndependentFormattingContextChange())
         setNeedsItemPlacement(subgridDidChange);
@@ -186,25 +183,25 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
 SubgridDidChange RenderGrid::subgridDidChange(const RenderStyle& oldStyle) const
 {
-    if (oldStyle.gridSubgridRows() != style().gridSubgridRows() || oldStyle.gridSubgridColumns() != style().gridSubgridColumns())
+    if (oldStyle.gridTemplateRows().subgrid != style().gridTemplateRows().subgrid || oldStyle.gridTemplateColumns().subgrid != style().gridTemplateColumns().subgrid)
         return SubgridDidChange::Yes;
     return SubgridDidChange::No;
 }
 
 bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
 {
-    return oldStyle.gridColumnTrackSizes().size() != style().gridColumnTrackSizes().size()
-        || oldStyle.gridRowTrackSizes().size() != style().gridRowTrackSizes().size()
+    return oldStyle.gridTemplateColumns().sizes.size() != style().gridTemplateColumns().sizes.size()
+        || oldStyle.gridTemplateRows().sizes.size() != style().gridTemplateRows().sizes.size()
         || oldStyle.gridTemplateAreas().map.columnCount != style().gridTemplateAreas().map.columnCount
         || oldStyle.gridTemplateAreas().map.rowCount != style().gridTemplateAreas().map.rowCount
-        || oldStyle.gridAutoRepeatColumns().size() != style().gridAutoRepeatColumns().size()
-        || oldStyle.gridAutoRepeatRows().size() != style().gridAutoRepeatRows().size();
+        || oldStyle.gridTemplateColumns().autoRepeatSizes.size() != style().gridTemplateColumns().autoRepeatSizes.size()
+        || oldStyle.gridTemplateRows().autoRepeatSizes.size() != style().gridTemplateRows().autoRepeatSizes.size();
 }
 
 bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
 {
-    return oldStyle.namedGridRowLines().map != style().namedGridRowLines().map
-        || oldStyle.namedGridColumnLines().map != style().namedGridColumnLines().map;
+    return oldStyle.gridTemplateRows().namedLines.map != style().gridTemplateRows().namedLines.map
+        || oldStyle.gridTemplateColumns().namedLines.map != style().gridTemplateColumns().namedLines.map;
 }
 
 bool RenderGrid::implicitGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
@@ -848,7 +845,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     if (isSubgrid(direction))
         return 0;
 
-    const auto& autoRepeatTracks = isRowAxis ? style().gridAutoRepeatColumns() : style().gridAutoRepeatRows();
+    const auto& autoRepeatTracks = isRowAxis ? style().gridTemplateColumns().autoRepeatSizes : style().gridTemplateRows().autoRepeatSizes;
     unsigned autoRepeatTrackListLength = autoRepeatTracks.size();
 
     if (!autoRepeatTrackListLength)
@@ -958,7 +955,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 
     // There will be always at least 1 auto-repeat track, so take it already into account when computing the total track size.
     LayoutUnit tracksSize = autoRepeatTracksSize;
-    auto& trackSizes = isRowAxis ? style().gridColumnTrackSizes() : style().gridRowTrackSizes();
+    auto& trackSizes = isRowAxis ? style().gridTemplateColumns().sizes : style().gridTemplateRows().sizes;
 
     for (const auto& track : trackSizes) {
         bool hasDefiniteMaxTrackBreadth = track.maxTrackBreadth().isLength() && !track.maxTrackBreadth().isContentSized();
@@ -991,7 +988,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 
 WTF::Range<size_t> RenderGrid::autoRepeatTracksRange(GridTrackSizingDirection direction) const
 {
-    auto insertionPoint = direction == GridTrackSizingDirection::ForColumns ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
+    auto insertionPoint = direction == GridTrackSizingDirection::ForColumns ? style().gridTemplateColumns().autoRepeatInsertionPoint : style().gridTemplateRows().autoRepeatInsertionPoint;
     auto firstAutoRepeatTrack = insertionPoint + currentGrid().explicitGridStart(direction);
     auto lastAutoRepeatTrack = firstAutoRepeatTrack + currentGrid().autoRepeatTracks(direction);
 
@@ -1030,7 +1027,7 @@ unsigned RenderGrid::clampAutoRepeatTracks(GridTrackSizingDirection direction, u
     if (!autoRepeatTracks)
         return 0;
 
-    unsigned insertionPoint = direction == GridTrackSizingDirection::ForColumns ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
+    unsigned insertionPoint = direction == GridTrackSizingDirection::ForColumns ? style().gridTemplateColumns().autoRepeatInsertionPoint : style().gridTemplateRows().autoRepeatInsertionPoint;
     unsigned maxTracks = static_cast<unsigned>(GridPosition::max());
 
     if (!insertionPoint)
@@ -1082,9 +1079,9 @@ bool RenderGrid::isMasonry(GridTrackSizingDirection direction) const
 bool RenderGrid::areMasonryRows() const
 {
     // isSubgridRows will return false if the masonry axis is rows. Need to check style if we are a subgrid
-    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridSubgridRows())
+    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridTemplateRows().subgrid)
         return parentGrid->areMasonryRows();
-    return style().gridMasonryRows();
+    return style().gridTemplateRows().masonry;
 }
 
 // Masonry Spec Section 2
@@ -1093,9 +1090,9 @@ bool RenderGrid::areMasonryRows() const
 bool RenderGrid::areMasonryColumns() const
 {
     // isSubgridColumns will return false if the masonry axis is columns. Need to check style if we are a subgrid
-    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridSubgridColumns())
+    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridTemplateColumns().subgrid)
         return parentGrid->areMasonryColumns();
-    return !areMasonryRows() && style().gridMasonryColumns();
+    return !areMasonryRows() && style().gridTemplateColumns().masonry;
 }
 
 // Masonry Spec Section 2.3.1 repeat(auto-fit)
@@ -1103,7 +1100,7 @@ bool RenderGrid::areMasonryColumns() const
 // We need to lie here that we are really an auto-fill instead of an auto-fit.
 AutoRepeatType RenderGrid::autoRepeatColumnsType() const
 {
-    auto autoRepeatColumns = style().gridAutoRepeatColumnsType();
+    auto autoRepeatColumns = style().gridTemplateColumns().autoRepeatType;
 
     if (areMasonryRows() && autoRepeatColumns == AutoRepeatType::Fit)
         return AutoRepeatType::Fill;
@@ -1113,7 +1110,7 @@ AutoRepeatType RenderGrid::autoRepeatColumnsType() const
 
 AutoRepeatType RenderGrid::autoRepeatRowsType() const
 {
-    auto autoRepeatRow = style().gridAutoRepeatRowsType();
+    auto autoRepeatRow = style().gridTemplateRows().autoRepeatType;
 
     if (areMasonryColumns() && autoRepeatRow == AutoRepeatType::Fit)
         return AutoRepeatType::Fill;
@@ -1310,7 +1307,7 @@ bool RenderGrid::isPlacedWithinExtrinsicallySizedExplicitTracks(const RenderBox&
 
     auto& gridStyle = style();
     auto gridItemArea = currentGrid.gridItemArea(gridItem);
-    auto& gridColumnSizes = gridStyle.gridColumnTrackSizes();
+    auto& gridColumnSizes = gridStyle.gridTemplateColumns().sizes;
     if (gridItemArea.columns.endLine() > gridColumnSizes.size())
         return false;
 
@@ -1319,7 +1316,7 @@ bool RenderGrid::isPlacedWithinExtrinsicallySizedExplicitTracks(const RenderBox&
             return false;
     }
 
-    auto& gridRowSizes = gridStyle.gridRowTrackSizes();
+    auto& gridRowSizes = gridStyle.gridTemplateRows().sizes;
     if (gridItemArea.rows.endLine() > gridRowSizes.size())
         return false;
 
@@ -2297,7 +2294,7 @@ bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
     // https://drafts.csswg.org/css-grid-2/#subgrid-listing
     if (establishesIndependentFormattingContextIgnoringDisplayType(style()))
         return false;
-    if (direction == GridTrackSizingDirection::ForColumns ? !style().gridSubgridColumns() : !style().gridSubgridRows())
+    if (direction == GridTrackSizingDirection::ForColumns ? !style().gridTemplateColumns().subgrid : !style().gridTemplateRows().subgrid)
         return false;
     auto* renderGrid = dynamicDowncast<RenderGrid>(parent());
     if (!renderGrid)

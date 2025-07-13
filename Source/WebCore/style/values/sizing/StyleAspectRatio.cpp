@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleAspectRatio.h"
 
+#include "AnimationUtilities.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSRatioValue.h"
 #include "CSSValueList.h"

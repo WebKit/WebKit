@@ -1365,7 +1365,7 @@ bool RenderBlock::establishesIndependentFormattingContext() const
     if (isGridItem()) {
         // Grid items establish a new independent formatting context, unless they're a subgrid
         // https://drafts.csswg.org/css-grid-2/#grid-item-display
-        if (!style.gridSubgridColumns() && !style.gridSubgridRows())
+        if (!style.gridTemplateColumns().subgrid && !style.gridTemplateRows().subgrid)
             return true;
         // Masonry makes grid items not subgrids.
         if (CheckedPtr parentGridBox = dynamicDowncast<RenderGrid>(parent()))

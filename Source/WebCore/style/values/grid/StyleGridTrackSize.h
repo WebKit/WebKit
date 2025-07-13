@@ -33,8 +33,10 @@
 #pragma once
 
 #include "StyleGridTrackBreadth.h"
+#include "StyleValueTypes.h"
 
 namespace WebCore {
+namespace Style {
 
 using namespace CSS::Literals;
 
@@ -55,8 +57,7 @@ enum class GridTrackSizeType : uint8_t {
 // m_maxTrackBreadth. The reason why we don't do it is because the maxTrackBreadth() call is a hot
 // spot, so adding a conditional statement there (to distinguish between fit-content and any other
 // case) was causing a severe performance drop.
-class GridTrackSize {
-public:
+struct GridTrackSize {
     GridTrackSize(const Style::GridTrackBreadth& breadth = Style::GridTrackBreadth(CSS::Keyword::Auto { }), GridTrackSizeType trackSizeType = GridTrackSizeType::Length)
         : m_type(trackSizeType)
         , m_minTrackBreadth(trackSizeType == GridTrackSizeType::FitContent ? Style::GridTrackBreadth(CSS::Keyword::Auto { }) : breadth)
@@ -157,6 +158,24 @@ private:
     bool m_maxTrackBreadthIsFixed : 1;
 };
 
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<GridTrackSize> { auto operator()(BuilderState&, const CSSValue&) -> GridTrackSize; };
+template<> struct CSSValueCreation<GridTrackSize> { auto operator()(CSSValuePool&, const RenderStyle&, const GridTrackSize&) -> Ref<CSSValue>; };
+
+// MARK: - Serialization
+
+template<> struct Serialize<GridTrackSize> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const GridTrackSize&); };
+
+// MARK: - Blending
+
+template<> struct Blending<GridTrackSize> {
+    auto blend(const GridTrackSize&, const GridTrackSize&, const BlendingContext&) -> GridTrackSize;
+};
+
+// MARK: - Logging
+
 WTF::TextStream& operator<<(WTF::TextStream&, const GridTrackSize&);
 
+} // namespace Style
 } // namespace WebCore

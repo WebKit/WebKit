@@ -28,7 +28,6 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "GridPositionsResolver.h"
 #include "StyleBuilderChecking.h"
-#include "StylePrimitiveNumericTypes+Blending.h"
 #include <algorithm>
 
 namespace WebCore {

@@ -301,8 +301,6 @@ public:
 
     static Ref<CSSValue> convertGridAutoFlow(ExtractorState&, GridAutoFlow);
     static Ref<CSSValue> convertGridPosition(ExtractorState&, const GridPosition&);
-    static Ref<CSSValue> convertGridTrackBreadth(ExtractorState&, const GridTrackBreadth&);
-    static Ref<CSSValue> convertGridTrackSize(ExtractorState&, const GridTrackSize&);
     static Ref<CSSValue> convertGridTrackSizeList(ExtractorState&, const Vector<GridTrackSize>&);
 };
 
@@ -2268,41 +2266,11 @@ inline Ref<CSSValue> ExtractorConverter::convertGridPosition(ExtractorState&, co
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertGridTrackBreadth(ExtractorState& state, const GridTrackBreadth& trackBreadth)
-{
-    if (!trackBreadth.isLength())
-        return createCSSValue(state.pool, state.style, trackBreadth.flex());
-    return createCSSValue(state.pool, state.style, trackBreadth.length());
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertGridTrackSize(ExtractorState& state, const GridTrackSize& trackSize)
-{
-    switch (trackSize.type()) {
-    case GridTrackSizeType::Length:
-        return convertGridTrackBreadth(state, trackSize.minTrackBreadth());
-    case GridTrackSizeType::FitContent:
-        return CSSFunctionValue::create(
-            CSSValueFitContent,
-            createCSSValue(state.pool, state.style, trackSize.fitContentTrackBreadth().length())
-        );
-    default:
-        ASSERT(trackSize.type() == GridTrackSizeType::MinMax);
-        if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex())
-            return createCSSValue(state.pool, state.style, trackSize.maxTrackBreadth().flex());
-
-        return CSSFunctionValue::create(
-            CSSValueMinmax,
-            convertGridTrackBreadth(state, trackSize.minTrackBreadth()),
-            convertGridTrackBreadth(state, trackSize.maxTrackBreadth())
-        );
-    }
-}
-
 inline Ref<CSSValue> ExtractorConverter::convertGridTrackSizeList(ExtractorState& state, const Vector<GridTrackSize>& gridTrackSizeList)
 {
     CSSValueListBuilder list;
     for (auto& gridTrackSize : gridTrackSizeList)
-        list.append(convertGridTrackSize(state, gridTrackSize));
+        list.append(convertStyleType(state, gridTrackSize));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 

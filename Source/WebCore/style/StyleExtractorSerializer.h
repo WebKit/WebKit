@@ -212,8 +212,6 @@ public:
 
     static void serializeGridAutoFlow(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GridAutoFlow);
     static void serializeGridPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridPosition&);
-    static void serializeGridTrackBreadth(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridTrackBreadth&);
-    static void serializeGridTrackSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridTrackSize&);
     static void serializeGridTrackSizeList(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const Vector<GridTrackSize>&);
 };
 
@@ -2575,46 +2573,10 @@ inline void ExtractorSerializer::serializeGridPosition(ExtractorState& state, St
     }
 }
 
-inline void ExtractorSerializer::serializeGridTrackBreadth(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridTrackBreadth& trackBreadth)
-{
-    if (!trackBreadth.isLength())
-        serializationForCSS(builder, context, state.style, trackBreadth.flex());
-    else
-        serializationForCSS(builder, context, state.style, trackBreadth.length());
-}
-
-inline void ExtractorSerializer::serializeGridTrackSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridTrackSize& trackSize)
-{
-    switch (trackSize.type()) {
-    case GridTrackSizeType::Length:
-        serializeGridTrackBreadth(state, builder, context, trackSize.minTrackBreadth());
-        return;
-    case GridTrackSizeType::FitContent:
-        builder.append(nameLiteral(CSSValueFitContent), '(');
-        serializationForCSS(builder, context, state.style, trackSize.fitContentTrackBreadth().length());
-        builder.append(')');
-        return;
-    case GridTrackSizeType::MinMax:
-        if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex()) {
-            serializationForCSS(builder, context, state.style, trackSize.maxTrackBreadth().flex());
-            return;
-        }
-
-        builder.append(nameLiteral(CSSValueMinmax), '(');
-        serializeGridTrackBreadth(state, builder, context, trackSize.minTrackBreadth());
-        builder.append(", "_s);
-        serializeGridTrackBreadth(state, builder, context, trackSize.maxTrackBreadth());
-        builder.append(')');
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 inline void ExtractorSerializer::serializeGridTrackSizeList(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const Vector<GridTrackSize>& gridTrackSizeList)
 {
     builder.append(interleave(gridTrackSizeList, [&](auto& builder, auto& gridTrackSize) {
-        serializeGridTrackSize(state, builder, context, gridTrackSize);
+        serializeStyleType(state, builder, context, gridTrackSize);
     }, ' '));
 }
 

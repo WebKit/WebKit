@@ -44,8 +44,8 @@ class OrderedNamedLinesCollector {
     WTF_MAKE_NONCOPYABLE(OrderedNamedLinesCollector);
 public:
     OrderedNamedLinesCollector(ExtractorState& state, bool isRowAxis)
-        : m_orderedNamedGridLines(isRowAxis ? state.style.orderedNamedGridColumnLines() : state.style.orderedNamedGridRowLines())
-        , m_orderedNamedAutoRepeatGridLines(isRowAxis ? state.style.autoRepeatOrderedNamedGridColumnLines() : state.style.autoRepeatOrderedNamedGridRowLines())
+        : m_orderedNamedGridLines(isRowAxis ? state.style.gridTemplateColumns().orderedNamedLines : state.style.gridTemplateRows().orderedNamedLines)
+        , m_orderedNamedAutoRepeatGridLines(isRowAxis ? state.style.gridTemplateColumns().autoRepeatOrderedNamedLines : state.style.gridTemplateRows().autoRepeatOrderedNamedLines)
     {
     }
     virtual ~OrderedNamedLinesCollector() = default;
@@ -67,7 +67,7 @@ class OrderedNamedLinesCollectorInGridLayout : public OrderedNamedLinesCollector
 public:
     OrderedNamedLinesCollectorInGridLayout(ExtractorState& state, bool isRowAxis, unsigned autoRepeatTracksCount, unsigned autoRepeatTrackListLength)
         : OrderedNamedLinesCollector(state, isRowAxis)
-        , m_insertionPoint(isRowAxis ? state.style.gridAutoRepeatColumnsInsertionPoint() : state.style.gridAutoRepeatRowsInsertionPoint())
+        , m_insertionPoint(isRowAxis ? state.style.gridTemplateColumns().autoRepeatInsertionPoint : state.style.gridTemplateRows().autoRepeatInsertionPoint)
         , m_autoRepeatTotalTracks(autoRepeatTracksCount)
         , m_autoRepeatTrackListLength(autoRepeatTrackListLength)
     {
@@ -85,15 +85,15 @@ class OrderedNamedLinesCollectorInSubgridLayout : public OrderedNamedLinesCollec
 public:
     OrderedNamedLinesCollectorInSubgridLayout(ExtractorState& state, bool isRowAxis, unsigned totalTracksCount)
         : OrderedNamedLinesCollector(state, isRowAxis)
-        , m_insertionPoint(isRowAxis ? state.style.gridAutoRepeatColumnsInsertionPoint() : state.style.gridAutoRepeatRowsInsertionPoint())
-        , m_autoRepeatLineSetListLength((isRowAxis ? state.style.autoRepeatOrderedNamedGridColumnLines() : state.style.autoRepeatOrderedNamedGridRowLines()).map.size())
+        , m_insertionPoint(isRowAxis ? state.style.gridTemplateColumns().autoRepeatInsertionPoint : state.style.gridTemplateRows().autoRepeatInsertionPoint)
+        , m_autoRepeatLineSetListLength((isRowAxis ? state.style.gridTemplateColumns().autoRepeatOrderedNamedLines : state.style.gridTemplateRows().autoRepeatOrderedNamedLines).map.size())
         , m_totalLines(totalTracksCount + 1)
     {
         if (!m_autoRepeatLineSetListLength) {
             m_autoRepeatTotalLineSets = 0;
             return;
         }
-        unsigned named = (isRowAxis ? state.style.orderedNamedGridColumnLines() : state.style.orderedNamedGridRowLines()).map.size();
+        unsigned named = (isRowAxis ? state.style.gridTemplateColumns().orderedNamedLines : state.style.gridTemplateRows().orderedNamedLines).map.size();
         if (named >= m_totalLines) {
             m_autoRepeatTotalLineSets = 0;
             return;

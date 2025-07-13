@@ -143,6 +143,20 @@ private:
     enum class GridTrackBreadthType : bool { Length, Flex };
     GridTrackBreadthType m_type;
 };
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<GridTrackBreadth> { auto operator()(BuilderState&, const CSSPrimitiveValue&) -> GridTrackBreadth; };
+template<> struct CSSValueCreation<GridTrackBreadth> { auto operator()(CSSValuePool&, const RenderStyle&, const GridTrackBreadth&) -> Ref<CSSValue>; };
+
+// MARK: - Serialization
+
+template<> struct Serialize<GridTrackBreadth> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const GridTrackBreadth&); };
+
+// MARK: - Blending
+
+template<> struct Blending<GridTrackBreadth> {
+    auto blend(const GridTrackBreadth&, const GridTrackBreadth&, const BlendingContext&) -> GridTrackBreadth;
+};
 
 } // namespace Style
 } // namespace WebCore

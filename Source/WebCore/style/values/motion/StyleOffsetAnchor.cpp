@@ -26,6 +26,7 @@
 #include "StyleOffsetAnchor.h"
 
 #include "CSSPositionValue.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include <wtf/text/TextStream.h>

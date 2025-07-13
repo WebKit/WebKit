@@ -1484,12 +1484,12 @@ static Style::GridOrderedNamedLinesMap gridLineNames(const RenderStyle* renderSt
             result.iterator->value.appendVector(newNames);
     };
 
-    auto orderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->orderedNamedGridColumnLines() : renderStyle->orderedNamedGridRowLines();
+    auto orderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridTemplateColumns().orderedNamedLines : renderStyle->gridTemplateRows().orderedNamedLines;
     for (auto& [i, names] : orderedGridLineNames.map)
         appendLineNames(i, names);
 
-    auto& autoRepeatOrderedGridLineNames = (direction == GridTrackSizingDirection::ForColumns ? renderStyle->autoRepeatOrderedNamedGridColumnLines() : renderStyle->autoRepeatOrderedNamedGridRowLines()).map;
-    auto autoRepeatInsertionPoint = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridAutoRepeatColumnsInsertionPoint() : renderStyle->gridAutoRepeatRowsInsertionPoint();
+    auto& autoRepeatOrderedGridLineNames = (direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridTemplateColumns().autoRepeatOrderedNamedLines : renderStyle->gridTemplateRows().autoRepeatOrderedNamedLines).map;
+    auto autoRepeatInsertionPoint = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridTemplateColumns().autoRepeatInsertionPoint : renderStyle->gridTemplateRows().autoRepeatInsertionPoint;
     unsigned autoRepeatIndex = 0;
     while (autoRepeatOrderedGridLineNames.size() && autoRepeatIndex < expectedLineCount - autoRepeatInsertionPoint) {
         auto names = autoRepeatOrderedGridLineNames.get(autoRepeatIndex % autoRepeatOrderedGridLineNames.size());

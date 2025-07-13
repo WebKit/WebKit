@@ -101,8 +101,8 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
 
     m_lastLine = explicitGridSizeForSide(*grid, side);
 
-    auto& gridLineNames = (isRowAxis ? gridContainerStyle->namedGridColumnLines() : gridContainerStyle->namedGridRowLines()).map;
-    auto& autoRepeatGridLineNames = (isRowAxis ? gridContainerStyle->autoRepeatNamedGridColumnLines() : gridContainerStyle->autoRepeatNamedGridRowLines()).map;
+    auto& gridLineNames = (isRowAxis ? gridContainerStyle->gridTemplateColumns().namedLines : gridContainerStyle->gridTemplateRows().namedLines).map;
+    auto& autoRepeatGridLineNames = (isRowAxis ? gridContainerStyle->gridTemplateColumns().autoRepeatNamedLines : gridContainerStyle->gridTemplateRows().autoRepeatNamedLines).map;
     auto& implicitGridLineNames = (isRowAxis ? gridContainerStyle->gridTemplateAreas().implicitNamedGridColumnLines : gridContainerStyle->gridTemplateAreas().implicitNamedGridRowLines).map;
 
     auto linesIterator = gridLineNames.find(lineName);
@@ -116,12 +116,12 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     m_isSubgrid = grid->isSubgrid(direction);
 
     m_autoRepeatTotalTracks = grid->autoRepeatCountForDirection(direction);
-    m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle->gridAutoRepeatColumns().size() : gridContainerStyle->gridAutoRepeatRows().size();
+    m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle->gridTemplateColumns().autoRepeatSizes.size() : gridContainerStyle->gridTemplateRows().autoRepeatSizes.size();
     m_autoRepeatLines = 0;
-    m_insertionPoint = isRowAxis ? gridContainerStyle->gridAutoRepeatColumnsInsertionPoint() : gridContainerStyle->gridAutoRepeatRowsInsertionPoint();
+    m_insertionPoint = isRowAxis ? gridContainerStyle->gridTemplateColumns().autoRepeatInsertionPoint : gridContainerStyle->gridTemplateRows().autoRepeatInsertionPoint;
 
     if (!m_isSubgrid) {
-        if (isRowAxis ? gridContainerStyle->gridSubgridColumns() : gridContainerStyle->gridSubgridRows()) {
+        if (isRowAxis ? gridContainerStyle->gridTemplateColumns().subgrid : gridContainerStyle->gridTemplateRows().subgrid) {
             // If subgrid was specified, but the grid wasn't able to actually become a subgrid, the used
             // value of the style should be the initial 'none' value.
             m_namedLinesIndices = nullptr;
@@ -160,9 +160,9 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     }
 
     ASSERT(!m_autoRepeatTotalTracks);
-    m_autoRepeatTrackListLength = (isRowAxis ? gridContainerStyle->autoRepeatOrderedNamedGridColumnLines() : gridContainerStyle->autoRepeatOrderedNamedGridRowLines()).map.size();
+    m_autoRepeatTrackListLength = (isRowAxis ? gridContainerStyle->gridTemplateColumns().autoRepeatOrderedNamedLines : gridContainerStyle->gridTemplateRows().autoRepeatOrderedNamedLines).map.size();
     if (m_autoRepeatTrackListLength) {
-        unsigned namedLines = (isRowAxis ? gridContainerStyle->orderedNamedGridColumnLines() : gridContainerStyle->orderedNamedGridRowLines()).map.size();
+        unsigned namedLines = (isRowAxis ? gridContainerStyle->gridTemplateColumns().orderedNamedLines : gridContainerStyle->gridTemplateRows().orderedNamedLines).map.size();
         unsigned totalLines = m_lastLine + 1;
         if (namedLines < totalLines) {
             // auto repeat in a subgrid specifies the line names that should be repeated, not
@@ -381,7 +381,7 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
         auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem);
         if (renderGrid && renderGrid->isSubgrid(direction)) {
             // Indefinite span for an item that is subgridded in this axis.
-            int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).map.size();
+            int lineCount = (isForColumns ? gridItem.style().gridTemplateColumns().orderedNamedLines : gridItem.style().gridTemplateRows().orderedNamedLines).map.size();
 
             if (initialPosition.isAuto()) {
                 // Set initial position to span <line names - 1>
@@ -401,7 +401,7 @@ unsigned GridPositionsResolver::explicitGridColumnCount(const RenderGrid& gridCo
         GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, GridTrackSizingDirection::ForColumns);
         return parent.gridSpanForGridItem(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForColumns), gridContainer.style().gridTemplateAreas().map.columnCount), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridTemplateColumns().sizes.size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForColumns), gridContainer.style().gridTemplateAreas().map.columnCount), GridPosition::max());
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridContainer)
@@ -411,7 +411,7 @@ unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridConta
         GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, GridTrackSizingDirection::ForRows);
         return parent.gridSpanForGridItem(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForRows), gridContainer.style().gridTemplateAreas().map.rowCount), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridTemplateRows().sizes.size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForRows), gridContainer.style().gridTemplateAreas().map.rowCount), GridPosition::max());
 }
 
 static unsigned lookAheadForNamedGridLine(int start, unsigned numberOfLines, NamedLineCollection& linesCollection)

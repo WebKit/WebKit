@@ -10036,9 +10036,8 @@
             "animation-type": "see prose",
             "initial": "none",
             "codegen-properties": {
-                "animation-wrapper": "GridTemplateWrapper",
-                "render-style-name-for-methods": "GridColumnList",
-                "style-builder-conditional-converter": "GridTrackList",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-builder-converter": "StyleType<GridTemplateList>",
                 "style-extractor-custom": true,
                 "parser-function": "consumeGridTemplatesRowsOrColumns",
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
@@ -10053,9 +10052,8 @@
             "animation-type": "see prose",
             "initial": "none",
             "codegen-properties": {
-                "animation-wrapper": "GridTemplateWrapper",
-                "render-style-name-for-methods": "GridRowList",
-                "style-builder-conditional-converter": "GridTrackList",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-builder-converter": "StyleType<GridTemplateList>",
                 "style-extractor-custom": true,
                 "parser-function": "consumeGridTemplatesRowsOrColumns",
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
