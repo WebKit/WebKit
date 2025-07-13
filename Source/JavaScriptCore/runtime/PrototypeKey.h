@@ -63,7 +63,7 @@ public:
     
     unsigned hash() const
     {
-        return WTF::IntHash<uintptr_t>::hash(std::bit_cast<uintptr_t>(m_prototype) ^ std::bit_cast<uintptr_t>(m_executable) ^ std::bit_cast<uintptr_t>(m_classInfo)) + m_inlineCapacity;
+        return WTF::IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(m_prototype) ^ reinterpret_cast<uintptr_t>(m_executable) ^ reinterpret_cast<uintptr_t>(m_classInfo)) + m_inlineCapacity;
     }
     
 private:

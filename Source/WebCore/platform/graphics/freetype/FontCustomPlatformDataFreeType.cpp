@@ -35,8 +35,8 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <ft2build.h>
-#include FT_MODULE_H
 #include <mutex>
+#include FT_MODULE_H
 
 #ifdef HAVE_HB_FEATURES_H
 #include <hb.h>
@@ -99,9 +99,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description, fontCreationContext);
-    if (!variants.isEmpty()) {
+    if (!variants.isEmpty())
         FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
-    }
 #endif
 
     auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
@@ -116,7 +115,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     // https://www.freetype.org/freetype2/docs/design/design-4.html
     // https://lists.nongnu.org/archive/html/freetype-devel/2004-10/msg00022.html
 
-    FT_Memory memory = std::bit_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
+    FT_Memory memory = reinterpret_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
     if (!memory)
         return false;
 

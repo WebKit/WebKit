@@ -58,9 +58,9 @@ template<typename CharacterType>
 static inline void appendStringToData(std::span<CharacterType>& data, int32_t value)
 {
     if constexpr (std::is_same_v<CharacterType, LChar>) {
-        auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(data.data() + data.size()), value);
+        auto result = std::to_chars(reinterpret_cast<char*>(data.data()), reinterpret_cast<char*>(data.data() + data.size()), value);
         ASSERT(result.ec != std::errc::value_too_large);
-        skip(data, result.ptr - std::bit_cast<char*>(data.data()));
+        skip(data, result.ptr - reinterpret_cast<char*>(data.data()));
     } else {
         WTF::StringTypeAdapter<int32_t> adapter { value };
         adapter.writeTo(data);

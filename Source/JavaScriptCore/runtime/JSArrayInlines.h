@@ -349,7 +349,7 @@ ALWAYS_INLINE bool containsHole(const T* data, unsigned length)
         }
         return false;
     } else
-        return WTF::find64(std::bit_cast<const uint64_t*>(data), JSValue::encode(JSValue()), length);
+        return WTF::find64(reinterpret_cast<const uint64_t*>(data), JSValue::encode(JSValue()), length);
 }
 
 } // namespace JSC

@@ -80,7 +80,7 @@ JSString* JSString::tryReplaceOneCharImpl(JSGlobalObject* globalObject, char16_t
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
+    if (reinterpret_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
         return nullptr; // Stack overflow
 
     if (this->isNonSubstringRope()) {
@@ -312,7 +312,7 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
                 unsigned offset = rope0->substringOffset();
                 view0.substring(offset, rope0Length).getCharacters(buffer);
             } else {
-                if (std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
+                if (reinterpret_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
                     MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, stackLimit);
                 resolveToBuffer(rope0->fiber0(), rope0->fiber1(), rope0->fiber2(), buffer.first(rope0Length), stackLimit);
             }
@@ -332,7 +332,7 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
     if (fiber1) [[likely]] {
         if (fiber0->isRope()) {
             if (fiber1->isRope()) {
-                if (std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
+                if (reinterpret_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
                     MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, stackLimit);
 
                 auto* rope0 = static_cast<const JSRopeString*>(fiber0);

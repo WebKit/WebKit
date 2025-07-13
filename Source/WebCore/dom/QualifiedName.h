@@ -83,8 +83,10 @@ public:
 
     WEBCORE_EXPORT QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI);
     WEBCORE_EXPORT QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace, NodeName);
-    QualifiedName(QualifiedNameImpl& impl) : m_impl(&impl) { }
-    explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
+    QualifiedName(QualifiedNameImpl& impl)
+        : m_impl(&impl) { }
+    explicit QualifiedName(WTF::HashTableDeletedValueType)
+        : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
     friend bool operator==(const QualifiedName&, const QualifiedName&) = default;
@@ -110,13 +112,13 @@ public:
 #if ENABLE(JIT)
     static constexpr ptrdiff_t implMemoryOffset() { return OBJECT_OFFSETOF(QualifiedName, m_impl); }
 #endif
-    
+
     // Init routine for globals
     WEBCORE_EXPORT static void init();
 
 private:
     static QualifiedNameImpl* hashTableDeletedValue() { return RefPtr<QualifiedNameImpl>::PtrTraits::hashTableDeletedValue(); }
-    
+
     RefPtr<QualifiedNameImpl> m_impl;
 };
 
@@ -127,7 +129,7 @@ inline void add(Hasher& hasher, const QualifiedName::QualifiedNameImpl& impl)
 
 inline void add(Hasher& hasher, const QualifiedName& name)
 {
-    add(hasher, std::bit_cast<uintptr_t>(name.impl()));
+    add(hasher, reinterpret_cast<uintptr_t>(name.impl()));
 }
 
 extern LazyNeverDestroyed<const QualifiedName> anyName;
@@ -142,7 +144,7 @@ inline bool operator==(const QualifiedName& q, const AtomString& a) { return a =
 struct QualifiedNameHash {
     static unsigned hash(const QualifiedName& name) { return hash(name.impl()); }
 
-    static unsigned hash(const QualifiedName::QualifiedNameImpl* name) 
+    static unsigned hash(const QualifiedName::QualifiedNameImpl* name)
     {
         if (!name->m_existingHash)
             name->m_existingHash = name->computeHash();
@@ -175,14 +177,14 @@ inline AtomString QualifiedName::toAtomString() const
 } // namespace WebCore
 
 namespace WTF {
-    
-    template<typename T> struct DefaultHash;
 
-    template<> struct DefaultHash<WebCore::QualifiedName> : WebCore::QualifiedNameHash { };
-    
-    template<> struct HashTraits<WebCore::QualifiedName> : SimpleClassHashTraits<WebCore::QualifiedName> {
-        static const bool emptyValueIsZero = false;
-        static WebCore::QualifiedName emptyValue() { return WebCore::nullQName(); }
-    };
+template<typename T> struct DefaultHash;
+
+template<> struct DefaultHash<WebCore::QualifiedName> : WebCore::QualifiedNameHash { };
+
+template<> struct HashTraits<WebCore::QualifiedName> : SimpleClassHashTraits<WebCore::QualifiedName> {
+    static const bool emptyValueIsZero = false;
+    static WebCore::QualifiedName emptyValue() { return WebCore::nullQName(); }
+};
 
 } // namespace WTF

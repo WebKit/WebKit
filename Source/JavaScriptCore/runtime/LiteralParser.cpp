@@ -1288,7 +1288,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursivelyEntry(VM& vm)
         return parse(vm, StartParseExpression, nullptr);
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBrace || type == TokLBracket)
-        return parseRecursively<ParserMode::StrictJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+        return parseRecursively<ParserMode::StrictJSON>(vm, reinterpret_cast<uint8_t*>(vm.softStackLimit()));
     return parsePrimitiveValue(vm);
 }
 
@@ -1305,7 +1305,7 @@ JSValue LiteralParser<CharType, reviverMode>::evalRecursivelyEntry(VM& vm)
 
         JSValue result;
         if (type == TokLBrace || type == TokLBracket)
-            result = parseRecursively<ParserMode::SloppyJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+            result = parseRecursively<ParserMode::SloppyJSON>(vm, reinterpret_cast<uint8_t*>(vm.softStackLimit()));
         else
             result = parsePrimitiveValue(vm);
 
@@ -1323,7 +1323,7 @@ JSValue LiteralParser<CharType, reviverMode>::evalRecursivelyEntry(VM& vm)
     }
 
     if (type == TokLBracket)
-        return parseRecursively<ParserMode::SloppyJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+        return parseRecursively<ParserMode::SloppyJSON>(vm, reinterpret_cast<uint8_t*>(vm.softStackLimit()));
     return parsePrimitiveValue(vm);
 }
 
@@ -1332,7 +1332,7 @@ template<ParserMode parserMode>
 JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* stackLimit)
     requires (reviverMode == JSONReviverMode::Disabled)
 {
-    if (std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
+    if (reinterpret_cast<uint8_t*>(currentStackPointer()) < stackLimit) [[unlikely]]
         return parse(vm, StartParseExpression, nullptr);
 
     auto scope = DECLARE_THROW_SCOPE(vm);

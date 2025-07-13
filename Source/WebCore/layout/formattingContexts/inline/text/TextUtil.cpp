@@ -130,7 +130,7 @@ InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTe
 {
     ASSERT(endPosition > startPosition + 1);
     ASSERT(inlineTextBox.content()[endPosition - 1] == space);
-    return width(inlineTextBox, fontCascade, startPosition, endPosition, { }, UseTrailingWhitespaceMeasuringOptimization::Yes) - 
+    return width(inlineTextBox, fontCascade, startPosition, endPosition, { }, UseTrailingWhitespaceMeasuringOptimization::Yes) -
         width(inlineTextBox, fontCascade, startPosition, endPosition - 1, { }, UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
@@ -158,9 +158,10 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
                 auto isIgnored = isDefaultIgnorableCodePoint(character);
 
                 // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
-                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
+                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude)) {
                     if (!isIgnored)
                         fallbackFonts.add(*glyphData.font);
+                }
             }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
@@ -540,7 +541,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
             constexpr auto cD7FF = SIMD::splat<UnsignedType>(0xD7FF);
             constexpr auto cFF00 = SIMD::splat<UnsignedType>(0xFF00);
             auto maybeBidiRTL = [&](auto span) ALWAYS_INLINE_LAMBDA {
-                auto input = SIMD::load(std::bit_cast<const UnsignedType*>(span.data()));
+                auto input = SIMD::load(reinterpret_cast<const UnsignedType*>(span.data()));
                 // ch < 0x0590
                 auto cond0 = SIMD::lessThan(input, c0590);
                 // General Punctuation such as curly quotes.

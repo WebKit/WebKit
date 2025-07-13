@@ -586,9 +586,9 @@ inline uint64_t Color::encodedPackedInlineColor(PackedColor::RGBA color)
 inline uint64_t Color::encodedOutOfLineComponents(Ref<OutOfLineComponents>&& outOfLineComponents)
 {
 #if CPU(ADDRESS64)
-    return std::bit_cast<uint64_t>(&outOfLineComponents.leakRef());
+    return reinterpret_cast<uint64_t>(&outOfLineComponents.leakRef());
 #else
-    return std::bit_cast<uint32_t>(&outOfLineComponents.leakRef());
+    return reinterpret_cast<uint32_t>(&outOfLineComponents.leakRef());
 #endif
 }
 
@@ -615,9 +615,9 @@ inline PackedColor::RGBA Color::decodedPackedInlineColor(uint64_t value)
 inline Color::OutOfLineComponents& Color::decodedOutOfLineComponents(uint64_t value)
 {
 #if CPU(ADDRESS64)
-    return *std::bit_cast<OutOfLineComponents*>(value & colorValueMask);
+    return *reinterpret_cast<OutOfLineComponents*>(value & colorValueMask);
 #else
-    return *std::bit_cast<OutOfLineComponents*>(static_cast<uint32_t>(value & colorValueMask));
+    return *reinterpret_cast<OutOfLineComponents*>(static_cast<uint32_t>(value & colorValueMask));
 #endif
 }
 

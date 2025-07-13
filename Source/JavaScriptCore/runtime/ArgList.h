@@ -82,7 +82,7 @@ protected:
 
     EncodedJSValue* inlineBuffer()
     {
-        return std::bit_cast<EncodedJSValue*>(std::bit_cast<uint8_t*>(this) + sizeof(MarkedVectorBase));
+        return reinterpret_cast<EncodedJSValue*>(reinterpret_cast<uint8_t*>(this) + sizeof(MarkedVectorBase));
     }
 
     Status expandCapacity();

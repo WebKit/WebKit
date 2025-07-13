@@ -82,7 +82,7 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
 {
     ASSERT(isPowerOfTwo(m_indexSize));
     ASSERT(isCompact() == other.isCompact());
-    memcpy(std::bit_cast<void*>(m_indexVector & indexVectorMask), std::bit_cast<void*>(other.m_indexVector & indexVectorMask), dataSize(isCompact()));
+    memcpy(reinterpret_cast<void*>(m_indexVector & indexVectorMask), reinterpret_cast<void*>(other.m_indexVector & indexVectorMask), dataSize(isCompact()));
 
     forEachProperty([&](auto& entry) {
         entry.key()->ref();

@@ -134,7 +134,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
         uintptr_t enumeratorAndFlag = structure->cachedPropertyNameEnumeratorAndFlag();
         if (enumeratorAndFlag) {
             if (!(enumeratorAndFlag & StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag))
-                return std::bit_cast<JSPropertyNameEnumerator*>(enumeratorAndFlag);
+                return reinterpret_cast<JSPropertyNameEnumerator*>(enumeratorAndFlag);
             structure->prototypeChain(vm, globalObject, base); // Refresh cached structure chain.
             if (auto* enumerator = structure->cachedPropertyNameEnumerator())
                 return enumerator;

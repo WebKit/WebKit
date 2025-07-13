@@ -101,8 +101,8 @@ public:
     {
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (executableOrRareData & rareDataTag)
-            return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->executable();
-        return std::bit_cast<ExecutableBase*>(executableOrRareData);
+            return reinterpret_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->executable();
+        return reinterpret_cast<ExecutableBase*>(executableOrRareData);
     }
 
     // To call any of these methods include JSFunctionInlines.h
@@ -133,7 +133,7 @@ public:
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (!(executableOrRareData & rareDataTag)) [[unlikely]]
             return allocateRareData(vm);
-        return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+        return reinterpret_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     }
 
     FunctionRareData* ensureRareDataAndObjectAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
@@ -142,7 +142,7 @@ public:
     {
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (executableOrRareData & rareDataTag)
-            return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+            return reinterpret_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
         return nullptr;
     }
 

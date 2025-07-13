@@ -28,7 +28,9 @@
 #include "GCAssertions.h"
 #include "HandleTypes.h"
 #include "StructureID.h"
+#include <cstdint>
 #include <type_traits>
+#include <utility>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/RawValueTraits.h>
 #include <wtf/TZoneMalloc.h>
@@ -128,7 +130,7 @@ public:
     void clear() { Traits::exchange(m_cell, nullptr); }
 
     // Slot cannot be used when pointers aren't stored as-is.
-    template<typename BarrierT, typename BarrierTraits, std::enable_if_t<std::is_same<BarrierTraits, RawPtrTraits<BarrierT>>::value, void*> = nullptr>
+    template<typename BarrierT, typename BarrierTraits, typename std::enable_if<std::is_same<BarrierTraits, RawPtrTraits<BarrierT>>::value>::type* = nullptr>
     struct SlotHelper {
         static BarrierT** reinterpret(typename BarrierTraits::StorageType* cell) { return reinterpret_cast<T**>(cell); }
     };
@@ -186,11 +188,11 @@ public:
     
     JSValue* slot() const
     { 
-        return std::bit_cast<JSValue*>(&m_value);
+        return reinterpret_cast<JSValue*>(const_cast<EncodedJSValue*>(&m_value));
     }
     
-    int32_t* tagPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
-    int32_t* payloadPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
+    int32_t* tagPointer() { return &reinterpret_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
+    int32_t* payloadPointer() { return &reinterpret_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
     
     explicit operator bool() const { return !!get(); }
     bool operator!() const { return !get(); } 

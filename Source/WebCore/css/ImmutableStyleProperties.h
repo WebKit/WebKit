@@ -70,7 +70,7 @@ inline void ImmutableStyleProperties::deref() const
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 inline std::span<PackedPtr<const CSSValue>> ImmutableStyleProperties::valueSpan() const
 {
-    return unsafeMakeSpan(std::bit_cast<PackedPtr<const CSSValue>*>(std::bit_cast<const uint8_t*>(metadataSpan().data()) + (m_arraySize * sizeof(StylePropertyMetadata))), propertyCount());
+    return unsafeMakeSpan(reinterpret_cast<PackedPtr<const CSSValue>*>(reinterpret_cast<const uint8_t*>(metadataSpan().data()) + (m_arraySize * sizeof(StylePropertyMetadata))), propertyCount());
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
