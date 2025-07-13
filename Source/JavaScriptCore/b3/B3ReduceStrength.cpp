@@ -3547,69 +3547,93 @@ private:
     {
         if (!timeToLive)
             DUMP_INT_RANGE_AND_RETURN(IntRange::top(value->type()));
+
+        auto it = m_rangeCache.find(value);
+        if (it != m_rangeCache.end())
+            DUMP_INT_RANGE_AND_RETURN(it->value);
         
+        IntRange result;
         switch (value->opcode()) {
         case Const32:
         case Const64: {
             int64_t intValue = value->asInt();
-            DUMP_INT_RANGE_AND_RETURN(IntRange(intValue, intValue));
+            result = IntRange(intValue, intValue);
+            break;
         }
 
         case BitAnd:
-            if (value->child(1)->hasInt())
-                DUMP_INT_RANGE_AND_RETURN(IntRange::rangeForMask(value->child(1)->asInt(), value->type()));
+            if (value->child(1)->hasInt()) {
+                result = IntRange::rangeForMask(value->child(1)->asInt(), value->type());
+                break;
+            }
+            result = IntRange::top(value->type());
             break;
 
         case SShr:
             if (value->child(1)->hasInt32()) {
-                DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).sShr(
-                    value->child(1)->asInt32(), value->type()));
+                result = rangeFor(value->child(0), timeToLive - 1).sShr(
+                    value->child(1)->asInt32(), value->type());
+                break;
             }
+            result = IntRange::top(value->type());
             break;
 
         case ZShr:
             if (value->child(1)->hasInt32()) {
-                DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).zShr(
-                    value->child(1)->asInt32(), value->type()));
+                result = rangeFor(value->child(0), timeToLive - 1).zShr(
+                    value->child(1)->asInt32(), value->type());
+                break;
             }
+            result = IntRange::top(value->type());
             break;
 
         case Shl:
             if (value->child(1)->hasInt32()) {
-                DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).shl(
-                    value->child(1)->asInt32(), value->type()));
+                result = rangeFor(value->child(0), timeToLive - 1).shl(
+                    value->child(1)->asInt32(), value->type());
+                break;
             }
+            result = IntRange::top(value->type());
             break;
 
         case Add:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).add(
-                rangeFor(value->child(1), timeToLive - 1), value->type()));
+            result = rangeFor(value->child(0), timeToLive - 1).add(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
+            break;
 
         case Sub:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).sub(
-                rangeFor(value->child(1), timeToLive - 1), value->type()));
+            result = rangeFor(value->child(0), timeToLive - 1).sub(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
+            break;
 
         case Mul:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).mul(
-                rangeFor(value->child(1), timeToLive - 1), value->type()));
+            result = rangeFor(value->child(0), timeToLive - 1).mul(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
+            break;
 
         case SExt8:
         case SExt8To64:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).sExt<int8_t>());
+            result = rangeFor(value->child(0), timeToLive - 1).sExt<int8_t>();
+            break;
         case SExt16:
         case SExt16To64:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).sExt<int16_t>());
+            result = rangeFor(value->child(0), timeToLive - 1).sExt<int16_t>();
+            break;
         case SExt32:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).sExt<int32_t>());
+            result = rangeFor(value->child(0), timeToLive - 1).sExt<int32_t>();
+            break;
 
         case ZExt32:
-            DUMP_INT_RANGE_AND_RETURN(rangeFor(value->child(0), timeToLive - 1).zExt32());
+            result = rangeFor(value->child(0), timeToLive - 1).zExt32();
+            break;
 
         default:
+            result = IntRange::top(value->type());
             break;
         }
 
-        DUMP_INT_RANGE_AND_RETURN(IntRange::top(value->type()));
+        m_rangeCache.add(value, result);
+        DUMP_INT_RANGE_AND_RETURN(result);
     }
 
     template<typename ValueType, typename... Arguments>
@@ -3875,6 +3899,7 @@ private:
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
     UncheckedKeyHashMap<ValueKey, Value*> m_valueForConstant;
+    UncheckedKeyHashMap<Value*, IntRange> m_rangeCache;
     BasicBlock* m_root { nullptr };
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };
