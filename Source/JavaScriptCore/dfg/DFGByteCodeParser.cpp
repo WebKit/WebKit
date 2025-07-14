@@ -187,6 +187,7 @@ private:
     void makeBlockTargetable(BasicBlock*, BytecodeIndex);
     void addJumpTo(BasicBlock*);
     void addJumpTo(unsigned bytecodeIndex);
+    void addBranch(Node* condition, BasicBlock* trueBlock, BasicBlock* falseBlock);
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     enum Terminality { Terminal, NonTerminal };
     Terminality handleCall(
@@ -1419,6 +1420,15 @@ void ByteCodeParser::addJumpTo(unsigned bytecodeIndex)
     m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
 }
 
+void ByteCodeParser::addBranch(Node* condition, BasicBlock* taken, BasicBlock* notTaken)
+{
+    ASSERT(!m_currentBlock->terminal());
+    BranchData* branchData = m_graph.m_branchData.add();
+    branchData->taken = BranchTarget(taken);
+    branchData->notTaken = BranchTarget(notTaken);
+    addToGraph(Branch, OpInfo(branchData), condition);
+}
+
 template<typename CallOp>
 ByteCodeParser::Terminality ByteCodeParser::handleCall(const JSInstruction* pc, NodeType op, CallMode callMode, BytecodeIndex osrExitIndex, Node* newTarget)
 {
@@ -2649,7 +2659,308 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             setResult(iterator);
             return CallOptimizationResult::Inlined;
         }
-            
+
+        case ArrayFilterIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            JSFunction* function = variant.function();
+            if (!function || !function->rareData())
+                return CallOptimizationResult::DidNothing;
+
+            ArrayMode arrayMode = getArrayMode(Array::Action::Write);
+            if (!arrayMode.isJSArray())
+                return CallOptimizationResult::DidNothing;
+
+            FunctionRareData* rareData = function->rareData();
+            ASSERT(rareData);
+
+            auto* profile = rareData->tryGetBuiltinProfileOfKind<BuiltinProfiling::ArrayPrototypeFilterProfile>();
+            if (!profile)
+                return CallOptimizationResult::DidNothing;
+
+            profile->updateValueProfiles(m_codeBlock->m_lock);
+
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            if (globalObject->arraySpeciesWatchpointSet().state() != IsWatched
+                || !globalObject->havingABadTimeWatchpointSet().isStillValid()
+                || globalObject->arrayPrototypeChainIsSaneWatchpointSet().state() != IsWatched) {
+                return CallOptimizationResult::DidNothing;
+            }
+
+            m_graph.watchpoints().addLazily(globalObject->arraySpeciesWatchpointSet());
+            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpointSet());
+            m_graph.watchpoints().addLazily(globalObject->arrayPrototypeChainIsSaneWatchpointSet());
+
+            auto exitOK = [&] ALWAYS_INLINE_LAMBDA {
+                m_exitOK = true;
+                addToGraph(ExitOK);
+            };
+
+            BasicBlock* bbThrowTypeError = allocateUntargetableBlock();
+            BasicBlock* bbAllocations = allocateUntargetableBlock();
+            BasicBlock* bbLoopHeader = allocateUntargetableBlock();
+            BasicBlock* bbLoopExitReturnA = allocateUntargetableBlock();
+            BasicBlock* bbLoopBodyHasProp = allocateUntargetableBlock();
+            BasicBlock* bbLoopBodyIncK = allocateUntargetableBlock();
+            BasicBlock* bbLoopBodyCheck = allocateUntargetableBlock();
+            BasicBlock* bbLoopBodySetProp = allocateUntargetableBlock();
+            BasicBlock* continuation = allocateUntargetableBlock();
+
+            auto oldIndex = m_currentIndex;
+
+            dataLogLn("bforward - ArrayFilterIntrinsic #########################################################");
+
+            ensureTmps(10);
+            auto k = Operand::tmp(0);
+            auto to = Operand::tmp(1);
+            auto scratch = Operand::tmp(2);
+            auto obj = Operand::tmp(3);
+            auto len = Operand::tmp(4);
+            auto arr = Operand::tmp(5);
+            auto val = Operand::tmp(6);
+
+            auto argThis = Operand::tmp(7);
+            auto argCallback = Operand::tmp(8);
+            auto argThisArg = Operand::tmp(9);
+
+            exitOK();
+            dataLogLn("bforward - before insertChecks()");
+            insertChecks(true);
+            dataLogLn("bforward - after insertChecks()");
+
+            set(argThis, get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), ImmediateSetWithFlush);
+            set(argCallback, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), ImmediateSetWithFlush);
+            set(argThisArg, (argumentCountIncludingThis >= 3) ? get(virtualRegisterForArgumentIncludingThis(2, registerOffset)) : jsConstant(jsUndefined()), ImmediateSetWithFlush);
+
+            {
+                dataLogLn("bforward - before ToThis/ToObject/ToLength/IsCallable");
+
+                exitOK();
+                Node* toThisResult = addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(profile->m_thisValueProfile.m_prediction), get(argThis));
+                Node* toObjectResult = addToGraph(ToObject, OpInfo(UINT32_MAX /* TODO: errorStringIndex? */), OpInfo(profile->m_toObjectValueProfile.m_prediction), toThisResult);
+
+                exitOK();
+                set(obj, toObjectResult);
+
+                exitOK();
+                Node* toLengthResult = addToGraph(ToLength, OpInfo(0), OpInfo(profile->m_toLengthValueProfile.m_prediction), toObjectResult);
+                set(len, toLengthResult);
+
+                exitOK();
+                Node* callableResult = addToGraph(IsCallable, get(argCallback));
+
+                processSetLocalQueue();
+                addBranch(callableResult, bbAllocations, bbThrowTypeError);
+
+                dataLogLn("bforward - after ToThis/ToObject/ToLength/IsCallable");
+            }
+
+            {
+                dataLogLn("bforward - bbThrowTypeError BEGIN");
+                m_currentBlock = bbThrowTypeError;
+                clearCaches();
+
+                LazyJSValue errorString = LazyJSValue::newString(m_graph, "Array.prototype.filter callback must be a function"_s);
+                OpInfo info(m_graph.m_lazyJSValues.add(errorString));
+                Node* errorMessage = addToGraph(LazyJSConstant, info);
+                addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);
+
+                processSetLocalQueue();
+                flushForTerminal();
+
+                dataLogLn("bforward - bbThrowTypeError END");
+            }
+
+            {
+                dataLogLn("bforward - bbAllocations BEGIN");
+                m_currentBlock = bbAllocations;
+                clearCaches();
+
+                Node* zero = jsConstant(jsNumber(0));
+
+                NewArrayWithSpeciesData data;
+                data.arrayMode = arrayMode.asWord();
+                data.indexingMode = profile->m_arrayAllocProfile.selectIndexingTypeConcurrently();
+                Node* newArray = addToGraph(NewArrayWithSpecies, OpInfo(data.asQuadWord()), OpInfo(ArrayUse), Edge(zero, KnownInt32Use), Edge(get(obj), KnownCellUse));
+
+                set(arr, newArray);
+
+                set(k, zero);
+                set(to, zero);
+
+                processSetLocalQueue();
+                addJumpTo(bbLoopHeader);
+
+                dataLogLn("bforward - bbAllocations END");
+            }
+
+
+            {
+                dataLogLn("bforward - bbLoopHeader BEGIN");
+                m_currentBlock = bbLoopHeader;
+                clearCaches();
+
+                exitOK();
+                Node* compareResult = addToGraph(CompareGreaterEq, get(k), get(len));
+
+                processSetLocalQueue();
+                addBranch(compareResult, bbLoopExitReturnA, bbLoopBodyHasProp);
+
+                dataLogLn("bforward - bbLoopHeader END");
+            }
+
+            {
+                dataLogLn("bforward - bbLoopExitReturnA BEGIN");
+                m_currentBlock = bbLoopExitReturnA;
+                clearCaches();
+
+                setResult(get(arr));
+
+                processSetLocalQueue();
+                addJumpTo(continuation);
+
+                dataLogLn("bforward - bbLoopExitReturnA END");
+            }
+
+            {
+                dataLogLn("bforward - bbLoopBodyHasProp BEGIN");
+                m_currentBlock = bbLoopBodyHasProp;
+                clearCaches();
+
+                ArrayMode arrayMode2 = getArrayMode(Array::Read); // TODO: from profile
+                exitOK();
+                set(scratch, addToGraph(InByVal, OpInfo(arrayMode2.asWord()), get(obj), get(k)));
+
+                processSetLocalQueue();
+                addBranch(get(scratch), bbLoopBodyCheck, bbLoopBodyIncK);
+
+                dataLogLn("bforward - bbLoopBodyHasProp END");
+            }
+
+            {
+                dataLogLn("bforward - bbLoopBodyCheck BEGIN");
+                m_currentBlock = bbLoopBodyCheck;
+                clearCaches();
+
+                ArrayMode arrayMode2 = getArrayMode(Array::Read); // TODO: from profile
+
+                exitOK();
+                addVarArgChild(Edge(get(obj), KnownCellUse));
+                addVarArgChild(Edge(get(k), KnownInt32Use));
+                addVarArgChild(nullptr);
+                Node* kValue = addToGraph(Node::VarArg, GetByVal,
+                    OpInfo(arrayMode2.asWord()),
+                    OpInfo(profile->m_getByValValueProfile.m_prediction));
+                exitOK();
+                set(val, kValue, ImmediateSetWithFlush);
+                Vector<Node*> arguments;
+                arguments.append(get(argThisArg));
+                arguments.append(kValue);
+                arguments.append(get(k));
+                arguments.append(get(obj));
+
+                int newRegisterOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
+                newRegisterOffset -= (argumentCountIncludingThis + 4 + 1); // args + return pc
+                newRegisterOffset -= CallFrame::headerSizeInRegisters;
+                newRegisterOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -newRegisterOffset);
+
+                ensureLocals(m_inlineStackTop->remapOperand(VirtualRegister(newRegisterOffset)).toLocal());
+
+                unsigned currentArgumentIndex = 0;
+                for (Node* argument : arguments)
+                    set(virtualRegisterForArgumentIncludingThis(currentArgumentIndex++, newRegisterOffset), argument, ImmediateNakedSet);
+
+                dataLogLn("bforward - before handleCall");
+                Terminality callTerminality = handleCall(
+                    scratch,
+                    Call,
+                    InlineCallFrame::Call,
+                    osrExitIndex, // TODO
+                    get(argCallback),
+                    4,
+                    newRegisterOffset,
+                    CallLinkStatus(), // TODO: pull this in from CallLinkInfo in profile
+                    profile->m_callbackResValueProfile.m_prediction,
+                    nullptr);
+                dataLogLn("bforward - after handleCall");
+                RELEASE_ASSERT(callTerminality == NonTerminal);
+                exitOK();
+
+                processSetLocalQueue();
+
+                Node* toBoolResult = addToGraph(ToBoolean, get(scratch));
+
+                addBranch(toBoolResult, bbLoopBodySetProp, bbLoopBodyIncK);
+                dataLogLn("bforward - bbLoopBodyCheck END");
+            }
+
+            {
+                dataLogLn("bforward - bbLoopBodySetProp BEGIN");
+                m_currentBlock = bbLoopBodySetProp;
+                clearCaches();
+
+                exitOK();
+
+                ArrayMode writeArrayMode = getArrayMode(Array::Write);
+
+                addVarArgChild(get(arr));
+                addVarArgChild(get(to));
+                addVarArgChild(get(val));
+                addVarArgChild(nullptr); // Leave room for property storage.
+                addVarArgChild(nullptr); // Leave room for length.
+                // Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : status.isMegamorphic() ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+
+                exitOK();
+                Node* putByVal = addToGraph(Node::VarArg, PutByVal, OpInfo(writeArrayMode.asWord()), OpInfo(ECMAMode::StrictMode));
+                // m_exitOK = false;
+                UNUSED_VARIABLE(putByVal);
+
+                exitOK();
+
+                Node* one = jsConstant(jsNumber(1));
+                Node* inc = addToGraph(ArithAdd, get(to), one);
+                inc->child1() = Edge(inc->child1().node(), KnownInt32Use);
+                inc->child2() = Edge(inc->child2().node(), KnownInt32Use);
+                set(to, inc);
+
+                processSetLocalQueue();
+                addJumpTo(bbLoopBodyIncK);
+                dataLogLn("bforward - bbLoopBodySetProp END");
+            }
+
+            {
+                dataLogLn("bforward - bbLoopBodyIncK BEGIN");
+                m_currentBlock = bbLoopBodyIncK;
+                clearCaches();
+
+                exitOK();
+
+                Node* one = jsConstant(jsNumber(1));
+                Node* inc = addToGraph(ArithAdd, get(k), one);
+                inc->child1() = Edge(inc->child1().node(), KnownInt32Use);
+                inc->child2() = Edge(inc->child2().node(), KnownInt32Use);
+                set(k, inc);
+
+                processSetLocalQueue();
+                addJumpTo(bbLoopHeader);
+                dataLogLn("bforward - bbLoopBodyIncK END");
+            }
+
+            {
+                dataLogLn("bforward - continuation BEGIN");
+                m_currentBlock = continuation;
+                clearCaches();
+                m_currentIndex = oldIndex;
+                dataLogLn("bforward - continuation END");
+            }
+
+            dataLogLn("bforward - case end! return Inlined");
+
+
+            return CallOptimizationResult::Inlined;
+        }
+
         case ArrayPushIntrinsic: {
             if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
                 return CallOptimizationResult::DidNothing;

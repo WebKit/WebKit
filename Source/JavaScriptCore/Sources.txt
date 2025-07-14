@@ -757,6 +757,7 @@ runtime/BooleanObject.cpp
 runtime/BooleanPrototype.cpp
 runtime/BrandedStructure.cpp
 runtime/BufferMemoryHandle.cpp
+runtime/BuiltinProfiling.cpp
 runtime/BytecodeCacheError.cpp
 runtime/CallData.cpp
 runtime/CachePayload.cpp

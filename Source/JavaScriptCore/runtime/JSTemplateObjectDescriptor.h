@@ -28,6 +28,7 @@
 
 #include "Structure.h"
 #include "TemplateObjectDescriptor.h"
+#include "VM.h"
 
 namespace JSC {
 

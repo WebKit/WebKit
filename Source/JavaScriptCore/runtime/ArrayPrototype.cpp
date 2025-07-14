@@ -72,6 +72,8 @@ static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncIncludes);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncCopyWithin);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToSpliced);
 
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncFilter);
+
 // ------------------------------ ArrayPrototype ----------------------------
 
 const ClassInfo ArrayPrototype::s_info = { "Array"_s, &JSArray::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ArrayPrototype) };
@@ -116,7 +118,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().somePublicName(), arrayPrototypeSomeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().indexOfPublicName(), arrayProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayIndexOfIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, arrayProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().filterPublicName(), arrayPrototypeFilterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->filter, arrayProtoFuncFilter, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayFilterIntrinsic);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatPublicName(), arrayPrototypeFlatCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatMapPublicName(), arrayPrototypeFlatMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().reducePublicName(), arrayPrototypeReduceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -2173,6 +2175,196 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSpliced, (JSGlobalObject* globalObject,
     }
 
     return JSValue::encode(result);
+}
+
+ALWAYS_INLINE static JSValue fastArrayFilter(JSGlobalObject* globalObject, VM& vm, JSArray* array, JSObject* callback, JSValue thisArg, BuiltinProfiling::ArrayPrototypeFilterProfile* profile)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = array->length();
+
+    auto indexingType = array->indexingType();
+    // ArrayAllocationProfile arrayProfile(indexingType);
+    profile->m_arrayAllocProfile.initializeIndexingMode(indexingType);
+    JSArray* result = constructEmptyArray(globalObject, &profile->m_arrayAllocProfile);
+    if (!length)
+        return result;
+
+    const auto callData = getCallData(callback);
+    ASSERT(callData.type != CallData::Type::None);
+
+    auto doFilter = [&](auto callFunction) ALWAYS_INLINE_LAMBDA {
+        switch (indexingType) {
+        case ALL_INT32_INDEXING_TYPES:
+        case ALL_CONTIGUOUS_INDEXING_TYPES: {
+            auto& butterfly = *array->butterfly();
+            auto data = butterfly.contiguous().data();
+            // TODO: we could check for holes and fall-back to slow path if it is faster:
+            // if (containsHole(data, length)) return { false, {} }; ...
+            for (unsigned i = 0; i < length; ++i) {
+                if (JSValue value = data[i].get(); value) [[likely]] {
+                    profile->m_getByValValueProfile.m_buckets[0] = JSValue::encode(value);
+                    JSValue callbackRes = callFunction(thisArg, value, jsNumber(i), array);
+                    profile->m_callbackResValueProfile.m_buckets[0] = JSValue::encode(callbackRes);
+                    if (callbackRes.toBoolean(globalObject))
+                        result->pushInline(globalObject, value);
+                }
+            }
+            break;
+        }
+        case ALL_DOUBLE_INDEXING_TYPES: {
+            auto& butterfly = *array->butterfly();
+            auto data = butterfly.contiguousDouble().data();
+            // TODO: if containsHole...
+            for (unsigned i = 0; i < length; ++i) {
+                if (isHole(data[i])) [[unlikely]]
+                    continue;
+                JSValue value = jsNumber(data[i]);
+                profile->m_getByValValueProfile.m_buckets[0] = JSValue::encode(value);
+                JSValue callbackRes = callFunction(thisArg, value, jsNumber(i), array);
+                profile->m_callbackResValueProfile.m_buckets[0] = JSValue::encode(callbackRes);
+                if (callbackRes.toBoolean(globalObject))
+                    result->pushInline(globalObject, value);
+            }
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    };
+
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(callback), 3);
+        RETURN_IF_EXCEPTION(scope, { });
+        doFilter([&](JSValue thisVal, JSValue value, JSValue i, JSValue thisObj) -> JSValue {
+            return cachedCall.callWithArguments(globalObject, thisVal, value, i, thisObj);
+        });
+    } else {
+        MarkedArgumentBuffer args;
+        doFilter([&](JSValue thisVal, JSValue value, JSValue i, JSValue thisObj) -> JSValue {
+            args.clear();
+            args.append(value);
+            args.append(i);
+            args.append(thisObj);
+            if (args.hasOverflowed()) [[unlikely]] {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+            return call(globalObject, callback, callData, thisVal, args);
+        });
+    }
+
+    RELEASE_AND_RETURN(scope, result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFilter, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSFunction* selfJsFunction = jsCast<JSFunction*>(callFrame->jsCallee());
+    FunctionRareData* rareData = selfJsFunction->ensureRareData(vm);
+    auto* profile = rareData->tryGetBuiltinProfileOfKind<BuiltinProfiling::ArrayPrototypeFilterProfile>();
+    if (!profile)
+        profile = rareData->allocateBuiltinProfile<BuiltinProfiling::ArrayPrototypeFilterProfile>();
+
+    auto thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+    RETURN_IF_EXCEPTION(scope, { });
+    profile->m_thisValueProfile.m_buckets[0] = JSValue::encode(thisValue);
+
+    if (thisValue.isUndefinedOrNull()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Array.prototype.filter requires that |this| not be null or undefined"_s);
+
+    auto* thisObject = thisValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    profile->m_toObjectValueProfile.m_buckets[0] = JSValue::encode(thisObject);
+
+    uint64_t length = toLength(globalObject, thisObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    profile->m_toLengthValueProfile.m_buckets[0] = JSValue::encode(jsNumber(length));
+
+    JSValue argCallback = callFrame->argument(0);
+    if (!argCallback.isCallable())
+        return throwVMTypeError(globalObject, scope, "Array.prototype.filter callback must be a function"_s);
+
+    JSValue argThisArg = callFrame->argument(1);
+
+    if (isJSArray(thisObject) && !holesMustForwardToPrototype(thisObject)) [[likely]] {
+        JSArray* array = asArray(thisObject);
+        switch (array->indexingType()) {
+        case ALL_INT32_INDEXING_TYPES:
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+        case ALL_DOUBLE_INDEXING_TYPES: {
+            JSValue result = fastArrayFilter(globalObject, vm, array, argCallback.toObject(globalObject), argThisArg, profile);
+            RELEASE_AND_RETURN(scope, JSValue::encode(result));
+        }
+        default:
+            break;
+        }
+    }
+
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, thisObject, 0);
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (speciesResult.first == SpeciesConstructResult::Exception) [[unlikely]]
+        return { };
+
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        result = speciesResult.second;
+    else {
+        result = constructEmptyArray(globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (!result) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    // CachedCall cachedCall(globalObject, jsCast<JSFunction*>(argCallback), 3);
+    auto doFilter = [&](auto callFunction) ALWAYS_INLINE_LAMBDA -> JSValue {
+        uint64_t nextIndex = 0;
+        for (uint64_t i = 0; i < length; i++) {
+            if (thisObject->hasProperty(globalObject, i)) [[likely]] {
+                // TODO: switch indexing type and use custom hole checking logic for each type
+                auto fromValue = thisObject->getIndex(globalObject, i);
+                RETURN_IF_EXCEPTION(scope, { });
+                JSValue callbackRes = callFunction(argThisArg, fromValue, jsNumber(i), thisObject);
+                if (callbackRes.toBoolean(globalObject)) {
+                    result->putDirectIndex(globalObject, nextIndex, fromValue, 0, PutDirectIndexShouldThrow);
+                    RETURN_IF_EXCEPTION(scope, { });
+                    ++nextIndex;
+                }
+            }
+        }
+        return result;
+    };
+
+    const auto callData = getCallData(argCallback);
+    ASSERT(callData.type != CallData::Type::None);
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(argCallback), 3);
+        RETURN_IF_EXCEPTION(scope, { });
+        doFilter([&](JSValue thisVal, JSValue value, JSValue i, JSValue thisObj) -> JSValue {
+            return cachedCall.callWithArguments(globalObject, thisVal, value, i, thisObj);
+        });
+    } else {
+        MarkedArgumentBuffer args;
+        doFilter([&](JSValue thisVal, JSValue value, JSValue i, JSValue thisObj) -> JSValue {
+            args.clear();
+            args.append(value);
+            args.append(i);
+            args.append(thisObj);
+            if (args.hasOverflowed()) [[unlikely]] {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+            return call(globalObject, argCallback, callData, thisVal, args);
+        });
+    }
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 
 } // namespace JSC

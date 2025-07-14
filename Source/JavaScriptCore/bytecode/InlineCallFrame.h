@@ -45,23 +45,27 @@ DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 struct InlineCallFrame {
     WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 
+/* For GetterCall-BoundFunctionTailCall, the stackOffset incorporates the argument count plus the true return PC slot. */ \
+#define JSC_FOR_EACH_INLINECALLFRAME_KIND(macro) \
+    macro(Call) \
+    macro(Construct) \
+    macro(TailCall) \
+    macro(CallVarargs) \
+    macro(ConstructVarargs) \
+    macro(TailCallVarargs) \
+    macro(GetterCall) \
+    macro(SetterCall) \
+    macro(ProxyObjectLoadCall) \
+    macro(ProxyObjectStoreCall) \
+    macro(ProxyObjectInCall) \
+    macro(BoundFunctionCall) \
+    macro(BoundFunctionTailCall) \
+    macro(NativeBuiltinCall)
+
     enum Kind {
-        Call,
-        Construct,
-        TailCall,
-        CallVarargs,
-        ConstructVarargs,
-        TailCallVarargs,
-        
-        // For these, the stackOffset incorporates the argument count plus the true return PC
-        // slot.
-        GetterCall,
-        SetterCall,
-        ProxyObjectLoadCall,
-        ProxyObjectStoreCall,
-        ProxyObjectInCall,
-        BoundFunctionCall,
-        BoundFunctionTailCall,
+#define X(kind) kind,
+        JSC_FOR_EACH_INLINECALLFRAME_KIND(X)
+#undef X
     };
     static constexpr unsigned bitWidthOfKind = 4;
 
@@ -84,6 +88,8 @@ struct InlineCallFrame {
         case Construct:
         case ConstructVarargs:
             return CallMode::Construct;
+        case NativeBuiltinCall:
+            break; // TODO: see if this is needed
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -132,6 +138,8 @@ struct InlineCallFrame {
         case Construct:
         case ConstructVarargs:
             return CodeSpecializationKind::CodeForConstruct;
+        case NativeBuiltinCall:
+            break; // TODO: see if this is needed
         }
         RELEASE_ASSERT_NOT_REACHED();
     }

@@ -913,6 +913,7 @@
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
 		2BDF4F7129E9E8BB0056BF50 /* PASReportCrashPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F6F29E9E8BB0056BF50 /* PASReportCrashPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2CFA3D562DEA2E8300ABCC7C /* BuiltinProfiling.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFA3D532DEA2E8300ABCC7C /* BuiltinProfiling.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31770C5527B94CE600308091 /* TemporalPlainDateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */; };
 		31770C5727B94CE600308091 /* TemporalPlainDatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C5127B94CE400308091 /* TemporalPlainDatePrototype.h */; };
@@ -3990,6 +3991,8 @@
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
 		2BDF4F6E29E9E8BB0056BF50 /* PASReportCrashPrivate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PASReportCrashPrivate.cpp; sourceTree = "<group>"; };
 		2BDF4F6F29E9E8BB0056BF50 /* PASReportCrashPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PASReportCrashPrivate.h; sourceTree = "<group>"; };
+		2CFA3D532DEA2E8300ABCC7C /* BuiltinProfiling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuiltinProfiling.h; sourceTree = "<group>"; };
+		2CFA3D542DEA2E8300ABCC7C /* BuiltinProfiling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinProfiling.cpp; sourceTree = "<group>"; };
 		2E3AF00D28171AC000371A25 /* ShadowRealmPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ShadowRealmPrototype.js; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmTypeDefinitionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmTypeDefinitionInlines.h; sourceTree = "<group>"; };
@@ -8075,6 +8078,8 @@
 				861AF60625D18C9D000B63E1 /* BrandedStructure.h */,
 				E3B24858291224530029C08A /* BufferMemoryHandle.cpp */,
 				E3B24857291224530029C08A /* BufferMemoryHandle.h */,
+				2CFA3D542DEA2E8300ABCC7C /* BuiltinProfiling.cpp */,
+				2CFA3D532DEA2E8300ABCC7C /* BuiltinProfiling.h */,
 				9E72940A190F0514001A91B5 /* BundlePath.h */,
 				9E729409190F0306001A91B5 /* BundlePath.mm */,
 				0FB7F38B15ED8E3800F167B2 /* Butterfly.h */,
@@ -10538,6 +10543,7 @@
 				DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
 				A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */,
+				2CFA3D562DEA2E8300ABCC7C /* BuiltinProfiling.h in Headers */,
 				99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */,
 				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
 				412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */,

@@ -130,33 +130,6 @@ function forEach(callback /*, thisArg */)
     }
 }
 
-@alwaysInline
-function filter(callback /*, thisArg */)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.filter requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    if (!@isCallable(callback))
-        @throwTypeError("Array.prototype.filter callback must be a function");
-    
-    var thisArg = @argument(1);
-    var result = @newArrayWithSpecies(0, array);
-
-    var nextIndex = 0;
-    for (var i = 0; i < length; i++) {
-        if (!(i in array))
-            continue;
-        var current = array[i]
-        if (callback.@call(thisArg, current, i, array)) {
-            @putByValDirect(result, nextIndex, current);
-            ++nextIndex;
-        }
-    }
-    return result;
-}
-
 function map(callback /*, thisArg */)
 {
     "use strict";

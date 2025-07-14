@@ -88,45 +88,12 @@ namespace WTF {
 void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
 {
     switch (kind) {
-    case JSC::InlineCallFrame::Call:
-        out.print("Call");
+#define X(k) case JSC::InlineCallFrame::k: \
+        out.print(#k); \
         return;
-    case JSC::InlineCallFrame::Construct:
-        out.print("Construct");
-        return;
-    case JSC::InlineCallFrame::TailCall:
-        out.print("TailCall");
-        return;
-    case JSC::InlineCallFrame::CallVarargs:
-        out.print("CallVarargs");
-        return;
-    case JSC::InlineCallFrame::ConstructVarargs:
-        out.print("ConstructVarargs");
-        return;
-    case JSC::InlineCallFrame::TailCallVarargs:
-        out.print("TailCallVarargs");
-        return;
-    case JSC::InlineCallFrame::GetterCall:
-        out.print("GetterCall");
-        return;
-    case JSC::InlineCallFrame::SetterCall:
-        out.print("SetterCall");
-        return;
-    case JSC::InlineCallFrame::ProxyObjectLoadCall:
-        out.print("ProxyObjectLoadCall");
-        return;
-    case JSC::InlineCallFrame::ProxyObjectStoreCall:
-        out.print("ProxyObjectStoreCall");
-        return;
-    case JSC::InlineCallFrame::ProxyObjectInCall:
-        out.print("ProxyObjectInCall");
-        return;
-    case JSC::InlineCallFrame::BoundFunctionCall:
-        out.print("BoundFunctionCall");
-        return;
-    case JSC::InlineCallFrame::BoundFunctionTailCall:
-        out.print("BoundFunctionTailCall");
-        return;
+
+        JSC_FOR_EACH_INLINECALLFRAME_KIND(X)
+#undef X
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

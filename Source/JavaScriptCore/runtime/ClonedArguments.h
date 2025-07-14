@@ -28,6 +28,7 @@
 #include "ArgumentsMode.h"
 #include "CommonIdentifiers.h"
 #include "JSObject.h"
+#include "VM.h"
 
 namespace JSC {
 

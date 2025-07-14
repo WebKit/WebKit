@@ -130,6 +130,7 @@
     macro(exports) \
     macro(fallback) \
     macro(fill) \
+    macro(filter) \
     macro(flags) \
     macro(firstDayOfWeek) \
     macro(forEach) \

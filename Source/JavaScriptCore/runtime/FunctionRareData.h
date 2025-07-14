@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BuiltinProfiling.h"
 #include "InternalFunctionAllocationProfile.h"
 #include "JSCast.h"
 #include "ObjectAllocationProfile.h"
@@ -132,6 +133,47 @@ public:
         m_hasModifiedNameForBoundOrNonHostFunction = true;
     }
 
+    inline bool hasBuiltinProfile() const { return !!m_builtinProfiling; }
+    inline BuiltinProfiling::BuiltinProfile* getBuiltinProfile() const
+    {
+        ASSERT(hasBuiltinProfile());
+        return m_builtinProfiling.get();
+    }
+    template <BuiltinProfiling::IsBuiltinProfileType T, typename... Args>
+    inline T* allocateBuiltinProfile(Args&&... args)
+    {
+        ASSERT(!hasBuiltinProfile());
+        m_builtinProfiling = makeUnique<BuiltinProfiling::BuiltinProfile, Args...>(
+            std::in_place_type<T>,
+            std::forward<Args>(args)...
+        );
+        T* result = std::get_if<T>(&m_builtinProfiling->variant());
+        ASSERT(result);
+        return result;
+    }
+
+    template <BuiltinProfiling::IsBuiltinProfileType T>
+    inline T* allocateBuiltinProfile()
+    {
+        ASSERT(!hasBuiltinProfile());
+        m_builtinProfiling = makeUnique<BuiltinProfiling::BuiltinProfile>(std::in_place_type<T>);
+        T* result = std::get_if<T>(&m_builtinProfiling->variant());
+        ASSERT(result);
+        return result;
+    }
+
+
+    template <BuiltinProfiling::IsBuiltinProfileType T>
+    inline T* tryGetBuiltinProfileOfKind() const
+    {
+        if (!m_builtinProfiling)
+            return nullptr;
+        BuiltinProfiling::BuiltinProfile* profile = getBuiltinProfile();
+        if (T* p = std::get_if<T>(&profile->variant()); p)
+            return p;
+        return nullptr;
+    }
+
     bool hasAllocationProfileClearingWatchpoint() const { return !!m_allocationProfileClearingWatchpoint; }
     Watchpoint* createAllocationProfileClearingWatchpoint();
     class AllocationProfileClearingWatchpoint;
@@ -161,6 +203,7 @@ private:
     WriteBarrierStructureID m_boundFunctionStructureID;
     WriteBarrier<ExecutableBase> m_executable;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
+    std::unique_ptr<BuiltinProfiling::BuiltinProfile> m_builtinProfiling;
     bool m_hasReifiedLength : 1;
     bool m_hasReifiedName : 1;
     bool m_hasModifiedLengthForBoundOrNonHostFunction : 1;
