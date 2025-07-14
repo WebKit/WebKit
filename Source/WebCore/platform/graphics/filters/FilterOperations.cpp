@@ -176,8 +176,8 @@ bool FilterOperations::canInterpolate(const FilterOperations& to, CompositeOpera
     // Note that this means that if either list is empty, interpolation is supported.
     auto numItems = std::min(size(), to.size());
     for (size_t i = 0; i < numItems; ++i) {
-        auto* fromOperation = at(i);
-        auto* toOperation = to.at(i);
+        RefPtr fromOperation = at(i);
+        RefPtr toOperation = to.at(i);
         if (!!fromOperation != !!toOperation)
             return false;
         if (fromOperation && toOperation && fromOperation->type() != toOperation->type())

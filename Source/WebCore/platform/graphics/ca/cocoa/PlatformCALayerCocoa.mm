@@ -930,7 +930,7 @@ bool PlatformCALayerCocoa::filtersCanBeComposited(const FilterOperations& filter
         return false;
     
     for (unsigned i = 0; i < filters.size(); ++i) {
-        const FilterOperation* filterOperation = filters.at(i);
+        RefPtr filterOperation = filters.at(i);
         switch (filterOperation->type()) {
         case FilterOperation::Type::Reference:
             return false;

@@ -394,7 +394,6 @@ platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
-platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/coretext/ComplexTextControllerCoreText.mm
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/mac/controls/ImageControlsButtonMac.mm
