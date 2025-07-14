@@ -1138,24 +1138,18 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::ModelProcessConnectionParameters&& parameters)
+void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& connectionIdentifier)
 {
     bool anyPageHasModelProcessEnabled = false;
     for (auto& page : m_pageMap.values())
         anyPageHasModelProcessEnabled |= page->preferences().modelElementEnabled() && page->preferences().modelProcessEnabled();
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
+    WebKit::ModelProcessConnectionParameters parameters;
+    parameters.webProcessIdentity = m_processIdentity;
     parameters.sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelElementEnabled);
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelProcessEnabled);
-
-#if ENABLE(IPC_TESTING_API)
-    parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
-#endif
-
-#if HAVE(AUDIT_TOKEN)
-    parameters.presentingApplicationAuditToken = m_processPool->configuration().presentingApplicationProcessToken();
-#endif
 
     protectedProcessPool()->createModelProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }

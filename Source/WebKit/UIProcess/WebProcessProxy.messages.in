@@ -43,7 +43,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier, struct WebKit::ModelProcessConnectionParameters parameters) AllowedWhenWaitingForSyncReply
+    CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier) AllowedWhenWaitingForSyncReply
 #endif
 
     DidExceedActiveMemoryLimit()
