@@ -474,6 +474,7 @@ using WTF::fastCompactAlignedMalloc;
     { \
         ::WTF::fastFree(p); \
     } \
+    using MallocImpl UNUSED_TYPE_ALIAS = FastMalloc; \
     using WTFIsFastMallocAllocated = int; \
 
 #define WTF_MAKE_FAST_COMPACT_ALLOCATED_IMPL \
@@ -509,6 +510,7 @@ using WTF::fastCompactAlignedMalloc;
     { \
         ::WTF::fastFree(p); \
     } \
+    using MallocImpl UNUSED_TYPE_ALIAS = FastMalloc; \
     using WTFIsFastMallocAllocated = int; \
 
 // FIXME: WTF_MAKE_FAST_ALLOCATED should take class name so that we can create malloc_zone per this macro.
@@ -532,6 +534,13 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 #define WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED \
     WTF_MAKE_FAST_COMPACT_ALLOCATED_IMPL \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+// ClassName is here so/when we address https://bugs.webkit.org/show_bug.cgi?id=205702 we can have heap breakdowns
+#define WTF_MAKE_FAST_ALLOCATED_WITH_TRAILING_BYTES(className) \
+public: \
+    using WTFIsFastMallocAllocatedWithTrailingBytes = int; \
+    WTF_MAKE_FAST_ALLOCATED
+
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 
@@ -567,6 +576,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
     { \
         classname##Malloc::free(p); \
     } \
+    using MallocImpl UNUSED_TYPE_ALIAS = classname##Malloc; \
     using WTFIsFastMallocAllocated = int; \
 
 #define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \

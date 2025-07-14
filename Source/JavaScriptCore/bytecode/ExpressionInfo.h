@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ namespace JSC {
 
 class ExpressionInfo {
     WTF_MAKE_NONCOPYABLE(ExpressionInfo);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_TRAILING_BYTES(ExpressionInfo);
 public:
     enum class FieldID : uint8_t { InstPC, Divot, Start, End, Line, Column };
 
@@ -184,16 +184,22 @@ public:
     Entry entryForInstPC(InstPC);
 
     bool isEmpty() const { return !m_numberOfEncodedInfo; };
-    size_t byteSize() const;
+    size_t byteSize() const { return allocationSize(m_numberOfChapters, m_numberOfEncodedInfo, m_numberOfEncodedInfoExtensions); }
 
     template<unsigned bitCount>
     static void print(PrintStream&, FieldID, unsigned value);
     static void dumpEncodedInfo(EncodedInfo* start, EncodedInfo* end); // For debugging use only.
 
-private:
+    static size_t allocationSize(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
+    {
+        return sizeof(ExpressionInfo) + payloadSizeInBytes(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
+    }
+    static size_t allocationSize(const Vector<Chapter>&, const Vector<EncodedInfo>&, unsigned numberOfEncodedInfoExtensions);
+
     ExpressionInfo(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions);
     ExpressionInfo(Vector<Chapter>&&, Vector<EncodedInfo>&&, unsigned numberOfEncodedInfoExtensions);
 
+private:
     template<typename T, unsigned bitCount> static T cast(unsigned);
 
     static bool isSpecial(unsigned);
@@ -203,11 +209,6 @@ private:
     {
         size_t size = numChapters * sizeof(Chapter) + (numberOfEncodedInfo + numberOfEncodedInfoExtensions) * sizeof(EncodedInfo);
         return roundUpToMultipleOf<sizeof(unsigned)>(size);
-    }
-
-    static size_t totalSizeInBytes(size_t numChapters, size_t numberOfEncodedInfo, size_t numberOfEncodedInfoExtensions)
-    {
-        return sizeof(ExpressionInfo) + payloadSizeInBytes(numChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
     }
 
     EncodedInfo* findChapterEncodedInfoJustBelow(InstPC) const;

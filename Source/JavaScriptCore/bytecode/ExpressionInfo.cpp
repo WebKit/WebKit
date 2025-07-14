@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -677,11 +677,7 @@ bool ExpressionInfo::Encoder::fits(T value)
 
 std::unique_ptr<ExpressionInfo> ExpressionInfo::Encoder::createExpressionInfo()
 {
-    size_t numberOfChapters = m_expressionInfoChapters.size();
-    size_t numberOfEncodedInfo = m_expressionInfoEncodedInfo.size() - m_numberOfEncodedInfoExtensions;
-    size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
-    void* allocation = FastMalloc::malloc(totalSize);
-    return std::unique_ptr<ExpressionInfo>(new (allocation) ExpressionInfo(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions));
+    return makeUniqueWithTrailingBytes<ExpressionInfo>(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions);
 }
 
 ExpressionInfo::Decoder::Decoder(const ExpressionInfo& expressionInfo)
@@ -889,9 +885,7 @@ IterationStatus ExpressionInfo::Decoder::decode(std::optional<ExpressionInfo::In
 
 std::unique_ptr<ExpressionInfo> ExpressionInfo::createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
 {
-    size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
-    void* allocation = FastMalloc::malloc(totalSize);
-    return std::unique_ptr<ExpressionInfo>(new (allocation) ExpressionInfo(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions));
+    return makeUniqueWithTrailingBytes<ExpressionInfo>(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
 }
 
 ExpressionInfo::ExpressionInfo(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
@@ -908,9 +902,11 @@ ExpressionInfo::ExpressionInfo(Vector<Chapter>&& chapters, Vector<EncodedInfo>&&
     std::uninitialized_copy(encodedInfo.begin(), encodedInfo.end(), this->encodedInfo());
 }
 
-size_t ExpressionInfo::byteSize() const
+size_t ExpressionInfo::allocationSize(Vector<Chapter>& chapters, Vector<EncodedInfo>& encodedInfo, unsigned numberOfEncodedInfoExtensions)
 {
-    return totalSizeInBytes(m_numberOfChapters, m_numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
+    size_t numberOfChapters = chapters.size();
+    size_t numberOfEncodedInfo = encodedInfo.size() - numberOfEncodedInfoExtensions;
+    return allocationSize(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
 }
 
 auto ExpressionInfo::lineColumnForInstPC(InstPC instPC) -> LineColumn

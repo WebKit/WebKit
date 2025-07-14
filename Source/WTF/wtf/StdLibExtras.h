@@ -871,14 +871,25 @@ ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
-template <typename ResultType, size_t... Is, typename ...Args>
+template<typename T, typename... Args>
+ALWAYS_INLINE auto makeUniqueWithTrailingBytes(Args&&... args)
+{
+    static_assert(std::is_same<typename T::WTFIsFastMallocAllocatedWithTrailingBytes, int>::value, "T should use FastMalloc (WTF_MAKE_FAST_ALLOCATED_WITH_TRAILING_BYTES)");
+    static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
+
+    // Don't directly use FastMalloc because we would lose the MALLOC_HEAP_BREAKDOWN data when that's enabled.
+    void* allocation = T::MallocImpl::malloc(T::allocationSize(args...));
+    return std::unique_ptr<T>(new (allocation) T(std::forward<Args>(args)...));
+}
+
+template <typename ResultType, size_t... Is, typename... Args>
 constexpr auto constructFixedSizeArrayWithArgumentsImpl(std::index_sequence<Is...>, Args&&... args) -> std::array<ResultType, sizeof...(Is)>
 {
     return { ((void)Is, ResultType { std::forward<Args>(args)... })... };
 }
 
 // Construct an std::array with N elements of ResultType, passing Args to each of the N constructors.
-template<typename ResultType, size_t N, typename ...Args>
+template<typename ResultType, size_t N, typename... Args>
 constexpr auto constructFixedSizeArrayWithArguments(Args&&... args) -> decltype(auto)
 {
     auto tuple = std::make_index_sequence<N>();
@@ -1537,6 +1548,7 @@ using WTF::lazyInitialize;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::makeUniqueWithoutRefCountedCheck;
+using WTF::makeUniqueWithTrailingBytes;
 using WTF::memcpySpan;
 using WTF::memmoveSpan;
 using WTF::memsetSpan;
