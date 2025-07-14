@@ -105,6 +105,8 @@ public:
     Layout::ElementBox* layoutBox();
     const Layout::ElementBox* layoutBox() const;
 
+    static const RenderBlock* formattingContextRoot(const RenderElement&);
+
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     inline bool canContainFixedPositionObjects(const RenderStyle* styleToUse = nullptr) const;
     inline bool canContainAbsolutelyPositionedObjects(const RenderStyle* styleToUse = nullptr) const;

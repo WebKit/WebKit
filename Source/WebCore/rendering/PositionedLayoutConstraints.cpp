@@ -31,6 +31,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "PositionArea.h"
+#include "RenderAncestorIterator.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -266,6 +267,30 @@ LayoutRange PositionedLayoutConstraints::adjustForPositionArea(const LayoutRange
 
 // MARK: - Resolving margins and alignment (after sizing).
 
+bool PositionedLayoutConstraints::isEligibleForStaticRangeAlignment(const RenderBlock& formattingContextRootForStaticPositioning) const
+{
+    ASSERT(formattingContextRootForStaticPositioning.createsNewFormattingContext()
+        && ((m_renderer->parent() == &formattingContextRootForStaticPositioning) ||  RenderElement::formattingContextRoot(*m_renderer->parent()) == &formattingContextRootForStaticPositioning));
+
+
+    if (m_containingAxis == LogicalBoxAxis::Inline)
+        return false;
+
+    if (formattingContextRootForStaticPositioning.isRenderBlockFlow())
+        return false;
+
+    if (formattingContextRootForStaticPositioning.isRenderFlexibleBox())
+        return false;
+
+    if (formattingContextRootForStaticPositioning.isRenderGrid())
+        return false;
+
+    // We can hit this in certain pieces of content (e.g. see mathml/crashtests/fixed-pos-children.html),
+    // but the spec has no definition for a static position rectangle.
+    return false;
+
+}
+
 void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComputedValues& computedValues) const
 {
     // Static position should have resolved one of our insets by now.
@@ -313,6 +338,23 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
         // Align into remaining space.
         if (!hasAutoBeforeInset && !hasAutoAfterInset && !hasAutoBeforeMargin && !hasAutoAfterMargin && remainingSpace)
             return resolveAlignmentShift(remainingSpace, computedValues.m_extent + usedMarginBefore + usedMarginAfter);
+
+        if (m_useStaticPosition) {
+            auto formattingContextRoot = [&] {
+                auto* parent = m_renderer->parent();
+                const auto* parentRenderBlock = dynamicDowncast<RenderBlock>(parent);
+                if (!parentRenderBlock || !parentRenderBlock->createsNewFormattingContext())
+                    return RenderElement::formattingContextRoot(*parent);
+                return parentRenderBlock;
+            }();
+
+            ASSERT(formattingContextRoot);
+
+            if (isEligibleForStaticRangeAlignment(*formattingContextRoot)) {
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return { };
+            }
+        }
 
         if (hasAutoBeforeInset)
             return remainingSpace;

@@ -2724,4 +2724,14 @@ void RenderElement::layoutIfNeeded()
     layout();
 }
 
+const RenderBlock* RenderElement::formattingContextRoot(const RenderElement& renderElement)
+{
+    for (auto& ancestorRenderBlock : ancestorsOfType<RenderBlock>(renderElement)) {
+        if (ancestorRenderBlock.createsNewFormattingContext())
+            return &ancestorRenderBlock;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 }

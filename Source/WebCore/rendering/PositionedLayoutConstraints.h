@@ -91,6 +91,7 @@ private:
     void captureAnchorGeometry();
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
 
+    bool isEligibleForStaticRangeAlignment(const RenderBlock& formattingContextRootForStaticPositioning) const;
     void computeStaticPosition();
     void computeInlineStaticDistance();
     void computeBlockStaticDistance();
