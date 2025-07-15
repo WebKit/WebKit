@@ -111,7 +111,7 @@ void GPUProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle
     auto cacheInvalidationHandler = [handle = WTFMove(handle)] () mutable {
         AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
     };
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    dispatch_async(RetainPtr { dispatch_get_global_queue(QOS_CLASS_UTILITY, 0) }.get(), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
 }
 #endif // PLATFORM(MAC)
 

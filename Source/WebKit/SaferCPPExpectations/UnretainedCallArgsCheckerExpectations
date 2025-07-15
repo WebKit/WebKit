@@ -1,5 +1,4 @@
 GPUProcess/mac/GPUProcessMac.mm
-GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.mm
 GeneratedWebKitSecureCoding.mm
 NetworkProcess/Authentication/cocoa/AuthenticationManagerCocoa.mm
 NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm

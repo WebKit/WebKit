@@ -76,8 +76,6 @@ public:
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&, RemoteSampleBufferDisplayLayerManager&);
 
-    RefPtr<WebCore::LocalSampleBufferDisplayLayer> protectedSampleBufferDisplayLayer() const;
-
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&&);
 #endif
@@ -105,8 +103,8 @@ private:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     const Ref<IPC::Connection> m_connection;
-    RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    const RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    const std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;
     ThreadSafeWeakPtr<RemoteSampleBufferDisplayLayerManager> m_remoteSampleBufferDisplayLayerManager;
