@@ -2223,9 +2223,13 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
     case ItemPosition::Stretch:
         return GridAxisPosition::GridAxisStart;
     case ItemPosition::Baseline:
+        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem))
+            return GridAxisPosition::GridAxisStart;
+        return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::LastBaseline:
-        // FIXME: Implement the previous values. For now, we always 'start' align the grid item.
-        return GridAxisPosition::GridAxisStart;
+        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem))
+            return GridAxisPosition::GridAxisEnd;
+        return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Legacy:
     case ItemPosition::Auto:
     case ItemPosition::Normal:
