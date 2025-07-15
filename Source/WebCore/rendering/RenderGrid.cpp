@@ -2223,11 +2223,11 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
     case ItemPosition::Stretch:
         return GridAxisPosition::GridAxisStart;
     case ItemPosition::Baseline:
-        // FIXME: Handle bidi-rtl and orthogonal grid items.
-        return GridAxisPosition::GridAxisStart;
+        // FIXME: Handle orthogonal grid items.
+        return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::LastBaseline:
-        // FIXME: Handle bidi-rtl and orthogonal grid items.
-        return GridAxisPosition::GridAxisEnd;
+        // FIXME: Handle orthogonal grid items.
+        return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Legacy:
     case ItemPosition::Auto:
     case ItemPosition::Normal:
