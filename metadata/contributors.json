@@ -8894,5 +8894,13 @@
          "zdobersek"
       ],
       "status" : "reviewer"
+   },
+   {
+      "emails": [
+         "cole.carley@gmail.com",
+         "ccarley2@apple.com"
+      ],
+      "github": "colelao",
+      "name": "Cole Carley"
    }
 ]
