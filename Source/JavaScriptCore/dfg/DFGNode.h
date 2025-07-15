@@ -3146,7 +3146,12 @@ public:
     {
         return isFullNumberOrBooleanSpeculationExpectingDefined(prediction());
     }
-    
+
+    bool shouldSpeculateNumberOrOther()
+    {
+        return isFullNumberOrOtherSpeculation(prediction());
+    }
+
     bool shouldSpeculateBoolean()
     {
         return isBooleanSpeculation(prediction());

@@ -620,6 +620,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/CodeBlockHash.h
     bytecode/CodeOrigin.h
     bytecode/CodeType.h
+    bytecode/CompareProfile.h
     bytecode/DFGExitProfile.h
     bytecode/DataFormat.h
     bytecode/DirectEvalCodeCache.h

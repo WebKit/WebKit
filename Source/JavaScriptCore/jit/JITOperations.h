@@ -50,6 +50,7 @@ class CallFrame;
 class CallLinkInfo;
 class ClonedArguments;
 class CodeBlock;
+class CompareProfile;
 class DirectArguments;
 class InlineCacheHandler;
 class JSArray;
@@ -326,17 +327,19 @@ JSC_DECLARE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame*, C
 JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 
-JSC_DECLARE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCompareLessEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCompareGreater, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCompareGreaterEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCompareEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCompareStrictEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareLessWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareLessEqWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareGreaterWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareGreaterEqWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareEqWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCompareStrictEqWithProfile, size_t, (JSGlobalObject*, CompareProfile*, EncodedJSValue, EncodedJSValue));
 #if USE(JSVALUE64)
-JSC_DECLARE_JIT_OPERATION(operationCompareStringEq, EncodedJSValue, (JSGlobalObject*, JSCell* left, JSCell* right));
-JSC_DECLARE_JIT_OPERATION(operationCompareEqHeapBigIntToInt32, size_t, (JSGlobalObject*, JSCell* heapBigInt, int32_t smallInt));
+JSC_DECLARE_JIT_OPERATION(operationCompareStringEqWithProfile, EncodedJSValue, (JSGlobalObject*, CompareProfile*, JSCell* left, JSCell* right));
 #else
-JSC_DECLARE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject*, JSCell* left, JSCell* right));
+JSC_DECLARE_JIT_OPERATION(operationCompareStringEqWithProfile, size_t, (JSGlobalObject*, CompareProfile*, JSCell* left, JSCell* right));
+#endif
+#if USE(JSVALUE64)
+JSC_DECLARE_JIT_OPERATION(operationCompareEqHeapBigIntToInt32, size_t, (JSGlobalObject*, JSCell* heapBigInt, int32_t smallInt));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, const JSValue* values, int32_t size));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, EncodedJSValue size));

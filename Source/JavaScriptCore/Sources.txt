@@ -224,6 +224,7 @@ bytecode/CodeBlockHash.cpp
 bytecode/CodeBlockJettisoningWatchpoint.cpp
 bytecode/CodeOrigin.cpp
 bytecode/CodeType.cpp
+bytecode/CompareProfile.cpp
 bytecode/ComplexGetStatus.cpp
 bytecode/DFGExitProfile.cpp
 bytecode/DataFormat.cpp

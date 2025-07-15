@@ -454,6 +454,11 @@ inline bool isFullNumberOrBooleanSpeculationExpectingDefined(SpeculatedType valu
     return isFullNumberOrBooleanSpeculation(value & ~SpecOther);
 }
 
+inline bool isFullNumberOrOtherSpeculation(SpeculatedType value)
+{
+    return !!(value & (SpecFullNumber | SpecOther)) && !(value & ~(SpecFullNumber | SpecOther));
+}
+
 inline bool isBooleanSpeculation(SpeculatedType value)
 {
     return value == SpecBoolean;

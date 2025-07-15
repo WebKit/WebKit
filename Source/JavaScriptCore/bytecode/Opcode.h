@@ -157,6 +157,28 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpTailCall) \
     macro(OpIteratorOpen) \
 
+#define FOR_EACH_OPCODE_WITH_SIMPLE_COMPARE_PROFILE(macro) \
+    macro(OpEq) \
+    macro(OpNeq) \
+    macro(OpStricteq) \
+    macro(OpNstricteq) \
+    macro(OpLess) \
+    macro(OpLesseq) \
+    macro(OpGreater) \
+    macro(OpGreatereq) \
+    macro(OpJeq) \
+    macro(OpJneq) \
+    macro(OpJstricteq) \
+    macro(OpJnstricteq) \
+    macro(OpJless) \
+    macro(OpJlesseq) \
+    macro(OpJgreater) \
+    macro(OpJgreatereq) \
+    macro(OpJnless) \
+    macro(OpJnlesseq) \
+    macro(OpJngreater) \
+    macro(OpJngreatereq) \
+
 #define FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(macro) \
     macro(OpNewArray) \
     macro(OpNewArrayWithSize) \

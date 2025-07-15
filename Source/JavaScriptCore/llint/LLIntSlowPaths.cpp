@@ -1747,112 +1747,176 @@ LLINT_SLOW_PATH_DECL(slow_path_less)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpLess>();
-    LLINT_RETURN(jsBoolean(jsLess<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs))));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_RETURN(jsBoolean(jsLess<true>(globalObject, lhs, rhs)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_lesseq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpLesseq>();
-    LLINT_RETURN(jsBoolean(jsLessEq<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs))));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_RETURN(jsBoolean(jsLessEq<true>(globalObject, lhs, rhs)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_greater)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGreater>();
-    LLINT_RETURN(jsBoolean(jsLess<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs))));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_RETURN(jsBoolean(jsLess<false>(globalObject, rhs, lhs)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_greatereq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGreatereq>();
-    LLINT_RETURN(jsBoolean(jsLessEq<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs))));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_RETURN(jsBoolean(jsLessEq<false>(globalObject, rhs, lhs)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jless)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJless>();
-    LLINT_BRANCH(jsLess<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(jsLess<true>(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnless)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnless>();
-    LLINT_BRANCH(!jsLess<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!jsLess<true>(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jgreater)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJgreater>();
-    LLINT_BRANCH(jsLess<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(jsLess<false>(globalObject, rhs, lhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jngreater)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJngreater>();
-    LLINT_BRANCH(!jsLess<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!jsLess<false>(globalObject, rhs, lhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jlesseq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJlesseq>();
-    LLINT_BRANCH(jsLessEq<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(jsLessEq<true>(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnlesseq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnlesseq>();
-    LLINT_BRANCH(!jsLessEq<true>(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!jsLessEq<true>(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jgreatereq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJgreatereq>();
-    LLINT_BRANCH(jsLessEq<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(jsLessEq<false>(globalObject, rhs, lhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jngreatereq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJngreatereq>();
-    LLINT_BRANCH(!jsLessEq<false>(globalObject, getOperand(callFrame, bytecode.m_rhs), getOperand(callFrame, bytecode.m_lhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!jsLessEq<false>(globalObject, rhs, lhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jeq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJeq>();
-    LLINT_BRANCH(JSValue::equal(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(JSValue::equal(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jneq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJneq>();
-    LLINT_BRANCH(!JSValue::equal(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!JSValue::equal(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jstricteq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJstricteq>();
-    LLINT_BRANCH(JSValue::strictEqual(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(JSValue::strictEqual(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnstricteq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnstricteq>();
-    LLINT_BRANCH(!JSValue::strictEqual(globalObject, getOperand(callFrame, bytecode.m_lhs), getOperand(callFrame, bytecode.m_rhs)));
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue lhs = getOperand(callFrame, bytecode.m_lhs);
+    JSValue rhs = getOperand(callFrame, bytecode.m_rhs);
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    LLINT_BRANCH(!JSValue::strictEqual(globalObject, lhs, rhs));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_switch_imm)

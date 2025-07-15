@@ -981,6 +981,34 @@ private:
                 fixDoubleOrBooleanEdge(node->child2());
             }
 
+            if (!m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                if (node->child1()->shouldSpeculateInt32OrOther() && node->child2()->shouldSpeculateInt32OrOther()) {
+                    CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
+                    if (auto* profile = profiledBlock->getCompareProfile(node->origin.semantic.bytecodeIndex())) {
+                        if (!profile->lhsObservedType().sawNonNumber() && !profile->rhsObservedType().sawNonNumber()) {
+                            // Likely polluted with undefined due to control flow, but it is only getting Int32 at runtime.
+                            fixIntOrBooleanEdge(node->child1());
+                            fixIntOrBooleanEdge(node->child2());
+                            node->clearFlags(NodeMustGenerate);
+                            break;
+                        }
+                    }
+                }
+
+                if (node->child1()->shouldSpeculateNumberOrOther() && node->child2()->shouldSpeculateNumberOrOther()) {
+                    CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
+                    if (auto* profile = profiledBlock->getCompareProfile(node->origin.semantic.bytecodeIndex())) {
+                        if (!profile->lhsObservedType().sawNonNumber() && !profile->rhsObservedType().sawNonNumber()) {
+                            // Likely polluted with undefined due to control flow, but it is only getting Int32 at runtime.
+                            fixEdge<DoubleRepUse>(node->child1());
+                            fixEdge<DoubleRepUse>(node->child2());
+                            node->clearFlags(NodeMustGenerate);
+                            break;
+                        }
+                    }
+                }
+            }
+
             // FIXME: We can convert BigInt32 to Double in Compare nodes since they do not require ToNumber semantics.
             // https://bugs.webkit.org/show_bug.cgi?id=211407
             if (node->op() != CompareEq
@@ -1245,9 +1273,10 @@ private:
                             ArrayModes arrayModes = 0;
                             {
                                 CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                                ConcurrentJSLocker locker(profiledBlock->m_lock);
-                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
+                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex())) {
+                                    ConcurrentJSLocker locker(profiledBlock->m_lock);
                                     arrayModes = arrayProfile->observedArrayModes(locker);
+                                }
                             }
                             auto info = refineArrayModesForMultiGetByVal(node, arrayModes);
                             if (!info)
@@ -1433,9 +1462,10 @@ private:
                             ArrayModes arrayModes = 0;
                             {
                                 CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                                ConcurrentJSLocker locker(profiledBlock->m_lock);
-                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
+                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex())) {
+                                    ConcurrentJSLocker locker(profiledBlock->m_lock);
                                     arrayModes = arrayProfile->observedArrayModes(locker);
+                                }
                             }
                             if (auto result = refineArrayModesForMultiPutByVal(node, arrayModes)) {
                                 if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
@@ -4895,9 +4925,8 @@ private:
         ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions, Array::Read);
         {
             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-            ConcurrentJSLocker locker(profiledBlock->m_lock);
-            ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex());
-            if (arrayProfile) {
+            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex())) {
+                ConcurrentJSLocker locker(profiledBlock->m_lock);
                 arrayProfile->computeUpdatedPrediction(profiledBlock);
                 arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
                 if (arrayMode.type() == Array::Unprofiled) {

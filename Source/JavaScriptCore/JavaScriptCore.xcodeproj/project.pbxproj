@@ -1930,6 +1930,7 @@
 		E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */; };
 		E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5126DE2E4800DA4915 /* TemporalTimeZoneConstructor.h */; };
 		E31179AA2288386100514B2C /* SymbolTableOrScopeDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E311F2972E04C70E00C12AAC /* CompareProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = E311F2942E04C70E00C12AAC /* CompareProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E318CA6B254406B6004DC129 /* IntlListFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA65254406B4004DC129 /* IntlListFormatConstructor.h */; };
@@ -5605,6 +5606,8 @@
 		E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalTimeZone.h; sourceTree = "<group>"; };
 		E30E8A5126DE2E4800DA4915 /* TemporalTimeZoneConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalTimeZoneConstructor.h; sourceTree = "<group>"; };
 		E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SymbolTableOrScopeDepth.h; sourceTree = "<group>"; };
+		E311F2942E04C70E00C12AAC /* CompareProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompareProfile.h; sourceTree = "<group>"; };
+		E311F2952E04C70E00C12AAC /* CompareProfile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompareProfile.cpp; sourceTree = "<group>"; };
 		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
 		E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAttributeGetterSetter.cpp; sourceTree = "<group>"; };
 		E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAttributeGetterSetter.h; sourceTree = "<group>"; };
@@ -9615,6 +9618,8 @@
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,
 				0F8F943F1667632D00D61971 /* CodeType.cpp */,
 				0F0B83A514BCF50400885B4F /* CodeType.h */,
+				E311F2952E04C70E00C12AAC /* CompareProfile.cpp */,
+				E311F2942E04C70E00C12AAC /* CompareProfile.h */,
 				0F6FC74E196110A800E1D02D /* ComplexGetStatus.cpp */,
 				0F6FC74F196110A800E1D02D /* ComplexGetStatus.h */,
 				62E3D5EF1B8D0B7300B868BB /* DataFormat.cpp */,
@@ -10626,6 +10631,7 @@
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
 				33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */,
+				E311F2972E04C70E00C12AAC /* CompareProfile.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */,
 				0FDCE12A1FAFA85F006F3901 /* CompleteSubspace.h in Headers */,

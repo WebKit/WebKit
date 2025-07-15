@@ -1095,7 +1095,8 @@ void JIT::emitSlow_op_jstricteq(const JSInstruction* currentInstruction, Vector<
     auto bytecode = currentInstruction->as<OpJstricteq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     loadGlobalObject(regT2);
-    callOperation(operationCompareStrictEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpJstricteq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareStrictEqWithProfile, regT2, regT5, regT0, regT1);
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
@@ -1106,7 +1107,8 @@ void JIT::emitSlow_op_jnstricteq(const JSInstruction* currentInstruction, Vector
     auto bytecode = currentInstruction->as<OpJnstricteq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     loadGlobalObject(regT2);
-    callOperation(operationCompareStrictEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpJnstricteq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareStrictEqWithProfile, regT2, regT5, regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
@@ -1681,7 +1683,8 @@ void JIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCas
 
     auto bytecode = currentInstruction->as<OpEq>();
     loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpEq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareEqWithProfile, regT2, regT5, regT0, regT1);
     boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
 }
@@ -1692,7 +1695,8 @@ void JIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCa
 
     auto bytecode = currentInstruction->as<OpNeq>();
     loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpNeq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareEqWithProfile, regT2, regT5, regT0, regT1);
     xor32(TrustedImm32(0x1), regT0);
     boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
@@ -1705,7 +1709,8 @@ void JIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCa
     auto bytecode = currentInstruction->as<OpJeq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpJeq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareEqWithProfile, regT2, regT5, regT0, regT1);
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
@@ -1716,7 +1721,8 @@ void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowC
     auto bytecode = currentInstruction->as<OpJneq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
+    materializePointerIntoMetadata(bytecode, OpJneq::Metadata::offsetOfProfile(), regT5);
+    callOperation(operationCompareEqWithProfile, regT2, regT5, regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 

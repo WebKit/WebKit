@@ -1043,10 +1043,10 @@ private:
     ArrayMode getArrayMode(Array::Action action)
     {
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeIndex(m_currentInstruction));
         if (!profile)
             return { };
+        ConcurrentJSLocker locker(codeBlock->m_lock);
         return getArrayMode(locker, *profile, action);
     }
 

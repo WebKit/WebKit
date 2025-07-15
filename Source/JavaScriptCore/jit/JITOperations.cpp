@@ -2532,66 +2532,91 @@ JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeF
     OPERATION_RETURN(scope, std::bit_cast<UCPURegister>(std::bit_cast<uintptr_t>(callTarget)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareLessWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
-    OPERATION_RETURN(scope, jsLess<true>(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
+
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
+
+    OPERATION_RETURN(scope, jsLess<true>(globalObject, src1, src2));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareLessEq, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareLessEqWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, jsLessEq<true>(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
+
+    OPERATION_RETURN(scope, jsLessEq<true>(globalObject, src1, src2));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareGreater, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareGreaterWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, jsLess<false>(globalObject, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)));
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
+
+    OPERATION_RETURN(scope, jsLess<false>(globalObject, src2, src1));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareGreaterEq, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareGreaterEqWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, jsLessEq<false>(globalObject, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)));
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
+
+    OPERATION_RETURN(scope, jsLessEq<false>(globalObject, src2, src1));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareEq, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareEqWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, JSValue::equalSlowCaseInline(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
+
+    OPERATION_RETURN(scope, JSValue::equalSlowCaseInline(globalObject, src1, src2));
 }
 
 #if USE(JSVALUE64)
-JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* left, JSCell* right))
+JSC_DEFINE_JIT_OPERATION(operationCompareStringEqWithProfile, EncodedJSValue, (JSGlobalObject* globalObject, CompareProfile* profile, JSCell* left, JSCell* right))
 #else
-JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject* globalObject, JSCell* left, JSCell* right))
+JSC_DEFINE_JIT_OPERATION(operationCompareStringEqWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, JSCell* left, JSCell* right))
 #endif
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto newProfile = *profile;
+    newProfile.lhsSawNonNumber();
+    newProfile.rhsSawNonNumber();
+    *profile = newProfile;
 
     bool result = asString(left)->equalInline(globalObject, asString(right));
 #if USE(JSVALUE64)
@@ -2601,7 +2626,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject* glob
 #endif
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompareStrictEq, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
+JSC_DEFINE_JIT_OPERATION(operationCompareStrictEqWithProfile, size_t, (JSGlobalObject* globalObject, CompareProfile* profile, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2610,6 +2635,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStrictEq, size_t, (JSGlobalObject* glob
 
     JSValue src1 = JSValue::decode(encodedOp1);
     JSValue src2 = JSValue::decode(encodedOp2);
+    profile->observeLHSAndRHS(src1, src2);
 
     OPERATION_RETURN(scope, JSValue::strictEqual(globalObject, src1, src2));
 }

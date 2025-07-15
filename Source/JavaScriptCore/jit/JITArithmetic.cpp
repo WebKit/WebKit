@@ -106,62 +106,62 @@ void JIT::emit_op_jngreatereq(const JSInstruction* currentInstruction)
 
 void JIT::emitSlow_op_less(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareSlow<OpLess>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLess, iter);
+    emit_compareSlow<OpLess>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLessWithProfile, iter);
 }
 
 void JIT::emitSlow_op_lesseq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareSlow<OpLesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEq, iter);
+    emit_compareSlow<OpLesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEqWithProfile, iter);
 }
 
 void JIT::emitSlow_op_greater(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareSlow<OpGreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreater, iter);
+    emit_compareSlow<OpGreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreaterWithProfile, iter);
 }
 
 void JIT::emitSlow_op_greatereq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareSlow<OpGreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEq, iter);
+    emit_compareSlow<OpGreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEqWithProfile, iter);
 }
 
 void JIT::emitSlow_op_jless(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJless>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLess, false, iter);
+    emit_compareAndJumpSlow<OpJless>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLessWithProfile, false, iter);
 }
 
 void JIT::emitSlow_op_jlesseq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJlesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEq, false, iter);
+    emit_compareAndJumpSlow<OpJlesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEqWithProfile, false, iter);
 }
 
 void JIT::emitSlow_op_jgreater(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJgreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreater, false, iter);
+    emit_compareAndJumpSlow<OpJgreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreaterWithProfile, false, iter);
 }
 
 void JIT::emitSlow_op_jgreatereq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJgreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEq, false, iter);
+    emit_compareAndJumpSlow<OpJgreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEqWithProfile, false, iter);
 }
 
 void JIT::emitSlow_op_jnless(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJnless>(currentInstruction, DoubleGreaterThanOrEqualOrUnordered, operationCompareLess, true, iter);
+    emit_compareAndJumpSlow<OpJnless>(currentInstruction, DoubleGreaterThanOrEqualOrUnordered, operationCompareLessWithProfile, true, iter);
 }
 
 void JIT::emitSlow_op_jnlesseq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJnlesseq>(currentInstruction, DoubleGreaterThanOrUnordered, operationCompareLessEq, true, iter);
+    emit_compareAndJumpSlow<OpJnlesseq>(currentInstruction, DoubleGreaterThanOrUnordered, operationCompareLessEqWithProfile, true, iter);
 }
 
 void JIT::emitSlow_op_jngreater(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJngreater>(currentInstruction, DoubleLessThanOrEqualOrUnordered, operationCompareGreater, true, iter);
+    emit_compareAndJumpSlow<OpJngreater>(currentInstruction, DoubleLessThanOrEqualOrUnordered, operationCompareGreaterWithProfile, true, iter);
 }
 
 void JIT::emitSlow_op_jngreatereq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJngreatereq>(currentInstruction, DoubleLessThanOrUnordered, operationCompareGreaterEq, true, iter);
+    emit_compareAndJumpSlow<OpJngreatereq>(currentInstruction, DoubleLessThanOrUnordered, operationCompareGreaterEqWithProfile, true, iter);
 }
 
 void JIT::emit_op_below(const JSInstruction* currentInstruction)
@@ -348,7 +348,7 @@ void JIT::emit_compareSlow(const JSInstruction* instruction, DoubleCondition con
         boxBoolean(regT0, jsRegT10);
         emitPutVirtualRegister(dst, jsRegT10);
     };
-    emit_compareSlowImpl(op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitDoubleCompare);
+    emit_compareSlowImpl<Op>(bytecode, op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitDoubleCompare);
 }
 
 template<typename Op, typename SlowOperation>
@@ -364,11 +364,11 @@ void JIT::emit_compareAndJumpSlow(const JSInstruction* instruction, DoubleCondit
     auto emitCompareAndJump = [&](FPRReg left, FPRReg right) {
         emitJumpSlowToHot(branchDouble(condition, left, right), target);
     };
-    emit_compareSlowImpl(op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitCompareAndJump);
+    emit_compareSlowImpl<Op>(bytecode, op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitCompareAndJump);
 }
 
-template<typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
-void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HanldeReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
+template<typename Op, typename Bytecode, typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
+void JIT::emit_compareSlowImpl(Bytecode& bytecode, VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HanldeReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
 {
 
     // We generate inline code for the following cases in the slow path:
@@ -379,13 +379,15 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
         linkAllSlowCases(iter);
 
         constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
-        constexpr JSValueRegs arg1JSR = preferredArgumentJSR<SlowOperation, 1>();
-        constexpr JSValueRegs arg2JSR = preferredArgumentJSR<SlowOperation, 2>();
+        constexpr GPRReg profileGPR = preferredArgumentGPR<SlowOperation, 1>();
+        constexpr JSValueRegs arg1JSR = preferredArgumentJSR<SlowOperation, 2>();
+        constexpr JSValueRegs arg2JSR = preferredArgumentJSR<SlowOperation, 3>();
 
         emitGetVirtualRegister(op1, arg1JSR);
         emitGetVirtualRegister(op2, arg2JSR);
         loadGlobalObject(globalObjectGPR);
-        callOperation(operation, globalObjectGPR, arg1JSR, arg2JSR);
+        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfProfile(), profileGPR);
+        callOperation(operation, globalObjectGPR, profileGPR, arg1JSR, arg2JSR);
         handleReturnValueGPR();
         return;
     }
@@ -419,7 +421,8 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
 
         emitGetVirtualRegister(op, jsReg1);
         loadGlobalObject(regT4);
-        callOperation(operation, regT4, jsRegT10, jsRegT32);
+        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfProfile(), regT5);
+        callOperation(operation, regT4, regT5, jsRegT10, jsRegT32);
         handleReturnValueGPR();
         return true;
     };
@@ -449,7 +452,8 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
 
     linkSlowCase(iter); // RHS is not Int.
     loadGlobalObject(regT4);
-    callOperation(operation, regT4, jsRegT10, jsRegT32);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfProfile(), regT5);
+    callOperation(operation, regT4, regT5, jsRegT10, jsRegT32);
     handleReturnValueGPR();
 }
 

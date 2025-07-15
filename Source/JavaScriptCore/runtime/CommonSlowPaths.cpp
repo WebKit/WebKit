@@ -327,28 +327,44 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_eq)
 {
     BEGIN();
     auto bytecode = pc->as<OpEq>();
-    RETURN(jsBoolean(JSValue::equal(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
+    auto& metadata = bytecode.metadata(codeBlock);
+    auto lhs = GET_C(bytecode.m_lhs).jsValue();
+    auto rhs = GET_C(bytecode.m_rhs).jsValue();
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    RETURN(jsBoolean(JSValue::equal(globalObject, lhs, rhs)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_neq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNeq>();
-    RETURN(jsBoolean(!JSValue::equal(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
+    auto& metadata = bytecode.metadata(codeBlock);
+    auto lhs = GET_C(bytecode.m_lhs).jsValue();
+    auto rhs = GET_C(bytecode.m_rhs).jsValue();
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    RETURN(jsBoolean(!JSValue::equal(globalObject, lhs, rhs)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_stricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpStricteq>();
-    RETURN(jsBoolean(JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
+    auto& metadata = bytecode.metadata(codeBlock);
+    auto lhs = GET_C(bytecode.m_lhs).jsValue();
+    auto rhs = GET_C(bytecode.m_rhs).jsValue();
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    RETURN(jsBoolean(JSValue::strictEqual(globalObject, lhs, rhs)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_nstricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNstricteq>();
-    RETURN(jsBoolean(!JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
+    auto& metadata = bytecode.metadata(codeBlock);
+    auto lhs = GET_C(bytecode.m_lhs).jsValue();
+    auto rhs = GET_C(bytecode.m_rhs).jsValue();
+    metadata.m_profile.observeLHSAndRHS(lhs, rhs);
+    RETURN(jsBoolean(!JSValue::strictEqual(globalObject, lhs, rhs)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_inc)

@@ -354,8 +354,8 @@ namespace JSC {
         void emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition);
         template<typename Op, typename SlowOperation>
         void emit_compareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
-        template<typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
-        void emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation, Vector<SlowCaseEntry>::iterator&, const HanldeReturnValueGPRFunctor&, const EmitDoubleCompareFunctor&);
+        template<typename Op, typename Bytecode, typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
+        void emit_compareSlowImpl(Bytecode&, VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation, Vector<SlowCaseEntry>::iterator&, const HanldeReturnValueGPRFunctor&, const EmitDoubleCompareFunctor&);
         template<typename Op, typename SlowOperation>
         void emit_compareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
 
