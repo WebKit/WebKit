@@ -32,6 +32,7 @@
 #include "GridArea.h"
 #include "GridLayoutFunctions.h"
 #include "GridPositionsResolver.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderObjectInlines.h"
@@ -2128,6 +2129,17 @@ void GridTrackSizingAlgorithm::run(GridTrackSizingDirection direction, unsigned 
 {
     setup(direction, numTracks, sizingOperation, availableSpace);
 
+    Vector<const RenderBox *> gridItemsToReset;
+    if (m_sizingState == SizingState::ColumnSizingFirstIteration && hasAllLengthRowSizes()) {
+        for (auto& gridItem : childrenOfType<RenderBox>(*m_renderGrid)) {
+            if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
+                continue;
+            auto estimatedRowSizes = estimatedGridAreaBreadthForGridItem(gridItem, GridTrackSizingDirection::ForRows);
+            const_cast<RenderBox&>(gridItem).setGridAreaContentLogicalHeight(estimatedRowSizes);
+            gridItemsToReset.append(&gridItem);
+        }
+    }
+
     StateMachine stateMachine(*this);
 
     if (m_renderGrid->isMasonry(m_direction))
@@ -2163,6 +2175,11 @@ void GridTrackSizingAlgorithm::run(GridTrackSizingDirection direction, unsigned 
 
     // Step 5.
     stretchAutoTracks();
+
+
+        for (auto* gridItem : gridItemsToReset) {
+            const_cast<RenderBox&>(*gridItem).clearGridAreaContentLogicalHeight();
+        }
 }
 
 void GridTrackSizingAlgorithm::reset()

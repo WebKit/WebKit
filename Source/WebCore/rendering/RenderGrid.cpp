@@ -783,6 +783,9 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         cacheBaselineAlignedGridItems(*this, algorithm, { GridTrackSizingDirection::ForColumns }, emptyCallback, !isSubgridRows());
     }
 
+    if (auto logicalHeight = availableLogicalHeightForContentBox())
+        algorithm.setFreeSpace(GridTrackSizingDirection::ForRows, logicalHeight);
+
     computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForColumns, gridLayoutState, &minLogicalWidth, &maxLogicalWidth);
 
     if (isMasonry(GridTrackSizingDirection::ForColumns)) {
