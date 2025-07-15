@@ -45,6 +45,7 @@
 #include "ShadowRoot.h"
 #include "TextEvent.h"
 #include "TouchEvent.h"
+#include "page/LocalDOMWindow.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -176,12 +177,20 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     auto typeInfo = eventNames().typeInfoForEvent(event.type());
     bool shouldDispatchEventToScripts = hasRelevantEventListener(document, event);
 
+    RefPtr window = document->window();
+    std::optional<size_t> pendingEventTiming;
+    if (window && document->settings().eventTimingEnabled())
+        pendingEventTiming = window->initializeEventTimingEntry(event, typeInfo.type());
+
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
     // FIXME: We should also check touch target list.
     bool hasNoEventListenerOrDefaultEventHandler = !shouldDispatchEventToScripts && !typeInfo.hasDefaultEventHandler() && !node.document().hasConnectedPluginElements();
     if (hasNoEventListenerOrDefaultEventHandler && !targetOrRelatedTargetIsInShadowTree) {
         event.resetBeforeDispatch();
         event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
+        if (pendingEventTiming)
+            window->finalizeEventTimingEntry(pendingEventTiming.value(), event.target());
+
         return;
     }
 
@@ -206,14 +215,22 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     if (hasNoEventListenerOrDefaultEventHandler) {
         if (shouldClearTargetsAfterDispatch)
             resetAfterDispatchInShadowTree(event);
+
+        if (pendingEventTiming)
+            window->finalizeEventTimingEntry(pendingEventTiming.value(), event.target());
+
         return;
     }
 
     event.resetBeforeDispatch();
 
     event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
-    if (!event.target())
+    if (!event.target()) {
+        if (pendingEventTiming)
+            window->finalizeEventTimingEntry(pendingEventTiming.value(), event.target());
+
         return;
+    }
 
     InputElementClickState clickHandlingState;
     clickHandlingState.trusted = event.isTrusted();
@@ -250,6 +267,9 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     if (shouldClearTargetsAfterDispatch)
         resetAfterDispatchInShadowTree(event);
+
+    if (pendingEventTiming)
+        window->finalizeEventTimingEntry(pendingEventTiming.value(), event.target());
 }
 
 template<typename T>

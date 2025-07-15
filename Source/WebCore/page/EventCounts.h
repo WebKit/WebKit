@@ -26,6 +26,9 @@
 
 #pragma once
 
+#include "EventNames.h"
+#include "PerformanceEntry.h"
+#include <optional>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -34,13 +37,17 @@ class DOMMapAdapter;
 
 class EventCounts final: public RefCounted<EventCounts> {
 public:
-
-    static Ref<EventCounts> create() { return adoptRef(*new EventCounts()); }
+    static Ref<EventCounts> create() { return adoptRef(*new EventCounts); }
 
     void initializeMapLike(DOMMapAdapter&);
+    void add(EventType);
+    static bool IsCounted(EventType);
 
 private:
     EventCounts();
+    std::array<unsigned, 36> m_counts { };
+    static std::optional<size_t> eventTypeIndex(EventType);
+    static const AtomString& eventNameFromType(EventType);
 };
 
 } // namespace WebCore

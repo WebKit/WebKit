@@ -25,7 +25,8 @@ PASS EventCounts interface: existence and properties of interface prototype obje
 PASS EventCounts interface: existence and properties of interface prototype object's "constructor" property
 PASS EventCounts interface: existence and properties of interface prototype object's @@unscopables property
 PASS EventCounts interface: maplike<DOMString, unsigned long long>
-FAIL Stringification of performance.eventCounts assert_class_string: class string of performance.eventCounts expected "[object EventCounts]" but got "[object Null]"
+PASS EventCounts must be primary interface of performance.eventCounts
+PASS Stringification of performance.eventCounts
 PASS Performance interface: attribute eventCounts
 PASS Performance interface: performance must inherit property "eventCounts" with the proper type
 

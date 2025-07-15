@@ -4326,6 +4326,14 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     m_didEnqueueFirstContentfulPaint = true;
 }
 
+void Document::enqueueEventTimingEntriesIfNeeded()
+{
+    if (!window())
+        return;
+
+    protectedWindow()->dispatchPendingEventTimingEntries();
+}
+
 ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& text)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)

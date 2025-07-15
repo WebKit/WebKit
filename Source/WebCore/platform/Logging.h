@@ -145,6 +145,7 @@ namespace WebCore {
     M(NotYetImplemented) \
     M(OverlayScrollbars) \
     M(PerformanceLogging) \
+    M(PerformanceTimeline) \
     M(PlatformLeaks) \
     M(Plugins) \
     M(PopupBlocking) \

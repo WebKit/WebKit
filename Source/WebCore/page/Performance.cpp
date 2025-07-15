@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Event.h"
+#include "EventCounts.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExceptionOr.h"
@@ -140,6 +141,20 @@ MonotonicTime Performance::monotonicTimeFromRelativeTime(DOMHighResTimeStamp rel
 ScriptExecutionContext* Performance::scriptExecutionContext() const
 {
     return ContextDestructionObserver::scriptExecutionContext();
+}
+
+EventCounts* Performance::eventCounts()
+{
+    // TODO: when event timing is no longer gated by a flag, stop
+    // lazy-initializing m_eventCounts
+    if (!is<Document>(scriptExecutionContext()))
+        return nullptr;
+
+    ASSERT(isMainThread());
+    if (!m_eventCounts)
+        m_eventCounts = EventCounts::create();
+
+    return m_eventCounts.get();
 }
 
 PerformanceNavigation* Performance::navigation()
@@ -258,6 +273,15 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
         if (entryType.isNull() || entryType == "measure"_s)
             entries.appendVector(m_userTiming->getMeasures());
     }
+}
+
+void Performance::countEvent(EventType type)
+{
+    ASSERT(isMainThread());
+    if (!m_eventCounts)
+        m_eventCounts = EventCounts::create();
+
+    m_eventCounts.get()->add(type);
 }
 
 void Performance::clearResourceTimings()

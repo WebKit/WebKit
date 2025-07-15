@@ -40,6 +40,7 @@
 #include "PointerCaptureController.h"
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 

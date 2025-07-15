@@ -1,3 +1,3 @@
 
-FAIL Event Timing: eventCounts. null is not an object (evaluating 'performance.eventCounts.get')
+PASS Event Timing: eventCounts.
 

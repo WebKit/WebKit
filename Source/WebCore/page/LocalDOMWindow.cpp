@@ -59,6 +59,7 @@
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "Element.h"
+#include "EventCounts.h"
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventLoop.h"
@@ -139,6 +140,7 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <algorithm>
 #include <memory>
+#include <wtf/Assertions.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
@@ -2454,6 +2456,49 @@ void LocalDOMWindow::finishedLoading()
         if (RefPtr loader = localFrame()->loader().activeDocumentLoader(); !loader || loader->mainDocumentError().isNull())
             print();
     }
+}
+
+std::optional<size_t> LocalDOMWindow::initializeEventTimingEntry(const Event& event, EventType type)
+{
+    if (!event.isTrusted() || !EventCounts::IsCounted(type))
+        return std::nullopt;
+
+    LOG_WITH_STREAM(PerformanceTimeline, stream << "Initializing event timing entry of type " << event.type());
+
+    // event.timeStamp() may not be reliable (wall clock):
+    auto startTime = std::min(event.timeStamp(), MonotonicTime::now());
+    m_performanceEventTimingCandidates.push_back(PerformanceEventTimingCandidate {
+        .type = type,
+        .typeString = event.type(),
+        .startTime =  performance().relativeTimeFromTimeOriginInReducedResolution(startTime),
+        .processingStart = performance().now(),
+        .processingEnd = 0,
+        .target = nullptr
+    });
+    // Return a raw array index (valid even if vector is relocated on push_back()):
+    return m_performanceEventTimingCandidates.size() - 1;
+}
+
+void LocalDOMWindow::finalizeEventTimingEntry(size_t index, RefPtr<EventTarget> target)
+{
+    ASSERT(m_performanceEventTimingCandidates.size() > index);
+    auto& candidate = m_performanceEventTimingCandidates[index];
+    candidate.target = WTFMove(target);
+    candidate.processingEnd = performance().now();
+}
+
+void LocalDOMWindow::dispatchPendingEventTimingEntries()
+{
+    if (m_performanceEventTimingCandidates.empty())
+        return;
+
+    LOG_WITH_STREAM(PerformanceTimeline, stream << "Dispatching " << m_performanceEventTimingCandidates.size() << " event timing entries");
+
+    for (auto &e : m_performanceEventTimingCandidates) {
+        performance().eventCounts()->add(e.type);
+        // TODO: dispatch to performance observers
+    }
+    m_performanceEventTimingCandidates.clear();
 }
 
 void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, SetLocationLocking locking, CanNavigateState navigationState)
