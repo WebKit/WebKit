@@ -137,6 +137,11 @@ MonotonicTime Performance::monotonicTimeFromRelativeTime(DOMHighResTimeStamp rel
     return m_timeOrigin + Seconds::fromMilliseconds(relativeTime);
 }
 
+ScriptExecutionContext* Performance::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
 PerformanceNavigation* Performance::navigation()
 {
     if (!is<Document>(scriptExecutionContext()))
