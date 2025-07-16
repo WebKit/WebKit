@@ -479,6 +479,7 @@ $(PROJECT_DIR)/Modules/fetch/FetchRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl
 $(PROJECT_DIR)/Modules/fetch/FetchResponse.idl
+$(PROJECT_DIR)/Modules/fetch/IPAddressSpace.idl
 $(PROJECT_DIR)/Modules/fetch/RequestPriority.idl
 $(PROJECT_DIR)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
 $(PROJECT_DIR)/Modules/filesystem/FileSystemDirectoryHandle.idl

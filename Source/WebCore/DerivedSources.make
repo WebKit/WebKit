@@ -399,6 +399,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/indexeddb/IDBTransactionMode.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl \
+    $(WebCore)/Modules/fetch/IPAddressSpace.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/ColorGamut.idl \
     $(WebCore)/Modules/mediacapabilities/HdrMetadataType.idl \

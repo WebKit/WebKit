@@ -396,6 +396,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestMode.idl
     Modules/fetch/FetchRequestRedirect.idl
     Modules/fetch/FetchResponse.idl
+    Modules/fetch/IPAddressSpace.idl
     Modules/fetch/RequestPriority.idl
     Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
 

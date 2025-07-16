@@ -1714,6 +1714,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
@@ -3340,10 +3342,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeys.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeys.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeInfo.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeInfo.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.cpp

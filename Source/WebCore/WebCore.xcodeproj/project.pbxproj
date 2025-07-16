@@ -1290,6 +1290,7 @@
 		3ADA87B52AC4ECDB00A75301 /* ArchiveError.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ADA87B42AC4ECDA00A75301 /* ArchiveError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB6B80F22A7D311003A2A69 /* TabSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C8D24EE2E25CF1A00D2A929 /* IPAddressSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3DFAB6FE2BCDA7AB00EDC3C4 /* ImageBufferPixelFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D0F80C52BCA014D006C8023 /* ImageBufferPixelFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3F8020351E9E47BF00DEC61D /* CoreAudioCaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F8020321E9E381D00DEC61D /* CoreAudioCaptureDevice.h */; };
@@ -10053,6 +10054,8 @@
 		3BB6B80F22A7D311003A2A69 /* TabSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabSize.h; sourceTree = "<group>"; };
 		3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerModelObject.h; sourceTree = "<group>"; };
 		3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerModelObject.cpp; sourceTree = "<group>"; };
+		3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPAddressSpace.h; sourceTree = "<group>"; };
+		3CE7C6702E270278005CDFD8 /* IPAddressSpace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IPAddressSpace.idl; sourceTree = "<group>"; };
 		3D0F80C52BCA014D006C8023 /* ImageBufferPixelFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferPixelFormat.h; sourceTree = "<group>"; };
 		3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreAudioCaptureSource.cpp; sourceTree = "<group>"; };
 		3F3BB5831E709EE400C701F2 /* CoreAudioCaptureSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureSource.h; sourceTree = "<group>"; };
@@ -25716,6 +25719,8 @@
 				41642B1929A516CF00F8AE0D /* FetchResponseBodyLoader.h */,
 				4102EE1027830E6300D6BE74 /* FormDataConsumer.cpp */,
 				4102EE0E27830E6300D6BE74 /* FormDataConsumer.h */,
+				3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */,
+				3CE7C6702E270278005CDFD8 /* IPAddressSpace.idl */,
 				44CF5098299B906F0038D284 /* RequestPriority.h */,
 				44CF5097299B90600038D284 /* RequestPriority.idl */,
 				7C2E0BD125106AC4005F3C87 /* WindowOrWorkerGlobalScope+Fetch.idl */,
@@ -42458,6 +42463,7 @@
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				7B66CFD52D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
+				3C8D24EE2E25CF1A00D2A929 /* IPAddressSpace.h in Headers */,
 				9BAF70C12DC1C35A0027B01E /* IsImportant.h in Headers */,
 				6DD53F3D2C49D37F0049F1C5 /* IsLoggedIn.h in Headers */,
 				E86097D22D84403B00A4E526 /* ISO18013.h in Headers */,

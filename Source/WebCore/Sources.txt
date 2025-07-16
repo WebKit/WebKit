@@ -4187,6 +4187,7 @@ JSIntegrityPolicyViolationReportBody.cpp
 JSIntersectionObserver.cpp
 JSIntersectionObserverCallback.cpp
 JSIntersectionObserverEntry.cpp
+JSIPAddressSpace.cpp
 JSIterationCompositeOperation.cpp
 JSIsLoggedIn.cpp
 JSJsonWebKey.cpp
