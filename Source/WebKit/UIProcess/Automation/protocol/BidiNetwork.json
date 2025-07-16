@@ -1,0 +1,1167 @@
+{
+    "domain": "BidiNetwork",
+    "exposedAs": "network",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The network module contains commands and events relating to network requests.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-network",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/network",
+    "types": [
+        {
+            "id": "AuthChallenge",
+            "description": "Represents an authentication challenge.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-AuthChallenge",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "scheme",
+                    "type": "string"
+                },
+                {
+                    "name": "realm",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "id": "AuthCredentials",
+            "description": "Represents the response to a request for authorization credentials.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-AuthCredentials",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "type",
+                    "type": "string",
+                    "enum": [
+                        "password"
+                    ]
+                },
+                {
+                    "name": "username",
+                    "type": "string"
+                },
+                {
+                    "name": "password",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "id": "BaseParameters",
+            "description": "An abstract type representing data common to all network events.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-BaseParameters",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "id": "BytesValue",
+            "description": "Represents binary data sent over the network. Valid UTF-8 is represented as a string, while other data is Base64-encoded.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-BytesValue",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "type",
+                    "type": "string",
+                    "enum": [
+                        "string",
+                        "base64"
+                    ]
+                },
+                {
+                    "name": "value",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "id": "Collector",
+            "description": "Represents the ID of a data collector.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Collector",
+            "type": "string"
+        },
+        {
+            "id": "CollectorType",
+            "description": "Represents the different types of data collectors that can be added.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-CollectorType",
+            "type": "string",
+            "enum": [
+                "blob"
+            ]
+        },
+        {
+            "id": "Cookie",
+            "description": "Represents a cookie.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Cookie",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "$ref": "BidiNetwork.BytesValue"
+                },
+                {
+                    "name": "domain",
+                    "type": "string"
+                },
+                {
+                    "name": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "size",
+                    "type": "number"
+                },
+                {
+                    "name": "httpOnly",
+                    "type": "boolean"
+                },
+                {
+                    "name": "secure",
+                    "type": "boolean"
+                },
+                {
+                    "name": "sameSite",
+                    "$ref": "BidiNetwork.SameSite"
+                },
+                {
+                    "name": "expiry",
+                    "type": "number",
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "id": "CookieHeader",
+            "description": "Represents the subset of cookie data found in a Cookie request header.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-CookieHeader",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "$ref": "BidiNetwork.BytesValue"
+                }
+            ]
+        },
+        {
+            "id": "DataType",
+            "description": "Represents the different types of network data that can be collected.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-DataType",
+            "type": "string",
+            "enum": [
+                "response"
+            ]
+        },
+        {
+            "id": "FetchTimingInfo",
+            "description": "Represents the timing information for each part of a request, relative to the request's client time origin.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-FetchTimingInfo",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "timeOrigin",
+                    "type": "number"
+                },
+                {
+                    "name": "requestTime",
+                    "type": "number"
+                },
+                {
+                    "name": "redirectStart",
+                    "type": "number"
+                },
+                {
+                    "name": "redirectEnd",
+                    "type": "number"
+                },
+                {
+                    "name": "fetchStart",
+                    "type": "number"
+                },
+                {
+                    "name": "dnsStart",
+                    "type": "number"
+                },
+                {
+                    "name": "dnsEnd",
+                    "type": "number"
+                },
+                {
+                    "name": "connectStart",
+                    "type": "number"
+                },
+                {
+                    "name": "connectEnd",
+                    "type": "number"
+                },
+                {
+                    "name": "tlsStart",
+                    "type": "number"
+                },
+                {
+                    "name": "requestStart",
+                    "type": "number"
+                },
+                {
+                    "name": "responseStart",
+                    "type": "number"
+                },
+                {
+                    "name": "responseEnd",
+                    "type": "number"
+                }
+            ]
+        },
+        {
+            "id": "Header",
+            "description": "Represents a single request header.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Header",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "$ref": "BidiNetwork.BytesValue"
+                }
+            ]
+        },
+        {
+            "id": "Initiator",
+            "description": "Represents the source of a network request.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Initiator",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "columnNumber",
+                    "type": "number",
+                    "optional": true
+                },
+                {
+                    "name": "lineNumber",
+                    "type": "number",
+                    "optional": true
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request",
+                    "optional": true
+                },
+                {
+                    "name": "stackTrace",
+                    "$ref": "BidiScript.StackTrace",
+                    "optional": true
+                },
+                {
+                    "name": "type",
+                    "type": "string",
+                    "enum": [
+                        "parser",
+                        "script",
+                        "preflight",
+                        "other"
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "id": "Intercept",
+            "description": "Represents the ID of a network intercept.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Intercept",
+            "type": "string"
+        },
+        {
+            "id": "InterceptPhase",
+            "description": "Represents the phase of a network request that can be intercepted.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-InterceptPhase",
+            "type": "string",
+            "enum": [
+                "beforeRequestSent",
+                "responseStarted",
+                "authRequired"
+            ]
+        },
+        {
+            "id": "Request",
+            "description": "A unique string identifier for a network request. The identifier for a request resulting from a redirect matches that of the initiating request.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Request",
+            "type": "string"
+        },
+        {
+            "id": "RequestData",
+            "description": "Represents an ongoing network request.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-RequestData",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "url",
+                    "type": "string"
+                },
+                {
+                    "name": "method",
+                    "type": "string"
+                },
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Header"
+                    }
+                },
+                {
+                    "name": "cookies",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Cookie"
+                    }
+                },
+                {
+                    "name": "headersSize",
+                    "type": "number"
+                },
+                {
+                    "name": "bodySize",
+                    "type": "number",
+                    "nullable": true
+                },
+                {
+                    "name": "destination",
+                    "type": "string"
+                },
+                {
+                    "name": "initiatorType",
+                    "type": "string",
+                    "nullable": true
+                },
+                {
+                    "name": "timings",
+                    "$ref": "BidiNetwork.FetchTimingInfo"
+                }
+            ]
+        },
+        {
+            "id": "ResponseContent",
+            "description": "Represents the decoded content of a network response.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-ResponseContent",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "size",
+                    "type": "number"
+                }
+            ]
+        },
+        {
+            "id": "ResponseData",
+            "description": "Represents the response to a network request.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-ResponseData",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "string"
+                },
+                {
+                    "name": "protocol",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "number"
+                },
+                {
+                    "name": "statusText",
+                    "type": "string"
+                },
+                {
+                    "name": "fromCache",
+                    "type": "boolean"
+                },
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Header"
+                    }
+                },
+                {
+                    "name": "mimeType",
+                    "type": "string"
+                },
+                {
+                    "name": "bytesReceived",
+                    "type": "number"
+                },
+                {
+                    "name": "headersSize",
+                    "type": "number",
+                    "nullable": true
+                },
+                {
+                    "name": "bodySize",
+                    "type": "number",
+                    "nullable": true
+                },
+                {
+                    "name": "content",
+                    "$ref": "BidiNetwork.ResponseContent"
+                },
+                {
+                    "name": "authChallenges",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.AuthChallenge"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "id": "SameSite",
+            "description": "Represents the SameSite attribute of a cookie.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-SameSite",
+            "type": "string",
+            "enum": [
+                "strict",
+                "lax",
+                "none",
+                "default"
+            ]
+        },
+        {
+            "id": "SetCookieHeader",
+            "description": "Represents the data found in a Set-Cookie response header.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-SetCookieHeader",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "$ref": "BidiNetwork.BytesValue"
+                },
+                {
+                    "name": "domain",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "httpOnly",
+                    "type": "boolean",
+                    "optional": true
+                },
+                {
+                    "name": "expiry",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "maxAge",
+                    "type": "number",
+                    "optional": true
+                },
+                {
+                    "name": "path",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "sameSite",
+                    "$ref": "BidiNetwork.SameSite",
+                    "optional": true
+                },
+                {
+                    "name": "secure",
+                    "type": "boolean",
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "id": "UrlPattern",
+            "description": "A pattern used for matching request URLs for network intercepts.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-UrlPattern",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "type",
+                    "type": "string",
+                    "enum": [
+                        "pattern",
+                        "string"
+                    ]
+                },
+                {
+                    "name": "protocol",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "hostname",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "port",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "pathname",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "search",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "pattern",
+                    "type": "string",
+                    "optional": true
+                }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "addDataCollector",
+            "description": "Adds a data collector.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-addDataCollector",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "dataTypes",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.DataType"
+                    }
+                },
+                {
+                    "name": "maxEncodedDataSize",
+                    "type": "number"
+                },
+                {
+                    "name": "collectorType",
+                    "$ref": "BidiNetwork.CollectorType",
+                    "optional": true,
+                    "default": "blob"
+                },
+                {
+                    "name": "contexts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiBrowsingContext.BrowsingContext"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "userContexts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiBrowser.UserContext"
+                    },
+                    "optional": true
+                }
+            ],
+            "returns": [
+                {
+                    "name": "collector",
+                    "$ref": "BidiNetwork.Collector"
+                }
+            ]
+        },
+        {
+            "name": "addIntercept",
+            "description": "Adds a network intercept.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-addIntercept",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "phases",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.InterceptPhase"
+                    }
+                },
+                {
+                    "name": "contexts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiBrowsingContext.BrowsingContext"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "urlPatterns",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.UrlPattern"
+                    },
+                    "optional": true
+                }
+            ],
+            "returns": [
+                {
+                    "name": "intercept",
+                    "$ref": "BidiNetwork.Intercept"
+                }
+            ]
+        },
+        {
+            "name": "continueRequest",
+            "description": "Continues a request that is blocked by a network intercept.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-continueRequest",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "body",
+                    "$ref": "BidiNetwork.BytesValue",
+                    "optional": true
+                },
+                {
+                    "name": "cookies",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.CookieHeader"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Header"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "method",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "url",
+                    "type": "string",
+                    "optional": true
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "continueResponse",
+            "description": "Continues a response that is blocked by a network intercept. This command can be used in the `responseStarted` phase to modify the status and headers while still providing the network response body.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-continueResponse",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "cookies",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.SetCookieHeader"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "credentials",
+                    "$ref": "BidiNetwork.AuthCredentials",
+                    "optional": true
+                },
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Header"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "reasonPhrase",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "statusCode",
+                    "type": "number",
+                    "optional": true
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "continueWithAuth",
+            "description": "Continues a response that is blocked by a network intercept during the `authRequired` phase.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-continueWithAuth",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "action",
+                    "type": "string",
+                    "enum": [
+                        "provideCredentials",
+                        "default",
+                        "cancel"
+                    ]
+                },
+                {
+                    "name": "credentials",
+                    "$ref": "BidiNetwork.AuthCredentials",
+                    "optional": true
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "disownData",
+            "description": "Releases collected network data for a given collector.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-disownData",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "dataType",
+                    "$ref": "BidiNetwork.DataType"
+                },
+                {
+                    "name": "collector",
+                    "$ref": "BidiNetwork.Collector"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "failRequest",
+            "description": "Fails a fetch request that is blocked by a network intercept.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-failRequest",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "getData",
+            "description": "Retrieves network data if it is available.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-getData",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "dataType",
+                    "$ref": "BidiNetwork.DataType"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "collector",
+                    "$ref": "BidiNetwork.Collector",
+                    "optional": true
+                },
+                {
+                    "name": "disown",
+                    "type": "boolean",
+                    "optional": true,
+                    "default": false
+                }
+            ],
+            "returns": [
+                {
+                    "name": "bytes",
+                    "$ref": "BidiNetwork.BytesValue"
+                }
+            ]
+        },
+        {
+            "name": "provideResponse",
+            "description": "Continues a request blocked by a network intercept by providing a complete response.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-provideResponse",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.Request"
+                },
+                {
+                    "name": "body",
+                    "$ref": "BidiNetwork.BytesValue",
+                    "optional": true
+                },
+                {
+                    "name": "cookies",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.SetCookieHeader"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Header"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "reasonPhrase",
+                    "type": "string",
+                    "optional": true
+                },
+                {
+                    "name": "statusCode",
+                    "type": "number",
+                    "optional": true
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "removeDataCollector",
+            "description": "Removes a data collector.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-removeDataCollector",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "collector",
+                    "$ref": "BidiNetwork.Collector"
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "removeIntercept",
+            "description": "Removes a network intercept.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-removeIntercept",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "intercept",
+                    "$ref": "BidiNetwork.Intercept"
+                }
+            ],
+            "returns": []
+        },
+        {
+            "name": "setCacheBehavior",
+            "description": "Configures the network cache behavior for specific requests.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-setCacheBehavior",
+            "async": true,
+            "parameters": [
+                {
+                    "name": "cacheBehavior",
+                    "type": "string",
+                    "enum": [
+                        "default",
+                        "bypass"
+                    ]
+                },
+                {
+                    "name": "contexts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiBrowsingContext.BrowsingContext"
+                    },
+                    "optional": true
+                }
+            ],
+            "returns": []
+        }
+    ],
+    "events": [
+        {
+            "name": "authRequired",
+            "description": "Emitted when the user agent is about to prompt for authorization credentials.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-network-authRequired",
+            "parameters": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "response",
+                    "$ref": "BidiNetwork.ResponseData"
+                }
+            ]
+        },
+        {
+            "name": "beforeRequestSent",
+            "description": "Emitted before a request is sent (either over the network or before being handled by a service worker or local cache).",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-network-beforeRequestSent",
+            "parameters": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "initiator",
+                    "$ref": "BidiNetwork.Initiator",
+                    "optional": true
+                }
+            ]
+        },
+        {
+            "name": "fetchError",
+            "description": "Emitted when a network request encounters an error.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-network-fetchError",
+            "parameters": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "errorText",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "responseCompleted",
+            "description": "Emitted after the full response body has been received.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-network-responseCompleted",
+            "parameters": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "response",
+                    "$ref": "BidiNetwork.ResponseData"
+                }
+            ]
+        },
+        {
+            "name": "responseStarted",
+            "description": "Emitted after the response headers are received but before the body is complete.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-network-responseStarted",
+            "parameters": [
+                {
+                    "name": "context",
+                    "$ref": "BidiBrowsingContext.BrowsingContext",
+                    "nullable": true
+                },
+                {
+                    "name": "isBlocked",
+                    "type": "boolean"
+                },
+                {
+                    "name": "navigation",
+                    "$ref": "BidiBrowsingContext.Navigation",
+                    "nullable": true
+                },
+                {
+                    "name": "redirectCount",
+                    "type": "number"
+                },
+                {
+                    "name": "request",
+                    "$ref": "BidiNetwork.RequestData"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "number"
+                },
+                {
+                    "name": "intercepts",
+                    "type": "array",
+                    "items": {
+                        "$ref": "BidiNetwork.Intercept"
+                    },
+                    "optional": true
+                },
+                {
+                    "name": "response",
+                    "$ref": "BidiNetwork.ResponseData"
+                }
+            ]
+        }
+    ]
+}

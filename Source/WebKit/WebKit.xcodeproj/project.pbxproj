@@ -6578,6 +6578,7 @@
 		5CFC9C802B717EFA00F8D289 /* CoreIPCCFDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFDictionary.h; sourceTree = "<group>"; };
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		5E59A1952E27186C0056C25F /* BidiNetwork.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiNetwork.json; sourceTree = "<group>"; };
 		5EB592AB2DC2049A0058664B /* BidiStorage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiStorage.json; sourceTree = "<group>"; };
 		5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiStorageAgent.cpp; sourceTree = "<group>"; };
 		5EEC724D2DC1B31300D012DD /* BidiStorageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiStorageAgent.h; sourceTree = "<group>"; };
@@ -8666,13 +8667,13 @@
 		FA580B382DA64B5F005E4965 /* UnifiedSource178.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource178.cpp; sourceTree = "<group>"; };
 		FA580B392DA64B5F005E4965 /* UnifiedSource179.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource179.cpp; sourceTree = "<group>"; };
 		FA580B3A2DA64B5F005E4965 /* UnifiedSource180.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource180.cpp; sourceTree = "<group>"; };
-		FA58F47C2E1F318A0098E1C8 /* Protected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Protected.h; sourceTree = "<group>"; };
 		FA58F4502E1DF3190098E1C8 /* APINodeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APINodeInfo.h; sourceTree = "<group>"; };
 		FA58F4512E1DF3190098E1C8 /* APINodeInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APINodeInfo.cpp; sourceTree = "<group>"; };
 		FA58F4522E1DF33A0098E1C8 /* _WKNodeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKNodeInfo.h; sourceTree = "<group>"; };
 		FA58F4532E1DF33A0098E1C8 /* _WKNodeInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNodeInfo.mm; sourceTree = "<group>"; };
 		FA58F4542E1DF33A0098E1C8 /* _WKNodeInfoInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKNodeInfoInternal.h; sourceTree = "<group>"; };
 		FA58F4562E1E030A0098E1C8 /* NodeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeInfo.h; sourceTree = "<group>"; };
+		FA58F47C2E1F318A0098E1C8 /* Protected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Protected.h; sourceTree = "<group>"; };
 		FA5C22422DC5710500B13EF3 /* RemoteWebTouchEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebTouchEvent.h; sourceTree = "<group>"; };
 		FA5C22432DC5719D00B13EF3 /* RemoteWebTouchEvent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWebTouchEvent.serialization.in; sourceTree = "<group>"; };
 		FA6342192D9D98D300A6BECE /* WebFrame.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrame.messages.in; sourceTree = "<group>"; };
@@ -14261,6 +14262,7 @@
 				996D00402D7AA0CD0049C7D8 /* BidiBrowser.json */,
 				996D00412D7AA0CD0049C7D8 /* BidiBrowsingContext.json */,
 				996D00422D7AA0CD0049C7D8 /* BidiLog.json */,
+				5E59A1952E27186C0056C25F /* BidiNetwork.json */,
 				996D00432D7AA0CD0049C7D8 /* BidiScript.json */,
 				99965A552DA096EF0039DFF5 /* BidiSession.json */,
 				5EB592AB2DC2049A0058664B /* BidiStorage.json */,

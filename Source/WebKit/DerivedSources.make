@@ -525,6 +525,7 @@ WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES = \
     $(WebKit2)/UIProcess/Automation/protocol/BidiBrowser.json \
     $(WebKit2)/UIProcess/Automation/protocol/BidiBrowsingContext.json \
     $(WebKit2)/UIProcess/Automation/protocol/BidiLog.json \
+	$(WebKit2)/UIProcess/Automation/protocol/BidiNetwork.json \
     $(WebKit2)/UIProcess/Automation/protocol/BidiScript.json \
     $(WebKit2)/UIProcess/Automation/protocol/BidiSession.json \
     $(WebKit2)/UIProcess/Automation/protocol/BidiStorage.json \

@@ -512,6 +512,7 @@ $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiBrowser.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiBrowsingContext.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiLog.json
+$(PROJECT_DIR)/UIProcess/Automation/protocol/BidiNetwork.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiScript.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiSession.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiStorage.json

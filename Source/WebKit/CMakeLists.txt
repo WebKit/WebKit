@@ -959,6 +959,7 @@ set(WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiBrowser.json
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiBrowsingContext.json
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiLog.json
+    ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiNetwork.json
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiScript.json
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiSession.json
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiStorage.json
