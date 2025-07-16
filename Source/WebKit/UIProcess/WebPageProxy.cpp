@@ -187,6 +187,7 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
 #include "WebProcessActivityState.h"
+#include "WebProcessCache.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -893,7 +894,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (hasRunningProcess())
         didAttachToRunningProcess();
 
-    addAllMessageReceivers();
+    if (!protectedLegacyMainFrameProcess()->isDummyProcessProxy())
+        addAllMessageReceivers();
 
 #if PLATFORM(IOS_FAMILY)
     DeprecatedGlobalSettings::setDisableScreenSizeOverride(m_preferences->disableScreenSizeOverride());
@@ -1354,8 +1356,10 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     // null after the page has closed.
     RefPtr { m_inspector }->reset();
 
-    protectedLegacyMainFrameProcess()->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
-    removeAllMessageReceivers();
+    if (!protectedLegacyMainFrameProcess()->isDummyProcessProxy()) {
+        protectedLegacyMainFrameProcess()->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
+        removeAllMessageReceivers();
+    }
 
     Ref processPool = m_configuration->processPool();
     RefPtr relatedPage = m_configuration->relatedPage();

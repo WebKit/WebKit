@@ -177,6 +177,9 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
 
 void releaseMemory(Critical critical, Synchronous synchronous, MaintainBackForwardCache maintainBackForwardCache, MaintainMemoryCache maintainMemoryCache)
 {
+    if (critical == Critical::Yes)
+        return;
+
     TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
 
 #if PLATFORM(IOS_FAMILY)
@@ -212,6 +215,8 @@ void releaseMemory(Critical critical, Synchronous synchronous, MaintainBackForwa
 
 void releaseGraphicsMemory(Critical critical, Synchronous synchronous)
 {
+    if (critical == Critical::Yes)
+        return;
     TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
 
     platformReleaseGraphicsMemory(critical);

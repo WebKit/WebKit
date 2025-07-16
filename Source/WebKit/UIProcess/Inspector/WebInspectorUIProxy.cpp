@@ -79,7 +79,8 @@ WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
+    if (!protectedInspectedPage()->protectedLegacyMainFrameProcess()->isDummyProcessProxy())
+        protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
 }
 
 WebInspectorUIProxy::~WebInspectorUIProxy()
@@ -238,7 +239,8 @@ void WebInspectorUIProxy::resetState()
 void WebInspectorUIProxy::reset()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get()) {
-        inspectedPage->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), inspectedPage->webPageIDInMainFrameProcess());
+        if (!inspectedPage->protectedLegacyMainFrameProcess()->isDummyProcessProxy())
+            inspectedPage->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), inspectedPage->webPageIDInMainFrameProcess());
         m_inspectedPage = nullptr;
     }
 }

@@ -162,6 +162,8 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 #endif
 
     WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u)", cachedProcess->process().processID(), size() + 1, capacity());
+    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u) %{public}s", cachedProcess->process().processID(), size() + 1, capacity(), site.toString().utf8().data());
+
     m_processesPerSite.add(site, WTFMove(cachedProcess));
 
     return true;
@@ -170,27 +172,38 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
     auto it = m_processesPerSite.find(site);
-    if (it == m_processesPerSite.end())
+    if (it == m_processesPerSite.end()) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: did not find %{public}s", 0, site.toString().utf8().data());
         return nullptr;
+    }
 
-    if (it->value->process().websiteDataStore() != &dataStore)
+    if (it->value->process().websiteDataStore() != &dataStore) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, datastore not identical", it->value->process().processID());
         return nullptr;
+    }
 
-    if (it->value->process().lockdownMode() != lockdownMode)
+    if (it->value->process().lockdownMode() != lockdownMode) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, lockdown mode not identical", it->value->process().processID());
         return nullptr;
+    }
 
-    if (!Ref { it->value->process() }->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration))
+    if (!Ref { it->value->process() }->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration)) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, preferences not identical", it->value->process().processID());
         return nullptr;
+    }
 
     Ref process = m_processesPerSite.take(it)->takeProcess();
     WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processID(), size(), capacity(), process->wasTerminated());
+    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d) %{public}s", process->processID(), size(), capacity(), process->wasTerminated(), site.toString().utf8().data());
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
 
-    if (process->wasTerminated())
+    if (process->wasTerminated()) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, was terminated", process->processID());
         return nullptr;
+    }
 
     return process;
 }
@@ -210,7 +223,7 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
         m_capacity = 0;
     } else {
 #if PLATFORM(IOS_FAMILY)
-        constexpr unsigned maxProcesses = 10;
+        constexpr unsigned maxProcesses = 32;
         size_t memorySize = WTF::ramSizeDisregardingJetsamLimit();
 #else
         constexpr unsigned maxProcesses = 30;

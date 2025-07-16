@@ -217,12 +217,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
 
 bool WebProcessPool::globalDelaysWebProcessLaunchDefaultValue()
 {
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).
-    return false;
-#else
     return true;
-#endif
 }
 
 Vector<String> WebProcessPool::urlSchemesWithCustomProtocolHandlers()
@@ -1257,7 +1252,8 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
-    }
+    } else
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: site is empty");
 
     if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode, pageConfiguration)) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
@@ -1312,7 +1308,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // We do not support several WebsiteDataStores sharing a single process.
         ASSERT(process->isDummyProcessProxy() || &pageConfiguration->websiteDataStore() == process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore());
-    } else if (pageConfiguration->delaysWebProcessLaunchUntilFirstLoad()) {
+    } else if (pageConfiguration->delaysWebProcessLaunchUntilFirstLoad() && m_webProcessCache->size()) {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: delaying WebProcess launch until first load");
         // In the common case, we delay process launch until something is actually loaded in the page.
         process = dummyProcessProxy(pageConfiguration->websiteDataStore().sessionID());
