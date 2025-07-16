@@ -755,8 +755,9 @@ protected:
     CharacterOffset characterOffsetForPoint(const IntPoint&);
     LayoutRect localCaretRectForCharacterOffset(RenderObject*&, const CharacterOffset&);
     bool shouldSkipBoundary(const CharacterOffset&, const CharacterOffset&);
-private:
+public:
     AccessibilityObject* rootWebArea();
+private:
 
     // Returns the object or nearest render-tree ancestor object that is already created (i.e.
     // retrievable by |get|, not |getOrCreate|).
