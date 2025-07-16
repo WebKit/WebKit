@@ -105,6 +105,9 @@ protected:
 
     void touchEvent(QTouchEvent*) override;
 
+    void focusInEvent(QFocusEvent*) override;
+    void focusOutEvent(QFocusEvent*) override;
+
 private Q_SLOTS:
     void configureWindow();
     void createWebView();
