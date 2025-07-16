@@ -27,6 +27,7 @@
 #include "WPEDisplayQtQuick.h"
 
 #include "WPEToplevelQtQuick.h"
+#include "WPEQtInputMethodContextImpl.h"
 #include "WPEViewQtQuick.h"
 
 #include <epoxy/egl.h>
@@ -122,11 +123,23 @@ static const char* wpeDisplayQtQuickGetDRMRenderNode(WPEDisplay* display)
     return priv->drmDevice.data();
 }
 
+static WPEInputMethodContext* wpeDisplayQtQuickCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* displayQt = WPE_DISPLAY_QTQUICK(display);
+    auto* view = wpe_view_qtquick_new(displayQt);
+
+    auto* priv = WPE_DISPLAY_QTQUICK(display)->priv;
+    priv->im =qt_input_method_context_impl_wpe_new(view);
+
+    return priv->im;
+}
+
 static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuickClass)
 {
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayQtQuickClass);
     displayClass->connect = wpeDisplayQtQuickConnect;
     displayClass->create_view = wpeDisplayQtQuickCreateView;
+    displayClass->create_input_method_context = wpeDisplayQtQuickCreateInputMethodContext;
     displayClass->get_egl_display = wpeDisplayQtQuickGetEGLDisplay;
     displayClass->get_drm_device = wpeDisplayQtQuickGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayQtQuickGetDRMRenderNode;
@@ -135,4 +148,9 @@ static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuic
 WPEDisplay* wpe_display_qtquick_new(void)
 {
     return WPE_DISPLAY(g_object_new(WPE_TYPE_DISPLAY_QTQUICK, nullptr));
+}
+
+WPEInputMethodContext* wpe_get_input_method_context(WPEDisplay *display)
+{
+    return WPE_DISPLAY_QTQUICK(display)->priv->im;
 }
