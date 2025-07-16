@@ -97,7 +97,7 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
     m_database.disableThreadingChecks();
 
     auto setBusyTimeout = m_database.prepareStatement("PRAGMA busy_timeout = 5000"_s);
-    if (!setBusyTimeout || setBusyTimeout->step() != SQLITE_ROW) {
+    if (!setBusyTimeout || CheckedPtr { &(setBusyTimeout.value()) }->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::setBusyTimeout failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
     }
 
@@ -112,7 +112,7 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
 void DatabaseUtilities::enableForeignKeys()
 {
     auto enableForeignKeys = m_database.prepareStatement("PRAGMA foreign_keys = ON"_s);
-    if (!enableForeignKeys || enableForeignKeys->step() != SQLITE_DONE) {
+    if (!enableForeignKeys || CheckedRef { *enableForeignKeys }->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::enableForeignKeys failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
     }
 }
@@ -205,12 +205,13 @@ String DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* original
 
 TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& tableName)
 {
-    auto getTableStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
-    if (!getTableStatement) {
+    auto getTablePreparedStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
+    if (!getTablePreparedStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return { };
     }
 
+    CheckedRef getTableStatement =  *getTablePreparedStatement;
     if (getTableStatement->bindText(1, tableName) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return { };
@@ -223,12 +224,13 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
 
     String createTableQuery = getTableStatement->columnText(0);
 
-    auto getIndexStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
-    if (!getIndexStatement) {
+    auto getIndexPreparedStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
+    if (!getIndexPreparedStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return { };
     }
 
+    CheckedRef getIndexStatement = *getIndexPreparedStatement;
     if (getIndexStatement->bindText(1, tableName) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return { };
@@ -272,7 +274,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE "_s, table, " RENAME TO _"_s, table));
-        if (!alterTable || alterTable->step() != SQLITE_DONE) {
+        if (!alterTable || CheckedPtr { &(alterTable.value()) }->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
             transaction.rollback();
             return;
@@ -287,7 +289,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     // Maintain the order of tables to make sure the ObservedDomains table is created first. Other tables have foreign key constraints referencing it.
     for (auto& table : sortedTables()) {
         auto migrateTableData = insertDistinctValuesInTableStatement(m_database, table);
-        if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
+        if (!migrateTableData || CheckedPtr { &(migrateTableData.value()) }->step() != SQLITE_DONE) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.characters(), m_database.lastErrorMsg());
             return;
@@ -297,7 +299,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     // Drop all tables at the end to avoid trashing data that references data in other tables.
     for (auto& table : sortedTables()) {
         auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _"_s, table));
-        if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
+        if (!dropTableQuery || CheckedPtr { &(dropTableQuery.value()) }->step() != SQLITE_DONE) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
             return;
@@ -315,14 +317,15 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
 Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 {
-    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
+    auto preparedStatement = m_database.prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
 
-    if (!statement) {
+    if (!preparedStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return { };
     }
 
     Vector<String> columns;
+    CheckedRef statement = *preparedStatement;
     while (statement->step() == SQLITE_ROW) {
         auto name = statement->columnText(1);
         columns.append(name);
@@ -333,11 +336,12 @@ Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 
 bool DatabaseUtilities::addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName)
 {
-    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE "_s, tableName, " ADD COLUMN "_s, columnName));
-    if (!statement) {
+    auto preparedStatement = m_database.prepareStatementSlow(makeString("ALTER TABLE "_s, tableName, " ADD COLUMN "_s, columnName));
+    if (!preparedStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
+    CheckedRef statement = *preparedStatement;
     if (statement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable error executing statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return false;

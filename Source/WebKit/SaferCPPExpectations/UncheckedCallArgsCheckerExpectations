@@ -1,5 +1,4 @@
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
-NetworkProcess/DatabaseUtilities.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
