@@ -38,8 +38,11 @@ std::unique_ptr<PlatformDisplayWin> PlatformDisplayWin::create()
         // Disable debug layers that makes some tests fail because
         // ANGLE fills uninitialized buffers with
         // kDebugColorInitClearValue in debug builds.
-        EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE,
-        EGL_FALSE,
+        EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_FALSE,
+        // TESTING - Force use of Windows software rasterizer
+        // Windows Advanced Rasterization Platform (WARP)
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_D3D_WARP_ANGLE,
         EGL_NONE,
     };
     auto glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes));

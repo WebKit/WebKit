@@ -1183,11 +1183,7 @@ class Port(object):
 
     def _path_to_driver(self, configuration=None):
         """Returns the full path to the test driver (DumpRenderTree)."""
-        local_driver_path = self._build_path(self.driver_name())
-        if sys.platform.startswith('win'):
-            base = os.path.splitext(local_driver_path)[0]
-            local_driver_path = base + ".exe"
-        return local_driver_path
+        return self._build_path(self.driver_name())
 
     def _driver_tempdir(self, target_host=None):
         host = target_host or self.host

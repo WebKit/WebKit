@@ -167,8 +167,24 @@ class WinPort(ApplePort):
         _log.error('Could not find apache in the expected location. (path=%s)' % path)
         return None
 
+    def _path_to_driver(self, configuration=None):
+        local_driver_path = self._build_path(self.driver_name())
+        if local_driver_path.startswith('/'):
+            # Need to convert from a mingw / msys style path to a Windows path
+            second_slash_index = local_driver_path.index('/', 1)
+            local_driver_path = os.path.abspath(local_driver_path[second_slash_index:])
+        base = os.path.splitext(local_driver_path)[0]
+        local_driver_path = base + ".exe"
+        return local_driver_path
+
+
     def _path_to_default_image_diff(self):
-        return self._build_path('ImageDiff.exe')
+        image_diff_path = self._build_path('ImageDiff.exe')
+        if image_diff_path.startswith('/'):
+            # Need to convert from a mingw / msys style path to a Windows path
+            second_slash_index = image_diff_path.index('/', 1)
+            image_diff_path = os.path.abspath(image_diff_path[second_slash_index:])
+        return image_diff_path
 
     API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKit.exe']
 

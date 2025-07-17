@@ -73,6 +73,9 @@ int wmain()
     STARTUPINFO startupInfo { };
     startupInfo.cb = sizeof(startupInfo);
     startupInfo.lpDesktop = desktop ? desktopName.data() : nullptr;
+    startupInfo.dwFlags = STARTF_USESIZE;
+    startupInfo.dwXSize = 1920;
+    startupInfo.dwYSize = 1080;
     if (!CreateProcess(0, cmd.data(), nullptr, nullptr, true, 0, 0, 0, &startupInfo, &processInformation)) {
         std::wcout << L"CreateProcess failed: " << GetLastError() << std::endl;
         return EXIT_FAILURE;
