@@ -367,6 +367,8 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
         // Any original result that was >= 1 should not be allowed to fall below 1.
         // This keeps border lines from vanishing.
         T result = convertComputedLength<T>(builderState, value);
+        if (primitiveValue->isLength() && primitiveValue->isRootFontRelativeLength())
+            result = result * builderState.style().usedZoom();
         if (builderState.style().usedZoom() < 1.0f && result < 1.0) {
             T originalLength = primitiveValue->resolveAsLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
             if (originalLength >= 1.0)

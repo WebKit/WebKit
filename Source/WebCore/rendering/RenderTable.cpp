@@ -156,8 +156,9 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     bool oldFixedTableLayout = oldStyle ? oldStyle->isFixedTableLayout() : false;
 
     // In the collapsed border model, there is no cell spacing.
-    m_hSpacing = collapseBorders() ? 0 : style().horizontalBorderSpacing();
-    m_vSpacing = collapseBorders() ? 0 : style().verticalBorderSpacing();
+    float zoom = style().zoom();
+    m_hSpacing = collapseBorders() ? 0 : style().horizontalBorderSpacing() * zoom;
+    m_vSpacing = collapseBorders() ? 0 : style().verticalBorderSpacing() * zoom;
 
     if (!m_tableLayout || style().isFixedTableLayout() != oldFixedTableLayout) {
         // According to the CSS2 spec, you only use fixed table layout if an explicit width is specified on the table. Auto width implies auto table layout.
