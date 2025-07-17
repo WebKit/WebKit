@@ -29,7 +29,7 @@ class GetterSetter;
 
 class DateConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)

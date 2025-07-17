@@ -49,7 +49,7 @@ struct YieldData {
 
 class BytecodeGeneratorification {
 public:
-    typedef Vector<YieldData> Yields;
+    using Yields = Vector<YieldData>;
 
     struct GeneratorFrameData {
         JSInstructionStream::Offset m_point;

@@ -38,7 +38,7 @@ class ObjectPrototype;
 
 class ObjectConstructor final : public JSC::InternalFunction {
 public:
-    typedef JSC::InternalFunction Base;
+    using Base = JSC::InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static ObjectConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)

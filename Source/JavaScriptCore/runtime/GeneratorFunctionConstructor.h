@@ -40,7 +40,7 @@ class GeneratorFunctionPrototype;
 // https://tc39.github.io/ecma262/#sec-generatorfunction-constructor
 class GeneratorFunctionConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static GeneratorFunctionConstructor* create(VM& vm, Structure* structure, GeneratorFunctionPrototype* generatorFunctionPrototype)
     {

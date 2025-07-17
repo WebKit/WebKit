@@ -39,7 +39,7 @@ class BasicBlock;
 class Procedure;
 class Value;
 
-typedef WTF::Insertion<Value*> Insertion;
+using Insertion = WTF::Insertion<Value*>;
 
 class InsertionSet {
 public:

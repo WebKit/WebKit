@@ -1118,7 +1118,7 @@ class JSNonFinalObject : public JSObject {
     friend class JSObject;
 
 public:
-    typedef JSObject Base;
+    using Base = JSObject;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 

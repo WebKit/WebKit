@@ -42,7 +42,7 @@ class HeapProfiler;
 class HeapSnapshot;
 class JSCell;
 
-typedef unsigned NodeIdentifier;
+using NodeIdentifier = unsigned;
 
 struct HeapSnapshotNode {
     HeapSnapshotNode(JSCell* cell, unsigned identifier)

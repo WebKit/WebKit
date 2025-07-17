@@ -36,7 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 class InsertionSet;
 
-typedef GenericBlockInsertionSet<BasicBlock>::BlockInsertion BlockInsertion;
+using BlockInsertion = GenericBlockInsertionSet<BasicBlock>::BlockInsertion;
 
 class BlockInsertionSet : public GenericBlockInsertionSet<BasicBlock> {
 public:

@@ -70,7 +70,7 @@ class StackSlot;
 } // namespace Air
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, WasmBoundsCheckValue*, GPRReg);
-typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
+using WasmBoundsCheckGenerator = SharedTask<WasmBoundsCheckGeneratorFunction>;
 
 // This represents B3's view of a piece of code. Note that this object must exist in a 1:1
 // relationship with Air::Code. B3::Procedure and Air::Code are just different facades of the B3
@@ -161,7 +161,7 @@ public:
     BasicBlock* at(unsigned index) const { return m_blocks[index].get(); }
     BasicBlock* operator[](unsigned index) const { return at(index); }
 
-    typedef WTF::IndexedContainerIterator<Procedure> iterator;
+    using iterator = WTF::IndexedContainerIterator<Procedure>;
 
     iterator begin() const { return iterator(*this, 0); }
     iterator end() const { return iterator(*this, size()); }

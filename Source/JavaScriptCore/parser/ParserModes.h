@@ -325,7 +325,7 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
     return true;
 }
 
-typedef uint8_t LexicallyScopedFeatures;
+using LexicallyScopedFeatures = uint8_t;
 
 const LexicallyScopedFeatures NoLexicallyScopedFeatures                     = 0;
 const LexicallyScopedFeatures StrictModeLexicallyScopedFeature         = 1 << 0;
@@ -335,7 +335,7 @@ const LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeat
 static constexpr unsigned bitWidthOfLexicallyScopedFeatures = 2;
 static_assert(AllLexicallyScopedFeatures <= (1 << bitWidthOfLexicallyScopedFeatures) - 1, "LexicallyScopedFeatures must be 2bits");
 
-typedef uint16_t CodeFeatures;
+using CodeFeatures = uint16_t;
 
 const CodeFeatures NoFeatures =                         0;
 const CodeFeatures EvalFeature =                   1 << 0;
@@ -356,7 +356,7 @@ const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | 
 static constexpr unsigned bitWidthOfCodeFeatures = 14;
 static_assert(AllFeatures <= (1 << bitWidthOfCodeFeatures) - 1, "CodeFeatures must fit within 14 bits");
 
-typedef uint8_t InnerArrowFunctionCodeFeatures;
+using InnerArrowFunctionCodeFeatures = uint8_t;
     
 const InnerArrowFunctionCodeFeatures NoInnerArrowFunctionFeatures =                0;
 const InnerArrowFunctionCodeFeatures EvalInnerArrowFunctionFeature =          1 << 0;

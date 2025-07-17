@@ -69,7 +69,7 @@ public:
         return &vm.functionSpace();
     }
     
-    typedef JSCallee Base;
+    using Base = JSCallee;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesGetCallData | OverridesPut;
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)

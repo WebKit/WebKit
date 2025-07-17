@@ -42,12 +42,12 @@
 #endif
 
 // From API/JSBase.h
-typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
-typedef const struct OpaqueJSContext* JSContextRef;
-typedef struct OpaqueJSContext* JSGlobalContextRef;
-typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
-typedef const struct OpaqueJSValue* JSValueRef;
-typedef struct OpaqueJSValue* JSObjectRef;
+using JSContextGroupRef = const struct OpaqueJSContextGroup*;
+using JSContextRef = const struct OpaqueJSContext*;
+using JSGlobalContextRef = struct OpaqueJSContext*;
+using JSPropertyNameAccumulatorRef = struct OpaqueJSPropertyNameAccumulator*;
+using JSValueRef = const struct OpaqueJSValue*;
+using JSObjectRef = struct OpaqueJSValue*;
 
 namespace WTF {
 class PrintStream;

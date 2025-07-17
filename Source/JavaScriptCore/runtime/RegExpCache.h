@@ -46,7 +46,7 @@ class RegExpCache final : private WeakHandleOwner {
     WTF_MAKE_TZONE_ALLOCATED(RegExpCache);
 
     friend class RegExp;
-    typedef MemoryCompactRobinHoodHashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
+    using RegExpCacheMap = MemoryCompactRobinHoodHashMap<RegExpKey, Weak<RegExp>>;
 
 public:
     RegExpCache() = default;

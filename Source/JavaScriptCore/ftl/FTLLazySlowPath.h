@@ -57,7 +57,7 @@ public:
     };
 
     typedef void GeneratorFunction(CCallHelpers&, GenerationParams&);
-    typedef SharedTask<GeneratorFunction> Generator;
+    using Generator = SharedTask<GeneratorFunction>;
 
     template<typename Functor>
     static Ref<Generator> createGenerator(const Functor& functor)

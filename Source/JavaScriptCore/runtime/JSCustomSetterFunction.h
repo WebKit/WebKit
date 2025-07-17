@@ -31,7 +31,7 @@ namespace JSC {
 
 class JSCustomSetterFunction final : public JSFunction {
 public:
-    typedef JSFunction Base;
+    using Base = JSFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     using CustomFunctionPointer = PutValueFunc;

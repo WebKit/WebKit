@@ -78,7 +78,7 @@ public:
     template<typename Functor> void forEachStrongHandle(const Functor&, const HashCountedSet<JSCell*>& skipSet);
 
 private:
-    typedef HandleNode Node;
+    using Node = HandleNode;
 
     JS_EXPORT_PRIVATE void grow();
     

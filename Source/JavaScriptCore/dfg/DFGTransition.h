@@ -54,7 +54,7 @@ struct Transition {
     void dump(PrintStream&) const;
 };
 
-typedef Vector<Transition, 3> TransitionVector;
+using TransitionVector = Vector<Transition, 3>;
 
 } } // namespace JSC::DFG
 

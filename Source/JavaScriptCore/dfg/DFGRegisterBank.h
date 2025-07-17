@@ -70,10 +70,10 @@ namespace JSC { namespace DFG {
 // less than Max.
 template<class BankInfo>
 class RegisterBank {
-    typedef typename BankInfo::RegisterType RegID;
+    using RegID = typename BankInfo::RegisterType;
     static constexpr size_t NUM_REGS = BankInfo::numberOfRegisters;
 
-    typedef uint32_t SpillHint;
+    using SpillHint = uint32_t;
     static constexpr SpillHint SpillHintInvalid = 0xffffffff;
 
 public:
@@ -371,8 +371,8 @@ private:
     MapEntry m_data[NUM_REGS];
 };
 
-typedef RegisterBank<GPRInfo>::iterator gpr_iterator;
-typedef RegisterBank<FPRInfo>::iterator fpr_iterator;
+using gpr_iterator = RegisterBank<GPRInfo>::iterator;
+using fpr_iterator = RegisterBank<FPRInfo>::iterator;
 
 } } // namespace JSC::DFG
 

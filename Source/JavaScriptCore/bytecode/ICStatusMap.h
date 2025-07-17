@@ -50,7 +50,7 @@ struct ICStatus {
     DeleteByStatus* deleteStatus { nullptr };
 };
 
-typedef UncheckedKeyHashMap<CodeOrigin, ICStatus, CodeOriginApproximateHash> ICStatusMap;
+using ICStatusMap = UncheckedKeyHashMap<CodeOrigin, ICStatus, CodeOriginApproximateHash>;
 
 struct ICStatusContext {
     ICStatus get(CodeOrigin) const;
@@ -62,7 +62,7 @@ struct ICStatusContext {
     ICStatusMap map;
 };
 
-typedef Vector<ICStatusContext*, 8> ICStatusContextStack;
+using ICStatusContextStack = Vector<ICStatusContext*, 8>;
 
 } // namespace JSC
 

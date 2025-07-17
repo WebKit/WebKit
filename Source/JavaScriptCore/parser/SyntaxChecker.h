@@ -95,12 +95,12 @@ public:
         NewTargetExpr = MetaPropertyBit | 0,
         ImportMetaExpr = MetaPropertyBit | 1,
     };
-    typedef int ExpressionType;
+    using ExpressionType = int;
 
-    typedef ExpressionType Expression;
-    typedef int SourceElements;
-    typedef int Arguments;
-    typedef ExpressionType Comma;
+    using Expression = ExpressionType;
+    using SourceElements = int;
+    using Arguments = int;
+    using Comma = ExpressionType;
     struct Property {
         ALWAYS_INLINE Property(void* = nullptr)
         {
@@ -118,30 +118,30 @@ public:
         PropertyNode::Type type { static_cast<PropertyNode::Type>(0) };
         bool isUnderscoreProtoSetter { false };
     };
-    typedef int PropertyList;
-    typedef int ElementList;
-    typedef int ArgumentsList;
-    typedef int TemplateExpressionList;
-    typedef int TemplateString;
-    typedef int TemplateStringList;
-    typedef int TemplateLiteral;
-    typedef int FormalParameterList;
-    typedef int FunctionBody;
-    typedef int ClassExpression;
-    typedef int ModuleName;
-    typedef int ImportSpecifier;
-    typedef int ImportSpecifierList;
-    typedef int ImportAttributesList;
-    typedef int ExportSpecifier;
-    typedef int ExportSpecifierList;
-    typedef int Statement;
-    typedef int ClauseList;
-    typedef int Clause;
-    typedef int BinaryOperand;
-    typedef int DestructuringPattern;
-    typedef DestructuringPattern ArrayPattern;
-    typedef DestructuringPattern ObjectPattern;
-    typedef DestructuringPattern RestPattern;
+    using PropertyList = int;
+    using ElementList = int;
+    using ArgumentsList = int;
+    using TemplateExpressionList = int;
+    using TemplateString = int;
+    using TemplateStringList = int;
+    using TemplateLiteral = int;
+    using FormalParameterList = int;
+    using FunctionBody = int;
+    using ClassExpression = int;
+    using ModuleName = int;
+    using ImportSpecifier = int;
+    using ImportSpecifierList = int;
+    using ImportAttributesList = int;
+    using ExportSpecifier = int;
+    using ExportSpecifierList = int;
+    using Statement = int;
+    using ClauseList = int;
+    using Clause = int;
+    using BinaryOperand = int;
+    using DestructuringPattern = int;
+    using ArrayPattern = DestructuringPattern;
+    using ObjectPattern = DestructuringPattern;
+    using RestPattern = DestructuringPattern;
 
     static constexpr bool CreatesAST = false;
     static constexpr bool NeedsFreeVariableInfo = false;

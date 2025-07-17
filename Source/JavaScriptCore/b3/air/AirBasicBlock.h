@@ -52,9 +52,9 @@ public:
     static const char* const dumpPrefix;
     static constexpr unsigned uninsertedIndex = UINT_MAX;
 
-    typedef Vector<Inst> InstList;
-    typedef Vector<BasicBlock*, 2> PredecessorList;
-    typedef Vector<FrequentedBlock, 2> SuccessorList;
+    using InstList = Vector<Inst>;
+    using PredecessorList = Vector<BasicBlock*, 2>;
+    using SuccessorList = Vector<FrequentedBlock, 2>;
 
     unsigned index() const { return m_index; }
 

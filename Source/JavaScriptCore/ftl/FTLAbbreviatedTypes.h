@@ -37,9 +37,9 @@ class Type;
 
 namespace JSC { namespace FTL {
 
-typedef B3::BasicBlock* LBasicBlock;
-typedef B3::Type LType;
-typedef B3::Value* LValue;
+using LBasicBlock = B3::BasicBlock*;
+using LType = B3::Type;
+using LValue = B3::Value*;
 
 } } // namespace JSC::FTL
 

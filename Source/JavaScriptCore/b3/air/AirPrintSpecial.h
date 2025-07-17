@@ -39,7 +39,7 @@ class CCallHelpers;
 
 namespace Printer {
 
-typedef Vector<B3::Air::Arg> ArgList;
+using ArgList = Vector<B3::Air::Arg>;
 
 // IsSameOrReference::value is true if T is the same type as U or U&. Else, it is false.
     

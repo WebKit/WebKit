@@ -26,7 +26,7 @@ namespace JSC {
 
 class FunctionPrototype final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static FunctionPrototype* create(VM& vm, Structure* structure)
     {

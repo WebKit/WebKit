@@ -76,7 +76,7 @@ namespace JSC { namespace DFG {
 #define NodeMiscFlag1                   0x200000
 #define NodeMiscFlag2                   0x400000
 
-typedef uint32_t NodeFlags;
+using NodeFlags = uint32_t;
 
 static inline bool bytecodeUsesAsNumber(NodeFlags flags)
 {

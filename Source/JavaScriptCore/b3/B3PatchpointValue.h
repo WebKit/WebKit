@@ -37,7 +37,7 @@ namespace JSC { namespace B3 {
 
 class PatchpointValue final : public StackmapValue {
 public:
-    typedef StackmapValue Base;
+    using Base = StackmapValue;
     
     static bool accepts(Kind kind) { return kind.opcode() == Patchpoint; }
 

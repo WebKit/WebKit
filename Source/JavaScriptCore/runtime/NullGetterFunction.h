@@ -31,7 +31,7 @@ namespace JSC {
 
 class NullGetterFunction final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static NullGetterFunction* create(VM& vm, Structure* structure)
     {

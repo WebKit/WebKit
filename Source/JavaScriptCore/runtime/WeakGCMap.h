@@ -37,14 +37,14 @@ namespace JSC {
 template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCHashTable {
     WTF_MAKE_FAST_ALLOCATED;
-    typedef Weak<ValueArg> ValueType;
-    typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
+    using ValueType = Weak<ValueArg>;
+    using HashMapType = UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg>;
 
 public:
-    typedef typename HashMapType::KeyType KeyType;
-    typedef typename HashMapType::AddResult AddResult;
-    typedef typename HashMapType::iterator iterator;
-    typedef typename HashMapType::const_iterator const_iterator;
+    using KeyType = typename HashMapType::KeyType;
+    using AddResult = typename HashMapType::AddResult;
+    using iterator = typename HashMapType::iterator;
+    using const_iterator = typename HashMapType::const_iterator;
 
     explicit WeakGCMap(VM&);
     ~WeakGCMap() final;

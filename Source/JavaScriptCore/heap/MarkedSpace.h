@@ -46,7 +46,7 @@ class LLIntOffsetsExtractor;
 class Subspace;
 class WeakSet;
 
-typedef uint32_t HeapVersion;
+using HeapVersion = uint32_t;
 
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
@@ -124,7 +124,7 @@ public:
     
     void prepareForConservativeScan();
 
-    typedef UncheckedKeyHashSet<MarkedBlock*>::iterator BlockIterator;
+    using BlockIterator = UncheckedKeyHashSet<MarkedBlock*>::iterator;
 
     template<typename Functor> void forEachLiveCell(HeapIterationScope&, const Functor&);
     template<typename Functor> void forEachDeadCell(HeapIterationScope&, const Functor&);

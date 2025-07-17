@@ -353,7 +353,7 @@ public:
     // OffsetType isn't sufficient to determine offset validity! Each Value opcode further has an
     // isLegalOffset runtime method used to determine value legality at runtime. This is exposed to users
     // of B3 to force them to reason about the target's offset.
-    typedef int32_t OffsetType;
+    using OffsetType = int32_t;
     template<typename Int>
     struct IsLegalOffset {
         static constexpr bool value = std::is_integral<Int>::value

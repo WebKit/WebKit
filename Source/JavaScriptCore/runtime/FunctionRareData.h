@@ -48,7 +48,7 @@ class FunctionRareData final : public JSCell {
     friend class VM;
     
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static FunctionRareData* create(VM&, ExecutableBase*);

@@ -35,7 +35,7 @@ class GetterSetter;
 
 class ShadowRealmConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static ShadowRealmConstructor* create(VM& vm, Structure* structure, ShadowRealmPrototype* shadowRealmPrototype)

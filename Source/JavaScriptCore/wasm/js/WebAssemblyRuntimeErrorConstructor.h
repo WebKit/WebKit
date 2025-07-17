@@ -36,7 +36,7 @@ class WebAssemblyRuntimeErrorPrototype;
 
 class WebAssemblyRuntimeErrorConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyRuntimeErrorConstructor* create(VM&, Structure*, WebAssemblyRuntimeErrorPrototype*);

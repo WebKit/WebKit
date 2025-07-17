@@ -41,7 +41,7 @@ namespace JSC {
 // FIXME: It seems like almost all the fields of a Structure are useless to a wasm GC "object" since they can't have dynamic fields
 // e.g. PropertyTables, Transitions, SeenProperties, Prototype, etc.
 class WebAssemblyGCStructure final : public Structure {
-    typedef Structure Base;
+    using Base = Structure;
 public:
     friend class Structure;
 

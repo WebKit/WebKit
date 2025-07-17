@@ -102,7 +102,7 @@ public:
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<CountingVariant countingVariant>, ExecutionCounter<countingVariant>);
 
-typedef ExecutionCounter<CountingForBaseline> BaselineExecutionCounter;
-typedef ExecutionCounter<CountingForUpperTiers> UpperTierExecutionCounter;
+using BaselineExecutionCounter = ExecutionCounter<CountingForBaseline>;
+using UpperTierExecutionCounter = ExecutionCounter<CountingForUpperTiers>;
 
 } // namespace JSC

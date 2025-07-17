@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-typedef int PropertyOffset;
+using PropertyOffset = int;
 
 static constexpr PropertyOffset invalidOffset = -1;
 static constexpr PropertyOffset firstOutOfLineOffset = 64;

@@ -38,7 +38,7 @@ class Structure;
 class TypeInfo;
 class VM;
 
-typedef uint8_t IndexingType;
+using IndexingType = uint8_t;
 
 // Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
 class StructureCache {

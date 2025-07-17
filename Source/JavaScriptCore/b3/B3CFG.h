@@ -40,10 +40,10 @@ class CFG {
     WTF_MAKE_NONCOPYABLE(CFG);
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CFG);
 public:
-    typedef BasicBlock* Node;
-    typedef IndexSet<BasicBlock*> Set;
+    using Node = BasicBlock*;
+    using Set = IndexSet<BasicBlock*>;
     template<typename T> using Map = IndexMap<BasicBlock*, T>;
-    typedef Vector<BasicBlock*, 4> List;
+    using List = Vector<BasicBlock*, 4>;
 
     CFG(Procedure& proc)
         : m_proc(proc)

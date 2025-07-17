@@ -264,7 +264,7 @@ class StructureTransitionTable {
     };
 #endif
 
-    typedef WeakGCMap<Hash::Key, Structure, Hash, Hash::KeyTraits> TransitionMap;
+    using TransitionMap = WeakGCMap<Hash::Key, Structure, Hash, Hash::KeyTraits>;
 
 public:
     StructureTransitionTable() = default;

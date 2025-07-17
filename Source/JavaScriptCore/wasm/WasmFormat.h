@@ -619,7 +619,7 @@ struct Segment {
     }
 
     static void destroy(Segment*);
-    typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
+    using Ptr = std::unique_ptr<Segment, decltype(&Segment::destroy)>;
     static Segment::Ptr create(std::optional<I32InitExpr>, uint32_t, Kind);
 
     bool isActive() const { return kind == Kind::Active; }

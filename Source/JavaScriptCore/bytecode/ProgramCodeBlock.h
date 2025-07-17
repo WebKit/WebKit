@@ -36,7 +36,7 @@ namespace JSC {
 
 class ProgramCodeBlock final : public GlobalCodeBlock {
 public:
-    typedef GlobalCodeBlock Base;
+    using Base = GlobalCodeBlock;
     DECLARE_INFO;
 
     template<typename, SubspaceAccess>

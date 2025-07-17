@@ -79,7 +79,7 @@ private:
         WriteBarrier<AbstractModuleRecord> moduleRecord;
     };
 
-    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportMap;
+    using ExportMap = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
 
     ExportMap m_exports;
     FixedVector<Identifier> m_names;

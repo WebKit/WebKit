@@ -133,7 +133,7 @@ private:
     };
 
     class NamedCaptureGroups {
-        typedef UncheckedKeyHashSet<String> GroupNameHashSet;
+        using GroupNameHashSet = UncheckedKeyHashSet<String>;
 
     public:
         NamedCaptureGroups()
@@ -1916,7 +1916,7 @@ private:
 
     // Misc helper functions:
 
-    typedef unsigned ParseState;
+    using ParseState = unsigned;
     
     ParseState saveState()
     {

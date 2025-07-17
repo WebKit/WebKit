@@ -35,7 +35,7 @@ enum TypeProfilerGlobalIDFlags {
     TypeProfilerReturnStatement = -3
 };
 
-typedef intptr_t GlobalVariableID;
+using GlobalVariableID = intptr_t;
 
 class TypeLocation {
 public:

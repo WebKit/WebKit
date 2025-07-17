@@ -33,9 +33,9 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
 
-typedef struct _GSocketAddress GSocketAddress;
-typedef struct _GSocketConnection GSocketConnection;
-typedef struct _GSocketService GSocketService;
+using GSocketAddress = struct _GSocketAddress;
+using GSocketConnection = struct _GSocketConnection;
+using GSocketService = struct _GSocketService;
 
 namespace Inspector {
 

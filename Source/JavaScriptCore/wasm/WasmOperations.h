@@ -50,7 +50,7 @@ namespace Wasm {
 class TypeDefinition;
 class JSEntrypointCallee;
 
-typedef int64_t EncodedWasmValue;
+using EncodedWasmValue = int64_t;
 
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void*, CallFrame*, WebAssemblyFunction*));
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));

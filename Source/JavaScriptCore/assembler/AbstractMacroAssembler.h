@@ -98,8 +98,8 @@ private:
 template <class AssemblerType>
 class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
-    typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
-    typedef AssemblerType AssemblerType_T;
+    using AbstractMacroAssemblerType = AbstractMacroAssembler<AssemblerType>;
+    using AssemblerType_T = AssemblerType;
     friend class SuppressRegisterAllocationValidation;
 
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
@@ -112,9 +112,9 @@ public:
 
     class Jump;
 
-    typedef typename AssemblerType::RegisterID RegisterID;
-    typedef typename AssemblerType::SPRegisterID SPRegisterID;
-    typedef typename AssemblerType::FPRegisterID FPRegisterID;
+    using RegisterID = typename AssemblerType::RegisterID;
+    using SPRegisterID = typename AssemblerType::SPRegisterID;
+    using FPRegisterID = typename AssemblerType::FPRegisterID;
     
     static constexpr RegisterID firstRegister() { return AssemblerType::firstRegister(); }
     static constexpr RegisterID lastRegister() { return AssemblerType::lastRegister(); }

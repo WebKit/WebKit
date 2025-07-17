@@ -77,9 +77,9 @@ struct SourceCodeValue {
 
 class CodeCacheMap {
 public:
-    typedef UncheckedKeyHashMap<SourceCodeKey, SourceCodeValue, SourceCodeKey::Hash, SourceCodeKey::HashTraits> MapType;
-    typedef MapType::iterator iterator;
-    typedef MapType::AddResult AddResult;
+    using MapType = UncheckedKeyHashMap<SourceCodeKey, SourceCodeValue, SourceCodeKey::Hash, SourceCodeKey::HashTraits>;
+    using iterator = MapType::iterator;
+    using AddResult = MapType::AddResult;
 
     CodeCacheMap()
         : m_size(0)
@@ -243,19 +243,19 @@ private:
 template <typename T> struct CacheTypes { };
 
 template <> struct CacheTypes<UnlinkedProgramCodeBlock> {
-    typedef JSC::ProgramNode RootNode;
+    using RootNode = JSC::ProgramNode;
     static constexpr SourceCodeType codeType = SourceCodeType::ProgramType;
     static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
-    typedef JSC::EvalNode RootNode;
+    using RootNode = JSC::EvalNode;
     static constexpr SourceCodeType codeType = SourceCodeType::EvalType;
     static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
-    typedef JSC::ModuleProgramNode RootNode;
+    using RootNode = JSC::ModuleProgramNode;
     static constexpr SourceCodeType codeType = SourceCodeType::ModuleType;
     static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
 };

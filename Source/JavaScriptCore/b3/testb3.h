@@ -334,11 +334,11 @@ struct B3Operand {
     Type value;
 };
 
-typedef B3Operand<v128_t> V128Operand;
-typedef B3Operand<int64_t> Int64Operand;
-typedef B3Operand<int32_t> Int32Operand;
-typedef B3Operand<int16_t> Int16Operand;
-typedef B3Operand<int8_t> Int8Operand;
+using V128Operand = B3Operand<v128_t>;
+using Int64Operand = B3Operand<int64_t>;
+using Int32Operand = B3Operand<int32_t>;
+using Int16Operand = B3Operand<int16_t>;
+using Int8Operand = B3Operand<int8_t>;
 
 #define MAKE_OPERAND(value) B3Operand<decltype(value)> { #value, value }
 

@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-typedef int64_t EncodedJSValue;
+using EncodedJSValue = int64_t;
     
 class ArrayAllocationProfile;
 class ArrayProfile;
@@ -81,7 +81,7 @@ template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
-typedef char* UnusedPtr;
+using UnusedPtr = char*;
 
 // These typedefs provide typechecking when code needs a variable to hold the function pointer
 // to a helper routine.

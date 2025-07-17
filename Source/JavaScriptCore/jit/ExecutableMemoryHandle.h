@@ -117,7 +117,7 @@ private:
     MemoryPtr m_start;
 };
 #else // not (ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT))
-typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
+using ExecutableMemoryHandle = WTF::MetaAllocatorHandle;
 #endif // ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 
 } // namespace JSC

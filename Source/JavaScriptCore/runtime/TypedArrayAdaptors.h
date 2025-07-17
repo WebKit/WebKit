@@ -38,9 +38,9 @@ template<
     typename TypeArg, typename ViewTypeArg, typename JSViewTypeArg,
     TypedArrayType typeValueArg>
 struct IntegralTypedArrayAdaptor {
-    typedef TypeArg Type;
-    typedef ViewTypeArg ViewType;
-    typedef JSViewTypeArg JSViewType;
+    using Type = TypeArg;
+    using ViewType = ViewTypeArg;
+    using JSViewType = JSViewTypeArg;
     static constexpr TypedArrayType typeValue = typeValueArg;
     static constexpr TypeArg minValue = std::numeric_limits<TypeArg>::lowest();
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
@@ -123,9 +123,9 @@ template<
     typename TypeArg, typename ViewTypeArg, typename JSViewTypeArg,
     TypedArrayType typeValueArg>
 struct FloatTypedArrayAdaptor {
-    typedef TypeArg Type;
-    typedef ViewTypeArg ViewType;
-    typedef JSViewTypeArg JSViewType;
+    using Type = TypeArg;
+    using ViewType = ViewTypeArg;
+    using JSViewType = JSViewTypeArg;
     static constexpr TypedArrayType typeValue = typeValueArg;
     static constexpr TypeArg minValue = std::numeric_limits<TypeArg>::lowest();
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
@@ -192,9 +192,9 @@ template<
     typename TypeArg, typename ViewTypeArg, typename JSViewTypeArg,
     TypedArrayType typeValueArg>
 struct BigIntTypedArrayAdaptor {
-    typedef TypeArg Type;
-    typedef ViewTypeArg ViewType;
-    typedef JSViewTypeArg JSViewType;
+    using Type = TypeArg;
+    using ViewType = ViewTypeArg;
+    using JSViewType = JSViewTypeArg;
     static constexpr TypedArrayType typeValue = typeValueArg;
     static constexpr TypeArg minValue = std::numeric_limits<TypeArg>::lowest();
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
@@ -279,9 +279,9 @@ struct BigInt64Adaptor : BigIntTypedArrayAdaptor<int64_t, BigInt64Array, JSBigIn
 struct BigUint64Adaptor : BigIntTypedArrayAdaptor<uint64_t, BigUint64Array, JSBigUint64Array, TypeBigUint64> { };
 
 struct Uint8ClampedAdaptor {
-    typedef uint8_t Type;
-    typedef Uint8ClampedArray ViewType;
-    typedef JSUint8ClampedArray JSViewType;
+    using Type = uint8_t;
+    using ViewType = Uint8ClampedArray;
+    using JSViewType = JSUint8ClampedArray;
     static constexpr TypedArrayType typeValue = TypeUint8Clamped;
     static constexpr uint8_t minValue = std::numeric_limits<uint8_t>::lowest();
     static constexpr uint8_t maxValue = std::numeric_limits<uint8_t>::max();

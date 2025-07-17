@@ -36,7 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 class BasicBlock;
 class Code;
 
-typedef WTF::Insertion<Inst> Insertion;
+using Insertion = WTF::Insertion<Inst>;
 
 class InsertionSet {
 public:

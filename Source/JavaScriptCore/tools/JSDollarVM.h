@@ -37,7 +37,7 @@ struct DollarVMAssertScope {
 
 class JSDollarVM final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertyNames;
 
     template<typename CellType, SubspaceAccess>

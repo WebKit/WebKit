@@ -36,7 +36,7 @@ class ModuleScopeData : public RefCounted<ModuleScopeData> {
     WTF_MAKE_NONCOPYABLE(ModuleScopeData);
     WTF_MAKE_TZONE_ALLOCATED(ModuleScopeData);
 public:
-    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Vector<RefPtr<UniquedStringImpl>>, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> IdentifierAliasMap;
+    using IdentifierAliasMap = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Vector<RefPtr<UniquedStringImpl>>, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
 
     static Ref<ModuleScopeData> create() { return adoptRef(*new ModuleScopeData); }
 

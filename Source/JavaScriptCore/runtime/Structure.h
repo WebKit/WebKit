@@ -201,7 +201,7 @@ class Structure : public JSCell {
 public:
     friend class StructureTransitionTable;
 
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
 

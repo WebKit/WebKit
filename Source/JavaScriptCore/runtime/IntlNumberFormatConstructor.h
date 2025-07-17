@@ -35,7 +35,7 @@ class IntlNumberFormatPrototype;
 
 class IntlNumberFormatConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlNumberFormatConstructor* create(VM&, Structure*, IntlNumberFormatPrototype*);

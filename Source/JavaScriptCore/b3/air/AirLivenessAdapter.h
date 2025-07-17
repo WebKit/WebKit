@@ -48,9 +48,9 @@ template<typename Adapter>
 struct LivenessAdapter {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    typedef Air::CFG CFG;
+    using CFG = Air::CFG;
 
-    typedef Vector<unsigned, 4> ActionsList;
+    using ActionsList = Vector<unsigned, 4>;
 
     struct Actions {
         Actions() { }
@@ -59,7 +59,7 @@ public:
         ActionsList def;
     };
 
-    typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
+    using ActionsForBoundary = Vector<Actions, 0, UnsafeVectorOverflow>;
 
     LivenessAdapter(Code& code)
         : code(code)
@@ -152,10 +152,10 @@ template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(TmpLivenessAdapter);
 public:
-    typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
+    using Base = LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>>;
 
     static constexpr const char* name = "TmpLiveness";
-    typedef Tmp Thing;
+    using Thing = Tmp;
 
     TmpLivenessAdapter(Code& code)
         : Base(code)
@@ -183,11 +183,11 @@ WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_
 struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(UnifiedTmpLivenessAdapter);
 public:
-    typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
+    using Base = LivenessAdapter<UnifiedTmpLivenessAdapter>;
 
     static constexpr const char* name = "UnifiedTmpLiveness";
 
-    typedef Tmp Thing;
+    using Thing = Tmp;
 
     UnifiedTmpLivenessAdapter(Code& code)
         : Base(code)
@@ -209,7 +209,7 @@ struct StackSlotLivenessAdapter : LivenessAdapter<StackSlotLivenessAdapter> {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(StackSlotLivenessAdapter);
 public:
     static constexpr const char* name = "StackSlotLiveness";
-    typedef StackSlot* Thing;
+    using Thing = StackSlot*;
 
     StackSlotLivenessAdapter(Code& code)
         : LivenessAdapter(code)

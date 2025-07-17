@@ -59,7 +59,7 @@ private:
 class AssertNoGC : public DisallowScope<AssertNoGC> {
     WTF_MAKE_NONCOPYABLE(AssertNoGC);
     WTF_FORBID_HEAP_ALLOCATION;
-    typedef DisallowScope<AssertNoGC> Base;
+    using Base = DisallowScope<AssertNoGC>;
 public:
 #if ASSERT_ENABLED
     AssertNoGC() = default;

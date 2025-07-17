@@ -43,7 +43,7 @@ public:
     const char* name() const { return m_name; }
     size_t size() const { return m_cells.size(); }
 
-    typedef SegmentedVector<CellProfile, 64> CellProfileVector;
+    using CellProfileVector = SegmentedVector<CellProfile, 64>;
     CellProfileVector& cells() { return m_cells; }
 
     void add(CellProfile&& profile)

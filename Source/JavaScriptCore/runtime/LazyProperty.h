@@ -119,6 +119,6 @@ private:
 
 // It's valid to bitcast any LazyProperty to LazyCellProperty if you're just going to call get()
 // or getConcurrently().
-typedef LazyProperty<JSCell, JSCell> LazyCellProperty;
+using LazyCellProperty = LazyProperty<JSCell, JSCell>;
 
 } // namespace JSC

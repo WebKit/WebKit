@@ -61,7 +61,7 @@ public:
     static constexpr int DoubleConditionBitSpecial = 0x20;
     static constexpr int DoubleConditionBits = DoubleConditionBitInvert | DoubleConditionBitSpecial;
 
-    typedef X86Assembler::XMMRegisterID XMMRegisterID;
+    using XMMRegisterID = X86Assembler::XMMRegisterID;
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {

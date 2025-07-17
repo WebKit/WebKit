@@ -45,7 +45,7 @@ namespace Inspector {
 class RemoteControllableTarget;
 
 #if PLATFORM(COCOA)
-typedef Vector<Function<void ()>> RemoteTargetQueue;
+using RemoteTargetQueue = Vector<Function<void ()>>;
 #endif
 
 class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {

@@ -29,7 +29,7 @@ namespace JSC {
 // FIXME: Rename to PropertyNameArray.
 class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
 public:
-    typedef Vector<Identifier, 20> PropertyNameVector;
+    using PropertyNameVector = Vector<Identifier, 20>;
 
     static Ref<PropertyNameArrayData> create() { return adoptRef(*new PropertyNameArrayData); }
 
@@ -73,7 +73,7 @@ public:
 
     // FIXME: Remove these functions.
     bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }
-    typedef PropertyNameArrayData::PropertyNameVector::const_iterator const_iterator;
+    using const_iterator = PropertyNameArrayData::PropertyNameVector::const_iterator;
     size_t size() const { return m_data->propertyNameVector().size(); }
     const_iterator begin() const { return m_data->propertyNameVector().begin(); }
     const_iterator end() const { return m_data->propertyNameVector().end(); }

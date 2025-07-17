@@ -37,7 +37,7 @@ class BasicBlock;
 class Dominators;
 class Value;
 
-typedef Vector<Value*, 1> Matches;
+using Matches = Vector<Value*, 1>;
 
 // This is a reusable utility for doing pure CSE. You can use it to do pure CSE on a program by just
 // proceeding in order and calling process().

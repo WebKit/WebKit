@@ -94,7 +94,7 @@ public:
         unsigned m_index;
     };
 
-    typedef iterator const_iterator;
+    using const_iterator = iterator;
 
     iterator begin() const { return iterator(*this, 0); }
     iterator end() const { return iterator(*this, size()); }

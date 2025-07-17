@@ -34,7 +34,7 @@ class GetterSetter;
 
 class WeakMapConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static WeakMapConstructor* create(VM& vm, Structure* structure, WeakMapPrototype* prototype)
     {

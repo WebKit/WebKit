@@ -46,7 +46,7 @@ namespace Air {
 struct GenerationContext;
 
 struct Inst {
-    typedef Vector<Arg, 3> ArgList;
+    using ArgList = Vector<Arg, 3>;
 
     Inst()
         : origin(nullptr)

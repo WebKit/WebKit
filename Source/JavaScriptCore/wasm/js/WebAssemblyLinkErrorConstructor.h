@@ -36,7 +36,7 @@ class WebAssemblyLinkErrorPrototype;
 
 class WebAssemblyLinkErrorConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyLinkErrorConstructor* create(VM&, Structure*, WebAssemblyLinkErrorPrototype*);

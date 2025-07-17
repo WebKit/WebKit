@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-typedef MacroAssembler::FPRegisterID FPRReg;
+using FPRReg = MacroAssembler::FPRegisterID;
 static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 
 #if ENABLE(ASSEMBLER)
@@ -41,7 +41,7 @@ static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 
 class FPRInfo {
 public:
-    typedef FPRReg RegisterType;
+    using RegisterType = FPRReg;
     static constexpr unsigned numberOfRegisters = 15;
     static constexpr unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
 
@@ -131,7 +131,7 @@ public:
 
 class FPRInfo {
 public:
-    typedef FPRReg RegisterType;
+    using RegisterType = FPRReg;
     static constexpr unsigned numberOfRegisters = 8;
 
     static constexpr unsigned numberOfArgumentRegisters = 8;
@@ -213,7 +213,7 @@ public:
 
 class FPRInfo {
 public:
-    typedef FPRReg RegisterType;
+    using RegisterType = FPRReg;
     static constexpr unsigned numberOfRegisters = 23;
     static constexpr unsigned numberOfArgumentRegisters = 8;
 
@@ -318,7 +318,7 @@ public:
 
 class FPRInfo {
 public:
-    typedef FPRReg RegisterType;
+    using RegisterType = FPRReg;
     static constexpr unsigned numberOfRegisters = 18;
     static constexpr unsigned numberOfArgumentRegisters = 8;
 

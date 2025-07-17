@@ -44,14 +44,14 @@
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
-typedef RetainPtr<NSDictionary> TargetListing;
+using TargetListing = RetainPtr<NSDictionary>;
 #endif
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
-typedef GRefPtr<GVariant> TargetListing;
-typedef struct _GCancellable GCancellable;
+using TargetListing = GRefPtr<GVariant>;
+using GCancellable = struct _GCancellable;
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)

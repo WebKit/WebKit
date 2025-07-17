@@ -105,7 +105,7 @@ public:
     friend class SlotVisitor;
     friend class SmallStrings;
 
-    typedef JSCell Base;
+    using Base = JSCell;
     // Do we really need OverridesGetOwnPropertySlot?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?

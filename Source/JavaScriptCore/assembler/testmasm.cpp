@@ -188,7 +188,7 @@ using CPUState = Probe::CPUState;
 
 Lock crashLock;
 
-typedef WTF::Function<void(CCallHelpers&)> Generator;
+using Generator = WTF::Function<void(CCallHelpers&)>;
 
 template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
 

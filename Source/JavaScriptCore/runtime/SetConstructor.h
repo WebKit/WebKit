@@ -34,7 +34,7 @@ class GetterSetter;
 
 class SetConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static SetConstructor* create(VM& vm, Structure* structure, SetPrototype* setPrototype)
     {

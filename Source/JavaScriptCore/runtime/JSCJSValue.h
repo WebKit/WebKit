@@ -87,7 +87,7 @@ enum PreferredPrimitiveType : uint8_t { NoPreference, PreferNumber, PreferString
 
 struct CallData;
 
-typedef int64_t EncodedJSValue;
+using EncodedJSValue = int64_t;
 
 inline void updateEncodedJSValueConcurrent(EncodedJSValue&, EncodedJSValue);
 inline void clearEncodedJSValueConcurrent(EncodedJSValue&);
@@ -590,7 +590,7 @@ struct OrderedHashTableTraits {
 };
 #endif
 
-typedef IntHash<EncodedJSValue> EncodedJSValueHash;
+using EncodedJSValueHash = IntHash<EncodedJSValue>;
 
 #if USE(JSVALUE32_64)
 struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
@@ -606,7 +606,7 @@ struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
 };
 #endif
 
-typedef std::pair<EncodedJSValue, SourceCodeRepresentation> EncodedJSValueWithRepresentation;
+using EncodedJSValueWithRepresentation = std::pair<EncodedJSValue, SourceCodeRepresentation>;
 
 struct EncodedJSValueWithRepresentationHashTraits : HashTraits<EncodedJSValueWithRepresentation> {
     static constexpr bool emptyValueIsZero = false;

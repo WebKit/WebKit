@@ -40,10 +40,10 @@ class CFG {
     WTF_MAKE_NONCOPYABLE(CFG);
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CFG);
 public:
-    typedef BasicBlock* Node;
-    typedef BlockSet Set;
+    using Node = BasicBlock*;
+    using Set = BlockSet;
     template<typename T> using Map = BlockMap<T>;
-    typedef BlockList List;
+    using List = BlockList;
 
     CFG(Graph& graph)
         : m_graph(graph)

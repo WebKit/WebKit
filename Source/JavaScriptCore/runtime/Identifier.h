@@ -262,9 +262,9 @@ struct IdentifierMapIndexHashTraits : HashTraits<int> {
     static constexpr bool emptyValueIsZero = false;
 };
 
-typedef UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
-typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
-typedef UncheckedKeyHashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
+using IdentifierSet = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+using IdentifierMap = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits>;
+using BorrowedIdentifierMap = UncheckedKeyHashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits>;
 
 } // namespace JSC
 

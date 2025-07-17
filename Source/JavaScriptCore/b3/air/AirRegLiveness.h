@@ -48,10 +48,10 @@ class RegLiveness {
         RegisterSet def;
     };
     
-    typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
+    using ActionsForBoundary = Vector<Actions, 0, UnsafeVectorOverflow>;
     
 public:
-    typedef Reg Thing;
+    using Thing = Reg;
     
     RegLiveness(Code& code);
     ~RegLiveness();

@@ -39,7 +39,7 @@ class LLIntOffsetsExtractor;
 class BasicBlockLocation {
     WTF_MAKE_TZONE_ALLOCATED(BasicBlockLocation);
 public:
-    typedef std::pair<int, int> Gap;
+    using Gap = std::pair<int, int>;
 
     BasicBlockLocation(int startOffset = -1, int endOffset = -1);
 

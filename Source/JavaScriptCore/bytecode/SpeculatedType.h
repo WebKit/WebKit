@@ -37,7 +37,7 @@ namespace JSC {
 
 class Structure;
 
-typedef uint64_t SpeculatedType;
+using SpeculatedType = uint64_t;
 static constexpr SpeculatedType SpecNone                              = 0; // We don't know anything yet.
 static constexpr SpeculatedType SpecFinalObject                       = 1ull << 0; // It's definitely a JSFinalObject.
 static constexpr SpeculatedType SpecArray                             = 1ull << 1; // It's definitely a JSArray.

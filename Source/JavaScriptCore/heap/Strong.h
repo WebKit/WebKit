@@ -52,7 +52,7 @@ template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabL
     template <typename U, ShouldStrongDestructorGrabLock> friend class Strong;
 
 public:
-    typedef typename Handle<T>::ExternalType ExternalType;
+    using ExternalType = typename Handle<T>::ExternalType;
 
     Strong()
         : Handle<T>()

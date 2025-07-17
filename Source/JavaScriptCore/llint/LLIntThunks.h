@@ -33,7 +33,7 @@
 namespace JSC {
 
 struct ProtoCallFrame;
-typedef int64_t EncodedJSValue;
+using EncodedJSValue = int64_t;
 
 extern "C" {
     EncodedJSValue SYSV_ABI vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);

@@ -43,7 +43,7 @@ struct NameSection;
 // SamplingProfiler copies it while suspending threads.
 struct IndexOrName {
     friend class JSC::LLIntOffsetsExtractor;
-    typedef size_t Index;
+    using Index = size_t;
 
 private:
 #if USE(JSVALUE32_64)

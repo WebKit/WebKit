@@ -39,7 +39,7 @@ class WebAssemblyModulePrototype;
 
 class WebAssemblyModuleConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static WebAssemblyModuleConstructor* create(VM&, Structure*, WebAssemblyModulePrototype*);

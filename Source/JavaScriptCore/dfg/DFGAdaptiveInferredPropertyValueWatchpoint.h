@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 class AdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(AdaptiveInferredPropertyValueWatchpoint);
 public:
-    typedef AdaptiveInferredPropertyValueWatchpointBase Base;
+    using Base = AdaptiveInferredPropertyValueWatchpointBase;
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     AdaptiveInferredPropertyValueWatchpoint() = default;
 

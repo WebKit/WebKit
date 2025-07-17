@@ -54,10 +54,10 @@ WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename Adapter>, L
 template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>
 using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;
 
-typedef Liveness<TmpLivenessAdapter<GP>> GPLiveness;
-typedef Liveness<TmpLivenessAdapter<FP>> FPLiveness;
-typedef Liveness<UnifiedTmpLivenessAdapter> UnifiedTmpLiveness;
-typedef Liveness<StackSlotLivenessAdapter> StackSlotLiveness;
+using GPLiveness = Liveness<TmpLivenessAdapter<GP>>;
+using FPLiveness = Liveness<TmpLivenessAdapter<FP>>;
+using UnifiedTmpLiveness = Liveness<UnifiedTmpLivenessAdapter>;
+using StackSlotLiveness = Liveness<StackSlotLivenessAdapter>;
 
 } } } // namespace JSC::B3::Air
 

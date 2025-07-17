@@ -29,17 +29,17 @@
 
 namespace JSC {
 
-typedef JSValue* HandleSlot;
+using HandleSlot = JSValue*;
 
 template<typename T> struct HandleTypes {
-    typedef T* ExternalType;
+    using ExternalType = T*;
     static ExternalType getFromSlot(HandleSlot slot) { return (slot && *slot) ? reinterpret_cast<ExternalType>(static_cast<void*>(slot->asCell())) : nullptr; }
     static JSValue toJSValue(T* cell) { return reinterpret_cast<JSCell*>(cell); }
     template<typename U> static void validateUpcast() { T* temp; temp = (U*)0; }
 };
 
 template<> struct HandleTypes<Unknown> {
-    typedef JSValue ExternalType;
+    using ExternalType = JSValue;
     static ExternalType getFromSlot(HandleSlot slot) { return slot ? *slot : JSValue(); }
     static JSValue toJSValue(const JSValue& v) { return v; }
     template<typename U> static void validateUpcast() { }
