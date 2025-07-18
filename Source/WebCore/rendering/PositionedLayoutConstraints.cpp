@@ -505,26 +505,29 @@ void PositionedLayoutConstraints::computeInlineStaticDistance()
         m_insetBefore = Style::InsetEdge::Fixed { staticPosition };
     } else {
         ASSERT(!haveOrthogonalWritingModes);
-        LayoutUnit staticPosition = m_renderer->layer()->staticInlinePosition() + containingSize() + m_container->borderLogicalLeft();
+        LayoutUnit staticPosition = m_renderer->layer()->staticInlinePosition();
+
+
         auto& enclosingBox = parent->enclosingBox();
         if (&enclosingBox != m_container.get() && m_container->isDescendantOf(&enclosingBox)) {
-            m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
+            m_insetAfter = Style::InsetEdge::Fixed { staticPosition + containingSize() + m_container->borderLogicalLeft() };
             return;
         }
-        staticPosition -= enclosingBox.logicalWidth();
+        staticPosition = enclosingBox.logicalWidth() - staticPosition;
         for (const RenderElement* current = &enclosingBox; current; current = current->container()) {
             CheckedPtr renderBox = dynamicDowncast<RenderBox>(*current);
             if (!renderBox)
                 continue;
 
             if (current != m_container.get()) {
-                staticPosition -= renderBox->logicalLeft();
+                staticPosition += renderBox->logicalLeft();
                 if (renderBox->isInFlowPositioned())
-                    staticPosition -= renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
+                    staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
             }
             if (current == m_container.get())
                 break;
         }
+        staticPosition = m_containingRange.max() - staticPosition;
         m_insetAfter = Style::InsetEdge::Fixed { staticPosition };
     }
 }
