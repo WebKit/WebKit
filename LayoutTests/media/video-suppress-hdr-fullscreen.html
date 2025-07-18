@@ -13,12 +13,16 @@
         if (CSS.supports("dynamic-range-limit", "no-limit")) {
             try {
                 let {success, observed} = compare(testFuncString, expected, '==');
-                if (!success)
-                    reportExpected(success, testFuncString, '==', expected, observed)
+                if (!success) {
+                    reportExpected(success, testFuncString, '==', expected, observed);
+                    return false;
+                }
             } catch (ex) {
                 consoleWrite(ex);
+                return false;
             }
         }
+        return true;
     }
 
     function go()
@@ -68,7 +72,8 @@
 
         testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
         run('internals.setPageShouldSuppressHDR(true)');
-        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', shouldSuppressHDR ? 0.5 : 1.0);
+        const success = testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', shouldSuppressHDR ? 0.5 : 1.0);
+        consoleWrite("isFullscreen=" + isFullscreen + " isMac=" + isMac + " -> shouldSuppressHDR=" + shouldSuppressHDR);
         run('internals.setPageShouldSuppressHDR(false)');
         testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
 
