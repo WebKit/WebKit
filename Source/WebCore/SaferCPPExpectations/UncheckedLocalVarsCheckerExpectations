@@ -1,6 +1,4 @@
-Modules/encryptedmedia/MediaKeySystemRequest.cpp
 Modules/gamepad/GamepadHapticActuator.cpp
-Modules/geolocation/GeolocationController.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBTransaction.cpp
 Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp
@@ -11,21 +9,16 @@ Modules/indexeddb/server/SQLiteIDBBackingStore.cpp
 Modules/indexeddb/server/SQLiteIDBCursor.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediastream/RTCPeerConnection.cpp
-Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
-Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
 Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
-Modules/permissions/Permissions.cpp
 Modules/push-api/PushDatabase.cpp
-Modules/speech/SpeechRecognition.cpp
 Modules/storage/WorkerStorageConnection.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp
 Modules/webdatabase/SQLStatement.cpp
 Modules/websockets/WebSocket.cpp
 accessibility/AXCoreObject.cpp
 accessibility/AXObjectCache.cpp
-accessibility/AXTextMarker.cpp
 accessibility/AccessibilityListBox.cpp
 accessibility/AccessibilityListBoxOption.cpp
 accessibility/AccessibilityMathMLElement.cpp
@@ -62,7 +55,6 @@ bindings/js/JSDOMWindowBase.cpp
 bindings/js/JSDOMWindowCustom.cpp
 bindings/js/JSDOMWindowProperties.cpp
 bindings/js/JSDocumentCustom.cpp
-bindings/js/JSEventListener.cpp
 bindings/js/JSHTMLElementCustom.cpp
 bindings/js/JSHTMLTemplateElementCustom.cpp
 bindings/js/JSLazyEventListener.cpp
@@ -72,12 +64,10 @@ bindings/js/JSStyleSheetCustom.h
 bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
-bindings/js/JSWorkerGlobalScopeCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScheduledAction.cpp
 bindings/js/ScriptModuleLoader.cpp
 contentextensions/ContentExtensionsBackend.cpp
-css/CSSFontSelector.cpp
 css/CSSStyleSheet.cpp
 css/FontFaceSet.cpp
 css/MediaQueryMatcher.cpp
@@ -163,6 +153,7 @@ editing/markup.cpp
 history/CachedFrame.cpp
 html/Autofill.cpp
 html/CachedHTMLCollectionInlines.h
+html/CanvasBase.cpp
 html/CollectionTraversalInlines.h
 html/FormAssociatedCustomElement.cpp
 html/FormListedElement.cpp
@@ -194,6 +185,8 @@ html/ModelDocument.cpp
 html/PluginDocument.cpp
 html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
+html/canvas/CanvasRenderingContext2D.cpp
+html/canvas/CanvasRenderingContext2DBase.cpp
 html/parser/HTMLConstructionSite.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -231,8 +224,6 @@ layout/formattingContexts/block/BlockFormattingQuirks.cpp
 layout/formattingContexts/block/BlockMarginCollapse.cpp
 layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp
-layout/formattingContexts/flex/FlexFormattingContext.cpp
-layout/formattingContexts/flex/FlexFormattingUtils.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.cpp
 layout/formattingContexts/inline/InlineContentAligner.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
@@ -279,7 +270,6 @@ layout/integration/inline/LineSelection.h
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutElementBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
-loader/ContentFilter.cpp
 loader/DocumentLoader.cpp
 loader/EmptyClients.cpp
 loader/FrameLoader.cpp
@@ -459,7 +449,6 @@ rendering/mathml/RenderMathMLToken.cpp
 rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/BoxLayoutShape.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
-rendering/style/GridPositionsResolver.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
@@ -553,6 +542,7 @@ style/StyleScope.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
+style/values/grid/StyleGridPositionsResolver.cpp
 style/values/primitives/StyleLengthResolution.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGClipPathElement.cpp

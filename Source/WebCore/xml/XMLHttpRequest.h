@@ -32,7 +32,6 @@
 #include "UserGestureIndicator.h"
 #include <wtf/URL.h>
 #include "XMLHttpRequestEventTarget.h"
-#include "XMLHttpRequestProgressEventThrottle.h"
 #include <wtf/CancellableTask.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -50,7 +49,9 @@ class SecurityOrigin;
 class TextResourceDecoder;
 class ThreadableLoader;
 class URLSearchParams;
+class XMLHttpRequestProgressEventThrottle;
 class XMLHttpRequestUpload;
+enum class ExceptionCode : uint8_t;
 struct OwnedString;
 template<typename> class ExceptionOr;
 
@@ -60,6 +61,8 @@ class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRe
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();
@@ -245,7 +248,7 @@ private:
     // Used for progress event tracking.
     long long m_receivedLength { 0 };
 
-    XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
+    const UniqueRef<XMLHttpRequestProgressEventThrottle> m_progressEventThrottle;
 
     mutable String m_allResponseHeaders;
 

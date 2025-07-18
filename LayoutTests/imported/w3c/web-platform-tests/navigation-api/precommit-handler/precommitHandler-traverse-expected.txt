@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Should never run
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: hash after commit expected "#1" but got ""
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: hash after commit expected "#3" but got "#1"
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: hash after commit expected "#3" but got "#1"
+
+FAIL precommitHandler for a traverse navigation, reject before commit assert_unreached: committed must not fulfill Reached unreachable code
+FAIL precommitHandler for a traverse navigation, reject after commit assert_equals: hash after commit expected "#1" but got ""
+FAIL precommitHandler for a traverse navigation, success assert_equals: hash after commit expected "#3" but got "#1"
+

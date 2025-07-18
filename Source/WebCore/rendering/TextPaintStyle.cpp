@@ -101,6 +101,14 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
         }
     }
 
+    if (lineStyle.insideDisabledSubmitButton()) {
+        RefPtr page = renderer.frame().page();
+        if (page && page->focusController().isActive()) {
+            paintStyle.fillColor = RenderTheme::singleton().disabledSubmitButtonTextColor();
+            return paintStyle;
+        }
+    }
+
     paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor, paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
@@ -136,7 +144,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     return paintStyle;
 }
 
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, FixedVector<Style::TextShadow>& selectionShadow)
+TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
 {
     TextPaintStyle selectionPaintStyle = textPaintStyle;
 
@@ -152,7 +160,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     RefPtr view = renderer.frame().view();
     if (auto pseudoStyle = renderer.selectionPseudoStyle()) {
         selectionPaintStyle.hasExplicitlySetFillColor = pseudoStyle->hasExplicitlySetColor();
-        selectionShadow = paintInfo.forceTextColor() ? FixedVector<Style::TextShadow> { } : pseudoStyle->textShadow();
+        selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : pseudoStyle->textShadow();
         auto viewportSize = view ? view->size() : IntSize();
         float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
         if (strokeWidth != selectionPaintStyle.strokeWidth)
@@ -162,12 +170,12 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
         if (stroke != selectionPaintStyle.strokeColor)
             selectionPaintStyle.strokeColor = stroke;
     } else
-        selectionShadow = paintInfo.forceTextColor() ? FixedVector<Style::TextShadow> { } : lineStyle.textShadow();
+        selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(lineStyle);
     UNUSED_PARAM(paintInfo);
-    selectionShadow = paintInfo.forceTextColor() ? FixedVector<Style::TextShadow> { } : lineStyle.textShadow();
+    selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
 #endif
     return selectionPaintStyle;
 }

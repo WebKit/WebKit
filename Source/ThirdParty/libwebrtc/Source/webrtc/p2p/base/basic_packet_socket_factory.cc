@@ -12,21 +12,27 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+#include <memory>
 #include <string>
 
 #include "absl/memory/memory.h"
 #include "api/async_dns_resolver.h"
+#include "api/packet_socket_factory.h"
 #include "p2p/base/async_stun_tcp_socket.h"
 #include "rtc_base/async_dns_resolver.h"
+#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_adapters.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/ssl_adapter.h"
 
-namespace rtc {
+namespace webrtc {
 
 BasicPacketSocketFactory::BasicPacketSocketFactory(
     SocketFactory* socket_factory)
@@ -41,12 +47,12 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
   // UDP sockets are simple.
   Socket* socket = socket_factory_->CreateSocket(address.family(), SOCK_DGRAM);
   if (!socket) {
-    return NULL;
+    return nullptr;
   }
   if (BindSocket(socket, address, min_port, max_port) < 0) {
     RTC_LOG(LS_ERROR) << "UDP bind failed with error " << socket->GetError();
     delete socket;
-    return NULL;
+    return nullptr;
   }
   return new AsyncUDPSocket(socket);
 }
@@ -59,23 +65,23 @@ AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
   // Fail if TLS is required.
   if (opts & PacketSocketFactory::OPT_TLS) {
     RTC_LOG(LS_ERROR) << "TLS support currently is not available.";
-    return NULL;
+    return nullptr;
   }
 
   if (opts & PacketSocketFactory::OPT_TLS_FAKE) {
     RTC_LOG(LS_ERROR) << "Fake TLS not supported.";
-    return NULL;
+    return nullptr;
   }
   Socket* socket =
       socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
-    return NULL;
+    return nullptr;
   }
 
   if (BindSocket(socket, local_address, min_port, max_port) < 0) {
     RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
     delete socket;
-    return NULL;
+    return nullptr;
   }
 
   RTC_CHECK(!(opts & PacketSocketFactory::OPT_STUN));
@@ -90,7 +96,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   Socket* socket =
       socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
-    return NULL;
+    return nullptr;
   }
 
   if (BindSocket(socket, local_address, 0, 0) < 0) {
@@ -103,7 +109,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     } else {
       RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
       delete socket;
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -128,7 +134,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     // Using TLS, wrap the socket in an SSL adapter.
     SSLAdapter* ssl_adapter = SSLAdapter::Create(socket);
     if (!ssl_adapter) {
-      return NULL;
+      return nullptr;
     }
 
     if (tlsOpts & PacketSocketFactory::OPT_TLS_INSECURE) {
@@ -143,7 +149,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
 
     if (ssl_adapter->StartSSL(remote_address.hostname().c_str()) != 0) {
       delete ssl_adapter;
-      return NULL;
+      return nullptr;
     }
 
   } else if (tlsOpts & PacketSocketFactory::OPT_TLS_FAKE) {
@@ -154,13 +160,13 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   if (socket->Connect(remote_address) < 0) {
     RTC_LOG(LS_ERROR) << "TCP connect failed with error " << socket->GetError();
     delete socket;
-    return NULL;
+    return nullptr;
   }
 
   // Finally, wrap that socket in a TCP or STUN TCP packet socket.
   AsyncPacketSocket* tcp_socket;
   if (tcp_options.opts & PacketSocketFactory::OPT_STUN) {
-    tcp_socket = new cricket::AsyncStunTCPSocket(socket);
+    tcp_socket = new AsyncStunTCPSocket(socket);
   } else {
     tcp_socket = new AsyncTCPSocket(socket);
   }
@@ -168,9 +174,9 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   return tcp_socket;
 }
 
-std::unique_ptr<webrtc::AsyncDnsResolverInterface>
+std::unique_ptr<AsyncDnsResolverInterface>
 BasicPacketSocketFactory::CreateAsyncDnsResolver() {
-  return std::make_unique<webrtc::AsyncDnsResolver>();
+  return std::make_unique<AsyncDnsResolver>();
 }
 
 int BasicPacketSocketFactory::BindSocket(Socket* socket,
@@ -190,4 +196,4 @@ int BasicPacketSocketFactory::BindSocket(Socket* socket,
   return ret;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

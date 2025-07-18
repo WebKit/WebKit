@@ -54,16 +54,16 @@ PROGRESSTRACKER_PROGRESSSTARTED, "ProgressTracker::progressStarted: frameID %" P
 PROGRESSTRACKER_PROGRESSCOMPLETED, "ProgressTracker::progressCompleted: frameID %" PRIu64 ", value %f, tracked frames %d, originating frameID %" PRIu64 ", isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
 PROGRESSTRACKER_FINALPROGRESSCOMPLETE, "ProgressTracker::finalProgressComplete: value %f, tracked frames %d, originating frameID %" PRIu64 ", isMainLoad %d, isMainLoadProgressing %d", (double, int, uint64_t, int, int), DEFAULT, Network
 
-FRAMELOADER_SETPROVISIONALDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setProvisionalDocumentLoader: Setting provisional document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_SETPROVISIONALDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setProvisionalDocumentLoader: Setting provisional document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
 FRAMELOADER_SETSTATE_MAIN_FRAME_LOAD_COMPLETED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setState: main frame load completed", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
-FRAMELOADER_SETPOLICYDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setPolicyDocumentLoader: Setting policy document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
-FRAMELOADER_TRANSITIONTOCOMMITTED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
-FRAMELOADER_SETDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setDocumentLoader: Setting document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
-FRAMELOADER_STOPALLLOADERS_CLEARING_PROVISIONAL_DOCUMENT_LOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: Clearing provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_SETPOLICYDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setPolicyDocumentLoader: Setting policy document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FRAMELOADER_TRANSITIONTOCOMMITTED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
+FRAMELOADER_SETDOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setDocumentLoader: Setting document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FRAMELOADER_STOPALLLOADERS_CLEARING_PROVISIONAL_DOCUMENT_LOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: Clearing provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
 FRAMELOADER_LOADWITHDOCUMENTLOADER_FRAME_LOAD_STARTED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithDocumentLoader: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 FRAMELOADER_LOADWITHDOCUMENTLOADER_MAIN_FRAME_LOAD_STARTED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithDocumentLoader: main frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
-FRAMELOADER_STOPALLLOADERS, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: m_provisionalDocumentLoader=%lx, m_documentLoader=%lx", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
-FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: Setting provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_STOPALLLOADERS, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: m_provisionalDocumentLoader=%" PRIu64 ", m_documentLoader=%" PRIu64 "", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: Setting provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
 FRAMELOADER_PREPAREFORLOADSTART, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::prepareForLoadStart: Starting frame load", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 FRAMELOADER_CHANGELOCATION, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::changeLocation: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 FRAMELOADER_LOADFRAMEREQUEST_FRAME_LOAD_STARTED, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadFrameRequest: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
@@ -117,11 +117,39 @@ HTMLMEDIAELEMENT_CANTRANSITIONFROMAUTOPLAYTOPLAY, "HTMLMediaElement::canTransiti
 HTMLMEDIAELEMENT_CONFIGURETEXTTRACKDISPLAY, "HTMLMediaElement::configureTextTrackDisplay(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
 HTMLMEDIAELEMENT_CONFIGURETEXTTRACKGROUP, "HTMLMediaElement::configureTextTrackGroup(%" PRIX64 ") %s track with language %s and BCP 47 language %s has score %d", (uint64_t, CString, CString, CString, int), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAENGINEWASUPDATED, "HTMLMediaElement::mediaEngineWasUpdated(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERCHARACTERISTICSCHANGED, "HTMLMediaElement::mediaPlayerCharacteristicChanged(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERDURATIONCHANGED, "HTMLMediaElement::mediaPlayerDurationChanged(%" PRIX64 ") duration = %f, current time = %f", (uint64_t, float, float), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERSIZECHANGED, "HTMLMediaElement::mediaPlayerSizeChanged(%" PRIX64 ") w = %f, h = %f", (uint64_t, float, float), DEFAULT, Media
+HTMLMEDIAELEMENT_PAUSE, "HTMLMediaElement::pause(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_PAUSEINTERNAL, "HTMLMediaElement::pauseInternal(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_PREPAREFORLOAD, "HTMLMediaElement::prepareForLoad(%" PRIX64 ") gesture = %d", (uint64_t, int), DEFAULT, Media
+HTMLMEDIAELEMENT_REMOVEAUDIOTRACK, "HTMLMediaElement::removeAudioTrack(%" PRIX64 ") id: %s, %s", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_SCENEIDENTIFIERDIDCHANGE, "HTMLMediaElement::sceneIdentifierDidChange(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_SCHEDULECONFIGURETEXTTRACKS_TASK_SCHEDULED, "HTMLMediaElement::scheduleConfigureTextTracks(%" PRIX64 ") task scheduled", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SCHEDULECONFIGURETEXTTRACKS_LAMBDA_TASK_FIRED, "HTMLMediaElement::scheduleConfigureTextTracks(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SCHEDULEMEDIAENGINEWASUPDATED_TASK_SCHEDULED, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") task scheduled", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SCHEDULEMEDIAENGINEWASUPDATED_LAMBDA_TASK_FIRED, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_LAMBDA_TASK_FIRED, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_NOTHING_TO_LOAD, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") nothing to load", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_HAS_SRCATTR_PLAYER_NOT_CREATED, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") has srcAttr but m_player is not created", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_ATTEMPTING_USE_OF_UNATTACHED_MEDIASOURCEHANDLE, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") Attempting to use a detached or a previously attached MediaSourceHandle", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_USING_SRCOBJECT_PROPERTY, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") using 'srcObject' property", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_USING_SRC_ATTRIBUTE_URL, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") using 'src' attribute url", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_EMPTY_SRC, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") empty 'src'", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SETAUTOPLAYEVENTPLAYBACKSTATE, "HTMLMediaElement::setAutoplayEventPlaybackState(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_SETMUTEDINTERNAL, "HTMLMediaElement::setMutedInternal(%" PRIX64 ") %d", (uint64_t, int), DEFAULT, Media
+HTMLMEDIAELEMENT_SETNETWORKSTATE, "HTMLMediaElement::setNetworkState(%" PRIX64 ") new state = %s, current state = %s", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_SETPLAYBACKRATE, "HTMLMediaElement::setPlaybackRate(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
+HTMLMEDIAELEMENT_SETREADYSTATE, "HTMLMediaElement::setReadyState(%" PRIX64 ") new state = %s, current state = %s", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_SETSHOWPOSTERFLAG, "HTMLMediaElement::setShowPosterFlag(%" PRIX64 ") %d", (uint64_t, int), DEFAULT, Media
+HTMLMEDIAELEMENT_SETVOLUME, "HTMLMediaElement::setVolume(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
 
 HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED, "HTMLVideoElement::mediaPlayerRenderingModeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLVIDEOELEMENT_MEDIAPLAYERFIRSTVIDEOFRAMEAVAILABLE, "HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable(%" PRIX64 ") m_showPoster = %d", (uint64_t, int), DEFAULT, Media
+HTMLVIDEOELEMENT_SCHEDULERESIZEEVENT, "HTMLMediaElement::scheduleResizeEvent(%" PRIX64 ") width: %f height: %f", (uint64_t, float, float), DEFAULT, Media
 
 PERFORMANCELOGGING_MEMORY_USAGE_INFO, "Memory usage info dump at %s:", (CString), DEFAULT, PerformanceLogging
-PERFORMANCELOGGING_MEMORY_USAGE_FOR_KEY, "  %s: %zu", (CString, size_t), DEFAULT, PerformanceLogging
+PERFORMANCELOGGING_MEMORY_USAGE_FOR_KEY, "  %s: %llu", (CString, uint64_t), DEFAULT, PerformanceLogging
 
 PERFORMANCEMONITOR_MEASURE_POSTLOAD_CPUUSAGE, "PerformanceMonitor::measurePostLoadCPUUsage: Process was using %.1f%% CPU after the page load.", (double), DEFAULT, PerformanceLogging
 PERFORMANCEMONITOR_MEASURE_POSTLOAD_MEMORYUSAGE, "PerformanceMonitor::measurePostLoadMemoryUsage: Process was using %" PRIu64 " bytes of memory after the page load.", (uint64_t), DEFAULT, PerformanceLogging

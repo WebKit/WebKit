@@ -20,6 +20,7 @@ promise_test(async() => {
         await localVideo.play();
         await waitForVideoFrame(localVideo);
     }
+    stream.getTracks().forEach(t => t.stop());
 }, "Check switching between playing with and without stream");
 
 promise_test(async() => {
@@ -39,6 +40,7 @@ promise_test(async() => {
         stream.addTrack(audioTrack);
         once(stream, 'onaddtrack');
     }
+    stream.getTracks().forEach(t => t.stop());
 }, "Check adding and removing a track to a stream");
 </script>
 </body>

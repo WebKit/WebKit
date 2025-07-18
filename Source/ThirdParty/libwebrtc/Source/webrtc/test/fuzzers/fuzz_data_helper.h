@@ -23,7 +23,7 @@ namespace test {
 // of when the end of the data has been reached.
 class FuzzDataHelper {
  public:
-  explicit FuzzDataHelper(rtc::ArrayView<const uint8_t> data);
+  explicit FuzzDataHelper(ArrayView<const uint8_t> data);
 
   // Returns true if n bytes can be read.
   bool CanReadBytes(size_t n) const { return data_ix_ + n <= data_.size(); }
@@ -70,9 +70,9 @@ class FuzzDataHelper {
     return select_from[index];
   }
 
-  rtc::ArrayView<const uint8_t> ReadByteArray(size_t bytes) {
+  ArrayView<const uint8_t> ReadByteArray(size_t bytes) {
     if (!CanReadBytes(bytes)) {
-      return rtc::ArrayView<const uint8_t>(nullptr, 0);
+      return ArrayView<const uint8_t>(nullptr, 0);
     }
     const size_t index_to_return = data_ix_;
     data_ix_ += bytes;
@@ -95,7 +95,7 @@ class FuzzDataHelper {
   size_t BytesLeft() const { return data_.size() - data_ix_; }
 
  private:
-  rtc::ArrayView<const uint8_t> data_;
+  ArrayView<const uint8_t> data_;
   size_t data_ix_ = 0;
 };
 

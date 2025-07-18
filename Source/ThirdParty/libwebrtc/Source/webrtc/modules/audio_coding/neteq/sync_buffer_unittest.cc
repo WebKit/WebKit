@@ -10,6 +10,11 @@
 
 #include "modules/audio_coding/neteq/sync_buffer.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/audio/audio_frame.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 
@@ -58,7 +63,7 @@ TEST(SyncBuffer, PushBackAndFlush) {
   // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = rtc::checked_cast<int16_t>(i);
+      new_data[channel][i] = checked_cast<int16_t>(i);
     }
   }
   // Push back `new_data` into `sync_buffer`. This operation should pop out
@@ -98,7 +103,7 @@ TEST(SyncBuffer, PushFrontZeros) {
   // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = rtc::checked_cast<int16_t>(1000 + i);
+      new_data[channel][i] = checked_cast<int16_t>(1000 + i);
     }
   }
   sync_buffer.PushBack(new_data);
@@ -131,7 +136,7 @@ TEST(SyncBuffer, GetNextAudioInterleaved) {
   // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = rtc::checked_cast<int16_t>(i);
+      new_data[channel][i] = checked_cast<int16_t>(i);
     }
   }
   // Push back `new_data` into `sync_buffer`. This operation should pop out

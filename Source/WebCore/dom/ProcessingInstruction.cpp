@@ -73,7 +73,7 @@ String ProcessingInstruction::nodeName() const
     return m_target;
 }
 
-Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?

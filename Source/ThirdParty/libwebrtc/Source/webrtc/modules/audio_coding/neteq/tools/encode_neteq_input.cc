@@ -10,8 +10,15 @@
 
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <utility>
 
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/rtp_headers.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -72,15 +79,15 @@ void EncodeNetEqInput::CreatePacket() {
   RTC_DCHECK(!info.send_even_if_empty);
   int num_blocks = 0;
   while (packet_data_->payload.size() == 0 && !info.send_even_if_empty) {
-    const size_t num_samples = rtc::CheckedDivExact(
+    const size_t num_samples = CheckedDivExact(
         static_cast<int>(encoder_->SampleRateHz() * kOutputPeriodMs), 1000);
 
     info = encoder_->Encode(rtp_timestamp_, generator_->Generate(num_samples),
                             &packet_data_->payload);
 
-    rtp_timestamp_ += rtc::dchecked_cast<uint32_t>(
-        num_samples * encoder_->RtpTimestampRateHz() /
-        encoder_->SampleRateHz());
+    rtp_timestamp_ +=
+        dchecked_cast<uint32_t>(num_samples * encoder_->RtpTimestampRateHz() /
+                                encoder_->SampleRateHz());
     ++num_blocks;
   }
   packet_data_->header.timestamp = info.encoded_timestamp;

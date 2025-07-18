@@ -11,10 +11,15 @@
 #include "video/quality_convergence_controller.h"
 
 #include <algorithm>
+#include <memory>
+#include <optional>
 
+#include "api/field_trials_view.h"
+#include "api/video/video_codec_type.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
+#include "video/quality_convergence_monitor.h"
 
 namespace webrtc {
 namespace {

@@ -13,8 +13,13 @@
 
 #include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_decoder.h"
 #include "vpx/vpx_frame_buffer.h"
@@ -52,10 +57,10 @@ bool Vp9FrameBufferPool::InitializeVpxUsePool(
   return true;
 }
 
-rtc::scoped_refptr<Vp9FrameBufferPool::Vp9FrameBuffer>
+scoped_refptr<Vp9FrameBufferPool::Vp9FrameBuffer>
 Vp9FrameBufferPool::GetFrameBuffer(size_t min_size) {
   RTC_DCHECK_GT(min_size, 0);
-  rtc::scoped_refptr<Vp9FrameBuffer> available_buffer = nullptr;
+  scoped_refptr<Vp9FrameBuffer> available_buffer = nullptr;
   {
     MutexLock lock(&buffers_lock_);
     // Do we have a buffer we can recycle?
@@ -149,7 +154,7 @@ int32_t Vp9FrameBufferPool::VpxGetFrameBuffer(void* user_priv,
 
   Vp9FrameBufferPool* pool = static_cast<Vp9FrameBufferPool*>(user_priv);
 
-  rtc::scoped_refptr<Vp9FrameBuffer> buffer = pool->GetFrameBuffer(min_size);
+  scoped_refptr<Vp9FrameBuffer> buffer = pool->GetFrameBuffer(min_size);
   fb->data = buffer->GetData();
   fb->size = buffer->GetDataSize();
   // Store Vp9FrameBuffer* in `priv` for use in VpxReleaseFrameBuffer.

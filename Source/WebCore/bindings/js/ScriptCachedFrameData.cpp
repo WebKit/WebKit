@@ -34,9 +34,11 @@
 
 #include "CommonVM.h"
 #include "Document.h"
+#include "FrameInlines.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"

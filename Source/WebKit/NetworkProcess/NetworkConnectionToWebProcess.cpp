@@ -217,7 +217,7 @@ void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
     m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::SetWebProcessHasUploads(m_webProcessIdentifier, hasUpload), 0);
 }
 
-void NetworkConnectionToWebProcess::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&& completionHandler)
 {
     auto url = request.url();
     MESSAGE_CHECK_COMPLETION(url.isValid(), completionHandler(makeUnexpected<WebCore::ResourceError>({ })));
@@ -257,7 +257,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
 
     if (decoder.messageReceiverName() == Messages::NetworkBroadcastChannelRegistry::messageReceiverName()) {
         if (CheckedPtr networkSession = this->networkSession())
-            networkSession->protectedBroadcastChannelRegistry()->didReceiveMessage(connection, decoder);
+            networkSession->broadcastChannelRegistry().didReceiveMessage(connection, decoder);
         return true;
     }
 
@@ -286,7 +286,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
     if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         MESSAGE_CHECK_WITH_RETURN_VALUE(builtInNotificationsEnabled(), false);
         if (CheckedPtr networkSession = this->networkSession())
-            networkSession->protectedNotificationManager()->didReceiveMessage(connection, decoder);
+            networkSession->notificationManager().didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
@@ -415,7 +415,7 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
     if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         MESSAGE_CHECK_WITH_RETURN_VALUE(builtInNotificationsEnabled(), false);
         if (CheckedPtr networkSession = this->networkSession())
-            return networkSession->protectedNotificationManager()->didReceiveSyncMessage(connection, decoder, reply);
+            return networkSession->notificationManager().didReceiveSyncMessage(connection, decoder, reply);
         return false;
     }
 #endif
@@ -452,7 +452,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
         Ref { m_networkResourceLoaders.begin()->value }->abort();
 
     if (CheckedPtr networkSession = this->networkSession()) {
-        networkSession->protectedBroadcastChannelRegistry()->removeConnection(connection);
+        networkSession->broadcastChannelRegistry().removeConnection(connection);
         for (auto& [url, topOrigin] : m_blobURLs)
             networkSession->blobRegistry().unregisterBlobURL(url, topOrigin);
         for (auto& [urlAndOrigin, count] : m_blobURLHandles) {
@@ -1189,7 +1189,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
             file->revokeFileAccess();
 
         if (CheckedPtr session = networkSession())
-            session->protectedStorageManager()->registerTemporaryBlobFilePaths(Ref { m_connection }, filePaths);
+            session->storageManager().registerTemporaryBlobFilePaths(Ref { m_connection }, filePaths);
 
         // Web process might create Blob with these files during index key generation.
         for (auto& path : filePaths)
@@ -1268,7 +1268,7 @@ void NetworkConnectionToWebProcess::hasStorageAccess(RegistrableDomain&& subFram
             resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, WTFMove(completionHandler));
             return;
         }
-        storageSession()->hasCookies(subFrameDomain, WTFMove(completionHandler));
+        CheckedRef { *storageSession() }->hasCookies(subFrameDomain, WTFMove(completionHandler));
         return;
     }
 
@@ -1524,7 +1524,7 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
 
     if (session) {
         Ref swServer = session->ensureSWServer();
-        auto allowCookieAccess = session->protectedNetworkProcess()->allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
+        auto allowCookieAccess = session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
         MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler());
         m_swContextConnection = WebSWServerToContextConnection::create(*this, webPageProxyID, WTFMove(site), serviceWorkerPageIdentifier, swServer);
     }
@@ -1697,7 +1697,7 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
     }
 
     auto registrableDomain = RegistrableDomain(scopeURL);
-    session->protectedNotificationManager()->subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+    session->notificationManager().subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)](auto&& result) mutable {
         if (RefPtr resourceLoadStatistics = weakThis && weakThis->networkSession() ? weakThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTFMove(registrableDomain), [result = WTFMove(result), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(WTFMove(result));
@@ -1715,7 +1715,7 @@ void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& sc
         return;
     }
 
-    session->protectedNotificationManager()->unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
+    session->notificationManager().unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
 
 }
 
@@ -1727,7 +1727,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL,
         return;
     }
 
-    session->protectedNotificationManager()->getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
+    session->notificationManager().getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
@@ -1738,7 +1738,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
         return;
     }
 
-    session->protectedNotificationManager()->getPermissionState(SecurityOriginData::fromURL(scopeURL), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+    session->notificationManager().getPermissionState(SecurityOriginData::fromURL(scopeURL), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
         completionHandler(static_cast<uint8_t>(state));
     });
 }
@@ -1784,7 +1784,7 @@ void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedP
 {
     m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
     if (CheckedPtr session = networkSession())
-        session->protectedStorageManager()->updateSharedPreferencesForConnection(m_connection, m_sharedPreferencesForWebProcess);
+        session->storageManager().updateSharedPreferencesForConnection(m_connection, m_sharedPreferencesForWebProcess);
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

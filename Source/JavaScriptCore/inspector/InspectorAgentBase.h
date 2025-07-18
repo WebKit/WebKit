@@ -69,7 +69,7 @@ public:
 
     String domainName() const { return m_name; }
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) = 0;
+    virtual void didCreateFrontendAndBackend() = 0;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) = 0;
     virtual void discardValues() { }
     virtual void discardAgent() { }

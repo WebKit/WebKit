@@ -1,0 +1,236 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAIT_ON_ADDRESS_NONE"},
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAIT_ON_ADDRESS_SHARED"}
+     ],
+     "name": "os_sync_wait_on_address_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAKE_BY_ADDRESS_NONE"},
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAKE_BY_ADDRESS_SHARED"}
+     ],
+     "name": "os_sync_wake_by_address_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "OS_UNFAIR_LOCK_FLAG_NONE"},
+      {"access": "public", "introduced": "18", "name": "OS_UNFAIR_LOCK_FLAG_ADAPTIVE_SPIN"}
+     ],
+     "name": "os_unfair_lock_flags_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapInt"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapIntBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapLong"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapLongBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapPtr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapPtrBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement64Barrier"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_OSAtomicDequeue"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_OSAtomicEnqueue"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndClear"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndClearBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndSet"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndSetBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSMemoryBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockLock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockTry"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockUnlock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__longjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__setjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_getcontext"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_longjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_longjmperror"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_makecontext"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address_with_deadline"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address_with_timeout"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wake_by_address_all"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wake_by_address_any"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_assert_not_owner"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_assert_owner"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_lock"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_lock_with_flags"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_trylock"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_unlock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_setcontext"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_setjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_siglongjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_sigsetjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_swapcontext"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_cache_control"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_dcache_flush"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_icache_invalidate"},
+    {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_enable_if_supported"},
+    {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_restore_if_supported"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "OSAtomic_int64_aligned64_t"},
+    {"access": "public", "name": "OSQueueHead"},
+    {"access": "public", "name": "OSSpinLock"},
+    {"access": "public", "name": "jmp_buf"},
+    {"access": "public", "name": "os_sync_wait_on_address_flags_t"},
+    {"access": "public", "name": "os_sync_wake_by_address_flags_t"},
+    {"access": "public", "introduced": "10", "name": "os_unfair_lock"},
+    {"access": "public", "name": "os_unfair_lock_flags_t"},
+    {"access": "public", "introduced": "10", "name": "os_unfair_lock_t"},
+    {"access": "public", "name": "sigjmp_buf"},
+    {"access": "public", "name": "timingsafe_token_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAIT_ON_ADDRESS_NONE"},
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAIT_ON_ADDRESS_SHARED"}
+     ],
+     "name": "os_sync_wait_on_address_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAKE_BY_ADDRESS_NONE"},
+      {"access": "public", "introduced": "17.4", "name": "OS_SYNC_WAKE_BY_ADDRESS_SHARED"}
+     ],
+     "name": "os_sync_wake_by_address_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "OS_UNFAIR_LOCK_FLAG_NONE"},
+      {"access": "public", "introduced": "18", "name": "OS_UNFAIR_LOCK_FLAG_ADAPTIVE_SPIN"}
+     ],
+     "name": "os_unfair_lock_flags_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAdd64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicAnd32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwap64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapInt"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapIntBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapLong"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapLongBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapPtr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicCompareAndSwapPtrBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicDecrement64Barrier"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_OSAtomicDequeue"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_OSAtomicEnqueue"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicIncrement64Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicOr32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndClear"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndClearBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndSet"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicTestAndSetBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32Barrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32Orig"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSAtomicXor32OrigBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSMemoryBarrier"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockLock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockTry"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_OSSpinLockUnlock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__longjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__setjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_getcontext"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_longjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_longjmperror"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_makecontext"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address_with_deadline"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wait_on_address_with_timeout"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wake_by_address_all"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_os_sync_wake_by_address_any"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_assert_not_owner"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_assert_owner"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_lock"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_lock_with_flags"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_trylock"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_unfair_lock_unlock"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_setcontext"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_setjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_siglongjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_sigsetjmp"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_swapcontext"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_cache_control"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_dcache_flush"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sys_icache_invalidate"},
+    {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_enable_if_supported"},
+    {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_restore_if_supported"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "OSAtomic_int64_aligned64_t"},
+    {"access": "public", "name": "OSQueueHead"},
+    {"access": "public", "name": "OSSpinLock"},
+    {"access": "public", "name": "jmp_buf"},
+    {"access": "public", "name": "os_sync_wait_on_address_flags_t"},
+    {"access": "public", "name": "os_sync_wake_by_address_flags_t"},
+    {"access": "public", "introduced": "10", "name": "os_unfair_lock"},
+    {"access": "public", "name": "os_unfair_lock_flags_t"},
+    {"access": "public", "introduced": "10", "name": "os_unfair_lock_t"},
+    {"access": "public", "name": "sigjmp_buf"},
+    {"access": "public", "name": "timingsafe_token_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

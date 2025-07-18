@@ -1,0 +1,22 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1600.00 2092.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1600.00 2092.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=1600 height=2092)
+
+      (interaction regions [
+        (interaction (4,3) width=116.84 height=44)
+        (clipPath move to (36,8), add line to (36,8), add curve to (36,3.58) (39.58,0) (44,0), add line to (108.84,0), add line to (108.84,0), add curve to (113.26,0) (116.84,3.58) (116.84,8), add line to (116.84,36), add line to (116.84,36), add curve to (116.84,40.42) (113.26,44) (108.84,44), add line to (44,44), add line to (44,44), add curve to (39.58,44) (36,40.42) (36,36), close subpath, move to (32,19), add curve to (32,27.84) (24.84,35) (16,35), add curve to (7.16,35) (0,27.84) (0,19), add curve to (0,10.16) (7.16,3) (16,3), add curve to (24.84,3) (32,10.16) (32,19), close subpath),
+        (interaction (4,50) width=124.84 height=57)
+        (clipPath move to (44,13), add line to (44,13), add line to (124.84,13), add line to (124.84,13), add line to (124.84,57), add line to (124.84,57), add line to (44,57), add line to (44,57), close subpath, move to (40,16.13), add line to (40,23.23), add curve to (40,32.49) (32.49,40) (23.23,40), add line to (23.22,40), add curve to (10.40,40) (0,29.60) (0,16.78), add line to (0,2.58), add curve to (0,1.15) (1.15,0) (2.58,0), add line to (30.97,0), add curve to (35.96,0) (40,4.04) (40,9.03), close subpath)])
+      )
+    )
+  )
+)
+

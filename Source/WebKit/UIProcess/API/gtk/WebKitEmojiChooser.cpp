@@ -60,7 +60,7 @@ GtkWidget* webkitEmojiChooserNew()
             return G_SOURCE_REMOVE;
         }, entry.leakRef(), nullptr);
         g_source_set_priority(source.get(), G_PRIORITY_LOW);
-        g_source_attach(source.get(), RunLoop::main().mainContext());
+        g_source_attach(source.get(), RunLoop::mainSingleton().mainContext());
 
         return g_type_from_name("GtkEmojiChooser");
     })();

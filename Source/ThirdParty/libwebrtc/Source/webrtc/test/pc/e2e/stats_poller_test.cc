@@ -41,7 +41,7 @@ class MockStatsObserver : public StatsObserverInterface {
   MOCK_METHOD(void,
               OnStatsReports,
               (absl::string_view pc_label,
-               const rtc::scoped_refptr<const RTCStatsReport>& report));
+               const scoped_refptr<const RTCStatsReport>& report));
 };
 
 TEST(StatsPollerTest, UnregisterParticipantAddedInCtor) {

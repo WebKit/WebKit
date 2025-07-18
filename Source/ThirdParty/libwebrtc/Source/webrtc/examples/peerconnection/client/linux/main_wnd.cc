@@ -80,7 +80,7 @@ gboolean SimulateLastRowActivated(gpointer data) {
   GtkTreeModel* model = gtk_tree_view_get_model(tree_view);
 
   // "if iter is NULL, then the number of toplevel nodes is returned."
-  int rows = gtk_tree_model_iter_n_children(model, NULL);
+  int rows = gtk_tree_model_iter_n_children(model, nullptr);
   GtkTreePath* lastpath = gtk_tree_path_new_from_indices(rows - 1, -1);
 
   // Select the last item in the list
@@ -154,13 +154,13 @@ GtkMainWnd::GtkMainWnd(const char* server,
                        int port,
                        bool autoconnect,
                        bool autocall)
-    : window_(NULL),
-      draw_area_(NULL),
-      vbox_(NULL),
-      server_edit_(NULL),
-      port_edit_(NULL),
-      peer_list_(NULL),
-      callback_(NULL),
+    : window_(nullptr),
+      draw_area_(nullptr),
+      vbox_(nullptr),
+      server_edit_(nullptr),
+      port_edit_(nullptr),
+      peer_list_(nullptr),
+      callback_(nullptr),
       server_(server),
       autoconnect_(autoconnect),
       autocall_(autocall) {
@@ -178,7 +178,7 @@ void GtkMainWnd::RegisterObserver(MainWndCallback* callback) {
 }
 
 bool GtkMainWnd::IsWindow() {
-  return window_ != NULL && GTK_IS_WINDOW(window_);
+  return window_ != nullptr && GTK_IS_WINDOW(window_);
 }
 
 void GtkMainWnd::MessageBox(const char* caption,
@@ -226,7 +226,7 @@ void GtkMainWnd::QueueUIThreadCallback(int msg_id, void* data) {
 }
 
 bool GtkMainWnd::Create() {
-  RTC_DCHECK(window_ == NULL);
+  RTC_DCHECK(window_ == nullptr);
 
   window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   if (window_) {
@@ -241,7 +241,7 @@ bool GtkMainWnd::Create() {
     SwitchToConnectUI();
   }
 
-  return window_ != NULL;
+  return window_ != nullptr;
 }
 
 bool GtkMainWnd::Destroy() {
@@ -249,7 +249,7 @@ bool GtkMainWnd::Destroy() {
     return false;
 
   gtk_widget_destroy(window_);
-  window_ = NULL;
+  window_ = nullptr;
 
   return true;
 }
@@ -258,13 +258,13 @@ void GtkMainWnd::SwitchToConnectUI() {
   RTC_LOG(LS_INFO) << __FUNCTION__;
 
   RTC_DCHECK(IsWindow());
-  RTC_DCHECK(vbox_ == NULL);
+  RTC_DCHECK(vbox_ == nullptr);
 
   gtk_container_set_border_width(GTK_CONTAINER(window_), 10);
 
   if (peer_list_) {
     gtk_widget_destroy(peer_list_);
-    peer_list_ = NULL;
+    peer_list_ = nullptr;
   }
 
   vbox_ = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -309,12 +309,12 @@ void GtkMainWnd::SwitchToPeerList(const Peers& peers) {
     gtk_container_set_border_width(GTK_CONTAINER(window_), 0);
     if (vbox_) {
       gtk_widget_destroy(vbox_);
-      vbox_ = NULL;
-      server_edit_ = NULL;
-      port_edit_ = NULL;
+      vbox_ = nullptr;
+      server_edit_ = nullptr;
+      port_edit_ = nullptr;
     } else if (draw_area_) {
       gtk_widget_destroy(draw_area_);
-      draw_area_ = NULL;
+      draw_area_ = nullptr;
       draw_buffer_.SetSize(0);
     }
 
@@ -342,12 +342,12 @@ void GtkMainWnd::SwitchToPeerList(const Peers& peers) {
 void GtkMainWnd::SwitchToStreamingUI() {
   RTC_LOG(LS_INFO) << __FUNCTION__;
 
-  RTC_DCHECK(draw_area_ == NULL);
+  RTC_DCHECK(draw_area_ == nullptr);
 
   gtk_container_set_border_width(GTK_CONTAINER(window_), 0);
   if (peer_list_) {
     gtk_widget_destroy(peer_list_);
-    peer_list_ = NULL;
+    peer_list_ = nullptr;
   }
 
   draw_area_ = gtk_drawing_area_new();
@@ -359,12 +359,12 @@ void GtkMainWnd::SwitchToStreamingUI() {
 
 void GtkMainWnd::OnDestroyed(GtkWidget* widget, GdkEvent* event) {
   callback_->Close();
-  window_ = NULL;
-  draw_area_ = NULL;
-  vbox_ = NULL;
-  server_edit_ = NULL;
-  port_edit_ = NULL;
-  peer_list_ = NULL;
+  window_ = nullptr;
+  draw_area_ = nullptr;
+  vbox_ = nullptr;
+  server_edit_ = nullptr;
+  port_edit_ = nullptr;
+  peer_list_ = nullptr;
 }
 
 void GtkMainWnd::OnClicked(GtkWidget* widget) {
@@ -392,7 +392,7 @@ void GtkMainWnd::OnKeyPress(GtkWidget* widget, GdkEventKey* key) {
       case GDK_KEY_KP_Enter:
       case GDK_KEY_Return:
         if (vbox_) {
-          OnClicked(NULL);
+          OnClicked(nullptr);
         } else if (peer_list_) {
           // OnRowActivated will be called automatically when the user
           // presses enter.
@@ -408,7 +408,7 @@ void GtkMainWnd::OnKeyPress(GtkWidget* widget, GdkEventKey* key) {
 void GtkMainWnd::OnRowActivated(GtkTreeView* tree_view,
                                 GtkTreePath* path,
                                 GtkTreeViewColumn* column) {
-  RTC_DCHECK(peer_list_ != NULL);
+  RTC_DCHECK(peer_list_ != nullptr);
   GtkTreeIter iter;
   GtkTreeModel* model;
   GtkTreeSelection* selection =
@@ -428,7 +428,7 @@ void GtkMainWnd::OnRedraw() {
 
   VideoRenderer* remote_renderer = remote_renderer_.get();
   if (remote_renderer && !remote_renderer->image().empty() &&
-      draw_area_ != NULL) {
+      draw_area_ != nullptr) {
     if (width_ != remote_renderer->width() ||
         height_ != remote_renderer->height()) {
       width_ = remote_renderer->width();
@@ -461,7 +461,7 @@ GtkMainWnd::VideoRenderer::VideoRenderer(
       height_(0),
       main_wnd_(main_wnd),
       rendered_track_(track_to_render) {
-  rendered_track_->AddOrUpdateSink(this, rtc::VideoSinkWants());
+  rendered_track_->AddOrUpdateSink(this, webrtc::VideoSinkWants());
 }
 
 GtkMainWnd::VideoRenderer::~VideoRenderer() {
@@ -485,7 +485,7 @@ void GtkMainWnd::VideoRenderer::SetSize(int width, int height) {
 void GtkMainWnd::VideoRenderer::OnFrame(const webrtc::VideoFrame& video_frame) {
   gdk_threads_enter();
 
-  rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(
+  webrtc::scoped_refptr<webrtc::I420BufferInterface> buffer(
       video_frame.video_frame_buffer()->ToI420());
   if (video_frame.rotation() != webrtc::kVideoRotation_0) {
     buffer = webrtc::I420Buffer::Rotate(*buffer, video_frame.rotation());

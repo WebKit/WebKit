@@ -54,7 +54,7 @@ void AdaptPartitions_Avx2(const RenderBuffer& render_buffer,
                           const FftData& G,
                           size_t num_partitions,
                           std::vector<std::vector<FftData>>* H) {
-  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
+  ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(
@@ -125,7 +125,7 @@ void ApplyFilter_Avx2(const RenderBuffer& render_buffer,
   S->re.fill(0.f);
   S->im.fill(0.f);
 
-  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
+  ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(

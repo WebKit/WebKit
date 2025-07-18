@@ -367,13 +367,13 @@ TEST(WTF_WorkQueue, ThreadSafetyAnalysisAssertIsCurrentWorks)
 #endif
 TEST(WTF_WorkQueue, MAYBE_MainWorkQueueIsCurrent)
 {
-    assertIsCurrent(WorkQueue::main());
+    assertIsCurrent(WorkQueue::mainSingleton());
     auto queue = WorkQueue::create("com.apple.WebKit.Test.MainWorkQueueIsCurrent"_s);
     queue->dispatch([] {
-        EXPECT_FALSE(WorkQueue::main().isCurrent());
+        EXPECT_FALSE(WorkQueue::mainSingleton().isCurrent());
     });
     queue->dispatchSync([] {
-        EXPECT_FALSE(WorkQueue::main().isCurrent());
+        EXPECT_FALSE(WorkQueue::mainSingleton().isCurrent());
     });
 }
 

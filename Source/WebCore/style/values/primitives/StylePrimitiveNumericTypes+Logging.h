@@ -26,6 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSSerializationContext.h"
+#include "CalculationValue.h"
 #include "StylePrimitiveNumericTypes.h"
 #include <wtf/text/TextStream.h>
 
@@ -39,7 +40,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Numeric auto const& value)
 {
-    return ts << CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { value.value, CSS::unitString(value.unit) });
+    return ts << CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { static_cast<double>(value.value), CSS::unitString(value.unit) });
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, DimensionPercentageNumeric auto const& value)

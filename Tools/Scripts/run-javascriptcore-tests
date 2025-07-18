@@ -763,6 +763,16 @@ sub processCoverageData
     generateHTMLFromProfdata();
 }
 
+sub setupEnvironment()
+{
+    my $productDir = productDir();
+    if ($^O eq "linux") {
+        setupUnixWebKitEnvironment($productDir);
+    }
+}
+
+setupEnvironment();
+
 if ($runTestMasm) { runTest("testmasm", "allMasmTestsPassed") }
 if ($runTestAir) { runTest("testair", "allAirTestsPassed") }
 if ($runTestB3) { runTest("testb3", "allB3TestsPassed") }

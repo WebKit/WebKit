@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGMaskElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "NodeName.h"
 #include "RenderElementInlines.h"
@@ -34,6 +35,7 @@
 #include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGRenderSupport.h"
 #include "SVGStringList.h"
 #include "SVGUnitTypes.h"

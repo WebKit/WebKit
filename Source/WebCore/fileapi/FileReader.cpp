@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "Exception.h"
 #include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "File.h"
 #include "Logging.h"
 #include "ProgressEvent.h"

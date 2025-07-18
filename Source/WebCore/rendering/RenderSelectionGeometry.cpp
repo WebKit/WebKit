@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderSelectionGeometry.h"
 
+#include "FloatQuad.h"
 #include "RenderText.h"
 #include <wtf/TZoneMallocInlines.h>
 

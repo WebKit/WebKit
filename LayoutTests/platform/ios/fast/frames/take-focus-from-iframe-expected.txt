@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
           layer at (0,0) size 200x40
             RenderBlock {HTML} at (0,0) size 200x40
               RenderBody {BODY} at (8,8) size 184x24
-                RenderTextControl {INPUT} at (0,0) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-          layer at (15,11) size 141x14
-            RenderBlock {DIV} at (6,3) size 143x15
+                RenderTextControl {INPUT} at (0,0) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          layer at (14,11) size 142x14
+            RenderBlock {DIV} at (6,3) size 142x14
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,60) size 784x23
+      RenderBlock {P} at (0,60) size 784x21
         RenderText {#text} at (0,0) size 374x19
           text run at (0,0) width 374: "This field should look and act focused. Try to type into it: "
-        RenderTextControl {INPUT} at (373,1) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-layer at (388,72) size 141x14
-  RenderBlock {DIV} at (6,3) size 143x15
+        RenderTextControl {INPUT} at (373,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+layer at (387,72) size 142x14
+  RenderBlock {DIV} at (6,3) size 142x14
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 3 {P} of body

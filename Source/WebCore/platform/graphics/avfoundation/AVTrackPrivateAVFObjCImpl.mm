@@ -281,13 +281,13 @@ TrackID AVTrackPrivateAVFObjCImpl::id() const
 
 AtomString AVTrackPrivateAVFObjCImpl::label() const
 {
+    ASSERT(m_assetTrack || m_mediaSelectionOption);
+
     NSArray *commonMetadata = nil;
     if (m_assetTrack)
         commonMetadata = [m_assetTrack commonMetadata];
-    else if (m_mediaSelectionOption)
+    if (![commonMetadata count] && m_mediaSelectionOption)
         commonMetadata = [m_mediaSelectionOption->avMediaSelectionOption() commonMetadata];
-    else
-        ASSERT_NOT_REACHED();
 
     NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if (![titles count])

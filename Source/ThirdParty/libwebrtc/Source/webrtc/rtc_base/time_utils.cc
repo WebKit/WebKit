@@ -25,7 +25,7 @@
 #include <minwinbase.h>
 #endif
 
-namespace rtc {
+namespace webrtc {
 
 #if defined(WEBRTC_WIN) || defined(WINUWP)
 // FileTime (January 1st 1601) to Unix time (January 1st 1970)
@@ -65,7 +65,7 @@ class TimeHelper final {
     TIME_ZONE_INFORMATION time_zone;
     GetTimeZoneInformation(&time_zone);
     int64_t time_zone_bias_ns =
-        rtc::dchecked_cast<int64_t>(time_zone.Bias) * 60 * 1000 * 1000 * 1000;
+        dchecked_cast<int64_t>(time_zone.Bias) * 60 * 1000 * 1000 * 1000;
     singleton.app_start_time_ns_ =
         (ntp_server_time_ms - kNTPTimeToUnixTimeEpochOffset) * 1000000 -
         time_zone_bias_ns;
@@ -78,9 +78,9 @@ class TimeHelper final {
     int64_t result = 0;
     LARGE_INTEGER qpcnt;
     QueryPerformanceCounter(&qpcnt);
-    result = rtc::dchecked_cast<int64_t>(
-        (rtc::dchecked_cast<uint64_t>(qpcnt.QuadPart) * 100000 /
-         rtc::dchecked_cast<uint64_t>(singleton.os_ticks_per_second_)) *
+    result = dchecked_cast<int64_t>(
+        (dchecked_cast<uint64_t>(qpcnt.QuadPart) * 100000 /
+         dchecked_cast<uint64_t>(singleton.os_ticks_per_second_)) *
         10000);
     result = singleton.app_start_time_ns_ + result -
              singleton.time_since_os_start_ns_;
@@ -92,7 +92,7 @@ class TimeHelper final {
     TIME_ZONE_INFORMATION time_zone;
     GetTimeZoneInformation(&time_zone);
     int64_t time_zone_bias_ns =
-        rtc::dchecked_cast<int64_t>(time_zone.Bias) * 60 * 1000 * 1000 * 1000;
+        dchecked_cast<int64_t>(time_zone.Bias) * 60 * 1000 * 1000 * 1000;
     FILETIME ft;
     // This will give us system file in UTC format.
     GetSystemTimeAsFileTime(&ft);
@@ -114,13 +114,13 @@ class TimeHelper final {
   void UpdateReferenceTime() {
     LARGE_INTEGER qpfreq;
     QueryPerformanceFrequency(&qpfreq);
-    os_ticks_per_second_ = rtc::dchecked_cast<int64_t>(qpfreq.QuadPart);
+    os_ticks_per_second_ = dchecked_cast<int64_t>(qpfreq.QuadPart);
 
     LARGE_INTEGER qpcnt;
     QueryPerformanceCounter(&qpcnt);
-    time_since_os_start_ns_ = rtc::dchecked_cast<int64_t>(
-        (rtc::dchecked_cast<uint64_t>(qpcnt.QuadPart) * 100000 /
-         rtc::dchecked_cast<uint64_t>(os_ticks_per_second_)) *
+    time_since_os_start_ns_ = dchecked_cast<int64_t>(
+        (dchecked_cast<uint64_t>(qpcnt.QuadPart) * 100000 /
+         dchecked_cast<uint64_t>(os_ticks_per_second_)) *
         10000);
   }
 
@@ -237,7 +237,7 @@ int64_t TimeUTCMicros() {
   struct timeval time;
   gettimeofday(&time, nullptr);
   // Convert from second (1.0) and microsecond (1e-6).
-  return (static_cast<int64_t>(time.tv_sec) * rtc::kNumMicrosecsPerSec +
+  return (static_cast<int64_t>(time.tv_sec) * kNumMicrosecsPerSec +
           time.tv_usec);
 #elif defined(WEBRTC_WIN)
   FILETIME ft;
@@ -255,4 +255,4 @@ int64_t TimeUTCMillis() {
   return TimeUTCMicros() / kNumMicrosecsPerMillisec;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

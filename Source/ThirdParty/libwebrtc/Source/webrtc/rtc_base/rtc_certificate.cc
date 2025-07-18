@@ -10,20 +10,22 @@
 
 #include "rtc_base/rtc_certificate.h"
 
+#include <cstdint>
 #include <memory>
+#include <utility>
 
+#include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/time_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 scoped_refptr<RTCCertificate> RTCCertificate::Create(
     std::unique_ptr<SSLIdentity> identity) {
   // Explicit new to access protected constructor.
-  return rtc::scoped_refptr<RTCCertificate>(
-      new RTCCertificate(identity.release()));
+  return scoped_refptr<RTCCertificate>(new RTCCertificate(identity.release()));
 }
 
 RTCCertificate::RTCCertificate(SSLIdentity* identity) : identity_(identity) {
@@ -74,4 +76,4 @@ bool RTCCertificate::operator!=(const RTCCertificate& certificate) const {
   return !(*this == certificate);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

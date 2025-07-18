@@ -787,7 +787,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_partialMixin
 
 JSC::GCClient::IsoSubspace* JSTestConditionalIncludes::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestConditionalIncludes, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestConditionalIncludes, UseCustomHeapCellType::No>(vm, "JSTestConditionalIncludes"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionalIncludes.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionalIncludes = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestConditionalIncludes.get(); },

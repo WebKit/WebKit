@@ -57,9 +57,9 @@ void FullBandErleEstimator::Reset() {
 }
 
 void FullBandErleEstimator::Update(
-    rtc::ArrayView<const float> X2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    ArrayView<const float> X2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
     const std::vector<bool>& converged_filters) {
   for (size_t ch = 0; ch < Y2.size(); ++ch) {
     if (converged_filters[ch]) {

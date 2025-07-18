@@ -47,10 +47,16 @@ class LinuxBrowserDriver(BrowserDriver):
 
     def __init__(self, browser_args):
         super().__init__(browser_args)
+        self._temp_profiledir = None
         self.process_name = self._get_first_executable_path_from_list(self.process_search_list)
         if self.process_name is None:
             raise ValueError('Cant find executable for browser {browser_name}. Searched list: {browser_process_list}'.format(
                               browser_name=self.browser_name, browser_process_list=self.process_search_list))
+
+    def _clean_temp_profiledir(self):
+        if self._temp_profiledir:
+            force_remove(self._temp_profiledir)
+            self._temp_profiledir = None
 
     def prepare_env(self, config):
         self._browser_process = None
@@ -63,7 +69,7 @@ class LinuxBrowserDriver(BrowserDriver):
         pass
 
     def restore_env(self):
-        force_remove(self._temp_profiledir)
+        self._clean_temp_profiledir()
 
     def restore_env_after_all_testing(self):
         pass
@@ -98,6 +104,7 @@ class LinuxBrowserDriver(BrowserDriver):
                 _log.error('Browser {browser_name} with pid {browser_pid} ended prematurely with return code {browser_retcode}.'.format(
                             browser_name=self.browser_name, browser_pid=self._browser_process.pid,
                             browser_retcode=self._browser_process.returncode))
+        self._clean_temp_profiledir()
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         if not self._default_browser_arguments:

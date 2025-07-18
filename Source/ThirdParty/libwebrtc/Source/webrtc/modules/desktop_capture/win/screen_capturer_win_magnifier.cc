@@ -87,7 +87,7 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
     return;
   }
 
-  int64_t capture_start_time_nanos = rtc::TimeNanos();
+  int64_t capture_start_time_nanos = webrtc::TimeNanos();
 
   // Switch to the desktop receiving user input if different from the current
   // one.
@@ -121,8 +121,8 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
 
-  int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
-                        rtc::kNumNanosecsPerMillisec;
+  int capture_time_ms = (webrtc::TimeNanos() - capture_start_time_nanos) /
+                        webrtc::kNumNanosecsPerMillisec;
   RTC_HISTOGRAM_COUNTS_1000(
       "WebRTC.DesktopCapture.Win.MagnifierCapturerFrameTime", capture_time_ms);
   frame->set_capture_time_ms(capture_time_ms);
@@ -135,12 +135,16 @@ bool ScreenCapturerWinMagnifier::GetSourceList(SourceList* sources) {
 }
 
 bool ScreenCapturerWinMagnifier::SelectSource(SourceId id) {
-  if (IsScreenValid(id, &current_device_key_)) {
+  std::wstring device_key;
+  bool valid = IsScreenValid(id, &device_key);
+  if (valid) {
     current_screen_id_ = id;
-    return true;
+    current_device_key_ = device_key;
+  } else {
+    current_screen_id_ = kFullDesktopScreenId;
+    current_device_key_ = std::nullopt;
   }
-
-  return false;
+  return valid;
 }
 
 void ScreenCapturerWinMagnifier::SetExcludedWindow(WindowId excluded_window) {

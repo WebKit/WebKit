@@ -2128,6 +2128,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_TEXTURE_ASTC_DECODE_PRECISION_EXT";
                 case 0x8F6E:
                     return "GL_NUM_SURFACE_COMPRESSION_FIXED_RATES_EXT";
+                case 0x8F6F:
+                    return "GL_FRAGMENT_SHADING_RATE_NON_TRIVIAL_COMBINERS_SUPPORTED_EXT";
                 case 0x8F94:
                     return "GL_R8_SNORM";
                 case 0x8F95:
@@ -2783,17 +2785,23 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                 case 0x96A5:
                     return "GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM";
                 case 0x96A6:
-                    return "GL_SHADING_RATE_1X1_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_1X1_PIXELS_EXT";
                 case 0x96A7:
-                    return "GL_SHADING_RATE_1X2_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_1X2_PIXELS_EXT";
                 case 0x96A8:
-                    return "GL_SHADING_RATE_2X1_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_2X1_PIXELS_EXT";
                 case 0x96A9:
-                    return "GL_SHADING_RATE_2X2_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_2X2_PIXELS_EXT";
+                case 0x96AA:
+                    return "GL_SHADING_RATE_1X4_PIXELS_EXT";
+                case 0x96AB:
+                    return "GL_SHADING_RATE_4X1_PIXELS_EXT";
                 case 0x96AC:
-                    return "GL_SHADING_RATE_4X2_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_4X2_PIXELS_EXT";
+                case 0x96AD:
+                    return "GL_SHADING_RATE_2X4_PIXELS_EXT";
                 case 0x96AE:
-                    return "GL_SHADING_RATE_4X4_PIXELS_QCOM";
+                    return "GL_SHADING_RATE_4X4_PIXELS_EXT";
                 case 0x96B0:
                     return "GL_SERIALIZED_CONTEXT_STRING_ANGLE";
                 case 0x96B1:
@@ -2854,6 +2862,40 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_SURFACE_COMPRESSION_FIXED_RATE_11BPC_EXT";
                 case 0x96CF:
                     return "GL_SURFACE_COMPRESSION_FIXED_RATE_12BPC_EXT";
+                case 0x96D0:
+                    return "GL_SHADING_RATE_EXT";
+                case 0x96D1:
+                    return "GL_SHADING_RATE_ATTACHMENT_EXT";
+                case 0x96D2:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT";
+                case 0x96D3:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT";
+                case 0x96D4:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_EXT";
+                case 0x96D5:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_EXT";
+                case 0x96D6:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_EXT";
+                case 0x96D7:
+                    return "GL_MIN_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_WIDTH_EXT";
+                case 0x96D8:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_WIDTH_EXT";
+                case 0x96D9:
+                    return "GL_MIN_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_HEIGHT_EXT";
+                case 0x96DA:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_HEIGHT_EXT";
+                case 0x96DB:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_ASPECT_RATIO_EXT";
+                case 0x96DC:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_LAYERS_EXT";
+                case 0x96DD:
+                    return "GL_FRAGMENT_SHADING_RATE_WITH_SHADER_DEPTH_STENCIL_WRITES_SUPPORTED_"
+                           "EXT";
+                case 0x96DE:
+                    return "GL_FRAGMENT_SHADING_RATE_WITH_SAMPLE_MASK_SUPPORTED_EXT";
+                case 0x96DF:
+                    return "GL_FRAGMENT_SHADING_RATE_ATTACHMENT_WITH_DEFAULT_FRAMEBUFFER_SUPPORTED_"
+                           "EXT";
                 case 0x96E0:
                     return "GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
                 case 0x96E1:
@@ -4531,6 +4573,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_DEPTH_ATTACHMENT";
                 case 0x8D20:
                     return "GL_STENCIL_ATTACHMENT";
+                case 0x96D1:
+                    return "GL_SHADING_RATE_ATTACHMENT_EXT";
                 default:
                     return UnknownEnumToString(value);
             }
@@ -5179,6 +5223,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_FETCH_PER_SAMPLE_ARM";
                 case 0x8F66:
                     return "GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM";
+                case 0x8F6F:
+                    return "GL_FRAGMENT_SHADING_RATE_NON_TRIVIAL_COMBINERS_SUPPORTED_EXT";
                 case 0x90D3:
                     return "GL_SHADER_STORAGE_BUFFER_BINDING";
                 case 0x90D4:
@@ -5265,6 +5311,28 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_DRIVER_UUID_EXT";
                 case 0x96A4:
                     return "GL_SHADING_RATE_QCOM";
+                case 0x96D0:
+                    return "GL_SHADING_RATE_EXT";
+                case 0x96D7:
+                    return "GL_MIN_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_WIDTH_EXT";
+                case 0x96D8:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_WIDTH_EXT";
+                case 0x96D9:
+                    return "GL_MIN_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_HEIGHT_EXT";
+                case 0x96DA:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_HEIGHT_EXT";
+                case 0x96DB:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_TEXEL_ASPECT_RATIO_EXT";
+                case 0x96DC:
+                    return "GL_MAX_FRAGMENT_SHADING_RATE_ATTACHMENT_LAYERS_EXT";
+                case 0x96DD:
+                    return "GL_FRAGMENT_SHADING_RATE_WITH_SHADER_DEPTH_STENCIL_WRITES_SUPPORTED_"
+                           "EXT";
+                case 0x96DE:
+                    return "GL_FRAGMENT_SHADING_RATE_WITH_SAMPLE_MASK_SUPPORTED_EXT";
+                case 0x96DF:
+                    return "GL_FRAGMENT_SHADING_RATE_ATTACHMENT_WITH_DEFAULT_FRAMEBUFFER_SUPPORTED_"
+                           "EXT";
                 default:
                     return UnknownEnumToString(value);
             }
@@ -7030,6 +7098,52 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_FLAT";
                 case 0x1D01:
                     return "GL_SMOOTH";
+                default:
+                    return UnknownEnumToString(value);
+            }
+        }
+
+        case GLESEnum::ShadingRate:
+        {
+            switch (value)
+            {
+                case 0x96A6:
+                    return "GL_SHADING_RATE_1X1_PIXELS_EXT";
+                case 0x96A7:
+                    return "GL_SHADING_RATE_1X2_PIXELS_EXT";
+                case 0x96A8:
+                    return "GL_SHADING_RATE_2X1_PIXELS_EXT";
+                case 0x96A9:
+                    return "GL_SHADING_RATE_2X2_PIXELS_EXT";
+                case 0x96AA:
+                    return "GL_SHADING_RATE_1X4_PIXELS_EXT";
+                case 0x96AB:
+                    return "GL_SHADING_RATE_4X1_PIXELS_EXT";
+                case 0x96AC:
+                    return "GL_SHADING_RATE_4X2_PIXELS_EXT";
+                case 0x96AD:
+                    return "GL_SHADING_RATE_2X4_PIXELS_EXT";
+                case 0x96AE:
+                    return "GL_SHADING_RATE_4X4_PIXELS_EXT";
+                default:
+                    return UnknownEnumToString(value);
+            }
+        }
+
+        case GLESEnum::ShadingRateCombinerOp:
+        {
+            switch (value)
+            {
+                case 0x96D2:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT";
+                case 0x96D3:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT";
+                case 0x96D4:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_EXT";
+                case 0x96D5:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_EXT";
+                case 0x96D6:
+                    return "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_EXT";
                 default:
                     return UnknownEnumToString(value);
             }

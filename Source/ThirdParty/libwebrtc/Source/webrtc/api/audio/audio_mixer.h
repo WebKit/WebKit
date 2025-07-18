@@ -11,10 +11,10 @@
 #ifndef API_AUDIO_AUDIO_MIXER_H_
 #define API_AUDIO_AUDIO_MIXER_H_
 
-#include <memory>
+#include <cstddef>
 
 #include "api/audio/audio_frame.h"
-#include "rtc_base/ref_count.h"
+#include "api/ref_count.h"
 
 namespace webrtc {
 

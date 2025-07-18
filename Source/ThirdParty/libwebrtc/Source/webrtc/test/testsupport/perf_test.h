@@ -76,7 +76,7 @@ void PrintResultList(
     absl::string_view measurement,
     absl::string_view modifier,
     absl::string_view user_story,
-    rtc::ArrayView<const double> values,
+    ArrayView<const double> values,
     absl::string_view units,
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);

@@ -102,7 +102,8 @@ private:
     };
     mutable Vector<uint64_t> m_commandEncoders;
     bool m_destroyed { false };
-} SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
+// FIXME: remove @safe once rdar://151039766 lands
+} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
 
 } // namespace WebGPU
 

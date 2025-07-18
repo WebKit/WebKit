@@ -524,7 +524,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
-            'win-deps',
             'kill-old-processes',
             'download-built-product',
             'extract-built-product',
@@ -893,7 +892,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'set-build-summary'
         ],
         'Safe-Merge-Queue': [
-            'retrieve-pr-data-from-label',
             'retrieve-pr-data-from-label',
             'retrieve-pr-data-from-label'
         ],

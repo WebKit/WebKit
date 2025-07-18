@@ -37,6 +37,7 @@
 #include "CommonAtomStrings.h"
 #include "DataCue.h"
 #include "Event.h"
+#include "ExceptionOr.h"
 #include "SourceBuffer.h"
 #include "TextTrackClient.h"
 #include "TextTrackCueList.h"

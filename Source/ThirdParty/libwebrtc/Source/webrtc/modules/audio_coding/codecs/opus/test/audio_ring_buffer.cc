@@ -10,6 +10,8 @@
 
 #include "modules/audio_coding/codecs/opus/test/audio_ring_buffer.h"
 
+#include <cstddef>
+
 #include "common_audio/ring_buffer.h"
 #include "rtc_base/checks.h"
 

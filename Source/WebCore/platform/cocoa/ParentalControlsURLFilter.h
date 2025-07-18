@@ -36,7 +36,7 @@ class WorkQueue;
 namespace WebCore {
 
 class ParentalControlsURLFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParentalControlsURLFilter);
 public:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
@@ -55,10 +55,10 @@ private:
 #else
     ParentalControlsURLFilter();
 #endif
-    RetainPtr<WCRBrowserEngineClient> effectiveWCRBrowserEngineClient();
+    WCRBrowserEngineClient* effectiveWCRBrowserEngineClient();
 
     mutable std::optional<bool> m_isEnabled;
-    RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
+    const RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     String m_configurationPath;
 #endif

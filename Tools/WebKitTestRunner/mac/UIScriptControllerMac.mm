@@ -168,7 +168,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     [table selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
     // Send the action after a short delay to simulate normal user interaction.
-    WorkQueue::protectedMain()->dispatchAfter(50_ms, [this, protectedThis = Ref { *this }, callbackID, table] {
+    WorkQueue::mainSingleton().dispatchAfter(50_ms, [this, protectedThis = Ref { *this }, callbackID, table] {
         if ([table window])
             [table sendAction:[table action] to:[table target]];
 
@@ -229,7 +229,7 @@ void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
         [activeMenu cancelTracking];
     }
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -332,7 +332,7 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
     eventSender->mouseDown(0, 0);
     eventSender->mouseUp(0, 0);
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -457,7 +457,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         currentTime += nanosecondsEventInterval;
     }
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

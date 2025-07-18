@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "Blob.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"

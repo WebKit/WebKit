@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "Autofill.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
@@ -223,13 +224,13 @@ void HTMLFormControlElement::didRecalcStyle(OptionSet<Style::Change>)
     }
 }
 
-bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLFormControlElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (!!tabIndexSetExplicitly())
-        return Element::isKeyboardFocusable(event);
+        return Element::isKeyboardFocusable(focusEventData);
     return isFocusable()
         && document().frame()
-        && document().frame()->eventHandler().tabsToAllFormControls(event);
+        && document().frame()->eventHandler().tabsToAllFormControls(focusEventData);
 }
 
 bool HTMLFormControlElement::isMouseFocusable() const

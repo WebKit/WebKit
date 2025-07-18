@@ -1252,7 +1252,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutT
 
 JSC::GCClient::IsoSubspace* JSTestDOMJIT::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDOMJIT, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDOMJIT, UseCustomHeapCellType::No>(vm, "JSTestDOMJIT"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDOMJIT.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDOMJIT = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDOMJIT.get(); },

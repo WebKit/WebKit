@@ -291,10 +291,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     [nsRequest setCachePolicy:toPlatformRequestCachePolicy(cachePolicy())];
     _CFURLRequestSetProtocolProperty([nsRequest _CFURLRequest], kCFURLRequestAllowAllPOSTCaching, kCFBooleanTrue);
 
-    double timeoutInterval = ResourceRequestBase::timeoutInterval();
-    if (timeoutInterval)
-        [nsRequest setTimeoutInterval:timeoutInterval];
-    // Otherwise, respect NSURLRequest default timeout.
+    if (double newTimeoutInterval = timeoutInterval())
+        [nsRequest setTimeoutInterval:newTimeoutInterval];
+    else
+        [nsRequest setTimeoutInterval:defaultTimeoutInterval()];
 
     [nsRequest setMainDocumentURL:firstPartyForCookies().createNSURL().get()];
     if (!httpMethod().isEmpty())

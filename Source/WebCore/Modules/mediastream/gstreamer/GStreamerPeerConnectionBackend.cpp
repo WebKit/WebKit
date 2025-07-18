@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "GStreamerCommon.h"
@@ -465,16 +466,6 @@ RTCPeerConnection& GStreamerPeerConnectionBackend::connection()
 void GStreamerPeerConnectionBackend::tearDown()
 {
     for (auto& transceiver : connection().currentTransceivers()) {
-        auto& track = transceiver->receiver().track();
-        auto& source = track.privateTrack().source();
-        if (source.isIncomingAudioSource()) {
-            auto& audioSource = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source);
-            audioSource.tearDown();
-        } else if (source.isIncomingVideoSource()) {
-            auto& videoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
-            videoSource.tearDown();
-        }
-
         if (auto senderBackend = transceiver->sender().backend())
             static_cast<GStreamerRtpSenderBackend*>(senderBackend)->tearDown();
 

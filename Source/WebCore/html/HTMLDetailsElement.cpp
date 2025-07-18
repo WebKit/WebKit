@@ -23,7 +23,6 @@
 #include "HTMLDetailsElement.h"
 
 #include "AXObjectCache.h"
-#include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -217,24 +216,6 @@ void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 void HTMLDetailsElement::toggleOpen()
 {
     setBooleanAttribute(HTMLNames::openAttr, !hasAttributeWithoutSynchronization(HTMLNames::openAttr));
-}
-
-// https://html.spec.whatwg.org/#ancestor-details-revealing-algorithm
-void revealClosedDetailsAncestors(Node& node)
-{
-    if (!node.document().settings().detailsAutoExpandEnabled())
-        return;
-
-    Ref currentNode = node;
-    while (RefPtr parent = currentNode->parentInComposedTree()) {
-        if (RefPtr slot = currentNode->assignedSlot(); slot && slot->userAgentPart() == UserAgentParts::detailsContent() && slot->shadowHost()) {
-            currentNode = *slot->shadowHost();
-            Ref details = downcast<HTMLDetailsElement>(currentNode);
-            if (!details->hasAttributeWithoutSynchronization(HTMLNames::openAttr))
-                details->toggleOpen();
-        } else
-            currentNode = *parent;
-    }
 }
 
 } // namespace WebCore

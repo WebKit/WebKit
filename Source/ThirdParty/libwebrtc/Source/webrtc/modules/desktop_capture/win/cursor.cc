@@ -28,13 +28,13 @@ namespace {
 
 #define RGBA(r, g, b, a)                                   \
   ((((a) << 24) & 0xff000000) | (((b) << 16) & 0xff0000) | \
-   (((g) << 8) & 0xff00) | ((r)&0xff))
+   (((g) << 8) & 0xff00) | ((r) & 0xff))
 
 #else  // !defined(WEBRTC_ARCH_LITTLE_ENDIAN)
 
 #define RGBA(r, g, b, a)                                   \
   ((((r) << 24) & 0xff000000) | (((g) << 16) & 0xff0000) | \
-   (((b) << 8) & 0xff00) | ((a)&0xff))
+   (((b) << 8) & 0xff00) | ((a) & 0xff))
 
 #endif  // !defined(WEBRTC_ARCH_LITTLE_ENDIAN)
 

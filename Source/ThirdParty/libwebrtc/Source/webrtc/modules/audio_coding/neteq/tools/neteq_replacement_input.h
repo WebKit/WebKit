@@ -11,9 +11,12 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_REPLACEMENT_INPUT_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_REPLACEMENT_INPUT_H_
 
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <set>
 
+#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 
 namespace webrtc {

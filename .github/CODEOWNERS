@@ -61,6 +61,8 @@
 /Tools/gstreamer/ @WebKit/glib-reviewers @philn
 /Tools/jhbuild/ @WebKit/glib-reviewers
 
+/Tools/WebKitTestRunner/InjectedBundle/Accessibility* @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
+
 # ================================================================================
 # bmalloc
 
@@ -89,7 +91,10 @@
 # ================================================================================
 # WebCore
 
+/Source/WebCore/accessibility @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
 /Source/WebCore/dom @rniwa @cdumez
+/LayoutTests/accessibility @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
+/LayoutTests/accessibility-isolated-tree @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
 /LayoutTests/fast/dom @rniwa
 /LayoutTests/fast/events @rniwa
 

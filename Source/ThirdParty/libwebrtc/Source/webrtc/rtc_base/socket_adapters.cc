@@ -25,7 +25,7 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/zero_memory.h"
 
-namespace rtc {
+namespace webrtc {
 
 BufferedReadAdapter::BufferedReadAdapter(Socket* socket, size_t size)
     : AsyncSocketAdapter(socket),
@@ -215,4 +215,4 @@ void AsyncSSLSocket::ProcessInput(char* data, size_t* len) {
     SignalReadEvent(this);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

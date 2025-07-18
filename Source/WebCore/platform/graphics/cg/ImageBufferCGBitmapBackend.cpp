@@ -32,6 +32,7 @@
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
+#include "NativeImage.h"
 #include "PixelBuffer.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>

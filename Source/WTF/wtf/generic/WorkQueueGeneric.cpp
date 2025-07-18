@@ -77,7 +77,7 @@ void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
 }
 
 WorkQueue::WorkQueue(MainTag)
-    : WorkQueueBase(RunLoop::main())
+    : WorkQueueBase(RunLoop::mainSingleton())
 {
 }
 

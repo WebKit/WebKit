@@ -159,7 +159,7 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
 
             RetainPtr destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
             RetainPtr sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
-            RunLoop::protectedMain()->dispatch([destinationPlayerLayer = WTFMove(destinationPlayerLayer), sourcePlayerLayer = WTFMove(sourcePlayerLayer)] {
+            RunLoop::mainSingleton().dispatch([destinationPlayerLayer = WTFMove(destinationPlayerLayer), sourcePlayerLayer = WTFMove(sourcePlayerLayer)] {
                 [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
             });
         } else {

@@ -40,8 +40,8 @@ LayerFilteringTransport::LayerFilteringTransport(
     const std::map<uint8_t, MediaType>& payload_type_map,
     uint32_t ssrc_to_filter_min,
     uint32_t ssrc_to_filter_max,
-    rtc::ArrayView<const RtpExtension> audio_extensions,
-    rtc::ArrayView<const RtpExtension> video_extensions)
+    ArrayView<const RtpExtension> audio_extensions,
+    ArrayView<const RtpExtension> video_extensions)
     : DirectTransport(task_queue,
                       std::move(pipe),
                       send_call,
@@ -67,8 +67,8 @@ LayerFilteringTransport::LayerFilteringTransport(
     int selected_tl,
     int selected_sl,
     const std::map<uint8_t, MediaType>& payload_type_map,
-    rtc::ArrayView<const RtpExtension> audio_extensions,
-    rtc::ArrayView<const RtpExtension> video_extensions)
+    ArrayView<const RtpExtension> audio_extensions,
+    ArrayView<const RtpExtension> video_extensions)
     : LayerFilteringTransport(task_queue,
                               std::move(pipe),
                               send_call,
@@ -86,7 +86,7 @@ bool LayerFilteringTransport::DiscardedLastPacket() const {
   return discarded_last_packet_;
 }
 
-bool LayerFilteringTransport::SendRtp(rtc::ArrayView<const uint8_t> packet,
+bool LayerFilteringTransport::SendRtp(ArrayView<const uint8_t> packet,
                                       const PacketOptions& options) {
   if (selected_tl_ == -1 && selected_sl_ == -1) {
     // Nothing to change, forward the packet immediately.
@@ -114,7 +114,7 @@ bool LayerFilteringTransport::SendRtp(rtc::ArrayView<const uint8_t> packet,
       bool end_of_frame;
 
       if (is_vp8) {
-        temporal_idx = absl::get<RTPVideoHeaderVP8>(
+        temporal_idx = std::get<RTPVideoHeaderVP8>(
                            parsed_payload->video_header.video_type_header)
                            .temporalIdx;
         spatial_idx = kNoSpatialIdx;
@@ -122,7 +122,7 @@ bool LayerFilteringTransport::SendRtp(rtc::ArrayView<const uint8_t> packet,
         non_ref_for_inter_layer_pred = false;
         end_of_frame = true;
       } else {
-        const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
+        const auto& vp9_header = std::get<RTPVideoHeaderVP9>(
             parsed_payload->video_header.video_type_header);
         temporal_idx = vp9_header.temporal_idx;
         spatial_idx = vp9_header.spatial_idx;

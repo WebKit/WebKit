@@ -32,11 +32,11 @@ namespace WebCore {
 
 class CSSCounterValue final : public CSSValue {
 public:
-    static Ref<CSSCounterValue> create(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle);
+    static Ref<CSSCounterValue> create(AtomString identifier, AtomString separator, Ref<CSSValue> counterStyle);
 
     const AtomString& identifier() const { return m_identifier; }
     const AtomString& separator() const { return m_separator; }
-    RefPtr<CSSValue> counterStyle() const { return m_counterStyle; }
+    Ref<CSSValue> counterStyle() const { return m_counterStyle; }
     String counterStyleCSSText() const;
 
     String customCSSText(const CSS::SerializationContext&) const;
@@ -44,19 +44,17 @@ public:
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
-        if (m_counterStyle) {
-            if (func(*m_counterStyle) == IterationStatus::Done)
-                return IterationStatus::Done;
-        }
+        if (func(m_counterStyle) == IterationStatus::Done)
+            return IterationStatus::Done;
         return IterationStatus::Continue;
     }
 
 private:
-    CSSCounterValue(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle);
+    CSSCounterValue(AtomString&& identifier, AtomString&& separator, Ref<CSSValue>&& counterStyle);
 
     AtomString m_identifier;
     AtomString m_separator;
-    RefPtr<CSSValue> m_counterStyle;
+    Ref<CSSValue> m_counterStyle;
 };
 
 } // namespace WebCore

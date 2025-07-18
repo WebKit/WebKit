@@ -304,9 +304,6 @@ static constexpr std::array supportedTypesOESTextureHalfFloat {
     GraphicsContextGL::HALF_FLOAT_OES,
 };
 
-#define ADD_VALUES_TO_SET(set, array) \
-    set.add(std::begin(array), std::end(array))
-
 // Counter for determining which context has the earliest active ordinal number.
 static std::atomic<uint64_t> s_lastActiveOrdinal;
 
@@ -612,9 +609,9 @@ void WebGLRenderingContextBase::initializeContextState()
     m_areOESTextureFloatFormatsAndTypesAdded = false;
     m_areOESTextureHalfFloatFormatsAndTypesAdded = false;
     m_areEXTsRGBFormatsAndTypesAdded = false;
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedFormatsES2);
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsES2);
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesES2);
+    m_supportedTexImageSourceInternalFormats.addAll(supportedFormatsES2);
+    m_supportedTexImageSourceFormats.addAll(supportedFormatsES2);
+    m_supportedTexImageSourceTypes.addAll(supportedTypesES2);
     m_packReverseRowOrderSupported = enableSupportedExtension("GL_ANGLE_reverse_row_order"_s);
 }
 
@@ -3908,18 +3905,18 @@ bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID fun
 void WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypes()
 {
     if (!m_areOESTextureFloatFormatsAndTypesAdded && m_oesTextureFloat) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesOESTextureFloat);
+        m_supportedTexImageSourceTypes.addAll(supportedTypesOESTextureFloat);
         m_areOESTextureFloatFormatsAndTypesAdded = true;
     }
 
     if (!m_areOESTextureHalfFloatFormatsAndTypesAdded && m_oesTextureHalfFloat) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesOESTextureHalfFloat);
+        m_supportedTexImageSourceTypes.addAll(supportedTypesOESTextureHalfFloat);
         m_areOESTextureHalfFloatFormatsAndTypesAdded = true;
     }
 
     if (!m_areEXTsRGBFormatsAndTypesAdded && m_extsRGB) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedInternalFormatsEXTsRGB);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsEXTsRGB);
+        m_supportedTexImageSourceInternalFormats.addAll(supportedInternalFormatsEXTsRGB);
+        m_supportedTexImageSourceFormats.addAll(supportedFormatsEXTsRGB);
         m_areEXTsRGBFormatsAndTypesAdded = true;
     }
 }
@@ -3934,9 +3931,9 @@ bool WebGLRenderingContextBase::validateTexImageSourceFormatAndType(TexImageFunc
     auto functionName = texImageFunctionName(functionID);
     auto functionType = texImageFunctionType(functionID);
     if (!m_areWebGL2TexImageSourceFormatsAndTypesAdded && isWebGL2()) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedInternalFormatsTexImageSourceES3);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsTexImageSourceES3);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesTexImageSourceES3);
+        m_supportedTexImageSourceInternalFormats.addAll(supportedInternalFormatsTexImageSourceES3);
+        m_supportedTexImageSourceFormats.addAll(supportedFormatsTexImageSourceES3);
+        m_supportedTexImageSourceTypes.addAll(supportedTypesTexImageSourceES3);
         m_areWebGL2TexImageSourceFormatsAndTypesAdded = true;
     }
 
@@ -5647,6 +5644,11 @@ void WebGLRenderingContextBase::prepareForDisplay()
 void WebGLRenderingContextBase::updateActiveOrdinal()
 {
     m_activeOrdinal = s_lastActiveOrdinal++;
+}
+
+bool WebGLRenderingContextBase::isOpaque() const
+{
+    return !m_attributes.alpha;
 }
 
 WebCoreOpaqueRoot root(WebGLRenderingContextBase* context)

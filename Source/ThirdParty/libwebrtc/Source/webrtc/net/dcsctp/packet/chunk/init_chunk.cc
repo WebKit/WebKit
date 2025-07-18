@@ -46,7 +46,8 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int InitChunk::kType;
 
-std::optional<InitChunk> InitChunk::Parse(rtc::ArrayView<const uint8_t> data) {
+std::optional<InitChunk> InitChunk::Parse(
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -68,7 +69,7 @@ std::optional<InitChunk> InitChunk::Parse(rtc::ArrayView<const uint8_t> data) {
 }
 
 void InitChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> parameters = parameters_.data();
+  webrtc::ArrayView<const uint8_t> parameters = parameters_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, parameters.size());
 
   writer.Store32<4>(*initiate_tag_);
@@ -81,8 +82,8 @@ void InitChunk::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string InitChunk::ToString() const {
-  return rtc::StringFormat("INIT, initiate_tag=0x%0x, initial_tsn=%u",
-                           *initiate_tag(), *initial_tsn());
+  return webrtc::StringFormat("INIT, initiate_tag=0x%0x, initial_tsn=%u",
+                              *initiate_tag(), *initial_tsn());
 }
 
 }  // namespace dcsctp

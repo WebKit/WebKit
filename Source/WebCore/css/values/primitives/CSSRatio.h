@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,9 @@ template<size_t I> const auto& get(const Ratio& value)
     else if constexpr (I == 1)
         return value.denominator;
 }
+
+// `Ratio` is special-cased to return a `CSSRatioValue`.
+template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const Ratio&); };
 
 } // namespace CSS
 } // namespace WebCore

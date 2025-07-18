@@ -47,7 +47,7 @@ Permissions& WorkerNavigatorPermissions::permissions(WorkerNavigator& navigator)
 Permissions& WorkerNavigatorPermissions::permissions()
 {
     if (!m_permissions)
-        m_permissions = Permissions::create(m_navigator.get());
+        lazyInitialize(m_permissions, Permissions::create(m_navigator.get()));
 
     return *m_permissions;
 }

@@ -132,7 +132,7 @@ private:
 };
 
 struct EventNames {
-    WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(EventNames); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventNames);
 public:''')
 
         for name in sorted(event_names_input.keys()):

@@ -22,6 +22,7 @@
 #include "absl/strings/string_view.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/openssl_stream_adapter.h"
 #ifdef OPENSSL_IS_BORINGSSL
 #include "rtc_base/boringssl_identity.h"
 #else
@@ -35,7 +36,7 @@
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 
-namespace rtc {
+namespace webrtc {
 
 class OpenSSLAdapter final : public SSLAdapter {
  public:
@@ -147,7 +148,7 @@ class OpenSSLAdapter final : public SSLAdapter {
 #ifdef OPENSSL_IS_BORINGSSL
   std::unique_ptr<BoringSSLIdentity> identity_;
 #else
-  std::unique_ptr<OpenSSLIdentity> identity_;
+  std::unique_ptr<webrtc::OpenSSLIdentity> identity_;
 #endif
   // Indicates whethere this is a client or a server.
   SSLRole role_;
@@ -173,7 +174,7 @@ class OpenSSLAdapter final : public SSLAdapter {
   // Holds the result of the call to run of the ssl_cert_verify_->Verify()
   bool custom_cert_verifier_status_;
   // Flag to cancel pending timeout task.
-  webrtc::ScopedTaskSafety timer_;
+  ScopedTaskSafety timer_;
 };
 
 // The OpenSSLAdapterFactory is responsbile for creating multiple new
@@ -210,8 +211,8 @@ class OpenSSLAdapterFactory : public SSLAdapterFactory {
 
  private:
   // Holds the SSLMode (DTLS,TLS) that will be used to set the session cache.
-  SSLMode ssl_mode_ = SSL_MODE_TLS;
-  SSLRole ssl_role_ = SSL_CLIENT;
+  SSLMode ssl_mode_ = webrtc::SSL_MODE_TLS;
+  SSLRole ssl_role_ = webrtc::SSL_CLIENT;
   bool ignore_bad_cert_ = false;
 
   std::unique_ptr<SSLIdentity> identity_;
@@ -232,6 +233,16 @@ class OpenSSLAdapterFactory : public SSLAdapterFactory {
 
 std::string TransformAlpnProtocols(const std::vector<std::string>& protos);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::OpenSSLAdapter;
+using ::webrtc::OpenSSLAdapterFactory;
+using ::webrtc::TransformAlpnProtocols;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_ADAPTER_H_

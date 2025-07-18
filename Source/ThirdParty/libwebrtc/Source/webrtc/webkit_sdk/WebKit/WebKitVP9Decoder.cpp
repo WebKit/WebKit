@@ -28,8 +28,8 @@
 #include "WebKitDecoder.h"
 #include "WebKitDecoderReceiver.h"
 #include "modules/video_coding/codecs/vp9/libvpx_vp9_decoder.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/cpu_info.h"
 
 namespace webrtc {
 
@@ -183,7 +183,7 @@ OSStatus startVP9DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
     decoder->m_instance->RegisterDecodeCompleteCallback(decoder->m_receiver.get());
 
     VideoDecoder::Settings settings;
-    settings.set_number_of_cores(CpuInfo::DetectNumberOfCores());
+    settings.set_number_of_cores(cpu_info::DetectNumberOfCores());
 
     auto dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
     RenderResolution frame_resolution { dimensions.width, dimensions.height };

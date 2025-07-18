@@ -102,6 +102,12 @@ class Span
         return count == 0 ? Span() : Span(mData + offset, count);
     }
 
+    constexpr Span subspan(size_type offset) const
+    {
+        ASSERT(offset <= mSize);
+        return offset == mSize ? Span() : Span(mData + offset, mSize - offset);
+    }
+
   private:
     T *mData     = nullptr;
     size_t mSize = 0;

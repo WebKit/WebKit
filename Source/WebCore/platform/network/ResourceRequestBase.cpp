@@ -287,6 +287,11 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::resetTimeoutInterval()
+{
+    setTimeoutInterval(s_defaultTimeoutInterval);
+}
+
 const URL& ResourceRequestBase::firstPartyForCookies() const
 {
     updateResourceRequest(); 

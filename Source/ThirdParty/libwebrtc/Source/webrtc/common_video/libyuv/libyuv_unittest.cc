@@ -8,20 +8,34 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "third_party/libyuv/include/libyuv.h"
-
 #include <math.h>
 #include <string.h>
 
+#include <cstdint>
+#include <cstdio>
+#include <limits>
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/video/i010_buffer.h"
+#include "api/video/i210_buffer.h"
+#include "api/video/i410_buffer.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/i422_buffer.h"
+#include "api/video/i444_buffer.h"
+#include "api/video/nv12_buffer.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "test/frame_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
+#include "third_party/libyuv/include/libyuv/rotate.h"
 
 namespace webrtc {
 
@@ -81,7 +95,7 @@ class TestLibYuv : public ::testing::Test {
 };
 
 TestLibYuv::TestLibYuv()
-    : source_file_(NULL),
+    : source_file_(nullptr),
       orig_frame_(),
       width_(352),
       height_(288),
@@ -90,41 +104,39 @@ TestLibYuv::TestLibYuv()
       frame_length_(CalcBufferSize(VideoType::kI420, 352, 288)) {}
 
 void TestLibYuv::SetUp() {
-  const std::string input_file_name =
-      webrtc::test::ResourcePath("foreman_cif", "yuv");
+  const std::string input_file_name = test::ResourcePath("foreman_cif", "yuv");
   source_file_ = fopen(input_file_name.c_str(), "rb");
-  ASSERT_TRUE(source_file_ != NULL)
+  ASSERT_TRUE(source_file_ != nullptr)
       << "Cannot read file: " << input_file_name << "\n";
 
-  rtc::scoped_refptr<I420BufferInterface> buffer(
+  scoped_refptr<I420BufferInterface> buffer(
       test::ReadI420Buffer(width_, height_, source_file_));
 
-  orig_frame_ =
-      std::make_unique<VideoFrame>(VideoFrame::Builder()
-                                       .set_video_frame_buffer(buffer)
-                                       .set_rotation(webrtc::kVideoRotation_0)
-                                       .set_timestamp_us(0)
-                                       .build());
+  orig_frame_ = std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                                 .set_video_frame_buffer(buffer)
+                                                 .set_rotation(kVideoRotation_0)
+                                                 .set_timestamp_us(0)
+                                                 .build());
 }
 
 void TestLibYuv::TearDown() {
-  if (source_file_ != NULL) {
+  if (source_file_ != nullptr) {
     ASSERT_EQ(0, fclose(source_file_));
   }
-  source_file_ = NULL;
+  source_file_ = nullptr;
 }
 
 TEST_F(TestLibYuv, ConvertTest) {
   // Reading YUV frame - testing on the first frame of the foreman sequence
   int j = 0;
   std::string output_file_name =
-      webrtc::test::OutputPath() + "LibYuvTest_conversion.yuv";
+      test::OutputPath() + "LibYuvTest_conversion.yuv";
   FILE* output_file = fopen(output_file_name.c_str(), "wb");
-  ASSERT_TRUE(output_file != NULL);
+  ASSERT_TRUE(output_file != nullptr);
 
   double psnr = 0.0;
 
-  rtc::scoped_refptr<I420Buffer> res_i420_buffer =
+  scoped_refptr<I420Buffer> res_i420_buffer =
       I420Buffer::Create(width_, height_);
 
   printf("\nConvert #%d I420 <-> I420 \n", j);
@@ -284,9 +296,9 @@ TEST_F(TestLibYuv, ConvertTest) {
 TEST_F(TestLibYuv, ConvertAlignedFrame) {
   // Reading YUV frame - testing on the first frame of the foreman sequence
   std::string output_file_name =
-      webrtc::test::OutputPath() + "LibYuvTest_conversion.yuv";
+      test::OutputPath() + "LibYuvTest_conversion.yuv";
   FILE* output_file = fopen(output_file_name.c_str(), "wb");
-  ASSERT_TRUE(output_file != NULL);
+  ASSERT_TRUE(output_file != nullptr);
 
   double psnr = 0.0;
 
@@ -294,7 +306,7 @@ TEST_F(TestLibYuv, ConvertAlignedFrame) {
   int stride_uv = 0;
   Calc16ByteAlignedStride(width_, &stride_y, &stride_uv);
 
-  rtc::scoped_refptr<I420Buffer> res_i420_buffer =
+  scoped_refptr<I420Buffer> res_i420_buffer =
       I420Buffer::Create(width_, height_, stride_y, stride_uv, stride_uv);
   std::unique_ptr<uint8_t[]> out_i420_buffer(new uint8_t[frame_length_]);
   EXPECT_EQ(0, ConvertFromI420(*orig_frame_, VideoType::kI420, 0,
@@ -367,13 +379,13 @@ TEST_F(TestLibYuv, NV12Scale4x4to2x2) {
 TEST(I420WeightedPSNRTest, SmokeTest) {
   uint8_t ref_y[] = {0, 0, 0, 0};
   uint8_t ref_uv[] = {0};
-  rtc::scoped_refptr<I420Buffer> ref_buffer =
+  scoped_refptr<I420Buffer> ref_buffer =
       I420Buffer::Copy(/*width=*/2, /*height=*/2, ref_y, /*stride_y=*/2, ref_uv,
                        /*stride_u=*/1, ref_uv, /*stride_v=*/1);
 
   uint8_t test_y[] = {1, 1, 1, 1};
   uint8_t test_uv[] = {2};
-  rtc::scoped_refptr<I420Buffer> test_buffer = I420Buffer::Copy(
+  scoped_refptr<I420Buffer> test_buffer = I420Buffer::Copy(
       /*width=*/2, /*height=*/2, test_y, /*stride_y=*/2, test_uv,
       /*stride_u=*/1, test_uv, /*stride_v=*/1);
 
@@ -382,5 +394,102 @@ TEST(I420WeightedPSNRTest, SmokeTest) {
               (6.0 * psnr(1.0) + psnr(4.0) + psnr(4.0)) / 8.0,
               /*abs_error=*/0.001);
 }
+
+#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+// Check that we catch int overflow if invalid dimensions get passed to
+// `I420Buffer::Create()`.
+TEST_F(TestLibYuv, I420DimensionsTooLarge) {
+  // Dimensions large enough to cause overflow.
+  constexpr int kWidth = 0xFFFF;
+  constexpr int kHeight = 0xAAB0;
+  // Sanity check for this test. This calculation, which is part of what
+  // `I420Buffer::Create()` will do, should cause an `int` overflow.
+  static_assert(
+      (int64_t{kWidth} * int64_t{kHeight}) > std::numeric_limits<int>::max(),
+      "");
+
+  EXPECT_DEATH(I010Buffer::Create(kWidth, kHeight),
+               "IsValueInRangeForNumericType");
+  EXPECT_DEATH(I210Buffer::Create(kWidth, kHeight),
+               "IsValueInRangeForNumericType");
+
+  int stride_uv = (kWidth + 1) / 2;
+  EXPECT_DEATH(I410Buffer::Create(kWidth, kHeight, /*stride_y=*/kWidth,
+                                  stride_uv, stride_uv),
+               "IsValueInRangeForNumericType");
+  EXPECT_DEATH(I420Buffer::Create(kWidth, kHeight, /*stride_y=*/kWidth,
+                                  stride_uv, stride_uv),
+               "IsValueInRangeForNumericType");
+  EXPECT_DEATH(I422Buffer::Create(kWidth, kHeight, /*stride_y=*/kWidth,
+                                  stride_uv, stride_uv),
+               "IsValueInRangeForNumericType");
+  EXPECT_DEATH(I444Buffer::Create(kWidth, kHeight, /*stride_y=*/kWidth,
+                                  stride_uv, stride_uv),
+               "IsValueInRangeForNumericType");
+  EXPECT_DEATH(
+      NV12Buffer::Create(kWidth, kHeight, /*stride_y=*/kWidth, stride_uv),
+      "IsValueInRangeForNumericType");
+}
+
+template <typename T>
+void TestInvalidDimensions5Params() {
+  EXPECT_DEATH(T::Create(-11, 1, /*stride_y=*/1,
+                         /*stride_u=*/1,
+                         /*stride_v=*/1),
+               "> 0");
+  EXPECT_DEATH(T::Create(1, -11, /*stride_y=*/1,
+                         /*stride_u=*/1,
+                         /*stride_v=*/1),
+               "> 0");
+  EXPECT_DEATH(T::Create(1, 1, /*stride_y=*/-12,
+                         /*stride_u=*/1,
+                         /*stride_v=*/1),
+               ">= width");
+  EXPECT_DEATH(T::Create(1, 1, /*stride_y=*/1,
+                         /*stride_u=*/-12,
+                         /*stride_v=*/1),
+               "> 0");
+  EXPECT_DEATH(T::Create(1, 1, /*stride_y=*/1,
+                         /*stride_u=*/1,
+                         /*stride_v=*/-12),
+               "> 0");
+}
+
+template <typename T>
+void TestInvalidDimensions4Params() {
+  EXPECT_DEATH(T::Create(-11, 1, /*stride_y=*/1,
+                         /*stride_uv=*/1),
+               "> 0");
+  EXPECT_DEATH(T::Create(1, -11, /*stride_y=*/1,
+                         /*stride_uv=*/1),
+               "> 0");
+  EXPECT_DEATH(T::Create(1, 1, /*stride_y=*/-12,
+                         /*stride_uv=*/1),
+               ">= width");
+  EXPECT_DEATH(T::Create(1, 1, /*stride_y=*/1,
+                         /*stride_uv=*/-12),
+               "> 0");
+}
+
+template <typename T>
+void TestInvalidDimensions2Param() {
+  EXPECT_DEATH(T::Create(-11, 1), "> 0");
+  EXPECT_DEATH(T::Create(1, -11), "> 0");
+}
+
+TEST_F(TestLibYuv, I420InvalidDimensions) {
+  // Only width and height provided to `Create()`.
+  TestInvalidDimensions2Param<I010Buffer>();
+  TestInvalidDimensions2Param<I210Buffer>();
+  // `Create() is provided with width, height, y, u, v.
+  TestInvalidDimensions5Params<I410Buffer>();
+  TestInvalidDimensions5Params<I420Buffer>();
+  TestInvalidDimensions5Params<I422Buffer>();
+  TestInvalidDimensions5Params<I444Buffer>();
+  // `Create() is provided with width, height, y, u_and_v.
+  TestInvalidDimensions4Params<NV12Buffer>();
+}
+
+#endif  // GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 }  // namespace webrtc

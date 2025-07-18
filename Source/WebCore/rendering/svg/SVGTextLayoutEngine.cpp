@@ -248,7 +248,7 @@ static inline void dumpTextBoxes(Vector<InlineIterator::SVGTextBoxIterator>& box
         fprintf(stderr, "        textBox properties, start=%d, len=%d, box direction=%d\n", textBox->start(), textBox->len(), (int)textBox->direction());
         fprintf(stderr, "   textRenderer properties, textLength=%d\n", textBox->renderer().text().length());
 
-        const auto* characters = textBox->renderer().text().characters<UChar>();
+        const auto* characters = textBox->renderer().text().characters<char16_t>();
 
         unsigned fragmentCount = fragments.size();
         for (unsigned i = 0; i < fragmentCount; ++i) {
@@ -524,7 +524,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : data.rotate;
 
         // Calculate glyph orientation angle.
-        const UChar* currentCharacter = characters.subspan(m_visualCharacterOffset).data();
+        const char16_t* currentCharacter = characters.subspan(m_visualCharacterOffset).data();
         float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, svgStyle, *currentCharacter);
 
         // Calculate glyph advance & x/y orientation shifts.

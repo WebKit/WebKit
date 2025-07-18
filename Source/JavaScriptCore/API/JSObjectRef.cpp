@@ -787,7 +787,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 }
 
 struct OpaqueJSPropertyNameArray {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaqueJSPropertyNameArray);
 public:
     // FIXME: Why not inherit from RefCounted?
     OpaqueJSPropertyNameArray(VM* vm)

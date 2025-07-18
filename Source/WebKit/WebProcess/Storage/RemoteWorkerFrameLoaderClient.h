@@ -27,12 +27,11 @@
 
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/EmptyFrameLoaderClient.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 
 namespace WebCore {
-
 class FrameLoader;
-
 }
 
 namespace WebKit {

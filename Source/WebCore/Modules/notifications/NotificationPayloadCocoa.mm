@@ -76,14 +76,14 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
 
 NSDictionary *NotificationPayload::dictionaryRepresentation() const
 {
-    id nsAppBadge = appBadge ? @(*appBadge) : [NSNull null];
-    id nsOptions = options ? options->dictionaryRepresentation() : [NSNull null];
+    RetainPtr nsAppBadge = appBadge ? @(*appBadge) : [NSNull null];
+    RetainPtr nsOptions = options ? options->dictionaryRepresentation() : [NSNull null];
 
     return @{
         WebNotificationDefaultActionKey : defaultActionURL.createNSURL().get(),
         WebNotificationTitleKey : title.createNSString().get(),
-        WebNotificationAppBadgeKey : nsAppBadge,
-        WebNotificationOptionsKey : nsOptions,
+        WebNotificationAppBadgeKey : nsAppBadge.get(),
+        WebNotificationOptionsKey : nsOptions.get(),
         WebNotificationMutableKey : @(isMutable),
     };
 }

@@ -16,6 +16,10 @@
 
 #include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_frame_type.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/deprecated/jitter_buffer_common.h"
 #include "modules/video_coding/deprecated/packet.h"
@@ -76,7 +80,7 @@ class VCMFrameBuffer : public VCMEncodedFrame {
   VCMFrameBufferStateEnum _state;  // Current state of the frame
   // Set with SetEncodedData, but keep pointer to the concrete class here, to
   // enable reallocation and mutation.
-  rtc::scoped_refptr<EncodedImageBuffer> encoded_image_buffer_;
+  scoped_refptr<EncodedImageBuffer> encoded_image_buffer_;
   VCMSessionInfo _sessionInfo;
   uint16_t _nackCount;
   int64_t _latestPacketTimeMs;

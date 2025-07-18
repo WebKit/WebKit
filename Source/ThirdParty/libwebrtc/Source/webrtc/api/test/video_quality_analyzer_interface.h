@@ -88,7 +88,7 @@ class VideoQualityAnalyzerInterface
   // thread in each method, but should remember, that it is the same thread,
   // that is used in video pipeline.
   virtual void Start(std::string /* test_case_name */,
-                     rtc::ArrayView<const std::string> /* peer_names */,
+                     ArrayView<const std::string> /* peer_names */,
                      int /* max_threads_count */) {}
 
   // Will be called when frame was generated from the input stream.
@@ -147,7 +147,7 @@ class VideoQualityAnalyzerInterface
   // Peer Connection identified by `pc_label`.
   void OnStatsReports(
       absl::string_view /* pc_label */,
-      const rtc::scoped_refptr<const RTCStatsReport>& /* report */) override {}
+      const scoped_refptr<const RTCStatsReport>& /* report */) override {}
 
   // Will be called before test adds new participant in the middle of a call.
   virtual void RegisterParticipantInCall(absl::string_view /* peer_name */) {}

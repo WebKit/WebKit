@@ -11,8 +11,6 @@
 #define MODULES_RTP_RTCP_SOURCE_RTP_DEPENDENCY_DESCRIPTOR_READER_H_
 
 #include <cstdint>
-#include <memory>
-#include <vector>
 
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
@@ -23,7 +21,7 @@ namespace webrtc {
 class RtpDependencyDescriptorReader {
  public:
   // Parses the dependency descriptor.
-  RtpDependencyDescriptorReader(rtc::ArrayView<const uint8_t> raw_data,
+  RtpDependencyDescriptorReader(ArrayView<const uint8_t> raw_data,
                                 const FrameDependencyStructure* structure,
                                 DependencyDescriptor* descriptor);
   RtpDependencyDescriptorReader(const RtpDependencyDescriptorReader&) = delete;

@@ -315,4 +315,47 @@ TEST_F(RateStatisticsTest, HandlesSomewhatLargeNumbers) {
   EXPECT_FALSE(stats_.Rate(now_ms));
 }
 
+TEST_F(RateStatisticsTest, HandlesLowFps) {
+  RateStatistics fps_stats(/*window_size_ms=*/1000, /*scale=*/1000);
+
+  const int64_t kExpectedFps = 1;
+  constexpr int64_t kTimeDelta = 1000 / kExpectedFps;
+
+  int64_t now_ms = 0;
+  EXPECT_FALSE(stats_.Rate(now_ms));
+  // Fill 1 s window.
+  while (now_ms < 1000) {
+    fps_stats.Update(1, now_ms);
+    now_ms += kTimeDelta;
+  }
+
+  // Simulate 1 fps stream for 10 seconds.
+  while (now_ms < 10000) {
+    fps_stats.Update(1, now_ms);
+    EXPECT_EQ(kExpectedFps, fps_stats.Rate(now_ms));
+    now_ms += kTimeDelta;
+  }
+}
+
+TEST_F(RateStatisticsTest, Handles25Fps) {
+  RateStatistics fps_stats(/*window_size_ms=*/1000, /*scale=*/1000);
+
+  constexpr int64_t kExpectedFps = 25;
+  constexpr int64_t kTimeDelta = 1000 / kExpectedFps;
+
+  int64_t now_ms = 0;
+  EXPECT_FALSE(stats_.Rate(now_ms));
+  // Fill 1 s window.
+  while (now_ms < 1000) {
+    fps_stats.Update(1, now_ms);
+    now_ms += kTimeDelta;
+  }
+  // Simulate 25 fps stream for 10 seconds.
+  while (now_ms < 10000) {
+    fps_stats.Update(1, now_ms);
+    EXPECT_EQ(kExpectedFps, fps_stats.Rate(now_ms));
+    now_ms += kTimeDelta;
+  }
+}
+
 }  // namespace

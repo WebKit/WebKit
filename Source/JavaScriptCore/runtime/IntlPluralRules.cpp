@@ -124,23 +124,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     StringBuilder skeletonBuilder;
 
     appendNumberFormatDigitOptionsToSkeleton(this, skeletonBuilder);
-
-    // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#notation
-    switch (m_notation) {
-    case IntlNotation::Standard:
-        break;
-    case IntlNotation::Scientific:
-        skeletonBuilder.append(" scientific"_s);
-        break;
-    case IntlNotation::Engineering:
-        skeletonBuilder.append(" engineering"_s);
-        break;
-    case IntlNotation::Compact:
-        // Intl.PluralRules does not support `compactDisplay` option
-        // https://github.com/tc39/ecma402/pull/989#issuecomment-2906752480
-        skeletonBuilder.append(" compact-short"_s);
-        break;
-    }
+    appendNumberFormatNotationOptionsToSkeleton(this, skeletonBuilder);
 
     StringView skeletonView { skeletonBuilder.toString() };
     auto upconverted = skeletonView.upconvertedCharacters();
@@ -256,7 +240,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     unumf_formatDouble(m_numberFormatter.get(), value, formattedNumber.get(), &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    Vector<UChar, 32> buffer;
+    Vector<char16_t, 32> buffer;
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
@@ -282,7 +266,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select range of plural value"_s);
 
-    Vector<UChar, 32> buffer;
+    Vector<char16_t, 32> buffer;
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);

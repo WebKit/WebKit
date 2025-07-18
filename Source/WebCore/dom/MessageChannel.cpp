@@ -30,6 +30,7 @@
 #include "MessagePort.h"
 #include "MessagePortChannelProvider.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 
 namespace WebCore {
 

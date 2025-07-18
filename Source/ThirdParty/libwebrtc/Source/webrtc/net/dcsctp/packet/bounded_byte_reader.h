@@ -51,7 +51,8 @@ inline uint32_t LoadBigEndian32(const uint8_t* data) {
 template <int FixedSize>
 class BoundedByteReader {
  public:
-  explicit BoundedByteReader(rtc::ArrayView<const uint8_t> data) : data_(data) {
+  explicit BoundedByteReader(webrtc::ArrayView<const uint8_t> data)
+      : data_(data) {
     RTC_CHECK(data.size() >= FixedSize);
   }
 
@@ -79,19 +80,19 @@ class BoundedByteReader {
   BoundedByteReader<SubSize> sub_reader(size_t variable_offset) const {
     RTC_CHECK(FixedSize + variable_offset + SubSize <= data_.size());
 
-    rtc::ArrayView<const uint8_t> sub_span =
+    webrtc::ArrayView<const uint8_t> sub_span =
         data_.subview(FixedSize + variable_offset, SubSize);
     return BoundedByteReader<SubSize>(sub_span);
   }
 
   size_t variable_data_size() const { return data_.size() - FixedSize; }
 
-  rtc::ArrayView<const uint8_t> variable_data() const {
+  webrtc::ArrayView<const uint8_t> variable_data() const {
     return data_.subview(FixedSize, data_.size() - FixedSize);
   }
 
  private:
-  const rtc::ArrayView<const uint8_t> data_;
+  const webrtc::ArrayView<const uint8_t> data_;
 };
 
 }  // namespace dcsctp

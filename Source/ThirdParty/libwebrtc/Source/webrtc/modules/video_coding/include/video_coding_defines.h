@@ -20,9 +20,7 @@
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
-#include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -63,22 +61,7 @@ class VCMReceiveCallback {
     std::optional<double> corruption_score;
   };
 
-  // TODO: bugs.webrtc.org/358039777 - Delete this function.
-  virtual int32_t FrameToRender(VideoFrame& videoFrame,  // NOLINT
-                                std::optional<uint8_t> qp,
-                                TimeDelta decode_time,
-                                VideoContentType content_type,
-                                VideoFrameType frame_type) {
-    RTC_CHECK_NOTREACHED();
-    return 0;
-  }
-
-  // TODO: bugs.webrtc.org/358039777 - Make this pure virtual.
-  virtual int32_t OnFrameToRender(const struct FrameToRender& arguments) {
-    return FrameToRender(arguments.video_frame, arguments.qp,
-                         arguments.decode_time, arguments.content_type,
-                         arguments.frame_type);
-  }
+  virtual int32_t OnFrameToRender(const FrameToRender& arguments) = 0;
 
   virtual void OnDroppedFrames(uint32_t frames_dropped);
 

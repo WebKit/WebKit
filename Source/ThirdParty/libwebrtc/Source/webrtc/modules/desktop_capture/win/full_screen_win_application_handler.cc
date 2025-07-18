@@ -38,24 +38,28 @@ bool CheckWindowClassName(HWND window, const wchar_t* class_name) {
   WCHAR buffer[kMaxClassNameLength];
 
   const int length = ::GetClassNameW(window, buffer, kMaxClassNameLength);
-  if (length <= 0)
+  if (length <= 0) {
     return false;
+  }
 
-  if (static_cast<size_t>(length) != classNameLength)
+  if (static_cast<size_t>(length) != classNameLength) {
     return false;
+  }
   return wcsncmp(buffer, class_name, classNameLength) == 0;
 }
 
 std::string WindowText(HWND window) {
   size_t len = ::GetWindowTextLength(window);
-  if (len == 0)
+  if (len == 0) {
     return std::string();
+  }
 
   std::vector<wchar_t> buffer(len + 1, 0);
   size_t copied = ::GetWindowTextW(window, buffer.data(), buffer.size());
-  if (copied == 0)
+  if (copied == 0) {
     return std::string();
-  return rtc::ToUtf8(buffer.data(), copied);
+  }
+  return webrtc::ToUtf8(buffer.data(), copied);
 }
 
 DWORD WindowProcessId(HWND window) {
@@ -66,8 +70,9 @@ DWORD WindowProcessId(HWND window) {
 
 std::wstring FileNameFromPath(const std::wstring& path) {
   auto found = path.rfind(L"\\");
-  if (found == std::string::npos)
+  if (found == std::string::npos) {
     return path;
+  }
   return path.substr(found + 1);
 }
 
@@ -88,101 +93,101 @@ DesktopCapturer::SourceList GetProcessWindows(
                });
   return result;
 }
+}  // namespace
 
-class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
- public:
-  explicit FullScreenPowerPointHandler(DesktopCapturer::SourceId sourceId)
-      : FullScreenApplicationHandler(sourceId) {}
+FullScreenPowerPointHandler::FullScreenPowerPointHandler(
+    DesktopCapturer::SourceId sourceId)
+    : FullScreenApplicationHandler(sourceId) {}
 
-  ~FullScreenPowerPointHandler() override {}
-
-  DesktopCapturer::SourceId FindFullScreenWindow(
-      const DesktopCapturer::SourceList& window_list,
-      int64_t timestamp) const override {
-    if (window_list.empty())
-      return 0;
-
-    HWND original_window = reinterpret_cast<HWND>(GetSourceId());
-    DWORD process_id = WindowProcessId(original_window);
-
-    DesktopCapturer::SourceList powerpoint_windows =
-        GetProcessWindows(window_list, process_id, original_window);
-
-    if (powerpoint_windows.empty())
-      return 0;
-
-    if (GetWindowType(original_window) != WindowType::kEditor)
-      return 0;
-
-    const auto original_document = GetDocumentFromEditorTitle(original_window);
-
-    for (const auto& source : powerpoint_windows) {
-      HWND window = reinterpret_cast<HWND>(source.id);
-
-      // Looking for slide show window for the same document
-      if (GetWindowType(window) != WindowType::kSlideShow ||
-          GetDocumentFromSlideShowTitle(window) != original_document) {
-        continue;
-      }
-
-      return source.id;
-    }
-
+DesktopCapturer::SourceId FullScreenPowerPointHandler::FindFullScreenWindow(
+    const DesktopCapturer::SourceList& window_list,
+    int64_t timestamp) const {
+  if (!UseHeuristicFullscreenPowerPointWindows() || window_list.empty()) {
     return 0;
   }
 
- private:
-  enum class WindowType { kEditor, kSlideShow, kOther };
-
-  WindowType GetWindowType(HWND window) const {
-    if (IsEditorWindow(window))
-      return WindowType::kEditor;
-    else if (IsSlideShowWindow(window))
-      return WindowType::kSlideShow;
-    else
-      return WindowType::kOther;
+  HWND original_window = reinterpret_cast<HWND>(GetSourceId());
+  if (GetWindowType(original_window) != WindowType::kEditor) {
+    return 0;
   }
 
-  constexpr static char kDocumentTitleSeparator[] = " - ";
+  DesktopCapturer::SourceList powerpoint_windows = GetProcessWindows(
+      window_list, WindowProcessId(original_window), original_window);
 
-  std::string GetDocumentFromEditorTitle(HWND window) const {
-    std::string title = WindowText(window);
-    auto position = title.find(kDocumentTitleSeparator);
-    return std::string(absl::StripAsciiWhitespace(
-        absl::string_view(title).substr(0, position)));
+  // No relevant windows with the same process id as the `original_window` were
+  // found.
+  if (powerpoint_windows.empty()) {
+    return 0;
   }
 
-  std::string GetDocumentFromSlideShowTitle(HWND window) const {
-    std::string title = WindowText(window);
-    auto left_pos = title.find(kDocumentTitleSeparator);
-    auto right_pos = title.rfind(kDocumentTitleSeparator);
-    constexpr size_t kSeparatorLength = arraysize(kDocumentTitleSeparator) - 1;
-    if (left_pos == std::string::npos || right_pos == std::string::npos)
-      return title;
+  const std::string original_document_title =
+      GetDocumentTitleFromEditor(original_window);
+  for (const auto& source : powerpoint_windows) {
+    HWND window = reinterpret_cast<HWND>(source.id);
 
-    if (right_pos > left_pos + kSeparatorLength) {
-      auto result_len = right_pos - left_pos - kSeparatorLength;
-      auto document = absl::string_view(title).substr(
-          left_pos + kSeparatorLength, result_len);
-      return std::string(absl::StripAsciiWhitespace(document));
-    } else {
-      auto document = absl::string_view(title).substr(
-          left_pos + kSeparatorLength, std::wstring::npos);
-      return std::string(absl::StripAsciiWhitespace(document));
+    // Looking for fullscreen slide show window for the corresponding editor
+    // document.
+    if (GetWindowType(window) == WindowType::kSlideShow &&
+        GetDocumentTitleFromSlideShow(window) == original_document_title) {
+      return source.id;
     }
   }
+  return 0;
+}
 
-  bool IsEditorWindow(HWND window) const {
-    return CheckWindowClassName(window, L"PPTFrameClass");
+FullScreenPowerPointHandler::WindowType
+FullScreenPowerPointHandler::GetWindowType(HWND window) const {
+  if (IsEditorWindow(window)) {
+    return WindowType::kEditor;
+  } else if (IsSlideShowWindow(window)) {
+    return WindowType::kSlideShow;
   }
 
-  bool IsSlideShowWindow(HWND window) const {
-    const LONG style = ::GetWindowLong(window, GWL_STYLE);
-    const bool min_box = WS_MINIMIZEBOX & style;
-    const bool max_box = WS_MAXIMIZEBOX & style;
-    return !min_box && !max_box;
+  return WindowType::kOther;
+}
+
+constexpr static char kDocumentTitleSeparator = '-';
+
+std::string FullScreenPowerPointHandler::GetDocumentTitleFromEditor(
+    HWND window) const {
+  std::string title = WindowText(window);
+  return std::string(absl::StripAsciiWhitespace(absl::string_view(title).substr(
+      0, title.rfind(kDocumentTitleSeparator))));
+}
+
+std::string FullScreenPowerPointHandler::GetDocumentTitleFromSlideShow(
+    HWND window) const {
+  std::string title = WindowText(window);
+  size_t position = title.find(kDocumentTitleSeparator);
+  if (position != std::string::npos) {
+    title = absl::StripAsciiWhitespace(
+        absl::string_view(title).substr(position + 1, std::wstring::npos));
   }
-};
+
+  size_t left_bracket_pos = title.find("[");
+  size_t right_bracket_pos = title.rfind("]");
+  if (left_bracket_pos == std::string::npos ||
+      right_bracket_pos == std::string::npos ||
+      right_bracket_pos <= left_bracket_pos) {
+    return title;
+  }
+
+  return std::string(absl::StripAsciiWhitespace(title.substr(
+      left_bracket_pos + 1, right_bracket_pos - left_bracket_pos - 1)));
+}
+
+bool FullScreenPowerPointHandler::IsEditorWindow(HWND window) const {
+  return CheckWindowClassName(window, L"PPTFrameClass");
+}
+
+bool FullScreenPowerPointHandler::IsSlideShowWindow(HWND window) const {
+  // TODO(https://crbug.com/409473386): Change this to use GetWindowLongPtr
+  // instead as recommended in the MS Windows API.
+  // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowlongptra
+  const bool has_minimize_or_maximize_buttons =
+      ::GetWindowLong(window, GWL_STYLE) & (WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+  return !has_minimize_or_maximize_buttons;
+}
 
 class OpenOfficeApplicationHandler : public FullScreenApplicationHandler {
  public:
@@ -192,8 +197,9 @@ class OpenOfficeApplicationHandler : public FullScreenApplicationHandler {
   DesktopCapturer::SourceId FindFullScreenWindow(
       const DesktopCapturer::SourceList& window_list,
       int64_t timestamp) const override {
-    if (window_list.empty())
+    if (window_list.empty()) {
       return 0;
+    }
 
     DWORD process_id = WindowProcessId(reinterpret_cast<HWND>(GetSourceId()));
 
@@ -225,8 +231,9 @@ class OpenOfficeApplicationHandler : public FullScreenApplicationHandler {
                        return IsSlideShowWindow(x);
                      });
 
-    if (slide_show_window == app_windows.end())
+    if (slide_show_window == app_windows.end()) {
       return 0;
+    }
 
     return slide_show_window->id;
   }
@@ -256,21 +263,21 @@ std::wstring GetPathByWindowId(HWND window_id) {
   DWORD process_id = WindowProcessId(window_id);
   HANDLE process =
       ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_id);
-  if (process == NULL)
+  if (process == NULL) {
     return L"";
+  }
   DWORD path_len = MAX_PATH;
   WCHAR path[MAX_PATH];
   std::wstring result;
-  if (::QueryFullProcessImageNameW(process, 0, path, &path_len))
+  if (::QueryFullProcessImageNameW(process, 0, path, &path_len)) {
     result = std::wstring(path, path_len);
-  else
+  } else {
     RTC_LOG_GLE(LS_ERROR) << "QueryFullProcessImageName failed.";
+  }
 
   ::CloseHandle(process);
   return result;
 }
-
-}  // namespace
 
 std::unique_ptr<FullScreenApplicationHandler>
 CreateFullScreenWinApplicationHandler(DesktopCapturer::SourceId source_id) {

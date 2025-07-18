@@ -46,7 +46,7 @@ namespace dcsctp {
 constexpr int IDataChunk::kType;
 
 std::optional<IDataChunk> IDataChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -89,7 +89,7 @@ void IDataChunk::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string IDataChunk::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "I-DATA, type=" << (options().is_unordered ? "unordered" : "ordered")
      << "::"
      << (*options().is_beginning && *options().is_end ? "complete"

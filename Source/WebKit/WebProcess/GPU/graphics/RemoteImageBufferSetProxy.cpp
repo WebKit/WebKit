@@ -170,13 +170,14 @@ void RemoteImageBufferSetProxy::didBecomeUnresponsive() const
     backend->didBecomeUnresponsive();
 }
 
-Ref<RemoteImageBufferSetProxy> RemoteImageBufferSetProxy::create(RemoteRenderingBackendProxy& renderingBackend)
+Ref<RemoteImageBufferSetProxy> RemoteImageBufferSetProxy::create(RemoteRenderingBackendProxy& renderingBackend, ImageBufferSetClient& client)
 {
-    return adoptRef(*new RemoteImageBufferSetProxy(renderingBackend));
+    return adoptRef(*new RemoteImageBufferSetProxy(renderingBackend, client));
 }
 
-RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy, ImageBufferSetClient& client)
     : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
+    , m_client(&client)
 {
 }
 
@@ -203,6 +204,12 @@ void RemoteImageBufferSetProxy::clearVolatility()
 }
 
 #if PLATFORM(COCOA)
+void RemoteImageBufferSetProxy::prepareToDisplay(const WebCore::Region& dirtyRegion, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, bool drawingRequiresClearedPixels)
+{
+    if (RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get())
+        remoteRenderingBackendProxy->prepareImageBufferSetForDisplay({ *this, dirtyRegion, supportsPartialRepaint, hasEmptyDirtyRegion, drawingRequiresClearedPixels });
+}
+
 void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBufferForDisplayOutputData outputData, RenderingUpdateID renderingUpdateID)
 {
     ASSERT(!isMainRunLoop());
@@ -240,6 +247,7 @@ void RemoteImageBufferSetProxy::close()
     assertIsMainRunLoop();
     Locker locker { m_lock };
     m_closed = true;
+    m_client = nullptr;
 
     if (RefPtr streamConnection = m_streamConnection; !m_prepareForDisplayIsPending && streamConnection) {
         streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
@@ -296,6 +304,12 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
         RefPtr { m_streamConnection }->addWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_remoteRenderingBackendProxy->workQueue(), *this, identifier().toUInt64());
     }
     m_prepareForDisplayIsPending = true;
+}
+
+void RemoteImageBufferSetProxy::setNeedsDisplay()
+{
+    if (CheckedPtr client = m_client)
+        client->setNeedsDisplay();
 }
 
 void RemoteImageBufferSetProxy::disconnect()

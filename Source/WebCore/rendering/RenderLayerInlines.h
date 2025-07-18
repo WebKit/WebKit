@@ -33,7 +33,6 @@ inline bool RenderLayer::canPaintTransparencyWithSetOpacity() const { return isB
 inline bool RenderLayer::hasBackdropFilter() const { return renderer().hasBackdropFilter(); }
 inline bool RenderLayer::hasFilter() const { return renderer().hasFilter(); }
 inline bool RenderLayer::hasPerspective() const { return renderer().style().hasPerspective(); }
-inline bool RenderLayer::isTransformed() const { return renderer().isTransformed(); }
 inline bool RenderLayer::isTransparent() const { return renderer().isTransparent() || renderer().hasMask(); }
 inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().filter().hasFilterThatMovesPixels(); }
 inline bool RenderLayer::preserves3D() const { return renderer().style().preserves3D(); }
@@ -45,6 +44,13 @@ inline Ref<Page> RenderLayer::protectedPage() const { return renderer().page(); 
 inline bool RenderLayer::hasAppleVisualEffect() const { return renderer().hasAppleVisualEffect(); }
 inline bool RenderLayer::hasAppleVisualEffectRequiringBackdropFilter() const { return renderer().hasAppleVisualEffectRequiringBackdropFilter(); }
 #endif
+
+inline bool RenderLayer::isTransformed() const
+{
+    // If the scroll offset is present, a transform is applied on top of existing
+    // transforms from the renderer.
+    return renderer().isTransformed() || m_snapshottedScrollOffsetForAnchorPositioning;
+}
 
 inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode(); } // FIXME: Why ask the renderer this given we have m_blendMode?
 

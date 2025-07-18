@@ -27,6 +27,8 @@
 #include "BroadcastChannel.h"
 
 #include "BroadcastChannelRegistry.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "ExceptionOr.h"
@@ -115,7 +117,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
         return;
     }
 
-    CheckedPtr workerLoaderProxy = downcast<WorkerGlobalScope>(*context).protectedThread()->workerLoaderProxy();
+    CheckedPtr workerLoaderProxy = downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy();
     if (!workerLoaderProxy)
         return;
 

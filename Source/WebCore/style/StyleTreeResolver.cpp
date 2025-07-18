@@ -1407,7 +1407,7 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     auto update = [&](const RenderStyle* style) {
         if (!style)
             return;
-        AnchorPositionEvaluator::updateAnchorPositionedStateForLayoutTimePositioned(element, *style, m_treeResolutionState.anchorPositionedStates);
+        AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchor(element, *style, m_treeResolutionState.anchorPositionedStates);
     };
 
     update(style);
@@ -1516,6 +1516,7 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
 
     for (auto& optionStyle : options.optionStyles) {
         auto constraints = PositionedLayoutConstraints { *box, *optionStyle, boxAxis };
+        constraints.computeInsets();
         optionsForSorting.append({ WTFMove(optionStyle), constraints.insetModifiedContainingSize() });
     }
 

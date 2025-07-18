@@ -483,15 +483,15 @@ static __strong NSData *CRLFCRLF;
         _receivedHTTPHeaders = CFHTTPMessageCreateEmpty(NULL, NO);
     }
 
-    [self _readUntilHeaderCompleteWithCallback:^(SRWebSocket *self, NSData *data) {
-      CFHTTPMessageAppendBytes(self->_receivedHTTPHeaders, (const UInt8 *)data.bytes, data.length);
+    [self _readUntilHeaderCompleteWithCallback:^(SRWebSocket *socket, NSData *data) {
+      CFHTTPMessageAppendBytes(socket->_receivedHTTPHeaders, (const UInt8 *)data.bytes, data.length);
 
-      if (CFHTTPMessageIsHeaderComplete(self->_receivedHTTPHeaders)) {
+      if (CFHTTPMessageIsHeaderComplete(socket->_receivedHTTPHeaders)) {
         SRFastLog(@"Finished reading headers %@",
-                  CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(self->_receivedHTTPHeaders)));
-        [self _HTTPHeadersDidFinish];
+                  CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(socket->_receivedHTTPHeaders)));
+        [socket _HTTPHeadersDidFinish];
       } else {
-        [self _readHTTPHeader];
+        [socket _readHTTPHeader];
       }
     }];
 }
@@ -929,15 +929,15 @@ static inline BOOL closeCodeIsValid(int closeCode) {
         }
     } else {
         assert(frame_header.payload_length <= SIZE_T_MAX);
-        [self _addConsumerWithDataLength:(size_t)frame_header.payload_length callback:^(SRWebSocket *self, NSData *newData) {
+        [self _addConsumerWithDataLength:(size_t)frame_header.payload_length callback:^(SRWebSocket *socket, NSData *newData) {
             if (isControlFrame) {
-                [self _handleFrameWithData:newData opCode:frame_header.opcode];
+                [socket _handleFrameWithData:newData opCode:frame_header.opcode];
             } else {
                 if (frame_header.fin) {
-                    [self _handleFrameWithData:self->_currentFrameData opCode:frame_header.opcode];
+                    [socket _handleFrameWithData:socket->_currentFrameData opCode:frame_header.opcode];
                 } else {
                     // TODO add assert that opcode is not a control;
-                    [self _readFrameContinue];
+                    [socket _readFrameContinue];
                 }
                 
             }
@@ -978,14 +978,14 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 {
     assert((_currentFrameCount == 0 && _currentFrameOpcode == 0) || (_currentFrameCount > 0 && _currentFrameOpcode > 0));
 
-    [self _addConsumerWithDataLength:2 callback:^(SRWebSocket *self, NSData *data) {
+    [self _addConsumerWithDataLength:2 callback:^(SRWebSocket *sself, NSData *data) {
         __block frame_header header = {0};
         
         const uint8_t *headerBuffer = data.bytes;
         assert(data.length >= 2);
         
         if (headerBuffer[0] & SRRsvMask) {
-            [self _closeWithProtocolError:@"Server used RSV bits"];
+            [sself _closeWithProtocolError:@"Server used RSV bits"];
             return;
         }
         
@@ -993,17 +993,17 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         
         BOOL isControlFrame = (receivedOpcode == SROpCodePing || receivedOpcode == SROpCodePong || receivedOpcode == SROpCodeConnectionClose);
         
-        if (!isControlFrame && receivedOpcode != 0 && self->_currentFrameCount > 0) {
-            [self _closeWithProtocolError:@"all data frames after the initial data frame must have opcode 0"];
+        if (!isControlFrame && receivedOpcode != 0 && sself->_currentFrameCount > 0) {
+            [sself _closeWithProtocolError:@"all data frames after the initial data frame must have opcode 0"];
             return;
         }
         
-        if (receivedOpcode == 0 && self->_currentFrameCount == 0) {
-            [self _closeWithProtocolError:@"cannot continue a message"];
+        if (receivedOpcode == 0 && sself->_currentFrameCount == 0) {
+            [sself _closeWithProtocolError:@"cannot continue a message"];
             return;
         }
         
-        header.opcode = receivedOpcode == 0 ? self->_currentFrameOpcode : receivedOpcode;
+        header.opcode = receivedOpcode == 0 ? sself->_currentFrameOpcode : receivedOpcode;
         
         header.fin = !!(SRFinMask & headerBuffer[0]);
         
@@ -1014,10 +1014,10 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         headerBuffer = NULL;
         
         if (header.masked) {
-            [self _closeWithProtocolError:@"Client must receive unmasked data"];
+            [sself _closeWithProtocolError:@"Client must receive unmasked data"];
         }
 
-        size_t extra_bytes_needed = header.masked ? sizeof(self->_currentReadMaskKey) : 0;
+        size_t extra_bytes_needed = header.masked ? sizeof(sself->_currentReadMaskKey) : 0;
 
         if (header.payload_length == 126) {
             extra_bytes_needed += sizeof(uint16_t);
@@ -1026,11 +1026,11 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         }
         
         if (extra_bytes_needed == 0) {
-            [self _handleFrameHeader:header curData:self->_currentFrameData];
+            [sself _handleFrameHeader:header curData:sself->_currentFrameData];
         } else {
-            [self _addConsumerWithDataLength:extra_bytes_needed callback:^(SRWebSocket *self, NSData *data) {
-                size_t mapped_size = data.length;
-                const void *mapped_buffer = data.bytes;
+            [sself _addConsumerWithDataLength:extra_bytes_needed callback:^(SRWebSocket *eself, NSData *edata) {
+                size_t mapped_size = edata.length;
+                const void *mapped_buffer = edata.bytes;
                 size_t offset = 0;
                 
                 if (header.payload_length == 126) {
@@ -1048,13 +1048,13 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
                 
                 
                 if (header.masked) {
-                  assert(mapped_size >= sizeof(self->_currentReadMaskOffset) + offset);
-                  memcpy(self->_currentReadMaskKey,
+                  assert(mapped_size >= sizeof(eself->_currentReadMaskOffset) + offset);
+                  memcpy(eself->_currentReadMaskKey,
                          ((uint8_t *)mapped_buffer) + offset,
-                         sizeof(self->_currentReadMaskKey));
+                         sizeof(eself->_currentReadMaskKey));
                 }
                 
-                [self _handleFrameHeader:header curData:self->_currentFrameData];
+                [eself _handleFrameHeader:header curData:eself->_currentFrameData];
             } readToCurrentFrame:NO unmaskBytes:NO];
         }
     } readToCurrentFrame:NO unmaskBytes:NO];

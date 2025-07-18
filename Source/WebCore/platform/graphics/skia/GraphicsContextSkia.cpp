@@ -737,10 +737,12 @@ void GraphicsContextSkia::translate(float x, float y)
     m_canvas.translate(SkFloatToScalar(x), SkFloatToScalar(y));
 }
 
-void GraphicsContextSkia::didUpdateState(GraphicsContextState& state)
+void GraphicsContextSkia::didUpdateState(GraphicsContextState&)
 {
-    // FIXME: Handle stroke changes.
-    state.didApplyChanges();
+}
+
+void GraphicsContextSkia::didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex)
+{
 }
 
 void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)

@@ -32,7 +32,7 @@
 namespace WTR {
 
 class GeolocationProviderMock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GeolocationProviderMock);
 public:
     GeolocationProviderMock(WKContextRef);
     ~GeolocationProviderMock();

@@ -36,17 +36,17 @@ ABSL_FLAG(std::string,
           "The test YUV file to run the analysis for");
 
 void CompareFiles(
-    const rtc::scoped_refptr<webrtc::test::Video>& reference_video,
-    const rtc::scoped_refptr<webrtc::test::Video>& test_video,
+    const webrtc::scoped_refptr<webrtc::test::Video>& reference_video,
+    const webrtc::scoped_refptr<webrtc::test::Video>& test_video,
     const char* results_file_name) {
   FILE* results_file = fopen(results_file_name, "w");
 
   const size_t num_frames = std::min(reference_video->number_of_frames(),
                                      test_video->number_of_frames());
   for (size_t i = 0; i < num_frames; ++i) {
-    const rtc::scoped_refptr<webrtc::I420BufferInterface> ref_buffer =
+    const webrtc::scoped_refptr<webrtc::I420BufferInterface> ref_buffer =
         reference_video->GetFrame(i);
-    const rtc::scoped_refptr<webrtc::I420BufferInterface> test_buffer =
+    const webrtc::scoped_refptr<webrtc::I420BufferInterface> test_buffer =
         test_video->GetFrame(i);
 
     // Calculate the PSNR and SSIM.
@@ -83,9 +83,9 @@ int main(int argc, char* argv[]) {
       "--test_file=test.yuv --results_file=results.txt\n");
   absl::ParseCommandLine(argc, argv);
 
-  rtc::scoped_refptr<webrtc::test::Video> reference_video =
+  webrtc::scoped_refptr<webrtc::test::Video> reference_video =
       webrtc::test::OpenY4mFile(absl::GetFlag(FLAGS_reference_file));
-  rtc::scoped_refptr<webrtc::test::Video> test_video =
+  webrtc::scoped_refptr<webrtc::test::Video> test_video =
       webrtc::test::OpenY4mFile(absl::GetFlag(FLAGS_test_file));
 
   if (!reference_video || !test_video) {

@@ -11,21 +11,23 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_TEST_VIDEOCODEC_TEST_FIXTURE_IMPL_H_
 #define MODULES_VIDEO_CODING_CODECS_TEST_VIDEOCODEC_TEST_FIXTURE_IMPL_H_
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "api/environment/environment.h"
 #include "api/test/videocodec_test_fixture.h"
+#include "api/test/videocodec_test_stats.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "common_video/h264/h264_common.h"
 #include "modules/video_coding/codecs/test/videocodec_test_stats_impl.h"
 #include "modules/video_coding/codecs/test/videoprocessor.h"
-#include "modules/video_coding/utility/ivf_file_writer.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/testsupport/frame_reader.h"
-#include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
 namespace test {

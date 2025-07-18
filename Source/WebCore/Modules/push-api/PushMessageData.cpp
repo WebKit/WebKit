@@ -27,6 +27,7 @@
 #include "PushMessageData.h"
 
 #include "Blob.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "TextResourceDecoder.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>

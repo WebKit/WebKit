@@ -27,10 +27,9 @@
 
 #include <concepts>
 #include <type_traits>
+#include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -77,7 +76,7 @@ protected:
         : m_size(span.size())
     {
         static_assert(std::is_final_v<Derived>);
-        std::uninitialized_copy(span.data(), span.data() + span.size(), begin());
+        std::uninitialized_copy(span.begin(), span.end(), begin());
     }
 
     template<typename InputIterator>
@@ -103,8 +102,8 @@ protected:
     {
         static_assert(std::is_final_v<Derived>);
 
-        for (size_t i = 0; i < m_size; ++i)
-            new (NotNull, std::addressof(begin()[i])) T(generator(i));
+        for (auto[i, item] : indexedRange(span()))
+            new (NotNull, std::addressof(item)) T(generator(i));
     }
 
     // This constructor, which is used via the `Failable` token, will attempt
@@ -124,9 +123,9 @@ protected:
     {
         static_assert(std::is_final_v<Derived>);
 
-        for (size_t i = 0; i < m_size; ++i) {
+        for (auto[i, item] : indexedRange(span())) {
             if (auto value = generator(i))
-                new (NotNull, std::addressof(begin()[i])) T(WTFMove(*value));
+                new (NotNull, std::addressof(item)) T(WTFMove(*value));
             else {
                 m_size = i;
                 return;
@@ -140,11 +139,10 @@ protected:
     {
         static_assert(std::is_final_v<Derived>);
 
+        auto span = this->span();
         size_t index = 0;
-        for (const auto& element : range) {
-            new (NotNull, std::addressof(begin()[index])) T(mapper(element));
-            index++;
-        }
+        for (const auto& element : range)
+            new (NotNull, std::addressof(span[index++])) T(mapper(element));
     }
 
     ~TrailingArray()
@@ -162,17 +160,15 @@ public:
     bool isEmpty() const { return !size(); }
     unsigned byteSize() const { return size() * sizeof(T); }
 
-    pointer data() LIFETIME_BOUND { return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
-    const_pointer data() const LIFETIME_BOUND { return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
-    std::span<T> span() LIFETIME_BOUND { return { data(), size() }; }
-    std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
+    std::span<T> span() LIFETIME_BOUND { return unsafeMakeSpan(data(), size()); }
+    std::span<const T> span() const LIFETIME_BOUND { return unsafeMakeSpan(data(), size()); }
 
-    iterator begin() LIFETIME_BOUND { return data(); }
-    iterator end() LIFETIME_BOUND { return data() + size(); }
+    iterator begin() LIFETIME_BOUND { return std::to_address(span().begin()); }
+    iterator end() LIFETIME_BOUND { return std::to_address(span().end()); }
     const_iterator begin() const LIFETIME_BOUND { return cbegin(); }
     const_iterator end() const LIFETIME_BOUND { return cend(); }
-    const_iterator cbegin() const LIFETIME_BOUND { return data(); }
-    const_iterator cend() const LIFETIME_BOUND { return data() + size(); }
+    const_iterator cbegin() const LIFETIME_BOUND { return std::to_address(span().begin()); }
+    const_iterator cend() const LIFETIME_BOUND { return std::to_address(span().end()); }
 
     reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
     reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
@@ -181,17 +177,9 @@ public:
     const_reverse_iterator crbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
     const_reverse_iterator crend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
 
-    reference at(unsigned i) LIFETIME_BOUND
-    {
-        RELEASE_ASSERT(i < size());
-        return begin()[i];
-    }
+    reference at(unsigned i) LIFETIME_BOUND { return span()[i]; }
 
-    const_reference at(unsigned i) const LIFETIME_BOUND
-    {
-        RELEASE_ASSERT(i < size());
-        return begin()[i];
-    }
+    const_reference at(unsigned i) const LIFETIME_BOUND { return span()[i]; }
 
     reference operator[](unsigned i) LIFETIME_BOUND { return at(i); }
     const_reference operator[](unsigned i) const LIFETIME_BOUND { return at(i); }
@@ -213,11 +201,14 @@ public:
     }
 
 protected:
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    pointer data() LIFETIME_BOUND { return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
+    const_pointer data() const LIFETIME_BOUND { return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     unsigned m_size { 0 };
 };
 
 } // namespace WTF
 
 using WTF::TrailingArray;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

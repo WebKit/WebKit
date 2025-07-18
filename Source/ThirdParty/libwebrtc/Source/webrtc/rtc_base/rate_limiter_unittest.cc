@@ -123,8 +123,8 @@ class ThreadTask {
   virtual void DoRun() = 0;
 
   RateLimiter* const rate_limiter_;
-  rtc::Event start_signal_;
-  rtc::Event end_signal_;
+  Event start_signal_;
+  Event end_signal_;
 };
 
 TEST_F(RateLimitTest, MultiThreadedUsage) {
@@ -145,7 +145,7 @@ TEST_F(RateLimitTest, MultiThreadedUsage) {
       EXPECT_TRUE(rate_limiter_->SetWindowSize(kWindowSizeMs / 2));
     }
   } set_window_size_task(rate_limiter.get());
-  auto thread1 = rtc::PlatformThread::SpawnJoinable(
+  auto thread1 = PlatformThread::SpawnJoinable(
       [&set_window_size_task] { set_window_size_task.Run(); }, "Thread1");
 
   class SetMaxRateTask : public ThreadTask {
@@ -156,7 +156,7 @@ TEST_F(RateLimitTest, MultiThreadedUsage) {
 
     void DoRun() override { rate_limiter_->SetMaxRate(kMaxRateBps * 2); }
   } set_max_rate_task(rate_limiter.get());
-  auto thread2 = rtc::PlatformThread::SpawnJoinable(
+  auto thread2 = PlatformThread::SpawnJoinable(
       [&set_max_rate_task] { set_max_rate_task.Run(); }, "Thread2");
 
   class UseRateTask : public ThreadTask {
@@ -173,7 +173,7 @@ TEST_F(RateLimitTest, MultiThreadedUsage) {
 
     SimulatedClock* const clock_;
   } use_rate_task(rate_limiter.get(), &clock_);
-  auto thread3 = rtc::PlatformThread::SpawnJoinable(
+  auto thread3 = PlatformThread::SpawnJoinable(
       [&use_rate_task] { use_rate_task.Run(); }, "Thread3");
 
   set_window_size_task.start_signal_.Set();

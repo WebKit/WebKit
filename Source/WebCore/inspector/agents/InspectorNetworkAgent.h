@@ -81,7 +81,7 @@ public:
     static bool cachedResourceContent(CachedResource&, String* result, bool* base64Encoded);
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
     // NetworkBackendDispatcherHandler
@@ -233,11 +233,11 @@ private:
         bool m_responded { false };
     };
 
-    std::unique_ptr<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
-    std::unique_ptr<NetworkResourcesData> m_resourcesData;
+    const UniqueRef<NetworkResourcesData> m_resourcesData;
 
     MemoryCompactRobinHoodHashMap<String, String> m_extraRequestHeaders;
     HashSet<ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;

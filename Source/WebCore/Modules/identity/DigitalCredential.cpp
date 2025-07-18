@@ -68,6 +68,11 @@ static ExceptionOr<UnvalidatedDigitalCredentialRequest> jsToCredentialRequest(co
     auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
     auto* globalObject = document.globalObject();
 
+    // Check that the object is JSON stringifiable.
+    JSC::JSONStringify(globalObject, request.data.get(), 0);
+    if (scope.exception()) [[unlikely]]
+        return Exception { ExceptionCode::ExistingExceptionError };
+
     switch (request.protocol) {
     case IdentityCredentialProtocol::OrgIsoMdoc: {
         auto result = convertDictionary<MobileDocumentRequest>(*globalObject, request.data.get());

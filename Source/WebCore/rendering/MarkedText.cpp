@@ -34,6 +34,7 @@
 #include "HighlightRegistry.h"
 #include "RenderBoxModelObject.h"
 #include "RenderHighlight.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"

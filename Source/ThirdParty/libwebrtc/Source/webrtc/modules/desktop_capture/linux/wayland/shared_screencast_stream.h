@@ -27,7 +27,7 @@ namespace webrtc {
 class SharedScreenCastStreamPrivate;
 
 class RTC_EXPORT SharedScreenCastStream
-    : public rtc::RefCountedNonVirtual<SharedScreenCastStream> {
+    : public webrtc::RefCountedNonVirtual<SharedScreenCastStream> {
  public:
   class Observer {
    public:
@@ -46,7 +46,7 @@ class RTC_EXPORT SharedScreenCastStream
     virtual ~Observer() = default;
   };
 
-  static rtc::scoped_refptr<SharedScreenCastStream> CreateDefault();
+  static webrtc::scoped_refptr<SharedScreenCastStream> CreateDefault();
 
   bool StartScreenCastStream(uint32_t stream_node_id);
   bool StartScreenCastStream(uint32_t stream_node_id,

@@ -11,9 +11,16 @@
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

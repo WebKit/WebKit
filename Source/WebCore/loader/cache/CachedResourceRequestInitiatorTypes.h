@@ -40,7 +40,8 @@ struct CachedResourceRequestInitiatorTypes {
     const AtomString icon;
     const AtomString navigation;
     const AtomString xmlhttprequest;
-    WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes); WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceRequestInitiatorTypes, Loader);
 private:
     friend class ThreadGlobalData;
 };

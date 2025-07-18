@@ -13,22 +13,34 @@
 #include <stddef.h>
 
 #include <algorithm>
-#include <cmath>
+#include <cstdint>
 #include <iterator>
 #include <optional>
+#include <tuple>
 #include <utility>
+#include <variant>
 
 #include "absl/algorithm/container.h"
-#include "absl/types/variant.h"
+#include "api/field_trials_view.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/encoded_frame.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "modules/include/module_common_types_public.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/timing/timing.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/string_encode.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
@@ -44,7 +56,7 @@ constexpr size_t kDecoderFrameMemoryLength = 10;
 VCMDecodedFrameCallback::VCMDecodedFrameCallback(
     VCMTiming* timing,
     Clock* clock,
-    const FieldTrialsView& field_trials,
+    const FieldTrialsView& /* field_trials */,
     CorruptionScoreCalculator* corruption_score_calculator)
     : _clock(clock),
       _timing(timing),
@@ -138,7 +150,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   if (corruption_score_calculator_ &&
       frame_info->frame_instrumentation_data.has_value()) {
     if (const FrameInstrumentationData* data =
-            absl::get_if<FrameInstrumentationData>(
+            std::get_if<FrameInstrumentationData>(
                 &*frame_info->frame_instrumentation_data)) {
       corruption_score = corruption_score_calculator_->CalculateCorruptionScore(
           decodedImage, *data);
@@ -280,7 +292,7 @@ void VCMDecodedFrameCallback::ClearTimestampMap() {
 }
 
 VCMGenericDecoder::VCMGenericDecoder(VideoDecoder* decoder)
-    : _callback(NULL),
+    : _callback(nullptr),
       decoder_(decoder),
       _last_keyframe_content_type(VideoContentType::UNSPECIFIED) {
   RTC_DCHECK(decoder_);
@@ -317,7 +329,7 @@ int32_t VCMGenericDecoder::Decode(
     Timestamp now,
     int64_t render_time_ms,
     const std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
         frame_instrumentation_data) {
   TRACE_EVENT("webrtc", "VCMGenericDecoder::Decode",
               perfetto::Flow::ProcessScoped(frame.RtpTimestamp()));

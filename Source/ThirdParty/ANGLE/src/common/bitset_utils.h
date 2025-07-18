@@ -166,7 +166,6 @@ class BitSetT final
     constexpr BitSetT &flip();
     constexpr BitSetT &flip(ParamT pos);
 
-    constexpr unsigned long to_ulong() const { return static_cast<unsigned long>(mBits); }
     constexpr BitsT bits() const { return mBits; }
 
     Iterator begin() const { return Iterator(*this); }
@@ -650,15 +649,6 @@ class BitSetArray final
     constexpr static std::size_t size() { return N; }
     Iterator begin() const { return Iterator(*this, 0); }
     Iterator end() const { return Iterator(*this, kArraySize); }
-    constexpr unsigned long to_ulong() const
-    {
-        // TODO(anglebug.com/42264163): Handle serializing more than kDefaultBitSetSize
-        for (std::size_t index = 1; index < kArraySize; index++)
-        {
-            ASSERT(mBaseBitSetArray[index].none());
-        }
-        return static_cast<unsigned long>(mBaseBitSetArray[0].to_ulong());
-    }
 
     // Assignment operators
     constexpr BitSetArray &operator&=(const BitSetArray &other);
@@ -699,6 +689,7 @@ class BitSetArray final
     constexpr param_type last() const;
 
     constexpr value_type bits(size_t index) const;
+    constexpr static size_t ArraySize() { return kArraySize; }
 
     // Produces a mask of ones up to the "x"th bit.
     constexpr static BitSetArray Mask(std::size_t x);

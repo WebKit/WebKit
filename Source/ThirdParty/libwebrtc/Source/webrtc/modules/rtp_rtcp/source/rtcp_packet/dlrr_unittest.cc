@@ -10,6 +10,10 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "test/gtest.h"
 

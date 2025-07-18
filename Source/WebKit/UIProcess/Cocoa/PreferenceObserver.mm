@@ -177,7 +177,7 @@
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    RunLoop::protectedMain()->dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
+    RunLoop::mainSingleton().dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
         std::optional<String> encodedValueString;
         if (encodedValue)
             encodedValueString = String(encodedValue.get());

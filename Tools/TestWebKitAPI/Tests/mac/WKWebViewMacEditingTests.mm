@@ -35,8 +35,10 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/Color.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/BlockPtr.h>
@@ -87,6 +89,84 @@
     if (!_slowInputContext)
         _slowInputContext = adoptNS([[SlowTextInputContext alloc] initWithClient:(id<NSTextInputClient>)self]);
     return _slowInputContext.get();
+}
+
+@end
+
+@interface MockTextInputContextAction : NSObject
+
+- (instancetype)initWithMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange replacementRange:(NSRange)replacementRange;
+
+@property (nonatomic) double delay;
+@property (nonatomic, assign) NSString *markedText;
+@property (nonatomic) NSRange selectedRange;
+@property (nonatomic) NSRange replacementRange;
+@end
+
+@implementation MockTextInputContextAction
+
+- (instancetype)initWithMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange replacementRange:(NSRange)replacementRange
+{
+    if (self = [super init]) {
+        _markedText = markedText;
+        _selectedRange = selectedRange;
+        _replacementRange = replacementRange;
+    }
+    return self;
+}
+
+@end
+
+@interface MockTextInputContext : NSTextInputContext
+@property (nonatomic, assign) NSMutableArray<MockTextInputContextAction *> *actions;
+@end
+
+@implementation MockTextInputContext
+
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler
+{
+    [super handleEventByInputMethod:event completionHandler:^(BOOL handled) {
+        if (!_actions.count) {
+            completionHandler(NO);
+            return;
+        }
+        MockTextInputContextAction *lastItem = _actions.lastObject;
+        [_actions removeLastObject];
+        double delay = lastItem ? lastItem.delay : 10;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (lastItem)
+                [self.client setMarkedText:lastItem.markedText selectedRange:lastItem.selectedRange replacementRange:lastItem.replacementRange];
+            completionHandler(!!lastItem);
+        });
+    }];
+}
+
+@end
+
+@interface TestWebViewWithMockTextInputContext : TestWKWebView {
+    RetainPtr<MockTextInputContext> _mockInputContext;
+}
+
+- (MockTextInputContext *)mockInputContext;
+@end
+
+@implementation TestWebViewWithMockTextInputContext
+
+- (MockTextInputContext *)mockInputContext
+{
+    return _mockInputContext.get();
+}
+
+- (NSTextInputContext *)inputContext
+{
+    return self._web_superInputContext;
+}
+
+- (MockTextInputContext *)_web_superInputContext
+{
+    if (!_mockInputContext)
+        _mockInputContext = adoptNS([[MockTextInputContext alloc] initWithClient:(id<NSTextInputClient>)self]);
+    return _mockInputContext.get();
 }
 
 @end
@@ -191,6 +271,38 @@ TEST(WKWebViewMacEditingTests, DoNotCrashWhenCallingTextInputClientMethodsWhileD
     }];
 
     EXPECT_WK_STREQ(textContent, [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(WKWebViewMacEditingTests, KeyDownFiresBeforeCompositionEvent)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"InputMethodUsesCorrectKeyEventOrder"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = adoptNS([[TestWebViewWithMockTextInputContext alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _web_superInputContext].actions = [@[
+        [[[MockTextInputContextAction alloc] initWithMarkedText:@"n" selectedRange:NSMakeRange(0, 1) replacementRange:NSMakeRange(NSNotFound, 0)] autorelease],
+        [[[MockTextInputContextAction alloc] initWithMarkedText:@"ni" selectedRange:NSMakeRange(0, 2) replacementRange:NSMakeRange(NSNotFound, 0)] autorelease],
+        [[[MockTextInputContextAction alloc] initWithMarkedText:@"\u4F60" selectedRange:NSMakeRange(0, 1) replacementRange:NSMakeRange(NSNotFound, 0)] autorelease],
+    ].mutableCopy autorelease];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<body contenteditable>Hello world</body>"]];
+    [webView stringByEvaluatingJavaScript:@"const target = document.body; const logs = [];"
+        "['keydown', 'keyup', 'input', 'compositionstart', 'compositionend', 'compositionupdate']"
+        ".forEach((type) => { target.addEventListener(type, (event) => logs.push(event)); }); document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
+    [webView removeFromSuperview];
+    [webView typeCharacter:'n'];
+    Util::runFor(1_s);
+    [webView typeCharacter:'i'];
+    Util::runFor(1_s);
+    [webView typeCharacter:' '];
+    Util::runFor(1_s);
+
+    EXPECT_STREQ("keydown,compositionstart,compositionupdate,input,keyup,keydown,compositionupdate,input,keyup,keydown,input,input,compositionend,keyup",
+        [webView stringByEvaluatingJavaScript:@"logs.map((event) => event.type).join(',')"].UTF8String);
 }
 
 TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView)

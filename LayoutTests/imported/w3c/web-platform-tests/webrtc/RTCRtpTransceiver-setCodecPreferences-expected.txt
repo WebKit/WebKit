@@ -17,7 +17,7 @@ PASS setCodecPreferences() with modified codec parameters should throw InvalidMo
 PASS setCodecPreferences() with modified codecs returned from getCapabilities() should throw InvalidModificationError
 PASS setCodecPreferences() modifies the order of audio codecs in createOffer
 PASS setCodecPreferences() modifies the order of video codecs in createOffer
-FAIL setCodecPreferences() can remove rtx assert_equals: expected (undefined) undefined but got (object) object "[object Object]"
+PASS setCodecPreferences() can remove rtx
 PASS setCodecPreferences() can remove red
 PASS setCodecPreferences() can remove ulpfec
 PASS setCodecPreferences() filters on receiver and prefers receiver order

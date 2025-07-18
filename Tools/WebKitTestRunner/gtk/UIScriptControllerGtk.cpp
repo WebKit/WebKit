@@ -71,7 +71,7 @@ bool UIScriptControllerGtk::isShowingDataListSuggestions() const
 void UIScriptControllerGtk::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -123,7 +123,7 @@ void UIScriptControllerGtk::activateAtPoint(long x, long y, JSValueRef callback)
     eventSender->mouseDown(0, 0);
     eventSender->mouseUp(0, 0);
 
-    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -150,7 +150,7 @@ void UIScriptControllerGtk::removeViewFromWindow(JSValueRef callback)
     auto* mainWebView = TestController::singleton().mainWebView();
     mainWebView->removeFromWindow();
 
-    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -163,7 +163,7 @@ void UIScriptControllerGtk::addViewToWindow(JSValueRef callback)
     auto* mainWebView = TestController::singleton().mainWebView();
     mainWebView->addToWindow();
 
-    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

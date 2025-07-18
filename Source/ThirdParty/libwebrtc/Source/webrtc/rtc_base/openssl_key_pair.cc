@@ -30,7 +30,7 @@
 #include "rtc_base/openssl.h"
 #include "rtc_base/openssl_utility.h"
 
-namespace rtc {
+namespace webrtc {
 
 // We could have exposed a myriad of parameters for the crypto stuff,
 // but keeping it simple seems best.
@@ -191,4 +191,4 @@ bool OpenSSLKeyPair::operator!=(const OpenSSLKeyPair& other) const {
   return !(*this == other);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

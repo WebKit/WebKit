@@ -22,8 +22,8 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 namespace {
 
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Unit;
+using test::ImprovementDirection;
+using test::Unit;
 
 constexpr TimeDelta kStatsWaitTimeout = TimeDelta::Seconds(1);
 
@@ -67,7 +67,7 @@ void NetworkQualityMetricsReporter::Start(
 
 void NetworkQualityMetricsReporter::OnStatsReports(
     absl::string_view pc_label,
-    const rtc::scoped_refptr<const RTCStatsReport>& report) {
+    const scoped_refptr<const RTCStatsReport>& report) {
   DataSize payload_received = DataSize::Zero();
   DataSize payload_sent = DataSize::Zero();
 
@@ -110,7 +110,7 @@ void NetworkQualityMetricsReporter::StopAndReportResults() {
 
 EmulatedNetworkStats NetworkQualityMetricsReporter::PopulateStats(
     EmulatedNetworkManagerInterface* network) {
-  rtc::Event wait;
+  Event wait;
   EmulatedNetworkStats stats;
   network->GetStats([&](EmulatedNetworkStats s) {
     stats = std::move(s);

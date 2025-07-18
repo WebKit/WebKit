@@ -193,50 +193,50 @@ AecmCore* WebRtcAecm_CreateCore() {
       WebRtc_CreateBuffer(FRAME_LEN + PART_LEN, sizeof(int16_t));
   if (!aecm->farFrameBuf) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
 
   aecm->nearNoisyFrameBuf =
       WebRtc_CreateBuffer(FRAME_LEN + PART_LEN, sizeof(int16_t));
   if (!aecm->nearNoisyFrameBuf) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
 
   aecm->nearCleanFrameBuf =
       WebRtc_CreateBuffer(FRAME_LEN + PART_LEN, sizeof(int16_t));
   if (!aecm->nearCleanFrameBuf) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
 
   aecm->outFrameBuf =
       WebRtc_CreateBuffer(FRAME_LEN + PART_LEN, sizeof(int16_t));
   if (!aecm->outFrameBuf) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
 
   aecm->delay_estimator_farend =
       WebRtc_CreateDelayEstimatorFarend(PART_LEN1, MAX_DELAY);
-  if (aecm->delay_estimator_farend == NULL) {
+  if (aecm->delay_estimator_farend == nullptr) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
   aecm->delay_estimator =
       WebRtc_CreateDelayEstimator(aecm->delay_estimator_farend, 0);
-  if (aecm->delay_estimator == NULL) {
+  if (aecm->delay_estimator == nullptr) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
   // TODO(bjornv): Explicitly disable robust delay validation until no
   // performance regression has been established.  Then remove the line.
   WebRtc_enable_robust_validation(aecm->delay_estimator, 0);
 
   aecm->real_fft = WebRtcSpl_CreateRealFFT(PART_LEN_SHIFT);
-  if (aecm->real_fft == NULL) {
+  if (aecm->real_fft == nullptr) {
     WebRtcAecm_FreeCore(aecm);
-    return NULL;
+    return nullptr;
   }
 
   // Init some aecm pointers. 16 and 32 byte alignment is only necessary
@@ -491,7 +491,7 @@ int WebRtcAecm_Control(AecmCore* aecm, int delay, int nlpFlag) {
 }
 
 void WebRtcAecm_FreeCore(AecmCore* aecm) {
-  if (aecm == NULL) {
+  if (aecm == nullptr) {
     return;
   }
 
@@ -516,7 +516,7 @@ int WebRtcAecm_ProcessFrame(AecmCore* aecm,
   int16_t* outBlock = (int16_t*)(((uintptr_t)outBlock_buf + 15) & ~15);
 
   int16_t farFrame[FRAME_LEN];
-  const int16_t* out_ptr = NULL;
+  const int16_t* out_ptr = nullptr;
   int size = 0;
 
   // Buffer the current frame.
@@ -528,24 +528,24 @@ int WebRtcAecm_ProcessFrame(AecmCore* aecm,
   // to pass the smaller blocks individually.
   WebRtc_WriteBuffer(aecm->farFrameBuf, farFrame, FRAME_LEN);
   WebRtc_WriteBuffer(aecm->nearNoisyFrameBuf, nearendNoisy, FRAME_LEN);
-  if (nearendClean != NULL) {
+  if (nearendClean != nullptr) {
     WebRtc_WriteBuffer(aecm->nearCleanFrameBuf, nearendClean, FRAME_LEN);
   }
 
   // Process as many blocks as possible.
   while (WebRtc_available_read(aecm->farFrameBuf) >= PART_LEN) {
     int16_t far_block[PART_LEN];
-    const int16_t* far_block_ptr = NULL;
+    const int16_t* far_block_ptr = nullptr;
     int16_t near_noisy_block[PART_LEN];
-    const int16_t* near_noisy_block_ptr = NULL;
+    const int16_t* near_noisy_block_ptr = nullptr;
 
     WebRtc_ReadBuffer(aecm->farFrameBuf, (void**)&far_block_ptr, far_block,
                       PART_LEN);
     WebRtc_ReadBuffer(aecm->nearNoisyFrameBuf, (void**)&near_noisy_block_ptr,
                       near_noisy_block, PART_LEN);
-    if (nearendClean != NULL) {
+    if (nearendClean != nullptr) {
       int16_t near_clean_block[PART_LEN];
-      const int16_t* near_clean_block_ptr = NULL;
+      const int16_t* near_clean_block_ptr = nullptr;
 
       WebRtc_ReadBuffer(aecm->nearCleanFrameBuf, (void**)&near_clean_block_ptr,
                         near_clean_block, PART_LEN);
@@ -555,7 +555,7 @@ int WebRtcAecm_ProcessFrame(AecmCore* aecm,
       }
     } else {
       if (WebRtcAecm_ProcessBlock(aecm, far_block_ptr, near_noisy_block_ptr,
-                                  NULL, outBlock) == -1) {
+                                  nullptr, outBlock) == -1) {
         return -1;
       }
     }
@@ -854,7 +854,7 @@ void WebRtcAecm_UpdateChannel(AecmCore* aecm,
         // right shift of 32 is undefined. To avoid that, we
         // do this check.
         tmpU32no1 =
-            rtc::dchecked_cast<uint32_t>(
+            dchecked_cast<uint32_t>(
                 shiftChFar >= 32 ? 0 : aecm->channelAdapt32[i] >> shiftChFar) *
             far_spectrum[i];
       }

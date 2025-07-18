@@ -16,8 +16,10 @@
 #include "rtc_base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
-#include "third_party/opus/src/include/opus.h"
-#include "third_party/opus/src/include/opus_multistream.h"
+#include "third_party/opus/src/include/opus.h"          // IWYU pragma: export
+#include "third_party/opus/src/include/opus_defines.h"  // IWYU pragma: export
+#include "third_party/opus/src/include/opus_multistream.h"  // IWYU pragma: export
+#include "third_party/opus/src/include/opus_types.h"  // IWYU pragma: export
 RTC_POP_IGNORING_WUNDEF()
 
 struct WebRtcOpusEncInst {

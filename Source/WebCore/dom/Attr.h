@@ -70,7 +70,7 @@ private:
 
     ExceptionOr<void> setPrefix(const AtomString&) final;
 
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
 
     bool isAttributeNode() const final { return true; }
 

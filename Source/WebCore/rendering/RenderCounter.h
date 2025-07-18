@@ -50,8 +50,8 @@ private:
     
     ASCIILiteral renderName() const override;
     String originalText() const override;
-    
-    RefPtr<CSSCounterStyle> counterStyle() const;
+
+    Ref<CSSCounterStyle> counterStyle() const;
 
     CounterContent m_counter;
     SingleThreadWeakPtr<CounterNode> m_counterNode;

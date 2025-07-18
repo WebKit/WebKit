@@ -51,9 +51,9 @@ FrameGeneratorInterface::Resolution SquareGenerator::GetResolution() const {
           .height = static_cast<size_t>(height_)};
 }
 
-rtc::scoped_refptr<I420Buffer> SquareGenerator::CreateI420Buffer(int width,
-                                                                 int height) {
-  rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
+scoped_refptr<I420Buffer> SquareGenerator::CreateI420Buffer(int width,
+                                                            int height) {
+  scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
   memset(buffer->MutableDataY(), 127, height * buffer->StrideY());
   memset(buffer->MutableDataU(), 127,
          buffer->ChromaHeight() * buffer->StrideU());
@@ -65,7 +65,7 @@ rtc::scoped_refptr<I420Buffer> SquareGenerator::CreateI420Buffer(int width,
 FrameGeneratorInterface::VideoFrameData SquareGenerator::NextFrame() {
   MutexLock lock(&mutex_);
 
-  rtc::scoped_refptr<VideoFrameBuffer> buffer = nullptr;
+  scoped_refptr<VideoFrameBuffer> buffer = nullptr;
   switch (type_) {
     case OutputType::kI420:
     case OutputType::kI010:
@@ -74,10 +74,8 @@ FrameGeneratorInterface::VideoFrameData SquareGenerator::NextFrame() {
       break;
     }
     case OutputType::kI420A: {
-      rtc::scoped_refptr<I420Buffer> yuv_buffer =
-          CreateI420Buffer(width_, height_);
-      rtc::scoped_refptr<I420Buffer> axx_buffer =
-          CreateI420Buffer(width_, height_);
+      scoped_refptr<I420Buffer> yuv_buffer = CreateI420Buffer(width_, height_);
+      scoped_refptr<I420Buffer> axx_buffer = CreateI420Buffer(width_, height_);
       buffer = WrapI420ABuffer(yuv_buffer->width(), yuv_buffer->height(),
                                yuv_buffer->DataY(), yuv_buffer->StrideY(),
                                yuv_buffer->DataU(), yuv_buffer->StrideU(),
@@ -114,10 +112,10 @@ SquareGenerator::Square::Square(int width, int height, int seed)
       yuv_a_(random_generator_.Rand(0, 255)) {}
 
 void SquareGenerator::Square::Draw(
-    const rtc::scoped_refptr<VideoFrameBuffer>& frame_buffer) {
+    const scoped_refptr<VideoFrameBuffer>& frame_buffer) {
   RTC_DCHECK(frame_buffer->type() == VideoFrameBuffer::Type::kI420 ||
              frame_buffer->type() == VideoFrameBuffer::Type::kI420A);
-  rtc::scoped_refptr<I420BufferInterface> buffer = frame_buffer->ToI420();
+  scoped_refptr<I420BufferInterface> buffer = frame_buffer->ToI420();
   int length_cap = std::min(buffer->height(), buffer->width()) / 4;
   int length = std::min(length_, length_cap);
   x_ = (x_ + random_generator_.Rand(0, 4)) % (buffer->width() - length);
@@ -141,7 +139,7 @@ void SquareGenerator::Square::Draw(
     return;
 
   // Optionally draw on alpha plane if given.
-  const webrtc::I420ABufferInterface* yuva_buffer = frame_buffer->GetI420A();
+  const I420ABufferInterface* yuva_buffer = frame_buffer->GetI420A();
   for (int y = y_; y < y_ + length; ++y) {
     uint8_t* pos_y = (const_cast<uint8_t*>(yuva_buffer->DataA()) + x_ +
                       y * yuva_buffer->StrideA());
@@ -436,7 +434,7 @@ void ScrollingImageFrameGenerator::CropSourceToScrolledImage(
   int pixels_scrolled_y =
       static_cast<int>(scroll_margin_y * scroll_factor + 0.5);
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer =
+  scoped_refptr<I420BufferInterface> i420_buffer =
       current_source_frame_.buffer->ToI420();
   int offset_y =
       (i420_buffer->StrideY() * pixels_scrolled_y) + pixels_scrolled_x;

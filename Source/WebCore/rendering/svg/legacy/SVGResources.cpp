@@ -28,6 +28,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "PathOperation.h"
 #include "ReferenceFilterOperation.h"
+#include "RenderElementInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGGradientElement.h"

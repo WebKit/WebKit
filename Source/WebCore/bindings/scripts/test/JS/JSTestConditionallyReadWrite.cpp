@@ -458,7 +458,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyRea
 
 JSC::GCClient::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm, "JSTestConditionallyReadWrite"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionallyReadWrite.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionallyReadWrite = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestConditionallyReadWrite.get(); },

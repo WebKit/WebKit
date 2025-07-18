@@ -11,9 +11,9 @@
 #ifndef P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_
 #define P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_
 
-namespace cricket {
+#include "api/candidate.h"
 
-class Candidate;
+namespace webrtc {
 
 class CandidatePairInterface {
  public:
@@ -35,6 +35,15 @@ struct CandidatePair final : public CandidatePairInterface {
   Candidate remote;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::CandidatePair;
+using ::webrtc::CandidatePairInterface;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_

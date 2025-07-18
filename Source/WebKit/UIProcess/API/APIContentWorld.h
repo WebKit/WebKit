@@ -62,6 +62,9 @@ public:
     bool disableLegacyBuiltinOverrides() const { return m_options.contains(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides); }
     void setDisableLegacyBuiltinOverrides(bool value) { m_options.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides); }
 
+    bool allowNodeInfo() const { return m_options.contains(WebKit::ContentWorldOption::AllowNodeInfo); }
+    void setNodeInfoEnabled() { m_options.add(WebKit::ContentWorldOption::AllowNodeInfo); }
+
     void addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy&);
     void userContentControllerProxyDestroyed(WebKit::WebUserContentControllerProxy&);
 

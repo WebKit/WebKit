@@ -96,7 +96,7 @@ std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithout
 
     document->updateStyleIfNeeded();
 
-    CheckedPtr style = canvas->computedStyle();
+    const auto* style = canvas->computedStyle();
     if (!style)
         return std::nullopt;
 
@@ -188,16 +188,16 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         return;
 
     Ref canvas = this->canvas();
-    Ref document = canvas->document();
+    auto& document = canvas->document();
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseUnresolvedFont() ignores these.
-    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!unresolvedFont)
         return;
 
     FontCascadeDescription fontDescription;
-    if (CheckedPtr computedStyle = canvas->computedStyle())
+    if (auto* computedStyle = canvas->computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
         static NeverDestroyed<AtomString> family = DefaultFontFamily;
@@ -208,7 +208,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), document.get());
+    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), document);
     if (!fontCascade)
         return;
 
@@ -216,7 +216,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
-    modifiableState().font.initialize(document->fontSelector(), CheckedRef { *fontCascade }.get());
+    modifiableState().font.initialize(document.fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
 
@@ -229,9 +229,9 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
 inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const
 {
-    CheckedPtr style = computedStyle || direction == Direction::Inherit ? protectedCanvas()->existingComputedStyle() : nullptr;
+    auto* style = computedStyle || direction == Direction::Inherit ? protectedCanvas()->existingComputedStyle() : nullptr;
     if (computedStyle)
-        *computedStyle = style.get();
+        *computedStyle = style;
     switch (direction) {
     case Direction::Inherit:
         return style ? style->writingMode().computedTextDirection() : TextDirection::LTR;
@@ -253,7 +253,7 @@ CanvasDirection CanvasRenderingContext2D::direction() const
 
 void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
-    protectedCanvasBase()->recordLastFillText(text);
+    canvasBase().recordLastFillText(text);
     drawTextInternal(text, x, y, true, maxWidth);
 }
 

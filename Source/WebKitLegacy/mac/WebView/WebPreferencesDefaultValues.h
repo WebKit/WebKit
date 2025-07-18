@@ -71,10 +71,6 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
-#if ENABLE(FORM_CONTROL_REFRESH)
-bool defaultFormControlRefreshEnabled();
-#endif
-
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
 bool defaultMediaSourceEnabled();
 #endif

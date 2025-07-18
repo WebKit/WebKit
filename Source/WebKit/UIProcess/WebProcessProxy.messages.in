@@ -48,7 +48,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
-    DidExceedMemoryFootprintThreshold(size_t footprint)
+    DidExceedMemoryFootprintThreshold(uint64_t footprint)
     DidExceedCPULimit()
 
     StopResponsivenessTimer()

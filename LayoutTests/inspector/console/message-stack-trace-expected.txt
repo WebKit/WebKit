@@ -60,5 +60,5 @@ ASYNC CALL STACK:
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.Module
 CALL STACK:
-0: [F] (anonymous function)
+0: [F] wrapper
 

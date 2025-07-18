@@ -27,6 +27,7 @@
 #include "DOMTokenList.h"
 
 #include "ExceptionOr.h"
+#include "NodeInlines.h"
 #include "SpaceSplitString.h"
 #include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
@@ -47,7 +48,7 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName,
 
 static inline bool tokenContainsHTMLSpace(StringView token)
 {
-    return token.find(isASCIIWhitespace<UChar>) != notFound;
+    return token.find(isASCIIWhitespace<char16_t>) != notFound;
 }
 
 ExceptionOr<void> DOMTokenList::validateToken(StringView token)
@@ -215,12 +216,12 @@ ExceptionOr<bool> DOMTokenList::supports(StringView token)
 // https://dom.spec.whatwg.org/#dom-domtokenlist-value
 const AtomString& DOMTokenList::value() const
 {
-    return protectedElement()->getAttribute(m_attributeName);
+    return m_element->getAttribute(m_attributeName);
 }
 
 void DOMTokenList::setValue(const AtomString& value)
 {
-    protectedElement()->setAttribute(m_attributeName, value);
+    m_element->setAttribute(m_attributeName, value);
 }
 
 void DOMTokenList::updateTokensFromAttributeValue(const AtomString& value)
@@ -295,7 +296,7 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
 Vector<AtomString, 1>& DOMTokenList::tokens()
 {
     if (m_tokensNeedUpdating)
-        updateTokensFromAttributeValue(protectedElement()->getAttribute(m_attributeName));
+        updateTokensFromAttributeValue(m_element->getAttribute(m_attributeName));
     ASSERT(!m_tokensNeedUpdating);
     return m_tokens;
 }

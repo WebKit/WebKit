@@ -64,7 +64,7 @@ std::ostream &operator<<(std::ostream &os, const MultiviewRenderTestParams &para
 }
 
 class MultiviewFramebufferTestBase : public MultiviewTestBase,
-                                     public ::testing::TestWithParam<MultiviewRenderTestParams>
+                                     public ::testing::WithParamInterface<MultiviewRenderTestParams>
 {
   protected:
     MultiviewFramebufferTestBase(const PlatformParameters &params, int samples)
@@ -298,6 +298,12 @@ class MultiviewRenderTest : public MultiviewFramebufferTestBase
     void SetUp() override
     {
         MultiviewFramebufferTestBase::FramebufferTestSetUp();
+        // SetUp() may have determined the test should be skipped and returned before completing.
+        if (Test::IsSkipped())
+        {
+            return;
+        }
+
         testSetUp();
     }
     void TearDown() override

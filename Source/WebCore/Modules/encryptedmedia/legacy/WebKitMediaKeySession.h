@@ -33,13 +33,13 @@
 #include "EventTargetInterfaces.h"
 #include "LegacyCDMSession.h"
 #include "Timer.h"
+#include "WebKitMediaKeys.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Deque.h>
 
 namespace WebCore {
 
 class WebKitMediaKeyError;
-class WebKitMediaKeys;
 template<typename> class ExceptionOr;
 
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTarget, public ActiveDOMObject, private LegacyCDMSessionClient {
@@ -94,7 +94,7 @@ private:
     const uint64_t m_logIdentifier;
 #endif
 
-    WebKitMediaKeys* m_keys;
+    CheckedPtr<WebKitMediaKeys> m_keys;
     String m_keySystem;
     String m_sessionId;
     String m_mediaKeysHashSalt;

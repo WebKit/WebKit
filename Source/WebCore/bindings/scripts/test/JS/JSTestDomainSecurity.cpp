@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod,
 
 JSC::GCClient::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDomainSecurity, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDomainSecurity, UseCustomHeapCellType::No>(vm, "JSTestDomainSecurity"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDomainSecurity.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDomainSecurity = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDomainSecurity.get(); },

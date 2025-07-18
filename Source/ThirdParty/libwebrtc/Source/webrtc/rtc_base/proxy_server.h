@@ -14,15 +14,14 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/memory/fifo_buffer.h"
 #include "rtc_base/server_socket_adapters.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
-namespace rtc {
-
-class SocketFactory;
+namespace webrtc {
 
 // ProxyServer is a base class that allows for easy construction of proxy
 // servers. With its helper class ProxyBinding, it contains all the necessary
@@ -89,6 +88,15 @@ class ProxyServer : public sigslot::has_slots<> {
   std::vector<std::unique_ptr<ProxyBinding>> bindings_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::ProxyBinding;
+using ::webrtc::ProxyServer;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_PROXY_SERVER_H_

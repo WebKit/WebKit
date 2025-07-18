@@ -18,7 +18,7 @@ namespace {
 
 // Compare the elements of two given array views.
 template <typename T, std::ptrdiff_t S>
-void ExpectEq(rtc::ArrayView<const T, S> a, rtc::ArrayView<const T, S> b) {
+void ExpectEq(ArrayView<const T, S> a, ArrayView<const T, S> b) {
   for (int i = 0; i < S; ++i) {
     SCOPED_TRACE(i);
     EXPECT_EQ(a[i], b[i]);
@@ -32,7 +32,7 @@ void TestRingBuffer() {
   SCOPED_TRACE(S);
   std::array<T, S> prev_pushed_array;
   std::array<T, S> pushed_array;
-  rtc::ArrayView<const T, S> pushed_array_view(pushed_array.data(), S);
+  ArrayView<const T, S> pushed_array_view(pushed_array.data(), S);
 
   // Init.
   RingBuffer<T, S, N> ring_buf;

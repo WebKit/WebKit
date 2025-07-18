@@ -3771,7 +3771,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addSwitch(Value condition, const Vector
             m_jit.lshiftPtr(TrustedImm32(3), wasmScratchGPR);
         else
             m_jit.lshiftPtr(TrustedImm32(2), wasmScratchGPR);
-        m_jit.addPtr(TrustedImmPtr(jumpTable->data()), wasmScratchGPR);
+        m_jit.addPtr(TrustedImmPtr(jumpTable->span().data()), wasmScratchGPR);
         m_jit.farJump(Address(wasmScratchGPR), JSSwitchPtrTag);
 
         auto labels = WTF::map(targets, [&](auto& target) {

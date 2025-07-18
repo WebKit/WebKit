@@ -18,7 +18,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -102,7 +102,7 @@ TEST(BufferTest, TestAppendData) {
   EXPECT_EQ(buf, Buffer(exp));
   Buffer buf2;
   buf2.AppendData(buf);
-  buf2.AppendData(rtc::ArrayView<uint8_t>(buf));
+  buf2.AppendData(ArrayView<uint8_t>(buf));
   const int8_t exp2[] = {0x4, 0x5, 0x6, 0xa, 0xb, 0x4, 0x5, 0x6, 0xa, 0xb};
   EXPECT_EQ(buf2, Buffer(exp2));
 }
@@ -242,7 +242,7 @@ TEST(BufferTest, TestClear) {
 }
 
 TEST(BufferTest, TestLambdaSetAppend) {
-  auto setter = [](rtc::ArrayView<uint8_t> av) {
+  auto setter = [](ArrayView<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -262,7 +262,7 @@ TEST(BufferTest, TestLambdaSetAppend) {
 }
 
 TEST(BufferTest, TestLambdaSetAppendSigned) {
-  auto setter = [](rtc::ArrayView<int8_t> av) {
+  auto setter = [](ArrayView<int8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -282,7 +282,7 @@ TEST(BufferTest, TestLambdaSetAppendSigned) {
 }
 
 TEST(BufferTest, TestLambdaAppendEmpty) {
-  auto setter = [](rtc::ArrayView<uint8_t> av) {
+  auto setter = [](ArrayView<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -300,7 +300,7 @@ TEST(BufferTest, TestLambdaAppendEmpty) {
 }
 
 TEST(BufferTest, TestLambdaAppendPartial) {
-  auto setter = [](rtc::ArrayView<uint8_t> av) {
+  auto setter = [](ArrayView<uint8_t> av) {
     for (int i = 0; i != 7; ++i)
       av[i] = kTestData[i];
     return 7;
@@ -316,7 +316,7 @@ TEST(BufferTest, TestLambdaAppendPartial) {
 
 TEST(BufferTest, TestMutableLambdaSetAppend) {
   uint8_t magic_number = 17;
-  auto setter = [magic_number](rtc::ArrayView<uint8_t> av) mutable {
+  auto setter = [magic_number](ArrayView<uint8_t> av) mutable {
     for (int i = 0; i != 15; ++i) {
       av[i] = magic_number;
       ++magic_number;
@@ -489,7 +489,7 @@ TEST(ZeroOnFreeBufferTest, TestZeroOnSetData) {
 
 TEST(ZeroOnFreeBufferTest, TestZeroOnSetDataFromSetter) {
   static constexpr size_t offset = 1;
-  const auto setter = [](rtc::ArrayView<uint8_t> av) {
+  const auto setter = [](ArrayView<uint8_t> av) {
     for (int i = 0; i != 2; ++i)
       av[i] = kTestData[offset + i];
     return 2;
@@ -545,4 +545,4 @@ TEST(ZeroOnFreeBufferTest, TestZeroOnClear) {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

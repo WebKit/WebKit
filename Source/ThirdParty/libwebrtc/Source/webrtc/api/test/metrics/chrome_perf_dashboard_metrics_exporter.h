@@ -29,7 +29,7 @@ class ChromePerfDashboardMetricsExporter : public MetricsExporter {
       absl::string_view export_file_path);
   ~ChromePerfDashboardMetricsExporter() override = default;
 
-  bool Export(rtc::ArrayView<const Metric> metrics) override;
+  bool Export(ArrayView<const Metric> metrics) override;
 
  private:
   const std::string export_file_path_;

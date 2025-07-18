@@ -1,0 +1,2904 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationUp"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationDown"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationLeft"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationRight"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationUpMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationDownMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationLeftMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationRightMirrored"}
+     ],
+     "introduced": "4",
+     "name": "ALAssetOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusNotDetermined"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusRestricted"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusDenied"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "6",
+     "name": "ALAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ALAssetsLibraryUnknownError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteFailedError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteBusyError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteInvalidDataError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteIncompatibleDataError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteDataEncodingError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteDiskSpaceError"},
+      {"access": "public", "name": "ALAssetsLibraryDataUnavailableError"},
+      {"access": "public", "name": "ALAssetsLibraryAccessUserDeniedError"},
+      {"access": "public", "name": "ALAssetsLibraryAccessGloballyDeniedError"}
+     ],
+     "introduced": "4",
+     "name": "enum (unnamed at ALAssetsLibrary.h:1501)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupLibrary"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupAlbum"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupEvent"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupFaces"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupSavedPhotos"},
+      {"access": "public", "introduced": "5", "name": "ALAssetsGroupPhotoStream"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupAll"}
+     ],
+     "name": "enum (unnamed at ALAssetsLibrary.h:351)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryDeletedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryInsertedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryUpdatedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryUpdatedAssetsKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyAssetURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyDate"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyDuration"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyLocation"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyOrientation"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyRepresentations"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyURLs"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypePhoto"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypeUnknown"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypeVideo"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyPersistentID"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyType"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsLibraryChangedNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsLibraryErrorDomain"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALErrorInvalidProperty"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "valueForProperty:"},
+      {"access": "public", "introduced": "4", "name": "defaultRepresentation"},
+      {"access": "public", "introduced": "4", "name": "representationForUTI:"},
+      {"access": "public", "introduced": "4", "name": "thumbnail"},
+      {"access": "public", "introduced": "5", "name": "aspectRatioThumbnail"},
+      {"access": "public", "introduced": "5", "name": "writeModifiedImageDataToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "writeModifiedVideoAtPathToSavedPhotosAlbum:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "setImageData:metadata:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "setVideoAtPath:completionBlock:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalAsset", "introduced": "5", "name": "originalAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "5", "name": "editable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "UTI"},
+      {"access": "public", "introduced": "4", "name": "dimensions"},
+      {"access": "public", "introduced": "4", "name": "size"},
+      {"access": "public", "introduced": "4", "name": "getBytes:fromOffset:length:error:"},
+      {"access": "public", "introduced": "4", "name": "fullResolutionImage"},
+      {"access": "public", "introduced": "4", "name": "CGImageWithOptions:"},
+      {"access": "public", "introduced": "4", "name": "fullScreenImage"},
+      {"access": "public", "introduced": "4", "name": "url"},
+      {"access": "public", "introduced": "4", "name": "metadata"},
+      {"access": "public", "introduced": "4", "name": "orientation"},
+      {"access": "public", "introduced": "4", "name": "scale"},
+      {"access": "public", "introduced": "5", "name": "filename"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetRepresentation",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "allPhotos"},
+      {"access": "public", "name": "allVideos"},
+      {"access": "public", "name": "allAssets"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsFilter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "valueForProperty:"},
+      {"access": "public", "introduced": "4", "name": "posterImage"},
+      {"access": "public", "introduced": "4", "name": "setAssetsFilter:"},
+      {"access": "public", "introduced": "4", "name": "numberOfAssets"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsUsingBlock:"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsWithOptions:usingBlock:"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsAtIndexes:options:usingBlock:"},
+      {"access": "public", "introduced": "5", "name": "addAsset:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "5", "name": "editable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "6", "name": "disableSharedPhotoStreamsSupport"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "enumerateGroupsWithTypes:usingBlock:failureBlock:"},
+      {"access": "public", "introduced": "4", "name": "assetForURL:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "5", "name": "groupForURL:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "5", "name": "addAssetsGroupAlbumWithName:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "4", "name": "writeImageToSavedPhotosAlbum:orientation:completionBlock:"},
+      {"access": "public", "introduced": "4.1", "name": "writeImageToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "4.1", "name": "writeImageDataToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "4", "name": "writeVideoAtPathToSavedPhotosAlbum:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "videoAtPathIsCompatibleWithSavedPhotosAlbum:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsLibrary",
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "ALAssetOrientation"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsGroupEnumerationResultsBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsGroupType"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryAccessFailureBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryAssetForURLResultBlock"},
+    {"access": "public", "introduced": "5", "name": "ALAssetsLibraryGroupResultBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryGroupsEnumerationResultsBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryWriteImageCompletionBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryWriteVideoCompletionBlock"},
+    {"access": "public", "name": "ALAuthorizationStatus"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationUp"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationDown"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationLeft"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationRight"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationUpMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationDownMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationLeftMirrored"},
+      {"access": "public", "introduced": "4", "name": "ALAssetOrientationRightMirrored"}
+     ],
+     "introduced": "4",
+     "name": "ALAssetOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusNotDetermined"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusRestricted"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusDenied"},
+      {"access": "public", "introduced": "6", "name": "ALAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "6",
+     "name": "ALAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ALAssetsLibraryUnknownError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteFailedError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteBusyError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteInvalidDataError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteIncompatibleDataError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteDataEncodingError"},
+      {"access": "public", "name": "ALAssetsLibraryWriteDiskSpaceError"},
+      {"access": "public", "name": "ALAssetsLibraryDataUnavailableError"},
+      {"access": "public", "name": "ALAssetsLibraryAccessUserDeniedError"},
+      {"access": "public", "name": "ALAssetsLibraryAccessGloballyDeniedError"}
+     ],
+     "introduced": "4",
+     "name": "enum (unnamed at ALAssetsLibrary.h:1501)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupLibrary"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupAlbum"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupEvent"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupFaces"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupSavedPhotos"},
+      {"access": "public", "introduced": "5", "name": "ALAssetsGroupPhotoStream"},
+      {"access": "public", "introduced": "4", "name": "ALAssetsGroupAll"}
+     ],
+     "name": "enum (unnamed at ALAssetsLibrary.h:351)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryDeletedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryInsertedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryUpdatedAssetGroupsKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_ALAssetLibraryUpdatedAssetsKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyAssetURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyDate"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyDuration"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyLocation"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyOrientation"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyRepresentations"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetPropertyURLs"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypePhoto"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypeUnknown"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetTypeVideo"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyPersistentID"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyType"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_ALAssetsGroupPropertyURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsLibraryChangedNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALAssetsLibraryErrorDomain"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_ALErrorInvalidProperty"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "valueForProperty:"},
+      {"access": "public", "introduced": "4", "name": "defaultRepresentation"},
+      {"access": "public", "introduced": "4", "name": "representationForUTI:"},
+      {"access": "public", "introduced": "4", "name": "thumbnail"},
+      {"access": "public", "introduced": "5", "name": "aspectRatioThumbnail"},
+      {"access": "public", "introduced": "5", "name": "writeModifiedImageDataToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "writeModifiedVideoAtPathToSavedPhotosAlbum:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "setImageData:metadata:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "setVideoAtPath:completionBlock:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalAsset", "introduced": "5", "name": "originalAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "5", "name": "editable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "UTI"},
+      {"access": "public", "introduced": "4", "name": "dimensions"},
+      {"access": "public", "introduced": "4", "name": "size"},
+      {"access": "public", "introduced": "4", "name": "getBytes:fromOffset:length:error:"},
+      {"access": "public", "introduced": "4", "name": "fullResolutionImage"},
+      {"access": "public", "introduced": "4", "name": "CGImageWithOptions:"},
+      {"access": "public", "introduced": "4", "name": "fullScreenImage"},
+      {"access": "public", "introduced": "4", "name": "url"},
+      {"access": "public", "introduced": "4", "name": "metadata"},
+      {"access": "public", "introduced": "4", "name": "orientation"},
+      {"access": "public", "introduced": "4", "name": "scale"},
+      {"access": "public", "introduced": "5", "name": "filename"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetRepresentation",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "allPhotos"},
+      {"access": "public", "name": "allVideos"},
+      {"access": "public", "name": "allAssets"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsFilter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "valueForProperty:"},
+      {"access": "public", "introduced": "4", "name": "posterImage"},
+      {"access": "public", "introduced": "4", "name": "setAssetsFilter:"},
+      {"access": "public", "introduced": "4", "name": "numberOfAssets"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsUsingBlock:"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsWithOptions:usingBlock:"},
+      {"access": "public", "introduced": "4", "name": "enumerateAssetsAtIndexes:options:usingBlock:"},
+      {"access": "public", "introduced": "5", "name": "addAsset:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "5", "name": "editable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "6", "name": "disableSharedPhotoStreamsSupport"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "enumerateGroupsWithTypes:usingBlock:failureBlock:"},
+      {"access": "public", "introduced": "4", "name": "assetForURL:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "5", "name": "groupForURL:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "5", "name": "addAssetsGroupAlbumWithName:resultBlock:failureBlock:"},
+      {"access": "public", "introduced": "4", "name": "writeImageToSavedPhotosAlbum:orientation:completionBlock:"},
+      {"access": "public", "introduced": "4.1", "name": "writeImageToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "4.1", "name": "writeImageDataToSavedPhotosAlbum:metadata:completionBlock:"},
+      {"access": "public", "introduced": "4", "name": "writeVideoAtPathToSavedPhotosAlbum:completionBlock:"},
+      {"access": "public", "introduced": "5", "name": "videoAtPathIsCompatibleWithSavedPhotosAlbum:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "ALAssetsLibrary",
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "ALAssetOrientation"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsGroupEnumerationResultsBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsGroupType"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryAccessFailureBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryAssetForURLResultBlock"},
+    {"access": "public", "introduced": "5", "name": "ALAssetsLibraryGroupResultBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryGroupsEnumerationResultsBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryWriteImageCompletionBlock"},
+    {"access": "public", "introduced": "4", "name": "ALAssetsLibraryWriteVideoCompletionBlock"},
+    {"access": "public", "name": "ALAuthorizationStatus"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "PHCloudIdentifier",
+     "introduced": "15",
+     "name": "",
+     "protocols": [
+      "NSCopying"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "localIdentifierMappingsForCloudIdentifiers:"},
+      {"access": "public", "introduced": "15", "name": "cloudIdentifierMappingsForLocalIdentifiers:"},
+      {"access": "public", "name": "localIdentifiersForCloudIdentifiers:", "unavailable": true},
+      {"access": "public", "name": "cloudIdentifiersForLocalIdentifiers:", "unavailable": true}
+     ],
+     "interface": "PHPhotoLibrary",
+     "introduced": "15",
+     "name": "CloudIdentifiers"
+    },
+    {
+     "access": "public",
+     "interface": "PHLivePhoto",
+     "introduced": "14",
+     "name": "NSItemProvider",
+     "protocols": [
+      "NSItemProviderReading"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithPlaceholderForCreatedAsset:"}
+     ],
+     "interface": "PHContentEditingOutput",
+     "introduced": "8",
+     "name": "PHAssetChangeRequest"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "requestContentEditingInputWithOptions:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "cancelContentEditingInputRequest:"}
+     ],
+     "interface": "PHAsset",
+     "introduced": "8",
+     "name": "PHContentEditingInput"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAccessLevelAddOnly"},
+      {"access": "public", "introduced": "8", "name": "PHAccessLevelReadWrite"}
+     ],
+     "introduced": "8",
+     "name": "PHAccessLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeAutoPick"},
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeUserPick"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetBurstSelectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumRegular"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedEvent"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedFaces"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumImported"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumMyPhotoStream"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumCloudShared"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumGeneric"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumPanoramas"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumVideos"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumFavorites"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumTimelapses"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumAllHidden"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumRecentlyAdded"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumBursts"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumSlomoVideos"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumUserLibrary"},
+      {"access": "public", "introduced": "9", "name": "PHAssetCollectionSubtypeSmartAlbumSelfPortraits"},
+      {"access": "public", "introduced": "9", "name": "PHAssetCollectionSubtypeSmartAlbumScreenshots"},
+      {"access": "public", "introduced": "10.2", "name": "PHAssetCollectionSubtypeSmartAlbumDepthEffect"},
+      {"access": "public", "introduced": "10.3", "name": "PHAssetCollectionSubtypeSmartAlbumLivePhotos"},
+      {"access": "public", "introduced": "11", "name": "PHAssetCollectionSubtypeSmartAlbumAnimated"},
+      {"access": "public", "introduced": "11", "name": "PHAssetCollectionSubtypeSmartAlbumLongExposures"},
+      {"access": "public", "introduced": "13", "name": "PHAssetCollectionSubtypeSmartAlbumUnableToUpload"},
+      {"access": "public", "introduced": "15", "name": "PHAssetCollectionSubtypeSmartAlbumRAW"},
+      {"access": "public", "introduced": "15", "name": "PHAssetCollectionSubtypeSmartAlbumCinematic"},
+      {"access": "public", "introduced": "18", "name": "PHAssetCollectionSubtypeSmartAlbumSpatial"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAny"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetCollectionSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeSmartAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeMoment"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetCollectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationDelete"},
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationContent"},
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationProperties"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetEditOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypePhotoPanorama"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypePhotoHDR"},
+      {"access": "public", "introduced": "9", "name": "PHAssetMediaSubtypePhotoScreenshot"},
+      {"access": "public", "introduced": "9.1", "name": "PHAssetMediaSubtypePhotoLive"},
+      {"access": "public", "introduced": "10.2", "name": "PHAssetMediaSubtypePhotoDepthEffect"},
+      {"access": "public", "introduced": "16", "name": "PHAssetMediaSubtypeSpatialMedia"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoStreamed"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoHighFrameRate"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoTimelapse"},
+      {"access": "public", "introduced": "15", "name": "PHAssetMediaSubtypeVideoCinematic"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetMediaSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeUnknown"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeImage"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeAudio"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleUnsupported"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleImage"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleImageAnimated"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleLivePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleVideoLooping"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetPlaybackStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAudio"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAlternatePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeFullSizePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeFullSizeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAdjustmentData"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAdjustmentBasePhoto"},
+      {"access": "public", "introduced": "9.1", "name": "PHAssetResourceTypePairedVideo"},
+      {"access": "public", "introduced": "10", "name": "PHAssetResourceTypeFullSizePairedVideo"},
+      {"access": "public", "introduced": "10", "name": "PHAssetResourceTypeAdjustmentBasePairedVideo"},
+      {"access": "public", "introduced": "13", "name": "PHAssetResourceTypeAdjustmentBaseVideo"},
+      {"access": "public", "introduced": "17", "name": "PHAssetResourceTypePhotoProxy"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetResourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeUserLibrary"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeCloudShared"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeiTunesSynced"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetSourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusNotDetermined"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusRestricted"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusDenied"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusAuthorized"},
+      {"access": "public", "introduced": "14", "name": "PHAuthorizationStatusLimited"}
+     ],
+     "introduced": "8",
+     "name": "PHAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationDeleteContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRemoveContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationAddContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationCreateContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRearrangeContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationDelete"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRename"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionEditOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeMomentListCluster"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeMomentListYear"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeRegularFolder"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeSmartFolderEvents"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeSmartFolderFaces"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeAny"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionListSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeMomentList"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeFolder"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeSmartFolder"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionListType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeAspectFit"},
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeAspectFill"},
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeDefault"}
+     ],
+     "introduced": "8",
+     "name": "PHImageContentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeOpportunistic"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeHighQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeFastFormat"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsDeliveryMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeNone"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeFast"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeExact"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsResizeMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionCurrent"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionUnadjusted"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionOriginal"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsVersion"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCodeUnknown"},
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCodeAborted"}
+     ],
+     "introduced": "10",
+     "name": "PHLivePhotoEditingErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameTypePhoto"},
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameTypeVideo"}
+     ],
+     "introduced": "10",
+     "name": "PHLivePhotoFrameType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHObjectTypeAsset"},
+      {"access": "public", "name": "PHObjectTypeAssetCollection"},
+      {"access": "public", "name": "PHObjectTypeCollectionList"}
+     ],
+     "introduced": "16",
+     "name": "PHObjectType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorInternalError"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorUserCancelled"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorLibraryVolumeOffline"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorRelinquishingLibraryBundleToWriter"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorSwitchingSystemPhotoLibrary"},
+      {"access": "public", "introduced": "14", "name": "PHPhotosErrorNetworkAccessRequired"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorNetworkError"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorIdentifierNotFound"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorMultipleIdentifiersFound"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorChangeNotSupported"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorOperationInterrupted"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorInvalidResource"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorMissingResource"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorNotEnoughSpace"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorRequestNotSupportedForAsset"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorAccessRestricted"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorAccessUserDenied"},
+      {"access": "public", "introduced": "15.4", "name": "PHPhotosErrorLibraryInFileProviderSyncRoot"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorPersistentChangeTokenExpired"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorPersistentChangeDetailsUnavailable"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorInvalid"}
+     ],
+     "introduced": "13",
+     "name": "PHPhotosError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeAutomatic"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeHighQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeMediumQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeFastFormat"}
+     ],
+     "introduced": "8",
+     "name": "PHVideoRequestOptionsDeliveryMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersionCurrent"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersionOriginal"}
+     ],
+     "introduced": "8",
+     "name": "PHVideoRequestOptionsVersion"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputCancelledKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputErrorKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputResultIsInCloudKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageCancelledKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageErrorKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageManagerMaximumSize"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultIsDegradedKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultIsInCloudKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultRequestIDKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoEditingErrorDomain", "unavailable": true},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoCancelledKey"},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoErrorKey"},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoIsDegradedKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoShouldRenderAtPlaybackTime"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_PHLocalIdentifierNotFound", "unavailable": true},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PHLocalIdentifiersErrorKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_PHPhotosErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithFormatIdentifier:formatVersion:data:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAdjustmentData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatIdentifier", "introduced": "8", "name": "formatIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatVersion", "introduced": "8", "name": "formatVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "introduced": "8", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PHContentEditingInput"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchAssetsInAssetCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchKeyAssetsInAssetCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithBurstIdentifier:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithOptions:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithMediaType:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithALAssetURLs:options:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canPerformEditOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStyle", "introduced": "11", "name": "playbackStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "8", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaSubtypes", "introduced": "8", "name": "mediaSubtypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "8", "name": "pixelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelHeight", "introduced": "8", "name": "pixelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "introduced": "8", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modificationDate", "introduced": "8", "name": "modificationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "introduced": "8", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "8", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "introduced": "8", "name": "hidden"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFavorite", "introduced": "8", "name": "favorite"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSyncFailureHidden", "name": "syncFailureHidden", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "burstIdentifier", "introduced": "8", "name": "burstIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "burstSelectionTypes", "introduced": "8", "name": "burstSelectionTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "representsBurst", "introduced": "8", "name": "representsBurst"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceType", "introduced": "9", "name": "sourceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAdjustments", "introduced": "15", "name": "hasAdjustments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustmentFormatIdentifier", "introduced": "15", "name": "adjustmentFormatIdentifier"}
+     ],
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromImage:"},
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromImageAtFileURL:"},
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromVideoAtFileURL:"},
+      {"access": "public", "introduced": "8", "name": "deleteAssets:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAsset:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "revertAssetContentToOriginal"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAsset", "introduced": "8", "name": "placeholderForCreatedAsset"},
+      {"access": "public", "getter": "creationDate", "introduced": "8", "name": "creationDate", "setter": "setCreationDate:"},
+      {"access": "public", "getter": "location", "introduced": "8", "name": "location", "setter": "setLocation:"},
+      {"access": "public", "getter": "isFavorite", "introduced": "8", "name": "favorite", "setter": "setFavorite:"},
+      {"access": "public", "getter": "isHidden", "introduced": "8", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "contentEditingOutput", "introduced": "8", "name": "contentEditingOutput", "setter": "setContentEditingOutput:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithType:subtype:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsContainingAsset:withType:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithALAssetGroupURLs:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentsInMomentList:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentsWithOptions:"},
+      {"access": "public", "introduced": "8", "name": "transientAssetCollectionWithAssets:title:"},
+      {"access": "public", "introduced": "8", "name": "transientAssetCollectionWithAssetFetchResult:title:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetCollectionType", "introduced": "8", "name": "assetCollectionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetCollectionSubtype", "introduced": "8", "name": "assetCollectionSubtype"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "estimatedAssetCount", "introduced": "8", "name": "estimatedAssetCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "8", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "introduced": "8", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "approximateLocation", "introduced": "8", "name": "approximateLocation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedLocationNames", "introduced": "8", "name": "localizedLocationNames"}
+     ],
+     "super": "PHCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetCollectionWithTitle:"},
+      {"access": "public", "introduced": "8", "name": "deleteAssetCollections:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAssetCollection:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAssetCollection:assets:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "addAssets:"},
+      {"access": "public", "introduced": "8", "name": "insertAssets:atIndexes:"},
+      {"access": "public", "introduced": "8", "name": "removeAssets:"},
+      {"access": "public", "introduced": "8", "name": "removeAssetsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "replaceAssetsAtIndexes:withAssets:"},
+      {"access": "public", "introduced": "8", "name": "moveAssetsAtIndexes:toIndex:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetCollectionChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAssetCollection", "introduced": "8", "name": "placeholderForCreatedAssetCollection"},
+      {"access": "public", "getter": "title", "introduced": "8", "name": "title", "setter": "setTitle:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "creationRequestForAsset"},
+      {"access": "public", "introduced": "9", "name": "supportsAssetResourceTypes:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "addResourceWithType:fileURL:options:"},
+      {"access": "public", "introduced": "9", "name": "addResourceWithType:data:options:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetCreationRequest",
+     "super": "PHAssetChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "assetResourcesForAsset:"},
+      {"access": "public", "introduced": "9.1", "name": "assetResourcesForLivePhoto:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "9", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetLocalIdentifier", "introduced": "9", "name": "assetLocalIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "introduced": "9", "name": "originalFilename"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "16", "name": "pixelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelHeight", "introduced": "16", "name": "pixelHeight"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceCreationOptions",
+     "properties": [
+      {"access": "public", "getter": "originalFilename", "introduced": "9", "name": "originalFilename", "setter": "setOriginalFilename:"},
+      {"access": "public", "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier", "setter": "setUniformTypeIdentifier:"},
+      {"access": "public", "getter": "shouldMoveFile", "introduced": "9", "name": "shouldMoveFile", "setter": "setShouldMoveFile:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "defaultManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "requestDataForAssetResource:options:dataReceivedHandler:completionHandler:"},
+      {"access": "public", "introduced": "9", "name": "writeDataForAssetResource:toFile:options:completionHandler:"},
+      {"access": "public", "introduced": "9", "name": "cancelDataRequest:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "9", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "9", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "startCachingImagesForAssets:targetSize:contentMode:options:"},
+      {"access": "public", "introduced": "8", "name": "stopCachingImagesForAssets:targetSize:contentMode:options:"},
+      {"access": "public", "introduced": "8", "name": "stopCachingImagesForAllAssets"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCachingImageManager",
+     "properties": [
+      {"access": "public", "getter": "allowsCachingHighQualityImages", "introduced": "8", "name": "allowsCachingHighQualityImages", "setter": "setAllowsCachingHighQualityImages:"}
+     ],
+     "super": "PHImageManager"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "changeDetailsForObject:"},
+      {"access": "public", "introduced": "8", "name": "changeDetailsForFetchResult:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHChange",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "PHChangeRequest",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "initWithStringValue:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHCloudIdentifier",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "notFoundIdentifier", "name": "notFoundIdentifier", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stringValue", "introduced": "15", "name": "stringValue"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHCloudIdentifierMapping",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "cloudIdentifier", "introduced": "15", "name": "cloudIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "15", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchCollectionsInCollectionList:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchTopLevelUserCollectionsWithOptions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canPerformEditOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "canContainAssets", "introduced": "8", "name": "canContainAssets"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canContainCollections", "introduced": "8", "name": "canContainCollections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedTitle", "introduced": "8", "name": "localizedTitle"}
+     ],
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsContainingCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsWithType:subtype:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentListsWithSubtype:containingMoment:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentListsWithSubtype:options:"},
+      {"access": "public", "introduced": "8", "name": "transientCollectionListWithCollections:title:"},
+      {"access": "public", "introduced": "8", "name": "transientCollectionListWithCollectionsFetchResult:title:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollectionList",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionListType", "introduced": "8", "name": "collectionListType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionListSubtype", "introduced": "8", "name": "collectionListSubtype"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "8", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "introduced": "8", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedLocationNames", "introduced": "8", "name": "localizedLocationNames"}
+     ],
+     "super": "PHCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForCollectionListWithTitle:"},
+      {"access": "public", "introduced": "8", "name": "deleteCollectionLists:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForCollectionList:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForCollectionList:childCollections:"},
+      {"access": "public", "introduced": "14.2", "name": "changeRequestForTopLevelCollectionListUserCollections:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "addChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "insertChildCollections:atIndexes:"},
+      {"access": "public", "introduced": "8", "name": "removeChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "removeChildCollectionsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "replaceChildCollectionsAtIndexes:withChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "moveChildCollectionsAtIndexes:toIndex:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollectionListChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedCollectionList", "introduced": "8", "name": "placeholderForCreatedCollectionList"},
+      {"access": "public", "getter": "title", "introduced": "8", "name": "title", "setter": "setTitle:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingInput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "8", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaSubtypes", "introduced": "8", "name": "mediaSubtypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "introduced": "8", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "introduced": "8", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "8", "name": "uniformTypeIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStyle", "introduced": "11", "name": "playbackStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustmentData", "introduced": "8", "name": "adjustmentData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displaySizeImage", "introduced": "8", "name": "displaySizeImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImageURL", "introduced": "8", "name": "fullSizeImageURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImageOrientation", "introduced": "8", "name": "fullSizeImageOrientation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "avAsset", "introduced": "8", "name": "avAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audiovisualAsset", "introduced": "9", "name": "audiovisualAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "livePhoto", "introduced": "10", "name": "livePhoto"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingInputRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "canHandleAdjustmentData", "introduced": "8", "name": "canHandleAdjustmentData", "setter": "setCanHandleAdjustmentData:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PHAssetChangeRequest"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithContentEditingInput:"},
+      {"access": "public", "introduced": "17", "name": "renderedContentURLForType:error:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingOutput",
+     "properties": [
+      {"access": "public", "getter": "adjustmentData", "introduced": "8", "name": "adjustmentData", "setter": "setAdjustmentData:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "renderedContentURL", "introduced": "8", "name": "renderedContentURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultRenderedContentType", "introduced": "17", "name": "defaultRenderedContentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedRenderedContentTypes", "introduced": "17", "name": "supportedRenderedContentTypes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchOptions",
+     "properties": [
+      {"access": "public", "getter": "predicate", "introduced": "8", "name": "predicate", "setter": "setPredicate:"},
+      {"access": "public", "getter": "sortDescriptors", "introduced": "8", "name": "sortDescriptors", "setter": "setSortDescriptors:"},
+      {"access": "public", "getter": "includeHiddenAssets", "introduced": "8", "name": "includeHiddenAssets", "setter": "setIncludeHiddenAssets:"},
+      {"access": "public", "getter": "includeAllBurstAssets", "introduced": "8", "name": "includeAllBurstAssets", "setter": "setIncludeAllBurstAssets:"},
+      {"access": "public", "getter": "includeAssetSourceTypes", "introduced": "9", "name": "includeAssetSourceTypes", "setter": "setIncludeAssetSourceTypes:"},
+      {"access": "public", "getter": "fetchLimit", "introduced": "9", "name": "fetchLimit", "setter": "setFetchLimit:"},
+      {"access": "public", "getter": "wantsIncrementalChangeDetails", "introduced": "8", "name": "wantsIncrementalChangeDetails", "setter": "setWantsIncrementalChangeDetails:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "objectAtIndex:"},
+      {"access": "public", "introduced": "8", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "introduced": "8", "name": "containsObject:"},
+      {"access": "public", "introduced": "8", "name": "indexOfObject:"},
+      {"access": "public", "introduced": "8", "name": "indexOfObject:inRange:"},
+      {"access": "public", "introduced": "8", "name": "objectsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsUsingBlock:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsWithOptions:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsAtIndexes:options:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "countOfAssetsWithMediaType:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "introduced": "8", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firstObject", "introduced": "8", "name": "firstObject"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastObject", "introduced": "8", "name": "lastObject"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "changeDetailsFromFetchResult:toFetchResult:changedObjects:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "enumerateMovesWithBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchResultChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchResultBeforeChanges", "introduced": "8", "name": "fetchResultBeforeChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchResultAfterChanges", "introduced": "8", "name": "fetchResultAfterChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasIncrementalChanges", "introduced": "8", "name": "hasIncrementalChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "removedIndexes", "introduced": "8", "name": "removedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "removedObjects", "introduced": "8", "name": "removedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedIndexes", "introduced": "8", "name": "insertedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedObjects", "introduced": "8", "name": "insertedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changedIndexes", "introduced": "8", "name": "changedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changedObjects", "introduced": "8", "name": "changedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasMoves", "introduced": "8", "name": "hasMoves"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "defaultManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "requestImageForAsset:targetSize:contentMode:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestImageDataForAsset:options:resultHandler:"},
+      {"access": "public", "introduced": "13", "name": "requestImageDataAndOrientationForAsset:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "cancelImageRequest:"},
+      {"access": "public", "introduced": "9.1", "name": "requestLivePhotoForAsset:targetSize:contentMode:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestPlayerItemForVideo:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestExportSessionForVideo:options:exportPreset:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestAVAssetForVideo:options:resultHandler:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHImageManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHImageRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "version", "introduced": "8", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "8", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "resizeMode", "introduced": "8", "name": "resizeMode", "setter": "setResizeMode:"},
+      {"access": "public", "getter": "normalizedCropRect", "introduced": "8", "name": "normalizedCropRect", "setter": "setNormalizedCropRect:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "isSynchronous", "introduced": "8", "name": "synchronous", "setter": "setSynchronous:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"},
+      {"access": "public", "getter": "allowSecondaryDegradedImage", "introduced": "17", "name": "allowSecondaryDegradedImage", "setter": "setAllowSecondaryDegradedImage:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSItemProvider"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "9.1", "name": "requestLivePhotoWithResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:"},
+      {"access": "public", "introduced": "9.1", "name": "cancelLivePhotoRequestWithRequestID:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.1", "name": "init", "unavailable": true}
+     ],
+     "introduced": "9.1",
+     "linkage": "exported",
+     "name": "PHLivePhoto",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "introduced": "9.1", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "initWithLivePhotoEditingInput:"},
+      {"access": "public", "introduced": "10", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "10", "name": "prepareLivePhotoForPlaybackWithTargetSize:options:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "saveLivePhotoToOutput:options:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "cancel"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "PHLivePhotoEditingContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImage", "introduced": "10", "name": "fullSizeImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "10", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoTime", "introduced": "10", "name": "photoTime"},
+      {"access": "public", "getter": "frameProcessor", "introduced": "10", "name": "frameProcessor", "setter": "setFrameProcessor:"},
+      {"access": "public", "getter": "audioVolume", "introduced": "10", "name": "audioVolume", "setter": "setAudioVolume:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "orientation", "introduced": "10", "name": "orientation"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9.1",
+     "linkage": "exported",
+     "name": "PHLivePhotoRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "version", "introduced": "9.1", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "9.1", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "9.1", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "9.1", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHLocalIdentifierMapping",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "introduced": "15", "name": "localIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "15", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "introduced": "8", "name": "localIdentifier"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObjectChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectBeforeChanges", "introduced": "8", "name": "objectBeforeChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectAfterChanges", "introduced": "8", "name": "objectAfterChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetContentChanged", "introduced": "8", "name": "assetContentChanged"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectWasDeleted", "introduced": "8", "name": "objectWasDeleted"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObjectPlaceholder",
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "changeDetailsForObjectType:error:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeToken", "name": "changeToken"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "enumerateChangesWithBlock:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChangeFetchResult",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChangeToken",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentObjectChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectType", "name": "objectType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedLocalIdentifiers", "name": "insertedLocalIdentifiers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "updatedLocalIdentifiers", "name": "updatedLocalIdentifiers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletedLocalIdentifiers", "name": "deletedLocalIdentifiers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CloudIdentifiers"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "sharedPhotoLibrary"},
+      {"access": "public", "introduced": "14", "name": "authorizationStatusForAccessLevel:"},
+      {"access": "public", "introduced": "14", "name": "requestAuthorizationForAccessLevel:handler:"},
+      {"access": "public", "introduced": "8", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "8", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "registerAvailabilityObserver:"},
+      {"access": "public", "introduced": "13", "name": "unregisterAvailabilityObserver:"},
+      {"access": "public", "introduced": "8", "name": "performChanges:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "performChangesAndWait:error:"},
+      {"access": "public", "introduced": "8", "name": "registerChangeObserver:"},
+      {"access": "public", "introduced": "8", "name": "unregisterChangeObserver:"},
+      {"access": "public", "introduced": "16", "name": "fetchPersistentChangesSinceToken:error:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHPhotoLibrary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "unavailabilityReason", "introduced": "13", "name": "unavailabilityReason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentChangeToken", "introduced": "16", "name": "currentChangeToken"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "PHProject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "projectExtensionData", "name": "projectExtensionData", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasProjectPreview", "name": "hasProjectPreview", "unavailable": true}
+     ],
+     "super": "PHAssetCollection",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithProject:", "unavailable": true},
+      {"access": "public", "name": "setKeyAsset:", "unavailable": true},
+      {"access": "public", "name": "setProjectPreviewImage:", "unavailable": true},
+      {"access": "public", "name": "removeAssets:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "PHProjectChangeRequest",
+     "properties": [
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:", "unavailable": true},
+      {"access": "public", "getter": "projectExtensionData", "name": "projectExtensionData", "setter": "setProjectExtensionData:", "unavailable": true}
+     ],
+     "super": "PHChangeRequest",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHVideoRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "version", "introduced": "8", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "8", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "PHLivePhotoFrame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "image", "introduced": "10", "name": "image"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "time", "introduced": "10", "name": "time"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "10", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "renderScale", "introduced": "10", "name": "renderScale"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "photoLibraryDidBecomeUnavailable:"}
+     ],
+     "introduced": "13",
+     "name": "PHPhotoLibraryAvailabilityObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "photoLibraryDidChange:"}
+     ],
+     "introduced": "8",
+     "name": "PHPhotoLibraryChangeObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "8", "name": "PHAccessLevel"},
+    {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHAssetCollectionType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetEditOperation"},
+    {"access": "public", "introduced": "8", "name": "PHAssetImageProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHAssetMediaType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
+    {"access": "public", "introduced": "9", "name": "PHAssetResourceDataRequestID"},
+    {"access": "public", "introduced": "9", "name": "PHAssetResourceProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAssetResourceType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetSourceType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetVideoProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAuthorizationStatus"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionEditOperation"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionListSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionListType"},
+    {"access": "public", "introduced": "8", "name": "PHContentEditingInputRequestID"},
+    {"access": "public", "introduced": "8", "name": "PHImageContentMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestID"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersion"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCode"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingOption"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameProcessingBlock"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameType"},
+    {"access": "public", "introduced": "9.1", "name": "PHLivePhotoRequestID"},
+    {"access": "public", "name": "PHObjectType"},
+    {"access": "public", "introduced": "13", "name": "PHPhotosError"},
+    {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryMode"},
+    {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersion"},
+    {"access": "public", "name": "UIImageOrientation"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "PHCloudIdentifier",
+     "introduced": "15",
+     "name": "",
+     "protocols": [
+      "NSCopying"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "localIdentifierMappingsForCloudIdentifiers:"},
+      {"access": "public", "introduced": "15", "name": "cloudIdentifierMappingsForLocalIdentifiers:"},
+      {"access": "public", "name": "localIdentifiersForCloudIdentifiers:", "unavailable": true},
+      {"access": "public", "name": "cloudIdentifiersForLocalIdentifiers:", "unavailable": true}
+     ],
+     "interface": "PHPhotoLibrary",
+     "introduced": "15",
+     "name": "CloudIdentifiers"
+    },
+    {
+     "access": "public",
+     "interface": "PHLivePhoto",
+     "introduced": "14",
+     "name": "NSItemProvider",
+     "protocols": [
+      "NSItemProviderReading"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithPlaceholderForCreatedAsset:"}
+     ],
+     "interface": "PHContentEditingOutput",
+     "introduced": "8",
+     "name": "PHAssetChangeRequest"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "requestContentEditingInputWithOptions:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "cancelContentEditingInputRequest:"}
+     ],
+     "interface": "PHAsset",
+     "introduced": "8",
+     "name": "PHContentEditingInput"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAccessLevelAddOnly"},
+      {"access": "public", "introduced": "8", "name": "PHAccessLevelReadWrite"}
+     ],
+     "introduced": "8",
+     "name": "PHAccessLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeAutoPick"},
+      {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionTypeUserPick"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetBurstSelectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumRegular"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedEvent"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedFaces"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumSyncedAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumImported"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumMyPhotoStream"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAlbumCloudShared"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumGeneric"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumPanoramas"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumVideos"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumFavorites"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumTimelapses"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumAllHidden"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumRecentlyAdded"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumBursts"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumSlomoVideos"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeSmartAlbumUserLibrary"},
+      {"access": "public", "introduced": "9", "name": "PHAssetCollectionSubtypeSmartAlbumSelfPortraits"},
+      {"access": "public", "introduced": "9", "name": "PHAssetCollectionSubtypeSmartAlbumScreenshots"},
+      {"access": "public", "introduced": "10.2", "name": "PHAssetCollectionSubtypeSmartAlbumDepthEffect"},
+      {"access": "public", "introduced": "10.3", "name": "PHAssetCollectionSubtypeSmartAlbumLivePhotos"},
+      {"access": "public", "introduced": "11", "name": "PHAssetCollectionSubtypeSmartAlbumAnimated"},
+      {"access": "public", "introduced": "11", "name": "PHAssetCollectionSubtypeSmartAlbumLongExposures"},
+      {"access": "public", "introduced": "13", "name": "PHAssetCollectionSubtypeSmartAlbumUnableToUpload"},
+      {"access": "public", "introduced": "15", "name": "PHAssetCollectionSubtypeSmartAlbumRAW"},
+      {"access": "public", "introduced": "15", "name": "PHAssetCollectionSubtypeSmartAlbumCinematic"},
+      {"access": "public", "introduced": "18", "name": "PHAssetCollectionSubtypeSmartAlbumSpatial"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtypeAny"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetCollectionSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeSmartAlbum"},
+      {"access": "public", "introduced": "8", "name": "PHAssetCollectionTypeMoment"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetCollectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationDelete"},
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationContent"},
+      {"access": "public", "introduced": "8", "name": "PHAssetEditOperationProperties"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetEditOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypePhotoPanorama"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypePhotoHDR"},
+      {"access": "public", "introduced": "9", "name": "PHAssetMediaSubtypePhotoScreenshot"},
+      {"access": "public", "introduced": "9.1", "name": "PHAssetMediaSubtypePhotoLive"},
+      {"access": "public", "introduced": "10.2", "name": "PHAssetMediaSubtypePhotoDepthEffect"},
+      {"access": "public", "introduced": "16", "name": "PHAssetMediaSubtypeSpatialMedia"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoStreamed"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoHighFrameRate"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtypeVideoTimelapse"},
+      {"access": "public", "introduced": "15", "name": "PHAssetMediaSubtypeVideoCinematic"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetMediaSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeUnknown"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeImage"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetMediaTypeAudio"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleUnsupported"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleImage"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleImageAnimated"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleLivePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyleVideoLooping"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetPlaybackStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAudio"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAlternatePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeFullSizePhoto"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeFullSizeVideo"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAdjustmentData"},
+      {"access": "public", "introduced": "8", "name": "PHAssetResourceTypeAdjustmentBasePhoto"},
+      {"access": "public", "introduced": "9.1", "name": "PHAssetResourceTypePairedVideo"},
+      {"access": "public", "introduced": "10", "name": "PHAssetResourceTypeFullSizePairedVideo"},
+      {"access": "public", "introduced": "10", "name": "PHAssetResourceTypeAdjustmentBasePairedVideo"},
+      {"access": "public", "introduced": "13", "name": "PHAssetResourceTypeAdjustmentBaseVideo"},
+      {"access": "public", "introduced": "17", "name": "PHAssetResourceTypePhotoProxy"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetResourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeNone"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeUserLibrary"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeCloudShared"},
+      {"access": "public", "introduced": "8", "name": "PHAssetSourceTypeiTunesSynced"}
+     ],
+     "introduced": "8",
+     "name": "PHAssetSourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusNotDetermined"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusRestricted"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusDenied"},
+      {"access": "public", "introduced": "8", "name": "PHAuthorizationStatusAuthorized"},
+      {"access": "public", "introduced": "14", "name": "PHAuthorizationStatusLimited"}
+     ],
+     "introduced": "8",
+     "name": "PHAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationDeleteContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRemoveContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationAddContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationCreateContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRearrangeContent"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationDelete"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionEditOperationRename"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionEditOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeMomentListCluster"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeMomentListYear"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeRegularFolder"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeSmartFolderEvents"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeSmartFolderFaces"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListSubtypeAny"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionListSubtype"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeMomentList"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeFolder"},
+      {"access": "public", "introduced": "8", "name": "PHCollectionListTypeSmartFolder"}
+     ],
+     "introduced": "8",
+     "name": "PHCollectionListType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeAspectFit"},
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeAspectFill"},
+      {"access": "public", "introduced": "8", "name": "PHImageContentModeDefault"}
+     ],
+     "introduced": "8",
+     "name": "PHImageContentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeOpportunistic"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeHighQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryModeFastFormat"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsDeliveryMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeNone"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeFast"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeModeExact"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsResizeMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionCurrent"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionUnadjusted"},
+      {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersionOriginal"}
+     ],
+     "introduced": "8",
+     "name": "PHImageRequestOptionsVersion"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCodeUnknown"},
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCodeAborted"}
+     ],
+     "introduced": "10",
+     "name": "PHLivePhotoEditingErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameTypePhoto"},
+      {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameTypeVideo"}
+     ],
+     "introduced": "10",
+     "name": "PHLivePhotoFrameType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHObjectTypeAsset"},
+      {"access": "public", "name": "PHObjectTypeAssetCollection"},
+      {"access": "public", "name": "PHObjectTypeCollectionList"}
+     ],
+     "introduced": "16",
+     "name": "PHObjectType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorInternalError"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorUserCancelled"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorLibraryVolumeOffline"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorRelinquishingLibraryBundleToWriter"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorSwitchingSystemPhotoLibrary"},
+      {"access": "public", "introduced": "14", "name": "PHPhotosErrorNetworkAccessRequired"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorNetworkError"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorIdentifierNotFound"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorMultipleIdentifiersFound"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorChangeNotSupported"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorOperationInterrupted"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorInvalidResource"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorMissingResource"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorNotEnoughSpace"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorRequestNotSupportedForAsset"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorAccessRestricted"},
+      {"access": "public", "introduced": "15", "name": "PHPhotosErrorAccessUserDenied"},
+      {"access": "public", "introduced": "15.4", "name": "PHPhotosErrorLibraryInFileProviderSyncRoot"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorPersistentChangeTokenExpired"},
+      {"access": "public", "introduced": "16", "name": "PHPhotosErrorPersistentChangeDetailsUnavailable"},
+      {"access": "public", "introduced": "13", "name": "PHPhotosErrorInvalid"}
+     ],
+     "introduced": "13",
+     "name": "PHPhotosError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeAutomatic"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeHighQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeMediumQualityFormat"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryModeFastFormat"}
+     ],
+     "introduced": "8",
+     "name": "PHVideoRequestOptionsDeliveryMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersionCurrent"},
+      {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersionOriginal"}
+     ],
+     "introduced": "8",
+     "name": "PHVideoRequestOptionsVersion"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputCancelledKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputErrorKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHContentEditingInputResultIsInCloudKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageCancelledKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageErrorKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageManagerMaximumSize"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultIsDegradedKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultIsInCloudKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_PHImageResultRequestIDKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoEditingErrorDomain", "unavailable": true},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoCancelledKey"},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoErrorKey"},
+    {"access": "public", "introduced": "9.1", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoInfoIsDegradedKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PHLivePhotoShouldRenderAtPlaybackTime"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_PHLocalIdentifierNotFound", "unavailable": true},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PHLocalIdentifiersErrorKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_PHPhotosErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithFormatIdentifier:formatVersion:data:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAdjustmentData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatIdentifier", "introduced": "8", "name": "formatIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatVersion", "introduced": "8", "name": "formatVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "introduced": "8", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PHContentEditingInput"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchAssetsInAssetCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchKeyAssetsInAssetCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithBurstIdentifier:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithOptions:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithMediaType:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetsWithALAssetURLs:options:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canPerformEditOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStyle", "introduced": "11", "name": "playbackStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "8", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaSubtypes", "introduced": "8", "name": "mediaSubtypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "8", "name": "pixelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelHeight", "introduced": "8", "name": "pixelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "introduced": "8", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modificationDate", "introduced": "8", "name": "modificationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "introduced": "8", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "8", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "introduced": "8", "name": "hidden"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFavorite", "introduced": "8", "name": "favorite"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSyncFailureHidden", "name": "syncFailureHidden", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "burstIdentifier", "introduced": "8", "name": "burstIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "burstSelectionTypes", "introduced": "8", "name": "burstSelectionTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "representsBurst", "introduced": "8", "name": "representsBurst"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceType", "introduced": "9", "name": "sourceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAdjustments", "introduced": "15", "name": "hasAdjustments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustmentFormatIdentifier", "introduced": "15", "name": "adjustmentFormatIdentifier"}
+     ],
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromImage:"},
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromImageAtFileURL:"},
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetFromVideoAtFileURL:"},
+      {"access": "public", "introduced": "8", "name": "deleteAssets:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAsset:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "revertAssetContentToOriginal"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAsset", "introduced": "8", "name": "placeholderForCreatedAsset"},
+      {"access": "public", "getter": "creationDate", "introduced": "8", "name": "creationDate", "setter": "setCreationDate:"},
+      {"access": "public", "getter": "location", "introduced": "8", "name": "location", "setter": "setLocation:"},
+      {"access": "public", "getter": "isFavorite", "introduced": "8", "name": "favorite", "setter": "setFavorite:"},
+      {"access": "public", "getter": "isHidden", "introduced": "8", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "contentEditingOutput", "introduced": "8", "name": "contentEditingOutput", "setter": "setContentEditingOutput:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithType:subtype:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsContainingAsset:withType:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchAssetCollectionsWithALAssetGroupURLs:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentsInMomentList:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentsWithOptions:"},
+      {"access": "public", "introduced": "8", "name": "transientAssetCollectionWithAssets:title:"},
+      {"access": "public", "introduced": "8", "name": "transientAssetCollectionWithAssetFetchResult:title:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetCollectionType", "introduced": "8", "name": "assetCollectionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetCollectionSubtype", "introduced": "8", "name": "assetCollectionSubtype"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "estimatedAssetCount", "introduced": "8", "name": "estimatedAssetCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "8", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "introduced": "8", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "approximateLocation", "introduced": "8", "name": "approximateLocation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedLocationNames", "introduced": "8", "name": "localizedLocationNames"}
+     ],
+     "super": "PHCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForAssetCollectionWithTitle:"},
+      {"access": "public", "introduced": "8", "name": "deleteAssetCollections:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAssetCollection:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForAssetCollection:assets:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "addAssets:"},
+      {"access": "public", "introduced": "8", "name": "insertAssets:atIndexes:"},
+      {"access": "public", "introduced": "8", "name": "removeAssets:"},
+      {"access": "public", "introduced": "8", "name": "removeAssetsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "replaceAssetsAtIndexes:withAssets:"},
+      {"access": "public", "introduced": "8", "name": "moveAssetsAtIndexes:toIndex:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHAssetCollectionChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAssetCollection", "introduced": "8", "name": "placeholderForCreatedAssetCollection"},
+      {"access": "public", "getter": "title", "introduced": "8", "name": "title", "setter": "setTitle:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "creationRequestForAsset"},
+      {"access": "public", "introduced": "9", "name": "supportsAssetResourceTypes:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "addResourceWithType:fileURL:options:"},
+      {"access": "public", "introduced": "9", "name": "addResourceWithType:data:options:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetCreationRequest",
+     "super": "PHAssetChangeRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "assetResourcesForAsset:"},
+      {"access": "public", "introduced": "9.1", "name": "assetResourcesForLivePhoto:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "9", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetLocalIdentifier", "introduced": "9", "name": "assetLocalIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "introduced": "9", "name": "originalFilename"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "16", "name": "pixelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelHeight", "introduced": "16", "name": "pixelHeight"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceCreationOptions",
+     "properties": [
+      {"access": "public", "getter": "originalFilename", "introduced": "9", "name": "originalFilename", "setter": "setOriginalFilename:"},
+      {"access": "public", "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier", "setter": "setUniformTypeIdentifier:"},
+      {"access": "public", "getter": "shouldMoveFile", "introduced": "9", "name": "shouldMoveFile", "setter": "setShouldMoveFile:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "defaultManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "requestDataForAssetResource:options:dataReceivedHandler:completionHandler:"},
+      {"access": "public", "introduced": "9", "name": "writeDataForAssetResource:toFile:options:completionHandler:"},
+      {"access": "public", "introduced": "9", "name": "cancelDataRequest:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "PHAssetResourceRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "9", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "9", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "startCachingImagesForAssets:targetSize:contentMode:options:"},
+      {"access": "public", "introduced": "8", "name": "stopCachingImagesForAssets:targetSize:contentMode:options:"},
+      {"access": "public", "introduced": "8", "name": "stopCachingImagesForAllAssets"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCachingImageManager",
+     "properties": [
+      {"access": "public", "getter": "allowsCachingHighQualityImages", "introduced": "8", "name": "allowsCachingHighQualityImages", "setter": "setAllowsCachingHighQualityImages:"}
+     ],
+     "super": "PHImageManager"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "changeDetailsForObject:"},
+      {"access": "public", "introduced": "8", "name": "changeDetailsForFetchResult:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHChange",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "PHChangeRequest",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "initWithStringValue:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHCloudIdentifier",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "notFoundIdentifier", "name": "notFoundIdentifier", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stringValue", "introduced": "15", "name": "stringValue"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHCloudIdentifierMapping",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "cloudIdentifier", "introduced": "15", "name": "cloudIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "15", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchCollectionsInCollectionList:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchTopLevelUserCollectionsWithOptions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canPerformEditOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "canContainAssets", "introduced": "8", "name": "canContainAssets"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canContainCollections", "introduced": "8", "name": "canContainCollections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedTitle", "introduced": "8", "name": "localizedTitle"}
+     ],
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsContainingCollection:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsWithLocalIdentifiers:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchCollectionListsWithType:subtype:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentListsWithSubtype:containingMoment:options:"},
+      {"access": "public", "introduced": "8", "name": "fetchMomentListsWithSubtype:options:"},
+      {"access": "public", "introduced": "8", "name": "transientCollectionListWithCollections:title:"},
+      {"access": "public", "introduced": "8", "name": "transientCollectionListWithCollectionsFetchResult:title:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollectionList",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionListType", "introduced": "8", "name": "collectionListType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionListSubtype", "introduced": "8", "name": "collectionListSubtype"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "8", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "introduced": "8", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedLocationNames", "introduced": "8", "name": "localizedLocationNames"}
+     ],
+     "super": "PHCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "creationRequestForCollectionListWithTitle:"},
+      {"access": "public", "introduced": "8", "name": "deleteCollectionLists:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForCollectionList:"},
+      {"access": "public", "introduced": "8", "name": "changeRequestForCollectionList:childCollections:"},
+      {"access": "public", "introduced": "14.2", "name": "changeRequestForTopLevelCollectionListUserCollections:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "addChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "insertChildCollections:atIndexes:"},
+      {"access": "public", "introduced": "8", "name": "removeChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "removeChildCollectionsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "replaceChildCollectionsAtIndexes:withChildCollections:"},
+      {"access": "public", "introduced": "8", "name": "moveChildCollectionsAtIndexes:toIndex:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHCollectionListChangeRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedCollectionList", "introduced": "8", "name": "placeholderForCreatedCollectionList"},
+      {"access": "public", "getter": "title", "introduced": "8", "name": "title", "setter": "setTitle:"}
+     ],
+     "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingInput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "8", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaSubtypes", "introduced": "8", "name": "mediaSubtypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "introduced": "8", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "introduced": "8", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "8", "name": "uniformTypeIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStyle", "introduced": "11", "name": "playbackStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustmentData", "introduced": "8", "name": "adjustmentData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displaySizeImage", "introduced": "8", "name": "displaySizeImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImageURL", "introduced": "8", "name": "fullSizeImageURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImageOrientation", "introduced": "8", "name": "fullSizeImageOrientation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "avAsset", "introduced": "8", "name": "avAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audiovisualAsset", "introduced": "9", "name": "audiovisualAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "livePhoto", "introduced": "10", "name": "livePhoto"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingInputRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "canHandleAdjustmentData", "introduced": "8", "name": "canHandleAdjustmentData", "setter": "setCanHandleAdjustmentData:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PHAssetChangeRequest"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "initWithContentEditingInput:"},
+      {"access": "public", "introduced": "17", "name": "renderedContentURLForType:error:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHContentEditingOutput",
+     "properties": [
+      {"access": "public", "getter": "adjustmentData", "introduced": "8", "name": "adjustmentData", "setter": "setAdjustmentData:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "renderedContentURL", "introduced": "8", "name": "renderedContentURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultRenderedContentType", "introduced": "17", "name": "defaultRenderedContentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedRenderedContentTypes", "introduced": "17", "name": "supportedRenderedContentTypes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchOptions",
+     "properties": [
+      {"access": "public", "getter": "predicate", "introduced": "8", "name": "predicate", "setter": "setPredicate:"},
+      {"access": "public", "getter": "sortDescriptors", "introduced": "8", "name": "sortDescriptors", "setter": "setSortDescriptors:"},
+      {"access": "public", "getter": "includeHiddenAssets", "introduced": "8", "name": "includeHiddenAssets", "setter": "setIncludeHiddenAssets:"},
+      {"access": "public", "getter": "includeAllBurstAssets", "introduced": "8", "name": "includeAllBurstAssets", "setter": "setIncludeAllBurstAssets:"},
+      {"access": "public", "getter": "includeAssetSourceTypes", "introduced": "9", "name": "includeAssetSourceTypes", "setter": "setIncludeAssetSourceTypes:"},
+      {"access": "public", "getter": "fetchLimit", "introduced": "9", "name": "fetchLimit", "setter": "setFetchLimit:"},
+      {"access": "public", "getter": "wantsIncrementalChangeDetails", "introduced": "8", "name": "wantsIncrementalChangeDetails", "setter": "setWantsIncrementalChangeDetails:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "objectAtIndex:"},
+      {"access": "public", "introduced": "8", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "introduced": "8", "name": "containsObject:"},
+      {"access": "public", "introduced": "8", "name": "indexOfObject:"},
+      {"access": "public", "introduced": "8", "name": "indexOfObject:inRange:"},
+      {"access": "public", "introduced": "8", "name": "objectsAtIndexes:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsUsingBlock:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsWithOptions:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "enumerateObjectsAtIndexes:options:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "countOfAssetsWithMediaType:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "introduced": "8", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firstObject", "introduced": "8", "name": "firstObject"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastObject", "introduced": "8", "name": "lastObject"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "changeDetailsFromFetchResult:toFetchResult:changedObjects:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "enumerateMovesWithBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHFetchResultChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchResultBeforeChanges", "introduced": "8", "name": "fetchResultBeforeChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchResultAfterChanges", "introduced": "8", "name": "fetchResultAfterChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasIncrementalChanges", "introduced": "8", "name": "hasIncrementalChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "removedIndexes", "introduced": "8", "name": "removedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "removedObjects", "introduced": "8", "name": "removedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedIndexes", "introduced": "8", "name": "insertedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedObjects", "introduced": "8", "name": "insertedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changedIndexes", "introduced": "8", "name": "changedIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changedObjects", "introduced": "8", "name": "changedObjects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasMoves", "introduced": "8", "name": "hasMoves"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "defaultManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "requestImageForAsset:targetSize:contentMode:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestImageDataForAsset:options:resultHandler:"},
+      {"access": "public", "introduced": "13", "name": "requestImageDataAndOrientationForAsset:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "cancelImageRequest:"},
+      {"access": "public", "introduced": "9.1", "name": "requestLivePhotoForAsset:targetSize:contentMode:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestPlayerItemForVideo:options:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestExportSessionForVideo:options:exportPreset:resultHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestAVAssetForVideo:options:resultHandler:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHImageManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHImageRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "version", "introduced": "8", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "8", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "resizeMode", "introduced": "8", "name": "resizeMode", "setter": "setResizeMode:"},
+      {"access": "public", "getter": "normalizedCropRect", "introduced": "8", "name": "normalizedCropRect", "setter": "setNormalizedCropRect:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "isSynchronous", "introduced": "8", "name": "synchronous", "setter": "setSynchronous:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"},
+      {"access": "public", "getter": "allowSecondaryDegradedImage", "introduced": "17", "name": "allowSecondaryDegradedImage", "setter": "setAllowSecondaryDegradedImage:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSItemProvider"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "9.1", "name": "requestLivePhotoWithResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:"},
+      {"access": "public", "introduced": "9.1", "name": "cancelLivePhotoRequestWithRequestID:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.1", "name": "init", "unavailable": true}
+     ],
+     "introduced": "9.1",
+     "linkage": "exported",
+     "name": "PHLivePhoto",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "introduced": "9.1", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "initWithLivePhotoEditingInput:"},
+      {"access": "public", "introduced": "10", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "10", "name": "prepareLivePhotoForPlaybackWithTargetSize:options:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "saveLivePhotoToOutput:options:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "cancel"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "PHLivePhotoEditingContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fullSizeImage", "introduced": "10", "name": "fullSizeImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "10", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoTime", "introduced": "10", "name": "photoTime"},
+      {"access": "public", "getter": "frameProcessor", "introduced": "10", "name": "frameProcessor", "setter": "setFrameProcessor:"},
+      {"access": "public", "getter": "audioVolume", "introduced": "10", "name": "audioVolume", "setter": "setAudioVolume:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "orientation", "introduced": "10", "name": "orientation"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9.1",
+     "linkage": "exported",
+     "name": "PHLivePhotoRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "version", "introduced": "9.1", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "9.1", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "9.1", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "9.1", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "PHLocalIdentifierMapping",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "introduced": "15", "name": "localIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "15", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "introduced": "8", "name": "localIdentifier"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObjectChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectBeforeChanges", "introduced": "8", "name": "objectBeforeChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectAfterChanges", "introduced": "8", "name": "objectAfterChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetContentChanged", "introduced": "8", "name": "assetContentChanged"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectWasDeleted", "introduced": "8", "name": "objectWasDeleted"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHObjectPlaceholder",
+     "super": "PHObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "changeDetailsForObjectType:error:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeToken", "name": "changeToken"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "enumerateChangesWithBlock:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChangeFetchResult",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentChangeToken",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "PHPersistentObjectChangeDetails",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectType", "name": "objectType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "insertedLocalIdentifiers", "name": "insertedLocalIdentifiers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "updatedLocalIdentifiers", "name": "updatedLocalIdentifiers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletedLocalIdentifiers", "name": "deletedLocalIdentifiers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CloudIdentifiers"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "sharedPhotoLibrary"},
+      {"access": "public", "introduced": "14", "name": "authorizationStatusForAccessLevel:"},
+      {"access": "public", "introduced": "14", "name": "requestAuthorizationForAccessLevel:handler:"},
+      {"access": "public", "introduced": "8", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "8", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "registerAvailabilityObserver:"},
+      {"access": "public", "introduced": "13", "name": "unregisterAvailabilityObserver:"},
+      {"access": "public", "introduced": "8", "name": "performChanges:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "performChangesAndWait:error:"},
+      {"access": "public", "introduced": "8", "name": "registerChangeObserver:"},
+      {"access": "public", "introduced": "8", "name": "unregisterChangeObserver:"},
+      {"access": "public", "introduced": "16", "name": "fetchPersistentChangesSinceToken:error:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHPhotoLibrary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "unavailabilityReason", "introduced": "13", "name": "unavailabilityReason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentChangeToken", "introduced": "16", "name": "currentChangeToken"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "PHProject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "projectExtensionData", "name": "projectExtensionData", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasProjectPreview", "name": "hasProjectPreview", "unavailable": true}
+     ],
+     "super": "PHAssetCollection",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithProject:", "unavailable": true},
+      {"access": "public", "name": "setKeyAsset:", "unavailable": true},
+      {"access": "public", "name": "setProjectPreviewImage:", "unavailable": true},
+      {"access": "public", "name": "removeAssets:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "PHProjectChangeRequest",
+     "properties": [
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:", "unavailable": true},
+      {"access": "public", "getter": "projectExtensionData", "name": "projectExtensionData", "setter": "setProjectExtensionData:", "unavailable": true}
+     ],
+     "super": "PHChangeRequest",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "PHVideoRequestOptions",
+     "properties": [
+      {"access": "public", "getter": "isNetworkAccessAllowed", "introduced": "8", "name": "networkAccessAllowed", "setter": "setNetworkAccessAllowed:"},
+      {"access": "public", "getter": "version", "introduced": "8", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "deliveryMode", "introduced": "8", "name": "deliveryMode", "setter": "setDeliveryMode:"},
+      {"access": "public", "getter": "progressHandler", "introduced": "8", "name": "progressHandler", "setter": "setProgressHandler:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "PHLivePhotoFrame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "image", "introduced": "10", "name": "image"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "time", "introduced": "10", "name": "time"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "10", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "renderScale", "introduced": "10", "name": "renderScale"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "photoLibraryDidBecomeUnavailable:"}
+     ],
+     "introduced": "13",
+     "name": "PHPhotoLibraryAvailabilityObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "photoLibraryDidChange:"}
+     ],
+     "introduced": "8",
+     "name": "PHPhotoLibraryChangeObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "8", "name": "PHAccessLevel"},
+    {"access": "public", "introduced": "8", "name": "PHAssetBurstSelectionType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetCollectionSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHAssetCollectionType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetEditOperation"},
+    {"access": "public", "introduced": "8", "name": "PHAssetImageProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAssetMediaSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHAssetMediaType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
+    {"access": "public", "introduced": "9", "name": "PHAssetResourceDataRequestID"},
+    {"access": "public", "introduced": "9", "name": "PHAssetResourceProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAssetResourceType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetSourceType"},
+    {"access": "public", "introduced": "8", "name": "PHAssetVideoProgressHandler"},
+    {"access": "public", "introduced": "8", "name": "PHAuthorizationStatus"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionEditOperation"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionListSubtype"},
+    {"access": "public", "introduced": "8", "name": "PHCollectionListType"},
+    {"access": "public", "introduced": "8", "name": "PHContentEditingInputRequestID"},
+    {"access": "public", "introduced": "8", "name": "PHImageContentMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestID"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsDeliveryMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsResizeMode"},
+    {"access": "public", "introduced": "8", "name": "PHImageRequestOptionsVersion"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingErrorCode"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoEditingOption"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameProcessingBlock"},
+    {"access": "public", "introduced": "10", "name": "PHLivePhotoFrameType"},
+    {"access": "public", "introduced": "9.1", "name": "PHLivePhotoRequestID"},
+    {"access": "public", "name": "PHObjectType"},
+    {"access": "public", "introduced": "13", "name": "PHPhotosError"},
+    {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsDeliveryMode"},
+    {"access": "public", "introduced": "8", "name": "PHVideoRequestOptionsVersion"},
+    {"access": "public", "name": "UIImageOrientation"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo14PHPhotoLibraryC6PhotosE23cloudIdentifierMappings19forLocalIdentifiersSDySSs6ResultOySo07PHCloudE0Cs5Error_pGGSaySSG_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo14PHPhotoLibraryC6PhotosE23localIdentifierMappings3forSDySo07PHCloudE0Cs6ResultOySSs5Error_pGGSayAGG_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE12makeIteratorAbCE0G0CyF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC4nextSo0aB0CSgyF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCStACMc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCfd"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultCST6PhotosMc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo014PHObjectChangeD0CyxGSgx_tSo0F0CRbzlF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo019PHFetchResultChangeD0CyxGSgSo0fG0CyxG_tSo8PHObjectCRbzlF"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo14PHPhotoLibraryC6PhotosE23cloudIdentifierMappings19forLocalIdentifiersSDySSs6ResultOySo07PHCloudE0Cs5Error_pGGSaySSG_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo14PHPhotoLibraryC6PhotosE23localIdentifierMappings3forSDySo07PHCloudE0Cs6ResultOySSs5Error_pGGSayAGG_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE12makeIteratorAbCE0G0CyF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC05fetchD0AeB_tcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorC4nextSo0aB0CSgyF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCStACMc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultC6PhotosE8IteratorCfd"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo29PHPersistentChangeFetchResultCST6PhotosMc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo014PHObjectChangeD0CyxGSgx_tSo0F0CRbzlF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo019PHFetchResultChangeD0CyxGSgSo0fG0CyxG_tSo8PHObjectCRbzlF"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

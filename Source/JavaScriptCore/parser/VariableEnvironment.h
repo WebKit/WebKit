@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/PackedRefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

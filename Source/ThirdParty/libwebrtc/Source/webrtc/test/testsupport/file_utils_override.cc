@@ -115,7 +115,7 @@ std::optional<std::string> ProjectRootPath() {
   if (GetModuleFileNameW(NULL, buf, MAX_PATH) == 0)
     return std::nullopt;
 
-  std::string exe_path = rtc::ToUtf8(std::wstring(buf));
+  std::string exe_path = webrtc::ToUtf8(std::wstring(buf));
   std::string exe_dir = DirName(exe_path);
   return DirName(DirName(exe_dir)) + std::string(kPathDelimiter);
 #endif
@@ -159,7 +159,7 @@ std::string ResourcePath(absl::string_view name, absl::string_view extension) {
 #else
   std::optional<std::string> path_opt = ProjectRootPath();
   RTC_DCHECK(path_opt);
-  rtc::StringBuilder os(*path_opt);
+  StringBuilder os(*path_opt);
   os << kResourcesDirName << kPathDelimiter << name << "." << extension;
   return os.Release();
 #endif

@@ -11,15 +11,15 @@
 #ifndef RTC_BASE_OPENSSL_DIGEST_H_
 #define RTC_BASE_OPENSSL_DIGEST_H_
 
-#include <openssl/ossl_typ.h>
 #include <stddef.h>
 
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/message_digest.h"
+#include "rtc_base/openssl.h"
 
-namespace rtc {
+namespace webrtc {
 
 // An implementation of the digest class that uses OpenSSL.
 class OpenSSLDigest final : public MessageDigest {
@@ -46,6 +46,14 @@ class OpenSSLDigest final : public MessageDigest {
   const EVP_MD* md_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::OpenSSLDigest;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_DIGEST_H_

@@ -199,7 +199,7 @@ void ExecuteDifferWrapperTest(bool with_hints,
                              frame_generator.size()->height())},
       check_result, updated_region_should_exactly_match);
 
-  Random random(rtc::TimeMillis());
+  Random random(TimeMillis());
   // Fuzzing tests.
   for (int i = 0; i < 1000; i++) {
     if (enlarge_updated_region) {
@@ -258,34 +258,34 @@ TEST(DesktopCapturerDifferWrapperTest, CaptureWithEnlargedAndRandomHints) {
 // [ RUN      ] DISABLED_CaptureWithEnlargedAndRandomHintsPerf
 // [       OK ] DISABLED_CaptureWithEnlargedAndRandomHintsPerf (6347 ms)
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithoutHintsPerf) {
-  int64_t started = rtc::TimeMillis();
+  int64_t started = TimeMillis();
   ExecuteDifferWrapperTest(false, false, false, false);
-  ASSERT_LE(rtc::TimeMillis() - started, 15000);
+  ASSERT_LE(TimeMillis() - started, 15000);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithHintsPerf) {
-  int64_t started = rtc::TimeMillis();
+  int64_t started = TimeMillis();
   ExecuteDifferWrapperTest(true, false, false, false);
-  ASSERT_LE(rtc::TimeMillis() - started, 15000);
+  ASSERT_LE(TimeMillis() - started, 15000);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithEnlargedHintsPerf) {
-  int64_t started = rtc::TimeMillis();
+  int64_t started = TimeMillis();
   ExecuteDifferWrapperTest(true, true, false, false);
-  ASSERT_LE(rtc::TimeMillis() - started, 15000);
+  ASSERT_LE(TimeMillis() - started, 15000);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithRandomHintsPerf) {
-  int64_t started = rtc::TimeMillis();
+  int64_t started = TimeMillis();
   ExecuteDifferWrapperTest(true, false, true, false);
-  ASSERT_LE(rtc::TimeMillis() - started, 15000);
+  ASSERT_LE(TimeMillis() - started, 15000);
 }
 
 TEST(DesktopCapturerDifferWrapperTest,
      DISABLED_CaptureWithEnlargedAndRandomHintsPerf) {
-  int64_t started = rtc::TimeMillis();
+  int64_t started = TimeMillis();
   ExecuteDifferWrapperTest(true, true, true, false);
-  ASSERT_LE(rtc::TimeMillis() - started, 15000);
+  ASSERT_LE(TimeMillis() - started, 15000);
 }
 
 }  // namespace webrtc

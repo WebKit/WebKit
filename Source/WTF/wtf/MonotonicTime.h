@@ -59,7 +59,7 @@ public:
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
-    struct MarkableTraits;
+    friend struct MarkableTraits<MonotonicTime>;
 
 private:
     friend class GenericTimeMixin<MonotonicTime>;
@@ -70,7 +70,8 @@ private:
 };
 static_assert(sizeof(MonotonicTime) == sizeof(double));
 
-struct MonotonicTime::MarkableTraits {
+template<>
+struct MarkableTraits<MonotonicTime> {
     static bool isEmptyValue(MonotonicTime time)
     {
         return std::isnan(time.m_value);

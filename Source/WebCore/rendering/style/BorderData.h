@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-class OutlineValue;
-
 using namespace CSS::Literals;
 
 class BorderData {
@@ -86,7 +84,6 @@ public:
 
     bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
 
-    friend bool operator==(const BorderData&, const BorderData&) = default;
 
     const BorderValue& left() const { return m_edges.left(); }
     const BorderValue& right() const { return m_edges.right(); }
@@ -108,6 +105,8 @@ public:
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
+    bool operator==(const BorderData&) const = default;
+
 private:
     bool containsCurrentColor() const;
 
@@ -117,8 +116,6 @@ private:
     Style::CornerShape m_cornerShapes { Style::CornerShapeValue::round() };
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const BorderValue&);
-WTF::TextStream& operator<<(WTF::TextStream&, const OutlineValue&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BorderData&);
 
 } // namespace WebCore

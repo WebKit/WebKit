@@ -19,7 +19,7 @@
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -122,4 +122,4 @@ TEST(SanitizersDeathTest, ThreadSanitizer) {
 
 }  // namespace
 
-}  // namespace rtc
+}  // namespace webrtc

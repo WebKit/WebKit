@@ -104,11 +104,9 @@ typedef NSString * AVVideoRange NS_TYPED_ENUM;
 @end
 #endif
 
-#if HAVE(AVPLAYER_SUPPRESSES_AUDIO_RENDERING)
 @interface AVPlayer (AVPlayerSuppressesAudioRendering)
 @property (nonatomic, getter=_suppressesAudioRendering, setter=_setSuppressesAudioRendering:) BOOL suppressesAudioRendering;
 @end
-#endif
 
 @interface AVPlayerItemVideoOutput (AVPlayerItemVideoOutputEarliestTime)
 @property (nonatomic, readonly) CMTime earliestAvailablePixelBufferItemTime;

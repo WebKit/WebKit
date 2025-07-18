@@ -25,7 +25,7 @@ uint8_t RandByte(Random& random) {
 }
 
 VideoFrame CreateRandom2x2VideoFrame(uint16_t id, Random& random) {
-  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
+  scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
 
   uint8_t data[6] = {RandByte(random), RandByte(random), RandByte(random),
                      RandByte(random), RandByte(random), RandByte(random)};

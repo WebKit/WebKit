@@ -2012,6 +2012,7 @@ private:
                 write(errorInformation->column);
                 writeNullableString(errorInformation->sourceURL);
                 writeNullableString(errorInformation->stack);
+                writeNullableString(errorInformation->cause);
                 return true;
             }
             if (obj->inherits<JSMessagePort>()) {
@@ -2356,7 +2357,7 @@ private:
         unsigned length = str.length();
 
         // Guard against overflow
-        if (length > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
+        if (length > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(char16_t)) {
             fail();
             return;
         }
@@ -3580,7 +3581,7 @@ private:
 
     static bool readString(std::span<const uint8_t>& span, String& str, unsigned length, bool is8Bit, ShouldAtomize shouldAtomize)
     {
-        if (length >= std::numeric_limits<int32_t>::max() / sizeof(UChar))
+        if (length >= std::numeric_limits<int32_t>::max() / sizeof(char16_t))
             return false;
 
         if (is8Bit) {
@@ -3593,18 +3594,18 @@ private:
             return true;
         }
 
-        size_t size = length * sizeof(UChar);
+        size_t size = length * sizeof(char16_t);
         if (span.size() < size)
             return false;
 
 #if ASSUME_LITTLE_ENDIAN
         auto stringSpan = consumeSpan(span, size);
         if (shouldAtomize == ShouldAtomize::Yes)
-            str = AtomString(spanReinterpretCast<const UChar>(stringSpan));
+            str = AtomString(spanReinterpretCast<const char16_t>(stringSpan));
         else
-            str = String(spanReinterpretCast<const UChar>(stringSpan));
+            str = String(spanReinterpretCast<const char16_t>(stringSpan));
 #else
-        std::span<UChar> characters;
+        std::span<char16_t> characters;
         str = String::createUninitialized(length, characters);
         for (unsigned i = 0; i < length; ++i) {
             uint16_t c;
@@ -5191,7 +5192,13 @@ private:
                 fail();
                 return JSValue();
             }
-            return ErrorInstance::create(m_lexicalGlobalObject, WTFMove(message), toErrorType(serializedErrorType), { line, column }, WTFMove(sourceURL), WTFMove(stackString));
+            String causeString;
+            if (!readNullableString(causeString)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            return ErrorInstance::create(m_lexicalGlobalObject, WTFMove(message), toErrorType(serializedErrorType), { line, column }, WTFMove(sourceURL), WTFMove(stackString), WTFMove(causeString));
         }
         case ObjectReferenceTag: {
             auto index = readConstantPoolIndex(m_objectPool);
@@ -6710,7 +6717,15 @@ std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSC::JS
     }
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-    return { ErrorInformation { errorTypeString, message, line, column, sourceURL, stack } };
+    PropertyDescriptor causeDescriptor;
+    String cause;
+    if (errorInstance.getOwnPropertyDescriptor(lexicalGlobalObject, vm.propertyNames->cause, causeDescriptor) && causeDescriptor.isDataDescriptor()) {
+        EXCEPTION_ASSERT(!scope.exception());
+        cause = causeDescriptor.value().toWTFString(lexicalGlobalObject);
+    }
+    RETURN_IF_EXCEPTION(scope, std::nullopt);
+
+    return { ErrorInformation { errorTypeString, message, line, column, sourceURL, stack, cause } };
 }
 
 } // namespace WebCore

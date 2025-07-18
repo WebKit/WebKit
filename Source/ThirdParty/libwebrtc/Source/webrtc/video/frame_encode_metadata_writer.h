@@ -11,15 +11,23 @@
 #ifndef VIDEO_FRAME_ENCODE_METADATA_WRITER_H_
 #define VIDEO_FRAME_ENCODE_METADATA_WRITER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <list>
 #include <optional>
 #include <vector>
 
+#include "api/rtp_packet_infos.h"
+#include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_rotation.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

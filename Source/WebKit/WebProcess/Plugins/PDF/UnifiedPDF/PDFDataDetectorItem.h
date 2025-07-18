@@ -56,8 +56,8 @@ public:
 private:
     PDFDataDetectorItem(DDScannerResult *, PDFPage *);
 
-    RetainPtr<DDScannerResult> m_result;
-    RetainPtr<PDFPage> m_page;
+    const RetainPtr<DDScannerResult> m_result;
+    const RetainPtr<PDFPage> m_page;
     bool m_hasActions { false };
     bool m_isPastDate { false };
 };

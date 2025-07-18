@@ -916,14 +916,6 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     RetainPtr<UIBarButtonItem> _nextButton;
 }
 
-#if ENABLE(SELECT_MULTIPLE_ADJUSTMENTS)
-#import <WebKitAdditions/WKSelectPickerTableViewControllerAdditions.mm>
-#else
-- (void)performAdjustmentsIfNeeded
-{
-}
-#endif
-
 - (id)initWithView:(WKContentView *)view
 {
     if (!(self = [super initWithStyle:UITableViewStyleGrouped]))
@@ -938,11 +930,21 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 #if !PLATFORM(APPLETV)
     _previousButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.up"] style:UIBarButtonItemStylePlain target:self action:@selector(previous:)]);
-    auto nextPreviousSpacer = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:NULL]);
-    [nextPreviousSpacer setWidth:nextPreviousSpacerWidth];
     _nextButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.down"] style:UIBarButtonItemStylePlain target:self action:@selector(next:)]);
 
-    self.navigationItem.leftBarButtonItems = @[ _previousButton.get(), nextPreviousSpacer.get(), _nextButton.get() ];
+    bool useGlassAppearance = false;
+#if HAVE(LIQUID_GLASS)
+    useGlassAppearance = isLiquidGlassEnabled();
+#endif
+
+    if (useGlassAppearance) {
+        self.tableView.backgroundColor = [UIColor clearColor];
+        self.navigationItem.leftBarButtonItems = @[ _previousButton.get(), _nextButton.get() ];
+    } else {
+        auto nextPreviousSpacer = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:NULL]);
+        [nextPreviousSpacer setWidth:nextPreviousSpacerWidth];
+        self.navigationItem.leftBarButtonItems = @[ _previousButton.get(), nextPreviousSpacer.get(), _nextButton.get() ];
+    }
 #endif
 
     auto closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close:)]);
@@ -955,8 +957,6 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
         if (option.isGroup)
             _numberOfSections++;
     }
-
-    [self performAdjustmentsIfNeeded];
 
     return self;
 }

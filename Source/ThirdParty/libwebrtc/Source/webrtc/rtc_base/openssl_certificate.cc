@@ -10,6 +10,14 @@
 
 #include "rtc_base/openssl_certificate.h"
 
+#include <cstdint>
+#include <string>
+
+#include "absl/strings/string_view.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
+
 #if defined(WEBRTC_WIN)
 // Must be included first before openssl headers.
 #include "rtc_base/win32.h"  // NOLINT
@@ -30,7 +38,7 @@
 #include "rtc_base/openssl_identity.h"
 #include "rtc_base/openssl_utility.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 // Random bits for certificate serial number
@@ -210,27 +218,18 @@ bool OpenSSLCertificate::GetSignatureDigestAlgorithm(
 }
 
 bool OpenSSLCertificate::ComputeDigest(absl::string_view algorithm,
-                                       unsigned char* digest,
-                                       size_t size,
-                                       size_t* length) const {
-  return ComputeDigest(x509_, algorithm, digest, size, length);
-}
-
-bool OpenSSLCertificate::ComputeDigest(const X509* x509,
-                                       absl::string_view algorithm,
-                                       unsigned char* digest,
-                                       size_t size,
-                                       size_t* length) {
+                                       Buffer& digest) const {
+  RTC_DCHECK_GT(digest.capacity(), 0);
   const EVP_MD* md = nullptr;
   unsigned int n = 0;
   if (!OpenSSLDigest::GetDigestEVP(algorithm, &md)) {
     return false;
   }
-  if (size < static_cast<size_t>(EVP_MD_size(md))) {
+  if (digest.capacity() < static_cast<size_t>(EVP_MD_size(md))) {
     return false;
   }
-  X509_digest(x509, md, digest, &n);
-  *length = n;
+  X509_digest(x509_, md, digest.data(), &n);
+  digest.SetSize(n);
   return true;
 }
 
@@ -288,4 +287,4 @@ int64_t OpenSSLCertificate::CertificateExpirationTime() const {
   return ASN1TimeToSec(expire_time->data, expire_time->length, long_format);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

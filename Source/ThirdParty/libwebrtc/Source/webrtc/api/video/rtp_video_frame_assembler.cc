@@ -161,7 +161,7 @@ RtpVideoFrameAssembler::Impl::RtpFrameVector
 RtpVideoFrameAssembler::Impl::AssembleFrames(
     video_coding::PacketBuffer::InsertResult insert_result) {
   video_coding::PacketBuffer::Packet* first_packet = nullptr;
-  std::vector<rtc::ArrayView<const uint8_t>> payloads;
+  std::vector<ArrayView<const uint8_t>> payloads;
   RtpFrameVector result;
 
   for (auto& packet : insert_result.packets) {
@@ -172,7 +172,7 @@ RtpVideoFrameAssembler::Impl::AssembleFrames(
     payloads.emplace_back(packet->video_payload);
 
     if (packet->is_last_packet_in_frame()) {
-      rtc::scoped_refptr<EncodedImageBuffer> bitstream =
+      scoped_refptr<EncodedImageBuffer> bitstream =
           depacketizer_->AssembleFrame(payloads);
 
       if (!bitstream) {
@@ -239,7 +239,7 @@ RtpVideoFrameAssembler::Impl::UpdateWithPadding(uint16_t seq_num) {
 bool RtpVideoFrameAssembler::Impl::ParseDependenciesDescriptorExtension(
     const RtpPacketReceived& rtp_packet,
     RTPVideoHeader& video_header) {
-  webrtc::DependencyDescriptor dependency_descriptor;
+  DependencyDescriptor dependency_descriptor;
 
   if (!rtp_packet.GetExtension<RtpDependencyDescriptorExtension>(
           video_structure_.get(), &dependency_descriptor)) {

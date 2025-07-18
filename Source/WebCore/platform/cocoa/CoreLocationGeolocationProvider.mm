@@ -70,7 +70,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
     _isWaitingForAuthorization = YES;
     _mode = mode;
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS) && defined(CL_HAS_RADAR_88834301)
+#if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS)
     if (!websiteIdentifier.isEmpty())
         _locationManager = adoptNS([allocCLLocationManagerInstance() initWithWebsiteIdentifier:websiteIdentifier.createNSString().get()]);
 #else
@@ -114,9 +114,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
             _client->geolocationAuthorizationDenied(_websiteIdentifier);
             break;
         case kCLAuthorizationStatusAuthorizedAlways:
-#if HAVE(CORE_LOCATION_AUTHORIZED_WHEN_IN_USE)
         case kCLAuthorizationStatusAuthorizedWhenInUse:
-#endif
             _isWaitingForAuthorization = NO;
             _client->geolocationAuthorizationGranted(_websiteIdentifier);
             if (_mode != WebCore::CoreLocationGeolocationProvider::Mode::AuthorizationOnly)

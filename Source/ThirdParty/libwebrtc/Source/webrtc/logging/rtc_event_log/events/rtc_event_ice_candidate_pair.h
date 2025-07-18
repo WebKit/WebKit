@@ -73,7 +73,7 @@ class RtcEventIceCandidatePair final : public RtcEvent {
   uint32_t candidate_pair_id() const { return candidate_pair_id_; }
   uint32_t transaction_id() const { return transaction_id_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

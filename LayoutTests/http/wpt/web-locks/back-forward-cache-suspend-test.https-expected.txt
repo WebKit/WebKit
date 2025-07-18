@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: TEST: Starting WebLocks suspend test
+CONSOLE MESSAGE: TEST: pageshow event, persisted:
+CONSOLE MESSAGE: TEST: Lock granted, lock object:
+CONSOLE MESSAGE: TEST: Lock promise created, waiting for suspend...
+CONSOLE MESSAGE: TEST: Checking initial lock state...
+CONSOLE MESSAGE: TEST: Initial query - held:
+CONSOLE MESSAGE: TEST: Lock details:
+CONSOLE MESSAGE: TEST: About to navigate to trigger BFCache...
+CONSOLE MESSAGE: TEST: Navigation initiated
+CONSOLE MESSAGE: TEST: pagehide event, persisted:
+CONSOLE MESSAGE: TEST: Page entering BFCache
+CONSOLE MESSAGE: TEST: pageshow event, persisted:
+CONSOLE MESSAGE: TEST: Page restored from BFCache
+CONSOLE MESSAGE: TEST: Lock promise rejected, reason:
+CONSOLE MESSAGE: TEST: Query after pageshow - held:
+CONSOLE MESSAGE: TEST: Test completed successfully
+
+PASS WebLocks are properly released when page is suspended for back/forward cache
+

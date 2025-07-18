@@ -18,7 +18,7 @@ namespace webrtc {
 namespace {
 std::string ProduceDebugText(size_t num_render_channels,
                              size_t num_capture_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Render channels: " << num_render_channels;
   ss << ", Capture channels: " << num_capture_channels;
   return ss.Release();

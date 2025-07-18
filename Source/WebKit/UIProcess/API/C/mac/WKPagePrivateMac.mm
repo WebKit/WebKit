@@ -172,3 +172,14 @@ id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page)
 #endif
 }
 
+NSDictionary *WKPageGetAccessibilityWebProcessDebugInfo(WKPageRef pageRef)
+{
+    return WebKit::toImpl(pageRef)->getAccessibilityWebProcessDebugInfo();
+}
+
+void WKPageAccessibilityClearIsolatedTree(WKPageRef pageRef)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WebKit::toImpl(pageRef)->clearAccessibilityIsolatedTree();
+#endif
+}

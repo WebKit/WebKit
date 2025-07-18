@@ -12,6 +12,8 @@
 
 #include "modules/audio_coding/neteq/background_noise.h"
 
+#include <cstddef>
+
 #include "test/gtest.h"
 
 namespace webrtc {

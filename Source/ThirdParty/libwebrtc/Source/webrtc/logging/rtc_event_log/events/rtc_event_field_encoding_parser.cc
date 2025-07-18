@@ -356,15 +356,15 @@ RtcEventLogParseStatus EventParser::ParseField(const FieldParameters& params) {
   return RtcEventLogParseStatus::Success();
 }
 
-RtcEventLogParseStatusOr<rtc::ArrayView<absl::string_view>>
+RtcEventLogParseStatusOr<ArrayView<absl::string_view>>
 EventParser::ParseStringField(const FieldParameters& params,
                               bool required_field) {
-  using StatusOr = RtcEventLogParseStatusOr<rtc::ArrayView<absl::string_view>>;
+  using StatusOr = RtcEventLogParseStatusOr<ArrayView<absl::string_view>>;
   RTC_DCHECK_EQ(params.field_type, FieldType::kString);
   auto status = ParseField(params);
   if (!status.ok())
     return StatusOr(status);
-  rtc::ArrayView<absl::string_view> strings = GetStrings();
+  ArrayView<absl::string_view> strings = GetStrings();
   if (required_field && strings.size() != NumEventsInBatch()) {
     return StatusOr::Error("Required string field not found", __FILE__,
                            __LINE__);
@@ -372,15 +372,15 @@ EventParser::ParseStringField(const FieldParameters& params,
   return StatusOr(strings);
 }
 
-RtcEventLogParseStatusOr<rtc::ArrayView<uint64_t>>
-EventParser::ParseNumericField(const FieldParameters& params,
-                               bool required_field) {
-  using StatusOr = RtcEventLogParseStatusOr<rtc::ArrayView<uint64_t>>;
+RtcEventLogParseStatusOr<ArrayView<uint64_t>> EventParser::ParseNumericField(
+    const FieldParameters& params,
+    bool required_field) {
+  using StatusOr = RtcEventLogParseStatusOr<ArrayView<uint64_t>>;
   RTC_DCHECK_NE(params.field_type, FieldType::kString);
   auto status = ParseField(params);
   if (!status.ok())
     return StatusOr(status);
-  rtc::ArrayView<uint64_t> values = GetValues();
+  ArrayView<uint64_t> values = GetValues();
   if (required_field && values.size() != NumEventsInBatch()) {
     return StatusOr::Error("Required numerical field not found", __FILE__,
                            __LINE__);

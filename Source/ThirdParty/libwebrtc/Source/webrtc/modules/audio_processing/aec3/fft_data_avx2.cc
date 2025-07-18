@@ -16,7 +16,7 @@
 namespace webrtc {
 
 // Computes the power spectrum of the data.
-void FftData::SpectrumAVX2(rtc::ArrayView<float> power_spectrum) const {
+void FftData::SpectrumAVX2(ArrayView<float> power_spectrum) const {
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, power_spectrum.size());
   for (size_t k = 0; k < kFftLengthBy2; k += 8) {
     __m256 r = _mm256_loadu_ps(&re[k]);

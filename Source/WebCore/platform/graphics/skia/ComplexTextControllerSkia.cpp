@@ -42,7 +42,7 @@ static inline float harfBuzzPositionToFloat(hb_position_t value)
     return static_cast<float>(value) / (1 << 16);
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(0, 0)
     , m_font(font)
     , m_characters(characters)
@@ -105,7 +105,7 @@ struct HBRun {
     UScriptCode script;
 };
 
-static std::optional<HBRun> findNextRun(std::span<const UChar> characters, unsigned offset)
+static std::optional<HBRun> findNextRun(std::span<const char16_t> characters, unsigned offset)
 {
     SurrogatePairAwareTextIterator textIterator(characters.subspan(offset), offset, characters.size());
     char32_t character;
@@ -161,7 +161,7 @@ struct RTL {
 };
 
 template <typename IterationData>
-static void forEachHBRun(const std::span<const UChar>& characters, Function<void(const HBRun&)>&& callback)
+static void forEachHBRun(const std::span<const char16_t>& characters, Function<void(const HBRun&)>&& callback)
 {
     IterationData data;
 
@@ -182,7 +182,7 @@ static void forEachHBRun(const std::span<const UChar>& characters, Function<void
     }
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const UChar> characters, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
 {
     ASSERT(!characters.empty());
 

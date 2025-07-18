@@ -208,9 +208,9 @@ static ResourceLoadInfo subResourceRequest(ASCIILiteral url, ASCIILiteral mainDo
     return { URL { url }, mainDocumentURL, mainDocumentURL, resourceType };
 }
 
-static ResourceLoadInfo requestInTopAndFrameURLs(ASCIILiteral url, ASCIILiteral topURL, ASCIILiteral frameURL, ResourceType resourceType = ResourceType::TopDocument, Vector<URL> ancestorFrameURLs = { })
+static ResourceLoadInfo requestInTopAndFrameURLs(ASCIILiteral url, ASCIILiteral topURL, ASCIILiteral frameURL, ResourceType resourceType = ResourceType::TopDocument)
 {
-    return { URL { url }, URL { topURL }, URL { frameURL }, resourceType, false, RequestMethod::None, ancestorFrameURLs };
+    return { URL { url }, URL { topURL }, URL { frameURL }, resourceType };
 }
 
 ContentExtensions::ContentExtensionsBackend makeBackend(String&& json)
@@ -1587,12 +1587,6 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"if-frame-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"unless-frame-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"if-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"if-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-ancestor-subframe-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]"_s, { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]"_s, { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]"_s, ContentExtensionError::JSONInvalidRegex);
@@ -3174,36 +3168,6 @@ TEST_F(ContentExtensionTest, UnlessFrameURL)
     auto matchingNothing = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\".*\"]}}]"_s);
     testRequest(matchingNothing, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
     testRequest(matchingNothing, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
-}
-
-TEST_F(ContentExtensionTest, IfAncestorSubframeURL)
-{
-    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"if-ancestor-subframe-url\":[\"whatwg\"]}}]"_s);
-    testRequest(basic, requestInTopAndFrameURLs("https://whatwg.org/"_s, "https://whatwg.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument, { URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction> });
-    testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://example.com/"_s, ResourceType::TopDocument, { URL { "https://example.com/"_s } }), { });
-    testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::ChildDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction> });
-    testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://apple.com/"_s, ResourceType::ChildDocument, { URL { "https://webkit.org/"_s }, URL { "https://apple.com/"_s } }), { });
-
-    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"if-ancestor-subframe-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_s);
-    auto caseSensitivityRequest = requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://example.com/wHaTwG"_s);
-    testRequest(basic, caseSensitivityRequest, { variantIndex<BlockLoadAction> });
-    testRequest(caseSensitivity, caseSensitivityRequest, { });
-
-    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"if-ancestor-subframe-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_s);
-    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { });
-    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::Image, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction> });
-
-    auto otherRulesWithConditions = makeBackend("["
-        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}},"
-        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"https\", \"if-top-url\":[\"example\"]}}"
-    "]"_s);
-    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction> });
-    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://webkit.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockCookiesAction> });
-    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction>, variantIndex<BlockCookiesAction> });
-
-    auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]"_s);
-    testRequest(matchingEverything, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { variantIndex<BlockLoadAction> });
-    testRequest(matchingEverything, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s, ResourceType::TopDocument, { URL { "https://webkit.org/"_s }, URL { "https://whatwg.org/"_s } }), { });
 }
 
 TEST_F(ContentExtensionTest, RegexSubstitution)

@@ -12500,35 +12500,54 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
     switch (node->child1().useKind()) {
     case Int32Use: {
         SpeculateInt32Operand value(this, node->child1());
-        GPRTemporary temp(this);
-        emitSwitchIntJump(data, value.gpr(), temp.gpr());
+        GPRTemporary target(this, Reuse, value);
+        GPRTemporary scratch(this);
+
+        GPRReg valueGPR = value.gpr();
+        GPRReg targetGPR = target.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
+        move(valueGPR, targetGPR);
+        emitSwitchIntJump(data, targetGPR, scratchGPR);
         noResult(node);
         break;
     }
-        
+
     case UntypedUse: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary temp(this);
-        JSValueRegs valueRegs = value.jsValueRegs();
-        GPRReg scratch = temp.gpr();
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        FPRTemporary scratch3(this);
+        FPRTemporary scratch4(this);
 
-        value.use();
+        JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg scratchGPR1 = scratch1.gpr();
+        GPRReg scratchGPR2 = scratch2.gpr();
+        FPRReg scratchFPR3 = scratch3.fpr();
+        FPRReg scratchFPR4 = scratch4.fpr();
 
         auto notInt32 = branchIfNotInt32(valueRegs);
-        emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch);
+        move(valueRegs.payloadGPR(), scratchGPR1);
+
+        Label dispatch = label();
+        emitSwitchIntJump(data, scratchGPR1, scratchGPR2);
+
         notInt32.link(this);
-        addBranch(branchIfNotNumber(valueRegs, scratch), data->fallThrough.block);
+        JumpList failureCases;
+        failureCases.append(branchIfNotNumber(valueRegs, scratchGPR1));
+#if USE(JSVALUE64)
+        unboxDoubleWithoutAssertions(valueRegs.payloadGPR(), scratchGPR1, scratchFPR3);
+#else
+        unboxDouble(valueRegs.tagGPR(), valueRegs.payloadGPR(), scratchFPR3);
+#endif
+        branchConvertDoubleToInt32(scratchFPR3, scratchGPR1, failureCases, scratchFPR4, /* negZeroCheck */ false);
+        addBranch(failureCases, data->fallThrough.block);
+        jump().linkTo(dispatch, this);
 
-        const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data->switchTableIndex);
-        silentSpillAllRegisters(scratch);
-        callOperationWithoutExceptionCheck(operationFindSwitchImmTargetForDouble, scratch, TrustedImmPtr(&vm()), valueRegs, data->switchTableIndex, unlinkedTable.m_min);
-        silentFillAllRegisters();
-
-        farJump(scratch, JSSwitchPtrTag);
-        noResult(node, UseChildrenCalledExplicitly);
+        noResult(node);
         break;
     }
-        
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -16841,7 +16860,7 @@ void SpeculativeJIT::compileStringLocaleCompare(Node* node)
 
 void SpeculativeJIT::compileStringIndexOf(Node* node)
 {
-    std::optional<UChar> character;
+    std::optional<char16_t> character;
     String searchString = node->child2()->tryGetString(m_graph);
     if (!!searchString) {
         if (searchString.length() == 1)

@@ -174,7 +174,7 @@ LoudnessHistogram* LoudnessHistogram::Create() {
 
 LoudnessHistogram* LoudnessHistogram::Create(int window_size) {
   if (window_size < 0)
-    return NULL;
+    return nullptr;
   return new LoudnessHistogram(window_size);
 }
 

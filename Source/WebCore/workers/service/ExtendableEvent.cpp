@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ExtendableEvent.h"
 
+#include "EventLoop.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
 #include "ScriptExecutionContext.h"

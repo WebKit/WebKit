@@ -1,0 +1,1104 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechErrorCodeInternalServiceError"},
+      {"access": "public", "name": "SFSpeechErrorCodeAudioReadFailed"},
+      {"access": "public", "name": "SFSpeechErrorCodeUndefinedTemplateClassName"},
+      {"access": "public", "name": "SFSpeechErrorCodeMalformedSupplementalModel"},
+      {"access": "public", "name": "SFSpeechErrorCodeTimeout"}
+     ],
+     "introduced": "17",
+     "name": "SFSpeechErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintUnspecified"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintDictation"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintSearch"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintConfirmation"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskHint"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateStarting"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateRunning"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateFinishing"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateCanceling"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateCompleted"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusDenied"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusRestricted"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognizerAuthorizationStatus"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SFSpeechErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "SFAcousticFeature",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "acousticFeatureValuePerFrame", "name": "acousticFeatureValuePerFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameDuration", "name": "frameDuration"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "appendAudioPCMBuffer:"},
+      {"access": "public", "name": "appendAudioSampleBuffer:"},
+      {"access": "public", "name": "endAudio"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechAudioBufferRecognitionRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nativeAudioFormat", "name": "nativeAudioFormat"}
+     ],
+     "super": "SFSpeechRecognitionRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "prepareCustomLanguageModelForUrl:clientIdentifier:configuration:completion:"},
+      {"access": "public", "name": "prepareCustomLanguageModelForUrl:clientIdentifier:configuration:ignoresCache:completion:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SFSpeechLanguageModel",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLanguageModel:"},
+      {"access": "public", "name": "initWithLanguageModel:vocabulary:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SFSpeechLanguageModelConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageModel", "name": "languageModel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vocabulary", "name": "vocabulary"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "speakingRate", "name": "speakingRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averagePauseDuration", "name": "averagePauseDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechStartTimestamp", "name": "speechStartTimestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechDuration", "name": "speechDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voiceAnalytics", "name": "voiceAnalytics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionRequest",
+     "properties": [
+      {"access": "public", "getter": "taskHint", "name": "taskHint", "setter": "setTaskHint:"},
+      {"access": "public", "getter": "shouldReportPartialResults", "name": "shouldReportPartialResults", "setter": "setShouldReportPartialResults:"},
+      {"access": "public", "getter": "contextualStrings", "name": "contextualStrings", "setter": "setContextualStrings:"},
+      {"access": "public", "getter": "interactionIdentifier", "introduced": "10", "name": "interactionIdentifier", "setter": "setInteractionIdentifier:"},
+      {"access": "public", "getter": "requiresOnDeviceRecognition", "introduced": "13", "name": "requiresOnDeviceRecognition", "setter": "setRequiresOnDeviceRecognition:"},
+      {"access": "public", "getter": "addsPunctuation", "introduced": "16", "name": "addsPunctuation", "setter": "setAddsPunctuation:"},
+      {"access": "public", "getter": "customizedLanguageModel", "introduced": "17", "name": "customizedLanguageModel", "setter": "setCustomizedLanguageModel:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bestTranscription", "name": "bestTranscription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transcriptions", "name": "transcriptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinal", "name": "final"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechRecognitionMetadata", "introduced": "14", "name": "speechRecognitionMetadata"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "finish"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionTask",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinishing", "name": "finishing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCancelled", "name": "cancelled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "supportedLocales"},
+      {"access": "public", "name": "authorizationStatus"},
+      {"access": "public", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithLocale:"},
+      {"access": "public", "name": "recognitionTaskWithRequest:resultHandler:"},
+      {"access": "public", "name": "recognitionTaskWithRequest:delegate:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "locale", "name": "locale"},
+      {"access": "public", "getter": "supportsOnDeviceRecognition", "introduced": "13", "name": "supportsOnDeviceRecognition", "setter": "setSupportsOnDeviceRecognition:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "defaultTaskHint", "name": "defaultTaskHint", "setter": "setDefaultTaskHint:"},
+      {"access": "public", "getter": "queue", "name": "queue", "setter": "setQueue:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechURLRecognitionRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"}
+     ],
+     "super": "SFSpeechRecognitionRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFTranscription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedString", "name": "formattedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speakingRate", "introduced": "13", "name": "speakingRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averagePauseDuration", "introduced": "13", "name": "averagePauseDuration"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFTranscriptionSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "substring", "name": "substring"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "substringRange", "name": "substringRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alternativeSubstrings", "name": "alternativeSubstrings"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voiceAnalytics", "introduced": "13", "name": "voiceAnalytics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "SFVoiceAnalytics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jitter", "name": "jitter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shimmer", "name": "shimmer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pitch", "name": "pitch"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voicing", "name": "voicing"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "speechRecognitionDidDetectSpeech:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didHypothesizeTranscription:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didFinishRecognition:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTaskFinishedReadingAudio:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTaskWasCancelled:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didFinishSuccessfully:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "speechRecognitionTask:didProcessAudioDuration:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "speechRecognizer:availabilityDidChange:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognizerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SFSpeechErrorCode"},
+    {"access": "public", "name": "SFSpeechRecognitionTaskHint"},
+    {"access": "public", "name": "SFSpeechRecognitionTaskState"},
+    {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatus"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechErrorCodeInternalServiceError"},
+      {"access": "public", "name": "SFSpeechErrorCodeAudioReadFailed"},
+      {"access": "public", "name": "SFSpeechErrorCodeUndefinedTemplateClassName"},
+      {"access": "public", "name": "SFSpeechErrorCodeMalformedSupplementalModel"},
+      {"access": "public", "name": "SFSpeechErrorCodeTimeout"}
+     ],
+     "introduced": "17",
+     "name": "SFSpeechErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintUnspecified"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintDictation"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintSearch"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskHintConfirmation"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskHint"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateStarting"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateRunning"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateFinishing"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateCanceling"},
+      {"access": "public", "name": "SFSpeechRecognitionTaskStateCompleted"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusDenied"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusRestricted"},
+      {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognizerAuthorizationStatus"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SFSpeechErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "SFAcousticFeature",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "acousticFeatureValuePerFrame", "name": "acousticFeatureValuePerFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameDuration", "name": "frameDuration"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "appendAudioPCMBuffer:"},
+      {"access": "public", "name": "appendAudioSampleBuffer:"},
+      {"access": "public", "name": "endAudio"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechAudioBufferRecognitionRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nativeAudioFormat", "name": "nativeAudioFormat"}
+     ],
+     "super": "SFSpeechRecognitionRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "prepareCustomLanguageModelForUrl:clientIdentifier:configuration:completion:"},
+      {"access": "public", "name": "prepareCustomLanguageModelForUrl:clientIdentifier:configuration:ignoresCache:completion:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SFSpeechLanguageModel",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLanguageModel:"},
+      {"access": "public", "name": "initWithLanguageModel:vocabulary:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SFSpeechLanguageModelConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageModel", "name": "languageModel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vocabulary", "name": "vocabulary"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "speakingRate", "name": "speakingRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averagePauseDuration", "name": "averagePauseDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechStartTimestamp", "name": "speechStartTimestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechDuration", "name": "speechDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voiceAnalytics", "name": "voiceAnalytics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionRequest",
+     "properties": [
+      {"access": "public", "getter": "taskHint", "name": "taskHint", "setter": "setTaskHint:"},
+      {"access": "public", "getter": "shouldReportPartialResults", "name": "shouldReportPartialResults", "setter": "setShouldReportPartialResults:"},
+      {"access": "public", "getter": "contextualStrings", "name": "contextualStrings", "setter": "setContextualStrings:"},
+      {"access": "public", "getter": "interactionIdentifier", "introduced": "10", "name": "interactionIdentifier", "setter": "setInteractionIdentifier:"},
+      {"access": "public", "getter": "requiresOnDeviceRecognition", "introduced": "13", "name": "requiresOnDeviceRecognition", "setter": "setRequiresOnDeviceRecognition:"},
+      {"access": "public", "getter": "addsPunctuation", "introduced": "16", "name": "addsPunctuation", "setter": "setAddsPunctuation:"},
+      {"access": "public", "getter": "customizedLanguageModel", "introduced": "17", "name": "customizedLanguageModel", "setter": "setCustomizedLanguageModel:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bestTranscription", "name": "bestTranscription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transcriptions", "name": "transcriptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinal", "name": "final"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechRecognitionMetadata", "introduced": "14", "name": "speechRecognitionMetadata"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "finish"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognitionTask",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinishing", "name": "finishing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCancelled", "name": "cancelled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "supportedLocales"},
+      {"access": "public", "name": "authorizationStatus"},
+      {"access": "public", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithLocale:"},
+      {"access": "public", "name": "recognitionTaskWithRequest:resultHandler:"},
+      {"access": "public", "name": "recognitionTaskWithRequest:delegate:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechRecognizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "locale", "name": "locale"},
+      {"access": "public", "getter": "supportsOnDeviceRecognition", "introduced": "13", "name": "supportsOnDeviceRecognition", "setter": "setSupportsOnDeviceRecognition:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "defaultTaskHint", "name": "defaultTaskHint", "setter": "setDefaultTaskHint:"},
+      {"access": "public", "getter": "queue", "name": "queue", "setter": "setQueue:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFSpeechURLRecognitionRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"}
+     ],
+     "super": "SFSpeechRecognitionRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFTranscription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedString", "name": "formattedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speakingRate", "introduced": "13", "name": "speakingRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averagePauseDuration", "introduced": "13", "name": "averagePauseDuration"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SFTranscriptionSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "substring", "name": "substring"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "substringRange", "name": "substringRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alternativeSubstrings", "name": "alternativeSubstrings"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voiceAnalytics", "introduced": "13", "name": "voiceAnalytics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "SFVoiceAnalytics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jitter", "name": "jitter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shimmer", "name": "shimmer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pitch", "name": "pitch"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voicing", "name": "voicing"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "speechRecognitionDidDetectSpeech:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didHypothesizeTranscription:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didFinishRecognition:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTaskFinishedReadingAudio:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTaskWasCancelled:", "optional": true},
+      {"access": "public", "name": "speechRecognitionTask:didFinishSuccessfully:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "speechRecognitionTask:didProcessAudioDuration:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognitionTaskDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "speechRecognizer:availabilityDidChange:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SFSpeechRecognizerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SFSpeechErrorCode"},
+    {"access": "public", "name": "SFSpeechRecognitionTaskHint"},
+    {"access": "public", "name": "SFSpeechRecognitionTaskState"},
+    {"access": "public", "name": "SFSpeechRecognizerAuthorizationStatus"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableMp"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableP6insert4datayAA021SFCustomLanguageModelB0C_tFTj"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableP6insert4datayAA021SFCustomLanguageModelB0C_tFTq"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableTL"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableMp"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableP6insert9generatoryAA25SFCustomLanguageModelDataC0B20PhraseCountGeneratorC_tFTj"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableP6insert9generatoryAA25SFCustomLanguageModelDataC0B20PhraseCountGeneratorC_tFTq"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV10buildArrayyAA0eF0_pSayAaG_pGFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV10buildBlockyAA0eF0_pAaG_pd_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV11buildEither5firstAA0eF0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV11buildEither6secondAA0eF0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV13buildOptionalyAA0eF0_pAaG_pSgFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC10identifierSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC10identifierSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV11descriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV11descriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV5countSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV5countSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phrase5countAESS_SitcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phraseSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phraseSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVs23CustomStringConvertibleAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateV6insert9generatoryAC0G20PhraseCountGeneratorC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVAA0G10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVAA0G10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVyAESayAA0G10Insertable_pGcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC17supportedPhonemes6localeSaySSG10Foundation6LocaleV_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV11descriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV11descriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8grapheme8phonemesAESS_SaySSGtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8graphemeSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8graphemeSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8phonemesSaySSGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8phonemesSaySSGvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVs0F17StringConvertibleAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC17makeAsyncIteratorAE0K0CyFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC17makeAsyncIteratorAE0K0CyFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4hash4intoys6HasherVz_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4hash4intoys6HasherVz_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6encode2toys7Encoder_p_tKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6encode2toys7Encoder_p_tKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6insert4datayAC_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6insert4datayAC_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTjTu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCScIAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSciAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesV7classes7builderAESDySSSaySSGG_AA18TemplateInsertable_pyXEtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV10buildArrayyAA0fG0_pSayAaG_pGFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV10buildBlockyAA0fG0_pAaG_pd_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV11buildEither5firstAA0fG0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV11buildEither6secondAA0fG0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV13buildOptionalyAA0fG0_pAaG_pSgFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V2eeoiySbAG_AGtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4bodySSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4bodySSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4fromAGs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V5countSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V5countSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V6insert9generatoryAE_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VAA0F10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VAA0F10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V_5countAGSS_SitcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC4fromAEs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6define9className6valuesySS_SaySSGtFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6define9className6valuesySS_SaySSGtFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6insert8template5countySS_SitFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6insert8template5countySS_SitFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCAEycfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCAEycfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC2eeoiySbAC_ACtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4hash4intoys6HasherVz_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4hash4intoys6HasherVz_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6encode2toys7Encoder_p_tKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6encode2toys7Encoder_p_tKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTjTu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert11phraseCountyAC06PhraseH0V_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert11phraseCountyAC06PhraseH0V_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert20phraseCountGeneratoryAC06PhrasehI0C_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert20phraseCountGeneratoryAC06PhrasehI0C_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert4termyAC19CustomPronunciationV_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert4termyAC19CustomPronunciationV_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10Foundation6LocaleVvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10Foundation6LocaleVvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7version7builderAC10Foundation6LocaleV_S2SAA0E10Insertable_pyXEtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7version7builderAC10Foundation6LocaleV_S2SAA0E10Insertable_pyXEtcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2Stcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC7versionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC7versionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMa"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMm"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMn"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMo"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMu"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCN"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSEAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSHAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSQAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo17SFAcousticFeatureC6SpeechE08acousticB13ValuePerFrameSaySdGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo17SFAcousticFeatureC6SpeechE08acousticB13ValuePerFrameSaySdGvpMV"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableMp"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableP6insert4datayAA021SFCustomLanguageModelB0C_tFTj"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableP6insert4datayAA021SFCustomLanguageModelB0C_tFTq"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech14DataInsertableTL"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableMp"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableP6insert9generatoryAA25SFCustomLanguageModelDataC0B20PhraseCountGeneratorC_tFTj"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableP6insert9generatoryAA25SFCustomLanguageModelDataC0B20PhraseCountGeneratorC_tFTq"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech18TemplateInsertableTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV10buildArrayyAA0eF0_pSayAaG_pGFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV10buildBlockyAA0eF0_pAaG_pd_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV11buildEither5firstAA0eF0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV11buildEither6secondAA0eF0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderV13buildOptionalyAA0eF0_pAaG_pSgFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC0E17InsertableBuilderVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC10identifierSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC10identifierSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV11descriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV11descriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV5countSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV5countSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phrase5countAESS_SitcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phraseSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV6phraseSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountV9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC11PhraseCountVs23CustomStringConvertibleAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateV6insert9generatoryAC0G20PhraseCountGeneratorC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVAA0G10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVAA0G10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC16CompoundTemplateVyAESayAA0G10Insertable_pGcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC17supportedPhonemes6localeSaySSG10Foundation6LocaleV_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV11descriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV11descriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8grapheme8phonemesAESS_SaySSGtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8graphemeSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8graphemeSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8phonemesSaySSGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV8phonemesSaySSGvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationV9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC19CustomPronunciationVs0F17StringConvertibleAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC17makeAsyncIteratorAE0K0CyFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC17makeAsyncIteratorAE0K0CyFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4fromAEs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4hash4intoys6HasherVz_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC4hash4intoys6HasherVz_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6encode2toys7Encoder_p_tKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6encode2toys7Encoder_p_tKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6insert4datayAC_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC6insert4datayAC_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTjTu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorC4nextAC0fG0VSgyYaKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCScIAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC8IteratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorC9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCAEycfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSciAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC20PhraseCountGeneratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesV6insert4datayAC_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesV7classes7builderAESDySSSaySSGG_AA18TemplateInsertable_pyXEtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVAA0E10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVAA0E10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25PhraseCountsFromTemplatesVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV10buildArrayyAA0fG0_pSayAaG_pGFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV10buildBlockyAA0fG0_pAaG_pd_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV11buildEither5firstAA0fG0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV11buildEither6secondAA0fG0_pAaH_p_tFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderV13buildOptionalyAA0fG0_pAaG_pSgFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC25TemplateInsertableBuilderVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V2eeoiySbAG_AGtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4bodySSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4bodySSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4fromAGs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V5countSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V5countSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V6insert9generatoryAE_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V9hashValueSivg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V9hashValueSivpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VAA0F10InsertableAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VAA0F10InsertableAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSEAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSHAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0VSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC0F0V_5countAGSS_SitcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC2eeoiySbAE_AEtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC4fromAEs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6define9className6valuesySS_SaySSGtFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6define9className6valuesySS_SaySSGtFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6insert8template5countySS_SitFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC6insert8template5countySS_SitFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorC9templates15templateClassesAGSayAE0F0VG_SDySSSaySSGGtcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorC8IteratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCAEycfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCAEycfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMm"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMo"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCMu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC28TemplatePhraseCountGeneratorCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC2eeoiySbAC_ACtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4fromACs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4hash4intoys6HasherVz_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC4hash4intoys6HasherVz_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6encode2toys7Encoder_p_tKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6encode2toys7Encoder_p_tKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTjTu"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6export2toy10Foundation3URLV_tYaKFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert11phraseCountyAC06PhraseH0V_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert11phraseCountyAC06PhraseH0V_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert20phraseCountGeneratoryAC06PhrasehI0C_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert20phraseCountGeneratoryAC06PhrasehI0C_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert4termyAC19CustomPronunciationV_tFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6insert4termyAC19CustomPronunciationV_tFTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10Foundation6LocaleVvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10Foundation6LocaleVvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7version7builderAC10Foundation6LocaleV_S2SAA0E10Insertable_pyXEtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7version7builderAC10Foundation6LocaleV_S2SAA0E10Insertable_pyXEtcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2StcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC6locale10identifier7versionAC10Foundation6LocaleV_S2Stcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC7versionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC7versionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataC9hashValueSivpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMa"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMm"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMn"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMo"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCMu"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCN"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSEAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSHAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSQAAMc"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCSeAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCfD"},
+    {"access": "public", "linkage": "exported", "name": "_$s6Speech25SFCustomLanguageModelDataCfd"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo17SFAcousticFeatureC6SpeechE08acousticB13ValuePerFrameSaySdGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo17SFAcousticFeatureC6SpeechE08acousticB13ValuePerFrameSaySdGvpMV"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

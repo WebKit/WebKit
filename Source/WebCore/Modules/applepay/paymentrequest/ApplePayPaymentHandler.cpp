@@ -971,7 +971,8 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
 
     // computePaymentMethodErrors() may run JS, which may abort the request so we need to
     // make sure we still have an active session.
-    if (!paymentCoordinator().hasActiveSession())
+    Ref paymentCoordinator = this->paymentCoordinator();
+    if (!paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::AbortError };
 
     // Ensure there is always at least one error to avoid having a final result.
@@ -982,7 +983,7 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     authorizationResult.status = ApplePayPaymentAuthorizationResult::Failure;
     authorizationResult.errors = WTFMove(errors);
     ASSERT(!authorizationResult.isFinalState());
-    paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+    paymentCoordinator->completePaymentSession(WTFMove(authorizationResult));
     return { };
 }
 

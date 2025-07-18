@@ -21,6 +21,7 @@
 #include "api/audio/audio_view.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
+#include "rtc_base/gtest_prod_util.h"
 
 namespace webrtc {
 
@@ -62,7 +63,7 @@ class AudioBuffer {
   // Returns a DeinterleavedView<> over the channel data.
   DeinterleavedView<float> view() {
     return DeinterleavedView<float>(
-        num_channels_ && buffer_num_frames_ ? channels()[0] : nullptr,
+        num_channels_ && buffer_num_frames_ ? channels() : nullptr,
         buffer_num_frames_, num_channels_);
   }
 

@@ -30,6 +30,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ContainerNodeInlines.h"
 #include "HTTPParsers.h"
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
@@ -80,7 +81,7 @@ bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
 
 std::optional<char32_t> MathMLTokenElement::convertToSingleCodePoint(StringView string)
 {
-    auto codePoints = string.trim(isASCIIWhitespaceWithoutFF<UChar>).codePoints();
+    auto codePoints = string.trim(isASCIIWhitespaceWithoutFF<char16_t>).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
         return std::nullopt;

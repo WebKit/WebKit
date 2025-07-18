@@ -44,6 +44,7 @@
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 typedef struct __CVBuffer *CVImageBufferRef;
+typedef struct OpaqueCMTaggedBufferGroup *CMTaggedBufferGroupRef;
 typedef UInt32 VTDecodeInfoFlags;
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
@@ -67,6 +68,7 @@ public:
     enum class DecodingFlag : uint8_t {
         NonDisplaying = 1 << 0,
         RealTime = 1 << 1,
+        EnableStereo = 1 << 2,
     };
     using DecodingFlags = OptionSet<DecodingFlag>;
 
@@ -88,7 +90,7 @@ private:
     Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t>, const std::optional<PlatformVideoColorSpace>&);
     bool isInvalidated() const { return m_invalidated; }
 
-    const Ref<WorkQueue> m_decompressionQueue;
+    static WorkQueue& queueSingleton();
     const RetainPtr<NSDictionary> m_pixelBufferAttributes;
 
     mutable Lock m_lock;
@@ -101,9 +103,15 @@ private:
     struct PendingDecodeData {
         DecodingFlags flags;
     };
-    std::optional<PendingDecodeData> m_pendingDecodeData WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
-    Vector<RetainPtr<CMSampleBufferRef>> m_lastDecodedSamples WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
-    OSStatus m_lastDecodingError WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get()) { noErr };
+    std::optional<PendingDecodeData> m_pendingDecodeData WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Vector<RetainPtr<CMSampleBufferRef>> m_lastDecodedSamples WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    OSStatus m_lastDecodingError WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { noErr };
+    RetainPtr<CMFormatDescriptionRef> m_currentImageDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+
+    // Stereo playback support
+    const bool m_stereoSupported { false };
+    bool m_stereoConfigured WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    RetainPtr<CFArrayRef> m_tagCollections WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
     std::atomic<bool> m_invalidated { false };
 

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "SVGMarkerElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResourceMarker.h"
 #include "NodeName.h"
 #include "RenderSVGResourceMarker.h"

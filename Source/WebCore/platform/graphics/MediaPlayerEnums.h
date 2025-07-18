@@ -153,7 +153,8 @@ String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy);
 enum class VideoMediaSampleRendererPreference : uint8_t {
     PrefersDecompressionSession = 1 << 0,
     ProtectedFallbackDisabled = 1 << 1,
-    UseDecompressionSessionForProtectedContent = 1 << 2
+    UseDecompressionSessionForProtectedContent = 1 << 2,
+    UseStereoDecoding = 1 << 3,
 };
 using VideoMediaSampleRendererPreferences = OptionSet<VideoMediaSampleRendererPreference>;
 

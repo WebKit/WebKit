@@ -10,8 +10,10 @@
  */
 #include "video/quality_convergence_monitor.h"
 
-#include <vector>
+#include <cstddef>
+#include <memory>
 
+#include "api/video/video_codec_type.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 
@@ -206,7 +208,10 @@ TEST(QualityConvergenceMonitorSetup, DefaultParameters) {
   QualityConvergenceMonitor::Parameters vp8_parameters =
       monitor->GetParametersForTesting();
   EXPECT_EQ(vp8_parameters.static_qp_threshold, kStaticQpThreshold);
-  EXPECT_FALSE(vp8_parameters.dynamic_detection_enabled);
+  EXPECT_TRUE(vp8_parameters.dynamic_detection_enabled);
+  EXPECT_EQ(vp8_parameters.dynamic_qp_threshold, 20);  // 13 + 7.
+  EXPECT_EQ(vp8_parameters.recent_window_length, 6u);
+  EXPECT_EQ(vp8_parameters.past_window_length, 6u);
 
   monitor = QualityConvergenceMonitor::Create(kStaticQpThreshold,
                                               kVideoCodecVP9, field_trials);

@@ -26,25 +26,25 @@ size_t FindOrEnd(absl::string_view str, size_t start, char delimiter) {
 namespace struct_parser_impl {
 namespace {
 inline void StringEncode(std::string* target, bool val) {
-  *target += rtc::ToString(val);
+  *target += BoolToString(val);
 }
 inline void StringEncode(std::string* target, double val) {
-  *target += rtc::ToString(val);
+  *target += absl::StrCat(val);
 }
 inline void StringEncode(std::string* target, int val) {
-  *target += rtc::ToString(val);
+  *target += absl::StrCat(val);
 }
 inline void StringEncode(std::string* target, unsigned val) {
-  *target += rtc::ToString(val);
+  *target += absl::StrCat(val);
 }
 inline void StringEncode(std::string* target, DataRate val) {
-  *target += webrtc::ToString(val);
+  *target += ToString(val);
 }
 inline void StringEncode(std::string* target, DataSize val) {
-  *target += webrtc::ToString(val);
+  *target += ToString(val);
 }
 inline void StringEncode(std::string* target, TimeDelta val) {
-  *target += webrtc::ToString(val);
+  *target += ToString(val);
 }
 
 template <typename T>

@@ -9,10 +9,12 @@
  */
 #include "api/test/metrics/print_result_proxy_metrics_exporter.h"
 
+#include <cstddef>
 #include <string>
 #include <unordered_set>
 
 #include "api/array_view.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "api/test/metrics/metric.h"
 #include "test/testsupport/perf_test.h"
 
@@ -76,8 +78,7 @@ bool NameEndsWithConnected(const std::string& name) {
 
 }  // namespace
 
-bool PrintResultProxyMetricsExporter::Export(
-    rtc::ArrayView<const Metric> metrics) {
+bool PrintResultProxyMetricsExporter::Export(ArrayView<const Metric> metrics) {
   static const std::unordered_set<std::string> per_call_metrics{
       "actual_encode_bitrate",
       "encode_frame_rate",

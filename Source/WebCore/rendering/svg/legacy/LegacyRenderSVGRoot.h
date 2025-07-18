@@ -116,8 +116,8 @@ private:
     IntSize m_containerSize;
     FloatRect m_repaintBoundingBox;
     Markable<FloatRect> m_objectBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_accurateRepaintBoundingBox;
+    mutable Markable<FloatRect> m_strokeBoundingBox;
+    mutable Markable<FloatRect> m_accurateRepaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;

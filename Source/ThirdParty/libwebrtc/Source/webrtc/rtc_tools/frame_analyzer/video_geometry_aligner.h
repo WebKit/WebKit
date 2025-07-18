@@ -28,28 +28,27 @@ struct CropRegion {
 
 // Crops and zooms in on the cropped region so that the returned frame has the
 // same resolution as the input frame.
-rtc::scoped_refptr<I420BufferInterface> CropAndZoom(
+scoped_refptr<I420BufferInterface> CropAndZoom(
     const CropRegion& crop_region,
-    const rtc::scoped_refptr<I420BufferInterface>& frame);
+    const scoped_refptr<I420BufferInterface>& frame);
 
 // Calculate the optimal cropping region on the reference frame to maximize SSIM
 // to the test frame.
 CropRegion CalculateCropRegion(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame);
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame);
 
 // Returns a cropped and zoomed version of the reference frame that matches up
 // to the test frame. This is a simple helper function on top of
 // CalculateCropRegion() and CropAndZoom().
-rtc::scoped_refptr<I420BufferInterface> AdjustCropping(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame);
+scoped_refptr<I420BufferInterface> AdjustCropping(
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame);
 
 // Returns a cropped and zoomed version of the reference video that matches up
 // to the test video. Frames are individually adjusted for cropping.
-rtc::scoped_refptr<Video> AdjustCropping(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video);
+scoped_refptr<Video> AdjustCropping(const scoped_refptr<Video>& reference_video,
+                                    const scoped_refptr<Video>& test_video);
 
 }  // namespace test
 }  // namespace webrtc

@@ -48,7 +48,9 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
+#include "EventTargetInlines.h"
 #include "EventNames.h"
+#include "FindRevealAlgorithms.h"
 #include "FixedContainerEdges.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -60,7 +62,6 @@
 #include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
-#include "HTMLDetailsElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
@@ -71,7 +72,7 @@
 #include "HTMLPlugInImageElement.h"
 #include "HighlightRegistry.h"
 #include "ImageDocument.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "LegacyRenderSVGRoot.h"
@@ -262,6 +263,7 @@ void LocalFrameView::reset()
     m_contentIsOpaque = false;
     m_updateEmbeddedObjectsTimer.stop();
     m_lastUserScrollType = std::nullopt;
+    m_wasEverScrolledExplicitlyByUser = false;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -1072,6 +1074,18 @@ LayoutPoint LocalFrameView::scrollPositionRespectingCustomFixedPosition() const
     return scrollPositionForFixedPosition();
 }
 
+void LocalFrameView::clearObscuredInsetsAdjustmentsIfNeeded()
+{
+    if (CheckedPtr tiledBacking = this->tiledBacking())
+        tiledBacking->clearObscuredInsetsAdjustments();
+}
+
+void LocalFrameView::obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta)
+{
+    if (CheckedPtr tiledBacking = this->tiledBacking())
+        tiledBacking->obscuredInsetsWillChange(WTFMove(obscuredInsetsDelta));
+}
+
 void LocalFrameView::obscuredContentInsetsDidChange(const FloatBoxExtent& newObscuredContentInsets)
 {
     RenderView* renderView = this->renderView();
@@ -1321,7 +1335,168 @@ void LocalFrameView::updateScrollGeometryContentSize()
     if (!page || !page->chrome().client().needsScrollGeometryUpdates())
         return;
 
-    m_scrollGeometryContentSize = contentsSize();
+    RefPtr document = m_frame->document();
+    if (!document)
+        return;
+
+    IntSize scrollGeometryContentSize;
+    bool heightDeterminingBoxIsPositioned = false;
+    bool hasViewportConstrainedHeight = false;
+
+    auto updateScrollGeometryContentSizeWithBoxAndPosition = [&scrollGeometryContentSize, &heightDeterminingBoxIsPositioned](const RenderBox& box, IntPoint position) {
+        scrollGeometryContentSize.setWidth(std::max(scrollGeometryContentSize.width(), position.x()));
+
+        auto oldHeight = scrollGeometryContentSize.height();
+        scrollGeometryContentSize.setHeight(std::max(scrollGeometryContentSize.height(), position.y()));
+
+        if (oldHeight != scrollGeometryContentSize.height())
+            heightDeterminingBoxIsPositioned = box.isPositioned();
+    };
+
+    auto maxPositionForBox = [](const RenderBox& box) {
+        auto rect = snappedIntRect(box.borderBoxRect());
+
+        auto borderBoxRectMaxCorner = rect.maxXMaxYCorner();
+
+        auto layoutOverflowRect = snappedIntRect(box.layoutOverflowRect());
+        auto layoutOverflowRectMaxCorner = layoutOverflowRect.maxXMaxYCorner();
+
+        if (box.effectiveOverflowX() == Overflow::Visible && layoutOverflowRectMaxCorner.x() > borderBoxRectMaxCorner.x())
+            rect.setWidth(rect.width() + layoutOverflowRectMaxCorner.x() - borderBoxRectMaxCorner.x());
+
+        if (box.effectiveOverflowY() == Overflow::Visible && layoutOverflowRectMaxCorner.y() > borderBoxRectMaxCorner.y())
+            rect.setHeight(rect.height() + layoutOverflowRectMaxCorner.y() - borderBoxRectMaxCorner.y());
+
+        auto point = roundedIntPoint(box.localToAbsolute(rect.location()));
+        rect.setLocation(point);
+
+        return rect.maxXMaxYCorner();
+    };
+
+    IntSize documentSize = layoutSize();
+    CheckedPtr<RenderBox> documentRenderer;
+
+    IntSize bodySize;
+    CheckedPtr<RenderBox> bodyRenderer;
+
+    auto adjustMaxPositionForBodyOrDocument = [&](RenderBox& box, IntPoint& maxPosition) {
+        if (box.isBody()) {
+            bodySize = { maxPosition.x(), maxPosition.y() };
+            bodyRenderer = &box;
+        } else
+            documentRenderer = &box;
+
+        CheckedRef style = box.style();
+
+        if (style->width().isAuto())
+            maxPosition.setX(0);
+
+        if (style->height().isAuto())
+            maxPosition.setY(0);
+    };
+
+    auto determineScrollGeometryForRendererWithNonVisibleOverflow = [&](const RenderBox& renderer) {
+        CheckedPtr descendant = renderer.firstChild();
+        CheckedPtr stop = renderer.nextInPreOrderAfterChildren();
+
+        while (descendant && descendant != stop) {
+            CheckedPtr descendantBox = dynamicDowncast<RenderBox>(*descendant);
+            if (!descendantBox) {
+                descendant = descendant->nextInPreOrder();
+                continue;
+            }
+
+            if (!descendantBox->isOutOfFlowPositioned()) {
+                descendant = descendant->nextInPreOrder();
+                continue;
+            }
+
+            auto position = maxPositionForBox(*descendantBox);
+            updateScrollGeometryContentSizeWithBoxAndPosition(*descendantBox, position);
+            descendant = descendant->nextInPreOrderAfterChildren();
+        }
+    };
+
+    auto constrainScrollGeometryContentSizeToViewportSizeIfNeeded = [&] {
+        auto viewportContrainedSize = scrollGeometryContentSize;
+
+        if (documentRenderer->effectiveOverflowX() != Overflow::Visible) {
+            if (bodyRenderer->effectiveOverflowX() != Overflow::Visible)
+                viewportContrainedSize.setWidth(bodySize.width());
+            else if (documentRenderer->effectiveOverflowX() == Overflow::Clip || documentRenderer->effectiveOverflowX() == Overflow::Hidden)
+                viewportContrainedSize.setWidth(documentSize.width());
+        }
+
+        if (documentRenderer->effectiveOverflowY() != Overflow::Visible) {
+            if (bodyRenderer->effectiveOverflowY() != Overflow::Visible)
+                viewportContrainedSize.setHeight(bodySize.height());
+            else if (documentRenderer->effectiveOverflowY() == Overflow::Clip || documentRenderer->effectiveOverflowY() == Overflow::Hidden)
+                viewportContrainedSize.setHeight(documentSize.height());
+        }
+
+        hasViewportConstrainedHeight = scrollGeometryContentSize.height() != viewportContrainedSize.height();
+
+        scrollGeometryContentSize.setWidth(std::min(scrollGeometryContentSize.width(), viewportContrainedSize.width()));
+        scrollGeometryContentSize.setHeight(std::min(scrollGeometryContentSize.height(), viewportContrainedSize.height()));
+    };
+
+    auto applyBodyMarginToScrollGeometryContentSizeIfNeeded = [&] {
+        if (!hasViewportConstrainedHeight && !scrollGeometryContentSize.isZero() && scrollGeometryContentSize.height() <= bodySize.height() && !heightDeterminingBoxIsPositioned)
+            scrollGeometryContentSize.setHeight(scrollGeometryContentSize.height() + bodyRenderer->collapsedMarginAfter());
+    };
+
+    // Determine the minimum view size needed such that no scrolling is necessary to reach
+    // any content.
+    //
+    // This is achieved by traversing the render tree and determining the bottom right corner
+    // of each renderer, after accounting for overflow.
+
+    CheckedPtr renderer = renderView()->firstChild();
+    while (renderer) {
+        CheckedPtr box = dynamicDowncast<RenderBox>(*renderer);
+        if (!box) {
+            renderer = renderer->nextInPreOrder();
+            continue;
+        }
+
+        auto maxPosition = maxPositionForBox(*box);
+
+        // The body and document renderers are special since their height is sized to fit
+        // the view in quirks mode. In this case, their size should not determine the
+        // scroll geometry content size, which could be smaller.
+        bool isBodyOrDocumentRenderer = box->isBody() || box->isDocumentElementRenderer();
+        if (isBodyOrDocumentRenderer)
+            adjustMaxPositionForBodyOrDocument(*box, maxPosition);
+
+        updateScrollGeometryContentSizeWithBoxAndPosition(*box, maxPosition);
+
+        if (!isBodyOrDocumentRenderer) {
+            // The children of positioned elements may be skipped, since the renderer itself
+            // already has the necessary geometry information.
+            if (box->isPositioned()) {
+                renderer = renderer->nextInPreOrderAfterChildren();
+                continue;
+            }
+
+            // Only out-of-flow positioned children need to be consulted if the current
+            // renderer has non-visible overflow. In-flow children would contribute to
+            // the current renderer's geometry information and may be ignored.
+            bool hasNonVisibleOverflow = isNonVisibleOverflow(box->effectiveOverflowX()) || isNonVisibleOverflow(box->effectiveOverflowY());
+            if (hasNonVisibleOverflow) {
+                determineScrollGeometryForRendererWithNonVisibleOverflow(*box);
+                renderer = renderer->nextInPreOrderAfterChildren();
+                continue;
+            }
+        }
+
+        renderer = renderer->nextInPreOrder();
+    }
+
+    constrainScrollGeometryContentSizeToViewportSizeIfNeeded();
+
+    applyBodyMarginToScrollGeometryContentSizeIfNeeded();
+
+    m_scrollGeometryContentSize = scrollGeometryContentSize;
 }
 
 bool LocalFrameView::shouldDeferScrollUpdateAfterContentSizeChange()
@@ -2714,8 +2889,10 @@ bool LocalFrameView::scrollToFragment(const URL& url)
                 RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
                 if (commonAncestor && !is<Element>(commonAncestor))
                     commonAncestor = commonAncestor->parentElement();
-                if (commonAncestor)
+                if (commonAncestor) {
                     document->setCSSTarget(downcast<Element>(commonAncestor.get()));
+                    revealClosedDetailsAndHiddenUntilFoundAncestors(*commonAncestor);
+                }
                 // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
                 TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 if (m_frame->settings().scrollToTextFragmentIndicatorEnabled() && !m_frame->page()->isControlledByAutomation())
@@ -2771,13 +2948,15 @@ bool LocalFrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
         return false;
     }
 
+    if (anchorElement)
+        revealClosedDetailsAndHiddenUntilFoundAncestors(*anchorElement);
+
     RefPtr<ContainerNode> scrollPositionAnchor = anchorElement;
     if (!scrollPositionAnchor)
         scrollPositionAnchor = m_frame->document();
     maintainScrollPositionAtAnchor(scrollPositionAnchor.get());
-    
+
     if (anchorElement) {
-        revealClosedDetailsAncestors(*anchorElement);
         // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
         if (anchorElement->isFocusable())
             document.setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, FocusVisibility::Visible });
@@ -2818,6 +2997,7 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
 
 void LocalFrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
 {
+
     m_pendingTextFragmentIndicatorRange = range;
     m_pendingTextFragmentIndicatorText = plainText(range);
     if (!m_pendingTextFragmentIndicatorRange)
@@ -3000,7 +3180,7 @@ void LocalFrameView::scrollToFocusedElementInternal()
     auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
     auto anchorRectWithScrollMargin = absoluteBounds.marginRect;
     auto anchorRect = absoluteBounds.anchorRect;
-    LocalFrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, anchorRect });
+    LocalFrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, OnlyAllowForwardScrolling::No, anchorRect });
 }
 
 void LocalFrameView::textFragmentIndicatorTimerFired()
@@ -3163,10 +3343,13 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
 
     // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
     if (revealRect != viewRect) {
-        // FIXME: Should we use document()->scrollingElement()?
-        // See https://bugs.webkit.org/show_bug.cgi?id=205059
-        ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
-        setScrollPosition(clampedScrollPosition, scrollPositionChangeOptionsForElement(*this, element, options));
+        if (options.onlyAllowForwardScrolling == OnlyAllowForwardScrolling::No || (revealRect.y() > viewRect.y())) {
+
+            // FIXME: Should we use document()->scrollingElement()?
+            // See https://bugs.webkit.org/show_bug.cgi?id=205059
+            ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
+            setScrollPosition(clampedScrollPosition, scrollPositionChangeOptionsForElement(*this, element, options));
+        }
     }
 
     // This is the outermost view of a web page, so after scrolling this view we
@@ -4141,7 +4324,9 @@ void LocalFrameView::scrollToTextFragmentRange()
     SetForScope skipScrollResetOfScrollToTextFragmentRange(m_skipScrollResetOfScrollToTextFragmentRange, true);
 
     // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
-    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll,
+        TemporarySelectionOption::OnlyAllowForwardScrolling
+    });
 
     if (m_delayedTextFragmentIndicatorTimer.isActive())
         return;
@@ -4341,7 +4526,8 @@ void LocalFrameView::updateScrollAnchoringPositionForScrollableAreas()
 
 void LocalFrameView::updateAnchorPositionedAfterScroll()
 {
-    Style::AnchorPositionEvaluator::updatePositionsAfterScroll(*m_frame->protectedDocument());
+    if (RefPtr document = m_frame->document())
+        Style::AnchorPositionEvaluator::updatePositionsAfterScroll(*document);
 }
 
 IntSize LocalFrameView::sizeForResizeEvent() const
@@ -4406,8 +4592,8 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     bool isMainFrame = m_frame->isMainFrame();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (InspectorClient* inspectorClient = page ? page->inspectorController().inspectorClient() : nullptr)
-            inspectorClient->didResizeMainFrame(m_frame.ptr());
+        if (InspectorBackendClient* inspectorBackendClient = page ? page->inspectorController().inspectorBackendClient() : nullptr)
+            inspectorBackendClient->didResizeMainFrame(m_frame.ptr());
     }
 }
 
@@ -5179,6 +5365,9 @@ void LocalFrameView::setLastUserScrollType(std::optional<UserScrollType> userScr
         return;
     m_lastUserScrollType = userScrollType;
     adjustTiledBackingCoverage();
+
+    if (userScrollType == UserScrollType::Explicit)
+        m_wasEverScrolledExplicitlyByUser = true;
 }
 
 void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState, RegionContext* regionContext)
@@ -5957,8 +6146,20 @@ void LocalFrameView::scrollableAreaSetChanged()
         scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
 }
 
+void LocalFrameView::scrollDidEnd()
+{
+    if (!isAwaitingScrollend())
+        return;
+    setIsAwaitingScrollend(false);
+    if (!m_frame->view())
+        return;
+    if (RefPtr document = m_frame->document())
+        document->addPendingScrollendEventTarget(*document);
+}
+
 void LocalFrameView::scheduleScrollEvent()
 {
+    setIsAwaitingScrollend(true);
     m_frame->eventHandler().scheduleScrollEvent();
     m_frame->eventHandler().dispatchFakeMouseMoveEventSoon();
 }
@@ -6633,13 +6834,13 @@ Color LocalFrameView::scrollbarTrackColorStyle() const
     return { };
 }
 
-ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
+Style::ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
 {
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject)
         return scrollingObject->style().scrollbarGutter();
-    return { };
+    return CSS::Keyword::Auto { };
 }
 
 ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
@@ -6751,7 +6952,7 @@ int LocalFrameView::scrollbarGutterWidth(bool isHorizontalWritingMode) const
     if (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
         return 0;
 
-    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
+    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto() || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
         return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
 
     if (!verticalScrollbar())
@@ -6765,7 +6966,7 @@ IntSize LocalFrameView::totalScrollbarSpace() const
     IntSize scrollbarGutter = { horizontalScrollbarIntrusion(), verticalScrollbarIntrusion() };
 
     if (isHorizontalWritingMode()) {
-        if (scrollbarGutterStyle().bothEdges)
+        if (scrollbarGutterStyle().isStableBothEdges())
             scrollbarGutter.setWidth(scrollbarGutterWidth() * 2);
         else
             scrollbarGutter.setWidth(scrollbarGutterWidth());
@@ -6775,7 +6976,7 @@ IntSize LocalFrameView::totalScrollbarSpace() const
 
 int LocalFrameView::insetForLeftScrollbarSpace() const
 {
-    if (scrollbarGutterStyle().bothEdges)
+    if (scrollbarGutterStyle().isStableBothEdges())
         return scrollbarGutterWidth();
     if (shouldPlaceVerticalScrollbarOnLeft())
         return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -49,7 +50,7 @@ private:
 
     static ASCIILiteral supplementName();
 
-    RefPtr<WakeLock> m_wakeLock;
+    const RefPtr<WakeLock> m_wakeLock;
     const CheckedRef<Navigator> m_navigator;
 };
 

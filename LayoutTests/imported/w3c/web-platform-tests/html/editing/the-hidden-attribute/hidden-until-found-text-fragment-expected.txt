@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation. Test timed out
+PASS Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation.
 

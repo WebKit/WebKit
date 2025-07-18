@@ -39,6 +39,7 @@
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIEvent_Private.h>
+#import <UIKit/UIFindInteraction.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardInputModeController.h>
 #import <UIKit/UIKeyboardPreferencesController.h>
@@ -99,22 +100,6 @@ extern NSString * const UIWindowDidRotateNotification;
 extern NSNotificationName const _UIWindowSceneEnhancedWindowingModeChanged;
 
 WTF_EXTERN_C_END
-
-#if HAVE(UIFINDINTERACTION)
-
-@interface _UIFindInteraction : NSObject <UIInteraction>
-@end
-
-@interface _UIFindInteraction (Staging_84486967)
-
-- (void)presentFindNavigatorShowingReplace:(BOOL)replaceVisible;
-
-- (void)findNext;
-- (void)findPrevious;
-
-@end
-
-#endif // HAVE(UIFINDINTERACTION)
 
 @interface UIApplication ()
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
@@ -604,6 +589,7 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
 @end
+
 #endif
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)

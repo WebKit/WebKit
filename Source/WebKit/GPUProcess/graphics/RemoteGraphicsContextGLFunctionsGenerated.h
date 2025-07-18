@@ -482,7 +482,7 @@
         returnValue = protectedContext()->getString(name);
         completionHandler(WTFMove(returnValue));
     }
-    void getFloatv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
+    void getFloatv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
@@ -491,7 +491,7 @@
         protectedContext()->getFloatv(pname, value);
         completionHandler(spanReinterpretCast<const float>(value.span()));
     }
-    void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
+    void getIntegerv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
@@ -534,7 +534,7 @@
         returnValue = protectedContext()->getProgrami(program, pname);
         completionHandler(returnValue);
     }
-    void getBooleanv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
+    void getBooleanv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!WTF::isValidCapacityForVector<GCGLboolean>(valueSize))
@@ -631,7 +631,7 @@
         returnValue = protectedContext()->getTexParameteri(target, pname);
         completionHandler(returnValue);
     }
-    void getUniformfv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
+    void getUniformfv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!m_objectNames.isValidKey(program)) [[unlikely]] {
@@ -646,7 +646,7 @@
         protectedContext()->getUniformfv(program, location, value);
         completionHandler(spanReinterpretCast<const float>(value.span()));
     }
-    void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
+    void getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!m_objectNames.isValidKey(program)) [[unlikely]] {
@@ -661,7 +661,7 @@
         protectedContext()->getUniformiv(program, location, value);
         completionHandler(spanReinterpretCast<const int32_t>(value.span()));
     }
-    void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
+    void getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!m_objectNames.isValidKey(program)) [[unlikely]] {
@@ -1782,7 +1782,7 @@
             program = m_objectNames.get(program);
         protectedContext()->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
     }
-    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
+    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!m_objectNames.isValidKey(program)) [[unlikely]] {
@@ -1988,7 +1988,7 @@
         assertIsCurrent(workQueue());
         protectedContext()->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
     }
-    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
+    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))

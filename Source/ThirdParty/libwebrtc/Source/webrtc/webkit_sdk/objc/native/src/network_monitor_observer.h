@@ -28,7 +28,7 @@ class NetworkMonitorObserver {
   // adapter type, for all available interfaces on the current path. If an
   // interface name isn't present it can be assumed to be unavailable.
   virtual void OnPathUpdate(
-      std::map<std::string, rtc::AdapterType> adapter_type_by_name) = 0;
+      std::map<std::string, webrtc::AdapterType> adapter_type_by_name) = 0;
 
  protected:
   virtual ~NetworkMonitorObserver() {}

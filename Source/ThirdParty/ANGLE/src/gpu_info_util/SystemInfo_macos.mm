@@ -54,11 +54,6 @@ bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *val
 // Gathers the vendor and device IDs for GPUs listed in the IORegistry.
 void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
 {
-#if TARGET_OS_OSX && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#else
-    const mach_port_t mainPort = kIOMainPortDefault;
-#endif
     constexpr uint32_t kNumServices         = 2;
     const char *kServiceNames[kNumServices] = {"IOGraphicsAccelerator2", "AGXAccelerator"};
     const bool kServiceIsGraphicsAccelerator2[kNumServices] = {true, false};
@@ -68,7 +63,7 @@ void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
         CFMutableDictionaryRef matchDictionary = IOServiceMatching(kServiceNames[i]);
 
         io_iterator_t entryIterator;
-        if (IOServiceGetMatchingServices(mainPort, matchDictionary, &entryIterator) !=
+        if (IOServiceGetMatchingServices(kIOMainPortDefault, matchDictionary, &entryIterator) !=
             kIOReturnSuccess)
         {
             continue;
@@ -148,12 +143,6 @@ void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
 
 void ForceGPUSwitchIndex(SystemInfo *info)
 {
-#if TARGET_OS_OSX && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#else
-    const mach_port_t mainPort = kIOMainPortDefault;
-#endif
-
     // Early-out if on a single-GPU system
     if (info->gpus.size() < 2)
     {
@@ -169,7 +158,7 @@ void ForceGPUSwitchIndex(SystemInfo *info)
         return;
 
     CFMutableDictionaryRef matchDictionary = IORegistryEntryIDMatching(gpuID);
-    io_service_t gpuEntry = IOServiceGetMatchingService(mainPort, matchDictionary);
+    io_service_t gpuEntry = IOServiceGetMatchingService(kIOMainPortDefault, matchDictionary);
 
     if (gpuEntry == IO_OBJECT_NULL)
     {
@@ -266,12 +255,6 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
 // Get VendorID from metal device's registry ID
 VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 {
-#if TARGET_OS_OSX && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#else
-    const mach_port_t mainPort = kIOMainPortDefault;
-#endif
-
     // Get a matching dictionary for the IOGraphicsAccelerator2
     CFMutableDictionaryRef matchingDict = IORegistryEntryIDMatching(registryID);
     if (matchingDict == nullptr)
@@ -281,7 +264,8 @@ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 
     // IOServiceGetMatchingService will consume the reference on the matching dictionary,
     // so we don't need to release the dictionary.
-    io_registry_entry_t acceleratorEntry = IOServiceGetMatchingService(mainPort, matchingDict);
+    io_registry_entry_t acceleratorEntry =
+        IOServiceGetMatchingService(kIOMainPortDefault, matchingDict);
     if (acceleratorEntry == IO_OBJECT_NULL)
     {
         return 0;

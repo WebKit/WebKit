@@ -126,6 +126,8 @@ private:
     RefPtr<NetworkResourceLoader> protectedLoader() const;
     void sendNavigationPreloadUpdate();
 
+    CheckedPtr<ServiceWorkerNavigationPreloader> checkedPreloader();
+
     WeakPtr<WebSWServerConnection> m_swServerConnection;
     WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;

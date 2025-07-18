@@ -1,0 +1,22 @@
+
+PASS Initially, the sibling-index() is 3 for --time
+PASS Initially, the sibling-index() is 3 for --angle
+PASS Initially, the sibling-index() is 3 for --resolution
+PASS Initially, the sibling-index() is 3 for --percentage
+PASS Initially, the sibling-index() is 3 for --number
+PASS Initially, the sibling-index() is 3 for --integer
+PASS Initially, the sibling-index() is 3 for --length
+PASS Initially, the sibling-index() is 3 for --length-percentage
+FAIL Initially, the sibling-index() is 3 for --color assert_equals: expected "color(srgb 0 0.6 0)" but got "oklab(0.591738 -0.159734 0.122589)"
+PASS Initially, the sibling-index() is 3 for --list
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --time assert_equals: expected "4s" but got "6s"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --angle assert_equals: expected "60deg" but got "90deg"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --resolution assert_equals: expected "2dppx" but got "3dppx"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --percentage assert_equals: expected "100%" but got "150%"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --number assert_equals: expected "2" but got "3"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --integer assert_equals: expected "2" but got "3"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --length assert_equals: expected "14px" but got "21px"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --length-percentage assert_equals: expected "calc(10% + 16px)" but got "calc(15% + 24px)"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --color assert_equals: expected "color(srgb 0 0.4 0)" but got "oklab(0.591738 -0.159734 0.122589)"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --list assert_equals: expected "13 2" but got "13 3"
+

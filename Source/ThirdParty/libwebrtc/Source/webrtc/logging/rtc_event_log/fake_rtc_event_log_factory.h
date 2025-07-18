@@ -25,7 +25,7 @@ class FakeRtcEventLogFactory : public RtcEventLogFactoryInterface {
   FakeRtcEventLogFactory() = default;
   ~FakeRtcEventLogFactory() override = default;
 
-  absl::Nonnull<std::unique_ptr<RtcEventLog>> Create(
+  absl_nonnull std::unique_ptr<RtcEventLog> Create(
       const Environment& env) const override;
 
   FakeRtcEventLog* last_log_created() { return last_log_created_; }

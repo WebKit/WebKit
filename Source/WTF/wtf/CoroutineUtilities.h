@@ -61,7 +61,7 @@ class [[nodiscard]] Awaitable {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     class PromiseBase {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PromiseBase);
     public:
         struct final_awaitable {
             WTF_FORBID_HEAP_ALLOCATION;
@@ -124,7 +124,7 @@ struct Task {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     struct promise_type {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(promise_type);
         Task get_return_object() { return { }; }
         std::suspend_never initial_suspend() { return { }; }
         std::suspend_never final_suspend() noexcept { return { }; }

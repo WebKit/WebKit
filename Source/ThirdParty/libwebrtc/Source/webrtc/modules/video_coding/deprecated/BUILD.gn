@@ -23,8 +23,12 @@ rtc_library("deprecated_decoding_state") {
     ":deprecated_frame_buffer",
     ":deprecated_jitter_buffer_common",
     ":deprecated_packet",
+    "..:codec_globals_headers",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_type",
     "../../../common_video",
     "../../../modules:module_api_public",
+    "../../../rtc_base:checks",
     "../../../rtc_base:logging",
   ]
 }
@@ -34,7 +38,10 @@ rtc_library("deprecated_event_wrapper") {
     "event_wrapper.cc",
     "event_wrapper.h",
   ]
-  deps = [ "../../../rtc_base:rtc_event" ]
+  deps = [
+    "../../../api/units:time_delta",
+    "../../../rtc_base:rtc_event",
+  ]
 }
 
 rtc_library("deprecated_jitter_buffer_common") {
@@ -52,8 +59,11 @@ rtc_library("deprecated_jitter_buffer") {
     ":deprecated_frame_buffer",
     ":deprecated_jitter_buffer_common",
     ":deprecated_packet",
+    ":deprecated_session_info",
     "../../../api:field_trials_view",
+    "../../../api/units:data_size",
     "../../../api/units:timestamp",
+    "../../../api/video:video_frame_type",
     "../../../modules:module_api",
     "../../../modules:module_api_public",
     "../../../modules/video_coding:video_codec_interface",
@@ -76,7 +86,9 @@ rtc_library("deprecated_frame_buffer") {
     ":deprecated_jitter_buffer_common",
     ":deprecated_packet",
     ":deprecated_session_info",
+    "../../../api:scoped_refptr",
     "../../../api/video:encoded_image",
+    "../../../api/video:video_frame_type",
     "../../../api/video:video_rtp_headers",
     "../../../modules/video_coding:codec_globals_headers",
     "../../../modules/video_coding:encoded_frame",
@@ -95,6 +107,7 @@ rtc_library("deprecated_packet") {
     "../../../api:rtp_headers",
     "../../../api:rtp_packet_info",
     "../../../api/units:timestamp",
+    "../../../api/video:video_frame",
     "../../../api/video:video_frame_type",
     "../../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../../modules/rtp_rtcp:rtp_video_header",
@@ -112,7 +125,10 @@ rtc_library("deprecated_receiver") {
     ":deprecated_jitter_buffer_common",
     ":deprecated_packet",
     "../../../api:field_trials_view",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../api/video:encoded_image",
+    "../../../api/video:video_rtp_headers",
     "../../../modules/video_coding",
     "../../../modules/video_coding:encoded_frame",
     "../../../modules/video_coding:video_codec_interface",
@@ -129,12 +145,14 @@ rtc_library("deprecated_session_info") {
   deps = [
     ":deprecated_jitter_buffer_common",
     ":deprecated_packet",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_type",
     "../../../modules:module_api",
     "../../../modules:module_api_public",
     "../../../modules/video_coding:codec_globals_headers",
+    "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
   sources = [
     "session_info.cc",
@@ -145,6 +163,7 @@ rtc_library("deprecated_session_info") {
 rtc_library("deprecated_stream_generator") {
   deps = [
     ":deprecated_packet",
+    "../../../api/video:video_frame_type",
     "../../../rtc_base:checks",
   ]
   sources = [
@@ -164,6 +183,7 @@ rtc_library("deprecated_unittests") {
   visibility += [ "../../../modules/*" ]
   deps = [
     ":deprecated_decoding_state",
+    ":deprecated_event_wrapper",
     ":deprecated_frame_buffer",
     ":deprecated_jitter_buffer",
     ":deprecated_jitter_buffer_common",
@@ -171,6 +191,10 @@ rtc_library("deprecated_unittests") {
     ":deprecated_receiver",
     ":deprecated_session_info",
     ":deprecated_stream_generator",
+    "../../../api:rtp_headers",
+    "../../../api/units:time_delta",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_type",
     "../../../common_video",
     "../../../modules/rtp_rtcp:rtp_video_header",
     "../../../modules/video_coding:codec_globals_headers",

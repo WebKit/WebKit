@@ -56,7 +56,7 @@ struct ServiceWorkerRoutePattern {
 };
 
 struct ServiceWorkerRouteCondition {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerRouteCondition);
 
     ServiceWorkerRouteCondition isolatedCopy() &&;
     ServiceWorkerRouteCondition copy() const;

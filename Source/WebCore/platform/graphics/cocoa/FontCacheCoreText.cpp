@@ -746,7 +746,7 @@ void FontCache::platformPurgeInactiveFontData()
 }
 
 #if PLATFORM(IOS_FAMILY)
-static inline bool isArabicCharacter(UChar character)
+static inline bool isArabicCharacter(char16_t character)
 {
     return character >= 0x0600 && character <= 0x06FF;
 }
@@ -778,7 +778,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     // (used to?) perform poorly. In order to speed up the browser, we block those fonts, and use other faster fonts instead.
     // However, this performance analysis was done, like, 10 years ago, and the probability that these fonts are still too slow
     // seems quite low. We should re-analyze performance to see if we can delete this code.
-    UChar firstCharacter = characterCluster[0];
+    char16_t firstCharacter = characterCluster[0];
     if (isArabicCharacter(firstCharacter)) {
         auto familyName = adoptCF(static_cast<CFStringRef>(CTFontCopyAttribute(result.get(), kCTFontFamilyNameAttribute)));
         if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
@@ -828,11 +828,11 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
 
 ASCIILiteral FontCache::platformAlternateFamilyName(const String& familyName)
 {
-    static const UChar heitiString[] = { 0x9ed1, 0x4f53 };
-    static const UChar songtiString[] = { 0x5b8b, 0x4f53 };
-    static const UChar weiruanXinXiMingTi[] = { 0x5fae, 0x8edf, 0x65b0, 0x7d30, 0x660e, 0x9ad4 };
-    static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
-    static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
+    static const char16_t heitiString[] = { 0x9ed1, 0x4f53 };
+    static const char16_t songtiString[] = { 0x5b8b, 0x4f53 };
+    static const char16_t weiruanXinXiMingTi[] = { 0x5fae, 0x8edf, 0x65b0, 0x7d30, 0x660e, 0x9ad4 };
+    static const char16_t weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
+    static const char16_t weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
 
     static constexpr ASCIILiteral songtiSC = "Songti SC"_s;
     static constexpr ASCIILiteral songtiTC = "Songti TC"_s;

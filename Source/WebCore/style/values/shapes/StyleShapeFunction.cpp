@@ -299,7 +299,7 @@ private:
 
     static CoordinatePair toCoordinatePair(FloatPoint p)
     {
-        return toPosition(p).value;
+        return { LengthPercentage<>::Dimension { p.x() }, LengthPercentage<>::Dimension { p.y() } };
     }
 
     static Position absoluteOffsetPoint(FloatPoint p)
@@ -649,7 +649,7 @@ std::optional<Shape> makeShapeFromPath(const Path& path)
     // FIXME: Not clear how to convert a initial Move command to the Shape's "from" parameter.
     // https://github.com/w3c/csswg-drafts/issues/10740
 
-    CommaSeparatedVector<ShapeCommand>::Vector shapeCommands;
+    CommaSeparatedVector<ShapeCommand>::Container shapeCommands;
     ShapeConversionPathConsumer converter(shapeCommands);
     SVGPathByteStreamSource source(path.data.byteStream);
 

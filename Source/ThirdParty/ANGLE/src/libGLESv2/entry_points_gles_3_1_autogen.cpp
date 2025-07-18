@@ -2980,9 +2980,15 @@ void GL_APIENTRY GL_SampleMaski(GLuint maskNumber, GLbitfield mask)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_3_1))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateSampleMaski(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLSampleMaski, maskNumber, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {

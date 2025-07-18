@@ -44,7 +44,7 @@ public:
 
 private:
     struct Request {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Request);
 
         Request(uint64_t identifier, DNSCompletionHandler&& completionHandler)
             : identifier(identifier)

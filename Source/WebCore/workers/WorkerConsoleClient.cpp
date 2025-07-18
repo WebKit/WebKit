@@ -51,69 +51,69 @@ void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel
     String messageText;
     arguments->getFirstArgumentAsString(messageText);
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTFMove(arguments), exec);
-    m_globalScope.addConsoleMessage(WTFMove(message));
+    Ref { m_globalScope.get() }->addConsoleMessage(WTFMove(message));
 }
 
 void WorkerConsoleClient::count(JSC::JSGlobalObject* exec, const String& label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::consoleCount(*worker, exec, label);
 }
 
 void WorkerConsoleClient::countReset(JSC::JSGlobalObject* exec, const String& label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::consoleCountReset(*worker, exec, label);
 }
 
 void WorkerConsoleClient::time(JSC::JSGlobalObject* exec, const String& label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::startConsoleTiming(*worker, exec, label);
 }
 
 void WorkerConsoleClient::timeLog(JSC::JSGlobalObject* exec, const String& label, Ref<ScriptArguments>&& arguments)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::logConsoleTiming(*worker, exec, label, WTFMove(arguments));
 }
 
 void WorkerConsoleClient::timeEnd(JSC::JSGlobalObject* exec, const String& label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::stopConsoleTiming(*worker, exec, label);
 }
 
 void WorkerConsoleClient::profile(JSC::JSGlobalObject*, const String& title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::startProfiling(*worker, title);
 }
 
 void WorkerConsoleClient::profileEnd(JSC::JSGlobalObject*, const String& title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::stopProfiling(*worker, title);
 }
 
 void WorkerConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::takeHeapSnapshot(*worker, title);
 }
 
 void WorkerConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&& arguments)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
-    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope))
+    if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::consoleTimeStamp(*worker, WTFMove(arguments));
 }
 

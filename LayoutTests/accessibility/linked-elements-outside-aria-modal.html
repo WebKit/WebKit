@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+
+<div id="modal1" role=dialog>
+    <input id="textfield1" role="combobox" aria-controls="list1">
+</div>
+
+<div id="modal2" role=dialog>
+    <input id="textfield2" role="combobox" aria-activedescendant="list2-option1">
+</div>
+
+<div id="list1" role="listbox">
+    <div role=option id="list1-option1">
+        Apples
+    </div>
+    <div role=option id="list1-option2">
+        Bananas
+    </div>
+</div>
+
+<div id="list2" role="listbox">
+    <div role=option id="list2-option1">
+        Apples
+    </div>
+    <div role=option id="list2-option2">
+        Bananas
+    </div>
+</div>
+
+<script>
+
+var output = "This test verifies that when an input inside something that is aria-modal is linked to elements outside the modal, that those elements are still accessible.\n\n";
+
+if (window.accessibilityController)
+{
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        document.getElementById("textfield1").focus();
+        output += "Checking aria-activedescendant relationship:\n";
+        output += await expectAsync("accessibilityController.accessibleElementById('list1').isIgnored", "false");
+        output += expect("accessibilityController.accessibleElementById('list1-option1').isIgnored", "false");
+        output += expect("accessibilityController.accessibleElementById('list1-option2').isIgnored", "false");
+        output += "\n";
+
+        document.getElementById("textfield2").focus();
+        document.getElementById("modal1").setAttribute("aria-modal", "false");
+        document.getElementById("modal2").setAttribute("aria-modal", "true");
+        output += "Checking aria-controls relationship:\n";
+        await waitFor(() => accessibilityController.accessibleElementById('list2-option1') != null);
+        output += expect("accessibilityController.accessibleElementById('list2-option1').isIgnored", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+</script>
+</body>
+</html>

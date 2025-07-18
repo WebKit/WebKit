@@ -72,8 +72,13 @@ void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& 
             presentationTime = fromGstClockTime(GST_BUFFER_PTS(buffer));
 
         auto rotationFromMeta = webkitGstBufferGetVideoRotation(buffer);
-        auto& size = capturer->size();
-        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(sample), std::nullopt, size, presentationTime, rotationFromMeta.first, rotationFromMeta.second, WTFMove(metadata)));
+        auto size = capturer->size();
+        VideoFrameGStreamer::CreateOptions options(WTFMove(size));
+        options.presentationTime = presentationTime;
+        options.rotation = rotationFromMeta.first;
+        options.isMirrored = rotationFromMeta.second;
+        options.timeMetadata = WTFMove(metadata);
+        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(sample), options));
         return GST_FLOW_OK;
     }), this);
 }

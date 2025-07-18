@@ -116,8 +116,15 @@ void SetCurrentThreadIdentity(ThreadIdentity* identity,
                       reinterpret_cast<void*>(identity));
   thread_identity_ptr = identity;
 #elif ABSL_THREAD_IDENTITY_MODE == ABSL_THREAD_IDENTITY_MODE_USE_CPP11
+#if WEBRTC_WEBKIT_BUILD
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
   thread_local std::unique_ptr<ThreadIdentity, ThreadIdentityReclaimerFunction>
       holder(identity, reclaimer);
+#if WEBRTC_WEBKIT_BUILD
+#pragma clang diagnostic pop
+#endif
   thread_identity_ptr = identity;
 #else
 #error Unimplemented ABSL_THREAD_IDENTITY_MODE

@@ -54,6 +54,9 @@ default_args = {
   android_ndk_api_level = 29
 
   vma_vulkan_headers_dir = "//third_party/vulkan-headers/src"
+
+  # Use Siso instead of Ninja.
+  use_siso = true
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

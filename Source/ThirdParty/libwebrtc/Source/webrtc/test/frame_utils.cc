@@ -35,7 +35,7 @@ bool EqualPlane(const uint8_t* data1,
   return true;
 }
 
-bool FramesEqual(const webrtc::VideoFrame& f1, const webrtc::VideoFrame& f2) {
+bool FramesEqual(const VideoFrame& f1, const VideoFrame& f2) {
   if (f1.rtp_timestamp() != f2.rtp_timestamp() ||
       f1.ntp_time_ms() != f2.ntp_time_ms() ||
       f1.render_time_ms() != f2.render_time_ms()) {
@@ -44,8 +44,8 @@ bool FramesEqual(const webrtc::VideoFrame& f1, const webrtc::VideoFrame& f2) {
   return FrameBufsEqual(f1.video_frame_buffer(), f2.video_frame_buffer());
 }
 
-bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
-                    const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f2) {
+bool FrameBufsEqual(const scoped_refptr<VideoFrameBuffer>& f1,
+                    const scoped_refptr<VideoFrameBuffer>& f2) {
   if (f1 == f2) {
     return true;
   }
@@ -59,8 +59,8 @@ bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
     return false;
   }
 
-  rtc::scoped_refptr<webrtc::I420BufferInterface> f1_i420 = f1->ToI420();
-  rtc::scoped_refptr<webrtc::I420BufferInterface> f2_i420 = f2->ToI420();
+  scoped_refptr<I420BufferInterface> f1_i420 = f1->ToI420();
+  scoped_refptr<I420BufferInterface> f2_i420 = f2->ToI420();
   return EqualPlane(f1_i420->DataY(), f2_i420->DataY(), f1_i420->StrideY(),
                     f2_i420->StrideY(), f1_i420->width(), f1_i420->height()) &&
          EqualPlane(f1_i420->DataU(), f2_i420->DataU(), f1_i420->StrideU(),
@@ -71,9 +71,9 @@ bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
                     f1_i420->ChromaHeight());
 }
 
-rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE* f) {
+scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE* f) {
   int half_width = (width + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> buffer(
+  scoped_refptr<I420Buffer> buffer(
       // Explicit stride, no padding between rows.
       I420Buffer::Create(width, height, width, half_width, half_width));
   size_t size_y = static_cast<size_t>(width) * height;
@@ -88,8 +88,8 @@ rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE* f) {
   return buffer;
 }
 
-rtc::scoped_refptr<NV12Buffer> ReadNV12Buffer(int width, int height, FILE* f) {
-  rtc::scoped_refptr<NV12Buffer> buffer(NV12Buffer::Create(width, height));
+scoped_refptr<NV12Buffer> ReadNV12Buffer(int width, int height, FILE* f) {
+  scoped_refptr<NV12Buffer> buffer(NV12Buffer::Create(width, height));
   size_t size_y = static_cast<size_t>(width) * height;
   size_t size_uv = static_cast<size_t>(width + width % 2) * ((height + 1) / 2);
 

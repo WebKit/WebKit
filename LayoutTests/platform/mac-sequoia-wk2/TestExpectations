@@ -1,0 +1,29 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only
+### occurs on Sequoia, you should probably use the platform/mac-wk2/TestExpectations file, NOT this one.
+###
+
+# -- The below has different, expected behavior on Tahoe than Sequoia --
+# -- Please put new failure expectations for Sequoia at the bottom of the file. --
+
+# rdar://155272309 (New Test (294762@main): [ wk2 OS 26 ] 3 digital-credentials are a consistent failure)
+imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass ]
+imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html [ Pass ]
+imported/w3c/web-platform-tests/digital-credentials/user-activation.https.html [ Pass ]
+
+# FIXME: Needs bug, regressed on Tahoe.
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-before-short-deletion.html [ Pass ]
+
+# -- The above has different, expected behavior on Tahoe than Sequoia --
+# -- New failure expectations for Sequoia below this point only!! --
+
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only
+### occurs on Sequoia, you should probably use the platform/mac-wk2/TestExpectations file, NOT this one.
+###
+### DO NOT PUT ANYTHING BELOW THIS LINE

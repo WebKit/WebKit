@@ -15,28 +15,28 @@
 #include "rtc_base/thread.h"
 
 namespace webrtc {
-class FakeIPseudoTcpNotify : public cricket::IPseudoTcpNotify {
+class FakeIPseudoTcpNotify : public webrtc::IPseudoTcpNotify {
  public:
-  void OnTcpOpen(cricket::PseudoTcp* tcp) {}
-  void OnTcpReadable(cricket::PseudoTcp* tcp) {}
-  void OnTcpWriteable(cricket::PseudoTcp* tcp) {}
-  void OnTcpClosed(cricket::PseudoTcp* tcp, uint32_t error) {}
+  void OnTcpOpen(webrtc::PseudoTcp* tcp) {}
+  void OnTcpReadable(webrtc::PseudoTcp* tcp) {}
+  void OnTcpWriteable(webrtc::PseudoTcp* tcp) {}
+  void OnTcpClosed(webrtc::PseudoTcp* tcp, uint32_t error) {}
 
-  cricket::IPseudoTcpNotify::WriteResult TcpWritePacket(cricket::PseudoTcp* tcp,
-                                                        const char* buffer,
-                                                        size_t len) {
-    return cricket::IPseudoTcpNotify::WriteResult::WR_SUCCESS;
+  webrtc::IPseudoTcpNotify::WriteResult TcpWritePacket(webrtc::PseudoTcp* tcp,
+                                                       const char* buffer,
+                                                       size_t len) {
+    return webrtc::IPseudoTcpNotify::WriteResult::WR_SUCCESS;
   }
 };
 
 struct Environment {
-  explicit Environment(cricket::IPseudoTcpNotify* notifier)
+  explicit Environment(webrtc::IPseudoTcpNotify* notifier)
       : ptcp(notifier, 0) {}
 
   // We need the thread to avoid some uninteresting crashes, since the
   // production code expects there to be a thread object available.
-  rtc::AutoThread thread;
-  cricket::PseudoTcp ptcp;
+  webrtc::AutoThread thread;
+  webrtc::PseudoTcp ptcp;
 };
 
 Environment* env = new Environment(new FakeIPseudoTcpNotify());

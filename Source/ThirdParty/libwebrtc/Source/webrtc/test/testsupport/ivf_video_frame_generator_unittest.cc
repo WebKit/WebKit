@@ -95,16 +95,15 @@ class IvfFileWriterEncodedCallback : public EncodedImageCallback {
 
   Mutex lock_;
   int received_frames_count_ RTC_GUARDED_BY(lock_) = 0;
-  rtc::Event expected_frames_count_received_;
+  Event expected_frames_count_received_;
 };
 
 class IvfVideoFrameGeneratorTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    file_name_ =
-        webrtc::test::TempFilename(webrtc::test::OutputPath(), "test_file.ivf");
+    file_name_ = test::TempFilename(test::OutputPath(), "test_file.ivf");
   }
-  void TearDown() override { webrtc::test::RemoveFile(file_name_); }
+  void TearDown() override { test::RemoveFile(file_name_); }
 
   VideoFrame BuildFrame(FrameGeneratorInterface::VideoFrameData frame_data) {
     return VideoFrame::Builder()
@@ -121,7 +120,7 @@ class IvfVideoFrameGeneratorTest : public ::testing::Test {
             std::nullopt);
 
     VideoCodec codec_settings;
-    webrtc::test::CodecSettings(video_codec_type, &codec_settings);
+    test::CodecSettings(video_codec_type, &codec_settings);
     codec_settings.width = kWidth;
     codec_settings.height = kHeight;
     codec_settings.maxFramerate = kMaxFramerate;
@@ -167,15 +166,21 @@ class IvfVideoFrameGeneratorTest : public ::testing::Test {
 
 }  // namespace
 
-TEST_F(IvfVideoFrameGeneratorTest, DoesNotKnowFps) {
+TEST_F(IvfVideoFrameGeneratorTest, FpsWithoutHint) {
   CreateTestVideoFile(VideoCodecType::kVideoCodecVP8, CreateVp8Encoder(env_));
-  IvfVideoFrameGenerator generator(env_, file_name_);
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/std::nullopt);
   EXPECT_EQ(generator.fps(), std::nullopt);
+}
+
+TEST_F(IvfVideoFrameGeneratorTest, FpsWithHint) {
+  CreateTestVideoFile(VideoCodecType::kVideoCodecVP8, CreateVp8Encoder(env_));
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/123);
+  EXPECT_EQ(generator.fps(), 123);
 }
 
 TEST_F(IvfVideoFrameGeneratorTest, Vp8) {
   CreateTestVideoFile(VideoCodecType::kVideoCodecVP8, CreateVp8Encoder(env_));
-  IvfVideoFrameGenerator generator(env_, file_name_);
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/std::nullopt);
   for (size_t i = 0; i < video_frames_.size(); ++i) {
     auto& expected_frame = video_frames_[i];
     VideoFrame actual_frame = BuildFrame(generator.NextFrame());
@@ -185,7 +190,7 @@ TEST_F(IvfVideoFrameGeneratorTest, Vp8) {
 
 TEST_F(IvfVideoFrameGeneratorTest, Vp8DoubleRead) {
   CreateTestVideoFile(VideoCodecType::kVideoCodecVP8, CreateVp8Encoder(env_));
-  IvfVideoFrameGenerator generator(env_, file_name_);
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/std::nullopt);
   for (size_t i = 0; i < video_frames_.size() * 2; ++i) {
     auto& expected_frame = video_frames_[i % video_frames_.size()];
     VideoFrame actual_frame = BuildFrame(generator.NextFrame());
@@ -195,7 +200,7 @@ TEST_F(IvfVideoFrameGeneratorTest, Vp8DoubleRead) {
 
 TEST_F(IvfVideoFrameGeneratorTest, Vp9) {
   CreateTestVideoFile(VideoCodecType::kVideoCodecVP9, CreateVp9Encoder(env_));
-  IvfVideoFrameGenerator generator(env_, file_name_);
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/std::nullopt);
   for (size_t i = 0; i < video_frames_.size(); ++i) {
     auto& expected_frame = video_frames_[i];
     VideoFrame actual_frame = BuildFrame(generator.NextFrame());
@@ -206,7 +211,7 @@ TEST_F(IvfVideoFrameGeneratorTest, Vp9) {
 #if defined(WEBRTC_USE_H264)
 TEST_F(IvfVideoFrameGeneratorTest, H264) {
   CreateTestVideoFile(VideoCodecType::kVideoCodecH264, CreateH264Encoder(env_));
-  IvfVideoFrameGenerator generator(env_, file_name_);
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/std::nullopt);
   for (size_t i = 0; i < video_frames_.size(); ++i) {
     auto& expected_frame = video_frames_[i];
     VideoFrame actual_frame = BuildFrame(generator.NextFrame());
@@ -214,6 +219,17 @@ TEST_F(IvfVideoFrameGeneratorTest, H264) {
   }
 }
 #endif
+
+TEST_F(IvfVideoFrameGeneratorTest, ScalesResolution) {
+  CreateTestVideoFile(VideoCodecType::kVideoCodecVP8, CreateVp8Encoder(env_));
+  IvfVideoFrameGenerator generator(env_, file_name_, /*fps_hint=*/123);
+  generator.ChangeResolution(kWidth * 2, kHeight / 2);
+  scoped_refptr<VideoFrameBuffer> frame_buffer = generator.NextFrame().buffer;
+  frame_buffer = generator.NextFrame().buffer;
+  ASSERT_TRUE(frame_buffer);
+  EXPECT_EQ(frame_buffer->width(), kWidth * 2);
+  EXPECT_EQ(frame_buffer->height(), kHeight / 2);
+}
 
 }  // namespace test
 }  // namespace webrtc

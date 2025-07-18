@@ -229,7 +229,7 @@ private:
     CSSSelector(CSSSelector&&) = delete;
 
     struct RareData : public RefCounted<RareData> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData, RareData);
         static Ref<RareData> create(AtomString);
         WEBCORE_EXPORT ~RareData();
 

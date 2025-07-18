@@ -33,7 +33,7 @@ namespace WTF {
 
 template<typename T, typename Type>
 class CompactRefPtrTuple final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompactRefPtrTuple);
 
     static_assert(::allowCompactPointers<T>());
 public:

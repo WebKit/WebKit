@@ -288,7 +288,7 @@ private:
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
-    std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
+    const UniqueRef<VideoLayerManagerObjC> m_videoLayerManager;
 
     // SampleBufferDisplayLayerClient
     void sampleBufferDisplayLayerStatusDidFail() final;

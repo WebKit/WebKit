@@ -28,7 +28,7 @@ namespace dcsctp {
 constexpr int CookieAckChunk::kType;
 
 std::optional<CookieAckChunk> CookieAckChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

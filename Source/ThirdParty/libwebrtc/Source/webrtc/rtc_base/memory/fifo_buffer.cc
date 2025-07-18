@@ -11,10 +11,17 @@
 #include "rtc_base/memory/fifo_buffer.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
+#include "api/array_view.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/stream.h"
 #include "rtc_base/thread.h"
 
-namespace rtc {
+namespace webrtc {
 
 FifoBuffer::FifoBuffer(size_t size)
     : state_(SS_OPEN),
@@ -49,7 +56,7 @@ StreamState FifoBuffer::GetState() const {
   return state_;
 }
 
-StreamResult FifoBuffer::Read(rtc::ArrayView<uint8_t> buffer,
+StreamResult FifoBuffer::Read(ArrayView<uint8_t> buffer,
                               size_t& bytes_read,
                               int& error) {
   RTC_DCHECK_RUN_ON(&callback_sequence_);
@@ -72,7 +79,7 @@ StreamResult FifoBuffer::Read(rtc::ArrayView<uint8_t> buffer,
   return result;
 }
 
-StreamResult FifoBuffer::Write(rtc::ArrayView<const uint8_t> buffer,
+StreamResult FifoBuffer::Write(ArrayView<const uint8_t> buffer,
                                size_t& bytes_written,
                                int& error) {
   RTC_DCHECK_RUN_ON(&callback_sequence_);
@@ -195,4 +202,4 @@ StreamResult FifoBuffer::WriteLocked(const void* buffer,
   return SR_SUCCESS;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

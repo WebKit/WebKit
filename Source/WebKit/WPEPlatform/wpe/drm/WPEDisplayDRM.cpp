@@ -103,7 +103,7 @@ struct DisplayDevice {
 };
 
 // This is based on weston function find_primary_gpu(). It tries to find the boot VGA device that is KMS capable, or the first KMS device.
-static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
+static struct DisplayDevice findTargetDevice(struct udev* udev, const char* seatID)
 {
     RefPtr<struct udev_enumerate> udevEnumerate = adoptRef(udev_enumerate_new(udev));
     udev_enumerate_add_match_subsystem(udevEnumerate.get(), "drm");
@@ -147,6 +147,35 @@ static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
     }
 
     return displayDevice;
+}
+
+static CString findFirstRenderNodeName()
+{
+    std::array<drmDevicePtr, 64> devices = { };
+
+    int numDevices = drmGetDevices2(0, devices.data(), std::size(devices));
+    if (numDevices <= 0)
+        return { };
+
+    CString filename;
+    for (int i = 0; i < numDevices; ++i) {
+        const auto* device = devices[i];
+        const auto nodes = unsafeMakeSpan(device->nodes, DRM_NODE_MAX);
+
+        bool hasPrimaryNode = device->available_nodes & (1 << DRM_NODE_PRIMARY);
+        if (!hasPrimaryNode)
+            continue;
+
+        bool hasRenderNode = device->available_nodes & (1 << DRM_NODE_RENDER);
+        if (!hasRenderNode)
+            continue;
+
+        filename = CString { nodes[DRM_NODE_RENDER] };
+        break;
+    }
+
+    drmFreeDevices(devices.data(), numDevices);
+    return filename;
 }
 
 static bool wpeDisplayDRMInitializeCapabilities(WPEDisplayDRM* display, int fd, GError** error)
@@ -255,7 +284,7 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     auto session = WPE::DRM::Session::create();
     DisplayDevice displayDevice;
     if (!deviceName) {
-        displayDevice = findDevice(udev.get(), session->seatID());
+        displayDevice = findTargetDevice(udev.get(), session->seatID());
         if (displayDevice.isNull()) {
             g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
             return FALSE;
@@ -315,7 +344,7 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     displayDRM->priv->session = WTFMove(session);
     displayDRM->priv->fd = WTFMove(fd);
     displayDRM->priv->drmDevice = WTFMove(displayDevice.filename);
-    displayDRM->priv->drmRenderNode = renderNodePath.get();
+    displayDRM->priv->drmRenderNode = renderNodePath ? renderNodePath.get() : findFirstRenderNodeName();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
 

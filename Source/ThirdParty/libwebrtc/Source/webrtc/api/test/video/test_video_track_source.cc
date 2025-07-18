@@ -46,15 +46,13 @@ void TestVideoTrackSource::SetState(SourceState new_state) {
   }
 }
 
-void TestVideoTrackSource::AddOrUpdateSink(
-    rtc::VideoSinkInterface<VideoFrame>* sink,
-    const rtc::VideoSinkWants& wants) {
+void TestVideoTrackSource::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                                           const VideoSinkWants& wants) {
   RTC_DCHECK(worker_thread_checker_.IsCurrent());
   source()->AddOrUpdateSink(sink, wants);
 }
 
-void TestVideoTrackSource::RemoveSink(
-    rtc::VideoSinkInterface<VideoFrame>* sink) {
+void TestVideoTrackSource::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK(worker_thread_checker_.IsCurrent());
   source()->RemoveSink(sink);
 }

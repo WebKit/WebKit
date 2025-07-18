@@ -37,9 +37,9 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 namespace {
 
-using webrtc::webrtc_pc_e2e::VideoConfig;
+using webrtc_pc_e2e::VideoConfig;
 using EmulatedSFUConfigMap =
-    ::webrtc::webrtc_pc_e2e::QualityAnalyzingVideoEncoder::EmulatedSFUConfigMap;
+    webrtc_pc_e2e::QualityAnalyzingVideoEncoder::EmulatedSFUConfigMap;
 
 class AnalyzingFramePreprocessor
     : public test::TestVideoCapturer::FramePreprocessor {
@@ -48,7 +48,7 @@ class AnalyzingFramePreprocessor
       absl::string_view peer_name,
       absl::string_view stream_label,
       VideoQualityAnalyzerInterface* analyzer,
-      std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks)
+      std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> sinks)
       : peer_name_(peer_name),
         stream_label_(stream_label),
         analyzer_(analyzer),
@@ -72,8 +72,7 @@ class AnalyzingFramePreprocessor
   const std::string peer_name_;
   const std::string stream_label_;
   VideoQualityAnalyzerInterface* const analyzer_;
-  const std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>
-      sinks_;
+  const std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> sinks_;
 };
 
 }  // namespace
@@ -117,7 +116,7 @@ std::unique_ptr<test::TestVideoCapturer::FramePreprocessor>
 VideoQualityAnalyzerInjectionHelper::CreateFramePreprocessor(
     absl::string_view peer_name,
     const VideoConfig& config) {
-  std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks;
+  std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> sinks;
   if (config.input_dump_options.has_value()) {
     std::unique_ptr<test::VideoFrameWriter> writer =
         config.input_dump_options->CreateInputDumpVideoFrameWriter(
@@ -149,7 +148,7 @@ VideoQualityAnalyzerInjectionHelper::CreateVideoSink(
 
 void VideoQualityAnalyzerInjectionHelper::Start(
     std::string test_case_name,
-    rtc::ArrayView<const std::string> peer_names,
+    ArrayView<const std::string> peer_names,
     int max_threads_count) {
   analyzer_->Start(std::move(test_case_name), peer_names, max_threads_count);
   extractor_->Start(peer_names.size());
@@ -169,7 +168,7 @@ void VideoQualityAnalyzerInjectionHelper::UnregisterParticipantInCall(
 
 void VideoQualityAnalyzerInjectionHelper::OnStatsReports(
     absl::string_view pc_label,
-    const rtc::scoped_refptr<const RTCStatsReport>& report) {
+    const scoped_refptr<const RTCStatsReport>& report) {
   analyzer_->OnStatsReports(pc_label, report);
 }
 

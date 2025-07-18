@@ -168,7 +168,7 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarke
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForSearchPredicate(JSContextRef, AccessibilityTextMarkerRange*, bool, JSValueRef, JSStringRef, bool, bool) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange*, bool) { return nullptr; }
-void AccessibilityUIElement::dismiss() { }
+bool AccessibilityUIElement::dismiss() { return false; }
 JSValueRef AccessibilityUIElement::children(JSContextRef) { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements(JSContextRef) { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }

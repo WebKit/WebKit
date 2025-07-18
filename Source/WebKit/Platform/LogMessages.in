@@ -38,7 +38,7 @@ WEBRESOURCELOADER_DIDRECEIVERESPONSE, "[webPageID=%" PRIu64 ", frameID=%" PRIu64
 WEBRESOURCELOADER_DIDRECEIVERESPONSE_NOT_CONTINUING_LOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didReceiveResponse: not continuing load because no coreLoader or no ID", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBRESOURCELOADER_DIDRECEIVERESPONSE_NOT_CONTINUING_INTERCEPT_LOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didReceiveResponse: not continuing intercept load because no coreLoader or no ID", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBRESOURCELOADER_DIDRECEIVEDATA, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didReceiveData: Started receiving data", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
-WEBRESOURCELOADER_DIDFINISHRESOURCELOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didFinishResourceLoad: (length=%zd)", (uint64_t, uint64_t, uint64_t, size_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDFINISHRESOURCELOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didFinishResourceLoad: (length=%llu)", (uint64_t, uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBRESOURCELOADER_SERVICEWORKERDIDNOTHANDLE, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::serviceWorkerDidNotHandle", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBRESOURCELOADER_DIDFAILRESOURCELOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didFailResourceLoad", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBRESOURCELOADER_DIDBLOCKAUTHENTICATIONCHALLENGE, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didBlockAuthenticationChallenge", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
@@ -77,6 +77,6 @@ WEBLOCALFRAMELOADERCLIENT_DISPATCH_DID_FIRST_VISUALLY_NONEMPTY_LAYOUT, "[webFram
 
 REMOTE_RENDERING_BACKEND_PROXY_CREATED_RENDERING_BACKEND, "[renderingBackend=%" PRIu64 "] Created rendering backend for pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, (uint64_t, uint64_t, uint64_t), DEFAULT, RemoteLayerBuffers
 
-VIDEOPRESENTATIONMANAGER_SETVIDEOLAYERFRAMEFENCED, "VideoPresentationManager::setVideoLayerFrameFenced(%llu): send right %d, fence data size %lu", (uint64_t, int, size_t), INFO, Media
+VIDEOPRESENTATIONMANAGER_SETVIDEOLAYERFRAMEFENCED, "VideoPresentationManager::setVideoLayerFrameFenced(%llu): send right %d, fence data size %llu", (uint64_t, int, uint64_t), INFO, Media
 
 MEDIAPLAYERPRIVATEREMOTE_LAYERHOSTINGCONTEXTCHANGED, "MediaPlayerPrivateRemote::layerHostingContextChanged", (), DEFAULT, Media

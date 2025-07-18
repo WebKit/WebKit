@@ -180,7 +180,7 @@ private PUBLIC_IN_WEBGPU_SWIFT:
     NSString* m_lastErrorString { nil };
     uint64_t m_debugGroupStackSize { 0 };
     ThreadSafeWeakPtr<CommandBuffer> m_cachedCommandBuffer;
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     NSMutableSet<id<MTLTexture>> *m_managedTextures { nil };
     NSMutableSet<id<MTLBuffer>> *m_managedBuffers { nil };
 #endif
@@ -207,7 +207,8 @@ private PUBLIC_IN_WEBGPU_SWIFT:
     uint32_t m_currentResidencySetCount { 0 };
 #endif
 private:
-} SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder);
+// FIXME: remove @safe once rdar://151039766 lands
+} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder);
 
 } // namespace WebGPU
 

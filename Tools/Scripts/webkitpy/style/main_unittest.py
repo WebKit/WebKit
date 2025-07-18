@@ -30,6 +30,7 @@ import webkitpy.style.checker as checker
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.logtesting import LogTesting
+from webkitpy.style.checker import ANSIColor
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
@@ -144,9 +145,11 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
+
+        expected = f"{ANSIColor.WHITE}/mock-checkout/LayoutTests/TestExpectations:3:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[test/expectations]{ANSIColor.RESET} {ANSIColor.WHITE}Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.{ANSIColor.RESET}\n"
         self.assertEqual(
             captured.root.log.getvalue(),
-            '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n',
+            expected,
         )
 
     def test_linter_duplicate_line_no_edit(self):
@@ -203,9 +206,11 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
+
+        expected = f"{ANSIColor.WHITE}/mock-checkout/LayoutTests/TestExpectations:3:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[test/expectations]{ANSIColor.RESET} {ANSIColor.WHITE}Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.{ANSIColor.RESET}\n"
         self.assertEqual(
             captured.root.log.getvalue(),
-            '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n',
+            expected,
         )
 
     def test_linter_deleted_file(self):
@@ -220,9 +225,11 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
+
+        expected = f"{ANSIColor.WHITE}/mock-checkout/LayoutTests/TestExpectations:2:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[test/expectations]{ANSIColor.RESET} {ANSIColor.WHITE}Path does not exist.{ANSIColor.RESET}\n"
         self.assertEqual(
             captured.root.log.getvalue(),
-            '/mock-checkout/LayoutTests/TestExpectations:2:  Path does not exist.  [test/expectations] [5]\n',
+            expected,
         )
 
     def test_linter_deleted_file_no_edit(self):

@@ -7,7 +7,7 @@
 import("../../../../gni/angle.gni")
 import("gl_backend.gni")
 
-if (angle_has_build && ozone_platform_gbm) {
+if (angle_use_gbm) {
   import("//build/config/linux/pkg_config.gni")
 }
 
@@ -21,7 +21,7 @@ config("angle_gl_backend_config") {
   if (angle_enable_gl_null) {
     defines += [ "ANGLE_ENABLE_OPENGL_NULL" ]
   }
-  if (ozone_platform_gbm) {
+  if (angle_use_gbm) {
     defines += [ "ANGLE_USE_GBM" ]
   }
   if (is_apple) {

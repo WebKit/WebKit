@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutElementBox.h"
+#include "StyleFlexBasis.h"
 
 namespace WebCore {
 namespace Layout {
@@ -84,6 +85,7 @@ public:
     bool isContentBoxBased() const { return style().boxSizing() == BoxSizing::ContentBox; }
 
     const ElementBox& layoutBox() const { return *m_layoutBox; }
+    CheckedRef<const ElementBox> checkedLayoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
     WritingMode writingMode() const { return style().writingMode(); }
 

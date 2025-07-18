@@ -22,6 +22,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
@@ -53,7 +54,6 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/tmmbr_help.h"
 #include "rtc_base/checks.h"
@@ -91,7 +91,7 @@ class RTCPSender::PacketSender {
   // Sends pending rtcp packet.
   void Send() {
     if (index_ > 0) {
-      callback_(rtc::ArrayView<const uint8_t>(buffer_, index_));
+      callback_(ArrayView<const uint8_t>(buffer_, index_));
       index_ = 0;
     }
   }
@@ -221,7 +221,7 @@ bool RTCPSender::Sending() const {
   return sending_;
 }
 
-void RTCPSender::SetSendingStatus(const FeedbackState& feedback_state,
+void RTCPSender::SetSendingStatus(const FeedbackState& /* feedback_state */,
                                   bool sending) {
   MutexLock lock(&mutex_rtcp_sender_);
   sending_ = sending;
@@ -238,8 +238,8 @@ int32_t RTCPSender::SendLossNotification(const FeedbackState& feedback_state,
                                          bool decodability_flag,
                                          bool buffering_allowed) {
   int32_t error_code = -1;
-  auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
-    transport_->SendRtcp(packet);
+  auto callback = [&](ArrayView<const uint8_t> packet) {
+    transport_->SendRtcp(packet, /*packet_options=*/{});
     error_code = 0;
     env_.event_log().Log(std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
   };
@@ -404,7 +404,7 @@ void RTCPSender::BuildSR(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(report);
 }
 
-void RTCPSender::BuildSDES(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildSDES(const RtcpContext& /* ctx */, PacketSender& sender) {
   size_t length_cname = cname_.length();
   RTC_CHECK_LT(length_cname, RTCP_CNAME_SIZE);
 
@@ -422,7 +422,7 @@ void RTCPSender::BuildRR(const RtcpContext& ctx, PacketSender& sender) {
   }
 }
 
-void RTCPSender::BuildPLI(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildPLI(const RtcpContext& /* ctx */, PacketSender& sender) {
   rtcp::Pli pli;
   pli.SetSenderSsrc(ssrc_);
   pli.SetMediaSsrc(remote_ssrc_);
@@ -431,7 +431,7 @@ void RTCPSender::BuildPLI(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(pli);
 }
 
-void RTCPSender::BuildFIR(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildFIR(const RtcpContext& /* ctx */, PacketSender& sender) {
   ++sequence_number_fir_;
 
   rtcp::Fir fir;
@@ -442,7 +442,7 @@ void RTCPSender::BuildFIR(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(fir);
 }
 
-void RTCPSender::BuildREMB(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildREMB(const RtcpContext& /* ctx */, PacketSender& sender) {
   rtcp::Remb remb;
   remb.SetSenderSsrc(ssrc_);
   remb.SetBitrateBps(remb_bitrate_);
@@ -467,7 +467,7 @@ void RTCPSender::BuildTMMBR(const RtcpContext& ctx, PacketSender& sender) {
   bool tmmbr_owner = false;
 
   // holding mutex_rtcp_sender_ while calling RTCPreceiver which
-  // will accuire criticalSectionRTCPReceiver_ is a potental deadlock but
+  // will acquire criticalSectionRTCPReceiver_ is a potential deadlock but
   // since RTCPreceiver is not doing the reverse we should be fine
   std::vector<rtcp::TmmbItem> candidates =
       ctx.feedback_state_.receiver->BoundingSet(&tmmbr_owner);
@@ -509,7 +509,8 @@ void RTCPSender::BuildTMMBR(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(tmmbr);
 }
 
-void RTCPSender::BuildTMMBN(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildTMMBN(const RtcpContext& /* ctx */,
+                            PacketSender& sender) {
   rtcp::Tmmbn tmmbn;
   tmmbn.SetSenderSsrc(ssrc_);
   for (const rtcp::TmmbItem& tmmbr : tmmbn_to_send_) {
@@ -520,13 +521,13 @@ void RTCPSender::BuildTMMBN(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(tmmbn);
 }
 
-void RTCPSender::BuildAPP(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildAPP(const RtcpContext& /* ctx */, PacketSender& sender) {
   rtcp::App app;
   app.SetSenderSsrc(ssrc_);
   sender.AppendPacket(app);
 }
 
-void RTCPSender::BuildLossNotification(const RtcpContext& ctx,
+void RTCPSender::BuildLossNotification(const RtcpContext& /* ctx */,
                                        PacketSender& sender) {
   loss_notification_.SetSenderSsrc(ssrc_);
   loss_notification_.SetMediaSsrc(remote_ssrc_);
@@ -550,7 +551,7 @@ void RTCPSender::BuildNACK(const RtcpContext& ctx, PacketSender& sender) {
   sender.AppendPacket(nack);
 }
 
-void RTCPSender::BuildBYE(const RtcpContext& ctx, PacketSender& sender) {
+void RTCPSender::BuildBYE(const RtcpContext& /* ctx */, PacketSender& sender) {
   rtcp::Bye bye;
   bye.SetSenderSsrc(ssrc_);
   bye.SetCsrcs(csrcs_);
@@ -595,8 +596,8 @@ int32_t RTCPSender::SendRTCP(const FeedbackState& feedback_state,
                              int32_t nack_size,
                              const uint16_t* nack_list) {
   int32_t error_code = -1;
-  auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
-    if (transport_->SendRtcp(packet)) {
+  auto callback = [&](ArrayView<const uint8_t> packet) {
+    if (transport_->SendRtcp(packet, /*packet_options=*/{})) {
       error_code = 0;
       env_.event_log().Log(
           std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
@@ -725,7 +726,7 @@ TimeDelta RTCPSender::ComputeTimeUntilNextReport(DataRate send_bitrate) {
 
   // The interval between RTCP packets is varied randomly over the
   // range [1/2,3/2] times the calculated interval.
-  int min_interval_int = rtc::dchecked_cast<int>(min_interval.ms());
+  int min_interval_int = dchecked_cast<int>(min_interval.ms());
   TimeDelta time_to_next = TimeDelta::Millis(
       random_.Rand(min_interval_int * 1 / 2, min_interval_int * 3 / 2));
 
@@ -893,8 +894,8 @@ void RTCPSender::SendCombinedRtcpPacket(
     ssrc = ssrc_;
   }
   RTC_DCHECK_LE(max_packet_size, IP_PACKET_SIZE);
-  auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
-    if (transport_->SendRtcp(packet)) {
+  auto callback = [&](ArrayView<const uint8_t> packet) {
+    if (transport_->SendRtcp(packet, /*packet_options=*/{})) {
       env_.event_log().Log(
           std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
     }

@@ -48,7 +48,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
-class InspectorClient;
+class InspectorBackendClient;
 class InspectorOverlay;
 class LocalFrame;
 class Page;
@@ -59,7 +59,7 @@ class InspectorPageAgent final : public InspectorAgentBase, public Inspector::Pa
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorPageAgent);
 public:
-    InspectorPageAgent(PageAgentContext&, InspectorClient*, InspectorOverlay&);
+    InspectorPageAgent(PageAgentContext&, InspectorBackendClient*, InspectorOverlay&);
     ~InspectorPageAgent();
 
     enum ResourceType {
@@ -93,7 +93,7 @@ public:
     static DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, LocalFrame*);
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // PageBackendDispatcherHandler
@@ -169,11 +169,11 @@ private:
     Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(LocalFrame*);
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(LocalFrame*);
 
-    std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::PageBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;
-    InspectorClient* m_client { nullptr };
+    InspectorBackendClient* m_client { nullptr };
     WeakRef<InspectorOverlay> m_overlay;
 
     WeakHashMap<Frame, String> m_frameToIdentifier;

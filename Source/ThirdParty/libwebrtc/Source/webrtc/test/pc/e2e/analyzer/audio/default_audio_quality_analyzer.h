@@ -44,7 +44,7 @@ class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
              TrackIdStreamInfoMap* analyzer_helper) override;
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
   void Stop() override;
 
   // Returns audio quality stats per stream label.

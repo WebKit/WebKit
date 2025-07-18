@@ -760,13 +760,18 @@ angle::Result VertexArrayVk::syncState(const gl::Context *context,
                     // We may have lost buffer content change when it became non-current. In that
                     // case we always assume buffer has changed. If compressVertexData.enabled is
                     // true, it also depends on buffer usage which may have changed.
-                    iter.setLaterBits(
-                        gl::VertexArray::DirtyBits(mState.getBufferBindingMask().to_ulong()
-                                                   << gl::VertexArray::DIRTY_BIT_BINDING_0));
+                    uint64_t bits = mState.getBufferBindingMask().bits();
+                    bits <<= gl::VertexArray::DIRTY_BIT_BINDING_0;
+                    iter.setLaterBits(gl::VertexArray::DirtyBits(bits));
                 }
                 else
                 {
-                    for (size_t bindingIndex : mState.getBufferBindingMask())
+                    // Element buffer is not in bindings yet, has to handle separately.
+                    iter.setLaterBit(gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER);
+                    gl::VertexArrayBufferBindingMask bindingMask = mState.getBufferBindingMask();
+                    bindingMask.reset(gl::kElementArrayBufferIndex);
+
+                    for (size_t bindingIndex : bindingMask)
                     {
                         const gl::Buffer *bufferGL    = bindings[bindingIndex].getBuffer().get();
                         vk::BufferSerial bufferSerial = vk::GetImpl(bufferGL)->getBufferSerial();

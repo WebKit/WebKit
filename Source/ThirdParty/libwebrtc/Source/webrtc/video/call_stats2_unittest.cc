@@ -10,12 +10,15 @@
 
 #include "video/call_stats2.h"
 
+#include <cstdint>
 #include <memory>
 
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -59,9 +62,9 @@ class CallStats2Test : public ::testing::Test {
           "CallStats",
           TaskQueueFactory::Priority::NORMAL);
 
-  // Note: Since rtc::Thread doesn't support injecting a Clock, we're going
+  // Note: Since webrtc::Thread doesn't support injecting a Clock, we're going
   // to be using a mix of the fake clock (used by CallStats) as well as the
-  // system clock (used by rtc::Thread). This isn't ideal and will result in
+  // system clock (used by webrtc::Thread). This isn't ideal and will result in
   // the tests taking longer to execute in some cases than they need to.
   SimulatedClock fake_clock_{12345};
   CallStats call_stats_{&fake_clock_, loop_.task_queue()};

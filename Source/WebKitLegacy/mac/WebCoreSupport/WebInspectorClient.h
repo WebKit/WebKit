@@ -28,7 +28,7 @@
 
 #import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/InspectorClient.h>
+#import <WebCore/InspectorBackendClient.h>
 #import <WebCore/InspectorDebuggableType.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <wtf/Forward.h>
@@ -54,7 +54,7 @@ class Page;
 
 class WebInspectorFrontendClient;
 
-class WebInspectorClient final : public WebCore::InspectorClient, public Inspector::FrontendChannel {
+class WebInspectorClient final : public WebCore::InspectorBackendClient, public Inspector::FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorClient);
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);

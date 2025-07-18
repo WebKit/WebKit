@@ -19,7 +19,7 @@
 #include "absl/strings/string_view.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 // clang-format off
@@ -135,4 +135,4 @@ TEST(StringToNumberTest, TestSpecificValues) {
   EXPECT_EQ(std::nullopt, StringToNumber<int8_t>("-256"));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

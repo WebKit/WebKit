@@ -24,6 +24,8 @@
 
 #include "config.h"
 #include "DecompressionStreamDecoder.h"
+
+#include "ExceptionOr.h"
 #include <compression.h>
 
 namespace WebCore {

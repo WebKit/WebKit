@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Should never run
+
+Harness Error (FAIL), message = Unhandled rejection
+
+FAIL precommitHandler for a reload navigation, reject before commit assert_unreached: committed must not fulfill Reached unreachable code
+PASS precommitHandler for a reload navigation, reject after commit
+PASS precommitHandler for a reload navigation, success
+

@@ -29,10 +29,10 @@ class WienerFilter {
   // Updates the filter estimate.
   void Update(
       int32_t num_analyzed_frames,
-      rtc::ArrayView<const float, kFftSizeBy2Plus1> noise_spectrum,
-      rtc::ArrayView<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
-      rtc::ArrayView<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
-      rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum);
+      ArrayView<const float, kFftSizeBy2Plus1> noise_spectrum,
+      ArrayView<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
+      ArrayView<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
+      ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum);
 
   // Compute an overall gain scaling factor.
   float ComputeOverallScalingFactor(int32_t num_analyzed_frames,
@@ -41,7 +41,7 @@ class WienerFilter {
                                     float energy_after_filtering) const;
 
   // Returns the filter.
-  rtc::ArrayView<const float, kFftSizeBy2Plus1> get_filter() const {
+  ArrayView<const float, kFftSizeBy2Plus1> get_filter() const {
     return filter_;
   }
 

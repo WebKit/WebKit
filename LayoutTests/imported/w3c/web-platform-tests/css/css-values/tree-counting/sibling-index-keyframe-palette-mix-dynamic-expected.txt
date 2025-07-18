@@ -1,0 +1,4 @@
+
+FAIL Initially, the sibling-index() is 4 for #target assert_equals: expected "palette-mix(in lch, --MyFirstPalette 20%, --MySecondPalette)" but got "normal"
+FAIL Removing a preceding sibling of #target reduces the sibling-index() assert_equals: expected "palette-mix(in lch, --MyFirstPalette 15%, --MySecondPalette 80%)" but got "normal"
+

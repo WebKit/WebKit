@@ -20,7 +20,9 @@
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#if !WEBRTC_WEBKIT_BUILD
 #include "rtc_base/strings/json.h"
+#endif
 #include "system_wrappers/include/clock.h"
 #include "test/call_config_utils.h"
 #include "test/encoder_settings.h"
@@ -31,6 +33,7 @@
 namespace webrtc {
 namespace test {
 
+#if !WEBRTC_WEBKIT_BUILD
 void RtpReplayer::Replay(const std::string& replay_config_filepath,
                          const uint8_t* rtp_dump_data,
                          size_t rtp_dump_size) {
@@ -40,6 +43,7 @@ void RtpReplayer::Replay(const std::string& replay_config_filepath,
   return Replay(std::move(stream_state), std::move(receive_stream_configs),
                 rtp_dump_data, rtp_dump_size);
 }
+#endif
 
 void RtpReplayer::Replay(
     std::unique_ptr<StreamState> stream_state,
@@ -47,12 +51,12 @@ void RtpReplayer::Replay(
     const uint8_t* rtp_dump_data,
     size_t rtp_dump_size) {
   RunLoop loop;
-  rtc::ScopedBaseFakeClock fake_clock;
+  ScopedBaseFakeClock fake_clock;
 
   // Work around: webrtc calls webrtc::Random(clock.TimeInMicroseconds())
   // everywhere and Random expects non-zero seed. Let's set the clock non-zero
   // to make them happy.
-  fake_clock.SetTime(webrtc::Timestamp::Millis(1));
+  fake_clock.SetTime(Timestamp::Millis(1));
 
   // Attempt to create an RtpReader from the input file.
   auto rtp_reader = CreateRtpReader(rtp_dump_data, rtp_dump_size);
@@ -88,6 +92,7 @@ void RtpReplayer::Replay(
   }
 }
 
+#if !WEBRTC_WEBKIT_BUILD
 std::vector<VideoReceiveStreamInterface::Config>
 RtpReplayer::ReadConfigFromFile(const std::string& replay_config,
                                 Transport* transport) {
@@ -112,6 +117,7 @@ RtpReplayer::ReadConfigFromFile(const std::string& replay_config,
   }
   return receive_stream_configs;
 }
+#endif
 
 void RtpReplayer::SetupVideoStreams(
     std::vector<VideoReceiveStreamInterface::Config>* receive_stream_configs,
@@ -149,14 +155,14 @@ std::unique_ptr<test::RtpFileReader> RtpReplayer::CreateRtpReader(
 }
 
 void RtpReplayer::ReplayPackets(
-    rtc::FakeClock* clock,
+    FakeClock* clock,
     Call* call,
     test::RtpFileReader* rtp_reader,
     const RtpPacketReceived::ExtensionManager& extensions) {
   int64_t replay_start_ms = -1;
 
   while (true) {
-    int64_t now_ms = rtc::TimeMillis();
+    int64_t now_ms = TimeMillis();
     if (replay_start_ms == -1) {
       replay_start_ms = now_ms;
     }
@@ -170,7 +176,7 @@ void RtpReplayer::ReplayPackets(
     if (deliver_in_ms > 0) {
       // StatsCounter::ReportMetricToAggregatedCounter is O(elapsed time).
       // Set an upper limit to prevent waste time.
-      clock->AdvanceTime(webrtc::TimeDelta::Millis(
+      clock->AdvanceTime(TimeDelta::Millis(
           std::min(deliver_in_ms, static_cast<int64_t>(100))));
     }
 

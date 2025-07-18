@@ -228,7 +228,7 @@ private:
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SnapshotRemovalTracker);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SnapshotRemovalTracker);
     public:
         enum Event : uint8_t {
@@ -360,6 +360,8 @@ private:
 #if PLATFORM(GTK)
     GRefPtr<GtkStyleContext> createStyleContext(const char*);
 #endif
+
+    RefPtr<WebBackForwardListItem> itemForSwipeDirection(SwipeDirection) const;
 
     WeakPtr<WebPageProxy> m_webPageProxy;
     WebPageProxyIdentifier m_webPageProxyIdentifier;

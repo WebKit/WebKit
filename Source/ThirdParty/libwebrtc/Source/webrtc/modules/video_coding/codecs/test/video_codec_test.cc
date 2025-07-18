@@ -8,12 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <limits>
+#include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
-#include "absl/functional/any_invocable.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
@@ -22,6 +29,11 @@
 #include "api/video/resolution.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "rtc_base/checks.h"
 #if defined(WEBRTC_ANDROID)
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 #endif
@@ -172,7 +184,7 @@ std::string TestName() {
 
 std::string TestOutputPath() {
   std::string output_path =
-      (rtc::StringBuilder() << OutputPath() << TestName()).str();
+      (StringBuilder() << OutputPath() << TestName()).str();
   std::string output_dir = DirName(output_path);
   bool result = CreateDir(output_dir);
   RTC_CHECK(result) << "Cannot create " << output_dir;
@@ -344,6 +356,12 @@ TEST_P(SpatialQualityTest, SpatialQuality) {
       {{"video_name", video_info.name},
        {"codec_type", codec_type},
        {"codec_impl", codec_impl}});
+
+  if (absl::GetFlag(FLAGS_write_csv)) {
+    stats->LogMetrics((StringBuilder() << TestOutputPath() << ".csv").str(),
+                      stats->Slice(Filter{}, /*merge=*/false), /*metadata=*/
+                      {{"test_name", TestName()}});
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -442,6 +460,12 @@ TEST_P(BitrateAdaptationTest, BitrateAdaptation) {
        {"video_name", video_info.name},
        {"rate_profile", std::to_string(bitrate_kbps.first) + "," +
                             std::to_string(bitrate_kbps.second)}});
+
+  if (absl::GetFlag(FLAGS_write_csv)) {
+    stats->LogMetrics((StringBuilder() << TestOutputPath() << ".csv").str(),
+                      stats->Slice(Filter{}, /*merge=*/false), /*metadata=*/
+                      {{"test_name", TestName()}});
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(All,
@@ -531,6 +555,12 @@ TEST_P(FramerateAdaptationTest, FramerateAdaptation) {
        {"video_name", video_info.name},
        {"rate_profile", std::to_string(framerate_fps.first) + "," +
                             std::to_string(framerate_fps.second)}});
+
+  if (absl::GetFlag(FLAGS_write_csv)) {
+    stats->LogMetrics((StringBuilder() << TestOutputPath() << ".csv").str(),
+                      stats->Slice(Filter{}, /*merge=*/false), /*metadata=*/
+                      {{"test_name", TestName()}});
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(All,
@@ -618,7 +648,7 @@ TEST(VideoCodecTest, DISABLED_EncodeDecode) {
   for (int sidx = 0; sidx < num_spatial_layers; ++sidx) {
     for (int tidx = 0; tidx < num_temporal_layers; ++tidx) {
       std::string metric_name_prefix =
-          (rtc::StringBuilder() << "s" << sidx << "t" << tidx << "_").str();
+          (StringBuilder() << "s" << sidx << "t" << tidx << "_").str();
       stream = stats->Aggregate(
           {.layer_id = {{.spatial_idx = sidx, .temporal_idx = tidx}}});
       stream.LogMetrics(GetGlobalMetricsLogger(), TestName(),
@@ -628,10 +658,9 @@ TEST(VideoCodecTest, DISABLED_EncodeDecode) {
   }
 
   if (absl::GetFlag(FLAGS_write_csv)) {
-    stats->LogMetrics(
-        (rtc::StringBuilder() << TestOutputPath() << ".csv").str(),
-        stats->Slice(Filter{}, /*merge=*/false), /*metadata=*/
-        {{"test_name", TestName()}});
+    stats->LogMetrics((StringBuilder() << TestOutputPath() << ".csv").str(),
+                      stats->Slice(Filter{}, /*merge=*/false), /*metadata=*/
+                      {{"test_name", TestName()}});
   }
 }
 

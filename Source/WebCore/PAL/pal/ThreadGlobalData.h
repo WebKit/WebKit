@@ -41,7 +41,7 @@ class ThreadGlobalData : public WTF::Thread::ClientData {
 public:
     PAL_EXPORT virtual ~ThreadGlobalData();
 
-    ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
+    ICUConverterWrapper& cachedConverterICU() { return m_cachedConverterICU; }
 
 protected:
     PAL_EXPORT ThreadGlobalData();
@@ -49,7 +49,7 @@ protected:
 private:
     PAL_EXPORT friend ThreadGlobalData& threadGlobalData();
 
-    std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
+    const UniqueRef<ICUConverterWrapper> m_cachedConverterICU;
 };
 
 #if USE(WEB_THREAD)

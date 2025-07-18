@@ -330,7 +330,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     ASSERT(element->isConnected());
     ASSERT(!m_loadableScript);
     Ref document = element->document();
-    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
+    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<char16_t>>()) {
         auto script = LoadableClassicScript::create(element->nonce(), element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriority(),
             element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), element->localName(), element->isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -370,7 +370,7 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         ASSERT(element->isConnected());
 
         String sourceURL = sourceAttributeValue();
-        if (StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
+        if (StringView(sourceURL).containsOnly<isASCIIWhitespace<char16_t>>()) {
             dispatchErrorEvent();
             return false;
         }

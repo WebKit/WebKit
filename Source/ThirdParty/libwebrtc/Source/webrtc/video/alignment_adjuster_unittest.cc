@@ -10,13 +10,16 @@
 
 #include "video/alignment_adjuster.h"
 
-#include <memory>
+#include <cstddef>
+#include <optional>
 #include <tuple>
 #include <vector>
 
-#include "rtc_base/numerics/safe_conversions.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_encoder.h"
 #include "test/encoder_settings.h"
 #include "test/gtest.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace test {

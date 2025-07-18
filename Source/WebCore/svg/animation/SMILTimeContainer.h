@@ -43,7 +43,7 @@ class WeakPtrImplWithEventTargetData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SMILTimeContainer);
 class SMILTimeContainer final : public RefCounted<SMILTimeContainer>  {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SMILTimeContainer);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SMILTimeContainer, SMILTimeContainer);
 public:
     static Ref<SMILTimeContainer> create(SVGSVGElement& owner) { return adoptRef(*new SMILTimeContainer(owner)); }
 

@@ -64,10 +64,10 @@ private:
                 copySmallCharacters(std::span { m_characters }, string.span8());
             else
                 copySmallCharacters(std::span { m_characters }, string.span16());
-            m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const UChar> { m_characters }.first(s_capacity)) | (length << 24);
+            m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters }.first(s_capacity)) | (length << 24);
         }
 
-        const UChar* characters() const { return m_characters.data(); }
+        const char16_t* characters() const { return m_characters.data(); }
         unsigned length() const { return m_hashAndLength >> 24; }
         unsigned hash() const { return m_hashAndLength & 0x00ffffffU; }
 
@@ -81,9 +81,9 @@ private:
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
 
         template<typename CharacterType>
-        ALWAYS_INLINE static void copySmallCharacters(std::span<UChar, s_capacity> destination, std::span<const CharacterType> source)
+        ALWAYS_INLINE static void copySmallCharacters(std::span<char16_t, s_capacity> destination, std::span<const CharacterType> source)
         {
-            if constexpr (std::is_same_v<CharacterType, UChar>)
+            if constexpr (std::is_same_v<CharacterType, char16_t>)
                 memcpySpan(destination, source);
             else {
                 for (auto [sourceCharacter, destinationCharacter] : zippedRange(source, destination))
@@ -91,7 +91,7 @@ private:
             }
         }
 
-        std::array<UChar, s_capacity> m_characters { };
+        std::array<char16_t, s_capacity> m_characters { };
         unsigned m_hashAndLength { 0 };
     };
 
@@ -173,7 +173,7 @@ private:
         float* value;
         if (length == 1) {
             // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
-            // This is fine since the key is uint32_t while character is UChar. So +1 never causes overflow.
+            // This is fine since the key is uint32_t while character is char16_t. So +1 never causes overflow.
             uint32_t character = text[0];
             auto addResult = m_singleCharMap.fastAdd(character + 1, entry);
             isNewEntry = addResult.isNewEntry;

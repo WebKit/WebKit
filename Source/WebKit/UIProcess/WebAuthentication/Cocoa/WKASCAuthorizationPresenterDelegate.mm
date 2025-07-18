@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::protectedMain()->dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
+    RunLoop::mainSingleton().dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
         if (!coordinator)
             return;
         callback(*coordinator);

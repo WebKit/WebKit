@@ -32,7 +32,6 @@
 #include "config.h"
 #include "CSSGridTemplateAreasValue.h"
 
-#include "GridArea.h"
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
@@ -40,41 +39,33 @@
 
 namespace WebCore {
 
-CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(NamedGridAreaMap map, size_t rowCount, size_t columnCount)
+CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(CSS::GridTemplateAreas&& areas)
     : CSSValue(ClassType::GridTemplateAreas)
-    , m_map(WTFMove(map))
-    , m_rowCount(rowCount)
-    , m_columnCount(columnCount)
+    , m_areas(WTFMove(areas))
 {
-    ASSERT(m_rowCount);
-    ASSERT(m_columnCount);
+    ASSERT(m_areas.map.rowCount);
+    ASSERT(m_areas.map.columnCount);
 }
 
-Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(NamedGridAreaMap map, size_t rowCount, size_t columnCount)
+CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(const CSS::GridTemplateAreas& areas)
+    : CSSGridTemplateAreasValue { CSS::GridTemplateAreas { areas } }
 {
-    return adoptRef(*new CSSGridTemplateAreasValue(WTFMove(map), rowCount, columnCount));
 }
 
-static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row, size_t column)
+Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(CSS::GridTemplateAreas&& areas)
 {
-    HashSet<String> candidates;
-    for (auto& it : gridAreaMap.map) {
-        auto& area = it.value;
-        if (row >= area.rows.startLine() && row < area.rows.endLine())
-            candidates.add(it.key);
-    }
-    for (auto& it : gridAreaMap.map) {
-        auto& area = it.value;
-        if (column >= area.columns.startLine() && column < area.columns.endLine() && candidates.contains(it.key))
-            return it.key;
-    }
-    return "."_s;
+    return adoptRef(*new CSSGridTemplateAreasValue(WTFMove(areas)));
+}
+
+Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(const CSS::GridTemplateAreas& areas)
+{
+    return adoptRef(*new CSSGridTemplateAreasValue(areas));
 }
 
 String CSSGridTemplateAreasValue::stringForRow(size_t row) const
 {
-    FixedVector<String> columns(m_columnCount);
-    for (auto& it : m_map.map) {
+    FixedVector<String> columns(m_areas.map.columnCount);
+    for (auto& it : m_areas.map.map) {
         auto& area = it.value;
         if (row >= area.rows.startLine() && row < area.rows.endLine()) {
             for (unsigned i = area.columns.startLine(); i < area.columns.endLine(); i++)
@@ -95,26 +86,14 @@ String CSSGridTemplateAreasValue::stringForRow(size_t row) const
     return builder.toString();
 }
 
-String CSSGridTemplateAreasValue::customCSSText(const CSS::SerializationContext&) const
+String CSSGridTemplateAreasValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    StringBuilder builder;
-    for (size_t row = 0; row < m_rowCount; ++row) {
-        builder.append('"');
-        for (size_t column = 0; column < m_columnCount; ++column) {
-            builder.append(stringForPosition(m_map, row, column));
-            if (column != m_columnCount - 1)
-                builder.append(' ');
-        }
-        builder.append('"');
-        if (row != m_rowCount - 1)
-            builder.append(' ');
-    }
-    return builder.toString();
+    return CSS::serializationForCSS(context, m_areas);
 }
 
 bool CSSGridTemplateAreasValue::equals(const CSSGridTemplateAreasValue& other) const
 {
-    return m_map.map == other.m_map.map && m_rowCount == other.m_rowCount && m_columnCount == other.m_columnCount;
+    return m_areas == other.m_areas;
 }
 
 } // namespace WebCore

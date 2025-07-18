@@ -313,7 +313,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    RefPtr focusedOrMainFrame = frame->page()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = frame->page()->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return std::nullopt;
 
@@ -484,7 +484,11 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     UNUSED_PARAM(rootViewToViewConversionCallback);
     UNUSED_PARAM(clearTextIndicator);
     ASSERT_UNUSED(createAnimationController, !createAnimationController);
-    auto textIndicator = dictionaryPopupInfo.textIndicator;
+
+    RefPtr textIndicator = dictionaryPopupInfo.textIndicator;
+    if (!textIndicator)
+        return nil;
+
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();

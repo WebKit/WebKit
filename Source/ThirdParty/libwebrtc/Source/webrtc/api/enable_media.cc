@@ -27,11 +27,6 @@
 namespace webrtc {
 namespace {
 
-using ::cricket::CompositeMediaEngine;
-using ::cricket::MediaEngineInterface;
-using ::cricket::WebRtcVideoEngine;
-using ::cricket::WebRtcVoiceEngine;
-
 class MediaFactoryImpl : public MediaFactory {
  public:
   MediaFactoryImpl() = default;
@@ -40,23 +35,21 @@ class MediaFactoryImpl : public MediaFactory {
   ~MediaFactoryImpl() override = default;
 
   std::unique_ptr<Call> CreateCall(CallConfig config) override {
-    return webrtc::Call::Create(std::move(config));
+    return Call::Create(std::move(config));
   }
 
   std::unique_ptr<MediaEngineInterface> CreateMediaEngine(
       const Environment& env,
       PeerConnectionFactoryDependencies& deps) override {
-    absl::Nullable<scoped_refptr<AudioProcessing>> audio_processing =
-        deps.audio_processing_builder != nullptr
-            ? std::move(deps.audio_processing_builder)->Build(env)
-            : std::move(deps.audio_processing);
+    absl_nullable scoped_refptr<AudioProcessing> audio_processing;
+    if (deps.audio_processing_builder != nullptr) {
+      audio_processing = std::move(deps.audio_processing_builder)->Build(env);
+    }
 
     auto audio_engine = std::make_unique<WebRtcVoiceEngine>(
-        &env.task_queue_factory(), deps.adm.get(),
-        std::move(deps.audio_encoder_factory),
+        env, std::move(deps.adm), std::move(deps.audio_encoder_factory),
         std::move(deps.audio_decoder_factory), std::move(deps.audio_mixer),
-        std::move(audio_processing), std::move(deps.audio_frame_processor),
-        env.field_trials());
+        std::move(audio_processing), std::move(deps.audio_frame_processor));
     auto video_engine = std::make_unique<WebRtcVideoEngine>(
         std::move(deps.video_encoder_factory),
         std::move(deps.video_decoder_factory), env.field_trials());

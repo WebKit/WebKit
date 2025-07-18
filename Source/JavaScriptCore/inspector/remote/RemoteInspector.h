@@ -69,7 +69,6 @@ namespace Inspector {
 class RemoteAutomationTarget;
 class RemoteControllableTarget;
 class RemoteInspectionTarget;
-class RemoteInspectorClient;
 
 class RemoteInspector final
 #if PLATFORM(COCOA)
@@ -291,7 +290,6 @@ private:
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-    // Connection from RemoteInspectorClient or WebDriver.
     std::optional<ConnectionID> m_clientConnection;
     bool m_readyToPushListings { false };
 

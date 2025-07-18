@@ -51,6 +51,7 @@ public:
 private:
     static NavigatorCookieConsent& from(Navigator&);
     static ASCIILiteral supplementName() { return "NavigatorCookieConsent"_s; }
+    bool isNavigatorCookieConsent() const final { return true; }
 
     void requestCookieConsent(RequestCookieConsentOptions&&, Ref<DeferredPromise>&&);
 
@@ -58,3 +59,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NavigatorCookieConsent)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isNavigatorCookieConsent(); }
+SPECIALIZE_TYPE_TRAITS_END()

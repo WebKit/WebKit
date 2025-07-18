@@ -12,13 +12,16 @@
 
 #include <stdint.h>
 
+#include <cstdlib>
 #include <limits>
 #include <optional>
+#include <string>
 
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -154,14 +157,13 @@ TEST(TimestampExtrapolatorTest, Slow90KHzClock) {
 
   constexpr TimeDelta k24FpsDelay = 1 / Frequency::Hertz(24);
   uint32_t rtp = 90000;
-  ts_extrapolator.Update(clock.CurrentTime(), rtp);
 
   // Slow camera will increment RTP at 25 FPS rate even though its producing at
   // 24 FPS. After 25 frames the extrapolator should settle at this rate.
   for (int i = 0; i < 25; ++i) {
+    ts_extrapolator.Update(clock.CurrentTime(), rtp);
     rtp += kRtpHz / k25Fps;
     clock.AdvanceTime(k24FpsDelay);
-    ts_extrapolator.Update(clock.CurrentTime(), rtp);
   }
 
   // The camera would normally produce 25 frames in 90K ticks, but is slow
@@ -181,14 +183,13 @@ TEST(TimestampExtrapolatorTest, Fast90KHzClock) {
 
   constexpr TimeDelta k26FpsDelay = 1 / Frequency::Hertz(26);
   uint32_t rtp = 90000;
-  ts_extrapolator.Update(clock.CurrentTime(), rtp);
 
   // Fast camera will increment RTP at 25 FPS rate even though its producing at
   // 26 FPS. After 25 frames the extrapolator should settle at this rate.
   for (int i = 0; i < 25; ++i) {
+    ts_extrapolator.Update(clock.CurrentTime(), rtp);
     rtp += kRtpHz / k25Fps;
     clock.AdvanceTime(k26FpsDelay);
-    ts_extrapolator.Update(clock.CurrentTime(), rtp);
   }
 
   // The camera would normally produce 25 frames in 90K ticks, but is slow
@@ -245,6 +246,78 @@ TEST(TimestampExtrapolatorTest, GapInReceivedFrames) {
   ts_extrapolator.Update(clock.CurrentTime(), rtp);
   EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(rtp),
               Optional(clock.CurrentTime()));
+}
+
+TEST(TimestampExtrapolatorTest, EstimatedClockDriftHistogram) {
+  const std::string kHistogramName = "WebRTC.Video.EstimatedClockDrift_ppm";
+  constexpr int kPpmTolerance = 50;
+  constexpr int kToPpmFactor = 1e6;
+  constexpr int kMinimumSamples = 3000;
+  constexpr Frequency k24Fps = Frequency::Hertz(24);
+  constexpr TimeDelta k24FpsDelay = 1 / k24Fps;
+
+  // This simulates a remote clock without drift with frames produced at 25 fps.
+  // Local scope to trigger the destructor of TimestampExtrapolator.
+  {
+    // Clear all histogram data.
+    metrics::Reset();
+    SimulatedClock clock(Timestamp::Millis(1337));
+    TimestampExtrapolator ts_extrapolator(clock.CurrentTime());
+
+    uint32_t rtp = 90000;
+    for (int i = 0; i < kMinimumSamples; ++i) {
+      ts_extrapolator.Update(clock.CurrentTime(), rtp);
+      rtp += kRtpHz / k25Fps;
+      clock.AdvanceTime(k25FpsDelay);
+    }
+  }
+  EXPECT_EQ(metrics::NumSamples(kHistogramName), 1);
+  const int kExpectedIdealClockDriftPpm = 0;
+  EXPECT_NEAR(kExpectedIdealClockDriftPpm, metrics::MinSample(kHistogramName),
+              kPpmTolerance);
+
+  // This simulates a slow remote clock, where the RTP timestamps are
+  // incremented as if the camera was 25 fps even though frames arrive at 24
+  // fps. Local scope to trigger the destructor of TimestampExtrapolator.
+  {
+    // Clear all histogram data.
+    metrics::Reset();
+    SimulatedClock clock(Timestamp::Millis(1337));
+    TimestampExtrapolator ts_extrapolator(clock.CurrentTime());
+
+    uint32_t rtp = 90000;
+    for (int i = 0; i < kMinimumSamples; ++i) {
+      ts_extrapolator.Update(clock.CurrentTime(), rtp);
+      rtp += kRtpHz / k25Fps;
+      clock.AdvanceTime(k24FpsDelay);
+    }
+  }
+  EXPECT_EQ(metrics::NumSamples(kHistogramName), 1);
+  const int kExpectedSlowClockDriftPpm =
+      std::abs(k24Fps / k25Fps - 1.0) * kToPpmFactor;
+  EXPECT_NEAR(kExpectedSlowClockDriftPpm, metrics::MinSample(kHistogramName),
+              kPpmTolerance);
+
+  // This simulates a fast remote clock, where the RTP timestamps are
+  // incremented as if the camera was 24 fps even though frames arrive at 25
+  // fps. Local scope to trigger the destructor of TimestampExtrapolator.
+  {
+    // Clear all histogram data.
+    metrics::Reset();
+    SimulatedClock clock(Timestamp::Millis(1337));
+    TimestampExtrapolator ts_extrapolator(clock.CurrentTime());
+
+    uint32_t rtp = 90000;
+    for (int i = 0; i < kMinimumSamples; ++i) {
+      ts_extrapolator.Update(clock.CurrentTime(), rtp);
+      rtp += kRtpHz / k24Fps;
+      clock.AdvanceTime(k25FpsDelay);
+    }
+  }
+  EXPECT_EQ(metrics::NumSamples(kHistogramName), 1);
+  const int kExpectedFastClockDriftPpm = (k25Fps / k24Fps - 1.0) * kToPpmFactor;
+  EXPECT_NEAR(kExpectedFastClockDriftPpm, metrics::MinSample(kHistogramName),
+              kPpmTolerance);
 }
 
 }  // namespace webrtc

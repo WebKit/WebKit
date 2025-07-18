@@ -2304,7 +2304,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     // In case anything we do by performing the press action causes an alert or other modal
     // behaviors, we need to return now, so that VoiceOver doesn't hang indefinitely.
-    RunLoop::protectedMain()->dispatch([protectedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self)] {
         [protectedSelf _accessibilityPerformPressAction];
     });
 }
@@ -2324,7 +2324,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)accessibilityPerformIncrementAction
 {
-    RunLoop::protectedMain()->dispatch([protectedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self)] {
         [protectedSelf _accessibilityPerformIncrementAction];
     });
 }
@@ -2343,7 +2343,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)accessibilityPerformDecrementAction
 {
-    RunLoop::protectedMain()->dispatch([protectedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self)] {
         [protectedSelf _accessibilityPerformDecrementAction];
     });
 }
@@ -2478,7 +2478,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!cache)
             return;
 
-        AXTreeData data = cache->treeData(); // Can specify AXStreamOptions here if needed (e.g., TextRuns)
+        AXTreeData data = cache->treeData({ { AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::RendererOrNode } }); // Can specify AXStreamOptions here if needed (e.g., TextRuns)
         SAFE_FPRINTF(stderr, "==AX Trees==\n%s\n%s\n", data.liveTree.utf8(), data.isolatedTree.utf8());
     });
 }

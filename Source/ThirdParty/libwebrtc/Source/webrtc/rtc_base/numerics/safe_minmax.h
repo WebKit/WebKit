@@ -11,8 +11,8 @@
 // Minimum and maximum
 // ===================
 //
-//   rtc::SafeMin(x, y)
-//   rtc::SafeMax(x, y)
+//   webrtc::SafeMin(x, y)
+//   webrtc::SafeMax(x, y)
 //
 // (These are both constexpr.)
 //
@@ -30,7 +30,7 @@
 // Clamp (a.k.a. constrain to a given interval)
 // ============================================
 //
-//   rtc::SafeClamp(x, a, b)
+//   webrtc::SafeClamp(x, a, b)
 //
 // Accepts three arguments of any mix of integral types or any mix of
 // floating-point types, and returns the value in the closed interval [a, b]
@@ -67,7 +67,7 @@
 // All three functions allow callers to explicitly specify the return type as a
 // template parameter, overriding the default return type. E.g.
 //
-//   rtc::SafeMin<int>(x, y)  // returns an int
+//   webrtc::SafeMin<int>(x, y)  // returns an int
 //
 // If the requested type is statically guaranteed to be able to represent the
 // result, then everything's fine, and the return type is as requested. But if
@@ -84,7 +84,7 @@
 #include "rtc_base/numerics/safe_compare.h"
 #include "rtc_base/type_traits.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace safe_minmax_impl {
 
@@ -331,6 +331,16 @@ R2 SafeClamp(T x, L min, H max) {
                           : static_cast<R2>(x);
 }
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SafeClamp;
+using ::webrtc::SafeMax;
+using ::webrtc::SafeMin;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NUMERICS_SAFE_MINMAX_H_

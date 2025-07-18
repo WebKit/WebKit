@@ -58,6 +58,8 @@ def get_browser_relevant_objects_glib(browser_driver):
     browser_path = port_driver.get_browser_path('cog' if browser_driver.browser_name == 'cog' else 'MiniBrowser')
     browser_relevant_objects.append(browser_path)
     browser_env = port_driver.setup_environ_for_server()
+    if not os.path.isfile(browser_path):
+        raise ValueError(f"The browser path does not exist: {browser_path}")
     libraries, interpreter = SharedObjectResolver('ldd', browser_env).get_libs_and_interpreter(browser_path)
     browser_build_dir = port_driver._build_path()
     for library in libraries:
@@ -67,7 +69,7 @@ def get_browser_relevant_objects_glib(browser_driver):
 
 
 def run(browser_driver, results_file):
-    if browser_driver.platform == "linux" and browser_driver.browser_name in ['minibrowser-wpe', 'cog', 'minibrowser-gtk']:
+    if browser_driver.platform == "linux" and (browser_driver.browser_name.startswith('minibrowser-wpe') or browser_driver.browser_name in ['cog', 'minibrowser-gtk']):
         browser_relevant_objects = get_browser_relevant_objects_glib(browser_driver)
     else:
         raise NotImplementedError(f'Getting the browser size data for browser "{browser_driver.browser_name}" and platform "{browser_driver.platform}" is not implemented')

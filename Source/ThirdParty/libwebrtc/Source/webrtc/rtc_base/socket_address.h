@@ -22,7 +22,7 @@
 struct sockaddr_in;
 struct sockaddr_storage;
 
-namespace rtc {
+namespace webrtc {
 
 // Records an IP address and port.
 class RTC_EXPORT SocketAddress {
@@ -194,6 +194,16 @@ RTC_EXPORT bool SocketAddressFromSockAddrStorage(const sockaddr_storage& saddr,
                                                  SocketAddress* out);
 SocketAddress EmptySocketAddressWithFamily(int family);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::EmptySocketAddressWithFamily;
+using ::webrtc::SocketAddress;
+using ::webrtc::SocketAddressFromSockAddrStorage;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SOCKET_ADDRESS_H_

@@ -11,9 +11,9 @@
 #ifndef API_STATS_RTC_STATS_COLLECTOR_CALLBACK_H_
 #define API_STATS_RTC_STATS_COLLECTOR_CALLBACK_H_
 
+#include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
-#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 
@@ -22,7 +22,7 @@ class RTCStatsCollectorCallback : public RefCountInterface {
   ~RTCStatsCollectorCallback() override = default;
 
   virtual void OnStatsDelivered(
-      const rtc::scoped_refptr<const RTCStatsReport>& report) = 0;
+      const scoped_refptr<const RTCStatsReport>& report) = 0;
 };
 
 }  // namespace webrtc

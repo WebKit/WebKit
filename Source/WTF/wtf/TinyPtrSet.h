@@ -45,7 +45,7 @@ namespace WTF {
 
 template<typename T>
 class TinyPtrSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TinyPtrSet);
     static_assert(sizeof(T) == sizeof(void*), "It's in the title of the class.");
 public:
     TinyPtrSet()

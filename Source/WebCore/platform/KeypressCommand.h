@@ -26,6 +26,9 @@
 #ifndef KeypressCommand_h
 #define KeypressCommand_h
 
+#include "CharacterRange.h"
+#include "CompositionHighlight.h"
+#include "CompositionUnderline.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,8 +52,23 @@ struct KeypressCommand {
         ASSERT(commandName == "insertText:"_s || text.isEmpty());
     }
 
+    KeypressCommand(const String& commandName, const String& text, Vector<CompositionUnderline>&& underlines, Vector<CompositionHighlight>&& highlights, const CharacterRange& selectedRange, const CharacterRange& replacementRange)
+        : commandName(commandName)
+        , text(text)
+        , underlines(WTFMove(underlines))
+        , highlights(WTFMove(highlights))
+        , selectedRange(selectedRange)
+        , replacementRange(replacementRange)
+    {
+        ASSERT(commandName == "setMarkedText:"_s || (underlines.isEmpty() && highlights.isEmpty()));
+    }
+
     String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
     String text;
+    Vector<CompositionUnderline> underlines;
+    Vector<CompositionHighlight> highlights;
+    CharacterRange selectedRange;
+    CharacterRange replacementRange;
 };
 
 } // namespace WebCore

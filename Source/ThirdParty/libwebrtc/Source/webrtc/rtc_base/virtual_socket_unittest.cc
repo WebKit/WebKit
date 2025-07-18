@@ -39,17 +39,15 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
-using ::webrtc::RepeatingTaskHandle;
-using ::webrtc::TimeDelta;
-using ::webrtc::testing::SSE_CLOSE;
-using ::webrtc::testing::SSE_ERROR;
-using ::webrtc::testing::SSE_OPEN;
-using ::webrtc::testing::SSE_READ;
-using ::webrtc::testing::SSE_WRITE;
-using ::webrtc::testing::StreamSink;
+using testing::SSE_CLOSE;
+using testing::SSE_ERROR;
+using testing::SSE_OPEN;
+using testing::SSE_READ;
+using testing::SSE_WRITE;
+using testing::StreamSink;
 
 // Sends at a constant rate but with random packet sizes.
 struct Sender {
@@ -58,10 +56,10 @@ struct Sender {
         socket(std::make_unique<AsyncUDPSocket>(s)),
         rate(rt),
         count(0) {
-    last_send = rtc::TimeMillis();
+    last_send = TimeMillis();
 
     periodic = RepeatingTaskHandle::DelayedStart(thread, NextDelay(), [this] {
-      int64_t cur_time = rtc::TimeMillis();
+      int64_t cur_time = TimeMillis();
       int64_t delay = cur_time - last_send;
       uint32_t size =
           std::clamp<uint32_t>(rate * delay / 1000, sizeof(uint32_t), 4096);
@@ -81,7 +79,7 @@ struct Sender {
 
   Thread* thread;
   std::unique_ptr<AsyncUDPSocket> socket;
-  rtc::PacketOptions options;
+  AsyncSocketPacketOptions options;
   RepeatingTaskHandle periodic;
   uint32_t rate;  // bytes per second
   uint32_t count;
@@ -100,8 +98,8 @@ struct Receiver : public sigslot::has_slots<> {
         sum_sq(0),
         samples(0) {
     socket->RegisterReceivedPacketCallback(
-        [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
-          OnReadPacket(socket, packet);
+        [&](AsyncPacketSocket* s, const ReceivedIpPacket& packet) {
+          OnReadPacket(s, packet);
         });
     periodic = RepeatingTaskHandle::DelayedStart(
         thread, TimeDelta::Seconds(1), [this] {
@@ -117,7 +115,7 @@ struct Receiver : public sigslot::has_slots<> {
 
   ~Receiver() override { periodic.Stop(); }
 
-  void OnReadPacket(AsyncPacketSocket* s, const rtc::ReceivedPacket& packet) {
+  void OnReadPacket(AsyncPacketSocket* s, const ReceivedIpPacket& packet) {
     ASSERT_EQ(socket.get(), s);
     ASSERT_GE(packet.payload().size(), 4U);
 
@@ -126,7 +124,7 @@ struct Receiver : public sigslot::has_slots<> {
 
     uint32_t send_time =
         *reinterpret_cast<const uint32_t*>(packet.payload().data());
-    uint32_t recv_time = rtc::TimeMillis();
+    uint32_t recv_time = TimeMillis();
     uint32_t delay = recv_time - send_time;
     sum += delay;
     sum_sq += delay * delay;
@@ -837,7 +835,7 @@ class VirtualSocketServerTest : public ::testing::Test {
   }
 
  protected:
-  rtc::ScopedFakeClock fake_clock_;
+  ScopedFakeClock fake_clock_;
   VirtualSocketServer ss_;
   AutoSocketServerThread thread_;
   const SocketAddress kIPv4AnyAddress;
@@ -1120,4 +1118,4 @@ TEST_F(VirtualSocketServerTest, CreatesStandardDistribution) {
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

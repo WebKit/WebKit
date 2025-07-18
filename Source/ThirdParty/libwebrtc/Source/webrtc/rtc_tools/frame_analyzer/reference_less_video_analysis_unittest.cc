@@ -23,7 +23,7 @@ class ReferenceLessVideoAnalysisTest : public ::testing::Test {
     ASSERT_TRUE(video);
   }
 
-  rtc::scoped_refptr<webrtc::test::Video> video;
+  webrtc::scoped_refptr<webrtc::test::Video> video;
   std::vector<double> psnr_per_frame;
   std::vector<double> ssim_per_frame;
 };

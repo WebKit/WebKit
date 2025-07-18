@@ -38,6 +38,7 @@
 #include "ReferenceFilterOperation.h"
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"

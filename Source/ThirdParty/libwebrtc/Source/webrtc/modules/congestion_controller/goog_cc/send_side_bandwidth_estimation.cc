@@ -192,7 +192,8 @@ TimeDelta RttBasedBackoff::CorrectedRtt() const {
 RttBasedBackoff::~RttBasedBackoff() = default;
 
 SendSideBandwidthEstimation::SendSideBandwidthEstimation(
-    const FieldTrialsView* key_value_config, RtcEventLog* event_log)
+    const FieldTrialsView* key_value_config,
+    RtcEventLog* event_log)
     : key_value_config_(key_value_config),
       rtt_backoff_(key_value_config),
       lost_packets_since_last_loss_update_(0),
@@ -695,11 +696,6 @@ bool SendSideBandwidthEstimation::LossBasedBandwidthEstimatorV2Enabled() const {
 bool SendSideBandwidthEstimation::LossBasedBandwidthEstimatorV2ReadyForUse()
     const {
   return loss_based_bandwidth_estimator_v2_->IsReady();
-}
-
-bool SendSideBandwidthEstimation::PaceAtLossBasedEstimate() const {
-  return LossBasedBandwidthEstimatorV2ReadyForUse() &&
-         loss_based_bandwidth_estimator_v2_->PaceAtLossBasedEstimate();
 }
 
 }  // namespace webrtc

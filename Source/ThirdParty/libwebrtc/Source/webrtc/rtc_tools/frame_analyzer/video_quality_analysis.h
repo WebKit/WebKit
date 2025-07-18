@@ -53,19 +53,19 @@ struct ResultsContainer {
 // position in the original video. We also need to provide a map from test frame
 // indices to reference frame indices.
 std::vector<AnalysisResult> RunAnalysis(
-    const rtc::scoped_refptr<webrtc::test::Video>& reference_video,
-    const rtc::scoped_refptr<webrtc::test::Video>& test_video,
+    const scoped_refptr<webrtc::test::Video>& reference_video,
+    const scoped_refptr<webrtc::test::Video>& test_video,
     const std::vector<size_t>& test_frame_indices);
 
 // Compute PSNR for an I420 buffer (all planes). The max return value (in the
 // case where the test and reference frames are exactly the same) will be 48.
-double Psnr(const rtc::scoped_refptr<I420BufferInterface>& ref_buffer,
-            const rtc::scoped_refptr<I420BufferInterface>& test_buffer);
+double Psnr(const scoped_refptr<I420BufferInterface>& ref_buffer,
+            const scoped_refptr<I420BufferInterface>& test_buffer);
 
 // Compute SSIM for an I420 buffer (all planes). The max return value (in the
 // case where the test and reference frames are exactly the same) will be 1.
-double Ssim(const rtc::scoped_refptr<I420BufferInterface>& ref_buffer,
-            const rtc::scoped_refptr<I420BufferInterface>& test_buffer);
+double Ssim(const scoped_refptr<I420BufferInterface>& ref_buffer,
+            const scoped_refptr<I420BufferInterface>& test_buffer);
 
 // Prints the result from the analysis in Chromium performance
 // numbers compatible format to stdout. If the results object contains no frames

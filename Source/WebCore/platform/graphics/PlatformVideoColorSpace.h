@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct PlatformVideoColorSpace {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PlatformVideoColorSpace);
     std::optional<PlatformVideoColorPrimaries> primaries;
     std::optional<PlatformVideoTransferCharacteristics> transfer;
     std::optional<PlatformVideoMatrixCoefficients> matrix;

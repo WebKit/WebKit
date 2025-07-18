@@ -13,7 +13,7 @@
 #include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 AsyncSocketAdapter::AsyncSocketAdapter(Socket* socket)
     : socket_(absl::WrapUnique(socket)) {
@@ -110,4 +110,4 @@ void AsyncSocketAdapter::OnCloseEvent(Socket* socket, int err) {
   SignalCloseEvent(this, err);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

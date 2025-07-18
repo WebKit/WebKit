@@ -31,9 +31,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 
 StyleTransformData::StyleTransformData()
     : operations(RenderStyle::initialTransform())
-    , x(RenderStyle::initialTransformOriginX())
-    , y(RenderStyle::initialTransformOriginY())
-    , z(RenderStyle::initialTransformOriginZ())
+    , origin(RenderStyle::initialTransformOrigin())
     , transformBox(RenderStyle::initialTransformBox())
 {
 }
@@ -41,9 +39,7 @@ StyleTransformData::StyleTransformData()
 inline StyleTransformData::StyleTransformData(const StyleTransformData& other)
     : RefCounted<StyleTransformData>()
     , operations(other.operations)
-    , x(other.x)
-    , y(other.y)
-    , z(other.z)
+    , origin(other.origin)
     , transformBox(other.transformBox)
 {
 }
@@ -55,16 +51,16 @@ Ref<StyleTransformData> StyleTransformData::copy() const
 
 bool StyleTransformData::operator==(const StyleTransformData& other) const
 {
-    return x == other.x && y == other.y && z == other.z && transformBox == other.transformBox && operations == other.operations;
+    return origin == other.origin
+        && transformBox == other.transformBox
+        && operations == other.operations;
 }
 
 #if !LOG_DISABLED
 void StyleTransformData::dumpDifferences(TextStream& ts, const StyleTransformData& other) const
 {
     LOG_IF_DIFFERENT(operations);
-    LOG_IF_DIFFERENT(x);
-    LOG_IF_DIFFERENT(y);
-    LOG_IF_DIFFERENT(z);
+    LOG_IF_DIFFERENT(origin);
     LOG_IF_DIFFERENT(transformBox);
 }
 #endif // !LOG_DISABLED

@@ -35,7 +35,7 @@
 namespace TestWebKitAPI {
 
 class TestNotificationProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestNotificationProvider);
 public:
     explicit TestNotificationProvider(Vector<WKNotificationManagerRef>&&);
     ~TestNotificationProvider();

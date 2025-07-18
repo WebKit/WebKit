@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Exception;
 class WebCodecsEncodedAudioChunk;
 class WebCodecsErrorCallback;
 class WebCodecsEncodedAudioChunkOutputCallback;

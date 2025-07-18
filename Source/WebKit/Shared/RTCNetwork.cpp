@@ -34,6 +34,17 @@
 
 namespace WebKit {
 
+/*
+static_assert
+ enum class EcnMarking : int {
+     kNotEct = 0, // Not ECN-Capable Transport
+     kEct1 = 1, // ECN-Capable Transport
+     kEct0 = 2, // Not used by L4s (or webrtc.)
+     kCe = 3, // Congestion experienced
+ };
+
+ */
+
 RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
     : name(WTFMove(name))
     , description(WTFMove(description))
@@ -47,16 +58,16 @@ RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddres
     , scopeID(scopeID)
     , ips(WTFMove(ips)) { }
 
-rtc::Network RTCNetwork::value() const
+webrtc::Network RTCNetwork::value() const
 {
-    rtc::Network network({ name.span().data(), name.size() }, { description.span().data(), description.size() }, prefix.rtcAddress(), prefixLength, rtc::AdapterType(type));
+    webrtc::Network network({ name.span().data(), name.size() }, { description.span().data(), description.size() }, prefix.rtcAddress(), prefixLength, webrtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
     network.set_active(active);
     network.set_ignored(ignored);
     network.set_scope_id(scopeID);
 
-    std::vector<rtc::InterfaceAddress> vector;
+    std::vector<webrtc::InterfaceAddress> vector;
     vector.reserve(ips.size());
     for (auto& ip : ips)
         vector.push_back(ip.rtcAddress());
@@ -82,11 +93,11 @@ RTCNetwork RTCNetwork::isolatedCopy() const
     };
 }
 
-namespace RTC::Network {
+namespace WebRTCNetwork {
 
-rtc::SocketAddress SocketAddress::rtcAddress() const
+webrtc::SocketAddress SocketAddress::rtcAddress() const
 {
-    rtc::SocketAddress result;
+    webrtc::SocketAddress result;
     result.SetPort(port);
     result.SetScopeID(scopeID);
     result.SetIP({ hostname.span().data(), hostname.size() });
@@ -95,7 +106,7 @@ rtc::SocketAddress SocketAddress::rtcAddress() const
     return result;
 }
 
-SocketAddress::SocketAddress(const rtc::SocketAddress& value)
+SocketAddress::SocketAddress(const webrtc::SocketAddress& value)
     : port(value.port())
     , scopeID(value.scope_id())
     , hostname(std::span { value.hostname() })
@@ -111,7 +122,7 @@ static std::array<uint32_t, 4> fromIPv6Address(const struct in6_addr& address)
     return array;
 }
 
-IPAddress::IPAddress(const rtc::IPAddress& input)
+IPAddress::IPAddress(const webrtc::IPAddress& input)
 {
     switch (input.family()) {
     case AF_INET6:
@@ -145,25 +156,25 @@ IPAddress::IPAddress(const struct sockaddr& address)
     }
 }
 
-rtc::IPAddress IPAddress::rtcAddress() const
+webrtc::IPAddress IPAddress::rtcAddress() const
 {
     return WTF::switchOn(value, [](UnspecifiedFamily) {
-        return rtc::IPAddress();
+        return webrtc::IPAddress();
     }, [] (uint32_t ipv4) {
         in_addr addressv4;
         addressv4.s_addr = ipv4;
-        return rtc::IPAddress(addressv4);
+        return webrtc::IPAddress(addressv4);
     }, [] (std::array<uint32_t, 4> ipv6) {
         in6_addr result;
         static_assert(sizeof(ipv6) == sizeof(result));
         memcpySpan(asMutableByteSpan(result), asByteSpan(ipv6));
-        return rtc::IPAddress(result);
+        return webrtc::IPAddress(result);
     });
 }
 
-rtc::InterfaceAddress InterfaceAddress::rtcAddress() const
+webrtc::InterfaceAddress InterfaceAddress::rtcAddress() const
 {
-    return rtc::InterfaceAddress(address.rtcAddress(), ipv6Flags);
+    return webrtc::InterfaceAddress(address.rtcAddress(), ipv6Flags);
 }
 
 }

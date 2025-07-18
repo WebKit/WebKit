@@ -33,6 +33,7 @@ rtc_library("fifo_buffer") {
     "fifo_buffer.h",
   ]
   deps = [
+    "..:checks",
     "..:macromagic",
     "..:stream",
     "..:threading",
@@ -53,6 +54,9 @@ rtc_library("unittests") {
     ":aligned_malloc",
     ":always_valid_pointer",
     ":fifo_buffer",
+    "..:stream",
+    "..:threading",
+    "../../api:array_view",
     "../../test:test_support",
   ]
 }

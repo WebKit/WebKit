@@ -43,6 +43,7 @@
 #include "FontDescription.h"
 #include "FontFace.h"
 #include "FontPaletteValues.h"
+#include "SVGFontFaceElement.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleProperties.h"

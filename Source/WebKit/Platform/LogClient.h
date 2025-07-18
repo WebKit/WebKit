@@ -43,7 +43,7 @@
 namespace WebKit {
 
 class LogClient final : public WebCore::LogClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LogClient);
 public:
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     LogClient(IPC::StreamClientConnection&, const LogStreamIdentifier&);

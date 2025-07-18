@@ -19,12 +19,14 @@
 #include <memory>
 #include <set>
 
+#include "api/array_view.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 
 // The following logging is for detailed (packet-level) analysis only.
@@ -33,7 +35,7 @@
 #define _DBG_VERBOSE 2
 #define _DEBUGMSG _DBG_NONE
 
-namespace cricket {
+namespace webrtc {
 
 //////////////////////////////////////////////////////////////////////
 // Network Constants
@@ -142,19 +144,19 @@ const uint32_t IDLE_TIMEOUT = 90 * 1000;  // 90 seconds;
 //////////////////////////////////////////////////////////////////////
 
 inline void long_to_bytes(uint32_t val, void* buf) {
-  *static_cast<uint32_t*>(buf) = rtc::HostToNetwork32(val);
+  *static_cast<uint32_t*>(buf) = HostToNetwork32(val);
 }
 
 inline void short_to_bytes(uint16_t val, void* buf) {
-  *static_cast<uint16_t*>(buf) = rtc::HostToNetwork16(val);
+  *static_cast<uint16_t*>(buf) = HostToNetwork16(val);
 }
 
 inline uint32_t bytes_to_long(const void* buf) {
-  return rtc::NetworkToHost32(*static_cast<const uint32_t*>(buf));
+  return NetworkToHost32(*static_cast<const uint32_t*>(buf));
 }
 
 inline uint16_t bytes_to_short(const void* buf) {
-  return rtc::NetworkToHost16(*static_cast<const uint16_t*>(buf));
+  return NetworkToHost16(*static_cast<const uint16_t*>(buf));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -186,7 +188,7 @@ void ReportStats() {
   char buffer[256];
   size_t len = 0;
   for (int i = 0; i < S_NUM_STATS; ++i) {
-    len += snprintf(buffer, arraysize(buffer), "%s%s:%d",
+    len += snprintf(buffer, std::size(buffer), "%s%s:%d",
                           (i == 0) ? "" : ",", STAT_NAMES[i], g_stats[i]);
     g_stats[i] = 0;
   }
@@ -201,9 +203,9 @@ void ReportStats() {
 
 uint32_t PseudoTcp::Now() {
 #if 0  // Use this to synchronize timers with logging timestamps (easier debug)
-  return static_cast<uint32_t>(rtc::TimeSince(StartTime()));
+  return static_cast<uint32_t>(webrtc::TimeSince(StartTime()));
 #else
-  return rtc::Time32();
+  return Time32();
 #endif
 }
 
@@ -286,7 +288,7 @@ void PseudoTcp::NotifyClock(uint32_t now) {
     return;
 
   // Check if it's time to retransmit a segment
-  if (m_rto_base && (rtc::TimeDiff32(m_rto_base + m_rx_rto, now) <= 0)) {
+  if (m_rto_base && (TimeDiff32(m_rto_base + m_rx_rto, now) <= 0)) {
     if (m_slist.empty()) {
       RTC_DCHECK_NOTREACHED();
     } else {
@@ -317,8 +319,8 @@ void PseudoTcp::NotifyClock(uint32_t now) {
   }
 
   // Check if it's time to probe closed windows
-  if ((m_snd_wnd == 0) && (rtc::TimeDiff32(m_lastsend + m_rx_rto, now) <= 0)) {
-    if (rtc::TimeDiff32(now, m_lastrecv) >= 15000) {
+  if ((m_snd_wnd == 0) && (TimeDiff32(m_lastsend + m_rx_rto, now) <= 0)) {
+    if (TimeDiff32(now, m_lastrecv) >= 15000) {
       closedown(ECONNABORTED);
       return;
     }
@@ -332,7 +334,7 @@ void PseudoTcp::NotifyClock(uint32_t now) {
   }
 
   // Check if it's time to send delayed acks
-  if (m_t_ack && (rtc::TimeDiff32(m_t_ack + m_ack_delay, now) <= 0)) {
+  if (m_t_ack && (TimeDiff32(m_t_ack + m_ack_delay, now) <= 0)) {
     packet(m_snd_nxt, 0, 0, 0);
   }
 
@@ -609,22 +611,22 @@ bool PseudoTcp::clock_check(uint32_t now, long& nTimeout) {
   nTimeout = DEFAULT_TIMEOUT;
 
   if (m_t_ack) {
-    nTimeout = std::min<int32_t>(nTimeout,
-                                 rtc::TimeDiff32(m_t_ack + m_ack_delay, now));
+    nTimeout =
+        std::min<int32_t>(nTimeout, TimeDiff32(m_t_ack + m_ack_delay, now));
   }
   if (m_rto_base) {
-    nTimeout = std::min<int32_t>(nTimeout,
-                                 rtc::TimeDiff32(m_rto_base + m_rx_rto, now));
+    nTimeout =
+        std::min<int32_t>(nTimeout, TimeDiff32(m_rto_base + m_rx_rto, now));
   }
   if (m_snd_wnd == 0) {
-    nTimeout = std::min<int32_t>(nTimeout,
-                                 rtc::TimeDiff32(m_lastsend + m_rx_rto, now));
+    nTimeout =
+        std::min<int32_t>(nTimeout, TimeDiff32(m_lastsend + m_rx_rto, now));
   }
 #if PSEUDO_KEEPALIVE
   if (m_state == TCP_ESTABLISHED) {
     nTimeout = std::min<int32_t>(
         nTimeout,
-        rtc::TimeDiff32(
+        webrtc::TimeDiff32(
             m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3 / 2 : IDLE_PING),
             now));
   }
@@ -700,7 +702,7 @@ bool PseudoTcp::process(Segment& seg) {
   if ((seg.ack > m_snd_una) && (seg.ack <= m_snd_nxt)) {
     // Calculate round-trip time
     if (seg.tsecr) {
-      int32_t rtt = rtc::TimeDiff32(now, seg.tsecr);
+      int32_t rtt = TimeDiff32(now, seg.tsecr);
       if (rtt >= 0) {
         if (m_rx_srtt == 0) {
           m_rx_srtt = rtt;
@@ -713,8 +715,8 @@ bool PseudoTcp::process(Segment& seg) {
           m_rx_rttvar = (3 * m_rx_rttvar + abs_err) / 4;
           m_rx_srtt = (7 * m_rx_srtt + rtt) / 8;
         }
-        m_rx_rto = rtc::SafeClamp(m_rx_srtt + rtc::SafeMax(1, 4 * m_rx_rttvar),
-                                  MIN_RTO, MAX_RTO);
+        m_rx_rto = SafeClamp(m_rx_srtt + SafeMax(1, 4 * m_rx_rttvar), MIN_RTO,
+                             MAX_RTO);
 #if _DEBUGMSG >= _DBG_VERBOSE
         RTC_LOG(LS_INFO) << "rtt: " << rtt << "  srtt: " << m_rx_srtt
                          << "  rto: " << m_rx_rto;
@@ -913,7 +915,7 @@ bool PseudoTcp::process(Segment& seg) {
     } else {
       uint32_t nOffset = seg.seq - m_rcv_nxt;
 
-      if (!m_rbuf.WriteOffset(seg.data, seg.len, nOffset, NULL)) {
+      if (!m_rbuf.WriteOffset(seg.data, seg.len, nOffset, nullptr)) {
         // Ignore incoming packets outside of the receive window.
         return false;
       }
@@ -1046,7 +1048,7 @@ bool PseudoTcp::transmit(const SList::iterator& seg, uint32_t now) {
 void PseudoTcp::attemptSend(SendFlags sflags) {
   uint32_t now = Now();
 
-  if (rtc::TimeDiff32(now, m_lastsend) > static_cast<long>(m_rx_rto)) {
+  if (TimeDiff32(now, m_lastsend) > static_cast<long>(m_rx_rto)) {
     m_cwnd = m_mss;
   }
 
@@ -1174,7 +1176,7 @@ void PseudoTcp::disableWindowScale() {
 }
 
 void PseudoTcp::queueConnectMessage() {
-  rtc::ByteBufferWriter buf;
+  ByteBufferWriter buf;
 
   buf.WriteUInt8(CTL_CONNECT);
   if (m_support_wnd_scale) {
@@ -1192,8 +1194,8 @@ void PseudoTcp::parseOptions(const char* data, uint32_t len) {
 
   // See http://www.freesoft.org/CIE/Course/Section4/8.htm for
   // parsing the options list.
-  rtc::ByteBufferReader buf(
-      rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(data), len));
+  ByteBufferReader buf(
+      MakeArrayView(reinterpret_cast<const uint8_t*>(data), len));
   while (buf.Length()) {
     uint8_t kind = TCP_OPT_EOL;
     buf.ReadUInt8(&kind);
@@ -1295,12 +1297,12 @@ PseudoTcp::LockedFifoBuffer::LockedFifoBuffer(size_t size)
 PseudoTcp::LockedFifoBuffer::~LockedFifoBuffer() {}
 
 size_t PseudoTcp::LockedFifoBuffer::GetBuffered() const {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   return data_length_;
 }
 
 bool PseudoTcp::LockedFifoBuffer::SetCapacity(size_t size) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   if (data_length_ > size)
     return false;
 
@@ -1322,7 +1324,7 @@ bool PseudoTcp::LockedFifoBuffer::ReadOffset(void* buffer,
                                              size_t bytes,
                                              size_t offset,
                                              size_t* bytes_read) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   return ReadOffsetLocked(buffer, bytes, offset, bytes_read);
 }
 
@@ -1330,14 +1332,14 @@ bool PseudoTcp::LockedFifoBuffer::WriteOffset(const void* buffer,
                                               size_t bytes,
                                               size_t offset,
                                               size_t* bytes_written) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   return WriteOffsetLocked(buffer, bytes, offset, bytes_written);
 }
 
 bool PseudoTcp::LockedFifoBuffer::Read(void* buffer,
                                        size_t bytes,
                                        size_t* bytes_read) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   size_t copy = 0;
   if (!ReadOffsetLocked(buffer, bytes, 0, &copy))
     return false;
@@ -1355,7 +1357,7 @@ bool PseudoTcp::LockedFifoBuffer::Read(void* buffer,
 bool PseudoTcp::LockedFifoBuffer::Write(const void* buffer,
                                         size_t bytes,
                                         size_t* bytes_written) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   size_t copy = 0;
   if (!WriteOffsetLocked(buffer, bytes, 0, &copy))
     return false;
@@ -1370,20 +1372,20 @@ bool PseudoTcp::LockedFifoBuffer::Write(const void* buffer,
 }
 
 void PseudoTcp::LockedFifoBuffer::ConsumeReadData(size_t size) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   RTC_DCHECK(size <= data_length_);
   read_position_ = (read_position_ + size) % buffer_length_;
   data_length_ -= size;
 }
 
 void PseudoTcp::LockedFifoBuffer::ConsumeWriteBuffer(size_t size) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   RTC_DCHECK(size <= buffer_length_ - data_length_);
   data_length_ += size;
 }
 
 bool PseudoTcp::LockedFifoBuffer::GetWriteRemaining(size_t* size) const {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   *size = buffer_length_ - data_length_;
   return true;
 }
@@ -1431,4 +1433,4 @@ bool PseudoTcp::LockedFifoBuffer::WriteOffsetLocked(const void* buffer,
   return true;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

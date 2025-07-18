@@ -56,8 +56,8 @@ class HasAddRefAndRelease {
 //   auto p = scoped_refptr<Foo>(new RefCountedObject<Foo>("bar", 123));
 //
 // If the class does not inherit from RefCountInterface, but does have
-// AddRef/Release methods (so a T* is convertible to rtc::scoped_refptr), this
-// is equivalent to just
+// AddRef/Release methods (so a T* is convertible to webrtc::scoped_refptr),
+// this is equivalent to just
 //
 //   auto p = scoped_refptr<Foo>(new Foo("bar", 123));
 //
@@ -86,7 +86,7 @@ template <
     typename std::enable_if<std::is_convertible_v<T*, RefCountInterface*> &&
                                 std::is_abstract_v<T>,
                             T>::type* = nullptr>
-absl::Nonnull<scoped_refptr<T>> make_ref_counted(Args&&... args) {
+absl_nonnull scoped_refptr<T> make_ref_counted(Args&&... args) {
   return scoped_refptr<T>(new RefCountedObject<T>(std::forward<Args>(args)...));
 }
 
@@ -99,7 +99,7 @@ template <
         !std::is_convertible_v<T*, RefCountInterface*> &&
             webrtc_make_ref_counted_internal::HasAddRefAndRelease<T>::value,
         T>::type* = nullptr>
-absl::Nonnull<scoped_refptr<T>> make_ref_counted(Args&&... args) {
+absl_nonnull scoped_refptr<T> make_ref_counted(Args&&... args) {
   return scoped_refptr<T>(new T(std::forward<Args>(args)...));
 }
 
@@ -113,7 +113,7 @@ template <
             !webrtc_make_ref_counted_internal::HasAddRefAndRelease<T>::value,
 
         T>::type* = nullptr>
-absl::Nonnull<scoped_refptr<FinalRefCountedObject<T>>> make_ref_counted(
+absl_nonnull scoped_refptr<FinalRefCountedObject<T>> make_ref_counted(
     Args&&... args) {
   return scoped_refptr<FinalRefCountedObject<T>>(
       new FinalRefCountedObject<T>(std::forward<Args>(args)...));
@@ -121,10 +121,12 @@ absl::Nonnull<scoped_refptr<FinalRefCountedObject<T>>> make_ref_counted(
 
 }  // namespace webrtc
 
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 namespace rtc {
 // Backwards compatibe alias.
 // TODO: bugs.webrtc.org/42225969 - deprecate and remove.
 using ::webrtc::make_ref_counted;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // API_MAKE_REF_COUNTED_H_

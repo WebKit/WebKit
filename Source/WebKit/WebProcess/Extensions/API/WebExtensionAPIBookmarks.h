@@ -49,7 +49,16 @@ public:
         String url;
     };
 
-    struct MockBookmarkNode {
+    struct MockBookmarkNode: public CanMakeWeakPtr<MockBookmarkNode>, public RefCounted<MockBookmarkNode> {
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MockBookmarkNode);
+
+    public:
+        template<typename... Args>
+        static Ref<MockBookmarkNode> create(Args&&... args)
+        {
+            return adoptRef(*new MockBookmarkNode(std::forward<Args>(args)...));
+        }
+
         String id;
         String parentId;
         String title;
@@ -57,9 +66,42 @@ public:
         size_t index;
         WallTime dateAdded;
         BookmarkTreeNodeType type;
+        Vector<Ref<MockBookmarkNode>> children;
+
+        MockBookmarkNode(const MockBookmarkNode& other)
+            : id(other.id)
+            , parentId(other.parentId)
+            , title(other.title)
+            , url(other.url)
+            , index(other.index)
+            , dateAdded(other.dateAdded)
+            , type(other.type)
+            , children(other.children)
+        {
+
+        }
+
+        MockBookmarkNode& operator=(const MockBookmarkNode& other)
+        {
+            if (this == &other)
+                return *this;
+
+            id = other.id;
+            parentId = other.parentId;
+            title = other.title;
+            url = other.url;
+            index = other.index;
+            dateAdded = other.dateAdded;
+            type = other.type;
+            children = other.children;
+            return *this;
+        }
+
+        MockBookmarkNode() = default;
     };
 
-    Vector<MockBookmarkNode> m_mockBookmarks;
+    HashMap<String, Ref<MockBookmarkNode>> m_mockBookmarks;
+    void initializeMockBookmarksInternal();
 
 #if PLATFORM(COCOA)
     void createBookmark(NSDictionary *bookmark, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

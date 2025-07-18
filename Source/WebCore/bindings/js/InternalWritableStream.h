@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Exception;
 template<typename> class ExceptionOr;
 
 class InternalWritableStream final : public DOMGuarded<JSC::JSObject> {

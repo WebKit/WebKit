@@ -45,7 +45,7 @@ class DEPRECATED_RtpSenderEgress {
 
     void EnqueuePackets(
         std::vector<std::unique_ptr<RtpPacketToSend>> packets) override;
-    void RemovePacketsForSsrc(uint32_t ssrc) override {}
+    void RemovePacketsForSsrc(uint32_t /* ssrc */) override {}
 
    private:
     uint16_t transport_sequence_number_;
@@ -82,7 +82,7 @@ class DEPRECATED_RtpSenderEgress {
   // recalled, return a vector with all of them (in corresponding order).
   // If any could not be recalled, return an empty vector.
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
-      rtc::ArrayView<const uint16_t> sequence_numbers) const
+      ArrayView<const uint16_t> sequence_numbers) const
       RTC_LOCKS_EXCLUDED(lock_);
 
  private:
@@ -120,8 +120,10 @@ class DEPRECATED_RtpSenderEgress {
   bool force_part_of_allocation_ RTC_GUARDED_BY(lock_);
   uint32_t timestamp_offset_ RTC_GUARDED_BY(lock_);
 
+  // These counters are only used if `rtp_stats_callback_` is null.
   StreamDataCounters rtp_stats_ RTC_GUARDED_BY(lock_);
   StreamDataCounters rtx_rtp_stats_ RTC_GUARDED_BY(lock_);
+
   // One element per value in RtpPacketMediaType, with index matching value.
   std::vector<BitrateTracker> send_rates_ RTC_GUARDED_BY(lock_);
 

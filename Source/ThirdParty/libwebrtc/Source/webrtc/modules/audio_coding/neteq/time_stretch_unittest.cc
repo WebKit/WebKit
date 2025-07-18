@@ -10,10 +10,13 @@
 
 // Unit tests for Accelerate and PreemptiveExpand classes.
 
+#include "modules/audio_coding/neteq/time_stretch.h"
+
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 
-#include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_coding/neteq/accelerate.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/preemptive_expand.h"
@@ -45,13 +48,13 @@ TEST(TimeStretch, CreateUsingFactory) {
   AccelerateFactory accelerate_factory;
   Accelerate* accelerate =
       accelerate_factory.Create(kSampleRate, kNumChannels, bgn);
-  EXPECT_TRUE(accelerate != NULL);
+  EXPECT_TRUE(accelerate != nullptr);
   delete accelerate;
 
   PreemptiveExpandFactory preemptive_expand_factory;
   PreemptiveExpand* preemptive_expand = preemptive_expand_factory.Create(
       kSampleRate, kNumChannels, bgn, kOverlapSamples);
-  EXPECT_TRUE(preemptive_expand != NULL);
+  EXPECT_TRUE(preemptive_expand != nullptr);
   delete preemptive_expand;
 }
 

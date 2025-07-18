@@ -235,9 +235,11 @@ void HTMLConstructionSite::attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& 
     task.child = WTFMove(child);
     task.selfClosing = selfClosing;
 
-    // Add as a sibling of the parent if we have reached the maximum depth allowed.
-    if (m_openElements.stackDepth() > m_maximumDOMTreeDepth && task.parent->parentNode())
+    // Close the last open tag and add as a sibling of the parent if we have reached the maximum depth allowed.
+    if (m_openElements.stackDepth() >= m_maximumDOMTreeDepth && task.parent->parentNode()) {
+        m_openElements.pop();
         task.parent = task.parent->parentNode();
+    }
 
     ASSERT(task.parent);
     m_taskQueue.append(WTFMove(task));

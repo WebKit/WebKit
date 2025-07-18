@@ -45,7 +45,7 @@ Ref<CcidConnection> CcidConnection::create(RetainPtr<TKSmartCard>&& smartCard, C
 CcidConnection::CcidConnection(RetainPtr<TKSmartCard>&& smartCard, CcidService& service)
     : m_smartCard(WTFMove(smartCard))
     , m_service(service)
-    , m_retryTimer(RunLoop::main(), this, &CcidConnection::startPolling)
+    , m_retryTimer(RunLoop::mainSingleton(), this, &CcidConnection::startPolling)
 {
     startPolling();
 }

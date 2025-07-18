@@ -34,6 +34,7 @@
 #include "MathMLFractionElement.h"
 #include "PaintInfo.h"
 #include "RenderMathMLBlockInlines.h"
+#include "RenderObjectInlines.h"
 #include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 

@@ -10,6 +10,7 @@
 
 #include "pc/rtp_media_utils.h"
 
+#include "api/rtp_transceiver_direction.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

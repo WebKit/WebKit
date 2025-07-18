@@ -1,0 +1,98 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "BCChatButtonStyleLight"},
+      {"access": "public", "name": "BCChatButtonStyleDark"}
+     ],
+     "introduced": "11.3",
+     "name": "BCChatButtonStyle"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameBody"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameGroup"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameIntent"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "11.3", "name": "openTranscript:intentParameters:"}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "BCChatAction",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11.3", "name": "initWithStyle:"},
+      {"access": "public", "introduced": "11.3", "name": "initWithCoder:"}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "BCChatButton",
+     "super": "UIControl"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "BCChatButtonStyle"},
+    {"access": "public", "name": "BCParameterName"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "BCChatButtonStyleLight"},
+      {"access": "public", "name": "BCChatButtonStyleDark"}
+     ],
+     "introduced": "11.3",
+     "name": "BCChatButtonStyle"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameBody"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameGroup"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_BCParameterNameIntent"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "11.3", "name": "openTranscript:intentParameters:"}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "BCChatAction",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11.3", "name": "initWithStyle:"},
+      {"access": "public", "introduced": "11.3", "name": "initWithCoder:"}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "BCChatButton",
+     "super": "UIControl"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "BCChatButtonStyle"},
+    {"access": "public", "name": "BCParameterName"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

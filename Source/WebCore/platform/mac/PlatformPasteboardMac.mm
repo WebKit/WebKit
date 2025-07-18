@@ -300,7 +300,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     return copyToVector(domPasteboardTypes);
 }
 
-int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
+int64_t PlatformPasteboard::write(const PasteboardCustomData& data, PasteboardDataLifetime pasteboardDataLifetime)
 {
     NSMutableArray *types = [NSMutableArray array];
     data.forEachType([&] (auto& type) {
@@ -314,7 +314,8 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
         [types addObject:@(PasteboardCustomData::cocoaType().characters())];
 
     [m_pasteboard declareTypes:types owner:nil];
-
+    if (pasteboardDataLifetime == PasteboardDataLifetime::Ephemeral)
+        [m_pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
     data.forEachPlatformStringOrBuffer([&] (auto& type, auto& stringOrBuffer) {
         auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, IncludeImageTypes::Yes);
         if (platformType.isEmpty())
@@ -391,11 +392,15 @@ int64_t PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
     return [m_pasteboard addTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
-int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
+int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes, PasteboardDataLifetime pasteboardDataLifetime)
 {
+    auto didClearContents = [m_pasteboard clearContents];
+
+    if (pasteboardDataLifetime == PasteboardDataLifetime::Ephemeral)
+        [m_pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
     if (!canWriteAllPasteboardTypes(pasteboardTypes))
-        return [m_pasteboard declareTypes:@[] owner:nil];
-    return [m_pasteboard declareTypes:createNSArray(pasteboardTypes).get() owner:nil];
+        return didClearContents;
+    return [m_pasteboard addTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
 int64_t PlatformPasteboard::setBufferForType(SharedBuffer* buffer, const String& pasteboardType)
@@ -577,12 +582,14 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
     return item;
 }
 
-int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData, PasteboardDataLifetime pasteboardDataLifetime)
 {
     if (itemData.size() == 1)
-        return write(itemData.first());
+        return write(itemData.first(), pasteboardDataLifetime);
 
     [m_pasteboard clearContents];
+    if (pasteboardDataLifetime == PasteboardDataLifetime::Ephemeral)
+        [m_pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
     [m_pasteboard writeObjects:createNSArray(itemData, [] (auto& data) {
         return createPasteboardItem(data);
     }).get()];

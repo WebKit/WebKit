@@ -88,8 +88,8 @@ private:
     Parent& renderingParent();
     RenderTreePosition& renderTreePosition();
 
-    GeneratedContent& generatedContent() { return *m_generatedContent; }
-    ViewTransition& viewTransition() { return *m_viewTransition; }
+    GeneratedContent& generatedContent() { return m_generatedContent; }
+    ViewTransition& viewTransition() { return m_viewTransition; }
 
     void pushParent(Element&, const Style::ElementUpdate*);
     void popParent();
@@ -113,8 +113,8 @@ private:
 
     Vector<Parent> m_parentStack;
 
-    std::unique_ptr<GeneratedContent> m_generatedContent;
-    std::unique_ptr<ViewTransition> m_viewTransition;
+    const UniqueRef<GeneratedContent> m_generatedContent;
+    const UniqueRef<ViewTransition> m_viewTransition;
 
     RenderTreeBuilder m_builder;
 };

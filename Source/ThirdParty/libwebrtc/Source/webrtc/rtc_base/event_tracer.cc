@@ -52,7 +52,7 @@ AddTraceEventPtr g_add_trace_event_ptr = nullptr;
 #if defined(RTC_USE_PERFETTO)
 void RegisterPerfettoTrackEvents() {
   if (perfetto::Tracing::IsInitialized()) {
-    webrtc::TrackEvent::Register();
+    TrackEvent::Register();
   }
 }
 #else
@@ -89,11 +89,9 @@ void EventTracer::AddTraceEvent(char phase,
 }
 #endif
 
-}  // namespace webrtc
-
 #if defined(RTC_USE_PERFETTO)
 // TODO(bugs.webrtc.org/15917): Implement for perfetto.
-namespace rtc::tracing {
+namespace tracing {
 void SetupInternalTracer(bool enable_all_categories) {}
 bool StartInternalCapture(absl::string_view filename) {
   return false;
@@ -102,14 +100,13 @@ void StartInternalCaptureToFile(FILE* file) {}
 void StopInternalCapture() {}
 void ShutdownInternalTracer() {}
 
-}  // namespace rtc::tracing
+}  // namespace tracing
 #else
 
 // This is a guesstimate that should be enough in most cases.
 static const size_t kEventLoggerArgsStrBufferInitialSize = 256;
 static const size_t kTraceArgBufferLength = 32;
 
-namespace rtc {
 namespace tracing {
 namespace {
 
@@ -130,7 +127,7 @@ class EventLogger final {
                      const unsigned long long* arg_values,
                      uint64_t timestamp,
                      int /* pid */,
-                     rtc::PlatformThreadId thread_id) {
+                     PlatformThreadId thread_id) {
     std::vector<TraceArg> args(num_args);
     for (int i = 0; i < num_args; ++i) {
       TraceArg& arg = args[i];
@@ -147,7 +144,7 @@ class EventLogger final {
         arg.value.as_string = str_copy;
       }
     }
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     trace_events_.push_back(
         {name, category_enabled, phase, args, timestamp, 1, thread_id});
   }
@@ -156,15 +153,14 @@ class EventLogger final {
   // https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview
   void Log() {
     RTC_DCHECK(output_file_);
-    static constexpr webrtc::TimeDelta kLoggingInterval =
-        webrtc::TimeDelta::Millis(100);
+    static constexpr TimeDelta kLoggingInterval = TimeDelta::Millis(100);
     fprintf(output_file_, "{ \"traceEvents\": [\n");
     bool has_logged_event = false;
     while (true) {
       bool shutting_down = shutdown_event_.Wait(kLoggingInterval);
       std::vector<TraceEvent> events;
       {
-        webrtc::MutexLock lock(&mutex_);
+        MutexLock lock(&mutex_);
         trace_events_.swap(events);
       }
       std::string args_str;
@@ -224,7 +220,7 @@ class EventLogger final {
     output_file_ = file;
     output_file_owned_ = owned;
     {
-      webrtc::MutexLock lock(&mutex_);
+      MutexLock lock(&mutex_);
       // Since the atomic fast-path for adding events to the queue can be
       // bypassed while the logging thread is shutting down there may be some
       // stale events in the queue, hence the vector needs to be cleared to not
@@ -286,7 +282,7 @@ class EventLogger final {
     std::vector<TraceArg> args;
     uint64_t timestamp;
     int pid;
-    rtc::PlatformThreadId tid;
+    PlatformThreadId tid;
   };
 
   static std::string TraceArgValueAsString(TraceArg arg) {
@@ -349,11 +345,11 @@ class EventLogger final {
     return output;
   }
 
-  webrtc::Mutex mutex_;
+  Mutex mutex_;
   std::vector<TraceEvent> trace_events_ RTC_GUARDED_BY(mutex_);
-  rtc::PlatformThread logging_thread_;
-  rtc::Event shutdown_event_;
-  webrtc::SequenceChecker thread_checker_;
+  PlatformThread logging_thread_;
+  Event shutdown_event_;
+  SequenceChecker thread_checker_;
   FILE* output_file_ = nullptr;
   bool output_file_owned_ = false;
 };
@@ -389,9 +385,9 @@ void InternalAddTraceEvent(char phase,
   if (g_event_logging_active.load() == 0)
     return;
 
-  g_event_logger.load()->AddTraceEvent(
-      name, category_enabled, phase, num_args, arg_names, arg_types, arg_values,
-      rtc::TimeMicros(), 1, rtc::CurrentThreadId());
+  g_event_logger.load()->AddTraceEvent(name, category_enabled, phase, num_args,
+                                       arg_names, arg_types, arg_values,
+                                       TimeMicros(), 1, CurrentThreadId());
 }
 
 }  // namespace
@@ -400,9 +396,9 @@ void SetupInternalTracer(bool enable_all_categories) {
   EventLogger* null_logger = nullptr;
   RTC_CHECK(
       g_event_logger.compare_exchange_strong(null_logger, new EventLogger()));
-  webrtc::SetupEventTracer(enable_all_categories ? InternalEnableAllCategories
-                                                 : InternalGetCategoryEnabled,
-                           InternalAddTraceEvent);
+  SetupEventTracer(enable_all_categories ? InternalEnableAllCategories
+                                         : InternalGetCategoryEnabled,
+                   InternalAddTraceEvent);
 }
 
 void StartInternalCaptureToFile(FILE* file) {
@@ -440,10 +436,11 @@ void ShutdownInternalTracer() {
   RTC_DCHECK(old_logger);
   RTC_CHECK(g_event_logger.compare_exchange_strong(old_logger, nullptr));
   delete old_logger;
-  webrtc::SetupEventTracer(nullptr, nullptr);
+  SetupEventTracer(nullptr, nullptr);
 }
 
 }  // namespace tracing
-}  // namespace rtc
 
 #endif  // defined(RTC_USE_PERFETTO)
+
+}  // namespace webrtc

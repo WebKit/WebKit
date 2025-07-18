@@ -12,10 +12,12 @@
 #define MODULES_AUDIO_CODING_CODECS_OPUS_TEST_LAPPED_TRANSFORM_H_
 
 #include <complex>
+#include <cstddef>
 #include <memory>
 
 #include "common_audio/real_fourier.h"
 #include "modules/audio_coding/codecs/opus/test/blocker.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/memory/aligned_malloc.h"
 
 namespace webrtc {
@@ -162,7 +164,6 @@ class LappedTransform {
   Callback* const block_processor_;
   Blocker blocker_;
 
-  // TODO(alessiob): Replace RealFourier with a different FFT library.
   std::unique_ptr<RealFourier> fft_;
   const size_t cplx_length_;
   AlignedArray<float> real_buf_;

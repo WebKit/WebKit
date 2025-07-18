@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-repeat-auto-valid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-node-not-connected.html
@@ -59,6 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-repeat-auto-valid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-areas-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-composition.html

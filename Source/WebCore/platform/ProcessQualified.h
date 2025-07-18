@@ -117,11 +117,6 @@ public:
         return object() >= other.object();
     }
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const ProcessQualified& identifier) { return T::MarkableTraits::isEmptyValue(identifier.object()); }
-        static constexpr ProcessQualified emptyValue() { return { T::MarkableTraits::emptyValue(), ProcessIdentifier::MarkableTraits::emptyValue() }; }
-    };
-
 private:
     T m_object;
     ProcessIdentifier m_processIdentifier;
@@ -201,6 +196,12 @@ class StringTypeAdapter<WebCore::ProcessQualified<T>, void> : public ProcessQual
 public:
     explicit StringTypeAdapter(const WebCore::ProcessQualified<T>& processQualified)
         : ProcessQualifiedStringTypeAdapter(processQualified.processIdentifier().toUInt64(), processQualified.object().toUInt64()) { }
+};
+
+template<typename T>
+struct MarkableTraits<WebCore::ProcessQualified<T>> {
+    static bool isEmptyValue(const WebCore::ProcessQualified<T>& identifier) { return MarkableTraits<T>::isEmptyValue(identifier.object()); }
+    static constexpr WebCore::ProcessQualified<T> emptyValue() { return { MarkableTraits<T>::emptyValue(), MarkableTraits<WebCore::ProcessIdentifier>::emptyValue() }; }
 };
 
 } // namespace WTF

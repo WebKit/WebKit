@@ -23,19 +23,19 @@
 namespace webrtc {
 
 namespace {
-int GetY(rtc::scoped_refptr<I422BufferInterface> buf, int col, int row) {
+int GetY(scoped_refptr<I422BufferInterface> buf, int col, int row) {
   return buf->DataY()[row * buf->StrideY() + col];
 }
 
-int GetU(rtc::scoped_refptr<I422BufferInterface> buf, int col, int row) {
+int GetU(scoped_refptr<I422BufferInterface> buf, int col, int row) {
   return buf->DataU()[row * buf->StrideU() + col];
 }
 
-int GetV(rtc::scoped_refptr<I422BufferInterface> buf, int col, int row) {
+int GetV(scoped_refptr<I422BufferInterface> buf, int col, int row) {
   return buf->DataV()[row * buf->StrideV() + col];
 }
 
-void FillI422Buffer(rtc::scoped_refptr<I422Buffer> buf) {
+void FillI422Buffer(scoped_refptr<I422Buffer> buf) {
   const uint8_t Y = 1;
   const uint8_t U = 2;
   const uint8_t V = 3;
@@ -61,7 +61,7 @@ TEST(I422BufferTest, InitialData) {
   constexpr int halfwidth = (width + 1) >> 1;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
+  scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
   EXPECT_EQ(width, i422_buffer->width());
   EXPECT_EQ(height, i422_buffer->height());
   EXPECT_EQ(stride, i422_buffer->StrideY());
@@ -76,7 +76,7 @@ TEST(I422BufferTest, ReadPixels) {
   constexpr int halfwidth = (width + 1) >> 1;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
+  scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
   // Y = 1, U = 2, V = 3.
   FillI422Buffer(i422_buffer);
   for (int row = 0; row < height; row++) {
@@ -99,12 +99,12 @@ TEST(I422BufferTest, ToI420) {
   constexpr int size = width * height;
   constexpr int halfsize = (width + 1) / 2 * height;
   constexpr int quartersize = (width + 1) / 2 * (height + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
   memset(reference->MutableDataY(), 8, size);
   memset(reference->MutableDataU(), 4, quartersize);
   memset(reference->MutableDataV(), 2, quartersize);
 
-  rtc::scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
+  scoped_refptr<I422Buffer> i422_buffer(I422Buffer::Create(width, height));
   // Convert the reference buffer to I422.
   memset(i422_buffer->MutableDataY(), 8, size);
   memset(i422_buffer->MutableDataU(), 4, halfsize);
@@ -123,7 +123,7 @@ TEST(I422BufferTest, ToI420) {
     }
   }
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer(i422_buffer->ToI420());
+  scoped_refptr<I420BufferInterface> i420_buffer(i422_buffer->ToI420());
   EXPECT_EQ(height, i420_buffer->height());
   EXPECT_EQ(width, i420_buffer->width());
   EXPECT_TRUE(test::FrameBufsEqual(reference, i420_buffer));

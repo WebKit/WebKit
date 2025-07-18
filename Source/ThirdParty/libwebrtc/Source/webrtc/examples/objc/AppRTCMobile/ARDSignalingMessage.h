@@ -40,17 +40,21 @@ typedef enum {
 
 @interface ARDICECandidateRemovalMessage : ARDSignalingMessage
 
-@property(nonatomic, readonly) NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *candidates;
+@property(nonatomic, readonly)
+    NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *candidates;
 
-- (instancetype)initWithRemovedCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
+- (instancetype)initWithRemovedCandidates:
+    (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
 
 @end
 
 @interface ARDSessionDescriptionMessage : ARDSignalingMessage
 
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCSessionDescription) * sessionDescription;
+@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCSessionDescription) *
+    sessionDescription;
 
-- (instancetype)initWithDescription:(RTC_OBJC_TYPE(RTCSessionDescription) *)description;
+- (instancetype)initWithDescription:
+    (RTC_OBJC_TYPE(RTCSessionDescription) *)description;
 
 @end
 

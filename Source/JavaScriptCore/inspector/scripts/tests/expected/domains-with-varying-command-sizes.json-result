@@ -780,7 +780,7 @@ namespace Inspector {
 
 
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorNetwork1BackendDispatcher);
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
     void loadResource1(long protocol_requestId) final;
@@ -789,7 +789,7 @@ private:
 };
 
 class ObjCInspectorNetwork3BackendDispatcher final : public AlternateNetwork3BackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorNetwork3BackendDispatcher);
 public:
     ObjCInspectorNetwork3BackendDispatcher(id<TestProtocolNetwork3DomainHandler> handler) { m_delegate = handler; }
     void loadResource1(long protocol_requestId) final;

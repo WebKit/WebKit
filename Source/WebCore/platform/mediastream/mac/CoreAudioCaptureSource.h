@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSession.h"
+#include "BaseAudioSharedUnit.h"
 #include "CAAudioStreamDescription.h"
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
@@ -47,7 +48,6 @@ namespace WebCore {
 
 class AudioSampleBufferList;
 class AudioSampleDataSource;
-class BaseAudioSharedUnit;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 

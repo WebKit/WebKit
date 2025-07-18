@@ -909,6 +909,8 @@ accessibility/mac/clipped-radio-input-frame.html [ WontFix ]
 
 accessibility/range-input-increment-decrement-fires-input-event.html [ WontFix ]
 
+accessibility/mac/stale-input-value-from-subfield-change.html [ WontFix ]
+
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
 
@@ -1048,6 +1050,7 @@ webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Skip ]
+webkit.org/b/156069 http/tests/download/iframe-usdz-download.html [ Skip ]
 
 # no support for waitUntilDownloadFinished on WK1.
 http/tests/download/anchor-download-redirect-same-origin-top-level.html [ Skip ]
@@ -1066,7 +1069,6 @@ http/tests/local/blob/navigate-blob.html [ Skip ]
 media/no-fullscreen-when-hidden.html [ Skip ]
 fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Skip ]
 fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Skip ]
-fullscreen/fullscreen-zero-height-element-with-non-zero-children.html [ Skip ]
 
 # Multi-process test
 fullscreen/iframe-fullscreen-system-exit.html [ Skip ]
@@ -1779,6 +1781,8 @@ fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
 # WK1 main frame scrollbars are native widgets whose size is unaffected by webkit-scrollbar.
 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 
+imported/w3c/web-platform-tests/visual-viewport/viewport-apply-initial-scale-after-navigation.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
@@ -1800,6 +1804,7 @@ http/tests/download/convert-cached-load-to-download.html [ Skip ]
 http/tests/mime/html-with-nosniff-html.html [ Skip ]
 
 # testRunner.findString function is WK2-only, not implemented for WK1.
+editing/text-iterator/find-in-page-in-hidden-until-found.html [ Skip ]
 editing/text-iterator/find-in-page-in-closed-details.html [ Skip ]
 editing/text-iterator/find-in-page-in-summary-of-closed-details.html [ Skip ]
 
@@ -1952,6 +1957,8 @@ fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
 
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
+
+compositing/layer-creation/sticky-overlap-extent.html
 
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
@@ -3026,10 +3033,11 @@ webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-meta
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/rec2020-001.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ ImageOnlyFailure ]
+# webkit.org/b/283013 (REGRESSION (Sequoia): [ Sequoia wk1 ] 4 WPT tests in css/css-color/*. html are a consistent image failure)
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/rec2020-001.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ Skip ]
 
 # Skipping as this test was added for a fix only intended for WK2.
 webkit.org/b/284068 [ Sequoia+ ] http/tests/download/anchor-download-redirect-cross-origin.html [ Skip ]
@@ -3145,3 +3153,17 @@ imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individu
 imported/w3c/web-platform-tests/css/css-images/gradient/conic-gradient-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/295119  imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-text-orientation.html [ Pass ImageOnlyFailure ]
+
+# # FIXME: Needs bug.
+# fast/forms/indeterminate-progress-inline-height.html [ Failure ]
+# fast/forms/range/slider-mouse-events.html [ Failure ]
+# fast/forms/search/search-zoom-computed-style-height.html [ Failure ]
+# fast/forms/text-control-intrinsic-widths.html [ Failure ]
+# fast/repaint/checkbox-overflow-vertical-rl.html [ Failure ]
+# imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+# imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.html [ Failure ]
+# platform/mac/fast/text/line-break-locale.html [ Failure ]
+# fast/forms/appearance-default-button.html [ ImageOnlyFailure ]
+
+# setSinkId is not enabled on WK1
+media/video-setSinkId-default.html [ Skip ]

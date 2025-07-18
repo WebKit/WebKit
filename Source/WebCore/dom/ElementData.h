@@ -42,7 +42,7 @@ class UniqueElementData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
 class ElementData : public RefCounted<ElementData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementData, ElementData);
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
@@ -148,7 +148,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData, ShareableElementData);
 public:
     static Ref<ShareableElementData> createWithAttributes(std::span<const Attribute>);
 

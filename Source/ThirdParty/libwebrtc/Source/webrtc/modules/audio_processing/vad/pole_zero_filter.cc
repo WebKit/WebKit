@@ -22,8 +22,8 @@ PoleZeroFilter* PoleZeroFilter::Create(const float* numerator_coefficients,
                                        size_t order_denominator) {
   if (order_numerator > kMaxFilterOrder ||
       order_denominator > kMaxFilterOrder || denominator_coefficients[0] == 0 ||
-      numerator_coefficients == NULL || denominator_coefficients == NULL)
-    return NULL;
+      numerator_coefficients == nullptr || denominator_coefficients == nullptr)
+    return nullptr;
   return new PoleZeroFilter(numerator_coefficients, order_numerator,
                             denominator_coefficients, order_denominator);
 }
@@ -66,7 +66,7 @@ static float FilterArPast(const T* past,
 int PoleZeroFilter::Filter(const int16_t* in,
                            size_t num_input_samples,
                            float* output) {
-  if (in == NULL || output == NULL)
+  if (in == nullptr || output == nullptr)
     return -1;
   // This is the typical case, just a memcpy.
   const size_t k = std::min(num_input_samples, highest_order_);

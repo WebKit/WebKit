@@ -10,9 +10,17 @@
 
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 
+#include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "common_audio/mocks/mock_smoothing_filter.h"
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
+#include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
+#include "rtc_base/checks.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -319,8 +327,8 @@ TEST(FecControllerPlrBasedTest, CheckBehaviorOnSpecialCurves) {
   //             |  A|___B______
   //             |-----------------> bandwidth
 
-  constexpr int kEnablingBandwidthHigh = kEnablingBandwidthLow;
-  constexpr float kDisablingPacketLossAtLowBw = kDisablingPacketLossAtHighBw;
+  constexpr int kEnablingBandwidth = kEnablingBandwidthLow;
+  constexpr float kDisablingPacketLoss = kDisablingPacketLossAtHighBw;
   FecControllerPlrBasedTestStates states;
   std::unique_ptr<MockSmoothingFilter> mock_smoothing_filter(
       new NiceMock<MockSmoothingFilter>());
@@ -329,8 +337,8 @@ TEST(FecControllerPlrBasedTest, CheckBehaviorOnSpecialCurves) {
       FecControllerPlrBased::Config(
           true,
           ThresholdCurve(kEnablingBandwidthLow, kEnablingPacketLossAtLowBw,
-                         kEnablingBandwidthHigh, kEnablingPacketLossAtHighBw),
-          ThresholdCurve(kDisablingBandwidthLow, kDisablingPacketLossAtLowBw,
+                         kEnablingBandwidth, kEnablingPacketLossAtHighBw),
+          ThresholdCurve(kDisablingBandwidthLow, kDisablingPacketLoss,
                          kDisablingBandwidthHigh, kDisablingPacketLossAtHighBw),
           0),
       std::move(mock_smoothing_filter)));
@@ -342,7 +350,7 @@ TEST(FecControllerPlrBasedTest, CheckBehaviorOnSpecialCurves) {
                        kEnablingPacketLossAtHighBw * 0.99f);
   CheckDecision(&states, false, kEnablingPacketLossAtHighBw * 0.99f);
 
-  UpdateNetworkMetrics(&states, kEnablingBandwidthHigh,
+  UpdateNetworkMetrics(&states, kEnablingBandwidth,
                        kEnablingPacketLossAtHighBw);
   CheckDecision(&states, true, kEnablingPacketLossAtHighBw);
 

@@ -21,7 +21,7 @@ namespace dcsctp {
 class PacketSender {
  public:
   PacketSender(DcSctpSocketCallbacks& callbacks,
-               std::function<void(rtc::ArrayView<const uint8_t>,
+               std::function<void(webrtc::ArrayView<const uint8_t>,
                                   SendPacketStatus)> on_sent_packet);
 
   // Sends the packet, and returns true if it was sent successfully.
@@ -32,7 +32,7 @@ class PacketSender {
 
   // Callback that will be triggered for every send attempt, indicating the
   // status of the operation.
-  std::function<void(rtc::ArrayView<const uint8_t>, SendPacketStatus)>
+  std::function<void(webrtc::ArrayView<const uint8_t>, SendPacketStatus)>
       on_sent_packet_;
 };
 }  // namespace dcsctp

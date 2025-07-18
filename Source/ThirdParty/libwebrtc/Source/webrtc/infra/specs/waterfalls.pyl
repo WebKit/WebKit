@@ -18,7 +18,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android32 (dbg)': {
@@ -28,7 +28,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android32 (more configs)': {
@@ -50,7 +50,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android64 (dbg)': {
@@ -60,7 +60,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android64 Builder arm64': {},
@@ -322,7 +322,7 @@
     'machines': {
       'iOS64 Debug': {
         'mixins': [
-          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -345,7 +345,7 @@
       },
       'iOS64 Release': {
         'mixins': [
-          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -366,7 +366,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm64_rel': {
@@ -376,7 +376,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm_dbg': {
@@ -386,7 +386,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm_more_configs': {
@@ -405,7 +405,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_compile_arm64_dbg': {},

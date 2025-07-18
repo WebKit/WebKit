@@ -11,12 +11,15 @@
 
 #include <stdint.h>
 
+#include <cstddef>
 #include <iterator>
+#include <optional>
 #include <set>
 
 #include "absl/algorithm/container.h"
 #include "absl/container/inlined_vector.h"
 #include "api/array_view.h"
+#include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -24,7 +27,7 @@ namespace webrtc {
 
 absl::InlinedVector<int64_t, 5> FrameDependenciesCalculator::FromBuffersUsage(
     int64_t frame_id,
-    rtc::ArrayView<const CodecBufferUsage> buffers_usage) {
+    ArrayView<const CodecBufferUsage> buffers_usage) {
   absl::InlinedVector<int64_t, 5> dependencies;
   RTC_DCHECK_GT(buffers_usage.size(), 0);
   for (const CodecBufferUsage& buffer_usage : buffers_usage) {

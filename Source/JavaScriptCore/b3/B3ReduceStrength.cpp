@@ -2828,18 +2828,18 @@ private:
         case ConstFloat:
         case ConstDouble: {
             ValueKey key = m_value->key();
-            if (Value* constInRoot = m_valueForConstant.get(key)) {
+            auto addResult = m_valueForConstant.add(key, m_value);
+            if (!addResult.isNewEntry) {
+                Value* constInRoot = addResult.iterator->value;
                 if (constInRoot != m_value) {
                     m_value->replaceWithIdentity(constInRoot);
                     m_changed = true;
                 }
-            } else if (m_block == m_root)
-                m_valueForConstant.add(key, m_value);
-            else {
+            } else if (m_block != m_root) {
                 Value* constInRoot = m_proc.clone(m_value);
                 ASSERT(m_root && m_root->size() >= 1);
                 m_root->appendNonTerminal(constInRoot);
-                m_valueForConstant.add(key, constInRoot);
+                addResult.iterator->value = constInRoot;
                 m_value->replaceWithIdentity(constInRoot);
                 m_changed = true;
             }

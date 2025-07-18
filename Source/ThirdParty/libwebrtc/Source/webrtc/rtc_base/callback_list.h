@@ -49,7 +49,7 @@ class RTC_EXPORT CallbackListReceivers {
 
   void RemoveReceivers(const void* removal_tag);
 
-  void Foreach(rtc::FunctionView<void(UntypedFunction&)> fv);
+  void Foreach(FunctionView<void(UntypedFunction&)> fv);
 
  private:
   // Special protected pointer value that's used as a removal_tag for

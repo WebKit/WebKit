@@ -11,8 +11,8 @@
 #ifndef MODULES_VIDEO_CODING_VIDEO_RECEIVER2_H_
 #define MODULES_VIDEO_CODING_VIDEO_RECEIVER2_H_
 
+#include <cstdint>
 #include <memory>
-#include <vector>
 
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"

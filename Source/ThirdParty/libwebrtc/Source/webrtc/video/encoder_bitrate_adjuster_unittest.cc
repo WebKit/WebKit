@@ -10,14 +10,25 @@
 
 #include "video/encoder_bitrate_adjuster.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -118,9 +129,8 @@ class EncoderBitrateAdjusterTest : public Test,
     RTC_DCHECK_EQ(media_utilization_factors.size(),
                   network_utilization_factors.size());
 
-    const int64_t start_us = rtc::TimeMicros();
-    while (rtc::TimeMicros() <
-           start_us + (duration_ms * rtc::kNumMicrosecsPerMillisec)) {
+    const int64_t start_us = TimeMicros();
+    while (TimeMicros() < start_us + (duration_ms * kNumMicrosecsPerMillisec)) {
       time_controller_.AdvanceTime(TimeDelta::Seconds(1) /
                                    target_framerate_fps_);
       for (size_t si = 0; si < NumSpatialLayers(); ++si) {

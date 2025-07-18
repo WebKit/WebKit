@@ -10,16 +10,20 @@
 
 #include "modules/rtp_rtcp/source/ulpfec_generator.h"
 
-#include <list>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
-#include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -38,7 +42,7 @@ void VerifyHeader(uint16_t seq_num,
                   int red_payload_type,
                   int fec_payload_type,
                   bool marker_bit,
-                  const rtc::CopyOnWriteBuffer& data) {
+                  const CopyOnWriteBuffer& data) {
   // Marker bit not set.
   EXPECT_EQ(marker_bit ? 0x80 : 0, data[1] & 0x80);
   EXPECT_EQ(red_payload_type, data[1] & 0x7F);

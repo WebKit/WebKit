@@ -20,7 +20,7 @@
 namespace webrtc {
 
 std::unique_ptr<DesktopFrame> RTC_EXPORT
-CreateDesktopFrameFromCGImage(rtc::ScopedCFTypeRef<CGImageRef> cg_image);
+CreateDesktopFrameFromCGImage(webrtc::ScopedCFTypeRef<CGImageRef> cg_image);
 
 }  // namespace webrtc
 

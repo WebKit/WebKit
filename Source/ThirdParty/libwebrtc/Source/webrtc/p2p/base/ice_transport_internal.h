@@ -13,26 +13,52 @@
 
 #include <stdint.h>
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/candidate.h"
+#include "api/field_trials_view.h"
+#include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/transport/enums.h"
+#include "p2p/base/candidate_pair_interface.h"
 #include "p2p/base/connection.h"
+#include "p2p/base/connection_info.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "p2p/base/port.h"
 #include "p2p/base/stun_dictionary.h"
 #include "p2p/base/transport_description.h"
+#include "p2p/dtls/dtls_stun_piggyback_callbacks.h"
+#include "rtc_base/callback_list.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/time_utils.h"
 
-namespace cricket {
+namespace webrtc {
+
+// TODO(zhihuang): Replace this with
+// PeerConnectionInterface::IceConnectionState.
+enum class IceTransportStateInternal {
+  STATE_INIT,
+  STATE_CONNECTING,  // Will enter this state once a connection is created
+  STATE_COMPLETED,
+  STATE_FAILED
+};
+
+enum IceConnectionState {
+  kIceConnectionConnecting = 0,
+  kIceConnectionFailed,
+  kIceConnectionConnected,  // Writable, but still checking one or more
+                            // connections
+  kIceConnectionCompleted,
+};
 
 struct IceTransportStats {
   CandidateStatsList candidate_stats_list;
@@ -53,18 +79,10 @@ struct IceTransportStats {
 
   IceRole ice_role = ICEROLE_UNKNOWN;
   std::string ice_local_username_fragment;
-  webrtc::IceTransportState ice_state = webrtc::IceTransportState::kNew;
+  IceTransportState ice_state = IceTransportState::kNew;
 };
 
 typedef std::vector<Candidate> Candidates;
-
-enum IceConnectionState {
-  kIceConnectionConnecting = 0,
-  kIceConnectionFailed,
-  kIceConnectionConnected,  // Writable, but still checking one or more
-                            // connections
-  kIceConnectionCompleted,
-};
 
 // TODO(deadbeef): Unify with PeerConnectionInterface::IceConnectionState
 // once /talk/ and /webrtc/ are combined, and also switch to ENUM_NAME naming
@@ -95,17 +113,14 @@ enum class NominationMode {
 // and contain valid values. If conditions are not met, an RTCError with the
 // appropriated error number and description is returned. If the configuration
 // is valid RTCError::OK() is returned.
-webrtc::RTCError VerifyCandidate(const Candidate& cand);
+RTCError VerifyCandidate(const Candidate& cand);
 
-// Runs through a list of cricket::Candidate instances and calls VerifyCandidate
+// Runs through a list of webrtc::Candidate instances and calls VerifyCandidate
 // for each one, stopping on the first error encounted and returning that error
 // value if so. On success returns RTCError::OK().
-webrtc::RTCError VerifyCandidates(const Candidates& candidates);
+RTCError VerifyCandidates(const Candidates& candidates);
 
 // Information about ICE configuration.
-// TODO(deadbeef): Use std::optional to represent unset values, instead of
-// -1.
-//
 // TODO(bugs.webrtc.org/15609): Define a public API for this.
 struct RTC_EXPORT IceConfig {
   // The ICE connection receiving timeout value in milliseconds.
@@ -191,9 +206,12 @@ struct RTC_EXPORT IceConfig {
   // binding requests to keep NAT bindings open.
   std::optional<int> stun_keepalive_interval;
 
-  std::optional<rtc::AdapterType> network_preference;
+  std::optional<AdapterType> network_preference;
 
-  webrtc::VpnPreference vpn_preference = webrtc::VpnPreference::kDefault;
+  VpnPreference vpn_preference = VpnPreference::kDefault;
+
+  // Experimental feature to transport the DTLS handshake in STUN packets.
+  bool dtls_handshake_in_stun = false;
 
   IceConfig();
   IceConfig(int receiving_timeout_ms,
@@ -204,7 +222,14 @@ struct RTC_EXPORT IceConfig {
             bool presume_writable_when_fully_relayed,
             int regather_on_failed_networks_interval_ms,
             int receiving_switching_delay_ms);
+  // Construct an IceConfig object from an RTCConfiguration object.
+  // This will check the `config` settings and set the associated IceConfig
+  // member properties.
+  explicit IceConfig(const PeerConnectionInterface::RTCConfiguration& config);
   ~IceConfig();
+
+  // Checks if the current configuration values are consistent.
+  RTCError IsValid() const;
 
   // Helper getters for parameters with implementation-specific default value.
   // By convention, parameters with default value are represented by
@@ -223,30 +248,21 @@ struct RTC_EXPORT IceConfig {
   int stun_keepalive_interval_or_default() const;
 };
 
-// TODO(zhihuang): Replace this with
-// PeerConnectionInterface::IceConnectionState.
-enum class IceTransportState {
-  STATE_INIT,
-  STATE_CONNECTING,  // Will enter this state once a connection is created
-  STATE_COMPLETED,
-  STATE_FAILED
-};
-
 // IceTransportInternal is an internal abstract class that does ICE.
 // Once the public interface is supported,
 // (https://www.w3.org/TR/webrtc/#rtcicetransport)
 // the IceTransportInterface will be split from this class.
 //
 // TODO(bugs.webrtc.org/15609): Define a public API for this.
-class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
+class RTC_EXPORT IceTransportInternal : public PacketTransportInternal {
  public:
   IceTransportInternal();
   ~IceTransportInternal() override;
 
   // TODO(bugs.webrtc.org/9308): Remove GetState once all uses have been
   // migrated to GetIceTransportState.
-  virtual IceTransportState GetState() const = 0;
-  virtual webrtc::IceTransportState GetIceTransportState() const = 0;
+  virtual IceTransportStateInternal GetState() const = 0;
+  virtual IceTransportState GetIceTransportState() const = 0;
 
   virtual int component() const = 0;
 
@@ -257,13 +273,27 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
   // Default implementation in order to allow downstream usage deletion.
   // TODO: bugs.webrtc.org/42224914 - Remove when all downstream overrides are
   // gone.
-  virtual void SetIceTiebreaker(uint64_t tiebreaker) { RTC_CHECK_NOTREACHED(); }
+  virtual void SetIceTiebreaker(uint64_t /* tiebreaker */) {
+    RTC_CHECK_NOTREACHED();
+  }
 
   virtual void SetIceCredentials(absl::string_view ice_ufrag,
                                  absl::string_view ice_pwd);
 
   virtual void SetRemoteIceCredentials(absl::string_view ice_ufrag,
                                        absl::string_view ice_pwd);
+
+  // TODO: bugs.webrtc.org/367395350 - Make virtual when all downstream
+  // overrides are gone.
+  // Returns the current local ICE parameters.
+  virtual const IceParameters* local_ice_parameters() const {
+    RTC_CHECK_NOTREACHED();
+  }
+  // Returns the latest remote ICE parameters or nullptr if there are no remote
+  // ICE parameters yet.
+  virtual const IceParameters* remote_ice_parameters() const {
+    RTC_CHECK_NOTREACHED();
+  }
 
   // The ufrag and pwd in `ice_params` must be set
   // before candidate gathering can start.
@@ -274,6 +304,10 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
   virtual void SetRemoteIceMode(IceMode mode) = 0;
 
   virtual void SetIceConfig(const IceConfig& config) = 0;
+  // Default implementation in order to allow downstream usage deletion.
+  // TODO: bugs.webrtc.org/367395350 - Make virtual when all downstream
+  // overrides are gone.
+  virtual const IceConfig& config() const { RTC_CHECK_NOTREACHED(); }
 
   // Start gathering candidates if not already started, or if an ICE restart
   // occurred.
@@ -309,7 +343,7 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
 
   void AddGatheringStateCallback(
       const void* removal_tag,
-      absl::AnyInvocable<void(IceTransportInternal*)> callback);
+      absl::AnyInvocable<void(webrtc::IceTransportInternal*)> callback);
   void RemoveGatheringStateCallback(const void* removal_tag);
 
   // Handles sending and receiving of candidates.
@@ -317,14 +351,15 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
       SignalCandidateGathered;
 
   void SetCandidateErrorCallback(
-      absl::AnyInvocable<void(IceTransportInternal*,
-                              const IceCandidateErrorEvent&)> callback) {
+      absl::AnyInvocable<void(webrtc::IceTransportInternal*,
+                              const webrtc::IceCandidateErrorEvent&)>
+          callback) {
     RTC_DCHECK(!candidate_error_callback_);
     candidate_error_callback_ = std::move(callback);
   }
 
   void SetCandidatesRemovedCallback(
-      absl::AnyInvocable<void(IceTransportInternal*, const Candidates&)>
+      absl::AnyInvocable<void(webrtc::IceTransportInternal*, const Candidates&)>
           callback) {
     RTC_DCHECK(!candidates_removed_callback_);
     candidates_removed_callback_ = std::move(callback);
@@ -339,7 +374,7 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
   sigslot::signal2<IceTransportInternal*, const Candidate&> SignalRouteChange;
 
   void SetCandidatePairChangeCallback(
-      absl::AnyInvocable<void(const cricket::CandidatePairChangeEvent&)>
+      absl::AnyInvocable<void(const webrtc::CandidatePairChangeEvent&)>
           callback) {
     RTC_DCHECK(!candidate_pair_change_callback_);
     candidate_pair_change_callback_ = std::move(callback);
@@ -383,30 +418,63 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
     dictionary_writer_synced_callback_list_.RemoveReceivers(tag);
   }
 
- protected:
-  void SendGatheringStateEvent() {
-    gathering_state_callback_list_.Send(this);
-  }
+  virtual const FieldTrialsView* field_trials() const { return nullptr; }
 
-  webrtc::CallbackList<IceTransportInternal*,
-                       const StunDictionaryView&,
-                       rtc::ArrayView<uint16_t>>
+  virtual void ResetDtlsStunPiggybackCallbacks() {}
+  virtual void SetDtlsStunPiggybackCallbacks(
+      DtlsStunPiggybackCallbacks&& callbacks) {}
+
+ protected:
+  void SendGatheringStateEvent() { gathering_state_callback_list_.Send(this); }
+
+  CallbackList<IceTransportInternal*,
+               const StunDictionaryView&,
+               ArrayView<uint16_t>>
       dictionary_view_updated_callback_list_;
-  webrtc::CallbackList<IceTransportInternal*, const StunDictionaryWriter&>
+  CallbackList<IceTransportInternal*, const StunDictionaryWriter&>
       dictionary_writer_synced_callback_list_;
 
-  webrtc::CallbackList<IceTransportInternal*> gathering_state_callback_list_;
+  CallbackList<IceTransportInternal*> gathering_state_callback_list_;
 
-  absl::AnyInvocable<void(IceTransportInternal*, const IceCandidateErrorEvent&)>
+  absl::AnyInvocable<void(webrtc::IceTransportInternal*,
+                          const webrtc::IceCandidateErrorEvent&)>
       candidate_error_callback_;
 
-  absl::AnyInvocable<void(IceTransportInternal*, const Candidates&)>
+  absl::AnyInvocable<void(webrtc::IceTransportInternal*, const Candidates&)>
       candidates_removed_callback_;
 
-  absl::AnyInvocable<void(const cricket::CandidatePairChangeEvent&)>
+  absl::AnyInvocable<void(const webrtc::CandidatePairChangeEvent&)>
       candidate_pair_change_callback_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::Candidates;
+using ::webrtc::ContinualGatheringPolicy;
+using ::webrtc::GATHER_CONTINUALLY;
+using ::webrtc::GATHER_ONCE;
+using ::webrtc::IceConfig;
+using ::webrtc::IceConnectionState;
+using ::webrtc::IceGatheringState;
+using ::webrtc::IceTransportInternal;
+using ::webrtc::IceTransportStats;
+using ::webrtc::kIceConnectionCompleted;
+using ::webrtc::kIceConnectionConnected;
+using ::webrtc::kIceConnectionConnecting;
+using ::webrtc::kIceConnectionFailed;
+using ::webrtc::kIceGatheringComplete;
+using ::webrtc::kIceGatheringGathering;
+using ::webrtc::kIceGatheringNew;
+using ::webrtc::NominationMode;
+using ::webrtc::VerifyCandidate;
+using ::webrtc::VerifyCandidates;
+
+using IceTransportState = ::webrtc::IceTransportStateInternal;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_ICE_TRANSPORT_INTERNAL_H_

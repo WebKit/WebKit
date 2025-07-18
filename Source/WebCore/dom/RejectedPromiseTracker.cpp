@@ -29,6 +29,7 @@
 
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "EventTargetInlines.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
 #include "Node.h"

@@ -55,7 +55,8 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 
 AnimationTimelinesController::AnimationTimelinesController(Document& document)
-    : m_document(document)
+    : m_cachedCurrentTimeClearanceTimer(*this, &AnimationTimelinesController::clearCachedCurrentTime)
+    , m_document(document)
 {
     if (RefPtr page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
@@ -267,8 +268,10 @@ void AnimationTimelinesController::suspendAnimations()
     if (m_isSuspended)
         return;
 
-    if (!m_cachedCurrentTime)
+    if (!m_cachedCurrentTime) {
         m_cachedCurrentTime = liveCurrentTime();
+        m_cachedCurrentTimeClearanceTimer.stop();
+    }
 
     for (Ref timeline : m_timelines)
         timeline->suspendAnimations();
@@ -281,7 +284,7 @@ void AnimationTimelinesController::resumeAnimations()
     if (!m_isSuspended)
         return;
 
-    m_cachedCurrentTime = std::nullopt;
+    clearCachedCurrentTime();
 
     m_isSuspended = false;
 
@@ -313,6 +316,8 @@ void AnimationTimelinesController::cacheCurrentTime(ReducedResolutionSeconds new
     if (m_cachedCurrentTime == newCurrentTime)
         return;
 
+    m_cachedCurrentTimeClearanceTimer.stop();
+
     // We can get in a situation where the event loop will not run a task that had been enqueued.
     // If that is the case, we must clear the task group and run the callback prior to adding a
     // new task.
@@ -331,6 +336,19 @@ void AnimationTimelinesController::cacheCurrentTime(ReducedResolutionSeconds new
         CancellableTask task(m_pendingAnimationsProcessingTaskCancellationGroup, std::bind(&AnimationTimelinesController::processPendingAnimations, this));
         m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
     }
+
+    if (!m_isSuspended) {
+        // In order to not have a stale cached current time, we schedule a timer to reset it
+        // in the time it would take an animation frame to run under normal circumstances.
+        RefPtr page = m_document->page();
+        auto renderingUpdateInterval = page ? page->preferredRenderingUpdateInterval() : FullSpeedAnimationInterval;
+        m_cachedCurrentTimeClearanceTimer.startOneShot(renderingUpdateInterval);
+    }
+}
+
+void AnimationTimelinesController::clearCachedCurrentTime()
+{
+    m_cachedCurrentTime = std::nullopt;
 }
 
 void AnimationTimelinesController::processPendingAnimations()

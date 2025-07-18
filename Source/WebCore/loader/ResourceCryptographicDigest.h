@@ -66,10 +66,10 @@ struct EncodedResourceCryptographicDigest {
     String digest;
 };
 
-std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<UChar>&);
+std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<char16_t>&);
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<LChar>&);
 
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>&);
+std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<char16_t>&);
 std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<LChar>&);
 
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);

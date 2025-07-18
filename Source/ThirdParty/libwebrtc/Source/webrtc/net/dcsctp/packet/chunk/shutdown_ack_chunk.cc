@@ -28,7 +28,7 @@ namespace dcsctp {
 constexpr int ShutdownAckChunk::kType;
 
 std::optional<ShutdownAckChunk> ShutdownAckChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

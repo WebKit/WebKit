@@ -48,7 +48,7 @@ CoreIPCNSValue::CoreIPCNSValue(Value&& value)
 auto CoreIPCNSValue::valueFromNSValue(NSValue *nsValue) -> Value
 {
     if (nsValueHasObjCType<NSRange>(nsValue))
-        return nsValue.rangeValue;
+        return IPCRange { nsValue.rangeValue.location, nsValue.rangeValue.length };
 
     if (nsValueHasObjCType<CGRect>(nsValue))
         return nsValue.rectValue;
@@ -68,10 +68,10 @@ RetainPtr<id> CoreIPCNSValue::toID() const
     auto nsValueFromWrapped = [](const Value& wrappedValue) {
         RetainPtr<id> result;
 
-        WTF::switchOn(wrappedValue, [&](const NSRange& range) {
-            result = [NSValue valueWithRange:range];
-        }, [&](const CGRect& rect) {
-            result = [NSValue valueWithRect:rect];
+        WTF::switchOn(wrappedValue, [&](const IPCRange& range) {
+            result = [NSValue valueWithRange:NSMakeRange(range.location, range.length)];
+        }, [&](const DoubleRect& rect) {
+            result = [NSValue valueWithRect:rect.toCG()];
         }, [&](const UniqueRef<CoreIPCNSCFObject>& object) {
             result = object->toID();
         });

@@ -41,7 +41,7 @@ ASCIILiteral intrinsicName(Intrinsic intrinsic)
     return { };
 }
 
-std::optional<IterationKind> interationKindForIntrinsic(Intrinsic intrinsic)
+std::optional<IterationKind> iterationKindForIntrinsic(Intrinsic intrinsic)
 {
     switch (intrinsic) {
     case ArrayValuesIntrinsic:

@@ -44,7 +44,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -240,10 +239,11 @@ class ReplacementAudioDecoderFactory : public AudioDecoderFactory {
 // the test and returns the NetEqDelayAnalyzer object that was used to
 // instrument the test.
 std::unique_ptr<test::NetEqStatsGetter> CreateNetEqTestAndRun(
-    ParsedRtcEventLog parsed_log,
+    const ParsedRtcEventLog& parsed_log,
     uint32_t ssrc,
-    const std::string& replacement_file_name,
-    int file_sample_rate_hz) {
+    absl::string_view replacement_file_name,
+    int file_sample_rate_hz,
+    absl::string_view field_trials) {
   std::unique_ptr<test::NetEqInput> input =
       test::CreateNetEqEventLogInput(parsed_log, ssrc);
   if (!input) {
@@ -258,9 +258,9 @@ std::unique_ptr<test::NetEqStatsGetter> CreateNetEqTestAndRun(
 
   std::unique_ptr<test::VoidAudioSink> output(new test::VoidAudioSink());
 
-  rtc::scoped_refptr<AudioDecoderFactory> decoder_factory =
-      rtc::make_ref_counted<ReplacementAudioDecoderFactory>(
-          replacement_file_name, file_sample_rate_hz);
+  scoped_refptr<AudioDecoderFactory> decoder_factory =
+      make_ref_counted<ReplacementAudioDecoderFactory>(replacement_file_name,
+                                                       file_sample_rate_hz);
 
   test::NetEqTest::DecoderMap codecs = {
       {kReplacementPt, SdpAudioFormat("l16", 48000, 1)}};
@@ -278,7 +278,7 @@ std::unique_ptr<test::NetEqStatsGetter> CreateNetEqTestAndRun(
   NetEq::Config config;
   test::NetEqTest test(config, decoder_factory, codecs, /*text_log=*/nullptr,
                        /*factory=*/nullptr, std::move(input), std::move(output),
-                       callbacks, field_trial::GetFieldTrialString());
+                       callbacks, field_trials);
   test.Run();
   return neteq_stats_getter;
 }
@@ -286,12 +286,14 @@ std::unique_ptr<test::NetEqStatsGetter> CreateNetEqTestAndRun(
 
 NetEqStatsGetterMap SimulateNetEq(const ParsedRtcEventLog& parsed_log,
                                   const AnalyzerConfig& config,
-                                  const std::string& replacement_file_name,
-                                  int file_sample_rate_hz) {
+                                  absl::string_view replacement_file_name,
+                                  int file_sample_rate_hz,
+                                  absl::string_view field_trials) {
   NetEqStatsGetterMap neteq_stats;
   for (uint32_t ssrc : parsed_log.incoming_audio_ssrcs()) {
-    std::unique_ptr<test::NetEqStatsGetter> stats = CreateNetEqTestAndRun(
-        parsed_log, ssrc, replacement_file_name, file_sample_rate_hz);
+    std::unique_ptr<test::NetEqStatsGetter> stats =
+        CreateNetEqTestAndRun(parsed_log, ssrc, replacement_file_name,
+                              file_sample_rate_hz, field_trials);
     if (stats) {
       neteq_stats[ssrc] = std::move(stats);
     }
@@ -363,9 +365,9 @@ void CreateNetEqStatsGraphInternal(
     const ParsedRtcEventLog& parsed_log,
     const AnalyzerConfig& config,
     const NetEqStatsGetterMap& neteq_stats,
-    rtc::FunctionView<const std::vector<std::pair<int64_t, NetEqStatsType>>*(
+    FunctionView<const std::vector<std::pair<int64_t, NetEqStatsType>>*(
         const test::NetEqStatsGetter*)> data_extractor,
-    rtc::FunctionView<float(const NetEqStatsType&)> stats_extractor,
+    FunctionView<float(const NetEqStatsType&)> stats_extractor,
     const std::string& plot_name,
     Plot* plot) {
   std::map<uint32_t, TimeSeries> time_series;
@@ -398,7 +400,7 @@ void CreateNetEqNetworkStatsGraph(
     const ParsedRtcEventLog& parsed_log,
     const AnalyzerConfig& config,
     const NetEqStatsGetterMap& neteq_stats,
-    rtc::FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
+    FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
     const std::string& plot_name,
     Plot* plot) {
   CreateNetEqStatsGraphInternal<NetEqNetworkStatistics>(
@@ -413,7 +415,7 @@ void CreateNetEqLifetimeStatsGraph(
     const ParsedRtcEventLog& parsed_log,
     const AnalyzerConfig& config,
     const NetEqStatsGetterMap& neteq_stats,
-    rtc::FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
+    FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
     const std::string& plot_name,
     Plot* plot) {
   CreateNetEqStatsGraphInternal<NetEqLifetimeStatistics>(

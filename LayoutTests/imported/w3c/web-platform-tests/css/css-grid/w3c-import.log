@@ -19,6 +19,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/child-border-box-and-max-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/child-border-box-and-max-content-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/child-border-box-and-max-content-001.html
@@ -39,9 +42,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1958131-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-as-flex-item-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-002-expected.html
@@ -50,6 +60,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-container-baseline-synthesized-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-extrinsically-sized-mutations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-flex-spanning-items-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-flex-spanning-items-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-flex-spanning-items-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-fragmentation-between-rows-001-print-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-fragmentation-between-rows-001-print.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-important.html

@@ -32,6 +32,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLDivElement.h"
+#include "IntRect.h"
 #include "MediaControllerInterface.h"
 #include "TextTrackRepresentation.h"
 #include <wtf/LoggerHelper.h>

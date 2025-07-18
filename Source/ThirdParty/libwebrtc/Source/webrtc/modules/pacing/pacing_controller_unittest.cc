@@ -66,13 +66,13 @@ std::unique_ptr<RtpPacketToSend> BuildPacket(RtpPacketMediaType type,
                                              uint32_t ssrc,
                                              uint16_t sequence_number,
                                              int64_t capture_time_ms,
-                                             size_t size) {
+                                             size_t payload_size) {
   auto packet = std::make_unique<RtpPacketToSend>(nullptr);
   packet->set_packet_type(type);
   packet->SetSsrc(ssrc);
   packet->SetSequenceNumber(sequence_number);
   packet->set_capture_time(Timestamp::Millis(capture_time_ms));
-  packet->SetPayloadSize(size);
+  packet->SetPayloadSize(payload_size);
   return packet;
 }
 
@@ -140,7 +140,7 @@ class MockPacingControllerCallback : public PacingController::PacketSender {
   MOCK_METHOD(size_t, SendPadding, (size_t target_size));
   MOCK_METHOD(void,
               OnAbortedRetransmissions,
-              (uint32_t, rtc::ArrayView<const uint16_t>),
+              (uint32_t, ArrayView<const uint16_t>),
               (override));
   MOCK_METHOD(std::optional<uint32_t>,
               GetRtxSsrcForMedia,
@@ -168,7 +168,7 @@ class MockPacketSender : public PacingController::PacketSender {
               (override));
   MOCK_METHOD(void,
               OnAbortedRetransmissions,
-              (uint32_t, rtc::ArrayView<const uint16_t>),
+              (uint32_t, ArrayView<const uint16_t>),
               (override));
   MOCK_METHOD(std::optional<uint32_t>,
               GetRtxSsrcForMedia,
@@ -206,8 +206,7 @@ class PacingControllerPadding : public PacingController::PacketSender {
     return packets;
   }
 
-  void OnAbortedRetransmissions(uint32_t,
-                                rtc::ArrayView<const uint16_t>) override {}
+  void OnAbortedRetransmissions(uint32_t, ArrayView<const uint16_t>) override {}
   std::optional<uint32_t> GetRtxSsrcForMedia(uint32_t) const override {
     return std::nullopt;
   }
@@ -267,8 +266,7 @@ class PacingControllerProbing : public PacingController::PacketSender {
     return packets;
   }
 
-  void OnAbortedRetransmissions(uint32_t,
-                                rtc::ArrayView<const uint16_t>) override {}
+  void OnAbortedRetransmissions(uint32_t, ArrayView<const uint16_t>) override {}
   std::optional<uint32_t> GetRtxSsrcForMedia(uint32_t) const override {
     return std::nullopt;
   }
@@ -306,7 +304,7 @@ class PacingControllerTest : public ::testing::Test {
                            type == RtpPacketMediaType::kRetransmission, false));
   }
 
-  void AdvanceTimeUntil(webrtc::Timestamp time) {
+  void AdvanceTimeUntil(Timestamp time) {
     Timestamp now = clock_.CurrentTime();
     clock_.AdvanceTime(std::max(TimeDelta::Zero(), time - now));
   }
@@ -1369,6 +1367,50 @@ TEST_F(PacingControllerTest, ProbingWithPaddingSupport) {
               kFirstClusterRate.bps(), kProbingErrorMargin.bps());
 }
 
+TEST_F(PacingControllerTest, PaddingPacketCanTriggerProbe) {
+  const int kInitialBitrateBps = 300000;
+  PacingControllerProbing packet_sender;
+  auto pacer =
+      std::make_unique<PacingController>(&clock_, &packet_sender, trials_);
+
+  pacer->SetPacingRates(
+      DataRate::BitsPerSec(kInitialBitrateBps * kPaceMultiplier),
+      /*padding_rate*/ DataRate::KilobitsPerSec(300));
+
+  pacer->EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo,
+                                   /*ssrc=*/123, /*sequence_number=*/1,
+                                   clock_.TimeInMilliseconds(),
+                                   /*payload_size=*/50));
+
+  for (int i = 0; i < 5; ++i) {
+    AdvanceTimeUntil(pacer->NextSendTime());
+    pacer->ProcessPackets();
+    EXPECT_EQ(packet_sender.last_pacing_info().probe_cluster_id,
+              PacedPacketInfo::kNotAProbe);
+  }
+  ASSERT_GT(packet_sender.packets_sent(), 0);
+  ASSERT_GT(packet_sender.padding_sent(), 0);
+
+  const int kProbeClusterId = 1;
+  std::vector<ProbeClusterConfig> probe_clusters = {
+      {.at_time = clock_.CurrentTime(),
+       .target_data_rate = DataRate::KilobitsPerSec(1000),
+       .target_duration = TimeDelta::Millis(15),
+       .target_probe_count = 5,
+       .id = kProbeClusterId}};
+  pacer->CreateProbeClusters(probe_clusters);
+  bool probe_packet_seen = false;
+  for (int i = 0; i < 5; ++i) {
+    AdvanceTimeUntil(pacer->NextSendTime());
+    pacer->ProcessPackets();
+    if (packet_sender.last_pacing_info().probe_cluster_id == kProbeClusterId) {
+      probe_packet_seen = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(probe_packet_seen);
+}
+
 TEST_F(PacingControllerTest, CanProbeWithPaddingBeforeFirstMediaPacket) {
   // const size_t kPacketSize = 1200;
   const int kInitialBitrateBps = 300000;
@@ -2386,8 +2428,7 @@ TEST_F(PacingControllerTest, FlushesPacketsOnKeyFrames) {
 }
 
 TEST_F(PacingControllerTest, CanControlQueueSizeUsingTtl) {
-  const uint32_t kSsrc = 12345;
-  const uint32_t kAudioSsrc = 2345;
+  const uint32_t kSsrc = 54321;
   uint16_t sequence_number = 1234;
 
   PacingController::Configuration config;

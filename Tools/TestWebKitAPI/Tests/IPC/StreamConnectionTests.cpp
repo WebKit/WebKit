@@ -212,7 +212,7 @@ protected:
 };
 
 class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin, public RefCounted<MockMessageReceiver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MockMessageReceiver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockMessageReceiver);
 public:
     static Ref<MockMessageReceiver> create()

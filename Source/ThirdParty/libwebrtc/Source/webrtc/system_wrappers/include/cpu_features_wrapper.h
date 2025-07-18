@@ -11,7 +11,7 @@
 #ifndef SYSTEM_WRAPPERS_INCLUDE_CPU_FEATURES_WRAPPER_H_
 #define SYSTEM_WRAPPERS_INCLUDE_CPU_FEATURES_WRAPPER_H_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace webrtc {
 
@@ -28,9 +28,6 @@ enum {
 
 // Returns true if the CPU supports the feature.
 int GetCPUInfo(CPUFeature feature);
-
-// No CPU feature is available => straight C path.
-int GetCPUInfoNoASM(CPUFeature feature);
 
 // Return the features in an ARM device.
 // It detects the features in the hardware platform, and returns supported

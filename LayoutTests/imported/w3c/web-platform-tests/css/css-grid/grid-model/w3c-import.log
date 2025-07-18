@@ -124,6 +124,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-max-content-size-with-max-content-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-max-content-size-with-max-content-item.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-min-max-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-multicol-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-multicol-001.html

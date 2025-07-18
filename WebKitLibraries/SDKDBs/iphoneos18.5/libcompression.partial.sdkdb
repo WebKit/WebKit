@@ -1,0 +1,122 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_LZ4"},
+      {"access": "public", "name": "COMPRESSION_ZLIB"},
+      {"access": "public", "name": "COMPRESSION_LZMA"},
+      {"access": "public", "name": "COMPRESSION_LZ4_RAW"},
+      {"access": "public", "name": "COMPRESSION_BROTLI"},
+      {"access": "public", "name": "COMPRESSION_LZFSE"},
+      {"access": "public", "name": "COMPRESSION_LZBITMAP"}
+     ],
+     "name": "compression_algorithm"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STATUS_OK"},
+      {"access": "public", "name": "COMPRESSION_STATUS_ERROR"},
+      {"access": "public", "name": "COMPRESSION_STATUS_END"}
+     ],
+     "name": "compression_status"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STREAM_FINALIZE"}
+     ],
+     "name": "compression_stream_flags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STREAM_ENCODE"},
+      {"access": "public", "name": "COMPRESSION_STREAM_DECODE"}
+     ],
+     "name": "compression_stream_operation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_decode_buffer"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_decode_scratch_buffer_size"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_encode_buffer"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_encode_scratch_buffer_size"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_destroy"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "compression_algorithm"},
+    {"access": "public", "name": "compression_status"},
+    {"access": "public", "name": "compression_stream"},
+    {"access": "public", "name": "compression_stream_flags"},
+    {"access": "public", "name": "compression_stream_operation"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_LZ4"},
+      {"access": "public", "name": "COMPRESSION_ZLIB"},
+      {"access": "public", "name": "COMPRESSION_LZMA"},
+      {"access": "public", "name": "COMPRESSION_LZ4_RAW"},
+      {"access": "public", "name": "COMPRESSION_BROTLI"},
+      {"access": "public", "name": "COMPRESSION_LZFSE"},
+      {"access": "public", "name": "COMPRESSION_LZBITMAP"}
+     ],
+     "name": "compression_algorithm"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STATUS_OK"},
+      {"access": "public", "name": "COMPRESSION_STATUS_ERROR"},
+      {"access": "public", "name": "COMPRESSION_STATUS_END"}
+     ],
+     "name": "compression_status"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STREAM_FINALIZE"}
+     ],
+     "name": "compression_stream_flags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "COMPRESSION_STREAM_ENCODE"},
+      {"access": "public", "name": "COMPRESSION_STREAM_DECODE"}
+     ],
+     "name": "compression_stream_operation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_decode_buffer"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_decode_scratch_buffer_size"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_encode_buffer"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_encode_scratch_buffer_size"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_destroy"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "compression_algorithm"},
+    {"access": "public", "name": "compression_status"},
+    {"access": "public", "name": "compression_stream"},
+    {"access": "public", "name": "compression_stream_flags"},
+    {"access": "public", "name": "compression_stream_operation"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

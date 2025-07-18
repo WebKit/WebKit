@@ -10,27 +10,47 @@
 
 #include "audio/audio_send_stream.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
-#include <thread>
 #include <utility>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "api/audio/audio_processing_statistics.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/call/bitrate_allocation.h"
+#include "api/crypto/frame_encryptor_interface.h"
 #include "api/environment/environment_factory.h"
+#include "api/function_view.h"
+#include "api/make_ref_counted.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
 #include "api/test/mock_frame_encryptor.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "audio/audio_state.h"
+#include "audio/channel_send.h"
 #include "audio/conversion.h"
 #include "audio/mock_voe_channel_proxy.h"
+#include "call/audio_state.h"
+#include "call/bitrate_allocator.h"
 #include "call/test/mock_bitrate_allocator.h"
 #include "call/test/mock_rtp_transport_controller_send.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/mocks/mock_network_link_rtcp_observer.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 #include "test/mock_audio_encoder_factory.h"
@@ -120,9 +140,9 @@ std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
   return nullptr;
 }
 
-rtc::scoped_refptr<MockAudioEncoderFactory> SetupEncoderFactoryMock() {
-  rtc::scoped_refptr<MockAudioEncoderFactory> factory =
-      rtc::make_ref_counted<MockAudioEncoderFactory>();
+scoped_refptr<MockAudioEncoderFactory> SetupEncoderFactoryMock() {
+  scoped_refptr<MockAudioEncoderFactory> factory =
+      make_ref_counted<MockAudioEncoderFactory>();
   ON_CALL(*factory, GetSupportedEncoders)
       .WillByDefault(Return(std::vector<AudioCodecSpec>(
           std::begin(kCodecSpecs), std::end(kCodecSpecs))));
@@ -148,14 +168,14 @@ struct ConfigHelper {
         audio_processing_(
             use_null_audio_processing
                 ? nullptr
-                : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>()),
+                : make_ref_counted<NiceMock<MockAudioProcessing>>()),
         audio_encoder_(nullptr) {
     using ::testing::Invoke;
 
     AudioState::Config config;
     config.audio_mixer = AudioMixerImpl::Create();
     config.audio_processing = audio_processing_;
-    config.audio_device_module = rtc::make_ref_counted<MockAudioDeviceModule>();
+    config.audio_device_module = make_ref_counted<MockAudioDeviceModule>();
     audio_state_ = AudioState::Create(config);
 
     SetupDefaultChannelSend(audio_bwe_enabled);
@@ -200,7 +220,6 @@ struct ConfigHelper {
   static void AddBweToConfig(AudioSendStream::Config* config) {
     config->rtp.extensions.push_back(RtpExtension(
         RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
-    config->send_codec_spec->transport_cc_enabled = true;
   }
 
   void SetupDefaultChannelSend(bool audio_bwe_enabled) {
@@ -247,11 +266,10 @@ struct ConfigHelper {
   void SetupMockForCallEncoder() {
     // Let ModifyEncoder to invoke mock audio encoder.
     EXPECT_CALL(*channel_send_, CallEncoder(_))
-        .WillRepeatedly(
-            [this](rtc::FunctionView<void(AudioEncoder*)> modifier) {
-              if (this->audio_encoder_)
-                modifier(this->audio_encoder_.get());
-            });
+        .WillRepeatedly([this](FunctionView<void(AudioEncoder*)> modifier) {
+          if (this->audio_encoder_)
+            modifier(this->audio_encoder_.get());
+        });
   }
 
   void SetupMockForSendTelephoneEvent() {
@@ -312,10 +330,10 @@ struct ConfigHelper {
 
  private:
   RealTimeController time_controller_;
-  rtc::scoped_refptr<AudioState> audio_state_;
+  scoped_refptr<AudioState> audio_state_;
   AudioSendStream::Config stream_config_;
   ::testing::StrictMock<MockChannelSend>* channel_send_ = nullptr;
-  rtc::scoped_refptr<MockAudioProcessing> audio_processing_;
+  scoped_refptr<MockAudioProcessing> audio_processing_;
   AudioProcessingStats audio_processing_stats_;
   ::testing::StrictMock<MockNetworkLinkRtcpObserver> rtcp_observer_;
   ::testing::NiceMock<MockRtpTransportControllerSend> rtp_transport_;
@@ -354,7 +372,6 @@ TEST(AudioSendStreamTest, ConfigToString) {
   config.send_codec_spec =
       AudioSendStream::Config::SendCodecSpec(kIsacPayloadType, kIsacFormat);
   config.send_codec_spec->nack_enabled = true;
-  config.send_codec_spec->transport_cc_enabled = false;
   config.send_codec_spec->cng_payload_type = 42;
   config.send_codec_spec->red_payload_type = 43;
   config.encoder_factory = MockAudioEncoderFactory::CreateUnusedFactory();
@@ -369,7 +386,7 @@ TEST(AudioSendStreamTest, ConfigToString) {
       "send_transport: null, "
       "min_bitrate_bps: 12000, max_bitrate_bps: 34000, has "
       "audio_network_adaptor_config: false, has_dscp: true, "
-      "send_codec_spec: {nack_enabled: true, transport_cc_enabled: false, "
+      "send_codec_spec: {nack_enabled: true, "
       "enable_non_sender_rtt: false, cng_payload_type: 42, "
       "red_payload_type: 43, payload_type: 103, "
       "format: {name: isac, clockrate_hz: 16000, num_channels: 1, "
@@ -543,22 +560,21 @@ TEST(AudioSendStreamTest, AudioNetworkAdaptorReceivesOverhead) {
     const std::string kAnaConfigString = "abcde";
 
     EXPECT_CALL(helper.mock_encoder_factory(), Create)
-        .WillOnce(
-            WithArg<1>([&kAnaConfigString](const SdpAudioFormat& format) {
-              auto mock_encoder = SetupAudioEncoderMock(format);
-              InSequence s;
-              EXPECT_CALL(
-                  *mock_encoder,
-                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
-              EXPECT_CALL(*mock_encoder,
-                          EnableAudioNetworkAdaptor(StrEq(kAnaConfigString), _))
-                  .WillOnce(Return(true));
-              // Note: Overhead is received AFTER ANA has been enabled.
-              EXPECT_CALL(
-                  *mock_encoder,
-                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
-              return mock_encoder;
-            }));
+        .WillOnce(WithArg<1>([&kAnaConfigString](const SdpAudioFormat& format) {
+          auto mock_encoder = SetupAudioEncoderMock(format);
+          InSequence s;
+          EXPECT_CALL(
+              *mock_encoder,
+              OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
+          EXPECT_CALL(*mock_encoder,
+                      EnableAudioNetworkAdaptor(StrEq(kAnaConfigString), _))
+              .WillOnce(Return(true));
+          // Note: Overhead is received AFTER ANA has been enabled.
+          EXPECT_CALL(
+              *mock_encoder,
+              OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
+          return mock_encoder;
+        }));
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(kOverheadPerPacket.bytes<size_t>()));
     EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
@@ -899,8 +915,8 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     auto send_stream = helper.CreateAudioSendStream();
     auto new_config = helper.config();
 
-    rtc::scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_0(
-        rtc::make_ref_counted<MockFrameEncryptor>());
+    scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_0(
+        make_ref_counted<MockFrameEncryptor>());
     new_config.frame_encryptor = mock_frame_encryptor_0;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))
         .Times(1);
@@ -912,8 +928,8 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
 
     // Updating frame encryptor to a new object should force a call to the
     // proxy.
-    rtc::scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_1(
-        rtc::make_ref_counted<MockFrameEncryptor>());
+    scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_1(
+        make_ref_counted<MockFrameEncryptor>());
     new_config.frame_encryptor = mock_frame_encryptor_1;
     new_config.crypto_options.sframe.require_frame_encryption = true;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))

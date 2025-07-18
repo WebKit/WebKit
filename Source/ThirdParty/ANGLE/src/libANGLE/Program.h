@@ -382,7 +382,7 @@ class Program final : public LabeledObject, public angle::Subject
     {
         // This function helps ensure the program binary is cached, even if the backend waits for
         // post-link tasks without the knowledge of the front-end.
-        if (!mIsBinaryCached && !mState.mBinaryRetrieveableHint &&
+        if (!mIsBinaryCached && !mState.mExecutable->mBinaryRetrieveableHint &&
             mState.mExecutable->mPostLinkSubTasks.empty())
         {
             cacheProgramBinaryIfNotAlready(context);
@@ -501,6 +501,7 @@ class Program final : public LabeledObject, public angle::Subject
 
     void unlink();
     void setupExecutableForLink(const Context *context);
+    void syncExecutableOnSuccessfulLink();
     void deleteSelf(const Context *context);
 
     angle::Result linkJobImpl(const Caps &caps,

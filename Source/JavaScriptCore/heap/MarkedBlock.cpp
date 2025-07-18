@@ -170,7 +170,6 @@ void MarkedBlock::Handle::lastChanceToFinalize()
     m_directory->assertSweeperIsSuspended();
     m_directory->setIsAllocated(this, false);
     m_directory->setIsDestructible(this, true);
-    m_directory->setIsUnswept(this, true);
     blockHeader().m_marks.clearAll();
     block().clearHasAnyMarked();
     blockHeader().m_markingVersion = heap()->objectSpace().markingVersion();
@@ -484,12 +483,12 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
         return;
     }
 
-    if (m_isFreeListed) [[unlikely]] {
+    if (m_isFreeListed) {
         dataLog("FATAL: ", RawPointer(this), "->sweep: block is free-listed.\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    if (isAllocated()) [[unlikely]] {
+    if (isAllocated()) {
         dataLog("FATAL: ", RawPointer(this), "->sweep: block is allocated.\n");
         RELEASE_ASSERT_NOT_REACHED();
     }

@@ -32,6 +32,7 @@
 #pragma once
 
 #include "WorkerThread.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ private:
 
     ASCIILiteral threadName() const final { return "WebCore: Worker"_s; }
 
-    WorkerObjectProxy& m_workerObjectProxy;
+    const CheckedRef<WorkerObjectProxy> m_workerObjectProxy;
 };
 
 } // namespace WebCore

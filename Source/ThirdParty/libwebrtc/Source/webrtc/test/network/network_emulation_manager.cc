@@ -11,15 +11,33 @@
 #include "test/network/network_emulation_manager.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
+#include "absl/base/nullability.h"
+#include "api/array_view.h"
 #include "api/field_trials_view.h"
-#include "api/units/time_delta.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/test/network_emulation/cross_traffic.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
+#include "api/test/network_emulation_manager.h"
+#include "api/test/simulated_network.h"
+#include "api/test/time_controller.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ip_address.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/task_utils/repeating_task.h"
+#include "test/network/cross_traffic.h"
+#include "test/network/emulated_network_manager.h"
 #include "test/network/emulated_turn_server.h"
+#include "test/network/network_emulation.h"
 #include "test/network/simulated_network.h"
 #include "test/network/traffic_route.h"
 #include "test/time_controller/real_time_controller.h"
@@ -99,7 +117,7 @@ NetworkEmulationManagerImpl::NodeBuilder() {
 
 EmulatedEndpointImpl* NetworkEmulationManagerImpl::CreateEndpoint(
     EmulatedEndpointConfig config) {
-  std::optional<rtc::IPAddress> ip = config.ip;
+  std::optional<IPAddress> ip = config.ip;
   if (!ip) {
     switch (config.generated_ip_family) {
       case EmulatedEndpointConfig::IpAddressFamily::kIpv4:
@@ -129,15 +147,16 @@ void NetworkEmulationManagerImpl::EnableEndpoint(EmulatedEndpoint* endpoint) {
   EmulatedNetworkManager* network_manager =
       endpoint_to_network_manager_[endpoint];
   RTC_CHECK(network_manager);
-  network_manager->EnableEndpoint(static_cast<EmulatedEndpointImpl*>(endpoint));
+  static_cast<EmulatedEndpointImpl*>(endpoint)->Enable();
+  network_manager->UpdateNetworks();
 }
 
 void NetworkEmulationManagerImpl::DisableEndpoint(EmulatedEndpoint* endpoint) {
   EmulatedNetworkManager* network_manager =
       endpoint_to_network_manager_[endpoint];
   RTC_CHECK(network_manager);
-  network_manager->DisableEndpoint(
-      static_cast<EmulatedEndpointImpl*>(endpoint));
+  static_cast<EmulatedEndpointImpl*>(endpoint)->Disable();
+  network_manager->UpdateNetworks();
 }
 
 EmulatedRoute* NetworkEmulationManagerImpl::CreateRoute(
@@ -282,7 +301,7 @@ void NetworkEmulationManagerImpl::StopCrossTraffic(
   });
 }
 
-EmulatedNetworkManagerInterface*
+EmulatedNetworkManagerInterface* absl_nonnull
 NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
     const std::vector<EmulatedEndpoint*>& endpoints) {
   std::vector<EmulatedEndpointImpl*> endpoint_impls;
@@ -293,15 +312,10 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
   auto endpoints_container = std::make_unique<EndpointsContainer>(
       endpoint_impls, stats_gathering_mode_);
   auto network_manager = std::make_unique<EmulatedNetworkManager>(
-      time_controller_.get(), &task_queue_, endpoints_container.get());
+      time_controller_.get(), task_queue_.Get(), endpoints_container.get());
   for (auto* endpoint : endpoints) {
     // Associate endpoint with network manager.
-    bool insertion_result =
-        endpoint_to_network_manager_.insert({endpoint, network_manager.get()})
-            .second;
-    RTC_CHECK(insertion_result)
-        << "Endpoint ip=" << endpoint->GetPeerLocalAddress().ToString()
-        << " is already used for another network";
+    endpoint_to_network_manager_[endpoint] = network_manager.get();
   }
 
   EmulatedNetworkManagerInterface* out = network_manager.get();
@@ -312,7 +326,7 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
 }
 
 void NetworkEmulationManagerImpl::GetStats(
-    rtc::ArrayView<EmulatedEndpoint* const> endpoints,
+    ArrayView<EmulatedEndpoint* const> endpoints,
     std::function<void(EmulatedNetworkStats)> stats_callback) {
   task_queue_.PostTask([endpoints, stats_callback,
                         stats_gathering_mode = stats_gathering_mode_]() {
@@ -329,7 +343,7 @@ void NetworkEmulationManagerImpl::GetStats(
 }
 
 void NetworkEmulationManagerImpl::GetStats(
-    rtc::ArrayView<EmulatedNetworkNode* const> nodes,
+    ArrayView<EmulatedNetworkNode* const> nodes,
     std::function<void(EmulatedNetworkNodeStats)> stats_callback) {
   task_queue_.PostTask(
       [nodes, stats_callback, stats_gathering_mode = stats_gathering_mode_]() {
@@ -341,11 +355,10 @@ void NetworkEmulationManagerImpl::GetStats(
       });
 }
 
-std::optional<rtc::IPAddress>
-NetworkEmulationManagerImpl::GetNextIPv4Address() {
+std::optional<IPAddress> NetworkEmulationManagerImpl::GetNextIPv4Address() {
   uint32_t addresses_count = kMaxIPv4Address - kMinIPv4Address;
   for (uint32_t i = 0; i < addresses_count; i++) {
-    rtc::IPAddress ip(next_ip4_address_);
+    IPAddress ip(next_ip4_address_);
     if (next_ip4_address_ == kMaxIPv4Address) {
       next_ip4_address_ = kMinIPv4Address;
     } else {
@@ -367,11 +380,11 @@ EmulatedTURNServerInterface* NetworkEmulationManagerImpl::CreateTURNServer(
   auto* client = CreateEndpoint(config.client_config);
   auto* peer = CreateEndpoint(config.client_config);
   char buf[128];
-  rtc::SimpleStringBuilder str(buf);
+  SimpleStringBuilder str(buf);
   str.AppendFormat("turn_server_%u",
                    static_cast<unsigned>(turn_servers_.size()));
   auto turn = std::make_unique<EmulatedTURNServer>(
-      time_controller_->CreateThread(str.str()), client, peer);
+      config, time_controller_->CreateThread(str.str()), client, peer);
   auto out = turn.get();
   turn_servers_.push_back(std::move(turn));
   return out;

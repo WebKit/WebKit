@@ -59,17 +59,17 @@ public:
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             return m_functionForCall;
-        ASSERT(kind == CodeForConstruct);
+        ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         return m_functionForConstruct;
     }
 
     static constexpr ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
     {
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             return OBJECT_OFFSETOF(InternalFunction, m_functionForCall);
-        ASSERT(kind == CodeForConstruct);
+        ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         return OBJECT_OFFSETOF(InternalFunction, m_functionForConstruct);
     }
 

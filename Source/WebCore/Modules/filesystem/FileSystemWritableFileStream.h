@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "Blob.h"
 #include "FileSystemWriteCommandType.h"
 #include "WritableStream.h"
+#include <JavaScriptCore/ArrayBufferView.h>
 
 namespace WebCore {
 
-class Blob;
 template<typename> class DOMPromiseDeferred;
 
 class FileSystemWritableFileStream : public WritableStream {

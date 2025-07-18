@@ -33,6 +33,7 @@
 #include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
 #include "ContainerNodeInlines.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "ElementInlines.h"
@@ -369,7 +370,7 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
     if (isCrossDocument)
         return nullAtom();
 
-    return makeAtomString("-ua-auto-"_s, String::number(element->identifier().toRawValue()));
+    return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toRawValue()));
 }
 
 static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name, ListHashSet<AtomString>& usedTransitionNames)
@@ -382,17 +383,20 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
 
 static Vector<AtomString> effectiveViewTransitionClassList(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
 {
-    auto classList = renderer.style().viewTransitionClasses();
-    if (classList.isEmpty())
-        return { };
+    return WTF::switchOn(renderer.style().viewTransitionClasses(),
+        [](const CSS::Keyword::None&) -> Vector<AtomString> {
+            return { };
+        },
+        [&](const auto& list) -> Vector<AtomString> {
+            auto scope = Style::Scope::forOrdinal(originatingElement, list[0].scopeOrdinal);
+            if (!scope || scope != &documentScope)
+                return { };
 
-    auto scope = Style::Scope::forOrdinal(originatingElement, classList.first().scopeOrdinal);
-    if (!scope || scope != &documentScope)
-        return { };
-
-    return WTF::map(classList, [&](auto& item) {
-        return item.name;
-    });
+            return WTF::map(list, [&](auto& item) {
+                return item.name;
+            });
+        }
+    );
 }
 
 LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
@@ -976,7 +980,7 @@ void ViewTransition::updatePseudoElementStylesWrite()
 
     bool changed = false;
     for (auto& [name, capturedElement] : m_namedElements.map())
-        changed |= updatePropertiesForGroupPseudo(*capturedElement, name);
+        changed |= updatePropertiesForGroupPseudo(capturedElement, name);
 
     if (changed) {
         if (RefPtr documentElement = document->documentElement())

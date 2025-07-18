@@ -39,7 +39,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
 class StyleSurroundData : public RefCounted<StyleSurroundData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSurroundData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSurroundData, StyleSurroundData);
 public:
     static Ref<StyleSurroundData> create() { return adoptRef(*new StyleSurroundData); }
     Ref<StyleSurroundData> copy() const;

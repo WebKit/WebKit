@@ -13,10 +13,15 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
+#include <list>
+#include <memory>
 #include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "modules/include/module_common_types_public.h"
+#include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/flexfec_03_header_reader_writer.h"
@@ -351,8 +356,15 @@ void ForwardErrorCorrection::InsertMediaPacket(
   RTC_DCHECK_EQ(received_packet.ssrc, protected_media_ssrc_);
 
   // Search for duplicate packets.
-  for (const auto& recovered_packet : *recovered_packets) {
+  auto insert_pos = recovered_packets->begin();
+  for (auto it = recovered_packets->rbegin(), end = recovered_packets->rend();
+       it != end; ++it) {
+    const auto& recovered_packet = *it;
     RTC_DCHECK_EQ(recovered_packet->ssrc, received_packet.ssrc);
+    if (SortablePacket::LessThan()(recovered_packet, &received_packet)) {
+      insert_pos = it.base();
+      break;
+    }
     if (recovered_packet->seq_num == received_packet.seq_num) {
       // Duplicate packet, no need to add to list.
       return;
@@ -367,11 +379,8 @@ void ForwardErrorCorrection::InsertMediaPacket(
   recovered_packet->ssrc = received_packet.ssrc;
   recovered_packet->seq_num = received_packet.seq_num;
   recovered_packet->pkt = received_packet.pkt;
-  // TODO(holmer): Consider replacing this with a binary search for the right
-  // position, and then just insert the new packet. Would get rid of the sort.
   RecoveredPacket* recovered_packet_ptr = recovered_packet.get();
-  recovered_packets->push_back(std::move(recovered_packet));
-  recovered_packets->sort(SortablePacket::LessThan());
+  recovered_packets->insert(insert_pos, std::move(recovered_packet));
   UpdateCoveringFecPackets(*recovered_packet_ptr);
 }
 
@@ -395,8 +404,16 @@ void ForwardErrorCorrection::InsertFecPacket(
   RTC_DCHECK_EQ(received_packet.ssrc, ssrc_);
 
   // Check for duplicate.
-  for (const auto& existing_fec_packet : received_fec_packets_) {
+  auto insert_pos = received_fec_packets_.begin();
+  for (auto it = received_fec_packets_.rbegin(),
+            end = received_fec_packets_.rend();
+       it != end; ++it) {
+    const auto& existing_fec_packet = *it;
     RTC_DCHECK_EQ(existing_fec_packet->ssrc, received_packet.ssrc);
+    if (SortablePacket::LessThan()(existing_fec_packet, &received_packet)) {
+      insert_pos = it.base();
+      break;
+    }
     if (existing_fec_packet->seq_num == received_packet.seq_num) {
       // Drop duplicate FEC packet data.
       return;
@@ -456,10 +473,7 @@ void ForwardErrorCorrection::InsertFecPacket(
     RTC_LOG(LS_WARNING) << "Received FEC packet has an all-zero packet mask.";
   } else {
     AssignRecoveredPackets(recovered_packets, fec_packet.get());
-    // TODO(holmer): Consider replacing this with a binary search for the right
-    // position, and then just insert the new packet. Would get rid of the sort.
-    received_fec_packets_.push_back(std::move(fec_packet));
-    received_fec_packets_.sort(SortablePacket::LessThan());
+    received_fec_packets_.insert(insert_pos, std::move(fec_packet));
     const size_t max_fec_packets = fec_header_reader_->MaxFecPackets();
     if (received_fec_packets_.size() > max_fec_packets) {
       received_fec_packets_.pop_front();
@@ -571,7 +585,7 @@ bool ForwardErrorCorrection::StartPacketRecovery(
 }
 
 bool ForwardErrorCorrection::FinishPacketRecovery(
-    const ReceivedFecPacket& fec_packet,
+    const ReceivedFecPacket& /* fec_packet */,
     RecoveredPacket* recovered_packet) {
   uint8_t* data = recovered_packet->pkt->data.MutableData();
   // Set the RTP version to 2.
@@ -690,11 +704,16 @@ size_t ForwardErrorCorrection::AttemptRecovery(
       auto* recovered_packet_ptr = recovered_packet.get();
       // Add recovered packet to the list of recovered packets and update any
       // FEC packets covering this packet with a pointer to the data.
-      // TODO(holmer): Consider replacing this with a binary search for the
-      // right position, and then just insert the new packet. Would get rid of
-      // the sort.
-      recovered_packets->push_back(std::move(recovered_packet));
-      recovered_packets->sort(SortablePacket::LessThan());
+      auto insert_pos = recovered_packets->begin();
+      for (auto it = recovered_packets->rbegin(),
+                end = recovered_packets->rend();
+           it != end; ++it) {
+        if (!SortablePacket::LessThan()(recovered_packet, *it)) {
+          insert_pos = it.base();
+          break;
+        }
+      }
+      recovered_packets->insert(insert_pos, std::move(recovered_packet));
       UpdateCoveringFecPackets(*recovered_packet_ptr);
       DiscardOldRecoveredPackets(recovered_packets);
       fec_packet_it = received_fec_packets_.erase(fec_packet_it);
@@ -709,7 +728,7 @@ size_t ForwardErrorCorrection::AttemptRecovery(
       // packet is old. We can discard this FEC packet.
       fec_packet_it = received_fec_packets_.erase(fec_packet_it);
     } else {
-      fec_packet_it++;
+      ++fec_packet_it;
     }
   }
 

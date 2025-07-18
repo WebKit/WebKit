@@ -52,10 +52,10 @@ CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue)
     if (!executable)
         return nullptr;
     
-    CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
+    CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeSpecializationKind::CodeForCall);
     
     if (!baselineCodeBlock)
-        baselineCodeBlock = executable->baselineCodeBlockFor(CodeForConstruct);
+        baselineCodeBlock = executable->baselineCodeBlockFor(CodeSpecializationKind::CodeForConstruct);
     
     return baselineCodeBlock;
 }

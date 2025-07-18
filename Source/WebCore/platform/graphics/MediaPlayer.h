@@ -133,7 +133,7 @@ struct MediaEngineSupportParameters {
 };
 
 struct SeekTarget {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SeekTarget);
     SeekTarget(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
         : time(targetTime)
         , negativeThreshold(negativeThreshold)

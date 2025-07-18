@@ -15,11 +15,10 @@
 #include <string>
 
 #include "api/array_view.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
-namespace cricket {
+namespace webrtc {
 
 struct FourCCAliasEntry {
   uint32_t alias;
@@ -44,9 +43,9 @@ static const FourCCAliasEntry kFourCCAliases[] = {
 };
 
 uint32_t CanonicalFourCC(uint32_t fourcc) {
-  for (uint32_t i = 0; i < arraysize(kFourCCAliases); ++i) {
-    if (kFourCCAliases[i].alias == fourcc) {
-      return kFourCCAliases[i].canonical;
+  for (const FourCCAliasEntry& entry : kFourCCAliases) {
+    if (entry.alias == fourcc) {
+      return entry.canonical;
     }
   }
   // Not an alias, so return it as-is.
@@ -74,7 +73,7 @@ std::string VideoFormat::ToString() const {
   }
 
   char buf[256];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << fourcc_name << width << "x" << height << "x"
      << IntervalToFpsFloat(interval);
   return sb.str();
@@ -92,4 +91,4 @@ int LeastCommonMultiple(int a, int b) {
   return std::lcm(a, b);
 }
 
-}  // namespace cricket
+}  // namespace webrtc

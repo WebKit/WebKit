@@ -10,6 +10,8 @@
 
 #include "modules/audio_coding/neteq/packet.h"
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 Packet::Packet() = default;

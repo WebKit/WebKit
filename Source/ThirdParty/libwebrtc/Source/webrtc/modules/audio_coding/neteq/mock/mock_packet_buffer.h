@@ -11,6 +11,11 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+
+#include "modules/audio_coding/neteq/packet.h"
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "test/gmock.h"
 

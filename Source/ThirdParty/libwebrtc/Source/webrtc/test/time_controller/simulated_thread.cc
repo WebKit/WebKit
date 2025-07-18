@@ -18,9 +18,9 @@ namespace {
 // A socket server that does nothing. It's different from NullSocketServer in
 // that it does allow sleep/wakeup. This avoids usage of an Event instance which
 // otherwise would cause issues with the simulated Yeild behavior.
-class DummySocketServer : public rtc::SocketServer {
+class DummySocketServer : public SocketServer {
  public:
-  rtc::Socket* CreateSocket(int family, int type) override {
+  Socket* CreateSocket(int family, int type) override {
     RTC_DCHECK_NOTREACHED();
     return nullptr;
   }
@@ -36,9 +36,9 @@ class DummySocketServer : public rtc::SocketServer {
 SimulatedThread::SimulatedThread(
     sim_time_impl::SimulatedTimeControllerImpl* handler,
     absl::string_view name,
-    std::unique_ptr<rtc::SocketServer> socket_server)
-    : rtc::Thread(socket_server ? std::move(socket_server)
-                                : std::make_unique<DummySocketServer>()),
+    std::unique_ptr<SocketServer> socket_server)
+    : Thread(socket_server ? std::move(socket_server)
+                           : std::make_unique<DummySocketServer>()),
       handler_(handler),
       name_(new char[name.size()]) {
   std::copy_n(name.begin(), name.size(), name_);
@@ -61,7 +61,7 @@ void SimulatedThread::RunReady(Timestamp at_time) {
   }
 }
 
-void SimulatedThread::BlockingCallImpl(rtc::FunctionView<void()> functor,
+void SimulatedThread::BlockingCallImpl(FunctionView<void()> functor,
                                        const Location& /*location*/) {
   if (IsQuitting())
     return;
@@ -81,7 +81,7 @@ void SimulatedThread::BlockingCallImpl(rtc::FunctionView<void()> functor,
 void SimulatedThread::PostTaskImpl(absl::AnyInvocable<void() &&> task,
                                    const PostTaskTraits& traits,
                                    const Location& location) {
-  rtc::Thread::PostTaskImpl(std::move(task), traits, location);
+  Thread::PostTaskImpl(std::move(task), traits, location);
   MutexLock lock(&lock_);
   next_run_time_ = Timestamp::MinusInfinity();
 }
@@ -90,10 +90,10 @@ void SimulatedThread::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
                                           TimeDelta delay,
                                           const PostDelayedTaskTraits& traits,
                                           const Location& location) {
-  rtc::Thread::PostDelayedTaskImpl(std::move(task), delay, traits, location);
+  Thread::PostDelayedTaskImpl(std::move(task), delay, traits, location);
   MutexLock lock(&lock_);
   next_run_time_ =
-      std::min(next_run_time_, Timestamp::Millis(rtc::TimeMillis()) + delay);
+      std::min(next_run_time_, Timestamp::Millis(TimeMillis()) + delay);
 }
 
 void SimulatedThread::Stop() {

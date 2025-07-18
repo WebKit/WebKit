@@ -48,7 +48,9 @@ static CGFloat const kCallControlMargin = 8;
 
 - (void)layoutSubviews {
   _roomText.frame =
-      CGRectMake(kRoomTextFieldMargin, 0, CGRectGetWidth(self.bounds) - kRoomTextFieldMargin,
+      CGRectMake(kRoomTextFieldMargin,
+                 0,
+                 CGRectGetWidth(self.bounds) - kRoomTextFieldMargin,
                  kRoomTextFieldHeight);
 }
 
@@ -93,10 +95,15 @@ static CGFloat const kCallControlMargin = 8;
 
     _startRegularCallButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _startRegularCallButton.titleLabel.font = controlFont;
-    [_startRegularCallButton setTitleColor:controlFontColor forState:UIControlStateNormal];
-    _startRegularCallButton.backgroundColor
-        = [UIColor colorWithRed:66.0/255.0 green:200.0/255.0 blue:90.0/255.0 alpha:1.0];
-    [_startRegularCallButton setTitle:@"Call room" forState:UIControlStateNormal];
+    [_startRegularCallButton setTitleColor:controlFontColor
+                                  forState:UIControlStateNormal];
+    _startRegularCallButton.backgroundColor =
+        [UIColor colorWithRed:66.0 / 255.0
+                        green:200.0 / 255.0
+                         blue:90.0 / 255.0
+                        alpha:1.0];
+    [_startRegularCallButton setTitle:@"Call room"
+                             forState:UIControlStateNormal];
     [_startRegularCallButton addTarget:self
                                 action:@selector(onStartRegularCall:)
                       forControlEvents:UIControlEventTouchUpInside];
@@ -104,22 +111,26 @@ static CGFloat const kCallControlMargin = 8;
 
     _startLoopbackCallButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _startLoopbackCallButton.titleLabel.font = controlFont;
-    [_startLoopbackCallButton setTitleColor:controlFontColor forState:UIControlStateNormal];
+    [_startLoopbackCallButton setTitleColor:controlFontColor
+                                   forState:UIControlStateNormal];
     _startLoopbackCallButton.backgroundColor =
-        [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0];
-    [_startLoopbackCallButton setTitle:@"Loopback call" forState:UIControlStateNormal];
+        [UIColor colorWithRed:0.0 green:122.0 / 255.0 blue:1.0 alpha:1.0];
+    [_startLoopbackCallButton setTitle:@"Loopback call"
+                              forState:UIControlStateNormal];
     [_startLoopbackCallButton addTarget:self
                                  action:@selector(onStartLoopbackCall:)
                        forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_startLoopbackCallButton];
 
-
     // Used to test what happens to sounds when calls are in progress.
     _audioLoopButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _audioLoopButton.titleLabel.font = controlFont;
-    [_audioLoopButton setTitleColor:controlFontColor forState:UIControlStateNormal];
-    _audioLoopButton.backgroundColor =
-        [UIColor colorWithRed:1.0 green:149.0/255.0 blue:0.0 alpha:1.0];
+    [_audioLoopButton setTitleColor:controlFontColor
+                           forState:UIControlStateNormal];
+    _audioLoopButton.backgroundColor = [UIColor colorWithRed:1.0
+                                                       green:149.0 / 255.0
+                                                        blue:0.0
+                                                       alpha:1.0];
     [self updateAudioLoopButton];
     [_audioLoopButton addTarget:self
                          action:@selector(onToggleAudioLoop:)
@@ -143,29 +154,36 @@ static CGFloat const kCallControlMargin = 8;
   CGRect bounds = self.bounds;
   CGFloat roomTextWidth = bounds.size.width - 2 * kRoomTextFieldMargin;
   CGFloat roomTextHeight = [_roomText sizeThatFits:bounds.size].height;
-  _roomText.frame =
-      CGRectMake(kRoomTextFieldMargin, kRoomTextFieldMargin, roomTextWidth,
-                 roomTextHeight);
+  _roomText.frame = CGRectMake(kRoomTextFieldMargin,
+                               kRoomTextFieldMargin,
+                               roomTextWidth,
+                               roomTextHeight);
 
   CGFloat buttonHeight =
-      (CGRectGetMaxY(self.bounds) - CGRectGetMaxY(_roomText.frame) - kCallControlMargin * 4) / 3;
+      (CGRectGetMaxY(self.bounds) - CGRectGetMaxY(_roomText.frame) -
+       kCallControlMargin * 4) /
+      3;
 
-  CGFloat regularCallFrameTop = CGRectGetMaxY(_roomText.frame) + kCallControlMargin;
-  CGRect regularCallFrame = CGRectMake(kCallControlMargin,
-                                       regularCallFrameTop,
-                                       bounds.size.width - 2*kCallControlMargin,
-                                       buttonHeight);
+  CGFloat regularCallFrameTop =
+      CGRectGetMaxY(_roomText.frame) + kCallControlMargin;
+  CGRect regularCallFrame =
+      CGRectMake(kCallControlMargin,
+                 regularCallFrameTop,
+                 bounds.size.width - 2 * kCallControlMargin,
+                 buttonHeight);
 
-  CGFloat loopbackCallFrameTop = CGRectGetMaxY(regularCallFrame) + kCallControlMargin;
-  CGRect loopbackCallFrame = CGRectMake(kCallControlMargin,
-                                        loopbackCallFrameTop,
-                                        bounds.size.width - 2*kCallControlMargin,
-                                        buttonHeight);
+  CGFloat loopbackCallFrameTop =
+      CGRectGetMaxY(regularCallFrame) + kCallControlMargin;
+  CGRect loopbackCallFrame =
+      CGRectMake(kCallControlMargin,
+                 loopbackCallFrameTop,
+                 bounds.size.width - 2 * kCallControlMargin,
+                 buttonHeight);
 
   CGFloat audioLoopTop = CGRectGetMaxY(loopbackCallFrame) + kCallControlMargin;
   CGRect audioLoopFrame = CGRectMake(kCallControlMargin,
                                      audioLoopTop,
-                                     bounds.size.width - 2*kCallControlMargin,
+                                     bounds.size.width - 2 * kCallControlMargin,
                                      buttonHeight);
 
   _startRegularCallButton.frame = regularCallFrame;

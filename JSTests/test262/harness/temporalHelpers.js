@@ -369,7 +369,7 @@ var TemporalHelpers = {
     assert(expected instanceof Temporal.ZonedDateTime, `${prefix}expected value should be a Temporal.ZonedDateTime`);
     assert(actual instanceof Temporal.ZonedDateTime, `${prefix}instanceof`);
     assert(actual.equals(expected), `${prefix}equals method`);
-    assert.sameValue(actual.timeZone, expected.timeZone, `${prefix}time zone same value:`);
+    assert.sameValue(actual.timeZoneId, expected.timeZoneId, `${prefix}time zone same value:`);
     assert.sameValue(
       actual.calendarId,
       expected.calendarId,

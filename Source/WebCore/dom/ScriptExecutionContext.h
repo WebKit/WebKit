@@ -336,7 +336,7 @@ public:
 
     void registerServiceWorker(ServiceWorker&);
     void unregisterServiceWorker(ServiceWorker&);
-    inline ServiceWorker* serviceWorker(ServiceWorkerIdentifier);
+    inline ServiceWorker* serviceWorker(ServiceWorkerIdentifier); // Defined in ScriptExecutionContextInlines.h.
 
     ServiceWorkerContainer* serviceWorkerContainer();
     ServiceWorkerContainer* ensureServiceWorkerContainer();

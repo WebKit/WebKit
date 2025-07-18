@@ -149,6 +149,7 @@ public:
         NavigationAction,
         NavigationData,
         NavigationResponse,
+        NodeInfo,
         Notification,
         NotificationManager,
         NotificationPermissionRequest,

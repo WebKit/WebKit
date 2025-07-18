@@ -1,0 +1,376 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "FALSE"},
+      {"access": "public", "name": "TRUE"}
+     ],
+     "name": "DYLD_BOOL"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLinkEditFileAccessError"},
+      {"access": "public", "name": "NSLinkEditFileFormatError"},
+      {"access": "public", "name": "NSLinkEditMachResourceError"},
+      {"access": "public", "name": "NSLinkEditUnixResourceError"},
+      {"access": "public", "name": "NSLinkEditOtherError"},
+      {"access": "public", "name": "NSLinkEditWarningError"},
+      {"access": "public", "name": "NSLinkEditMultiplyDefinedError"},
+      {"access": "public", "name": "NSLinkEditUndefinedError"}
+     ],
+     "name": "NSLinkEditErrors"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSObjectFileImageFailure"},
+      {"access": "public", "name": "NSObjectFileImageSuccess"},
+      {"access": "public", "name": "NSObjectFileImageInappropriateFile"},
+      {"access": "public", "name": "NSObjectFileImageArch"},
+      {"access": "public", "name": "NSObjectFileImageFormat"},
+      {"access": "public", "name": "NSObjectFileImageAccess"}
+     ],
+     "name": "NSObjectFileImageReturnCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSOtherErrorRelocation"},
+      {"access": "public", "name": "NSOtherErrorLazyBind"},
+      {"access": "public", "name": "NSOtherErrorIndrLoop"},
+      {"access": "public", "name": "NSOtherErrorLazyInit"},
+      {"access": "public", "name": "NSOtherErrorInvalidArgs"}
+     ],
+     "name": "NSOtherErrorNumbers"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "dyld_image_adding"},
+      {"access": "public", "name": "dyld_image_removing"},
+      {"access": "public", "name": "dyld_image_info_change"},
+      {"access": "public", "name": "dyld_image_dyld_moved"}
+     ],
+     "name": "dyld_image_mode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "dyld_error_kind_none"},
+      {"access": "public", "name": "dyld_error_kind_dylib_missing"},
+      {"access": "public", "name": "dyld_error_kind_dylib_wrong_arch"},
+      {"access": "public", "name": "dyld_error_kind_dylib_version"},
+      {"access": "public", "name": "dyld_error_kind_symbol_missing"}
+     ],
+     "name": "enum (unnamed at dyld_images.h:1091)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT"},
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND"},
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND64"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:2941)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_NONE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_MULTI"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_LAST"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:741)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32_FIRMWARE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64_OFFSET"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_OFFSET"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_KERNEL"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64_KERNEL_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_USERLAND"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_FIRMWARE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_X86_64_KERNEL_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_USERLAND24"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SHARED_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SEGMENTED"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:901)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddLibrary", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddLibraryWithSearching", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddressOfSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSCreateObjectFileImageFromFile", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSCreateObjectFileImageFromMemory", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSDestroyObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSGetSectionDataInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSInstallLinkEditErrorHandlers", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolDefinedInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefined", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefinedInImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefinedWithHint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLibraryNameForModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLinkEditError", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLinkModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupAndBindSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupAndBindSymbolWithHint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupSymbolInImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupSymbolInModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSModuleForSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSNameOfModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSNameOfSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolDefinitionCountInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolDefinitionNameInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolReferenceCountInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolReferenceNameInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSUnLinkModule", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfLinkTimeLibrary"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfRunTimeLibrary"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__NSGetExecutablePath"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_all_twolevel_modules_prebound", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_bind_fully_image_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_header"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_header_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_name"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_vmaddr_slide"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_image_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_image_count"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_launched_prebound", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind_fully", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind_with_hint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_present", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_add_image"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_remove_image"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "__dyld_shared_cache_contains_path"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_atexit"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_bootstrap"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dladdr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlclose"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlerror"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlopen"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_dlopen_preflight"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlsym"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_cpu_type"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_mach_header"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice_in_fd"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_cpu_type_for_arch_name"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice_in_fd"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "Dl_info"},
+    {"access": "public", "name": "NSLinkEditErrorHandlers"},
+    {"access": "public", "name": "NSLinkEditErrors"},
+    {"access": "public", "name": "NSModule"},
+    {"access": "public", "name": "NSObjectFileImage"},
+    {"access": "public", "name": "NSObjectFileImageReturnCode"},
+    {"access": "public", "name": "NSOtherErrorNumbers"},
+    {"access": "public", "name": "NSSymbol"},
+    {"access": "public", "name": "dyld_image_notifier"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "FALSE"},
+      {"access": "public", "name": "TRUE"}
+     ],
+     "name": "DYLD_BOOL"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLinkEditFileAccessError"},
+      {"access": "public", "name": "NSLinkEditFileFormatError"},
+      {"access": "public", "name": "NSLinkEditMachResourceError"},
+      {"access": "public", "name": "NSLinkEditUnixResourceError"},
+      {"access": "public", "name": "NSLinkEditOtherError"},
+      {"access": "public", "name": "NSLinkEditWarningError"},
+      {"access": "public", "name": "NSLinkEditMultiplyDefinedError"},
+      {"access": "public", "name": "NSLinkEditUndefinedError"}
+     ],
+     "name": "NSLinkEditErrors"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSObjectFileImageFailure"},
+      {"access": "public", "name": "NSObjectFileImageSuccess"},
+      {"access": "public", "name": "NSObjectFileImageInappropriateFile"},
+      {"access": "public", "name": "NSObjectFileImageArch"},
+      {"access": "public", "name": "NSObjectFileImageFormat"},
+      {"access": "public", "name": "NSObjectFileImageAccess"}
+     ],
+     "name": "NSObjectFileImageReturnCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSOtherErrorRelocation"},
+      {"access": "public", "name": "NSOtherErrorLazyBind"},
+      {"access": "public", "name": "NSOtherErrorIndrLoop"},
+      {"access": "public", "name": "NSOtherErrorLazyInit"},
+      {"access": "public", "name": "NSOtherErrorInvalidArgs"}
+     ],
+     "name": "NSOtherErrorNumbers"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "dyld_image_adding"},
+      {"access": "public", "name": "dyld_image_removing"},
+      {"access": "public", "name": "dyld_image_info_change"},
+      {"access": "public", "name": "dyld_image_dyld_moved"}
+     ],
+     "name": "dyld_image_mode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "dyld_error_kind_none"},
+      {"access": "public", "name": "dyld_error_kind_dylib_missing"},
+      {"access": "public", "name": "dyld_error_kind_dylib_wrong_arch"},
+      {"access": "public", "name": "dyld_error_kind_dylib_version"},
+      {"access": "public", "name": "dyld_error_kind_symbol_missing"}
+     ],
+     "name": "enum (unnamed at dyld_images.h:1091)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT"},
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND"},
+      {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND64"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:2941)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_NONE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_MULTI"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_START_LAST"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:741)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_32_FIRMWARE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64_OFFSET"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_OFFSET"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_KERNEL"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_64_KERNEL_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_USERLAND"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_FIRMWARE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_X86_64_KERNEL_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_USERLAND24"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SHARED_CACHE"},
+      {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SEGMENTED"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:901)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddLibrary", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddLibraryWithSearching", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSAddressOfSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSCreateObjectFileImageFromFile", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSCreateObjectFileImageFromMemory", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSDestroyObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSGetSectionDataInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSInstallLinkEditErrorHandlers", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolDefinedInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefined", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefinedInImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSIsSymbolNameDefinedWithHint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLibraryNameForModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLinkEditError", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLinkModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupAndBindSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupAndBindSymbolWithHint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupSymbolInImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSLookupSymbolInModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSModuleForSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSNameOfModule", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSNameOfSymbol", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolDefinitionCountInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolDefinitionNameInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolReferenceCountInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSSymbolReferenceNameInObjectFileImage", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSUnLinkModule", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfLinkTimeLibrary"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfRunTimeLibrary"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__NSGetExecutablePath"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_all_twolevel_modules_prebound", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_bind_fully_image_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_header"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_header_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_name"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_get_image_vmaddr_slide"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_image_containing_address", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_image_count"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_launched_prebound", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind_fully", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_lookup_and_bind_with_hint", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_present", "unavailable": true},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_add_image"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_remove_image"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "__dyld_shared_cache_contains_path"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_atexit"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_bootstrap"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dladdr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlclose"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlerror"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlopen"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_dlopen_preflight"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlsym"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_cpu_type"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_mach_header"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice_in_fd"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_cpu_type_for_arch_name"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice_in_fd"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "Dl_info"},
+    {"access": "public", "name": "NSLinkEditErrorHandlers"},
+    {"access": "public", "name": "NSLinkEditErrors"},
+    {"access": "public", "name": "NSModule"},
+    {"access": "public", "name": "NSObjectFileImage"},
+    {"access": "public", "name": "NSObjectFileImageReturnCode"},
+    {"access": "public", "name": "NSOtherErrorNumbers"},
+    {"access": "public", "name": "NSSymbol"},
+    {"access": "public", "name": "dyld_image_notifier"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

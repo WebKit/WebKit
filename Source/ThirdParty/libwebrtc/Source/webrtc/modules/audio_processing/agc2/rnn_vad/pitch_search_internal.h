@@ -24,8 +24,8 @@ namespace webrtc {
 namespace rnn_vad {
 
 // Performs 2x decimation without any anti-aliasing filter.
-void Decimate2x(rtc::ArrayView<const float, kBufSize24kHz> src,
-                rtc::ArrayView<float, kBufSize12kHz> dst);
+void Decimate2x(ArrayView<const float, kBufSize24kHz> src,
+                ArrayView<float, kBufSize12kHz> dst);
 
 // Key concepts and keywords used below in this file.
 //
@@ -65,8 +65,8 @@ void Decimate2x(rtc::ArrayView<const float, kBufSize24kHz> src,
 // Computes the sum of squared samples for every sliding frame `y` in the pitch
 // buffer. The indexes of `y_energy` are inverted lags.
 void ComputeSlidingFrameSquareEnergies24kHz(
-    rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    rtc::ArrayView<float, kRefineNumLags24kHz> y_energy,
+    ArrayView<const float, kBufSize24kHz> pitch_buffer,
+    ArrayView<float, kRefineNumLags24kHz> y_energy,
     AvailableCpuFeatures cpu_features);
 
 // Top-2 pitch period candidates. Unit: number of samples - i.e., inverted lags.
@@ -79,16 +79,16 @@ struct CandidatePitchPeriods {
 // pitch buffer and the auto-correlation values (having inverted lags as
 // indexes).
 CandidatePitchPeriods ComputePitchPeriod12kHz(
-    rtc::ArrayView<const float, kBufSize12kHz> pitch_buffer,
-    rtc::ArrayView<const float, kNumLags12kHz> auto_correlation,
+    ArrayView<const float, kBufSize12kHz> pitch_buffer,
+    ArrayView<const float, kNumLags12kHz> auto_correlation,
     AvailableCpuFeatures cpu_features);
 
 // Computes the pitch period at 48 kHz given a view on the 24 kHz pitch buffer,
 // the energies for the sliding frames `y` at 24 kHz and the pitch period
 // candidates at 24 kHz (encoded as inverted lag).
 int ComputePitchPeriod48kHz(
-    rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    rtc::ArrayView<const float, kRefineNumLags24kHz> y_energy,
+    ArrayView<const float, kBufSize24kHz> pitch_buffer,
+    ArrayView<const float, kRefineNumLags24kHz> y_energy,
     CandidatePitchPeriods pitch_candidates_24kHz,
     AvailableCpuFeatures cpu_features);
 
@@ -102,8 +102,8 @@ struct PitchInfo {
 // `y` at 24 kHz, the initial 48 kHz estimation (computed by
 // `ComputePitchPeriod48kHz()`) and the last estimated pitch.
 PitchInfo ComputeExtendedPitchPeriod48kHz(
-    rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    rtc::ArrayView<const float, kRefineNumLags24kHz> y_energy,
+    ArrayView<const float, kBufSize24kHz> pitch_buffer,
+    ArrayView<const float, kRefineNumLags24kHz> y_energy,
     int initial_pitch_period_48kHz,
     PitchInfo last_pitch_48kHz,
     AvailableCpuFeatures cpu_features);

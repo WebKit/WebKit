@@ -12,11 +12,19 @@
 
 #include <stdlib.h>
 
+#include <cstdint>
+#include <optional>
 #include <string>
+#include <utility>
 
 #include "absl/memory/memory.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment_factory.h"
+#include "api/make_ref_counted.h"
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
+#include "modules/audio_coding/neteq/packet.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder.h"
@@ -65,7 +73,7 @@ TEST(DecoderDatabase, InsertAndRemoveAll) {
 }
 
 TEST(DecoderDatabase, GetDecoderInfo) {
-  auto factory = rtc::make_ref_counted<MockAudioDecoderFactory>();
+  auto factory = make_ref_counted<MockAudioDecoderFactory>();
   auto* decoder = new MockAudioDecoder;
   EXPECT_CALL(*factory, Create)
       .WillOnce(WithArg<1>([decoder](const SdpAudioFormat& format) {
@@ -80,12 +88,12 @@ TEST(DecoderDatabase, GetDecoderInfo) {
       db.RegisterPayload(kPayloadType, SdpAudioFormat(kCodecName, 8000, 1)));
   const DecoderDatabase::DecoderInfo* info;
   info = db.GetDecoderInfo(kPayloadType);
-  ASSERT_TRUE(info != NULL);
+  ASSERT_TRUE(info != nullptr);
   EXPECT_TRUE(info->IsType("pcmu"));
   EXPECT_EQ(kCodecName, info->get_name());
   EXPECT_EQ(decoder, db.GetDecoder(kPayloadType));
   info = db.GetDecoderInfo(kPayloadType + 1);  // Other payload type.
-  EXPECT_TRUE(info == NULL);                   // Should not be found.
+  EXPECT_TRUE(info == nullptr);                // Should not be found.
 }
 
 TEST(DecoderDatabase, GetDecoder) {
@@ -95,7 +103,7 @@ TEST(DecoderDatabase, GetDecoder) {
   EXPECT_EQ(DecoderDatabase::kOK,
             db.RegisterPayload(kPayloadType, SdpAudioFormat("l16", 8000, 1)));
   AudioDecoder* dec = db.GetDecoder(kPayloadType);
-  ASSERT_TRUE(dec != NULL);
+  ASSERT_TRUE(dec != nullptr);
 }
 
 TEST(DecoderDatabase, TypeTests) {
@@ -185,40 +193,40 @@ TEST(DecoderDatabase, IF_ISAC(ActiveDecoders)) {
   ASSERT_EQ(DecoderDatabase::kOK,
             db.RegisterPayload(13, SdpAudioFormat("cn", 8000, 1)));
   // Verify that no decoders are active from the start.
-  EXPECT_EQ(NULL, db.GetActiveDecoder());
-  EXPECT_EQ(NULL, db.GetActiveCngDecoder());
+  EXPECT_EQ(nullptr, db.GetActiveDecoder());
+  EXPECT_EQ(nullptr, db.GetActiveCngDecoder());
 
   // Set active speech codec.
   bool changed;  // Should be true when the active decoder changed.
   EXPECT_EQ(DecoderDatabase::kOK, db.SetActiveDecoder(0, &changed));
   EXPECT_TRUE(changed);
   AudioDecoder* decoder = db.GetActiveDecoder();
-  ASSERT_FALSE(decoder == NULL);  // Should get a decoder here.
+  ASSERT_FALSE(decoder == nullptr);  // Should get a decoder here.
 
   // Set the same again. Expect no change.
   EXPECT_EQ(DecoderDatabase::kOK, db.SetActiveDecoder(0, &changed));
   EXPECT_FALSE(changed);
   decoder = db.GetActiveDecoder();
-  ASSERT_FALSE(decoder == NULL);  // Should get a decoder here.
+  ASSERT_FALSE(decoder == nullptr);  // Should get a decoder here.
 
   // Change active decoder.
   EXPECT_EQ(DecoderDatabase::kOK, db.SetActiveDecoder(103, &changed));
   EXPECT_TRUE(changed);
   decoder = db.GetActiveDecoder();
-  ASSERT_FALSE(decoder == NULL);  // Should get a decoder here.
+  ASSERT_FALSE(decoder == nullptr);  // Should get a decoder here.
 
   // Remove the active decoder, and verify that the active becomes NULL.
   EXPECT_EQ(DecoderDatabase::kOK, db.Remove(103));
-  EXPECT_EQ(NULL, db.GetActiveDecoder());
+  EXPECT_EQ(nullptr, db.GetActiveDecoder());
 
   // Set active CNG codec.
   EXPECT_EQ(DecoderDatabase::kOK, db.SetActiveCngDecoder(13));
   ComfortNoiseDecoder* cng = db.GetActiveCngDecoder();
-  ASSERT_FALSE(cng == NULL);  // Should get a decoder here.
+  ASSERT_FALSE(cng == nullptr);  // Should get a decoder here.
 
   // Remove the active CNG decoder, and verify that the active becomes NULL.
   EXPECT_EQ(DecoderDatabase::kOK, db.Remove(13));
-  EXPECT_EQ(NULL, db.GetActiveCngDecoder());
+  EXPECT_EQ(nullptr, db.GetActiveCngDecoder());
 
   // Try to set non-existing codecs as active.
   EXPECT_EQ(DecoderDatabase::kDecoderNotFound,

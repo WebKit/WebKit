@@ -28,6 +28,7 @@
 
 #include "ClipRect.h"
 #include "ColorSerialization.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "FrameSelection.h"
@@ -160,7 +161,7 @@ String quoteAndEscapeNonPrintables(StringView s)
     StringBuilder result;
     result.append('"');
     for (unsigned i = 0; i != s.length(); ++i) {
-        UChar c = s[i];
+        char16_t c = s[i];
         if (c == '\\') {
             result.append("\\\\"_s);
         } else if (c == '"') {

@@ -171,6 +171,7 @@ enum class ModalContainerDecision : uint8_t;
 enum class PlatformEventModifier : uint8_t;
 enum class PluginUnavailabilityReason : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+enum class ScriptTrackingPrivacyCategory : uint8_t;
 enum class TextAnimationRunMode : uint8_t;
 
 enum class MediaProducerMediaState : uint32_t;
@@ -671,6 +672,7 @@ public:
 #endif
 
     virtual bool requiresScriptTrackingPrivacyProtections(const URL&, const SecurityOrigin& /* topOrigin */) const { return false; }
+    virtual bool shouldAllowScriptAccess(const URL&, const WebCore::SecurityOrigin&, ScriptTrackingPrivacyCategory) const { return true; }
 
     virtual void animationDidFinishForElement(const Element&) { }
 

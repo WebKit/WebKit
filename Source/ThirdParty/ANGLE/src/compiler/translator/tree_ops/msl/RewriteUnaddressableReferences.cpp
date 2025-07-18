@@ -162,6 +162,7 @@ bool IsLValueUnaryOp(TOperator op)
         case EOpArrayLength:
             return false;
         default:
+            break;
     }
     // At the time, we cannot use UNREACHABLE(); because builtin function calls might be unary ops.
     return false;

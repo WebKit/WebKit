@@ -25,7 +25,7 @@ namespace webrtc {
 namespace test {
 
 class MacCapturer : public TestVideoCapturer,
-                    public rtc::VideoSinkInterface<VideoFrame> {
+                    public VideoSinkInterface<VideoFrame> {
  public:
   static MacCapturer* Create(size_t width,
                              size_t height,

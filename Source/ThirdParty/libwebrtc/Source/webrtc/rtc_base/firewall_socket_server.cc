@@ -21,7 +21,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
-namespace rtc {
+namespace webrtc {
 
 class FirewallSocket : public AsyncSocketAdapter {
  public:
@@ -110,7 +110,7 @@ class FirewallSocket : public AsyncSocketAdapter {
                           << addr.ToSensitiveString() << " to "
                           << GetLocalAddress().ToSensitiveString() << " denied";
     }
-    return 0;
+    return nullptr;
   }
 
  private:
@@ -163,19 +163,19 @@ void FirewallSocketServer::AddRule(bool allow,
   r.p = p;
   r.src = src;
   r.dst = dst;
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   rules_.push_back(r);
 }
 
 void FirewallSocketServer::ClearRules() {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   rules_.clear();
 }
 
 bool FirewallSocketServer::Check(FirewallProtocol p,
                                  const SocketAddress& src,
                                  const SocketAddress& dst) {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   for (size_t i = 0; i < rules_.size(); ++i) {
     const Rule& r = rules_[i];
     if ((r.p != p) && (r.p != FP_ANY))
@@ -194,11 +194,11 @@ bool FirewallSocketServer::Check(FirewallProtocol p,
 }
 
 void FirewallSocketServer::SetUnbindableIps(
-    const std::vector<rtc::IPAddress>& unbindable_ips) {
+    const std::vector<IPAddress>& unbindable_ips) {
   unbindable_ips_ = unbindable_ips;
 }
 
-bool FirewallSocketServer::IsBindableIp(const rtc::IPAddress& ip) {
+bool FirewallSocketServer::IsBindableIp(const IPAddress& ip) {
   return !absl::c_linear_search(unbindable_ips_, ip);
 }
 
@@ -210,8 +210,7 @@ void FirewallSocketServer::SetMessageQueue(Thread* queue) {
   server_->SetMessageQueue(queue);
 }
 
-bool FirewallSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
-                                bool process_io) {
+bool FirewallSocketServer::Wait(TimeDelta max_wait_duration, bool process_io) {
   return server_->Wait(max_wait_duration, process_io);
 }
 
@@ -236,12 +235,12 @@ FirewallManager::~FirewallManager() {
 }
 
 void FirewallManager::AddServer(FirewallSocketServer* server) {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   servers_.push_back(server);
 }
 
 void FirewallManager::RemoveServer(FirewallSocketServer* server) {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   servers_.erase(std::remove(servers_.begin(), servers_.end(), server),
                  servers_.end());
 }
@@ -250,7 +249,7 @@ void FirewallManager::AddRule(bool allow,
                               FirewallProtocol p,
                               FirewallDirection d,
                               const SocketAddress& addr) {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   for (std::vector<FirewallSocketServer*>::const_iterator it = servers_.begin();
        it != servers_.end(); ++it) {
     (*it)->AddRule(allow, p, d, addr);
@@ -258,11 +257,11 @@ void FirewallManager::AddRule(bool allow,
 }
 
 void FirewallManager::ClearRules() {
-  webrtc::MutexLock scope(&mutex_);
+  MutexLock scope(&mutex_);
   for (std::vector<FirewallSocketServer*>::const_iterator it = servers_.begin();
        it != servers_.end(); ++it) {
     (*it)->ClearRules();
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

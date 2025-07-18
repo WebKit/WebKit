@@ -88,14 +88,14 @@ static NSCalendarUnit toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
 PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Recurring);
-    PKRecurringPaymentSummaryItem *summaryItem = [PAL::getPKRecurringPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    RetainPtr<PKRecurringPaymentSummaryItem> summaryItem = [PAL::getPKRecurringPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
     if (!lineItem.recurringPaymentStartDate.isNaN())
-        summaryItem.startDate = toDate(lineItem.recurringPaymentStartDate);
-    summaryItem.intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
-    summaryItem.intervalCount = lineItem.recurringPaymentIntervalCount;
+        summaryItem.get().startDate = toDate(lineItem.recurringPaymentStartDate);
+    summaryItem.get().intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
+    summaryItem.get().intervalCount = lineItem.recurringPaymentIntervalCount;
     if (!lineItem.recurringPaymentEndDate.isNaN())
-        summaryItem.endDate = toDate(lineItem.recurringPaymentEndDate);
-    return summaryItem;
+        summaryItem.get().endDate = toDate(lineItem.recurringPaymentEndDate);
+    return summaryItem.get();
 }
 
 #endif // HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
@@ -105,10 +105,10 @@ PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const ApplePayLineIt
 PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Deferred);
-    PKDeferredPaymentSummaryItem *summaryItem = [PAL::getPKDeferredPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    RetainPtr<PKDeferredPaymentSummaryItem> summaryItem = [PAL::getPKDeferredPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
     if (!lineItem.deferredPaymentDate.isNaN())
-        summaryItem.deferredDate = toDate(lineItem.deferredPaymentDate);
-    return summaryItem;
+        summaryItem.get().deferredDate = toDate(lineItem.deferredPaymentDate);
+    return summaryItem.get();
 }
 
 #endif // HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
@@ -118,9 +118,9 @@ PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem
 PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::AutomaticReload);
-    PKAutomaticReloadPaymentSummaryItem *summaryItem = [PAL::getPKAutomaticReloadPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
-    summaryItem.thresholdAmount = toDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount);
-    return summaryItem;
+    RetainPtr<PKAutomaticReloadPaymentSummaryItem> summaryItem = [PAL::getPKAutomaticReloadPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    summaryItem.get().thresholdAmount = toDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount);
+    return summaryItem.get();
 }
 
 #endif // HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
@@ -130,15 +130,13 @@ PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const Ap
 PKDisbursementSummaryItem *platformDisbursementSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::Disbursement);
-    PKDisbursementSummaryItem *summaryItem = [PAL::getPKDisbursementSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount)];
-    return summaryItem;
+    return [PAL::getPKDisbursementSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount)];
 }
 
 PKInstantFundsOutFeeSummaryItem *platformInstantFundsOutFeeSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::InstantFundsOutFee);
-    PKInstantFundsOutFeeSummaryItem *summaryItem = [PAL::getPKInstantFundsOutFeeSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount)];
-    return summaryItem;
+    return [PAL::getPKInstantFundsOutFeeSummaryItemClass() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toDecimalNumber(lineItem.amount)];
 }
 
 #endif // HAVE(PASSKIT_DISBURSEMENTS)
@@ -185,8 +183,8 @@ NSArray *platformDisbursementSummaryItems(const Vector<ApplePayLineItem>& lineIt
 {
     NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:lineItems.size()];
     for (auto& lineItem : lineItems) {
-        if (PKPaymentSummaryItem *summaryItem = platformSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem];
+        if (RetainPtr summaryItem = platformSummaryItem(lineItem))
+            [paymentSummaryItems addObject:summaryItem.get()];
     }
     return adoptNS([paymentSummaryItems copy]).autorelease();
 }
@@ -196,12 +194,12 @@ NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<AppleP
 {
     NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:lineItems.size() + 1];
     for (auto& lineItem : lineItems) {
-        if (PKPaymentSummaryItem *summaryItem = platformSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem];
+        if (RetainPtr summaryItem = platformSummaryItem(lineItem))
+            [paymentSummaryItems addObject:summaryItem.get()];
     }
 
-    if (PKPaymentSummaryItem *totalItem = platformSummaryItem(total))
-        [paymentSummaryItems addObject:totalItem];
+    if (RetainPtr totalItem = platformSummaryItem(total))
+        [paymentSummaryItems addObject:totalItem.get()];
 
     return adoptNS([paymentSummaryItems copy]).autorelease();
 }

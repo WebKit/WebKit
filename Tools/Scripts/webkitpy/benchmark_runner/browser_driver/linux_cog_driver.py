@@ -36,8 +36,11 @@ class CogBrowserDriver(LinuxBrowserDriver):
     def launch_url(self, url, options, browser_build_path, browser_path):
         self._default_browser_arguments = []
         if self.process_name.endswith('run-minibrowser'):
-            self._default_browser_arguments.append('--wpe')
+            self._default_browser_arguments.extend(['--wpe', '--'])
         self._default_browser_arguments.append('--webprocess-failure=exit')
+        if self.browser_args:
+            self._default_browser_arguments.extend(self.browser_args)
+            self.browser_args = []
         self._default_browser_arguments.append(url)
         super(CogBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 

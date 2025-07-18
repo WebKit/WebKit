@@ -48,18 +48,18 @@ namespace WebKit {
 
 class LibWebRTCSocketFactory;
 
-class LibWebRTCSocket final : public rtc::AsyncPacketSocket, public CanMakeCheckedPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
+class LibWebRTCSocket final : public webrtc::AsyncPacketSocket, public CanMakeCheckedPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocket);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocket);
 public:
     enum class Type { UDP, ClientTCP, ServerConnectionTCP };
 
-    LibWebRTCSocket(LibWebRTCSocketFactory&, WebCore::ScriptExecutionContextIdentifier, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
+    LibWebRTCSocket(LibWebRTCSocketFactory&, WebCore::ScriptExecutionContextIdentifier, Type, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress);
     ~LibWebRTCSocket();
 
     WebCore::ScriptExecutionContextIdentifier contextIdentifier() const { return m_contextIdentifier; }
-    const rtc::SocketAddress& localAddress() const { return m_localAddress; }
-    const rtc::SocketAddress& remoteAddress() const { return m_remoteAddress; }
+    const webrtc::SocketAddress& localAddress() const { return m_localAddress; }
+    const webrtc::SocketAddress& remoteAddress() const { return m_remoteAddress; }
 
     void setError(int error) { m_error = error; }
     void setState(State state) { m_state = state; }
@@ -71,9 +71,9 @@ private:
     bool willSend(size_t);
 
     friend class LibWebRTCNetwork;
-    void signalReadPacket(std::span<const uint8_t>, rtc::SocketAddress&&, int64_t, rtc::EcnMarking);
+    void signalReadPacket(std::span<const uint8_t>, webrtc::SocketAddress&&, int64_t, webrtc::EcnMarking);
     void signalSentPacket(int64_t, int64_t);
-    void signalAddressReady(const rtc::SocketAddress&);
+    void signalAddressReady(const webrtc::SocketAddress&);
     void signalConnect();
     void signalClose(int);
     void signalUsedInterface(String&&);
@@ -81,24 +81,24 @@ private:
     // AsyncPacketSocket API
     int GetError() const final { return m_error; }
     void SetError(int error) final { setError(error); }
-    rtc::SocketAddress GetLocalAddress() const final;
-    rtc::SocketAddress GetRemoteAddress() const final;
-    int Send(const void *pv, size_t cb, const rtc::PacketOptions& options) final { return SendTo(pv, cb, m_remoteAddress, options); }
-    int SendTo(const void *, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
+    webrtc::SocketAddress GetLocalAddress() const final;
+    webrtc::SocketAddress GetRemoteAddress() const final;
+    int Send(const void *pv, size_t cb, const webrtc::AsyncSocketPacketOptions& options) final { return SendTo(pv, cb, m_remoteAddress, options); }
+    int SendTo(const void *, size_t, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&) final;
     int Close() final;
     State GetState() const final { return m_state; }
-    int GetOption(rtc::Socket::Option, int*) final;
-    int SetOption(rtc::Socket::Option, int) final;
+    int GetOption(webrtc::Socket::Option, int*) final;
+    int SetOption(webrtc::Socket::Option, int) final;
 
     const CheckedRef<LibWebRTCSocketFactory> m_factory;
     Type m_type;
-    rtc::SocketAddress m_localAddress;
-    rtc::SocketAddress m_remoteAddress;
+    webrtc::SocketAddress m_localAddress;
+    webrtc::SocketAddress m_remoteAddress;
 
     int m_error { 0 };
     State m_state { STATE_BINDING };
 
-    StdMap<rtc::Socket::Option, int> m_options;
+    StdMap<webrtc::Socket::Option, int> m_options;
 
     bool m_isSuspended { false };
     WebCore::ScriptExecutionContextIdentifier m_contextIdentifier;

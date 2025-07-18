@@ -65,7 +65,7 @@ public:
 
 class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient, public CanMakeCheckedPtr<TextTrackLoader> {
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextTrackLoader, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackLoader);
 public:
     TextTrackLoader(TextTrackLoaderClient&, Document&);

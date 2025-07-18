@@ -35,7 +35,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WTF {
 
 class StackBounds {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackBounds);
 public:
 
     // This 64k number was picked because a sampling of stack usage differences

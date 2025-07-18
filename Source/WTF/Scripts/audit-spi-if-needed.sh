@@ -22,6 +22,7 @@ if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
     done
 
     for arch in ${ARCHS}; do
+         # FIXME: Remove --no-errors to enforce no new SPI in the build.
         (set -x && "${program}" \
          --sdkdb-dir "${versioned_sdkdb_dir}" \
          --sdkdb-cache "${OBJROOT}/WebKitSDKDBs/${SDK_NAME}.sqlite3" \
@@ -29,6 +30,8 @@ if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
          --depfile "${depfile}" \
          -F "${BUILT_PRODUCTS_DIR}" \
          -L "${BUILT_PRODUCTS_DIR}" \
+         @"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/platform-enabled-swift-args.${arch}.resp" \
+         --no-errors \
          $@)
      done
 else

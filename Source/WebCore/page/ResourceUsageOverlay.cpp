@@ -63,7 +63,7 @@ ResourceUsageOverlay::~ResourceUsageOverlay()
     ASSERT(isMainThread());
     platformDestroy();
     if (RefPtr page = m_page.get())
-        page->pageOverlayController().uninstallPageOverlay(*m_overlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
+        page->pageOverlayController().uninstallPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
 }
 
 void ResourceUsageOverlay::initialize()
@@ -81,9 +81,8 @@ void ResourceUsageOverlay::initialize()
     initialRect.setY(20);
 #endif
 
-    RefPtr overlay = m_overlay;
-    overlay->setFrame(initialRect);
-    page->pageOverlayController().installPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
+    m_overlay->setFrame(initialRect);
+    page->pageOverlayController().installPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
     platformInitialize();
 }
 
@@ -92,18 +91,17 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
     if (event.button() != MouseButton::Left)
         return false;
 
-    RefPtr overlay = m_overlay;
     switch (event.type()) {
     case PlatformEvent::Type::MousePressed: {
-        overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
+        m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
         m_dragging = true;
-        IntPoint location = overlay->frame().location();
+        IntPoint location = m_overlay->frame().location();
         m_dragPoint = event.position() + IntPoint(-location.x(), -location.y());
         return true;
     }
     case PlatformEvent::Type::MouseReleased:
         if (m_dragging) {
-            overlay->setShouldIgnoreMouseEventsOutsideBounds(true);
+            m_overlay->setShouldIgnoreMouseEventsOutsideBounds(true);
             m_dragging = false;
             return true;
         }
@@ -113,7 +111,7 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             RefPtr page = m_page.get();
             if (!page)
                 return false;
-            IntRect newFrame = overlay->frame();
+            IntRect newFrame = m_overlay->frame();
 
             // Move the new frame relative to the point where the drag was initiated.
             newFrame.setLocation(event.position());
@@ -129,8 +127,8 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             if (newFrame.maxY() > frameView.height())
                 newFrame.setY(frameView.height() - newFrame.height());
 
-            overlay->setFrame(newFrame);
-            overlay->setNeedsDisplay();
+            m_overlay->setFrame(newFrame);
+            m_overlay->setNeedsDisplay();
             return true;
         }
         break;

@@ -31,6 +31,7 @@
 #include "PathOperation.h"
 #include "PathTraversalState.h"
 #include "RenderBlock.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "TransformOperationData.h"
 #include "TransformationMatrix.h"

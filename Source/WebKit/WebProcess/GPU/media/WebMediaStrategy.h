@@ -49,9 +49,6 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-    std::unique_ptr<WebCore::MediaRecorderPrivateWriter> createMediaRecorderPrivateWriter(WebCore::MediaRecorderContainerType, WebCore::MediaRecorderPrivateWriterListener&) const final;
-#endif
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void nativeImageFromVideoFrame(const WebCore::VideoFrame&, CompletionHandler<void(std::optional<RefPtr<WebCore::NativeImage>>&&)>&&) final;
 #endif

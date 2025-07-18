@@ -1,10 +1,10 @@
 
 FAIL computedStyleMap serialization of width: calc-size(auto, size) assert_equals: expected "calc-size(auto, size)" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(fit-content, size) assert_equals: expected "calc-size(fit-content, size)" but got "auto"
-FAIL computedStyleMap serialization of height: calc-size(min-content, size * 2) assert_equals: expected "calc-size(min-content, size * 2)" but got "auto"
-FAIL computedStyleMap serialization of max-width: calc-size(max-content, size / 2) assert_equals: expected "calc-size(max-content, size * 0.5)" but got "none"
-FAIL computedStyleMap serialization of max-height: calc-size(fit-content, 30px + size / 2) assert_equals: expected "calc-size(fit-content, 30px + size * 0.5)" but got "none"
-FAIL computedStyleMap serialization of width: calc-size(fit-content, 50% + size / 2) assert_equals: expected "calc-size(fit-content, 50% + size * 0.5)" but got "auto"
+FAIL computedStyleMap serialization of height: calc-size(min-content, size * 2) assert_equals: expected "calc-size(min-content, 2 * size)" but got "auto"
+FAIL computedStyleMap serialization of max-width: calc-size(max-content, size / 2) assert_equals: expected "calc-size(max-content, (0.5 * size))" but got "none"
+FAIL computedStyleMap serialization of max-height: calc-size(fit-content, 30px + size / 2) assert_equals: expected "calc-size(fit-content, 30px + (0.5 * size))" but got "none"
+FAIL computedStyleMap serialization of width: calc-size(fit-content, 50% + size / 2) assert_equals: expected "calc-size(fit-content, 50% + (0.5 * size))" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(any, 30px) assert_equals: expected "calc-size(any, 30px)" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(any, 25em) assert_equals: expected "calc-size(any, 400px)" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(any, 40%) assert_equals: expected "calc-size(any, 40%)" but got "auto"
@@ -17,5 +17,5 @@ FAIL computedStyleMap serialization of width: calc-size(calc-size(any, 30px), 25
 FAIL computedStyleMap serialization of width: calc-size(calc-size(2in, 30px), 25em) assert_equals: expected "calc-size(calc-size(192px, 30px), 400px)" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(calc-size(min-content, 30px), 25em) assert_equals: expected "calc-size(calc-size(min-content, 30px), 400px)" but got "auto"
 FAIL computedStyleMap serialization of width: calc-size(calc-size(min-content, size), size) assert_equals: expected "calc-size(calc-size(min-content, size), size)" but got "auto"
-FAIL computedStyleMap serialization of width: calc-size(calc-size(fit-content, size * 2), size) assert_equals: expected "calc-size(calc-size(fit-content, size * 2), size)" but got "auto"
+FAIL computedStyleMap serialization of width: calc-size(calc-size(fit-content, size * 2), size) assert_equals: expected "calc-size(calc-size(fit-content, 2 * size), size)" but got "auto"
 

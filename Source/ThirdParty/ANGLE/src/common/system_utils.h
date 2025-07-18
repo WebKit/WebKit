@@ -42,6 +42,7 @@ bool IsDirectory(const char *filename);
 bool IsFullPath(std::string dirName);
 bool CreateDirectories(const std::string &path);
 void MakeForwardSlashThePathSeparator(std::string &path);
+bool IsSameFileDescriptor(int fd1, int fd2);
 std::string GetRootDirectory();
 std::string ConcatenatePath(std::string first, std::string second);
 

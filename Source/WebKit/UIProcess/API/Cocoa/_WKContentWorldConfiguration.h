@@ -50,6 +50,9 @@ WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 /*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be disabled or not. */
 @property (nonatomic) BOOL disableLegacyBuiltinOverrides;
 
+/*! @abstract A boolean indicating whether node info can be returned from JS to ObjC. */
+@property (nonatomic) BOOL allowNodeInfo;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -64,8 +64,9 @@ if (rtc_include_tests) {
         ":desktop_capture_mock",
         ":primitives",
         ":screen_drawer",
-        "../../rtc_base/third_party/base64",
-        "../../system_wrappers",
+        "../../api:array_view",
+        "../../rtc_base:base64",
+        "../../rtc_base:threading",
         "../../test:test_support",
       ]
       sources += [
@@ -157,12 +158,9 @@ if (rtc_include_tests) {
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
       "../../rtc_base:random",
-      "../../rtc_base:timeutils",
-
-      # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
-      # rtc_base:threading is fully defined.
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
+      "../../rtc_base:timeutils",
       "../../system_wrappers",
       "../../test:test_support",
     ]
@@ -172,6 +170,7 @@ if (rtc_include_tests) {
         "win/cursor_unittest.cc",
         "win/cursor_unittest_resources.h",
         "win/cursor_unittest_resources.rc",
+        "win/full_screen_win_application_handler_unittest.cc",
         "win/screen_capture_utils_unittest.cc",
         "win/screen_capturer_win_directx_unittest.cc",
         "win/test_support/test_window.cc",
@@ -234,7 +233,7 @@ if (rtc_include_tests) {
       "../../api:scoped_refptr",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
-      "../../system_wrappers",
+      "../../rtc_base:threading",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
 
@@ -408,8 +407,11 @@ rtc_library("desktop_capture") {
       "Xdamage",
       "Xext",
       "Xfixes",
-      "Xrender",
+
+      # Xrandr depends on Xrender and needs to be listed before its dependency.
       "Xrandr",
+
+      "Xrender",
       "Xtst",
     ]
   }
@@ -523,6 +525,7 @@ rtc_library("desktop_capture") {
       "shcore.lib",
     ]
     deps += [
+      "../../rtc_base:threading",
       "../../rtc_base:win32",
       "../../rtc_base/containers:flat_map",
       "../../rtc_base/win:create_direct3d_device",
@@ -591,6 +594,7 @@ rtc_library("desktop_capture") {
     libs += [ "dwmapi.lib" ]
     deps += [
       "../../rtc_base:rtc_event",
+      "../../rtc_base:threading",
       "../../rtc_base/win:hstring",
     ]
   }
@@ -624,6 +628,8 @@ if (is_mac) {
       "mac/desktop_frame_iosurface.mm",
       "mac/desktop_frame_provider.h",
       "mac/desktop_frame_provider.mm",
+      "mac/sck_picker_handle.h",
+      "mac/sck_picker_handle.mm",
       "mac/screen_capturer_mac.h",
       "mac/screen_capturer_mac.mm",
       "mac/screen_capturer_sck.h",
@@ -650,10 +656,13 @@ if (is_mac) {
       "../../rtc_base:event_tracer",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
+      "../../rtc_base:safe_conversions",
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:rtc_export",
       "../../sdk:helpers_objc",
+      "//third_party/abseil-cpp/absl/base:core_headers",
+      "//third_party/abseil-cpp/absl/strings:str_format",
     ]
     frameworks = [
       "AppKit.framework",

@@ -1,4 +1,4 @@
 Click me
 
-PASS <a download> click fires navigate event
+FAIL <a download> click fires navigate event assert_equals: expected (object) Element node <a id="a" href="?1" download="">Click me</a> but got (undefined) undefined
 

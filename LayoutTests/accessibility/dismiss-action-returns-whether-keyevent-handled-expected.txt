@@ -1,0 +1,10 @@
+Tests that calling dismiss returns true only if the key event is handled.
+
+Result from dismissing alertDoesNotHandle: false
+Result from dismissing alertDoesHandle: true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+alert
+alert

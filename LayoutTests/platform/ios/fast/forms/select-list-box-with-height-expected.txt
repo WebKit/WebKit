@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 372x19
           text run at (0,0) width 372: "The select below has a size of 3, but a much larger height."
       RenderBlock (anonymous) at (0,36) size 784x250
-        RenderMenuList {SELECT} at (0,0) size 65x250 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (0,0) size 65x250 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,118) size 53x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "

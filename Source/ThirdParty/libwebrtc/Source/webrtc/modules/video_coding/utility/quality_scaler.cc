@@ -10,14 +10,19 @@
 
 #include "modules/video_coding/utility/quality_scaler.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <utility>
+#include <optional>
 
 #include "api/field_trials_view.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
-#include "api/video/video_adaptation_reason.h"
+#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/quality_scaler_settings.h"
+#include "rtc_base/experiments/quality_scaling_experiment.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/weak_ptr.h"
@@ -44,7 +49,7 @@ class QualityScaler::QpSmoother {
 
   std::optional<int> GetAvg() const {
     float value = smoother_.filtered();
-    if (value == rtc::ExpFilter::kValueUndefined) {
+    if (value == ExpFilter::kValueUndefined) {
       return std::nullopt;
     }
     return static_cast<int>(value);
@@ -61,7 +66,7 @@ class QualityScaler::QpSmoother {
  private:
   const float alpha_;
   int64_t last_sample_ms_;
-  rtc::ExpFilter smoother_;
+  ExpFilter smoother_;
 };
 
 // The QualityScaler checks for QP periodically by queuing CheckQpTasks. The
@@ -172,7 +177,7 @@ class QualityScaler::CheckQpTask {
   const Result previous_task_result_;
   Result result_;
 
-  rtc::WeakPtrFactory<CheckQpTask> weak_ptr_factory_;
+  WeakPtrFactory<CheckQpTask> weak_ptr_factory_;
 };
 
 QualityScaler::QualityScaler(QualityScalerQpUsageHandlerInterface* handler,

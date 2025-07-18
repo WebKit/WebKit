@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT <form> requestSubmit() sets sourceElement Test timed out
+PASS <form> requestSubmit() sets sourceElement
 

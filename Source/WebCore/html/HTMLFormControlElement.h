@@ -98,7 +98,7 @@ public:
     RefPtr<HTMLElement> popoverTargetElement() const;
     const AtomString& popoverTargetAction() const;
 
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    bool isKeyboardFocusable(const FocusEventData&) const override;
 
     using Node::ref;
     using Node::deref;

@@ -42,7 +42,7 @@ public:
     JSCell* m_calleeOrExecutable { nullptr };
     uint32_t m_count { 0 };
     uint8_t m_index { 0 };
-    ArityCheckMode m_arityCheckMode { MustCheckArity };
+    ArityCheckMode m_arityCheckMode { ArityCheckMode::MustCheckArity };
     CodePtr<JSEntryPtrTag> m_target;
     CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_target is changed.
 

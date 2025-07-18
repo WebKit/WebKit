@@ -430,7 +430,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithIndexedGetterPrototypeFunction_ind
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterWithIndexedGetter::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedSetterWithIndexedGetter, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedSetterWithIndexedGetter, UseCustomHeapCellType::No>(vm, "JSTestNamedSetterWithIndexedGetter"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithIndexedGetter.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithIndexedGetter = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithIndexedGetter.get(); },

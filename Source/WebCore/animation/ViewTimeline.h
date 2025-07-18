@@ -71,15 +71,15 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&& = { });
-    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
+    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const ViewTimelineInsetItem&);
 
     const Element* subject() const;
     const WeakStyleable subjectStyleable() const { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
 
-    const ViewTimelineInsets& insets() const { return m_insets; }
-    void setInsets(ViewTimelineInsets&& insets) { m_insets = WTFMove(insets); }
+    const ViewTimelineInsetItem& insets() const { return m_insets; }
+    void setInsets(const ViewTimelineInsetItem& insets) { m_insets = insets; }
 
     Ref<CSSNumericValue> startOffset() const;
     Ref<CSSNumericValue> endOffset() const;
@@ -103,7 +103,7 @@ private:
     template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, const SingleTimelineRange::Name, F&&) const;
 
     explicit ViewTimeline(ScrollAxis);
-    explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
+    explicit ViewTimeline(const AtomString&, ScrollAxis, const ViewTimelineInsetItem&);
 
     bool isViewTimeline() const final { return true; }
 
@@ -128,12 +128,13 @@ private:
 
     WeakStyleable m_subject;
     std::optional<SpecifiedViewTimelineInsets> m_specifiedInsets;
-    ViewTimelineInsets m_insets;
+    ViewTimelineInsetItem m_insets;
     CurrentTimeData m_cachedCurrentTimeData { };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StickinessAdjustmentData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StickinessAdjustmentData::StickinessLocation&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewTimeline&);
 
 } // namespace WebCore
 

@@ -24,7 +24,7 @@
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_annotations.h"
 
-namespace rtc {
+namespace webrtc {
 
 ///////////////////////////////////////////////////////////////////////////////
 // StreamInterface is a generic asynchronous stream interface, supporting read,
@@ -75,10 +75,10 @@ class RTC_EXPORT StreamInterface {
   //  SR_EOS: the end-of-stream has been reached, or the stream is in the
   //    SS_CLOSED state.
 
-  virtual StreamResult Read(rtc::ArrayView<uint8_t> buffer,
+  virtual StreamResult Read(ArrayView<uint8_t> buffer,
                             size_t& read,
                             int& error) = 0;
-  virtual StreamResult Write(rtc::ArrayView<const uint8_t> data,
+  virtual StreamResult Write(ArrayView<const uint8_t> data,
                              size_t& written,
                              int& error) = 0;
 
@@ -139,7 +139,7 @@ class RTC_EXPORT StreamInterface {
 #pragma clang diagnostic pop
   }
 
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker callback_sequence_{
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker callback_sequence_{
       webrtc::SequenceChecker::kDetached};
 
  private:
@@ -147,6 +147,28 @@ class RTC_EXPORT StreamInterface {
       RTC_GUARDED_BY(&callback_sequence_) = nullptr;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SE_CLOSE;
+using ::webrtc::SE_OPEN;
+using ::webrtc::SE_READ;
+using ::webrtc::SE_WRITE;
+using ::webrtc::SR_BLOCK;
+using ::webrtc::SR_EOS;
+using ::webrtc::SR_ERROR;
+using ::webrtc::SR_SUCCESS;
+using ::webrtc::SS_CLOSED;
+using ::webrtc::SS_OPEN;
+using ::webrtc::SS_OPENING;
+using ::webrtc::StreamEvent;
+using ::webrtc::StreamInterface;
+using ::webrtc::StreamResult;
+using ::webrtc::StreamState;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_STREAM_H_

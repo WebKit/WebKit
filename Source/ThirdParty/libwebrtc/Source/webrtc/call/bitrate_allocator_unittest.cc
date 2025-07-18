@@ -78,7 +78,7 @@ class TestBitrateObserver : public BitrateAllocatorObserver {
   uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override {
     last_bitrate_bps_ = update.target_bitrate.bps();
     last_fraction_loss_ =
-        rtc::dchecked_cast<uint8_t>(update.packet_loss_ratio * 256);
+        dchecked_cast<uint8_t>(update.packet_loss_ratio * 256);
     last_rtt_ms_ = update.round_trip_time.ms();
     last_probing_interval_ms_ = update.bwe_period.ms();
     return update.target_bitrate.bps() * protection_ratio_;

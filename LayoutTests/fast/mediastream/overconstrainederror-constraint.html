@@ -21,7 +21,9 @@ promise_test(async () => {
 }, "Before grant");
 
 promise_test(async(test) => {
-    await navigator.mediaDevices.getUserMedia({audio: true});
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    stream.getTracks().forEach(t => t.stop());
+
     return navigator.mediaDevices.getUserMedia({audio: {deviceId: {exact:"none"}}}).then(
         () => assert_not_reached("gum should fail"),
         (e) => {

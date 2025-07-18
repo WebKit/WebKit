@@ -286,7 +286,7 @@ public:
                 // Nothing to do - no canonical equivalents.
                 break;
             case CanonicalizeSet: {
-                UChar ch;
+                char16_t ch;
                 for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addSorted(ch);
                 break;
@@ -2229,7 +2229,7 @@ public:
                     return false;
                 if (term.m_matchDirection != MatchDirection::Forward)
                     return false;
-                builder.append(static_cast<UChar>(term.patternCharacter));
+                builder.append(static_cast<char16_t>(term.patternCharacter));
             }
             String atom = builder.toString();
             if (atom.length() > 0) {

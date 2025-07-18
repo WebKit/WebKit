@@ -78,7 +78,7 @@ void decompressionOutputCallback(void *decoderRef,
   RTCVideoFrame *decodedFrame =
       [[RTCVideoFrame alloc] initWithBuffer:frameBuffer
                                    rotation:RTCVideoRotation_0
-                                timeStampNs:CMTimeGetSeconds(timestamp) * rtc::kNumNanosecsPerSec];
+                                timeStampNs:CMTimeGetSeconds(timestamp) * webrtc::kNumNanosecsPerSec];
   decodedFrame.timeStamp = decodeParams->timestamp;
   [decoder processFrame:decodedFrame reorderSize:decodeParams->reorderSize];
 }

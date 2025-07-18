@@ -26,7 +26,7 @@ class BitstreamParser {
   virtual ~BitstreamParser() = default;
 
   // Parse an additional chunk of the bitstream.
-  virtual void ParseBitstream(rtc::ArrayView<const uint8_t> bitstream) = 0;
+  virtual void ParseBitstream(ArrayView<const uint8_t> bitstream) = 0;
 
   // Get the last extracted QP value from the parsed bitstream. If no QP
   // value could be parsed, returns std::nullopt.

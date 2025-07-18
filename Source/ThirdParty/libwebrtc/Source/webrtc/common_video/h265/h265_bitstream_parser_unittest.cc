@@ -10,8 +10,16 @@
 
 #include "common_video/h265/h265_bitstream_parser.h"
 
+#include <cstdint>
+#include <optional>
+
+#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
+
+using ::testing::Eq;
+using ::testing::Optional;
 
 namespace webrtc {
 
@@ -53,6 +61,12 @@ const uint8_t kH265SliceChunk[] = {
     0x26, 0x0f, 0x7b, 0x30, 0x1c, 0xd7, 0xd4, 0x3a, 0xec, 0xad, 0xef, 0x73,
 };
 
+// Contains enough of data for the second slice of a frame.
+const uint8_t kH265SecondSliceChunkInAFrame[] = {
+    0x02, 0x01, 0x23, 0xfc, 0x20, 0x22, 0xad, 0x13, 0x68, 0xce, 0xc3, 0x5a,
+    0x00, 0xdc, 0xeb, 0x86, 0x4b, 0x0b, 0xa7, 0x6a, 0xe1, 0x9c, 0x5c, 0xea,
+};
+
 // Contains short term ref pic set slice to verify Log2Ceiling path.
 const uint8_t kH265SliceStrChunk[] = {
     0x00, 0x00, 0x00, 0x01, 0x40, 0x01, 0x0c, 0x01, 0xff, 0xff, 0x01, 0x00,
@@ -91,6 +105,24 @@ const uint8_t kH265BitstreamInvalidQPChunk52[] = {
     0x00, 0x01, 0x26, 0x01, 0xaf, 0x03, 0x44,
 };
 
+// Bitstream that contains pred_weight_table. Contains enough data to parse
+// over pred_weight_table for slice QP. This is bear.hevc from Chromium source,
+// used for H265 hardware decoder's parser test, with some slices truncated.
+const uint8_t kH265BitstreamWithPredWeightTable[] = {
+    0x00, 0x00, 0x00, 0x01, 0x40, 0x01, 0x0c, 0x01, 0xff, 0xff, 0x01, 0x60,
+    0x00, 0x00, 0x03, 0x00, 0x80, 0x00, 0x00, 0x03, 0x00, 0x00, 0x03, 0x00,
+    0x3c, 0x95, 0xc0, 0x90, 0x00, 0x00, 0x00, 0x01, 0x42, 0x01, 0x01, 0x01,
+    0x60, 0x00, 0x00, 0x03, 0x00, 0x80, 0x00, 0x00, 0x03, 0x00, 0x00, 0x03,
+    0x00, 0x3c, 0xa0, 0x0a, 0x08, 0x0b, 0x9f, 0x79, 0x65, 0x79, 0x24, 0xca,
+    0xe0, 0x10, 0x00, 0x00, 0x06, 0x40, 0x00, 0x00, 0xbb, 0x50, 0x80, 0x00,
+    0x00, 0x00, 0x01, 0x44, 0x01, 0xc1, 0x73, 0xd1, 0x89, 0x00, 0x00, 0x00,
+    0x01, 0x02, 0x01, 0xd0, 0x21, 0x49, 0xe8, 0xee, 0x50, 0x9c, 0x27, 0x20,
+    0x42, 0xc4, 0xcd, 0x33, 0xf0, 0xb1, 0x23, 0x7b, 0xfe, 0x4d, 0xcf, 0x40,
+    0xeb, 0x17, 0x37, 0x91, 0x1c, 0xb6, 0xba, 0x21, 0x42, 0xf7, 0xef, 0x01,
+    0x08, 0x90, 0x49, 0xdc, 0xfc, 0x10, 0x1f, 0x5e, 0x02, 0xd9, 0xaa, 0xe8,
+    0x32, 0xeb, 0x74, 0xbc, 0xdb, 0x2c, 0xa3, 0xec,
+};
+
 TEST(H265BitstreamParserTest, ReportsNoQpWithoutParsedSlices) {
   H265BitstreamParser h265_parser;
   EXPECT_FALSE(h265_parser.GetLastSliceQp().has_value());
@@ -100,6 +132,14 @@ TEST(H265BitstreamParserTest, ReportsNoQpWithOnlyParsedPpsAndSpsSlices) {
   H265BitstreamParser h265_parser;
   h265_parser.ParseBitstream(kH265VpsSpsPps);
   EXPECT_FALSE(h265_parser.GetLastSliceQp().has_value());
+}
+
+TEST(H265BitstreamParserTest, ReportQpWithPredWeightTable) {
+  H265BitstreamParser h265_parser;
+  h265_parser.ParseBitstream(kH265BitstreamWithPredWeightTable);
+  std::optional<int> qp = h265_parser.GetLastSliceQp();
+  ASSERT_TRUE(qp.has_value());
+  EXPECT_EQ(34, *qp);
 }
 
 TEST(H265BitstreamParserTest, ReportsLastSliceQpForImageSlices) {
@@ -142,6 +182,24 @@ TEST(H265BitstreamParserTest, ReportsLastSliceQpInvalidQPSlices) {
   h265_parser.ParseBitstream(kH265BitstreamInvalidQPChunk52);
   qp = h265_parser.GetLastSliceQp();
   ASSERT_FALSE(qp.has_value());
+}
+
+TEST(H265BitstreamParserTest, ReportsFirstSliceSegmentInPic) {
+  EXPECT_THAT(H265BitstreamParser::IsFirstSliceSegmentInPic(kH265SliceChunk),
+              Optional(Eq(true)));
+}
+
+TEST(H265BitstreamParserTest, ReportsFirstSliceSegmentInPicFalse) {
+  EXPECT_THAT(H265BitstreamParser::IsFirstSliceSegmentInPic(
+                  kH265SecondSliceChunkInAFrame),
+              Optional(Eq(false)));
+}
+
+TEST(H265BitstreamParserTest, ReportsFirstSliceSegmentInPicParseInvalidSlice) {
+  ArrayView<const uint8_t> slice_data(kH265SliceChunk);
+  EXPECT_THAT(
+      H265BitstreamParser::IsFirstSliceSegmentInPic(slice_data.subview(50)),
+      Eq(std::nullopt));
 }
 
 }  // namespace webrtc

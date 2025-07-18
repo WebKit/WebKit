@@ -92,7 +92,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCanvasAgent);
 
 InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
     : InspectorAgentBase("Canvas"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CanvasBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_canvasDestroyedTimer(*this, &InspectorCanvasAgent::canvasDestroyedTimerFired)
@@ -104,7 +104,7 @@ InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
 
 InspectorCanvasAgent::~InspectorCanvasAgent() = default;
 
-void InspectorCanvasAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorCanvasAgent::didCreateFrontendAndBackend()
 {
 }
 

@@ -74,7 +74,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 #endif
     : m_webPage(webPage)
     , m_sceneState(CoordinatedSceneState::create())
-    , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
+    , m_layerFlushTimer(RunLoop::mainSingleton(), this, &LayerTreeHost::layerFlushTimerFired)
 #if !HAVE(DISPLAY_LINK)
     , m_displayID(displayID)
 #endif
@@ -175,8 +175,11 @@ void LayerTreeHost::cancelPendingLayerFlush()
 
 void LayerTreeHost::flushLayers()
 {
+    RELEASE_ASSERT(!m_isFlushingLayers);
     if (m_layerTreeStateIsFrozen)
         return;
+
+    SetForScope<bool> reentrancyProtector(m_isFlushingLayers, true);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(FlushPendingLayerChangesStart, FlushPendingLayerChangesEnd);
@@ -235,6 +238,11 @@ void LayerTreeHost::flushLayers()
     m_imageBackingStores.removeIf([](auto& it) {
         return it.value->hasOneRef();
     });
+
+    if (m_waitUntilPaintingComplete) {
+        m_sceneState->waitUntilPaintingComplete();
+        m_waitUntilPaintingComplete = false;
+    }
 }
 
 void LayerTreeHost::layerFlushTimerFired()
@@ -317,9 +325,20 @@ void LayerTreeHost::forceRepaint()
     m_pendingForceRepaint = false;
     m_webPage.corePage()->forceRepaintAllFrames();
     m_forceFrameSync = true;
+
+    // Make sure `m_sceneState->waitUntilPaintingComplete()` is invoked at the
+    // end of the currently running layer flush, or after the next one if there
+    // is none ongoing at present.
+    m_waitUntilPaintingComplete = true;
+
+    // If forceRepaint() is invoked via JS through e.g. a rAF() callback, a call
+    // to `page->updateRendering()` _during_ a layer flush is responsible for that.
+    // If m_isFlushingLayers is true, that layer flush is still ongoing, so we do
+    // not need to cancel pending ones and immediately flush again (re-entrancy!).
+    if (m_isFlushingLayers)
+        return;
     cancelPendingLayerFlush();
     flushLayers();
-    m_sceneState->waitUntilPaintingComplete();
 #endif
 }
 

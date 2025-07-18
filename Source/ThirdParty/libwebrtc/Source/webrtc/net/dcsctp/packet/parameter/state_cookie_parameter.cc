@@ -29,7 +29,7 @@ namespace dcsctp {
 constexpr int StateCookieParameter::kType;
 
 std::optional<StateCookieParameter> StateCookieParameter::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -43,7 +43,7 @@ void StateCookieParameter::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string StateCookieParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "State Cookie parameter (cookie_length=" << data_.size() << ")";
   return sb.Release();
 }

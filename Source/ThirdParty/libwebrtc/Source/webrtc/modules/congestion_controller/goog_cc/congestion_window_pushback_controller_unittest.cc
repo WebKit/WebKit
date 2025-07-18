@@ -14,7 +14,6 @@
 
 #include "api/units/data_size.h"
 #include "test/explicit_key_value_config.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

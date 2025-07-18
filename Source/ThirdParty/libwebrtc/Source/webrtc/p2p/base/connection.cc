@@ -13,23 +13,43 @@
 #include <math.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/candidate.h"
+#include "api/rtc_error.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/transport/stun.h"
 #include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/ice_logger.h"
+#include "p2p/base/connection_info.h"
 #include "p2p/base/p2p_constants.h"
+#include "p2p/base/p2p_transport_channel_ice_field_trials.h"
+#include "p2p/base/port_interface.h"
+#include "p2p/base/stun_request.h"
+#include "p2p/base/transport_description.h"
+#include "p2p/dtls/dtls_stun_piggyback_callbacks.h"
+#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
+#include "rtc_base/net_helpers.h"
 #include "rtc_base/network.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -39,11 +59,10 @@
 #include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/weak_ptr.h"
 
-namespace cricket {
+namespace webrtc {
 namespace {
-
-using webrtc::IceCandidateType;
 
 // Determines whether we have seen at least the given maximum number of
 // pings fail to have a response.
@@ -89,48 +108,46 @@ IceCandidateType GetRtcEventLogCandidateType(const Candidate& c) {
   return IceCandidateType::kRelay;
 }
 
-webrtc::IceCandidatePairProtocol GetProtocolByString(
-    absl::string_view protocol) {
+IceCandidatePairProtocol GetProtocolByString(absl::string_view protocol) {
   if (protocol == UDP_PROTOCOL_NAME) {
-    return webrtc::IceCandidatePairProtocol::kUdp;
+    return IceCandidatePairProtocol::kUdp;
   } else if (protocol == TCP_PROTOCOL_NAME) {
-    return webrtc::IceCandidatePairProtocol::kTcp;
+    return IceCandidatePairProtocol::kTcp;
   } else if (protocol == SSLTCP_PROTOCOL_NAME) {
-    return webrtc::IceCandidatePairProtocol::kSsltcp;
+    return IceCandidatePairProtocol::kSsltcp;
   } else if (protocol == TLS_PROTOCOL_NAME) {
-    return webrtc::IceCandidatePairProtocol::kTls;
+    return IceCandidatePairProtocol::kTls;
   }
-  return webrtc::IceCandidatePairProtocol::kUnknown;
+  return IceCandidatePairProtocol::kUnknown;
 }
 
-webrtc::IceCandidatePairAddressFamily GetAddressFamilyByInt(
-    int address_family) {
+IceCandidatePairAddressFamily GetAddressFamilyByInt(int address_family) {
   if (address_family == AF_INET) {
-    return webrtc::IceCandidatePairAddressFamily::kIpv4;
+    return IceCandidatePairAddressFamily::kIpv4;
   } else if (address_family == AF_INET6) {
-    return webrtc::IceCandidatePairAddressFamily::kIpv6;
+    return IceCandidatePairAddressFamily::kIpv6;
   }
-  return webrtc::IceCandidatePairAddressFamily::kUnknown;
+  return IceCandidatePairAddressFamily::kUnknown;
 }
 
-webrtc::IceCandidateNetworkType ConvertNetworkType(rtc::AdapterType type) {
+IceCandidateNetworkType ConvertNetworkType(AdapterType type) {
   switch (type) {
-    case rtc::ADAPTER_TYPE_ETHERNET:
-      return webrtc::IceCandidateNetworkType::kEthernet;
-    case rtc::ADAPTER_TYPE_LOOPBACK:
-      return webrtc::IceCandidateNetworkType::kLoopback;
-    case rtc::ADAPTER_TYPE_WIFI:
-      return webrtc::IceCandidateNetworkType::kWifi;
-    case rtc::ADAPTER_TYPE_VPN:
-      return webrtc::IceCandidateNetworkType::kVpn;
-    case rtc::ADAPTER_TYPE_CELLULAR:
-    case rtc::ADAPTER_TYPE_CELLULAR_2G:
-    case rtc::ADAPTER_TYPE_CELLULAR_3G:
-    case rtc::ADAPTER_TYPE_CELLULAR_4G:
-    case rtc::ADAPTER_TYPE_CELLULAR_5G:
-      return webrtc::IceCandidateNetworkType::kCellular;
+    case ADAPTER_TYPE_ETHERNET:
+      return IceCandidateNetworkType::kEthernet;
+    case ADAPTER_TYPE_LOOPBACK:
+      return IceCandidateNetworkType::kLoopback;
+    case ADAPTER_TYPE_WIFI:
+      return IceCandidateNetworkType::kWifi;
+    case ADAPTER_TYPE_VPN:
+      return IceCandidateNetworkType::kVpn;
+    case ADAPTER_TYPE_CELLULAR:
+    case ADAPTER_TYPE_CELLULAR_2G:
+    case ADAPTER_TYPE_CELLULAR_3G:
+    case ADAPTER_TYPE_CELLULAR_4G:
+    case ADAPTER_TYPE_CELLULAR_5G:
+      return IceCandidateNetworkType::kCellular;
     default:
-      return webrtc::IceCandidateNetworkType::kUnknown;
+      return IceCandidateNetworkType::kUnknown;
   }
 }
 
@@ -209,11 +226,11 @@ int Connection::ConnectionRequest::resend_delay() {
   return CONNECTION_RESPONSE_TIMEOUT;
 }
 
-Connection::Connection(rtc::WeakPtr<PortInterface> port,
+Connection::Connection(WeakPtr<PortInterface> port,
                        size_t index,
                        const Candidate& remote_candidate)
     : network_thread_(port->thread()),
-      id_(rtc::CreateRandomId()),
+      id_(CreateRandomId()),
       port_(std::move(port)),
       local_candidate_(port_->Candidates()[index]),
       remote_candidate_(remote_candidate),
@@ -234,8 +251,8 @@ Connection::Connection(rtc::WeakPtr<PortInterface> port,
       last_data_received_(0),
       last_ping_response_received_(0),
       state_(IceCandidatePairState::WAITING),
-      time_created_ms_(rtc::TimeMillis()),
-      delta_internal_unix_epoch_ms_(rtc::TimeUTCMillis() - rtc::TimeMillis()),
+      time_created_ms_(TimeMillis()),
+      delta_internal_unix_epoch_ms_(TimeUTCMillis() - TimeMillis()),
       field_trials_(&kDefaultFieldTrials),
       rtt_estimate_(DEFAULT_RTT_ESTIMATE_HALF_TIME_MS) {
   RTC_DCHECK_RUN_ON(network_thread_);
@@ -249,7 +266,7 @@ Connection::~Connection() {
   RTC_DCHECK(!received_packet_callback_);
 }
 
-webrtc::TaskQueueBase* Connection::network_thread() const {
+TaskQueueBase* Connection::network_thread() const {
   return network_thread_;
 }
 
@@ -262,7 +279,7 @@ const Candidate& Connection::remote_candidate() const {
   return remote_candidate_;
 }
 
-const rtc::Network* Connection::network() const {
+const Network* Connection::network() const {
   RTC_DCHECK(port_) << ToDebugId() << ": port_ null in network()";
   return port()->Network();
 }
@@ -433,21 +450,21 @@ void Connection::OnSendStunPacket(const void* data,
                                   size_t size,
                                   StunRequest* req) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  rtc::PacketOptions options(port_->StunDscpValue());
+  AsyncSocketPacketOptions options(port_->StunDscpValue());
   options.info_signaled_after_sent.packet_type =
-      rtc::PacketType::kIceConnectivityCheck;
+      PacketType::kIceConnectivityCheck;
   auto err =
       port_->SendTo(data, size, remote_candidate_.address(), options, false);
   if (err < 0) {
     RTC_LOG(LS_WARNING) << ToString()
                         << ": Failed to send STUN ping "
                            " err="
-                        << err << " id=" << rtc::hex_encode(req->id());
+                        << err << " id=" << hex_encode(req->id());
   }
 }
 
 void Connection::RegisterReceivedPacketCallback(
-    absl::AnyInvocable<void(Connection*, const rtc::ReceivedPacket&)>
+    absl::AnyInvocable<void(Connection*, const ReceivedIpPacket&)>
         received_packet_callback) {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_CHECK(!received_packet_callback_);
@@ -462,20 +479,19 @@ void Connection::DeregisterReceivedPacketCallback() {
 void Connection::OnReadPacket(const char* data,
                               size_t size,
                               int64_t packet_time_us) {
-  OnReadPacket(
-      rtc::ReceivedPacket::CreateFromLegacy(data, size, packet_time_us));
+  OnReadPacket(ReceivedIpPacket::CreateFromLegacy(data, size, packet_time_us));
 }
-void Connection::OnReadPacket(const rtc::ReceivedPacket& packet) {
+void Connection::OnReadPacket(const ReceivedIpPacket& packet) {
   RTC_DCHECK_RUN_ON(network_thread_);
   std::unique_ptr<IceMessage> msg;
   std::string remote_ufrag;
-  const rtc::SocketAddress& addr(remote_candidate_.address());
+  const SocketAddress& addr(remote_candidate_.address());
   if (!port_->GetStunMessage(
           reinterpret_cast<const char*>(packet.payload().data()),
           packet.payload().size(), addr, &msg, &remote_ufrag)) {
     // The packet did not parse as a valid STUN message
     // This is a data packet, pass it along.
-    last_data_received_ = rtc::TimeMillis();
+    last_data_received_ = TimeMillis();
     UpdateReceiving(last_data_received_);
     recv_rate_tracker_.AddSamples(packet.payload().size());
     stats_.packets_received++;
@@ -509,7 +525,7 @@ void Connection::OnReadPacket(const rtc::ReceivedPacket& packet) {
       // "silently" discard the request.
       RTC_LOG(LS_VERBOSE) << ToString() << ": Discarding "
                           << StunMethodToString(msg->type())
-                          << ", id=" << rtc::hex_encode(msg->transaction_id())
+                          << ", id=" << hex_encode(msg->transaction_id())
                           << " with invalid message integrity: "
                           << static_cast<int>(msg->integrity());
       return;
@@ -523,7 +539,7 @@ void Connection::OnReadPacket(const rtc::ReceivedPacket& packet) {
       // "silently" discard the response.
       RTC_LOG(LS_VERBOSE) << ToString() << ": Discarding "
                           << StunMethodToString(msg->type())
-                          << ", id=" << rtc::hex_encode(msg->transaction_id())
+                          << ", id=" << hex_encode(msg->transaction_id())
                           << " with invalid message integrity: "
                           << static_cast<int>(msg->integrity());
       return;
@@ -533,12 +549,12 @@ void Connection::OnReadPacket(const rtc::ReceivedPacket& packet) {
     // No message integrity.
   }
 
-  rtc::LoggingSeverity sev = (!writable() ? rtc::LS_INFO : rtc::LS_VERBOSE);
+  LoggingSeverity sev = (!writable() ? LS_INFO : LS_VERBOSE);
   switch (msg->type()) {
     case STUN_BINDING_REQUEST:
       RTC_LOG_V(sev) << ToString() << ": Received "
                      << StunMethodToString(msg->type())
-                     << ", id=" << rtc::hex_encode(msg->transaction_id());
+                     << ", id=" << hex_encode(msg->transaction_id());
       if (remote_ufrag == remote_candidate_.username()) {
         HandleStunBindingOrGoogPingRequest(msg.get());
       } else {
@@ -581,6 +597,39 @@ void Connection::OnReadPacket(const rtc::ReceivedPacket& packet) {
   }
 }
 
+void Connection::MaybeAddDtlsPiggybackingAttributes(StunMessage* msg) {
+  if (dtls_stun_piggyback_callbacks_.empty()) {
+    return;
+  }
+
+  const auto& [attr, ack] = dtls_stun_piggyback_callbacks_.send_data(
+      static_cast<StunMessageType>(msg->type()));
+
+  if (ack) {
+    size_t msg_length = msg->length();
+    size_t need_length = ack->length() + kStunAttributeHeaderSize;
+    if (msg_length + need_length <= kMaxStunBindingLength) {
+      msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
+          STUN_ATTR_META_DTLS_IN_STUN_ACK, *ack));
+    } else if (msg_length + kStunAttributeHeaderSize <= kMaxStunBindingLength) {
+      // Add en empty ACK.
+      std::string empty;
+      msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
+          STUN_ATTR_META_DTLS_IN_STUN_ACK, empty));
+    } else {
+      return;
+    }
+  }
+
+  if (attr) {
+    size_t need_length = attr->length() + kStunAttributeHeaderSize;
+    if (msg->length() + need_length <= kMaxStunBindingLength) {
+      msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
+          STUN_ATTR_META_DTLS_IN_STUN, *attr));
+    }
+  }
+}
+
 void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
   RTC_DCHECK_RUN_ON(network_thread_);
   // This connection should now be receiving.
@@ -588,7 +637,7 @@ void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
   if (field_trials_->extra_ice_ping && last_ping_response_received_ == 0) {
     if (local_candidate().is_relay() || local_candidate().is_prflx() ||
         remote_candidate().is_relay() || remote_candidate().is_prflx()) {
-      const int64_t now = rtc::TimeMillis();
+      const int64_t now = TimeMillis();
       if (last_ping_sent_ + kMinExtraPingDelayMs <= now) {
         RTC_LOG(LS_INFO) << ToString()
                          << "WebRTC-ExtraICEPing/Sending extra ping"
@@ -606,7 +655,7 @@ void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
     }
   }
 
-  const rtc::SocketAddress& remote_addr = remote_candidate_.address();
+  const SocketAddress& remote_addr = remote_candidate_.address();
   if (msg->type() == STUN_BINDING_REQUEST) {
     // Check for role conflicts.
     const std::string& remote_ufrag = remote_candidate_.username();
@@ -618,11 +667,19 @@ void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
   }
 
   stats_.recv_ping_requests++;
-  LogCandidatePairEvent(webrtc::IceCandidatePairEventType::kCheckReceived,
+  LogCandidatePairEvent(IceCandidatePairEventType::kCheckReceived,
                         msg->reduced_transaction_id());
 
   // This is a validated stun request from remote peer.
   if (msg->type() == STUN_BINDING_REQUEST) {
+    if (!dtls_stun_piggyback_callbacks_.empty()) {
+      const StunByteStringAttribute* dtls_piggyback_attribute =
+          msg->GetByteString(STUN_ATTR_META_DTLS_IN_STUN);
+      const StunByteStringAttribute* dtls_piggyback_ack =
+          msg->GetByteString(STUN_ATTR_META_DTLS_IN_STUN_ACK);
+      dtls_stun_piggyback_callbacks_.recv_data(dtls_piggyback_attribute,
+                                               dtls_piggyback_ack);
+    }
     SendStunBindingResponse(msg);
   } else {
     RTC_DCHECK(msg->type() == GOOG_PING_REQUEST);
@@ -684,8 +741,8 @@ void Connection::SendStunBindingResponse(const StunMessage* message) {
   // Retrieve the username from the `message`.
   const StunByteStringAttribute* username_attr =
       message->GetByteString(STUN_ATTR_USERNAME);
-  RTC_DCHECK(username_attr != NULL);
-  if (username_attr == NULL) {
+  RTC_DCHECK(username_attr != nullptr);
+  if (username_attr == nullptr) {
     // No valid username, skip the response.
     return;
   }
@@ -739,14 +796,15 @@ void Connection::SendStunBindingResponse(const StunMessage* message) {
         RTC_LOG(LS_ERROR) << "GOOG_DELTA consumer did not return ack!";
       }
     } else {
-      RTC_LOG(LS_WARNING) << "Ignore GOOG_DELTA"
-                          << " len: " << delta->length()
+      RTC_LOG(LS_WARNING) << "Ignore GOOG_DELTA" << " len: " << delta->length()
                           << " answer_goog_delta = "
                           << field_trials_->answer_goog_delta
                           << " goog_delta_consumer_ = "
                           << goog_delta_consumer_.has_value();
     }
   }
+
+  MaybeAddDtlsPiggybackingAttributes(&response);
 
   response.AddMessageIntegrity(local_candidate().password());
   response.AddFingerprint();
@@ -767,31 +825,31 @@ void Connection::SendGoogPingResponse(const StunMessage* message) {
 void Connection::SendResponseMessage(const StunMessage& response) {
   RTC_DCHECK_RUN_ON(network_thread_);
   // Where I send the response.
-  const rtc::SocketAddress& addr = remote_candidate_.address();
+  const SocketAddress& addr = remote_candidate_.address();
 
   // Send the response.
-  rtc::ByteBufferWriter buf;
+  ByteBufferWriter buf;
   response.Write(&buf);
-  rtc::PacketOptions options(port_->StunDscpValue());
+  AsyncSocketPacketOptions options(port_->StunDscpValue());
   options.info_signaled_after_sent.packet_type =
-      rtc::PacketType::kIceConnectivityCheckResponse;
+      PacketType::kIceConnectivityCheckResponse;
   auto err = port_->SendTo(buf.Data(), buf.Length(), addr, options, false);
   if (err < 0) {
     RTC_LOG(LS_ERROR) << ToString() << ": Failed to send "
                       << StunMethodToString(response.type())
                       << ", to=" << addr.ToSensitiveString() << ", err=" << err
-                      << ", id=" << rtc::hex_encode(response.transaction_id());
+                      << ", id=" << hex_encode(response.transaction_id());
   } else {
     // Log at LS_INFO if we send a stun ping response on an unwritable
     // connection.
-    rtc::LoggingSeverity sev = (!writable()) ? rtc::LS_INFO : rtc::LS_VERBOSE;
+    LoggingSeverity sev = (!writable()) ? LS_INFO : LS_VERBOSE;
     RTC_LOG_V(sev) << ToString() << ": Sent "
                    << StunMethodToString(response.type())
                    << ", to=" << addr.ToSensitiveString()
-                   << ", id=" << rtc::hex_encode(response.transaction_id());
+                   << ", id=" << hex_encode(response.transaction_id());
 
     stats_.sent_ping_responses++;
-    LogCandidatePairEvent(webrtc::IceCandidatePairEventType::kCheckResponseSent,
+    LogCandidatePairEvent(IceCandidatePairEventType::kCheckResponseSent,
                           response.reduced_transaction_id());
   }
 }
@@ -849,7 +907,7 @@ bool Connection::Shutdown() {
   SignalDestroyed.disconnect_all();
   destroyed_signals(this);
 
-  LogCandidatePairConfig(webrtc::IceCandidatePairConfigType::kDestroyed);
+  LogCandidatePairConfig(IceCandidatePairConfigType::kDestroyed);
 
   // Reset the `port_` after logging and firing the destroyed signal since
   // information required for logging needs access to `port_`.
@@ -882,16 +940,16 @@ void Connection::FailAndPrune() {
 
 void Connection::PrintPingsSinceLastResponse(std::string* s, size_t max) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  rtc::StringBuilder oss;
+  StringBuilder oss;
   if (pings_since_last_response_.size() > max) {
     for (size_t i = 0; i < max; i++) {
       const SentPing& ping = pings_since_last_response_[i];
-      oss << rtc::hex_encode(ping.id) << " ";
+      oss << hex_encode(ping.id) << " ";
     }
     oss << "... " << (pings_since_last_response_.size() - max) << " more";
   } else {
     for (const SentPing& ping : pings_since_last_response_) {
-      oss << rtc::hex_encode(ping.id) << " ";
+      oss << hex_encode(ping.id) << " ";
     }
   }
   *s = oss.Release();
@@ -914,7 +972,7 @@ void Connection::UpdateState(int64_t now) {
     return;
 
   // Computes our estimate of the RTT given the current estimate.
-  int rtt = rtc::SafeClamp(2 * rtt_, MINIMUM_RTT, MAXIMUM_RTT);
+  int rtt = SafeClamp(2 * rtt_, MINIMUM_RTT, MAXIMUM_RTT);
 
   if (RTC_LOG_CHECK_LEVEL(LS_VERBOSE)) {
     std::string pings;
@@ -1012,8 +1070,8 @@ void Connection::Ping(int64_t now,
   }
 
   pings_since_last_response_.push_back(SentPing(req->id(), now, nomination));
-  RTC_LOG(LS_VERBOSE) << ToString() << ": Sending STUN ping, id="
-                      << rtc::hex_encode(req->id())
+  RTC_LOG(LS_VERBOSE) << ToString()
+                      << ": Sending STUN ping, id=" << hex_encode(req->id())
                       << ", nomination=" << nomination_;
   requests_.Send(req.release());
   state_ = IceCandidatePairState::IN_PROGRESS;
@@ -1084,6 +1142,8 @@ std::unique_ptr<IceMessage> Connection::BuildPingRequest(
     message->AddAttribute(std::move(delta));
   }
 
+  MaybeAddDtlsPiggybackingAttributes(message.get());
+
   message->AddMessageIntegrity(remote_candidate_.password());
   message->AddFingerprint();
 
@@ -1115,7 +1175,7 @@ int64_t Connection::last_ping_received() const {
 
 void Connection::ReceivedPing(const std::optional<std::string>& request_id) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  last_ping_received_ = rtc::TimeMillis();
+  last_ping_received_ = TimeMillis();
   last_ping_id_received_ = request_id;
   UpdateReceiving(last_ping_received_);
 }
@@ -1133,11 +1193,11 @@ void Connection::HandlePiggybackCheckAcknowledgementIfAny(StunMessage* msg) {
         pings_since_last_response_,
         [&request_id](const SentPing& ping) { return ping.id == request_id; });
     if (iter != pings_since_last_response_.end()) {
-      rtc::LoggingSeverity sev = !writable() ? rtc::LS_INFO : rtc::LS_VERBOSE;
+      LoggingSeverity sev = !writable() ? LS_INFO : LS_VERBOSE;
       RTC_LOG_V(sev) << ToString()
                      << ": Received piggyback STUN ping response, id="
-                     << rtc::hex_encode(request_id);
-      const int64_t rtt = rtc::TimeMillis() - iter->sent_time;
+                     << hex_encode(request_id);
+      const int64_t rtt = TimeMillis() - iter->sent_time;
       ReceivedPingResponse(rtt, request_id, iter->nomination);
     }
   }
@@ -1155,7 +1215,7 @@ int64_t Connection::last_data_received() const {
 
 void Connection::ReceivedPingResponse(
     int rtt,
-    absl::string_view request_id,
+    absl::string_view /* request_id */,
     const std::optional<uint32_t>& nomination) {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DCHECK_GE(rtt, 0);
@@ -1168,7 +1228,7 @@ void Connection::ReceivedPingResponse(
     acked_nomination_ = nomination.value();
   }
 
-  int64_t now = rtc::TimeMillis();
+  int64_t now = TimeMillis();
   total_round_trip_time_ms_ += rtt;
   current_round_trip_time_ms_ = static_cast<uint32_t>(rtt);
   rtt_estimate_.AddSample(now, rtt);
@@ -1278,7 +1338,7 @@ bool Connection::stable(int64_t now) const {
 }
 
 std::string Connection::ToDebugId() const {
-  return rtc::ToHex(reinterpret_cast<uintptr_t>(this));
+  return ToHex(reinterpret_cast<uintptr_t>(this));
 }
 
 uint32_t Connection::ComputeNetworkCost() const {
@@ -1314,7 +1374,7 @@ std::string Connection::ToString() const {
       "-",  // candidate pair not selected (false)
       "S",  // selected (true)
   };
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Conn[" << ToDebugId();
 
   if (!port_) {
@@ -1356,15 +1416,15 @@ std::string Connection::ToSensitiveString() const {
   return ToString();
 }
 
-const webrtc::IceCandidatePairDescription& Connection::ToLogDescription() {
+const IceCandidatePairDescription& Connection::ToLogDescription() {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (log_description_.has_value()) {
     return log_description_.value();
   }
   const Candidate& local = local_candidate();
   const Candidate& remote = remote_candidate();
-  const rtc::Network* network = port()->Network();
-  log_description_ = webrtc::IceCandidatePairDescription(
+  const Network* network = port()->Network();
+  log_description_ = IceCandidatePairDescription(
       GetRtcEventLogCandidateType(local), GetRtcEventLogCandidateType(remote));
   log_description_->local_relay_protocol =
       GetProtocolByString(local.relay_protocol());
@@ -1378,13 +1438,12 @@ const webrtc::IceCandidatePairDescription& Connection::ToLogDescription() {
   return log_description_.value();
 }
 
-void Connection::set_ice_event_log(webrtc::IceEventLog* ice_event_log) {
+void Connection::set_ice_event_log(IceEventLog* ice_event_log) {
   RTC_DCHECK_RUN_ON(network_thread_);
   ice_event_log_ = ice_event_log;
 }
 
-void Connection::LogCandidatePairConfig(
-    webrtc::IceCandidatePairConfigType type) {
+void Connection::LogCandidatePairConfig(IceCandidatePairConfigType type) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (ice_event_log_ == nullptr) {
     return;
@@ -1392,7 +1451,7 @@ void Connection::LogCandidatePairConfig(
   ice_event_log_->LogCandidatePairConfig(type, id(), ToLogDescription());
 }
 
-void Connection::LogCandidatePairEvent(webrtc::IceCandidatePairEventType type,
+void Connection::LogCandidatePairEvent(IceCandidatePairEventType type,
                                        uint32_t transaction_id) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (ice_event_log_ == nullptr) {
@@ -1406,7 +1465,7 @@ void Connection::OnConnectionRequestResponse(StunRequest* request,
   RTC_DCHECK_RUN_ON(network_thread_);
   // Log at LS_INFO if we receive a ping response on an unwritable
   // connection.
-  rtc::LoggingSeverity sev = !writable() ? rtc::LS_INFO : rtc::LS_VERBOSE;
+  LoggingSeverity sev = !writable() ? LS_INFO : LS_VERBOSE;
 
   int rtt = request->Elapsed();
 
@@ -1415,7 +1474,7 @@ void Connection::OnConnectionRequestResponse(StunRequest* request,
     PrintPingsSinceLastResponse(&pings, 5);
     RTC_LOG_V(sev) << ToString() << ": Received "
                    << StunMethodToString(response->type())
-                   << ", id=" << rtc::hex_encode(request->id())
+                   << ", id=" << hex_encode(request->id())
                    << ", code=0"  // Makes logging easier to parse.
                       ", rtt="
                    << rtt << ", pings_since_last_response=" << pings;
@@ -1431,9 +1490,8 @@ void Connection::OnConnectionRequestResponse(StunRequest* request,
   ReceivedPingResponse(rtt, request_id, nomination);
 
   stats_.recv_ping_responses++;
-  LogCandidatePairEvent(
-      webrtc::IceCandidatePairEventType::kCheckResponseReceived,
-      response->reduced_transaction_id());
+  LogCandidatePairEvent(IceCandidatePairEventType::kCheckResponseReceived,
+                        response->reduced_transaction_id());
 
   if (request->msg()->type() == STUN_BINDING_REQUEST) {
     if (!remote_support_goog_ping_.has_value()) {
@@ -1473,16 +1531,31 @@ void Connection::OnConnectionRequestResponse(StunRequest* request,
       // This means that remote does not support GOOG_DELTA
       RTC_LOG(LS_INFO) << "NO DELTA ACK => disable GOOG_DELTA";
       (*goog_delta_ack_consumer_)(
-          webrtc::RTCError(webrtc::RTCErrorType::UNSUPPORTED_OPERATION));
+          RTCError(RTCErrorType::UNSUPPORTED_OPERATION));
     } else if (delta_ack) {
       // We did NOT send DELTA but got a DELTA_ACK.
       // That is internal error.
       RTC_LOG(LS_ERROR) << "DELTA ACK w/o DELTA => disable GOOG_DELTA";
-      (*goog_delta_ack_consumer_)(
-          webrtc::RTCError(webrtc::RTCErrorType::INTERNAL_ERROR));
+      (*goog_delta_ack_consumer_)(RTCError(RTCErrorType::INTERNAL_ERROR));
     }
   } else if (delta_ack) {
     RTC_LOG(LS_ERROR) << "Discard GOOG_DELTA_ACK, no consumer";
+  }
+
+  if (!dtls_stun_piggyback_callbacks_.empty()) {
+    const bool sent_dtls_piggyback =
+        request->msg()->GetByteString(STUN_ATTR_META_DTLS_IN_STUN) != nullptr;
+    const bool sent_dtls_piggyback_ack =
+        request->msg()->GetByteString(STUN_ATTR_META_DTLS_IN_STUN_ACK) !=
+        nullptr;
+    const StunByteStringAttribute* dtls_piggyback_attr =
+        response->GetByteString(STUN_ATTR_META_DTLS_IN_STUN);
+    const StunByteStringAttribute* dtls_piggyback_ack =
+        response->GetByteString(STUN_ATTR_META_DTLS_IN_STUN_ACK);
+    if (sent_dtls_piggyback || sent_dtls_piggyback_ack) {
+      dtls_stun_piggyback_callbacks_.recv_data(dtls_piggyback_attr,
+                                               dtls_piggyback_ack);
+    }
   }
 }
 
@@ -1496,7 +1569,7 @@ void Connection::OnConnectionRequestErrorResponse(ConnectionRequest* request,
   int error_code = response->GetErrorCodeValue();
   RTC_LOG(LS_WARNING) << ToString() << ": Received "
                       << StunMethodToString(response->type())
-                      << " id=" << rtc::hex_encode(request->id())
+                      << " id=" << hex_encode(request->id())
                       << " code=" << error_code
                       << " rtt=" << request->Elapsed();
 
@@ -1521,23 +1594,23 @@ void Connection::OnConnectionRequestErrorResponse(ConnectionRequest* request,
 
 void Connection::OnConnectionRequestTimeout(ConnectionRequest* request) {
   // Log at LS_INFO if we miss a ping on a writable connection.
-  rtc::LoggingSeverity sev = writable() ? rtc::LS_INFO : rtc::LS_VERBOSE;
+  LoggingSeverity sev = writable() ? LS_INFO : LS_VERBOSE;
   RTC_LOG_V(sev) << ToString() << ": Timing-out STUN ping "
-                 << rtc::hex_encode(request->id()) << " after "
-                 << request->Elapsed() << " ms";
+                 << hex_encode(request->id()) << " after " << request->Elapsed()
+                 << " ms";
 }
 
 void Connection::OnConnectionRequestSent(ConnectionRequest* request) {
   RTC_DCHECK_RUN_ON(network_thread_);
   // Log at LS_INFO if we send a ping on an unwritable connection.
-  rtc::LoggingSeverity sev = !writable() ? rtc::LS_INFO : rtc::LS_VERBOSE;
+  LoggingSeverity sev = !writable() ? LS_INFO : LS_VERBOSE;
   RTC_LOG_V(sev) << ToString() << ": Sent "
                  << StunMethodToString(request->msg()->type())
-                 << ", id=" << rtc::hex_encode(request->id())
+                 << ", id=" << hex_encode(request->id())
                  << ", use_candidate=" << use_candidate_attr()
                  << ", nomination=" << nomination_;
   stats_.sent_ping_requests_total++;
-  LogCandidatePairEvent(webrtc::IceCandidatePairEventType::kCheckSent,
+  LogCandidatePairEvent(IceCandidatePairEventType::kCheckSent,
                         request->reduced_transaction_id());
   if (stats_.recv_ping_responses == 0) {
     stats_.sent_ping_requests_before_first_response++;
@@ -1630,12 +1703,12 @@ ConnectionInfo Connection::stats() {
   stats_.current_round_trip_time_ms = current_round_trip_time_ms_;
   stats_.remote_candidate = remote_candidate();
   if (last_data_received_ > 0) {
-    stats_.last_data_received = webrtc::Timestamp::Millis(
-        last_data_received_ + delta_internal_unix_epoch_ms_);
+    stats_.last_data_received =
+        Timestamp::Millis(last_data_received_ + delta_internal_unix_epoch_ms_);
   }
   if (last_send_data_ > 0) {
-    stats_.last_data_sent = webrtc::Timestamp::Millis(
-        last_send_data_ + delta_internal_unix_epoch_ms_);
+    stats_.last_data_sent =
+        Timestamp::Millis(last_send_data_ + delta_internal_unix_epoch_ms_);
   }
   return stats_;
 }
@@ -1778,14 +1851,14 @@ void Connection::ForgetLearnedState() {
   pings_since_last_response_.clear();
 }
 
-ProxyConnection::ProxyConnection(rtc::WeakPtr<PortInterface> port,
+ProxyConnection::ProxyConnection(WeakPtr<PortInterface> port,
                                  size_t index,
                                  const Candidate& remote_candidate)
     : Connection(std::move(port), index, remote_candidate) {}
 
 int ProxyConnection::Send(const void* data,
                           size_t size,
-                          const rtc::PacketOptions& options) {
+                          const AsyncSocketPacketOptions& options) {
   RTC_DCHECK(port_) << ToDebugId() << ": port_ null in Send()";
   if (!port_)
     return SOCKET_ERROR;
@@ -1793,7 +1866,7 @@ int ProxyConnection::Send(const void* data,
   stats_.sent_total_packets++;
   int sent =
       port_->SendTo(data, size, remote_candidate_.address(), options, true);
-  int64_t now = rtc::TimeMillis();
+  int64_t now = TimeMillis();
   if (sent <= 0) {
     RTC_DCHECK(sent < 0);
     error_ = port_->GetError();
@@ -1810,4 +1883,4 @@ int ProxyConnection::GetError() {
   return error_;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

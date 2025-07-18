@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                width: 800px;
+                height: 2000px;
+            }
+            .sticky {
+                position: sticky;
+                top: 0;
+                width: 150px;
+                height: 150px;
+                background: blue;
+            }
+            .dot {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                background-color: orange;
+            }
+        </style>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+            }
+
+            function setupDots() {
+                let across = 8;
+                let down = 20;
+                let spacing = 100;
+                let container = document.getElementById('dots-container');
+                for (let col = 0; col < across; ++col) {
+                    for (let row = 0; row < down; ++row) {
+                        let div = document.createElement('div');
+                        div.className = 'dot';
+                        div.style.left = col * spacing + 'px';
+                        div.style.top = row * spacing + 'px';
+                        container.appendChild(div);
+                    }
+                }
+            }
+
+            function doTest() {
+                setupDots();
+                if (window.testRunner) {
+                    document.getElementById('result').innerText = internals.layerTreeAsText(document);
+                }
+            }
+            window.addEventListener('load', doTest, false);
+        </script>
+    </head>
+    <body>
+        <div class="sticky"></div>
+        <div id="dots-container"></div>
+        <pre id="result"></pre>
+    </body>
+</html>

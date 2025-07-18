@@ -192,7 +192,7 @@
             "contextsAllowed": ["attribute", "interface"]
         },
         "EnabledForWorld": {
-            "contextsAllowed": ["attribute", "operation"],
+            "contextsAllowed": ["attribute", "operation", "interface"],
             "values": ["*"],
             "supportsConjunction": true
         },

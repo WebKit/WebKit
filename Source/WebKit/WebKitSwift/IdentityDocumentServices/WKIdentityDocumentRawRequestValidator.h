@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKIdentityDocumentRawRequestValidator : NSObject
 
-- (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin;
+- (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin error:(NSError **)error;
 
 @end
 

@@ -57,7 +57,6 @@ bool DxgiFrame::Prepare(DesktopSize size, DesktopCapturer::SourceId source_id) {
     } else {
       frame.reset(new BasicDesktopFrame(size));
     }
-
     frame_ = SharedDesktopFrame::Wrap(std::move(frame));
   }
 

@@ -21,9 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: "ScriptTrackingPrivacyFilter.h"
+[CustomHeader] struct WebKit::ScriptTrackingPrivacyHost {
+    String hostName;
+    OptionSet<WebCore::ScriptTrackingPrivacyFlag> allowedCategories;
+}
+
+header: "ScriptTrackingPrivacyFilter.h"
 [CustomHeader] struct WebKit::ScriptTrackingPrivacyRules {
-    Vector<String> thirdPartyHosts;
-    Vector<String> thirdPartyTopDomains;
-    Vector<String> firstPartyHosts;
-    Vector<String> firstPartyTopDomains;
+    Vector<WebKit::ScriptTrackingPrivacyHost> thirdPartyHosts;
+    Vector<WebKit::ScriptTrackingPrivacyHost> thirdPartyTopDomains;
+    Vector<WebKit::ScriptTrackingPrivacyHost> firstPartyHosts;
+    Vector<WebKit::ScriptTrackingPrivacyHost> firstPartyTopDomains;
 }

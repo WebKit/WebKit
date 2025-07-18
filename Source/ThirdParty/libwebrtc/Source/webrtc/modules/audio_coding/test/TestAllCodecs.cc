@@ -10,21 +10,27 @@
 
 #include "modules/audio_coding/test/TestAllCodecs.h"
 
+#include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <limits>
 #include <string>
 
 #include "absl/strings/match.h"
+#include "absl/strings/str_cat.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/acm2/acm_resampler.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "modules/include/module_common_types.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/string_encode.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -50,7 +56,7 @@ namespace webrtc {
 
 // Class for simulating packet handling.
 TestPack::TestPack()
-    : neteq_(NULL),
+    : neteq_(nullptr),
       sequence_number_(0),
       timestamp_diff_(0),
       last_in_timestamp_(0),
@@ -87,7 +93,7 @@ int32_t TestPack::SendData(AudioFrameType frame_type,
   memcpy(payload_data_, payload_data, payload_size);
 
   status = neteq_->InsertPacket(
-      rtp_header, rtc::ArrayView<const uint8_t>(payload_data_, payload_size),
+      rtp_header, ArrayView<const uint8_t>(payload_data_, payload_size),
       /*receive_time=*/Timestamp::MinusInfinity());
 
   payload_size_ = payload_size;
@@ -115,21 +121,21 @@ TestAllCodecs::TestAllCodecs()
       neteq_(DefaultNetEqFactory().Create(env_,
                                           NetEq::Config(),
                                           CreateBuiltinAudioDecoderFactory())),
-      channel_a_to_b_(NULL),
+      channel_a_to_b_(nullptr),
       test_count_(0),
       packet_size_samples_(0),
       packet_size_bytes_(0) {}
 
 TestAllCodecs::~TestAllCodecs() {
-  if (channel_a_to_b_ != NULL) {
+  if (channel_a_to_b_ != nullptr) {
     delete channel_a_to_b_;
-    channel_a_to_b_ = NULL;
+    channel_a_to_b_ = nullptr;
   }
 }
 
 void TestAllCodecs::Perform() {
   const std::string file_name =
-      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
+      test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   infile_a_.Open(file_name, 32000, "rb");
 
   neteq_->SetCodecs({{107, {"L16", 8000, 1}},
@@ -307,8 +313,8 @@ void TestAllCodecs::RegisterSendCodec(char* codec_name,
 
   auto factory = CreateBuiltinAudioEncoderFactory();
   SdpAudioFormat format = {codec_name, clockrate_hz, num_channels};
-  format.parameters["ptime"] = rtc::ToString(rtc::CheckedDivExact(
-      packet_size, rtc::CheckedDivExact(sampling_freq_hz, 1000)));
+  format.parameters["ptime"] = absl::StrCat(
+      CheckedDivExact(packet_size, CheckedDivExact(sampling_freq_hz, 1000)));
   acm_a_->SetEncoder(factory->Create(env_, format, {.payload_type = 17}));
 }
 
@@ -372,8 +378,8 @@ void TestAllCodecs::Run(TestPack* channel) {
 }
 
 void TestAllCodecs::OpenOutFile(int test_number) {
-  std::string filename = webrtc::test::OutputPath();
-  rtc::StringBuilder test_number_str;
+  std::string filename = test::OutputPath();
+  StringBuilder test_number_str;
   test_number_str << test_number;
   filename += "testallcodecs_out_";
   filename += test_number_str.str();

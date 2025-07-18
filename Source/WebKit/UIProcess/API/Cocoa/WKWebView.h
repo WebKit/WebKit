@@ -701,6 +701,21 @@ typedef NS_OPTIONS(NSUInteger, WKWebViewDataType) {
  */
 - (void)restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(restoreData(_:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+/*! @abstract Edge insets on all sides, relative to the web view's coordinate space, which shrink
+ * the bounds of the layout viewport. Obscured content areas (that is, parts of the web view that
+ * overlap with obscured content insets) should be covered by UI elements managed by the client,
+ * such as a navigation bar or buttons. The web view automatically adjusts how fixed and sticky
+ * elements are rendered near edges with non-zero obscured insets, to ensure compatibility and
+ * legibility.
+ *
+ * All edge insets must be non-negative. Defaults to 0 on all sides.
+ */
+#if TARGET_OS_OSX
+@property (nonatomic) NSEdgeInsets obscuredContentInsets WK_API_AVAILABLE(macos(26.0));
+#else
+@property (nonatomic) UIEdgeInsets obscuredContentInsets WK_API_AVAILABLE(ios(26.0), visionos(26.0));
+#endif
+
 @end
 
 #if !TARGET_OS_IPHONE

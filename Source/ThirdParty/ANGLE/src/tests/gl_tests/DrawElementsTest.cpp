@@ -651,6 +651,68 @@ TEST_P(DrawElementsTest, DrawElementsWithDifferentIndexBufferOffsets)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test one element buffer bind to two vertexArrays and switch vertexArray should draw correctly
+TEST_P(DrawElementsTest, TwoVertexArraysWithSameElementBuffer)
+{
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM(programDrawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(programDrawRed);
+    GLint posLocation = glGetAttribLocation(programDrawRed, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+
+    GLBuffer vertexBuffer;
+    const std::array<Vector3, 4> &vertices = GetIndexedQuadVertices();
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer elementBuffer;
+    std::array<GLubyte, 6> zeros;
+    size_t elementBufferSize = sizeof(zeros[0]) * zeros.size();
+    zeros.fill(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBufferSize, zeros.data(), GL_DYNAMIC_DRAW);
+
+    // Set up two vertex arrays using same set of buffers. Since initial element buffer all point to
+    // the same vertex, it should only draw one point
+    GLuint vertexArray[2];
+    glGenVertexArrays(2, vertexArray);
+
+    glBindVertexArray(vertexArray[0]);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(0));
+
+    glBindVertexArray(vertexArray[1]);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(0));
+
+    // Use vertexArray[0] and update elementBuffer and draw
+    const std::array<GLubyte, 6> &indices = {0, 1, 2, 0, 2, 3};
+    glBindVertexArray(vertexArray[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBufferSize, indices.data(), GL_DYNAMIC_DRAW);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(0));
+
+    // Use vertexArray[1] and and draw
+    glBindVertexArray(vertexArray[1]);
+    size_t elementBufferOffset = sizeof(indices[0]) * 3;
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE,
+                   reinterpret_cast<const void *>(elementBufferOffset));
+
+    // We should see both triangles
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+
+    glDeleteVertexArrays(2, vertexArray);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that the offset in the index buffer is forced to be a multiple of the element size
 TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
 {
@@ -695,8 +757,81 @@ TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+class WebGLDrawElementsTest3 : public WebGLDrawElementsTest
+{};
+// Test one element buffer bind to two vertexArrays and switch vertexArray should draw correctly.
+// With WebGL, we will go through element buffer range validation check which will catch bugs if the
+// cached index range is incorrect.
+TEST_P(WebGLDrawElementsTest3, TwoVertexArraysWithSameElementBuffer)
+{
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM(programDrawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(programDrawRed);
+    GLint posLocation = glGetAttribLocation(programDrawRed, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+
+    GLBuffer vertexBuffer;
+    const std::array<Vector3, 4> &vertices = GetIndexedQuadVertices();
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer elementBuffer;
+    std::array<GLuint, 6> invalidIndexData;
+    size_t elementBufferSize = sizeof(invalidIndexData[0]) * invalidIndexData.size();
+    invalidIndexData.fill(0xffffffff);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBufferSize, invalidIndexData.data(),
+                 GL_DYNAMIC_DRAW);
+
+    // Set up two vertex arrays using same set of buffers. Since initial element buffer all point to
+    // 0xffffffff, which exceed max index range, it should generate GL_INVALID_OPERATION.
+    GLuint vertexArray[2];
+    glGenVertexArrays(2, vertexArray);
+
+    glBindVertexArray(vertexArray[0]);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, reinterpret_cast<const void *>(0));
+
+    glBindVertexArray(vertexArray[1]);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+    size_t elementBufferOffset1 = sizeof(invalidIndexData[0]) * 3;
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT,
+                   reinterpret_cast<const void *>(elementBufferOffset1));
+
+    // This should alsop clear the context error code.
+    ASSERT_TRUE(glGetError() == GL_INVALID_OPERATION);
+
+    // Use vertexArray[0] and update elementBuffer and draw
+    const std::array<GLuint, 6> &indices = {0, 1, 2, 0, 2, 3};
+    glBindVertexArray(vertexArray[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBufferSize, indices.data(), GL_DYNAMIC_DRAW);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, reinterpret_cast<const void *>(0));
+
+    // Use vertexArray[1] and and draw
+    glBindVertexArray(vertexArray[1]);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT,
+                   reinterpret_cast<const void *>(elementBufferOffset1));
+    ASSERT_TRUE(glGetError() == GL_NO_ERROR);
+
+    // We should see both triangles
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+
+    glDeleteVertexArrays(2, vertexArray);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawElementsTest);
 ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
 
 ANGLE_INSTANTIATE_TEST_ES2(WebGLDrawElementsTest);
+ANGLE_INSTANTIATE_TEST_ES3(WebGLDrawElementsTest3);
 }  // namespace

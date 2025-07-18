@@ -117,6 +117,8 @@ public:
 private:
     GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&);
 
+    Ref<WebGPU::CommandEncoder> protectedBacking() { return m_backing; }
+
     Ref<WebGPU::CommandEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
 };

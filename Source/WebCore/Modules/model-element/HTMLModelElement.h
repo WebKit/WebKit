@@ -36,6 +36,7 @@
 #include "HTMLModelElementCamera.h"
 #include "IDLTypes.h"
 #include "LayerHostingContextIdentifier.h"
+#include "ModelPlayer.h"
 #include "ModelPlayerClient.h"
 #include "PlatformLayer.h"
 #include "PlatformLayerIdentifier.h"
@@ -57,7 +58,6 @@ class GraphicsLayer;
 class LayoutPoint;
 class LayoutSize;
 class Model;
-class ModelPlayer;
 class ModelPlayerProvider;
 class MouseEvent;
 
@@ -184,6 +184,11 @@ public:
     size_t externalMemoryCost() const;
 #endif
 
+    void viewportIntersectionChanged(bool isIntersecting);
+    bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
+
+    WEBCORE_EXPORT String modelElementStateForTesting() const;
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
@@ -194,8 +199,8 @@ private:
     void deleteModelPlayer();
     void unloadModelPlayer(bool onSuspend);
     void reloadModelPlayer();
-    void startReloadModelTimer();
-    void reloadModelTimerFired();
+    void startLoadModelTimer();
+    void loadModelTimerFired();
 
     RefPtr<GraphicsLayer> graphicsLayer() const;
 
@@ -273,6 +278,13 @@ private:
     void updateStageMode();
 #endif
     void modelResourceFinished();
+    void sourceRequestResource();
+    bool shouldDeferLoading() const;
+    bool isModelDeferred() const;
+    bool isModelLoading() const;
+    bool isModelLoaded() const;
+    bool isModelUnloading() const;
+    bool isModelUnloaded() const;
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
@@ -285,9 +297,10 @@ private:
     bool m_dataComplete { false };
     bool m_isDragging { false };
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
+    bool m_isIntersectingViewport { false };
 
     RefPtr<ModelPlayer> m_modelPlayer;
-    EventLoopTimerHandle m_reloadModelTimer;
+    EventLoopTimerHandle m_loadModelTimer;
 #if ENABLE(MODEL_PROCESS)
     Ref<DOMMatrixReadOnly> m_entityTransform;
     Ref<DOMPointReadOnly> m_boundingBoxCenter;

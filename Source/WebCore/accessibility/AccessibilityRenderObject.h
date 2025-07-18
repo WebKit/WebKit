@@ -186,7 +186,7 @@ private:
     void addImageMapChildren();
     void addAttachmentChildren();
     void addRemoteSVGChildren();
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     void updateAttachmentViewParents();
 #endif
     String expandedTextValue() const override;

@@ -289,9 +289,9 @@ void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
     context().setLineCap(lineCap);
 }
 
-void RemoteDisplayListRecorder::setLineDash(DashArray&& dashArray, float dashOffset)
+void RemoteDisplayListRecorder::setLineDash(FixedVector<double>&& dashArray, float dashOffset)
 {
-    context().setLineDash(dashArray, dashOffset);
+    context().setLineDash(DashArray(dashArray.span()), dashOffset);
 }
 
 void RemoteDisplayListRecorder::setLineJoin(LineJoin lineJoin)
@@ -404,7 +404,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
 }
 
-void RemoteDisplayListRecorder::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, GlyphBufferAdvance> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
+void RemoteDisplayListRecorder::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     if (!font) {
@@ -412,7 +412,7 @@ void RemoteDisplayListRecorder::drawGlyphs(RenderingResourceIdentifier fontIdent
         return;
     }
 
-    context().drawGlyphs(*font, Vector(glyphsAdvances.span<0>()), Vector(glyphsAdvances.span<(1)>()), localAnchor, fontSmoothingMode);
+    context().drawGlyphs(*font, glyphsAdvances.span<0>(), Vector<GlyphBufferAdvance>(glyphsAdvances.span<1>()), localAnchor, fontSmoothingMode);
 }
 
 void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier)

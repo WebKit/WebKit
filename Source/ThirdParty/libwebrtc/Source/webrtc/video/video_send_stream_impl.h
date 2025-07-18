@@ -20,13 +20,26 @@
 #include <string>
 #include <vector>
 
+#include "api/adaptation/resource.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/environment/environment.h"
+#include "api/fec_controller.h"
 #include "api/field_trials_view.h"
 #include "api/metronome/metronome.h"
+#include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_layers_allocation.h"
+#include "api/video/video_source_interface.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/bitrate_allocator.h"
 #include "call/rtp_config.h"
@@ -97,16 +110,17 @@ class VideoSendStreamImpl : public webrtc::VideoSendStream,
   void Stop() override;
   bool started() override;
 
-  void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) override;
-  std::vector<rtc::scoped_refptr<Resource>> GetAdaptationResources() override;
+  void AddAdaptationResource(scoped_refptr<Resource> resource) override;
+  std::vector<scoped_refptr<Resource>> GetAdaptationResources() override;
 
-  void SetSource(rtc::VideoSourceInterface<webrtc::VideoFrame>* source,
+  void SetSource(VideoSourceInterface<webrtc::VideoFrame>* source,
                  const DegradationPreference& degradation_preference) override;
 
   void ReconfigureVideoEncoder(VideoEncoderConfig config) override;
   void ReconfigureVideoEncoder(VideoEncoderConfig config,
                                SetParametersCallback callback) override;
   Stats GetStats() override;
+  void SetStats(const Stats& stats) override;
 
   void StopPermanentlyAndGetRtpStates(RtpStateMap* rtp_state_map,
                                       RtpPayloadStateMap* payload_state_map);

@@ -10,8 +10,7 @@
 
 #include "rtc_base/net_test_helpers.h"
 
-#include <memory>
-#include <string>
+#include "rtc_base/net_helpers.h"
 
 #if defined(WEBRTC_WIN)
 #include <ws2spi.h>
@@ -20,7 +19,6 @@
 #include "rtc_base/win/windows_version.h"
 #endif
 #if defined(WEBRTC_POSIX) && !defined(__native_client__)
-#include <arpa/inet.h>
 #if defined(WEBRTC_ANDROID)
 #include "rtc_base/ifaddrs_android.h"
 #else
@@ -28,7 +26,7 @@
 #endif
 #endif  // defined(WEBRTC_POSIX) && !defined(__native_client__)
 
-namespace rtc {
+namespace webrtc {
 
 bool HasIPv4Enabled() {
 #if defined(WEBRTC_POSIX) && !defined(__native_client__)
@@ -55,10 +53,10 @@ bool HasIPv6Enabled() {
   // WinUWP always has IPv6 capability.
   return true;
 #elif defined(WEBRTC_WIN)
-  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_VISTA) {
+  if (rtc_win::GetVersion() >= rtc_win::Version::VERSION_VISTA) {
     return true;
   }
-  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_XP) {
+  if (rtc_win::GetVersion() < rtc_win::Version::VERSION_XP) {
     return false;
   }
   DWORD protbuff_size = 4096;
@@ -108,4 +106,4 @@ bool HasIPv6Enabled() {
   return true;
 #endif
 }
-}  // namespace rtc
+}  // namespace webrtc

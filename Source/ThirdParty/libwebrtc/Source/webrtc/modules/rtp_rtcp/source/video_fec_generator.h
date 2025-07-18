@@ -11,11 +11,15 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_VIDEO_FEC_GENERATOR_H_
 #define MODULES_RTP_RTCP_SOURCE_VIDEO_FEC_GENERATOR_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/units/data_rate.h"
 #include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
 namespace webrtc {

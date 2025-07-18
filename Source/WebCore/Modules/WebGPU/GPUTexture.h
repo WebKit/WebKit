@@ -59,7 +59,7 @@ public:
     ExceptionOr<Ref<GPUTextureView>> createView(const std::optional<GPUTextureViewDescriptor>&) const;
 
     void destroy();
-    bool isDestroyed() const;
+    bool isDestroyed() const { return m_isDestroyed; }
 
     WebGPU::Texture& backing() { return m_backing; }
     const WebGPU::Texture& backing() const { return m_backing; }

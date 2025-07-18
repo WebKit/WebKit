@@ -37,7 +37,7 @@ namespace dcsctp {
 constexpr int ErrorChunk::kType;
 
 std::optional<ErrorChunk> ErrorChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -51,7 +51,7 @@ std::optional<ErrorChunk> ErrorChunk::Parse(
 }
 
 void ErrorChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
+  webrtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, error_causes.size());
   writer.CopyToVariableData(error_causes);
 }

@@ -5260,7 +5260,7 @@ class WebKitStyleTest(CppStyleTestBase):
         #     '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::singleton().testFailed(__FILE__, __LINE__, #expression); return; } } while (0 )\n',
         #     'Mismatching spaces inside () in if  [whitespace/parens] [5]')
         self.assert_multi_line_lint(
-            'WTF_MAKE_NONCOPYABLE(ClassName); WTF_MAKE_FAST_ALLOCATED;\n',
+            'WTF_MAKE_NONCOPYABLE(ClassName); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ClassName);\n',
             '')
         self.assert_multi_line_lint(
             '#define MyMacro(name, status) \\\n'

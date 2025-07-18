@@ -62,7 +62,7 @@ RtcEventLogImpl::RtcEventLogImpl(std::unique_ptr<RtcEventLogEncoder> encoder,
     : max_events_in_history_(max_events_in_history),
       max_config_events_in_history_(max_config_events_in_history),
       event_encoder_(std::move(encoder)),
-      last_output_ms_(rtc::TimeMillis()),
+      last_output_ms_(TimeMillis()),
       task_queue_(task_queue_factory->CreateTaskQueue(
           "rtc_event_log",
           TaskQueueFactory::Priority::NORMAL)) {}
@@ -98,8 +98,8 @@ bool RtcEventLogImpl::StartLogging(std::unique_ptr<RtcEventLogOutput> output,
     return false;
   }
 
-  const int64_t timestamp_us = rtc::TimeMillis() * 1000;
-  const int64_t utc_time_us = rtc::TimeUTCMillis() * 1000;
+  const int64_t timestamp_us = TimeMillis() * 1000;
+  const int64_t utc_time_us = TimeUTCMillis() * 1000;
   RTC_LOG(LS_INFO) << "Starting WebRTC event log. (Timestamp, UTC) = ("
                    << timestamp_us << ", " << utc_time_us << ").";
 
@@ -147,9 +147,9 @@ void RtcEventLogImpl::StopLogging() {
   // TODO(bugs.webrtc.org/14449): Do not block current thread waiting on the
   // task queue. It might work for now, for current callers, but disallows
   // caller to share threads with the `task_queue_`.
-  rtc::Event output_stopped;
+  Event output_stopped;
   StopLogging([&output_stopped]() { output_stopped.Set(); });
-  output_stopped.Wait(rtc::Event::kForever);
+  output_stopped.Wait(Event::kForever);
 
   RTC_DLOG(LS_INFO) << "WebRTC event log successfully stopped.";
 }
@@ -233,10 +233,10 @@ void RtcEventLogImpl::ScheduleOutput() {
       LogEventsToOutput(std::move(histories));
     }
   };
-  const int64_t now_ms = rtc::TimeMillis();
+  const int64_t now_ms = TimeMillis();
   const int64_t time_since_output_ms = now_ms - last_output_ms_;
-  const int32_t delay = rtc::SafeClamp(output_period_ms_ - time_since_output_ms,
-                                       0, output_period_ms_);
+  const int32_t delay =
+      SafeClamp(output_period_ms_ - time_since_output_ms, 0, output_period_ms_);
   task_queue_->PostDelayedTask(std::move(output_task),
                                TimeDelta::Millis(delay));
 }
@@ -256,7 +256,7 @@ void RtcEventLogImpl::LogToMemory(std::unique_ptr<RtcEvent> event) {
 }
 
 void RtcEventLogImpl::LogEventsToOutput(EventHistories histories) {
-  last_output_ms_ = rtc::TimeMillis();
+  last_output_ms_ = TimeMillis();
 
   // Serialize the stream configurations.
   std::string encoded_configs = event_encoder_->EncodeBatch(
@@ -317,7 +317,7 @@ void RtcEventLogImpl::StopOutput() {
 void RtcEventLogImpl::StopLoggingInternal() {
   if (event_output_) {
     RTC_DCHECK(event_output_->IsActive());
-    const int64_t timestamp_us = rtc::TimeMillis() * 1000;
+    const int64_t timestamp_us = TimeMillis() * 1000;
     event_output_->Write(event_encoder_->EncodeLogEnd(timestamp_us));
   }
   StopOutput();

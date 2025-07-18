@@ -103,6 +103,7 @@ public:
     WEBCORE_EXPORT void setDrawsContent(bool) override;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT void setDrawsHDRContent(bool) override;
+    WEBCORE_EXPORT void setTonemappingEnabled(bool) override;
     WEBCORE_EXPORT void setNeedsDisplayIfEDRHeadroomExceeds(float) override;
 #endif
     WEBCORE_EXPORT void setContentsVisible(bool) override;
@@ -198,7 +199,6 @@ public:
     WEBCORE_EXPORT void setCustomAppearance(CustomAppearance) override;
 
     WEBCORE_EXPORT void deviceOrPageScaleFactorChanged() override;
-    WEBCORE_EXPORT void screenSupportedContentsFormatsChanged() override;
     void setShouldUpdateRootRelativeScaleFactor(bool value) override { m_shouldUpdateRootRelativeScaleFactor = value; }
 
     float rootRelativeScaleFactor() { return m_rootRelativeScaleFactor; }
@@ -206,7 +206,7 @@ public:
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CommitState);
         unsigned treeDepth { 0 };
         unsigned totalBackdropFilterArea { 0 };
         bool ancestorHadChanges { false };
@@ -285,6 +285,7 @@ private:
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool drawsHDRContent() const override { return m_drawsHDRContent; }
     void updateDrawsHDRContent();
+    void updateTonemappingEnabled();
 #endif
 
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
@@ -402,7 +403,7 @@ private:
     typedef unsigned ComputeVisibleRectFlags;
     
     struct VisibleAndCoverageRects {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VisibleAndCoverageRects);
         FloatRect visibleRect;
         FloatRect coverageRect;
         TransformationMatrix animatingTransform;
@@ -427,7 +428,7 @@ private:
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplicaState);
         static const size_t maxReplicaDepth = 16;
         enum ReplicaBranchType { ChildBranch = 0, ReplicaBranch = 1 };
         ReplicaState(ReplicaBranchType firstBranch)
@@ -673,6 +674,7 @@ private:
 #endif
 #if HAVE(SUPPORT_HDR_DISPLAY)
         DrawsHDRContentChanged                  = 1LLU << 47,
+        TonemappingEnabledChanged               = 1LLU << 48,
 #endif
     };
     typedef uint64_t LayerChangeFlags;
@@ -706,7 +708,7 @@ private:
 
     // References to clones of our layers, for replicated layers.
     struct LayerClones {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LayerClones);
         LayerMap primaryLayerClones;
         LayerMap structuralLayerClones;
         LayerMap contentsLayerClones;

@@ -46,7 +46,7 @@ typedef NullTextBreakIterator TextBreakIteratorPlatform;
 class TextBreakIteratorCache;
 
 class TextBreakIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIterator);
 public:
     struct LineMode {
         using Behavior = TextBreakIteratorICU::LineMode::Behavior;
@@ -138,7 +138,7 @@ private:
 class CachedTextBreakIterator;
 
 class TextBreakIteratorCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIteratorCache);
 // Use CachedTextBreakIterator instead of dealing with the cache directly.
 private:
     friend class LazyNeverDestroyed<TextBreakIteratorCache>;
@@ -182,7 +182,7 @@ private:
 
 // RAII for TextBreakIterator and TextBreakIteratorCache.
 class CachedTextBreakIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedTextBreakIterator);
 public:
     CachedTextBreakIterator(StringView string, std::span<const char16_t> priorContext, TextBreakIterator::Mode mode, const AtomString& locale, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
         : m_backing(isMainThread() ? TextBreakIteratorCache::singleton().take(string, priorContext, mode, contentAnalysis, locale) : TextBreakIterator(string, priorContext, mode, contentAnalysis, locale))
@@ -234,7 +234,7 @@ WTF_EXPORT_PRIVATE UBreakIterator* sentenceBreakIterator(StringView);
 WTF_EXPORT_PRIVATE bool isWordTextBreak(UBreakIterator*);
 
 class CachedLineBreakIteratorFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedLineBreakIteratorFactory);
 public:
     class PriorContext {
     public:
@@ -356,7 +356,7 @@ private:
 // Use this for general text processing, e.g. string truncation.
 
 class NonSharedCharacterBreakIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NonSharedCharacterBreakIterator);
     WTF_MAKE_NONCOPYABLE(NonSharedCharacterBreakIterator);
 public:
     WTF_EXPORT_PRIVATE NonSharedCharacterBreakIterator(StringView);

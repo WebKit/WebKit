@@ -191,7 +191,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestScheduledActionPrototypeFunction_method, (JSGloba
 
 JSC::GCClient::IsoSubspace* JSTestScheduledAction::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestScheduledAction, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestScheduledAction, UseCustomHeapCellType::No>(vm, "JSTestScheduledAction"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestScheduledAction.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestScheduledAction = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestScheduledAction.get(); },

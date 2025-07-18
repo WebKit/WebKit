@@ -66,7 +66,7 @@ static StringView extractCharset(StringView value)
         while (pos < length && value[pos] <= ' ')
             ++pos;
 
-        UChar quoteMark = 0;
+        char16_t quoteMark = 0;
         if (pos < length && (value[pos] == '"' || value[pos] == '\''))
             quoteMark = value[pos++];
 
@@ -120,7 +120,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(std::span<co
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return charset.trim(isASCIIWhitespace<UChar>);
+        return charset.trim(isASCIIWhitespace<char16_t>);
 
     return PAL::TextEncoding();
 }

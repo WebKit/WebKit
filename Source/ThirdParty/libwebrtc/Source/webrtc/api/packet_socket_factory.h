@@ -19,12 +19,10 @@
 #include "api/async_dns_resolver.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_certificate.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
-
-class SSLCertificateVerifier;
-class AsyncResolverInterface;
+namespace webrtc {
 
 struct PacketSocketTcpOptions {
   PacketSocketTcpOptions() = default;
@@ -70,7 +68,7 @@ class RTC_EXPORT PacketSocketFactory {
       const SocketAddress& remote_address,
       const PacketSocketTcpOptions& tcp_options) = 0;
 
-  virtual std::unique_ptr<webrtc::AsyncDnsResolverInterface>
+  virtual std::unique_ptr<AsyncDnsResolverInterface>
   CreateAsyncDnsResolver() = 0;
 
  private:
@@ -78,6 +76,15 @@ class RTC_EXPORT PacketSocketFactory {
   PacketSocketFactory& operator=(const PacketSocketFactory&) = delete;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::PacketSocketFactory;
+using ::webrtc::PacketSocketTcpOptions;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // API_PACKET_SOCKET_FACTORY_H_

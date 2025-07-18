@@ -13,7 +13,7 @@
 // The implementation is borrowed from chromium except that it does not
 // implement SupportsWeakPtr.
 
-namespace rtc {
+namespace webrtc {
 namespace internal {
 
 void WeakReference::Flag::Invalidate() {
@@ -68,4 +68,4 @@ WeakPtrBase::~WeakPtrBase() {}
 WeakPtrBase::WeakPtrBase(const WeakReference& ref) : ref_(ref) {}
 
 }  // namespace internal
-}  // namespace rtc
+}  // namespace webrtc

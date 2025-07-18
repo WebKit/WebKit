@@ -16,7 +16,6 @@
 #include <optional>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
@@ -81,10 +80,10 @@ class RtpPacketToSend : public RtpPacket {
 
   // An application can attach arbitrary data to an RTP packet using
   // `additional_data`. The additional data does not affect WebRTC processing.
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data() const {
+  scoped_refptr<RefCountedBase> additional_data() const {
     return additional_data_;
   }
-  void set_additional_data(rtc::scoped_refptr<rtc::RefCountedBase> data) {
+  void set_additional_data(scoped_refptr<RefCountedBase> data) {
     additional_data_ = std::move(data);
   }
 
@@ -147,6 +146,11 @@ class RtpPacketToSend : public RtpPacket {
   void set_transport_sequence_number(int64_t transport_sequence_number) {
     transport_sequence_number_ = transport_sequence_number;
   }
+  // Transport is capable of handling explicit congestion notification and the
+  // RTP packet should be sent as ect(1)
+  // https://www.rfc-editor.org/rfc/rfc9331.html
+  bool send_as_ect1() const { return send_as_ect1_; }
+  void set_send_as_ect1() { send_as_ect1_ = true; }
 
  private:
   webrtc::Timestamp capture_time_ = webrtc::Timestamp::Zero();
@@ -156,11 +160,12 @@ class RtpPacketToSend : public RtpPacket {
   std::optional<int64_t> transport_sequence_number_;
   bool allow_retransmission_ = false;
   std::optional<uint16_t> retransmitted_sequence_number_;
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data_;
+  scoped_refptr<RefCountedBase> additional_data_;
   bool is_first_packet_of_frame_ = false;
   bool is_key_frame_ = false;
   bool fec_protect_packet_ = false;
   bool is_red_ = false;
+  bool send_as_ect1_ = false;
   std::optional<TimeDelta> time_in_send_queue_;
 };
 

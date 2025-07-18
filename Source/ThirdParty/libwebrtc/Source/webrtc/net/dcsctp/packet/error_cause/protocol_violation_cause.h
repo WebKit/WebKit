@@ -38,7 +38,7 @@ class ProtocolViolationCause : public Parameter,
       : additional_information_(additional_information) {}
 
   static std::optional<ProtocolViolationCause> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

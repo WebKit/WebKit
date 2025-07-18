@@ -19,7 +19,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -85,4 +85,4 @@ void RTCCertificateGenerator::GenerateCertificateAsync(
   });
 }
 
-}  // namespace rtc
+}  // namespace webrtc

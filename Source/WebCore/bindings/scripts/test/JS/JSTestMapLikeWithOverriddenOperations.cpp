@@ -376,7 +376,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_
 
 JSC::GCClient::IsoSubspace* JSTestMapLikeWithOverriddenOperations::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestMapLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestMapLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm, "JSTestMapLikeWithOverriddenOperations"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestMapLikeWithOverriddenOperations.get(); },

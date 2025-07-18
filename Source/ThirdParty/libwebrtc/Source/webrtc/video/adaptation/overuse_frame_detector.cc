@@ -14,20 +14,29 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/exp_filter.h"
+#include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
+#include "video/video_stream_encoder_observer.h"
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 #include <mach/mach.h>
@@ -79,8 +88,8 @@ class SendProcessingUsage1 : public OveruseFrameDetector::ProcessingUsage {
         count_(0),
         last_processed_capture_time_us_(-1),
         max_sample_diff_ms_(kDefaultSampleDiffMs * kMaxSampleDiffMarginFactor),
-        filtered_processing_ms_(new rtc::ExpFilter(kWeightFactorProcessing)),
-        filtered_frame_diff_ms_(new rtc::ExpFilter(kWeightFactorFrameDiff)) {
+        filtered_processing_ms_(new ExpFilter(kWeightFactorProcessing)),
+        filtered_frame_diff_ms_(new ExpFilter(kWeightFactorFrameDiff)) {
     Reset();
   }
   ~SendProcessingUsage1() override {}
@@ -137,7 +146,7 @@ class SendProcessingUsage1 : public OveruseFrameDetector::ProcessingUsage {
     while (!frame_timing_.empty()) {
       FrameTiming timing = frame_timing_.front();
       if (time_sent_in_us - timing.capture_us <
-          kEncodingTimeMeasureWindowMs * rtc::kNumMicrosecsPerMillisec) {
+          kEncodingTimeMeasureWindowMs * kNumMicrosecsPerMillisec) {
         break;
       }
       if (timing.last_send_us != -1) {
@@ -212,8 +221,8 @@ class SendProcessingUsage1 : public OveruseFrameDetector::ProcessingUsage {
   uint64_t count_;
   int64_t last_processed_capture_time_us_;
   float max_sample_diff_ms_;
-  std::unique_ptr<rtc::ExpFilter> filtered_processing_ms_;
-  std::unique_ptr<rtc::ExpFilter> filtered_frame_diff_ms_;
+  std::unique_ptr<ExpFilter> filtered_processing_ms_;
+  std::unique_ptr<ExpFilter> filtered_frame_diff_ms_;
 };
 
 // New cpu load estimator.
@@ -291,7 +300,7 @@ class SendProcessingUsage2 : public OveruseFrameDetector::ProcessingUsage {
   int64_t DurationPerInputFrame(int64_t capture_time_us,
                                 int64_t encode_time_us) {
     // Discard data on old frames; limit 2 seconds.
-    static constexpr int64_t kMaxAge = 2 * rtc::kNumMicrosecsPerSec;
+    static constexpr int64_t kMaxAge = 2 * kNumMicrosecsPerSec;
     for (auto it = max_encode_time_per_input_frame_.begin();
          it != max_encode_time_per_input_frame_.end() &&
          it->first < capture_time_us - kMaxAge;) {
@@ -375,7 +384,7 @@ class OverdoseInjector : public OveruseFrameDetector::ProcessingUsage {
   }
 
   int Value() override {
-    int64_t now_ms = rtc::TimeMillis();
+    int64_t now_ms = TimeMillis();
     if (last_toggling_ms_ == -1) {
       last_toggling_ms_ = now_ms;
     } else {
@@ -531,7 +540,7 @@ bool OveruseFrameDetector::FrameTimeoutDetected(int64_t now_us) const {
   if (last_capture_time_us_ == -1)
     return false;
   return (now_us - last_capture_time_us_) >
-         options_.frame_timeout_interval_ms * rtc::kNumMicrosecsPerMillisec;
+         options_.frame_timeout_interval_ms * kNumMicrosecsPerMillisec;
 }
 
 void OveruseFrameDetector::ResetAll(int num_pixels) {
@@ -576,8 +585,7 @@ void OveruseFrameDetector::FrameSent(uint32_t timestamp,
                                          capture_time_us, encode_duration_us);
 
   if (encode_duration_us) {
-    EncodedFrameTimeMeasured(*encode_duration_us /
-                             rtc::kNumMicrosecsPerMillisec);
+    EncodedFrameTimeMeasured(*encode_duration_us / kNumMicrosecsPerMillisec);
   }
 }
 
@@ -590,7 +598,7 @@ void OveruseFrameDetector::CheckForOveruse(
       !encode_usage_percent_)
     return;
 
-  int64_t now_ms = rtc::TimeMillis();
+  int64_t now_ms = TimeMillis();
   const char* action = "NoAction";
 
   if (IsOverusing(*encode_usage_percent_)) {

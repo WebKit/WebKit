@@ -18,7 +18,7 @@
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/system_time.h"
 
-namespace rtc {
+namespace webrtc {
 
 static const int64_t kNumMillisecsPerSec = INT64_C(1000);
 static const int64_t kNumMicrosecsPerSec = INT64_C(1000000);
@@ -127,7 +127,7 @@ int64_t TmToSeconds(const tm& tm);
 // Note that this function obeys the system's idea about what the time
 // is. It is not guaranteed to be monotonic; it will jump in case the
 // system time is changed, e.g., by some other process calling
-// settimeofday. Always use rtc::TimeMicros(), not this function, for
+// settimeofday. Always use webrtc::TimeMicros(), not this function, for
 // measuring time intervals and timeouts.
 RTC_EXPORT int64_t TimeUTCMicros();
 
@@ -135,6 +135,37 @@ RTC_EXPORT int64_t TimeUTCMicros();
 // See above.
 RTC_EXPORT int64_t TimeUTCMillis();
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::ClockInterface;
+using ::webrtc::GetClockForTesting;
+using ::webrtc::kNtpJan1970Millisecs;
+using ::webrtc::kNumMicrosecsPerMillisec;
+using ::webrtc::kNumMicrosecsPerSec;
+using ::webrtc::kNumMillisecsPerSec;
+using ::webrtc::kNumNanosecsPerMicrosec;
+using ::webrtc::kNumNanosecsPerMillisec;
+using ::webrtc::kNumNanosecsPerSec;
+using ::webrtc::SetClockForTesting;
+using ::webrtc::SystemTimeMillis;
+using ::webrtc::Time;
+using ::webrtc::Time32;
+using ::webrtc::TimeAfter;
+using ::webrtc::TimeDiff;
+using ::webrtc::TimeDiff32;
+using ::webrtc::TimeMicros;
+using ::webrtc::TimeMillis;
+using ::webrtc::TimeNanos;
+using ::webrtc::TimeSince;
+using ::webrtc::TimeUntil;
+using ::webrtc::TimeUTCMicros;
+using ::webrtc::TimeUTCMillis;
+using ::webrtc::TmToSeconds;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_TIME_UTILS_H_

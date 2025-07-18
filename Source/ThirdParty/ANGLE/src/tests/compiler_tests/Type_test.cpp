@@ -19,9 +19,7 @@ namespace sh
 // Verify that mangled name matches between a vector/matrix TType and a corresponding StaticType.
 TEST(Type, VectorAndMatrixMangledNameConsistent)
 {
-    angle::PoolAllocator allocator;
-    allocator.push();
-    SetGlobalPoolAllocator(&allocator);
+    TScopedPoolAllocator allocator;
 
     const TType *staticTypeScalar = StaticType::Get<EbtFloat, EbpMedium, EvqGlobal, 1, 1>();
     const TType *staticTypeVec2   = StaticType::Get<EbtFloat, EbpMedium, EvqGlobal, 2, 1>();
@@ -35,9 +33,6 @@ TEST(Type, VectorAndMatrixMangledNameConsistent)
               std::string(typeVec2->getMangledName()));
     EXPECT_EQ(std::string(staticTypeMat2x4->getMangledName()),
               std::string(typeMat2x4->getMangledName()));
-
-    SetGlobalPoolAllocator(nullptr);
-    allocator.pop();
 }
 
 // Verify that basic type mangled names are unique.

@@ -201,7 +201,7 @@ class TestAudioDevice : public AudioDeviceGeneric {
   bool capturing_initialized_ RTC_GUARDED_BY(lock_) = false;
 
   std::vector<int16_t> playout_buffer_ RTC_GUARDED_BY(lock_);
-  rtc::BufferT<int16_t> recording_buffer_ RTC_GUARDED_BY(lock_);
+  BufferT<int16_t> recording_buffer_ RTC_GUARDED_BY(lock_);
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
 };
 

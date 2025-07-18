@@ -11,16 +11,24 @@
 #include "modules/video_coding/codecs/av1/dav1d_decoder.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <optional>
 
+#include "api/environment/environment.h"
+#include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
+#include "api/video_codecs/video_decoder.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/logging.h"
+#include "third_party/dav1d/libdav1d/include/dav1d/data.h"
 #include "third_party/dav1d/libdav1d/include/dav1d/dav1d.h"
-#include "third_party/libyuv/include/libyuv/convert.h"
-#include "third_party/libyuv/include/libyuv/planar_functions.h"
+#include "third_party/dav1d/libdav1d/include/dav1d/headers.h"
+#include "third_party/dav1d/libdav1d/include/dav1d/picture.h"
 
 namespace webrtc {
 namespace {
@@ -28,6 +36,7 @@ namespace {
 class Dav1dDecoder : public VideoDecoder {
  public:
   Dav1dDecoder();
+  explicit Dav1dDecoder(const Environment& env);
   Dav1dDecoder(const Dav1dDecoder&) = delete;
   Dav1dDecoder& operator=(const Dav1dDecoder&) = delete;
 
@@ -45,6 +54,8 @@ class Dav1dDecoder : public VideoDecoder {
  private:
   Dav1dContext* context_ = nullptr;
   DecodedImageCallback* decode_complete_callback_ = nullptr;
+
+  const bool crop_to_render_resolution_ = false;
 };
 
 class ScopedDav1dData {
@@ -57,13 +68,12 @@ class ScopedDav1dData {
   Dav1dData data_ = {};
 };
 
-class ScopedDav1dPicture
-    : public rtc::RefCountedNonVirtual<ScopedDav1dPicture> {
+class ScopedDav1dPicture : public RefCountedNonVirtual<ScopedDav1dPicture> {
  public:
   ~ScopedDav1dPicture() { dav1d_picture_unref(&picture_); }
 
   Dav1dPicture& Picture() { return picture_; }
-  using rtc::RefCountedNonVirtual<ScopedDav1dPicture>::HasOneRef;
+  using RefCountedNonVirtual<ScopedDav1dPicture>::HasOneRef;
 
  private:
   Dav1dPicture picture_ = {};
@@ -72,9 +82,13 @@ class ScopedDav1dPicture
 constexpr char kDav1dName[] = "dav1d";
 
 // Calling `dav1d_data_wrap` requires a `free_callback` to be registered.
-void NullFreeCallback(const uint8_t* buffer, void* opaque) {}
+void NullFreeCallback(const uint8_t* /* buffer */, void* /* opaque */) {}
 
 Dav1dDecoder::Dav1dDecoder() = default;
+
+Dav1dDecoder::Dav1dDecoder(const Environment& env)
+    : crop_to_render_resolution_(env.field_trials().IsEnabled(
+          "WebRTC-Dav1dDecoder-CropToRenderResolution")) {}
 
 Dav1dDecoder::~Dav1dDecoder() {
   Release();
@@ -84,9 +98,9 @@ bool Dav1dDecoder::Configure(const Settings& settings) {
   Dav1dSettings s;
   dav1d_default_settings(&s);
 
-  s.n_threads = std::max(2, settings.number_of_cores());
-  s.max_frame_delay = 1;   // For low latency decoding.
-  s.all_layers = 0;        // Don't output a frame for every spatial layer.
+  s.n_threads = std::clamp(settings.number_of_cores(), 1, DAV1D_MAX_THREADS);
+  s.max_frame_delay = 1;  // For low latency decoding.
+  s.all_layers = 0;       // Don't output a frame for every spatial layer.
   // Limit max frame size to avoid OOM'ing fuzzers. crbug.com/325284120.
   s.frame_size_limit = 16384 * 16384;
   s.operating_point = 31;  // Decode all operating points.
@@ -138,7 +152,7 @@ int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  rtc::scoped_refptr<ScopedDav1dPicture> scoped_dav1d_picture(
+  scoped_refptr<ScopedDav1dPicture> scoped_dav1d_picture(
       new ScopedDav1dPicture{});
   Dav1dPicture& dav1d_picture = scoped_dav1d_picture->Picture();
   if (int get_picture_res = dav1d_get_picture(context_, &dav1d_picture)) {
@@ -155,21 +169,38 @@ int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  rtc::scoped_refptr<VideoFrameBuffer> wrapped_buffer;
+  int width = dav1d_picture.p.w;
+  int height = dav1d_picture.p.h;
+
+  if (crop_to_render_resolution_ && dav1d_picture.frame_hdr) {
+    // Interpret render_width/height as resolution decoded frame should be
+    // cropped to.
+    if (dav1d_picture.frame_hdr->render_width > 0 &&
+        dav1d_picture.frame_hdr->render_height > 0) {
+      width = std::min(width, dav1d_picture.frame_hdr->render_width);
+      height = std::min(height, dav1d_picture.frame_hdr->render_height);
+    } else {
+      RTC_LOG(LS_WARNING) << "Dav1dDecoder::Decode invalid render resolution "
+                          << dav1d_picture.frame_hdr->render_width << "x"
+                          << dav1d_picture.frame_hdr->render_height;
+    }
+  }
+
+  scoped_refptr<VideoFrameBuffer> wrapped_buffer;
   if (dav1d_picture.p.layout == DAV1D_PIXEL_LAYOUT_I420) {
     wrapped_buffer = WrapI420Buffer(
-        dav1d_picture.p.w, dav1d_picture.p.h,
-        static_cast<uint8_t*>(dav1d_picture.data[0]), dav1d_picture.stride[0],
-        static_cast<uint8_t*>(dav1d_picture.data[1]), dav1d_picture.stride[1],
-        static_cast<uint8_t*>(dav1d_picture.data[2]), dav1d_picture.stride[1],
+        width, height, static_cast<uint8_t*>(dav1d_picture.data[0]),
+        dav1d_picture.stride[0], static_cast<uint8_t*>(dav1d_picture.data[1]),
+        dav1d_picture.stride[1], static_cast<uint8_t*>(dav1d_picture.data[2]),
+        dav1d_picture.stride[1],
         // To keep |scoped_dav1d_picture.Picture()| alive
         [scoped_dav1d_picture] {});
   } else if (dav1d_picture.p.layout == DAV1D_PIXEL_LAYOUT_I444) {
     wrapped_buffer = WrapI444Buffer(
-        dav1d_picture.p.w, dav1d_picture.p.h,
-        static_cast<uint8_t*>(dav1d_picture.data[0]), dav1d_picture.stride[0],
-        static_cast<uint8_t*>(dav1d_picture.data[1]), dav1d_picture.stride[1],
-        static_cast<uint8_t*>(dav1d_picture.data[2]), dav1d_picture.stride[1],
+        width, height, static_cast<uint8_t*>(dav1d_picture.data[0]),
+        dav1d_picture.stride[0], static_cast<uint8_t*>(dav1d_picture.data[1]),
+        dav1d_picture.stride[1], static_cast<uint8_t*>(dav1d_picture.data[2]),
+        dav1d_picture.stride[1],
         // To keep |scoped_dav1d_picture.Picture()| alive
         [scoped_dav1d_picture] {});
   } else {
@@ -208,6 +239,10 @@ int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
 
 std::unique_ptr<VideoDecoder> CreateDav1dDecoder() {
   return std::make_unique<Dav1dDecoder>();
+}
+
+std::unique_ptr<VideoDecoder> CreateDav1dDecoder(const Environment& env) {
+  return std::make_unique<Dav1dDecoder>(env);
 }
 
 }  // namespace webrtc

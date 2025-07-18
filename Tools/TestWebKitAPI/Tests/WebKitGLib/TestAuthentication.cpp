@@ -346,7 +346,7 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
 }
 
 class Tunnel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Tunnel);
 public:
 #if USE(SOUP2)
     Tunnel(SoupServer* server, SoupMessage* message)

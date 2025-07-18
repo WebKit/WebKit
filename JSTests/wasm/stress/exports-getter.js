@@ -1,3 +1,6 @@
+//@ $skipModes << "wasm-no-wasm-jit".to_sym if $buildType == "debug"
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import { instantiate } from "../wabt-wrapper.js";
 
 function bench(instance)

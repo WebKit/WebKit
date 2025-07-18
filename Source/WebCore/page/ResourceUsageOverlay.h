@@ -57,7 +57,7 @@ public:
     static Ref<ResourceUsageOverlay> create(Page&);
     ~ResourceUsageOverlay();
 
-    PageOverlay& overlay() { return *m_overlay; }
+    PageOverlay& overlay() { return m_overlay; }
 
 #if PLATFORM(COCOA)
     void platformDraw(CGContextRef);
@@ -83,13 +83,13 @@ private:
     void platformDestroy();
 
     WeakPtr<Page> m_page;
-    RefPtr<PageOverlay> m_overlay;
+    const Ref<PageOverlay> m_overlay;
     bool m_dragging { false };
     IntPoint m_dragPoint;
 
 #if PLATFORM(COCOA)
-    RetainPtr<CALayer> m_layer;
-    RetainPtr<CALayer> m_containerLayer;
+    const RetainPtr<CALayer> m_layer;
+    const RetainPtr<CALayer> m_containerLayer;
 #endif
 
 #if OS(LINUX)

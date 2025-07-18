@@ -131,7 +131,7 @@ header: <WebCore/PlatformXR.h>
 };
 
 [Nested, RValue] struct PlatformXR::FrameData::ExternalTextureData {
-    size_t reusableTextureIndex;
+    uint64_t reusableTextureIndex;
     PlatformXR::FrameData::ExternalTexture colorTexture;
     PlatformXR::FrameData::ExternalTexture depthStencilBuffer;
 };

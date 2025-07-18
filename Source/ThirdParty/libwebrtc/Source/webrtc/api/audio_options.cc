@@ -16,11 +16,11 @@
 #include "api/array_view.h"
 #include "rtc_base/strings/string_builder.h"
 
-namespace cricket {
+namespace webrtc {
 namespace {
 
 template <class T>
-void ToStringIfSet(rtc::SimpleStringBuilder* result,
+void ToStringIfSet(SimpleStringBuilder* result,
                    const char* key,
                    const std::optional<T>& val) {
   if (val) {
@@ -81,7 +81,7 @@ bool AudioOptions::operator==(const AudioOptions& o) const {
 
 std::string AudioOptions::ToString() const {
   char buffer[1024];
-  rtc::SimpleStringBuilder result(buffer);
+  SimpleStringBuilder result(buffer);
   result << "AudioOptions {";
   ToStringIfSet(&result, "aec", echo_cancellation);
 #if defined(WEBRTC_IOS)
@@ -104,4 +104,4 @@ std::string AudioOptions::ToString() const {
   return result.str();
 }
 
-}  // namespace cricket
+}  // namespace webrtc

@@ -56,7 +56,7 @@ enum class State {
 
 struct _WPEScreenSyncObserverDRMPrivate {
     _WPEScreenSyncObserverDRMPrivate()
-        : destroyThreadTimer(RunLoop::main(), this, &_WPEScreenSyncObserverDRMPrivate::invalidate)
+        : destroyThreadTimer(RunLoop::mainSingleton(), this, &_WPEScreenSyncObserverDRMPrivate::invalidate)
     {
         destroyThreadTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
     }

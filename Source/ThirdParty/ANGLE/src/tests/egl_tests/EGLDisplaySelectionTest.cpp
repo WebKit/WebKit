@@ -129,7 +129,7 @@ class EGLDisplaySelectionTestMultiDisplay : public EGLDisplaySelectionTestNoFixt
         displayAttributes.push_back(powerPreference);
         displayAttributes.push_back(EGL_NONE);
 
-        *display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        *display = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttributes.data());
         ASSERT_TRUE(*display != EGL_NO_DISPLAY);
@@ -156,7 +156,7 @@ class EGLDisplaySelectionTestMultiDisplay : public EGLDisplaySelectionTestNoFixt
         displayAttributes.push_back(deviceType);
         displayAttributes.push_back(EGL_NONE);
 
-        *display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        *display = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttributes.data());
         ASSERT_TRUE(*display != EGL_NO_DISPLAY);
@@ -504,7 +504,7 @@ class EGLDisplaySelectionTestDeviceId : public EGLDisplaySelectionTestNoFixture
         }
         displayAttributes.push_back(EGL_NONE);
 
-        *display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        *display = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttributes.data());
         ASSERT_TRUE(*display != EGL_NO_DISPLAY);

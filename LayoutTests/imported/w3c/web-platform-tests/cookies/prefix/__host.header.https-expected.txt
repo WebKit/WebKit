@@ -1,22 +1,22 @@
 
 PASS __Host: Secure origin: Does not set 'Path=/;'
-FAIL __HoSt: Secure origin: Does not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "0.02745361323050355"
+FAIL __HoSt: Secure origin: Does not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "bar2"
 PASS __Host: Secure origin: Does set 'Secure; Path=/;'
 PASS __HoSt: Secure origin: Does set 'Secure; Path=/;'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; '
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; ' assert_equals: expected (undefined) undefined but got (string) "0.09586554926477497"
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; ' assert_equals: expected (undefined) undefined but got (string) "bar6"
 PASS __Host: Secure origin: Does not set 'Path=/;MaxAge=10'
-FAIL __HoSt: Secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "0.528527237577119"
+FAIL __HoSt: Secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar8"
 PASS __Host: Secure origin: Does set 'Secure; Path=/;MaxAge=10'
 PASS __HoSt: Secure origin: Does set 'Secure; Path=/;MaxAge=10'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10'
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "0.9628031845641266"
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar12"
 PASS __Host: Secure origin: Does not set 'Path=/;HttpOnly'
-FAIL __HoSt: Secure origin: Does not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "0.17186113442674777"
+FAIL __HoSt: Secure origin: Does not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar14"
 PASS __Host: Secure origin: Does set 'Secure; Path=/;HttpOnly'
 PASS __HoSt: Secure origin: Does set 'Secure; Path=/;HttpOnly'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; HttpOnly'
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; HttpOnly' assert_equals: expected (undefined) undefined but got (string) "0.41733921848427913"
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar18"
 PASS __Host: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py'
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py' assert_equals: expected (undefined) undefined but got (string) "0.7000720201711788"
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py' assert_equals: expected (undefined) undefined but got (string) "bar20"
 

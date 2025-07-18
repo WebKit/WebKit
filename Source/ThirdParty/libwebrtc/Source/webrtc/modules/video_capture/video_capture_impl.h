@@ -23,12 +23,14 @@
 #include "api/video/video_frame.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_sink_interface.h"
+#include "modules/video_capture/raw_video_sink_interface.h"
 #include "modules/video_capture/video_capture.h"
 #include "modules/video_capture/video_capture_config.h"
 #include "modules/video_capture/video_capture_defines.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -45,9 +47,9 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
    *   deviceUniqueIdUTF8 -  name of the device. Available names can be found by
    * using GetDeviceName
    */
-  static rtc::scoped_refptr<VideoCaptureModule> Create(
+  static scoped_refptr<VideoCaptureModule> Create(
       const char* deviceUniqueIdUTF8);
-  static rtc::scoped_refptr<VideoCaptureModule> Create(
+  static scoped_refptr<VideoCaptureModule> Create(
       VideoCaptureOptions* options,
       const char* deviceUniqueIdUTF8);
 
@@ -61,7 +63,7 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
 
   // Call backs
   void RegisterCaptureDataCallback(
-      rtc::VideoSinkInterface<VideoFrame>* dataCallback) override;
+      VideoSinkInterface<VideoFrame>* dataCallback) override;
   virtual void RegisterCaptureDataCallback(
       RawVideoSinkInterface* dataCallback) override;
   void DeRegisterCaptureDataCallback() override;
@@ -92,7 +94,7 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
   SequenceChecker api_checker_;
   // RaceChecker for members that can be accessed on the API thread while
   // capture is not happening, and on a callback thread otherwise.
-  rtc::RaceChecker capture_checker_;
+  RaceChecker capture_checker_;
   // current Device unique name;
   char* _deviceUniqueId RTC_GUARDED_BY(api_checker_);
   Mutex api_lock_;
@@ -115,7 +117,7 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
   // last time the frame rate callback function was called.
   int64_t _lastFrameRateCallbackTimeNanos RTC_GUARDED_BY(capture_checker_);
 
-  rtc::VideoSinkInterface<VideoFrame>* _dataCallBack RTC_GUARDED_BY(api_lock_);
+  VideoSinkInterface<VideoFrame>* _dataCallBack RTC_GUARDED_BY(api_lock_);
   RawVideoSinkInterface* _rawDataCallBack RTC_GUARDED_BY(api_lock_);
 
   int64_t _lastProcessFrameTimeNanos RTC_GUARDED_BY(capture_checker_);

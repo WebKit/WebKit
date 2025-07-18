@@ -117,16 +117,16 @@ TEST(WTF_StdLibExtras, findBitInWord_uint64_t) { testFindBitInWord<uint64_t>(); 
 
 // Tests that function-local types can be instantiated with makeUnique.
 // Style check would complain about use of std::make_unique, enforcing use of
-// makeUnique. The makeUnique needs WTF_..._MAKE_FAST_ALLOCATED.
+// makeUnique. The makeUnique needs WTF_DEPRECATED_..._DEPRECATED_MAKE_FAST_ALLOCATED.
 // There used to be a warn-unused-typedef errors when using these.
 TEST(WTF_StdLibExtras, MakeUniqueFunctionLocalTypeCompiles)
 {
     struct LocalStruct {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LocalStruct);
     };
     IGNORE_CLANG_WARNINGS_BEGIN("unused-local-typedef")
     class LocalClass {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LocalClass);
     };
     IGNORE_CLANG_WARNINGS_END
     auto s = makeUnique<LocalStruct>();

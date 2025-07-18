@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class TextDocumentParser final : public HTMLDocumentParser {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextDocumentParser, HTMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextDocumentParser);
 public:
     static Ref<TextDocumentParser> create(HTMLDocument& document)

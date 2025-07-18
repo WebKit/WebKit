@@ -592,7 +592,7 @@ static bool canBeRFC9557Annotation(const StringParsingBuffer<CharacterType>& buf
 template<typename CharacterType>
 static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
 {
-    switch (static_cast<UChar>(character)) {
+    switch (static_cast<char16_t>(character)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':
@@ -636,7 +636,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(St
     if (*buffer == '!')
         buffer.advance();
 
-    switch (static_cast<UChar>(*buffer)) {
+    switch (static_cast<char16_t>(*buffer)) {
     case '+':
     case '-': {
         auto offset = parseUTCOffset(buffer, false);
@@ -768,7 +768,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 {
     if (buffer.atEnd())
         return std::nullopt;
-    switch (static_cast<UChar>(*buffer)) {
+    switch (static_cast<char16_t>(*buffer)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':

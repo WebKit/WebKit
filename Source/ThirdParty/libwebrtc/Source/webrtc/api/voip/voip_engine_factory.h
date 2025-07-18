@@ -12,11 +12,13 @@
 #define API_VOIP_VOIP_ENGINE_FACTORY_H_
 
 #include <memory>
+#include <optional>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/voip/voip_engine.h"
@@ -28,16 +30,6 @@ namespace webrtc {
 // marked with comments as either mandatory or optional and default
 // implementations that applications can use.
 struct VoipEngineConfig {
-  // TODO: bugs.webrtc.org/369904700 - Remove explicit default constructors
-  // when deprecated `audio_processing` is removed and thus implicit
-  // constructors won't be considered deprecated.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  VoipEngineConfig() = default;
-  VoipEngineConfig(VoipEngineConfig&&) = default;
-  VoipEngineConfig& operator=(VoipEngineConfig&&) = default;
-#pragma clang diagnostic pop
-
   // Mandatory (e.g. api/audio_codec/builtin_audio_encoder_factory).
   // AudioEncoderFactory provides a set of audio codecs for VoipEngine to encode
   // the audio input sample. Application can choose to limit the set to reduce
@@ -50,9 +42,10 @@ struct VoipEngineConfig {
   // to limit the set to reduce application footprint.
   scoped_refptr<AudioDecoderFactory> decoder_factory;
 
-  // Mandatory (e.g. api/task_queue/default_task_queue_factory).
-  // TaskQeueuFactory provided for VoipEngine to work asynchronously on its
+  // Optional (e.g. api/task_queue/default_task_queue_factory).
+  // TaskQueueFactory provided for VoipEngine to work asynchronously on its
   // encoding flow.
+  // It is an error to provide both `env` and `task_queue_factory`.
   std::unique_ptr<TaskQueueFactory> task_queue_factory;
 
   // Mandatory (e.g. modules/audio_device/include).
@@ -61,6 +54,13 @@ struct VoipEngineConfig {
   // play through its output device (e.g. speaker).
   scoped_refptr<AudioDeviceModule> audio_device_module;
 
+  // Optional. When not set, VoipEngine will use a default Environment created
+  // with `CreateEnvironment`, see api/environment/environment_factory.h
+  // Provides
+  // - TaskQueueFactory to work asynchronously on VoipEngine encoding flow
+  // - FieldTrialsView for experimentations
+  std::optional<Environment> env;
+
   // Optional (e.g. api/audio/builtin_audio_processing_builder).
   // AudioProcessing provides audio procesing functionalities (e.g. acoustic
   // echo cancellation, noise suppression, gain control, etc) on audio input
@@ -68,10 +68,6 @@ struct VoipEngineConfig {
   // such functionalities to perform on audio input samples received from
   // AudioDeviceModule.
   std::unique_ptr<AudioProcessingBuilderInterface> audio_processing_builder;
-
-  // TODO: bugs.webrtc.org/369904700 - Remove when users are migrated to set
-  // `audio_processing_builder` instead.
-  [[deprecated]] scoped_refptr<AudioProcessing> audio_processing;
 };
 
 // Creates a VoipEngine instance with provided VoipEngineConfig.

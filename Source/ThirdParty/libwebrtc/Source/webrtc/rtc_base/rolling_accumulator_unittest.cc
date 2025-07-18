@@ -14,7 +14,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -147,4 +147,4 @@ TEST(RollingAccumulatorTest, NumericStabilityForVariance) {
 
   EXPECT_NEAR(stats.ComputeVariance(), 1. / 12, 1e-3);
 }
-}  // namespace rtc
+}  // namespace webrtc

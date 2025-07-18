@@ -1,0 +1,6 @@
+
+PASS navigator.credentials.get() calling the API without user activation should reject with NotAllowedError.
+PASS navigator.credentials.get() consumes user activation.
+FAIL navigator.credentials.create() calling the API without user activation should reject with NotAllowedError. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.credentials.create() consumes user activation. assert_unreached: Should have rejected: undefined Reached unreachable code
+

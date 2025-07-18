@@ -71,7 +71,7 @@ inline bool isPageAligned(size_t size) { return isPageAligned(pageSize(), size);
 
 
 class PageBlock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PageBlock);
 public:
     PageBlock() = default;
     PageBlock(void*, size_t, bool hasGuardPages);

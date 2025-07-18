@@ -39,7 +39,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGRenderStyle);
 class SVGRenderStyle : public RefCounted<SVGRenderStyle> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGRenderStyle);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGRenderStyle, SVGRenderStyle);
 public:
     static Ref<SVGRenderStyle> createDefaultStyle();
     static Ref<SVGRenderStyle> create() { return adoptRef(*new SVGRenderStyle); }

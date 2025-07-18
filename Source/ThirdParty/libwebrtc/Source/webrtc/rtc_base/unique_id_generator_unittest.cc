@@ -25,21 +25,21 @@
 using ::testing::IsEmpty;
 using ::testing::Test;
 
-namespace rtc {
+namespace webrtc {
 namespace {
 // Utility class that registers itself as the currently active task queue.
-class FakeTaskQueue : public webrtc::TaskQueueBase {
+class FakeTaskQueue : public TaskQueueBase {
  public:
   FakeTaskQueue() : task_queue_setter_(this) {}
 
   void Delete() override {}
   void PostTaskImpl(absl::AnyInvocable<void() &&> task,
                     const PostTaskTraits& traits,
-                    const webrtc::Location& location) override {}
+                    const Location& location) override {}
   void PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
-                           webrtc::TimeDelta delay,
+                           TimeDelta delay,
                            const PostDelayedTaskTraits& traits,
-                           const webrtc::Location& location) override {}
+                           const Location& location) override {}
 
  private:
   CurrentTaskQueueSetter task_queue_setter_;
@@ -76,7 +76,7 @@ TYPED_TEST(UniqueIdGeneratorTest, ElementsDoNotRepeat) {
 TYPED_TEST(UniqueIdGeneratorTest, KnownElementsAreNotGenerated) {
   typedef TypeParam Generator;
   const size_t num_elements = 100;
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator1;
   std::vector<typename Generator::value_type> known_values;
   for (size_t i = 0; i < num_elements; i++) {
@@ -84,7 +84,7 @@ TYPED_TEST(UniqueIdGeneratorTest, KnownElementsAreNotGenerated) {
   }
   EXPECT_EQ(num_elements, known_values.size());
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator2(known_values);
 
   std::vector<typename Generator::value_type> values;
@@ -103,7 +103,7 @@ TYPED_TEST(UniqueIdGeneratorTest, KnownElementsAreNotGenerated) {
 TYPED_TEST(UniqueIdGeneratorTest, AddedElementsAreNotGenerated) {
   typedef TypeParam Generator;
   const size_t num_elements = 100;
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator1;
   std::vector<typename Generator::value_type> known_values;
   for (size_t i = 0; i < num_elements; i++) {
@@ -111,7 +111,7 @@ TYPED_TEST(UniqueIdGeneratorTest, AddedElementsAreNotGenerated) {
   }
   EXPECT_EQ(num_elements, known_values.size());
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator2;
 
   for (const typename Generator::value_type& value : known_values) {
@@ -134,11 +134,11 @@ TYPED_TEST(UniqueIdGeneratorTest, AddedElementsAreNotGenerated) {
 TYPED_TEST(UniqueIdGeneratorTest, AddKnownIdOnNewIdReturnsTrue) {
   typedef TypeParam Generator;
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator1;
   const typename Generator::value_type id = generator1.Generate();
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator2;
   EXPECT_TRUE(generator2.AddKnownId(id));
 }
@@ -146,11 +146,11 @@ TYPED_TEST(UniqueIdGeneratorTest, AddKnownIdOnNewIdReturnsTrue) {
 TYPED_TEST(UniqueIdGeneratorTest, AddKnownIdCalledAgainForSameIdReturnsFalse) {
   typedef TypeParam Generator;
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator1;
   const typename Generator::value_type id = generator1.Generate();
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator2;
   ASSERT_TRUE(generator2.AddKnownId(id));
   EXPECT_FALSE(generator2.AddKnownId(id));
@@ -160,12 +160,12 @@ TYPED_TEST(UniqueIdGeneratorTest,
            AddKnownIdOnIdProvidedAsKnownToCtorReturnsFalse) {
   typedef TypeParam Generator;
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator1;
   const typename Generator::value_type id = generator1.Generate();
   std::vector<typename Generator::value_type> known_values = {id};
 
-  rtc::InitRandom(0);
+  InitRandom(0);
   Generator generator2(known_values);
   EXPECT_FALSE(generator2.AddKnownId(id));
 }
@@ -173,7 +173,7 @@ TYPED_TEST(UniqueIdGeneratorTest,
 // Tests that it's OK to construct the generator in one execution environment
 // (thread/task queue) but use it in another.
 TEST(UniqueNumberGenerator, UsedOnSecondaryThread) {
-  const auto* current_tq = webrtc::TaskQueueBase::Current();
+  const auto* current_tq = TaskQueueBase::Current();
   // Construct the generator before `fake_task_queue` to ensure that it is
   // constructed in a different execution environment than what
   // `fake_task_queue` will represent.
@@ -181,7 +181,7 @@ TEST(UniqueNumberGenerator, UsedOnSecondaryThread) {
 
   FakeTaskQueue fake_task_queue;
   // Sanity check to make sure we're in a different runtime environment.
-  ASSERT_NE(current_tq, webrtc::TaskQueueBase::Current());
+  ASSERT_NE(current_tq, TaskQueueBase::Current());
 
   // Generating an id should be fine in this context.
   generator.Generate();
@@ -208,4 +208,4 @@ TEST(UniqueNumberGeneratorDeathTest, FailsWhenUsedInWrongContext) {
 }
 #endif
 
-}  // namespace rtc
+}  // namespace webrtc

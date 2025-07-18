@@ -31,12 +31,10 @@
 #include <wtf/Deque.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 #if CPU(ARM64)
-static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
+static constexpr std::array<JSC::MacroAssembler::RegisterID, 15> callerSavedRegisters {
     JSC::ARM64Registers::x0,
     JSC::ARM64Registers::x1,
     JSC::ARM64Registers::x2,
@@ -53,12 +51,12 @@ static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::ARM64Registers::x13,
     JSC::ARM64Registers::x14,
 };
-static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
+static constexpr std::array<JSC::MacroAssembler::RegisterID, 1> calleeSavedRegisters = {
     JSC::ARM64Registers::x19
 };
 static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARM64Registers::x15;
 #elif CPU(X86_64)
-static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
+static constexpr std::array<JSC::MacroAssembler::RegisterID, 8> callerSavedRegisters {
     JSC::X86Registers::eax,
     JSC::X86Registers::ecx,
     JSC::X86Registers::edx,
@@ -68,7 +66,7 @@ static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::r9,
     JSC::X86Registers::r10,
 };
-static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
+static constexpr std::array<JSC::MacroAssembler::RegisterID, 4> calleeSavedRegisters {
     JSC::X86Registers::r12,
     JSC::X86Registers::r13,
     JSC::X86Registers::r14,
@@ -77,10 +75,11 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
 #else
 #error RegisterAllocator has no defined registers for the architecture.
 #endif
-static const unsigned calleeSavedRegisterCount = std::size(calleeSavedRegisters);
-static const unsigned maximumRegisterCount = calleeSavedRegisterCount + std::size(callerSavedRegisters);
 
-typedef Vector<JSC::MacroAssembler::RegisterID, maximumRegisterCount> RegisterVector;
+static constexpr unsigned calleeSavedRegisterCount = std::size(calleeSavedRegisters);
+static constexpr unsigned maximumRegisterCount = calleeSavedRegisterCount + std::size(callerSavedRegisters);
+
+using RegisterVector = Vector<JSC::MacroAssembler::RegisterID, maximumRegisterCount>;
 
 class RegisterAllocator {
 public:
@@ -151,10 +150,8 @@ public:
 
     const Vector<JSC::MacroAssembler::RegisterID, calleeSavedRegisterCount>& reserveCalleeSavedRegisters(unsigned count)
     {
-        RELEASE_ASSERT(count <= std::size(calleeSavedRegisters));
         RELEASE_ASSERT(!m_reservedCalleeSavedRegisters.size());
-        for (unsigned i = 0; i < count; ++i) {
-            JSC::MacroAssembler::RegisterID registerId = calleeSavedRegisters[i];
+        for (auto registerId : std::span { calleeSavedRegisters }.first(count)) {
             m_reservedCalleeSavedRegisters.append(registerId);
             m_registers.append(registerId);
         }
@@ -245,7 +242,5 @@ inline RegisterAllocator::~RegisterAllocator()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CSS_SELECTOR_JIT)

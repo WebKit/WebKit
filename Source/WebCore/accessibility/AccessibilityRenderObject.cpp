@@ -39,6 +39,7 @@
 #include "CachedImage.h"
 #include "ComplexTextController.h"
 #include "ComposedTreeIterator.h"
+#include "ContainerNodeInlines.h"
 #include "DocumentSVG.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -73,6 +74,7 @@
 #include "HitTestResult.h"
 #include "Image.h"
 #include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
@@ -83,6 +85,7 @@
 #include "Page.h"
 #include "PathUtilities.h"
 #include "PluginViewBase.h"
+#include "PositionInlines.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderButton.h"
@@ -1453,6 +1456,11 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         );
     }
 
+    if (is<SVGGraphicsElement>(element())) {
+        // Match TextIterator (and other browsers) and don't emit text positions for SVG graphics elements.
+        return { };
+    }
+
     if (isReplacedElement()) {
         auto* containingBlock = renderer ? renderer->containingBlock() : nullptr;
         FloatRect rect = frameRect();
@@ -1563,7 +1571,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
         lineString.reserveCapacity(lineString.length() + text.length());
         for (unsigned i = 0; i < text.length(); i++) {
-            UChar character = text[i];
+            char16_t character = text[i];
             if (character == '\t' && collapseTabs)
                 lineString.append(' ');
             else if (character == '\n' && collapseNewlines)
@@ -1580,9 +1588,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     };
 
     Vector<std::array<uint16_t, 2>> textRunDomOffsets;
-    // FIXME: Use InlineIteratorLogicalOrderTraversal instead. Otherwise we'll do the wrong thing for mixed direction content.
-    // Tracked by: https://bugs.webkit.org/show_bug.cgi?id=294632
-    auto textBox = InlineIterator::lineLeftmostTextBoxFor(*renderText);
+    auto [textBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(*renderText);
     size_t currentLineIndex = textBox ? textBox->lineIndex() : 0;
 
     bool containsOnlyASCII = true;
@@ -1611,6 +1617,10 @@ AXTextRuns AccessibilityRenderObject::textRuns()
                 lineString.append(' ');
                 ++endIndex;
                 characterWidths.append(0);
+                // We also need to account for this in the DOM offset itself, as otherwise we'll
+                // compute the wrong value when going from rendered-text offset to DOM offset
+                // (e.g. via AXTextRuns::domOffset()).
+                textRunDomOffsets.last()[1] += 1;
             }
             runs.append({ currentLineIndex, startIndex, endIndex, { std::exchange(textRunDomOffsets, { }) }, std::exchange(characterWidths, { }), lineHeight, distanceFromBoundsInDirection });
 
@@ -1626,7 +1636,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
         // Within each iteration of this loop, we are looking at the *next* text box to compare to the current.
         // So, we need to set the textRunDomOffsets after the line index comparison, in order to assign the right DOM offsets per text box.
-        textBox.traverseNextTextBox();
+        textBox = InlineIterator::nextTextBoxInLogicalOrder(textBox, orderCache);
         textRunDomOffsets.append({ startDOMOffset, endDOMOffset });
     }
 
@@ -2625,22 +2635,15 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
 }
 #endif // USE(ATSPI)
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 void AccessibilityRenderObject::updateAttachmentViewParents()
 {
-    // Only the unignored parent should set the attachment parent, because that's
-    // what is reflected in the AX hierarchy to the client.
-    if (isIgnored())
-        return;
-
-    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
-        if (child->isAttachment()) {
-            if (RefPtr liveChild = dynamicDowncast<AccessibilityObject>(child.get()))
-                liveChild->overrideAttachmentParent(this);
-        }
-    }
+    // updateChildrenIfNeeded == false because this is called right after we've added children, so we know
+    // they're clean and don't need updating.
+    for (const auto& child : children(/* updateChildrenIfNeeded */ false))
+        downcast<AccessibilityObject>(child)->overrideAttachmentParent(this);
 }
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(MAC)
 
 RenderObject* AccessibilityRenderObject::markerRenderer() const
 {
@@ -2777,7 +2780,7 @@ void AccessibilityRenderObject::addChildren()
     addImageMapChildren();
     addTextFieldChildren();
     addRemoteSVGChildren();
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     updateAttachmentViewParents();
 #endif
     updateOwnedChildren();

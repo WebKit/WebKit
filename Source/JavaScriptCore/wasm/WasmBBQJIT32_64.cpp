@@ -3516,13 +3516,10 @@ void BBQJIT::emitMoveConst(Value constant, Location loc)
         m_jit.move(Imm32(constant.asI64lo()), loc.asGPRlo());
         break;
     case TypeKind::F32:
-        m_jit.move(Imm32(constant.asI32()), wasmScratchGPR);
-        m_jit.move32ToFloat(wasmScratchGPR, loc.asFPR());
+        m_jit.move32ToFloat(Imm32(constant.asI32()), loc.asFPR());
         break;
     case TypeKind::F64:
-        m_jit.move(Imm32(constant.asI64hi()), wasmScratchGPR2);
-        m_jit.move(Imm32(constant.asI64lo()), wasmScratchGPR);
-        m_jit.move64ToDouble(wasmScratchGPR2, wasmScratchGPR, loc.asFPR());
+        m_jit.move64ToDouble(Imm64(constant.asI64()), loc.asFPR());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant typekind.");

@@ -12,8 +12,7 @@ Alignment Natural
     TailIndent: 0
     FirstLineHeadIndent: 0
     LineHeight: 0/0
-    LineHeightMultiple: 0
-    LineBreakMode: WordWrapping
+    LineHeightMultiple: 0 LineBreakMode WordWrapping
     Tabs: (    28L,
     56L,
     84L,

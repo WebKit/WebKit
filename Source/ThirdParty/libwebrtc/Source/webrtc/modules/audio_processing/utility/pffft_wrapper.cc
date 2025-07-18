@@ -34,11 +34,11 @@ Pffft::FloatBuffer::~FloatBuffer() {
   pffft_aligned_free(data_);
 }
 
-rtc::ArrayView<const float> Pffft::FloatBuffer::GetConstView() const {
+ArrayView<const float> Pffft::FloatBuffer::GetConstView() const {
   return {data_, size_};
 }
 
-rtc::ArrayView<float> Pffft::FloatBuffer::GetView() {
+ArrayView<float> Pffft::FloatBuffer::GetView() {
   return {data_, size_};
 }
 

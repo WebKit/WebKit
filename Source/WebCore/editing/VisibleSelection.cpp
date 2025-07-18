@@ -240,7 +240,7 @@ void VisibleSelection::appendTrailingWhitespace()
 
     CharacterIterator charIt(*makeSimpleRange(m_end, makeBoundaryPointAfterNodeContents(*scope)), TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     for (; !charIt.atEnd() && charIt.text().length(); charIt.advance(1)) {
-        UChar c = charIt.text()[0];
+        char16_t c = charIt.text()[0];
         if ((!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')
             break;
         m_end = makeDeprecatedLegacyPosition(charIt.range().end);

@@ -38,7 +38,7 @@ class AXObjectCache;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 class AXGeometryManager final : public ThreadSafeRefCounted<AXGeometryManager> {
     WTF_MAKE_NONCOPYABLE(AXGeometryManager);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXGeometryManager);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXGeometryManager, AXGeometryManager);
 public:
     explicit AXGeometryManager(AXObjectCache&);
     AXGeometryManager();

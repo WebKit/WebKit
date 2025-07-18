@@ -15,7 +15,6 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
@@ -34,18 +33,18 @@ namespace webrtc {
 
 std::optional<AudioEncoderL16::Config> AudioEncoderL16::SdpToConfig(
     const SdpAudioFormat& format) {
-  if (!rtc::IsValueInRangeForNumericType<int>(format.num_channels)) {
+  if (!IsValueInRangeForNumericType<int>(format.num_channels)) {
     RTC_DCHECK_NOTREACHED();
     return std::nullopt;
   }
   Config config;
   config.sample_rate_hz = format.clockrate_hz;
-  config.num_channels = rtc::dchecked_cast<int>(format.num_channels);
+  config.num_channels = dchecked_cast<int>(format.num_channels);
   auto ptime_iter = format.parameters.find("ptime");
   if (ptime_iter != format.parameters.end()) {
-    const auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+    const auto ptime = StringToNumber<int>(ptime_iter->second);
     if (ptime && *ptime > 0) {
-      config.frame_size_ms = rtc::SafeClamp(10 * (*ptime / 10), 10, 60);
+      config.frame_size_ms = SafeClamp(10 * (*ptime / 10), 10, 60);
     }
   }
   if (absl::EqualsIgnoreCase(format.name, "L16") && config.IsOk()) {
@@ -62,8 +61,7 @@ void AudioEncoderL16::AppendSupportedEncoders(
 AudioCodecInfo AudioEncoderL16::QueryAudioEncoder(
     const AudioEncoderL16::Config& config) {
   RTC_DCHECK(config.IsOk());
-  return {config.sample_rate_hz,
-          rtc::dchecked_cast<size_t>(config.num_channels),
+  return {config.sample_rate_hz, dchecked_cast<size_t>(config.num_channels),
           config.sample_rate_hz * config.num_channels * 16};
 }
 

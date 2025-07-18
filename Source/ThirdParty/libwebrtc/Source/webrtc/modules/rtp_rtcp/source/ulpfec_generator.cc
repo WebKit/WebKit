@@ -15,12 +15,17 @@
 #include <cstdint>
 #include <memory>
 #include <utility>
+#include <vector>
 
+#include "api/environment/environment.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {

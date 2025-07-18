@@ -18,7 +18,7 @@
 #include "examples/turnserver/read_auth_file.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/port_interface.h"
-#include "p2p/base/turn_server.h"
+#include "p2p/test/turn_server.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/physical_socket_server.h"
@@ -28,7 +28,7 @@
 namespace {
 const char kSoftware[] = "libjingle TurnServer";
 
-class TurnFileAuth : public cricket::TurnAuthInterface {
+class TurnFileAuth : public webrtc::TurnAuthInterface {
  public:
   explicit TurnFileAuth(std::map<std::string, std::string> name_to_key)
       : name_to_key_(std::move(name_to_key)) {}
@@ -58,29 +58,29 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  rtc::SocketAddress int_addr;
+  webrtc::SocketAddress int_addr;
   if (!int_addr.FromString(argv[1])) {
     std::cerr << "Unable to parse IP address: " << argv[1] << std::endl;
     return 1;
   }
 
-  rtc::IPAddress ext_addr;
-  if (!IPFromString(argv[2], &ext_addr)) {
+  webrtc::IPAddress ext_addr;
+  if (!webrtc::IPFromString(argv[2], &ext_addr)) {
     std::cerr << "Unable to parse IP address: " << argv[2] << std::endl;
     return 1;
   }
 
-  rtc::PhysicalSocketServer socket_server;
-  rtc::AutoSocketServerThread main(&socket_server);
-  rtc::AsyncUDPSocket* int_socket =
-      rtc::AsyncUDPSocket::Create(&socket_server, int_addr);
+  webrtc::PhysicalSocketServer socket_server;
+  webrtc::AutoSocketServerThread main(&socket_server);
+  webrtc::AsyncUDPSocket* int_socket =
+      webrtc::AsyncUDPSocket::Create(&socket_server, int_addr);
   if (!int_socket) {
     std::cerr << "Failed to create a UDP socket bound at" << int_addr.ToString()
               << std::endl;
     return 1;
   }
 
-  cricket::TurnServer server(&main);
+  webrtc::TurnServer server(&main);
   std::fstream auth_file(argv[4], std::fstream::in);
 
   TurnFileAuth auth(auth_file.is_open()
@@ -89,10 +89,10 @@ int main(int argc, char* argv[]) {
   server.set_realm(argv[3]);
   server.set_software(kSoftware);
   server.set_auth_hook(&auth);
-  server.AddInternalSocket(int_socket, cricket::PROTO_UDP);
+  server.AddInternalSocket(int_socket, webrtc::PROTO_UDP);
   server.SetExternalSocketFactory(
-      new rtc::BasicPacketSocketFactory(&socket_server),
-      rtc::SocketAddress(ext_addr, 0));
+      new webrtc::BasicPacketSocketFactory(&socket_server),
+      webrtc::SocketAddress(ext_addr, 0));
 
   std::cout << "Listening internally at " << int_addr.ToString() << std::endl;
 

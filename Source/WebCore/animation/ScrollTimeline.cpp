@@ -388,14 +388,9 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 
-TextStream& operator<<(TextStream& ts, Scroller scroller)
+TextStream& operator<<(TextStream& ts, const ScrollTimeline& timeline)
 {
-    switch (scroller) {
-    case Scroller::Nearest: ts << "nearest"_s; break;
-    case Scroller::Root: ts << "root"_s; break;
-    case Scroller::Self: ts << "self"_s; break;
-    }
-    return ts;
+    return ts << timeline.name() << ' ' << timeline.axis();
 }
 
 } // namespace WebCore

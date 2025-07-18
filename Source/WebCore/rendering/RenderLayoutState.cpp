@@ -358,12 +358,15 @@ ContentVisibilityOverrideScope::ContentVisibilityOverrideScope(LocalFrameViewLay
         layoutContext.setIsVisiblityHiddenIgnored(true);
     if (overrideTypes.contains(OverrideType::Auto))
         layoutContext.setIsVisiblityAutoIgnored(true);
+    if (overrideTypes.contains(OverrideType::RevealedWhenFound))
+        layoutContext.setIsRevealedWhenFoundIgnored(true);
 }
 
 ContentVisibilityOverrideScope::~ContentVisibilityOverrideScope()
 {
     m_layoutContext->setIsVisiblityHiddenIgnored(false);
     m_layoutContext->setIsVisiblityAutoIgnored(false);
+    m_layoutContext->setIsRevealedWhenFoundIgnored(false);
 }
 
 } // namespace WebCore

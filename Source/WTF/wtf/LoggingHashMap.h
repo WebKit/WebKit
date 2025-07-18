@@ -39,7 +39,7 @@ template<
     typename LoggingKeyTraits = LoggingHashKeyTraits<KeyArg>,
     typename LoggingValueTraits = LoggingHashValueTraits<MappedArg>>
 class LoggingHashMap final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LoggingHashMap);
 
 public:
     typedef WTF::UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> UncheckedKeyHashMap;

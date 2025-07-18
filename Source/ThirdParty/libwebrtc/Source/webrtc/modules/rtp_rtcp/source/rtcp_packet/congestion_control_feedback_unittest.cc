@@ -129,9 +129,9 @@ TEST(CongestionControlFeedbackTest, CreateReturnsTrueForBasicPacket) {
        .arrival_time_offset = TimeDelta::Millis(2)}};
   CongestionControlFeedback fb(std::move(packets), /*compact_ntp_timestamp=*/1);
 
-  rtc::Buffer buf(fb.BlockLength());
+  Buffer buf(fb.BlockLength());
   size_t position = 0;
-  rtc::FunctionView<void(rtc::ArrayView<const uint8_t> packet)> callback;
+  FunctionView<void(ArrayView<const uint8_t> packet)> callback;
   EXPECT_TRUE(fb.Create(buf.data(), &position, buf.capacity(), callback));
 }
 
@@ -140,7 +140,7 @@ TEST(CongestionControlFeedbackTest, CanCreateAndParseWithoutPackets) {
   uint32_t kCompactNtp = 1234;
   CongestionControlFeedback fb(kPackets, kCompactNtp);
 
-  rtc::Buffer buffer = fb.Build();
+  Buffer buffer = fb.Build();
   CongestionControlFeedback parsed_fb;
   CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
@@ -162,7 +162,7 @@ TEST(CongestionControlFeedbackTest, CanCreateAndParsePacketsWithTwoSsrc) {
   uint32_t kCompactNtp = 1234;
   CongestionControlFeedback fb(kPackets, kCompactNtp);
 
-  rtc::Buffer buffer = fb.Build();
+  Buffer buffer = fb.Build();
   CongestionControlFeedback parsed_fb;
   CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
@@ -179,11 +179,11 @@ TEST(CongestionControlFeedbackTest, CanCreateAndParsePacketWithEcnCe) {
       {.ssrc = 1,
        .sequence_number = 1,
        .arrival_time_offset = TimeDelta::Millis(1),
-       .ecn = rtc::EcnMarking::kCe}};
+       .ecn = EcnMarking::kCe}};
   uint32_t kCompactNtp = 1234;
   CongestionControlFeedback fb(kPackets, kCompactNtp);
 
-  rtc::Buffer buffer = fb.Build();
+  Buffer buffer = fb.Build();
   CongestionControlFeedback parsed_fb;
   CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
@@ -196,11 +196,11 @@ TEST(CongestionControlFeedbackTest, CanCreateAndParsePacketWithEct1) {
       {.ssrc = 1,
        .sequence_number = 1,
        .arrival_time_offset = TimeDelta::Millis(1),
-       .ecn = rtc::EcnMarking::kEct1}};
+       .ecn = EcnMarking::kEct1}};
   uint32_t kCompactNtp = 1234;
   CongestionControlFeedback fb(kPackets, kCompactNtp);
 
-  rtc::Buffer buffer = fb.Build();
+  Buffer buffer = fb.Build();
   CongestionControlFeedback parsed_fb;
   CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
@@ -227,7 +227,7 @@ TEST(CongestionControlFeedbackTest, CanCreateAndParseWithMissingPackets) {
   uint32_t kCompactNtp = 1234;
   CongestionControlFeedback fb(kPackets, kCompactNtp);
 
-  rtc::Buffer buffer = fb.Build();
+  Buffer buffer = fb.Build();
   CongestionControlFeedback parsed_fb;
   CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));

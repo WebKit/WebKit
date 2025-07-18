@@ -55,7 +55,7 @@ inline void StoreBigEndian32(uint8_t* data, uint32_t val) {
 template <int FixedSize>
 class BoundedByteWriter {
  public:
-  explicit BoundedByteWriter(rtc::ArrayView<uint8_t> data) : data_(data) {
+  explicit BoundedByteWriter(webrtc::ArrayView<uint8_t> data) : data_(data) {
     RTC_CHECK(data.size() >= FixedSize);
   }
 
@@ -87,7 +87,7 @@ class BoundedByteWriter {
         data_.subview(FixedSize + variable_offset, SubSize));
   }
 
-  void CopyToVariableData(rtc::ArrayView<const uint8_t> source) {
+  void CopyToVariableData(webrtc::ArrayView<const uint8_t> source) {
     size_t copy_size = std::min(source.size(), data_.size() - FixedSize);
     if (source.data() == nullptr || copy_size == 0) {
       return;
@@ -96,7 +96,7 @@ class BoundedByteWriter {
   }
 
  private:
-  rtc::ArrayView<uint8_t> data_;
+  webrtc::ArrayView<uint8_t> data_;
 };
 }  // namespace dcsctp
 

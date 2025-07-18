@@ -103,8 +103,8 @@ std::string GetLayerName(LayerDescription layer);
 // For each element in data_view, use `f()` to extract a y-coordinate and
 // store the result in a TimeSeries.
 template <typename DataType, typename IterableType>
-void ProcessPoints(rtc::FunctionView<float(const DataType&)> fx,
-                   rtc::FunctionView<std::optional<float>(const DataType&)> fy,
+void ProcessPoints(FunctionView<float(const DataType&)> fx,
+                   FunctionView<std::optional<float>(const DataType&)> fy,
                    const IterableType& data_view,
                    TimeSeries* result) {
   for (size_t i = 0; i < data_view.size(); i++) {
@@ -120,12 +120,11 @@ void ProcessPoints(rtc::FunctionView<float(const DataType&)> fx,
 // y-coordinate and store the result in a TimeSeries. Note that the x-coordinate
 // will be the time of the second element in the pair.
 template <typename DataType, typename ResultType, typename IterableType>
-void ProcessPairs(
-    rtc::FunctionView<float(const DataType&)> fx,
-    rtc::FunctionView<std::optional<ResultType>(const DataType&,
-                                                const DataType&)> fy,
-    const IterableType& data,
-    TimeSeries* result) {
+void ProcessPairs(FunctionView<float(const DataType&)> fx,
+                  FunctionView<std::optional<ResultType>(const DataType&,
+                                                         const DataType&)> fy,
+                  const IterableType& data,
+                  TimeSeries* result) {
   for (size_t i = 1; i < data.size(); i++) {
     float x = fx(data[i]);
     std::optional<ResultType> y = fy(data[i - 1], data[i]);
@@ -139,9 +138,9 @@ void ProcessPairs(
 // will be the time of the second element in the pair.
 template <typename DataType, typename ResultType, typename IterableType>
 void AccumulatePairs(
-    rtc::FunctionView<float(const DataType&)> fx,
-    rtc::FunctionView<std::optional<ResultType>(const DataType&,
-                                                const DataType&)> fy,
+    FunctionView<float(const DataType&)> fx,
+    FunctionView<std::optional<ResultType>(const DataType&, const DataType&)>
+        fy,
     const IterableType& data,
     TimeSeries* result) {
   ResultType sum = 0;
@@ -160,11 +159,10 @@ void AccumulatePairs(
 // to `end_time`. The value of each data point is the average of the data
 // during the preceding `window_duration_us` microseconds.
 template <typename DataType, typename ResultType, typename IterableType>
-void MovingAverage(
-    rtc::FunctionView<std::optional<ResultType>(const DataType&)> fy,
-    const IterableType& data_view,
-    AnalyzerConfig config,
-    TimeSeries* result) {
+void MovingAverage(FunctionView<std::optional<ResultType>(const DataType&)> fy,
+                   const IterableType& data_view,
+                   AnalyzerConfig config,
+                   TimeSeries* result) {
   size_t window_index_begin = 0;
   size_t window_index_end = 0;
   ResultType sum_in_window = 0;

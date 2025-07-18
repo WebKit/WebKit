@@ -100,7 +100,7 @@ Ref<AudioSession> AudioSession::create()
 AudioSession::AudioSession() = default;
 AudioSession::~AudioSession() = default;
 
-AudioSession& AudioSession::sharedSession()
+AudioSession& AudioSession::singleton()
 {
     if (!s_mediaPlaybackEnabled)
         return dummyAudioSession();
@@ -141,11 +141,10 @@ bool AudioSession::tryToSetActive(bool active)
     m_active = active;
     if (m_isInterrupted && m_active) {
         callOnMainThread([hasActiveChanged] {
-            Ref session = sharedSession();
-            if (session->m_isInterrupted && session->m_active)
-                session->endInterruption(MayResume::Yes);
+            if (singleton().m_isInterrupted && singleton().m_active)
+                singleton().endInterruption(MayResume::Yes);
             if (hasActiveChanged)
-                session->activeStateChanged();
+                singleton().activeStateChanged();
         });
     } else if (hasActiveChanged)
         activeStateChanged();

@@ -9,7 +9,7 @@ Language: ObjC
 BasedOnStyle: Google
 BinPackParameters: false
 BinPackArguments: false
-ColumnLimit: 100
+ColumnLimit: 80
 ObjCBlockIndentWidth: 2
 AllowAllParametersOfDeclarationOnNextLine: true
 AlignOperands: false

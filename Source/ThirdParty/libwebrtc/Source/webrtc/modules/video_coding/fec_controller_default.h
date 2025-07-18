@@ -19,6 +19,7 @@
 
 #include "api/environment/environment.h"
 #include "api/fec_controller.h"
+#include "api/video/video_frame_type.h"
 #include "modules/video_coding/media_opt_util.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"

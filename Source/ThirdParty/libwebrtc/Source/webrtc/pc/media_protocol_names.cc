@@ -15,7 +15,7 @@
 
 #include <string>
 
-namespace cricket {
+namespace webrtc {
 
 // The official registry of RTP parameters is at
 // http://www.iana.org/assignments/rtp-parameters/rtp-parameters.xml
@@ -72,7 +72,7 @@ bool IsRtpProtocol(absl::string_view protocol) {
   if (protocol.empty()) {
     return true;
   }
-  size_t pos = protocol.find(cricket::kMediaProtocolRtpPrefix);
+  size_t pos = protocol.find(kMediaProtocolRtpPrefix);
   if (pos == std::string::npos) {
     return false;
   }
@@ -102,4 +102,4 @@ bool IsPlainRtp(absl::string_view protocol) {
          protocol == kMediaProtocolSavp || protocol == kMediaProtocolAvp;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

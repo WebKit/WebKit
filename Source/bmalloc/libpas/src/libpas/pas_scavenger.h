@@ -31,9 +31,9 @@
 #include <sys/qos.h>
 #endif
 
-PAS_BEGIN_EXTERN_C;
-
 #include "pas_allocation_mode.h"
+
+PAS_BEGIN_EXTERN_C;
 
 enum pas_scavenger_state {
     pas_scavenger_state_no_thread,

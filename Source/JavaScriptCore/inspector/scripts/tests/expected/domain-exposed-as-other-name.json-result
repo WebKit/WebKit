@@ -532,7 +532,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class DatabaseFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DatabaseFrontendDispatcher);
 public:
     DatabaseFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void didEncounterError(RefPtr<Protocol::Database::Error>&& opt_sqlError);
@@ -889,7 +889,7 @@ namespace Inspector {
 
 
 class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorDatabaseBackendDispatcher);
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
     void executeSQLSyncOptionalReturnValues(long protocol_requestId, int databaseId, const String& query) final;

@@ -12,9 +12,11 @@
 
 #include <stdlib.h>
 
-#include <string>
+#include <cstdint>
+#include <cstring>
 #include <vector>
 
+#include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 
@@ -47,7 +49,7 @@ class AudioMultiVectorTest : public ::testing::TestWithParam<size_t> {
     // And so on.
     for (size_t i = 0; i < array_length(); ++i) {
       for (size_t j = 1; j <= num_channels_; ++j) {
-        *ptr = rtc::checked_cast<int16_t>(j * 100 + i);
+        *ptr = checked_cast<int16_t>(j * 100 + i);
         ++ptr;
       }
     }
@@ -118,7 +120,7 @@ TEST_P(AudioMultiVectorTest, PushBackInterleavedAndCopy) {
 // Try to copy to a NULL pointer. Nothing should happen.
 TEST_P(AudioMultiVectorTest, CopyToNull) {
   AudioMultiVector vec(num_channels_);
-  AudioMultiVector* vec_copy = NULL;
+  AudioMultiVector* vec_copy = nullptr;
   vec.PushBackInterleaved(array_interleaved_);
   vec.CopyTo(vec_copy);
 }

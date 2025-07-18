@@ -18,7 +18,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 // This file declares a family of functions to parse integers from strings.
 // The standard C library functions either fail to indicate errors (atoi, etc.)
@@ -100,6 +100,14 @@ StringToNumber(absl::string_view str, int /* base */ = 10) {
   return string_to_number_internal::ParseFloatingPoint<T>(str);
 }
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::StringToNumber;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_STRING_TO_NUMBER_H_

@@ -1,3 +1,5 @@
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import { eq as assertEq, throws as assertThrows } from "../assert.js";
 const pageSize = 64*1024;
 

@@ -20,15 +20,23 @@
 #endif
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 // rtc namespaced wrappers for inet_ntop and inet_pton so we can avoid
 // the windows-native versions of these.
 const char* inet_ntop(int af, const void* src, char* dst, socklen_t size);
 int inet_pton(int af, absl::string_view src, void* dst);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::inet_ntop;
+using ::webrtc::inet_pton;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NET_HELPERS_H_

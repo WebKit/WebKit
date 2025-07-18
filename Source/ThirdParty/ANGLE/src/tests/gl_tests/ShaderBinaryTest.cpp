@@ -92,6 +92,14 @@ class ShaderBinaryTest : public ANGLETest<>
 
     bool supported() const
     {
+        // The system driver compiler version is not expected to match the version compiled into
+        // this test, causing glShaderBinary() to return GL_INVALID_VALUE due to the incompatible
+        // binaries.
+        if (isDriverSystemEgl())
+        {
+            return false;
+        }
+
         GLint formatCount;
         glGetIntegerv(GL_NUM_SHADER_BINARY_FORMATS, &formatCount);
         if (formatCount == 0)

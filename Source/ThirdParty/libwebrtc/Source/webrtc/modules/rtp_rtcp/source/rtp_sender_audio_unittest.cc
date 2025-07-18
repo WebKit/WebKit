@@ -10,17 +10,24 @@
 
 #include "modules/rtp_rtcp/source/rtp_sender_audio.h"
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -38,7 +45,7 @@ const uint64_t kStartTime = 123456789;
 
 using ::testing::ElementsAreArray;
 
-class LoopbackTransportTest : public webrtc::Transport {
+class LoopbackTransportTest : public Transport {
  public:
   LoopbackTransportTest() {
     receivers_extensions_.Register<AudioLevelExtension>(kAudioLevelExtensionId);
@@ -46,13 +53,16 @@ class LoopbackTransportTest : public webrtc::Transport {
         kAbsoluteCaptureTimeExtensionId);
   }
 
-  bool SendRtp(rtc::ArrayView<const uint8_t> data,
+  bool SendRtp(ArrayView<const uint8_t> data,
                const PacketOptions& /*options*/) override {
     sent_packets_.push_back(RtpPacketReceived(&receivers_extensions_));
     EXPECT_TRUE(sent_packets_.back().Parse(data));
     return true;
   }
-  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override { return false; }
+  bool SendRtcp(ArrayView<const uint8_t> /* data */,
+                const PacketOptions& /* options */) override {
+    return false;
+  }
   const RtpPacketReceived& last_sent_packet() { return sent_packets_.back(); }
   int packets_sent() { return sent_packets_.size(); }
 
@@ -78,7 +88,7 @@ class RtpSenderAudioTest : public ::testing::Test {
     rtp_module_.SetSequenceNumber(kSeqNum);
   }
 
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   SimulatedClock fake_clock_;
   const Environment env_;
   LoopbackTransportTest transport_;

@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -51,7 +51,6 @@
     jsTestIsAsync = true;
 
     addEventListener("load", async () => {
-        await UIHelper.setObscuredInsets(100, 0, 0, 0);
         await UIHelper.ensurePresentationUpdate();
         colorsBeforeScrolling = await UIHelper.fixedContainerEdgeColors();
         shouldBeEqualToString("colorsBeforeScrolling.top", "rgb(250, 60, 0)");

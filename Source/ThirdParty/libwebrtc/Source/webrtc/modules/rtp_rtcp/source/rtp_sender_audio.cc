@@ -12,26 +12,29 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "api/audio_codecs/audio_format.h"
+#include "absl/strings/string_view.h"
 #include "api/rtp_headers.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
-#include "modules/rtp_rtcp/source/ntp_time_util.h"
+#include "modules/rtp_rtcp/source/dtmf_queue.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "system_wrappers/include/ntp_time.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -47,8 +50,8 @@ RTPSenderAudio::~RTPSenderAudio() {}
 int32_t RTPSenderAudio::RegisterAudioPayload(absl::string_view payload_name,
                                              const int8_t payload_type,
                                              const uint32_t frequency,
-                                             const size_t channels,
-                                             const uint32_t rate) {
+                                             const size_t /* channels */,
+                                             const uint32_t /* rate */) {
   if (absl::EqualsIgnoreCase(payload_name, "cn")) {
     MutexLock lock(&send_audio_mutex_);
     //  we can have multiple CNG payload types
@@ -77,7 +80,7 @@ int32_t RTPSenderAudio::RegisterAudioPayload(absl::string_view payload_name,
     return 0;
   } else if (payload_name == "audio") {
     MutexLock lock(&send_audio_mutex_);
-    encoder_rtp_timestamp_frequency_ = rtc::dchecked_cast<int>(frequency);
+    encoder_rtp_timestamp_frequency_ = dchecked_cast<int>(frequency);
     return 0;
   }
   return 0;

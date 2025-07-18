@@ -28,15 +28,15 @@
 namespace webrtc {
 
 PipeWireVersion PipeWireVersion::Parse(const absl::string_view& version) {
-  std::vector<absl::string_view> parsed_version = rtc::split(version, '.');
+  std::vector<absl::string_view> parsed_version = webrtc::split(version, '.');
 
   if (parsed_version.size() != 3) {
     return {};
   }
 
-  std::optional<int> major = rtc::StringToNumber<int>(parsed_version.at(0));
-  std::optional<int> minor = rtc::StringToNumber<int>(parsed_version.at(1));
-  std::optional<int> micro = rtc::StringToNumber<int>(parsed_version.at(2));
+  std::optional<int> major = webrtc::StringToNumber<int>(parsed_version.at(0));
+  std::optional<int> minor = webrtc::StringToNumber<int>(parsed_version.at(1));
+  std::optional<int> micro = webrtc::StringToNumber<int>(parsed_version.at(2));
 
   // Return invalid version if we failed to parse it
   if (!major || !minor || !micro) {

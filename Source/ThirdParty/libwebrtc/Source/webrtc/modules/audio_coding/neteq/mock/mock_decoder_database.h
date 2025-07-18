@@ -11,9 +11,13 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_DECODER_DATABASE_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_DECODER_DATABASE_H_
 
-#include <string>
+#include <cstdint>
+#include <optional>
 
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment_factory.h"
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "test/gmock.h"
 

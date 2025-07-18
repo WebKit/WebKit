@@ -21,12 +21,12 @@ namespace webrtc {
 namespace test {
 
 int AudioprocFloatImpl(
-    absl::Nonnull<std::unique_ptr<BuiltinAudioProcessingBuilder>> ap_builder,
+    absl_nonnull std::unique_ptr<BuiltinAudioProcessingBuilder> ap_builder,
     int argc,
     char* argv[]);
 
 int AudioprocFloatImpl(
-    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface> ap_builder,
     int argc,
     char* argv[]);
 

@@ -184,6 +184,8 @@ private:
         bool m_shouldStartStreaming { false };
     };
 
+    CheckedPtr<Loader> checkedLoader() { return m_loader.get(); }
+
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;
     std::unique_ptr<Loader> m_loader;

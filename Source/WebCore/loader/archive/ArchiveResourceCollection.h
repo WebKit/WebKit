@@ -41,7 +41,7 @@ class ArchiveResource;
 
 class ArchiveResourceCollection {
     WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ArchiveResourceCollection, Loader);
 
 public:
     ArchiveResourceCollection() = default;

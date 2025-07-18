@@ -176,6 +176,10 @@
 [submodule "third_party/rapidjson/src"]
 	path = third_party/rapidjson/src
 	url = https://chromium.googlesource.com/external/github.com/Tencent/rapidjson
+[submodule "third_party/re2/src"]
+	path = third_party/re2/src
+	url = https://chromium.googlesource.com/external/github.com/google/re2
+	gclient-condition = not build_with_chromium
 [submodule "third_party/requests/src"]
 	path = third_party/requests/src
 	url = https://chromium.googlesource.com/external/github.com/kennethreitz/requests

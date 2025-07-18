@@ -25,6 +25,7 @@
 #include "SVGPreserveAspectRatioValue.h"
 
 #include "AffineTransform.h"
+#include "ExceptionOr.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -77,7 +78,7 @@ bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<LChar>& buffer, bool
     return parseInternal(buffer, validate);
 }
 
-bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<UChar>& buffer, bool validate)
+bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<char16_t>& buffer, bool validate)
 {
     return parseInternal(buffer, validate);
 }

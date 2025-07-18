@@ -97,7 +97,7 @@ private:
     HashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;
+    const RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;
 #endif
 };
 

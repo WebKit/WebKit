@@ -58,7 +58,7 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
 }
 
 class MultipartHandleClient final : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MultipartHandleClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MultipartHandleClient);
 public:
     void setMultipartHandle();

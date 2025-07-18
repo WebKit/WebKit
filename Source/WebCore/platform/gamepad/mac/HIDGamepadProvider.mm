@@ -88,11 +88,10 @@ HIDGamepadProvider& HIDGamepadProvider::singleton()
 }
 
 HIDGamepadProvider::HIDGamepadProvider()
-    : m_initialGamepadsConnectedTimer(*this, &HIDGamepadProvider::initialGamepadsConnectedTimerFired)
+    : m_manager(adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone)))
+    , m_initialGamepadsConnectedTimer(*this, &HIDGamepadProvider::initialGamepadsConnectedTimerFired)
     , m_inputNotificationTimer(*this, &HIDGamepadProvider::inputNotificationTimerFired)
 {
-    m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
-
     RetainPtr<CFDictionaryRef> joystickDictionary = deviceMatchingDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
     RetainPtr<CFDictionaryRef> gamepadDictionary = deviceMatchingDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad);
 

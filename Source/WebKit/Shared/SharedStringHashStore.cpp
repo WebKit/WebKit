@@ -53,7 +53,7 @@ static unsigned tableLengthForKeyCount(unsigned keyCount)
 
 SharedStringHashStore::SharedStringHashStore(Client& client)
     : m_client(client)
-    , m_pendingOperationsTimer(RunLoop::main(), this, &SharedStringHashStore::processPendingOperations)
+    , m_pendingOperationsTimer(RunLoop::mainSingleton(), this, &SharedStringHashStore::processPendingOperations)
 {
 }
 

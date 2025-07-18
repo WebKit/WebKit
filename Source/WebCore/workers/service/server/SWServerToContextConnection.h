@@ -108,7 +108,7 @@ public:
     virtual bool isWebSWServerToContextConnection() const { return false; }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    virtual void reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier, size_t bytesTransferredOverNetworkDelta) = 0;
+    virtual void reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier, uint64_t bytesTransferredOverNetworkDelta) = 0;
 #endif
 
 protected:

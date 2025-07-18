@@ -58,7 +58,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/random.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 #include "test/explicit_key_value_config.h"
@@ -69,6 +68,7 @@ namespace webrtc {
 namespace {
 
 using rtcp::ReceiveTimeInfo;
+using test::ExplicitKeyValueConfig;
 using ::testing::_;
 using ::testing::AllOf;
 using ::testing::ElementsAre;
@@ -84,7 +84,6 @@ using ::testing::SizeIs;
 using ::testing::StrEq;
 using ::testing::StrictMock;
 using ::testing::UnorderedElementsAre;
-using ::webrtc::test::ExplicitKeyValueConfig;
 
 class MockRtcpPacketTypeCounterObserver : public RtcpPacketTypeCounterObserver {
  public:
@@ -128,7 +127,7 @@ class MockModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
   MOCK_METHOD(void, OnReceivedNack, (const std::vector<uint16_t>&), (override));
   MOCK_METHOD(void,
               OnReceivedRtcpReportBlocks,
-              (rtc::ArrayView<const ReportBlockData>),
+              (ArrayView<const ReportBlockData>),
               (override));
 };
 
@@ -897,7 +896,7 @@ TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
   xr.SetRrtr(rrtr);
   xr.AddDlrrItem(ReceiveTimeInfo(kReceiverMainSsrc, 0x12345, 0x67890));
 
-  rtc::Buffer packet = xr.Build();
+  Buffer packet = xr.Build();
   // Modify the DLRR block to have an unsupported block type, from 5 to 6.
   ASSERT_EQ(5, packet.data()[20]);
   packet.data()[20] = 6;
@@ -1747,13 +1746,13 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnCongestionControlFeedback) {
   ReceiverMocks mocks;
   mocks.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
   RTCPReceiver receiver = Create(mocks);
-  receiver.SetRemoteSSRC(kSenderSsrc);
 
-  rtcp::CongestionControlFeedback packet({{
-                                             .ssrc = 123,
-                                             .sequence_number = 1,
-                                         }},
-                                         /*report_timestamp_compact_ntp=*/324);
+  rtcp::CongestionControlFeedback packet(
+      {{
+          .ssrc = mocks.config.local_media_ssrc,
+          .sequence_number = 1,
+      }},
+      /*report_timestamp_compact_ntp=*/324);
   packet.SetSenderSsrc(kSenderSsrc);
 
   EXPECT_CALL(
@@ -1762,6 +1761,33 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnCongestionControlFeedback) {
           mocks.clock.CurrentTime(),
           Property(&rtcp::CongestionControlFeedback::packets, SizeIs(1))));
   receiver.IncomingPacket(packet.Build());
+}
+
+TEST(RtcpReceiverTest, FiltersCongestionControlFeedbackOnFirstSsrc) {
+  ReceiverMocks mocks_1;
+  mocks_1.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  RTCPReceiver receiver_1 = Create(mocks_1);
+
+  ReceiverMocks mocks_2;
+  mocks_2.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  mocks_2.config.local_media_ssrc = 789;
+  mocks_2.config.rtx_send_ssrc = 345;
+  RTCPReceiver receiver_2 = Create(mocks_2);
+
+  rtcp::CongestionControlFeedback packet(
+      {{
+          .ssrc = mocks_2.config.local_media_ssrc,
+          .sequence_number = 1,
+      }},
+      /*report_timestamp_compact_ntp=*/324);
+  packet.SetSenderSsrc(kSenderSsrc);
+
+  EXPECT_CALL(mocks_1.network_link_rtcp_observer, OnCongestionControlFeedback)
+      .Times(0);
+  EXPECT_CALL(mocks_2.network_link_rtcp_observer, OnCongestionControlFeedback)
+      .Times(1);
+  receiver_1.IncomingPacket(packet.Build());
+  receiver_2.IncomingPacket(packet.Build());
 }
 
 TEST(RtcpReceiverTest,
@@ -1826,7 +1852,7 @@ TEST(RtcpReceiverTest, HandlesInvalidCongestionControlFeedback) {
                                          }},
                                          /*report_timestamp_compact_ntp=*/324);
   packet.SetSenderSsrc(kSenderSsrc);
-  rtc::Buffer built_packet = packet.Build();
+  Buffer built_packet = packet.Build();
   // Modify the CongestionControlFeedback packet so that it is invalid.
   const size_t kNumReportsOffset = 14;
   ByteWriter<uint16_t>::WriteBigEndian(&built_packet.data()[kNumReportsOffset],
@@ -1903,7 +1929,7 @@ TEST(RtcpReceiverTest, HandlesInvalidTransportFeedback) {
   rtcp::CompoundPacket compound;
   compound.Append(std::move(packet));
   compound.Append(std::move(remb));
-  rtc::Buffer built_packet = compound.Build();
+  Buffer built_packet = compound.Build();
 
   // Modify the TransportFeedback packet so that it is invalid.
   const size_t kStatusCountOffset = 14;

@@ -177,13 +177,13 @@ void SignalDependentErleEstimator::Reset() {
 // correction factor to the erle that is given as an input to this method.
 void SignalDependentErleEstimator::Update(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         filter_frequency_responses,
-    rtc::ArrayView<const float, kFftLengthBy2Plus1> X2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> average_erle,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    ArrayView<const float, kFftLengthBy2Plus1> X2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> average_erle,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
         average_erle_onset_compensated,
     const std::vector<bool>& converged_filters) {
   RTC_DCHECK_GT(num_sections_, 1);
@@ -205,12 +205,12 @@ void SignalDependentErleEstimator::Update(
       float correction_factor =
           correction_factors_[ch][n_active_sections_[ch][k]]
                              [band_to_subband_[k]];
-      erle_[ch][k] = rtc::SafeClamp(average_erle[ch][k] * correction_factor,
-                                    min_erle_, max_erle_[band_to_subband_[k]]);
+      erle_[ch][k] = SafeClamp(average_erle[ch][k] * correction_factor,
+                               min_erle_, max_erle_[band_to_subband_[k]]);
       if (use_onset_detection_) {
-        erle_onset_compensated_[ch][k] = rtc::SafeClamp(
-            average_erle_onset_compensated[ch][k] * correction_factor,
-            min_erle_, max_erle_[band_to_subband_[k]]);
+        erle_onset_compensated_[ch][k] =
+            SafeClamp(average_erle_onset_compensated[ch][k] * correction_factor,
+                      min_erle_, max_erle_[band_to_subband_[k]]);
       }
     }
   }
@@ -231,7 +231,7 @@ void SignalDependentErleEstimator::Dump(
 // together constitute 90% of the estimated echo energy.
 void SignalDependentErleEstimator::ComputeNumberOfActiveFilterSections(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         filter_frequency_responses) {
   RTC_DCHECK_GT(num_sections_, 1);
   // Computes an approximation of the power spectrum if the filter would have
@@ -244,17 +244,17 @@ void SignalDependentErleEstimator::ComputeNumberOfActiveFilterSections(
 }
 
 void SignalDependentErleEstimator::UpdateCorrectionFactors(
-    rtc::ArrayView<const float, kFftLengthBy2Plus1> X2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    ArrayView<const float, kFftLengthBy2Plus1> X2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
     const std::vector<bool>& converged_filters) {
   for (size_t ch = 0; ch < converged_filters.size(); ++ch) {
     if (converged_filters[ch]) {
       constexpr float kX2BandEnergyThreshold = 44015068.0f;
       constexpr float kSmthConstantDecreases = 0.1f;
       constexpr float kSmthConstantIncreases = kSmthConstantDecreases / 2.f;
-      auto subband_powers = [](rtc::ArrayView<const float> power_spectrum,
-                               rtc::ArrayView<float> power_spectrum_subbands) {
+      auto subband_powers = [](ArrayView<const float> power_spectrum,
+                               ArrayView<float> power_spectrum_subbands) {
         for (size_t subband = 0; subband < kSubbands; ++subband) {
           RTC_DCHECK_LE(kBandBoundaries[subband + 1], power_spectrum.size());
           power_spectrum_subbands[subband] = std::accumulate(
@@ -306,7 +306,7 @@ void SignalDependentErleEstimator::UpdateCorrectionFactors(
         alpha = static_cast<float>(is_erle_updated[subband]) * alpha;
         erle_estimators_[ch][idx][subband] +=
             alpha * (new_erle[subband] - erle_estimators_[ch][idx][subband]);
-        erle_estimators_[ch][idx][subband] = rtc::SafeClamp(
+        erle_estimators_[ch][idx][subband] = SafeClamp(
             erle_estimators_[ch][idx][subband], min_erle_, max_erle_[subband]);
       }
 
@@ -317,8 +317,8 @@ void SignalDependentErleEstimator::UpdateCorrectionFactors(
         alpha = static_cast<float>(is_erle_updated[subband]) * alpha;
         erle_ref_[ch][subband] +=
             alpha * (new_erle[subband] - erle_ref_[ch][subband]);
-        erle_ref_[ch][subband] = rtc::SafeClamp(erle_ref_[ch][subband],
-                                                min_erle_, max_erle_[subband]);
+        erle_ref_[ch][subband] =
+            SafeClamp(erle_ref_[ch][subband], min_erle_, max_erle_[subband]);
       }
 
       for (size_t subband = 0; subband < kSubbands; ++subband) {
@@ -344,7 +344,7 @@ void SignalDependentErleEstimator::UpdateCorrectionFactors(
 
 void SignalDependentErleEstimator::ComputeEchoEstimatePerFilterSection(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         filter_frequency_responses) {
   const SpectrumBuffer& spectrum_render_buffer =
       render_buffer.GetSpectrumBuffer();

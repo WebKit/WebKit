@@ -15,7 +15,6 @@
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
-#include "api/video/video_frame_buffer.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -54,7 +53,7 @@ TEST(TestVideoFrameBufferPool, FailToReuseWrongSize) {
 }
 
 TEST(TestVideoFrameBufferPool, FrameValidAfterPoolDestruction) {
-  rtc::scoped_refptr<I420Buffer> buffer;
+  scoped_refptr<I420Buffer> buffer;
   {
     VideoFrameBufferPool pool;
     buffer = pool.CreateI420Buffer(16, 16);

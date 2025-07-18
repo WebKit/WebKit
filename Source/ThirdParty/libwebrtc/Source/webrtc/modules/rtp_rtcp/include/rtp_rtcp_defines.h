@@ -18,15 +18,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/variant.h"
 #include "api/array_view.h"
-#include "api/audio_codecs/audio_format.h"
-#include "api/rtp_headers.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -34,8 +30,7 @@
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
-#include "system_wrappers/include/clock.h"
+#include "rtc_base/checks.h"
 
 #define RTCP_CNAME_SIZE 256  // RFC 3550 page 44, including null termination
 #define IP_PACKET_SIZE 1500  // we assume ethernet
@@ -180,9 +175,8 @@ class NetworkLinkRtcpObserver {
 
   // Called on an RTCP packet with sender or receiver reports with non zero
   // report blocks. Report blocks are combined from all reports into one array.
-  virtual void OnReport(
-      Timestamp /* receive_time */,
-      rtc::ArrayView<const ReportBlockData> /* report_blocks */) {}
+  virtual void OnReport(Timestamp /* receive_time */,
+                        ArrayView<const ReportBlockData> /* report_blocks */) {}
   virtual void OnRttUpdate(Timestamp /* receive_time */, TimeDelta /* rtt */) {}
 };
 
@@ -356,16 +350,8 @@ struct StreamDataCounters {
 };
 
 class RtpSendRates {
-  template <std::size_t... Is>
-  constexpr std::array<DataRate, sizeof...(Is)> make_zero_array(
-      std::index_sequence<Is...>) {
-    return {{(static_cast<void>(Is), DataRate::Zero())...}};
-  }
-
  public:
-  RtpSendRates()
-      : send_rates_(
-            make_zero_array(std::make_index_sequence<kNumMediaTypes>())) {}
+  constexpr RtpSendRates() = default;
   RtpSendRates(const RtpSendRates& rhs) = default;
   RtpSendRates& operator=(const RtpSendRates&) = default;
 
@@ -388,6 +374,10 @@ class StreamDataCountersCallback {
  public:
   virtual ~StreamDataCountersCallback() {}
 
+  // TODO: webrtc:40644448 - Make this pure virtual.
+  virtual StreamDataCounters GetDataCounters(uint32_t ssrc) const {
+    RTC_CHECK_NOTREACHED();
+  }
   virtual void DataCountersUpdated(const StreamDataCounters& counters,
                                    uint32_t ssrc) = 0;
 };

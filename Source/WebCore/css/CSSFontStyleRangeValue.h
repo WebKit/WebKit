@@ -50,7 +50,7 @@ public:
     {
         if (func(fontStyleValue.get()) == IterationStatus::Done)
             return IterationStatus::Done;
-        if (obliqueValues) {
+        if (RefPtr obliqueValues = this->obliqueValues) {
             if (func(*obliqueValues) == IterationStatus::Done)
                 return IterationStatus::Done;
         }

@@ -10,6 +10,7 @@
 
 #include "rtc_base/platform_thread_types.h"
 
+// IWYU pragma: begin_keep
 #if defined(WEBRTC_LINUX)
 #include <sys/prctl.h>
 #include <sys/syscall.h>
@@ -31,8 +32,9 @@ typedef HRESULT(WINAPI* RTC_SetThreadDescription)(HANDLE hThread,
 
 #include "rtc_base/checks.h"
 #endif
+// IWYU pragma: end_keep
 
-namespace rtc {
+namespace webrtc {
 
 PlatformThreadId CurrentThreadId() {
 #if defined(WEBRTC_WIN)
@@ -123,4 +125,4 @@ void SetCurrentThreadName(const char* name) {
 #endif
 }
 
-}  // namespace rtc
+}  // namespace webrtc

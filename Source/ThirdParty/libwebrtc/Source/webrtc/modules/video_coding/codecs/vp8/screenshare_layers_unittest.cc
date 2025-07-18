@@ -15,14 +15,18 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -84,7 +88,7 @@ class ScreenshareLayerTest : public ::testing::Test {
     return flags;
   }
 
-  int ConfigureFrame(bool key_frame) {
+  int ConfigureFrame(bool /* key_frame */) {
     tl_config_ = NextFrameConfig(0, timestamp_);
     EXPECT_EQ(0, tl_config_.encoder_layer_id)
         << "ScreenshareLayers always encodes using the bitrate allocator for "
@@ -113,7 +117,7 @@ class ScreenshareLayerTest : public ::testing::Test {
 
   Vp8FrameConfig NextFrameConfig(size_t stream_index, uint32_t timestamp) {
     int64_t timestamp_ms = timestamp / 90;
-    clock_.AdvanceTime(TimeDelta::Millis(timestamp_ms - rtc::TimeMillis()));
+    clock_.AdvanceTime(TimeDelta::Millis(timestamp_ms - TimeMillis()));
     return layers_->NextFrameConfig(stream_index, timestamp);
   }
 
@@ -192,7 +196,7 @@ class ScreenshareLayerTest : public ::testing::Test {
   int min_qp_;
   uint32_t max_qp_;
   int frame_size_;
-  rtc::ScopedFakeClock clock_;
+  ScopedFakeClock clock_;
   std::unique_ptr<ScreenshareLayers> layers_;
 
   uint32_t timestamp_;

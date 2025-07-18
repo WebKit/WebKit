@@ -57,8 +57,8 @@ VideoType PipeWireRawFormatToVideoType(uint32_t id) {
 
 void PipeWireNode::PipeWireNodeDeleter::operator()(
     PipeWireNode* node) const noexcept {
-  pw_proxy_destroy(node->proxy_);
   spa_hook_remove(&node->node_listener_);
+  pw_proxy_destroy(node->proxy_);
 }
 
 // static
@@ -87,7 +87,7 @@ PipeWireNode::PipeWireNode(PipeWireSession* session,
       .param = OnNodeParam,
   };
 
-  pw_node_add_listener(proxy_, &node_listener_, &node_events, this);
+  pw_node_add_listener(reinterpret_cast<pw_node*>(proxy_), &node_listener_, &node_events, this);
 }
 
 // static
@@ -103,8 +103,8 @@ void PipeWireNode::OnNodeInfo(void* data, const pw_node_info* info) {
 
     vid_str = spa_dict_lookup(info->props, SPA_KEY_DEVICE_VENDOR_ID);
     pid_str = spa_dict_lookup(info->props, SPA_KEY_DEVICE_PRODUCT_ID);
-    vid = vid_str ? rtc::StringToNumber<int>(vid_str) : std::nullopt;
-    pid = pid_str ? rtc::StringToNumber<int>(pid_str) : std::nullopt;
+    vid = vid_str ? webrtc::StringToNumber<int>(vid_str) : std::nullopt;
+    pid = pid_str ? webrtc::StringToNumber<int>(pid_str) : std::nullopt;
 
     if (vid && pid) {
       char model_str[10];
@@ -119,7 +119,7 @@ void PipeWireNode::OnNodeInfo(void* data, const pw_node_info* info) {
       uint32_t id = info->params[i].id;
       if (id == SPA_PARAM_EnumFormat &&
           info->params[i].flags & SPA_PARAM_INFO_READ) {
-        pw_node_enum_params(that->proxy_, 0, id, 0, UINT32_MAX, nullptr);
+        pw_node_enum_params(reinterpret_cast<pw_node*>(that->proxy_), 0, id, 0, UINT32_MAX, nullptr);
         break;
       }
     }

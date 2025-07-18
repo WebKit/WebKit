@@ -29,6 +29,7 @@
 #include "BitmapImage.h"
 #include "ColorBlending.h"
 #include "ColorHash.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -45,6 +46,7 @@
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderElement.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderText.h"
 #include "TextIterator.h"
@@ -386,8 +388,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
         return rect;
     });
 
-    auto [startLayer, endLayer, enclosingLayer, enclosingGraphicsLayerID] = computeEnclosingLayer(range);
-    data.enclosingGraphicsLayerID = enclosingGraphicsLayerID;
+    data.enclosingGraphicsLayerID = computeEnclosingLayer(range).enclosingGraphicsLayerID;
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.

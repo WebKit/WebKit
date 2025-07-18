@@ -179,7 +179,7 @@ public:
 
         if (m_delayedScriptDialogs) {
             webkit_script_dialog_ref(dialog);
-            RunLoop::protectedMain()->dispatch([this, dialog] {
+            RunLoop::mainSingleton().dispatch([this, dialog] {
                 webkit_script_dialog_close(dialog);
                 webkit_script_dialog_unref(dialog);
                 g_main_loop_quit(m_mainLoop);

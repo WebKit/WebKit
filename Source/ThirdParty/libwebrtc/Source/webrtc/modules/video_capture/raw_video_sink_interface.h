@@ -14,6 +14,10 @@
 #ifndef MODULES_VIDEO_CAPTURE_RAW_VIDEO_SINK_INTERFACE_H_
 #define MODULES_VIDEO_CAPTURE_RAW_VIDEO_SINK_INTERFACE_H_
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/video/video_rotation.h"
 #include "modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {

@@ -85,7 +85,7 @@ static RetainPtr<NSString> getToken(const WebCore::SecurityOriginData& securityO
 }
 
 struct PermissionRequest {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PermissionRequest);
 
     static std::unique_ptr<PermissionRequest> create(const WebCore::SecurityOriginData& origin, NSURL *requestingURL, WKWebView *view, id<WKWebAllowDenyPolicyListener> listener)
     {

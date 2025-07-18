@@ -8,10 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <ostream>
+
 #include "absl/flags/flag.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/rtp_parameters.h"
 #include "modules/audio_coding/codecs/opus/opus_inst.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 ABSL_FLAG(int, bit_rate_kbps, 32, "Target bit rate (kbps).");
 
@@ -50,7 +60,7 @@ class NetEqOpusQualityTest : public NetEqQualityTest {
   void TearDown() override;
   int EncodeBlock(int16_t* in_data,
                   size_t block_size_samples,
-                  rtc::Buffer* payload,
+                  Buffer* payload,
                   size_t max_bytes) override;
 
  private:
@@ -72,8 +82,8 @@ NetEqOpusQualityTest::NetEqOpusQualityTest()
                        kOpusSamplingKhz,
                        kOpusSamplingKhz,
                        SdpAudioFormat("opus", 48000, 2)),
-      opus_encoder_(NULL),
-      repacketizer_(NULL),
+      opus_encoder_(nullptr),
+      repacketizer_(nullptr),
       sub_block_size_samples_(
           static_cast<size_t>(kOpusBlockDurationMs * kOpusSamplingKhz)),
       bit_rate_kbps_(absl::GetFlag(FLAGS_bit_rate_kbps)),
@@ -144,14 +154,14 @@ void NetEqOpusQualityTest::TearDown() {
 
 int NetEqOpusQualityTest::EncodeBlock(int16_t* in_data,
                                       size_t block_size_samples,
-                                      rtc::Buffer* payload,
+                                      Buffer* payload,
                                       size_t max_bytes) {
   EXPECT_EQ(block_size_samples, sub_block_size_samples_ * sub_packets_);
   int16_t* pointer = in_data;
   int value;
   opus_repacketizer_init(repacketizer_);
   for (int idx = 0; idx < sub_packets_; idx++) {
-    payload->AppendData(max_bytes, [&](rtc::ArrayView<uint8_t> payload) {
+    payload->AppendData(max_bytes, [&](ArrayView<uint8_t> payload) {
       value = WebRtcOpus_Encode(opus_encoder_, pointer, sub_block_size_samples_,
                                 max_bytes, payload.data());
 

@@ -100,14 +100,14 @@ class RTC_LOCKABLE SequenceChecker
 //  public:
 //   class Encoder {
 //    public:
-//     rtc::TaskQueueBase& Queue() { return encoder_queue_; }
+//     webrtc::TaskQueueBase& Queue() { return encoder_queue_; }
 //     void Encode() {
 //       RTC_DCHECK_RUN_ON(&encoder_queue_);
 //       DoSomething(var_);
 //     }
 //
 //    private:
-//     rtc::TaskQueueBase& encoder_queue_;
+//     webrtc::TaskQueueBase& encoder_queue_;
 //     Frame var_ RTC_GUARDED_BY(encoder_queue_);
 //   };
 //
@@ -115,12 +115,12 @@ class RTC_LOCKABLE SequenceChecker
 //     // Will fail at runtime when DCHECK is enabled:
 //     // encoder_->Encode();
 //     // Will work:
-//     rtc::scoped_refptr<Encoder> encoder = encoder_;
+//     webrtc::scoped_refptr<Encoder> encoder = encoder_;
 //     encoder_->Queue().PostTask([encoder] { encoder->Encode(); });
 //   }
 //
 //  private:
-//   rtc::scoped_refptr<Encoder> encoder_;
+//   webrtc::scoped_refptr<Encoder> encoder_;
 // }
 
 // Document if a function expected to be called from same thread/task queue.
@@ -129,13 +129,13 @@ class RTC_LOCKABLE SequenceChecker
 
 // Checks current code is running on the desired sequence.
 //
-// First statement validates it is running on the sequence `x`.
-// Second statement annotates for the thread safety analyzer the check was done.
+// First statement annotates for the thread safety analyzer the check was done.
+// Second statement validates it is running on the sequence `x`.
 // Such annotation has to be attached to a function, and that function has to be
 // called. Thus current implementation creates a noop lambda and calls it.
 #define RTC_DCHECK_RUN_ON(x)                                               \
+  []() RTC_ASSERT_EXCLUSIVE_LOCK(x) {}();                                  \
   RTC_DCHECK((x)->IsCurrent())                                             \
-      << webrtc::webrtc_sequence_checker_internal::ExpectationToString(x); \
-  []() RTC_ASSERT_EXCLUSIVE_LOCK(x) {}()
+      << webrtc::webrtc_sequence_checker_internal::ExpectationToString(x);
 
 #endif  // API_SEQUENCE_CHECKER_H_

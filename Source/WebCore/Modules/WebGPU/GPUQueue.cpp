@@ -432,16 +432,16 @@ static void imageBytesForSource(WebGPU::Queue& backing, const auto& sourceDescri
         auto* cachedImage = imageElement->cachedImage();
         if (!cachedImage)
             return callback({ }, 0, 0);
-        RefPtr image = cachedImage->image();
-        if (!image || !image->isBitmapImage())
+        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
+        if (!image)
             return callback({ }, 0, 0);
-        RefPtr nativeImage = static_cast<BitmapImage*>(image.get())->nativeImage();
+        RefPtr nativeImage = image->nativeImage();
         if (!nativeImage)
             return callback({ }, 0, 0);
         RetainPtr platformImage = nativeImage->platformImage();
         if (!platformImage)
             return callback({ }, 0, 0);
-        RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
+        RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(RetainPtr { CGImageGetDataProvider(platformImage.get()) }.get()));
         if (!pixelDataCfData)
             return callback({ }, 0, 0);
 
@@ -463,19 +463,15 @@ static void imageBytesForSource(WebGPU::Queue& backing, const auto& sourceDescri
         auto& channels = [&] -> const std::array<int, 4>& {
             switch (alphaInfo) {
             case kCGImageAlphaNone:               /* For example, RGB. */
+            case kCGImageAlphaPremultipliedLast:  /* For example, premultiplied RGBA */
             case kCGImageAlphaLast:               /* For example, non-premultiplied RGBA */
             case kCGImageAlphaNoneSkipLast:       /* For example, RGBX. */
-                needsPremultipliedAlpha = !needsPremultipliedAlpha;
-                [[fallthrough]];
-            case kCGImageAlphaPremultipliedLast:  /* For example, premultiplied RGBA */
                 channelLayoutIsRGB = true;
                 return isBGRA ? channelsBGRX : channelsRGBX;
+            case kCGImageAlphaPremultipliedFirst: /* For example, premultiplied ARGB */
             case kCGImageAlphaFirst:              /* For example, non-premultiplied ARGB */
             case kCGImageAlphaNoneSkipFirst:      /* For example, XRGB. */
             case kCGImageAlphaOnly:                /* No color data, alpha data only */
-                needsPremultipliedAlpha = !needsPremultipliedAlpha;
-                [[fallthrough]];
-            case kCGImageAlphaPremultipliedFirst: /* For example, premultiplied ARGB */
                 return isBGRA ? channelsXBGR : channelsXRGB;
             }
         }();

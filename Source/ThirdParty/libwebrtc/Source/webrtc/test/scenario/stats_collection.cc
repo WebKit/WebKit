@@ -10,9 +10,27 @@
 
 #include "test/scenario/stats_collection.h"
 
+#include <cmath>
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "api/rtc_event_log_output.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "call/audio_receive_stream.h"
+#include "call/call.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/memory_usage.h"
 #include "rtc_base/thread.h"
+#include "test/logging/log_writer.h"
+#include "test/scenario/performance_stats.h"
 
 namespace webrtc {
 namespace test {
@@ -139,7 +157,7 @@ void CallStatsCollector::AddStats(Call::Stats sample) {
     stats_.pacer_delay.AddSample(TimeDelta::Millis(sample.pacer_delay_ms));
   if (sample.rtt_ms > 0)
     stats_.round_trip_time.AddSample(TimeDelta::Millis(sample.rtt_ms));
-  stats_.memory_usage.AddSample(rtc::GetProcessResidentSizeBytes());
+  stats_.memory_usage.AddSample(GetProcessResidentSizeBytes());
 }
 
 void AudioReceiveStatsCollector::AddStats(

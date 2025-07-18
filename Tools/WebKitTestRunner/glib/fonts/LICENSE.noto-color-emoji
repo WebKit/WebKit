@@ -1,8 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: noto-emoji
-Source: https://github.com/googlei18n/noto-emoji
-Files-Excluded: third_party/pngquant
-                fonts/NotoColorEmoji.ttf
+Source: https://github.com/googlefonts/noto-emoji
+Files-Excluded: fonts/*.ttf
 
 Files:     *
 Copyright: 2013-2017 Google Inc.

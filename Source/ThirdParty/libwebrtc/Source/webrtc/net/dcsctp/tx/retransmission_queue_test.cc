@@ -81,7 +81,7 @@ class RetransmissionQueueTest : public testing::Test {
 
   std::function<SendQueue::DataToSend(Timestamp, size_t)> CreateChunk(
       OutgoingMessageId message_id) {
-    return [this, message_id](Timestamp now, size_t max_size) {
+    return [this, message_id](Timestamp /* now */, size_t /* max_size */) {
       return SendQueue::DataToSend(message_id,
                                    gen_.Ordered({1, 2, 3, 4}, "BE"));
     };
@@ -579,7 +579,7 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   static constexpr size_t kCwnd = 1200;
   queue.set_cwnd(kCwnd);
   EXPECT_EQ(queue.cwnd(), kCwnd);
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 
   std::vector<uint8_t> payload(1000);
@@ -596,7 +596,8 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kInFlight)));
-  EXPECT_EQ(queue.unacked_bytes(), payload.size() + DataChunk::kHeaderSize);
+  EXPECT_EQ(queue.unacked_packet_bytes(),
+            payload.size() + DataChunk::kHeaderSize);
   EXPECT_EQ(queue.unacked_items(), 1u);
 
   // Will force chunks to be retransmitted
@@ -605,7 +606,7 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kToBeRetransmitted)));
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 
   std::vector<std::pair<TSN, Data>> chunks_to_rtx =
@@ -614,7 +615,8 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kInFlight)));
-  EXPECT_EQ(queue.unacked_bytes(), payload.size() + DataChunk::kHeaderSize);
+  EXPECT_EQ(queue.unacked_packet_bytes(),
+            payload.size() + DataChunk::kHeaderSize);
   EXPECT_EQ(queue.unacked_items(), 1u);
 }
 
@@ -1048,7 +1050,7 @@ TEST_F(RetransmissionQueueTest, AccountsNackedAbandonedChunksAsNotOutstanding) {
                           Pair(TSN(10), State::kInFlight),  //
                           Pair(TSN(11), State::kInFlight),  //
                           Pair(TSN(12), State::kInFlight)));
-  EXPECT_EQ(queue.unacked_bytes(), (16 + 4) * 3u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), (16 + 4) * 3u);
   EXPECT_EQ(queue.unacked_items(), 3u);
 
   // Mark the message as lost.
@@ -1062,20 +1064,20 @@ TEST_F(RetransmissionQueueTest, AccountsNackedAbandonedChunksAsNotOutstanding) {
                           Pair(TSN(10), State::kAbandoned),  //
                           Pair(TSN(11), State::kAbandoned),  //
                           Pair(TSN(12), State::kAbandoned)));
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 
   // Now ACK those, one at a time.
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 
   queue.HandleSack(now_, SackChunk(TSN(11), kArwnd, {}, {}));
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 
   queue.HandleSack(now_, SackChunk(TSN(12), kArwnd, {}, {}));
-  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_packet_bytes(), 0u);
   EXPECT_EQ(queue.unacked_items(), 0u);
 }
 
@@ -1398,7 +1400,7 @@ TEST_F(RetransmissionQueueTest, CwndRecoversWhenAcking) {
       queue.GetChunksToSend(now_, 1500);
   EXPECT_THAT(chunks_to_send, ElementsAre(Pair(TSN(10), _)));
   size_t serialized_size = payload.size() + DataChunk::kHeaderSize;
-  EXPECT_EQ(queue.unacked_bytes(), serialized_size);
+  EXPECT_EQ(queue.unacked_packet_bytes(), serialized_size);
 
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
 
@@ -1608,6 +1610,46 @@ TEST_F(RetransmissionQueueTest, CanAlwaysSendOnePacket) {
   EXPECT_THAT(queue.GetChunksToSend(now_, mtu), ElementsAre(Pair(TSN(13), _)));
   EXPECT_THAT(queue.GetChunksToSend(now_, mtu), ElementsAre(Pair(TSN(14), _)));
   EXPECT_THAT(queue.GetChunksToSend(now_, mtu), IsEmpty());
+}
+
+TEST_F(RetransmissionQueueTest, UpdatesRwndFromSackAndUnackedPayloadBytes) {
+  RetransmissionQueue queue = CreateQueue();
+
+  EXPECT_EQ(queue.rwnd(), kArwnd);
+
+  constexpr size_t kChunkSize = 4;
+
+  EXPECT_CALL(producer_, Produce)
+      .WillOnce(CreateChunk(OutgoingMessageId(0)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1)))
+      .WillOnce(CreateChunk(OutgoingMessageId(2)))
+      .WillRepeatedly([](Timestamp, size_t) { return std::nullopt; });
+
+  EXPECT_THAT(GetSentPacketTSNs(queue),
+              testing::ElementsAre(TSN(10), TSN(11), TSN(12)));
+  EXPECT_THAT(queue.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(9), State::kAcked),  //
+                          Pair(TSN(10), State::kInFlight),
+                          Pair(TSN(11), State::kInFlight),
+                          Pair(TSN(12), State::kInFlight)));
+
+  EXPECT_EQ(queue.rwnd(), kArwnd - kChunkSize * 3);
+
+  // Acknowledge TSN = 10.
+  queue.HandleSack(now_, SackChunk(TSN(10), 1000, {}, {}));
+  EXPECT_THAT(queue.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(10), State::kAcked),     //
+                          Pair(TSN(11), State::kInFlight),  //
+                          Pair(TSN(12), State::kInFlight)));
+
+  EXPECT_EQ(queue.rwnd(), 1000 - kChunkSize * 2);
+
+  // Acknowledge everything.
+  queue.HandleSack(now_, SackChunk(TSN(12), 2000, {}, {}));
+  EXPECT_THAT(queue.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(12), State::kAcked)));
+
+  EXPECT_EQ(queue.rwnd(), 2000u);
 }
 
 }  // namespace

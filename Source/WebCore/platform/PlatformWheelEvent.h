@@ -64,6 +64,7 @@ enum class PlatformWheelEventPhase : uint8_t {
     Ended       = 1 << 3,
     Cancelled   = 1 << 4,
     MayBegin    = 1 << 5,
+    WillBegin   = 1 << 6,
 #endif
 };
 
@@ -158,6 +159,7 @@ public:
     bool isGestureContinuation() const; // The fingers-down part of the gesture excluding momentum.
     bool shouldResetLatching() const;
     bool isEndOfMomentumScroll() const;
+    bool isMomentumEvent() const;
 #else
     bool useLatchedEventElement() const { return false; }
 #endif
@@ -234,6 +236,8 @@ inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
 {
     return m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::Ended;
 }
+
+inline bool PlatformWheelEvent::isMomentumEvent() const { return momentumPhase() != PlatformWheelEventPhase::None && momentumPhase() != PlatformWheelEventPhase::WillBegin; }
 
 #endif // ENABLE(ASYNC_SCROLLING)
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -45,8 +46,8 @@ private:
     static NavigatorPermissions& from(Navigator&);
     static ASCIILiteral supplementName();
 
-    RefPtr<Permissions> m_permissions;
-    const CheckedRef<Navigator> m_navigator;
+    const RefPtr<Permissions> m_permissions;
+    const WTF::CheckedRef<Navigator> m_navigator;
 };
 
 }

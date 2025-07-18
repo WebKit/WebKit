@@ -30,7 +30,6 @@ WindowSurfaceVkMac::~WindowSurfaceVkMac()
 }
 
 angle::Result WindowSurfaceVkMac::createSurfaceVk(vk::ErrorContext *context)
-    API_AVAILABLE(macosx(10.11))
 {
     mMetalDevice = MTLCreateSystemDefaultDevice();
 
@@ -61,7 +60,6 @@ angle::Result WindowSurfaceVkMac::createSurfaceVk(vk::ErrorContext *context)
 
 angle::Result WindowSurfaceVkMac::getCurrentWindowSize(vk::ErrorContext *context,
                                                        gl::Extents *extentsOut) const
-    API_AVAILABLE(macosx(10.11))
 {
     ANGLE_VK_CHECK(context, (mMetalLayer != nullptr), VK_ERROR_INITIALIZATION_FAILED);
 

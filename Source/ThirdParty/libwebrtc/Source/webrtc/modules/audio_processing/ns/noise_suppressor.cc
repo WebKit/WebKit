@@ -70,7 +70,7 @@ constexpr std::array<float, 96> kBlocks160w256FirstHalf = {
     0.99986614f};
 
 // Applies the filterbank window to a buffer.
-void ApplyFilterBankWindow(rtc::ArrayView<float, kFftSize> x) {
+void ApplyFilterBankWindow(ArrayView<float, kFftSize> x) {
   for (size_t i = 0; i < 96; ++i) {
     x[i] = kBlocks160w256FirstHalf[i] * x[i];
   }
@@ -82,9 +82,9 @@ void ApplyFilterBankWindow(rtc::ArrayView<float, kFftSize> x) {
 }
 
 // Extends a frame with previous data.
-void FormExtendedFrame(rtc::ArrayView<const float, kNsFrameSize> frame,
-                       rtc::ArrayView<float, kFftSize - kNsFrameSize> old_data,
-                       rtc::ArrayView<float, kFftSize> extended_frame) {
+void FormExtendedFrame(ArrayView<const float, kNsFrameSize> frame,
+                       ArrayView<float, kFftSize - kNsFrameSize> old_data,
+                       ArrayView<float, kFftSize> extended_frame) {
   std::copy(old_data.begin(), old_data.end(), extended_frame.begin());
   std::copy(frame.begin(), frame.end(),
             extended_frame.begin() + old_data.size());
@@ -93,9 +93,9 @@ void FormExtendedFrame(rtc::ArrayView<const float, kNsFrameSize> frame,
 }
 
 // Uses overlap-and-add to produce an output frame.
-void OverlapAndAdd(rtc::ArrayView<const float, kFftSize> extended_frame,
-                   rtc::ArrayView<float, kOverlapSize> overlap_memory,
-                   rtc::ArrayView<float, kNsFrameSize> output_frame) {
+void OverlapAndAdd(ArrayView<const float, kFftSize> extended_frame,
+                   ArrayView<float, kOverlapSize> overlap_memory,
+                   ArrayView<float, kNsFrameSize> output_frame) {
   for (size_t i = 0; i < kOverlapSize; ++i) {
     output_frame[i] = overlap_memory[i] + extended_frame[i];
   }
@@ -107,9 +107,9 @@ void OverlapAndAdd(rtc::ArrayView<const float, kFftSize> extended_frame,
 }
 
 // Produces a delayed frame.
-void DelaySignal(rtc::ArrayView<const float, kNsFrameSize> frame,
-                 rtc::ArrayView<float, kFftSize - kNsFrameSize> delay_buffer,
-                 rtc::ArrayView<float, kNsFrameSize> delayed_frame) {
+void DelaySignal(ArrayView<const float, kNsFrameSize> frame,
+                 ArrayView<float, kFftSize - kNsFrameSize> delay_buffer,
+                 ArrayView<float, kNsFrameSize> delayed_frame) {
   constexpr size_t kSamplesFromFrame = kNsFrameSize - (kFftSize - kNsFrameSize);
   std::copy(delay_buffer.begin(), delay_buffer.end(), delayed_frame.begin());
   std::copy(frame.begin(), frame.begin() + kSamplesFromFrame,
@@ -120,7 +120,7 @@ void DelaySignal(rtc::ArrayView<const float, kNsFrameSize> frame,
 }
 
 // Computes the energy of an extended frame.
-float ComputeEnergyOfExtendedFrame(rtc::ArrayView<const float, kFftSize> x) {
+float ComputeEnergyOfExtendedFrame(ArrayView<const float, kFftSize> x) {
   float energy = 0.f;
   for (float x_k : x) {
     energy += x_k * x_k;
@@ -131,8 +131,8 @@ float ComputeEnergyOfExtendedFrame(rtc::ArrayView<const float, kFftSize> x) {
 
 // Computes the energy of an extended frame based on its subcomponents.
 float ComputeEnergyOfExtendedFrame(
-    rtc::ArrayView<const float, kNsFrameSize> frame,
-    rtc::ArrayView<float, kFftSize - kNsFrameSize> old_data) {
+    ArrayView<const float, kNsFrameSize> frame,
+    ArrayView<float, kFftSize - kNsFrameSize> old_data) {
   float energy = 0.f;
   for (float v : old_data) {
     energy += v * v;
@@ -146,9 +146,9 @@ float ComputeEnergyOfExtendedFrame(
 
 // Computes the magnitude spectrum based on an FFT output.
 void ComputeMagnitudeSpectrum(
-    rtc::ArrayView<const float, kFftSize> real,
-    rtc::ArrayView<const float, kFftSize> imag,
-    rtc::ArrayView<float, kFftSizeBy2Plus1> signal_spectrum) {
+    ArrayView<const float, kFftSize> real,
+    ArrayView<const float, kFftSize> imag,
+    ArrayView<float, kFftSizeBy2Plus1> signal_spectrum) {
   signal_spectrum[0] = fabsf(real[0]) + 1.f;
   signal_spectrum[kFftSizeBy2Plus1 - 1] =
       fabsf(real[kFftSizeBy2Plus1 - 1]) + 1.f;
@@ -160,13 +160,13 @@ void ComputeMagnitudeSpectrum(
 }
 
 // Compute prior and post SNR.
-void ComputeSnr(rtc::ArrayView<const float, kFftSizeBy2Plus1> filter,
-                rtc::ArrayView<const float> prev_signal_spectrum,
-                rtc::ArrayView<const float> signal_spectrum,
-                rtc::ArrayView<const float> prev_noise_spectrum,
-                rtc::ArrayView<const float> noise_spectrum,
-                rtc::ArrayView<float> prior_snr,
-                rtc::ArrayView<float> post_snr) {
+void ComputeSnr(ArrayView<const float, kFftSizeBy2Plus1> filter,
+                ArrayView<const float> prev_signal_spectrum,
+                ArrayView<const float> signal_spectrum,
+                ArrayView<const float> prev_noise_spectrum,
+                ArrayView<const float> noise_spectrum,
+                ArrayView<float> prior_snr,
+                ArrayView<float> post_snr) {
   for (size_t i = 0; i < kFftSizeBy2Plus1; ++i) {
     // Previous post SNR.
     // Previous estimate: based on previous frame with gain filter.
@@ -187,10 +187,10 @@ void ComputeSnr(rtc::ArrayView<const float, kFftSizeBy2Plus1> filter,
 // Computes the attenuating gain for the noise suppression of the upper bands.
 float ComputeUpperBandsGain(
     float minimum_attenuating_gain,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> filter,
-    rtc::ArrayView<const float> speech_probability,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> prev_analysis_signal_spectrum,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum) {
+    ArrayView<const float, kFftSizeBy2Plus1> filter,
+    ArrayView<const float> speech_probability,
+    ArrayView<const float, kFftSizeBy2Plus1> prev_analysis_signal_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum) {
   // Average speech prob and filter gain for the end of the lowest band.
   constexpr int kNumAvgBins = 32;
   constexpr float kOneByNumAvgBins = 1.f / kNumAvgBins;
@@ -271,13 +271,13 @@ NoiseSuppressor::NoiseSuppressor(const NsConfig& config,
 }
 
 void NoiseSuppressor::AggregateWienerFilters(
-    rtc::ArrayView<float, kFftSizeBy2Plus1> filter) const {
-  rtc::ArrayView<const float, kFftSizeBy2Plus1> filter0 =
+    ArrayView<float, kFftSizeBy2Plus1> filter) const {
+  ArrayView<const float, kFftSizeBy2Plus1> filter0 =
       channels_[0]->wiener_filter.get_filter();
   std::copy(filter0.begin(), filter0.end(), filter.begin());
 
   for (size_t ch = 1; ch < num_channels_; ++ch) {
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> filter_ch =
+    ArrayView<const float, kFftSizeBy2Plus1> filter_ch =
         channels_[ch]->wiener_filter.get_filter();
 
     for (size_t k = 0; k < kFftSizeBy2Plus1; ++k) {
@@ -295,7 +295,7 @@ void NoiseSuppressor::Analyze(const AudioBuffer& audio) {
   // Check for zero frames.
   bool zero_frame = true;
   for (size_t ch = 0; ch < num_channels_; ++ch) {
-    rtc::ArrayView<const float, kNsFrameSize> y_band0(
+    ArrayView<const float, kNsFrameSize> y_band0(
         &audio.split_bands_const(ch)[0][0], kNsFrameSize);
     float energy = ComputeEnergyOfExtendedFrame(
         y_band0, channels_[ch]->analyze_analysis_memory);
@@ -325,7 +325,7 @@ void NoiseSuppressor::Analyze(const AudioBuffer& audio) {
   // Analyze all channels.
   for (size_t ch = 0; ch < num_channels_; ++ch) {
     std::unique_ptr<ChannelState>& ch_p = channels_[ch];
-    rtc::ArrayView<const float, kNsFrameSize> y_band0(
+    ArrayView<const float, kNsFrameSize> y_band0(
         &audio.split_bands_const(ch)[0][0], kNsFrameSize);
 
     // Form an extended frame and apply analysis filter bank windowing.
@@ -383,35 +383,35 @@ void NoiseSuppressor::Analyze(const AudioBuffer& audio) {
 void NoiseSuppressor::Process(AudioBuffer* audio) {
   // Select the space for storing data during the processing.
   std::array<FilterBankState, kMaxNumChannelsOnStack> filter_bank_states_stack;
-  rtc::ArrayView<FilterBankState> filter_bank_states(
-      filter_bank_states_stack.data(), num_channels_);
+  ArrayView<FilterBankState> filter_bank_states(filter_bank_states_stack.data(),
+                                                num_channels_);
   std::array<float, kMaxNumChannelsOnStack> upper_band_gains_stack;
-  rtc::ArrayView<float> upper_band_gains(upper_band_gains_stack.data(),
-                                         num_channels_);
+  ArrayView<float> upper_band_gains(upper_band_gains_stack.data(),
+                                    num_channels_);
   std::array<float, kMaxNumChannelsOnStack> energies_before_filtering_stack;
-  rtc::ArrayView<float> energies_before_filtering(
+  ArrayView<float> energies_before_filtering(
       energies_before_filtering_stack.data(), num_channels_);
   std::array<float, kMaxNumChannelsOnStack> gain_adjustments_stack;
-  rtc::ArrayView<float> gain_adjustments(gain_adjustments_stack.data(),
-                                         num_channels_);
+  ArrayView<float> gain_adjustments(gain_adjustments_stack.data(),
+                                    num_channels_);
   if (NumChannelsOnHeap(num_channels_) > 0) {
     // If the stack-allocated space is too small, use the heap for storing the
     // data.
-    filter_bank_states = rtc::ArrayView<FilterBankState>(
+    filter_bank_states = ArrayView<FilterBankState>(
         filter_bank_states_heap_.data(), num_channels_);
     upper_band_gains =
-        rtc::ArrayView<float>(upper_band_gains_heap_.data(), num_channels_);
-    energies_before_filtering = rtc::ArrayView<float>(
-        energies_before_filtering_heap_.data(), num_channels_);
+        ArrayView<float>(upper_band_gains_heap_.data(), num_channels_);
+    energies_before_filtering =
+        ArrayView<float>(energies_before_filtering_heap_.data(), num_channels_);
     gain_adjustments =
-        rtc::ArrayView<float>(gain_adjustments_heap_.data(), num_channels_);
+        ArrayView<float>(gain_adjustments_heap_.data(), num_channels_);
   }
 
   // Compute the suppression filters for all channels.
   for (size_t ch = 0; ch < num_channels_; ++ch) {
     // Form an extended frame and apply analysis filter bank windowing.
-    rtc::ArrayView<float, kNsFrameSize> y_band0(&audio->split_bands(ch)[0][0],
-                                                kNsFrameSize);
+    ArrayView<float, kNsFrameSize> y_band0(&audio->split_bands(ch)[0][0],
+                                           kNsFrameSize);
 
     FormExtendedFrame(y_band0, channels_[ch]->process_analysis_memory,
                       filter_bank_states[ch].extended_frame);
@@ -457,7 +457,7 @@ void NoiseSuppressor::Process(AudioBuffer* audio) {
 
   // Aggregate the Wiener filters for all channels.
   std::array<float, kFftSizeBy2Plus1> filter_data;
-  rtc::ArrayView<const float, kFftSizeBy2Plus1> filter = filter_data;
+  ArrayView<const float, kFftSizeBy2Plus1> filter = filter_data;
   if (num_channels_ == 1) {
     filter = channels_[0]->wiener_filter.get_filter();
   } else {
@@ -509,8 +509,8 @@ void NoiseSuppressor::Process(AudioBuffer* audio) {
 
   // Use overlap-and-add to form the output frame of the lowest band.
   for (size_t ch = 0; ch < num_channels_; ++ch) {
-    rtc::ArrayView<float, kNsFrameSize> y_band0(&audio->split_bands(ch)[0][0],
-                                                kNsFrameSize);
+    ArrayView<float, kNsFrameSize> y_band0(&audio->split_bands(ch)[0][0],
+                                           kNsFrameSize);
     OverlapAndAdd(filter_bank_states[ch].extended_frame,
                   channels_[ch]->process_synthesis_memory, y_band0);
   }
@@ -527,8 +527,8 @@ void NoiseSuppressor::Process(AudioBuffer* audio) {
       for (size_t b = 1; b < num_bands_; ++b) {
         // Delay the upper bands to match the delay of the filterbank applied to
         // the lowest band.
-        rtc::ArrayView<float, kNsFrameSize> y_band(
-            &audio->split_bands(ch)[b][0], kNsFrameSize);
+        ArrayView<float, kNsFrameSize> y_band(&audio->split_bands(ch)[b][0],
+                                              kNsFrameSize);
         std::array<float, kNsFrameSize> delayed_frame;
         DelaySignal(y_band, channels_[ch]->process_delay_memory[b - 1],
                     delayed_frame);
@@ -544,8 +544,8 @@ void NoiseSuppressor::Process(AudioBuffer* audio) {
   // Limit the output the allowed range.
   for (size_t ch = 0; ch < num_channels_; ++ch) {
     for (size_t b = 0; b < num_bands_; ++b) {
-      rtc::ArrayView<float, kNsFrameSize> y_band(&audio->split_bands(ch)[b][0],
-                                                 kNsFrameSize);
+      ArrayView<float, kNsFrameSize> y_band(&audio->split_bands(ch)[b][0],
+                                            kNsFrameSize);
       for (size_t j = 0; j < kNsFrameSize; j++) {
         y_band[j] = std::min(std::max(y_band[j], -32768.f), 32767.f);
       }

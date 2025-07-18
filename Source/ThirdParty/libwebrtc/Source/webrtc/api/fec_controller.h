@@ -37,6 +37,7 @@ class VCMProtectionCallback {
   // 'retransmission_mode' is either a value of enum RetransmissionMode, or
   // computed with bitwise operators on values of enum RetransmissionMode.
   virtual void SetRetransmissionMode(int retransmission_mode) = 0;
+
  protected:
   virtual ~VCMProtectionCallback() {}
 };

@@ -289,7 +289,7 @@ bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> pro
 
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
     HashSet<CSSPropertyID> toRemove;
-    toRemove.add(properties.begin(), properties.end());
+    toRemove.addAll(properties);
 
     return m_propertyVector.removeAllMatching([&toRemove](const CSSProperty& property) {
         return toRemove.contains(property.id());

@@ -198,14 +198,14 @@ TEST(BitstreamReaderTest, ReadBits) {
 }
 
 TEST(BitstreamReaderTest, ReadZeroBits) {
-  BitstreamReader reader(rtc::ArrayView<const uint8_t>(nullptr, 0));
+  BitstreamReader reader(ArrayView<const uint8_t>(nullptr, 0));
 
   EXPECT_EQ(reader.ReadBits(0), 0u);
   EXPECT_TRUE(reader.Ok());
 }
 
 TEST(BitstreamReaderTest, ReadBitFromEmptyArray) {
-  BitstreamReader reader(rtc::ArrayView<const uint8_t>(nullptr, 0));
+  BitstreamReader reader(ArrayView<const uint8_t>(nullptr, 0));
 
   // Trying to read from the empty array shouldn't dereference the pointer,
   // i.e. shouldn't crash.
@@ -214,7 +214,7 @@ TEST(BitstreamReaderTest, ReadBitFromEmptyArray) {
 }
 
 TEST(BitstreamReaderTest, ReadBitsFromEmptyArray) {
-  BitstreamReader reader(rtc::ArrayView<const uint8_t>(nullptr, 0));
+  BitstreamReader reader(ArrayView<const uint8_t>(nullptr, 0));
 
   // Trying to read from the empty array shouldn't dereference the pointer,
   // i.e. shouldn't crash.
@@ -325,12 +325,12 @@ TEST(BitstreamReaderTest, NoGolombOverread) {
   const uint8_t bytes[] = {0x00, 0xFF, 0xFF};
   // Make sure the bit buffer correctly enforces byte length on golomb reads.
   // If it didn't, the above buffer would be valid at 3 bytes.
-  BitstreamReader reader1(rtc::MakeArrayView(bytes, 1));
+  BitstreamReader reader1(MakeArrayView(bytes, 1));
   // When parse fails, `ReadExponentialGolomb` may return any number.
   reader1.ReadExponentialGolomb();
   EXPECT_FALSE(reader1.Ok());
 
-  BitstreamReader reader2(rtc::MakeArrayView(bytes, 2));
+  BitstreamReader reader2(MakeArrayView(bytes, 2));
   reader2.ReadExponentialGolomb();
   EXPECT_FALSE(reader2.Ok());
 

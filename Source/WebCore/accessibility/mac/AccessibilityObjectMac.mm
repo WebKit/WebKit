@@ -68,22 +68,21 @@ void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
 
 void AccessibilityObject::detachFromParent()
 {
-    if (isAttachment())
-        overrideAttachmentParent(nullptr);
+    overrideAttachmentParent(nullptr);
 }
 
 void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
 {
-    if (!isAttachment())
+    if (!isAttachment()) [[likely]]
         return;
 
     RefPtr axParent = parent;
     id parentWrapper = nil;
-    if (axParent) {
-        if (axParent->isIgnored())
-            axParent = axParent->parentObjectUnignored();
+    if (axParent && axParent->isIgnored())
+        axParent = axParent->parentObjectUnignored();
+
+    if (axParent)
         parentWrapper = axParent->wrapper();
-    }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];

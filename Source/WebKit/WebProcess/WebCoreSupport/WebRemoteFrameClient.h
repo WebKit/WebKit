@@ -61,6 +61,7 @@ private:
     void updateSandboxFlags(WebCore::SandboxFlags) final;
     void updateOpener(const WebCore::Frame&) final;
     void updateScrollingMode(WebCore::ScrollbarMode scrollingMode) final;
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&) final;
 };
 
 }

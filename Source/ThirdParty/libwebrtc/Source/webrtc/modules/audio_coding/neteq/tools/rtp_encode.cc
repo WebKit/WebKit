@@ -119,10 +119,10 @@ class Packetizer : public AudioPacketizationCallback {
 
     constexpr size_t kRtpHeaderLength = 12;
     constexpr size_t kRtpDumpHeaderLength = 8;
-    const uint16_t length = htons(rtc::checked_cast<uint16_t>(
+    const uint16_t length = htons(checked_cast<uint16_t>(
         kRtpHeaderLength + kRtpDumpHeaderLength + payload_len_bytes));
-    const uint16_t plen = htons(
-        rtc::checked_cast<uint16_t>(kRtpHeaderLength + payload_len_bytes));
+    const uint16_t plen =
+        htons(checked_cast<uint16_t>(kRtpHeaderLength + payload_len_bytes));
     const uint32_t offset = htonl(timestamp / (timestamp_rate_hz_ / 1000));
     RTC_CHECK_EQ(fwrite(&length, sizeof(uint16_t), 1, out_file_), 1);
     RTC_CHECK_EQ(fwrite(&plen, sizeof(uint16_t), 1, out_file_), 1);

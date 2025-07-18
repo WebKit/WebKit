@@ -14,6 +14,7 @@
 #include <numeric>
 
 #include "api/audio/echo_canceller3_config.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "rtc_base/random.h"
 #include "rtc_base/system/arch.h"
@@ -36,7 +37,7 @@ TEST(ComfortNoiseGenerator, CorrectLevel) {
   constexpr size_t kNumChannels = 5;
   EchoCanceller3Config config;
   ComfortNoiseGenerator cng(config, DetectOptimization(), kNumChannels);
-  AecState aec_state(config, kNumChannels);
+  AecState aec_state(CreateEnvironment(), config, kNumChannels);
 
   std::vector<std::array<float, kFftLengthBy2Plus1>> N2(kNumChannels);
   std::vector<FftData> n_lower(kNumChannels);

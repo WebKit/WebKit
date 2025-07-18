@@ -44,7 +44,7 @@ class IncomingSSNResetRequestParameter
         stream_ids_(std::move(stream_ids)) {}
 
   static std::optional<IncomingSSNResetRequestParameter> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
@@ -52,7 +52,7 @@ class IncomingSSNResetRequestParameter
   ReconfigRequestSN request_sequence_number() const {
     return request_sequence_number_;
   }
-  rtc::ArrayView<const StreamID> stream_ids() const { return stream_ids_; }
+  webrtc::ArrayView<const StreamID> stream_ids() const { return stream_ids_; }
 
  private:
   static constexpr size_t kStreamIdSize = sizeof(uint16_t);

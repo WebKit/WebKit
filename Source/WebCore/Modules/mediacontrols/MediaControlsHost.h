@@ -54,7 +54,7 @@ class MediaControlsHost final
     , private MediaSessionObserver
 #endif
     , public CanMakeWeakPtr<MediaControlsHost> {
-    WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaControlsHost>);
 

@@ -69,11 +69,13 @@ class MockVoipNetwork : public VoipNetwork {
  public:
   MOCK_METHOD(VoipResult,
               ReceivedRTPPacket,
-              (ChannelId channel_id, rtc::ArrayView<const uint8_t> rtp_packet),
+              (ChannelId channel_id,
+               webrtc::ArrayView<const uint8_t> rtp_packet),
               (override));
   MOCK_METHOD(VoipResult,
               ReceivedRTCPPacket,
-              (ChannelId channel_id, rtc::ArrayView<const uint8_t> rtcp_packet),
+              (ChannelId channel_id,
+               webrtc::ArrayView<const uint8_t> rtcp_packet),
               (override));
 };
 

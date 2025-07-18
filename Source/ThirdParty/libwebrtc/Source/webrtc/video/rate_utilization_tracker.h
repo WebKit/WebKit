@@ -11,6 +11,7 @@
 #ifndef VIDEO_RATE_UTILIZATION_TRACKER_H_
 #define VIDEO_RATE_UTILIZATION_TRACKER_H_
 
+#include <cstddef>
 #include <deque>
 #include <optional>
 

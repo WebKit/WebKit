@@ -35,7 +35,7 @@ std::string EncodeOptionalBlobs(
     if (blob.has_value()) {
       ++num_blobs_present;
       reserve_size_bits +=
-          (rtc::BitBufferWriter::kMaxLeb128Length.bytes() + blob->size()) * 8;
+          (BitBufferWriter::kMaxLeb128Length.bytes() + blob->size()) * 8;
     }
   }
 
@@ -49,7 +49,7 @@ std::string EncodeOptionalBlobs(
   }
 
   std::vector<uint8_t> buffer((reserve_size_bits + 7) / 8);
-  rtc::BitBufferWriter writer(buffer.data(), buffer.size());
+  BitBufferWriter writer(buffer.data(), buffer.size());
 
   // Write present bits if all blobs are not present.
   writer.WriteBits(all_blobs_present, 1);

@@ -12,8 +12,11 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 
 #include "absl/algorithm/container.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
@@ -32,7 +35,7 @@ SamplesStatsCounter& SamplesStatsCounter::operator=(SamplesStatsCounter&&) =
     default;
 
 void SamplesStatsCounter::AddSample(double value) {
-  AddSample(StatsSample{value, Timestamp::Micros(rtc::TimeMicros())});
+  AddSample(StatsSample{value, Timestamp::Micros(TimeMicros())});
 }
 
 void SamplesStatsCounter::AddSample(StatsSample sample) {

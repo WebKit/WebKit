@@ -126,10 +126,11 @@ def _CleanArtifacts(output_dir):
 def _CleanTemporary(output_dir, architectures):
     if os.path.isdir(output_dir):
         logging.info('Removing temporary build files.')
-        for arch in architectures:
-            arch_lib_path = os.path.join(output_dir, arch)
-            if os.path.isdir(arch_lib_path):
-                shutil.rmtree(arch_lib_path)
+        for (env, archs) in architectures.items():
+            for arch in archs:
+                arch_lib_path = '%s_%s_libs' % (env, arch)
+                if os.path.isdir(arch_lib_path):
+                    shutil.rmtree(arch_lib_path)
 
 
 def _ParseArchitecture(architectures):
@@ -189,8 +190,13 @@ def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
                    ('true' if libvpx_build_vp9 else 'false'))
 
     gn_args.append('use_lld=true')
-    gn_args.append('use_remoteexec=' + ('true' if use_remoteexec else 'false'))
     gn_args.append('rtc_enable_objc_symbol_export=true')
+    gn_args.append('use_siso=true')
+    if use_remoteexec:
+        gn_args.extend([
+            'use_remoteexec=true',
+            'use_reclient=false',
+        ])
 
     args_string = ' '.join(gn_args + extra_gn_args)
     logging.info('Building WebRTC with args: %s', args_string)
@@ -206,13 +212,14 @@ def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
     logging.info('Building target: %s', gn_target_name)
 
     cmd = [
-        os.path.join(SRC_DIR, 'third_party', 'ninja', 'ninja'),
+        os.path.join(SRC_DIR, 'third_party', 'siso', 'cipd', 'siso'),
+        'ninja',
         '-C',
         output_dir,
         gn_target_name,
     ]
     if use_remoteexec:
-        cmd.extend(['-j', '200'])
+        cmd.extend(['-remote_jobs', '200'])
     _RunCommand(cmd)
 
 
@@ -232,7 +239,7 @@ def main():
     gn_args = args.extra_gn_args
 
     if args.purify:
-        _CleanTemporary(args.output_dir, list(architectures.keys()))
+        _CleanTemporary(args.output_dir, architectures)
         return 0
 
     gn_target_name = 'framework_objc'
@@ -249,7 +256,7 @@ def main():
         framework_paths.append(framework_path)
         lib_paths = []
         for arch in archs:
-            lib_path = os.path.join(framework_path, arch + '_libs')
+            lib_path = '%s_%s_libs' % (framework_path, arch)
             lib_paths.append(lib_path)
             BuildWebRTC(lib_path, environment, arch, args.build_config,
                         gn_target_name, ios_deployment_target,

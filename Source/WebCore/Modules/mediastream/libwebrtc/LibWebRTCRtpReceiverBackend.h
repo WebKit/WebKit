@@ -42,7 +42,7 @@ class RealtimeMediaSource;
 class LibWebRTCRtpReceiverBackend final : public RTCRtpReceiverBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpReceiverBackend);
 public:
-    explicit LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
+    explicit LibWebRTCRtpReceiverBackend(webrtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
     ~LibWebRTCRtpReceiverBackend();
 
     webrtc::RtpReceiverInterface* rtcReceiver() { return m_rtcReceiver.get(); }
@@ -56,7 +56,7 @@ private:
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
 
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
+    webrtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
     RefPtr<RTCRtpTransformBackend> m_transformBackend;
 };
 

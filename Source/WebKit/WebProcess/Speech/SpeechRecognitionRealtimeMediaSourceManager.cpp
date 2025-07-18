@@ -133,10 +133,10 @@ private:
     void audioUnitWillStart() final
     {
 #if USE(AUDIO_SESSION)
-        auto bufferSize = AudioSession::sharedSession().sampleRate() / 50;
-        if (AudioSession::sharedSession().preferredBufferSize() > bufferSize)
-            AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
-        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::Default, RouteSharingPolicy::Default);
+        auto bufferSize = AudioSession::singleton().sampleRate() / 50;
+        if (AudioSession::singleton().preferredBufferSize() > bufferSize)
+            AudioSession::singleton().setPreferredBufferSize(bufferSize);
+        AudioSession::singleton().setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::Default, RouteSharingPolicy::Default);
 #endif
     }
 

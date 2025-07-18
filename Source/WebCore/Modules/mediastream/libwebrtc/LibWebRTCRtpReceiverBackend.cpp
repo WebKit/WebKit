@@ -51,7 +51,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpReceiverBackend);
 
-LibWebRTCRtpReceiverBackend::LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver)
+LibWebRTCRtpReceiverBackend::LibWebRTCRtpReceiverBackend(webrtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver)
     : m_rtcReceiver(WTFMove(rtcReceiver))
 {
 }
@@ -110,11 +110,12 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource(Document& doc
 {
     auto rtcTrack = m_rtcReceiver->track();
     switch (m_rtcReceiver->media_type()) {
-    case cricket::MEDIA_TYPE_DATA:
-    case cricket::MEDIA_TYPE_UNSUPPORTED:
+    case webrtc::MediaType::ANY:
+    case webrtc::MediaType::DATA:
+    case webrtc::MediaType::UNSUPPORTED:
         break;
-    case cricket::MEDIA_TYPE_AUDIO: {
-        rtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack { static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get()) };
+    case webrtc::MediaType::AUDIO: {
+        webrtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack { static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get()) };
         auto source = RealtimeIncomingAudioSource::create(WTFMove(audioTrack), fromStdString(rtcTrack->id()));
         if (document.page()) {
             auto& webRTCProvider = reinterpret_cast<LibWebRTCProvider&>(document.page()->webRTCProvider());
@@ -122,8 +123,8 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource(Document& doc
         }
         return source;
     }
-    case cricket::MEDIA_TYPE_VIDEO: {
-        rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack { static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get()) };
+    case webrtc::MediaType::VIDEO: {
+        webrtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack { static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get()) };
         auto source = RealtimeIncomingVideoSource::create(WTFMove(videoTrack), fromStdString(rtcTrack->id()));
         if (document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
             source->enableFrameRatedMonitoring();

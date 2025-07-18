@@ -55,8 +55,6 @@ public:
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
-    struct MarkableTraits;
-
 private:
     friend class GenericTimeMixin<ApproximateTime>;
     constexpr ApproximateTime(double rawValue)
@@ -66,7 +64,8 @@ private:
 };
 static_assert(sizeof(ApproximateTime) == sizeof(double));
 
-struct ApproximateTime::MarkableTraits {
+template<>
+struct MarkableTraits<ApproximateTime> {
     static bool isEmptyValue(ApproximateTime time)
     {
         return time.isNaN();

@@ -49,7 +49,7 @@ WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForw
     , m_processIdentifier(processIdentifier)
     , m_backForwardItemID(backForwardItemID)
     , m_suspendedPage(WTFMove(suspendedPage))
-    , m_expirationTimer(RunLoop::main(), this, &WebBackForwardCacheEntry::expirationTimerFired)
+    , m_expirationTimer(RunLoop::mainSingleton(), this, &WebBackForwardCacheEntry::expirationTimerFired)
 {
     m_expirationTimer.startOneShot(expirationDelay);
 }

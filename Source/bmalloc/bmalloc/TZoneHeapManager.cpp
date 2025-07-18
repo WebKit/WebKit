@@ -120,25 +120,21 @@ TZoneHeapManager::TZoneHeapManager()
 
 void determineTZoneMallocFallback()
 {
-    static Mutex s_mutex;
-    LockHolder lock(s_mutex);
-    {
-        if (tzoneMallocFallback != TZoneMallocFallback::Undecided)
-            return;
+    if (tzoneMallocFallback != TZoneMallocFallback::Undecided)
+        return;
 
-        if (Environment::get()->isSystemHeapEnabled()) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-            return;
-        }
-
-        const char* env = getenv("bmalloc_TZoneHeap");
-        if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-            return;
-        }
-
-        tzoneMallocFallback = TZoneMallocFallback::DoNotFallBack;
+    if (Environment::get()->isSystemHeapEnabled()) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
+        return;
     }
+
+    const char* env = getenv("bmalloc_TZoneHeap");
+    if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
+        return;
+    }
+
+    tzoneMallocFallback = TZoneMallocFallback::DoNotFallBack;
 }
 
 void TZoneHeapManager::requirePerBootSeed()

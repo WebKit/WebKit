@@ -10,19 +10,22 @@
 
 #include "rtc_base/task_queue_stdlib.h"
 
+#include <memory>
+#include <string>
+
 #include "api/task_queue/task_queue_factory.h"
 #include "api/task_queue/task_queue_test.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 std::unique_ptr<TaskQueueFactory> CreateTaskQueueFactory(
-    const webrtc::FieldTrialsView*) {
+    const FieldTrialsView*) {
   return CreateTaskQueueStdlibFactory();
 }
 
@@ -30,7 +33,7 @@ INSTANTIATE_TEST_SUITE_P(TaskQueueStdlib,
                          TaskQueueTest,
                          ::testing::Values(CreateTaskQueueFactory));
 
-class StringPtrLogSink : public rtc::LogSink {
+class StringPtrLogSink : public LogSink {
  public:
   explicit StringPtrLogSink(std::string* log_data) : log_data_(log_data) {}
 
@@ -47,14 +50,14 @@ class StringPtrLogSink : public rtc::LogSink {
 TEST(TaskQueueStdlib, AvoidsSpammingLogOnInactivity) {
   std::string log_output;
   StringPtrLogSink stream(&log_output);
-  rtc::LogMessage::AddLogToStream(&stream, rtc::LS_VERBOSE);
+  LogMessage::AddLogToStream(&stream, LS_VERBOSE);
   auto task_queue = CreateTaskQueueStdlibFactory()->CreateTaskQueue(
       "test", TaskQueueFactory::Priority::NORMAL);
-  auto wait_duration = rtc::Event::kDefaultWarnDuration + TimeDelta::Seconds(1);
-  SleepMs(wait_duration.ms());
+  auto wait_duration = Event::kDefaultWarnDuration + TimeDelta::Seconds(1);
+  Thread::SleepMs(wait_duration.ms());
   EXPECT_EQ(log_output.length(), 0u);
   task_queue = nullptr;
-  rtc::LogMessage::RemoveLogToStream(&stream);
+  LogMessage::RemoveLogToStream(&stream);
 }
 
 }  // namespace

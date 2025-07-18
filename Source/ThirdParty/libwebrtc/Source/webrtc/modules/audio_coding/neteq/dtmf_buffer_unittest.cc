@@ -10,14 +10,14 @@
 
 #include "modules/audio_coding/neteq/dtmf_buffer.h"
 
+#include <cstdint>
+
 #ifdef WIN32
 #include <winsock2.h>  // ntohl()
 #else
-#include <arpa/inet.h>  // ntohl()
 #endif
 
-#include <iostream>
-
+#include "rtc_base/ip_address.h"
 #include "test/gtest.h"
 
 // Modify the tests so that they pass with the modifications done to DtmfBuffer

@@ -2863,9 +2863,13 @@ void RenderPassDesc::packStencilUnresolveAttachment()
     mUnresolveStencil = true;
 }
 
-void RenderPassDesc::removeDepthStencilUnresolveAttachment()
+void RenderPassDesc::removeDepthUnresolveAttachment()
 {
-    mUnresolveDepth   = false;
+    mUnresolveDepth = false;
+}
+
+void RenderPassDesc::removeStencilUnresolveAttachment()
+{
     mUnresolveStencil = false;
 }
 
@@ -5640,6 +5644,7 @@ void SamplerDesc::reset()
     mBorderColor.blue  = 0.0f;
     mBorderColor.alpha = 0.0f;
     mReserved          = 0;
+    mUsesSecondComponentForStencil = 0;
 }
 
 void SamplerDesc::update(Renderer *renderer,
@@ -5752,6 +5757,15 @@ void SamplerDesc::update(Renderer *renderer,
     const vk::Format &vkFormat = renderer->getFormat(intendedFormatID);
     gl::ColorGeneric adjustedBorderColor =
         AdjustBorderColor(samplerState.getBorderColor(), vkFormat.getIntendedFormat(), stencilMode);
+
+    // As per the spec, for custom borders for textures with a stencil component, the implementation
+    // is required to use either the first or the second component of the border color. Although it
+    // is recommended to use the first, using the second is also valid.
+    mUsesSecondComponentForStencil =
+        vkFormat.getIntendedFormat().hasDepthOrStencilBits() && stencilMode &&
+                renderer->getFeatures().usesSecondComponentForStencilBorderColor.enabled
+            ? 1
+            : 0;
     mBorderColor = adjustedBorderColor.colorF;
 
     mReserved = 0;
@@ -5805,14 +5819,13 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
         createInfo.addressModeV == VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER ||
         createInfo.addressModeW == VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER)
     {
-        ASSERT((contextVk->getFeatures().supportsCustomBorderColor.enabled));
+        ASSERT(contextVk->getFeatures().supportsCustomBorderColor.enabled);
         customBorderColorInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
 
-        customBorderColorInfo.customBorderColor.float32[0] = mBorderColor.red;
-        customBorderColorInfo.customBorderColor.float32[1] = mBorderColor.green;
-        customBorderColorInfo.customBorderColor.float32[2] = mBorderColor.blue;
-        customBorderColorInfo.customBorderColor.float32[3] = mBorderColor.alpha;
-
+        // Currently it is not required to set the format in customBorderColorInfo, because the
+        // feature supportsCustomBorderColor currently requires customBorderColorWithoutFormat to
+        // be enabled.
+        angle::ColorF customColor = mBorderColor;
         if (mBorderColorType == static_cast<uint32_t>(angle::ColorGeneric::Type::Float))
         {
             createInfo.borderColor = VK_BORDER_COLOR_FLOAT_CUSTOM_EXT;
@@ -5820,7 +5833,16 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
         else
         {
             createInfo.borderColor = VK_BORDER_COLOR_INT_CUSTOM_EXT;
+            if (mUsesSecondComponentForStencil)
+            {
+                customColor.green = customColor.red;
+            }
         }
+
+        customBorderColorInfo.customBorderColor.float32[0] = customColor.red;
+        customBorderColorInfo.customBorderColor.float32[1] = customColor.green;
+        customBorderColorInfo.customBorderColor.float32[2] = customColor.blue;
+        customBorderColorInfo.customBorderColor.float32[3] = customColor.alpha;
 
         vk::AddToPNextChain(&createInfo, &customBorderColorInfo);
     }
@@ -5945,6 +5967,13 @@ void WriteDescriptorDescs::updateShaderBuffers(
     const std::vector<gl::InterfaceBlock> &blocks,
     VkDescriptorType descriptorType)
 {
+    std::vector<uint32_t> *blockIndexToDescriptorDescIndexMap =
+        IsUniformBuffer(descriptorType) ? &mUniformBlockIndexToDescriptorDescIndex
+                                        : &mStorageBlockIndexToDescriptorDescIndex;
+    ASSERT(blockIndexToDescriptorDescIndexMap != nullptr);
+    ASSERT(blockIndexToDescriptorDescIndexMap->empty());
+    blockIndexToDescriptorDescIndexMap->resize(blocks.size(), kInvalidDescriptorDescIndex);
+
     // Initialize the descriptor writes in a first pass. This ensures we can pack the structures
     // corresponding to array elements tightly.
     for (uint32_t blockIndex = 0; blockIndex < blocks.size(); ++blockIndex)
@@ -5959,8 +5988,9 @@ void WriteDescriptorDescs::updateShaderBuffers(
         const gl::ShaderType firstShaderType = block.getFirstActiveShaderType();
         const ShaderInterfaceVariableInfo &info =
             variableInfoMap.getVariableById(firstShaderType, block.getId(firstShaderType));
+        uint32_t arrayElement = block.pod.isArray ? block.pod.arrayElement : 0;
 
-        if (block.pod.isArray && block.pod.arrayElement > 0)
+        if (arrayElement > 0)
         {
             incrementDescriptorCount(info.binding, 1);
             mCurrentInfoIndex++;
@@ -5969,6 +5999,10 @@ void WriteDescriptorDescs::updateShaderBuffers(
         {
             updateWriteDesc(info.binding, descriptorType, 1);
         }
+
+        // Cache DescriptorDesc index
+        blockIndexToDescriptorDescIndexMap->at(blockIndex) =
+            mDescs[info.binding].descriptorInfoIndex + arrayElement;
     }
 }
 
@@ -6156,96 +6190,6 @@ std::ostream &operator<<(std::ostream &os, const WriteDescriptorDescs &desc)
 }
 
 // DescriptorSetDesc implementation.
-void DescriptorSetDesc::updateDescriptorSet(Renderer *renderer,
-                                            const WriteDescriptorDescs &writeDescriptorDescs,
-                                            UpdateDescriptorSetsBuilder *updateBuilder,
-                                            const DescriptorDescHandles *handles,
-                                            VkDescriptorSet descriptorSet) const
-{
-    for (uint32_t writeIndex = 0; writeIndex < writeDescriptorDescs.size(); ++writeIndex)
-    {
-        const WriteDescriptorDesc &writeDesc = writeDescriptorDescs[writeIndex];
-
-        if (writeDesc.descriptorCount == 0)
-        {
-            continue;
-        }
-
-        VkWriteDescriptorSet &writeSet = updateBuilder->allocWriteDescriptorSet();
-
-        writeSet.descriptorCount  = writeDesc.descriptorCount;
-        writeSet.descriptorType   = static_cast<VkDescriptorType>(writeDesc.descriptorType);
-        writeSet.dstArrayElement  = 0;
-        writeSet.dstBinding       = writeIndex;
-        writeSet.dstSet           = descriptorSet;
-        writeSet.pBufferInfo      = nullptr;
-        writeSet.pImageInfo       = nullptr;
-        writeSet.pNext            = nullptr;
-        writeSet.pTexelBufferView = nullptr;
-        writeSet.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-
-        uint32_t infoDescIndex = writeDesc.descriptorInfoIndex;
-
-        switch (writeSet.descriptorType)
-        {
-            case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
-            case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
-            {
-                ASSERT(writeDesc.descriptorCount == 1);
-                VkBufferView &bufferView  = updateBuilder->allocBufferView();
-                bufferView                = handles[infoDescIndex].bufferView;
-                writeSet.pTexelBufferView = &bufferView;
-                break;
-            }
-            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
-            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
-            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
-            {
-                VkDescriptorBufferInfo *writeBuffers =
-                    updateBuilder->allocDescriptorBufferInfos(writeSet.descriptorCount);
-                for (uint32_t arrayElement = 0; arrayElement < writeSet.descriptorCount;
-                     ++arrayElement)
-                {
-                    const DescriptorInfoDesc &infoDesc =
-                        mDescriptorInfos[infoDescIndex + arrayElement];
-                    VkDescriptorBufferInfo &bufferInfo = writeBuffers[arrayElement];
-                    bufferInfo.buffer = handles[infoDescIndex + arrayElement].buffer;
-                    bufferInfo.offset = infoDesc.imageViewSerialOrOffset;
-                    bufferInfo.range  = infoDesc.imageLayoutOrRange;
-                }
-                writeSet.pBufferInfo = writeBuffers;
-                break;
-            }
-            case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-            case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
-            case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
-            case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
-            {
-                VkDescriptorImageInfo *writeImages =
-                    updateBuilder->allocDescriptorImageInfos(writeSet.descriptorCount);
-                for (uint32_t arrayElement = 0; arrayElement < writeSet.descriptorCount;
-                     ++arrayElement)
-                {
-                    const DescriptorInfoDesc &infoDesc =
-                        mDescriptorInfos[infoDescIndex + arrayElement];
-                    VkDescriptorImageInfo &imageInfo = writeImages[arrayElement];
-
-                    imageInfo.imageLayout = static_cast<VkImageLayout>(infoDesc.imageLayoutOrRange);
-                    imageInfo.imageView = handles[infoDescIndex + arrayElement].imageView;
-                    imageInfo.sampler   = handles[infoDescIndex + arrayElement].sampler;
-                }
-                writeSet.pImageInfo = writeImages;
-                break;
-            }
-
-            default:
-                UNREACHABLE();
-                break;
-        }
-    }
-}
-
 std::ostream &operator<<(std::ostream &os, const DescriptorSetDesc &desc)
 {
     os << " desc[" << desc.size() << "]:";
@@ -6386,15 +6330,14 @@ void DescriptorSetDescBuilder::updatePreCacheActiveTextures(
     Context *context,
     const gl::ProgramExecutable &executable,
     const gl::ActiveTextureArray<TextureVk *> &textures,
-    const gl::SamplerBindingVector &samplers)
+    const gl::SamplerBindingVector &samplers,
+    const WriteDescriptorDescs &writeDescriptorDescs)
 {
     const std::vector<gl::SamplerBinding> &samplerBindings = executable.getSamplerBindings();
     const gl::ActiveTextureMask &activeTextures            = executable.getActiveSamplersMask();
     const ProgramExecutableVk *executableVk                = vk::GetImpl(&executable);
 
-    resize(executableVk->getTextureWriteDescriptorDescs().getTotalDescriptorCount());
-    const WriteDescriptorDescs &writeDescriptorDescs =
-        executableVk->getTextureWriteDescriptorDescs();
+    ASSERT(writeDescriptorDescs.getTotalDescriptorCount() == mDesc.size());
 
     const ShaderInterfaceVariableInfoMap &variableInfoMap = executableVk->getVariableInfoMap();
     const std::vector<gl::LinkedUniform> &uniforms        = executable.getUniforms();
@@ -6481,34 +6424,22 @@ void DescriptorSetDescBuilder::setEmptyBuffer(uint32_t infoDescIndex,
     }
 }
 
-template <typename CommandBufferT>
 void DescriptorSetDescBuilder::updateOneShaderBuffer(
     Context *context,
-    CommandBufferT *commandBufferHelper,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
+    CommandBufferHelperCommon *commandBufferHelper,
+    const size_t blockIndex,
     const gl::InterfaceBlock &block,
-    uint32_t bufferIndex,
+    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding,
     VkDescriptorType descriptorType,
     VkDeviceSize maxBoundBufferRange,
     const BufferHelper &emptyBuffer,
     const WriteDescriptorDescs &writeDescriptorDescs,
     const GLbitfield memoryBarrierBits)
 {
-    if (block.activeShaders().none())
-    {
-        return;
-    }
+    uint32_t infoDescIndex =
+        writeDescriptorDescs.getDescriptorDescIndexForBufferBlockIndex(descriptorType, blockIndex);
+    ASSERT(infoDescIndex != kInvalidDescriptorDescIndex && infoDescIndex < mDesc.size());
 
-    const gl::ShaderType firstShaderType = block.getFirstActiveShaderType();
-    const ShaderInterfaceVariableInfo &info =
-        variableInfoMap.getVariableById(firstShaderType, block.getId(firstShaderType));
-
-    uint32_t binding       = info.binding;
-    uint32_t arrayElement  = block.pod.isArray ? block.pod.arrayElement : 0;
-    uint32_t infoDescIndex = writeDescriptorDescs[binding].descriptorInfoIndex + arrayElement;
-
-    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = buffers[bufferIndex];
     if (bufferBinding.get() == nullptr)
     {
         setEmptyBuffer(infoDescIndex, descriptorType, emptyBuffer);
@@ -6527,9 +6458,7 @@ void DescriptorSetDescBuilder::updateOneShaderBuffer(
     BufferVk *bufferVk         = vk::GetImpl(bufferBinding.get());
     BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-    const bool isUniformBuffer = descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
-                                 descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-    if (isUniformBuffer)
+    if (IsUniformBuffer(descriptorType))
     {
         commandBufferHelper->bufferRead(context, VK_ACCESS_UNIFORM_READ_BIT, block.activeShaders(),
                                         &bufferHelper);
@@ -6589,39 +6518,39 @@ void DescriptorSetDescBuilder::updateOneShaderBuffer(
     mHandles[infoDescIndex].buffer = bufferHelper.getBuffer().getHandle();
 }
 
-template <typename CommandBufferT>
-void DescriptorSetDescBuilder::updateShaderBuffers(
-    Context *context,
-    CommandBufferT *commandBufferHelper,
-    const gl::ProgramExecutable &executable,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const std::vector<gl::InterfaceBlock> &blocks,
-    VkDescriptorType descriptorType,
-    VkDeviceSize maxBoundBufferRange,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs,
-    const GLbitfield memoryBarrierBits)
+void DescriptorSetDescBuilder::updateShaderBuffers(Context *context,
+                                                   CommandBufferHelperCommon *commandBufferHelper,
+                                                   const gl::ProgramExecutable &executable,
+                                                   const gl::BufferVector &buffers,
+                                                   const std::vector<gl::InterfaceBlock> &blocks,
+                                                   VkDescriptorType descriptorType,
+                                                   VkDeviceSize maxBoundBufferRange,
+                                                   const BufferHelper &emptyBuffer,
+                                                   const WriteDescriptorDescs &writeDescriptorDescs,
+                                                   const GLbitfield memoryBarrierBits)
 {
-    const bool isUniformBuffer = descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
-                                 descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+    const bool isUniformBuffer = IsUniformBuffer(descriptorType);
+
+    gl::ProgramBufferBlockMask dirtyBlocks = isUniformBuffer
+                                                 ? executable.getActiveUniformBufferBlocks()
+                                                 : executable.getActiveStorageBufferBlocks();
 
     // Now that we have the proper array elements counts, initialize the info structures.
-    for (uint32_t blockIndex = 0; blockIndex < blocks.size(); ++blockIndex)
+    for (size_t blockIndex : dirtyBlocks)
     {
         const GLuint binding = isUniformBuffer
                                    ? executable.getUniformBlockBinding(blockIndex)
                                    : executable.getShaderStorageBlockBinding(blockIndex);
-        updateOneShaderBuffer(context, commandBufferHelper, variableInfoMap, buffers,
-                              blocks[blockIndex], binding, descriptorType, maxBoundBufferRange,
-                              emptyBuffer, writeDescriptorDescs, memoryBarrierBits);
+
+        updateOneShaderBuffer(context, commandBufferHelper, blockIndex, blocks[blockIndex],
+                              buffers[binding], descriptorType, maxBoundBufferRange, emptyBuffer,
+                              writeDescriptorDescs, memoryBarrierBits);
     }
 }
 
-template <typename CommandBufferT>
 void DescriptorSetDescBuilder::updateAtomicCounters(
     Context *context,
-    CommandBufferT *commandBufferHelper,
+    CommandBufferHelperCommon *commandBufferHelper,
     const gl::ProgramExecutable &executable,
     const ShaderInterfaceVariableInfoMap &variableInfoMap,
     const gl::BufferVector &buffers,
@@ -6691,80 +6620,27 @@ void DescriptorSetDescBuilder::updateAtomicCounters(
     }
 }
 
-// Explicit instantiation
-template void DescriptorSetDescBuilder::updateOneShaderBuffer<vk::RenderPassCommandBufferHelper>(
-    Context *context,
-    RenderPassCommandBufferHelper *commandBufferHelper,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const gl::InterfaceBlock &block,
-    uint32_t bufferIndex,
+void DescriptorSetDescBuilder::updateOneShaderBufferOffset(
+    const size_t blockIndex,
+    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding,
     VkDescriptorType descriptorType,
-    VkDeviceSize maxBoundBufferRange,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs,
-    const GLbitfield memoryBarrierBits);
+    const WriteDescriptorDescs &writeDescriptorDescs)
+{
+    uint32_t infoDescIndex =
+        writeDescriptorDescs.getDescriptorDescIndexForBufferBlockIndex(descriptorType, blockIndex);
+    ASSERT(infoDescIndex != kInvalidDescriptorDescIndex && infoDescIndex < mDesc.size());
+    ASSERT(bufferBinding.get() != nullptr);
 
-template void DescriptorSetDescBuilder::updateOneShaderBuffer<OutsideRenderPassCommandBufferHelper>(
-    Context *context,
-    OutsideRenderPassCommandBufferHelper *commandBufferHelper,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const gl::InterfaceBlock &block,
-    uint32_t bufferIndex,
-    VkDescriptorType descriptorType,
-    VkDeviceSize maxBoundBufferRange,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs,
-    const GLbitfield memoryBarrierBits);
+    DescriptorInfoDesc &infoDesc = mDesc.getInfoDesc(infoDescIndex);
+    BufferHelper &bufferHelper   = vk::GetImpl(bufferBinding.get())->getBuffer();
+    ASSERT(infoDesc.samplerOrBufferSerial == bufferHelper.getBlockSerial().getValue());
+    // Reachable only by program executables with dynamic descriptor type
+    ASSERT(infoDesc.imageViewSerialOrOffset == 0);
 
-template void DescriptorSetDescBuilder::updateShaderBuffers<OutsideRenderPassCommandBufferHelper>(
-    Context *context,
-    OutsideRenderPassCommandBufferHelper *commandBufferHelper,
-    const gl::ProgramExecutable &executable,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const std::vector<gl::InterfaceBlock> &blocks,
-    VkDescriptorType descriptorType,
-    VkDeviceSize maxBoundBufferRange,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs,
-    const GLbitfield memoryBarrierBits);
-
-template void DescriptorSetDescBuilder::updateShaderBuffers<RenderPassCommandBufferHelper>(
-    Context *context,
-    RenderPassCommandBufferHelper *commandBufferHelper,
-    const gl::ProgramExecutable &executable,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const std::vector<gl::InterfaceBlock> &blocks,
-    VkDescriptorType descriptorType,
-    VkDeviceSize maxBoundBufferRange,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs,
-    const GLbitfield memoryBarrierBits);
-
-template void DescriptorSetDescBuilder::updateAtomicCounters<OutsideRenderPassCommandBufferHelper>(
-    Context *context,
-    OutsideRenderPassCommandBufferHelper *commandBufferHelper,
-    const gl::ProgramExecutable &executable,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,
-    const VkDeviceSize requiredOffsetAlignment,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs);
-
-template void DescriptorSetDescBuilder::updateAtomicCounters<RenderPassCommandBufferHelper>(
-    Context *context,
-    RenderPassCommandBufferHelper *commandBufferHelper,
-    const gl::ProgramExecutable &executable,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    const gl::BufferVector &buffers,
-    const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,
-    const VkDeviceSize requiredOffsetAlignment,
-    const BufferHelper &emptyBuffer,
-    const WriteDescriptorDescs &writeDescriptorDescs);
+    VkDeviceSize newOffset = bufferBinding.getOffset() + bufferHelper.getOffset();
+    ASSERT(infoDescIndex < mDynamicOffsets.size());
+    SetBitField(mDynamicOffsets[infoDescIndex], newOffset);
+}
 
 angle::Result DescriptorSetDescBuilder::updateImages(
     Context *context,
@@ -6981,35 +6857,9 @@ void DescriptorSetDescBuilder::updateInputAttachment(
     mHandles[infoIndex].imageView = imageView->getHandle();
 }
 
-void DescriptorSetDescBuilder::updateDescriptorSet(Renderer *renderer,
-                                                   const WriteDescriptorDescs &writeDescriptorDescs,
-                                                   UpdateDescriptorSetsBuilder *updateBuilder,
-                                                   VkDescriptorSet descriptorSet) const
-{
-    mDesc.updateDescriptorSet(renderer, writeDescriptorDescs, updateBuilder, mHandles.data(),
-                              descriptorSet);
-}
-
 // SharedCacheKeyManager implementation.
 template <class SharedCacheKeyT>
-size_t SharedCacheKeyManager<SharedCacheKeyT>::updateEmptySlotBits()
-{
-    ASSERT(mSharedCacheKeys.size() == mEmptySlotBits.size() * kSlotBitCount);
-    size_t emptySlot = kInvalidSlot;
-    for (size_t slot = 0; slot < mSharedCacheKeys.size(); ++slot)
-    {
-        SharedCacheKeyT &sharedCacheKey = mSharedCacheKeys[slot];
-        if (!sharedCacheKey->valid())
-        {
-            mEmptySlotBits[slot / kSlotBitCount].set(slot % kSlotBitCount);
-            emptySlot = slot;
-        }
-    }
-    return emptySlot;
-}
-
-template <class SharedCacheKeyT>
-void SharedCacheKeyManager<SharedCacheKeyT>::addKeyImpl(const SharedCacheKeyT &key)
+bool SharedCacheKeyManager<SharedCacheKeyT>::addKeyToEmptySlot(const SharedCacheKeyT &key)
 {
     // Search for available slots and use that if any
     size_t slot = 0;
@@ -7022,32 +6872,48 @@ void SharedCacheKeyManager<SharedCacheKeyT>::addKeyImpl(const SharedCacheKeyT &k
             ASSERT(!sharedCacheKey->valid());
             sharedCacheKey = key;
             emptyBits.reset(slot % kSlotBitCount);
-            return;
+            return true;
         }
         slot += kSlotBitCount;
     }
+    return false;
+}
 
-    // Some cached entries may have been released. Try to update and use any available slot if any.
-    slot = updateEmptySlotBits();
-    if (slot != kInvalidSlot)
+template <class SharedCacheKeyT>
+bool SharedCacheKeyManager<SharedCacheKeyT>::releaseUnusedKeysAndReplaceWithKey(
+    const SharedCacheKeyT &key)
+{
+    ASSERT(mSharedCacheKeys.size() == mEmptySlotBits.size() * kSlotBitCount);
+    size_t emptySlot = kInvalidSlot;
+
+    for (size_t slot = 0; slot < mSharedCacheKeys.size(); ++slot)
     {
         SharedCacheKeyT &sharedCacheKey = mSharedCacheKeys[slot];
-        ASSERT(!sharedCacheKey->valid());
-        sharedCacheKey         = key;
-        SlotBitMask &emptyBits = mEmptySlotBits[slot / kSlotBitCount];
-        emptyBits.reset(slot % kSlotBitCount);
-        return;
+        if (!sharedCacheKey->valid())
+        {
+            mEmptySlotBits[slot / kSlotBitCount].set(slot % kSlotBitCount);
+            emptySlot = slot;
+        }
     }
 
+    if (emptySlot != kInvalidSlot)
+    {
+        SharedCacheKeyT &sharedCacheKey = mSharedCacheKeys[emptySlot];
+        ASSERT(!sharedCacheKey->valid());
+        sharedCacheKey         = key;
+        SlotBitMask &emptyBits = mEmptySlotBits[emptySlot / kSlotBitCount];
+        emptyBits.reset(emptySlot % kSlotBitCount);
+        return true;
+    }
+
+    return false;
+}
+
+template <class SharedCacheKeyT>
+void SharedCacheKeyManager<SharedCacheKeyT>::addKeyToNewSlot(const SharedCacheKeyT &key)
+{
     // No slot available, expand mSharedCacheKeys
     ASSERT(mSharedCacheKeys.size() == mEmptySlotBits.size() * kSlotBitCount);
-    if (!mEmptySlotBits.empty())
-    {
-        // On first insertion, let std::vector allocate a single entry for minimal memory overhead,
-        // since this is the most common usage case. If that exceeds, reserve a larger chunk to
-        // avoid storage reallocation for efficiency (enough storage enough for 512 cache entries).
-        mEmptySlotBits.reserve(8);
-    }
     mEmptySlotBits.emplace_back(0xFFFFFFFE);
     mSharedCacheKeys.emplace_back(key);
     while (mSharedCacheKeys.size() < mEmptySlotBits.size() * kSlotBitCount)
@@ -7162,7 +7028,27 @@ template class SharedCacheKeyManager<SharedFramebufferCacheKey>;
 template <>
 void SharedCacheKeyManager<SharedFramebufferCacheKey>::addKey(const SharedFramebufferCacheKey &key)
 {
-    addKeyImpl(key);
+    if (addKeyToEmptySlot(key))
+    {
+        return;
+    }
+
+    // Some cached entries may have been released. Try to update and use any available slot if
+    // any.
+    if (releaseUnusedKeysAndReplaceWithKey(key))
+    {
+        return;
+    }
+
+    // No slot available, expand mSharedCacheKeys
+    if (!mEmptySlotBits.empty())
+    {
+        // On first insertion, let std::vector allocate a single entry for minimal memory overhead,
+        // since this is the most common usage case. If that exceeds, reserve a larger chunk to
+        // avoid storage reallocation for efficiency (enough storage enough for 512 cache entries).
+        mEmptySlotBits.reserve(8);
+    }
+    addKeyToNewSlot(key);
 }
 
 // Explict instantiate for DescriptorSetCacheManager
@@ -7182,7 +7068,7 @@ void SharedCacheKeyManager<SharedDescriptorSetCacheKey>::addKey(
     // In case of the texture or buffer is part of many descriptorSets, lets not track it any more
     // to alleviate the overhead associated with this. We will rely on eviction to free the
     // descriptorSets when needed.
-    static constexpr size_t kMaxEmptySlots            = 4;
+    static constexpr size_t kMaxEmptySlots            = 1;
     static constexpr size_t kMaxSharedCacheKeyTracked = kSlotBitCount * kMaxEmptySlots;
     if (mSharedCacheKeys.size() >= kMaxSharedCacheKeyTracked)
     {
@@ -7192,7 +7078,14 @@ void SharedCacheKeyManager<SharedDescriptorSetCacheKey>::addKey(
     mLastAddedSharedCacheKey = key;
     ASSERT(!containsKeyWithOwnerEqual(key));
 
-    addKeyImpl(key);
+    if (addKeyToEmptySlot(key))
+    {
+        return;
+    }
+
+    // No slot available, expand mSharedCacheKeys
+    addKeyToNewSlot(key);
+    ASSERT(mEmptySlotBits.size() <= kMaxEmptySlots);
 }
 
 // PipelineCacheAccess implementation.
@@ -7319,6 +7212,100 @@ uint32_t UpdateDescriptorSetsBuilder::flushDescriptorSetUpdates(VkDevice device)
     mBufferViews.clear();
 
     return totalSize;
+}
+
+void UpdateDescriptorSetsBuilder::updateWriteDescriptorSet(
+    vk::Renderer *renderer,
+    const vk::DescriptorSetDescBuilder &descriptorSetDescBuilder,
+    const vk::WriteDescriptorDescs &writeDescriptorDescs,
+    const VkDescriptorSet descriptorSet)
+{
+    const vk::DescriptorInfoDesc *descriptorSetDescs =
+        descriptorSetDescBuilder.getDesc().getInfoDescs();
+    const vk::DescriptorDescHandles *handles = descriptorSetDescBuilder.getHandles();
+
+    for (uint32_t writeIndex = 0; writeIndex < writeDescriptorDescs.size(); ++writeIndex)
+    {
+        const vk::WriteDescriptorDesc &writeDesc = writeDescriptorDescs[writeIndex];
+
+        if (writeDesc.descriptorCount == 0)
+        {
+            continue;
+        }
+
+        VkWriteDescriptorSet &writeSet = allocWriteDescriptorSet();
+
+        writeSet.descriptorCount  = writeDesc.descriptorCount;
+        writeSet.descriptorType   = static_cast<VkDescriptorType>(writeDesc.descriptorType);
+        writeSet.dstArrayElement  = 0;
+        writeSet.dstBinding       = writeIndex;
+        writeSet.dstSet           = descriptorSet;
+        writeSet.pBufferInfo      = nullptr;
+        writeSet.pImageInfo       = nullptr;
+        writeSet.pNext            = nullptr;
+        writeSet.pTexelBufferView = nullptr;
+        writeSet.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+
+        uint32_t infoDescIndex = writeDesc.descriptorInfoIndex;
+
+        switch (writeSet.descriptorType)
+        {
+            case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
+            case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
+            {
+                ASSERT(writeDesc.descriptorCount == 1);
+                VkBufferView &bufferView  = allocBufferView();
+                bufferView                = handles[infoDescIndex].bufferView;
+                writeSet.pTexelBufferView = &bufferView;
+                break;
+            }
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+            {
+                VkDescriptorBufferInfo *writeBuffers =
+                    allocDescriptorBufferInfos(writeSet.descriptorCount);
+                for (uint32_t arrayElement = 0; arrayElement < writeSet.descriptorCount;
+                     ++arrayElement)
+                {
+                    const vk::DescriptorInfoDesc &infoDesc =
+                        descriptorSetDescs[infoDescIndex + arrayElement];
+                    VkDescriptorBufferInfo &bufferInfo = writeBuffers[arrayElement];
+                    bufferInfo.buffer = handles[infoDescIndex + arrayElement].buffer;
+                    bufferInfo.offset = infoDesc.imageViewSerialOrOffset;
+                    bufferInfo.range  = infoDesc.imageLayoutOrRange;
+                }
+                writeSet.pBufferInfo = writeBuffers;
+                break;
+            }
+            case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+            case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
+            case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
+            case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+            {
+                VkDescriptorImageInfo *writeImages =
+                    allocDescriptorImageInfos(writeSet.descriptorCount);
+                for (uint32_t arrayElement = 0; arrayElement < writeSet.descriptorCount;
+                     ++arrayElement)
+                {
+                    const vk::DescriptorInfoDesc &infoDesc =
+                        descriptorSetDescs[infoDescIndex + arrayElement];
+                    VkDescriptorImageInfo &imageInfo = writeImages[arrayElement];
+
+                    imageInfo.imageLayout = static_cast<VkImageLayout>(infoDesc.imageLayoutOrRange);
+                    imageInfo.imageView   = handles[infoDescIndex + arrayElement].imageView;
+                    imageInfo.sampler     = handles[infoDescIndex + arrayElement].sampler;
+                }
+                writeSet.pImageInfo = writeImages;
+                break;
+            }
+
+            default:
+                UNREACHABLE();
+                break;
+        }
+    }
 }
 
 // FramebufferCache implementation.

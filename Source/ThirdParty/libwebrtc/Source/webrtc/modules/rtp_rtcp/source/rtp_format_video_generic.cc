@@ -12,11 +12,14 @@
 
 #include <string.h>
 
-#include <optional>
+#include <cstdint>
+#include <variant>
 
+#include "api/array_view.h"
+#include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
@@ -27,7 +30,7 @@ constexpr size_t kExtendedHeaderLength = 2;
 }  // namespace
 
 RtpPacketizerGeneric::RtpPacketizerGeneric(
-    rtc::ArrayView<const uint8_t> payload,
+    ArrayView<const uint8_t> payload,
     PayloadSizeLimits limits,
     const RTPVideoHeader& rtp_video_header)
     : remaining_payload_(payload) {
@@ -38,9 +41,8 @@ RtpPacketizerGeneric::RtpPacketizerGeneric(
   current_packet_ = payload_sizes_.begin();
 }
 
-RtpPacketizerGeneric::RtpPacketizerGeneric(
-    rtc::ArrayView<const uint8_t> payload,
-    PayloadSizeLimits limits)
+RtpPacketizerGeneric::RtpPacketizerGeneric(ArrayView<const uint8_t> payload,
+                                           PayloadSizeLimits limits)
     : header_size_(0), remaining_payload_(payload) {
   payload_sizes_ = SplitAboutEqually(payload.size(), limits);
   current_packet_ = payload_sizes_.begin();
@@ -90,7 +92,7 @@ void RtpPacketizerGeneric::BuildHeader(const RTPVideoHeader& rtp_video_header) {
   if (rtp_video_header.frame_type == VideoFrameType::kVideoFrameKey) {
     header_[0] |= RtpFormatVideoGeneric::kKeyFrameBit;
   }
-  if (const auto* generic_header = absl::get_if<RTPVideoHeaderLegacyGeneric>(
+  if (const auto* generic_header = std::get_if<RTPVideoHeaderLegacyGeneric>(
           &rtp_video_header.video_type_header)) {
     // Store bottom 15 bits of the picture id. Only 15 bits are used for
     // compatibility with other packetizer implemenetations.

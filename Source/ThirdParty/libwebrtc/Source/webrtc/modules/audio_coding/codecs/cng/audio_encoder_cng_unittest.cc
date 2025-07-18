@@ -10,11 +10,21 @@
 
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <memory>
-#include <vector>
+#include <optional>
+#include <utility>
 
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/units/time_delta.h"
+#include "common_audio/vad/include/vad.h"
 #include "common_audio/vad/mock/mock_vad.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 #include "test/testsupport/rtc_expect_death.h"
@@ -88,8 +98,7 @@ class AudioEncoderCngTest : public ::testing::Test {
   void Encode() {
     ASSERT_TRUE(cng_) << "Must call CreateCng() first.";
     encoded_info_ = cng_->Encode(
-        timestamp_,
-        rtc::ArrayView<const int16_t>(audio_, num_audio_samples_10ms_),
+        timestamp_, ArrayView<const int16_t>(audio_, num_audio_samples_10ms_),
         &encoded_);
     timestamp_ += static_cast<uint32_t>(num_audio_samples_10ms_);
   }
@@ -207,7 +216,7 @@ class AudioEncoderCngTest : public ::testing::Test {
   uint32_t timestamp_;
   int16_t audio_[kMaxNumSamples];
   size_t num_audio_samples_10ms_;
-  rtc::Buffer encoded_;
+  Buffer encoded_;
   AudioEncoder::EncodedInfo encoded_info_;
   int sample_rate_hz_;
 };
@@ -305,8 +314,8 @@ TEST_F(AudioEncoderCngTest, EncodePassive) {
                   encoded_info_.encoded_bytes);
         EXPECT_EQ(expected_timestamp, encoded_info_.encoded_timestamp);
       }
-      expected_timestamp += rtc::checked_cast<uint32_t>(
-          kBlocksPerFrame * num_audio_samples_10ms_);
+      expected_timestamp +=
+          checked_cast<uint32_t>(kBlocksPerFrame * num_audio_samples_10ms_);
     } else {
       // Otherwise, expect no output.
       EXPECT_EQ(0u, encoded_info_.encoded_bytes);

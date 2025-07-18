@@ -46,7 +46,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/environment/environment_factory.h>
 #include <webrtc/modules/video_coding/codecs/vp8/include/vp8.h>
 #include <webrtc/modules/video_coding/codecs/vp9/include/vp9.h>
-#include <webrtc/system_wrappers/include/cpu_info.h>
+#include <webrtc/modules/video_coding/include/video_error_codes.h>
+#include <webrtc/rtc_base/cpu_info.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -187,7 +188,7 @@ LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXV
 {
     m_internalDecoder->RegisterDecodeCompleteCallback(this);
     webrtc::VideoDecoder::Settings settings;
-    settings.set_number_of_cores(webrtc::CpuInfo::DetectNumberOfCores());
+    settings.set_number_of_cores(webrtc::cpu_info::DetectNumberOfCores());
     m_internalDecoder->Configure(settings);
 }
 

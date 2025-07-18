@@ -177,7 +177,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) {
         throwOutOfMemoryError(globalObject, scope);
@@ -261,7 +261,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalOb
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) {
         throwOutOfMemoryError(globalObject, scope);
@@ -542,7 +542,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto sourceData = source.span16();
 
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
@@ -854,7 +854,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    std::span<UChar> buffer;
+    std::span<char16_t> buffer;
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
@@ -998,7 +998,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearch(VM& vm, JSGl
             RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
         }
 
-        std::span<UChar> buffer;
+        std::span<char16_t> buffer;
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
@@ -1315,8 +1315,8 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
         if (hasNamedCaptures)
             ++argCount;
         JSFunction* func = jsCast<JSFunction*>(replaceValue);
-        CachedCall cachedCall(globalObject, func, argCount);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        std::optional<CachedCall> cachedCallHolder;
+        CachedCall* cachedCall = nullptr;
         while (true) {
             int* ovector;
             MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition, &ovector);
@@ -1327,7 +1327,12 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
             if (!sourceRanges.tryConstructAndAppend(lastIndex, result.start)) [[unlikely]]
                 OUT_OF_MEMORY(globalObject, scope);
 
-            cachedCall.clearArguments();
+            if (!cachedCall) {
+                cachedCallHolder.emplace(globalObject, func, argCount);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                cachedCall = &cachedCallHolder.value();
+            }
+            cachedCall->clearArguments();
             JSObject* groups = hasNamedCaptures ? constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure()) : nullptr;
 
             for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
@@ -1343,7 +1348,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
                     RETURN_IF_EXCEPTION(scope, nullptr);
                 }
 
-                cachedCall.appendArgument(patternValue);
+                cachedCall->appendArgument(patternValue);
 
                 if (i && hasNamedCaptures) {
                     String groupName = regExp->getCaptureGroupNameForSubpatternId(i);
@@ -1369,18 +1374,18 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
                 }
             }
 
-            cachedCall.appendArgument(jsNumber(result.start));
-            cachedCall.appendArgument(string);
+            cachedCall->appendArgument(jsNumber(result.start));
+            cachedCall->appendArgument(string);
             if (hasNamedCaptures)
-                cachedCall.appendArgument(groups);
+                cachedCall->appendArgument(groups);
 
-            cachedCall.setThis(jsUndefined());
-            if (cachedCall.hasOverflowedArguments()) [[unlikely]] {
+            cachedCall->setThis(jsUndefined());
+            if (cachedCall->hasOverflowedArguments()) [[unlikely]] {
                 throwOutOfMemoryError(globalObject, scope);
                 return nullptr;
             }
 
-            JSValue jsResult = cachedCall.call();
+            JSValue jsResult = cachedCall->call();
             RETURN_IF_EXCEPTION(scope, nullptr);
             replacements.append(jsResult.toWTFString(globalObject));
             RETURN_IF_EXCEPTION(scope, nullptr);

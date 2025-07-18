@@ -19,10 +19,10 @@ VideoRenderer* VideoRenderer::CreatePlatformRenderer(const char* window_title,
                                                      size_t width,
                                                      size_t height) {
   GlxRenderer* glx_renderer = GlxRenderer::Create(window_title, width, height);
-  if (glx_renderer != NULL) {
+  if (glx_renderer != nullptr) {
     return glx_renderer;
   }
-  return NULL;
+  return nullptr;
 }
 }  // namespace test
 }  // namespace webrtc

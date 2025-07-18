@@ -89,9 +89,9 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
 {
     webrtc::RtpCodecCapability rtcCodec;
     if (codec.mimeType.startsWith("video/"_s))
-        rtcCodec.kind = cricket::MEDIA_TYPE_VIDEO;
+        rtcCodec.kind = webrtc::MediaType::VIDEO;
     else if (codec.mimeType.startsWith("audio/"_s))
-        rtcCodec.kind = cricket::MEDIA_TYPE_AUDIO;
+        rtcCodec.kind = webrtc::MediaType::AUDIO;
     else
         return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
 

@@ -442,7 +442,7 @@ class GPerfOutputGenerator:
         }""")
 
         writer.write_block(f"""
-        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const UChar> characters)
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const char16_t> characters)
         {{
             constexpr unsigned maxKeywordLength = {longest_keyword_length};
             std::array<LChar, maxKeywordLength> buffer;
@@ -450,7 +450,7 @@ class GPerfOutputGenerator:
                 return nullptr;
 
             for (size_t i = 0; i < characters.size(); ++i) {{
-                UChar character = characters[i];
+                char16_t character = characters[i];
                 if (!isLatin1(character))
                     return nullptr;
 
@@ -484,7 +484,7 @@ class GPerfOutputGenerator:
             }""")
 
         writer.write_block(f"""
-            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const UChar> characters)
+            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const char16_t> characters)
             {{
                 constexpr unsigned maxKeywordLength = {longest_keyword_length};
                 std::array<LChar, maxKeywordLength> buffer;
@@ -492,7 +492,7 @@ class GPerfOutputGenerator:
                     return std::nullopt;
 
                 for (size_t i = 0; i < characters.size(); ++i) {{
-                    UChar character = characters[i];
+                    char16_t character = characters[i];
                     if (!isLatin1(character))
                         return std::nullopt;
 

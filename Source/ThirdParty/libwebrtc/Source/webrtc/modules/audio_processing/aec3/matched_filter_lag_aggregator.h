@@ -77,7 +77,7 @@ class MatchedFilterLagAggregator {
     void Reset();
     void Aggregate(int lag);
     int candidate() const { return candidate_; }
-    rtc::ArrayView<const int> histogram() const { return histogram_; }
+    ArrayView<const int> histogram() const { return histogram_; }
 
    private:
     std::vector<int> histogram_;

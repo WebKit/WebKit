@@ -38,20 +38,20 @@ namespace webrtc_pc_e2e {
 namespace {
 
 class SetRemoteDescriptionCallback
-    : public webrtc::SetRemoteDescriptionObserverInterface {
+    : public SetRemoteDescriptionObserverInterface {
  public:
-  void OnSetRemoteDescriptionComplete(webrtc::RTCError error) override {
+  void OnSetRemoteDescriptionComplete(RTCError error) override {
     is_called_ = true;
     error_ = error;
   }
 
   bool is_called() const { return is_called_; }
 
-  webrtc::RTCError error() const { return error_; }
+  RTCError error() const { return error_; }
 
  private:
   bool is_called_ = false;
-  webrtc::RTCError error_;
+  RTCError error_;
 };
 
 }  // namespace
@@ -97,7 +97,7 @@ bool TestPeer::SetRemoteDescription(
     std::string* error_out) {
   RTC_CHECK(wrapper_) << "TestPeer is already closed";
 
-  auto observer = rtc::make_ref_counted<SetRemoteDescriptionCallback>();
+  auto observer = make_ref_counted<SetRemoteDescriptionCallback>();
   // We're assuming (and asserting) that the PeerConnection implementation of
   // SetRemoteDescription is synchronous when called on the signaling thread.
   pc()->SetRemoteDescription(std::move(desc), observer);
@@ -140,14 +140,13 @@ void TestPeer::Close() {
   worker_thread_ = nullptr;
 }
 
-TestPeer::TestPeer(
-    rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
-    rtc::scoped_refptr<PeerConnectionInterface> pc,
-    std::unique_ptr<MockPeerConnectionObserver> observer,
-    Params params,
-    ConfigurableParams configurable_params,
-    std::vector<PeerConfigurer::VideoSource> video_sources,
-    std::unique_ptr<rtc::Thread> worker_thread)
+TestPeer::TestPeer(scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
+                   scoped_refptr<PeerConnectionInterface> pc,
+                   std::unique_ptr<MockPeerConnectionObserver> observer,
+                   Params params,
+                   ConfigurableParams configurable_params,
+                   std::vector<PeerConfigurer::VideoSource> video_sources,
+                   std::unique_ptr<Thread> worker_thread)
     : params_(std::move(params)),
       configurable_params_(std::move(configurable_params)),
       worker_thread_(std::move(worker_thread)),

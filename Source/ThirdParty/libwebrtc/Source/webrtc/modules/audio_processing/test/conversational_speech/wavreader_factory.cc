@@ -29,11 +29,11 @@ class WavReaderAdaptor final : public WavReaderInterface {
       : wav_reader_(filepath) {}
   ~WavReaderAdaptor() override = default;
 
-  size_t ReadFloatSamples(rtc::ArrayView<float> samples) override {
+  size_t ReadFloatSamples(ArrayView<float> samples) override {
     return wav_reader_.ReadSamples(samples.size(), samples.begin());
   }
 
-  size_t ReadInt16Samples(rtc::ArrayView<int16_t> samples) override {
+  size_t ReadInt16Samples(ArrayView<int16_t> samples) override {
     return wav_reader_.ReadSamples(samples.size(), samples.begin());
   }
 

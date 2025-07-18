@@ -20,6 +20,8 @@
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_frame_type.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_packetizer_av1_test_helper.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
@@ -39,8 +41,8 @@ constexpr uint8_t kNewCodedVideoSequenceBit = 0b00'00'1000;
 
 // Wrapper around rtp_packet to make it look like container of payload bytes.
 struct RtpPayload {
-  using value_type = rtc::ArrayView<const uint8_t>::value_type;
-  using const_iterator = rtc::ArrayView<const uint8_t>::const_iterator;
+  using value_type = ArrayView<const uint8_t>::value_type;
+  using const_iterator = ArrayView<const uint8_t>::const_iterator;
 
   RtpPayload() : rtp_packet(/*extensions=*/nullptr) {}
   RtpPayload& operator=(RtpPayload&&) = default;
@@ -63,7 +65,7 @@ class Av1Frame {
   using value_type = uint8_t;
   using const_iterator = const uint8_t*;
 
-  explicit Av1Frame(rtc::scoped_refptr<EncodedImageBuffer> frame)
+  explicit Av1Frame(scoped_refptr<EncodedImageBuffer> frame)
       : frame_(std::move(frame)) {}
 
   const_iterator begin() const { return frame_ ? frame_->data() : nullptr; }
@@ -72,18 +74,17 @@ class Av1Frame {
   }
 
  private:
-  rtc::scoped_refptr<EncodedImageBuffer> frame_;
+  scoped_refptr<EncodedImageBuffer> frame_;
 };
 
 std::vector<RtpPayload> Packetize(
-    rtc::ArrayView<const uint8_t> payload,
+    ArrayView<const uint8_t> payload,
     RtpPacketizer::PayloadSizeLimits limits,
-    bool even_distribution,
     VideoFrameType frame_type = VideoFrameType::kVideoFrameDelta,
     bool is_last_frame_in_picture = true) {
   // Run code under test.
   RtpPacketizerAv1 packetizer(payload, limits, frame_type,
-                              is_last_frame_in_picture, even_distribution);
+                              is_last_frame_in_picture);
   // Convert result into structure that is easier to run expectation against.
   std::vector<RtpPayload> result(packetizer.NumPackets());
   for (RtpPayload& rtp_payload : result) {
@@ -92,71 +93,67 @@ std::vector<RtpPayload> Packetize(
   return result;
 }
 
-Av1Frame ReassembleFrame(rtc::ArrayView<const RtpPayload> rtp_payloads) {
-  std::vector<rtc::ArrayView<const uint8_t>> payloads(rtp_payloads.size());
+Av1Frame ReassembleFrame(ArrayView<const RtpPayload> rtp_payloads) {
+  std::vector<ArrayView<const uint8_t>> payloads(rtp_payloads.size());
   for (size_t i = 0; i < rtp_payloads.size(); ++i) {
     payloads[i] = rtp_payloads[i];
   }
   return Av1Frame(VideoRtpDepacketizerAv1().AssembleFrame(payloads));
 }
 
-class RtpPacketizerAv1Test : public ::testing::TestWithParam<bool> {};
-
-TEST_P(RtpPacketizerAv1Test, EmptyPayload) {
+TEST(RtpPacketizerAv1Test, EmptyPayload) {
   RtpPacketizer::PayloadSizeLimits limits;
-  RtpPacketizerAv1 packetizer({}, limits, VideoFrameType::kVideoFrameKey, true,
-                              GetParam());
+  RtpPacketizerAv1 packetizer({}, limits, VideoFrameType::kVideoFrameKey, true);
   EXPECT_EQ(packetizer.NumPackets(), 0u);
 }
 
-TEST_P(RtpPacketizerAv1Test, PacketizeOneObuWithoutSizeAndExtension) {
+TEST(RtpPacketizerAv1Test, PacketizeOneObuWithoutSizeAndExtension) {
   auto kFrame = BuildAv1Frame({Av1Obu(kAv1ObuTypeFrame)
                                    .WithoutSize()
                                    .WithPayload({1, 2, 3, 4, 5, 6, 7})});
-  EXPECT_THAT(Packetize(kFrame, {}, GetParam()),
+  EXPECT_THAT(Packetize(kFrame, {}),
               ElementsAre(ElementsAre(0b00'01'0000,  // aggregation header
                                       kAv1ObuTypeFrame, 1, 2, 3, 4, 5, 6, 7)));
 }
 
-TEST_P(RtpPacketizerAv1Test, PacketizeOneObuWithoutSizeWithExtension) {
+TEST(RtpPacketizerAv1Test, PacketizeOneObuWithoutSizeWithExtension) {
   auto kFrame = BuildAv1Frame({Av1Obu(kAv1ObuTypeFrame)
                                    .WithoutSize()
                                    .WithExtension(kAv1ObuExtensionS1T1)
                                    .WithPayload({2, 3, 4, 5, 6, 7})});
   EXPECT_THAT(
-      Packetize(kFrame, {}, GetParam()),
+      Packetize(kFrame, {}),
       ElementsAre(ElementsAre(0b00'01'0000,  // aggregation header
                               kAv1ObuTypeFrame | kAv1ObuExtensionPresentBit,
                               kAv1ObuExtensionS1T1, 2, 3, 4, 5, 6, 7)));
 }
 
-TEST_P(RtpPacketizerAv1Test, RemovesObuSizeFieldWithoutExtension) {
+TEST(RtpPacketizerAv1Test, RemovesObuSizeFieldWithoutExtension) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeFrame).WithPayload({11, 12, 13, 14, 15, 16, 17})});
   EXPECT_THAT(
-      Packetize(kFrame, {}, GetParam()),
+      Packetize(kFrame, {}),
       ElementsAre(ElementsAre(0b00'01'0000,  // aggregation header
                               kAv1ObuTypeFrame, 11, 12, 13, 14, 15, 16, 17)));
 }
 
-TEST_P(RtpPacketizerAv1Test, RemovesObuSizeFieldWithExtension) {
+TEST(RtpPacketizerAv1Test, RemovesObuSizeFieldWithExtension) {
   auto kFrame = BuildAv1Frame({Av1Obu(kAv1ObuTypeFrame)
                                    .WithExtension(kAv1ObuExtensionS1T1)
                                    .WithPayload({1, 2, 3, 4, 5, 6, 7})});
   EXPECT_THAT(
-      Packetize(kFrame, {}, GetParam()),
+      Packetize(kFrame, {}),
       ElementsAre(ElementsAre(0b00'01'0000,  // aggregation header
                               kAv1ObuTypeFrame | kAv1ObuExtensionPresentBit,
                               kAv1ObuExtensionS1T1, 1, 2, 3, 4, 5, 6, 7)));
 }
 
-TEST_P(RtpPacketizerAv1Test,
-       OmitsSizeForLastObuWhenThreeObusFitsIntoThePacket) {
+TEST(RtpPacketizerAv1Test, OmitsSizeForLastObuWhenThreeObusFitsIntoThePacket) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeSequenceHeader).WithPayload({1, 2, 3, 4, 5, 6}),
        Av1Obu(kAv1ObuTypeMetadata).WithPayload({11, 12, 13, 14}),
        Av1Obu(kAv1ObuTypeFrame).WithPayload({21, 22, 23, 24, 25, 26})});
-  EXPECT_THAT(Packetize(kFrame, {}, GetParam()),
+  EXPECT_THAT(Packetize(kFrame, {}),
               ElementsAre(ElementsAre(
                   0b00'11'0000,  // aggregation header
                   7, kAv1ObuTypeSequenceHeader, 1, 2, 3, 4, 5, 6,  //
@@ -164,13 +161,13 @@ TEST_P(RtpPacketizerAv1Test,
                   kAv1ObuTypeFrame, 21, 22, 23, 24, 25, 26)));
 }
 
-TEST_P(RtpPacketizerAv1Test, UseSizeForAllObusWhenFourObusFitsIntoThePacket) {
+TEST(RtpPacketizerAv1Test, UseSizeForAllObusWhenFourObusFitsIntoThePacket) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeSequenceHeader).WithPayload({1, 2, 3, 4, 5, 6}),
        Av1Obu(kAv1ObuTypeMetadata).WithPayload({11, 12, 13, 14}),
        Av1Obu(kAv1ObuTypeFrameHeader).WithPayload({21, 22, 23}),
        Av1Obu(kAv1ObuTypeTileGroup).WithPayload({31, 32, 33, 34, 35, 36})});
-  EXPECT_THAT(Packetize(kFrame, {}, GetParam()),
+  EXPECT_THAT(Packetize(kFrame, {}),
               ElementsAre(ElementsAre(
                   0b00'00'0000,  // aggregation header
                   7, kAv1ObuTypeSequenceHeader, 1, 2, 3, 4, 5, 6,  //
@@ -179,7 +176,7 @@ TEST_P(RtpPacketizerAv1Test, UseSizeForAllObusWhenFourObusFitsIntoThePacket) {
                   7, kAv1ObuTypeTileGroup, 31, 32, 33, 34, 35, 36)));
 }
 
-TEST_P(RtpPacketizerAv1Test, DiscardsTemporalDelimiterAndTileListObu) {
+TEST(RtpPacketizerAv1Test, DiscardsTemporalDelimiterAndTileListObu) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeTemporalDelimiter), Av1Obu(kAv1ObuTypeMetadata),
        Av1Obu(kAv1ObuTypeTileList).WithPayload({1, 2, 3, 4, 5, 6}),
@@ -187,7 +184,7 @@ TEST_P(RtpPacketizerAv1Test, DiscardsTemporalDelimiterAndTileListObu) {
        Av1Obu(kAv1ObuTypeTileGroup).WithPayload({31, 32, 33, 34, 35, 36})});
 
   EXPECT_THAT(
-      Packetize(kFrame, {}, GetParam()),
+      Packetize(kFrame, {}),
       ElementsAre(ElementsAre(0b00'11'0000,  // aggregation header
                               1,
                               kAv1ObuTypeMetadata,  //
@@ -196,7 +193,7 @@ TEST_P(RtpPacketizerAv1Test, DiscardsTemporalDelimiterAndTileListObu) {
                               kAv1ObuTypeTileGroup, 31, 32, 33, 34, 35, 36)));
 }
 
-TEST_P(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPacketForceSplitObuHeader) {
+TEST(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPacketForceSplitObuHeader) {
   // Craft expected payloads so that there is only one way to split original
   // frame into two packets.
   const uint8_t kExpectPayload1[6] = {
@@ -217,45 +214,42 @@ TEST_P(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPacketForceSplitObuHeader) {
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
-  auto payloads = Packetize(kFrame, limits, GetParam());
+  auto payloads = Packetize(kFrame, limits);
   EXPECT_THAT(payloads, ElementsAre(ElementsAreArray(kExpectPayload1),
                                     ElementsAreArray(kExpectPayload2)));
 }
 
-TEST_P(RtpPacketizerAv1Test,
-       SetsNbitAtTheFirstPacketOfAKeyFrameWithSequenceHeader) {
+TEST(RtpPacketizerAv1Test,
+     SetsNbitAtTheFirstPacketOfAKeyFrameWithSequenceHeader) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeSequenceHeader).WithPayload({1, 2, 3, 4, 5, 6, 7})});
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
-  auto packets =
-      Packetize(kFrame, limits, GetParam(), VideoFrameType::kVideoFrameKey);
+  auto packets = Packetize(kFrame, limits, VideoFrameType::kVideoFrameKey);
   ASSERT_THAT(packets, SizeIs(2));
   EXPECT_TRUE(packets[0].aggregation_header() & kNewCodedVideoSequenceBit);
   EXPECT_FALSE(packets[1].aggregation_header() & kNewCodedVideoSequenceBit);
 }
 
-TEST_P(RtpPacketizerAv1Test,
-       DoesntSetNbitAtThePacketsOfAKeyFrameWithoutSequenceHeader) {
+TEST(RtpPacketizerAv1Test,
+     DoesntSetNbitAtThePacketsOfAKeyFrameWithoutSequenceHeader) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeFrame).WithPayload({1, 2, 3, 4, 5, 6, 7})});
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
-  auto packets =
-      Packetize(kFrame, limits, GetParam(), VideoFrameType::kVideoFrameKey);
+  auto packets = Packetize(kFrame, limits, VideoFrameType::kVideoFrameKey);
   ASSERT_THAT(packets, SizeIs(2));
   EXPECT_FALSE(packets[0].aggregation_header() & kNewCodedVideoSequenceBit);
   EXPECT_FALSE(packets[1].aggregation_header() & kNewCodedVideoSequenceBit);
 }
 
-TEST_P(RtpPacketizerAv1Test, DoesntSetNbitAtThePacketsOfADeltaFrame) {
+TEST(RtpPacketizerAv1Test, DoesntSetNbitAtThePacketsOfADeltaFrame) {
   // Even when that delta frame starts with a (redundant) sequence header.
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeSequenceHeader).WithPayload({1, 2, 3, 4, 5, 6, 7})});
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
-  auto packets =
-      Packetize(kFrame, limits, GetParam(), VideoFrameType::kVideoFrameDelta);
+  auto packets = Packetize(kFrame, limits, VideoFrameType::kVideoFrameDelta);
   ASSERT_THAT(packets, SizeIs(2));
   EXPECT_FALSE(packets[0].aggregation_header() & kNewCodedVideoSequenceBit);
   EXPECT_FALSE(packets[1].aggregation_header() & kNewCodedVideoSequenceBit);
@@ -266,27 +260,27 @@ TEST_P(RtpPacketizerAv1Test, DoesntSetNbitAtThePacketsOfADeltaFrame) {
 // to validate frame is reconstracted to the same one. Note: since
 // RtpDepacketizer always inserts obu_size fields in the output, use frame where
 // each obu has obu_size fields for more streight forward validation.
-TEST_P(RtpPacketizerAv1Test, SplitSingleObuIntoTwoPackets) {
+TEST(RtpPacketizerAv1Test, SplitSingleObuIntoTwoPackets) {
   auto kFrame =
       BuildAv1Frame({Av1Obu(kAv1ObuTypeFrame)
                          .WithPayload({11, 12, 13, 14, 15, 16, 17, 18, 19})});
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 8;
-  auto payloads = Packetize(kFrame, limits, GetParam());
+  auto payloads = Packetize(kFrame, limits);
   EXPECT_THAT(payloads, ElementsAre(SizeIs(Le(8u)), SizeIs(Le(8u))));
 
   // Use RtpDepacketizer to validate the split.
   EXPECT_THAT(ReassembleFrame(payloads), ElementsAreArray(kFrame));
 }
 
-TEST_P(RtpPacketizerAv1Test, SplitSingleObuIntoManyPackets) {
+TEST(RtpPacketizerAv1Test, SplitSingleObuIntoManyPackets) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(1200, 27))});
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 100;
-  auto payloads = Packetize(kFrame, limits, GetParam());
+  auto payloads = Packetize(kFrame, limits);
   EXPECT_THAT(payloads, SizeIs(13u));
   EXPECT_THAT(payloads, Each(SizeIs(Le(100u))));
 
@@ -294,38 +288,35 @@ TEST_P(RtpPacketizerAv1Test, SplitSingleObuIntoManyPackets) {
   EXPECT_THAT(ReassembleFrame(payloads), ElementsAreArray(kFrame));
 }
 
-TEST_P(RtpPacketizerAv1Test, SetMarkerBitForLastPacketInEndOfPictureFrame) {
+TEST(RtpPacketizerAv1Test, SetMarkerBitForLastPacketInEndOfPictureFrame) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(200, 27))});
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 100;
-  auto payloads =
-      Packetize(kFrame, limits, GetParam(), VideoFrameType::kVideoFrameDelta,
-                /*is_last_frame_in_picture=*/true);
+  auto payloads = Packetize(kFrame, limits, VideoFrameType::kVideoFrameDelta,
+                            /*is_last_frame_in_picture=*/true);
   ASSERT_THAT(payloads, SizeIs(3u));
   EXPECT_FALSE(payloads[0].rtp_packet.Marker());
   EXPECT_FALSE(payloads[1].rtp_packet.Marker());
   EXPECT_TRUE(payloads[2].rtp_packet.Marker());
 }
 
-TEST_P(RtpPacketizerAv1Test,
-       DoesntSetMarkerBitForPacketsNotInEndOfPictureFrame) {
+TEST(RtpPacketizerAv1Test, DoesntSetMarkerBitForPacketsNotInEndOfPictureFrame) {
   auto kFrame = BuildAv1Frame(
       {Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(200, 27))});
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 100;
-  auto payloads =
-      Packetize(kFrame, limits, GetParam(), VideoFrameType::kVideoFrameDelta,
-                /*is_last_frame_in_picture=*/false);
+  auto payloads = Packetize(kFrame, limits, VideoFrameType::kVideoFrameDelta,
+                            /*is_last_frame_in_picture=*/false);
   ASSERT_THAT(payloads, SizeIs(3u));
   EXPECT_FALSE(payloads[0].rtp_packet.Marker());
   EXPECT_FALSE(payloads[1].rtp_packet.Marker());
   EXPECT_FALSE(payloads[2].rtp_packet.Marker());
 }
 
-TEST_P(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPackets) {
+TEST(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPackets) {
   // 2nd OBU is too large to fit into one packet, so its head would be in the
   // same packet as the 1st OBU.
   auto kFrame = BuildAv1Frame(
@@ -334,42 +325,35 @@ TEST_P(RtpPacketizerAv1Test, SplitTwoObusIntoTwoPackets) {
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 8;
-  auto payloads = Packetize(kFrame, limits, GetParam());
+  auto payloads = Packetize(kFrame, limits);
   EXPECT_THAT(payloads, ElementsAre(SizeIs(Le(8u)), SizeIs(Le(8u))));
 
   // Use RtpDepacketizer to validate the split.
   EXPECT_THAT(ReassembleFrame(payloads), ElementsAreArray(kFrame));
 }
 
-TEST_P(RtpPacketizerAv1Test,
-       SplitSingleObuIntoTwoPacketsBecauseOfSinglePacketLimit) {
+TEST(RtpPacketizerAv1Test,
+     SplitSingleObuIntoTwoPacketsBecauseOfSinglePacketLimit) {
   auto kFrame =
       BuildAv1Frame({Av1Obu(kAv1ObuTypeFrame)
                          .WithPayload({11, 12, 13, 14, 15, 16, 17, 18, 19})});
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 10;
   limits.single_packet_reduction_len = 8;
-  auto payloads = Packetize(kFrame, limits, GetParam());
+  auto payloads = Packetize(kFrame, limits);
   EXPECT_THAT(payloads, ElementsAre(SizeIs(Le(10u)), SizeIs(Le(10u))));
 
   EXPECT_THAT(ReassembleFrame(payloads), ElementsAreArray(kFrame));
 }
 
-INSTANTIATE_TEST_SUITE_P(bool, RtpPacketizerAv1Test, ::testing::Bool());
-
-TEST(RtpPacketizerAv1TestEven, EvenDistributionDiffers) {
+TEST(RtpPacketizerAv1TestEven, EvenDistribution) {
   auto kFrame = BuildAv1Frame({
       Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(1206, 0)),
       Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(1476, 0)),
       Av1Obu(kAv1ObuTypeFrame).WithPayload(std::vector<uint8_t>(1431, 0)),
   });
-  EXPECT_THAT(
-      Packetize(kFrame, {}, /*even_distribution=*/false),
-      ElementsAre(SizeIs(1200), SizeIs(1200), SizeIs(1200), SizeIs(523)));
-
-  EXPECT_THAT(
-      Packetize(kFrame, {}, /*even_distribution=*/true),
-      ElementsAre(SizeIs(1032), SizeIs(1032), SizeIs(1032), SizeIs(1028)));
+  EXPECT_THAT(Packetize(kFrame, {}), ElementsAre(SizeIs(1032), SizeIs(1032),
+                                                 SizeIs(1032), SizeIs(1028)));
 }
 
 }  // namespace

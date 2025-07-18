@@ -39,6 +39,7 @@
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/transport/rtp/rtp_source.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/recordable_encoded_frame.h"
@@ -49,6 +50,7 @@
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "common_video/include/quality_limitation_reason.h"
+#include "media/base/audio_source.h"
 #include "media/base/codec.h"
 #include "media/base/stream_params.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
@@ -61,24 +63,13 @@
 #include "rtc_base/string_encode.h"
 #include "rtc_base/strings/string_builder.h"
 
-namespace rtc {
-class Timing;
-}
-
 namespace webrtc {
 class VideoFrame;
+struct VideoFormat;
 
 webrtc::RTCError InvokeSetParametersCallback(SetParametersCallback& callback,
                                              RTCError error);
 
-}  // namespace webrtc
-
-namespace cricket {
-
-class AudioSource;
-class VideoCapturer;
-struct RtpHeader;
-struct VideoFormat;
 class VideoMediaSendChannelInterface;
 class VideoMediaReceiveChannelInterface;
 class VoiceMediaSendChannelInterface;
@@ -92,7 +83,7 @@ static std::string ToStringIfSet(const char* key, const std::optional<T>& val) {
   if (val) {
     str = key;
     str += ": ";
-    str += val ? rtc::ToString(*val) : "";
+    str += val ? absl::StrCat(*val) : "";
     str += ", ";
   }
   return str;
@@ -100,7 +91,7 @@ static std::string ToStringIfSet(const char* key, const std::optional<T>& val) {
 
 template <class T>
 static std::string VectorToString(const std::vector<T>& vals) {
-  rtc::StringBuilder ost;
+  StringBuilder ost;
   ost << "[";
   for (size_t i = 0; i < vals.size(); ++i) {
     if (i > 0) {
@@ -134,7 +125,7 @@ struct VideoOptions {
   bool operator!=(const VideoOptions& o) const { return !(*this == o); }
 
   std::string ToString() const {
-    rtc::StringBuilder ost;
+    StringBuilder ost;
     ost << "VideoOptions {";
     ost << ToStringIfSet("noise reduction", video_noise_reduction);
     ost << ToStringIfSet("screencast min bitrate kbps",
@@ -173,12 +164,12 @@ struct VideoOptions {
 class MediaChannelNetworkInterface {
  public:
   enum SocketType { ST_RTP, ST_RTCP };
-  virtual bool SendPacket(rtc::CopyOnWriteBuffer* packet,
-                          const rtc::PacketOptions& options) = 0;
-  virtual bool SendRtcp(rtc::CopyOnWriteBuffer* packet,
-                        const rtc::PacketOptions& options) = 0;
+  virtual bool SendPacket(CopyOnWriteBuffer* packet,
+                          const AsyncSocketPacketOptions& options) = 0;
+  virtual bool SendRtcp(CopyOnWriteBuffer* packet,
+                        const AsyncSocketPacketOptions& options) = 0;
   virtual int SetOption(SocketType type,
-                        rtc::Socket::Option opt,
+                        webrtc::Socket::Option opt,
                         int option) = 0;
   virtual ~MediaChannelNetworkInterface() {}
 };
@@ -190,14 +181,14 @@ class MediaSendChannelInterface {
   virtual VideoMediaSendChannelInterface* AsVideoSendChannel() = 0;
 
   virtual VoiceMediaSendChannelInterface* AsVoiceSendChannel() = 0;
-  virtual cricket::MediaType media_type() const = 0;
+  virtual webrtc::MediaType media_type() const = 0;
 
   // Gets the currently set codecs/payload types to be used for outgoing media.
-  virtual std::optional<Codec> GetSendCodec() const = 0;
+  virtual std::optional<webrtc::Codec> GetSendCodec() const = 0;
 
   // Creates a new outgoing media stream with SSRCs and CNAME as described
   // by sp.
-  virtual bool AddSendStream(const StreamParams& sp) = 0;
+  virtual bool AddSendStream(const webrtc::StreamParams& sp) = 0;
   // Removes an outgoing media stream.
   // SSRC must be the first SSRC of the media stream if the stream uses
   // multiple SSRCs. In the case of an ssrc of 0, the possibly cached
@@ -205,13 +196,13 @@ class MediaSendChannelInterface {
   virtual bool RemoveSendStream(uint32_t ssrc) = 0;
   // Called on the network thread after a transport has finished sending a
   // packet.
-  virtual void OnPacketSent(const rtc::SentPacket& sent_packet) = 0;
+  virtual void OnPacketSent(const SentPacketInfo& sent_packet) = 0;
   // Called when the socket's ability to send has changed.
   virtual void OnReadyToSend(bool ready) = 0;
   // Called when the network route used for sending packets changed.
   virtual void OnNetworkRouteChanged(
       absl::string_view transport_name,
-      const rtc::NetworkRoute& network_route) = 0;
+      const webrtc::NetworkRoute& network_route) = 0;
   // Sets the abstract interface class for sending RTP/RTCP data.
   virtual void SetInterface(MediaChannelNetworkInterface* iface) = 0;
 
@@ -231,7 +222,7 @@ class MediaSendChannelInterface {
   // to.
   virtual void SetFrameEncryptor(
       uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor) = 0;
+      scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor) = 0;
 
   virtual webrtc::RTCError SetRtpSendParameters(
       uint32_t ssrc,
@@ -240,8 +231,7 @@ class MediaSendChannelInterface {
 
   virtual void SetEncoderToPacketizerFrameTransformer(
       uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface>
-          frame_transformer) = 0;
+      scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) = 0;
 
   // note: The encoder_selector object must remain valid for the lifetime of the
   // MediaChannel, unless replaced.
@@ -266,11 +256,11 @@ class MediaReceiveChannelInterface {
   virtual VideoMediaReceiveChannelInterface* AsVideoReceiveChannel() = 0;
   virtual VoiceMediaReceiveChannelInterface* AsVoiceReceiveChannel() = 0;
 
-  virtual cricket::MediaType media_type() const = 0;
+  virtual webrtc::MediaType media_type() const = 0;
   // Creates a new incoming media stream with SSRCs, CNAME as described
   // by sp. In the case of a sp without SSRCs, the unsignaled sp is cached
   // to be used later for unsignaled streams received.
-  virtual bool AddRecvStream(const StreamParams& sp) = 0;
+  virtual bool AddRecvStream(const webrtc::StreamParams& sp) = 0;
   // Removes an incoming media stream.
   // ssrc must be the first SSRC of the media stream if the stream uses
   // multiple SSRCs.
@@ -305,12 +295,11 @@ class MediaReceiveChannelInterface {
   // attached to.
   virtual void SetFrameDecryptor(
       uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) = 0;
+      scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) = 0;
 
   virtual void SetDepacketizerToDecoderFrameTransformer(
       uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface>
-          frame_transformer) = 0;
+      scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) = 0;
 
   // Set base minimum delay of the receive stream with specified ssrc.
   // Base minimum delay sets lower bound on minimum delay value which
@@ -386,7 +375,7 @@ struct MediaSenderInfo {
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-nackcount
   uint32_t nacks_received = 0;
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-targetbitrate
-  std::optional<double> target_bitrate;
+  std::optional<webrtc::DataRate> target_bitrate;
   int packets_lost = 0;
   float fraction_lost = 0.0f;
   int64_t rtt_ms = 0;
@@ -575,7 +564,8 @@ struct VoiceReceiverInfo : public MediaReceiverInfo {
 struct VideoSenderInfo : public MediaSenderInfo {
   VideoSenderInfo();
   ~VideoSenderInfo();
-  std::vector<SsrcGroup> ssrc_groups;
+  std::optional<size_t> encoding_index;
+  std::vector<webrtc::SsrcGroup> ssrc_groups;
   std::optional<std::string> encoder_implementation_name;
   int firs_received = 0;
   int plis_received = 0;
@@ -619,7 +609,7 @@ struct VideoSenderInfo : public MediaSenderInfo {
 struct VideoReceiverInfo : public MediaReceiverInfo {
   VideoReceiverInfo();
   ~VideoReceiverInfo();
-  std::vector<SsrcGroup> ssrc_groups;
+  std::vector<webrtc::SsrcGroup> ssrc_groups;
   std::optional<std::string> decoder_implementation_name;
   std::optional<bool> power_efficient_decoder;
   int packets_concealed = 0;
@@ -826,29 +816,27 @@ struct VideoMediaInfo {
   RtpCodecParametersMap receive_codecs;
 };
 
-struct RtcpParameters {
-  bool reduced_size = false;
-  bool remote_estimate = false;
-};
-
 struct MediaChannelParameters {
   virtual ~MediaChannelParameters() = default;
   // This is the value to be sent in the MID RTP header extension (if the header
   // extension in included in the list of extensions).
-  // It is also used as a key to map the channnel to its transport.
+  // It is also used as a key to map the channel to its transport.
   std::string mid;
 
-  std::vector<Codec> codecs;
+  std::vector<webrtc::Codec> codecs;
   std::vector<webrtc::RtpExtension> extensions;
   // For a send stream this is true if we've negotiated a send direction,
   // for a receive stream this is true if we've negotiated a receive direction.
   bool is_stream_active = true;
 
   // TODO(pthatcher): Add streams.
-  RtcpParameters rtcp;
+  struct RtcpParameters {
+    bool reduced_size = false;
+    bool remote_estimate = false;
+  } rtcp;
 
   std::string ToString() const {
-    rtc::StringBuilder ost;
+    StringBuilder ost;
     ost << "{";
     const char* separator = "";
     for (const auto& entry : ToStringMap()) {
@@ -863,9 +851,9 @@ struct MediaChannelParameters {
   virtual std::map<std::string, std::string> ToStringMap() const {
     return {{"codecs", VectorToString(codecs)},
             {"extensions", VectorToString(extensions)},
-            {"rtcp", "{reduced_size:" + rtc::ToString(rtcp.reduced_size) +
+            {"rtcp", "{reduced_size:" + absl::StrCat(rtcp.reduced_size) +
                          ", remote_estimate:" +
-                         rtc::ToString(rtcp.remote_estimate) + "}"}};
+                         absl::StrCat(rtcp.remote_estimate) + "}"}};
   }
 };
 
@@ -876,7 +864,7 @@ struct SenderParameters : MediaChannelParameters {
  protected:
   std::map<std::string, std::string> ToStringMap() const override {
     auto params = MediaChannelParameters::ToStringMap();
-    params["max_bandwidth_bps"] = rtc::ToString(max_bandwidth_bps);
+    params["max_bandwidth_bps"] = absl::StrCat(max_bandwidth_bps);
     params["mid"] = (mid.empty() ? "<not set>" : mid);
     params["extmap-allow-mixed"] = extmap_allow_mixed ? "true" : "false";
     return params;
@@ -886,7 +874,7 @@ struct SenderParameters : MediaChannelParameters {
 struct AudioSenderParameter : SenderParameters {
   AudioSenderParameter();
   ~AudioSenderParameter() override;
-  AudioOptions options;
+  webrtc::AudioOptions options;
 
  protected:
   std::map<std::string, std::string> ToStringMap() const override;
@@ -902,8 +890,8 @@ class VoiceMediaSendChannelInterface : public MediaSendChannelInterface {
   // Configure stream for sending.
   virtual bool SetAudioSend(uint32_t ssrc,
                             bool enable,
-                            const AudioOptions* options,
-                            AudioSource* source) = 0;
+                            const webrtc::AudioOptions* options,
+                            webrtc::AudioSource* source) = 0;
   // Returns if the telephone-event has been negotiated.
   virtual bool CanInsertDtmf() = 0;
   // Send a DTMF `event`. The DTMF out-of-band signal will be used.
@@ -938,8 +926,9 @@ class VoiceMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
   virtual void SetDefaultRawAudioSink(
       std::unique_ptr<webrtc::AudioSinkInterface> sink) = 0;
   virtual bool GetStats(VoiceMediaReceiveInfo* stats, bool reset_legacy) = 0;
-  virtual void SetReceiveNackEnabled(bool enabled) = 0;
+  virtual webrtc::RtcpMode RtcpMode() const = 0;
   virtual void SetRtcpMode(webrtc::RtcpMode mode) = 0;
+  virtual void SetReceiveNackEnabled(bool enabled) = 0;
   virtual void SetReceiveNonSenderRttEnabled(bool enabled) = 0;
 };
 
@@ -970,7 +959,7 @@ class VideoMediaSendChannelInterface : public MediaSendChannelInterface {
   virtual bool SetVideoSend(
       uint32_t ssrc,
       const VideoOptions* options,
-      rtc::VideoSourceInterface<webrtc::VideoFrame>* source) = 0;
+      webrtc::VideoSourceInterface<webrtc::VideoFrame>* source) = 0;
   // Cause generation of a keyframe for `ssrc` on a sending channel.
   virtual void GenerateSendKeyFrame(uint32_t ssrc,
                                     const std::vector<std::string>& rids) = 0;
@@ -1002,11 +991,12 @@ class VideoMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
   // stream, which is used when SSRCs are not signaled.
   virtual webrtc::RtpParameters GetDefaultRtpReceiveParameters() const = 0;
   // Sets the sink object to be used for the specified stream.
-  virtual bool SetSink(uint32_t ssrc,
-                       rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) = 0;
+  virtual bool SetSink(
+      uint32_t ssrc,
+      webrtc::VideoSinkInterface<webrtc::VideoFrame>* sink) = 0;
   // The sink is used for the 'default' stream.
   virtual void SetDefaultSink(
-      rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) = 0;
+      webrtc::VideoSinkInterface<webrtc::VideoFrame>* sink) = 0;
   // Request generation of a keyframe for `ssrc` on a receiving channel via
   // RTCP feedback.
   virtual void RequestRecvKeyFrame(uint32_t ssrc) = 0;
@@ -1023,9 +1013,51 @@ class VideoMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
                                              bool nack_enabled,
                                              webrtc::RtcpMode rtcp_mode,
                                              std::optional<int> rtx_time) = 0;
-  virtual bool AddDefaultRecvStreamForTesting(const StreamParams& sp) = 0;
+  virtual bool AddDefaultRecvStreamForTesting(
+      const webrtc::StreamParams& sp) = 0;
 };
 
+}  // namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using RtcpParameters = ::webrtc::MediaChannelParameters::RtcpParameters;
+using ::webrtc::AudioReceiverParameters;
+using ::webrtc::AudioSenderParameter;
+using ::webrtc::BandwidthEstimationInfo;
+using ::webrtc::kScreencastDefaultFps;
+using ::webrtc::MediaChannelNetworkInterface;
+using ::webrtc::MediaChannelParameters;
+using ::webrtc::MediaReceiveChannelInterface;
+using ::webrtc::MediaReceiverInfo;
+using ::webrtc::MediaSendChannelInterface;
+using ::webrtc::MediaSenderInfo;
+using ::webrtc::RtpCodecParametersMap;
+using ::webrtc::SenderParameters;
+using ::webrtc::SsrcReceiverInfo;
+using ::webrtc::SsrcSenderInfo;
+using ::webrtc::ToStringIfSet;
+using ::webrtc::VectorToString;
+using ::webrtc::VideoMediaInfo;
+using ::webrtc::VideoMediaReceiveChannelInterface;
+using ::webrtc::VideoMediaReceiveInfo;
+using ::webrtc::VideoMediaSendChannelInterface;
+using ::webrtc::VideoMediaSendInfo;
+using ::webrtc::VideoOptions;
+using ::webrtc::VideoReceiverInfo;
+using ::webrtc::VideoReceiverParameters;
+using ::webrtc::VideoSenderInfo;
+using ::webrtc::VideoSenderParameters;
+using ::webrtc::VoiceMediaInfo;
+using ::webrtc::VoiceMediaReceiveChannelInterface;
+using ::webrtc::VoiceMediaReceiveInfo;
+using ::webrtc::VoiceMediaSendChannelInterface;
+using ::webrtc::VoiceMediaSendInfo;
+using ::webrtc::VoiceReceiverInfo;
+using ::webrtc::VoiceSenderInfo;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_MEDIA_CHANNEL_H_

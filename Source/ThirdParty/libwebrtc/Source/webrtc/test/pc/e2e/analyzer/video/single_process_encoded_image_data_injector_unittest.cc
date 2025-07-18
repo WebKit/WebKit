@@ -20,7 +20,7 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 namespace {
 
-rtc::scoped_refptr<EncodedImageBuffer>
+scoped_refptr<EncodedImageBuffer>
 CreateEncodedImageBufferOfSizeNFilledWithValuesFromX(size_t n, uint8_t x) {
   auto buffer = EncodedImageBuffer::Create(n);
   for (size_t i = 0; i < n; ++i) {
@@ -200,7 +200,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractFromConcatenated) {
   // buffer.
   size_t concatenated_length =
       intermediate1.size() + intermediate2.size() + intermediate3.size();
-  rtc::Buffer concatenated_buffer;
+  Buffer concatenated_buffer;
   concatenated_buffer.AppendData(intermediate1.data(), intermediate1.size());
   concatenated_buffer.AppendData(intermediate2.data(), intermediate2.size());
   concatenated_buffer.AppendData(intermediate3.data(), intermediate3.size());
@@ -252,7 +252,7 @@ TEST(SingleProcessEncodedImageDataInjector,
   // buffer.
   size_t concatenated_length =
       intermediate1.size() + intermediate2.size() + intermediate3.size();
-  rtc::Buffer concatenated_buffer;
+  Buffer concatenated_buffer;
   concatenated_buffer.AppendData(intermediate1.data(), intermediate1.size());
   concatenated_buffer.AppendData(intermediate2.data(), intermediate2.size());
   concatenated_buffer.AppendData(intermediate3.data(), intermediate3.size());

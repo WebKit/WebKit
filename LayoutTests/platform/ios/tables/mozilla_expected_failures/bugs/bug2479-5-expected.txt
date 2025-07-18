@@ -1,10 +1,10 @@
-layer at (0,0) size 800x1521
+layer at (0,0) size 800x1520
   RenderView at (0,0) size 800x600
-layer at (8,8) size 784x1513
-  RenderBlock {HTML} at (8,8) size 784x1514 [bgcolor=#008000] [border: (16px solid #00FF00)]
-    RenderTable at (16,16) size 752x1482
-      RenderTableSection (anonymous) at (0,0) size 752x1482
-        RenderTableRow (anonymous) at (0,0) size 752x1482
+layer at (8,8) size 784x1512
+  RenderBlock {HTML} at (8,8) size 784x1512 [bgcolor=#008000] [border: (16px solid #00FF00)]
+    RenderTable at (16,16) size 752x1480
+      RenderTableSection (anonymous) at (0,0) size 752x1480
+        RenderTableRow (anonymous) at (0,0) size 752x1480
           RenderTableCell {HEAD} at (0,0) size 268x466 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
             RenderBlock {META} at (21,37) size 226x2 [border: (1px dotted #FFFFFF)]
             RenderBlock {META} at (21,55) size 226x2 [border: (1px dotted #FFFFFF)]
@@ -35,7 +35,7 @@ layer at (8,8) size 784x1513
                 text run at (1,201) width 206: "color: white; background: red; }"
                 text run at (1,221) width 150: "BODY { color: yellow;"
                 text run at (1,241) width 124: "background: teal; }"
-          RenderTableCell {BODY} at (268,41) size 484x1441 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {BODY} at (268,41) size 484x1439 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
             RenderBlock {H1} at (21,94) size 442x78 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,2) size 152x36
                 text run at (1,2) width 152: "Rendering "
@@ -131,33 +131,33 @@ layer at (8,8) size 784x1513
             RenderBlock {H2} at (21,1159) size 442x32 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,2) size 156x28
                 text run at (1,2) width 156: "Submit Results"
-            RenderBlock {FORM} at (21,1215) size 442x98 [border: (1px dotted #FFFF00)]
-              RenderBlock {P} at (1,17) size 440x64
+            RenderBlock {FORM} at (21,1215) size 442x96 [border: (1px dotted #FFFF00)]
+              RenderBlock {P} at (1,17) size 440x62
                 RenderText {#text} at (0,0) size 263x19
                   text run at (0,0) width 263: "How does your browser fare on this test?"
-                RenderMenuList {SELECT} at (0,21) size 440x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+                RenderMenuList {SELECT} at (0,21) size 440x20 [color=#000000] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
                   RenderBlock (anonymous) at (6,3) size 428x14
                     RenderText at (0,0) size 212x14
                       text run at (0,0) width 212: "Document renders exactly as described."
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {LABEL} at (0,41) size 227x19
+                RenderInline {LABEL} at (0,41) size 226x19
                   RenderText {#text} at (0,41) size 72x19
                     text run at (0,41) width 72: "Comment: "
-                  RenderTextControl {INPUT} at (71,42) size 156x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-                RenderText {#text} at (226,41) size 5x19
-                  text run at (226,41) width 5: " "
-                RenderButton {INPUT} at (230,42) size 65x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+                  RenderTextControl {INPUT} at (71,42) size 155x20 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                RenderText {#text} at (225,41) size 5x19
+                  text run at (225,41) width 5: " "
+                RenderButton {INPUT} at (229,42) size 65x20 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
                   RenderBlock (anonymous) at (12,3) size 40x14
                     RenderText at (0,0) size 40x14
                       text run at (0,0) width 40: "Submit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderBlock {P} at (21,1346) size 442x23 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1345) size 442x22 [border: (1px dotted #FFFF00)]
               RenderInline {A} at (1,1) size 162x19 [color=#0000EE]
                 RenderText {#text} at (1,1) size 162x19
                   text run at (1,1) width 162: "Up to the Evil Tests Page"
               RenderText {#text} at (162,1) size 5x19
                 text run at (162,1) width 5: "."
-            RenderBlock {P} at (21,1384) size 442x23 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1383) size 442x22 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 177x19
                 text run at (1,1) width 177: "This page is maintained by "
               RenderInline {A} at (177,1) size 79x19 [color=#0000EE]
@@ -170,10 +170,10 @@ layer at (8,8) size 784x1513
                   text run at (264,1) width 125: "py8ieh@bath.ac.uk"
               RenderText {#text} at (388,1) size 10x19
                 text run at (388,1) width 10: ")."
-            RenderBlock {P} at (21,1422) size 442x23 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1421) size 442x22 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 172x19
                 text run at (1,1) width 172: "Last updated in June 1999."
-layer at (392,1301) size 141x14
-  RenderBlock {DIV} at (6,3) size 143x15
-layer at (313,1352) size 442x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (21,1328) size 442x3 [color=#808080] [border: (1px dotted #808080)]
+layer at (392,1301) size 142x14 backgroundClip at (392,1301) size 141x14 clip at (392,1301) size 141x14
+  RenderBlock {DIV} at (6,3) size 142x14
+layer at (313,1351) size 442x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (21,1327) size 442x2 [color=#808080] [border: (1px dotted #808080)]

@@ -1,4 +1,4 @@
 
 
-PASS navigation.forward() goes to the nearest forward entry
+FAIL navigation.forward() goes to the nearest forward entry assert_equals: expected 0 but got 1
 

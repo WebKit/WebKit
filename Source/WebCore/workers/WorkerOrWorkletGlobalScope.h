@@ -59,9 +59,9 @@ public:
 
     JSC::VM& vm() final;
     JSC::VM* vmIfExists() const final;
-    WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
+    WorkerInspectorController& inspectorController() const { return m_inspectorController; }
 
-    ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
+    ScriptModuleLoader& moduleLoader() { return m_moduleLoader; }
 
     // ScriptExecutionContext.
     EventLoopTaskGroup& eventLoop() final;
@@ -111,11 +111,11 @@ private:
 #endif
 
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
-    std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
+    const UniqueRef<ScriptModuleLoader> m_moduleLoader;
     WorkerOrWorkletThread* m_thread;
-    RefPtr<WorkerEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
-    std::unique_ptr<WorkerInspectorController> m_inspectorController;
+    const RefPtr<WorkerEventLoop> m_eventLoop;
+    const std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
+    const UniqueRef<WorkerInspectorController> m_inspectorController;
     PAL::SessionID m_sessionID;
     ReferrerPolicy m_referrerPolicy;
     bool m_isClosing { false };

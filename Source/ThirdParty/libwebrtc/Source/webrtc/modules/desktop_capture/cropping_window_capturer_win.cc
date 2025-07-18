@@ -152,7 +152,7 @@ class CroppingWindowCapturerWin : public CroppingWindowCapturer {
 
   bool enumerate_current_process_windows_;
 
-  rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
+  webrtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
 
   // Used to make sure that we only log the usage of fullscreen detection once.
   mutable bool fullscreen_usage_logged_ = false;
@@ -199,7 +199,7 @@ void CroppingWindowCapturerWin::CaptureFrame() {
 }
 
 bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
-  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN8 &&
+  if (webrtc::rtc_win::GetVersion() < webrtc::rtc_win::Version::VERSION_WIN8 &&
       window_capture_helper_.IsAeroEnabled()) {
     return false;
   }

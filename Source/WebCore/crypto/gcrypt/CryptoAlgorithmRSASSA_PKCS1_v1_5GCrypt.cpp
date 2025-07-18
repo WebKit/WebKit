@@ -28,6 +28,7 @@
 #include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
 
 #include "CryptoKeyRSA.h"
+#include "ExceptionOr.h"
 #include "GCryptUtilities.h"
 #include "NotImplemented.h"
 

@@ -26,8 +26,16 @@
 
 namespace webrtc {
 
+constexpr int kMaxPacketsPerSsrc = 16384;
+
 void CongestionControlFeedbackTracker::ReceivedPacket(
     const RtpPacketReceived& packet) {
+  if (packets_.size() > kMaxPacketsPerSsrc) {
+    RTC_LOG(LS_VERBOSE)
+        << "Unexpected number of packets without sending reports:"
+        << packets_.size();
+    return;
+  }
   int64_t unwrapped_sequence_number =
       unwrapper_.Unwrap(packet.SequenceNumber());
   if (last_sequence_number_in_feedback_ &&
@@ -39,9 +47,9 @@ void CongestionControlFeedbackTracker::ReceivedPacket(
         << static_cast<uint16_t>(*last_sequence_number_in_feedback_);
     // TODO: bugs.webrtc.org/374550342 - According to spec, the old packets
     // should be reported again. But at the moment, we dont store history of
-    // packet we already reported and thus, they will be reported as lost. Note
-    // that this is likely not a problem in webrtc since the packets will also
-    // be removed from the send history when they are first reported as
+    // packet we already reported and thus, they will be reported as lost.
+    // Note that this is likely not a problem in webrtc since the packets will
+    // also be removed from the send history when they are first reported as
     // received.
     last_sequence_number_in_feedback_ = unwrapped_sequence_number - 1;
   }
@@ -69,12 +77,14 @@ void CongestionControlFeedbackTracker::AddPacketsToFeedback(
   auto packet_it = packets_.begin();
   uint32_t ssrc = packet_it->ssrc;
   for (int64_t sequence_number = *last_sequence_number_in_feedback_ + 1;
-       sequence_number <= packets_.back().unwrapped_sequence_number;
+       sequence_number <= packets_.back().unwrapped_sequence_number &&
+       sequence_number <=
+           *last_sequence_number_in_feedback_ + kMaxPacketsPerSsrc;
        ++sequence_number) {
     RTC_DCHECK(packet_it != packets_.end());
     RTC_DCHECK_EQ(ssrc, packet_it->ssrc);
 
-    rtc::EcnMarking ecn = rtc::EcnMarking::kNotEct;
+    EcnMarking ecn = EcnMarking::kNotEct;
     TimeDelta arrival_time_offset = TimeDelta::MinusInfinity();
 
     if (sequence_number == packet_it->unwrapped_sequence_number) {
@@ -89,8 +99,8 @@ void CongestionControlFeedbackTracker::AddPacketsToFeedback(
         // the copies of the duplicated packet are ECN-CE marked, then an ECN-CE
         // mark MUST be reported for that packet; otherwise, the ECN mark of the
         // first copy to arrive is reported.
-        if (packet_it->ecn == rtc::EcnMarking::kCe) {
-          ecn = rtc::EcnMarking::kCe;
+        if (packet_it->ecn == EcnMarking::kCe) {
+          ecn = EcnMarking::kCe;
         }
         RTC_LOG(LS_WARNING) << "Received duplicate packet ssrc:" << ssrc
                             << " seq:" << static_cast<uint16_t>(sequence_number)

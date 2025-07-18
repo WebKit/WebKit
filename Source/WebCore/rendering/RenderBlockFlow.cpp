@@ -468,7 +468,7 @@ void RenderBlockFlow::layoutBlockWithNoChildren()
             setHasMarginBeforeQuirk(style.marginBefore().hasQuirk());
             setHasMarginAfterQuirk(style.marginAfter().hasQuirk());
         }
-        setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight() + (hasLineIfEmpty() ? lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes) : 0_lu));
+        setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight() + (hasLineIfEmpty() ? lineHeight() : 0_lu));
         updateLogicalHeight();
     };
     computeBlockAxisSize();
@@ -780,7 +780,7 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
 
         auto logicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (hasLineIfEmpty())
-            logicalHeight += lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+            logicalHeight += lineHeight();
         setLogicalHeight(logicalHeight);
 
         repaintLogicalTop = { };
@@ -1212,9 +1212,9 @@ void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, App
 {
     LayoutUnit startPosition = borderAndPaddingStart();
     LayoutUnit initialStartPosition = startPosition;
-    if ((shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().bothEdges) && isHorizontalWritingMode())
+    if ((shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().isStableBothEdges()) && isHorizontalWritingMode())
         startPosition += (writingMode().isLogicalLeftInlineStart() ? 1 : -1) * verticalScrollbarWidth();
-    if (style().scrollbarGutter().bothEdges && !isHorizontalWritingMode())
+    if (style().scrollbarGutter().isStableBothEdges() && !isHorizontalWritingMode())
         startPosition += (writingMode().isLogicalLeftInlineStart() ? 1 : -1) * horizontalScrollbarHeight();
     LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + contentBoxLogicalWidth();
 
@@ -2749,7 +2749,7 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
     if (!fontMetrics.capHeight())
         return;
 
-    LayoutUnit heightOfLine = lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    LayoutUnit heightOfLine = lineHeight();
     LayoutUnit beforeMarginBorderPadding = childBox.borderAndPaddingBefore() + childBox.marginBefore();
     
     // Make an adjustment to align with the cap height of a theoretical block line.
@@ -3209,7 +3209,7 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
 
     LayoutPoint adjustedLocation = accumulatedOffset;
     if (auto* renderView = dynamicDowncast<RenderView>(*this))
-        adjustedLocation += toLayoutSize(renderView->protectedFrameView()->scrollPosition());
+        adjustedLocation += toLayoutSize(renderView->frameView().scrollPosition());
 
     for (auto& floatingObject : makeReversedRange(m_floatingObjects->set())) {
         auto& renderer = floatingObject->renderer();
@@ -3293,69 +3293,6 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
 
     ASSERT_NOT_REACHED();
     return { };
-}
-
-std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
-{
-    if (isWritingModeRoot())
-        return { };
-
-    if (shouldApplyLayoutContainment())
-        return RenderBlock::inlineBlockBaseline(lineDirection);
-
-    RefPtr element = this->element();
-    bool isHTMLFormControlElement = element && element->isFormControlElement();
-    if (style().display() == DisplayType::InlineBlock) {
-        // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'
-        // property has a computed value other than 'visible'. see https://www.w3.org/TR/CSS22/visudet.html
-        auto shouldSynthesizeBaseline = !style().isOverflowVisible() && !isHTMLFormControlElement && !isRenderTextControlInnerBlock();
-        if (shouldSynthesizeBaseline)
-            return { };
-    }
-    // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
-    auto boxHeight = synthesizedBaseline(*this, *parentStyle(), lineDirection, BorderBox) + (lineDirection == HorizontalLine ? m_marginBox.bottom() : m_marginBox.left());
-    LayoutUnit lastBaseline;
-    if (!childrenInline()) {
-        auto inlineBlockBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
-        if (!inlineBlockBaseline)
-            return inlineBlockBaseline;
-        lastBaseline = inlineBlockBaseline.value();
-    } else {
-        if (!hasLines()) {
-            if (!hasLineIfEmpty())
-                return std::nullopt;
-            const auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
-            return LayoutUnit { LayoutUnit(fontMetrics.intAscent()
-                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.intHeight()) / 2
-                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
-        }
-
-        if (svgTextLayout()) {
-            auto& style = firstLineStyle();
-            // LegacyInlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
-            lastBaseline = style.metricsOfPrimaryFont().intAscent(legacyRootBox()->baselineType())
-                + (style.writingMode().isLineInverted() ? logicalHeight() - legacyRootBox()->logicalBottom() : legacyRootBox()->logicalTop());
-        } else if (inlineLayout())
-            lastBaseline = floorToInt(inlineLayout()->lastLineLogicalBaseline());
-    }
-
-    if (style().overflowY() == Overflow::Visible)
-        return lastBaseline;
-
-    // While css-align-3 defines the last baseline form block containers which are
-    // scroll containers (with an initial baseline-source value) as the block-end margin
-    // edge, we instead maintain our legacy behavior for form controls and content
-    // inside form controls to maintain compatibility.
-    auto isInFormControl = [&] {
-        if (!element)
-            return false;
-        if (RefPtr shadowHost = element->shadowHost())
-            return shadowHost->isFormControlElement();
-        return false;
-    };
-    if (isHTMLFormControlElement || isInFormControl())
-        return std::min(boxHeight, lastBaseline);
-    return boxHeight;
 }
 
 LayoutUnit RenderBlockFlow::adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const
@@ -3911,7 +3848,7 @@ static bool hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const 
 {
     if (rootStyle.textAlign() != TextAlignMode::Start)
         return false;
-    if (rootStyle.textIndent() != RenderStyle::zeroLength())
+    if (!rootStyle.textIndent().length.isZero())
         return false;
     return true;
 }
@@ -4045,7 +3982,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     auto partialRepaintRect = layoutFormattingContextLineLayout.layout(relayoutChildren == RelayoutChildren::Yes ? LayoutIntegration::LineLayout::ForceFullLayout::Yes : LayoutIntegration::LineLayout::ForceFullLayout::No);
 
     auto borderBoxBottom = [&] {
-        auto contentHeight = !hasLines() && hasLineIfEmpty() ? lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes) : layoutFormattingContextLineLayout.contentLogicalHeight();
+        auto contentHeight = !hasLines() && hasLineIfEmpty() ? lineHeight() : layoutFormattingContextLineLayout.contentLogicalHeight();
         return borderAndPaddingBefore() + contentHeight + borderAndPaddingAfter() + scrollbarLogicalHeight();
     };
     auto newBorderBoxBottom = borderBoxBottom();
@@ -4354,7 +4291,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     if (RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow()) {
         LayoutUnit newColumnHeight;
-        if (hasDefiniteLogicalHeight() || view().protectedFrameView()->pagination().mode != Pagination::Mode::Unpaginated) {
+        if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Mode::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());
             newColumnHeight = std::max<LayoutUnit>(computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
@@ -4557,7 +4494,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, Render
 {
     if (auto* renderText = dynamicDowncast<RenderText>(trailingSpaceChild)) {
         // Collapse away the trailing space at the end of a block.
-        const UChar space = ' ';
+        const char16_t space = ' ';
         const FontCascade& font = renderText->style().fontCascade(); // FIXME: This ignores first-line.
         float spaceWidth = font.width(RenderBlock::constructTextRun(span(space), renderText->style()));
         inlineMax -= spaceWidth + font.wordSpacing();
@@ -4634,7 +4571,7 @@ static inline LayoutUnit preferredWidth(LayoutUnit preferredWidth, float result)
 static inline std::optional<LayoutUnit> textIndentForBlockContainer(const RenderBlockFlow& renderer)
 {
     auto& style = renderer.style();
-    if (auto fixedTextIndent = style.textIndent().tryFixed())
+    if (auto fixedTextIndent = style.textIndent().length.tryFixed())
         return fixedTextIndent->value ? std::make_optional(LayoutUnit { fixedTextIndent->value }) : std::nullopt;
 
     auto indentValue = LayoutUnit { };
@@ -4642,7 +4579,7 @@ static inline std::optional<LayoutUnit> textIndentForBlockContainer(const Render
         if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
             // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
             // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-            indentValue = minimumValueForLength(style.textIndent(), containingBlockFixedLogicalWidth->value);
+            indentValue = Style::evaluate(style.textIndent().length, containingBlockFixedLogicalWidth->value);
         }
     }
     return indentValue ? std::make_optional(indentValue) : std::nullopt;

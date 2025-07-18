@@ -1,0 +1,4 @@
+
+PASS Initially, the sibling-index() is 3 for #target
+FAIL Removing a preceding sibling of #target reduces the sibling-index() assert_equals: expected "oblique 10deg" but got "oblique 15deg"
+

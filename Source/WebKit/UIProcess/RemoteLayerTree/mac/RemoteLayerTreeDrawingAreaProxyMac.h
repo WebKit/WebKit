@@ -107,7 +107,7 @@ private:
 
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
-    const std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
+    const UniqueRef<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
 
     Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
     Markable<WebCore::PlatformLayerIdentifier> m_pageScrollingLayerID;

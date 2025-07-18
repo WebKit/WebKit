@@ -14,12 +14,13 @@
 #include <vector>
 
 #include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
+#include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/test/test_dependency_factory.h"
 #include "api/test/video_quality_test_fixture.h"
 #include "api/units/data_rate.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/spatial_layer.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
@@ -977,7 +978,7 @@ TEST(FullStackTest, Screenshare_Slides_Vp9_3sl_High_Fps) {
 #if !defined(WEBRTC_MAC)
 
 TEST(FullStackTest, Vp9ksvc_3sl_High) {
-  webrtc::test::ScopedFieldTrials override_trials(
+  test::ScopedFieldTrials override_trials(
       AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
   auto fixture = CreateVideoQualityTestFixture();
   ParamsWithLogging simulcast;
@@ -992,7 +993,7 @@ TEST(FullStackTest, Vp9ksvc_3sl_High) {
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low) {
-  webrtc::test::ScopedFieldTrials override_trials(
+  test::ScopedFieldTrials override_trials(
       AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
   auto fixture = CreateVideoQualityTestFixture();
   ParamsWithLogging simulcast;
@@ -1007,9 +1008,8 @@ TEST(FullStackTest, Vp9ksvc_3sl_Low) {
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low_Bw_Limited) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"
-                        "WebRTC-Vp9ExternalRefCtrl/Enabled/"));
+  test::ScopedFieldTrials override_trials(
+      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
   auto fixture = CreateVideoQualityTestFixture();
   ParamsWithLogging simulcast;
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -1024,7 +1024,7 @@ TEST(FullStackTest, Vp9ksvc_3sl_Low_Bw_Limited) {
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
-  webrtc::test::ScopedFieldTrials override_trials(
+  test::ScopedFieldTrials override_trials(
       AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
   auto fixture = CreateVideoQualityTestFixture();
   ParamsWithLogging simulcast;
@@ -1042,7 +1042,7 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
 
 // TODO(webrtc:9722): Remove when experiment is cleaned up.
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
-  webrtc::test::ScopedFieldTrials override_trials(
+  test::ScopedFieldTrials override_trials(
       AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
   auto fixture = CreateVideoQualityTestFixture();
   ParamsWithLogging simulcast;
@@ -1087,7 +1087,7 @@ TEST(FullStackTest, MAYBE_Simulcast_HD_High) {
   simulcast.ss[0] = {
       streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       true};
-  webrtc::test::ScopedFieldTrials override_trials(AppendFieldTrials(
+  test::ScopedFieldTrials override_trials(AppendFieldTrials(
       "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/"));
   fixture->RunWithAnalyzer(simulcast);
 }

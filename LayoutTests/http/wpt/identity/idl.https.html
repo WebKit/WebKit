@@ -22,6 +22,7 @@ interface DigitalCredential : Credential {
     readonly attribute DOMString protocol;
     readonly attribute Uint8Array data;
     static boolean userAgentAllowsProtocol(DOMString protocol);
+    [Default] object toJSON();
 };
 </script>
 <script>

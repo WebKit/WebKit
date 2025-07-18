@@ -376,14 +376,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKSelectTableViewController> _tableViewController;
 }
 
-#if ENABLE(SELECT_MULTIPLE_ADJUSTMENTS)
-#import <WebKitAdditions/WKSelectPopoverAdditions.mm>
-#else
-- (void)performAdjustmentsIfNeeded
-{
-}
-#endif
-
 - (instancetype)initWithView:(WKContentView *)view hasGroups:(BOOL)hasGroups
 {
     if (!(self = [super initWithView:view]))
@@ -406,7 +398,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.popoverController = adoptNS([[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()]).get();
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [self performAdjustmentsIfNeeded];
+#if HAVE(LIQUID_GLASS)
+    if (isLiquidGlassEnabled())
+        [_tableViewController tableView].backgroundColor = [UIColor clearColor];
+#endif
 
     return self;
 }

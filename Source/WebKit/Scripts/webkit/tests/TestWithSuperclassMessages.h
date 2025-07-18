@@ -184,11 +184,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_value;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_value;
     }
 
 private:
-    const int& m_value;
+    SUPPRESS_FORWARD_DECL_MEMBER const int& m_value;
 };
 #endif
 

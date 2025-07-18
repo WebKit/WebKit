@@ -36,9 +36,9 @@ namespace WebCore {
 struct ComputedEffectTiming : EffectTiming {
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
     std::optional<WebAnimationTime> localTime;
-    MarkableDouble simpleIterationProgress;
-    MarkableDouble progress;
-    MarkableDouble currentIteration;
+    Markable<double> simpleIterationProgress;
+    Markable<double> progress;
+    Markable<double> currentIteration;
     WebAnimationTime endTime;
     WebAnimationTime activeDuration;
     TimingFunction::Before before { TimingFunction::Before::No };

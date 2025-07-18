@@ -120,31 +120,11 @@ WorkerThread::~WorkerThread()
     --workerThreadCounter;
 }
 
-WorkerLoaderProxy* WorkerThread::workerLoaderProxy()
-{
-    return m_workerLoaderProxy.get();
-}
-
-WorkerBadgeProxy* WorkerThread::workerBadgeProxy() const
-{
-    return m_workerBadgeProxy.get();
-}
-
-WorkerDebuggerProxy* WorkerThread::workerDebuggerProxy() const
-{
-    return m_workerDebuggerProxy.get();
-}
-
-WorkerReportingProxy* WorkerThread::workerReportingProxy() const
-{
-    return m_workerReportingProxy.get();
-}
-
 Ref<Thread> WorkerThread::createThread()
 {
     if (is<WorkerMainRunLoop>(runLoop())) {
         // This worker should run on the main thread.
-        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }] {
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
             protectedThis->workerOrWorkletThread();
         });
         ASSERT(isMainThread());
@@ -208,16 +188,6 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
     // all ref/derefs of these objects are happening on the thread at this point). Note that
     // WorkerThread::~WorkerThread happens on a different thread where it was created.
     m_startupData = nullptr;
-}
-
-IDBClient::IDBConnectionProxy* WorkerThread::idbConnectionProxy()
-{
-    return m_idbConnectionProxy.get();
-}
-
-SocketProvider* WorkerThread::socketProvider()
-{
-    return m_socketProvider.get();
 }
 
 WorkerGlobalScope* WorkerThread::globalScope()

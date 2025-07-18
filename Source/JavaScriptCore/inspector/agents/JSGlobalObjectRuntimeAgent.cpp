@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(JSGlobalObjectRuntimeAgent);
 
 JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(JSAgentContext& context)
     : InspectorRuntimeAgent(context)
-    , m_frontendDispatcher(makeUnique<RuntimeFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<RuntimeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(RuntimeBackendDispatcher::create(context.backendDispatcher, this))
     , m_globalObject(context.inspectedGlobalObject)
 {

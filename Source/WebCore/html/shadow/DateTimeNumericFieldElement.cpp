@@ -168,7 +168,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
     if (keyboardEvent.type() != eventNames().keypressEvent)
         return;
 
-    auto charCode = static_cast<UChar>(keyboardEvent.charCode());
+    auto charCode = static_cast<char16_t>(keyboardEvent.charCode());
     String number = localeForOwner().convertFromLocalizedNumber(span(charCode));
     int digit = number[0] - '0';
     if (digit < 0 || digit > 9)

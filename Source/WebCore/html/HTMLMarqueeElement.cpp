@@ -24,6 +24,7 @@
 #include "HTMLMarqueeElement.h"
 
 #include "Attribute.h"
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ElementInlines.h"

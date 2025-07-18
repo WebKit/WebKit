@@ -16,29 +16,29 @@
 
 namespace webrtc {
 
-#define WEBRTC_CA_RETURN_ON_ERR(expr)                                \
-  do {                                                               \
-    err = expr;                                                      \
-    if (err != noErr) {                                              \
-      logCAMsg(rtc::LS_ERROR, "Error in " #expr, (const char*)&err); \
-      return -1;                                                     \
-    }                                                                \
+#define WEBRTC_CA_RETURN_ON_ERR(expr)                                   \
+  do {                                                                  \
+    err = expr;                                                         \
+    if (err != noErr) {                                                 \
+      logCAMsg(webrtc::LS_ERROR, "Error in " #expr, (const char*)&err); \
+      return -1;                                                        \
+    }                                                                   \
   } while (0)
 
-#define WEBRTC_CA_LOG_ERR(expr)                                      \
-  do {                                                               \
-    err = expr;                                                      \
-    if (err != noErr) {                                              \
-      logCAMsg(rtc::LS_ERROR, "Error in " #expr, (const char*)&err); \
-    }                                                                \
+#define WEBRTC_CA_LOG_ERR(expr)                                         \
+  do {                                                                  \
+    err = expr;                                                         \
+    if (err != noErr) {                                                 \
+      logCAMsg(webrtc::LS_ERROR, "Error in " #expr, (const char*)&err); \
+    }                                                                   \
   } while (0)
 
-#define WEBRTC_CA_LOG_WARN(expr)                                       \
-  do {                                                                 \
-    err = expr;                                                        \
-    if (err != noErr) {                                                \
-      logCAMsg(rtc::LS_WARNING, "Error in " #expr, (const char*)&err); \
-    }                                                                  \
+#define WEBRTC_CA_LOG_WARN(expr)                                          \
+  do {                                                                    \
+    err = expr;                                                           \
+    if (err != noErr) {                                                   \
+      logCAMsg(webrtc::LS_WARNING, "Error in " #expr, (const char*)&err); \
+    }                                                                     \
   } while (0)
 
 AudioMixerManagerMac::AudioMixerManagerMac()
@@ -885,19 +885,19 @@ int32_t AudioMixerManagerMac::MinMicrophoneVolume(uint32_t& minVolume) const {
 // ============================================================================
 
 // CoreAudio errors are best interpreted as four character strings.
-void AudioMixerManagerMac::logCAMsg(const rtc::LoggingSeverity sev,
+void AudioMixerManagerMac::logCAMsg(const webrtc::LoggingSeverity sev,
                                     const char* msg,
                                     const char* err) {
   RTC_DCHECK(msg != NULL);
   RTC_DCHECK(err != NULL);
-  RTC_DCHECK(sev == rtc::LS_ERROR || sev == rtc::LS_WARNING);
+  RTC_DCHECK(sev == webrtc::LS_ERROR || sev == webrtc::LS_WARNING);
 
 #ifdef WEBRTC_ARCH_BIG_ENDIAN
   switch (sev) {
-    case rtc::LS_ERROR:
+    case webrtc::LS_ERROR:
       RTC_LOG(LS_ERROR) << msg << ": " << err[0] << err[1] << err[2] << err[3];
       break;
-    case rtc::LS_WARNING:
+    case webrtc::LS_WARNING:
       RTC_LOG(LS_WARNING) << msg << ": " << err[0] << err[1] << err[2]
                           << err[3];
       break;
@@ -907,10 +907,10 @@ void AudioMixerManagerMac::logCAMsg(const rtc::LoggingSeverity sev,
 #else
   // We need to flip the characters in this case.
   switch (sev) {
-    case rtc::LS_ERROR:
+    case webrtc::LS_ERROR:
       RTC_LOG(LS_ERROR) << msg << ": " << err[3] << err[2] << err[1] << err[0];
       break;
-    case rtc::LS_WARNING:
+    case webrtc::LS_WARNING:
       RTC_LOG(LS_WARNING) << msg << ": " << err[3] << err[2] << err[1]
                           << err[0];
       break;

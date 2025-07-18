@@ -18,7 +18,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Describes a Simulcast Layer.
 // Each simulcast layer has a rid as the identifier and a paused flag.
@@ -110,6 +110,16 @@ class SimulcastDescription final {
   SimulcastLayerList receive_layers_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::SimulcastDescription;
+using ::webrtc::SimulcastLayer;
+using ::webrtc::SimulcastLayerList;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // PC_SIMULCAST_DESCRIPTION_H_

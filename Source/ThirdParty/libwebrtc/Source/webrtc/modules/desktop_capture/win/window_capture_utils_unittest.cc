@@ -28,10 +28,10 @@ namespace {
 const char kWindowThreadName[] = "window_capture_utils_test_thread";
 const WCHAR kWindowTitle[] = L"Window Capture Utils Test";
 
-std::unique_ptr<rtc::Thread> SetUpUnresponsiveWindow(std::mutex& mtx,
-                                                     WindowInfo& info) {
-  std::unique_ptr<rtc::Thread> window_thread;
-  window_thread = rtc::Thread::Create();
+std::unique_ptr<webrtc::Thread> SetUpUnresponsiveWindow(std::mutex& mtx,
+                                                        WindowInfo& info) {
+  std::unique_ptr<webrtc::Thread> window_thread;
+  window_thread = webrtc::Thread::Create();
   window_thread->SetName(kWindowThreadName, nullptr);
   window_thread->Start();
 
@@ -66,7 +66,7 @@ TEST(WindowCaptureUtilsTest, GetWindowList) {
 TEST(WindowCaptureUtilsTest, IncludeUnresponsiveWindows) {
   std::mutex mtx;
   WindowInfo info;
-  std::unique_ptr<rtc::Thread> window_thread =
+  std::unique_ptr<webrtc::Thread> window_thread =
       SetUpUnresponsiveWindow(mtx, info);
 
   EXPECT_FALSE(IsWindowResponding(info.hwnd));
@@ -89,7 +89,7 @@ TEST(WindowCaptureUtilsTest, IncludeUnresponsiveWindows) {
 TEST(WindowCaptureUtilsTest, IgnoreUnresponsiveWindows) {
   std::mutex mtx;
   WindowInfo info;
-  std::unique_ptr<rtc::Thread> window_thread =
+  std::unique_ptr<webrtc::Thread> window_thread =
       SetUpUnresponsiveWindow(mtx, info);
 
   EXPECT_FALSE(IsWindowResponding(info.hwnd));

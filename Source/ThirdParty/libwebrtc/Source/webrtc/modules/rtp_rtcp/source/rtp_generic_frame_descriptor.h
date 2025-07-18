@@ -13,8 +13,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <optional>
-#include <vector>
 
 #include "api/array_view.h"
 
@@ -56,7 +54,7 @@ class RtpGenericFrameDescriptor {
   uint16_t FrameId() const;
   void SetFrameId(uint16_t frame_id);
 
-  rtc::ArrayView<const uint16_t> FrameDependenciesDiffs() const;
+  ArrayView<const uint16_t> FrameDependenciesDiffs() const;
   void ClearFrameDependencies() { num_frame_deps_ = 0; }
   // Returns false on failure, i.e. number of dependencies is too large.
   bool AddFrameDependencyDiff(uint16_t fdiff);

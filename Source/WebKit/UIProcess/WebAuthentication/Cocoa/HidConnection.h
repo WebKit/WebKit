@@ -73,7 +73,7 @@ private:
     // Overrided by MockHidConnection.
     virtual void registerDataReceivedCallbackInternal();
 
-    RetainPtr<IOHIDDeviceRef> m_device;
+    const RetainPtr<IOHIDDeviceRef> m_device;
     Vector<uint8_t> m_inputBuffer;
     // Could queue data requested by other applications.
     Deque<Vector<uint8_t>> m_inputReports;

@@ -254,7 +254,7 @@ CoreAudioSharedUnit::StoredAudioUnit CoreAudioSharedUnit::takeStoredVPIOUnit()
 
 void CoreAudioSharedUnit::resetSampleRate()
 {
-    setSampleRate(m_getSampleRateCallback ? m_getSampleRateCallback() : AudioSession::protectedSharedSession()->sampleRate());
+    setSampleRate(m_getSampleRateCallback ? m_getSampleRateCallback() : AudioSession::singleton().sampleRate());
 }
 
 void CoreAudioSharedUnit::captureDeviceChanged()
@@ -269,7 +269,7 @@ void CoreAudioSharedUnit::captureDeviceChanged()
 
 size_t CoreAudioSharedUnit::preferredIOBufferSize()
 {
-    return AudioSession::protectedSharedSession()->bufferSize();
+    return AudioSession::singleton().bufferSize();
 }
 
 OSStatus CoreAudioSharedUnit::setupAudioUnit()
@@ -759,7 +759,7 @@ bool CoreAudioSharedUnit::migrateToNewDefaultDevice(const CaptureDevice& capture
 void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& callback)
 {
     if (RefPtr audioUnitCreationWarmupPromise = m_audioUnitCreationWarmupPromise) {
-        audioUnitCreationWarmupPromise->whenSettled(RunLoop::protectedMain(), WTFMove(callback));
+        audioUnitCreationWarmupPromise->whenSettled(RunLoop::mainSingleton(), WTFMove(callback));
         return;
     }
 
@@ -770,7 +770,7 @@ void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& c
 
     m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation"_s, WorkQueue::QOS::UserInitiated).get(), [] {
         return createAudioUnit(true);
-    })->whenSettled(RunLoop::protectedMain(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
         if (weakThis && vpioUnitOrError.has_value())
             weakThis->setStoredVPIOUnit(WTFMove(vpioUnitOrError.value()));
         callback();

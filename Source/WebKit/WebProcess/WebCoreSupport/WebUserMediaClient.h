@@ -30,16 +30,20 @@ namespace WebKit {
 
 class WebPage;
 
-class WebUserMediaClient : public WebCore::UserMediaClient {
+class WebUserMediaClient final: public WebCore::UserMediaClient, public RefCounted<WebUserMediaClient> {
     WTF_MAKE_TZONE_ALLOCATED(WebUserMediaClient);
 public:
-    WebUserMediaClient(WebPage&);
-    ~WebUserMediaClient() { }
+
+    static Ref<WebUserMediaClient> create(WebPage& page)
+    {
+        return adoptRef(*new WebUserMediaClient(page));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
-    Ref<WebPage> protectedPage() const;
-
-    void pageDestroyed() override;
+    explicit WebUserMediaClient(WebPage&);
 
     void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
     void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
@@ -53,10 +57,10 @@ private:
 
     void initializeFactories();
 
-    WeakRef<WebPage> m_page;
+    WeakPtr<WebPage> m_page;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)
 

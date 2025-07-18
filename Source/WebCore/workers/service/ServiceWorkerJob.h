@@ -74,6 +74,8 @@ public:
 
     WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
 
+    bool isRegistering() const;
+
 private:
     // WorkerScriptLoaderClient
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;

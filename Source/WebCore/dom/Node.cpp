@@ -426,6 +426,12 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
 #endif
 }
 
+static HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& nodeIdentifiersMap()
+{
+    static MainThreadNeverDestroyed<HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>> map;
+    return map;
+}
+
 Node::~Node()
 {
     ASSERT(isMainThread());
@@ -438,6 +444,11 @@ Node::~Node()
     if (!ignoreSet().remove(*this))
         nodeCounter.decrement();
 #endif
+
+    if (hasStateFlag(StateFlag::HasNodeIdentifier)) [[unlikely]]
+        nodeIdentifiersMap().remove(*this);
+    else
+        ASSERT(!nodeIdentifiersMap().contains(*this));
 
 #if DUMP_NODE_STATISTICS
     liveNodeSet().remove(*this);
@@ -815,14 +826,14 @@ ExceptionOr<void> Node::normalize()
     return { };
 }
 
-Ref<Node> Node::cloneNode(bool deep)
+Ref<Node> Node::cloneNode(bool deep) const
 {
     ASSERT(!isShadowRoot());
     RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
     return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 
-ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep)
+ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep) const
 {
     if (isShadowRoot()) [[unlikely]]
         return Exception { ExceptionCode::NotSupportedError };
@@ -3115,6 +3126,23 @@ TextStream& operator<<(TextStream& ts, const Node& node)
 {
     ts << node.debugDescription();
     return ts;
+}
+
+NodeIdentifier Node::nodeIdentifier() const
+{
+    return nodeIdentifiersMap().ensure(const_cast<Node&>(*this), [&] {
+        setStateFlag(StateFlag::HasNodeIdentifier);
+        return NodeIdentifier::generate();
+    }).iterator->value;
+}
+
+Node* Node::fromIdentifier(NodeIdentifier identifier)
+{
+    for (auto& [node, nodeIdentifier] : nodeIdentifiersMap()) {
+        if (nodeIdentifier == identifier)
+            return node.ptr();
+    }
+    return nullptr;
 }
 
 } // namespace WebCore

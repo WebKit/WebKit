@@ -186,12 +186,12 @@ Ref<IPC::Connection> RemoteAudioSessionProxy::protectedConnection() const
 
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
 {
-    AudioSession::protectedSharedSession()->beginInterruptionForTesting();
+    AudioSession::singleton().beginInterruptionForTesting();
 }
 
 void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
 {
-    AudioSession::protectedSharedSession()->endInterruptionForTesting();
+    AudioSession::singleton().endInterruptionForTesting();
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteAudioSessionProxy::sharedPreferencesForWebProcess() const

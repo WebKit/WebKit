@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -39,8 +39,6 @@ async function sampledTopColor() {
 }
 
 addEventListener("load", async () => {
-    await UIHelper.setObscuredInsets(100, 0, 0, 0);
-
     let header = document.querySelector("header");
     description("To manually test, scroll this page down; the top sampled color should remain solid white");
 

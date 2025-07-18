@@ -128,7 +128,6 @@ class SendSideBandwidthEstimation {
                                 BandwidthUsage delay_detector_state,
                                 std::optional<DataRate> probe_bitrate,
                                 bool in_alr);
-  bool PaceAtLossBasedEstimate() const;
 
  private:
   friend class GoogCcStatePrinter;

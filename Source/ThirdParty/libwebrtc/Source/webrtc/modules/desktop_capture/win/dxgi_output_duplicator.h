@@ -14,6 +14,7 @@
 #include <comdef.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
+#include <shellscalingapi.h>
 #include <wrl/client.h>
 
 #include <memory>
@@ -83,6 +84,10 @@ class DxgiOutputDuplicator {
   // How many frames have been captured by this DxigOutputDuplicator.
   int64_t num_frames_captured() const;
 
+  // Device scale factor of the monitor associated with this
+  // DxigOutputDuplicator.
+  std::optional<float> device_scale_factor() const;
+
   // Moves `desktop_rect_`. See DxgiDuplicatorController::TranslateRect().
   void TranslateRect(const DesktopVector& position);
 
@@ -127,6 +132,7 @@ class DxgiOutputDuplicator {
   const Microsoft::WRL::ComPtr<IDXGIOutput1> output_;
   const std::string device_name_;
   DesktopRect desktop_rect_;
+  const HMONITOR monitor_;
   Microsoft::WRL::ComPtr<IDXGIOutputDuplication> duplication_;
   DXGI_OUTDUPL_DESC desc_;
   std::vector<uint8_t> metadata_;

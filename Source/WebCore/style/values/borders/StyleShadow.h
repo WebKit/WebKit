@@ -40,6 +40,9 @@ template<typename T> concept Shadow = requires(const T& shadow) {
     { paintingSpread(shadow) } -> std::same_as<LayoutUnit>;
 };
 
+template<typename ShadowType> using ShadowList = CommaSeparatedFixedVector<ShadowType>;
+template<typename ShadowType> struct Shadows : ListOrNone<ShadowList<ShadowType>> { using ListOrNone<ShadowList<ShadowType>>::ListOrNone; };
+
 LayoutUnit paintingExtent(Shadow auto const& shadow)
 {
     // Blurring uses a Gaussian function whose std. deviation is m_radius/2, and which in theory
@@ -54,7 +57,7 @@ LayoutUnit paintingExtentAndSpread(Shadow auto const& shadow)
     return paintingExtent(shadow) + paintingSpread(shadow);
 }
 
-template<Shadow ShadowType> auto shadowOutsetExtent(const FixedVector<ShadowType>& shadows) -> LayoutBoxExtent
+template<Shadow ShadowType> auto shadowOutsetExtent(const Shadows<ShadowType>& shadows) -> LayoutBoxExtent
 {
     LayoutUnit top;
     LayoutUnit right;
@@ -76,7 +79,7 @@ template<Shadow ShadowType> auto shadowOutsetExtent(const FixedVector<ShadowType
     return { top, right, bottom, left };
 }
 
-template<Shadow ShadowType> auto shadowInsetExtent(const FixedVector<ShadowType>& shadows) -> LayoutBoxExtent
+template<Shadow ShadowType> auto shadowInsetExtent(const Shadows<ShadowType>& shadows) -> LayoutBoxExtent
 {
     LayoutUnit top;
     LayoutUnit right;
@@ -98,7 +101,7 @@ template<Shadow ShadowType> auto shadowInsetExtent(const FixedVector<ShadowType>
     return { top, right, bottom, left };
 }
 
-template<Shadow ShadowType> auto shadowHorizontalExtent(const FixedVector<ShadowType>& shadows) -> std::pair<LayoutUnit, LayoutUnit>
+template<Shadow ShadowType> auto shadowHorizontalExtent(const Shadows<ShadowType>& shadows) -> std::pair<LayoutUnit, LayoutUnit>
 {
     LayoutUnit left = 0;
     LayoutUnit right = 0;
@@ -116,7 +119,7 @@ template<Shadow ShadowType> auto shadowHorizontalExtent(const FixedVector<Shadow
     return { left, right };
 }
 
-template<Shadow ShadowType> auto shadowVerticalExtent(const FixedVector<ShadowType>& shadows) -> std::pair<LayoutUnit, LayoutUnit>
+template<Shadow ShadowType> auto shadowVerticalExtent(const Shadows<ShadowType>& shadows) -> std::pair<LayoutUnit, LayoutUnit>
 {
     LayoutUnit top = 0;
     LayoutUnit bottom = 0;
@@ -135,17 +138,17 @@ template<Shadow ShadowType> auto shadowVerticalExtent(const FixedVector<ShadowTy
     return { top, bottom };
 }
 
-template<Shadow ShadowType> auto shadowBlockDirectionExtent(const FixedVector<ShadowType>& shadows, WritingMode writingMode) -> std::pair<LayoutUnit, LayoutUnit>
+template<Shadow ShadowType> auto shadowBlockDirectionExtent(const Shadows<ShadowType>& shadows, WritingMode writingMode) -> std::pair<LayoutUnit, LayoutUnit>
 {
     return writingMode.isHorizontal() ? shadowVerticalExtent(shadows) : shadowHorizontalExtent(shadows);
 }
 
-template<Shadow ShadowType> auto shadowInlineDirectionExtent(const FixedVector<ShadowType>& shadows, WritingMode writingMode) -> std::pair<LayoutUnit, LayoutUnit>
+template<Shadow ShadowType> auto shadowInlineDirectionExtent(const Shadows<ShadowType>& shadows, WritingMode writingMode) -> std::pair<LayoutUnit, LayoutUnit>
 {
     return writingMode.isHorizontal() ? shadowHorizontalExtent(shadows) : shadowVerticalExtent(shadows);
 }
 
-template<Shadow ShadowType> void adjustRectForShadow(LayoutRect& rect, const FixedVector<ShadowType>& shadows)
+template<Shadow ShadowType> void adjustRectForShadow(LayoutRect& rect, const Shadows<ShadowType>& shadows)
 {
     auto shadowExtent = shadowOutsetExtent(shadows);
 
@@ -154,7 +157,7 @@ template<Shadow ShadowType> void adjustRectForShadow(LayoutRect& rect, const Fix
     rect.setHeight(rect.height() - shadowExtent.top() + shadowExtent.bottom());
 }
 
-template<Shadow ShadowType> void adjustRectForShadow(FloatRect& rect, const FixedVector<ShadowType>& shadows)
+template<Shadow ShadowType> void adjustRectForShadow(FloatRect& rect, const Shadows<ShadowType>& shadows)
 {
     auto shadowExtent = shadowOutsetExtent(shadows);
 

@@ -269,7 +269,7 @@ void NetworkStorageSession::setAgeCapForClientSideCookies(std::optional<Seconds>
 void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>& domains)
 {
     m_registrableDomainsToBlockAndDeleteCookiesFor.clear();
-    m_registrableDomainsToBlockAndDeleteCookiesFor.add(domains.begin(), domains.end());
+    m_registrableDomainsToBlockAndDeleteCookiesFor.addAll(domains);
     if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy)
         cookieEnabledStateMayHaveChanged();
 }
@@ -277,7 +277,7 @@ void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const 
 void NetworkStorageSession::setPrevalentDomainsToBlockButKeepCookiesFor(const Vector<RegistrableDomain>& domains)
 {
     m_registrableDomainsToBlockButKeepCookiesFor.clear();
-    m_registrableDomainsToBlockButKeepCookiesFor.add(domains.begin(), domains.end());
+    m_registrableDomainsToBlockButKeepCookiesFor.addAll(domains);
     if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy)
         cookieEnabledStateMayHaveChanged();
 }
@@ -285,7 +285,7 @@ void NetworkStorageSession::setPrevalentDomainsToBlockButKeepCookiesFor(const Ve
 void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vector<RegistrableDomain>& domains)
 {
     m_registrableDomainsWithUserInteractionAsFirstParty.clear();
-    m_registrableDomainsWithUserInteractionAsFirstParty.add(domains.begin(), domains.end());
+    m_registrableDomainsWithUserInteractionAsFirstParty.addAll(domains);
     if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction)
         cookieEnabledStateMayHaveChanged();
 }

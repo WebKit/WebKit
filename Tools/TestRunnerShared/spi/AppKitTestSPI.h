@@ -33,6 +33,9 @@ DECLARE_SYSTEM_HEADER
 
 @interface NSDraggingItem ()
 - (instancetype)_initWithItem:(id)item;
+#if HAVE(DRAGGING_ITEM_INIT_WITH_PASTEBOARD_ITEM)
+- (instancetype)_initWithPasteboardItem:(id)item localItem:(id)local;
+#endif
 @end
 
 #endif // PLATFORM(MAC)

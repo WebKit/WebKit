@@ -137,6 +137,7 @@ public:
     virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
+    RefPtr<WebCore::GraphicsLayer> protectedGraphicsLayer() const;
 
     virtual void setView(PluginView&);
 
@@ -196,7 +197,7 @@ public:
     virtual WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) = 0;
 
     virtual Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions) = 0;
-    virtual Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) = 0;
+    virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) = 0;
     virtual RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) { return { }; }
     virtual void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) { }
 
@@ -284,7 +285,7 @@ public:
     virtual void setActiveAnnotation(SetActiveAnnotationParams&&) = 0;
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
-    virtual CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;
+    virtual CGRect pluginBoundsForAnnotation(PDFAnnotation*) const = 0;
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 
@@ -486,7 +487,7 @@ protected:
 
     RetainPtr<PDFDocument> m_pdfDocument;
 
-    RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
+    const RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
 
     String m_suggestedFilename;
 

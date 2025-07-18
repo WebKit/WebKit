@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -108,7 +109,7 @@ private:
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;
 
-    std::unique_ptr<WebCore::StorageThread> m_thread;
+    const UniqueRef<WebCore::StorageThread> m_thread;
     
     bool m_isActive;
     bool m_needsInitialization;

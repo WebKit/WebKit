@@ -390,7 +390,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLega
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns, UseCustomHeapCellType::No>(vm, "JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.get(); },

@@ -1904,6 +1904,9 @@
     "imported/w3c/web-platform-tests/css/css-content/content-none-select-1.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-fonts/discrete-no-interpolation.html": [
         "slow"
     ],
@@ -1959,6 +1962,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-values/calc-size/animation/calc-size-width-interpolation.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-values/random-computed.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-values/vh-update-and-transition-in-subframe.html": [
@@ -3869,6 +3875,15 @@
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-3.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-4.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-tabindex.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html": [
         "slow"
     ],
@@ -3876,6 +3891,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.html": [

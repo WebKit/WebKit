@@ -79,24 +79,24 @@ class RTC_EXPORT RtpPacketInfos {
   size_type size() const { return entries().size(); }
 
  private:
-  class Data final : public rtc::RefCountedNonVirtual<Data> {
+  class Data final : public RefCountedNonVirtual<Data> {
    public:
-    static rtc::scoped_refptr<Data> Create(const vector_type& entries) {
+    static scoped_refptr<Data> Create(const vector_type& entries) {
       // Performance optimization for the empty case.
       if (entries.empty()) {
         return nullptr;
       }
 
-      return rtc::make_ref_counted<Data>(entries);
+      return make_ref_counted<Data>(entries);
     }
 
-    static rtc::scoped_refptr<Data> Create(vector_type&& entries) {
+    static scoped_refptr<Data> Create(vector_type&& entries) {
       // Performance optimization for the empty case.
       if (entries.empty()) {
         return nullptr;
       }
 
-      return rtc::make_ref_counted<Data>(std::move(entries));
+      return make_ref_counted<Data>(std::move(entries));
     }
 
     const vector_type& entries() const { return entries_; }
@@ -122,7 +122,7 @@ class RTC_EXPORT RtpPacketInfos {
     }
   }
 
-  rtc::scoped_refptr<Data> data_;
+  scoped_refptr<Data> data_;
 };
 
 }  // namespace webrtc

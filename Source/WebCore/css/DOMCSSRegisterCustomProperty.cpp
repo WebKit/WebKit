@@ -33,6 +33,7 @@
 #include "CSSTokenizer.h"
 #include "DOMCSSNamespace.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "StyleBuilder.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleResolver.h"

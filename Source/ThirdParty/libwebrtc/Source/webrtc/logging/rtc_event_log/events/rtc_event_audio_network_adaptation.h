@@ -56,7 +56,7 @@ class RtcEventAudioNetworkAdaptation final : public RtcEvent {
 
   const AudioEncoderRuntimeConfig& config() const { return *config_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

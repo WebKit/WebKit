@@ -222,6 +222,12 @@ public:
             }
             return GST_PAD_PROBE_OK;
         }), this, nullptr);
+
+        auto& trackSource = m_track->source();
+        if (!trackSource.isIncomingAudioSource() && !trackSource.isIncomingVideoSource())
+            return;
+
+        connectIncomingTrack();
     }
 
     void replaceTrack(RefPtr<MediaStreamTrackPrivate>&& newTrack)
@@ -243,8 +249,10 @@ public:
     void connectIncomingTrack()
     {
 #if USE(GSTREAMER_WEBRTC)
-        if (!m_track)
+        if (!m_track) {
+            GST_WARNING_OBJECT(m_src.get(), "No track found!");
             return;
+        }
         auto& trackSource = m_track->source();
         int clientId;
         auto client = GRefPtr<GstElement>(m_src);
@@ -254,6 +262,7 @@ public:
                 GST_DEBUG_OBJECT(m_src.get(), "Incoming audio track already registered.");
                 return;
             }
+            GST_DEBUG_OBJECT(m_src.get(), "Registering incoming audio track");
             clientId = source.registerClient(WTFMove(client));
         } else {
             RELEASE_ASSERT(trackSource.isIncomingVideoSource());
@@ -262,6 +271,7 @@ public:
                 GST_DEBUG_OBJECT(m_src.get(), "Incoming video track already registered.");
                 return;
             }
+            GST_DEBUG_OBJECT(m_src.get(), "Registering incoming video track");
             clientId = source.registerClient(WTFMove(client));
         }
 
@@ -657,7 +667,7 @@ private:
         VideoFrameTimeMetadata metadata;
         metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
         auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
-        webkitGstBufferAddVideoFrameMetadata(buffer.get(), WTFMove(metadata), m_videoRotation, m_videoMirrored);
+        webkitGstBufferAddVideoFrameMetadata(buffer.get(), WTFMove(metadata), m_videoRotation, m_videoMirrored, VideoFrameContentHint::None);
         {
             GstMappedBuffer data(buffer, GST_MAP_WRITE);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
@@ -1083,6 +1093,8 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
     gst_element_class_add_pad_template(gstElementClass, gst_static_pad_template_get(&audioSrcTemplate));
 }
 
+static GRefPtr<GstStreamCollection> webkitMediaStreamSrcCreateStreamCollection(WebKitMediaStreamSrc* self);
+
 struct PadChainData {
     GRefPtr<GstStream> stream;
     WebKitMediaStreamSrc* element;
@@ -1106,10 +1118,11 @@ static GstFlowReturn webkitMediaStreamSrcChain(GstPad* pad, GstObject*, GstBuffe
         }
 
         // Make sure that the video.videoWidth is reset to 0.
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
+        auto streamCollection = webkitMediaStreamSrcCreateStreamCollection(self);
+        gst_pad_send_event(pad, gst_event_new_stream_collection(streamCollection.leakRef()));
 
         auto tags = mediaStreamTrackPrivateGetTags(source->track());
-        gst_pad_push_event(pad, gst_event_new_tag(tags.leakRef()));
+        gst_pad_send_event(pad, gst_event_new_tag(tags.leakRef()));
 
         {
             Locker locker { *source->eosLocker() };

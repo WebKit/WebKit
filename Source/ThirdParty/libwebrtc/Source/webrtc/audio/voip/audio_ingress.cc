@@ -39,11 +39,10 @@ NetEq::Config CreateNetEqConfig() {
 
 }  // namespace
 
-AudioIngress::AudioIngress(
-    const Environment& env,
-    RtpRtcpInterface* rtp_rtcp,
-    ReceiveStatistics* receive_statistics,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
+AudioIngress::AudioIngress(const Environment& env,
+                           RtpRtcpInterface* rtp_rtcp,
+                           ReceiveStatistics* receive_statistics,
+                           scoped_refptr<AudioDecoderFactory> decoder_factory)
     : env_(env),
       playing_(false),
       remote_ssrc_(0),
@@ -144,7 +143,7 @@ void AudioIngress::SetReceiveCodecs(
   neteq_->SetCodecs(codecs);
 }
 
-void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
+void AudioIngress::ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet) {
   RtpPacketReceived rtp_packet_received;
   rtp_packet_received.Parse(rtp_packet.data(), rtp_packet.size());
 
@@ -188,7 +187,7 @@ void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
   const uint8_t* payload = rtp_packet_received.data() + header.headerLength;
   size_t payload_length = packet_length - header.headerLength;
   size_t payload_data_length = payload_length - header.paddingLength;
-  auto data_view = rtc::ArrayView<const uint8_t>(payload, payload_data_length);
+  auto data_view = ArrayView<const uint8_t>(payload, payload_data_length);
 
   // Push the incoming payload (parsed and ready for decoding) into the ACM.
   if (data_view.empty()) {
@@ -200,8 +199,7 @@ void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
   }
 }
 
-void AudioIngress::ReceivedRTCPPacket(
-    rtc::ArrayView<const uint8_t> rtcp_packet) {
+void AudioIngress::ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet) {
   rtcp::CommonHeader rtcp_header;
   if (rtcp_header.Parse(rtcp_packet.data(), rtcp_packet.size()) &&
       (rtcp_header.type() == rtcp::SenderReport::kPacketType ||

@@ -58,7 +58,7 @@ struct MutexWrapper<GRecMutex> {
 
 template<typename T>
 class GMutexLocker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GMutexLocker);
     WTF_MAKE_NONCOPYABLE(GMutexLocker);
 public:
     explicit GMutexLocker(T& mutex)

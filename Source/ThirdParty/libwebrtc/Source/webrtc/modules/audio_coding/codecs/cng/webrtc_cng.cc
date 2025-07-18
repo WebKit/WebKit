@@ -11,8 +11,12 @@
 #include "modules/audio_coding/codecs/cng/webrtc_cng.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
+#include "api/array_view.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -71,7 +75,7 @@ void ComfortNoiseDecoder::Reset() {
   dec_used_scale_factor_ = 0;
 }
 
-void ComfortNoiseDecoder::UpdateSid(rtc::ArrayView<const uint8_t> sid) {
+void ComfortNoiseDecoder::UpdateSid(ArrayView<const uint8_t> sid) {
   int16_t refCs[WEBRTC_CNG_MAX_LPC_ORDER];
   int32_t targetEnergy;
   size_t length = sid.size();
@@ -108,7 +112,7 @@ void ComfortNoiseDecoder::UpdateSid(rtc::ArrayView<const uint8_t> sid) {
   }
 }
 
-bool ComfortNoiseDecoder::Generate(rtc::ArrayView<int16_t> out_data,
+bool ComfortNoiseDecoder::Generate(ArrayView<int16_t> out_data,
                                    bool new_period) {
   int16_t excitation[kCngMaxOutsizeOrder];
   int16_t low[kCngMaxOutsizeOrder];
@@ -137,7 +141,7 @@ bool ComfortNoiseDecoder::Generate(rtc::ArrayView<int16_t> out_data,
   }
 
   /* Calculate new scale factor in Q13 */
-  dec_used_scale_factor_ = rtc::checked_cast<int16_t>(
+  dec_used_scale_factor_ = checked_cast<int16_t>(
       WEBRTC_SPL_MUL_16_16_RSFT(dec_used_scale_factor_, Beta >> 2, 13) +
       WEBRTC_SPL_MUL_16_16_RSFT(dec_target_scale_factor_, BetaC >> 2, 13));
 
@@ -232,9 +236,9 @@ void ComfortNoiseEncoder::Reset(int fs, int interval, int quality) {
   enc_seed_ = 7777; /* For debugging only. */
 }
 
-size_t ComfortNoiseEncoder::Encode(rtc::ArrayView<const int16_t> speech,
+size_t ComfortNoiseEncoder::Encode(ArrayView<const int16_t> speech,
                                    bool force_sid,
-                                   rtc::Buffer* output) {
+                                   Buffer* output) {
   int16_t arCoefs[WEBRTC_CNG_MAX_LPC_ORDER + 1];
   int32_t corrVector[WEBRTC_CNG_MAX_LPC_ORDER + 1];
   int16_t refCs[WEBRTC_CNG_MAX_LPC_ORDER + 1];
@@ -363,7 +367,7 @@ size_t ComfortNoiseEncoder::Encode(rtc::ArrayView<const int16_t> speech,
       index = 94;
 
     const size_t output_coefs = enc_nrOfCoefs_ + 1;
-    output->AppendData(output_coefs, [&](rtc::ArrayView<uint8_t> output) {
+    output->AppendData(output_coefs, [&](ArrayView<uint8_t> output) {
       output[0] = (uint8_t)index;
 
       /* Quantize coefficients with tweak for WebRtc implementation of

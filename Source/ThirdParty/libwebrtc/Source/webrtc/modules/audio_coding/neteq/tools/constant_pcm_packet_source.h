@@ -13,8 +13,10 @@
 
 #include <stdio.h>
 
-#include <string>
+#include <cstdint>
+#include <memory>
 
+#include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 
 namespace webrtc {

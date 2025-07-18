@@ -14,4 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/implicit-stacking-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/participating-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/shuffle.html

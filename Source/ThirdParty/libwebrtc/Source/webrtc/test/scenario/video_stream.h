@@ -96,8 +96,7 @@ class ReceiveVideoStream {
   std::vector<VideoReceiveStreamInterface*> receive_streams_;
   FlexfecReceiveStream* flecfec_stream_ = nullptr;
   FakeVideoRenderer fake_renderer_;
-  std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>
-      render_taps_;
+  std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> render_taps_;
   CallClient* const receiver_;
   const VideoStreamConfig config_;
   std::unique_ptr<VideoDecoderFactory> decoder_factory_;

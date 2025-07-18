@@ -75,10 +75,18 @@ recommended to apply for WebRTC committer rights obtaining process.
 6.  Also as any contributor you must sign and return the
     [Contributor License Agreement][4]
 
+## WebRTC Committers expiration
+
+If a WebRTC committer isn't active on Gerrit (e.g. by uploading a CL, or
+participating in code reviews) for more than 1 year, they will lose their status
+as a WebRTC Committer and removed from the list of committers. An email will be
+sent one week before the expiration date, giving the committer 7 days to 
+demonstrate activity and maintain their WebRTC Committer status.
+
 [1]: https://webrtc.googlesource.com/src/+/refs/heads/main/docs/faq.md#to-be-a-contributor_do-i-need-to-sign-any-agreements
 [2]: https://chromium.googlesource.com/chromium/src/+/refs/heads/main/styleguide/c++/c++.md
 [3]: https://webrtc.googlesource.com/src/+/refs/heads/main/g3doc/style-guide.md
 [4]: https://developers.google.com/open-source/cla/individual?hl=en
 [5]: https://google.github.io/styleguide/cppguide.html
-[6]: https://bugs.chromium.org/p/webrtc/issues/entry?template=Become+WebRTC+committer
-[7]: https://bugs.chromium.org/p/webrtc/issues/entry?template=Get+tryjob+access
+[6]: https://issues.webrtc.org/issues/new?component=1565136&template=1986141
+[7]: https://issues.webrtc.org/issues/new?component=1565136&template=1986372

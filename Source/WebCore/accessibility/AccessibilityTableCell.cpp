@@ -34,6 +34,7 @@
 #include "AccessibilityTableRow.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableCellElement.h"
+#include "RenderElementInlines.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"
 

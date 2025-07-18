@@ -216,7 +216,7 @@ MediaTime RemoteAudioDestinationProxy::outputLatency() const
 {
     return (MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(sampleRate()) }
 #if USE(AUDIO_SESSION)
-            + MediaTime { static_cast<int64_t>(AudioSession::protectedSharedSession()->outputLatency()), static_cast<uint32_t>(AudioSession::protectedSharedSession()->sampleRate()) }
+            + MediaTime { static_cast<int64_t>(AudioSession::singleton().outputLatency()), static_cast<uint32_t>(AudioSession::singleton().sampleRate()) }
 #endif
             );
 }

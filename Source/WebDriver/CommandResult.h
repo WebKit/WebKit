@@ -84,7 +84,7 @@ public:
     const RefPtr<JSON::Value>& result() const { return m_result; };
     void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTFMove(errorData); }
     bool isError() const { return !!m_errorCode; }
-    ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value(); }
+    ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value_or(ErrorCode::UnknownError); }
     String errorString() const;
     std::optional<String> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
     const RefPtr<JSON::Object>& additionalErrorData() const { return m_errorAdditionalData; }

@@ -1,0 +1,4 @@
+
+FAIL Initially, the sibling-index() is 3 for #target assert_equals: expected (string) "150%" but got (undefined) undefined
+FAIL Removing a preceding sibling of #target reduces the sibling-index() assert_equals: expected (string) "100%" but got (undefined) undefined
+

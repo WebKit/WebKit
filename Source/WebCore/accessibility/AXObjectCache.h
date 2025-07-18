@@ -74,7 +74,7 @@ class Scrollbar;
 class ScrollView;
 class VisiblePosition;
 class Widget;
-enum class AXStreamOptions : uint8_t;
+enum class AXStreamOptions : uint16_t;
 
 struct CharacterOffset {
     RefPtr<Node> node;
@@ -106,7 +106,7 @@ struct CharacterOffset {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXComputedObjectAttributeCache);
 class AXComputedObjectAttributeCache {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXComputedObjectAttributeCache);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXComputedObjectAttributeCache, AXComputedObjectAttributeCache);
 public:
     AccessibilityObjectInclusion getIgnored(AXID) const;
     void setIgnored(AXID, AccessibilityObjectInclusion);
@@ -135,6 +135,14 @@ struct VisiblePositionIndexRange {
 };
 
 struct AXTreeData {
+    String liveTree;
+    String isolatedTree;
+};
+
+// When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
+struct AXDebugInfo {
+    bool isAccessibilityEnabled;
+    bool isAccessibilityThreadInitialized;
     String liveTree;
     String isolatedTree;
 };
@@ -651,7 +659,7 @@ public:
 
     static ASCIILiteral notificationPlatformName(AXNotification);
 
-    AXTreeData treeData(std::optional<OptionSet<AXStreamOptions>> = std::nullopt);
+    WEBCORE_EXPORT AXTreeData treeData(std::optional<OptionSet<AXStreamOptions>> = std::nullopt);
 
     enum class UpdateRelations : bool { No, Yes };
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
@@ -665,7 +673,9 @@ public:
 #if PLATFORM(MAC)
     AXCoreObject::AccessibilityChildrenVector sortedLiveRegions();
     AXCoreObject::AccessibilityChildrenVector sortedNonRootWebAreas();
-    void addSortedObject(AccessibilityObject&, PreSortedObjectType);
+    void deferSortForNewLiveRegion(Ref<AccessibilityObject>&&);
+    void queueUnsortedObject(Ref<AccessibilityObject>&&, PreSortedObjectType);
+    void addSortedObjects(Vector<Ref<AccessibilityObject>>&&, PreSortedObjectType);
     void removeLiveRegion(AccessibilityObject&);
     void initializeSortedIDLists();
 
@@ -677,6 +687,7 @@ public:
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
+    WEBCORE_EXPORT static bool isAXThreadInitialized();
 private:
     static bool clientSupportsIsolatedTree();
     // Propagates the root of the isolated tree back into the Core and WebKit.
@@ -862,7 +873,7 @@ private:
     // clean it up from this map, since existingAXObjectCache fails due to the nullptr m_frame.
     // This scenario seems extremely rare, and may only happen when the webpage is about to be destroyed anyways,
     // so, go with WeakHashMap now until we find a completely safe solution based on document / frame lifecycles.
-    WeakHashMap<Node, Markable<AXID>, WeakPtrImplWithEventTargetData> m_nodeObjectMapping;
+    WeakHashMap<Node, AXID, WeakPtrImplWithEventTargetData> m_nodeObjectMapping;
 
     WeakHashMap<RenderText, LineRange, SingleThreadWeakPtrImpl> m_mostRecentlyPaintedText;
 
@@ -934,7 +945,7 @@ private:
     std::optional<std::pair<WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
     WeakHashSet<AccessibilityObject> m_deferredUnconnectedObjects;
 #if PLATFORM(MAC)
-    WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_deferredDocumentAddedList;
+    HashMap<PreSortedObjectType, Vector<Ref<AccessibilityObject>>, IntHash<PreSortedObjectType>, WTF::StrongEnumHashTraits<PreSortedObjectType>> m_deferredUnsortedObjects;
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1021,7 +1032,7 @@ public:
     ~AXAttributeCacheEnabler();
 
 private:
-    AXObjectCache* m_cache;
+    const WeakPtr<AXObjectCache> m_cache;
     bool m_wasAlreadyCaching { false };
 };
 

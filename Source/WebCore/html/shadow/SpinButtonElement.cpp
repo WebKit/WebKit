@@ -28,6 +28,7 @@
 #include "SpinButtonElement.h"
 
 #include "Chrome.h"
+#include "ContainerNodeInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "HTMLNames.h"

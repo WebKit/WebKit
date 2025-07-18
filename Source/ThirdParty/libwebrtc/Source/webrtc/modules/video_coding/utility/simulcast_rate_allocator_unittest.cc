@@ -10,16 +10,21 @@
 
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/units/data_rate.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_bitrate_allocator.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
-#include "api/video_codecs/vp8_temporal_layers.h"
 #include "rtc_base/checks.h"
 #include "test/explicit_key_value_config.h"
 #include "test/gmock.h"

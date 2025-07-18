@@ -27,6 +27,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContainerNodeInlines.h"
 #include "DOMTokenList.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
@@ -58,6 +59,7 @@
 #include "SystemPreviewInfo.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashMap.h>
@@ -115,22 +117,22 @@ bool HTMLAnchorElement::isInteractiveContent() const
     return isLink();
 }
 
-bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLAnchorElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (!isFocusable())
         return false;
 
     // Anchor is focusable if the base element supports focus and is focusable.
     if (isFocusable() && Element::supportsFocus())
-        return HTMLElement::isKeyboardFocusable(event);
+        return HTMLElement::isKeyboardFocusable(focusEventData);
 
     RefPtr frame = document().frame();
     if (!frame)
         return false;
 
-    if (isLink() && !frame->eventHandler().tabsToLinks(event))
+    if (isLink() && !frame->eventHandler().tabsToLinks(focusEventData))
         return false;
-    return HTMLElement::isKeyboardFocusable(event);
+    return HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
 static void appendServerMapMousePosition(StringBuilder& url, Event& event)
@@ -564,7 +566,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     systemPreviewInfo.isPreview = isSystemPreviewLink() && document->settings().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
-        systemPreviewInfo.element.elementIdentifier = identifier();
+        systemPreviewInfo.element.nodeIdentifier = nodeIdentifier();
         systemPreviewInfo.element.documentIdentifier = document->identifier();
         systemPreviewInfo.element.webPageIdentifier = document->pageID();
         if (auto* child = firstElementChild())

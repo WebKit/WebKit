@@ -11,20 +11,23 @@
 #ifndef P2P_BASE_ICE_CONTROLLER_INTERFACE_H_
 #define P2P_BASE_ICE_CONTROLLER_INTERFACE_H_
 
+#include <cstdint>
 #include <optional>
 #include <string>
-#include <utility>
 #include <vector>
 
+#include "api/array_view.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_switch_reason.h"
 #include "p2p/base/ice_transport_internal.h"
+#include "p2p/base/p2p_transport_channel_ice_field_trials.h"
+#include "p2p/base/transport_description.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
+namespace webrtc {
 
-struct IceFieldTrials;  // Forward declaration to avoid circular dependency.
+// Forward declaration to avoid circular dependency.
 
 struct RTC_EXPORT IceRecheckEvent {
   IceRecheckEvent(IceSwitchReason _reason, int _recheck_delay_ms)
@@ -102,13 +105,13 @@ class IceControllerInterface {
   virtual void OnConnectionDestroyed(const Connection* connection) = 0;
 
   // These are all connections that has been added and not destroyed.
-  virtual rtc::ArrayView<const Connection* const> GetConnections() const {
+  virtual ArrayView<const Connection* const> GetConnections() const {
     // Stub implementation to simplify downstream roll.
     RTC_CHECK_NOTREACHED();
     return {};
   }
   // TODO(bugs.webrtc.org/15702): Remove this after downstream is cleaned up.
-  virtual rtc::ArrayView<const Connection*> connections() const {
+  virtual ArrayView<const Connection*> connections() const {
     // Stub implementation to simplify downstream removal.
     RTC_CHECK_NOTREACHED();
     return {};
@@ -145,6 +148,15 @@ class IceControllerInterface {
   virtual std::vector<const Connection*> PruneConnections() = 0;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::IceControllerInterface;
+using ::webrtc::IceRecheckEvent;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_ICE_CONTROLLER_INTERFACE_H_

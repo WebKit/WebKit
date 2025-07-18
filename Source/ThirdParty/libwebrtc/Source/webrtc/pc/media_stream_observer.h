@@ -39,7 +39,7 @@ class MediaStreamObserver : public ObserverInterface {
   void OnChanged() override;
 
  private:
-  rtc::scoped_refptr<MediaStreamInterface> stream_;
+  scoped_refptr<MediaStreamInterface> stream_;
   AudioTrackVector cached_audio_tracks_;
   VideoTrackVector cached_video_tracks_;
   const std::function<void(AudioTrackInterface*, MediaStreamInterface*)>

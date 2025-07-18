@@ -46,10 +46,10 @@ void AgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
     m_agents.append(WTFMove(agent));
 }
 
-void AgentRegistry::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void AgentRegistry::didCreateFrontendAndBackend()
 {
     for (auto& agent : m_agents)
-        agent->didCreateFrontendAndBackend(frontendRouter, backendDispatcher);
+        agent->didCreateFrontendAndBackend();
 }
 
 void AgentRegistry::willDestroyFrontendAndBackend(DisconnectReason reason)

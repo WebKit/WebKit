@@ -17,7 +17,7 @@
 #include "absl/strings/string_view.h"
 #include "modules/audio_device/dummy/file_audio_device.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/string_utils.h"
+#include "rtc_base/string_utils.h"  // IWYU pragma: keep
 
 namespace webrtc {
 
@@ -47,8 +47,8 @@ void FileAudioDeviceFactory::SetFilenamesToUse(
   RTC_DCHECK_LT(outputAudioFilename.size(), MAX_FILENAME_LEN);
 
   // Copy the strings since we don't know the lifetime of the input pointers.
-  rtc::strcpyn(_inputAudioFilename, MAX_FILENAME_LEN, inputAudioFilename);
-  rtc::strcpyn(_outputAudioFilename, MAX_FILENAME_LEN, outputAudioFilename);
+  strcpyn(_inputAudioFilename, MAX_FILENAME_LEN, inputAudioFilename);
+  strcpyn(_outputAudioFilename, MAX_FILENAME_LEN, outputAudioFilename);
   _isConfigured = true;
 #else
   // Sanity: must be compiled with the right define to run this.

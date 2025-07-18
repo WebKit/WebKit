@@ -42,8 +42,7 @@ inline constexpr int64_t ToNtpUnits(TimeDelta delta) {
   // then multiplaction and conversion to seconds are swapped to avoid float
   // arithmetic.
   // 2^31 us ~= 35.8 minutes.
-  return (rtc::saturated_cast<int32_t>(delta.us()) * (int64_t{1} << 32)) /
-         1'000'000;
+  return (saturated_cast<int32_t>(delta.us()) * (int64_t{1} << 32)) / 1'000'000;
 }
 
 // Converts interval from compact ntp (1/2^16 seconds) resolution to TimeDelta.

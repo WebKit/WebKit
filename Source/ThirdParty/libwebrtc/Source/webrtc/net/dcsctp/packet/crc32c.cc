@@ -15,7 +15,7 @@
 
 namespace dcsctp {
 
-uint32_t GenerateCrc32C(rtc::ArrayView<const uint8_t> data) {
+uint32_t GenerateCrc32C(webrtc::ArrayView<const uint8_t> data) {
   uint32_t crc32c = crc32c_value(data.data(), data.size());
 
   // Byte swapping for little endian byte order:

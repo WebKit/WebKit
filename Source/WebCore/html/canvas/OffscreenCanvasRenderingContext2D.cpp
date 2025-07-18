@@ -91,7 +91,7 @@ OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = defaul
 
 void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 {
-    Ref context = *canvasBase().scriptExecutionContext();
+    auto& context = *canvasBase().scriptExecutionContext();
 
     if (newFont.isEmpty())
         return;
@@ -101,7 +101,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseFont() ignores these.
-    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, context.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, context, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!unresolvedFont)
         return;
 
@@ -117,9 +117,9 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setSpecifiedSize(DefaultFontSize);
     fontDescription.setComputedSize(DefaultFontSize);
 
-    if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), context.get())) {
-        ASSERT(context->cssFontSelector());
-        modifiableState().font.initialize(*context->cssFontSelector(), *fontCascade);
+    if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), context)) {
+        ASSERT(context.cssFontSelector());
+        modifiableState().font.initialize(*context.cssFontSelector(), *fontCascade);
 
         String letterSpacing;
         setLetterSpacing(std::exchange(modifiableState().letterSpacing, letterSpacing));
@@ -132,7 +132,7 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
 {
     if (!canvasBase().hasCreatedImageBuffer())
         return canvasBase().allocateImageBuffer();
-    RefPtr buffer = canvasBase().buffer();
+    auto* buffer = canvasBase().buffer();
     if (!buffer)
         return nullptr;
     // As the canvas context state is stored in GraphicsContext, which is owned

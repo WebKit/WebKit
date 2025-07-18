@@ -1,6 +1,4 @@
-Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/websockets/WorkerThreadableWebSocketChannel.h
-accessibility/AXObjectCache.h
 bindings/js/JSLazyEventListener.cpp
 css/CSSToLengthConversionData.h
 css/SelectorChecker.h
@@ -21,7 +19,6 @@ inspector/InstrumentingAgents.h
 inspector/agents/InspectorCSSAgent.h
 inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/WebHeapAgent.cpp
-layout/formattingContexts/flex/FlexFormattingContext.h
 layout/formattingContexts/inline/AbstractLineBuilder.h
 layout/formattingContexts/inline/InlineContentBreaker.h
 layout/formattingContexts/inline/InlineFormattingContext.h
@@ -41,8 +38,6 @@ loader/DocumentThreadableLoader.h
 loader/WorkerThreadableLoader.h
 page/FrameSnapshotting.cpp
 page/UndoManager.h
-page/csp/ContentSecurityPolicyDirectiveList.h
-page/csp/ContentSecurityPolicySource.h
 platform/OrientationNotifier.h
 platform/ScrollAnimator.h
 platform/Scrollbar.h
@@ -97,7 +92,6 @@ rendering/mathml/RenderMathMLScripts.h
 rendering/shapes/ShapeOutsideInfo.h
 rendering/svg/SVGRenderingContext.h
 rendering/svg/SVGTextBoxPainter.h
-rendering/svg/SVGTextLayoutEngineBaseline.h
 rendering/svg/legacy/SVGResourcesCache.h
 rendering/updating/RenderTreeBuilder.h
 rendering/updating/RenderTreeBuilderBlock.cpp
@@ -116,7 +110,3 @@ style/StyleTreeResolver.h
 style/Styleable.h
 style/values/color/StyleColorResolutionState.h
 svg/properties/SVGPropertyOwnerRegistry.h
-workers/DedicatedWorkerThread.h
-workers/service/ServiceWorkerContainer.h
-xml/XMLHttpRequestProgressEventThrottle.h
-xml/XMLHttpRequestUpload.h

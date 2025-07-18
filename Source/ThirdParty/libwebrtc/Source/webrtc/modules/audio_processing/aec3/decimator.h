@@ -29,7 +29,7 @@ class Decimator {
   Decimator& operator=(const Decimator&) = delete;
 
   // Downsamples the signal.
-  void Decimate(rtc::ArrayView<const float> in, rtc::ArrayView<float> out);
+  void Decimate(ArrayView<const float> in, ArrayView<float> out);
 
  private:
   const size_t down_sampling_factor_;

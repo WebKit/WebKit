@@ -16,6 +16,7 @@
 
 #include <vector>
 
+#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -64,7 +65,7 @@ struct NaluIndex {
 
 // Returns a vector of the NALU indices in the given buffer.
 RTC_EXPORT std::vector<NaluIndex> FindNaluIndices(
-    rtc::ArrayView<const uint8_t> buffer);
+    ArrayView<const uint8_t> buffer);
 
 // Get the NAL type from the header byte immediately following start sequence.
 RTC_EXPORT NaluType ParseNaluType(uint8_t data);
@@ -83,23 +84,23 @@ RTC_EXPORT NaluType ParseNaluType(uint8_t data);
 // the 03 emulation byte.
 
 // Parse the given data and remove any emulation byte escaping.
-std::vector<uint8_t> ParseRbsp(rtc::ArrayView<const uint8_t> data);
+std::vector<uint8_t> ParseRbsp(ArrayView<const uint8_t> data);
 
 // TODO: bugs.webrtc.org/42225170 - Deprecate.
 inline std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length) {
-  return ParseRbsp(rtc::MakeArrayView(data, length));
+  return ParseRbsp(MakeArrayView(data, length));
 }
 
 // Write the given data to the destination buffer, inserting and emulation
 // bytes in order to escape any data the could be interpreted as a start
 // sequence.
-void WriteRbsp(rtc::ArrayView<const uint8_t> bytes, rtc::Buffer* destination);
+void WriteRbsp(ArrayView<const uint8_t> bytes, Buffer* destination);
 
 // TODO: bugs.webrtc.org/42225170 - Deprecate.
 inline void WriteRbsp(const uint8_t* bytes,
                       size_t length,
-                      rtc::Buffer* destination) {
-  WriteRbsp(rtc::MakeArrayView(bytes, length), destination);
+                      Buffer* destination) {
+  WriteRbsp(MakeArrayView(bytes, length), destination);
 }
 }  // namespace H264
 }  // namespace webrtc

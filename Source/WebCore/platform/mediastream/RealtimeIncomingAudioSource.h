@@ -54,7 +54,7 @@ class RealtimeIncomingAudioSource
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingAudioSource, WTF::DestructionThread::MainRunLoop>
 {
 public:
-    static Ref<RealtimeIncomingAudioSource> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingAudioSource> create(webrtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
     void setAudioModule(RefPtr<LibWebRTCAudioModule>&&);
     LibWebRTCAudioModule* audioModule() { return m_audioModule.get(); }
@@ -62,7 +62,7 @@ public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
     ~RealtimeIncomingAudioSource();
 protected:
-    RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    RealtimeIncomingAudioSource(webrtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "RealtimeIncomingAudioSource"_s; }
@@ -85,7 +85,7 @@ private:
     bool isIncomingAudioSource() const final { return true; }
 
     RealtimeMediaSourceSettings m_currentSettings;
-    rtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
+    webrtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
     RefPtr<LibWebRTCAudioModule> m_audioModule;
 
 #if !RELEASE_LOG_DISABLED

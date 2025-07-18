@@ -11,12 +11,19 @@
 #include "test/network/traffic_route.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <utility>
 
-#include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_minmax.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/socket_address.h"
+#include "system_wrappers/include/clock.h"
+#include "test/network/network_emulation.h"
 
 namespace webrtc {
 namespace test {
@@ -77,11 +84,11 @@ void CrossTrafficRouteImpl::SendPacket(size_t packet_size) {
 }
 
 void CrossTrafficRouteImpl::SendPacket(size_t packet_size, uint16_t dest_port) {
-  rtc::CopyOnWriteBuffer data(packet_size);
+  CopyOnWriteBuffer data(packet_size);
   std::fill_n(data.MutableData(), data.size(), 0);
   receiver_->OnPacketReceived(EmulatedIpPacket(
-      /*from=*/rtc::SocketAddress(),
-      rtc::SocketAddress(endpoint_->GetPeerLocalAddress(), dest_port), data,
+      /*from=*/SocketAddress(),
+      SocketAddress(endpoint_->GetPeerLocalAddress(), dest_port), data,
       clock_->CurrentTime()));
 }
 

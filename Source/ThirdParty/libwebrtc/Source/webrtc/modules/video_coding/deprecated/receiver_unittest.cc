@@ -16,6 +16,9 @@
 #include <queue>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/video/video_frame_type.h"
+#include "modules/video_coding/deprecated/event_wrapper.h"
 #include "modules/video_coding/deprecated/jitter_buffer_common.h"
 #include "modules/video_coding/deprecated/packet.h"
 #include "modules/video_coding/deprecated/stream_generator.h"

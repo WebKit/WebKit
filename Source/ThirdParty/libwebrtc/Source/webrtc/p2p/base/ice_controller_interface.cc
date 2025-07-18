@@ -14,7 +14,7 @@
 
 #include "p2p/base/ice_switch_reason.h"
 
-namespace cricket {
+namespace webrtc {
 
 std::string IceRecheckEvent::ToString() const {
   std::string str = IceSwitchReasonToString(reason);
@@ -24,4 +24,4 @@ std::string IceRecheckEvent::ToString() const {
   return str;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

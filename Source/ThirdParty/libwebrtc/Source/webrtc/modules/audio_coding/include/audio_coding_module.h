@@ -11,15 +11,15 @@
 #ifndef MODULES_AUDIO_CODING_INCLUDE_AUDIO_CODING_MODULE_H_
 #define MODULES_AUDIO_CODING_INCLUDE_AUDIO_CODING_MODULE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <optional>
-#include <string>
 #include <utility>
-#include <vector>
 
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/function_view.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -69,7 +69,7 @@ class AudioCodingModule {
   // access to the unique_ptr; it may call the encoder, steal the encoder and
   // replace it with another encoder or with nullptr, etc.
   virtual void ModifyEncoder(
-      rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
+      FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
 
   // Utility method for simply replacing the existing encoder with a new one.
   void SetEncoder(std::unique_ptr<AudioEncoder> new_encoder) {

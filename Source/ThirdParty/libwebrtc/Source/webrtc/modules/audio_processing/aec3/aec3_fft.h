@@ -48,21 +48,19 @@ class Aec3Fft {
 
   // Windows the input using a Hanning window, and then adds padding of
   // kFftLengthBy2 initial zeros before computing the Fft.
-  void ZeroPaddedFft(rtc::ArrayView<const float> x,
-                     Window window,
-                     FftData* X) const;
+  void ZeroPaddedFft(ArrayView<const float> x, Window window, FftData* X) const;
 
   // Concatenates the kFftLengthBy2 values long x and x_old before computing the
   // Fft. After that, x is copied to x_old.
-  void PaddedFft(rtc::ArrayView<const float> x,
-                 rtc::ArrayView<const float> x_old,
+  void PaddedFft(ArrayView<const float> x,
+                 ArrayView<const float> x_old,
                  FftData* X) const {
     PaddedFft(x, x_old, Window::kRectangular, X);
   }
 
   // Padded Fft using a time-domain window.
-  void PaddedFft(rtc::ArrayView<const float> x,
-                 rtc::ArrayView<const float> x_old,
+  void PaddedFft(ArrayView<const float> x,
+                 ArrayView<const float> x_old,
                  Window window,
                  FftData* X) const;
 

@@ -14,9 +14,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <memory>
+#include <optional>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 #include "modules/rtp_rtcp/source/dtmf_queue.h"
@@ -46,7 +48,7 @@ class RTPSenderAudio {
 
   struct RtpAudioFrame {
     AudioFrameType type = AudioFrameType::kAudioFrameSpeech;
-    rtc::ArrayView<const uint8_t> payload;
+    ArrayView<const uint8_t> payload;
 
     // Payload id to write to the payload type field of the rtp packet.
     int payload_id = -1;
@@ -63,7 +65,7 @@ class RTPSenderAudio {
     std::optional<int> audio_level_dbov;
 
     // Contributing sources list.
-    rtc::ArrayView<const uint32_t> csrcs;
+    ArrayView<const uint32_t> csrcs;
   };
   bool SendAudio(const RtpAudioFrame& frame);
 

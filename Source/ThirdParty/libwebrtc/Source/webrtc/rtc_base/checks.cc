@@ -59,7 +59,7 @@ void AppendFormat(std::string* s, const char* fmt, ...) {
 }
 }  // namespace
 
-namespace rtc {
+namespace webrtc {
 namespace webrtc_checks_impl {
 
 #if !defined(WEBRTC_CHROMIUM_BUILD)
@@ -224,17 +224,17 @@ RTC_NORETURN void UnreachableCodeReached() {
 #endif  // !RTC_DCHECK_IS_ON
 
 }  // namespace webrtc_checks_impl
-}  // namespace rtc
+}  // namespace webrtc
 
 // Function to call from the C version of the RTC_CHECK and RTC_DCHECK macros.
 RTC_NORETURN void rtc_FatalMessage(const char* file,
                                    int line,
                                    const char* msg) {
 #if RTC_CHECK_MSG_ENABLED
-  static constexpr rtc::webrtc_checks_impl::CheckArgType t[] = {
-      rtc::webrtc_checks_impl::CheckArgType::kEnd};
-  rtc::webrtc_checks_impl::FatalLog(file, line, msg, t);
+  static constexpr webrtc::webrtc_checks_impl::CheckArgType t[] = {
+      webrtc::webrtc_checks_impl::CheckArgType::kEnd};
+  webrtc::webrtc_checks_impl::FatalLog(file, line, msg, t);
 #else
-  rtc::webrtc_checks_impl::FatalLog(file, line);
+  webrtc::webrtc_checks_impl::FatalLog(file, line);
 #endif
 }

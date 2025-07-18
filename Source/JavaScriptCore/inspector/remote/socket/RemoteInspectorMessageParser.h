@@ -33,7 +33,7 @@
 namespace Inspector {
 
 class MessageParser {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MessageParser);
 public:
     static Vector<uint8_t> createMessage(std::span<const uint8_t>);
 

@@ -49,7 +49,7 @@ namespace dcsctp {
 constexpr int IForwardTsnChunk::kType;
 
 std::optional<IForwardTsnChunk> IForwardTsnChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -77,7 +77,7 @@ std::optional<IForwardTsnChunk> IForwardTsnChunk::Parse(
 }
 
 void IForwardTsnChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const SkippedStream> skipped = skipped_streams();
+  webrtc::ArrayView<const SkippedStream> skipped = skipped_streams();
   size_t variable_size = skipped.size() * kSkippedStreamBufferSize;
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, variable_size);
 
@@ -96,7 +96,7 @@ void IForwardTsnChunk::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string IForwardTsnChunk::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "I-FORWARD-TSN, new_cumulative_tsn=" << *new_cumulative_tsn();
   return sb.Release();
 }

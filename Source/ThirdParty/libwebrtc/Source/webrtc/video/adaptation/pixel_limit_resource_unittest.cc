@@ -14,11 +14,15 @@
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "api/adaptation/resource.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "call/adaptation/test/fake_video_stream_input_state_provider.h"
 #include "call/adaptation/test/mock_resource_listener.h"
 #include "call/adaptation/video_stream_adapter.h"
-#include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -64,7 +68,7 @@ TEST_F(PixelLimitResourceTest, ResourceIsSilentByDefault) {
   // OnResourceUsageStateMeasured() is invoked.
   testing::StrictMock<MockResourceListener> resource_listener;
   RunTaskOnTaskQueue([&]() {
-    rtc::scoped_refptr<PixelLimitResource> pixel_limit_resource =
+    scoped_refptr<PixelLimitResource> pixel_limit_resource =
         PixelLimitResource::Create(task_queue_.get(), &input_state_provider_);
     pixel_limit_resource->SetResourceListener(&resource_listener);
     // Set a current pixel count.
@@ -80,7 +84,7 @@ TEST_F(PixelLimitResourceTest,
   constexpr int kMaxPixels = 640 * 480;
   testing::StrictMock<MockResourceListener> resource_listener;
   RunTaskOnTaskQueue([&]() {
-    rtc::scoped_refptr<PixelLimitResource> pixel_limit_resource =
+    scoped_refptr<PixelLimitResource> pixel_limit_resource =
         PixelLimitResource::Create(task_queue_.get(), &input_state_provider_);
     pixel_limit_resource->SetResourceListener(&resource_listener);
     time_controller_.AdvanceTime(TimeDelta::Zero());
@@ -115,7 +119,7 @@ TEST_F(PixelLimitResourceTest,
   const int kMinPixels = GetLowerResolutionThan(kMaxPixels);
   testing::StrictMock<MockResourceListener> resource_listener;
   RunTaskOnTaskQueue([&]() {
-    rtc::scoped_refptr<PixelLimitResource> pixel_limit_resource =
+    scoped_refptr<PixelLimitResource> pixel_limit_resource =
         PixelLimitResource::Create(task_queue_.get(), &input_state_provider_);
     pixel_limit_resource->SetResourceListener(&resource_listener);
     time_controller_.AdvanceTime(TimeDelta::Zero());

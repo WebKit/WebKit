@@ -102,31 +102,31 @@ TimeDelta AtoToTimeDelta(uint16_t receive_info) {
   return TimeDelta::Seconds(ato) / 1024;
 }
 
-uint16_t To2BitEcn(rtc::EcnMarking ecn_marking) {
+uint16_t To2BitEcn(EcnMarking ecn_marking) {
   switch (ecn_marking) {
-    case rtc::EcnMarking::kNotEct:
+    case EcnMarking::kNotEct:
       return 0;
-    case rtc::EcnMarking::kEct1:
+    case EcnMarking::kEct1:
       return kEcnEct1 << 13;
-    case rtc::EcnMarking::kEct0:
+    case EcnMarking::kEct0:
       return kEcnEct0 << 13;
-    case rtc::EcnMarking::kCe:
+    case EcnMarking::kCe:
       return kEcnCe << 13;
   }
 }
 
-rtc::EcnMarking ToEcnMarking(uint16_t receive_info) {
+EcnMarking ToEcnMarking(uint16_t receive_info) {
   const uint16_t ecn = (receive_info >> 13) & 0b11;
   if (ecn == kEcnEct1) {
-    return rtc::EcnMarking::kEct1;
+    return EcnMarking::kEct1;
   }
   if (ecn == kEcnEct0) {
-    return rtc::EcnMarking::kEct0;
+    return EcnMarking::kEct0;
   }
   if (ecn == kEcnCe) {
-    return rtc::EcnMarking::kCe;
+    return EcnMarking::kCe;
   }
-  return rtc::EcnMarking::kNotEct;
+  return EcnMarking::kNotEct;
 }
 
 }  // namespace
@@ -166,7 +166,7 @@ bool CongestionControlFeedback::Create(uint8_t* buffer,
   //   |R|ECN|  Arrival time offset    | ...                           .
   //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   //   .                                                               .
-  auto write_report_for_ssrc = [&](rtc::ArrayView<const PacketInfo> packets) {
+  auto write_report_for_ssrc = [&](ArrayView<const PacketInfo> packets) {
     // SSRC of nth RTP stream.
     ByteWriter<uint32_t>::WriteBigEndian(&buffer[*position], packets[0].ssrc);
     *position += 4;
@@ -211,7 +211,7 @@ bool CongestionControlFeedback::Create(uint8_t* buffer,
     }
   };
 
-  rtc::ArrayView<const PacketInfo> remaining(packets_);
+  ArrayView<const PacketInfo> remaining(packets_);
   while (!remaining.empty()) {
     int number_of_packets_for_ssrc = 0;
     uint32_t ssrc = remaining[0].ssrc;

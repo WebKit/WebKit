@@ -33,7 +33,7 @@
 
 namespace PAL {
 
-static void ucnv_toUnicode_span(UConverter* converter, std::span<UChar> target, std::span<const uint8_t> source, int32_t* offsets, UBool flush, UErrorCode& error)
+static void ucnv_toUnicode_span(UConverter* converter, std::span<char16_t> target, std::span<const uint8_t> source, int32_t* offsets, UBool flush, UErrorCode& error)
 {
     auto* targetStart = target.data();
     auto* targetEnd = std::to_address(target.end());
@@ -44,7 +44,7 @@ static void ucnv_toUnicode_span(UConverter* converter, std::span<UChar> target, 
 
 #if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-jis0208.txt
-constexpr std::array<std::pair<uint16_t, UChar>, 7724> jis0208Reference { {
+constexpr std::array<std::pair<uint16_t, char16_t>, 7724> jis0208Reference { {
     { 0, 0x3000 }, { 1, 0x3001 }, { 2, 0x3002 }, { 3, 0xFF0C }, { 4, 0xFF0E }, { 5, 0x30FB }, { 6, 0xFF1A }, { 7, 0xFF1B },
     { 8, 0xFF1F }, { 9, 0xFF01 }, { 10, 0x309B }, { 11, 0x309C }, { 12, 0x00B4 }, { 13, 0xFF40 }, { 14, 0x00A8 }, { 15, 0xFF3E },
     { 16, 0xFFE3 }, { 17, 0xFF3F }, { 18, 0x30FD }, { 19, 0x30FE }, { 20, 0x309D }, { 21, 0x309E }, { 22, 0x3003 }, { 23, 0x4EDD },
@@ -1015,7 +1015,7 @@ constexpr std::array<std::pair<uint16_t, UChar>, 7724> jis0208Reference { {
 #endif // ASSERT_ENABLED
 
 // These are values from https://encoding.spec.whatwg.org/index-jis0208.txt that are not in ICU.
-constexpr std::array<std::pair<uint16_t, UChar>, 388> jis0208Extras { {
+constexpr std::array<std::pair<uint16_t, char16_t>, 388> jis0208Extras { {
     { 10716, 0x2170 }, { 10717, 0x2171 }, { 10718, 0x2172 }, { 10719, 0x2173 }, { 10720, 0x2174 }, { 10721, 0x2175 }, { 10722, 0x2176 }, { 10723, 0x2177 },
     { 10724, 0x2178 }, { 10725, 0x2179 }, { 10726, 0x2160 }, { 10727, 0x2161 }, { 10728, 0x2162 }, { 10729, 0x2163 }, { 10730, 0x2164 }, { 10731, 0x2165 },
     { 10732, 0x2166 }, { 10733, 0x2167 }, { 10734, 0x2168 }, { 10735, 0x2169 }, { 10736, 0xffe2 }, { 10737, 0xffe4 }, { 10738, 0xff07 }, { 10739, 0xff02 },
@@ -1067,13 +1067,13 @@ constexpr std::array<std::pair<uint16_t, UChar>, 388> jis0208Extras { {
     { 11100, 0x9d6b }, { 11101, 0xfa2d }, { 11102, 0x9e19 }, { 11103, 0x9ed1 }
 } };
 
-const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208()
+const std::array<std::pair<uint16_t, char16_t>, 7724>& jis0208()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static std::array<std::pair<uint16_t, UChar>, 7724>* array;
+    static std::array<std::pair<uint16_t, char16_t>, 7724>* array;
     static std::once_flag flag;
     std::call_once(flag, [] {
-        array = new std::array<std::pair<uint16_t, UChar>, 7724>;
+        array = new std::array<std::pair<uint16_t, char16_t>, 7724>;
         size_t arrayIndex = 0;
         
         UErrorCode error = U_ZERO_ERROR;
@@ -1082,7 +1082,7 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208()
 
         constexpr size_t range = 94;
         std::array<uint8_t, 2> icuInput;
-        UChar icuOutput;
+        char16_t icuOutput;
         for (size_t i = 0; i < range; i++) {
             for (size_t j = 0; j < range; j++) {
                 icuInput[0] = 0xA1 + i;
@@ -1106,7 +1106,7 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208()
 
 #if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-jis0212.txt
-const std::array<std::pair<uint16_t, UChar>, 6067> jis0212Reference { {
+const std::array<std::pair<uint16_t, char16_t>, 6067> jis0212Reference { {
     { 108, 0x02D8 }, { 109, 0x02C7 }, { 110, 0x00B8 }, { 111, 0x02D9 }, { 112, 0x02DD }, { 113, 0x00AF }, { 114, 0x02DB }, { 115, 0x02DA },
     { 116, 0xFF5E }, { 117, 0x0384 }, { 118, 0x0385 }, { 127, 0x00A1 }, { 128, 0x00A6 }, { 129, 0x00BF }, { 168, 0x00BA }, { 169, 0x00AA },
     { 170, 0x00A9 }, { 171, 0x00AE }, { 172, 0x2122 }, { 173, 0x00A4 }, { 174, 0x2116 }, { 534, 0x0386 }, { 535, 0x0388 }, { 536, 0x0389 },
@@ -1869,13 +1869,13 @@ const std::array<std::pair<uint16_t, UChar>, 6067> jis0212Reference { {
 } };
 #endif // ASSERT_ENABLED
 
-const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212()
+const std::array<std::pair<uint16_t, char16_t>, 6067>& jis0212()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static std::array<std::pair<uint16_t, UChar>, 6067>* array;
+    static std::array<std::pair<uint16_t, char16_t>, 6067>* array;
     static std::once_flag flag;
     std::call_once(flag, [] {
-        array = new std::array<std::pair<uint16_t, UChar>, 6067>();
+        array = new std::array<std::pair<uint16_t, char16_t>, 6067>();
         size_t arrayIndex = 0;
         
         UErrorCode error = U_ZERO_ERROR;
@@ -1884,7 +1884,7 @@ const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212()
 
         constexpr size_t range = 94;
         std::array<uint8_t, 3> icuInput;
-        UChar icuOutput;
+        char16_t icuOutput;
         for (size_t i = 0; i < range; i++) {
             for (size_t j = 0; j < range; j++) {
                 icuInput[0] = 0x8F;
@@ -4891,7 +4891,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
         ASSERT(!error);
 
         std::array<uint8_t, 2> icuInput;
-        UChar icuOutput;
+        char16_t icuOutput;
 
         // These are the ranges from https://encoding.spec.whatwg.org/index-big5.txt that have valid pointers.
         constexpr std::array<std::pair<uint16_t, uint16_t>, 60> big5PointerRanges { {
@@ -4932,7 +4932,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
 
 #if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-euc-kr.txt
-const std::array<std::pair<uint16_t, UChar>, 17048> eucKRDecodingIndexReference { {
+const std::array<std::pair<uint16_t, char16_t>, 17048> eucKRDecodingIndexReference { {
     { 0, 0xAC02 }, { 1, 0xAC03 }, { 2, 0xAC05 }, { 3, 0xAC06 }, { 4, 0xAC0B }, { 5, 0xAC0C }, { 6, 0xAC0D }, { 7, 0xAC0E },
     { 8, 0xAC0F }, { 9, 0xAC18 }, { 10, 0xAC1E }, { 11, 0xAC1F }, { 12, 0xAC21 }, { 13, 0xAC22 }, { 14, 0xAC23 }, { 15, 0xAC25 },
     { 16, 0xAC26 }, { 17, 0xAC27 }, { 18, 0xAC28 }, { 19, 0xAC29 }, { 20, 0xAC2A }, { 21, 0xAC2B }, { 22, 0xAC2E }, { 23, 0xAC32 },
@@ -7067,19 +7067,19 @@ const std::array<std::pair<uint16_t, UChar>, 17048> eucKRDecodingIndexReference 
 } };
 #endif
 
-const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
+const std::array<std::pair<uint16_t, char16_t>, 17048>& eucKR()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static std::array<std::pair<uint16_t, UChar>, 17048>* array;
+    static std::array<std::pair<uint16_t, char16_t>, 17048>* array;
     static std::once_flag flag;
     std::call_once(flag, [] {
-        array = new std::array<std::pair<uint16_t, UChar>, 17048>;
+        array = new std::array<std::pair<uint16_t, char16_t>, 17048>;
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error) };
         ASSERT(U_SUCCESS(error));
-        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, UChar>> {
+        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, char16_t>> {
             std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
-            std::array<UChar, 2> icuOutput;
+            std::array<char16_t, 2> icuOutput;
             UErrorCode error = U_ZERO_ERROR;
             ucnv_toUnicode_span(icuConverter.get(), std::span { icuOutput }, std::span { icuInput }, nullptr, true, error);
             if (icuOutput[0] == 0xFFFD)
@@ -7103,7 +7103,7 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
 
 #if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-gb18030.txt
-const std::array<UChar, 23940> gb18030Reference { {
+const std::array<char16_t, 23940> gb18030Reference { {
     0x4E02, 0x4E04, 0x4E05, 0x4E06, 0x4E0F, 0x4E12, 0x4E17, 0x4E1F, 0x4E20, 0x4E21, 0x4E23, 0x4E26, 0x4E29, 0x4E2E, 0x4E2F, 0x4E31,
     0x4E33, 0x4E35, 0x4E37, 0x4E3C, 0x4E40, 0x4E41, 0x4E42, 0x4E44, 0x4E46, 0x4E4A, 0x4E51, 0x4E55, 0x4E57, 0x4E5A, 0x4E5B, 0x4E62,
     0x4E63, 0x4E64, 0x4E65, 0x4E67, 0x4E68, 0x4E6A, 0x4E6B, 0x4E6C, 0x4E6D, 0x4E6E, 0x4E6F, 0x4E72, 0x4E74, 0x4E75, 0x4E76, 0x4E77,
@@ -8604,13 +8604,13 @@ const std::array<UChar, 23940> gb18030Reference { {
 } };
 #endif
 
-const std::array<UChar, 23940>& gb18030()
+const std::array<char16_t, 23940>& gb18030()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static std::array<UChar, 23940>* array;
+    static std::array<char16_t, 23940>* array;
     static std::once_flag flag;
     std::call_once(flag, [] {
-        array = new std::array<UChar, 23940>;
+        array = new std::array<char16_t, 23940>;
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("gb18030", &error) };
         for (size_t pointer = 0; pointer < 23940; ++pointer) {
@@ -8619,7 +8619,7 @@ const std::array<UChar, 23940>& gb18030()
                 static_cast<uint8_t>(pointer % 190)
             };
             icuInput[1] += (icuInput[1] < 0x3F) ? 0x40 : 0x41;
-            UChar icuOutput { 0 };
+            char16_t icuOutput { 0 };
             ucnv_toUnicode_span(icuConverter.get(), singleElementSpan(icuOutput), std::span { icuInput }, nullptr, true, error);
             ASSERT(!error);
             ASSERT(icuOutput != 0xFFFD);
@@ -8633,7 +8633,7 @@ const std::array<UChar, 23940>& gb18030()
         }
 
 #if !HAVE(GB_18030_2022)
-        static std::array<std::pair<size_t, UChar>, 18> gb18030_2022Differences { {
+        static std::array<std::pair<size_t, char16_t>, 18> gb18030_2022Differences { {
             { 7182, 0xfe10 },
             { 7183, 0xfe12 },
             { 7184, 0xfe11 },

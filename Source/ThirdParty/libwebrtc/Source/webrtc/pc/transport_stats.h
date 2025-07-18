@@ -11,16 +11,17 @@
 #ifndef PC_TRANSPORT_STATS_H_
 #define PC_TRANSPORT_STATS_H_
 
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/dtls_transport_interface.h"
-#include "p2p/base/dtls_transport_internal.h"
 #include "p2p/base/ice_transport_internal.h"
-#include "p2p/base/port.h"
 #include "rtc_base/ssl_stream_adapter.h"
 
-namespace cricket {
+namespace webrtc {
 
 struct TransportChannelStats {
   TransportChannelStats();
@@ -29,13 +30,13 @@ struct TransportChannelStats {
 
   int component = 0;
   int ssl_version_bytes = 0;
-  int srtp_crypto_suite = rtc::kSrtpInvalidCryptoSuite;
-  int ssl_cipher_suite = rtc::kTlsNullWithNullNull;
+  int srtp_crypto_suite = webrtc::kSrtpInvalidCryptoSuite;
+  int ssl_cipher_suite = webrtc::kTlsNullWithNullNull;
   std::optional<absl::string_view> tls_cipher_suite_name;
-  std::optional<rtc::SSLRole> dtls_role;
-  webrtc::DtlsTransportState dtls_state = webrtc::DtlsTransportState::kNew;
+  std::optional<SSLRole> dtls_role;
+  DtlsTransportState dtls_state = DtlsTransportState::kNew;
   IceTransportStats ice_transport_stats;
-  uint16_t ssl_peer_signature_algorithm = rtc::kSslSignatureAlgorithmUnknown;
+  uint16_t ssl_peer_signature_algorithm = webrtc::kSslSignatureAlgorithmUnknown;
 };
 
 // Information about all the channels of a transport.
@@ -48,6 +49,16 @@ struct TransportStats {
   TransportChannelStatsList channel_stats;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::TransportChannelStats;
+using ::webrtc::TransportChannelStatsList;
+using ::webrtc::TransportStats;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // PC_TRANSPORT_STATS_H_

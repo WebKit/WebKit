@@ -38,6 +38,7 @@ rtc_library("frame_delay_variation_kalman_filter") {
   deps = [
     "../../../api/units:data_size",
     "../../../api/units:time_delta",
+    "../../../rtc_base:checks",
   ]
   visibility = [
     ":jitter_estimator",
@@ -76,6 +77,7 @@ rtc_library("rtt_filter") {
   ]
   deps = [
     "../../../api/units:time_delta",
+    "../../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
@@ -87,9 +89,11 @@ rtc_library("timestamp_extrapolator") {
     "timestamp_extrapolator.h",
   ]
   deps = [
+    "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../modules:module_api_public",
     "../../../rtc_base:rtc_numerics",
+    "../../../system_wrappers:metrics",
   ]
 }
 
@@ -103,8 +107,10 @@ rtc_library("timing_module") {
     ":timestamp_extrapolator",
     "../../../api:field_trials_view",
     "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../api/video:video_frame",
     "../../../api/video:video_rtp_headers",
+    "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:macromagic",
     "../../../rtc_base:rtc_numerics",
@@ -139,6 +145,7 @@ rtc_library("timing_unittests") {
     "../../../api/units:timestamp",
     "../../../rtc_base:histogram_percentile_counter",
     "../../../rtc_base:timeutils",
+    "../../../system_wrappers:metrics",
     "../../../system_wrappers:system_wrappers",
     "../../../test:scoped_key_value_config",
     "../../../test:test_support",

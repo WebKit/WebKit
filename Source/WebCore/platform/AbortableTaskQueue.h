@@ -174,7 +174,7 @@ private:
     //   Background threads: read only. Reads must be made with the lock.
     class Task : public ThreadSafeRefCounted<Task> {
         WTF_MAKE_NONCOPYABLE(Task);
-        WTF_MAKE_FAST_ALLOCATED(Task);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Task);
     public:
         static Ref<Task> create(AbortableTaskQueue* taskQueue, Function<void()>&& taskCallback)
         {
@@ -221,7 +221,7 @@ private:
         ASSERT(m_lock.isHeld());
         Ref<Task> task = Task::create(this, WTFMove(callback));
         m_channel.append(task.copyRef());
-        RunLoop::protectedMain()->dispatch([task = WTFMove(task)]() { task->dispatch(); });
+        RunLoop::mainSingleton().dispatch([task = WTFMove(task)]() { task->dispatch(); });
     }
 
     void cancelAllTasks() WTF_REQUIRES_LOCK(m_lock)

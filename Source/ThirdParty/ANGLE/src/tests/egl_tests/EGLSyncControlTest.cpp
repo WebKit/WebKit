@@ -106,7 +106,7 @@ class EGLSyncControlTest : public testing::Test
         mOSWindow->setVisible(true);
 
         // Create an EGLDisplay using the EGLDevice
-        mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttribs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);

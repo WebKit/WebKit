@@ -547,7 +547,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     }
 
     RefPtr frame = m_frame.get();
-    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
+    lazyInitialize(m_accessibilityObject, adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]));
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
     if (isFullFramePlugin() && frame->isMainFrame())
         [m_accessibilityObject setParent:frame->page()->accessibilityRemoteObject()];
@@ -1430,10 +1430,10 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
     return true;
 }
 
-CGRect PDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+CGRect PDFPlugin::pluginBoundsForAnnotation(PDFAnnotation *annotation) const
 {
     auto documentSize = contentSizeRespectingZoom();
-    auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation.get()];
+    auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation];
     annotationBounds.origin.y = documentSize.height - annotationBounds.origin.y - annotationBounds.size.height - m_scrollOffset.height();
     annotationBounds.origin.x -= m_scrollOffset.width();
     return annotationBounds;
@@ -1605,7 +1605,7 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
     bool atScrollTop = !scrollPosition().y();
     bool atScrollBottom = scrollPosition().y() == maximumScrollPosition().y();
 
-    bool inMomentumScroll = event.momentumPhase() != WebWheelEvent::PhaseNone;
+    bool inMomentumScroll = event.isMomentumEvent();
 
     int scrollMagnitudeThresholdForPageFlip = defaultScrollMagnitudeThresholdForPageFlip;
 

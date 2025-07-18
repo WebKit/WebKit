@@ -332,15 +332,15 @@ Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
     return create(span16().subspan(start, length));
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 char32_t StringImpl::characterStartingAt(unsigned i)
 {
     if (is8Bit())
-        return m_data8[i];
-    if (U16_IS_SINGLE(m_data16[i]))
-        return m_data16[i];
-    if (i + 1 < m_length && U16_IS_LEAD(m_data16[i]) && U16_IS_TRAIL(m_data16[i + 1]))
-        return U16_GET_SUPPLEMENTARY(m_data16[i], m_data16[i + 1]);
+        return span8()[i];
+    auto span = span16();
+    if (U16_IS_SINGLE(span[i]))
+        return span[i];
+    if (i + 1 < m_length && U16_IS_LEAD(span[i]) && U16_IS_TRAIL(span[i + 1]))
+        return U16_GET_SUPPLEMENTARY(span[i], span[i + 1]);
     return 0;
 }
 
@@ -352,8 +352,9 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
 
     // First scan the string for uppercase and non-ASCII characters:
     if (is8Bit()) {
-        for (unsigned i = 0; i < m_length; ++i) {
-            LChar character = m_data8[i];
+        auto span = span8();
+        for (unsigned i = 0; i < span.size(); ++i) {
+            LChar character = span[i];
             if (!isASCII(character) || isASCIIUpper(character)) [[unlikely]]
                 return convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(i);
         }
@@ -364,8 +365,9 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     bool noUpper = true;
     unsigned ored = 0;
 
-    for (unsigned i = 0; i < m_length; ++i) {
-        char16_t character = m_data16[i];
+    auto span = span16();
+    for (unsigned i = 0; i < span.size(); ++i) {
+        char16_t character = span[i];
         if (isASCIIUpper(character)) [[unlikely]]
             noUpper = false;
         ored |= character;
@@ -377,8 +379,8 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     if (!(ored & ~0x7F)) {
         std::span<char16_t> data16;
         auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
-        for (unsigned i = 0; i < m_length; ++i)
-            data16[i] = toASCIILower(m_data16[i]);
+        for (unsigned i = 0; i < span.size(); ++i)
+            data16[i] = toASCIILower(span[i]);
         return newImpl;
     }
 
@@ -409,14 +411,15 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingInde
     std::span<LChar> data8;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
+    auto span = span8();
     for (unsigned i = 0; i < failingIndex; ++i) {
-        ASSERT(isASCII(m_data8[i]));
-        ASSERT(!isASCIIUpper(m_data8[i]));
-        data8[i] = m_data8[i];
+        ASSERT(isASCII(span[i]));
+        ASSERT(!isASCIIUpper(span[i]));
+        data8[i] = span[i];
     }
 
-    for (unsigned i = failingIndex; i < m_length; ++i) {
-        LChar character = m_data8[i];
+    for (unsigned i = failingIndex; i < span.size(); ++i) {
+        LChar character = span[i];
         if (isASCII(character))
             data8[i] = toASCIILower(character);
         else {
@@ -440,8 +443,9 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
 
     // First scan the string for uppercase and non-ASCII characters:
     if (is8Bit()) {
-        for (unsigned i = 0; i < m_length; ++i) {
-            LChar character = m_data8[i];
+        auto span = span8();
+        for (unsigned i = 0; i < span.size(); ++i) {
+            LChar character = span[i];
             if (!isASCII(character) || isASCIILower(character)) [[unlikely]]
                 return convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(i);
         }
@@ -456,16 +460,17 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     std::span<LChar> destination;
     auto newImpl = createUninitialized(m_length, destination);
 
+    auto span = span8();
     for (unsigned i = 0; i < failingIndex; ++i) {
-        ASSERT(isASCII(m_data8[i]));
-        ASSERT(!isASCIILower(m_data8[i]));
-        destination[i] = m_data8[i];
+        ASSERT(isASCII(span[i]));
+        ASSERT(!isASCIILower(span[i]));
+        destination[i] = span[i];
     }
 
     // Do a faster loop for the case where all the characters are ASCII.
     unsigned ored = 0;
-    for (unsigned i = failingIndex; i < m_length; ++i) {
-        LChar character = m_data8[i];
+    for (unsigned i = failingIndex; i < span.size(); ++i) {
+        LChar character = span[i];
         ored |= character;
         destination[i] = toASCIIUpper(character);
     }
@@ -478,8 +483,8 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     // There are two special cases.
     //  1. Some Latin-1 characters when converted to upper case are 16 bit characters.
     //  2. Lower case sharp-S converts to "SS" (two characters)
-    for (unsigned i = 0; i < m_length; ++i) {
-        LChar character = m_data8[i];
+    for (unsigned i = 0; i < span.size(); ++i) {
+        LChar character = span[i];
         if (character == smallLetterSharpS) [[unlikely]]
             ++numberSharpSCharacters;
         ASSERT(u_toupper(character) <= 0xFFFF);
@@ -500,8 +505,8 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     newImpl = createUninitialized(m_length + numberSharpSCharacters, destination);
 
     size_t destinationIndex = 0;
-    for (unsigned i = 0; i < m_length; ++i) {
-        LChar character = m_data8[i];
+    for (unsigned i = 0; i < span.size(); ++i) {
+        LChar character = span[i];
         if (character == smallLetterSharpS) {
             destination[destinationIndex++] = 'S';
             destination[destinationIndex++] = 'S';
@@ -513,7 +518,6 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
 
     return newImpl;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleUpconvert()
 {
@@ -641,13 +645,13 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& local
     return newString;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 Ref<StringImpl> StringImpl::foldCase()
 {
     if (is8Bit()) {
         unsigned failingIndex;
-        for (unsigned i = 0; i < m_length; ++i) {
-            auto character = m_data8[i];
+        auto span = span8();
+        for (unsigned i = 0; i < span.size(); ++i) {
+            auto character = span[i];
             if (!isASCII(character) || isASCIIUpper(character)) [[unlikely]] {
                 failingIndex = i;
                 goto SlowPath;
@@ -658,8 +662,8 @@ Ref<StringImpl> StringImpl::foldCase()
 
 SlowPath:
         bool need16BitCharacters = false;
-        for (unsigned i = failingIndex; i < m_length; ++i) {
-            auto character = m_data8[i];
+        for (unsigned i = failingIndex; i < span.size(); ++i) {
+            auto character = span[i];
             if (character == 0xB5 || character == 0xDF) {
                 need16BitCharacters = true;
                 break;
@@ -669,9 +673,9 @@ SlowPath:
         if (!need16BitCharacters) {
             std::span<LChar> data8;
             auto folded = createUninitializedInternalNonEmpty(m_length, data8);
-            copyCharacters(data8, { m_data8, failingIndex });
-            for (unsigned i = failingIndex; i < m_length; ++i) {
-                auto character = m_data8[i];
+            copyCharacters(data8, span.first(failingIndex));
+            for (unsigned i = failingIndex; i < span.size(); ++i) {
+                auto character = span[i];
                 if (isASCII(character))
                     data8[i] = toASCIILower(character);
                 else {
@@ -685,8 +689,9 @@ SlowPath:
         // FIXME: Unclear why we use goto in the 8-bit case, and a different approach in the 16-bit case.
         bool noUpper = true;
         unsigned ored = 0;
-        for (unsigned i = 0; i < m_length; ++i) {
-            char16_t character = m_data16[i];
+        auto span = span16();
+        for (unsigned i = 0; i < span.size(); ++i) {
+            char16_t character = span[i];
             if (isASCIIUpper(character)) [[unlikely]]
                 noUpper = false;
             ored |= character;
@@ -698,8 +703,8 @@ SlowPath:
             }
             std::span<char16_t> data16;
             auto folded = createUninitializedInternalNonEmpty(m_length, data16);
-            for (unsigned i = 0; i < m_length; ++i)
-                data16[i] = toASCIILower(m_data16[i]);
+            for (unsigned i = 0; i < span.size(); ++i)
+                data16[i] = toASCIILower(span[i]);
             return folded;
         }
     }
@@ -724,7 +729,6 @@ SlowPath:
         return *this;
     return folded;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template<StringImpl::CaseConvertType type, typename CharacterType>
 ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, std::span<const CharacterType> data)
@@ -769,17 +773,17 @@ Ref<StringImpl> StringImpl::convertToASCIIUppercase()
     return convertASCIICase<CaseConvertType::Upper>(*this, span16());
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatchedCharacters(CodeUnitPredicate predicate)
+template<typename CharacterType, typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatchedCharacters(CodeUnitPredicate predicate)
 {
-    if (!m_length)
+    auto span = StringImpl::span<CharacterType>();
+    if (span.empty())
         return *this;
 
     unsigned start = 0;
-    unsigned end = m_length - 1;
+    unsigned end = span.size() - 1;
     
     // skip white space from start
-    while (start <= end && predicate(is8Bit() ? m_data8[start] : m_data16[start]))
+    while (start <= end && predicate(span[start]))
         ++start;
     
     // only white space
@@ -787,23 +791,21 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatc
         return *empty();
 
     // skip white space from end
-    while (end && predicate(is8Bit() ? m_data8[end] : m_data16[end]))
+    while (end && predicate(span[end]))
         --end;
 
-    if (!start && end == m_length - 1)
+    if (!start && end == span.size() - 1)
         return *this;
-    if (is8Bit())
-        return create(std::span { m_data8 + start, end + 1 - start });
-    return create(std::span { m_data16 + start, end + 1 - start });
+    return create(span.subspan(start, end + 1 - start));
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Ref<StringImpl> StringImpl::trim(CodeUnitMatchFunction predicate)
 {
-    return trimMatchedCharacters(predicate);
+    if (is8Bit())
+        return trimMatchedCharacters<LChar>(predicate);
+    return trimMatchedCharacters<char16_t>(predicate);
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
 {
     StringBuffer<CharacterType> data(m_length);
@@ -812,7 +814,7 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
     unsigned outc = 0;
     bool changedToSpace = false;
     
-    auto* to = data.characters();
+    auto to = data.span();
     
     while (true) {
         while (!from.empty() && predicate(from.front())) {
@@ -837,7 +839,6 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
 
     return adopt(WTFMove(data));
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace)
 {
@@ -860,7 +861,6 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(span16(), ok);
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
 {
     ASSERT(!matchString.empty());
@@ -889,7 +889,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
         }
 
         size_t i = 0;
-        while (searchHash != matchHash || !equal(searchCharacters.data() + i, matchString)) {
+        while (searchHash != matchHash || !equal(searchCharacters.subspan(i).data(), matchString)) {
             if (i == delta)
                 return notFound;
             searchHash += searchCharacters[i + matchString.size()];
@@ -909,7 +909,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
     }
 
     size_t i = 0;
-    while (searchHash != matchHash || !equal(searchCharacters.data() + i, matchString)) {
+    while (searchHash != matchHash || !equal(searchCharacters.subspan(i).data(), matchString)) {
         if (i == delta)
             return notFound;
         searchHash += searchCharacters[i + matchString.size()];
@@ -918,7 +918,6 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
     }
     return start + i;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 size_t StringImpl::reverseFind(std::span<const LChar> matchString, size_t start)
 {

@@ -48,6 +48,13 @@ setTimeout(() => {
     });
 });
 
+function shouldBeTainted() {
+    if ($vm.vmTaintedState() == "Untainted")
+        throw new Error("Expected tainted");
+}
+
+$vm.runTaintedString(`setTimeout(shouldBeTainted.bind("foo"), 0);`);
+
 setTimeout(() => {
     // Test JSONP code paths, which can create code via setters.
     check("Untainted");

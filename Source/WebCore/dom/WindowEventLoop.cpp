@@ -292,7 +292,7 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
     // FIXME: Also bail out from the task loop in EventLoop::run().
     threadGlobalData().threadTimers().breakFireLoopForRenderingUpdate();
 
-    RunLoop::protectedMain()->suspendFunctionDispatchForCurrentCycle();
+    RunLoop::mainSingleton().suspendFunctionDispatchForCurrentCycle();
 #endif
 }
 

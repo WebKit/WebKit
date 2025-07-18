@@ -17,14 +17,14 @@
 
 namespace webrtc {
 
-bool IsRtcpPacket(rtc::ArrayView<const uint8_t> packet);
-bool IsRtpPacket(rtc::ArrayView<const uint8_t> packet);
+bool IsRtcpPacket(ArrayView<const uint8_t> packet);
+bool IsRtpPacket(ArrayView<const uint8_t> packet);
 
 // Returns base rtp header fields of the rtp packet.
 // Behaviour is undefined when `!IsRtpPacket(rtp_packet)`.
-int ParseRtpPayloadType(rtc::ArrayView<const uint8_t> rtp_packet);
-uint16_t ParseRtpSequenceNumber(rtc::ArrayView<const uint8_t> rtp_packet);
-uint32_t ParseRtpSsrc(rtc::ArrayView<const uint8_t> rtp_packet);
+int ParseRtpPayloadType(ArrayView<const uint8_t> rtp_packet);
+uint16_t ParseRtpSequenceNumber(ArrayView<const uint8_t> rtp_packet);
+uint32_t ParseRtpSsrc(ArrayView<const uint8_t> rtp_packet);
 
 }  // namespace webrtc
 

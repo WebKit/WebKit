@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IntegrityPolicy.h"
 
+#include "Document.h"
 #include "IntegrityPolicyViolationReportBody.h"
 #include "RFC8941.h"
 #include "Report.h"

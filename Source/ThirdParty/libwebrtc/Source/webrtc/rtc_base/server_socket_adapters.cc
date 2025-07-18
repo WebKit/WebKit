@@ -14,7 +14,7 @@
 
 #include "rtc_base/byte_buffer.h"
 
-namespace rtc {
+namespace webrtc {
 
 AsyncProxyServerSocket::AsyncProxyServerSocket(Socket* socket,
                                                size_t buffer_size)
@@ -55,4 +55,4 @@ void AsyncSSLServerSocket::ProcessInput(char* data, size_t* len) {
   BufferInput(false);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

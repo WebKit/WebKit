@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GridSpan.h"
 
-#include "GridPosition.h"
+#include "StyleGridPosition.h"
 
 namespace WebCore {
 
@@ -167,8 +167,8 @@ GridSpan::GridSpan(int startLine, int endLine, GridSpanType type)
     }
 #endif
 
-    m_startLine = std::max(GridPosition::min(), std::min(startLine, GridPosition::max() - 1));
-    m_endLine = std::max(GridPosition::min() + 1, std::min(endLine, GridPosition::max()));
+    m_startLine = std::max(Style::GridPosition::min(), std::min(startLine, Style::GridPosition::max() - 1));
+    m_endLine = std::max(Style::GridPosition::min() + 1, std::min(endLine, Style::GridPosition::max()));
 }
 
 }

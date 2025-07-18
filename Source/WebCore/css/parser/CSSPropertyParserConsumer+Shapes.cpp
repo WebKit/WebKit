@@ -323,7 +323,7 @@ static std::optional<CSS::Polygon> consumeBasicShapePolygonFunctionParameters(CS
             return { };
     }
 
-    CSS::Polygon::Vertices::Vector vertices;
+    CSS::Polygon::Vertices::Container vertices;
     do {
         auto vertex = consumePair<CSS::Polygon::Vertex>(args, state);
         if (!vertex)
@@ -819,7 +819,7 @@ static std::optional<CSS::Shape> consumeBasicShapeShapeFunctionParameters(CSSPar
     if (!consumeCommaIncludingWhitespace(args))
         return { };
 
-    CSS::Shape::Commands::Vector commands;
+    CSS::Shape::Commands::Container commands;
     do {
         auto command = consumeShapeCommand(args, state);
         if (!command)

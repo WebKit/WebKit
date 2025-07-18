@@ -40,7 +40,7 @@ namespace WebCore {
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String& sdp)
 {
-    cricket::Candidate candidate;
+    webrtc::Candidate candidate;
     if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))
         return { };
 

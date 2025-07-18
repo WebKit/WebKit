@@ -63,7 +63,7 @@ WavBasedSimulator::GetCustomEventChain(absl::string_view filename) {
 
 WavBasedSimulator::WavBasedSimulator(
     const SimulationSettings& settings,
-    absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing)
+    absl_nonnull scoped_refptr<AudioProcessing> audio_processing)
     : AudioProcessingSimulator(settings, std::move(audio_processing)) {
   if (settings_.call_order_input_filename) {
     call_chain_ = WavBasedSimulator::GetCustomEventChain(

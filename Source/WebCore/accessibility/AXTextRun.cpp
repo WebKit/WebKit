@@ -29,16 +29,6 @@
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
 
-#define TEXT_RUN_ASSERT_AND_LOG(assertion, methodName) do { \
-    if (!(assertion)) { \
-        RELEASE_LOG(Accessibility, "[AX Thread Text Run] hit assertion in %" PUBLIC_LOG_STRING, methodName); \
-        ASSERT(assertion); \
-    } \
-} while (0)
-#define TEXT_RUN_ASSERT_NOT_REACHED_AND_LOG(methodName) do { \
-    TEXT_RUN_ASSERT_AND_LOG(false, methodName); \
-} while (0)
-
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -97,7 +87,7 @@ unsigned AXTextRuns::domOffset(unsigned renderedTextOffset) const
     for (size_t i = 0; i < size(); i++) {
         const auto& domOffsets = at(i).domOffsets();
         for (const auto& domOffsetPair : domOffsets) {
-            TEXT_RUN_ASSERT_AND_LOG(domOffsetPair[0] >= previousEndDomOffset, "domOffset");
+            ASSERT(domOffsetPair[0] >= previousEndDomOffset);
             if (domOffsetPair[0] < previousEndDomOffset)
                 return renderedTextOffset;
             // domOffsetPair[0] represents the start DOM offset of this run. Subtracting it
@@ -125,7 +115,7 @@ unsigned AXTextRuns::domOffset(unsigned renderedTextOffset) const
     }
     // We were provided with a rendered-text offset that didn't actually fit into our
     // runs. This should never happen.
-    TEXT_RUN_ASSERT_NOT_REACHED_AND_LOG("renderedTextOffset");
+    ASSERT_NOT_REACHED();
     return renderedTextOffset;
 }
 
@@ -166,7 +156,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
             unsigned measuredWidthInDirection = 0;
             if (i == runIndexOfSmallerOffset) {
                 unsigned offsetOfFirstCharacterInRun = !i ? 0 : runLengthSumTo(i - 1);
-                TEXT_RUN_ASSERT_AND_LOG(smallerOffset >= offsetOfFirstCharacterInRun, "localRect (1)");
+                ASSERT(smallerOffset >= offsetOfFirstCharacterInRun);
                 if (smallerOffset < offsetOfFirstCharacterInRun)
                     smallerOffset = offsetOfFirstCharacterInRun;
                 // Measure the characters in this run (accomplished by smallerOffset - offsetOfFirstCharacterInRun)
@@ -203,7 +193,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
             } else if (i == runIndexOfLargerOffset) {
                 // We're measuring the end of the range, so measure from the first character in the run up to largerOffset.
                 unsigned offsetOfFirstCharacterInRun = !i ? 0 : runLengthSumTo(i - 1);
-                TEXT_RUN_ASSERT_AND_LOG(largerOffset >= offsetOfFirstCharacterInRun, "localRect (3)");
+                ASSERT(largerOffset >= offsetOfFirstCharacterInRun);
                 if (largerOffset < offsetOfFirstCharacterInRun)
                     largerOffset = offsetOfFirstCharacterInRun;
 

@@ -16,11 +16,14 @@
 #include <array>
 #include <cmath>
 #include <cstring>
+#include <numbers>
 #include <numeric>
 #include <string>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
@@ -29,13 +32,13 @@ namespace webrtc {
 namespace {
 
 std::string ProduceDebugText(int sample_rate_hz) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   return ss.Release();
 }
 
-constexpr size_t kDownSamplingFactors[] = {2, 4, 8};
-constexpr float kPi = 3.141592f;
+constexpr size_t kDownSamplingFactors[] = {4, 8};
+constexpr float kPi = std::numbers::pi_v<float>;
 constexpr size_t kNumStartupBlocks = 50;
 constexpr size_t kNumBlocks = 1000;
 
@@ -59,18 +62,17 @@ void ProduceDecimatedSinusoidalOutputPower(int sample_rate_hz,
   for (size_t k = 0; k < kNumBlocks; ++k) {
     std::vector<float> sub_block(sub_block_size);
     decimator.Decimate(
-        rtc::ArrayView<const float>(&input[k * kBlockSize], kBlockSize),
-        sub_block);
+        ArrayView<const float>(&input[k * kBlockSize], kBlockSize), sub_block);
 
     std::copy(sub_block.begin(), sub_block.end(),
               output.begin() + k * sub_block_size);
   }
 
   ASSERT_GT(kNumBlocks, kNumStartupBlocks);
-  rtc::ArrayView<const float> input_to_evaluate(
+  ArrayView<const float> input_to_evaluate(
       &input[kNumStartupBlocks * kBlockSize],
       (kNumBlocks - kNumStartupBlocks) * kBlockSize);
-  rtc::ArrayView<const float> output_to_evaluate(
+  ArrayView<const float> output_to_evaluate(
       &output[kNumStartupBlocks * sub_block_size],
       (kNumBlocks - kNumStartupBlocks) * sub_block_size);
   *input_power =

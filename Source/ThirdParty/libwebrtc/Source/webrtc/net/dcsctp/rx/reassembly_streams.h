@@ -46,7 +46,7 @@ class ReassemblyStreams {
   // message has been assembled as well as indicating from which TSNs this
   // message was assembled from.
   using OnAssembledMessage =
-      std::function<void(rtc::ArrayView<const UnwrappedTSN> tsns,
+      std::function<void(webrtc::ArrayView<const UnwrappedTSN> tsns,
                          DcSctpMessage message)>;
 
   virtual ~ReassemblyStreams() = default;
@@ -71,13 +71,13 @@ class ReassemblyStreams {
   // this operation.
   virtual size_t HandleForwardTsn(
       UnwrappedTSN new_cumulative_ack_tsn,
-      rtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
+      webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
           skipped_streams) = 0;
 
   // Called for incoming (possibly deferred) RE_CONFIG chunks asking for
   // either a few streams, or all streams (when the list is empty) to be
   // reset - to have their next SSN or Message ID to be zero.
-  virtual void ResetStreams(rtc::ArrayView<const StreamID> stream_ids) = 0;
+  virtual void ResetStreams(webrtc::ArrayView<const StreamID> stream_ids) = 0;
 
   virtual HandoverReadinessStatus GetHandoverReadiness() const = 0;
   virtual void AddHandoverState(DcSctpSocketHandoverState& state) = 0;

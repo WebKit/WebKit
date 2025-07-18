@@ -143,7 +143,7 @@ OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes() con
 #if USE(SKIA)
     modes.add(FilterRenderingMode::Accelerated);
 #endif
-#if HAVE(CGSTYLE_CREATE_SHADOW2)
+#if USE(CG)
     if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif

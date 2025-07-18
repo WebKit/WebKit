@@ -274,17 +274,17 @@ bool HTMLScriptElement::isScriptPreventedByAttributes() const
     auto& eventAttribute = attributeWithoutSynchronization(eventAttr);
     auto& forAttribute = attributeWithoutSynchronization(forAttr);
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
-        if (!equalLettersIgnoringASCIICase(StringView(forAttribute).trim(isASCIIWhitespace<UChar>), "window"_s))
+        if (!equalLettersIgnoringASCIICase(StringView(forAttribute).trim(isASCIIWhitespace<char16_t>), "window"_s))
             return true;
 
-        auto eventAttributeView = StringView(eventAttribute).trim(isASCIIWhitespace<UChar>);
+        auto eventAttributeView = StringView(eventAttribute).trim(isASCIIWhitespace<char16_t>);
         if (!equalLettersIgnoringASCIICase(eventAttributeView, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttributeView, "onload()"_s))
             return true;
     }
     return false;
 }
 
-Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
+Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
     return adoptRef(*new HTMLScriptElement(tagQName(), document, false, alreadyStarted()));
 }

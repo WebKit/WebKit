@@ -11304,7 +11304,7 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileStringIndexOf()
     {
-        std::optional<UChar> character;
+        std::optional<char16_t> character;
         String searchString = m_node->child2()->tryGetString(m_graph);
         if (!!searchString) {
             if (searchString.length() == 1)
@@ -20142,6 +20142,7 @@ IGNORE_CLANG_WARNINGS_END
         if (scratchFPRUsage == NeedScratchFPR)
             patchpoint->numFPScratchRegisters++;
         patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedFPRs());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;

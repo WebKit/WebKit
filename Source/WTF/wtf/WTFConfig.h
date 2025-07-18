@@ -91,7 +91,7 @@ struct Config {
     bool isPermanentlyFrozen;
     bool disabledFreezingForTesting;
     bool useSpecialAbortForExtraSecurityImplications;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(ANDROID)
     bool disableForwardingVPrintfStdErrToOSLog;
 #endif
 

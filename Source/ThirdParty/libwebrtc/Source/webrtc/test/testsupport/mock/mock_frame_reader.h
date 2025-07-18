@@ -20,14 +20,14 @@ namespace test {
 
 class MockFrameReader : public FrameReader {
  public:
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, PullFrame, (), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, PullFrame, (int*), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>,
+  MOCK_METHOD(scoped_refptr<I420Buffer>, PullFrame, (), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>, PullFrame, (int*), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>,
               PullFrame,
               (int*, Resolution, Ratio),
               (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, ReadFrame, (int), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>,
+  MOCK_METHOD(scoped_refptr<I420Buffer>, ReadFrame, (int), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>,
               ReadFrame,
               (int, Resolution),
               (override));

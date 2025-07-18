@@ -133,6 +133,7 @@ public:
     WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
     String enterKeyHint() const;
 
+    bool isHiddenUntilFound() const;
     std::optional<Variant<bool, double, String>> hidden() const;
     void setHidden(const std::optional<Variant<bool, double, String>>&);
 

@@ -48,6 +48,7 @@
 #import "WebInspectorInternal.h"
 #import "WebPage.h"
 #import "WebPageGroupProxy.h"
+#import "WebPreferencesDefaultValues.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessDataStoreParameters.h"
 #import "WebProcessMessages.h"
@@ -598,6 +599,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
+#if HAVE(LIQUID_GLASS)
+    setLiquidGlassEnabled(parameters.isLiquidGlassEnabled);
+#endif
+
 #if HAVE(VIDEO_RESTRICTED_DECODING) && (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     if (codeCheckSemaphore)
         dispatch_semaphore_wait(codeCheckSemaphore.get(), DISPATCH_TIME_FOREVER);
@@ -882,10 +887,12 @@ void WebProcess::registerLogHook()
         if (char* messageString = os_log_copy_message_string(msg)) {
             auto logString = unsafeSpan8IncludingNullTerminator(messageString);
             if (logString.size() > logStringMaxSize) {
-                String logStringTruncated = String::fromUTF8(logString).left(logStringMaxSize - 1);
-                logString = byteCast<uint8_t>(logStringTruncated.utf8().spanIncludingNullTerminator());
-            }
-            WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
+                auto mutableLogString = spanConstCast<LChar>(logString);
+                mutableLogString = mutableLogString.subspan(0, logStringMaxSize);
+                mutableLogString.back() = 0;
+                WebProcess::singleton().sendLogOnStream(logChannel, logCategory, mutableLogString, type);
+            } else
+                WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
         }
     }).get());
@@ -1079,11 +1086,11 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
     ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), *auditToken), 0);
 #else
     if (!overrideDisplayName) {
-        RunLoop::protectedMain()->dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
+        RunLoop::mainSingleton().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activeOrigins).get(), nullptr);
         });
     } else {
-        RunLoop::protectedMain()->dispatch([name = overrideDisplayName.createCFString()] {
+        RunLoop::mainSingleton().dispatch([name = overrideDisplayName.createCFString()] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, name.get(), nullptr);
         });
     }
@@ -1657,6 +1664,31 @@ void WebProcess::registerFontMap(HashMap<String, URL>&& fontMap, HashMap<String,
     userInstalledFontMap() = WTFMove(fontMap);
     userInstalledFontFamilyMap() = WTFMove(fontFamilyMap);
 }
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+void WebProcess::initializeAccessibility(Vector<SandboxExtension::Handle>&& handles)
+{
+#if ASSERT_ENABLED
+    static bool hasInitializedAccessibility = false;
+    ASSERT_UNUSED(hasInitializedAccessibility, !hasInitializedAccessibility);
+    hasInitializedAccessibility = true;
+#endif
+
+    RELEASE_LOG(Process, "WebProcess::initializeAccessibility, pid = %d", getpid());
+    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
+        auto extension = SandboxExtension::create(WTFMove(handle));
+        if (extension)
+            extension->consume();
+        return extension;
+    });
+
+    [NSApplication _accessibilityInitialize];
+
+    for (auto& extension : extensions)
+        extension->revoke();
+}
+#endif
+
 
 } // namespace WebKit
 

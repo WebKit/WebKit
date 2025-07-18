@@ -92,15 +92,15 @@ SpectralCorrelator::SpectralCorrelator()
 SpectralCorrelator::~SpectralCorrelator() = default;
 
 void SpectralCorrelator::ComputeAutoCorrelation(
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<float, kOpusBands24kHz> auto_corr) const {
+    ArrayView<const float> x,
+    ArrayView<float, kOpusBands24kHz> auto_corr) const {
   ComputeCrossCorrelation(x, x, auto_corr);
 }
 
 void SpectralCorrelator::ComputeCrossCorrelation(
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<const float> y,
-    rtc::ArrayView<float, kOpusBands24kHz> cross_corr) const {
+    ArrayView<const float> x,
+    ArrayView<const float> y,
+    ArrayView<float, kOpusBands24kHz> cross_corr) const {
   RTC_DCHECK_EQ(x.size(), kFrameSize20ms24kHz);
   RTC_DCHECK_EQ(x.size(), y.size());
   RTC_DCHECK_EQ(x[1], 0.f) << "The Nyquist coefficient must be zeroed.";
@@ -123,8 +123,8 @@ void SpectralCorrelator::ComputeCrossCorrelation(
 }
 
 void ComputeSmoothedLogMagnitudeSpectrum(
-    rtc::ArrayView<const float> bands_energy,
-    rtc::ArrayView<float, kNumBands> log_bands_energy) {
+    ArrayView<const float> bands_energy,
+    ArrayView<float, kNumBands> log_bands_energy) {
   RTC_DCHECK_LE(bands_energy.size(), kNumBands);
   constexpr float kOneByHundred = 1e-2f;
   constexpr float kLogOneByHundred = -2.f;
@@ -138,7 +138,7 @@ void ComputeSmoothedLogMagnitudeSpectrum(
     return x;
   };
   // Smoothing over the bands for which the band energy is defined.
-  for (int i = 0; rtc::SafeLt(i, bands_energy.size()); ++i) {
+  for (int i = 0; SafeLt(i, bands_energy.size()); ++i) {
     log_bands_energy[i] = smooth(std::log10(kOneByHundred + bands_energy[i]));
   }
   // Smoothing over the remaining bands (zero energy).
@@ -158,9 +158,9 @@ std::array<float, kNumBands * kNumBands> ComputeDctTable() {
   return dct_table;
 }
 
-void ComputeDct(rtc::ArrayView<const float> in,
-                rtc::ArrayView<const float, kNumBands * kNumBands> dct_table,
-                rtc::ArrayView<float> out) {
+void ComputeDct(ArrayView<const float> in,
+                ArrayView<const float, kNumBands * kNumBands> dct_table,
+                ArrayView<float> out) {
   // DCT scaling factor - i.e., sqrt(2 / kNumBands).
   constexpr float kDctScalingFactor = 0.301511345f;
   constexpr float kDctScalingFactorError =
@@ -174,9 +174,9 @@ void ComputeDct(rtc::ArrayView<const float> in,
   RTC_DCHECK_LE(in.size(), kNumBands);
   RTC_DCHECK_LE(1, out.size());
   RTC_DCHECK_LE(out.size(), in.size());
-  for (int i = 0; rtc::SafeLt(i, out.size()); ++i) {
+  for (int i = 0; SafeLt(i, out.size()); ++i) {
     out[i] = 0.f;
-    for (int j = 0; rtc::SafeLt(j, in.size()); ++j) {
+    for (int j = 0; SafeLt(j, in.size()); ++j) {
       out[i] += in[j] * dct_table[j * kNumBands + i];
     }
     // TODO(bugs.webrtc.org/10480): Scaling factor in the DCT table.

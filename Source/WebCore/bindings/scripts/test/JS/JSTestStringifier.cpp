@@ -182,7 +182,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestStringifierPrototypeFunction_toString, (JSGlobalO
 
 JSC::GCClient::IsoSubspace* JSTestStringifier::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestStringifier, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestStringifier, UseCustomHeapCellType::No>(vm, "JSTestStringifier"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestStringifier.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestStringifier.get(); },

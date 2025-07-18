@@ -11,6 +11,8 @@
 
 #include <math.h>
 
+#include <numbers>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -42,8 +44,8 @@ uint32_t Random::Rand(uint32_t low, uint32_t high) {
 int32_t Random::Rand(int32_t low, int32_t high) {
   RTC_DCHECK(low <= high);
   const int64_t low_i64{low};
-  return rtc::dchecked_cast<int32_t>(
-      Rand(rtc::dchecked_cast<uint32_t>(high - low_i64)) + low_i64);
+  return dchecked_cast<int32_t>(Rand(dchecked_cast<uint32_t>(high - low_i64)) +
+                                low_i64);
 }
 
 template <>
@@ -71,7 +73,7 @@ double Random::Gaussian(double mean, double standard_deviation) {
   // interval (0, 1]. Note that we rely on NextOutput to generate integers
   // in the range [1, 2^64-1]. Normally this behavior is a bit frustrating,
   // but here it is exactly what we need.
-  const double kPi = 3.14159265358979323846;
+  const double kPi = std::numbers::pi;
   double u1 = static_cast<double>(NextOutput()) /
               static_cast<double>(0xFFFFFFFFFFFFFFFFull);
   double u2 = static_cast<double>(NextOutput()) /

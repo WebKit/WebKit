@@ -71,11 +71,6 @@ template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> stru
         );
     }
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const NumberOrPercentage& value) { return value.isEmpty(); }
-        static NumberOrPercentage emptyValue() { return NumberOrPercentage(CSS::PrimitiveDataEmptyToken()); }
-    };
-
 private:
     NumberOrPercentage(CSS::PrimitiveDataEmptyToken token)
         : value { WTFMove(token) }
@@ -168,5 +163,15 @@ template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentageRes
 
 } // namespace Style
 } // namespace WebCore
+
+namespace WTF {
+
+template<auto nR, auto pR, typename V>
+struct MarkableTraits<WebCore::Style::NumberOrPercentage<nR, pR, V>> {
+    static bool isEmptyValue(const WebCore::Style::NumberOrPercentage<nR, pR, V>& value) { return value.isEmpty(); }
+    static WebCore::Style::NumberOrPercentage<nR, pR, V> emptyValue() { return WebCore::Style::NumberOrPercentage<nR, pR, V>(WebCore::CSS::PrimitiveDataEmptyToken()); }
+};
+
+}
 
 template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::NumberOrPercentage<nR, pR, V>> = true;

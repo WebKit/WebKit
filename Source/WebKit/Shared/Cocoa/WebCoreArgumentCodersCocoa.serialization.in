@@ -153,31 +153,31 @@ header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::ParagraphStyleTextList {
     WebCore::AttributedStringTextListID thisID
     String markerFormat;
-    [Validator='startingItemNumber >= 0'] long startingItemNumber;
+    [Validator='startingItemNumber >= 0'] int64_t startingItemNumber;
 }
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::ParagraphStyleCommonTableAttributes {
-    CGFloat width;
-    CGFloat minimumWidth;
-    CGFloat maximumWidth;
-    CGFloat minimumHeight;
-    CGFloat maximumHeight;
+    double width;
+    double minimumWidth;
+    double maximumWidth;
+    double minimumHeight;
+    double maximumHeight;
 
-    CGFloat paddingMinXEdge;
-    CGFloat paddingMinYEdge;
-    CGFloat paddingMaxXEdge;
-    CGFloat paddingMaxYEdge;
+    double paddingMinXEdge;
+    double paddingMinYEdge;
+    double paddingMaxXEdge;
+    double paddingMaxYEdge;
 
-    CGFloat borderMinXEdge;
-    CGFloat borderMinYEdge;
-    CGFloat borderMaxXEdge;
-    CGFloat borderMaxYEdge;
+    double borderMinXEdge;
+    double borderMinYEdge;
+    double borderMaxXEdge;
+    double borderMaxYEdge;
 
-    CGFloat marginMinXEdge;
-    CGFloat marginMinYEdge;
-    CGFloat marginMaxXEdge;
-    CGFloat marginMaxYEdge;
+    double marginMinXEdge;
+    double marginMinYEdge;
+    double marginMaxXEdge;
+    double marginMaxYEdge;
 
     RetainPtr<WebCore::CocoaColor> backgroundColor;
     RetainPtr<WebCore::CocoaColor> borderMinXEdgeColor;
@@ -190,17 +190,17 @@ header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTableBlock : WebCore::ParagraphStyleCommonTableAttributes {
     WebCore::AttributedStringTextTableBlockID thisID;
     WebCore::AttributedStringTextTableID tableID;
-    [Validator='startingRow >= 0'] long startingRow;
-    [Validator='rowSpan >= 0'] long rowSpan;
-    [Validator='startingColumn >= 0'] long startingColumn;
-    [Validator='columnSpan >= 0'] long columnSpan;
+    [Validator='startingRow >= 0'] int64_t startingRow;
+    [Validator='rowSpan >= 0'] int64_t rowSpan;
+    [Validator='startingColumn >= 0'] int64_t startingColumn;
+    [Validator='columnSpan >= 0'] int64_t columnSpan;
     WebCore::TextTableBlockVerticalAlignment verticalAlignment;
 };
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTable : WebCore::ParagraphStyleCommonTableAttributes {
     WebCore::AttributedStringTextTableID thisID;
-    unsigned long numberOfColumns;
+    uint64_t numberOfColumns;
     WebCore::TextTableLayoutAlgorithm layout;
     bool collapsesBorders;
     bool hidesEmptyCells;
@@ -208,7 +208,7 @@ header: <WebCore/AttributedString.h>
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTab {
-    CGFloat location;
+    double location;
     WebCore::ParagraphStyleAlignment alignment;
 }
 
@@ -218,11 +218,11 @@ header: <WebCore/AttributedString.h>
     WebCore::ParagraphStyleAlignment alignment;
     WebCore::ParagraphStyleWritingDirection writingDirection;
     float hyphenationFactor;
-    CGFloat firstLineHeadIndent;
-    CGFloat headIndent;
-    [Validator='headerLevel >= 0'] long headerLevel;
-    CGFloat tailIndent;
-    CGFloat paragraphSpacing;
+    double firstLineHeadIndent;
+    double headIndent;
+    [Validator='headerLevel >= 0'] int64_t headerLevel;
+    double tailIndent;
+    double paragraphSpacing;
     Vector<WebCore::AttributedStringTextTableBlockID> textTableBlockIDs;
     Vector<WebCore::AttributedStringTextListID> textListIDs;
     Vector<WebCore::TextTableBlock> textTableBlocks;
@@ -249,8 +249,8 @@ header: <WebCore/AttributedString.h>
 }
 
 [Nested] struct WebCore::AttributedString::Range {
-    size_t location
-    size_t length
+    uint64_t location
+    uint64_t length
 };
 
 struct WebCore::AttributedString {
@@ -518,7 +518,6 @@ UIColor wrapped by CoreIPCColor
 
 using CFTimeInterval = double
 using CGGlyph = uint16_t
-using NSRect = CGRect
 
 #if ENABLE(WRITING_TOOLS)
 using WebCore::WritingTools::TextSuggestion::ID = WTF::UUID

@@ -926,9 +926,10 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         return true;
     }
 
-    // Don't expose headers as elements; instead expose their children as elements, with the header trait (unless they have no children)
+    // Don't expose headers as elements; instead expose their children as elements, with the header trait (unless they have no children).
+    // Only expose a heading with no children if it has an accessibility label, indicating that it is using aria-label or aria-labelledby.
     case AccessibilityRole::Heading:
-        return ![self accessibilityElementCount];
+        return ![self accessibilityElementCount] && [self accessibilityLabel] != nil;
     case AccessibilityRole::Video:
         return [self accessibilityIsWebInteractiveVideo];
 

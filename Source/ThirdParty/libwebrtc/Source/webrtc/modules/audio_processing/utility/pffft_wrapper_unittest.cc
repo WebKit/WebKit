@@ -40,8 +40,8 @@ double frand() {
   return std::rand() / static_cast<double>(RAND_MAX);
 }
 
-void ExpectArrayViewsEquality(rtc::ArrayView<const float> a,
-                              rtc::ArrayView<const float> b) {
+void ExpectArrayViewsEquality(ArrayView<const float> a,
+                              ArrayView<const float> b) {
   ASSERT_EQ(a.size(), b.size());
   for (size_t i = 0; i < a.size(); ++i) {
     SCOPED_TRACE(i);
@@ -74,8 +74,8 @@ void PffftValidateWrapper(size_t fft_size, bool complex_fft) {
   auto out_wrapper = pffft_wrapper.CreateBuffer();
 
   // Input and output buffers views.
-  rtc::ArrayView<float> in_view(in, num_floats);
-  rtc::ArrayView<float> out_view(out, num_floats);
+  ArrayView<float> in_view(in, num_floats);
+  ArrayView<float> out_view(out, num_floats);
   auto in_wrapper_view = in_wrapper->GetView();
   EXPECT_EQ(in_wrapper_view.size(), num_floats);
   auto out_wrapper_view = out_wrapper->GetConstView();

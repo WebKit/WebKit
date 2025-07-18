@@ -89,6 +89,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/PointerCharacteristics.h>
+#import <WebCore/Quirks.h>
 #import <WebCore/RemoteFrameView.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
@@ -177,6 +178,8 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     getPlatformEditorStateCommon(frame, result);
 
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && frame.protectedEditor()->canEnableAutomaticSpellingCorrection();
+    RefPtr document = frame.document();
+    result.inputMethodUsesCorrectKeyEventOrder = frame.settings().inputMethodUsesCorrectKeyEventOrder() || (document && document->quirks().inputMethodUsesCorrectKeyEventOrder());
 
     if (!result.hasPostLayoutAndVisualData())
         return;
@@ -270,23 +273,27 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     Ref editor = frame->editor();
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
-        if (commands[i].commandName == "insertText:"_s) {
+        auto& currentCommand = commands[i];
+        if (currentCommand.commandName == "insertText:"_s) {
             if (editor->hasComposition()) {
                 eventWasHandled = true;
-                editor->confirmComposition(commands[i].text);
+                editor->confirmComposition(currentCommand.text);
             } else {
                 if (!editor->canEdit())
                     continue;
 
                 // An insertText: might be handled by other responders in the chain if we don't handle it.
                 // One example is space bar that results in scrolling down the page.
-                eventWasHandled |= editor->insertText(commands[i].text, event);
+                eventWasHandled |= editor->insertText(currentCommand.text, event);
             }
+        } else if (currentCommand.commandName == "setMarkedText:"_s) {
+            setCompositionAsync(currentCommand.text, currentCommand.underlines, currentCommand.highlights, { },
+                EditingRange { currentCommand.selectedRange }, EditingRange { currentCommand.replacementRange });
         } else {
-            if (commands[i].commandName == "scrollPageDown:"_s || commands[i].commandName == "scrollPageUp:"_s)
+            if (currentCommand.commandName == "scrollPageDown:"_s || currentCommand.commandName == "scrollPageUp:"_s)
                 frame->eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
 
-            Editor::Command command = editor->command(commandNameForSelectorName(commands[i].commandName));
+            Editor::Command command = editor->command(commandNameForSelectorName(currentCommand.commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
@@ -1066,24 +1073,6 @@ void WebPage::removePDFHUD(PDFPluginBase& plugin)
 }
 
 #endif // ENABLE(PDF_PLUGIN)
-
-#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
-void WebPage::initializeAccessibility(Vector<SandboxExtension::Handle>&& handles)
-{
-    RELEASE_LOG(Process, "WebPage::initializeAccessibility, pid = %d", getpid());
-    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
-        auto extension = SandboxExtension::create(WTFMove(handle));
-        if (extension)
-            extension->consume();
-        return extension;
-    });
-
-    [NSApplication _accessibilityInitialize];
-
-    for (auto& extension : extensions)
-        extension->revoke();
-}
-#endif
 
 } // namespace WebKit
 

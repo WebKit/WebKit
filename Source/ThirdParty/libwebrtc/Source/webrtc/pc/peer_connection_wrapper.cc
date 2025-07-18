@@ -12,30 +12,45 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "api/data_channel_interface.h"
 #include "api/function_view.h"
-#include "api/set_remote_description_observer_interface.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/media_stream_interface.h"
+#include "api/media_types.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
+#include "api/test/rtc_error_matchers.h"
+#include "pc/peer_connection.h"
+#include "pc/peer_connection_proxy.h"
 #include "pc/sdp_utils.h"
 #include "pc/test/fake_video_track_source.h"
+#include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 
+using ::testing::Eq;
 using RTCOfferAnswerOptions = PeerConnectionInterface::RTCOfferAnswerOptions;
 
-namespace {
-const uint32_t kDefaultTimeout = 10000U;
-}
-
 PeerConnectionWrapper::PeerConnectionWrapper(
-    rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
-    rtc::scoped_refptr<PeerConnectionInterface> pc,
+    scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
+    scoped_refptr<PeerConnectionInterface> pc,
     std::unique_ptr<MockPeerConnectionObserver> observer)
     : pc_factory_(std::move(pc_factory)),
       observer_(std::move(observer)),
@@ -61,6 +76,13 @@ PeerConnectionInterface* PeerConnectionWrapper::pc() {
 
 MockPeerConnectionObserver* PeerConnectionWrapper::observer() {
   return observer_.get();
+}
+
+PeerConnection* PeerConnectionWrapper::GetInternalPeerConnection() {
+  auto* pci =
+      static_cast<PeerConnectionProxyWithInternal<PeerConnectionInterface>*>(
+          pc());
+  return static_cast<PeerConnection*>(pci->internal());
 }
 
 std::unique_ptr<SessionDescriptionInterface>
@@ -132,11 +154,13 @@ PeerConnectionWrapper::CreateRollback() {
 }
 
 std::unique_ptr<SessionDescriptionInterface> PeerConnectionWrapper::CreateSdp(
-    rtc::FunctionView<void(CreateSessionDescriptionObserver*)> fn,
+    FunctionView<void(CreateSessionDescriptionObserver*)> fn,
     std::string* error_out) {
-  auto observer = rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+  auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
   fn(observer.get());
-  EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
+      IsRtcOk());
   if (error_out && !observer->result()) {
     *error_out = observer->error();
   }
@@ -153,6 +177,20 @@ bool PeerConnectionWrapper::SetLocalDescription(
       error_out);
 }
 
+bool PeerConnectionWrapper::SetLocalDescription(
+    std::unique_ptr<SessionDescriptionInterface> desc,
+    RTCError* error_out) {
+  auto observer = make_ref_counted<FakeSetLocalDescriptionObserver>();
+  pc()->SetLocalDescription(std::move(desc), observer);
+  EXPECT_THAT(
+      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
+      IsRtcOk());
+  bool ok = observer->error().ok();
+  if (error_out)
+    *error_out = std::move(observer->error());
+  return ok;
+}
+
 bool PeerConnectionWrapper::SetRemoteDescription(
     std::unique_ptr<SessionDescriptionInterface> desc,
     std::string* error_out) {
@@ -166,9 +204,11 @@ bool PeerConnectionWrapper::SetRemoteDescription(
 bool PeerConnectionWrapper::SetRemoteDescription(
     std::unique_ptr<SessionDescriptionInterface> desc,
     RTCError* error_out) {
-  auto observer = rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
+  auto observer = make_ref_counted<FakeSetRemoteDescriptionObserver>();
   pc()->SetRemoteDescription(std::move(desc), observer);
-  EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
+      IsRtcOk());
   bool ok = observer->error().ok();
   if (error_out)
     *error_out = std::move(observer->error());
@@ -176,11 +216,13 @@ bool PeerConnectionWrapper::SetRemoteDescription(
 }
 
 bool PeerConnectionWrapper::SetSdp(
-    rtc::FunctionView<void(SetSessionDescriptionObserver*)> fn,
+    FunctionView<void(SetSessionDescriptionObserver*)> fn,
     std::string* error_out) {
-  auto observer = rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
+  auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   fn(observer.get());
-  EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
+      IsRtcOk());
   if (error_out && !observer->result()) {
     *error_out = observer->error();
   }
@@ -234,85 +276,82 @@ bool PeerConnectionWrapper::ExchangeOfferAnswerWith(
   return set_remote_answer;
 }
 
-rtc::scoped_refptr<RtpTransceiverInterface>
-PeerConnectionWrapper::AddTransceiver(cricket::MediaType media_type) {
-  RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> result =
+scoped_refptr<RtpTransceiverInterface> PeerConnectionWrapper::AddTransceiver(
+    MediaType media_type) {
+  RTCErrorOr<scoped_refptr<RtpTransceiverInterface>> result =
       pc()->AddTransceiver(media_type);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<RtpTransceiverInterface>
-PeerConnectionWrapper::AddTransceiver(cricket::MediaType media_type,
-                                      const RtpTransceiverInit& init) {
-  RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> result =
+scoped_refptr<RtpTransceiverInterface> PeerConnectionWrapper::AddTransceiver(
+    MediaType media_type,
+    const RtpTransceiverInit& init) {
+  RTCErrorOr<scoped_refptr<RtpTransceiverInterface>> result =
       pc()->AddTransceiver(media_type, init);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<RtpTransceiverInterface>
-PeerConnectionWrapper::AddTransceiver(
-    rtc::scoped_refptr<MediaStreamTrackInterface> track) {
-  RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> result =
+scoped_refptr<RtpTransceiverInterface> PeerConnectionWrapper::AddTransceiver(
+    scoped_refptr<MediaStreamTrackInterface> track) {
+  RTCErrorOr<scoped_refptr<RtpTransceiverInterface>> result =
       pc()->AddTransceiver(track);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<RtpTransceiverInterface>
-PeerConnectionWrapper::AddTransceiver(
-    rtc::scoped_refptr<MediaStreamTrackInterface> track,
+scoped_refptr<RtpTransceiverInterface> PeerConnectionWrapper::AddTransceiver(
+    scoped_refptr<MediaStreamTrackInterface> track,
     const RtpTransceiverInit& init) {
-  RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> result =
+  RTCErrorOr<scoped_refptr<RtpTransceiverInterface>> result =
       pc()->AddTransceiver(track, init);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<AudioTrackInterface> PeerConnectionWrapper::CreateAudioTrack(
+scoped_refptr<AudioTrackInterface> PeerConnectionWrapper::CreateAudioTrack(
     const std::string& label) {
   return pc_factory()->CreateAudioTrack(label, nullptr);
 }
 
-rtc::scoped_refptr<VideoTrackInterface> PeerConnectionWrapper::CreateVideoTrack(
+scoped_refptr<VideoTrackInterface> PeerConnectionWrapper::CreateVideoTrack(
     const std::string& label) {
   return pc_factory()->CreateVideoTrack(FakeVideoTrackSource::Create(), label);
 }
 
-rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddTrack(
-    rtc::scoped_refptr<MediaStreamTrackInterface> track,
+scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddTrack(
+    scoped_refptr<MediaStreamTrackInterface> track,
     const std::vector<std::string>& stream_ids) {
-  RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>> result =
+  RTCErrorOr<scoped_refptr<RtpSenderInterface>> result =
       pc()->AddTrack(track, stream_ids);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddTrack(
-    rtc::scoped_refptr<MediaStreamTrackInterface> track,
+scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddTrack(
+    scoped_refptr<MediaStreamTrackInterface> track,
     const std::vector<std::string>& stream_ids,
     const std::vector<RtpEncodingParameters>& init_send_encodings) {
-  RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>> result =
+  RTCErrorOr<scoped_refptr<RtpSenderInterface>> result =
       pc()->AddTrack(track, stream_ids, init_send_encodings);
   EXPECT_EQ(RTCErrorType::NONE, result.error().type());
   return result.MoveValue();
 }
 
-rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddAudioTrack(
+scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddAudioTrack(
     const std::string& track_label,
     const std::vector<std::string>& stream_ids) {
   return AddTrack(CreateAudioTrack(track_label), stream_ids);
 }
 
-rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddVideoTrack(
+scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddVideoTrack(
     const std::string& track_label,
     const std::vector<std::string>& stream_ids) {
   return AddTrack(CreateVideoTrack(track_label), stream_ids);
 }
 
-rtc::scoped_refptr<DataChannelInterface>
-PeerConnectionWrapper::CreateDataChannel(
+scoped_refptr<DataChannelInterface> PeerConnectionWrapper::CreateDataChannel(
     const std::string& label,
     const std::optional<DataChannelInit>& config) {
   const DataChannelInit* config_ptr = config.has_value() ? &(*config) : nullptr;
@@ -339,10 +378,12 @@ bool PeerConnectionWrapper::IsIceConnected() {
   return observer()->ice_connected_;
 }
 
-rtc::scoped_refptr<const RTCStatsReport> PeerConnectionWrapper::GetStats() {
-  auto callback = rtc::make_ref_counted<MockRTCStatsCollectorCallback>();
+scoped_refptr<const RTCStatsReport> PeerConnectionWrapper::GetStats() {
+  auto callback = make_ref_counted<MockRTCStatsCollectorCallback>();
   pc()->GetStats(callback.get());
-  EXPECT_TRUE_WAIT(callback->called(), kDefaultTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return callback->called(); }, ::testing::IsTrue()),
+      IsRtcOk());
   return callback->report();
 }
 

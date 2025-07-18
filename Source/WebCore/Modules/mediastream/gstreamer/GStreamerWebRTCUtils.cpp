@@ -22,6 +22,7 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCUtils.h"
 
+#include "ExceptionOr.h"
 #include "GStreamerRegistryScanner.h"
 #include "OpenSSLCryptoUniquePtr.h"
 #include "RTCIceCandidate.h"

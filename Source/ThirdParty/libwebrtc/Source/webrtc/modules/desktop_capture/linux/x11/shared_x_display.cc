@@ -31,19 +31,19 @@ SharedXDisplay::~SharedXDisplay() {
 }
 
 // static
-rtc::scoped_refptr<SharedXDisplay> SharedXDisplay::Create(
+scoped_refptr<SharedXDisplay> SharedXDisplay::Create(
     absl::string_view display_name) {
   Display* display = XOpenDisplay(
-      display_name.empty() ? NULL : std::string(display_name).c_str());
+      display_name.empty() ? nullptr : std::string(display_name).c_str());
   if (!display) {
     RTC_LOG(LS_ERROR) << "Unable to open display";
     return nullptr;
   }
-  return rtc::scoped_refptr<SharedXDisplay>(new SharedXDisplay(display));
+  return scoped_refptr<SharedXDisplay>(new SharedXDisplay(display));
 }
 
 // static
-rtc::scoped_refptr<SharedXDisplay> SharedXDisplay::CreateDefault() {
+scoped_refptr<SharedXDisplay> SharedXDisplay::CreateDefault() {
   return Create(std::string());
 }
 
@@ -70,7 +70,7 @@ void SharedXDisplay::RemoveEventHandler(int type, XEventHandler* handler) {
 void SharedXDisplay::ProcessPendingXEvents() {
   // Hold reference to `this` to prevent it from being destroyed while
   // processing events.
-  rtc::scoped_refptr<SharedXDisplay> self(this);
+  scoped_refptr<SharedXDisplay> self(this);
 
   // Protect access to `event_handlers_` after incrementing the refcount for
   // `this` to ensure the instance is still valid when the lock is acquired.

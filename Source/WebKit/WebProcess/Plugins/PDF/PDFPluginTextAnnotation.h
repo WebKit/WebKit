@@ -38,7 +38,7 @@ class Element;
 namespace WebKit {
 
 class PDFPluginTextAnnotation : public PDFPluginAnnotation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PDFPluginTextAnnotation);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginTextAnnotation);
 public:
     static Ref<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFPluginBase*);

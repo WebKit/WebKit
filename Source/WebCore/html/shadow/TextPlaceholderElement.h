@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class LayoutSize;
+
 class TextPlaceholderElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextPlaceholderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextPlaceholderElement);

@@ -48,6 +48,9 @@ struct pas_basic_heap_page_caches {
                                                  would create unnecessary fragmentation in the large
                                                  heap. */
     pas_shared_page_directory_by_size medium_shared_page_directories;
+    pas_megapage_cache small_compact_exclusive_segregated_megapage_cache;
+    pas_megapage_cache small_compact_other_megapage_cache;
+    pas_megapage_cache medium_compact_megapage_cache;
 };
 
 #define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(small_log_shift, medium_log_shift) \
@@ -60,7 +63,10 @@ struct pas_basic_heap_page_caches {
         .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small), \
         .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium), \
         .medium_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \
-            (medium_log_shift), pas_share_pages) \
+            (medium_log_shift), pas_share_pages), \
+        .small_compact_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small_compact), \
+        .small_compact_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small_compact), \
+        .medium_compact_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium_compact) \
     })
 
 static inline pas_shared_page_directory_by_size*

@@ -71,7 +71,7 @@ void CachedBytecode::commitUpdates(const ForEachUpdateCallback& callback) const
             const CacheUpdate::FunctionUpdate& functionUpdate = update.asFunction();
             payload = &functionUpdate.m_payload;
             {
-                ptrdiff_t kindOffset = functionUpdate.m_kind == CodeForCall ? CachedFunctionExecutableOffsets::codeBlockForCallOffset() : CachedFunctionExecutableOffsets::codeBlockForConstructOffset();
+                ptrdiff_t kindOffset = functionUpdate.m_kind == CodeSpecializationKind::CodeForCall ? CachedFunctionExecutableOffsets::codeBlockForCallOffset() : CachedFunctionExecutableOffsets::codeBlockForConstructOffset();
                 ptrdiff_t codeBlockOffset = functionUpdate.m_base + kindOffset + CachedWriteBarrierOffsets::ptrOffset() + CachedPtrOffsets::offsetOffset();
                 ptrdiff_t offsetPayload = static_cast<ptrdiff_t>(offset) - codeBlockOffset;
                 static_assert(std::is_same<decltype(VariableLengthObjectBase::m_offset), ptrdiff_t>::value);

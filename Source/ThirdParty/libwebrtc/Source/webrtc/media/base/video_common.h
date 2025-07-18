@@ -21,7 +21,7 @@
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/time_utils.h"
 
-namespace cricket {
+namespace webrtc {
 
 //////////////////////////////////////////////////////////////////////////////
 // Definition of FourCC codes
@@ -142,7 +142,7 @@ struct VideoFormatPod {
 
 struct RTC_EXPORT VideoFormat : VideoFormatPod {
   static const int64_t kMinimumInterval =
-      rtc::kNumNanosecsPerSec / 10000;  // 10k fps.
+      webrtc::kNumNanosecsPerSec / 10000;  // 10k fps.
 
   VideoFormat() { Construct(0, 0, 0, 0); }
 
@@ -162,21 +162,21 @@ struct RTC_EXPORT VideoFormat : VideoFormatPod {
   }
 
   static int64_t FpsToInterval(int fps) {
-    return fps ? rtc::kNumNanosecsPerSec / fps : kMinimumInterval;
+    return fps ? webrtc::kNumNanosecsPerSec / fps : kMinimumInterval;
   }
 
   static int IntervalToFps(int64_t interval) {
     if (!interval) {
       return 0;
     }
-    return static_cast<int>(rtc::kNumNanosecsPerSec / interval);
+    return static_cast<int>(webrtc::kNumNanosecsPerSec / interval);
   }
 
   static float IntervalToFpsFloat(int64_t interval) {
     if (!interval) {
       return 0.f;
     }
-    return static_cast<float>(rtc::kNumNanosecsPerSec) /
+    return static_cast<float>(webrtc::kNumNanosecsPerSec) /
            static_cast<float>(interval);
   }
 
@@ -220,6 +220,66 @@ ABSL_DEPRECATE_AND_INLINE() int GreatestCommonDivisor(int a, int b);
 // Returns the smallest positive integer that is divisible by both `a` and `b`.
 ABSL_DEPRECATE_AND_INLINE() int LeastCommonMultiple(int a, int b);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::CanonicalFourCC;
+using ::webrtc::FourCC;
+using ::webrtc::FOURCC_24BG;
+using ::webrtc::FOURCC_2VUY;
+using ::webrtc::FOURCC_ABGR;
+using ::webrtc::FOURCC_ANY;
+using ::webrtc::FOURCC_ARGB;
+using ::webrtc::FOURCC_BA81;
+using ::webrtc::FOURCC_BGGR;
+using ::webrtc::FOURCC_BGR3;
+using ::webrtc::FOURCC_BGRA;
+using ::webrtc::FOURCC_CM24;
+using ::webrtc::FOURCC_CM32;
+using ::webrtc::FOURCC_DMB1;
+using ::webrtc::FOURCC_GBRG;
+using ::webrtc::FOURCC_GRBG;
+using ::webrtc::FOURCC_H264;
+using ::webrtc::FOURCC_HDYC;
+using ::webrtc::FOURCC_I400;
+using ::webrtc::FOURCC_I411;
+using ::webrtc::FOURCC_I420;
+using ::webrtc::FOURCC_I422;
+using ::webrtc::FOURCC_I444;
+using ::webrtc::FOURCC_IYUV;
+using ::webrtc::FOURCC_J400;
+using ::webrtc::FOURCC_J420;
+using ::webrtc::FOURCC_JPEG;
+using ::webrtc::FOURCC_M420;
+using ::webrtc::FOURCC_MJPG;
+using ::webrtc::FOURCC_NV12;
+using ::webrtc::FOURCC_NV21;
+using ::webrtc::FOURCC_R444;
+using ::webrtc::FOURCC_RAW;
+using ::webrtc::FOURCC_RGB3;
+using ::webrtc::FOURCC_RGBA;
+using ::webrtc::FOURCC_RGBO;
+using ::webrtc::FOURCC_RGBP;
+using ::webrtc::FOURCC_RGGB;
+using ::webrtc::FOURCC_UYVY;
+using ::webrtc::FOURCC_YU12;
+using ::webrtc::FOURCC_YU16;
+using ::webrtc::FOURCC_YU24;
+using ::webrtc::FOURCC_YUVS;
+using ::webrtc::FOURCC_YUY2;
+using ::webrtc::FOURCC_YUYV;
+using ::webrtc::FOURCC_YV12;
+using ::webrtc::FOURCC_YV16;
+using ::webrtc::FOURCC_YV24;
+using ::webrtc::GetFourccName;
+using ::webrtc::GreatestCommonDivisor;
+using ::webrtc::LeastCommonMultiple;
+using ::webrtc::VideoFormat;
+using ::webrtc::VideoFormatPod;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_VIDEO_COMMON_H_

@@ -41,7 +41,7 @@ class SendAudioStream {
   friend class ReceiveAudioStream;
   SendAudioStream(CallClient* sender,
                   AudioStreamConfig config,
-                  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+                  scoped_refptr<AudioEncoderFactory> encoder_factory,
                   Transport* send_transport);
   AudioSendStream* send_stream_ = nullptr;
   CallClient* const sender_;
@@ -67,7 +67,7 @@ class ReceiveAudioStream {
   ReceiveAudioStream(CallClient* receiver,
                      AudioStreamConfig config,
                      SendAudioStream* send_stream,
-                     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+                     scoped_refptr<AudioDecoderFactory> decoder_factory,
                      Transport* feedback_transport);
   AudioReceiveStreamInterface* receive_stream_ = nullptr;
   CallClient* const receiver_;
@@ -90,9 +90,9 @@ class AudioStreamPair {
  private:
   friend class Scenario;
   AudioStreamPair(CallClient* sender,
-                  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+                  scoped_refptr<AudioEncoderFactory> encoder_factory,
                   CallClient* receiver,
-                  rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+                  scoped_refptr<AudioDecoderFactory> decoder_factory,
                   AudioStreamConfig config);
 
  private:

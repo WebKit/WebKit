@@ -53,7 +53,7 @@ public:
     RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession() const { return m_pkPaymentMerchantSession; }
 
 private:
-    RetainPtr<PKPaymentMerchantSession> m_pkPaymentMerchantSession;
+    const RetainPtr<PKPaymentMerchantSession> m_pkPaymentMerchantSession;
 };
 
 }

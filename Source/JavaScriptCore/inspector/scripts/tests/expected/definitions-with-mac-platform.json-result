@@ -367,7 +367,7 @@ class FrontendRouter;
 
 #if DOMAIN-MAC
 class NetworkFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkFrontendDispatcher);
 public:
     NetworkFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
 #if EVENT-MAC
@@ -658,7 +658,7 @@ namespace Inspector {
 
 #if DOMAIN-MAC
 class ObjCInspectorNetworkBackendDispatcher final : public AlternateNetworkBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorNetworkBackendDispatcher);
 public:
     ObjCInspectorNetworkBackendDispatcher(id<TestProtocolNetworkDomainHandler> handler) { m_delegate = handler; }
 #if COMMAND-MAC

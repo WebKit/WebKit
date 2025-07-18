@@ -87,10 +87,6 @@ const int optionsSpacingInlineStart = 2;
 // Default size when the multiple attribute is present but size attribute is absent.
 const int defaultSize = 4;
 
-// FIXME: This hardcoded baselineAdjustment is what we used to do for the old
-// widget, but I'm not sure this is right for the new control.
-const int baselineAdjustment = 7;
-
 RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
     : RenderBlockFlow(Type::ListBox, element, WTFMove(style))
 {
@@ -306,14 +302,6 @@ RenderBox::LogicalExtentComputedValues RenderListBox::computeLogicalHeight(Layou
     cacheIntrinsicContentLogicalHeightForFlexItem(logicalHeight);
     logicalHeight += writingMode().isHorizontal() ? verticalBorderAndPaddingExtent() : horizontalBorderAndPaddingExtent();
     return RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
-}
-
-LayoutUnit RenderListBox::baselinePosition(bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
-{
-    auto baseline = RenderBox::baselinePosition(firstLine, lineDirection, linePositionMode);
-    if (!shouldApplyLayoutContainment())
-        baseline -= baselineAdjustment;
-    return baseline;
 }
 
 LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index) const

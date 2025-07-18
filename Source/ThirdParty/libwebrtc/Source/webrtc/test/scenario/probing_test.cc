@@ -86,9 +86,8 @@ TEST(ProbingTest, ProbesRampsUpWhenVideoEncoderConfigChanges) {
   VideoStreamConfig video_config;
   video_config.encoder.codec =
       VideoStreamConfig::Encoder::Codec::kVideoCodecVP8;
-  video_config.encoder.simulcast_streams = {webrtc::ScalabilityMode::kL1T3,
-                                            webrtc::ScalabilityMode::kL1T3,
-                                            webrtc::ScalabilityMode::kL1T3};
+  video_config.encoder.simulcast_streams = {
+      ScalabilityMode::kL1T3, ScalabilityMode::kL1T3, ScalabilityMode::kL1T3};
   video_config.source.generator.width = 1280;
   video_config.source.generator.height = 720;
 

@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/aec3/suppression_gain.h"
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/aec3/subtractor.h"
@@ -42,7 +44,7 @@ TEST(SuppressionGainDeathTest, NullOutputGains) {
   Y.im.fill(0.0f);
 
   float high_bands_gain;
-  AecState aec_state(EchoCanceller3Config{}, 1);
+  AecState aec_state(CreateEnvironment(), EchoCanceller3Config{}, 1);
   EXPECT_DEATH(
       SuppressionGain(EchoCanceller3Config{}, DetectOptimization(), 16000, 1)
           .GetGain(E2, S2, R2, R2_unbounded, N2,
@@ -74,10 +76,11 @@ TEST(SuppressionGain, BasicGainComputation) {
   std::array<float, kFftLengthBy2Plus1> g;
   std::vector<SubtractorOutput> output(kNumCaptureChannels);
   Block x(kNumBands, kNumRenderChannels);
+  const Environment env = CreateEnvironment();
   EchoCanceller3Config config;
-  AecState aec_state(config, kNumCaptureChannels);
+  AecState aec_state(env, config, kNumCaptureChannels);
   ApmDataDumper data_dumper(42);
-  Subtractor subtractor(config, kNumRenderChannels, kNumCaptureChannels,
+  Subtractor subtractor(env, config, kNumRenderChannels, kNumCaptureChannels,
                         &data_dumper, DetectOptimization());
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
       RenderDelayBuffer::Create(config, kSampleRateHz, kNumRenderChannels));

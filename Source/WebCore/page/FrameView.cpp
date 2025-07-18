@@ -28,6 +28,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContainerNodeInlines.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"

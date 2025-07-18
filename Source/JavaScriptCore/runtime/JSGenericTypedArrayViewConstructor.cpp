@@ -205,7 +205,7 @@ WARN_UNUSED_RETURN size_t decodeHex(std::span<const LChar> span, std::span<uint8
     return decodeHexImpl(span, result);
 }
 
-WARN_UNUSED_RETURN size_t decodeHex(std::span<const UChar> span, std::span<uint8_t> result)
+WARN_UNUSED_RETURN size_t decodeHex(std::span<const char16_t> span, std::span<uint8_t> result)
 {
     return decodeHexImpl(span, result);
 }

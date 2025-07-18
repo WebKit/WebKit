@@ -28,6 +28,7 @@
 #include "BoxSides.h"
 #include "WritingMode.h"
 #include <array>
+#include <concepts>
 #include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
@@ -173,6 +174,25 @@ inline RectEdges<T>& operator+=(RectEdges<T>& a, const RectEdges<T>& b)
     a = a + b;
     return a;
 }
+
+template<typename T>
+constexpr RectEdges<T> operator-(const RectEdges<T>& a, const RectEdges<T>& b)
+{
+    return {
+        a.top() - b.top(),
+        a.right() - b.right(),
+        a.bottom() - b.bottom(),
+        a.left() - b.left()
+    };
+}
+
+template<typename T>
+inline RectEdges<T>& operator-=(RectEdges<T>& a, const RectEdges<T>& b)
+{
+    a = a - b;
+    return a;
+}
+
 
 template<typename T, typename F>
 inline RectEdges<T> blend(const RectEdges<T>& a, const RectEdges<T>& b, F&& functor)

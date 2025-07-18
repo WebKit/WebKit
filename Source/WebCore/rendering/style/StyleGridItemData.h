@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "GridPosition.h"
+#include "StyleGridPosition.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -38,25 +38,27 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridItemData);
 class StyleGridItemData : public RefCounted<StyleGridItemData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleGridItemData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleGridItemData, StyleGridItemData);
 public:
     static Ref<StyleGridItemData> create() { return adoptRef(*new StyleGridItemData); }
     Ref<StyleGridItemData> copy() const;
 
     bool operator==(const StyleGridItemData& o) const
     {
-        return gridColumnStart == o.gridColumnStart && gridColumnEnd == o.gridColumnEnd
-            && gridRowStart == o.gridRowStart && gridRowEnd == o.gridRowEnd;
+        return gridColumnStart == o.gridColumnStart
+            && gridColumnEnd == o.gridColumnEnd
+            && gridRowStart == o.gridRowStart
+            && gridRowEnd == o.gridRowEnd;
     }
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const StyleGridItemData&) const;
 #endif
 
-    GridPosition gridColumnStart;
-    GridPosition gridColumnEnd;
-    GridPosition gridRowStart;
-    GridPosition gridRowEnd;
+    Style::GridPosition gridColumnStart;
+    Style::GridPosition gridColumnEnd;
+    Style::GridPosition gridRowStart;
+    Style::GridPosition gridRowEnd;
 
 private:
     StyleGridItemData();

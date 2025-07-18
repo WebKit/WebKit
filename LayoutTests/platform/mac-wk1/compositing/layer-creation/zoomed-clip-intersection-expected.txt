@@ -1,0 +1,30 @@
+Image
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 2349.00 1749.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 783.00 583.00)
+      (contentsOpaque 1)
+      (transform [3.00 0.00 0.00 0.00] [0.00 3.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 2
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 1024.00 1042.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

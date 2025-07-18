@@ -44,7 +44,7 @@ class XRProjectionLayer;
 class XRSubImage;
 
 class XRBinding : public RefCountedAndCanMakeWeakPtr<XRBinding>, public WGPUXRBindingImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRBinding);
 public:
     static Ref<XRBinding> create(Device& device)
     {

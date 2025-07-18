@@ -11,8 +11,12 @@
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <deque>
 #include <iterator>
 #include <limits>
+#include <optional>
 
 #include "absl/algorithm/container.h"
 #include "rtc_base/checks.h"

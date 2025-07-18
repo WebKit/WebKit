@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSValueList.h"
 #include "Chrome.h"

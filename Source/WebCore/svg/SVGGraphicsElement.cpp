@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGGraphicsElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderAncestorIterator.h"

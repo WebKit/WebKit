@@ -199,7 +199,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestStringifierNamedOperationPrototypeFunction_toStri
 
 JSC::GCClient::IsoSubspace* JSTestStringifierNamedOperation::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestStringifierNamedOperation, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestStringifierNamedOperation, UseCustomHeapCellType::No>(vm, "JSTestStringifierNamedOperation"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestStringifierNamedOperation.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifierNamedOperation = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestStringifierNamedOperation.get(); },

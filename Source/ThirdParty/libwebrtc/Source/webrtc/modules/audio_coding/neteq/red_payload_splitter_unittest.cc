@@ -12,14 +12,19 @@
 
 #include "modules/audio_coding/neteq/red_payload_splitter.h"
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <optional>
 #include <utility>  // pair
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/make_ref_counted.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder_factory.h"
@@ -100,7 +105,7 @@ Packet CreateRedPayload(size_t num_payloads,
     *payload_ptr |= 0x80;
     ++payload_ptr;
     int this_offset =
-        rtc::checked_cast<int>((num_payloads - i - 1) * timestamp_offset);
+        checked_cast<int>((num_payloads - i - 1) * timestamp_offset);
     *payload_ptr = this_offset >> 6;
     ++payload_ptr;
     RTC_DCHECK_LE(kPayloadLength, 1023);  // Max length described by 10 bits.
@@ -283,8 +288,8 @@ TEST(RedPayloadSplitter, TwoPacketsThreePayloads) {
 // 0 = CNGnb
 // 1 = PCMu
 // 2 = DTMF (AVT)
-// 3 = iLBC
-// We expect the method CheckRedPayloads to discard the iLBC packet, since it
+// 3 = PCMa
+// We expect the method CheckRedPayloads to discard the PCMa packet, since it
 // is a non-CNG, non-DTMF payload of another type than the first speech payload
 // found in the list (which is PCMu).
 TEST(RedPayloadSplitter, CheckRedPayloads) {
@@ -304,7 +309,7 @@ TEST(RedPayloadSplitter, CheckRedPayloads) {
   decoder_database.RegisterPayload(1, SdpAudioFormat("pcmu", 8000, 1));
   decoder_database.RegisterPayload(2,
                                    SdpAudioFormat("telephone-event", 8000, 1));
-  decoder_database.RegisterPayload(3, SdpAudioFormat("ilbc", 8000, 1));
+  decoder_database.RegisterPayload(1, SdpAudioFormat("pcma", 8000, 1));
 
   RedPayloadSplitter splitter;
   splitter.CheckRedPayloads(&packet_list, decoder_database);

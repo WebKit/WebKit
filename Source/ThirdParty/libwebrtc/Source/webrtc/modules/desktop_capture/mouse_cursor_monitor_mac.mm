@@ -10,7 +10,6 @@
 
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 
-
 #include <memory>
 
 #include <ApplicationServices/ApplicationServices.h>
@@ -33,13 +32,14 @@ namespace {
 CGImageRef CreateScaledCGImage(CGImageRef image, int width, int height) {
   // Create context, keeping original image properties.
   CGColorSpaceRef colorspace = CGImageGetColorSpace(image);
-  CGContextRef context = CGBitmapContextCreate(nullptr,
-                                               width,
-                                               height,
-                                               CGImageGetBitsPerComponent(image),
-                                               width * DesktopFrame::kBytesPerPixel,
-                                               colorspace,
-                                               CGImageGetBitmapInfo(image));
+  CGContextRef context =
+      CGBitmapContextCreate(nullptr,
+                            width,
+                            height,
+                            CGImageGetBitsPerComponent(image),
+                            width * DesktopFrame::kBytesPerPixel,
+                            colorspace,
+                            CGImageGetBitmapInfo(image));
 
   if (!context) return nil;
 
@@ -66,13 +66,13 @@ class MouseCursorMonitorMac : public MouseCursorMonitor {
  private:
   static void DisplaysReconfiguredCallback(CGDirectDisplayID display,
                                            CGDisplayChangeSummaryFlags flags,
-                                           void *user_parameter);
+                                           void* user_parameter);
   void DisplaysReconfigured(CGDirectDisplayID display,
                             CGDisplayChangeSummaryFlags flags);
 
   void CaptureImage(float scale);
 
-  rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
+  webrtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
   CGWindowID window_id_;
   ScreenId screen_id_;
   Callback* callback_ = NULL;
@@ -80,9 +80,10 @@ class MouseCursorMonitorMac : public MouseCursorMonitor {
   __strong NSImage* last_cursor_ = NULL;
 };
 
-MouseCursorMonitorMac::MouseCursorMonitorMac(const DesktopCaptureOptions& options,
-                                             CGWindowID window_id,
-                                             ScreenId screen_id)
+MouseCursorMonitorMac::MouseCursorMonitorMac(
+    const DesktopCaptureOptions& options,
+    CGWindowID window_id,
+    ScreenId screen_id)
     : configuration_monitor_(options.configuration_monitor()),
       window_id_(window_id),
       screen_id_(screen_id),
@@ -115,8 +116,7 @@ void MouseCursorMonitorMac::Capture() {
 
   CaptureImage(scale);
 
-  if (mode_ != SHAPE_AND_POSITION)
-    return;
+  if (mode_ != SHAPE_AND_POSITION) return;
 
   // Always report cursor position in DIP pixel.
   callback_->OnMouseCursorPosition(
@@ -133,7 +133,8 @@ void MouseCursorMonitorMac::CaptureImage(float scale) {
   NSSize nssize = [nsimage size];  // DIP size
 
   // No need to caputre cursor image if it's unchanged since last capture.
-  if ([[nsimage TIFFRepresentation] isEqual:[last_cursor_ TIFFRepresentation]]) return;
+  if ([[nsimage TIFFRepresentation] isEqual:[last_cursor_ TIFFRepresentation]])
+    return;
   last_cursor_ = nsimage;
 
   DesktopSize size(round(nssize.width * scale),
@@ -144,17 +145,18 @@ void MouseCursorMonitorMac::CaptureImage(float scale) {
                std::min(size.width(), static_cast<int>(nshotspot.x * scale))),
       std::max(0,
                std::min(size.height(), static_cast<int>(nshotspot.y * scale))));
-  CGImageRef cg_image =
-      [nsimage CGImageForProposedRect:NULL context:nil hints:nil];
-  if (!cg_image)
-    return;
+  CGImageRef cg_image = [nsimage CGImageForProposedRect:NULL
+                                                context:nil
+                                                  hints:nil];
+  if (!cg_image) return;
 
   // Before 10.12, OSX may report 1X cursor on Retina screen. (See
   // crbug.com/632995.) After 10.12, OSX may report 2X cursor on non-Retina
   // screen. (See crbug.com/671436.) So scaling the cursor if needed.
   CGImageRef scaled_cg_image = nil;
   if (CGImageGetWidth(cg_image) != static_cast<size_t>(size.width())) {
-    scaled_cg_image = CreateScaledCGImage(cg_image, size.width(), size.height());
+    scaled_cg_image =
+        CreateScaledCGImage(cg_image, size.width(), size.height());
     if (scaled_cg_image != nil) {
       cg_image = scaled_cg_image;
     }
@@ -199,8 +201,7 @@ MouseCursorMonitor* MouseCursorMonitor::CreateForWindow(
 }
 
 MouseCursorMonitor* MouseCursorMonitor::CreateForScreen(
-    const DesktopCaptureOptions& options,
-    ScreenId screen) {
+    const DesktopCaptureOptions& options, ScreenId screen) {
   return new MouseCursorMonitorMac(options, kCGNullWindowID, screen);
 }
 

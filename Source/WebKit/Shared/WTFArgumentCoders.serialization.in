@@ -68,7 +68,7 @@ header: <wtf/ObjectIdentifier.h>
 template: class WebKit::WebURLSchemeHandler
 template: enum class WebCore::AXIDType
 template: struct WebCore::BackgroundFetchRecordIdentifierType
-template: struct WebCore::ElementIdentifierType
+template: struct WebCore::NodeIdentifierType
 template: struct WebCore::FetchIdentifierType
 template: struct WebCore::ImageDecoderIdentifierType
 template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
@@ -95,7 +95,6 @@ template: struct WebKit::RemoteCDMInstanceIdentifierType
 template: struct WebKit::RemoteCDMInstanceSessionIdentifierType
 template: struct WebKit::RemoteLegacyCDMIdentifierType
 template: struct WebKit::RemoteLegacyCDMSessionIdentifierType
-template: struct WebKit::RemoteMediaRecorderPrivateWriterIdentifierType
 template: enum class WebKit::RemoteMediaSourceIdentifierType
 template: enum class WebKit::RemoteSourceBufferIdentifierType
 template: struct WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
@@ -230,7 +229,7 @@ using WTF::ProcessID = pid_t;
 
 header: <wtf/MemoryPressureHandler.h>
 [CustomHeader] struct WTF::MemoryPressureHandlerConfiguration {
-    size_t baseThreshold;
+    uint64_t baseThreshold;
     double conservativeThresholdFraction;
     double strictThresholdFraction;
     std::optional<double> killThresholdFraction;

@@ -130,6 +130,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/document-element-detached-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/duplicate-tag-rejects-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/duplicate-tag-rejects-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/dynamic-stylesheet-animations-timing-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/dynamic-stylesheet-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation-ref.html
@@ -151,6 +152,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/far-away-capture-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/far-away-capture-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/far-away-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/finished-promise-defers-cleanup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-new-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-new.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-old-expected.html
@@ -216,6 +218,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-composited-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-composited-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-composited-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-filter-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-filter-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-filter.html
@@ -389,6 +394,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-scaling-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-scaling-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-scaling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-change-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-change-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-position-fixed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-position-fixed-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-position-fixed.html
@@ -511,6 +519,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-get-computed-style-clean-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-get-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation-ref.html
@@ -557,6 +566,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-element-display-none-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-element-display-none-during-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-preserve3d-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-reconstruct-frame-tree-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-replace-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-scrollbar-with-fixed-background-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/root-style-change-during-animation-expected.html
@@ -613,6 +623,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/sibling-frames-transition-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/sibling-frames-transition-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/sibling-frames-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/small-scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/small-scale-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/small-scale.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute.html

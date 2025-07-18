@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class BlobLoader;
+class Exception;
 class FormData;
 class ScriptExecutionContext;
 template<typename> class ExceptionOr;

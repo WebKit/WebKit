@@ -44,7 +44,7 @@ absl::string_view SpecToString(VideoResolution::Spec spec) {
 }
 
 void AppendResolution(const VideoResolution& resolution,
-                      rtc::StringBuilder& builder) {
+                      StringBuilder& builder) {
   builder << "_" << resolution.width() << "x" << resolution.height() << "_"
           << resolution.fps();
 }
@@ -95,7 +95,7 @@ bool VideoResolution::IsRegular() const {
   return spec_ == Spec::kNone;
 }
 std::string VideoResolution::ToString() const {
-  rtc::StringBuilder out;
+  StringBuilder out;
   out << "{ width=" << width_ << ", height=" << height_ << ", fps=" << fps_
       << ", spec=" << SpecToString(spec_) << " }";
   return out.Release();
@@ -162,7 +162,7 @@ VideoDumpOptions::Y4mVideoFrameWriterFactory(
 std::string VideoDumpOptions::GetInputDumpFileName(
     absl::string_view stream_label,
     const VideoResolution& resolution) const {
-  rtc::StringBuilder file_name;
+  StringBuilder file_name;
   file_name << stream_label;
   AppendResolution(resolution, file_name);
   return test::JoinFilename(output_directory_, file_name.Release());
@@ -181,7 +181,7 @@ std::string VideoDumpOptions::GetOutputDumpFileName(
     absl::string_view stream_label,
     absl::string_view receiver,
     const VideoResolution& resolution) const {
-  rtc::StringBuilder file_name;
+  StringBuilder file_name;
   file_name << stream_label << "_" << receiver;
   AppendResolution(resolution, file_name);
   return test::JoinFilename(output_directory_, file_name.Release());
@@ -199,7 +199,7 @@ std::optional<std::string> VideoDumpOptions::GetOutputFrameIdsDumpFileName(
 }
 
 std::string VideoDumpOptions::ToString() const {
-  rtc::StringBuilder out;
+  StringBuilder out;
   out << "{ output_directory_=" << output_directory_
       << ", sampling_modulo_=" << sampling_modulo_
       << ", export_frame_ids_=" << export_frame_ids_ << " }";
@@ -220,9 +220,6 @@ VideoConfig::VideoConfig(absl::string_view stream_label,
                          int32_t fps)
     : width(width), height(height), fps(fps), stream_label(stream_label) {}
 
-AudioConfig::AudioConfig(absl::string_view stream_label)
-    : stream_label(stream_label) {}
-
 VideoCodecConfig::VideoCodecConfig(absl::string_view name)
     : name(name), required_params() {}
 
@@ -232,7 +229,7 @@ VideoCodecConfig::VideoCodecConfig(
     : name(name), required_params(std::move(required_params)) {}
 
 std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
-    rtc::ArrayView<const VideoConfig> video_configs) {
+    ArrayView<const VideoConfig> video_configs) {
   std::vector<VideoResolution> resolutions;
   for (const auto& video_config : video_configs) {
     resolutions.push_back(video_config.GetResolution());
@@ -241,7 +238,7 @@ std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
 }
 
 std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
-    rtc::ArrayView<const VideoResolution> resolutions) {
+    ArrayView<const VideoResolution> resolutions) {
   if (resolutions.empty()) {
     return std::nullopt;
   }
@@ -301,7 +298,7 @@ std::vector<std::string> VideoSubscription::GetSubscribedPeers() const {
 }
 
 std::string VideoSubscription::ToString() const {
-  rtc::StringBuilder out;
+  StringBuilder out;
   out << "{ default_resolution_=[";
   if (default_resolution_.has_value()) {
     out << default_resolution_->ToString();

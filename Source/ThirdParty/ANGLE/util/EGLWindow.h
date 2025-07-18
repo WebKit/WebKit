@@ -43,21 +43,21 @@ struct ANGLE_UTIL_EXPORT ConfigParameters
     int depthBits;
     int stencilBits;
 
-    Optional<bool> webGLCompatibility;
-    Optional<bool> robustResourceInit;
+    bool webGLCompatibility;
+    bool robustResourceInit;
 
     // EGLWindow-specific.
     EGLenum componentType;
     bool multisample;
     bool debug;
     bool noError;
-    Optional<bool> extensionsEnabled;
+    bool extensionsEnabled;
     bool bindGeneratesResource;
     bool clientArraysEnabled;
     bool robustAccess;
     bool mutableRenderBuffer;
     EGLint samples;
-    Optional<bool> contextProgramCacheEnabled;
+    bool contextProgramCacheEnabled;
     EGLenum resetStrategy;
     EGLenum colorSpace;
     EGLint swapInterval;

@@ -37,6 +37,7 @@
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "NetworkLoadMetrics.h"
 #include "Performance.h"
 #include "ResourceResponse.h"

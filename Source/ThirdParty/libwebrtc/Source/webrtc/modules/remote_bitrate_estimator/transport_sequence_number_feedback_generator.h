@@ -11,26 +11,21 @@
 #ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_TRANSPORT_SEQUENCE_NUMBER_FEEDBACK_GENERATOR_H_
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_TRANSPORT_SEQUENCE_NUMBER_FEEDBACK_GENERATOR_H_
 
-#include <deque>
-#include <functional>
+#include <cstdint>
 #include <memory>
 #include <optional>
-#include <vector>
 
-#include "api/field_trials_view.h"
 #include "api/rtp_headers.h"
-#include "api/transport/network_control.h"
 #include "api/units/data_rate.h"
-#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/remote_bitrate_estimator/packet_arrival_map.h"
 #include "modules/remote_bitrate_estimator/rtp_transport_feedback_generator.h"
-#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -45,16 +40,13 @@ class TransportSequenceNumberFeedbackGenenerator
     : public RtpTransportFeedbackGenerator {
  public:
   TransportSequenceNumberFeedbackGenenerator(
-      RtpTransportFeedbackGenerator::RtcpSender feedback_sender,
-      NetworkStateEstimator* network_state_estimator);
+      RtpTransportFeedbackGenerator::RtcpSender feedback_sender);
   ~TransportSequenceNumberFeedbackGenenerator();
 
   void OnReceivedPacket(const RtpPacketReceived& packet) override;
   void OnSendBandwidthEstimateChanged(DataRate estimate) override;
 
   TimeDelta Process(Timestamp now) override;
-
-  void SetTransportOverhead(DataSize overhead_per_packet) override;
 
  private:
   void MaybeCullOldPackets(int64_t sequence_number, Timestamp arrival_time)
@@ -86,13 +78,9 @@ class TransportSequenceNumberFeedbackGenenerator
   Timestamp last_process_time_;
 
   Mutex lock_;
-  //  `network_state_estimator_` may be null.
-  NetworkStateEstimator* const network_state_estimator_
-      RTC_PT_GUARDED_BY(&lock_);
   uint32_t media_ssrc_ RTC_GUARDED_BY(&lock_);
   uint8_t feedback_packet_count_ RTC_GUARDED_BY(&lock_);
   SeqNumUnwrapper<uint16_t> unwrapper_ RTC_GUARDED_BY(&lock_);
-  DataSize packet_overhead_ RTC_GUARDED_BY(&lock_);
 
   // The next sequence number that should be the start sequence number during
   // periodic reporting. Will be std::nullopt before the first seen packet.
@@ -103,11 +91,6 @@ class TransportSequenceNumberFeedbackGenenerator
 
   TimeDelta send_interval_ RTC_GUARDED_BY(&lock_);
   bool send_periodic_feedback_ RTC_GUARDED_BY(&lock_);
-
-  // Unwraps absolute send times.
-  uint32_t previous_abs_send_time_ RTC_GUARDED_BY(&lock_);
-  Timestamp abs_send_timestamp_ RTC_GUARDED_BY(&lock_);
-  Timestamp last_arrival_time_with_abs_send_time_ RTC_GUARDED_BY(&lock_);
 };
 
 }  // namespace webrtc

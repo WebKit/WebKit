@@ -50,7 +50,7 @@
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::protectedMain()->dispatch([connection = _connection, tags = retainPtr(tags)] {
+    RunLoop::mainSingleton().dispatch([connection = _connection, tags = retainPtr(tags)] {
         if (!connection)
             return;
         connection->didDetectTags(tags.get());

@@ -302,7 +302,7 @@ private:
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 
 #define INIT_SERVER_STRUCTURE_ISO_SUBSPACE(name, heapCellType, type) \
-    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierPreciseCells, makeUnique<StructureAlignedMemoryAllocator>())
+    , name(#name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierPreciseCells, makeUnique<StructureAlignedMemoryAllocator>())
 
 Heap::Heap(VM& vm, HeapType heapType)
     : m_heapType(heapType)
@@ -2474,10 +2474,17 @@ void Heap::updateAllocationLimits()
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        if (!m_isInOpportunisticTask)
-            m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
-        dataLogLnIf(verbose, "Full: maxHeapSize = ", m_maxHeapSize);
+        size_t lastMaxHeapSize = m_maxHeapSize;
+        m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
+        if (m_isInOpportunisticTask) {
+            // After an Opportunistic Full GC, we allow eden to occupy all the space we recovered.
+            // In this case, m_maxHeapSize may be larger than currentHeapSize + m_maxEdenSize.
+            // Note that m_maxEdenSize is still used when we increase m_maxHeapSize after an
+            // Eden GC to ensure that eden can grow to at least m_maxHeapSize.
+            m_maxHeapSize = std::max(m_maxHeapSize, lastMaxHeapSize);
+        }
+        dataLogLnIf(verbose, "Full: maxHeapSize = ", m_maxHeapSize);
         dataLogLnIf(verbose, "Full: maxEdenSize = ", m_maxEdenSize);
         m_sizeAfterLastFullCollect = currentHeapSize;
         dataLogLnIf(verbose, "Full: sizeAfterLastFullCollect = ", currentHeapSize);
@@ -2487,18 +2494,16 @@ void Heap::updateAllocationLimits()
         ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
         // Theoretically, we shouldn't ever scan more memory than the heap size we planned to have.
         // But we are sloppy, so we have to defend against the overflow.
-        m_maxEdenSize = currentHeapSize > m_maxHeapSize ? 0 : m_maxHeapSize - currentHeapSize;
-        dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
+        size_t remainingHeapSize = currentHeapSize > m_maxHeapSize ? 0 : m_maxHeapSize - currentHeapSize;
+        dataLogLnIf(verbose, "Eden: remainingHeapSize = ", remainingHeapSize);
         m_sizeAfterLastEdenCollect = currentHeapSize;
         dataLogLnIf(verbose, "Eden: sizeAfterLastEdenCollect = ", currentHeapSize);
-        double edenToOldGenerationRatio = (double)m_maxEdenSize / (double)m_maxHeapSize;
+        double edenToOldGenerationRatio = (double)remainingHeapSize / (double)m_maxHeapSize;
         double minEdenToOldGenerationRatio = 1.0 / 3.0;
         if (edenToOldGenerationRatio < minEdenToOldGenerationRatio)
             m_shouldDoFullCollection = true;
-        // This seems suspect at first, but what it does is ensure that the nursery size is fixed.
-        m_maxHeapSize += currentHeapSize - m_sizeAfterLastCollect;
+        m_maxHeapSize = std::max(m_maxHeapSize, currentHeapSize + m_maxEdenSize);
         dataLogLnIf(verbose, "Eden: maxHeapSize = ", m_maxHeapSize);
-        m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
         if (m_fullActivityCallback) {
             ASSERT(currentHeapSize >= m_sizeAfterLastFullCollect);
@@ -2836,7 +2841,8 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
             return true;
         }
 
-        size_t bytesAllowedThisCycle = m_maxEdenSize;
+        ASSERT(m_maxHeapSize > m_sizeAfterLastCollect);
+        size_t bytesAllowedThisCycle = m_maxHeapSize - m_sizeAfterLastCollect;
 
         bool isCritical = false;
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)

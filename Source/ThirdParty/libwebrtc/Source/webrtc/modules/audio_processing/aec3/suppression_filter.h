@@ -31,11 +31,11 @@ class SuppressionFilter {
   SuppressionFilter(const SuppressionFilter&) = delete;
   SuppressionFilter& operator=(const SuppressionFilter&) = delete;
 
-  void ApplyGain(rtc::ArrayView<const FftData> comfort_noise,
-                 rtc::ArrayView<const FftData> comfort_noise_high_bands,
+  void ApplyGain(ArrayView<const FftData> comfort_noise,
+                 ArrayView<const FftData> comfort_noise_high_bands,
                  const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
                  float high_bands_gain,
-                 rtc::ArrayView<const FftData> E_lowest_band,
+                 ArrayView<const FftData> E_lowest_band,
                  Block* e);
 
  private:

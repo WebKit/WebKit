@@ -47,7 +47,7 @@ RemoteMediaPlayerMIMETypeCache::RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayer
 
 void RemoteMediaPlayerMIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
 {
-    m_supportedTypesCache.add(newTypes.begin(), newTypes.end());
+    m_supportedTypesCache.addAll(newTypes);
 }
 
 bool RemoteMediaPlayerMIMETypeCache::isEmpty() const

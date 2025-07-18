@@ -549,7 +549,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (!m_cachedObjectStoreStatement || m_cachedObjectStoreStatement->reset() != SQLITE_OK) {
-            if (auto cachedObjectStoreStatement = database->prepareHeapStatement("SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;"_s))
+            if (auto cachedObjectStoreStatement = database->prepareHeapStatement("SELECT rowid, value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;"_s))
                 m_cachedObjectStoreStatement = cachedObjectStoreStatement.value().moveToUniquePtr();
         }
 
@@ -563,9 +563,18 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
         int result = m_cachedObjectStoreStatement->step();
 
-        if (result == SQLITE_ROW)
-            record.record.value = { ThreadSafeDataBuffer::create(m_cachedObjectStoreStatement->columnBlob(0)) };
-        else if (result == SQLITE_DONE) {
+        if (result == SQLITE_ROW) {
+            auto recordsRowID = m_cachedObjectStoreStatement->columnInt64(0);
+            Vector<String> blobURLs, blobFilePaths;
+            auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(recordsRowID, blobURLs, blobFilePaths);
+            if (!error.isNull()) {
+                LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
+                markAsErrored(record);
+                return FetchResult::Failure;
+            }
+
+            record.record.value = { ThreadSafeDataBuffer::create(m_cachedObjectStoreStatement->columnBlob(1)), WTFMove(blobURLs), WTFMove(blobFilePaths) };
+        } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.
             return FetchResult::ShouldFetchAgain;
@@ -573,7 +582,6 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", database->lastError(), database->lastErrorMsg());
             markAsErrored(record);
             return FetchResult::Failure;
-
         }
     }
 

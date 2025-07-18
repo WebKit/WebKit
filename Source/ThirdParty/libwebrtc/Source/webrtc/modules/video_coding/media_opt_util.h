@@ -14,11 +14,11 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include <cstdint>
 #include <memory>
 
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
-#include "modules/video_coding/internal_defines.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/numerics/exp_filter.h"
 
@@ -44,10 +44,6 @@ enum FilterPacketLossMode {
 // Thresholds for hybrid NACK/FEC
 // common to media optimization and the jitter buffer.
 constexpr int64_t kLowRttNackMs = 20;
-
-// If the RTT is higher than this an extra RTT wont be added to to the jitter
-// buffer delay.
-constexpr int kMaxRttDelayThreshold = 500;
 
 struct VCMProtectionParameters {
   VCMProtectionParameters();
@@ -339,11 +335,11 @@ class VCMLossProtectionLogic {
   int64_t _lastPrUpdateT;
   int64_t _lastPacketPerFrameUpdateT;
   int64_t _lastPacketPerFrameUpdateTKey;
-  rtc::ExpFilter _lossPr255;
+  ExpFilter _lossPr255;
   VCMLossProbabilitySample _lossPrHistory[kLossPrHistorySize];
   uint8_t _shortMaxLossPr255;
-  rtc::ExpFilter _packetsPerFrame;
-  rtc::ExpFilter _packetsPerFrameKey;
+  ExpFilter _packetsPerFrame;
+  ExpFilter _packetsPerFrameKey;
   size_t _codecWidth;
   size_t _codecHeight;
   int _numLayers;

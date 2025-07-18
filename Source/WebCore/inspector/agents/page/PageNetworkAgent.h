@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-class InspectorClient;
+class InspectorBackendClient;
 class Page;
 
 class PageNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(PageNetworkAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageNetworkAgent);
 public:
-    PageNetworkAgent(PageAgentContext&, InspectorClient*);
+    PageNetworkAgent(PageAgentContext&, InspectorBackendClient*);
     ~PageNetworkAgent();
 
 private:
@@ -54,7 +54,7 @@ private:
 
     WeakRef<Page> m_inspectedPage;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    InspectorClient* m_client { nullptr };
+    InspectorBackendClient* m_client { nullptr };
 #endif
 };
 

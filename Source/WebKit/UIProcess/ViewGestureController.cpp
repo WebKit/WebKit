@@ -84,7 +84,7 @@ Ref<ViewGestureController> ViewGestureController::create(WebPageProxy& page)
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_webPageProxyIdentifier(webPageProxy.identifier())
-    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)
+    , m_swipeActiveLoadMonitoringTimer(RunLoop::mainSingleton(), this, &ViewGestureController::checkForActiveLoads)
 #if !PLATFORM(IOS_FAMILY)
     , m_pendingSwipeTracker(webPageProxy, *this)
 #endif
@@ -142,6 +142,18 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
     if (gestureControllerIter->value->m_currentGestureID != gestureID)
         return nullptr;
     return gestureControllerIter->value.ptr();
+}
+
+RefPtr<WebBackForwardListItem> ViewGestureController::itemForSwipeDirection(SwipeDirection direction) const
+{
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return { };
+
+    if (direction == SwipeDirection::Back)
+        return page->backForwardList().goBackItemSkippingItemsWithoutUserGesture();
+
+    return page->backForwardList().goForwardItemSkippingItemsWithoutUserGesture();
 }
 
 ViewGestureController::GestureID ViewGestureController::takeNextGestureID()
@@ -298,7 +310,7 @@ void ViewGestureController::checkForActiveLoads()
 }
 
 ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker()
-    : m_watchdogTimer(RunLoop::main(), this, &SnapshotRemovalTracker::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::mainSingleton(), this, &SnapshotRemovalTracker::watchdogTimerFired)
 {
 }
 

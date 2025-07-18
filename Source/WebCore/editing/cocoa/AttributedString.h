@@ -115,30 +115,30 @@ enum class ParagraphStyleWritingDirection: uint8_t {
 struct ParagraphStyleTextList {
     AttributedStringTextListID thisID;
     String markerFormat;
-    long startingItemNumber { 0 };
+    int64_t startingItemNumber { 0 };
 };
 
 struct ParagraphStyleCommonTableAttributes {
-    CGFloat width { 0 };
-    CGFloat minimumWidth { 0 };
-    CGFloat maximumWidth { 0 };
-    CGFloat minimumHeight { 0 };
-    CGFloat maximumHeight { 0 };
+    double width { 0 };
+    double minimumWidth { 0 };
+    double maximumWidth { 0 };
+    double minimumHeight { 0 };
+    double maximumHeight { 0 };
 
-    CGFloat paddingMinXEdge { 0 };
-    CGFloat paddingMinYEdge { 0 };
-    CGFloat paddingMaxXEdge { 0 };
-    CGFloat paddingMaxYEdge { 0 };
+    double paddingMinXEdge { 0 };
+    double paddingMinYEdge { 0 };
+    double paddingMaxXEdge { 0 };
+    double paddingMaxYEdge { 0 };
 
-    CGFloat borderMinXEdge { 0 };
-    CGFloat borderMinYEdge { 0 };
-    CGFloat borderMaxXEdge { 0 };
-    CGFloat borderMaxYEdge { 0 };
+    double borderMinXEdge { 0 };
+    double borderMinYEdge { 0 };
+    double borderMaxXEdge { 0 };
+    double borderMaxYEdge { 0 };
 
-    CGFloat marginMinXEdge { 0 };
-    CGFloat marginMinYEdge { 0 };
-    CGFloat marginMaxXEdge { 0 };
-    CGFloat marginMaxYEdge { 0 };
+    double marginMinXEdge { 0 };
+    double marginMinYEdge { 0 };
+    double marginMaxXEdge { 0 };
+    double marginMaxYEdge { 0 };
 
     RetainPtr<PlatformColor> backgroundColor;
     RetainPtr<PlatformColor> borderMinXEdgeColor;
@@ -149,7 +149,7 @@ struct ParagraphStyleCommonTableAttributes {
 
 struct TextTable : ParagraphStyleCommonTableAttributes {
     AttributedStringTextTableID thisID;
-    unsigned long numberOfColumns { 0 };
+    uint64_t numberOfColumns { 0 };
     TextTableLayoutAlgorithm layout { TextTableLayoutAlgorithm::Automatic };
     bool collapsesBorders { false };
     bool hidesEmptyCells { false };
@@ -158,15 +158,15 @@ struct TextTable : ParagraphStyleCommonTableAttributes {
 struct TextTableBlock : ParagraphStyleCommonTableAttributes {
     AttributedStringTextTableBlockID thisID;
     AttributedStringTextTableID tableID;
-    long startingRow { 0 };
-    long rowSpan { 1 };
-    long startingColumn { 0 };
-    long columnSpan { 1 };
+    int64_t startingRow { 0 };
+    int64_t rowSpan { 1 };
+    int64_t startingColumn { 0 };
+    int64_t columnSpan { 1 };
     TextTableBlockVerticalAlignment verticalAlignment { TextTableBlockVerticalAlignment::Top };
 };
 
 struct TextTab {
-    CGFloat location { 0 };
+    double location { 0 };
     ParagraphStyleAlignment alignment { ParagraphStyleAlignment::Natural };
 };
 
@@ -175,11 +175,11 @@ struct ParagraphStyle {
     ParagraphStyleAlignment alignment { ParagraphStyleAlignment::Natural };
     ParagraphStyleWritingDirection writingDirection { ParagraphStyleWritingDirection::Natural };
     float hyphenationFactor { 0 };
-    CGFloat firstLineHeadIndent { 0 };
-    CGFloat headIndent { 0 };
-    long headerLevel { 0 };
-    CGFloat tailIndent { 0 };
-    CGFloat paragraphSpacing { 0 };
+    double firstLineHeadIndent { 0 };
+    double headIndent { 0 };
+    int64_t headerLevel { 0 };
+    double tailIndent { 0 };
+    double paragraphSpacing { 0 };
     Vector<AttributedStringTextTableBlockID> textTableBlockIDs;
     Vector<AttributedStringTextListID> textListIDs;
     Vector<TextTableBlock> textTableBlocks;
@@ -190,8 +190,8 @@ struct ParagraphStyle {
 
 struct WEBCORE_EXPORT AttributedString {
     struct Range {
-        size_t location { 0 };
-        size_t length { 0 };
+        uint64_t location { 0 };
+        uint64_t length { 0 };
     };
 
     using TextTableID = AttributedStringTextTableID;

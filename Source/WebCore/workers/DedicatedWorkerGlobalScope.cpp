@@ -36,6 +36,7 @@
 #include "DedicatedWorkerThread.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
+#include "ExceptionOr.h"
 #include "JSRTCRtpScriptTransformer.h"
 #include "LocalDOMWindow.h"
 #include "MessageEvent.h"

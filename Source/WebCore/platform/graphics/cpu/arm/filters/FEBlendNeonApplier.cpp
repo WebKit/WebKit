@@ -172,8 +172,8 @@ void FEBlendNeonApplier::applyPlatform(unsigned char* srcPixelArrayA, unsigned c
 
 bool FEBlendNeonApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
-    Ref input2 = inputs[1];
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
     auto* destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
@@ -182,10 +182,10 @@ bool FEBlendNeonApplier::apply(const Filter&, std::span<const Ref<FilterImage>> 
     auto* destinationPixelArray = destinationPixelBuffer->bytes().data();
 
     auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto sourcePixelArrayA = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
+    auto sourcePixelArrayA = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
     auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
-    auto sourcePixelArrayB = input2->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectBDrawingRect);
+    auto sourcePixelArrayB = input2.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectBDrawingRect);
 
     unsigned sourcePixelArrayLength = sourcePixelArrayA->bytes().size();
     ASSERT(sourcePixelArrayLength == sourcePixelArrayB->bytes().size());

@@ -11,12 +11,15 @@
 #include "common_video/h265/h265_pps_parser.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 
+#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
-#include "rtc_base/arraysize.h"
+#include "common_video/h265/h265_sps_parser.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,9 +38,9 @@ void WritePps(const H265PpsParser::PpsState& pps,
               bool pps_deblocking_filter_disabled_flag,
               bool pps_scaling_list_data_present_flag,
               bool scaling_list_pred_mode_flag,
-              rtc::Buffer* out_buffer) {
+              Buffer* out_buffer) {
   uint8_t data[kPpsBufferMaxSize] = {0};
-  rtc::BitBufferWriter bit_buffer(data, kPpsBufferMaxSize);
+  BitBufferWriter bit_buffer(data, kPpsBufferMaxSize);
 
   // pic_parameter_set_id: ue(v)
   bit_buffer.WriteExponentialGolomb(pps.pps_id);
@@ -161,7 +164,7 @@ void WritePps(const H265PpsParser::PpsState& pps,
     bit_buffer.GetCurrentOffset(&byte_offset, &bit_offset);
   }
 
-  H265::WriteRbsp(rtc::MakeArrayView(data, byte_offset), out_buffer);
+  H265::WriteRbsp(MakeArrayView(data, byte_offset), out_buffer);
 }
 
 class H265PpsParserTest : public ::testing::Test {
@@ -221,7 +224,7 @@ class H265PpsParserTest : public ::testing::Test {
   }
 
   H265PpsParser::PpsState generated_pps_;
-  rtc::Buffer buffer_;
+  Buffer buffer_;
   std::optional<H265PpsParser::PpsState> parsed_pps_;
   std::optional<H265SpsParser::SpsState> parsed_sps_;
 };

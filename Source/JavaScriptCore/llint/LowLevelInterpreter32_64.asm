@@ -2252,7 +2252,11 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     addp t3, t2
 
     bineq t1, Int32Tag, .opSwitchImmNotInt
-    subi UnlinkedSimpleJumpTable::m_min[t2], t0
+
+    loadi UnlinkedSimpleJumpTable::m_min[t2], t3
+    bieq t3, (constexpr INT32_MAX), .opSwitchImmSlow
+
+    subi t3, t0
     loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t3
     btpz t3, .opSwitchImmFallThrough
     biaeq t0, Int32FixedVector::Storage::m_size[t3], .opSwitchImmFallThrough
@@ -2289,6 +2293,10 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadp JSString::m_fiber[t0], t1
     btpnz t1, isRopeInPointer, .opSwitchOnRope
     bineq StringImpl::m_length[t1], 1, .opSwitchCharFallThrough
+
+    loadi UnlinkedSimpleJumpTable::m_min[t2], t3
+    bieq t3, (constexpr INT32_MAX), .opSwitchSlow
+
     loadp StringImpl::m_data8[t1], t0
     btinz StringImpl::m_hashAndFlags[t1], HashFlags8BitBuffer, .opSwitchChar8Bit
     loadh [t0], t0
@@ -2296,7 +2304,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
 .opSwitchChar8Bit:
     loadb [t0], t0
 .opSwitchCharReady:
-    subi UnlinkedSimpleJumpTable::m_min[t2], t0
+    subi t3, t0
     loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t3
     btpz t3, .opSwitchCharFallThrough
     biaeq t0, Int32FixedVector::Storage::m_size[t3], .opSwitchCharFallThrough
@@ -2311,7 +2319,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
 .opSwitchOnRope:
     bineq JSRopeString::m_compactFibers + JSRopeString::CompactFibers::m_length[t0], 1, .opSwitchCharFallThrough
 
-.opSwitchOnRopeChar:
+.opSwitchSlow:
     callSlowPath(_llint_slow_path_switch_char)
     nextInstruction()
 end)

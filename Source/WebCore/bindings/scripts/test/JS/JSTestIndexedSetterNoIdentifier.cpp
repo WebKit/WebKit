@@ -311,7 +311,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestIndexedSetterNoIdentifierConstructor, (JSGlobalOb
 
 JSC::GCClient::IsoSubspace* JSTestIndexedSetterNoIdentifier::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestIndexedSetterNoIdentifier, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestIndexedSetterNoIdentifier, UseCustomHeapCellType::No>(vm, "JSTestIndexedSetterNoIdentifier"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestIndexedSetterNoIdentifier.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestIndexedSetterNoIdentifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestIndexedSetterNoIdentifier.get(); },

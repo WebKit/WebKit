@@ -18,8 +18,8 @@
 namespace webrtc {
 namespace rnn_vad {
 
-float VectorMath::DotProductAvx2(rtc::ArrayView<const float> x,
-                                 rtc::ArrayView<const float> y) const {
+float VectorMath::DotProductAvx2(ArrayView<const float> x,
+                                 ArrayView<const float> y) const {
   RTC_DCHECK(cpu_features_.avx2);
   RTC_DCHECK_EQ(x.size(), y.size());
   __m256 accumulator = _mm256_setzero_ps();
@@ -43,8 +43,7 @@ float VectorMath::DotProductAvx2(rtc::ArrayView<const float> x,
   low = _mm_add_ss(high, low);
   float dot_product = _mm_cvtss_f32(low);
   // Add the result for the last block if incomplete.
-  for (int i = incomplete_block_index; i < rtc::dchecked_cast<int>(x.size());
-       ++i) {
+  for (int i = incomplete_block_index; i < dchecked_cast<int>(x.size()); ++i) {
     dot_product += x[i] * y[i];
   }
   return dot_product;

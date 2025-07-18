@@ -49,7 +49,7 @@ class RTC_EXPORT SequenceCheckerImpl {
   mutable Mutex lock_;
   // These are mutable so that IsCurrent can set them.
   mutable bool attached_ RTC_GUARDED_BY(lock_);
-  mutable rtc::PlatformThreadRef valid_thread_ RTC_GUARDED_BY(lock_);
+  mutable PlatformThreadRef valid_thread_ RTC_GUARDED_BY(lock_);
   mutable const TaskQueueBase* valid_queue_ RTC_GUARDED_BY(lock_);
 };
 

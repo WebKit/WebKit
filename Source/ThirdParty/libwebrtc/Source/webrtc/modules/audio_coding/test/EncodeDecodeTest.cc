@@ -13,15 +13,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cstdint>
+#include <map>
 #include <memory>
+#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/test/RTPFile.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -52,7 +61,7 @@ int32_t TestPacketization::SendData(
 }
 
 Sender::Sender()
-    : _acm(NULL), _pcmFile(), _audioFrame(), _packetization(NULL) {}
+    : _acm(nullptr), _pcmFile(), _audioFrame(), _packetization(nullptr) {}
 
 void Sender::Setup(const Environment& env,
                    AudioCodingModule* acm,
@@ -62,7 +71,7 @@ void Sender::Setup(const Environment& env,
                    int payload_type,
                    SdpAudioFormat format) {
   // Open input file
-  const std::string file_name = webrtc::test::ResourcePath(in_file_name, "pcm");
+  const std::string file_name = test::ResourcePath(in_file_name, "pcm");
   _pcmFile.Open(file_name, in_sample_rate, "rb");
   if (format.num_channels == 2) {
     _pcmFile.ReadStereo(true);
@@ -136,9 +145,8 @@ void Receiver::Setup(NetEq* neteq,
 
   int playSampFreq;
   std::string file_name;
-  rtc::StringBuilder file_stream;
-  file_stream << webrtc::test::OutputPath() << out_file_name << file_num
-              << ".pcm";
+  StringBuilder file_stream;
+  file_stream << test::OutputPath() << out_file_name << file_num << ".pcm";
   file_name = file_stream.str();
   _rtpStream = rtpStream;
 
@@ -175,8 +183,8 @@ bool Receiver::IncomingPacket() {
 
     EXPECT_GE(
         0, _neteq->InsertPacket(_rtpHeader,
-                                rtc::ArrayView<const uint8_t>(
-                                    _incomingPayload, _realPayloadSizeBytes),
+                                ArrayView<const uint8_t>(_incomingPayload,
+                                                         _realPayloadSizeBytes),
                                 /*receive_time=*/Timestamp::Millis(_nextTime)));
     _realPayloadSizeBytes = _rtpStream->Read(&_rtpHeader, _incomingPayload,
                                              _payloadSizeBytes, &_nextTime);
@@ -250,8 +258,8 @@ void EncodeDecodeTest::Perform() {
     RTPFile rtpFile;
     std::unique_ptr<AudioCodingModule> acm(AudioCodingModule::Create());
 
-    std::string fileName = webrtc::test::TempFilename(
-        webrtc::test::OutputPath(), "encode_decode_rtp");
+    std::string fileName =
+        test::TempFilename(test::OutputPath(), "encode_decode_rtp");
     rtpFile.Open(fileName.c_str(), "wb+");
     rtpFile.WriteHeader();
     Sender sender;

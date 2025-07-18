@@ -38,7 +38,7 @@ class RnnVad {
   // Observes `feature_vector` and `is_silence`, updates the RNN and returns the
   // current voice probability.
   float ComputeVadProbability(
-      rtc::ArrayView<const float, kFeatureVectorSize> feature_vector,
+      ArrayView<const float, kFeatureVectorSize> feature_vector,
       bool is_silence);
 
  private:

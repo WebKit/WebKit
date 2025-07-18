@@ -12,9 +12,18 @@
 
 #include <string.h>
 
+#include <cstdint>
+#include <vector>
+
 #include "api/video/encoded_image.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "modules/video_coding/deprecated/jitter_buffer_common.h"
 #include "modules/video_coding/deprecated/packet.h"
+#include "modules/video_coding/deprecated/session_info.h"
+#include "modules/video_coding/encoded_frame.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/trace_event.h"
@@ -26,7 +35,7 @@ VCMFrameBuffer::VCMFrameBuffer()
 
 VCMFrameBuffer::~VCMFrameBuffer() {}
 
-webrtc::VideoFrameType VCMFrameBuffer::FrameType() const {
+VideoFrameType VCMFrameBuffer::FrameType() const {
   return _sessionInfo.FrameType();
 }
 
@@ -73,8 +82,8 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(const VCMPacket& packet,
                                                 int64_t timeInMs,
                                                 const FrameData& frame_data) {
   TRACE_EVENT0("webrtc", "VCMFrameBuffer::InsertPacket");
-  RTC_DCHECK(!(NULL == packet.dataPtr && packet.sizeBytes > 0));
-  if (packet.dataPtr != NULL) {
+  RTC_DCHECK(!(nullptr == packet.dataPtr && packet.sizeBytes > 0));
+  if (packet.dataPtr != nullptr) {
     _payloadType = packet.payloadType;
   }
 

@@ -1347,6 +1347,18 @@ constexpr bool IsDynamicDescriptor(VkDescriptorType descriptorType)
     }
 }
 
+constexpr bool IsUniformBuffer(const VkDescriptorType descriptorType)
+{
+    return descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
+           descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+}
+
+constexpr bool IsStorageBuffer(const VkDescriptorType descriptorType)
+{
+    return descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ||
+           descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+}
+
 void ApplyPipelineCreationFeedback(ErrorContext *context,
                                    const VkPipelineCreationFeedback &feedback);
 

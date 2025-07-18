@@ -11,6 +11,9 @@
 #include "modules/audio_coding/neteq/audio_vector.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <memory>
 
 #include "rtc_base/checks.h"

@@ -240,7 +240,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDelegateToSharedSyntheticAttribute_sharedAttri
 
 JSC::GCClient::IsoSubspace* JSTestDelegateToSharedSyntheticAttribute::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDelegateToSharedSyntheticAttribute, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDelegateToSharedSyntheticAttribute, UseCustomHeapCellType::No>(vm, "JSTestDelegateToSharedSyntheticAttribute"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute.get(); },

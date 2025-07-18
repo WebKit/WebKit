@@ -27,7 +27,7 @@
     DispatchedTo=WebContent
 ]
 messages -> WebRTCResolver {
-    void SetResolvedAddress(Vector<WebKit::RTC::Network::IPAddress> addresses)
+    void SetResolvedAddress(Vector<WebKit::WebRTCNetwork::IPAddress> addresses)
     void ResolvedAddressError(int error)
 }
 

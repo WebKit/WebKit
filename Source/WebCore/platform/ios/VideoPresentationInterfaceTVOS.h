@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class VideoPresentationInterfaceTVOS final : public VideoPresentationInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VideoPresentationInterfaceTVOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceTVOS);
 public:
     WEBCORE_EXPORT static Ref<VideoPresentationInterfaceTVOS> create(PlaybackSessionInterfaceIOS&);

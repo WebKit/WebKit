@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/pseudo-element-text-decoration-under-pseudo-first-line-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-animation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-first-line-child-display-none-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-first-line-layer-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-first-line-multi-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-on-empty-first-line-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/crashtests/text-decoration-on-pseudo-first-line-crash.html

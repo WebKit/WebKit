@@ -62,19 +62,7 @@ public:
 
     CALayer *layer() const { return m_layer.get(); }
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    struct VisibleRectMarkableTraits {
-        static bool isEmptyValue(const WebCore::FloatRect& value)
-        {
-            return value.isEmpty();
-        }
-
-        static WebCore::FloatRect emptyValue()
-        {
-            return { };
-        }
-    };
-
-    const Markable<WebCore::FloatRect, VisibleRectMarkableTraits> visibleRect() const { return m_visibleRect; }
+    const Markable<WebCore::FloatRect> visibleRect() const { return m_visibleRect; }
     void setVisibleRect(const WebCore::FloatRect& value) { m_visibleRect = value; }
 #endif
 
@@ -124,6 +112,8 @@ public:
     void addToHostingNode(RemoteLayerTreeNode&);
     void removeFromHostingNode();
 
+    void applyBackingStore(RemoteLayerTreeHost*, RemoteLayerBackingStoreProperties&);
+
     // A cached CAIOSurface object to retain CA render resources.
     struct CachedContentsBuffer {
         BufferAndBackendInfo imageBufferInfo;
@@ -171,7 +161,7 @@ private:
     RetainPtr<CALayer> m_layer;
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
+    Markable<WebCore::FloatRect> m_visibleRect;
 #endif
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)

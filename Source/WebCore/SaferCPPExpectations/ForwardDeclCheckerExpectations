@@ -25,8 +25,6 @@ Modules/WebGPU/Implementation/WebGPUXRProjectionLayerImpl.cpp
 Modules/WebGPU/Implementation/WebGPUXRSubImageImpl.cpp
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
-Modules/encryptedmedia/MediaKeyStatusMap.h
-Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/indexeddb/IDBDatabase.h
 Modules/mediastream/RTCPeerConnection.h
 Modules/notifications/NotificationController.h
@@ -44,7 +42,6 @@ bindings/js/WindowProxy.h
 bridge/objc/objc_runtime.h
 crypto/cocoa/CryptoAlgorithmEd25519Cocoa.cpp
 crypto/cocoa/CryptoKeyOKPCocoa.cpp
-css/CSSFontSelector.h
 css/CSSImageValue.cpp
 css/CSSStyleProperties.h
 css/CSSToLengthConversionData.h
@@ -79,13 +76,10 @@ inspector/UserGestureEmulationScope.h
 inspector/agents/InspectorDOMAgent.h
 inspector/agents/InspectorNetworkAgent.h
 inspector/agents/InspectorPageAgent.h
-layout/floats/FloatingContext.h
-layout/formattingContexts/FormattingContext.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
 layout/formattingContexts/inline/text/TextUtil.cpp
-layout/integration/LayoutIntegrationUtils.h
 layout/integration/inline/LayoutIntegrationLineLayout.h
 layout/layouttree/LayoutElementBox.h
 loader/cache/CachedImageClient.h
@@ -135,7 +129,6 @@ workers/DedicatedWorkerThread.cpp
 workers/Worker.h
 workers/WorkerOrWorkletGlobalScope.h
 workers/WorkerThread.h
-workers/service/ServiceWorkerContainer.h
 workers/service/context/ServiceWorkerInspectorProxy.h
 workers/service/context/ServiceWorkerThread.cpp
 workers/service/context/ServiceWorkerThread.h

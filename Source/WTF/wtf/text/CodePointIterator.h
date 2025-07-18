@@ -34,7 +34,7 @@ namespace WTF {
 
 template<typename CharacterType>
 class CodePointIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodePointIterator);
 public:
     ALWAYS_INLINE CodePointIterator() = default;
     ALWAYS_INLINE CodePointIterator(std::span<const CharacterType> data)

@@ -33,7 +33,7 @@
 
 @interface WebNSHTTPCookieStorageDummyForInternalAccess : NSObject {
 @public
-    NSHTTPCookieStorageInternal *_internal;
+    RetainPtr<NSHTTPCookieStorageInternal> _internal;
 }
 @end
 

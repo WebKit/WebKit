@@ -83,8 +83,7 @@ class NoiseSuppressor {
   std::vector<std::unique_ptr<ChannelState>> channels_;
 
   // Aggregates the Wiener filters into a single filter to use.
-  void AggregateWienerFilters(
-      rtc::ArrayView<float, kFftSizeBy2Plus1> filter) const;
+  void AggregateWienerFilters(ArrayView<float, kFftSizeBy2Plus1> filter) const;
 };
 
 }  // namespace webrtc

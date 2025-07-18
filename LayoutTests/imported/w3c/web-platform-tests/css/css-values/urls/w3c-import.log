@@ -18,3 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/fragment-only.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/resolve-relative-to-base.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/resolve-relative-to-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/url-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/url-request-modifiers-computed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/url-request-modifiers-invalid.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/url-request-modifiers-serialize.sub.html

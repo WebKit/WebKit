@@ -25,7 +25,7 @@ namespace {
 void ReadParam(const Json::Value& root, std::string param_name, bool* param) {
   RTC_DCHECK(param);
   bool v;
-  if (rtc::GetBoolFromJsonObject(root, param_name, &v)) {
+  if (GetBoolFromJsonObject(root, param_name, &v)) {
     *param = v;
   }
 }
@@ -33,7 +33,7 @@ void ReadParam(const Json::Value& root, std::string param_name, bool* param) {
 void ReadParam(const Json::Value& root, std::string param_name, size_t* param) {
   RTC_DCHECK(param);
   int v;
-  if (rtc::GetIntFromJsonObject(root, param_name, &v) && v >= 0) {
+  if (GetIntFromJsonObject(root, param_name, &v) && v >= 0) {
     *param = v;
   }
 }
@@ -41,7 +41,7 @@ void ReadParam(const Json::Value& root, std::string param_name, size_t* param) {
 void ReadParam(const Json::Value& root, std::string param_name, int* param) {
   RTC_DCHECK(param);
   int v;
-  if (rtc::GetIntFromJsonObject(root, param_name, &v)) {
+  if (GetIntFromJsonObject(root, param_name, &v)) {
     *param = v;
   }
 }
@@ -49,7 +49,7 @@ void ReadParam(const Json::Value& root, std::string param_name, int* param) {
 void ReadParam(const Json::Value& root, std::string param_name, float* param) {
   RTC_DCHECK(param);
   double v;
-  if (rtc::GetDoubleFromJsonObject(root, param_name, &v)) {
+  if (GetDoubleFromJsonObject(root, param_name, &v)) {
     *param = static_cast<float>(v);
   }
 }
@@ -59,9 +59,9 @@ void ReadParam(const Json::Value& root,
                EchoCanceller3Config::Filter::RefinedConfiguration* param) {
   RTC_DCHECK(param);
   Json::Value json_array;
-  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+  if (GetValueFromJsonObject(root, param_name, &json_array)) {
     std::vector<double> v;
-    rtc::JsonArrayToDoubleVector(json_array, &v);
+    JsonArrayToDoubleVector(json_array, &v);
     if (v.size() != 6) {
       RTC_LOG(LS_ERROR) << "Incorrect array size for " << param_name;
       return;
@@ -80,9 +80,9 @@ void ReadParam(const Json::Value& root,
                EchoCanceller3Config::Filter::CoarseConfiguration* param) {
   RTC_DCHECK(param);
   Json::Value json_array;
-  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+  if (GetValueFromJsonObject(root, param_name, &json_array)) {
     std::vector<double> v;
-    rtc::JsonArrayToDoubleVector(json_array, &v);
+    JsonArrayToDoubleVector(json_array, &v);
     if (v.size() != 3) {
       RTC_LOG(LS_ERROR) << "Incorrect array size for " << param_name;
       return;
@@ -99,7 +99,7 @@ void ReadParam(const Json::Value& root,
   RTC_DCHECK(param);
 
   Json::Value subsection;
-  if (rtc::GetValueFromJsonObject(root, param_name, &subsection)) {
+  if (GetValueFromJsonObject(root, param_name, &subsection)) {
     ReadParam(subsection, "downmix", &param->downmix);
     ReadParam(subsection, "adaptive_selection", &param->adaptive_selection);
     ReadParam(subsection, "activity_power_threshold",
@@ -116,9 +116,9 @@ void ReadParam(
         param) {
   RTC_DCHECK(param);
   Json::Value json_array;
-  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+  if (GetValueFromJsonObject(root, param_name, &json_array)) {
     std::vector<int> v;
-    rtc::JsonArrayToIntVector(json_array, &v);
+    JsonArrayToIntVector(json_array, &v);
     if (v.size() != 2) {
       RTC_LOG(LS_ERROR) << "Incorrect array size for " << param_name;
       return;
@@ -133,9 +133,9 @@ void ReadParam(const Json::Value& root,
                EchoCanceller3Config::Suppressor::MaskingThresholds* param) {
   RTC_DCHECK(param);
   Json::Value json_array;
-  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+  if (GetValueFromJsonObject(root, param_name, &json_array)) {
     std::vector<double> v;
-    rtc::JsonArrayToDoubleVector(json_array, &v);
+    JsonArrayToDoubleVector(json_array, &v);
     if (v.size() != 3) {
       RTC_LOG(LS_ERROR) << "Incorrect array size for " << param_name;
       return;
@@ -170,7 +170,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
   }
 
   Json::Value aec3_root;
-  success = rtc::GetValueFromJsonObject(root, "aec3", &aec3_root);
+  success = GetValueFromJsonObject(root, "aec3", &aec3_root);
   if (!success) {
     RTC_LOG(LS_ERROR) << "Missing AEC3 config field: " << json_string;
     *parsing_successful = false;
@@ -178,14 +178,14 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
   }
 
   Json::Value section;
-  if (rtc::GetValueFromJsonObject(aec3_root, "buffering", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "buffering", &section)) {
     ReadParam(section, "excess_render_detection_interval_blocks",
               &cfg.buffering.excess_render_detection_interval_blocks);
     ReadParam(section, "max_allowed_excess_render_blocks",
               &cfg.buffering.max_allowed_excess_render_blocks);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "delay", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "delay", &section)) {
     ReadParam(section, "default_delay", &cfg.delay.default_delay);
     ReadParam(section, "down_sampling_factor", &cfg.delay.down_sampling_factor);
     ReadParam(section, "num_filters", &cfg.delay.num_filters);
@@ -203,8 +203,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.delay.delay_candidate_detection_threshold);
 
     Json::Value subsection;
-    if (rtc::GetValueFromJsonObject(section, "delay_selection_thresholds",
-                                    &subsection)) {
+    if (GetValueFromJsonObject(section, "delay_selection_thresholds",
+                               &subsection)) {
       ReadParam(subsection, "initial",
                 &cfg.delay.delay_selection_thresholds.initial);
       ReadParam(subsection, "converged",
@@ -223,7 +223,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "detect_pre_echo", &cfg.delay.detect_pre_echo);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "filter", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "filter", &section)) {
     ReadParam(section, "refined", &cfg.filter.refined);
     ReadParam(section, "coarse", &cfg.filter.coarse);
     ReadParam(section, "refined_initial", &cfg.filter.refined_initial);
@@ -245,7 +245,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.filter.export_linear_aec_output);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "erle", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "erle", &section)) {
     ReadParam(section, "min", &cfg.erle.min);
     ReadParam(section, "max_l", &cfg.erle.max_l);
     ReadParam(section, "max_h", &cfg.erle.max_h);
@@ -257,7 +257,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.erle.clamp_quality_estimate_to_one);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "ep_strength", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "ep_strength", &section)) {
     ReadParam(section, "default_gain", &cfg.ep_strength.default_gain);
     ReadParam(section, "default_len", &cfg.ep_strength.default_len);
     ReadParam(section, "nearend_len", &cfg.ep_strength.nearend_len);
@@ -269,7 +269,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.ep_strength.use_conservative_tail_frequency_response);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "echo_audibility", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "echo_audibility", &section)) {
     ReadParam(section, "low_render_limit",
               &cfg.echo_audibility.low_render_limit);
     ReadParam(section, "normal_render_limit",
@@ -288,7 +288,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.echo_audibility.use_stationarity_properties_at_init);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "render_levels", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "render_levels", &section)) {
     ReadParam(section, "active_render_limit",
               &cfg.render_levels.active_render_limit);
     ReadParam(section, "poor_excitation_render_limit",
@@ -299,15 +299,14 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.render_levels.render_power_gain_db);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "echo_removal_control",
-                                  &section)) {
+  if (GetValueFromJsonObject(aec3_root, "echo_removal_control", &section)) {
     ReadParam(section, "has_clock_drift",
               &cfg.echo_removal_control.has_clock_drift);
     ReadParam(section, "linear_and_stable_echo_path",
               &cfg.echo_removal_control.linear_and_stable_echo_path);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "echo_model", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "echo_model", &section)) {
     Json::Value subsection;
     ReadParam(section, "noise_floor_hold", &cfg.echo_model.noise_floor_hold);
     ReadParam(section, "min_noise_floor_power",
@@ -324,16 +323,16 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.echo_model.model_reverb_in_nonlinear_mode);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "comfort_noise", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "comfort_noise", &section)) {
     ReadParam(section, "noise_floor_dbfs", &cfg.comfort_noise.noise_floor_dbfs);
   }
 
   Json::Value subsection;
-  if (rtc::GetValueFromJsonObject(aec3_root, "suppressor", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "suppressor", &section)) {
     ReadParam(section, "nearend_average_blocks",
               &cfg.suppressor.nearend_average_blocks);
 
-    if (rtc::GetValueFromJsonObject(section, "normal_tuning", &subsection)) {
+    if (GetValueFromJsonObject(section, "normal_tuning", &subsection)) {
       ReadParam(subsection, "mask_lf", &cfg.suppressor.normal_tuning.mask_lf);
       ReadParam(subsection, "mask_hf", &cfg.suppressor.normal_tuning.mask_hf);
       ReadParam(subsection, "max_inc_factor",
@@ -342,7 +341,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
                 &cfg.suppressor.normal_tuning.max_dec_factor_lf);
     }
 
-    if (rtc::GetValueFromJsonObject(section, "nearend_tuning", &subsection)) {
+    if (GetValueFromJsonObject(section, "nearend_tuning", &subsection)) {
       ReadParam(subsection, "mask_lf", &cfg.suppressor.nearend_tuning.mask_lf);
       ReadParam(subsection, "mask_hf", &cfg.suppressor.nearend_tuning.mask_hf);
       ReadParam(subsection, "max_inc_factor",
@@ -360,8 +359,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "last_lf_band", &cfg.suppressor.last_lf_band);
     ReadParam(section, "first_hf_band", &cfg.suppressor.first_hf_band);
 
-    if (rtc::GetValueFromJsonObject(section, "dominant_nearend_detection",
-                                    &subsection)) {
+    if (GetValueFromJsonObject(section, "dominant_nearend_detection",
+                               &subsection)) {
       ReadParam(subsection, "enr_threshold",
                 &cfg.suppressor.dominant_nearend_detection.enr_threshold);
       ReadParam(subsection, "enr_exit_threshold",
@@ -380,8 +379,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
                      .use_unbounded_echo_spectrum);
     }
 
-    if (rtc::GetValueFromJsonObject(section, "subband_nearend_detection",
-                                    &subsection)) {
+    if (GetValueFromJsonObject(section, "subband_nearend_detection",
+                               &subsection)) {
       ReadParam(
           subsection, "nearend_average_blocks",
           &cfg.suppressor.subband_nearend_detection.nearend_average_blocks);
@@ -398,8 +397,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "use_subband_nearend_detection",
               &cfg.suppressor.use_subband_nearend_detection);
 
-    if (rtc::GetValueFromJsonObject(section, "high_bands_suppression",
-                                    &subsection)) {
+    if (GetValueFromJsonObject(section, "high_bands_suppression",
+                               &subsection)) {
       ReadParam(subsection, "enr_threshold",
                 &cfg.suppressor.high_bands_suppression.enr_threshold);
       ReadParam(subsection, "max_gain_during_echo",
@@ -417,7 +416,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.suppressor.conservative_hf_suppression);
   }
 
-  if (rtc::GetValueFromJsonObject(aec3_root, "multi_channel", &section)) {
+  if (GetValueFromJsonObject(aec3_root, "multi_channel", &section)) {
     ReadParam(section, "detect_stereo_content",
               &cfg.multi_channel.detect_stereo_content);
     ReadParam(section, "stereo_detection_threshold",
@@ -430,7 +429,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
 }
 
 std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
-  rtc::StringBuilder ost;
+  StringBuilder ost;
   ost << "{";
   ost << "\"aec3\": {";
   ost << "\"buffering\": {";

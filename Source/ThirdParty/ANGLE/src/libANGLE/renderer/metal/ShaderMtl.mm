@@ -76,12 +76,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *conte
     options->metal.generateShareableShaders =
         displayMtl->getFeatures().generateShareableShaders.enabled;
 
-    if (displayMtl->getFeatures().intelExplicitBoolCastWorkaround.enabled ||
-        options->metal.generateShareableShaders)
-    {
-        options->addExplicitBoolCasts = true;
-    }
-
     options->clampPointSize = true;
 #if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
     options->clampFragDepth = true;

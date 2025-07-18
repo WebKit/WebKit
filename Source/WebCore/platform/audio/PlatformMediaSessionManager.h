@@ -153,6 +153,8 @@ protected:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    bool willLog(WTFLogLevel) const;
+
     int countActiveAudioCaptureSources();
 
     bool computeSupportsSeeking() const;

@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebLocks Back/Forward Cache Suspend Test</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+'use strict';
+
+// Test that WebLocks are properly released when page is suspended for back/forward cache
+async_test(t => {
+    let lockReleased = false;
+    let promiseRejected = false;
+    let pageHidden = false;
+    let pageShown = false;
+    
+    console.log('TEST: Starting WebLocks suspend test');
+    
+    // Listen for page cache events
+    window.addEventListener('pagehide', function(event) {
+        console.log('TEST: pagehide event, persisted:', event.persisted);
+        if (event.persisted) {
+            pageHidden = true;
+            console.log('TEST: Page entering BFCache');
+        }
+    });
+    
+    window.addEventListener('pageshow', function(event) {
+        console.log('TEST: pageshow event, persisted:', event.persisted);
+        if (event.persisted) {
+            pageShown = true;
+            console.log('TEST: Page restored from BFCache');
+            
+            // Check if lock was released while in cache
+            setTimeout(() => {
+                navigator.locks.query().then(snapshot => {
+                    console.log('TEST: Query after pageshow - held:', snapshot.held.length, 'pending:', snapshot.pending.length);
+                    t.step(() => {
+                        assert_true(pageHidden, 'Page should have been hidden');
+                        assert_true(pageShown, 'Page should have been shown');
+                        assert_equals(snapshot.held.length, 0, 'Lock should be released after BFCache');
+                        assert_equals(snapshot.pending.length, 0, 'No pending locks should remain');
+                        assert_true(promiseRejected, 'Lock promise should have been rejected');
+                        assert_true(lockReleased, 'Lock should have been released');
+                    });
+                    console.log('TEST: Test completed successfully');
+                    t.done();
+                });
+            }, 100);
+        }
+    });
+    
+    // Request a lock that should be released when page is suspended
+    const lockPromise = navigator.locks.request('suspend-test-lock', async (lock) => {
+        console.log('TEST: Lock granted, lock object:', lock);
+        // Return a promise that never resolves normally
+        // It should be rejected when suspend() is called
+        return new Promise((resolve, reject) => {
+            console.log('TEST: Lock promise created, waiting for suspend...');
+            // This promise will be rejected by suspend() implementation
+        });
+    });
+    
+    lockPromise.catch(reason => {
+        console.log('TEST: Lock promise rejected, reason:', reason);
+        promiseRejected = true;
+        lockReleased = true;
+    });
+    
+    // Wait for the lock to be acquired, then navigate to trigger suspend
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            console.log('TEST: Checking initial lock state...');
+            navigator.locks.query().then(snapshot => {
+                console.log('TEST: Initial query - held:', snapshot.held.length, 'pending:', snapshot.pending.length);
+                if (snapshot.held.length > 0) {
+                    console.log('TEST: Lock details:', snapshot.held[0]);
+                }
+                
+                t.step(() => {
+                    assert_equals(snapshot.held.length, 1, 'Lock should be held initially');
+                    assert_equals(snapshot.held[0].name, 'suspend-test-lock', 'Correct lock name');
+                });
+                
+                console.log('TEST: About to navigate to trigger BFCache...');
+                // Navigate to a helper page that will navigate back
+                window.location.href = 'resources/bfcache-helper.html';
+                console.log('TEST: Navigation initiated');
+            });
+        }, 100);
+    });
+    
+    // Timeout if suspend doesn't work
+    setTimeout(() => {
+        if (!lockReleased && !pageShown) {
+            console.log('TEST: Timeout - lock was not released, pageHidden:', pageHidden, 'pageShown:', pageShown);
+            t.step(() => {
+                assert_unreached('Lock should have been released due to suspend');
+            });
+            t.done();
+        }
+    }, 10000);
+    
+}, 'WebLocks are properly released when page is suspended for back/forward cache');
+
+</script>
+</body>
+</html>

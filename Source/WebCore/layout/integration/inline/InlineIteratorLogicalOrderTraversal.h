@@ -33,7 +33,7 @@ namespace WebCore {
 namespace InlineIterator {
 
 struct TextLogicalOrderCacheData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TextLogicalOrderCacheData);
 
     Vector<TextBoxIterator> boxes;
     size_t index { 0 };
@@ -44,7 +44,7 @@ std::pair<TextBoxIterator, TextLogicalOrderCache> firstTextBoxInLogicalOrderFor(
 TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator&, TextLogicalOrderCache&);
 
 struct LineLogicalOrderCacheData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineLogicalOrderCacheData);
 
     LineBoxIterator lineBox;
     Vector<LeafBoxIterator> boxes;

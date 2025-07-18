@@ -24,13 +24,14 @@
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/ssl_certificate.h"
 #ifdef OPENSSL_IS_BORINGSSL
-#include <openssl/base.h>
-
 #include "rtc_base/boringssl_identity.h"
+#include "rtc_base/openssl.h"
 #else
 #include "rtc_base/openssl_identity.h"
 #endif
+#include "api/field_trials_view.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
@@ -38,7 +39,7 @@
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread.h"
 
-namespace rtc {
+namespace webrtc {
 
 // This class was written with OpenSSLAdapter (a socket adapter) as a
 // starting point. It has similar structure and functionality, but uses a
@@ -70,19 +71,18 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
  public:
   OpenSSLStreamAdapter(
       std::unique_ptr<StreamInterface> stream,
-      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error);
+      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error,
+      const FieldTrialsView* field_trials = nullptr);
   ~OpenSSLStreamAdapter() override;
 
   void SetIdentity(std::unique_ptr<SSLIdentity> identity) override;
   SSLIdentity* GetIdentityForTesting() const override;
 
   // Default argument is for compatibility
-  void SetServerRole(SSLRole role = SSL_SERVER) override;
-  bool SetPeerCertificateDigest(
+  void SetServerRole(SSLRole role = webrtc::SSL_SERVER) override;
+  SSLPeerCertificateDigestError SetPeerCertificateDigest(
       absl::string_view digest_alg,
-      const unsigned char* digest_val,
-      size_t digest_len,
-      SSLPeerCertificateDigestError* error = nullptr) override;
+      ArrayView<const uint8_t> digest_val) override;
 
   std::unique_ptr<SSLCertChain> GetPeerSSLCertChain() const override;
 
@@ -92,11 +92,10 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   [[deprecated]] void SetMode(SSLMode mode) override;
   void SetMaxProtocolVersion(SSLProtocolVersion version) override;
   void SetInitialRetransmissionTimeout(int timeout_ms) override;
+  void SetMTU(int mtu) override;
 
-  StreamResult Read(rtc::ArrayView<uint8_t> data,
-                    size_t& read,
-                    int& error) override;
-  StreamResult Write(rtc::ArrayView<const uint8_t> data,
+  StreamResult Read(ArrayView<uint8_t> data, size_t& read, int& error) override;
+  StreamResult Write(ArrayView<const uint8_t> data,
                      size_t& written,
                      int& error) override;
   void Close() override;
@@ -110,14 +109,7 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   bool GetSslVersionBytes(int* version) const override;
   // Key Extractor interface
   bool ExportSrtpKeyingMaterial(
-      rtc::ZeroOnFreeBuffer<uint8_t>& keying_material) override;
-  [[deprecated("Use ExportSrtpKeyingMaterial instead")]] bool
-  ExportKeyingMaterial(absl::string_view label,
-                       const uint8_t* context,
-                       size_t context_len,
-                       bool use_context,
-                       uint8_t* result,
-                       size_t result_len) override;
+      ZeroOnFreeBuffer<uint8_t>& keying_material) override;
 
   uint16_t GetPeerSignatureAlgorithm() const override;
 
@@ -136,6 +128,21 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   // Use our timeutils.h source of timing in BoringSSL, allowing us to test
   // using a fake clock.
   static void EnableTimeCallbackForTesting();
+
+  // Return max DTLS SSLProtocolVersion supported by implementation.
+  static SSLProtocolVersion GetMaxSupportedDTLSProtocolVersion();
+
+  // Return number of times DTLS retransmission has been triggered.
+  // Used for testing (and maybe put into stats?).
+  int GetRetransmissionCount() const override { return retransmission_count_; }
+
+  // Set cipher group ids to use during DTLS handshake to establish ephemeral
+  // key, see CryptoOptions::EphemeralKeyExchangeCipherGroups.
+  bool SetSslGroupIds(const std::vector<uint16_t>& group_ids) override;
+
+  // Return the the ID of the group used by the adapters most recently
+  // completed handshake, or 0 if not applicable (e.g. before the handshake).
+  uint16_t GetSslGroupId() const override;
 
  private:
   enum SSLState {
@@ -206,9 +213,9 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   const std::unique_ptr<StreamInterface> stream_;
   absl::AnyInvocable<void(SSLHandshakeError)> handshake_error_;
 
-  rtc::Thread* const owner_;
-  webrtc::ScopedTaskSafety task_safety_;
-  webrtc::RepeatingTaskHandle timeout_task_;
+  Thread* const owner_;
+  ScopedTaskSafety task_safety_;
+  RepeatingTaskHandle timeout_task_;
 
   SSLState state_;
   SSLRole role_;
@@ -225,7 +232,7 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
 #ifdef OPENSSL_IS_BORINGSSL
   std::unique_ptr<BoringSSLIdentity> identity_;
 #else
-  std::unique_ptr<OpenSSLIdentity> identity_;
+  std::unique_ptr<webrtc::OpenSSLIdentity> identity_;
 #endif
   // The certificate chain that the peer presented. Initially null, until the
   // connection is established.
@@ -238,6 +245,9 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   // The DtlsSrtp ciphers
   std::string srtp_ciphers_;
 
+  // The ssl cipher groups to be used for DTLS handshake.
+  std::vector<uint16_t> ssl_cipher_groups_;
+
   // Do DTLS or not
   SSLMode ssl_mode_;
 
@@ -248,12 +258,31 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   // be too aggressive for low bandwidth links.
   int dtls_handshake_timeout_ms_ = 50;
 
-  // Rollout killswitch for disabling session tickets.
-  const bool disable_handshake_ticket_;
+  // MTU configured for dtls.
+  int dtls_mtu_ = 1200;
+
+  // 0 == Disabled
+  // 1 == Max
+  // 2 == Enabled (both min and max)
+  const int force_dtls_13_ = 0;
+
+  int retransmission_count_ = 0;
+
+  // Kill switch (from field-trial) flag to disable the use of
+  // SSL_set_group_ids.
+  const bool disable_ssl_group_ids_ = false;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::OpenSSLStreamAdapter;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_STREAM_ADAPTER_H_

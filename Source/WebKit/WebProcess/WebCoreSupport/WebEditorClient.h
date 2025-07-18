@@ -180,7 +180,7 @@ private:
     bool shouldShowUnicodeMenu() final;
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(MAC)
     void didDispatchInputMethodKeydown(WebCore::KeyboardEvent&) final;
 #endif
 

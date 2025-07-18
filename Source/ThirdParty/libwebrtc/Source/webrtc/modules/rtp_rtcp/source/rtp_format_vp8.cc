@@ -15,11 +15,11 @@
 
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp8.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
@@ -58,7 +58,7 @@ bool ValidateHeader(const RTPVideoHeaderVP8& hdr_info) {
 
 }  // namespace
 
-RtpPacketizerVp8::RtpPacketizerVp8(rtc::ArrayView<const uint8_t> payload,
+RtpPacketizerVp8::RtpPacketizerVp8(ArrayView<const uint8_t> payload,
                                    PayloadSizeLimits limits,
                                    const RTPVideoHeaderVP8& hdr_info)
     : hdr_(BuildHeader(hdr_info)), remaining_payload_(payload) {

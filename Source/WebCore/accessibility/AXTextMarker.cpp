@@ -65,7 +65,7 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visi
     zeroBytes(*this);
     treeID = cache.treeID().toUInt64();
     auto position = visiblePosition.deepEquivalent();
-    auto optionalObjectID = nodeID(cache, position.anchorNode());
+    auto optionalObjectID = nodeID(cache, position.protectedAnchorNode().get());
     objectID = optionalObjectID ? optionalObjectID->toUInt64() : 0;
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
     anchorType = position.anchorType();
@@ -116,7 +116,7 @@ AXTextMarker::AXTextMarker(const VisiblePosition& visiblePosition, TextMarkerOri
     if (!node)
         return;
 
-    CheckedPtr cache = node->document().axObjectCache();
+    CheckedPtr cache = node->protectedDocument()->axObjectCache();
     if (!cache)
         return;
 
@@ -131,7 +131,7 @@ AXTextMarker::AXTextMarker(const CharacterOffset& characterOffset, TextMarkerOri
     if (characterOffset.isNull())
         return;
 
-    if (auto* cache = characterOffset.node->document().axObjectCache())
+    if (CheckedPtr cache = characterOffset.node->protectedDocument()->axObjectCache())
         m_data = cache->textMarkerDataForCharacterOffset(characterOffset, origin);
 }
 
@@ -280,7 +280,7 @@ AXTextMarkerRange::AXTextMarkerRange(const std::optional<SimpleRange>& range)
     }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
-    if (CheckedPtr cache = range->start.document().axObjectCache()) {
+    if (CheckedPtr cache = range->start.protectedDocument()->axObjectCache()) {
         m_start = AXTextMarker(cache->startOrEndCharacterOffsetForRange(*range, true));
         m_end = AXTextMarker(cache->startOrEndCharacterOffsetForRange(*range, false));
     }
@@ -607,6 +607,7 @@ String AXTextMarkerRange::toString() const
 
         StringBuilder builder;
         for (; !it.atEnd(); it.advance()) {
+            RefPtr node = it.node();
             // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
             if (it.text().length()) {
                 // If this is in a list item, we need to add the text for the list marker
@@ -614,10 +615,10 @@ String AXTextMarkerRange::toString() const
                 // when iterating text.
                 // Don't add list marker text for new line character.
                 if (it.text().length() != 1 || !isASCIIWhitespace(it.text()[0]))
-                    builder.append(AccessibilityObject::listMarkerTextForNodeAndPosition(it.node(), makeDeprecatedLegacyPosition(it.range().start)));
+                    builder.append(AccessibilityObject::listMarkerTextForNodeAndPosition(node.get(), makeDeprecatedLegacyPosition(it.range().start)));
                 it.appendTextToStringBuilder(builder);
             } else {
-                if (AccessibilityObject::replacedNodeNeedsCharacter(*it.node()))
+                if (AccessibilityObject::replacedNodeNeedsCharacter(*node))
                     builder.append(objectReplacementCharacter);
             }
         }

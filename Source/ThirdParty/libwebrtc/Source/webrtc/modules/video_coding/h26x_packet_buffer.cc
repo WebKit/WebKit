@@ -11,19 +11,23 @@
 #include "modules/video_coding/h26x_packet_buffer.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <limits>
+#include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/algorithm/container.h"
 #include "api/array_view.h"
-#include "api/rtp_packet_info.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
-#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/h264_sprop_parameter_sets.h"
@@ -49,7 +53,7 @@ bool IsFirstPacketOfFragment(const RTPVideoHeaderH264& h264_header) {
 
 bool BeginningOfIdr(const H26xPacketBuffer::Packet& packet) {
   const auto& h264_header =
-      absl::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
+      std::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
   const bool contains_idr_nalu =
       absl::c_any_of(h264_header.nalus, [](const auto& nalu_info) {
         return nalu_info.type == H264::NaluType::kIdr;
@@ -67,13 +71,13 @@ bool BeginningOfIdr(const H26xPacketBuffer::Packet& packet) {
 
 bool HasSps(const H26xPacketBuffer::Packet& packet) {
   auto& h264_header =
-      absl::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
+      std::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
   return absl::c_any_of(h264_header.nalus, [](const auto& nalu_info) {
     return nalu_info.type == H264::NaluType::kSps;
   });
 }
 
-int64_t* GetContinuousSequence(rtc::ArrayView<int64_t> last_continuous,
+int64_t* GetContinuousSequence(ArrayView<int64_t> last_continuous,
                                int64_t unwrapped_seq_num) {
   for (int64_t& last : last_continuous) {
     if (unwrapped_seq_num - 1 == last) {
@@ -101,6 +105,24 @@ bool HasVps(const H26xPacketBuffer::Packet& packet) {
 H26xPacketBuffer::H26xPacketBuffer(bool h264_idr_only_keyframes_allowed)
     : h264_idr_only_keyframes_allowed_(h264_idr_only_keyframes_allowed) {
   last_continuous_in_sequence_.fill(std::numeric_limits<int64_t>::min());
+}
+
+H26xPacketBuffer::InsertResult H26xPacketBuffer::InsertPadding(
+    uint16_t unwrapped_seq_num) {
+  int64_t* last_continuous_unwrapped_seq_num =
+      GetContinuousSequence(last_continuous_in_sequence_, unwrapped_seq_num);
+  if (last_continuous_unwrapped_seq_num == nullptr) {
+    last_continuous_in_sequence_[last_continuous_in_sequence_index_] =
+        unwrapped_seq_num;
+    last_continuous_unwrapped_seq_num =
+        &last_continuous_in_sequence_[last_continuous_in_sequence_index_];
+    last_continuous_in_sequence_index_ =
+        (last_continuous_in_sequence_index_ + 1) %
+        last_continuous_in_sequence_.size();
+  } else {
+    *last_continuous_unwrapped_seq_num = unwrapped_seq_num;
+  }
+  return {};
 }
 
 H26xPacketBuffer::InsertResult H26xPacketBuffer::InsertPacket(
@@ -229,7 +251,7 @@ bool H26xPacketBuffer::MaybeAssembleFrame(int64_t start_seq_num_unwrapped,
     const auto& packet = GetPacket(seq_num);
     if (packet->codec() == kVideoCodecH264) {
       const auto& h264_header =
-          absl::get<RTPVideoHeaderH264>(packet->video_header.video_type_header);
+          std::get<RTPVideoHeaderH264>(packet->video_header.video_type_header);
       for (const auto& nalu : h264_header.nalus) {
         has_idr |= nalu.type == H264::NaluType::kIdr;
         has_sps |= nalu.type == H264::NaluType::kSps;
@@ -339,9 +361,9 @@ void H26xPacketBuffer::InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
     return;
   }
   std::optional<SpsParser::SpsState> parsed_sps = SpsParser::ParseSps(
-      rtc::ArrayView<const uint8_t>(sps).subview(kNaluHeaderOffset));
+      ArrayView<const uint8_t>(sps).subview(kNaluHeaderOffset));
   std::optional<PpsParser::PpsState> parsed_pps = PpsParser::ParsePps(
-      rtc::ArrayView<const uint8_t>(pps).subview(kNaluHeaderOffset));
+      ArrayView<const uint8_t>(pps).subview(kNaluHeaderOffset));
 
   if (!parsed_sps) {
     RTC_LOG(LS_WARNING) << "Failed to parse SPS.";
@@ -384,9 +406,9 @@ bool H26xPacketBuffer::FixH264Packet(Packet& packet) {
 
   RTPVideoHeader& video_header = packet.video_header;
   RTPVideoHeaderH264& h264_header =
-      absl::get<RTPVideoHeaderH264>(video_header.video_type_header);
+      std::get<RTPVideoHeaderH264>(video_header.video_type_header);
 
-  rtc::CopyOnWriteBuffer result;
+  CopyOnWriteBuffer result;
 
   if (h264_idr_only_keyframes_allowed_) {
     // Check if sps and pps insertion is needed.

@@ -106,7 +106,7 @@ void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
     m_declarativeShadowRoot = shadowRoot;
 }
 
-Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
 {
     RefPtr<Node> clone;
     switch (type) {

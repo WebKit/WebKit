@@ -210,6 +210,34 @@ TEST(GraphicsContextTests, DrawsReportHasDrawn)
     EXPECT_FALSE(context.consumeHasDrawn());
 }
 
+TEST(GraphicsContextTests, OutOfGamutSRGBNotDrawn)
+{
+    auto colorSpace = DestinationColorSpace::ExtendedSRGB();
+    auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 16, 8 * contextWidth, colorSpace.platformColorSpace(), bitmapInfo));
+    GraphicsContextCG ctx(cgContext.get());
+
+    // Draw an out of gamut white
+    ctx.fillRect(FloatRect(0, 0, contextWidth, contextHeight), { ExtendedSRGBA<float> { 5.0, 5.0, 5.0, 1.0 } });
+
+    // Copy the first pixel as bytes (4 float16s = 8 bytes)
+    CGContextFlush(cgContext.get());
+    std::array<uint8_t, 8> firstPixel;
+    uint8_t* primaryData = static_cast<uint8_t*>(CGBitmapContextGetData(cgContext.get()));
+    memcpySpan(std::span { firstPixel }, std::span(primaryData, 8));
+
+    // Draw normal SDR white.
+    ctx.fillRect(FloatRect(0, 0, contextWidth, contextHeight), Color::white);
+
+    CGContextFlush(cgContext.get());
+    primaryData = static_cast<uint8_t*>(CGBitmapContextGetData(cgContext.get()));
+
+    // Compare the bytes to confirm that out of gamut was restricted
+    // to the SDR range.
+    for (size_t i = 0; i < 8; i++)
+        EXPECT_EQ(firstPixel[i], primaryData[i]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)

@@ -11,14 +11,17 @@
 #ifndef RTC_TOOLS_RTP_GENERATOR_RTP_GENERATOR_H_
 #define RTC_TOOLS_RTP_GENERATOR_RTP_GENERATOR_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/media_types.h"
-#include "api/video/builtin_video_bitrate_allocator_factory.h"
+#include "api/video/video_bitrate_allocator_factory.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "call/call.h"
@@ -28,7 +31,6 @@
 #include "test/frame_generator_capturer.h"
 #include "test/rtp_file_reader.h"
 #include "test/rtp_file_writer.h"
-#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -91,10 +93,11 @@ class RtpGenerator final : public webrtc::Transport {
   // webrtc::Transport implementation
   // Captured RTP packets are written to the RTPDump file instead of over the
   // network.
-  bool SendRtp(rtc::ArrayView<const uint8_t> packet,
-               const webrtc::PacketOptions& options) override;
+  bool SendRtp(ArrayView<const uint8_t> packet,
+               const PacketOptions& options) override;
   // RTCP packets are ignored for now.
-  bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override;
+  bool SendRtcp(ArrayView<const uint8_t> packet,
+                const PacketOptions& options) override;
   // Returns the maximum duration
   int GetMaxDuration() const;
   // Waits until all video streams have finished.

@@ -156,7 +156,7 @@ TEST(AlrDetectorTest, BandwidthEstimateChanges) {
 }
 
 TEST(AlrDetectorTest, ParseControlFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
+  test::ScopedFieldTrials scoped_field_trial(
       "WebRTC-ProbingScreenshareBwe/Control/");
   std::optional<AlrExperimentSettings> parsed_params =
       AlrExperimentSettings::CreateFromFieldTrial(
@@ -165,7 +165,7 @@ TEST(AlrDetectorTest, ParseControlFieldTrial) {
 }
 
 TEST(AlrDetectorTest, ParseActiveFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
+  test::ScopedFieldTrials scoped_field_trial(
       "WebRTC-ProbingScreenshareBwe/1.1,2875,85,20,-20,1/");
   std::optional<AlrExperimentSettings> parsed_params =
       AlrExperimentSettings::CreateFromFieldTrial(
@@ -180,7 +180,7 @@ TEST(AlrDetectorTest, ParseActiveFieldTrial) {
 }
 
 TEST(AlrDetectorTest, ParseAlrSpecificFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
+  test::ScopedFieldTrials scoped_field_trial(
       "WebRTC-AlrDetectorParameters/"
       "bw_usage:90%,start:0%,stop:-10%/");
   FieldTrialBasedConfig field_trials;

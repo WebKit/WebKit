@@ -27,19 +27,25 @@
 
 #include "WebPage.h"
 #include <WebCore/GeolocationClient.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
 
-class WebGeolocationClient final : public WebCore::GeolocationClient {
+class WebGeolocationClient final : public WebCore::GeolocationClient, public RefCounted<WebGeolocationClient> {
     WTF_MAKE_TZONE_ALLOCATED(WebGeolocationClient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGeolocationClient);
 public:
-    explicit WebGeolocationClient(WebPage&);
+    static Ref<WebGeolocationClient> create(WebPage& webPage) { return adoptRef(*new WebGeolocationClient(webPage)); }
     virtual ~WebGeolocationClient();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    explicit WebGeolocationClient(WebPage&);
+
     void geolocationDestroyed() final;
 
     void startUpdating(const String& authorizationToken, bool needsHighAccuracy) final;

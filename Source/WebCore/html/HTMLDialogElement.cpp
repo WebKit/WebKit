@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSSelector.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"

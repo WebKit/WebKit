@@ -84,7 +84,7 @@ bool IsSse2Available() {
 Aec3Fft::Aec3Fft() : ooura_fft_(IsSse2Available()) {}
 
 // TODO(peah): Change x to be std::array once the rest of the code allows this.
-void Aec3Fft::ZeroPaddedFft(rtc::ArrayView<const float> x,
+void Aec3Fft::ZeroPaddedFft(ArrayView<const float> x,
                             Window window,
                             FftData* X) const {
   RTC_DCHECK(X);
@@ -110,8 +110,8 @@ void Aec3Fft::ZeroPaddedFft(rtc::ArrayView<const float> x,
   Fft(&fft, X);
 }
 
-void Aec3Fft::PaddedFft(rtc::ArrayView<const float> x,
-                        rtc::ArrayView<const float> x_old,
+void Aec3Fft::PaddedFft(ArrayView<const float> x,
+                        ArrayView<const float> x_old,
                         Window window,
                         FftData* X) const {
   RTC_DCHECK(X);

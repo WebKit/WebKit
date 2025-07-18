@@ -1371,17 +1371,18 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
         return nullptr;
 
     ASSERT_UNUSED(corePage, page->corePage() == &corePage);
-#if PLATFORM(COCOA)
+#if ENABLE(TILED_CA_DRAWING_AREA)
     switch (page->drawingArea()->type()) {
-#if PLATFORM(MAC)
     case DrawingAreaType::TiledCoreAnimation:
         return TiledCoreAnimationScrollingCoordinator::create(page.get());
-#endif
     case DrawingAreaType::RemoteLayerTree:
         return RemoteScrollingCoordinator::create(page.get());
     }
-#endif
+#elif PLATFORM(COCOA)
+    return RemoteScrollingCoordinator::create(page.get());
+#else
     return nullptr;
+#endif
 }
 
 #endif
@@ -1400,7 +1401,8 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
         ASSERT(!currentScrollbarsController || is<ScrollbarsControllerMock>(currentScrollbarsController));
         return;
     }
-    
+
+#if ENABLE(TILED_CA_DRAWING_AREA)
     switch (page->drawingArea()->type()) {
     case DrawingAreaType::RemoteLayerTree: {
         if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
@@ -1414,6 +1416,12 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
             area.setScrollbarsController(ScrollbarsController::create(area));
     }
     }
+#else
+    if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
+        area.setScrollbarsController(ScrollbarsController::create(area));
+    else if (area.usesCompositedScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
+        area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
+#endif
 }
 
 #endif
@@ -2231,9 +2239,11 @@ void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentD
 
 bool WebChromeClient::isUsingUISideCompositing() const
 {
-#if PLATFORM(COCOA)
+#if ENABLE(TILED_CA_DRAWING_AREA)
     RefPtr page = m_page.get();
     return page && page->drawingArea()->type() == DrawingAreaType::RemoteLayerTree;
+#elif PLATFORM(COCOA)
+    return true;
 #else
     return false;
 #endif
@@ -2347,6 +2357,11 @@ void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<v
 bool WebChromeClient::requiresScriptTrackingPrivacyProtections(const URL& url, const SecurityOrigin& topOrigin) const
 {
     return WebProcess::singleton().requiresScriptTrackingPrivacyProtections(url, topOrigin);
+}
+
+bool WebChromeClient::shouldAllowScriptAccess(const URL& url, const SecurityOrigin& topOrigin, ScriptTrackingPrivacyCategory category) const
+{
+    return WebProcess::singleton().shouldAllowScriptAccess(url, topOrigin, category);
 }
 
 void WebChromeClient::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)

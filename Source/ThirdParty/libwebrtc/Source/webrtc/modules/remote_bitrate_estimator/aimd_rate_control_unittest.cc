@@ -9,6 +9,10 @@
  */
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 
+#include <optional>
+
+#include "api/transport/bandwidth_usage.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -18,7 +22,7 @@
 namespace webrtc {
 namespace {
 
-using ::webrtc::test::ExplicitKeyValueConfig;
+using test::ExplicitKeyValueConfig;
 
 constexpr Timestamp kInitialTime = Timestamp::Millis(123'456);
 

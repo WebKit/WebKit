@@ -160,15 +160,16 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
         options.clientIdentifier = scriptExecutionContext.identifier().object();
         options.resultingClientIdentifier = clientIdentifier->object();
-        m_serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
+        Ref serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
+        m_serviceWorkerDataManager = serviceWorkerDataManager.copyRef();
         m_context = scriptExecutionContext;
 
         // In case of blob URLs, we reuse the context controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
         else {
-            accessWorkerScriptLoaderMap([this](auto& map) mutable {
-                map.add(*m_clientIdentifier, *m_serviceWorkerDataManager);
+            accessWorkerScriptLoaderMap([clientIdentifier = *clientIdentifier, serviceWorkerDataManager = WTFMove(serviceWorkerDataManager)](auto& map) mutable {
+                map.add(clientIdentifier, serviceWorkerDataManager);
             });
             m_didAddToWorkerScriptLoaderMap = true;
         }
@@ -290,7 +291,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
 #endif
 
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
+        lazyInitialize(m_decoder, TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s));
 
     if (buffer.isEmpty())
         return;
@@ -341,11 +342,12 @@ void WorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIden
 
 void WorkerScriptLoader::cancel()
 {
-    if (!m_threadableLoader)
+    RefPtr threadableLoader = m_threadableLoader;
+    if (!threadableLoader)
         return;
 
     m_client = nullptr;
-    m_threadableLoader->cancel();
+    threadableLoader->cancel();
     m_threadableLoader = nullptr;
 }
 
@@ -358,9 +360,9 @@ WorkerFetchResult WorkerScriptLoader::fetchResult() const
 
 std::optional<ServiceWorkerData> WorkerScriptLoader::takeServiceWorkerData()
 {
-    if (!m_serviceWorkerDataManager)
-        return { };
-    return m_serviceWorkerDataManager->takeData();
+    if (RefPtr serviceWorkerDataManager = m_serviceWorkerDataManager)
+        return serviceWorkerDataManager->takeData();
+    return { };
 }
 
 RefPtr<WorkerScriptLoader::ServiceWorkerDataManager> WorkerScriptLoader::serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier identifier)
@@ -374,7 +376,7 @@ RefPtr<WorkerScriptLoader::ServiceWorkerDataManager> WorkerScriptLoader::service
 
 void WorkerScriptLoader::setControllingServiceWorker(ServiceWorkerData&& activeServiceWorkerData)
 {
-    m_serviceWorkerDataManager->setData(WTFMove(activeServiceWorkerData));
+    Ref { *m_serviceWorkerDataManager }->setData(WTFMove(activeServiceWorkerData));
 }
 
 WorkerScriptLoader::ServiceWorkerDataManager::~ServiceWorkerDataManager()

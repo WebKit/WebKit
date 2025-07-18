@@ -114,8 +114,8 @@ private:
     std::atomic<ConnectionState> m_connectionState { ConnectionState::Pending };
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSString> m_connectionIdentifier;
-    RetainPtr<NSString> m_destination;
+    const RetainPtr<NSString> m_connectionIdentifier;
+    const RetainPtr<NSString> m_destination;
 #endif
 };
 

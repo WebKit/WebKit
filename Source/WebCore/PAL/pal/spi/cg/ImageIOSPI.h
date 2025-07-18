@@ -41,9 +41,7 @@ IMAGEIO_EXTERN const CFStringRef kCGImageSourceUseHardwareAcceleration;
 
 WTF_EXTERN_C_BEGIN
 CFStringRef CGImageSourceGetTypeWithData(CFDataRef, CFStringRef, bool*);
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
 OSStatus CGImageSourceSetAllowableTypes(CFArrayRef allowableTypes);
-#endif
 
 IMAGEIO_EXTERN OSStatus CGImageSourceDisableHardwareDecoding();
 IMAGEIO_EXTERN OSStatus CGImageSourceEnableRestrictedDecoding();

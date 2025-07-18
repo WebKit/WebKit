@@ -25,6 +25,7 @@
 
 #import <WebKit/WebKit.h>
 #import <wtf/Forward.h>
+#import <wtf/IterationStatus.h>
 #import <wtf/RetainPtr.h>
 
 @class _WKFrameTreeNode;
@@ -106,7 +107,8 @@ class Color;
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
-- (void)forEachCALayer:(void(^)(CALayer *))visitor;
+- (CALayer *)firstLayerWithName:(NSString *)layerName;
+- (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor;
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
@@ -181,6 +183,7 @@ class Color;
 - (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector;
 - (Vector<WebCore::Color>)sampleColors;
 - (Vector<WebCore::Color>)sampleColorsWithInterval:(unsigned)interval;
+- (RetainPtr<_WKFrameTreeNode>)frameTree;
 @end
 
 #if PLATFORM(IOS_FAMILY)

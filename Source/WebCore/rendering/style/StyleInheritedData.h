@@ -38,7 +38,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedData);
 class StyleInheritedData : public RefCounted<StyleInheritedData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleInheritedData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleInheritedData, StyleInheritedData);
 public:
     static Ref<StyleInheritedData> create() { return adoptRef(*new StyleInheritedData); }
     Ref<StyleInheritedData> copy() const;

@@ -67,7 +67,7 @@ public:
     static const ASCIILiteral backtraceObjectGroup;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
     virtual bool enabled() const { return m_enabled; }
 
@@ -246,8 +246,8 @@ private:
     using AsyncCallIdentifier = std::pair<unsigned, uint64_t>;
     static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, uint64_t callbackId);
 
-    std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<DebuggerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<DebuggerBackendDispatcher> m_backendDispatcher;
 
     JSC::Debugger& m_debugger;
     InjectedScriptManager& m_injectedScriptManager;

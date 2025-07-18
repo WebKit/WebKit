@@ -38,7 +38,7 @@ messages -> RemoteRenderingBackend Stream {
     ReleaseFont(WebCore::RenderingResourceIdentifier identifier)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
     ReleaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
-    CacheDecomposedGlyphs(IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::GlyphBufferAdvance> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode, WebCore::RenderingResourceIdentifier identifier)
+    CacheDecomposedGlyphs(IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode, WebCore::RenderingResourceIdentifier identifier)
     ReleaseDecomposedGlyphs(WebCore::RenderingResourceIdentifier identifier) StreamBatched
     CacheGradient(Ref<WebCore::Gradient> gradient, WebCore::RenderingResourceIdentifier identifier)
     ReleaseGradient(WebCore::RenderingResourceIdentifier identifier)

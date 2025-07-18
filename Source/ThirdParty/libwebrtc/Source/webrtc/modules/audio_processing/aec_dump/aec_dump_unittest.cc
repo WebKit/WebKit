@@ -21,14 +21,14 @@ namespace webrtc {
 TEST(AecDumper, APICallsDoNotCrash) {
   // Note order of initialization: Task queue has to be initialized
   // before AecDump.
-  webrtc::TaskQueueForTest file_writer_queue("file_writer_queue");
+  TaskQueueForTest file_writer_queue("file_writer_queue");
 
   const std::string filename =
-      webrtc::test::TempFilename(webrtc::test::OutputPath(), "aec_dump");
+      test::TempFilename(test::OutputPath(), "aec_dump");
 
   {
-    std::unique_ptr<webrtc::AecDump> aec_dump =
-        webrtc::AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
+    std::unique_ptr<AecDump> aec_dump =
+        AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
 
     constexpr int kNumChannels = 1;
     constexpr int kNumSamplesPerChannel = 160;
@@ -44,10 +44,10 @@ TEST(AecDumper, APICallsDoNotCrash) {
 
     aec_dump->WriteCaptureStreamMessage();
 
-    webrtc::InternalAPMConfig apm_config;
+    InternalAPMConfig apm_config;
     aec_dump->WriteConfig(apm_config);
 
-    webrtc::ProcessingConfig api_format;
+    ProcessingConfig api_format;
     constexpr int64_t kTimeNowMs = 123456789ll;
     aec_dump->WriteInitMessage(api_format, kTimeNowMs);
   }
@@ -56,14 +56,14 @@ TEST(AecDumper, APICallsDoNotCrash) {
 }
 
 TEST(AecDumper, WriteToFile) {
-  webrtc::TaskQueueForTest file_writer_queue("file_writer_queue");
+  TaskQueueForTest file_writer_queue("file_writer_queue");
 
   const std::string filename =
-      webrtc::test::TempFilename(webrtc::test::OutputPath(), "aec_dump");
+      test::TempFilename(test::OutputPath(), "aec_dump");
 
   {
-    std::unique_ptr<webrtc::AecDump> aec_dump =
-        webrtc::AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
+    std::unique_ptr<AecDump> aec_dump =
+        AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
 
     constexpr int kNumChannels = 1;
     constexpr int kNumSamplesPerChannel = 160;
@@ -77,7 +77,7 @@ TEST(AecDumper, WriteToFile) {
   // Verify the file has been written after the AecDump d-tor has
   // finished.
   FILE* fid = fopen(filename.c_str(), "r");
-  ASSERT_TRUE(fid != NULL);
+  ASSERT_TRUE(fid != nullptr);
 
   // Clean it up.
   ASSERT_EQ(0, fclose(fid));

@@ -107,16 +107,16 @@ public:
     void setOptimizationThresholdBasedOnCompilationResult(FunctionCodeIndex functionIndex, CompilationResult result)
     {
         switch (result) {
-        case CompilationSuccessful:
+        case CompilationResult::CompilationSuccessful:
             optimizeNextInvocation(functionIndex);
             return;
-        case CompilationFailed:
+        case CompilationResult::CompilationFailed:
             dontOptimizeAnytimeSoon(functionIndex);
             return;
-        case CompilationDeferred:
+        case CompilationResult::CompilationDeferred:
             optimizeAfterWarmUp(functionIndex);
             return;
-        case CompilationInvalidated:
+        case CompilationResult::CompilationInvalidated:
             // This is weird - it will only happen in cases when the DFG code block (i.e.
             // the code block that this JITCode belongs to) is also invalidated. So it
             // doesn't really matter what we do. But, we do the right thing anyway. Note

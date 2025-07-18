@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBufferRemoteDisplayListBackend.h"
 
+#include <WebCore/NativeImage.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {

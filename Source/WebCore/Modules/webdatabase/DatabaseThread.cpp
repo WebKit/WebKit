@@ -39,7 +39,7 @@
 namespace WebCore {
 
 DatabaseThread::DatabaseThread()
-    : m_transactionCoordinator(makeUnique<SQLTransactionCoordinator>())
+    : m_transactionCoordinator(makeUniqueRef<SQLTransactionCoordinator>())
 {
     m_selfRef = this;
 }

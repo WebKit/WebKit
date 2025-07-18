@@ -14,6 +14,7 @@
 #include <cmath>
 
 #include "api/units/data_rate.h"
+#include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

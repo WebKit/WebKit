@@ -13,8 +13,8 @@
 
 #include <stdint.h>
 
-#include "rtc_base/checks.h"
 #include "rtc_base/strong_alias.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -26,28 +26,10 @@ enum class Priority {
   kHigh,
 };
 
-class PriorityValue
+class RTC_EXPORT PriorityValue
     : public webrtc::StrongAlias<class PriorityValueTag, uint16_t> {
  public:
-  explicit PriorityValue(Priority priority) {
-    switch (priority) {
-      case Priority::kVeryLow:
-        value_ = 128;
-        break;
-      case Priority::kLow:
-        value_ = 256;
-        break;
-      case Priority::kMedium:
-        value_ = 512;
-        break;
-      case Priority::kHigh:
-        value_ = 1024;
-        break;
-      default:
-        RTC_CHECK_NOTREACHED();
-    }
-  }
-
+  explicit PriorityValue(Priority priority);
   explicit PriorityValue(uint16_t priority) : StrongAlias(priority) {}
 };
 

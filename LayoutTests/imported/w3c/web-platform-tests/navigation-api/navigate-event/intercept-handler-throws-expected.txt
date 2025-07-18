@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: a message
-
-Harness Error (FAIL), message = Unhandled rejection: a message
 
 PASS event.intercept() should abort if the handler throws
 

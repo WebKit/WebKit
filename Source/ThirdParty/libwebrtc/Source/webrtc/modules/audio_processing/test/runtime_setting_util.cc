@@ -15,7 +15,7 @@
 namespace webrtc {
 
 void ReplayRuntimeSetting(AudioProcessing* apm,
-                          const webrtc::audioproc::RuntimeSetting& setting) {
+                          const audioproc::RuntimeSetting& setting) {
   RTC_CHECK(apm);
   // TODO(bugs.webrtc.org/9138): Add ability to handle different types
   // of settings. Currently CapturePreGain, CaptureFixedPostGain and

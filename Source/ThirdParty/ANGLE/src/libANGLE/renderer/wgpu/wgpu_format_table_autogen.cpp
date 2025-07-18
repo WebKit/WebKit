@@ -913,6 +913,10 @@ void Format::initialize(const angle::Format &angleFormat)
             mVertexLoadRequiresConversion = false;
             break;
 
+        case angle::FormatID::G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+            // This format is not implemented in WebGPU.
+            break;
+
         case angle::FormatID::G8_B8R8_2PLANE_420_UNORM:
             // This format is not implemented in WebGPU.
             break;

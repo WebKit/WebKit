@@ -44,8 +44,8 @@ AutoCorrelationCalculator::~AutoCorrelationCalculator() = default;
 // inverted lag equal to 0 that corresponds to a lag equal to the maximum
 // pitch period.
 void AutoCorrelationCalculator::ComputeOnPitchBuffer(
-    rtc::ArrayView<const float, kBufSize12kHz> pitch_buf,
-    rtc::ArrayView<float, kNumLags12kHz> auto_corr) {
+    ArrayView<const float, kBufSize12kHz> pitch_buf,
+    ArrayView<float, kNumLags12kHz> auto_corr) {
   RTC_DCHECK_LT(auto_corr.size(), kMaxPitch12kHz);
   RTC_DCHECK_GT(pitch_buf.size(), kMaxPitch12kHz);
   constexpr int kFftFrameSize = 1 << kAutoCorrelationFftOrder;

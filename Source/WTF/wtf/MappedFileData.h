@@ -47,7 +47,7 @@ enum class MappedFileMode : bool {
 };
 
 class MappedFileData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MappedFileData);
 public:
     MappedFileData() = default;
     WTF_EXPORT_PRIVATE ~MappedFileData();

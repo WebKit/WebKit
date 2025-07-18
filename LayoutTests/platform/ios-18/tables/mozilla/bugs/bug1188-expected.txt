@@ -1,0 +1,141 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x196
+        RenderTable {TABLE} at (0,10) size 600x186
+          RenderTableSection {TBODY} at (0,0) size 600x186
+            RenderTableRow {TR} at (0,2) size 600x44
+              RenderTableCell {TD} at (2,2) size 595x44 [r=0 c=0 rs=1 cs=3]
+                RenderImage {IMG} at (7,1) size 580x42
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableRow {TR} at (0,48) size 600x55
+              RenderTableCell {TD} at (2,55) size 595x41 [bgcolor=#99CCCC] [r=1 c=0 rs=1 cs=3]
+                RenderInline {FONT} at (48,11) size 128x16
+                  RenderInline {B} at (48,11) size 128x16
+                    RenderText {#text} at (48,11) size 128x16
+                      text run at (48,4) width 128: "Search the Web with"
+                RenderText {#text} at (175,8) size 5x20
+                  text run at (175,1) width 5: " "
+                RenderMenuList {SELECT} at (179,9) size 75x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+                  RenderBlock (anonymous) at (6,3) size 62x14
+                    RenderText at (0,0) size 50x14
+                      text run at (0,0) width 50: "Netscape"
+                RenderTextControl {INPUT} at (253,9) size 226x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                RenderText {#text} at (478,8) size 5x20
+                  text run at (478,1) width 5: " "
+                RenderButton {INPUT} at (482,9) size 64x21 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+                  RenderBlock (anonymous) at (12,3) size 39x14
+                    RenderText at (0,0) size 39x14
+                      text run at (0,0) width 39: "Search"
+                RenderBR {BR} at (545,8) size 1x20
+                RenderInline {SMALL} at (13,30) size 568x16
+                  RenderInline {A} at (13,30) size 101x16 [color=#0000EE]
+                    RenderText {#text} at (13,30) size 101x16
+                      text run at (13,23) width 101: "Classifieds< /A>   "
+                  RenderInline {A} at (113,30) size 60x16 [color=#0000EE]
+                    RenderText {#text} at (113,30) size 60x16
+                      text run at (113,23) width 23: "Net "
+                      text run at (135,23) width 38: "Search"
+                  RenderText {#text} at (172,30) size 11x16
+                    text run at (172,23) width 11: "   "
+                  RenderInline {A} at (182,30) size 82x16 [color=#0000EE]
+                    RenderText {#text} at (182,30) size 82x16
+                      text run at (182,23) width 56: "Find Web "
+                      text run at (237,23) width 27: "Sites"
+                  RenderText {#text} at (263,30) size 11x16
+                    text run at (263,23) width 4: " "
+                    text run at (266,23) width 8: "  "
+                  RenderInline {A} at (273,30) size 67x16 [color=#0000EE]
+                    RenderText {#text} at (273,30) size 67x16
+                      text run at (273,23) width 41: "What's "
+                      text run at (313,23) width 27: "Cool"
+                  RenderText {#text} at (339,30) size 11x16
+                    text run at (339,23) width 11: "   "
+                  RenderInline {A} at (349,30) size 66x16 [color=#0000EE]
+                    RenderText {#text} at (349,30) size 66x16
+                      text run at (349,23) width 66: "What's New"
+                  RenderText {#text} at (414,30) size 11x16
+                    text run at (414,23) width 11: "   "
+                  RenderInline {A} at (424,30) size 75x16 [color=#0000EE]
+                    RenderText {#text} at (424,30) size 75x16
+                      text run at (424,23) width 75: "People Finder"
+                  RenderText {#text} at (498,30) size 11x16
+                    text run at (498,23) width 11: "   "
+                  RenderInline {A} at (508,30) size 73x16 [color=#0000EE]
+                    RenderText {#text} at (508,30) size 73x16
+                      text run at (508,23) width 73: "Yellow Pages"
+                  RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableRow {TR} at (0,105) size 600x50
+              RenderTableCell {TD} at (2,113) size 160x34 [r=2 c=0 rs=1 cs=1]
+                RenderInline {A} at (21,6) size 118x35 [color=#0000EE]
+                  RenderInline {FONT} at (21,9) size 118x31 [color=#CC0033]
+                    RenderText {#text} at (21,9) size 118x31
+                      text run at (21,1) width 118: "Download Netscape"
+                      text run at (26,17) width 107: "Communicator 4.5"
+              RenderTableCell {TD} at (163,105) size 272x50 [r=2 c=1 rs=1 cs=1]
+                RenderInline {A} at (19,21) size 233x28 [color=#0000EE]
+                  RenderImage {IMG} at (19,1) size 233x35 [border: (1px solid #0000EE)]
+                  RenderBR {BR} at (251,21) size 1x19
+                  RenderInline {FONT} at (111,36) size 48x12
+                    RenderText {#text} at (111,36) size 48x12
+                      text run at (111,36) width 48: "Click Here!"
+                RenderBR {BR} at (158,30) size 1x19
+              RenderTableCell {TD} at (436,121) size 161x18 [r=2 c=2 rs=1 cs=1]
+                RenderInline {A} at (14,14) size 132x19 [color=#0000EE]
+                  RenderInline {FONT} at (14,17) size 132x15 [color=#0066FF]
+                    RenderText {#text} at (14,17) size 132x15
+                      text run at (14,1) width 132: "Hassle-Free Upgrades"
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableRow {TR} at (0,157) size 600x22
+              RenderTableCell {TD} at (2,157) size 595x22 [r=3 c=0 rs=1 cs=3]
+                RenderInline {A} at (15,1) size 49x19 [color=#0000EE]
+                  RenderInline {FONT} at (15,4) size 49x15 [color=#0066FF]
+                    RenderInline {B} at (15,4) size 49x15
+                      RenderText {#text} at (15,4) size 49x15
+                        text run at (15,4) width 49: "Contact"
+                RenderText {#text} at (63,1) size 14x19
+                  text run at (63,1) width 14: " : "
+                RenderInline {SMALL} at (76,4) size 503x15
+                  RenderInline {A} at (76,4) size 77x15 [color=#0000EE]
+                    RenderText {#text} at (76,4) size 77x15
+                      text run at (76,4) width 77: "Address Book"
+                  RenderText {#text} at (152,4) size 12x15
+                    text run at (152,4) width 12: " - "
+                  RenderInline {A} at (163,4) size 65x15 [color=#0000EE]
+                    RenderText {#text} at (163,4) size 65x15
+                      text run at (163,4) width 65: "Discussions"
+                  RenderText {#text} at (227,4) size 12x15
+                    text run at (227,4) width 12: " - "
+                  RenderInline {A} at (238,4) size 98x15 [color=#0000EE]
+                    RenderText {#text} at (238,4) size 98x15
+                      text run at (238,4) width 98: "Instant Messenger"
+                  RenderText {#text} at (335,4) size 12x15
+                    text run at (335,4) width 12: " - "
+                  RenderInline {A} at (346,4) size 79x15 [color=#0000EE]
+                    RenderText {#text} at (346,4) size 79x15
+                      text run at (346,4) width 79: "Long Distance"
+                  RenderText {#text} at (424,4) size 12x15
+                    text run at (424,4) width 12: " - "
+                  RenderInline {A} at (435,4) size 52x15 [color=#0000EE]
+                    RenderText {#text} at (435,4) size 52x15
+                      text run at (435,4) width 52: "Members"
+                  RenderText {#text} at (486,4) size 12x15
+                    text run at (486,4) width 12: " - "
+                  RenderInline {A} at (497,4) size 82x15 [color=#0000EE]
+                    RenderText {#text} at (497,4) size 82x15
+                      text run at (497,4) width 82: "WebMail< /A>"
+                RenderInline {A} at (578,1) size 0x19 [color=#0000EE]
+                  RenderText {#text} at (0,0) size 0x0
+            RenderTableRow {TR} at (0,181) size 600x3
+              RenderTableCell {TD} at (2,181) size 597x3 [bgcolor=#99CCCC] [r=4 c=0 rs=1 cs=4]
+                RenderTable {TABLE} at (1,1) size 0x1
+                  RenderTableSection {TBODY} at (0,0) size 0x1
+                    RenderTableRow {TR} at (0,0) size 0x1
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+layer at (8,8) size 602x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 602x2 [color=#808080] [border: (1px inset #808080)]
+layer at (270,78) size 211x14
+  RenderBlock {DIV} at (6,3) size 213x15

@@ -35,7 +35,7 @@ class AudioChannel : public RefCountInterface {
                Transport* transport,
                uint32_t local_ssrc,
                AudioMixer* audio_mixer,
-               rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
+               scoped_refptr<AudioDecoderFactory> decoder_factory);
   ~AudioChannel() override;
 
   // Set and get ChannelId that this audio channel belongs for debugging and
@@ -72,10 +72,10 @@ class AudioChannel : public RefCountInterface {
 
   // APIs relayed to AudioIngress.
   bool IsPlaying() const { return ingress_->IsPlaying(); }
-  void ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
+  void ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet) {
     ingress_->ReceivedRTPPacket(rtp_packet);
   }
-  void ReceivedRTCPPacket(rtc::ArrayView<const uint8_t> rtcp_packet) {
+  void ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet) {
     ingress_->ReceivedRTCPPacket(rtcp_packet);
   }
   void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs) {

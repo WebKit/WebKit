@@ -17,7 +17,6 @@
 #import "ARDSettingsModel+Private.h"
 #import "ARDSettingsStore.h"
 
-
 @interface ARDSettingsModelTests : XCTestCase {
   ARDSettingsModel *_model;
 }
@@ -50,13 +49,13 @@
 
 - (void)testStoringInvalidConstraintReturnsNo {
   id storeMock = [self setupMockStore];
-  [([[storeMock stub] andReturn:@"960x480"])videoResolution];
+  [([[storeMock stub] andReturn:@"960x480"]) videoResolution];
   XCTAssertFalse([_model storeVideoResolutionSetting:@"960x480"]);
 }
 
 - (void)testWidthConstraintFromStore {
   id storeMock = [self setupMockStore];
-  [([[storeMock stub] andReturn:@"1270x480"])videoResolution];
+  [([[storeMock stub] andReturn:@"1270x480"]) videoResolution];
   int width = [_model currentVideoResolutionWidthFromStore];
 
   XCTAssertEqual(width, 1270);
@@ -64,7 +63,7 @@
 
 - (void)testHeightConstraintFromStore {
   id storeMock = [self setupMockStore];
-  [([[storeMock stub] andReturn:@"960x540"])videoResolution];
+  [([[storeMock stub] andReturn:@"960x540"]) videoResolution];
   int height = [_model currentVideoResolutionHeightFromStore];
 
   XCTAssertEqual(height, 540);
@@ -72,7 +71,7 @@
 
 - (void)testConstraintComponentIsNilWhenInvalidConstraintString {
   id storeMock = [self setupMockStore];
-  [([[storeMock stub] andReturn:@"invalid"])videoResolution];
+  [([[storeMock stub] andReturn:@"invalid"]) videoResolution];
   int width = [_model currentVideoResolutionWidthFromStore];
 
   XCTAssertEqual(width, 0);

@@ -132,15 +132,13 @@ void RunFineBufferTest(int frame_size_in_samples) {
 
   for (int i = 0; i < kNumberOfFrames; ++i) {
     fine_buffer.GetPlayoutData(
-        rtc::ArrayView<int16_t>(out_buffer.get(),
-                                kChannels * kFrameSizeSamples),
-        0);
+        ArrayView<int16_t>(out_buffer.get(), kChannels * kFrameSizeSamples), 0);
     EXPECT_TRUE(
         VerifyBuffer(out_buffer.get(), i, kChannels * kFrameSizeSamples));
     UpdateInputBuffer(in_buffer.get(), i, kChannels * kFrameSizeSamples);
     fine_buffer.DeliverRecordedData(
-        rtc::ArrayView<const int16_t>(in_buffer.get(),
-                                      kChannels * kFrameSizeSamples),
+        ArrayView<const int16_t>(in_buffer.get(),
+                                 kChannels * kFrameSizeSamples),
         0);
   }
 }

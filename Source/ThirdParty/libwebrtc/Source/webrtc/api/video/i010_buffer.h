@@ -26,20 +26,20 @@ namespace webrtc {
 class I010Buffer : public I010BufferInterface {
  public:
   // Create a new buffer.
-  static rtc::scoped_refptr<I010Buffer> Create(int width, int height);
+  static scoped_refptr<I010Buffer> Create(int width, int height);
 
   // Create a new buffer and copy the pixel data.
-  static rtc::scoped_refptr<I010Buffer> Copy(const I010BufferInterface& buffer);
+  static scoped_refptr<I010Buffer> Copy(const I010BufferInterface& buffer);
 
   // Convert and put I420 buffer into a new buffer.
-  static rtc::scoped_refptr<I010Buffer> Copy(const I420BufferInterface& buffer);
+  static scoped_refptr<I010Buffer> Copy(const I420BufferInterface& buffer);
 
   // Return a rotated copy of `src`.
-  static rtc::scoped_refptr<I010Buffer> Rotate(const I010BufferInterface& src,
-                                               VideoRotation rotation);
+  static scoped_refptr<I010Buffer> Rotate(const I010BufferInterface& src,
+                                          VideoRotation rotation);
 
   // VideoFrameBuffer implementation.
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
+  scoped_refptr<I420BufferInterface> ToI420() override;
 
   // PlanarYuv16BBuffer implementation.
   int width() const override;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TimeRanges.h"
 
+#include "ExceptionOr.h"
+
 namespace WebCore {
 
 Ref<TimeRanges> TimeRanges::create()

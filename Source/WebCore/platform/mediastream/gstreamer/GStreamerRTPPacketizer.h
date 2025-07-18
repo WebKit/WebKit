@@ -30,7 +30,7 @@ namespace WebCore {
 
 class GStreamerRTPPacketizer : public ThreadSafeRefCounted<GStreamerRTPPacketizer> {
     WTF_MAKE_NONCOPYABLE(GStreamerRTPPacketizer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GStreamerRTPPacketizer);
 public:
     explicit GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, std::optional<int>&&);
     virtual ~GStreamerRTPPacketizer();

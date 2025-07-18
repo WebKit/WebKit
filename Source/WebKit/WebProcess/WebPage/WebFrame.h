@@ -65,6 +65,11 @@ class IntRect;
 class LocalFrame;
 class PlatformMouseEvent;
 class RemoteFrame;
+
+enum class FocusDirection : uint8_t;
+enum class FoundElementInRemoteFrame : bool;
+
+struct FocusEventData;
 struct GlobalWindowIdentifier;
 }
 
@@ -273,6 +278,8 @@ private:
     inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
 
     RefPtr<WebCore::LocalFrame> localFrame();
+
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;

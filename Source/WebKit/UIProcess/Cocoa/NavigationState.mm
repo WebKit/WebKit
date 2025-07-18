@@ -526,7 +526,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
         configuration.get().referrerURL = referrerURL.get();
 
         [LSAppLink openWithURL:url.createNSURL().get() configuration:configuration.get() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
-            RunLoop::protectedMain()->dispatch([localCompletionHandler, success] {
+            RunLoop::mainSingleton().dispatch([localCompletionHandler, success] {
                 (*localCompletionHandler)(success);
                 delete localCompletionHandler;
             });
@@ -1324,7 +1324,7 @@ void NavigationState::NavigationClient::legacyWebCryptoMasterKey(WebPageProxy&, 
     if (!navigationState)
         return completionHandler(std::nullopt);
     if (!(navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebView || navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebViewCompletionHandler))
-        return completionHandler(WebCore::defaultWebCryptoMasterKey());
+        return WebCore::getDefaultWebCryptoMasterKey(WTFMove(completionHandler));
     auto navigationDelegate = navigationState->navigationDelegate();
     if (!navigationDelegate)
         return completionHandler(std::nullopt);

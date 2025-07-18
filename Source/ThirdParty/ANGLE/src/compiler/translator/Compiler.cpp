@@ -59,7 +59,6 @@
 #include "compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.h"
 #include "compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.h"
 #include "compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.h"
-#include "compiler/translator/tree_ops/glsl/apple/RewriteDoWhile.h"
 #include "compiler/translator/tree_ops/glsl/apple/UnfoldShortCircuitAST.h"
 #include "compiler/translator/tree_ops/msl/EnsureLoopForwardProgress.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
@@ -187,6 +186,120 @@ void DumpFuzzerCase(char const *const *shaderStrings,
     fclose(f);
 }
 #endif  // defined(ANGLE_FUZZER_CORPUS_OUTPUT_DIR)
+
+// Helper function to check if the TIntermNode is a uniform type declaration
+bool IsCurrentNodeUniformDeclaration(TIntermNode *node)
+{
+    TIntermDeclaration *declarationNode = node->getAsDeclarationNode();
+    if (declarationNode != nullptr)
+    {
+        TIntermTyped *typeNode = declarationNode->getSequence()->front()->getAsTyped();
+        if (typeNode != nullptr && typeNode->getType().getQualifier() == TQualifier::EvqUniform)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsCurrentNodeStructTypeDeclaration(TIntermNode *node)
+{
+    TIntermDeclaration *declarationNode = node->getAsDeclarationNode();
+    if (declarationNode != nullptr)
+    {
+        TIntermTyped *typeNode = declarationNode->getSequence()->front()->getAsTyped();
+        if (typeNode != nullptr && (typeNode->getType().getBasicType() == EbtStruct &&
+                                    typeNode->getType().getQualifier() != EvqUniform &&
+                                    typeNode->getType().isStructSpecifier()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Comparator function used for sorting shader uniforms
+struct UniformSortComparator
+{
+    // returns true if the first < second, returns false otherwise
+    bool operator()(TIntermNode *first, TIntermNode *second)
+    {
+        const TType &firstType = first->getAsDeclarationNode()
+                                     ->getSequence()
+                                     ->front()
+                                     ->getAsSymbolNode()
+                                     ->variable()
+                                     .getType();
+        const TType &secondType = second->getAsDeclarationNode()
+                                      ->getSequence()
+                                      ->front()
+                                      ->getAsSymbolNode()
+                                      ->variable()
+                                      .getType();
+        // First, sort by precision: lowp and mediump are smaller than highp
+        if (firstType.getPrecision() != secondType.getPrecision())
+        {
+            return firstType.getPrecision() != TPrecision::EbpHigh;
+        }
+
+        // We don't sort highp uniforms. If both uniforms are highp, consider them as equivalent
+        if (firstType.getPrecision() == TPrecision::EbpHigh &&
+            secondType.getPrecision() == TPrecision::EbpHigh)
+        {
+            return false;
+        }
+        // If both uniforms are mediump or lowp, we further sort them based on a list of criteria
+        ASSERT(firstType.getPrecision() != TPrecision::EbpHigh &&
+               secondType.getPrecision() != TPrecision::EbpHigh);
+        // criteria 1: sort by arrayness. Non-array element is smaller.
+        if (firstType.isArray() != secondType.isArray())
+        {
+            return !firstType.isArray();
+        }
+        // criteria 2: sort by whether the uniform is a struct. Non-structs is smaller.
+        if ((firstType.getStruct() == nullptr) != (secondType.getStruct() == nullptr))
+        {
+            return firstType.getStruct() == nullptr;
+        }
+        // If both are struct, place the one that has specifier in the front
+        if (firstType.getStruct() != nullptr && secondType.getStruct() != nullptr)
+        {
+            return firstType.isStructSpecifier();
+        }
+        // criteria 3, non-matrix is smaller than matrix
+        if (firstType.isMatrix() != secondType.isMatrix())
+        {
+            return !firstType.isMatrix();
+        }
+        // if both are matrix, sort by matrix size
+        if (firstType.isMatrix() == secondType.isMatrix() && firstType.isMatrix())
+        {
+            if (firstType.getCols() != secondType.getCols())
+            {
+                return firstType.getCols() < secondType.getCols();
+            }
+            else
+            {
+                return firstType.getRows() < secondType.getRows();
+            }
+        }
+        // criteria 4, non-vector is smaller
+        if (firstType.isVector() != secondType.isVector())
+        {
+            return !firstType.isVector();
+        }
+        // if both are vectors, sort by vector size
+        if (firstType.isVector() == secondType.isVector() && firstType.isVector())
+        {
+            return firstType.getNominalSize() < secondType.getNominalSize();
+        }
+
+        // If we can't determine which element is smaller based on previous criteria, consider first
+        // and second as equivalent.
+        return false;
+    }
+};
+
 }  // anonymous namespace
 
 bool IsGLSL130OrNewer(ShShaderOutput output)
@@ -263,23 +376,6 @@ int GetMaxUniformVectorsForShaderType(GLenum shaderType, const ShBuiltInResource
 namespace
 {
 
-class [[nodiscard]] TScopedPoolAllocator
-{
-  public:
-    TScopedPoolAllocator(angle::PoolAllocator *allocator) : mAllocator(allocator)
-    {
-        mAllocator->push();
-        SetGlobalPoolAllocator(mAllocator);
-    }
-    ~TScopedPoolAllocator()
-    {
-        SetGlobalPoolAllocator(nullptr);
-        mAllocator->pop(angle::PoolAllocator::ReleaseStrategy::All);
-    }
-
-  private:
-    angle::PoolAllocator *mAllocator;
-};
 
 class [[nodiscard]] TScopedSymbolTableLevel
 {
@@ -369,14 +465,12 @@ bool ValidateFragColorAndFragData(GLenum shaderType,
 
 TShHandleBase::TShHandleBase()
 {
-    allocator.push();
     SetGlobalPoolAllocator(&allocator);
 }
 
 TShHandleBase::~TShHandleBase()
 {
     SetGlobalPoolAllocator(nullptr);
-    allocator.popAll();
 }
 
 TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
@@ -996,15 +1090,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    // This pass might emit short circuits so keep it before the short circuit unfolding
-    if (compileOptions.rewriteDoWhileLoops)
-    {
-        if (!RewriteDoWhile(this, root, &mSymbolTable))
-        {
-            return false;
-        }
-    }
-
     if (compileOptions.addAndTrueToLoopCondition)
     {
         if (!AddAndTrueToLoopCondition(this, root))
@@ -1193,6 +1278,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     }
 
     ASSERT(!mVariablesCollected);
+    if (!sortUniforms(root))
+    {
+        return false;
+    }
     CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
                      &mOutputVaryings, &mSharedVariables, &mUniformBlocks, &mShaderStorageBlocks,
                      mResources.HashFunction, &mSymbolTable, mShaderType, mExtensionBehavior,
@@ -1397,7 +1486,7 @@ bool TCompiler::compile(const char *const shaderStrings[],
         compileOptions.flattenPragmaSTDGLInvariantAll = true;
     }
 
-    TScopedPoolAllocator scopedAlloc(&allocator);
+    TScopedPoolAllocator scopedAlloc;
     TIntermBlock *root = compileTreeImpl(shaderStrings, numStrings, compileOptions);
 
     if (root)
@@ -1767,6 +1856,52 @@ void TCompiler::internalTagUsedFunction(size_t index)
     {
         internalTagUsedFunction(calleeIndex);
     }
+}
+
+bool TCompiler::sortUniforms(TIntermBlock *root)
+{
+    // First: Separate sequences into three chunks
+    TIntermSequence structTypeDeclarationSequence;
+    TIntermSequence uniformDeclarationSequence;
+    TIntermSequence remainingSequence;
+
+    TIntermSequence *sequence = root->getSequence();
+    size_t nodeIndex          = 0;
+    while (nodeIndex < sequence->size())
+    {
+        TIntermNode *node = sequence->at(nodeIndex);
+        if (IsCurrentNodeStructTypeDeclaration(node))
+        {
+            structTypeDeclarationSequence.push_back(node);
+        }
+        else if (IsCurrentNodeUniformDeclaration(node))
+        {
+            uniformDeclarationSequence.push_back(node);
+        }
+        else
+        {
+            remainingSequence.push_back(node);
+        }
+        ++nodeIndex;
+    }
+
+    // Second: Sort uniforms based on their precisions and data types
+    std::stable_sort(uniformDeclarationSequence.begin(), uniformDeclarationSequence.end(),
+                     UniformSortComparator());
+
+    // Third: merge three chunks
+    TIntermSequence reorderedSequence;
+    reorderedSequence.reserve(structTypeDeclarationSequence.size() +
+                              uniformDeclarationSequence.size() + remainingSequence.size());
+    std::move(structTypeDeclarationSequence.begin(), structTypeDeclarationSequence.end(),
+              std::back_inserter(reorderedSequence));
+    std::move(uniformDeclarationSequence.begin(), uniformDeclarationSequence.end(),
+              std::back_inserter(reorderedSequence));
+    std::move(remainingSequence.begin(), remainingSequence.end(),
+              std::back_inserter(reorderedSequence));
+
+    root->replaceAllChildren(std::move(reorderedSequence));
+    return validateAST(root);
 }
 
 bool TCompiler::pruneUnusedFunctions(TIntermBlock *root)

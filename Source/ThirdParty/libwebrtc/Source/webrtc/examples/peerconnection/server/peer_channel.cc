@@ -14,9 +14,13 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <ctime>
+#include <iterator>
+#include <string>
 
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 #include "examples/peerconnection/server/data_socket.h"
-#include "examples/peerconnection/server/utils.h"
 #include "rtc_base/checks.h"
 
 // Set to the peer id of the originator when messages are being
@@ -53,16 +57,16 @@ const size_t kMaxNameLength = 512;
 int ChannelMember::s_member_id_ = 0;
 
 ChannelMember::ChannelMember(DataSocket* socket)
-    : waiting_socket_(NULL),
+    : waiting_socket_(nullptr),
       id_(++s_member_id_),
       connected_(true),
-      timestamp_(time(NULL)) {
+      timestamp_(time(nullptr)) {
   RTC_DCHECK(socket);
   RTC_DCHECK_EQ(socket->method(), DataSocket::GET);
   RTC_DCHECK(socket->PathEquals("/sign_in"));
   name_ = socket->request_arguments();
   if (name_.empty())
-    name_ = "peer_" + int2str(id_);
+    name_ = "peer_" + absl::StrCat(id_);
   else if (name_.length() > kMaxNameLength)
     name_.resize(kMaxNameLength);
 
@@ -76,12 +80,11 @@ bool ChannelMember::is_wait_request(DataSocket* ds) const {
 }
 
 bool ChannelMember::TimedOut() {
-  return waiting_socket_ == NULL && (time(NULL) - timestamp_) > 30;
+  return waiting_socket_ == nullptr && (time(nullptr) - timestamp_) > 30;
 }
 
 std::string ChannelMember::GetPeerIdHeader() const {
-  std::string ret(kPeerIdHeader + int2str(id_) + "\r\n");
-  return ret;
+  return kPeerIdHeader + absl::StrCat(id_) + "\r\n";
 }
 
 bool ChannelMember::NotifyOfOtherMember(const ChannelMember& other) {
@@ -119,8 +122,8 @@ void ChannelMember::ForwardRequestToPeer(DataSocket* ds, ChannelMember* peer) {
 
 void ChannelMember::OnClosing(DataSocket* ds) {
   if (ds == waiting_socket_) {
-    waiting_socket_ = NULL;
-    timestamp_ = time(NULL);
+    waiting_socket_ = nullptr;
+    timestamp_ = time(nullptr);
   }
 }
 
@@ -136,8 +139,8 @@ void ChannelMember::QueueResponse(const std::string& status,
     if (!ok) {
       printf("Failed to deliver data to waiting socket\n");
     }
-    waiting_socket_ = NULL;
-    timestamp_ = time(NULL);
+    waiting_socket_ = nullptr;
+    timestamp_ = time(nullptr);
   } else {
     QueuedResponse qr;
     qr.status = status;
@@ -176,24 +179,24 @@ ChannelMember* PeerChannel::Lookup(DataSocket* ds) const {
   RTC_DCHECK(ds);
 
   if (ds->method() != DataSocket::GET && ds->method() != DataSocket::POST)
-    return NULL;
+    return nullptr;
 
   size_t i = 0;
-  for (; i < ARRAYSIZE(kRequestPaths); ++i) {
+  for (; i < std::size(kRequestPaths); ++i) {
     if (ds->PathEquals(kRequestPaths[i]))
       break;
   }
 
-  if (i == ARRAYSIZE(kRequestPaths))
-    return NULL;
+  if (i == std::size(kRequestPaths))
+    return nullptr;
 
   std::string args(ds->request_arguments());
-  static const char kPeerId[] = "peer_id=";
+  static constexpr absl::string_view kPeerId = "peer_id=";
   size_t found = args.find(kPeerId);
   if (found == std::string::npos)
-    return NULL;
+    return nullptr;
 
-  int id = atoi(&args[found + ARRAYSIZE(kPeerId) - 1]);
+  int id = atoi(&args[found + kPeerId.size()]);
   Members::const_iterator iter = members_.begin();
   for (; iter != members_.end(); ++iter) {
     if (id == (*iter)->id()) {
@@ -205,7 +208,7 @@ ChannelMember* PeerChannel::Lookup(DataSocket* ds) const {
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ChannelMember* PeerChannel::IsTargetedRequest(const DataSocket* ds) const {
@@ -215,18 +218,18 @@ ChannelMember* PeerChannel::IsTargetedRequest(const DataSocket* ds) const {
   const std::string& path = ds->request_path();
   size_t args = path.find('?');
   if (args == std::string::npos)
-    return NULL;
+    return nullptr;
   size_t found;
-  const char kTargetPeerIdParam[] = "to=";
+  static constexpr absl::string_view kTargetPeerIdParam = "to=";
   do {
     found = path.find(kTargetPeerIdParam, args);
     if (found == std::string::npos)
-      return NULL;
+      return nullptr;
     if (found == (args + 1) || path[found - 1] == '&') {
-      found += ARRAYSIZE(kTargetPeerIdParam) - 1;
+      found += kTargetPeerIdParam.size();
       break;
     }
-    args = found + ARRAYSIZE(kTargetPeerIdParam) - 1;
+    args = found + kTargetPeerIdParam.size();
   } while (true);
   int id = atoi(&path[found]);
   Members::const_iterator i = members_.begin();
@@ -235,7 +238,7 @@ ChannelMember* PeerChannel::IsTargetedRequest(const DataSocket* ds) const {
       return *i;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 bool PeerChannel::AddMember(DataSocket* ds) {
@@ -246,8 +249,8 @@ bool PeerChannel::AddMember(DataSocket* ds) {
   HandleDeliveryFailures(&failures);
   members_.push_back(new_guy);
 
-  printf("New member added (total=%s): %s\n",
-         size_t2str(members_.size()).c_str(), new_guy->name().c_str());
+  printf("New member added (total=%zu): %s\n", members_.size(),
+         new_guy->name().c_str());
 
   // Let the newly connected peer know about other members of the channel.
   std::string content_type;
@@ -279,7 +282,7 @@ void PeerChannel::OnClosing(DataSocket* ds) {
         break;
     }
   }
-  printf("Total connected: %s\n", size_t2str(members_.size()).c_str());
+  printf("Total connected: %zu\n", members_.size());
 }
 
 void PeerChannel::CheckForTimeout() {

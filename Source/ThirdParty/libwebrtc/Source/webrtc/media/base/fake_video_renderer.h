@@ -13,61 +13,67 @@
 
 #include <stdint.h>
 
-#include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
-#include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_sink_interface.h"
 #include "rtc_base/synchronization/mutex.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Faked video renderer that has a callback for actions on rendering.
-class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+class FakeVideoRenderer : public VideoSinkInterface<VideoFrame> {
  public:
   FakeVideoRenderer();
 
-  void OnFrame(const webrtc::VideoFrame& frame) override;
+  void OnFrame(const VideoFrame& frame) override;
 
   int width() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return width_;
   }
   int height() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return height_;
   }
 
-  webrtc::VideoRotation rotation() const {
-    webrtc::MutexLock lock(&mutex_);
+  VideoRotation rotation() const {
+    MutexLock lock(&mutex_);
     return rotation_;
   }
 
   int64_t timestamp_us() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return timestamp_us_;
   }
 
   int num_rendered_frames() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return num_rendered_frames_;
   }
 
   bool black_frame() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return black_frame_;
   }
 
  private:
   int width_ = 0;
   int height_ = 0;
-  webrtc::VideoRotation rotation_ = webrtc::kVideoRotation_0;
+  VideoRotation rotation_ = webrtc::kVideoRotation_0;
   int64_t timestamp_us_ = 0;
   int num_rendered_frames_ = 0;
   bool black_frame_ = false;
-  mutable webrtc::Mutex mutex_;
+  mutable Mutex mutex_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::FakeVideoRenderer;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_FAKE_VIDEO_RENDERER_H_

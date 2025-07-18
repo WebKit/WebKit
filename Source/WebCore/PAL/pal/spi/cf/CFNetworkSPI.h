@@ -64,7 +64,7 @@ DECLARE_SYSTEM_HEADER
 
 #include <Network/Network.h>
 
-#if HAVE(PRECONNECT_PING) && defined(__OBJC__)
+#if defined(__OBJC__)
 
 @interface _NSHTTPConnectionInfo : NSObject
 - (void)sendPingWithReceiveHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
@@ -75,7 +75,7 @@ DECLARE_SYSTEM_HEADER
 - (void)getUnderlyingHTTPConnectionInfoWithCompletionHandler:(void (^)(_NSHTTPConnectionInfo *connectionInfo))completionHandler;
 @end
 
-#endif // HAVE(PRECONNECT_PING) && defined(__OBJC__)
+#endif // defined(__OBJC__)
 
 #if HAVE(LOGGING_PRIVACY_LEVEL)
 typedef enum {
@@ -97,6 +97,7 @@ OS_OBJECT_DECL(nw_context);
 OS_OBJECT_DECL(nw_endpoint);
 OS_OBJECT_DECL(nw_resolver);
 OS_OBJECT_DECL(nw_parameters);
+OS_OBJECT_DECL(nw_path_evaluator);
 OS_OBJECT_DECL(nw_proxy_config);
 OS_OBJECT_DECL(nw_protocol_options);
 OS_OBJECT_DECL(nw_establishment_report);
@@ -119,6 +120,8 @@ struct nw_protocol_options;
 typedef struct nw_protocol_options *nw_protocol_options_t;
 struct nw_establishment_report;
 typedef struct nw_establishment_report *nw_establishment_report_t;
+struct nw_path_evaluator;
+typedef struct nw_path_evaluator *nw_path_evaluator_t;
 #endif // OS_OBJECT_USE_OBJC
 
 #if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -148,6 +151,9 @@ bool nw_resolver_set_update_handler(nw_resolver_t, dispatch_queue_t, nw_resolver
 bool nw_resolver_cancel(nw_resolver_t);
 void nw_context_set_privacy_level(nw_context_t, nw_context_privacy_level_t);
 void nw_parameters_set_context(nw_parameters_t, nw_context_t);
+OS_OBJECT_RETURNS_RETAINED nw_path_evaluator_t nw_path_create_evaluator_for_endpoint(nw_endpoint_t, nw_parameters_t);
+OS_OBJECT_RETURNS_RETAINED nw_path_t nw_path_evaluator_copy_path(nw_path_evaluator_t);
+OS_OBJECT_RETURNS_RETAINED nw_resolver_t nw_resolver_create_with_path(nw_path_t);
 OS_OBJECT_RETURNS_RETAINED nw_endpoint_t nw_establishment_report_copy_proxy_endpoint(nw_establishment_report_t);
 
 OS_OBJECT_RETURNS_RETAINED nw_context_t nw_context_create(const char *);

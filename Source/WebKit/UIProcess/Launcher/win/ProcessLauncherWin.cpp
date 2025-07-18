@@ -118,7 +118,7 @@ void ProcessLauncher::launchProcess()
     m_hProcess = Win32Handle::adopt(processInformation.hProcess);
     WTF::ProcessID pid = processInformation.dwProcessId;
 
-    RunLoop::protectedMain()->dispatch([protectedThis, pid, serverIdentifier] {
+    RunLoop::mainSingleton().dispatch([protectedThis, pid, serverIdentifier] {
         protectedThis->didFinishLaunchingProcess(pid, IPC::Connection::Identifier { serverIdentifier });
     });
 }

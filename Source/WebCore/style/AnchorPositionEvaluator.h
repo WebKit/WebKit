@@ -43,6 +43,7 @@ namespace WebCore {
 class Document;
 class Element;
 class LayoutRect;
+class LayoutSize;
 class RenderBlock;
 class RenderBox;
 class RenderBoxModelObject;
@@ -97,10 +98,6 @@ using AnchorToAnchorPositionedMap = SingleThreadWeakHashMap<const RenderBoxModel
 
 class AnchorPositionEvaluator {
 public:
-    // Find the anchor element indicated by `elementName` and update the associated anchor resolution data.
-    // Returns nullptr if the anchor element can't be found.
-    static RefPtr<Element> findAnchorForAnchorFunctionAndAttemptResolution(BuilderState&, std::optional<ScopedName> elementName);
-
     using Side = Variant<CSSValueID, double>;
     static bool propertyAllowsAnchorFunction(CSSPropertyID);
     static std::optional<double> evaluate(BuilderState&, std::optional<ScopedName> elementName, Side);
@@ -111,7 +108,7 @@ public:
     static void updateAnchorPositioningStatesAfterInterleavedLayout(Document&, AnchorPositionedStates&);
     static void updateSnapshottedScrollOffsets(Document&);
     static void updatePositionsAfterScroll(Document&);
-    static void updateAnchorPositionedStateForLayoutTimePositioned(Element&, const RenderStyle&, AnchorPositionedStates&);
+    static void updateAnchorPositionedStateForDefaultAnchor(Element&, const RenderStyle&, AnchorPositionedStates&);
 
     static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const RenderBoxModelObject> anchorBox, const RenderBlock& containingBlock);
 
@@ -132,9 +129,12 @@ public:
     static CheckedPtr<RenderBoxModelObject> defaultAnchorForBox(const RenderBox&);
 
 private:
+    static CheckedPtr<RenderBoxModelObject> findAnchorForAnchorFunctionAndAttemptResolution(BuilderState&, std::optional<ScopedName> elementName);
     static AnchorElements findAnchorsForAnchorPositionedElement(const Element&, const HashSet<ResolvedScopedName>& anchorNames, const AnchorsForAnchorName&);
     static RefPtr<const Element> anchorPositionedElementOrPseudoElement(BuilderState&);
     static AnchorPositionedKey keyForElementOrPseudoElement(const Element&);
+    static void addAnchorFunctionScrollCompensatedAxis(RenderStyle&, const RenderBox& anchored, const RenderBoxModelObject& anchor, BoxAxis);
+    static LayoutSize scrollOffsetFromAnchor(const RenderBoxModelObject& anchor, const RenderBox& anchored);
 };
 
 } // namespace Style

@@ -27,9 +27,12 @@
 #include "FrameMemoryMonitor.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "Quirks.h"
+
 namespace WebCore {
 
 Ref<FrameMemoryMonitor> FrameMemoryMonitor::create(const LocalFrame& frame)

@@ -162,11 +162,11 @@ private:
     void deleteOriginLockFor(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     using DatabaseSet = HashSet<Database*>;
-    using DatabaseNameMap = HashMap<String, DatabaseSet*>;
-    using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap*>;
+    using DatabaseNameMap = HashMap<String, DatabaseSet>;
+    using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap>;
 
     Lock m_openDatabaseMapGuard;
-    mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap WTF_GUARDED_BY_LOCK(m_openDatabaseMapGuard);
+    mutable DatabaseOriginMap m_openDatabaseMap WTF_GUARDED_BY_LOCK(m_openDatabaseMapGuard);
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
     Lock m_databaseGuard;

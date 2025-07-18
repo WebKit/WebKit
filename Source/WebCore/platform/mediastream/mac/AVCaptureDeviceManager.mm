@@ -252,7 +252,7 @@ void AVCaptureDeviceManager::processRefreshedCaptureDevices(CompletionHandler<vo
 void AVCaptureDeviceManager::refreshCaptureDevices(CompletionHandler<void()>&& callback)
 {
     m_dispatchQueue->dispatch([callback = WTFMove(callback)]() mutable {
-        RunLoop::protectedMain()->dispatch([callback = WTFMove(callback), deviceList = crossThreadCopy(AVCaptureDeviceManager::singleton().retrieveCaptureDevices())]() mutable {
+        RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), deviceList = crossThreadCopy(AVCaptureDeviceManager::singleton().retrieveCaptureDevices())]() mutable {
             AVCaptureDeviceManager::singleton().processRefreshedCaptureDevices(WTFMove(callback), WTFMove(deviceList));
         });
     });
@@ -302,7 +302,7 @@ void AVCaptureDeviceManager::setUserPreferredCamera(CompletionHandler<void()>&& 
                     break;
                 }
             }
-            RunLoop::protectedMain()->dispatch(WTFMove(callback));
+            RunLoop::mainSingleton().dispatch(WTFMove(callback));
         });
         return;
     }
@@ -347,7 +347,7 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (!m_callback)
         return;
 
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = retainPtr(self)] {
         if (m_callback)
             m_callback->refreshCaptureDevices();
     });
@@ -365,7 +365,7 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (![keyPath isEqualToString:@"suspended"] && ![keyPath isEqualToString:@"systemPreferredCamera"] && ![keyPath isEqualToString:@"devices"])
         return;
 
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = retainPtr(self)] {
         if (m_callback)
             m_callback->refreshCaptureDevices();
     });

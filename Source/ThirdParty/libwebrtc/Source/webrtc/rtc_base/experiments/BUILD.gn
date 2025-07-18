@@ -62,10 +62,12 @@ rtc_library("quality_scaling_experiment") {
     "quality_scaling_experiment.h",
   ]
   deps = [
+    "..:checks",
     "..:logging",
     "../../api:field_trials_view",
-    "../../api/transport:field_trial_based_config",
+    "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
+    "../../rtc_base/experiments:field_trial_parser",
     "//third_party/abseil-cpp/absl/strings",
   ]
 }
@@ -91,7 +93,6 @@ rtc_library("balanced_degradation_settings") {
     "..:logging",
     "../../api:field_trials_view",
     "../../api/video_codecs:video_codecs_api",
-    "../../system_wrappers:field_trial",
   ]
 }
 

@@ -49,7 +49,7 @@ class PeerParamsPreprocessor::DefaultNamesProvider {
   // instance.
   explicit DefaultNamesProvider(
       absl::string_view prefix,
-      rtc::ArrayView<const absl::string_view> default_names = {})
+      ArrayView<const absl::string_view> default_names = {})
       : prefix_(prefix), default_names_(default_names) {}
 
   void MaybeSetName(std::optional<std::string>& name) {
@@ -77,7 +77,7 @@ class PeerParamsPreprocessor::DefaultNamesProvider {
   }
 
   const std::string prefix_;
-  const rtc::ArrayView<const absl::string_view> default_names_;
+  const ArrayView<const absl::string_view> default_names_;
 
   std::set<std::string> known_names_;
   size_t counter_ = 0;
@@ -106,7 +106,7 @@ void PeerParamsPreprocessor::SetDefaultValuesForMissingParams(
   }
 
   if (params->video_codecs.empty()) {
-    params->video_codecs.push_back(VideoCodecConfig(cricket::kVp8CodecName));
+    params->video_codecs.push_back(VideoCodecConfig(kVp8CodecName));
   }
 }
 

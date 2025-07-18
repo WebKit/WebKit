@@ -209,7 +209,7 @@ int AudioFrameOperations::ScaleWithSat(float scale, AudioFrame* frame) {
   int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_ * frame->num_channels_;
        i++) {
-    frame_data[i] = rtc::saturated_cast<int16_t>(scale * frame_data[i]);
+    frame_data[i] = saturated_cast<int16_t>(scale * frame_data[i]);
   }
   return 0;
 }

@@ -21,7 +21,7 @@
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -137,4 +137,4 @@ TEST_F(RTCCertificateTest, FromPEMWithInvalidPEM) {
   EXPECT_FALSE(certificate);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

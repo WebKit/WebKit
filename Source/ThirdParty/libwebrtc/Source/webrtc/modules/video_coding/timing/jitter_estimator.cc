@@ -14,18 +14,18 @@
 #include <string.h>
 
 #include <algorithm>
-#include <cstdint>
 #include <optional>
 
+#include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/video_coding/timing/frame_delay_variation_kalman_filter.h"
 #include "modules/video_coding/timing/rtt_filter.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

@@ -50,7 +50,7 @@ namespace WTF {
 
 template <typename T>
 class CompactPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompactPtr);
 public:
 #if HAVE(36BIT_ADDRESS)
     // The CompactPtr algorithm relies on shifting a 36-bit address

@@ -28,6 +28,7 @@
 #include "HTMLOptionElement.h"
 
 #include "AXObjectCache.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementAncestorIteratorInlines.h"

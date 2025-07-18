@@ -30,7 +30,7 @@ import UniformTypeIdentifiers
 internal import WebKit_Private
 internal import WebKit_Private.WKSnapshotConfigurationPrivate
 
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WebPage: Transferable {
@@ -162,20 +162,24 @@ extension WebPage: Transferable {
     ///
     /// For example, you can export a 100 pt by 100 pt region of a webpage as a PDF, and allow it to have a transparent background:
     ///
-    ///     let page = WebPage()
-    ///     // Load web content and wait for navigation to complete.
+    /// ```swift
+    /// let page = WebPage()
+    /// // Load web content and wait for navigation to complete.
     ///
-    ///     let square = CGRect(x: 0, y: 0, width: 100, height: 100)
-    ///     let pdf = try await page.exported(as: .pdf(region: .rect(square), allowTransparentBackground: true))
+    /// let square = CGRect(x: 0, y: 0, width: 100, height: 100)
+    /// let pdf = try await page.exported(as: .pdf(region: .rect(square), allowTransparentBackground: true))
+    /// ```
     ///
     /// If no configuration is needed, use the ``Transferable`` conformance of ``WebPage`` directly:
     ///
-    ///     let page = WebPage()
-    ///     // Load web content and wait for navigation to complete.
+    /// ```swift
+    /// let page = WebPage()
+    /// // Load web content and wait for navigation to complete.
     ///
-    ///     let pdf = try await page.exported(as: .pdf)
+    /// let pdf = try await page.exported(as: .pdf)
+    /// ```
     ///
-    /// - Parameter representation: A conifguration for a representation for a specific type of data with optional customizable properties.
+    /// - Parameter representation: A configuration for a representation for a specific type of data with optional customizable properties.
     /// - Returns: The data with the specified representation type.
     /// - Throws: An error if the specified representation cannot be created from the page.
     public nonisolated func exported(as representation: ExportedContentConfiguration) async throws -> Data {

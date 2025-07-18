@@ -11,18 +11,32 @@
 #ifndef VIDEO_VIDEO_STREAM_BUFFER_CONTROLLER_H_
 #define VIDEO_VIDEO_STREAM_BUFFER_CONTROLLER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 
+#include "absl/container/inlined_vector.h"
 #include "api/field_trials_view.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_timing.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
 #include "modules/video_coding/timing/timing.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
-#include "video/decode_synchronizer.h"
+#include "video/frame_decode_scheduler.h"
+#include "video/frame_decode_timing.h"
 #include "video/video_receive_stream_timeout_tracker.h"
 
 namespace webrtc {

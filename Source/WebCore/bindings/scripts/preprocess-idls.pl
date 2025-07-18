@@ -183,7 +183,7 @@ using namespace JSC;
 
 class DOMIsoSubspaces {
     WTF_MAKE_NONCOPYABLE(DOMIsoSubspaces);
-    WTF_MAKE_FAST_ALLOCATED(DOMIsoSubspaces);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DOMIsoSubspaces);
 public:
     DOMIsoSubspaces() = default;
 END
@@ -199,7 +199,7 @@ using namespace JSC;
 
 class DOMClientIsoSubspaces {
     WTF_MAKE_NONCOPYABLE(DOMClientIsoSubspaces);
-    WTF_MAKE_FAST_ALLOCATED(DOMClientIsoSubspaces);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DOMClientIsoSubspaces);
 public:
     DOMClientIsoSubspaces() = default;
 END
@@ -363,7 +363,7 @@ if ($constructorsHeaderFile) {
     $constructorsHeaderCode .= "\n";
     $constructorsHeaderCode .= "class DOMConstructors {\n";
     $constructorsHeaderCode .= "    WTF_MAKE_NONCOPYABLE(DOMConstructors);\n";
-    $constructorsHeaderCode .= "    WTF_MAKE_FAST_ALLOCATED(DOMConstructors);\n";
+    $constructorsHeaderCode .= "    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DOMConstructors);\n";
     $constructorsHeaderCode .= "public:\n";
     $constructorsHeaderCode .= "    using ConstructorArray = std::array<JSC::WriteBarrier<JSC::JSObject>, numberOfDOMConstructors>;\n";
     $constructorsHeaderCode .= "    DOMConstructors() = default;\n";

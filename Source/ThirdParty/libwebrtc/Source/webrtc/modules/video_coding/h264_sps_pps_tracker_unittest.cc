@@ -10,11 +10,11 @@
 
 #include "modules/video_coding/h264_sps_pps_tracker.h"
 
-#include <string.h>
-
+#include <cstdint>
 #include <vector>
 
-#include "absl/types/variant.h"
+#include "api/array_view.h"
+#include "api/video/video_codec_type.h"
 #include "common_video/h264/h264_common.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
@@ -30,7 +30,7 @@ using ::testing::SizeIs;
 
 const uint8_t start_code[] = {0, 0, 0, 1};
 
-rtc::ArrayView<const uint8_t> Bitstream(
+ArrayView<const uint8_t> Bitstream(
     const H264SpsPpsTracker::FixedBitstream& fixed) {
   return fixed.bitstream;
 }
@@ -69,7 +69,7 @@ class H264VideoHeader : public RTPVideoHeader {
   }
 
   RTPVideoHeaderH264& h264() {
-    return absl::get<RTPVideoHeaderH264>(video_type_header);
+    return std::get<RTPVideoHeaderH264>(video_type_header);
   }
 };
 

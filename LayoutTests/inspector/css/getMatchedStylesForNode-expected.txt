@@ -259,6 +259,58 @@ Matched:
         "cssProperties": [
           {
             "name": "z-index",
+            "value": "400",
+            "text": "z-index: 400;",
+            "range": "<filtered>",
+            "implicit": false,
+            "status": "active"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": "",
+        "range": "<filtered>",
+        "cssText": " z-index: 400; "
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>",
+      "groupings": [
+        {
+          "type": "starting-style-rule",
+          "ruleId": "<filtered>",
+          "range": "<filtered>",
+          "sourceURL": "<filtered>"
+        }
+      ],
+      "isImplicitlyNested": false
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div#x",
+            "specificity": [
+              1,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div#x",
+        "range": "<filtered>"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "author",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
             "value": "100",
             "text": "z-index: 100;",
             "range": "<filtered>",

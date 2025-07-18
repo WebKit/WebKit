@@ -67,8 +67,7 @@ void CallbackListReceivers::RemoveReceivers(const void* removal_tag) {
   }
 }
 
-void CallbackListReceivers::Foreach(
-    rtc::FunctionView<void(UntypedFunction&)> fv) {
+void CallbackListReceivers::Foreach(FunctionView<void(UntypedFunction&)> fv) {
   RTC_CHECK(!send_in_progress_);
   bool removals_detected = false;
   send_in_progress_ = true;

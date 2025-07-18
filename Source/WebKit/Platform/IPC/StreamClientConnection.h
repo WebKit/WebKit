@@ -139,8 +139,8 @@ private:
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
     private:
-        CheckedRef<StreamClientConnection> m_owner;
-        Connection::Client& m_receiver;
+        const CheckedRef<StreamClientConnection> m_owner;
+        const CheckedRef<Connection::Client> m_receiver;
     };
     std::optional<DedicatedConnectionClient> m_dedicatedConnectionClient;
     uint64_t m_currentDestinationID { 0 };
@@ -226,7 +226,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=248947): Current contract is that completionHandler
         // is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr, nullptr);
         });
     }
@@ -296,14 +296,13 @@ Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReply
 template<typename T>
 std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, std::span<uint8_t> span)
 {
-    Ref connection = m_connection;
     // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
-    auto syncRequestID = connection->makeSyncRequestID();
-    if (!connection->pushPendingSyncRequestID(syncRequestID))
+    auto syncRequestID = m_connection->makeSyncRequestID();
+    if (!m_connection->pushPendingSyncRequestID(syncRequestID))
         return { { Error::CantWaitForSyncReplies } };
 
-    auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
+    auto decoderResult = [&] -> std::optional<Connection::DecoderOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span };
         messageEncoder << syncRequestID;
         message.encode(messageEncoder);
@@ -325,9 +324,9 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         } else
             m_buffer.resetClientOffset();
 
-        return connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
+        return m_connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
     }();
-    connection->popPendingSyncRequestID(syncRequestID);
+    m_connection->popPendingSyncRequestID(syncRequestID);
 
     if (!decoderResult)
         return std::nullopt;
@@ -338,7 +337,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (decoder->messageName() == MessageName::CancelSyncMessageReply)
         return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
-    *decoder >> replyArguments;
+    decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
     return { { WTFMove(decoder), WTFMove(*replyArguments) } };

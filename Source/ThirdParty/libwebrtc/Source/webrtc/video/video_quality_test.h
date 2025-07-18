@@ -10,25 +10,41 @@
 #ifndef VIDEO_VIDEO_QUALITY_TEST_H_
 #define VIDEO_VIDEO_QUALITY_TEST_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "api/audio/audio_device.h"
+#include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/fec_controller.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
-#include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
+#include "api/scoped_refptr.h"
 #include "api/test/frame_generator_interface.h"
+#include "api/test/video/function_video_decoder_factory.h"
+#include "api/test/video/function_video_encoder_factory.h"
 #include "api/test/video_quality_test_fixture.h"
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_source_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "call/call_config.h"
 #include "call/fake_network_pipe.h"
-#include "media/engine/internal_decoder_factory.h"
-#include "media/engine/internal_encoder_factory.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "test/call_test.h"
+#include "test/direct_transport.h"
 #include "test/layer_filtering_transport.h"
+#include "video/config/video_encoder_config.h"
 #include "video/video_analyzer.h"
+
 #ifdef WEBRTC_WIN
 #include "modules/audio_device/win/core_audio_utility_win.h"
 #include "rtc_base/win/scoped_com_initializer.h"
@@ -92,7 +108,7 @@ class VideoQualityTest : public test::CallTest,
   void StopThumbnails();
   void DestroyThumbnailStreams();
   // Helper method for creating a real ADM (using hardware) for all platforms.
-  rtc::scoped_refptr<AudioDeviceModule> CreateAudioDevice();
+  scoped_refptr<AudioDeviceModule> CreateAudioDevice();
   void InitializeAudioDevice(CallConfig* send_call_config,
                              CallConfig* recv_call_config,
                              bool use_real_adm);
@@ -103,10 +119,9 @@ class VideoQualityTest : public test::CallTest,
   virtual std::unique_ptr<test::LayerFilteringTransport> CreateSendTransport();
   virtual std::unique_ptr<test::DirectTransport> CreateReceiveTransport();
 
-  std::vector<std::unique_ptr<rtc::VideoSourceInterface<VideoFrame>>>
+  const Environment env_;
+  std::vector<std::unique_ptr<VideoSourceInterface<VideoFrame>>>
       thumbnail_capturers_;
-  Clock* const clock_;
-  const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   RtcEventLogFactory rtc_event_log_factory_;
 
   test::FunctionVideoDecoderFactory video_decoder_factory_;

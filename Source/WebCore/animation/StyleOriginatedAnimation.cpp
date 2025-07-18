@@ -32,6 +32,7 @@
 #include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
+#include "EventTargetInlines.h"
 #include "KeyframeEffect.h"
 #include "Logging.h"
 #include "RenderStyle.h"

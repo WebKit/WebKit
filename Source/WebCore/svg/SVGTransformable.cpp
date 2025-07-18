@@ -27,6 +27,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGTransform.h"
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
@@ -259,7 +260,7 @@ std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransf
     return parseTransformTypeGeneric(buffer);
 }
 
-std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<char16_t>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }

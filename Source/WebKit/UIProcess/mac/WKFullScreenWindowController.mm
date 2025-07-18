@@ -29,6 +29,7 @@
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
 
 #import "AppKitSPI.h"
+#import "GPUProcessProxy.h"
 #import "LayerTreeContext.h"
 #import "NativeWebMouseEvent.h"
 #import "VideoPresentationManagerProxy.h"
@@ -37,6 +38,7 @@
 #import "WKViewPrivate.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/CGWindowUtilities.h>
 #import <WebCore/FloatRect.h>

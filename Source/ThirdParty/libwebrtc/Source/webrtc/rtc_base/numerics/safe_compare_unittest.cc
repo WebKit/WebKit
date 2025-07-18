@@ -16,7 +16,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -394,4 +394,4 @@ TEST(SafeCmpTest, Enum) {
   static_assert(SafeEq(13u, e4), "");
 }
 
-}  // namespace rtc
+}  // namespace webrtc

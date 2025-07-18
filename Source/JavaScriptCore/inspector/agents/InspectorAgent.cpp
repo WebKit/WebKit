@@ -42,14 +42,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAgent);
 InspectorAgent::InspectorAgent(AgentContext& context)
     : InspectorAgentBase("Inspector"_s)
     , m_environment(context.environment)
-    , m_frontendDispatcher(makeUnique<InspectorFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<InspectorFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(InspectorBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
 InspectorAgent::~InspectorAgent() = default;
 
-void InspectorAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorAgent::didCreateFrontendAndBackend()
 {
 }
 

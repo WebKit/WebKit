@@ -82,7 +82,7 @@ class RTC_EXPORT DxgiDuplicatorController {
   static std::string ResultName(Result result);
 
   // Returns the singleton instance of DxgiDuplicatorController.
-  static rtc::scoped_refptr<DxgiDuplicatorController> Instance();
+  static webrtc::scoped_refptr<DxgiDuplicatorController> Instance();
 
   // See ScreenCapturerWinDirectx::IsCurrentSessionSupported().
   static bool IsCurrentSessionSupported();
@@ -198,11 +198,20 @@ class RTC_EXPORT DxgiDuplicatorController {
                       SharedDesktopFrame* target)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // The minimum GetNumFramesCaptured() returned by `duplicators_`.
-  int64_t GetNumFramesCaptured() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  // When monitor_id is kFullDesktopScreenId, meaning capturing all screens,
+  // the minimum GetNumFramesCaptured(int monitor_id) returned by duplicators_.
+  int64_t GetNumFramesCaptured(int monitor_id) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns a DesktopSize to cover entire `desktop_rect_`.
   DesktopSize desktop_size() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
+  // Returns the device scale factor of one screen. `monitor_id` should be >= 0.
+  // If system does not support DXGI based capturer, or `monitor_id` is greater
+  // than the total screen count of all the Duplicators, this function returns
+  // std::nullopt.
+  std::optional<float> GetDeviceScaleFactor(int monitor_id) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns the size of one screen. `id` should be >= 0. If system does not
   // support DXGI based capturer, or `id` is greater than the total screen count
@@ -224,7 +233,9 @@ class RTC_EXPORT DxgiDuplicatorController {
   // GetNumFramesCaptured() has never reached the requirement.
   // According to http://crbug.com/682112, dxgi capturer returns a black frame
   // during first several capture attempts.
-  bool EnsureFrameCaptured(Context* context, SharedDesktopFrame* target)
+  bool EnsureFrameCaptured(Context* context,
+                           int monitor_id,
+                           SharedDesktopFrame* target)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Moves `desktop_rect_` and all underlying `duplicators_`, putting top left

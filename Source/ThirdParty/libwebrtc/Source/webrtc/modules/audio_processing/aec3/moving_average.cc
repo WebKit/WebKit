@@ -31,8 +31,8 @@ MovingAverage::MovingAverage(size_t num_elem, size_t mem_len)
 
 MovingAverage::~MovingAverage() = default;
 
-void MovingAverage::Average(rtc::ArrayView<const float> input,
-                            rtc::ArrayView<float> output) {
+void MovingAverage::Average(ArrayView<const float> input,
+                            ArrayView<float> output) {
   RTC_DCHECK(input.size() == num_elem_);
   RTC_DCHECK(output.size() == num_elem_);
 

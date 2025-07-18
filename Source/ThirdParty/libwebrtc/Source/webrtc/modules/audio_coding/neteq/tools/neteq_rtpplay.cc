@@ -8,18 +8,26 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cerrno>
+#include <climits>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 #include "modules/audio_coding/neteq/tools/neteq_test_factory.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 
 using TestConfig = webrtc::test::NetEqTestFactory::Config;
 
@@ -78,7 +86,11 @@ ABSL_FLAG(int,
 ABSL_FLAG(int,
           red,
           TestConfig::default_red(),
-          "RTP payload type for redundant audio (RED)");
+          "RTP payload type for redundant audio (RED, 8kHz)");
+ABSL_FLAG(int,
+          opus_red,
+          TestConfig::default_opus_red(),
+          "RTP payload type for redundant audio (RED, 48kHz)");
 ABSL_FLAG(int,
           cn_nb,
           TestConfig::default_cn_nb(),
@@ -225,7 +237,10 @@ void PrintCodecMapping() {
   PrintCodecMappingEntry("AVT/DTMF (16 kHz)", absl::GetFlag(FLAGS_avt_16));
   PrintCodecMappingEntry("AVT/DTMF (32 kHz)", absl::GetFlag(FLAGS_avt_32));
   PrintCodecMappingEntry("AVT/DTMF (48 kHz)", absl::GetFlag(FLAGS_avt_48));
-  PrintCodecMappingEntry("redundant audio (RED)", absl::GetFlag(FLAGS_red));
+  PrintCodecMappingEntry("redundant audio (RED 8khz)",
+                         absl::GetFlag(FLAGS_red));
+  PrintCodecMappingEntry("redundant audio (RED 48khz)",
+                         absl::GetFlag(FLAGS_opus_red));
   PrintCodecMappingEntry("comfort noise (8 kHz)", absl::GetFlag(FLAGS_cn_nb));
   PrintCodecMappingEntry("comfort noise (16 kHz)", absl::GetFlag(FLAGS_cn_wb));
   PrintCodecMappingEntry("comfort noise (32 kHz)",
@@ -270,13 +285,13 @@ std::optional<std::string> CreateOptionalOutputFileName(
   }
   if (!basename.empty()) {
     // Override the automatic assignment.
-    rtc::StringBuilder sb(basename);
+    webrtc::StringBuilder sb(basename);
     sb << suffix;
     return sb.str();
   }
   if (!output_audio_filename.empty()) {
     // Automatically assign name.
-    rtc::StringBuilder sb(output_audio_filename);
+    webrtc::StringBuilder sb(output_audio_filename);
     sb << suffix;
     return sb.str();
   }
@@ -325,6 +340,7 @@ int main(int argc, char* argv[]) {
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_avt_32)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_avt_48)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_red)));
+  RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_opus_red)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_cn_nb)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_cn_wb)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_cn_swb32)));
@@ -358,6 +374,7 @@ int main(int argc, char* argv[]) {
   config.avt_32 = absl::GetFlag(FLAGS_avt_32);
   config.avt_48 = absl::GetFlag(FLAGS_avt_48);
   config.red = absl::GetFlag(FLAGS_red);
+  config.opus_red = absl::GetFlag(FLAGS_opus_red);
   config.cn_nb = absl::GetFlag(FLAGS_cn_nb);
   config.cn_wb = absl::GetFlag(FLAGS_cn_wb);
   config.cn_swb32 = absl::GetFlag(FLAGS_cn_swb32);

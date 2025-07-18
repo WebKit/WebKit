@@ -1,6 +1,10 @@
+CONSOLE MESSAGE: Error: assert_equals: selection should be collapsed in the second <span> element which was clicked by middle button before pointerup event expected Text node "second span." but got Text node "first span."
+CONSOLE MESSAGE: Error: assert_equals: Selection should be collapsed in the second <span> element which was clicked by middle button before mouseup event expected Text node "second span." but got Text node "first span."
 first span.
 second span.
 link.
+
+Harness Error (FAIL), message = Error: assert_equals: Selection should be collapsed in the second <span> element which was clicked by middle button before mouseup event expected Text node "second span." but got Text node "first span."
 
 PASS middle click should set focus to clicked editable element and collapse selection around the clicked point
 PASS middle click should move caret in an editable element
@@ -8,5 +12,5 @@ PASS middle click shouldn't move caret in an editable element if the default of 
 PASS middle click shouldn't move caret in an editable element if the default of pointerdown event is prevented
 FAIL Shift + middle click should extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
 FAIL Shift + middle click in a link shouldn't extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
-PASS middle mouse button down should move caret, but its button up shouldn't move caret
+FAIL middle mouse button down should move caret, but its button up shouldn't move caret assert_equals: Selection#focusNode should stay in the second <span> element expected Text node "second span." but got Text node "first span."
 

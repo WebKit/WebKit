@@ -62,7 +62,7 @@ private:
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void didSetValueByUserEdit() final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
-    float decorationWidth() const final;
+    float decorationWidth(float inputWidth) const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
 
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;

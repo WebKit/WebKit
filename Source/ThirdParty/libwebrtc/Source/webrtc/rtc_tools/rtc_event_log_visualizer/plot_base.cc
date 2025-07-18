@@ -262,9 +262,9 @@ void Plot::PrintPythonCode(absl::string_view figure_output_path) const {
   }
 }
 
-void Plot::ExportProtobuf(webrtc::analytics::Chart* chart) const {
+void Plot::ExportProtobuf(analytics::Chart* chart) const {
   for (size_t i = 0; i < series_list_.size(); i++) {
-    webrtc::analytics::DataSet* data_set = chart->add_data_sets();
+    analytics::DataSet* data_set = chart->add_data_sets();
     for (const auto& point : series_list_[i].points) {
       data_set->add_x_values(point.x);
     }
@@ -273,15 +273,15 @@ void Plot::ExportProtobuf(webrtc::analytics::Chart* chart) const {
     }
 
     if (series_list_[i].line_style == LineStyle::kBar) {
-      data_set->set_style(webrtc::analytics::ChartStyle::BAR_CHART);
+      data_set->set_style(analytics::ChartStyle::BAR_CHART);
     } else if (series_list_[i].line_style == LineStyle::kLine) {
-      data_set->set_style(webrtc::analytics::ChartStyle::LINE_CHART);
+      data_set->set_style(analytics::ChartStyle::LINE_CHART);
     } else if (series_list_[i].line_style == LineStyle::kStep) {
-      data_set->set_style(webrtc::analytics::ChartStyle::LINE_STEP_CHART);
+      data_set->set_style(analytics::ChartStyle::LINE_STEP_CHART);
     } else if (series_list_[i].line_style == LineStyle::kNone) {
-      data_set->set_style(webrtc::analytics::ChartStyle::SCATTER_CHART);
+      data_set->set_style(analytics::ChartStyle::SCATTER_CHART);
     } else {
-      data_set->set_style(webrtc::analytics::ChartStyle::UNDEFINED);
+      data_set->set_style(analytics::ChartStyle::UNDEFINED);
     }
 
     if (series_list_[i].point_style == PointStyle::kHighlight)
@@ -300,7 +300,7 @@ void Plot::ExportProtobuf(webrtc::analytics::Chart* chart) const {
   chart->set_id(id_);
 
   for (const auto& kv : yaxis_tick_labels_) {
-    webrtc::analytics::TickLabel* tick = chart->add_yaxis_tick_labels();
+    analytics::TickLabel* tick = chart->add_yaxis_tick_labels();
     tick->set_value(kv.first);
     tick->set_label(kv.second);
   }
@@ -334,10 +334,9 @@ void PlotCollection::PrintPythonCode(
 }
 
 void PlotCollection::ExportProtobuf(
-    webrtc::analytics::ChartCollection* collection) const {
+    analytics::ChartCollection* collection) const {
   for (const auto& plot : plots_) {
-    webrtc::analytics::Chart* protobuf_representation =
-        collection->add_charts();
+    analytics::Chart* protobuf_representation = collection->add_charts();
     plot->ExportProtobuf(protobuf_representation);
   }
   if (calltime_to_utc_ms_) {

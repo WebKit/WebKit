@@ -644,7 +644,7 @@ int VTTCue::calculateComputedLinePosition() const
     return n;
 }
 
-static bool isCueParagraphSeparator(UChar character)
+static bool isCueParagraphSeparator(char16_t character)
 {
     // Within a cue, paragraph boundaries are only denoted by Type B characters,
     // such as U+000A LINE FEED (LF), U+0085 NEXT LINE (NEL), and U+2029 PARAGRAPH SEPARATOR.
@@ -676,11 +676,11 @@ void VTTCue::determineTextDirection()
         return;
 
     for (size_t i = 0; i < paragraph.length(); ++i) {
-        UChar current = paragraph[i];
+        char16_t current = paragraph[i];
         if (!current || isCueParagraphSeparator(current))
             return;
 
-        if (UChar current = paragraph[i]) {
+        if (char16_t current = paragraph[i]) {
             UCharDirection charDirection = u_charDirection(current);
             if (charDirection == U_LEFT_TO_RIGHT) {
                 m_displayDirection = CSSValueLtr;

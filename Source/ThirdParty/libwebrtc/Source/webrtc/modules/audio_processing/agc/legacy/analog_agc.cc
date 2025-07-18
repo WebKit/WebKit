@@ -265,7 +265,7 @@ int WebRtcAgc_GetAddFarendError(void* state, size_t samples) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(state);
 
-  if (stt == NULL)
+  if (stt == nullptr)
     return -1;
 
   if (stt->fs == 8000) {
@@ -943,7 +943,7 @@ int WebRtcAgc_Analyze(void* agcInst,
                       int32_t gains[11]) {
   LegacyAgc* stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
@@ -1005,7 +1005,7 @@ int WebRtcAgc_set_config(void* agcInst, WebRtcAgcConfig agcConfig) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
@@ -1053,11 +1053,11 @@ int WebRtcAgc_get_config(void* agcInst, WebRtcAgcConfig* config) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
-  if (config == NULL) {
+  if (config == nullptr) {
     stt->lastError = AGC_NULL_POINTER_ERROR;
     return -1;
   }

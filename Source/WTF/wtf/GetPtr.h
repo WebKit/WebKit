@@ -15,7 +15,6 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
@@ -33,6 +32,12 @@ template <typename T> struct IsSmartPtr {
     static constexpr bool value = false;
     static constexpr bool isNullable = true;
 };
+
+template<typename T>
+inline constexpr bool IsSmartPtrV = IsSmartPtr<T>::value;
+
+template<typename T>
+inline constexpr bool IsSmartPtrNullableV = IsSmartPtr<T>::isNullable;
 
 template <typename T, bool isSmartPtr>
 struct GetPtrHelperBase;

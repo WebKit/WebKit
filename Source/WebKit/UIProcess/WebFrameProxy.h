@@ -62,9 +62,12 @@ class FrameTreeSyncData;
 class ResourceRequest;
 class SecurityOriginData;
 
+struct FocusEventData;
 struct FrameIdentifierType;
 struct NavigationIdentifierType;
 
+enum class FocusDirection : uint8_t;
+enum class FoundElementInRemoteFrame : bool;
 enum class MouseEventPolicy : uint8_t;
 enum class ResourceResponseSource : uint8_t;
 enum class SandboxFlag : uint16_t;
@@ -240,6 +243,7 @@ public:
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
     void updateRemoteFrameSize(WebCore::IntSize);
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
 
     WebCore::SandboxFlags effectiveSandboxFlags() const { return m_effectiveSandboxFlags; }
     void updateSandboxFlags(WebCore::SandboxFlags sandboxFlags) { m_effectiveSandboxFlags = sandboxFlags; }

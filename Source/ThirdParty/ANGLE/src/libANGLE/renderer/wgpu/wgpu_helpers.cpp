@@ -8,10 +8,14 @@
 
 #include <algorithm>
 
+#include "common/PackedGLEnums_autogen.h"
+#include "dawn/dawn_proc_table.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 #include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_utils.h"
+#include "webgpu/webgpu.h"
 
 namespace rx
 {
@@ -130,7 +134,10 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
     dst.texture                  = mTexture.get();
     std::vector<PackedRenderPassColorAttachment> colorAttachments;
     TextureViewHandle textureView;
-    ANGLE_TRY(createTextureViewSingleLevel(levelGL, 0, textureView));
+    // Create a texture view of the entire level, layers and all.
+    ANGLE_TRY(createTextureView(levelGL, /*levelCount=*/1, /*layerIndex*/ 0,
+                                mTextureDescriptor.size.depthOrArrayLayers, textureView,
+                                WGPUTextureViewDimension_Undefined));
     bool updateDepth      = false;
     bool updateStencil    = false;
     float depthValue      = 1;
@@ -148,6 +155,13 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
                 LevelIndex wgpuLevel    = toWgpuLevel(srcUpdate.targetLevel);
                 dst.mipLevel            = wgpuLevel.get();
                 WGPUExtent3D copyExtent = getLevelSize(wgpuLevel);
+
+                // TODO(anglebug.com/389145696): copyExtent just always copies to the whole level.
+                // Should support smaller regions.
+                dst.origin = WGPUOrigin3D{0, 0, srcUpdate.layerIndex};
+                // Updating multiple layers at once maybe not currently supported.
+                ASSERT(srcUpdate.layerCount == 1);
+                copyExtent.depthOrArrayLayers = srcUpdate.layerCount;
 
                 ANGLE_TRY(contextWgpu->flush(webgpu::RenderPassClosureReason::CopyBufferToTexture));
                 contextWgpu->ensureCommandEncoderCreated();
@@ -265,9 +279,13 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     WGPUTexelCopyBufferLayout textureDataLayout = WGPU_TEXEL_COPY_BUFFER_LAYOUT_INIT;
     textureDataLayout.bytesPerRow             = outputRowPitch;
     textureDataLayout.rowsPerImage            = outputDepthPitch;
+
+    GLint layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+
     appendSubresourceUpdate(
-        levelGL, SubresourceUpdate(UpdateSource::Texture, levelGL, bufferHelper.getBuffer(),
-                                   textureDataLayout));
+        levelGL,
+        SubresourceUpdate(UpdateSource::Texture, levelGL, layerIndex, index.getLayerCount(),
+                          bufferHelper.getBuffer(), textureDataLayout));
     return angle::Result::Continue;
 }
 
@@ -278,6 +296,28 @@ void ImageHelper::stageClear(gl::LevelIndex targetLevel,
 {
     appendSubresourceUpdate(targetLevel, SubresourceUpdate(UpdateSource::Clear, targetLevel,
                                                            clearValues, hasDepth, hasStencil));
+}
+
+void ImageHelper::removeSingleSubresourceStagedUpdates(gl::LevelIndex levelToRemove,
+                                                       uint32_t layerIndex,
+                                                       uint32_t layerCount)
+{
+    std::vector<SubresourceUpdate> *updatesToClear = getLevelUpdates(levelToRemove);
+    if (!updatesToClear || updatesToClear->size() == 0)
+    {
+        return;
+    }
+
+    for (int64_t i = updatesToClear->size() - 1; i >= 0; i--)
+    {
+        size_t index = static_cast<size_t>(i);
+        // TODO(anglebug.com/420782526): maybe clear partial matches here. Vulkan backend does not.
+        if ((*updatesToClear)[index].layerIndex == layerIndex &&
+            (*updatesToClear)[index].layerCount == layerCount)
+        {
+            updatesToClear->erase(updatesToClear->begin() + index);
+        }
+    }
 }
 
 void ImageHelper::removeStagedUpdates(gl::LevelIndex levelToRemove)
@@ -329,6 +369,8 @@ angle::Result ImageHelper::getReadPixelsParams(rx::ContextWgpu *contextWgpu,
 angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
                                       const gl::Rectangle &area,
                                       const rx::PackPixelsParams &packPixelsParams,
+                                      webgpu::LevelIndex level,
+                                      uint32_t layer,
                                       void *pixels)
 {
     if (mActualFormatID == angle::FormatID::NONE)
@@ -363,8 +405,9 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
     WGPUTexelCopyTextureInfo copyTexture WGPU_TEXEL_COPY_TEXTURE_INFO_INIT;
     copyTexture.origin.x = area.x;
     copyTexture.origin.y = area.y;
+    copyTexture.origin.z = layer;
     copyTexture.texture  = mTexture.get();
-    copyTexture.mipLevel = toWgpuLevel(mFirstAllocatedLevel).get();
+    copyTexture.mipLevel = level.get();
 
     WGPUExtent3D copySize = WGPU_EXTENT_3D_INIT;
     copySize.width  = area.width;
@@ -400,12 +443,13 @@ angle::Result ImageHelper::createFullTextureView(TextureViewHandle &textureViewO
                              desiredViewDimension);
 }
 
-angle::Result ImageHelper::createTextureView(gl::LevelIndex targetLevel,
-                                             uint32_t levelCount,
-                                             uint32_t layerIndex,
-                                             uint32_t arrayLayerCount,
-                                             TextureViewHandle &textureViewOut,
-                                             WGPUTextureViewDimension desiredViewDimension)
+angle::Result ImageHelper::createTextureView(
+    gl::LevelIndex targetLevel,
+    uint32_t levelCount,
+    uint32_t layerIndex,
+    uint32_t arrayLayerCount,
+    TextureViewHandle &textureViewOut,
+    Optional<WGPUTextureViewDimension> desiredViewDimension)
 {
     if (!isTextureLevelInAllocatedImage(targetLevel))
     {
@@ -417,7 +461,7 @@ angle::Result ImageHelper::createTextureView(gl::LevelIndex targetLevel,
     textureViewDesc.arrayLayerCount = arrayLayerCount;
     textureViewDesc.baseMipLevel    = toWgpuLevel(targetLevel).get();
     textureViewDesc.mipLevelCount   = levelCount;
-    if (desiredViewDimension == WGPUTextureViewDimension_Undefined)
+    if (!desiredViewDimension.valid())
     {
         switch (mTextureDescriptor.dimension)
         {
@@ -440,7 +484,7 @@ angle::Result ImageHelper::createTextureView(gl::LevelIndex targetLevel,
     }
     else
     {
-        textureViewDesc.dimension = desiredViewDimension;
+        textureViewDesc.dimension = desiredViewDimension.value();
     }
     textureViewDesc.format = mTextureDescriptor.format;
     textureViewOut         = TextureViewHandle::Acquire(

@@ -58,7 +58,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
         static_assert(Extent, "Can't encode a fixed size of 0");
 
         if constexpr (Extent == std::dynamic_extent) {
-            size_t size = span.size();
+            uint64_t size = span.size();
             encoder << size;
             if (!size)
                 return;
@@ -73,8 +73,11 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
 
         size_t size = Extent;
         if constexpr (Extent == std::dynamic_extent) {
-            auto decodedSize = decoder.template decode<size_t>();
+            auto decodedSize = decoder.template decode<uint64_t>();
             if (!decodedSize)
+                return std::nullopt;
+
+            if (*decodedSize > std::numeric_limits<size_t>::max())
                 return std::nullopt;
 
             size = *decodedSize;
@@ -104,7 +107,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     template<typename Encoder, size_t... Indices>
     static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference, std::index_sequence<Indices...>)
     {
-        size_t size = arrayReference.size();
+        uint64_t size = arrayReference.size();
         encoder << size;
         if (!size) [[unlikely]]
             return;
@@ -115,7 +118,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     template<typename Decoder>
     static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
-        auto decodedSize = decoder.template decode<size_t>();
+        auto decodedSize = decoder.template decode<uint64_t>();
         if (!decodedSize) [[unlikely]]
             return std::nullopt;
         if (!*decodedSize) [[unlikely]]
@@ -327,7 +330,7 @@ template<typename T> struct ArgumentCoder<UniqueRef<T>> {
     static void encode(Encoder& encoder, U&& object)
     {
         static_assert(std::is_same_v<std::remove_cvref_t<U>, UniqueRef<T>>);
-        encoder << WTF::forward_like<U>(*object);
+        encoder << WTF::forward_like<U>(object.get());
     }
 
     template<typename Decoder>
@@ -453,7 +456,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     {
         static_assert(std::is_same_v<std::remove_cvref_t<U>, Vector<T, inlineCapacity, OverflowHandler, minCapacity>>);
 
-        encoder << static_cast<size_t>(vector.size());
+        encoder << static_cast<uint64_t>(vector.size());
         for (auto&& item : vector)
             encoder << WTF::forward_like<U>(item);
     }
@@ -461,7 +464,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        auto size = decoder.template decode<size_t>();
+        auto size = decoder.template decode<uint64_t>();
         if (!size)
             return std::nullopt;
 
@@ -519,7 +522,7 @@ template<typename T> struct FixedVectorArgumentCoder<false, T> {
     {
         static_assert(std::is_same_v<std::remove_cvref_t<U>, FixedVector<T>>);
 
-        encoder << static_cast<size_t>(vector.size());
+        encoder << static_cast<uint64_t>(vector.size());
         for (auto&& item : vector)
             encoder << WTF::forward_like<U>(item);
     }
@@ -527,7 +530,7 @@ template<typename T> struct FixedVectorArgumentCoder<false, T> {
     template<typename Decoder>
     static std::optional<FixedVector<T>> decode(Decoder& decoder)
     {
-        auto size = decoder.template decode<size_t>();
+        auto size = decoder.template decode<uint64_t>();
         if (!size)
             return std::nullopt;
 
@@ -573,49 +576,6 @@ template<typename T> struct ArgumentCoder<FixedVector<T>> : FixedVectorArgumentC
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
-
-    template<typename Encoder, typename T>
-    static void encode(Encoder& encoder, T&& hashMap)
-    {
-        static_assert(std::is_same_v<std::remove_cvref_t<T>, HashMapType>);
-
-        encoder << static_cast<unsigned>(hashMap.size());
-        for (auto&& entry : hashMap)
-            encoder << WTF::forward_like<T>(entry);
-    }
-
-    template<typename Decoder>
-    static std::optional<HashMapType> decode(Decoder& decoder)
-    {
-        auto hashMapSize = decoder.template decode<unsigned>();
-        if (!hashMapSize)
-            return std::nullopt;
-
-        HashMapType hashMap;
-        for (unsigned i = 0; i < *hashMapSize; ++i) {
-            auto key = decoder.template decode<KeyArg>();
-            if (!key) [[unlikely]]
-                return std::nullopt;
-
-            auto value = decoder.template decode<MappedArg>();
-            if (!value) [[unlikely]]
-                return std::nullopt;
-
-            if (!HashMapType::isValidKey(*key)) [[unlikely]]
-                return std::nullopt;
-
-            if (!hashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry) [[unlikely]] {
-                // The hash map already has the specified key, bail.
-                return std::nullopt;
-            }
-        }
-
-        return hashMap;
-    }
-};
-
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
-    typedef UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
 
     template<typename Encoder, typename T>
     static void encode(Encoder& encoder, T&& hashMap)
@@ -894,7 +854,7 @@ template<typename T, typename Traits> struct ArgumentCoder<WTF::Markable<T, Trai
     }
 
     template<typename Decoder>
-    static std::optional<WTF::Markable<T>> decode(Decoder& decoder)
+    static std::optional<WTF::Markable<T, Traits>> decode(Decoder& decoder)
     {
         auto isEmpty = decoder.template decode<bool>();
         if (!isEmpty) [[unlikely]]

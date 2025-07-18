@@ -59,11 +59,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_floats;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_floats;
     }
 
 private:
-    const std::span<const float>& m_floats;
+    SUPPRESS_FORWARD_DECL_MEMBER const std::span<const float>& m_floats;
 };
 
 class TestSpanOfConstFloatSegments {
@@ -84,11 +84,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_floatSegments;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_floatSegments;
     }
 
 private:
-    const std::span<const WebCore::FloatSegment>& m_floatSegments;
+    SUPPRESS_FORWARD_DECL_MEMBER const std::span<const WebCore::FloatSegment>& m_floatSegments;
 };
 
 } // namespace TestWithSpanOfConst

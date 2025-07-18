@@ -62,12 +62,12 @@ void RunBitexactnessTest(int sample_rate_hz,
                          int stream_delay_ms,
                          EchoControlMobileImpl::RoutingMode routing_mode,
                          bool comfort_noise_enabled,
-                         const rtc::ArrayView<const float>& output_reference) {
+                         const ArrayView<const float>& output_reference) {
   EchoControlMobileImpl echo_control_mobile;
   SetupComponent(sample_rate_hz, routing_mode, comfort_noise_enabled,
                  &echo_control_mobile);
 
-  const int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
+  const int samples_per_channel = CheckedDivExact(sample_rate_hz, 100);
   const StreamConfig render_config(sample_rate_hz, num_channels);
   AudioBuffer render_buffer(
       render_config.sample_rate_hz(), render_config.num_channels(),

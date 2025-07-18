@@ -1054,9 +1054,9 @@ void AccessibilityUIElement::press()
     [m_element _accessibilityActivate];
 }
     
-void AccessibilityUIElement::dismiss()
+bool AccessibilityUIElement::dismiss()
 {
-    [m_element accessibilityPerformEscape];
+    return [m_element accessibilityPerformEscape];
 }
 
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const

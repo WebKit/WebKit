@@ -345,7 +345,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class DomainFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DomainFrontendDispatcher);
 public:
     DomainFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void Event();
@@ -544,7 +544,7 @@ namespace Inspector {
 
 
 class ObjCInspectorDomainBackendDispatcher final : public AlternateDomainBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorDomainBackendDispatcher);
 public:
     ObjCInspectorDomainBackendDispatcher(id<TestProtocolDomainDomainHandler> handler) { m_delegate = handler; }
     void Command(long protocol_requestId) final;

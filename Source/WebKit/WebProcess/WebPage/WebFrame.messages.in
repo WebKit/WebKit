@@ -30,4 +30,5 @@ messages -> WebFrame {
     UpdateFrameSize(WebCore::IntSize newSize)
     CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
     DestroyProvisionalFrame();
+    FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
 }

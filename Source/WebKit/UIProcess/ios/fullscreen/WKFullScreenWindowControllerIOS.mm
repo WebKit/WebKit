@@ -218,7 +218,6 @@ struct WKWebViewState {
             page->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
         }
         [webView _setViewScale:_savedViewScale];
-        scrollView.zoomScale = _savedZoomScale;
         scrollView.bouncesZoom = _savedBouncesZoom;
         webView._minimumEffectiveDeviceWidth = _savedMinimumEffectiveDeviceWidth;
     }
@@ -1066,7 +1065,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // apply the default web view state (which sets both parameters anyways)?
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
-        [webView _overrideZoomScaleParametersWithMinimumZoomScale:WebKit::baseScale maximumZoomScale:WebKit::baseScale allowUserScaling:NO];
+        [webView _setForcesInitialScaleFactor:YES];
         [webView _resetContentOffset];
         [_window insertSubview:webView.get() atIndex:0];
         WebKit::WKWebViewState().applyTo(webView.get());
@@ -1372,7 +1371,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [webView becomeFirstResponder];
 
-    [webView _clearOverrideZoomScaleParameters];
+    [webView _setForcesInitialScaleFactor:NO];
     _viewState.applyTo(webView.get());
     if (auto page = [webView _page])
         page->setOverrideViewportArguments(std::nullopt);
@@ -1489,7 +1488,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (superview)
         return;
 
-    RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
         if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
             [self close];
     });

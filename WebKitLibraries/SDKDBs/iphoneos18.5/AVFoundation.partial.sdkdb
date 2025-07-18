@@ -1,0 +1,12 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

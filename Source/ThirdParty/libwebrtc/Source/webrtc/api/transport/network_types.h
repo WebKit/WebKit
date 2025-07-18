@@ -154,11 +154,16 @@ struct RTC_EXPORT TransportLossReport {
 };
 
 // Packet level feedback
-
 struct RTC_EXPORT PacketResult {
   class ReceiveTimeOrder {
    public:
     bool operator()(const PacketResult& lhs, const PacketResult& rhs);
+  };
+
+  struct RtpPacketInfo {
+    uint32_t ssrc = 0;
+    uint16_t rtp_sequence_number = 0;
+    bool is_retransmission = false;
   };
 
   PacketResult();
@@ -170,6 +175,9 @@ struct RTC_EXPORT PacketResult {
   SentPacket sent_packet;
   Timestamp receive_time = Timestamp::PlusInfinity();
   EcnMarking ecn = EcnMarking::kNotEct;
+
+  // `rtp_packet_info` is only set if the feedback is related to a RTP packet.
+  std::optional<RtpPacketInfo> rtp_packet_info;
 };
 
 struct RTC_EXPORT TransportPacketsFeedback {
@@ -179,6 +187,7 @@ struct RTC_EXPORT TransportPacketsFeedback {
 
   Timestamp feedback_time = Timestamp::PlusInfinity();
   DataSize data_in_flight = DataSize::Zero();
+  bool transport_supports_ecn = false;
   std::vector<PacketResult> packet_feedbacks;
 
   // Arrival times for messages without send time information.

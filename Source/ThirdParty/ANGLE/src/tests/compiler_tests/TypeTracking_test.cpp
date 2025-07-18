@@ -677,8 +677,6 @@ void main()
 }
 )";
     const char kExpected[] = R"(0:2: Code block
-0:3:   Declaration
-0:3:     'o' (out highp 4-component vector of float)
 0:6:   Declaration
 0:? :     '' (structure 's2' (specifier))
 0:10:   Declaration
@@ -704,6 +702,8 @@ void main()
 0:10:           0.0 (const float)
 0:10:           0.0 (const float)
 0:10:           5.0 (const float)
+0:3:   Declaration
+0:3:     'o' (out highp 4-component vector of float)
 0:11:   Function Definition:
 0:11:     Function Prototype: 'f' (structure 's1')
 0:11:       parameter: 's' (in structure 's1')

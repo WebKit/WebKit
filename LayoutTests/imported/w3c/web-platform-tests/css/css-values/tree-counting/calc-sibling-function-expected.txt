@@ -2,7 +2,5 @@
 PASS basic sibling-index() test
 PASS basic sibling-count() test
 PASS sibling-index() in calc() with percentage
-PASS sibling-count() on pseudo-element
-PASS sibling-index() on root
-PASS sibling-count() on root
+PASS sibling-count on pseudo-element
 

@@ -48,7 +48,7 @@ private:
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) override { RELEASE_ASSERT_NOT_REACHED(); }
     bool display(CoordinatedPlatformLayer&) override { RELEASE_ASSERT_NOT_REACHED(); }
 
-    bool tryCopyToLayer(ImageBuffer&) override;
+    bool tryCopyToLayer(ImageBuffer&, bool opaque) override;
 
     const Ref<GraphicsLayerContentsDisplayDelegate> m_delegate;
 };

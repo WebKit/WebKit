@@ -224,6 +224,17 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
     [self _flashScrollIndicatorsForAxes:axes persistingPreviousFlashes:YES];
 }
 
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+- (BOOL)_wk_usesHardTopScrollEdgeEffect
+{
+    // Calling this getter may trigger unintended behaviors, since calling -[UIScrollEdgeEffect style]
+    // may cause UIKit to layout subviews during the next update cycle.
+    return [self.topEdgeEffect.style isEqual:UIScrollEdgeEffectStyle.hardStyle];
+}
+
+#endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
 @end
 
 @implementation UIView (WebKitInternal)
@@ -387,6 +398,16 @@ UIRectEdge uiRectEdgeForSide(WebCore::BoxSide side)
     }
     ASSERT_NOT_REACHED();
     return UIRectEdgeNone;
+}
+
+UIEdgeInsets maxEdgeInsets(const UIEdgeInsets& a, const UIEdgeInsets& b)
+{
+    return UIEdgeInsetsMake(
+        std::max<CGFloat>(a.top, b.top),
+        std::max<CGFloat>(a.left, b.left),
+        std::max<CGFloat>(a.bottom, b.bottom),
+        std::max<CGFloat>(a.right, b.right)
+    );
 }
 
 } // namespace WebKit

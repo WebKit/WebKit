@@ -551,7 +551,7 @@ using Collection = ListHashSet<RefPtr<ListHashSetReferencedItem>>;
 
 class FakeElementAnimationRareData {
     WTF_MAKE_NONCOPYABLE(FakeElementAnimationRareData);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FakeElementAnimationRareData);
 public:
     explicit FakeElementAnimationRareData() { };
     ~FakeElementAnimationRareData() { };

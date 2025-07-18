@@ -154,9 +154,6 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
         if (layerProperties.changedProperties & LayerChange::MasksToBoundsChanged)
             ts.dumpProperty("masksToBounds"_s, layerProperties.masksToBounds);
 
-        if (layerProperties.changedProperties & LayerChange::OpaqueChanged)
-            ts.dumpProperty("opaque"_s, layerProperties.opaque);
-
         if (layerProperties.changedProperties & LayerChange::ContentsHiddenChanged)
             ts.dumpProperty("contentsHidden"_s, layerProperties.contentsHidden);
 
@@ -247,8 +244,6 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("isDescendentOfSeparatedPortal"_s, layerProperties.isDescendentOfSeparatedPortal);
 #endif
 #endif
-        if (layerProperties.changedProperties & LayerChange::ContentsFormatChanged)
-            ts.dumpProperty("contentsFormat"_s, layerProperties.contentsFormat);
 
         if (layerProperties.changedProperties & LayerChange::VideoGravityChanged)
             ts.dumpProperty("videoGravity"_s, layerProperties.videoGravity);

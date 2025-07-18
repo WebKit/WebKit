@@ -61,8 +61,8 @@ PlatformImage PlatformWebViewClientLibWPE::snapshot()
         class TimeoutTimer {
         public:
             TimeoutTimer()
-                : m_timer(RunLoop::main(), [] {
-                    RunLoop::protectedMain()->stop();
+                : m_timer(RunLoop::mainSingleton(), [] {
+                    RunLoop::mainSingleton().stop();
                 })
             {
                 m_timer.startOneShot(1_s / 60);
@@ -71,7 +71,7 @@ PlatformImage PlatformWebViewClientLibWPE::snapshot()
             RunLoop::Timer m_timer;
         } timeoutTimer;
 
-        RunLoop::main().run();
+        RunLoop::mainSingleton().run();
     }
 
     return m_backend->snapshot();

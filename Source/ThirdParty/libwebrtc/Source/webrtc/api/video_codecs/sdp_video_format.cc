@@ -50,8 +50,7 @@ std::string GetFmtpParameterOrDefault(const CodecParameterMap& params,
 std::string H264GetPacketizationModeOrDefault(const CodecParameterMap& params) {
   // If packetization-mode is not present, default to "0".
   // https://tools.ietf.org/html/rfc6184#section-6.2
-  return GetFmtpParameterOrDefault(params, cricket::kH264FmtpPacketizationMode,
-                                   "0");
+  return GetFmtpParameterOrDefault(params, kH264FmtpPacketizationMode, "0");
 }
 
 bool H264IsSamePacketizationMode(const CodecParameterMap& left,
@@ -63,7 +62,7 @@ bool H264IsSamePacketizationMode(const CodecParameterMap& left,
 std::string AV1GetTierOrDefault(const CodecParameterMap& params) {
   // If the parameter is not present, the tier MUST be inferred to be 0.
   // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return GetFmtpParameterOrDefault(params, cricket::kAv1FmtpTier, "0");
+  return GetFmtpParameterOrDefault(params, kAv1FmtpTier, "0");
 }
 
 bool AV1IsSameTier(const CodecParameterMap& left,
@@ -74,7 +73,7 @@ bool AV1IsSameTier(const CodecParameterMap& left,
 std::string AV1GetLevelIdxOrDefault(const CodecParameterMap& params) {
   // If the parameter is not present, it MUST be inferred to be 5 (level 3.1).
   // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return GetFmtpParameterOrDefault(params, cricket::kAv1FmtpLevelIdx, "5");
+  return GetFmtpParameterOrDefault(params, kAv1FmtpLevelIdx, "5");
 }
 
 bool AV1IsSameLevelIdx(const CodecParameterMap& left,
@@ -87,7 +86,7 @@ bool AV1IsSameLevelIdx(const CodecParameterMap& left,
 std::string GetH265TxModeOrDefault(const CodecParameterMap& params) {
   // If TxMode is not present, a value of "SRST" must be inferred.
   // https://tools.ietf.org/html/rfc7798@section-7.1
-  return GetFmtpParameterOrDefault(params, cricket::kH265FmtpTxMode, "SRST");
+  return GetFmtpParameterOrDefault(params, kH265FmtpTxMode, "SRST");
 }
 
 bool IsSameH265TxMode(const CodecParameterMap& left,
@@ -166,7 +165,7 @@ SdpVideoFormat& SdpVideoFormat::operator=(SdpVideoFormat&&) = default;
 SdpVideoFormat::~SdpVideoFormat() = default;
 
 std::string SdpVideoFormat::ToString() const {
-  rtc::StringBuilder builder;
+  StringBuilder builder;
   builder << "Codec name: " << name << ", parameters: {";
   for (const auto& kv : parameters) {
     builder << " " << kv.first << "=" << kv.second;
@@ -198,7 +197,7 @@ bool SdpVideoFormat::IsSameCodec(const SdpVideoFormat& other) const {
 }
 
 bool SdpVideoFormat::IsCodecInList(
-    rtc::ArrayView<const webrtc::SdpVideoFormat> formats) const {
+    ArrayView<const SdpVideoFormat> formats) const {
   for (const auto& format : formats) {
     if (IsSameCodec(format)) {
       return true;
@@ -213,7 +212,7 @@ bool operator==(const SdpVideoFormat& a, const SdpVideoFormat& b) {
 }
 
 const SdpVideoFormat SdpVideoFormat::VP8() {
-  return SdpVideoFormat(cricket::kVp8CodecName, {});
+  return SdpVideoFormat(kVp8CodecName, {});
 }
 
 const SdpVideoFormat SdpVideoFormat::H264() {
@@ -221,53 +220,57 @@ const SdpVideoFormat SdpVideoFormat::H264() {
   // * packetization-mode (which defaults to 0 but 1 is more common)
   // * level-asymmetry-allowed (which defaults to 0 but 1 is more common)
   // * profile-level-id of which there are many.
-  return SdpVideoFormat(cricket::kH264CodecName, {});
+  return SdpVideoFormat(kH264CodecName, {});
+}
+
+const SdpVideoFormat SdpVideoFormat::H265() {
+  return SdpVideoFormat(kH265CodecName, {});
 }
 
 const SdpVideoFormat SdpVideoFormat::VP9Profile0() {
   return SdpVideoFormat(
-      cricket::kVp9CodecName,
+      kVp9CodecName,
       {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile0)}});
 }
 
 const SdpVideoFormat SdpVideoFormat::VP9Profile1() {
   return SdpVideoFormat(
-      cricket::kVp9CodecName,
+      kVp9CodecName,
       {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile1)}});
 }
 
 const SdpVideoFormat SdpVideoFormat::VP9Profile2() {
   return SdpVideoFormat(
-      cricket::kVp9CodecName,
+      kVp9CodecName,
       {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile2)}});
 }
 
 const SdpVideoFormat SdpVideoFormat::VP9Profile3() {
   return SdpVideoFormat(
-      cricket::kVp9CodecName,
+      kVp9CodecName,
       {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile3)}});
 }
 
 const SdpVideoFormat SdpVideoFormat::AV1Profile0() {
   // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return SdpVideoFormat(cricket::kAv1CodecName,
-                        {{cricket::kAv1FmtpProfile,
-                          AV1ProfileToString(AV1Profile::kProfile0).data()},
-                         {cricket::kAv1FmtpLevelIdx, "5"},
-                         {cricket::kAv1FmtpTier, "0"}});
+  return SdpVideoFormat(
+      kAv1CodecName,
+      {{kAv1FmtpProfile, AV1ProfileToString(AV1Profile::kProfile0).data()},
+       {kAv1FmtpLevelIdx, "5"},
+       {kAv1FmtpTier, "0"}});
 }
 
 const SdpVideoFormat SdpVideoFormat::AV1Profile1() {
   // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return SdpVideoFormat(cricket::kAv1CodecName,
-                        {{cricket::kAv1FmtpProfile,
-                          AV1ProfileToString(AV1Profile::kProfile1).data()},
-                         {cricket::kAv1FmtpLevelIdx, "5"},
-                         {cricket::kAv1FmtpTier, "0"}});
+  return SdpVideoFormat(
+      kAv1CodecName,
+      {{kAv1FmtpProfile, AV1ProfileToString(AV1Profile::kProfile1).data()},
+       {kAv1FmtpLevelIdx, "5"},
+       {kAv1FmtpTier, "0"}});
 }
 
 std::optional<SdpVideoFormat> FuzzyMatchSdpVideoFormat(
-    rtc::ArrayView<const SdpVideoFormat> supported_formats,
+    ArrayView<const SdpVideoFormat> supported_formats,
     const SdpVideoFormat& format) {
   std::optional<SdpVideoFormat> res;
   int best_parameter_match = 0;

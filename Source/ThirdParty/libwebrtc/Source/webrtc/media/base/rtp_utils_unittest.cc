@@ -15,11 +15,12 @@
 #include <cstdint>
 #include <vector>
 
+#include "api/array_view.h"
 #include "media/base/fake_rtp.h"
 #include "rtc_base/async_packet_socket.h"
 #include "test/gtest.h"
 
-namespace cricket {
+namespace webrtc {
 
 static const uint8_t kInvalidPacket[] = {0x80, 0x00};
 
@@ -72,12 +73,12 @@ static const int kAstIndexInOneByteRtpMsg = 21;
 // and in message `kRtpMsgWithTwoByteAbsSendTimeExtension`.
 static const int kAstIndexInTwoByteRtpMsg = 21;
 
-static const rtc::ArrayView<const uint8_t> kPcmuFrameArrayView =
-    rtc::MakeArrayView(kPcmuFrame, sizeof(kPcmuFrame));
-static const rtc::ArrayView<const uint8_t> kRtcpReportArrayView =
-    rtc::MakeArrayView(kRtcpReport, sizeof(kRtcpReport));
-static const rtc::ArrayView<const uint8_t> kInvalidPacketArrayView =
-    rtc::MakeArrayView(kInvalidPacket, sizeof(kInvalidPacket));
+static const ArrayView<const uint8_t> kPcmuFrameArrayView =
+    MakeArrayView(kPcmuFrame, sizeof(kPcmuFrame));
+static const ArrayView<const uint8_t> kRtcpReportArrayView =
+    MakeArrayView(kRtcpReport, sizeof(kRtcpReport));
+static const ArrayView<const uint8_t> kInvalidPacketArrayView =
+    MakeArrayView(kInvalidPacket, sizeof(kInvalidPacket));
 
 TEST(RtpUtilsTest, GetRtcp) {
   int pt;
@@ -186,7 +187,7 @@ TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionInTurnSendIndication) {
 // Test without any packet options variables set. This method should return
 // without HMAC value in the packet.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithDefaultValues) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   std::vector<uint8_t> rtp_packet(
       kRtpMsgWithOneByteAbsSendTimeExtension,
       kRtpMsgWithOneByteAbsSendTimeExtension +
@@ -207,7 +208,7 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithDefaultValues) {
 
 // Veirfy HMAC is updated when packet option parameters are set.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParams) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   packet_time_params.srtp_auth_key.assign(kTestKey,
                                           kTestKey + sizeof(kTestKey));
   packet_time_params.srtp_auth_tag_len = 4;
@@ -264,7 +265,7 @@ TEST(RtpUtilsTest, UpdateTwoByteAbsSendTimeExtensionInRtpPacket) {
 
 // Verify we update both AbsSendTime extension header and HMAC.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParamsAndAbsSendTime) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   packet_time_params.srtp_auth_key.assign(kTestKey,
                                           kTestKey + sizeof(kTestKey));
   packet_time_params.srtp_auth_tag_len = 4;
@@ -297,4 +298,4 @@ TEST(RtpUtilsTest, InferRtpPacketType) {
             InferRtpPacketType(kInvalidPacketArrayView));
 }
 
-}  // namespace cricket
+}  // namespace webrtc

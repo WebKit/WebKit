@@ -37,8 +37,11 @@ class FrameLoadRequest;
 class IntSize;
 class SecurityOriginData;
 
+enum class FocusDirection : uint8_t;
+enum class FoundElementInRemoteFrame : bool;
 enum class RenderAsTextFlag : uint16_t;
 
+struct FocusEventData;
 struct MessageWithMessagePorts;
 
 class RemoteFrameClient : public FrameLoaderClient {
@@ -58,6 +61,8 @@ public:
     virtual void unfocus() = 0;
     virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
     virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
+    virtual void findFocusableElementDescendingIntoRemoteFrame(FocusDirection, const FocusEventData&, CompletionHandler<void(FoundElementInRemoteFrame)>&&) = 0;
+
     virtual bool isWebRemoteFrameClient() const { return false; }
     virtual ~RemoteFrameClient() { }
 };

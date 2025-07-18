@@ -37,6 +37,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -132,7 +133,7 @@ static void wpeViewWaylandDispose(GObject* object)
 }
 
 class WaylandBuffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WaylandBuffer);
 public:
     virtual ~WaylandBuffer()
     {
@@ -300,8 +301,7 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEView* view, GBytes* bytes
     if (offset < 0)
         return nullptr;
 
-    memcpy(reinterpret_cast<char*>(wlPool->data()) + offset, g_bytes_get_data(bytes, nullptr), size);
-
+    wlPool->write(WTF::span(bytes), offset);
     return new SharedMemoryBuffer(view, WTFMove(wlPool), offset, width, height, stride);
 }
 
@@ -309,7 +309,7 @@ static struct wl_buffer* createWaylandBufferSHM(WPEView* view, WPEBuffer* buffer
 {
     if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(wpe_buffer_get_user_data(buffer))) {
         GBytes* bytes = wpe_buffer_shm_get_data(WPE_BUFFER_SHM(buffer));
-        memcpy(reinterpret_cast<char*>(sharedMemoryBuffer->wlPool()->data()), g_bytes_get_data(bytes, nullptr), sharedMemoryBuffer->wlPool()->size());
+        sharedMemoryBuffer->wlPool()->write(WTF::span(bytes));
         return sharedMemoryBuffer->wlBuffer();
     }
 

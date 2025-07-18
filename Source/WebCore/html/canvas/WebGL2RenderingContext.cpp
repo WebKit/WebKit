@@ -162,7 +162,7 @@ void WebGL2RenderingContext::initializeContextState()
     m_maxArrayTextureLayers = context->getInteger(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS);
 
     m_boundSamplers.clear();
-    m_boundSamplers.resize(m_textureUnits.size());
+    m_boundSamplers.grow(m_textureUnits.size());
 }
 
 long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)

@@ -94,7 +94,7 @@ namespace JSC {
     }
 
     struct SwitchInfo {
-        enum SwitchType : uint8_t { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };
+        enum class SwitchType : uint8_t { None, Immediate, Character, ImmediateList, CharacterList, String };
         uint32_t bytecodeOffset;
         SwitchType switchType;
     };
@@ -135,7 +135,7 @@ namespace JSC {
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     class ParserArenaRoot {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot, ParserArenaRoot);
     protected:
         ParserArenaRoot(ParserArena&);
 

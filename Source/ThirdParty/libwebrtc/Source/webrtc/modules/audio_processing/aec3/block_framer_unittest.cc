@@ -22,13 +22,13 @@ namespace {
 
 void SetupSubFrameView(
     std::vector<std::vector<std::vector<float>>>* sub_frame,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame_view) {
   for (size_t band = 0; band < sub_frame_view->size(); ++band) {
     for (size_t channel = 0; channel < (*sub_frame_view)[band].size();
          ++channel) {
       (*sub_frame_view)[band][channel] =
-          rtc::ArrayView<float>((*sub_frame)[band][channel].data(),
-                                (*sub_frame)[band][channel].size());
+          ArrayView<float>((*sub_frame)[band][channel].data(),
+                           (*sub_frame)[band][channel].size());
     }
   }
 }
@@ -48,7 +48,7 @@ float ComputeSampleValue(size_t chunk_counter,
 bool VerifySubFrame(
     size_t sub_frame_counter,
     int offset,
-    const std::vector<std::vector<rtc::ArrayView<float>>>& sub_frame_view) {
+    const std::vector<std::vector<ArrayView<float>>>& sub_frame_view) {
   for (size_t band = 0; band < sub_frame_view.size(); ++band) {
     for (size_t channel = 0; channel < sub_frame_view[band].size(); ++channel) {
       for (size_t sample = 0; sample < sub_frame_view[band][channel].size();
@@ -85,8 +85,8 @@ void RunFramerTest(int sample_rate_hz, size_t num_channels) {
   std::vector<std::vector<std::vector<float>>> output_sub_frame(
       num_bands, std::vector<std::vector<float>>(
                      num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> output_sub_frame_view(
-      num_bands, std::vector<rtc::ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> output_sub_frame_view(
+      num_bands, std::vector<ArrayView<float>>(num_channels));
   SetupSubFrameView(&output_sub_frame, &output_sub_frame_view);
   BlockFramer framer(num_bands, num_channels);
 
@@ -124,9 +124,9 @@ void RunWronglySizedInsertAndExtractParametersTest(
       num_sub_frame_bands,
       std::vector<std::vector<float>>(
           num_sub_frame_channels, std::vector<float>(sub_frame_length, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> output_sub_frame_view(
+  std::vector<std::vector<ArrayView<float>>> output_sub_frame_view(
       output_sub_frame.size(),
-      std::vector<rtc::ArrayView<float>>(num_sub_frame_channels));
+      std::vector<ArrayView<float>>(num_sub_frame_channels));
   SetupSubFrameView(&output_sub_frame, &output_sub_frame_view);
   BlockFramer framer(correct_num_bands, correct_num_channels);
   EXPECT_DEATH(
@@ -147,9 +147,9 @@ void RunWronglySizedInsertParameterTest(int sample_rate_hz,
       correct_num_bands,
       std::vector<std::vector<float>>(
           correct_num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> output_sub_frame_view(
+  std::vector<std::vector<ArrayView<float>>> output_sub_frame_view(
       output_sub_frame.size(),
-      std::vector<rtc::ArrayView<float>>(correct_num_channels));
+      std::vector<ArrayView<float>>(correct_num_channels));
   SetupSubFrameView(&output_sub_frame, &output_sub_frame_view);
   BlockFramer framer(correct_num_bands, correct_num_channels);
   framer.InsertBlockAndExtractSubFrame(correct_block, &output_sub_frame_view);
@@ -174,9 +174,8 @@ void RunWronglyInsertOrderTest(int sample_rate_hz,
       correct_num_bands,
       std::vector<std::vector<float>>(
           num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> output_sub_frame_view(
-      output_sub_frame.size(),
-      std::vector<rtc::ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> output_sub_frame_view(
+      output_sub_frame.size(), std::vector<ArrayView<float>>(num_channels));
   SetupSubFrameView(&output_sub_frame, &output_sub_frame_view);
   BlockFramer framer(correct_num_bands, num_channels);
   for (size_t k = 0; k < num_preceeding_api_calls; ++k) {
@@ -188,7 +187,7 @@ void RunWronglyInsertOrderTest(int sample_rate_hz,
 #endif
 
 std::string ProduceDebugText(int sample_rate_hz, size_t num_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   ss << ", number of channels: " << num_channels;
   return ss.Release();
@@ -293,7 +292,7 @@ TEST(BlockFramerDeathTest, WrongNumberOfPreceedingApiCallsForInsertBlock) {
   for (size_t num_channels : {1, 2, 8}) {
     for (auto rate : {16000, 32000, 48000}) {
       for (size_t num_calls = 0; num_calls < 4; ++num_calls) {
-        rtc::StringBuilder ss;
+        StringBuilder ss;
         ss << "Sample rate: " << rate;
         ss << ", Num channels: " << num_channels;
         ss << ", Num preceeding InsertBlockAndExtractSubFrame calls: "

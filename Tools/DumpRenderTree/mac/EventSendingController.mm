@@ -789,7 +789,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                                       location:lastMousePosition]);
 #endif // !PLATFORM(IOS_FAMILY)
 
-    NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
+    NSView *subView = [[mainFrame webView] hitTest:lastMousePosition];
     if (subView) {
 #if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:event.get()];

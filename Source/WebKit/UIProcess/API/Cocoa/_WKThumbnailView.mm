@@ -34,6 +34,7 @@
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/IOSurface.h>
 #import <WebCore/ShareableBitmap.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/MathExtras.h>
@@ -146,7 +147,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         static_cast<int>(obscuredContentInsets.left()),
         static_cast<int>(obscuredContentInsets.top())
     });
-    WebKit::SnapshotOptions options { WebKit::SnapshotOption::InViewCoordinates, WebKit::SnapshotOption::UseScreenColorSpace };
+    WebKit::SnapshotOptions options { WebKit::SnapshotOption::InViewCoordinates, WebKit::SnapshotOption::UseScreenColorSpace, WebKit::SnapshotOption::Accelerated, WebKit::SnapshotOption::AllowHDR };
     WebCore::IntSize bitmapSize = snapshotRect.size();
     bitmapSize.scale(_scale * webPageProxy->deviceScaleFactor());
 
@@ -161,13 +162,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _lastSnapshotScale = _scale;
     _lastSnapshotMaximumSize = _maximumSnapshotSize;
-    webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
-        if (!imageHandle)
+    webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](CGImageRef image) {
+        if (!image)
             return;
-        auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
-        RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
-        tracePoint(TakeSnapshotEnd, !!cgImage);
-        [thumbnailView _didTakeSnapshot:cgImage.get()];
+        tracePoint(TakeSnapshotEnd, !!image);
+        [thumbnailView _didTakeSnapshot:image];
     });
 }
 
@@ -250,6 +249,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self.layer.sublayers = @[];
     self.layer.contentsGravity = kCAGravityResizeAspectFill;
     self.layer.contents = (__bridge id)image;
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    if (CGImageGetContentHeadroom(image) > 1) {
+        self.layer.toneMapMode = CAToneMapModeIfSupported;
+        self.layer.preferredDynamicRange = CADynamicRangeHigh;
+    } else {
+        self.layer.toneMapMode = CAToneMapModeAutomatic;
+        self.layer.preferredDynamicRange = CADynamicRangeAutomatic;
+    }
+#endif
 
     // If we got a scale change while snapshotting, we'll take another snapshot once the first one returns.
     if (_snapshotWasDeferred) {

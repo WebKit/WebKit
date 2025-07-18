@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static bool shapeByUniscribe(const UChar* str, int len, SCRIPT_ITEM& item, const Font* fontData,
+static bool shapeByUniscribe(const char16_t* str, int len, SCRIPT_ITEM& item, const Font* fontData,
     Vector<WORD>& glyphs, Vector<WORD>& clusters,
     Vector<SCRIPT_VISATTR>& visualAttributes)
 {
@@ -168,7 +168,7 @@ static Vector<unsigned> stringIndicesFromClusters(const Vector<WORD>& clusters, 
     return stringIndices;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const UChar> cp, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> cp, unsigned stringLocation, const Font* font)
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
@@ -199,7 +199,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     for (int i = 0; i < numItems; i++) {
         // Determine the string for this item.
-        const UChar* str = cp.data() + items[i].iCharPos;
+        const char16_t* str = cp.data() + items[i].iCharPos;
         int length = items[i+1].iCharPos - items[i].iCharPos;
         SCRIPT_ITEM& item = items[i];
 

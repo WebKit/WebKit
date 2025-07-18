@@ -46,42 +46,46 @@ std::string TransformFilePath(std::string path) {
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     Clock* clock,
     TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::SquaresVideo config) {
+    FrameGeneratorCapturerConfig::SquaresVideo config,
+    bool allow_zero_hertz) {
   return std::make_unique<FrameGeneratorCapturer>(
       clock,
       CreateSquareFrameGenerator(config.width, config.height,
                                  config.pixel_format, config.num_squares),
-      config.framerate, task_queue_factory);
+      config.framerate, task_queue_factory, allow_zero_hertz);
 }
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     Clock* clock,
     TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::SquareSlides config) {
+    FrameGeneratorCapturerConfig::SquareSlides config,
+    bool allow_zero_hertz) {
   return std::make_unique<FrameGeneratorCapturer>(
       clock,
       CreateSlideFrameGenerator(
           config.width, config.height,
           /*frame_repeat_count*/ config.change_interval.seconds<double>() *
               config.framerate),
-      config.framerate, task_queue_factory);
+      config.framerate, task_queue_factory, allow_zero_hertz);
 }
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     Clock* clock,
     TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::VideoFile config) {
+    FrameGeneratorCapturerConfig::VideoFile config,
+    bool allow_zero_hertz) {
   RTC_CHECK(config.width && config.height);
   return std::make_unique<FrameGeneratorCapturer>(
       clock,
       CreateFromYuvFileFrameGenerator({TransformFilePath(config.name)},
                                       config.width, config.height,
                                       /*frame_repeat_count*/ 1),
-      config.framerate, task_queue_factory);
+      config.framerate, task_queue_factory, allow_zero_hertz);
 }
 
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     Clock* clock,
     TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::ImageSlides config) {
+    FrameGeneratorCapturerConfig::ImageSlides config,
+    bool allow_zero_hertz) {
   std::unique_ptr<FrameGeneratorInterface> slides_generator;
   std::vector<std::string> paths = config.paths;
   for (std::string& path : paths)
@@ -105,7 +109,8 @@ std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
             config.framerate);
   }
   return std::make_unique<FrameGeneratorCapturer>(
-      clock, std::move(slides_generator), config.framerate, task_queue_factory);
+      clock, std::move(slides_generator), config.framerate, task_queue_factory,
+      allow_zero_hertz);
 }
 
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
@@ -113,19 +118,22 @@ std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     TaskQueueFactory& task_queue_factory,
     const FrameGeneratorCapturerConfig& config) {
   if (config.video_file) {
-    return CreateFrameGeneratorCapturer(clock, task_queue_factory,
-                                        *config.video_file);
+    return CreateFrameGeneratorCapturer(
+        clock, task_queue_factory, *config.video_file, config.allow_zero_hertz);
   } else if (config.image_slides) {
     return CreateFrameGeneratorCapturer(clock, task_queue_factory,
-                                        *config.image_slides);
+                                        *config.image_slides,
+                                        config.allow_zero_hertz);
   } else if (config.squares_slides) {
     return CreateFrameGeneratorCapturer(clock, task_queue_factory,
-                                        *config.squares_slides);
+                                        *config.squares_slides,
+                                        config.allow_zero_hertz);
   } else {
     return CreateFrameGeneratorCapturer(
         clock, task_queue_factory,
         config.squares_video.value_or(
-            FrameGeneratorCapturerConfig::SquaresVideo()));
+            FrameGeneratorCapturerConfig::SquaresVideo()),
+        config.allow_zero_hertz);
   }
 }
 

@@ -12,15 +12,15 @@
 #define MODULES_VIDEO_CODING_H26X_PACKET_BUFFER_H_
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
-#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/base/attributes.h"
 #include "modules/video_coding/packet_buffer.h"
-#include "rtc_base/numerics/sequence_number_unwrapper.h"
 
 namespace webrtc {
 
@@ -37,6 +37,7 @@ class H26xPacketBuffer {
 
   ABSL_MUST_USE_RESULT InsertResult
   InsertPacket(std::unique_ptr<Packet> packet);
+  ABSL_MUST_USE_RESULT InsertResult InsertPadding(uint16_t unwrapped_seq_num);
 
   // Out of band supplied codec parameters for H.264.
   void SetSpropParameterSets(const std::string& sprop_parameter_sets);

@@ -149,7 +149,7 @@ int TransformDbMetricForReporting(bool negate,
   if (negate) {
     new_value = -new_value;
   }
-  return static_cast<int>(rtc::SafeClamp(new_value, min_value, max_value));
+  return static_cast<int>(SafeClamp(new_value, min_value, max_value));
 }
 
 }  // namespace aec3

@@ -51,7 +51,7 @@ public:
 
 private:
     CheckedPtr<Node> m_node;
-    mutable Markable<int, IntegralMarkableTraits<int, -1>> m_index;
+    mutable Markable<int> m_index;
 };
 
 } // namespace WebCore

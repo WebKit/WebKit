@@ -378,7 +378,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
         layer.position = CGPointMake(properties.position.x(), properties.position.y());
@@ -430,9 +430,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & LayerChange::DoubleSidedChanged)
         layer.doubleSided = properties.doubleSided;
-
-    if (properties.changedProperties & LayerChange::OpaqueChanged)
-        layer.opaque = properties.opaque;
 
     if (properties.changedProperties & LayerChange::ContentsRectChanged)
         layer.contentsRect = properties.contentsRect;
@@ -486,17 +483,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     {
         auto* backingStore = properties.backingStoreOrProperties.properties.get();
         if (backingStore && properties.backingStoreAttached) {
-            std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier;
-            UIView* hostingView = nil;
-            if (layerTreeNode) {
-#if PLATFORM(IOS_FAMILY)
-                hostingView = layerTreeNode->uiView();
-#endif
-                backingStore->updateCachedBuffers(*layerTreeNode, layerContentsType, hostingView);
-                asyncContentsIdentifier = layerTreeNode->asyncContentsIdentifier();
-            }
-
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView);
+            RELEASE_ASSERT(layerTreeNode);
+            layerTreeNode->applyBackingStore(layerTreeHost, *backingStore);
         } else
             [layer _web_clearContents];
     }
@@ -526,6 +514,12 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackdropRootChanged)
         layer.shouldRasterize = properties.backdropRoot;
 
+    if (properties.changedProperties & LayerChange::TonemappingEnabledChanged) {
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+        layer.toneMapMode = properties.tonemappingEnabled ? CAToneMapModeIfSupported : CAToneMapModeNever;
+#endif
+    }
+
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     if (properties.changedProperties & LayerChange::SeparatedPortalChanged) {
         // FIXME: Implement SeparatedPortalChanged.
@@ -549,30 +543,17 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 #endif
 
-    if (properties.changedProperties & LayerChange::ContentsFormatChanged) {
-        auto contentsFormat = properties.contentsFormat;
-        if (RetainPtr formatString = contentsFormatString(contentsFormat))
-            [layer setContentsFormat:formatString.get()];
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-        if (contentsFormat == ContentsFormat::RGBA16F) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [layer setWantsExtendedDynamicRangeContent:true];
-            ALLOW_DEPRECATED_DECLARATIONS_END
-        }
-#endif
-    }
-
 #if HAVE(CORE_MATERIAL)
     if (properties.changedProperties & LayerChange::AppleVisualEffectChanged)
         updateAppleVisualEffect(layer, layerTreeNode, properties.appleVisualEffectData);
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    applyPropertiesToLayer(node.layer(), &node, layerTreeHost, properties, layerContentsType);
+    applyPropertiesToLayer(node.layer(), &node, layerTreeHost, properties);
     if (properties.changedProperties & LayerChange::EventRegionChanged)
         node.setEventRegion(properties.eventRegion);
     updateMask(node, properties, relatedLayers);

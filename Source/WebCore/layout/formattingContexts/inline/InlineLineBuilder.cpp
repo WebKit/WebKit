@@ -44,7 +44,7 @@ namespace WebCore {
 namespace Layout {
 
 struct LineContent {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineContent);
 
     InlineItemRange range;
     bool endsWithHyphen { false };
@@ -182,7 +182,7 @@ static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs
 }
 
 struct LineCandidate {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineCandidate);
 
     void reset();
 

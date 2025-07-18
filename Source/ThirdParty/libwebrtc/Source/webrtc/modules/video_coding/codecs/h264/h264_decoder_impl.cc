@@ -119,13 +119,13 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
   // http://crbug.com/390941. Our pool is set up to zero-initialize new buffers.
   // TODO(https://crbug.com/390941): Delete that feature from the video pool,
   // instead add an explicit call to InitializeData here.
-  rtc::scoped_refptr<PlanarYuvBuffer> frame_buffer;
-  rtc::scoped_refptr<I444Buffer> i444_buffer;
-  rtc::scoped_refptr<I420Buffer> i420_buffer;
-  rtc::scoped_refptr<I422Buffer> i422_buffer;
-  rtc::scoped_refptr<I010Buffer> i010_buffer;
-  rtc::scoped_refptr<I210Buffer> i210_buffer;
-  rtc::scoped_refptr<I410Buffer> i410_buffer;
+  webrtc::scoped_refptr<PlanarYuvBuffer> frame_buffer;
+  webrtc::scoped_refptr<I444Buffer> i444_buffer;
+  webrtc::scoped_refptr<I420Buffer> i420_buffer;
+  webrtc::scoped_refptr<I422Buffer> i422_buffer;
+  webrtc::scoped_refptr<I010Buffer> i010_buffer;
+  webrtc::scoped_refptr<I210Buffer> i210_buffer;
+  webrtc::scoped_refptr<I410Buffer> i410_buffer;
   int bytes_per_pixel = 1;
   switch (context->pix_fmt) {
     case AV_PIX_FMT_YUV420P:
@@ -405,7 +405,7 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   VideoFrame* input_frame =
       static_cast<VideoFrame*>(av_buffer_get_opaque(av_frame_->buf[0]));
   RTC_DCHECK(input_frame);
-  rtc::scoped_refptr<VideoFrameBuffer> frame_buffer =
+  webrtc::scoped_refptr<VideoFrameBuffer> frame_buffer =
       input_frame->video_frame_buffer();
 
   // Instantiate Planar YUV buffer according to video frame buffer type
@@ -530,7 +530,7 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
       return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> cropped_buffer;
+  webrtc::scoped_refptr<webrtc::VideoFrameBuffer> cropped_buffer;
   switch (video_frame_buffer_type) {
     case VideoFrameBuffer::Type::kI420:
       cropped_buffer = WrapI420Buffer(

@@ -104,7 +104,7 @@ static String sanitizeFilename(const String& filename)
         return filename;
 
     // Trim leading/trailing whitespaces, path separators and dots
-    auto result = filename.trim([](UChar character) -> bool {
+    auto result = filename.trim([](char16_t character) -> bool {
         return deprecatedIsSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
     });
 

@@ -125,7 +125,9 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
 
     nw_context_set_privacy_level(context.get(), nw_context_privacy_level_silent);
     nw_parameters_set_context(parameters.get(), context.get());
-    RetainPtr resolver = adoptCF(nw_resolver_create_with_endpoint(hostEndpoint.get(), parameters.get()));
+    RetainPtr pathEvaluator = adoptCF(nw_path_create_evaluator_for_endpoint(hostEndpoint.get(), parameters.get()));
+    RetainPtr path = adoptCF(nw_path_evaluator_copy_path(pathEvaluator.get()));
+    RetainPtr resolver = adoptCF(nw_resolver_create_with_path(path.get()));
 
     RELEASE_ASSERT_WITH_MESSAGE(isMainThread(), "Always create timer on the main thread.");
     auto timeoutTimer = makeUnique<Timer>([resolver, completionHandler]() mutable {

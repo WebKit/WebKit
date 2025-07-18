@@ -119,7 +119,9 @@ class ErrorSet : angle::NonCopyable
     GLenum getGraphicsResetStatus(rx::ContextImpl *contextImpl);
     GLenum getResetStrategy() const { return mResetStrategy; }
     GLenum getErrorForCapture() const;
+#if defined(ANGLE_ENABLE_ASSERTS)
     uint32_t getPushedErrorCount() const { return mPushedErrors; }
+#endif
 
   private:
     void setContextLost();
@@ -148,10 +150,10 @@ class ErrorSet : angle::NonCopyable
     // The following are atomic and lockless as they are very frequently accessed.
     std::atomic_int mSkipValidation;
     std::atomic_int mContextLost;
+#if defined(ANGLE_ENABLE_ASSERTS)
+    std::atomic_uint32_t mPushedErrors;  // must be unsigned to handle overflows
+#endif
     std::atomic_int mHasAnyErrors;
-
-    // Error counter for asserting validation layer consistency
-    uint32_t mPushedErrors;
 };
 
 enum class VertexAttribTypeCase
@@ -586,6 +588,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isVertexArrayGenerated(VertexArrayID vertexArray) const;
     bool isTransformFeedbackGenerated(TransformFeedbackID transformFeedback) const;
 
+    bool isZeroTextureBound(TextureType textureType) const;
+
     bool isExternal() const { return mState.isExternal(); }
 
     void getBooleanvImpl(GLenum pname, GLboolean *params) const;
@@ -787,7 +791,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
         return mTransformFeedbackMap;
     }
     GLenum getErrorForCapture() const { return mErrors.getErrorForCapture(); }
+#if defined(ANGLE_ENABLE_ASSERTS)
     uint32_t getPushedErrorCount() const { return mErrors.getPushedErrorCount(); }
+#endif
 
     void onPreSwap();
 
@@ -1009,6 +1015,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     state::DirtyObjects mComputeDirtyObjects;
     state::DirtyBits mCopyImageDirtyBits;
     state::DirtyObjects mCopyImageDirtyObjects;
+    state::DirtyObjects mTilingDirtyObjects;
 
     // Binding to container objects that use dependent state updates.
     angle::ObserverBinding mVertexArrayObserverBinding;

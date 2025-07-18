@@ -86,7 +86,7 @@ class RtcEventGenericPacketSent final : public RtcEvent {
 
   size_t padding_length() const { return padding_length_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

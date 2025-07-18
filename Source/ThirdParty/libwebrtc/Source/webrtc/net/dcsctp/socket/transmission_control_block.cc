@@ -248,11 +248,13 @@ void TransmissionControlBlock::SendBufferedPackets(SctpPacket::Builder& builder,
       heartbeat_handler_.RestartTimer();
     }
 
+    bool set_immediate_sack_bit =
+        cwnd() < (options_.immediate_sack_under_cwnd_mtus * options_.mtu);
     for (auto& [tsn, data] : chunks) {
       if (capabilities_.message_interleaving) {
-        builder.Add(IDataChunk(tsn, std::move(data), false));
+        builder.Add(IDataChunk(tsn, std::move(data), set_immediate_sack_bit));
       } else {
-        builder.Add(DataChunk(tsn, std::move(data), false));
+        builder.Add(DataChunk(tsn, std::move(data), set_immediate_sack_bit));
       }
     }
 
@@ -276,7 +278,7 @@ void TransmissionControlBlock::SendBufferedPackets(SctpPacket::Builder& builder,
 }
 
 std::string TransmissionControlBlock::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
 
   sb.AppendFormat(
       "verification_tag=%08x, last_cumulative_ack=%u, capabilities=",

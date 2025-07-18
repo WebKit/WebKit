@@ -72,6 +72,8 @@ class FragmentedSharedBuffer;
 
 struct SimpleRange;
 
+static constexpr auto pasteboardExpirationDelay = 8_min;
+
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
 enum class WebContentReadingPolicy : bool { AnyType, OnlyRichTextTypes };
 enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, IncludeImageAltTextForDataTransfer };

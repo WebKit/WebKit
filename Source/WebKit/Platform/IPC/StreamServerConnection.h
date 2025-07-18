@@ -70,7 +70,7 @@ struct StreamServerConnectionParameters {
 // The StreamServerConnection does not trust the StreamClientConnection.
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StreamServerConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;

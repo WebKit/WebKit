@@ -157,7 +157,7 @@ static std::optional<CSS::GradientDeprecatedColorStop> consumeDeprecatedGradient
 
 static std::optional<CSS::GradientDeprecatedColorStopList> consumeDeprecatedGradientColorStops(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    CSS::GradientDeprecatedColorStopList::Vector stops;
+    CSS::GradientDeprecatedColorStopList::Container stops;
     while (consumeCommaIncludingWhitespace(range)) {
         auto stop = consumeDeprecatedGradientColorStop(range, state);
         if (!stop)
@@ -274,7 +274,7 @@ static std::optional<CSS::Color> consumeStopColor(CSSParserTokenRange& range, CS
 
 template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer> static std::optional<CSS::GradientColorStopList<Stop>> consumeColorStopList(CSSParserTokenRange& range, CSS::PropertyParserState& state, Consumer&& consumeStopPosition)
 {
-    typename CSS::GradientColorStopList<Stop>::Vector stops;
+    typename CSS::GradientColorStopList<Stop>::Container stops;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;

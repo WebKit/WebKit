@@ -581,7 +581,7 @@ TEST(FloatPoint, Casting)
 TEST(FloatPoint, Markable)
 {
     WebCore::FloatPoint point(1024.3f, 768.6f);
-    Markable<WebCore::FloatPoint, WebCore::FloatPoint::MarkableTraits> optional;
+    Markable<WebCore::FloatPoint> optional;
     EXPECT_FALSE(optional) << "nullopt";
     optional = point;
     EXPECT_EQ((optional.value_or(WebCore::FloatPoint { })), point) << "retained";

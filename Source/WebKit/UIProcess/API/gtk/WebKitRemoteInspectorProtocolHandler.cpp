@@ -50,8 +50,7 @@ public:
 
     void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
     {
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
-        String message = serializedScriptValue->internalRepresentation().toString();
+        String message = jsMessage.toString();
         Vector<String> tokens = message.split(':');
         if (tokens.size() != 3)
             return;

@@ -34,22 +34,18 @@
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace rtc {
-class SocketAddress;
-}
-
 namespace WTF {
 
-template<> struct DefaultHash<rtc::SocketAddress> {
-    static unsigned hash(const rtc::SocketAddress& address) { return address.Hash(); }
-    static bool equal(const rtc::SocketAddress& a, const rtc::SocketAddress& b) { return a == b || (a.IsNil() && b.IsNil() && a.scope_id() == b.scope_id()); }
+template<> struct DefaultHash<webrtc::SocketAddress> {
+    static unsigned hash(const webrtc::SocketAddress& address) { return address.Hash(); }
+    static bool equal(const webrtc::SocketAddress& a, const webrtc::SocketAddress& b) { return a == b || (a.IsNil() && b.IsNil() && a.scope_id() == b.scope_id()); }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<> struct HashTraits<rtc::SocketAddress> : GenericHashTraits<rtc::SocketAddress> {
-    static rtc::SocketAddress emptyValue() { return rtc::SocketAddress { }; }
-    static void constructDeletedValue(rtc::SocketAddress& address) { address.SetScopeID(std::numeric_limits<int>::min()); }
-    static bool isDeletedValue(const rtc::SocketAddress& address) { return address.scope_id() == std::numeric_limits<int>::min(); }
+template<> struct HashTraits<webrtc::SocketAddress> : GenericHashTraits<webrtc::SocketAddress> {
+    static webrtc::SocketAddress emptyValue() { return webrtc::SocketAddress { }; }
+    static void constructDeletedValue(webrtc::SocketAddress& address) { address.SetScopeID(std::numeric_limits<int>::min()); }
+    static bool isDeletedValue(const webrtc::SocketAddress& address) { return address.scope_id() == std::numeric_limits<int>::min(); }
 };
 
 }
@@ -61,9 +57,9 @@ class NetworkRTCUDPSocketCocoaConnections;
 class NetworkRTCUDPSocketCocoa final : public NetworkRTCProvider::Socket {
     WTF_MAKE_TZONE_ALLOCATED(NetworkRTCUDPSocketCocoa);
 public:
-    static std::unique_ptr<NetworkRTCProvider::Socket> createUDPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
+    static std::unique_ptr<NetworkRTCProvider::Socket> createUDPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const webrtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
-    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
+    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const webrtc::SocketAddress&, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     ~NetworkRTCUDPSocketCocoa();
 
 private:
@@ -72,7 +68,7 @@ private:
     Type type() const final { return Type::UDP; }
     void close() final;
     void setOption(int option, int value) final;
-    void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
+    void sendTo(std::span<const uint8_t>, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&) final;
 
     CheckedRef<NetworkRTCProvider> m_rtcProvider;
     WebCore::LibWebRTCSocketIdentifier m_identifier;

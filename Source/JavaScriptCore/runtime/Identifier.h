@@ -114,7 +114,7 @@ public:
 
     static Identifier fromString(VM&, ASCIILiteral);
     static Identifier fromString(VM&, std::span<const LChar>);
-    static Identifier fromString(VM&, std::span<const UChar>);
+    static Identifier fromString(VM&, std::span<const char16_t>);
     static Identifier fromString(VM&, const String&);
     static Identifier fromString(VM&, AtomStringImpl*);
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
@@ -125,7 +125,7 @@ public:
     static Identifier fromUid(const PrivateName&);
     static Identifier fromUid(SymbolImpl&);
 
-    static Identifier createLCharFromUChar(VM& vm, std::span<const UChar> string) { return Identifier(vm, add8(vm, string)); }
+    static Identifier createLCharFromUChar(VM& vm, std::span<const char16_t> string) { return Identifier(vm, add8(vm, string)); }
 
     JS_EXPORT_PRIVATE static Identifier from(VM&, unsigned y);
     JS_EXPORT_PRIVATE static Identifier from(VM&, int y);
@@ -150,7 +150,7 @@ public:
     static bool equal(const StringImpl*, const LChar*);
     static inline bool equal(const StringImpl* a, const char* b) { return Identifier::equal(a, byteCast<LChar>(b)); };
     static bool equal(const StringImpl*, std::span<const LChar>);
-    static bool equal(const StringImpl*, std::span<const UChar>);
+    static bool equal(const StringImpl*, std::span<const char16_t>);
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
     void dump(PrintStream&) const;
@@ -159,7 +159,7 @@ private:
     AtomString m_string;
 
     inline Identifier(VM&, std::span<const LChar>); // Defined in IdentifierInlines.h
-    inline Identifier(VM&, std::span<const UChar>); // Defined in IdentifierInlines.h
+    inline Identifier(VM&, std::span<const char16_t>); // Defined in IdentifierInlines.h
     ALWAYS_INLINE Identifier(VM&, ASCIILiteral); // Defined in IdentifierInlines.h
     inline Identifier(VM&, AtomStringImpl*); // Defined in IdentifierInlines.h
     inline Identifier(VM&, const AtomString&); // Defined in IdentifierInlines.h
@@ -178,7 +178,7 @@ private:
     static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
     template <typename T> inline static Ref<AtomStringImpl> add(VM&, std::span<const T>); // Defined in IdentifierInlines.h
-    static Ref<AtomStringImpl> add8(VM&, std::span<const UChar>);
+    static Ref<AtomStringImpl> add8(VM&, std::span<const char16_t>);
     template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
     static Ref<AtomStringImpl> add(VM&, StringImpl*);
@@ -197,7 +197,7 @@ template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString
     return true;
 }
 
-template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(UChar c)
+template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(char16_t c)
 {
     return (c <= maxSingleCharacterString);
 }
@@ -227,7 +227,7 @@ inline bool Identifier::equal(const StringImpl* r, std::span<const LChar> s)
     return WTF::equal(r, s);
 }
 
-inline bool Identifier::equal(const StringImpl* r, std::span<const UChar> s)
+inline bool Identifier::equal(const StringImpl* r, std::span<const char16_t> s)
 {
     return WTF::equal(r, s);
 }

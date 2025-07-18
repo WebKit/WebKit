@@ -169,6 +169,7 @@ public:
     WEBCORE_EXPORT std::span<uint8_t> mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
+    const DestinationColorSpace& colorSpace() const { return  m_configuration.colorSpace(); }
 
     // Create a graphics context that can be used to paint into the backing store.
     WEBCORE_EXPORT std::unique_ptr<GraphicsContext> createGraphicsContext();

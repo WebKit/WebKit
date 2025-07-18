@@ -70,7 +70,7 @@ bool RtpDemuxerCriteria::operator!=(const RtpDemuxerCriteria& other) const {
 }
 
 std::string RtpDemuxerCriteria::ToString() const {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   sb << "{mid: " << (mid_.empty() ? "<empty>" : mid_)
      << ", rsid: " << (rsid_.empty() ? "<empty>" : rsid_) << ", ssrcs: [";
 
@@ -90,7 +90,7 @@ std::string RtpDemuxerCriteria::ToString() const {
 
 // static
 std::string RtpDemuxer::DescribePacket(const RtpPacketReceived& packet) {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   sb << "PT=" << packet.PayloadType() << " SSRC=" << packet.Ssrc();
   std::string mid;
   if (packet.GetExtension<RtpMid>(&mid)) {

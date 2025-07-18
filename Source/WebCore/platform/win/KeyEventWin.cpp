@@ -218,7 +218,7 @@ static int windowsKeycodeWithLocation(WPARAM keycode, LPARAM keyData)
     return regeneratedVirtualKeyCode ? regeneratedVirtualKeyCode : keycode;
 }
 
-static inline String singleCharacterString(UChar c)
+static inline String singleCharacterString(char16_t c)
 {
     return span(c);
 }

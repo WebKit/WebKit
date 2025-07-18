@@ -109,7 +109,7 @@ void ReverbModelEstimatorTest::CreateImpulseResponseWithDecay() {
       H_j.Spectrum(Aec3Optimization::kNone, H2_[ch][j]);
     }
   }
-  rtc::ArrayView<float> H2_tail(H2_[0][H2_[0].size() - 1]);
+  ArrayView<float> H2_tail(H2_[0][H2_[0].size() - 1]);
   true_power_tail_ = std::accumulate(H2_tail.begin(), H2_tail.end(), 0.f);
 }
 void ReverbModelEstimatorTest::RunEstimator() {

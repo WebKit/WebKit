@@ -51,7 +51,7 @@ class AdaptiveStringSearcherTables;
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
 
 class StringView final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringView);
 public:
     StringView();
 #if CHECK_STRINGVIEW_LIFETIME
@@ -284,7 +284,7 @@ inline StringView emptyStringView() { return ""_span; }
 namespace WTF {
 
 struct StringViewWithUnderlyingString {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(StringViewWithUnderlyingString);
     StringViewWithUnderlyingString() = default;
 
     StringViewWithUnderlyingString(StringView passedView, String passedUnderlyingString)
@@ -511,7 +511,7 @@ inline bool StringView::containsOnlyASCII() const
 
 template<size_t N>
 class StringView::UpconvertedCharactersWithSize {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UpconvertedCharactersWithSize);
 public:
     explicit UpconvertedCharactersWithSize(StringView);
     operator const char16_t*() const LIFETIME_BOUND { return m_characters.data(); }
@@ -790,7 +790,7 @@ inline bool equalIgnoringASCIICase(StringView a, ASCIILiteral b)
 }
 
 class StringView::SplitResult {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SplitResult);
 public:
     SplitResult(StringView view LIFETIME_BOUND, char16_t separator, bool allowEmptyEntries);
 
@@ -805,7 +805,7 @@ private:
 };
 
 class StringView::GraphemeClusters {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GraphemeClusters);
 public:
     explicit GraphemeClusters(StringView view LIFETIME_BOUND);
 
@@ -818,7 +818,7 @@ private:
 };
 
 class StringView::CodePoints {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodePoints);
 public:
     explicit CodePoints(StringView view LIFETIME_BOUND);
 
@@ -832,7 +832,7 @@ private:
 };
 
 class StringView::CodeUnits {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodeUnits);
 public:
     explicit CodeUnits(StringView view LIFETIME_BOUND);
 
@@ -845,7 +845,7 @@ private:
 };
 
 class StringView::SplitResult::Iterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     using iterator_category = std::forward_iterator_tag;
     using value_type = StringView;
@@ -875,7 +875,7 @@ private:
 };
 
 class StringView::GraphemeClusters::Iterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     Iterator() = delete;
     WTF_EXPORT_PRIVATE Iterator(StringView view LIFETIME_BOUND, unsigned index);
@@ -898,7 +898,7 @@ private:
 };
 
 class StringView::CodePoints::Iterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     using iterator_category = std::forward_iterator_tag;
     Iterator(StringView view LIFETIME_BOUND, unsigned index);
@@ -918,7 +918,7 @@ private:
 };
 
 class StringView::CodeUnits::Iterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     Iterator(StringView view LIFETIME_BOUND, unsigned index);
 

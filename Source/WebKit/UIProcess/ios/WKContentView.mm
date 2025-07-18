@@ -581,7 +581,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    RunLoop::protectedMain()->dispatch([strongSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([strongSelf = retainPtr(self)] {
         if (![strongSelf window])
             return;
 

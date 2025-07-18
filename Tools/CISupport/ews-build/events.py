@@ -349,7 +349,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     PUBLIC_REPOS = ('WebKit/WebKit',)
     SENSATIVE_FIELDS = ('github.title',)
     LABEL_PROCESS_DELAY = 10
-    ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue', 'chgibb-apple')
+    ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
     TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
 
     _commit_classes = []

@@ -8,26 +8,26 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
 test/built-ins/Function/prototype/arguments/prop-desc.js:
-  default: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function get arguments() {'
-  strict mode: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function get arguments() {'
+  default: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function arguments() {'
+  strict mode: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function arguments() {'
 test/built-ins/Function/prototype/caller-arguments/accessor-properties.js:
-  default: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function get caller() {'
-  strict mode: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function get caller() {'
+  default: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function caller() {'
+  strict mode: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function caller() {'
 test/built-ins/Function/prototype/caller/prop-desc.js:
-  default: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function get caller() {'
-  strict mode: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function get caller() {'
+  default: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function caller() {'
+  strict mode: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function caller() {'
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
 test/built-ins/Iterator/concat/fresh-iterator-result.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/built-ins/Iterator/concat/next-method-returns-throwing-value.js:
   default: 'Test262Error: '
   strict mode: 'Test262Error: '
-test/built-ins/Object/keys/order-after-define-property-with-function.js:
-  default: 'Test262Error: Actual [a, length] and expected [length, a] should have the same contents. '
-  strict mode: 'Test262Error: Actual [a, length] and expected [length, a] should have the same contents. '
+test/built-ins/Map/prototype/getOrInsertComputed/canonical-key-passed-to-callback.js:
+  default: 'Test262Error: Expected SameValue(«0», «-0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «-0») to be true'
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -1102,6 +1102,9 @@ test/intl402/DateTimeFormat/prototype/format/temporal-plainyearmonth-formatting-
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlapping-options.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
@@ -1111,6 +1114,9 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-sup
 test/intl402/DateTimeFormat/prototype/formatRange/to-datetime-formattable-with-different-arg-kinds.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"

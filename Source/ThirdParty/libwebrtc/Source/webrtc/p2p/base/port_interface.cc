@@ -10,14 +10,12 @@
 
 #include "p2p/base/port_interface.h"
 
-#include <string>
 
-#include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 PortInterface::PortInterface() = default;
 
 PortInterface::~PortInterface() = default;
 
-}  // namespace cricket
+}  // namespace webrtc

@@ -264,17 +264,17 @@ bool MathMLElement::canStartSelection() const
     return hasEditableStyle();
 }
 
-bool MathMLElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool MathMLElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (isFocusable() && StyledElement::supportsFocus())
-        return StyledElement::isKeyboardFocusable(event);
+        return StyledElement::isKeyboardFocusable(focusEventData);
 
     if (isLink()) {
         RefPtr frame = document().frame();
-        return frame && frame->eventHandler().tabsToLinks(event);
+        return frame && frame->eventHandler().tabsToLinks(focusEventData);
     }
 
-    return StyledElement::isKeyboardFocusable(event);
+    return StyledElement::isKeyboardFocusable(focusEventData);
 }
 
 bool MathMLElement::isMouseFocusable() const

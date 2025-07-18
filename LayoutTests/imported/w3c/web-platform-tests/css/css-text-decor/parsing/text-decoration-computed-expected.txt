@@ -7,6 +7,8 @@ FAIL Property text-decoration value 'double overline underline' assert_true: 'do
 FAIL Property text-decoration value 'underline overline line-through red' assert_true: 'underline overline line-through red' is a supported value for text-decoration. expected true got false
 FAIL Property text-decoration value 'rgba(10, 20, 30, 0.4) dotted' assert_true: 'rgba(10, 20, 30, 0.4) dotted' is a supported value for text-decoration. expected true got false
 FAIL Property text-decoration value 'underline dashed rgb(0, 255, 0)' assert_true: 'underline dashed rgb(0, 255, 0)' is a supported value for text-decoration. expected true got false
+PASS Property text-decoration value 'underline overline line-through blink'
+FAIL Property text-decoration value 'underline overline line-through blink red' assert_true: 'underline overline line-through blink red' is a supported value for text-decoration. expected true got false
 FAIL Property text-decoration value 'auto' assert_true: 'auto' is a supported value for text-decoration. expected true got false
 FAIL Property text-decoration value 'from-font' assert_true: 'from-font' is a supported value for text-decoration. expected true got false
 FAIL Property text-decoration value '10px' assert_true: '10px' is a supported value for text-decoration. expected true got false

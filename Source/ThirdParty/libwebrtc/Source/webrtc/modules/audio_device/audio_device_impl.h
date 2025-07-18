@@ -17,7 +17,11 @@
 
 #include <memory>
 
+#include "absl/base/nullability.h"
 #include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_buffer.h"
 
@@ -42,9 +46,9 @@ class AudioDeviceModuleImpl : public AudioDeviceModuleForTest {
     kPlatformFuchsia = 7,
   };
 
-  int32_t CheckPlatform();
-  int32_t CreatePlatformSpecificObjects();
-  int32_t AttachAudioBuffer();
+  static absl_nullable scoped_refptr<AudioDeviceModuleImpl> Create(
+      const Environment& env,
+      AudioLayer audio_layer);
 
   AudioDeviceModuleImpl(AudioLayer audio_layer,
                         TaskQueueFactory* task_queue_factory);
@@ -55,6 +59,10 @@ class AudioDeviceModuleImpl : public AudioDeviceModuleForTest {
                         TaskQueueFactory* task_queue_factory,
                         bool create_detached);
   ~AudioDeviceModuleImpl() override;
+
+  int32_t CheckPlatform();
+  int32_t CreatePlatformSpecificObjects(const Environment& env);
+  int32_t AttachAudioBuffer();
 
   // Retrieve the currently utilized audio layer
   int32_t ActiveAudioLayer(AudioLayer* audioLayer) const override;

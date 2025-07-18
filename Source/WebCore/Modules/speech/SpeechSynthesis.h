@@ -113,6 +113,7 @@ private:
     void eventListenersDidChange() final;
     
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
+    Ref<PlatformSpeechSynthesizer> ensureProtectedPlatformSpeechSynthesizer();
     
     RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     std::optional<Vector<Ref<SpeechSynthesisVoice>>> m_voiceList;

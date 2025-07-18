@@ -27,7 +27,9 @@
 #include "BackForwardController.h"
 
 #include "BackForwardClient.h"
+#include "Frame.h"
 #include "HistoryItem.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "ShouldTreatAsContinuingLoad.h"
 #include <wtf/TZoneMallocInlines.h>

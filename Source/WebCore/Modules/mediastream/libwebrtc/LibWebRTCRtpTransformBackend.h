@@ -50,7 +50,7 @@ protected:
 
 private:
     void sendFrameToOutput(std::unique_ptr<webrtc::TransformableFrameInterface>&&);
-    void addOutputCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>&&, uint32_t ssrc);
+    void addOutputCallback(webrtc::scoped_refptr<webrtc::TransformedFrameCallback>&&, uint32_t ssrc);
     void removeOutputCallback(uint32_t ssrc);
 
     // RTCRtpTransformBackend
@@ -60,8 +60,8 @@ private:
 
     // webrtc::FrameTransformerInterface
     void Transform(std::unique_ptr<webrtc::TransformableFrameInterface>) final;
-    void RegisterTransformedFrameCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>) final;
-    void RegisterTransformedFrameSinkCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>, uint32_t ssrc) final;
+    void RegisterTransformedFrameCallback(webrtc::scoped_refptr<webrtc::TransformedFrameCallback>) final;
+    void RegisterTransformedFrameSinkCallback(webrtc::scoped_refptr<webrtc::TransformedFrameCallback>, uint32_t ssrc) final;
     void UnregisterTransformedFrameCallback() final;
     void UnregisterTransformedFrameSinkCallback(uint32_t ssrc) final;
     void AddRef() const final { ref(); }
@@ -74,7 +74,7 @@ private:
     Callback m_inputCallback WTF_GUARDED_BY_LOCK(m_inputCallbackLock);
 
     Lock m_outputCallbacksLock;
-    StdUnorderedMap<uint32_t, rtc::scoped_refptr<webrtc::TransformedFrameCallback>> m_outputCallbacks WTF_GUARDED_BY_LOCK(m_outputCallbacksLock);
+    StdUnorderedMap<uint32_t, webrtc::scoped_refptr<webrtc::TransformedFrameCallback>> m_outputCallbacks WTF_GUARDED_BY_LOCK(m_outputCallbacksLock);
 };
 
 inline LibWebRTCRtpTransformBackend::LibWebRTCRtpTransformBackend(MediaType mediaType, Side side)

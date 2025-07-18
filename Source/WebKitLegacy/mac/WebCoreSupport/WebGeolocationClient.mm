@@ -80,11 +80,6 @@ WebGeolocationClient::WebGeolocationClient(WebView *webView)
 {
 }
 
-void WebGeolocationClient::geolocationDestroyed()
-{
-    delete this;
-}
-
 void WebGeolocationClient::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
 {
     UNUSED_PARAM(authorizationToken);

@@ -257,12 +257,6 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
     return nullptr;
 }
 
-AXIsolatedObject* AXIsolatedTree::objectForID(AXID axID) const
-{
-    ASSERT(!isMainThread());
-    return m_readerThreadNodeMap.get(axID);
-}
-
 void AXIsolatedTree::generateSubtree(AccessibilityObject& axObject)
 {
     AXTRACE("AXIsolatedTree::generateSubtree"_s);
@@ -371,7 +365,7 @@ void AXIsolatedTree::queueRemovalsLocked(Vector<AXID>&& subtreeRemovals)
     ASSERT(m_changeLogLock.isLocked());
 
     m_pendingSubtreeRemovals.appendVector(WTFMove(subtreeRemovals));
-    m_pendingProtectedFromDeletionIDs.formUnion(std::exchange(m_protectedFromDeletionIDs, { }));
+    m_pendingProtectedFromDeletionIDs.addAll(std::exchange(m_protectedFromDeletionIDs, { }));
 }
 
 void AXIsolatedTree::queueRemovalsAndUnresolvedChanges()
@@ -1482,7 +1476,7 @@ void AXIsolatedTree::queueNodeUpdate(AXID objectID, const NodeUpdateOptions& opt
 
         auto addResult = m_needsPropertyUpdates.add(objectID, options.properties);
         if (!addResult.isNewEntry)
-            addResult.iterator->value.formUnion(options.properties);
+            addResult.iterator->value.addAll(options.properties);
     }
 
     if (options.shouldUpdateChildren)
@@ -1658,13 +1652,16 @@ static bool shouldCacheElementName(ElementName name)
 {
     switch (name) {
     case ElementName::HTML_body:
+    case ElementName::HTML_del:
     case ElementName::HTML_h1:
     case ElementName::HTML_h2:
     case ElementName::HTML_h3:
     case ElementName::HTML_h4:
     case ElementName::HTML_h5:
     case ElementName::HTML_h6:
+    case ElementName::HTML_ins:
     case ElementName::HTML_th:
+    case ElementName::HTML_time:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     case ElementName::HTML_mark:
     case ElementName::HTML_attachment:
@@ -1898,10 +1895,8 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
         }
 
-        if (object.supportsDatetimeAttribute()) {
-            setProperty(AXProperty::SupportsDatetimeAttribute, true);
+        if (object.supportsDatetimeAttribute())
             setProperty(AXProperty::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
-        }
 
         if (object.supportsCheckedState()) {
             setProperty(AXProperty::SupportsCheckedState, true);

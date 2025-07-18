@@ -58,7 +58,7 @@ int64_t RtpStream::GenerateFrame(int64_t time_now_us,
   if (time_now_us < next_rtp_time_) {
     return next_rtp_time_;
   }
-  RTC_CHECK(packets != NULL);
+  RTC_CHECK(packets != nullptr);
   size_t bits_per_frame = (bitrate_bps_ + fps_ / 2) / fps_;
   size_t n_packets =
       std::max<size_t>((bits_per_frame + 4 * kMtu) / (8 * kMtu), 1u);
@@ -137,7 +137,7 @@ void StreamGenerator::SetBitrateBps(int bitrate_bps) {
 int64_t StreamGenerator::GenerateFrame(int64_t time_now_us,
                                        int64_t* next_sequence_number,
                                        std::vector<PacketResult>* packets) {
-  RTC_CHECK(packets != NULL);
+  RTC_CHECK(packets != nullptr);
   RTC_CHECK(packets->empty());
   RTC_CHECK_GT(capacity_, 0);
   auto it =

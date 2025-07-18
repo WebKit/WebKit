@@ -41,8 +41,6 @@ public:
     bool handleUpstreamQuery(GstQuery*);
     GstPadProbeReturn handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&&);
 
-    void tearDown();
-
 protected:
     RealtimeIncomingSourceGStreamer(const CaptureDevice&);
 

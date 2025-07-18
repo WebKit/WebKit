@@ -23,7 +23,7 @@
 
 namespace webrtc {
 
-absl::Nonnull<std::unique_ptr<RtcEventLog>> RtcEventLogFactory::Create(
+absl_nonnull std::unique_ptr<RtcEventLog> RtcEventLogFactory::Create(
     const Environment& env) const {
 #ifndef WEBRTC_ENABLE_RTC_EVENT_LOG
   return std::make_unique<RtcEventLogNull>();

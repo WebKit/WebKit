@@ -13,7 +13,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Names or name prefixes of protocols as defined by SDP specifications,
 // and generated in SDP produced by WebRTC.
@@ -42,6 +42,26 @@ bool IsPlainRtp(absl::string_view protocol);
 // Returns true if the given media protocol is encrypted RTP
 bool IsDtlsRtp(absl::string_view protocol);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::IsDtlsRtp;
+using ::webrtc::IsDtlsSctp;
+using ::webrtc::IsPlainRtp;
+using ::webrtc::IsPlainSctp;
+using ::webrtc::IsRtpProtocol;
+using ::webrtc::IsSctpProtocol;
+using ::webrtc::kMediaProtocolAvpf;
+using ::webrtc::kMediaProtocolDtlsSavpf;
+using ::webrtc::kMediaProtocolDtlsSctp;
+using ::webrtc::kMediaProtocolSavpf;
+using ::webrtc::kMediaProtocolSctp;
+using ::webrtc::kMediaProtocolTcpDtlsSctp;
+using ::webrtc::kMediaProtocolUdpDtlsSctp;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // PC_MEDIA_PROTOCOL_NAMES_H_

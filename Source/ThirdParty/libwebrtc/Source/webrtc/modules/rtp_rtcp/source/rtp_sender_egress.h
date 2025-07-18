@@ -54,7 +54,7 @@ class RtpSenderEgress {
     void EnqueuePackets(
         std::vector<std::unique_ptr<RtpPacketToSend>> packets) override;
     // Since we don't pace packets, there's no pending packets to remove.
-    void RemovePacketsForSsrc(uint32_t ssrc) override {}
+    void RemovePacketsForSsrc(uint32_t /* ssrc */) override {}
 
    private:
     void PrepareForSend(RtpPacketToSend* packet);
@@ -93,15 +93,14 @@ class RtpSenderEgress {
   // recalled, return a vector with all of them (in corresponding order).
   // If any could not be recalled, return an empty vector.
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
-      rtc::ArrayView<const uint16_t> sequence_numbers) const;
+      ArrayView<const uint16_t> sequence_numbers) const;
 
   void SetFecProtectionParameters(const FecProtectionParams& delta_params,
                                   const FecProtectionParams& key_params);
   std::vector<std::unique_ptr<RtpPacketToSend>> FetchFecPackets();
 
   // Clears pending status for these sequence numbers in the packet history.
-  void OnAbortedRetransmissions(
-      rtc::ArrayView<const uint16_t> sequence_numbers);
+  void OnAbortedRetransmissions(ArrayView<const uint16_t> sequence_numbers);
 
  private:
   struct Packet {
@@ -148,8 +147,10 @@ class RtpSenderEgress {
   bool force_part_of_allocation_ RTC_GUARDED_BY(worker_queue_);
   uint32_t timestamp_offset_ RTC_GUARDED_BY(worker_queue_);
 
+  // These counters are only used if `rtp_stats_callback_` is null.
   StreamDataCounters rtp_stats_ RTC_GUARDED_BY(worker_queue_);
   StreamDataCounters rtx_rtp_stats_ RTC_GUARDED_BY(worker_queue_);
+
   // One element per value in RtpPacketMediaType, with index matching value.
   std::vector<BitrateTracker> send_rates_ RTC_GUARDED_BY(worker_queue_);
   std::optional<std::pair<FecProtectionParams, FecProtectionParams>>

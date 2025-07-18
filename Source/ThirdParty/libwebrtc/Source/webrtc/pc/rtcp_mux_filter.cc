@@ -10,9 +10,10 @@
 
 #include "pc/rtcp_mux_filter.h"
 
+#include "pc/session_description.h"
 #include "rtc_base/logging.h"
 
-namespace cricket {
+namespace webrtc {
 
 RtcpMuxFilter::RtcpMuxFilter() : state_(ST_INIT), offer_enable_(false) {}
 
@@ -122,4 +123,4 @@ bool RtcpMuxFilter::ExpectAnswer(ContentSource source) {
           (state_ == ST_RECEIVEDPRANSWER && source == CS_REMOTE));
 }
 
-}  // namespace cricket
+}  // namespace webrtc

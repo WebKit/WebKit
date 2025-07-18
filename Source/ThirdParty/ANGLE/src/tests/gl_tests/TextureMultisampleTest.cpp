@@ -471,6 +471,77 @@ TEST_P(TextureMultisampleTest, CheckSamplePositions)
     ASSERT_GL_NO_ERROR();
 }
 
+// Regression test for a bug in the Vulkan backend where a staged clear was not applied if
+// glGetMultisamplefv is called.
+TEST_P(TextureMultisampleTest, GetMultisamplefvAfterClear)
+{
+    ANGLE_SKIP_TEST_IF(lessThanES31MultisampleExtNotSupported());
+
+    // OpenGL does not guarantee sample positions.
+    ANGLE_SKIP_TEST_IF(IsOpenGL());
+
+    GLint numSampleCounts = 0;
+    glGetInternalformativ(GL_TEXTURE_2D_MULTISAMPLE, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, 1,
+                          &numSampleCounts);
+    ASSERT_GT(numSampleCounts, 0);
+
+    GLint sampleCount = 0;
+    glGetInternalformativ(GL_TEXTURE_2D_MULTISAMPLE, GL_RGBA8, GL_SAMPLES, 1, &sampleCount);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebuffer);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+    texStorageMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampleCount, GL_RGBA8, 1, 1, GL_TRUE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_NO_ERROR();
+
+    // Clear operation will be staged (Vulkan backend).
+    glClearColor(1.0f, 1.0f, 0.0, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Calling this API will perform draw framebuffer sync which will flush staged clear.
+    // If there is no bug, clear will not be deferred during the flush.
+    GLfloat samplePosition[2];
+    getMultisamplefv(GL_SAMPLE_POSITION, 0, samplePosition);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(),
+                     multisampleTextureFragmentShader());
+    GLint texLocation = glGetUniformLocation(texelFetchProgram, "tex");
+    ASSERT_GE(texLocation, 0);
+    GLint sampleNumLocation = glGetUniformLocation(texelFetchProgram, "sampleNum");
+    ASSERT_GE(sampleNumLocation, 0);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glViewport(0, 0, 1, 1);
+
+    // Check that texture is cleared correctly.
+    glUseProgram(texelFetchProgram);
+    glUniform1i(texLocation, 0);
+    glUniform1i(sampleNumLocation, 0);
+    drawQuad(texelFetchProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebuffer);
+
+    // Modify the framebuffer.
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture2);
+    texStorageMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampleCount, GL_RGBA8, 1, 1, GL_TRUE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           texture2, 0);
+
+    // This call will perform draw framebuffer sync.
+    // In case of a bug, previously deferred clear will cause an ASSERT.
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test textureSize and texelFetch when using ANGLE_texture_multisample extension
 TEST_P(TextureMultisampleTest, SimpleTexelFetch)
 {

@@ -38,9 +38,15 @@ void GL_APIENTRY GL_ActiveTexture(GLenum texture)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateActiveTexture(context->getPrivateState(),
                                                     context->getMutableErrorSetForValidation(),
                                                     angle::EntryPoint::GLActiveTexture, texture);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -329,9 +335,15 @@ void GL_APIENTRY GL_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendColor(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendColor, red, green, blue, alpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -367,9 +379,15 @@ void GL_APIENTRY GL_BlendEquation(GLenum mode)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquation(context->getPrivateState(),
                                                     context->getMutableErrorSetForValidation(),
                                                     angle::EntryPoint::GLBlendEquation, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -405,9 +423,15 @@ void GL_APIENTRY GL_BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationSeparate(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendEquationSeparate, modeRGB, modeAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -444,9 +468,15 @@ void GL_APIENTRY GL_BlendFunc(GLenum sfactor, GLenum dfactor)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFunc(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLBlendFunc, sfactor, dfactor);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -484,10 +514,16 @@ void GL_APIENTRY GL_BlendFuncSeparate(GLenum sfactorRGB,
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFuncSeparate(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendFuncSeparate, sfactorRGB, dfactorRGB, sfactorAlpha,
                     dfactorAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -696,9 +732,15 @@ void GL_APIENTRY GL_ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateClearColor(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLClearColor, red, green, blue, alpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -729,9 +771,15 @@ void GL_APIENTRY GL_ClearDepthf(GLfloat d)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateClearDepthf(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLClearDepthf, d);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -761,9 +809,15 @@ void GL_APIENTRY GL_ClearStencil(GLint s)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateClearStencil(context->getPrivateState(),
                                                    context->getMutableErrorSetForValidation(),
                                                    angle::EntryPoint::GLClearStencil, s);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -795,9 +849,15 @@ void GL_APIENTRY GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GL
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateColorMask(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLColorMask, red, green, blue, alpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1188,9 +1248,15 @@ void GL_APIENTRY GL_CullFace(GLenum mode)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateCullFace(context->getPrivateState(),
                                                context->getMutableErrorSetForValidation(),
                                                angle::EntryPoint::GLCullFace, modePacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1470,9 +1536,15 @@ void GL_APIENTRY GL_DepthFunc(GLenum func)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDepthFunc(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLDepthFunc, func);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1502,9 +1574,15 @@ void GL_APIENTRY GL_DepthMask(GLboolean flag)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDepthMask(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLDepthMask, flag);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1534,9 +1612,15 @@ void GL_APIENTRY GL_DepthRangef(GLfloat n, GLfloat f)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDepthRangef(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLDepthRangef, n, f);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1611,9 +1695,15 @@ void GL_APIENTRY GL_Disable(GLenum cap)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDisable(context->getPrivateState(),
                                               context->getMutableErrorSetForValidation(),
                                               angle::EntryPoint::GLDisable, cap);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -1768,9 +1858,15 @@ void GL_APIENTRY GL_Enable(GLenum cap)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateEnable(context->getPrivateState(),
                                              context->getMutableErrorSetForValidation(),
                                              angle::EntryPoint::GLEnable, cap);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -2030,9 +2126,15 @@ void GL_APIENTRY GL_FrontFace(GLenum mode)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateFrontFace(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLFrontFace, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -3457,9 +3559,15 @@ void GL_APIENTRY GL_Hint(GLenum target, GLenum mode)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateHint(context->getPrivateState(),
                                            context->getMutableErrorSetForValidation(),
                                            angle::EntryPoint::GLHint, target, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -3536,9 +3644,15 @@ GLboolean GL_APIENTRY GL_IsEnabled(GLenum cap)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateIsEnabled(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLIsEnabled, cap);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -3815,9 +3929,15 @@ void GL_APIENTRY GL_LineWidth(GLfloat width)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateLineWidth(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLLineWidth, width);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -3890,9 +4010,15 @@ void GL_APIENTRY GL_PixelStorei(GLenum pname, GLint param)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePixelStorei(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLPixelStorei, pname, param);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -3923,9 +4049,15 @@ void GL_APIENTRY GL_PolygonOffset(GLfloat factor, GLfloat units)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePolygonOffset(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPolygonOffset, factor, units);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4098,9 +4230,15 @@ void GL_APIENTRY GL_SampleCoverage(GLfloat value, GLboolean invert)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateSampleCoverage(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLSampleCoverage, value, invert);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4131,9 +4269,15 @@ void GL_APIENTRY GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateScissor(context->getPrivateState(),
                                               context->getMutableErrorSetForValidation(),
                                               angle::EntryPoint::GLScissor, x, y, width, height);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4264,9 +4408,15 @@ void GL_APIENTRY GL_StencilFunc(GLenum func, GLint ref, GLuint mask)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilFunc(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLStencilFunc, func, ref, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4298,9 +4448,15 @@ void GL_APIENTRY GL_StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLu
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilFuncSeparate(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLStencilFuncSeparate, face, func, ref, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -4335,9 +4491,15 @@ void GL_APIENTRY GL_StencilMask(GLuint mask)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilMask(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLStencilMask, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4368,9 +4530,15 @@ void GL_APIENTRY GL_StencilMaskSeparate(GLenum face, GLuint mask)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilMaskSeparate(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLStencilMaskSeparate, face, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -4406,9 +4574,15 @@ void GL_APIENTRY GL_StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilOp(context->getPrivateState(),
                                                 context->getMutableErrorSetForValidation(),
                                                 angle::EntryPoint::GLStencilOp, fail, zfail, zpass);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))
@@ -4441,9 +4615,15 @@ void GL_APIENTRY GL_StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, 
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateStencilOpSeparate(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLStencilOpSeparate, face, sfail, dpfail, dppass);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5673,9 +5853,15 @@ void GL_APIENTRY GL_VertexAttrib1f(GLuint index, GLfloat x)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib1f(context->getPrivateState(),
                                                      context->getMutableErrorSetForValidation(),
                                                      angle::EntryPoint::GLVertexAttrib1f, index, x);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5710,9 +5896,15 @@ void GL_APIENTRY GL_VertexAttrib1fv(GLuint index, const GLfloat *v)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib1fv(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib1fv, index, v);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5747,9 +5939,15 @@ void GL_APIENTRY GL_VertexAttrib2f(GLuint index, GLfloat x, GLfloat y)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib2f(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib2f, index, x, y);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5784,9 +5982,15 @@ void GL_APIENTRY GL_VertexAttrib2fv(GLuint index, const GLfloat *v)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib2fv(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib2fv, index, v);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5821,9 +6025,15 @@ void GL_APIENTRY GL_VertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat z
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib3f(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib3f, index, x, y, z);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5858,9 +6068,15 @@ void GL_APIENTRY GL_VertexAttrib3fv(GLuint index, const GLfloat *v)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib3fv(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib3fv, index, v);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5895,9 +6111,15 @@ void GL_APIENTRY GL_VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib4f(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib4f, index, x, y, z, w);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -5932,9 +6154,15 @@ void GL_APIENTRY GL_VertexAttrib4fv(GLuint index, const GLfloat *v)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_2_0))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateVertexAttrib4fv(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLVertexAttrib4fv, index, v);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -6022,9 +6250,15 @@ void GL_APIENTRY GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
         {
             if (ANGLE_LIKELY(true))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateViewport(context->getPrivateState(),
                                                context->getMutableErrorSetForValidation(),
                                                angle::EntryPoint::GLViewport, x, y, width, height);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
         }
         if (ANGLE_LIKELY(isCallValid))

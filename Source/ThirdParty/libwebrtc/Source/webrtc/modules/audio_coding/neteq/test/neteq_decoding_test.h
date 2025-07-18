@@ -11,9 +11,10 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TEST_NETEQ_DECODING_TEST_H_
 #define MODULES_AUDIO_CODING_NETEQ_TEST_NETEQ_DECODING_TEST_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <set>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"

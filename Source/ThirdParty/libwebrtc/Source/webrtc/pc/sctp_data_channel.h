@@ -46,7 +46,7 @@ class SctpDataChannelControllerInterface {
   // Sends the data to the transport.
   virtual RTCError SendData(StreamId sid,
                             const SendDataParams& params,
-                            const rtc::CopyOnWriteBuffer& payload) = 0;
+                            const CopyOnWriteBuffer& payload) = 0;
   // Adds the data channel SID to the transport for SCTP.
   virtual void AddSctpDataStream(StreamId sid, PriorityValue priority) = 0;
   // Begins the closing procedure by sending an outgoing stream reset. Still
@@ -78,7 +78,7 @@ struct InternalDataChannelInit : public DataChannelInit {
   // stream ids in situations where we cannot determine the SSL role from the
   // transport for purposes of generating a stream ID.
   // See: https://www.rfc-editor.org/rfc/rfc8832.html#name-protocol-overview
-  std::optional<rtc::SSLRole> fallback_ssl_role;
+  std::optional<SSLRole> fallback_ssl_role;
 };
 
 // Helper class to allocate unique IDs for SCTP DataChannels.
@@ -89,7 +89,7 @@ class SctpSidAllocator {
   // SSL_CLIENT, the allocated id starts from 0 and takes even numbers;
   // otherwise, the id starts from 1 and takes odd numbers.
   // If a `StreamId` cannot be allocated, `std::nullopt` is returned.
-  std::optional<StreamId> AllocateSid(rtc::SSLRole role);
+  std::optional<StreamId> AllocateSid(SSLRole role);
 
   // Attempts to reserve a specific sid. Returns false if it's unavailable.
   bool ReserveSid(StreamId sid);
@@ -129,13 +129,13 @@ class SctpSidAllocator {
 //    OnClosingProcedureComplete callback and transition to kClosed.
 class SctpDataChannel : public DataChannelInterface {
  public:
-  static rtc::scoped_refptr<SctpDataChannel> Create(
-      rtc::WeakPtr<SctpDataChannelControllerInterface> controller,
+  static scoped_refptr<SctpDataChannel> Create(
+      WeakPtr<SctpDataChannelControllerInterface> controller,
       const std::string& label,
       bool connected_to_transport,
       const InternalDataChannelInit& config,
-      rtc::Thread* signaling_thread,
-      rtc::Thread* network_thread);
+      Thread* signaling_thread,
+      Thread* network_thread);
 
   // Instantiates an API proxy for a SctpDataChannel instance that will be
   // handed out to external callers.
@@ -144,9 +144,9 @@ class SctpDataChannel : public DataChannelInterface {
   // callbacks after the peerconnection has been closed. The data controller
   // will update the flag when closed, which will cancel any pending event
   // notifications.
-  static rtc::scoped_refptr<DataChannelInterface> CreateProxy(
-      rtc::scoped_refptr<SctpDataChannel> channel,
-      rtc::scoped_refptr<PendingTaskSafetyFlag> signaling_safety);
+  static scoped_refptr<DataChannelInterface> CreateProxy(
+      scoped_refptr<SctpDataChannel> channel,
+      scoped_refptr<PendingTaskSafetyFlag> signaling_safety);
 
   void RegisterObserver(DataChannelObserver* observer) override;
   void UnregisterObserver() override;
@@ -154,10 +154,6 @@ class SctpDataChannel : public DataChannelInterface {
   std::string label() const override;
   bool reliable() const override;
   bool ordered() const override;
-
-  // Backwards compatible accessors
-  uint16_t maxRetransmitTime() const override;
-  uint16_t maxRetransmits() const override;
 
   std::optional<int> maxPacketLifeTime() const override;
   std::optional<int> maxRetransmitsOpt() const override;
@@ -190,8 +186,7 @@ class SctpDataChannel : public DataChannelInterface {
   // already finished.
   void OnTransportReady();
 
-  void OnDataReceived(DataMessageType type,
-                      const rtc::CopyOnWriteBuffer& payload);
+  void OnDataReceived(DataMessageType type, const CopyOnWriteBuffer& payload);
 
   // Sets the SCTP sid and adds to transport layer if not set yet. Should only
   // be called once.
@@ -232,11 +227,11 @@ class SctpDataChannel : public DataChannelInterface {
 
  protected:
   SctpDataChannel(const InternalDataChannelInit& config,
-                  rtc::WeakPtr<SctpDataChannelControllerInterface> controller,
+                  WeakPtr<SctpDataChannelControllerInterface> controller,
                   const std::string& label,
                   bool connected_to_transport,
-                  rtc::Thread* signaling_thread,
-                  rtc::Thread* network_thread);
+                  Thread* signaling_thread,
+                  Thread* network_thread);
   ~SctpDataChannel() override;
 
  private:
@@ -260,7 +255,7 @@ class SctpDataChannel : public DataChannelInterface {
   RTCError SendDataMessage(const DataBuffer& buffer, bool queue_if_blocked)
       RTC_RUN_ON(network_thread_);
 
-  bool SendControlMessage(const rtc::CopyOnWriteBuffer& buffer)
+  bool SendControlMessage(const CopyOnWriteBuffer& buffer)
       RTC_RUN_ON(network_thread_);
 
   bool connected_to_transport() const RTC_RUN_ON(network_thread_) {
@@ -268,8 +263,8 @@ class SctpDataChannel : public DataChannelInterface {
   }
   void MaybeSendOnBufferedAmountChanged() RTC_RUN_ON(network_thread_);
 
-  rtc::Thread* const signaling_thread_;
-  rtc::Thread* const network_thread_;
+  Thread* const signaling_thread_;
+  Thread* const network_thread_;
   std::optional<StreamId> id_n_ RTC_GUARDED_BY(network_thread_) = std::nullopt;
   const int internal_id_;
   const std::string label_;
@@ -290,14 +285,14 @@ class SctpDataChannel : public DataChannelInterface {
   uint64_t bytes_sent_ RTC_GUARDED_BY(network_thread_) = 0;
   uint32_t messages_received_ RTC_GUARDED_BY(network_thread_) = 0;
   uint64_t bytes_received_ RTC_GUARDED_BY(network_thread_) = 0;
-  rtc::WeakPtr<SctpDataChannelControllerInterface> controller_
+  WeakPtr<SctpDataChannelControllerInterface> controller_
       RTC_GUARDED_BY(network_thread_);
   HandshakeState handshake_state_ RTC_GUARDED_BY(network_thread_) =
       kHandshakeInit;
   // Did we already start the graceful SCTP closing procedure?
   bool started_closing_procedure_ RTC_GUARDED_BY(network_thread_) = false;
   PacketQueue queued_received_data_ RTC_GUARDED_BY(network_thread_);
-  rtc::scoped_refptr<PendingTaskSafetyFlag> network_safety_ =
+  scoped_refptr<PendingTaskSafetyFlag> network_safety_ =
       PendingTaskSafetyFlag::CreateDetachedInactive();
 };
 

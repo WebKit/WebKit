@@ -67,12 +67,12 @@ public:
 
     JSDOMStructureMap& structures() WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
     DOMGuardedObjectSet& guardedObjects() WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
-    DOMConstructors& constructors() { return *m_constructors; }
+    DOMConstructors& constructors() { return m_constructors; }
 
     // No locking is necessary for call sites that do not mutate the containers and are not on the GC thread.
     const JSDOMStructureMap& structures() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
     const DOMGuardedObjectSet& guardedObjects() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
-    const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return *m_constructors; }
+    const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
 
     // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
     inline JSDOMStructureMap& structures(NoLockingNecessaryTag);
@@ -137,7 +137,7 @@ protected:
 
     JSDOMStructureMap m_structures WTF_GUARDED_BY_LOCK(m_gcLock);
     DOMGuardedObjectSet m_guardedObjects WTF_GUARDED_BY_LOCK(m_gcLock);
-    std::unique_ptr<DOMConstructors> m_constructors;
+    const UniqueRef<DOMConstructors> m_constructors;
 
     const Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;

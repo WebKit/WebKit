@@ -48,7 +48,7 @@ struct StringWithDirection;
 
 class HistoryController final : public CanMakeWeakPtr<HistoryController>  {
     WTF_MAKE_NONCOPYABLE(HistoryController);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HistoryController, Loader);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 

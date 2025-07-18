@@ -11,12 +11,17 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_FAKE_DECODE_FROM_FILE_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_FAKE_DECODE_FROM_FILE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
+#include <utility>
+#include <vector>
 
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace test {
@@ -37,7 +42,7 @@ class FakeDecodeFromFile : public AudioDecoder {
 
   ~FakeDecodeFromFile() = default;
 
-  std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
+  std::vector<ParseResult> ParsePayload(Buffer&& payload,
                                         uint32_t timestamp) override;
 
   void Reset() override {}
@@ -63,7 +68,7 @@ class FakeDecodeFromFile : public AudioDecoder {
   static void PrepareEncoded(uint32_t timestamp,
                              size_t samples,
                              size_t original_payload_size_bytes,
-                             rtc::ArrayView<uint8_t> encoded);
+                             ArrayView<uint8_t> encoded);
 
  private:
   std::unique_ptr<InputAudioFile> input_;

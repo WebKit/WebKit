@@ -255,18 +255,6 @@ public:
 
     friend bool operator==(const FloatRect&, const FloatRect&) = default;
 
-    struct MarkableTraits {
-        constexpr static bool isEmptyValue(const FloatRect& rect)
-        {
-            return rect.isNaN();
-        }
-
-        constexpr static FloatRect emptyValue()
-        {
-            return FloatRect::nanRect();
-        }
-    };
-
 private:
     FloatPoint m_location;
     FloatSize m_size;
@@ -365,7 +353,7 @@ constexpr FloatRect FloatRect::nanRect()
 
 constexpr bool FloatRect::isNaN() const
 {
-    return isNaNConstExpr(x());
+    return isNaNConstExpr(x()) || isNaNConstExpr(y());
 }
 
 inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, float deltaMaxY)
@@ -398,6 +386,19 @@ struct LogArgument<WebCore::FloatRect> {
     static String toString(const WebCore::FloatRect& rect)
     {
         return rect.toJSONString();
+    }
+};
+
+template<>
+struct MarkableTraits<WebCore::FloatRect> {
+    constexpr static bool isEmptyValue(const WebCore::FloatRect& rect)
+    {
+        return rect.isNaN();
+    }
+
+    constexpr static WebCore::FloatRect emptyValue()
+    {
+        return WebCore::FloatRect::nanRect();
     }
 };
 

@@ -41,8 +41,8 @@ bool PitchIsValid(float pitch_hz) {
          pitch_period <= kMaxPitch24kHz;
 }
 
-void CreatePureTone(float amplitude, float freq_hz, rtc::ArrayView<float> dst) {
-  for (int i = 0; rtc::SafeLt(i, dst.size()); ++i) {
+void CreatePureTone(float amplitude, float freq_hz, ArrayView<float> dst) {
+  for (int i = 0; SafeLt(i, dst.size()); ++i) {
     dst[i] = amplitude * std::sin(2.f * kPi * freq_hz * i / kSampleRate24kHz);
   }
 }
@@ -51,8 +51,8 @@ void CreatePureTone(float amplitude, float freq_hz, rtc::ArrayView<float> dst) {
 // For every frame, the output is written into `feature_vector`. Returns true
 // if silence is detected in the last frame.
 bool FeedTestData(FeaturesExtractor& features_extractor,
-                  rtc::ArrayView<const float> samples,
-                  rtc::ArrayView<float, kFeatureVectorSize> feature_vector) {
+                  ArrayView<const float> samples,
+                  ArrayView<float, kFeatureVectorSize> feature_vector) {
   // TODO(bugs.webrtc.org/8948): Add when the issue is fixed.
   // FloatingPointExceptionObserver fpe_observer;
   bool is_silence = true;
@@ -78,8 +78,8 @@ TEST(RnnVadTest, FeatureExtractionLowHighPitch) {
   FeaturesExtractor features_extractor(cpu_features);
   std::vector<float> samples(kNumTestDataSize);
   std::vector<float> feature_vector(kFeatureVectorSize);
-  ASSERT_EQ(kFeatureVectorSize, rtc::dchecked_cast<int>(feature_vector.size()));
-  rtc::ArrayView<float, kFeatureVectorSize> feature_vector_view(
+  ASSERT_EQ(kFeatureVectorSize, dchecked_cast<int>(feature_vector.size()));
+  ArrayView<float, kFeatureVectorSize> feature_vector_view(
       feature_vector.data(), kFeatureVectorSize);
 
   // Extract the normalized scalar feature that is proportional to the estimated

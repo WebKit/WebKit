@@ -28,6 +28,7 @@
 
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorClient.h"
+#include "DisplayRefreshMonitorFactory.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 

@@ -98,10 +98,10 @@ class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
-    WorkerBadgeProxy* workerBadgeProxy() const;
-    WorkerDebuggerProxy* workerDebuggerProxy() const final;
-    WorkerLoaderProxy* workerLoaderProxy() final;
-    WorkerReportingProxy* workerReportingProxy() const;
+    WorkerBadgeProxy* workerBadgeProxy() const { return m_workerBadgeProxy.get(); }
+    WorkerDebuggerProxy* workerDebuggerProxy() const final { return m_workerDebuggerProxy.get(); }
+    WorkerLoaderProxy* workerLoaderProxy() const final { return m_workerLoaderProxy.get(); }
+    WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy.get(); }
 
     // Number of active worker threads.
     WEBCORE_EXPORT static unsigned workerThreadCount();
@@ -125,8 +125,8 @@ protected:
 
     WorkerGlobalScope* globalScope();
 
-    IDBClient::IDBConnectionProxy* idbConnectionProxy();
-    SocketProvider* socketProvider();
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() { return m_idbConnectionProxy.get(); }
+    SocketProvider* socketProvider() { return m_socketProvider.get(); }
 
     std::unique_ptr<WorkerClient> m_workerClient;
 private:
@@ -152,8 +152,8 @@ private:
     NotificationClient* m_notificationClient { nullptr };
 #endif
 
-    RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
-    RefPtr<SocketProvider> m_socketProvider;
+    const RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+    const RefPtr<SocketProvider> m_socketProvider;
     bool m_isInStaticScriptEvaluation { false };
 };
 

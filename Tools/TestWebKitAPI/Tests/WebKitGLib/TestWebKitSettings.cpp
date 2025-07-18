@@ -210,6 +210,16 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_tabs_to_links(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_tabs_to_links(settings));
 
+    // DNS prefetching is deprecated and always false.
+    // Make warnings non-fatal for this test to make it pass.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+    g_assert_false(webkit_settings_get_enable_dns_prefetching(settings));
+    webkit_settings_set_enable_dns_prefetching(settings, TRUE);
+    g_assert_false(webkit_settings_get_enable_dns_prefetching(settings));
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
     // Caret browsing is disabled by default.
     g_assert_false(webkit_settings_get_enable_caret_browsing(settings));
     webkit_settings_set_enable_caret_browsing(settings, TRUE);

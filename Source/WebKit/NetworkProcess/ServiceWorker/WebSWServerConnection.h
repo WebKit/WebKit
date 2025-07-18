@@ -92,6 +92,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     NetworkSession* session();
+    CheckedPtr<NetworkSession> checkedSession();
     PAL::SessionID sessionID() const;
 
     RefPtr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
@@ -105,7 +106,7 @@ public:
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void reportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier, size_t bytesTransferredOverNetworkDelta);
+    void reportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier, uint64_t bytesTransferredOverNetworkDelta);
 #endif
 
 private:
@@ -190,7 +191,7 @@ private:
     bool isWebSWServerConnection() const final { return true; }
 
     WeakPtr<NetworkConnectionToWebProcess> m_networkConnectionToWebProcess;
-    Ref<IPC::Connection> m_contentConnection;
+    const Ref<IPC::Connection> m_contentConnection;
     HashMap<WebCore::ScriptExecutionContextIdentifier, WebCore::ClientOrigin> m_clientOrigins;
     HashMap<WebCore::ServiceWorkerJobIdentifier, CompletionHandler<void(UnregisterJobResult&&)>> m_unregisterJobs;
     bool m_isThrottleable { true };

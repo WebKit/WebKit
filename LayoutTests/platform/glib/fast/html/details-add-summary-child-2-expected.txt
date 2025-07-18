@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DETAILS} at (0,0) size 784x18
-        RenderListItem {SUMMARY} at (0,0) size 784x18
-          RenderListMarker at (0,0) size 12x17: "\x{25BE}"
-          RenderText {#text} at (12,0) size 62x17
-            text run at (12,0) width 62: "summary "
-          RenderInline {SPAN} at (74,0) size 142x17
-            RenderInline {B} at (74,0) size 142x17
-              RenderText {#text} at (74,0) size 142x17
-                text run at (74,0) width 142: "should have bold test"
-        RenderBlock {SLOT} at (0,18) size 784x0
+      RenderBlock {DETAILS} at (0,0) size 784x19
+        RenderListItem {SUMMARY} at (0,0) size 784x19
+          RenderListMarker at (0,1) size 12x17: "\x{25BE}"
+          RenderText {#text} at (12,1) size 62x17
+            text run at (12,1) width 62: "summary "
+          RenderInline {SPAN} at (74,1) size 142x17
+            RenderInline {B} at (74,1) size 142x17
+              RenderText {#text} at (74,1) size 142x17
+                text run at (74,1) width 142: "should have bold test"
+        RenderBlock {SLOT} at (0,19) size 784x0

@@ -9,12 +9,21 @@
  */
 
 #include <bitset>
+#include <cstddef>
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
-#include "common_video/corruption_detection_message.h"
-#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "api/rtp_headers.h"
+#include "api/transport/rtp/corruption_detection_message.h"
+#include "api/video/color_space.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_layers_allocation.h"
+#include "api/video/video_timing.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/corruption_detection_extension.h"
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -70,10 +79,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       case kRtpExtensionNone:
       case kRtpExtensionNumberOfExtensions:
         break;
-      case kRtpExtensionTransmissionTimeOffset:
+      case kRtpExtensionTransmissionTimeOffset: {
         int32_t offset;
         packet.GetExtension<TransmissionOffset>(&offset);
         break;
+      }
       case kRtpExtensionAudioLevel: {
         AudioLevel audio_level;
         packet.GetExtension<AudioLevelExtension>(&audio_level);
@@ -93,14 +103,16 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<AbsoluteCaptureTimeExtension>(&extension);
         break;
       }
-      case kRtpExtensionVideoRotation:
+      case kRtpExtensionVideoRotation: {
         uint8_t rotation;
         packet.GetExtension<VideoOrientation>(&rotation);
         break;
-      case kRtpExtensionTransportSequenceNumber:
+      }
+      case kRtpExtensionTransportSequenceNumber: {
         uint16_t seqnum;
         packet.GetExtension<TransportSequenceNumber>(&seqnum);
         break;
+      }
       case kRtpExtensionTransportSequenceNumber02: {
         uint16_t seqnum;
         std::optional<FeedbackRequest> feedback_request;
@@ -113,10 +125,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<PlayoutDelayLimits>(&playout);
         break;
       }
-      case kRtpExtensionVideoContentType:
+      case kRtpExtensionVideoContentType: {
         VideoContentType content_type;
         packet.GetExtension<VideoContentTypeExtension>(&content_type);
         break;
+      }
       case kRtpExtensionVideoTiming: {
         VideoSendTiming timing;
         packet.GetExtension<VideoTimingExtension>(&timing);

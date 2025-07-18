@@ -41,6 +41,7 @@
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "LayoutPoint.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "LocalizedStrings.h"

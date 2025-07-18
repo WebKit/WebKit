@@ -15,6 +15,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "api/async_dns_resolver.h"
@@ -26,7 +27,6 @@
 #include "api/field_trials_view.h"
 #include "api/ice_transport_interface.h"
 #include "api/neteq/neteq_factory.h"
-#include "api/packet_socket_factory.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
 #include "api/scoped_refptr.h"
@@ -40,6 +40,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/network.h"
 #include "rtc_base/rtc_certificate_generator.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/thread.h"
 
@@ -56,6 +57,8 @@ namespace webrtc_pc_e2e {
 // can override only some parts of media engine like video encoder/decoder
 // factories.
 struct PeerConnectionFactoryComponents {
+  std::unique_ptr<NetworkManager> network_manager;
+  SocketFactory* socket_factory = nullptr;
   std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory;
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
@@ -63,13 +66,13 @@ struct PeerConnectionFactoryComponents {
 
   std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
   std::unique_ptr<VideoDecoderFactory> video_decoder_factory;
-  rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory;
-  rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory;
+  scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory;
+  scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory;
 
   std::unique_ptr<FieldTrialsView> trials;
 
-  rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing;
-  rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer;
+  std::unique_ptr<AudioProcessingBuilderInterface> audio_processing;
+  scoped_refptr<webrtc::AudioMixer> audio_mixer;
 };
 
 // Contains most parts from PeerConnectionDependencies. Also all fields are
@@ -79,42 +82,32 @@ struct PeerConnectionFactoryComponents {
 // Separate class was introduced to clarify which components can be
 // overridden. For example observer, which is required to
 // PeerConnectionDependencies, will be provided by fixture implementation,
-// so client can't inject its own. Also only network manager can be overridden
-// inside port allocator.
+// so client can't inject its own.
 struct PeerConnectionComponents {
-  PeerConnectionComponents(rtc::NetworkManager* network_manager,
-                           rtc::PacketSocketFactory* packet_socket_factory)
-      : network_manager(network_manager),
-        packet_socket_factory(packet_socket_factory) {
-    RTC_CHECK(network_manager);
-  }
-
-  rtc::NetworkManager* const network_manager;
-  rtc::PacketSocketFactory* const packet_socket_factory;
   std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>
       async_dns_resolver_factory;
-  std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator;
-  std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier;
+  std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator;
+  std::unique_ptr<SSLCertificateVerifier> tls_cert_verifier;
   std::unique_ptr<IceTransportFactory> ice_transport_factory;
 };
 
 // Contains all components, that can be overridden in peer connection. Also
 // has a network thread, that will be used to communicate with another peers.
 struct InjectableComponents {
-  InjectableComponents(rtc::Thread* network_thread,
-                       rtc::NetworkManager* network_manager,
-                       rtc::PacketSocketFactory* packet_socket_factory)
+  InjectableComponents(Thread* network_thread,
+                       std::unique_ptr<NetworkManager> network_manager,
+                       SocketFactory* socket_factory)
       : network_thread(network_thread),
         worker_thread(nullptr),
         pcf_dependencies(std::make_unique<PeerConnectionFactoryComponents>()),
-        pc_dependencies(
-            std::make_unique<PeerConnectionComponents>(network_manager,
-                                                       packet_socket_factory)) {
+        pc_dependencies(std::make_unique<PeerConnectionComponents>()) {
     RTC_CHECK(network_thread);
+    pcf_dependencies->network_manager = std::move(network_manager);
+    pcf_dependencies->socket_factory = socket_factory;
   }
 
-  rtc::Thread* const network_thread;
-  rtc::Thread* worker_thread;
+  Thread* const network_thread;
+  Thread* worker_thread;
 
   std::unique_ptr<PeerConnectionFactoryComponents> pcf_dependencies;
   std::unique_ptr<PeerConnectionComponents> pc_dependencies;
@@ -128,14 +121,12 @@ struct Params {
   std::optional<std::string> name;
   // If `audio_config` is set audio stream will be configured
   std::optional<AudioConfig> audio_config;
-  // Flags to set on `cricket::PortAllocator`. If not set,
-  // cricket::kDefaultPortAllocatorFlags will be used and
-  // cricket::PORTALLOCATOR_DISABLE_TCP will be disabled.
+  // Flags to override `rtc_configuration.port_allocator_config.flags`
   //
   // IMPORTANT: if you use WebRTC Network Emulation
   // (api/test/network_emulation_manager.h) and set this field, remember to set
-  // cricket::PORTALLOCATOR_DISABLE_TCP to 0.
-  std::optional<uint32_t> port_allocator_flags = std::nullopt;
+  // webrtc::PORTALLOCATOR_DISABLE_TCP.
+  uint32_t port_allocator_flags = PORTALLOCATOR_DISABLE_TCP;
   // If `rtc_event_log_path` is set, an RTCEventLog will be saved in that
   // location and it will be available for further analysis.
   std::optional<std::string> rtc_event_log_path;

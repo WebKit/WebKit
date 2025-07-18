@@ -12,4 +12,7 @@ specific_include_rules = {
     "+rtc_base/synchronization/mutex.h",
     "+rtc_base/thread_annotations.h",
   ],
+  "chrome_perf_dashboard_metrics_exporter_test.cc": [
+    "+tracing/tracing/proto/histogram.pb.h"
+  ],
 }

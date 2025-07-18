@@ -12,9 +12,13 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/checks.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -85,8 +89,8 @@ bool SimulcastUtility::IsConferenceModeScreenshare(
   return encoder_config.content_type ==
              VideoEncoderConfig::ContentType::kScreen &&
          encoder_config.legacy_conference_mode &&
-         (encoder_config.codec_type == webrtc::VideoCodecType::kVideoCodecVP8 ||
-          encoder_config.codec_type == webrtc::VideoCodecType::kVideoCodecH264);
+         (encoder_config.codec_type == VideoCodecType::kVideoCodecVP8 ||
+          encoder_config.codec_type == VideoCodecType::kVideoCodecH264);
 }
 
 int SimulcastUtility::NumberOfTemporalLayers(const VideoCodec& codec,

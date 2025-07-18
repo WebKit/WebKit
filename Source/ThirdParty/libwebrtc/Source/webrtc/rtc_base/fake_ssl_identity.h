@@ -11,14 +11,18 @@
 #ifndef RTC_BASE_FAKE_SSL_IDENTITY_H_
 #define RTC_BASE_FAKE_SSL_IDENTITY_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 class FakeSSLCertificate : public SSLCertificate {
  public:
@@ -36,9 +40,7 @@ class FakeSSLCertificate : public SSLCertificate {
   int64_t CertificateExpirationTime() const override;
   bool GetSignatureDigestAlgorithm(std::string* algorithm) const override;
   bool ComputeDigest(absl::string_view algorithm,
-                     unsigned char* digest,
-                     size_t size,
-                     size_t* length) const override;
+                     Buffer& digest) const override;
 
   void SetCertificateExpirationTime(int64_t expiration_time);
 
@@ -78,6 +80,15 @@ class FakeSSLIdentity : public SSLIdentity {
   std::unique_ptr<SSLCertChain> cert_chain_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::FakeSSLCertificate;
+using ::webrtc::FakeSSLIdentity;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_FAKE_SSL_IDENTITY_H_

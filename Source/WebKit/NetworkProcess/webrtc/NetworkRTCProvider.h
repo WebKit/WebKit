@@ -55,9 +55,9 @@ class Connection;
 class Decoder;
 }
 
-namespace rtc {
+namespace webrtc {
 class SocketAddress;
-struct PacketOptions;
+struct AsyncSocketPacketOptions;
 }
 
 namespace WebCore {
@@ -78,7 +78,7 @@ struct SocketComparator {
 };
 
 class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr<NetworkRTCProvider> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkRTCProvider);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkRTCProvider);
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
@@ -104,7 +104,7 @@ public:
 
         virtual void close() = 0;
         virtual void setOption(int option, int value) = 0;
-        virtual void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
+        virtual void sendTo(std::span<const uint8_t>, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&) = 0;
     };
 
     std::unique_ptr<Socket> takeSocket(WebCore::LibWebRTCSocketIdentifier);
@@ -143,8 +143,8 @@ private:
 #if PLATFORM(COCOA)
     const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
 #else
-    static rtc::Thread& rtcNetworkThread();
-    void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
+    static webrtc::Thread& rtcNetworkThread();
+    void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<webrtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
 #endif
 
     // FunctionDispatcher
@@ -176,7 +176,7 @@ private:
 #endif
 
 #if !PLATFORM(COCOA)
-    UniqueRef<rtc::BasicPacketSocketFactory> m_packetSocketFactory;
+    UniqueRef<webrtc::BasicPacketSocketFactory> m_packetSocketFactory;
 #endif
 };
 

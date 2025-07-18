@@ -58,33 +58,27 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
         is_linux = self.platform.startswith('linux') and not is_android
         is_win = self.platform.startswith('win')
 
-        if test_type == 'nontest':
-            self.WriteFailureAndRaise('We should not be isolating %s.' %
-                                      target,
-                                      output_path=None)
         if test_type not in ('console_test_launcher', 'windowed_test_launcher',
                              'non_parallel_console_test_launcher', 'raw',
-                             'additional_compile_target', 'junit_test',
-                             'script'):
+                             'additional_compile_target'):
             self.WriteFailureAndRaise('No command line for '
                                       '%s found (test type %s).' %
                                       (target, test_type),
                                       output_path=None)
 
-        cmdline = []
         extra_files = [
             '../../.vpython3',
             '../../testing/test_env.py',
         ]
         vpython_exe = 'vpython3'
 
-        if isolate_map[target].get('script'):
-            cmdline += [
-                vpython_exe,
-                '../../' + self.ToSrcRelPath(isolate_map[target]['script'])
-            ]
+        if is_ios or is_fuchsia or test_type == 'raw':
+            if is_win:
+                cmdline = ['bin\\run_{}.bat'.format(target)]
+            else:
+                cmdline = ['bin/run_{}'.format(target)]
         elif is_android:
-            cmdline += [
+            cmdline = [
                 'luci-auth', 'context', '--', vpython_exe,
                 '../../build/android/test_wrapper/logdog_wrapper.py',
                 '--target', target, '--logdog-bin-cmd',
@@ -92,14 +86,10 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
                 '--logcat-output-file', '${ISOLATED_OUTDIR}/logcats',
                 '--store-tombstones'
             ]
-        elif is_ios or is_fuchsia or test_type == 'raw':
-            if is_win:
-                cmdline += ['bin\\run_{}.bat'.format(target)]
-            else:
-                cmdline += ['bin/run_{}'.format(target)]
         else:
+            cmdline = []
             if isolate_map[target].get('use_pipewire', False):
-                cmdline += [
+                cmdline = [
                     vpython_exe, '../../tools_webrtc/configure_pipewire.py'
                 ]
                 extra_files.append('../../tools_webrtc/configure_pipewire.py')

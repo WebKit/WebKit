@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericUnits.h"
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes.h"
@@ -31,6 +32,8 @@
 
 namespace WebCore {
 namespace Style {
+
+using namespace CSS::Literals;
 
 template<auto R, typename V> struct CSSValueConversion<Integer<R, V>> {
     auto operator()(BuilderState& builderState, const CSSPrimitiveValue& value) -> Integer<R, V>

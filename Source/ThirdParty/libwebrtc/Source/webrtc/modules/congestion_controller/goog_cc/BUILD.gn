@@ -79,7 +79,6 @@ rtc_library("alr_detector") {
   deps = [
     "../../../api:field_trials_view",
     "../../../api/rtc_event_log",
-    "../../../api/transport:field_trial_based_config",
     "../../../logging:rtc_event_pacing",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_conversions",
@@ -332,6 +331,7 @@ if (rtc_include_tests) {
         "../../../test:explicit_key_value_config",
         "../../../test:field_trial",
         "../../../test:test_support",
+        "../../../test/network:emulated_network",
         "../../../test/scenario",
         "../../../test/scenario:column_printer",
         "../../pacing",

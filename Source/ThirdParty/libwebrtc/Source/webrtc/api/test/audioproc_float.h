@@ -36,11 +36,11 @@ namespace test {
 // using the BuiltinAudioProcessingBuilder is deactivated.
 int AudioprocFloat(int argc, char* argv[]);
 int AudioprocFloat(
-    absl::Nonnull<std::unique_ptr<BuiltinAudioProcessingBuilder>> ap_builder,
+    absl_nonnull std::unique_ptr<BuiltinAudioProcessingBuilder> ap_builder,
     int argc,
     char* argv[]);
 int AudioprocFloat(
-    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface> ap_builder,
     int argc,
     char* argv[]);
 

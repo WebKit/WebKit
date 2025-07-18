@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'asapersson' reviewed: '2021-04-14'} *-->
+<!--* freshness: {owner: 'asapersson' reviewed: '2025-01-10'} *-->
 
 # Video stats
 
@@ -32,15 +32,19 @@ and holds a `VideoSendStream::Stats` object.
 *   `referenced_media_ssrc` - only present for type kRtx/kFlexfec. The SSRC for the kMedia stream that retransmissions or FEC is performed for.
 
 Updated when a frame has been encoded, `VideoStreamEncoder::OnEncodedImage`.
-*   `frames_encoded `- total number of encoded frames.
+
+*   `frames_encoded `- total number of encoded frames [[rtcoutboundrtpstreamstats-framesencoded]].
 *   `encode_frame_rate` - number of encoded frames during the last second.
 *   `width` - width of last encoded frame [[rtcoutboundrtpstreamstats-framewidth]].
 *   `height` - height of last encoded frame [[rtcoutboundrtpstreamstats-frameheight]].
-*   `total_encode_time_ms` - total encode time for encoded frames.
+*   `total_encode_time_ms` - total encode time for encoded frames [[rtcoutboundrtpstreamstats-totalencodetime]].
 *   `qp_sum` - sum of quantizer values of encoded frames [[rtcoutboundrtpstreamstats-qpsum]].
 *   `frame_counts` - total number of encoded key/delta frames [[rtcoutboundrtpstreamstats-keyframesencoded]].
+*   `huge_frames_sent` - total number of huge frames sent [[rtcoutboundrtpstreamstats-hugeframessent]].
+*   `scalability_mode` - configured scalability mode for the stream [[rtcoutboundrtpstreamstats-scalabilitymode]].
 
 Updated when a RTP packet is transmitted to the network, `RtpSenderEgress::SendPacket`.
+
 *   `rtp_stats` - total number of sent bytes/packets.
 *   `total_bitrate_bps` - total bitrate sent in bits per second (over a one second window).
 *   `retransmit_bitrate_bps` - total retransmit bitrate sent in bits per second (over a one second window).
@@ -49,9 +53,11 @@ Updated when a RTP packet is transmitted to the network, `RtpSenderEgress::SendP
 *   `total_packet_send_delay_ms` - total capture-to-send delay for sent packets [[rtcoutboundrtpstreamstats-totalpacketsenddelay]].
 
 Updated when an incoming RTCP packet is parsed, `RTCPReceiver::ParseCompoundPacket`.
+
 *   `rtcp_packet_type_counts` - total number of received NACK/FIR/PLI packets [rtcoutboundrtpstreamstats-[nackcount], [fircount], [plicount]].
 
 Updated when a RTCP report block packet is received, `RTCPReceiver::TriggerCallbacksFromRtcpPacket`.
+
 *   `rtcp_stats` - RTCP report block data.
 *   `report_block_data` - RTCP report block data.
 
@@ -59,24 +65,32 @@ Updated when a RTCP report block packet is received, `RTCPReceiver::TriggerCallb
 *   `std::map<uint32_t, StreamStats> substreams` - StreamStats mapped per SSRC.
 
 Updated when a frame is received from the source, `VideoStreamEncoder::OnFrame`.
+
 *   `frames` - total number of frames fed to VideoStreamEncoder.
 *   `input_frame_rate` - number of frames fed to VideoStreamEncoder during the last second.
+*   `frames_dropped_by_bad_timestamp` - total number of dropped frames due to bad timestamp.
 *   `frames_dropped_by_congestion_window` - total number of dropped frames due to congestion window pushback.
 *   `frames_dropped_by_encoder_queue` - total number of dropped frames due to that the encoder is blocked.
 
 Updated if a frame from the source is dropped, `VideoStreamEncoder::OnDiscardedFrame`.
+
 *   `frames_dropped_by_capturer` - total number dropped frames by the source.
 
 Updated if a frame is dropped by `FrameDropper`, `VideoStreamEncoder::MaybeEncodeVideoFrame`.
+
 *   `frames_dropped_by_rate_limiter` - total number of dropped frames to avoid bitrate overuse.
 
 Updated (if changed) before a frame is passed to the encoder, `VideoStreamEncoder::EncodeVideoFrame`.
+
 *   `encoder_implementation_name` - name of encoder implementation [[rtcoutboundrtpstreamstats-encoderimplementation]].
+*   `power_efficient_encoder` - whether the encoder is considered power efficient [[rtcoutboundrtpstreamstats-powerefficientencoder]].
 
 Updated after a frame has been encoded, `VideoStreamEncoder::OnEncodedImage`.
-*   `frames_encoded `- total number of encoded frames [[rtcoutboundrtpstreamstats-framesencoded]].
+
+*   `frames_encoded `- total number of frames encoded [[rtcoutboundrtpstreamstats-framesencoded]].
 *   `encode_frame_rate` - number of encoded frames during the last second [[rtcoutboundrtpstreamstats-framespersecond]].
 *   `total_encoded_bytes_target` - total target frame size in bytes [[rtcoutboundrtpstreamstats-totalencodedbytestarget]].
+*   `frames_sent` - total number of frames sent [[rtcoutboundrtpstreamstats-framessent]].
 *   `huge_frames_sent` - total number of huge frames sent [[rtcoutboundrtpstreamstats-hugeframessent]].
 *   `media_bitrate_bps` - the actual bitrate the encoder is producing.
 *   `avg_encode_time_ms` - average encode time for encoded frames.
@@ -84,6 +98,7 @@ Updated after a frame has been encoded, `VideoStreamEncoder::OnEncodedImage`.
 *   `frames_dropped_by_encoder`- total number of dropped frames by the encoder.
 
 Adaptation stats.
+
 *   `bw_limited_resolution` - shows if resolution is limited due to restricted bandwidth.
 *   `cpu_limited_resolution` - shows if resolution is limited due to cpu.
 *   `bw_limited_framerate` - shows if framerate is limited due to restricted bandwidth.
@@ -95,9 +110,11 @@ Adaptation stats.
 *   `number_of_quality_adapt_changes` - total number of times resolution/framerate has changed due to quality limitation.
 
 Updated when the encoder is configured, `VideoStreamEncoder::ReconfigureEncoder`.
+
 *   `content_type` - configured content type (UNSPECIFIED/SCREENSHARE).
 
 Updated when the available bitrate changes, `VideoSendStreamImpl::OnBitrateUpdated`.
+
 *   `target_media_bitrate_bps` - the bitrate the encoder is configured to use.
 *   `suspended` - shows if video is suspended due to zero target bitrate.
 
@@ -119,37 +136,49 @@ and holds a `VideoReceiveStream::Stats` object.
 *   `ssrc` - configured SSRC for the received stream.
 
 Updated when a complete frame is received, `FrameBuffer::InsertFrame`.
+
 *   `frame_counts` - total number of key/delta frames received [[rtcinboundrtpstreamstats-keyframesdecoded]].
 *   `network_frame_rate` - number of frames received during the last second.
 
 Updated when a frame is ready for decoding, `FrameBuffer::GetNextFrame`. From `VCMTiming`:
+
 *   `jitter_buffer_ms` - jitter delay in ms: this is the delay added to handle network jitter
 *   `max_decode_ms` - the 95th percentile observed decode time within a time window (10 sec).
 *   `render_delay_ms` - render delay in ms.
 *   `min_playout_delay_ms` - minimum playout delay in ms.
 *   `target_delay_ms` - target playout delay in ms. Max(`min_playout_delay_ms`, `jitter_delay_ms` + `max_decode_ms` + `render_delay_ms`).
 *   `current_delay_ms` - actual playout delay in ms.
-*   `jitter_buffer_delay_seconds` - total jitter buffer delay in seconds: this is the time spent waiting in the jitter buffer [[rtcinboundrtpstreamstats-jitterbufferdelay]].
+*   `jitter_buffer_delay` - sum of time for each frame from earliest packet is entered to corresponding frame is emitted from the jitter buffer [[rtcinboundrtpstreamstats-jitterbufferdelay]].
 *   `jitter_buffer_emitted_count` - total number of frames that have come out from the jitter buffer [[rtcinboundrtpstreamstats-jitterbufferemittedcount]].
+*   `jitter_buffer_target_delay` - increased by the target jitter buffer delay every time a frame is emitted from the jitter buffer [[rtcinboundrtpstreamstats-jitterbuffertargetdelay]].
+*   `jitter_buffer_minimum_delay` - minimum obtainable jitter buffer delay without external influence [[rtcinboundrtpstreamstats-jitterbufferminimumdelay]].
 
 Updated (if changed) after a frame is passed to the decoder, `VCMGenericDecoder::Decode`.
+
 *   `decoder_implementation_name` - name of decoder implementation [[rtcinboundrtpstreamstats-decoderimplementation]].
+*   `power_efficient_decoder` - whether the decoder is considered power efficient [[rtcinboundrtpstreamstats-powerefficientdecoder]].
 
 Updated when a frame is ready for decoding, `FrameBuffer::GetNextFrame`.
+
 *   `timing_frame_info` - timestamps for a full lifetime of a frame.
 *   `first_frame_received_to_decoded_ms` - initial decoding latency between the first arrived frame and the first decoded frame.
-*   `frames_dropped` - total number of dropped frames prior to decoding or if the system is too slow [[rtcreceivedrtpstreamstats-framesdropped]].
+*   `frames_dropped` - total number of dropped frames prior to decoding or if the system is too slow [[rtcinboundrtpstreamstats-framesdropped]].
 
 Updated after a frame has been decoded, `VCMDecodedFrameCallback::Decoded`.
+
 *   `frames_decoded` - total number of decoded frames [[rtcinboundrtpstreamstats-framesdecoded]].
 *   `decode_frame_rate` - number of decoded frames during the last second [[rtcinboundrtpstreamstats-framespersecond]].
 *   `decode_ms` - time to decode last frame in ms.
-*   `total_decode_time_ms` - total decode time for decoded frames [[rtcinboundrtpstreamstats-totaldecodetime]].
+*   `total_decode_time` - total decode time for decoded frames [[rtcinboundrtpstreamstats-totaldecodetime]].
+*   `total_processing_delay` - sum of time for each frame from first RTP packet is received to corresponding frame is decoded [[rtcinboundrtpstreamstats-totalprocessingdelay]].
+*   `total_assembly_time` - sum of time for each frame from first RTP packet is received to the last RTP packet of a frame is received (for frames consisting of more than one RTP packet) [[rtcinboundrtpstreamstats-totalassemblytime]].
+*   `frames_assembled_from_multiple_packets` - total number of correctly decoded frames that consist of more than one RTP packet [[rtcinboundrtpstreamstats-framesassembledfrommultiplepackets]].
 *   `qp_sum` - sum of quantizer values of decoded frames [[rtcinboundrtpstreamstats-qpsum]].
 *   `content_type` - content type (UNSPECIFIED/SCREENSHARE).
 *   `interframe_delay_max_ms` - max inter-frame delay within a time window between decoded frames.
 
 Updated before a frame is sent to the renderer, `VideoReceiveStream2::OnFrame`.
+
 *   `frames_rendered` - total number of rendered frames.
 *   `render_frame_rate` - number of rendered frames during the last second.
 *   `width` - width of last frame fed to renderer [[rtcinboundrtpstreamstats-framewidth]].
@@ -164,12 +193,13 @@ Updated before a frame is sent to the renderer, `VideoReceiveStream2::OnFrame`.
 *   `total_squared_inter_frame_delay` - sum of squared inter-frame delays in seconds between rendered frames [[rtcinboundrtpstreamstats-totalsquaredinterframedelay]].
 
 `ReceiveStatisticsImpl::OnRtpPacket` is updated for received RTP packets. From `ReceiveStatistics`:
+
 *   `total_bitrate_bps` - incoming bitrate in bps.
 *   `rtp_stats` - RTP statistics for the received stream.
 
 Updated when a RTCP packet is sent, `RTCPSender::ComputeCompoundRTCPPacket`.
-*   `rtcp_packet_type_counts` - total number of sent NACK/FIR/PLI packets [rtcinboundrtpstreamstats-[nackcount], [fircount], [plicount]].
 
+*   `rtcp_packet_type_counts` - total number of sent NACK/FIR/PLI packets [rtcinboundrtpstreamstats-[nackcount], [fircount], [plicount]].
 
 [VideoSendStream]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/call/video_send_stream.h
 [VideoSendStream::Stats]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/call/video_send_stream.h?q=VideoSendStream::Stats
@@ -179,14 +209,17 @@ Updated when a RTCP packet is sent, `RTCPSender::ComputeCompoundRTCPPacket`.
 [rtcoutboundrtpstreamstats-frameheight]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-frameheight
 [rtcoutboundrtpstreamstats-qpsum]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-qpsum
 [rtcoutboundrtpstreamstats-keyframesencoded]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-keyframesencoded
+[rtcoutboundrtpstreamstats-scalabilitymode]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-scalabilitymode
 [rtcoutboundrtpstreamstats-totalpacketsenddelay]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalpacketsenddelay
 [nackcount]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-nackcount
 [fircount]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-fircount
 [plicount]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-plicount
 [rtcoutboundrtpstreamstats-encoderimplementation]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-encoderimplementation
+[rtcoutboundrtpstreamstats-powerefficientencoder]:https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-powerefficientencoder
 [rtcoutboundrtpstreamstats-framesencoded]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-framesencoded
 [rtcoutboundrtpstreamstats-framespersecond]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-framespersecond
 [rtcoutboundrtpstreamstats-totalencodedbytestarget]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalencodedbytestarget
+[rtcoutboundrtpstreamstats-framessent]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-framessent
 [rtcoutboundrtpstreamstats-hugeframessent]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-hugeframessent
 [rtcoutboundrtpstreamstats-totalencodetime]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalencodetime
 [rtcoutboundrtpstreamstats-qualitylimitationreason]: https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-qualitylimitationreason
@@ -199,11 +232,17 @@ Updated when a RTCP packet is sent, `RTCPSender::ComputeCompoundRTCPPacket`.
 [rtcinboundrtpstreamstats-keyframesdecoded]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-keyframesdecoded
 [rtcinboundrtpstreamstats-jitterbufferdelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbufferdelay
 [rtcinboundrtpstreamstats-jitterbufferemittedcount]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbufferemittedcount
+[rtcinboundrtpstreamstats-jitterbuffertargetdelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbuffertargetdelay
+[rtcinboundrtpstreamstats-jitterbufferminimumdelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbufferminimumdelay
 [rtcinboundrtpstreamstats-decoderimplementation]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-decoderimplementation
-[rtcreceivedrtpstreamstats-framesdropped]: https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-framesdropped
+[rtcinboundrtpstreamstats-powerefficientdecoder]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-powerefficientdecoder
+[rtcinboundrtpstreamstats-framesdropped]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-framesdropped
 [rtcinboundrtpstreamstats-framesdecoded]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-framesdecoded
 [rtcinboundrtpstreamstats-framespersecond]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-framespersecond
 [rtcinboundrtpstreamstats-totaldecodetime]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-totaldecodetime
+[rtcinboundrtpstreamstats-totalprocessingdelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalprocessingdelay
+[rtcinboundrtpstreamstats-totalassemblytime]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalassemblytime
+[rtcinboundrtpstreamstats-framesassembledfrommultiplepackets]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-framesassembledfrommultiplepackets
 [rtcinboundrtpstreamstats-qpsum]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-qpsum
 [rtcinboundrtpstreamstats-totalinterframedelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalinterframedelay
 [rtcinboundrtpstreamstats-totalsquaredinterframedelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalsquaredinterframedelay

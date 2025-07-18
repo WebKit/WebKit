@@ -32,13 +32,13 @@ class EchoEmulatingCapturer : public TestAudioDeviceModule::Capturer {
       std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
       EchoEmulationConfig config);
 
-  void OnAudioRendered(rtc::ArrayView<const int16_t> data);
+  void OnAudioRendered(ArrayView<const int16_t> data);
 
   int SamplingFrequency() const override {
     return delegate_->SamplingFrequency();
   }
   int NumChannels() const override { return delegate_->NumChannels(); }
-  bool Capture(rtc::BufferT<int16_t>* buffer) override;
+  bool Capture(BufferT<int16_t>* buffer) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Capturer> delegate_;
@@ -67,7 +67,7 @@ class EchoEmulatingRenderer : public TestAudioDeviceModule::Renderer {
     return delegate_->SamplingFrequency();
   }
   int NumChannels() const override { return delegate_->NumChannels(); }
-  bool Render(rtc::ArrayView<const int16_t> data) override;
+  bool Render(ArrayView<const int16_t> data) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Renderer> delegate_;

@@ -65,14 +65,14 @@ static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportSt
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline RTCIceGatheringState toRTCIceGatheringState(cricket::IceGatheringState state)
+static inline RTCIceGatheringState toRTCIceGatheringState(webrtc::IceGatheringState state)
 {
     switch (state) {
-    case cricket::IceGatheringState::kIceGatheringNew:
+    case webrtc::IceGatheringState::kIceGatheringNew:
         return RTCIceGatheringState::New;
-    case cricket::IceGatheringState::kIceGatheringGathering:
+    case webrtc::IceGatheringState::kIceGatheringGathering:
         return RTCIceGatheringState::Gathering;
-    case cricket::IceGatheringState::kIceGatheringComplete:
+    case webrtc::IceGatheringState::kIceGatheringComplete:
         return RTCIceGatheringState::Complete;
     }
 
@@ -81,25 +81,25 @@ static inline RTCIceGatheringState toRTCIceGatheringState(cricket::IceGatheringS
 
 class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCIceTransportBackendObserver>, public sigslot::has_slots<> {
 public:
-    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, rtc::scoped_refptr<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, webrtc::scoped_refptr<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTFMove(backend))); }
 
     void start();
     void stop();
 
 private:
-    LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient&, rtc::scoped_refptr<webrtc::IceTransportInterface>&&);
+    LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient&, webrtc::scoped_refptr<webrtc::IceTransportInterface>&&);
 
-    void onIceTransportStateChanged(cricket::IceTransportInternal*);
-    void onGatheringStateChanged(cricket::IceTransportInternal*);
-    void onNetworkRouteChanged(std::optional<rtc::NetworkRoute>);
+    void onIceTransportStateChanged(webrtc::IceTransportInternal*);
+    void onGatheringStateChanged(webrtc::IceTransportInternal*);
+    void onNetworkRouteChanged(std::optional<webrtc::NetworkRoute>);
 
-    void processSelectedCandidatePairChanged(const cricket::Candidate&, const cricket::Candidate&);
+    void processSelectedCandidatePairChanged(const webrtc::Candidate&, const webrtc::Candidate&);
 
-    rtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
+    webrtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
     WeakPtr<RTCIceTransportBackendClient> m_client;
 };
 
-LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient& client, rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
+LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient& client, webrtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
     , m_client(client)
 {
@@ -149,7 +149,7 @@ void LibWebRTCIceTransportBackendObserver::stop()
     });
 }
 
-void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::IceTransportInternal* internal)
+void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(webrtc::IceTransportInternal* internal)
 {
     callOnMainThread([protectedThis = Ref { *this }, state = internal->GetIceTransportState()] {
         if (protectedThis->m_client)
@@ -157,7 +157,7 @@ void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::I
     });
 }
 
-void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(cricket::IceTransportInternal* internal)
+void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(webrtc::IceTransportInternal* internal)
 {
     callOnMainThread([protectedThis = Ref { *this }, state = internal->gathering_state()] {
         if (protectedThis->m_client)
@@ -165,13 +165,13 @@ void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(cricket::IceT
     });
 }
 
-void LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged(std::optional<rtc::NetworkRoute>)
+void LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged(std::optional<webrtc::NetworkRoute>)
 {
     if (auto selectedPair = m_backend->internal()->GetSelectedCandidatePair())
         processSelectedCandidatePairChanged(selectedPair->local_candidate(), selectedPair->remote_candidate());
 }
 
-void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(const cricket::Candidate& local, const cricket::Candidate& remote)
+void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(const webrtc::Candidate& local, const webrtc::Candidate& remote)
 {
     callOnMainThread([protectedThis = Ref { *this }, localSdp = fromStdString(local.ToString()).isolatedCopy(), remoteSdp = fromStdString(remote.ToString()).isolatedCopy(), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
         if (!protectedThis->m_client)
@@ -185,7 +185,7 @@ void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(c
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCIceTransportBackend);
 
-LibWebRTCIceTransportBackend::LibWebRTCIceTransportBackend(rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
+LibWebRTCIceTransportBackend::LibWebRTCIceTransportBackend(webrtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
 {
     ASSERT(m_backend);

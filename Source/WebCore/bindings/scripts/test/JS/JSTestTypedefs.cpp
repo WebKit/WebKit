@@ -802,7 +802,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_callWithSequenceThatReq
 
 JSC::GCClient::IsoSubspace* JSTestTypedefs::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestTypedefs, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestTypedefs, UseCustomHeapCellType::No>(vm, "JSTestTypedefs"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestTypedefs.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTypedefs = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestTypedefs.get(); },

@@ -70,6 +70,7 @@ rtc_library("unittest") {
     "../../../../api:array_view",
     "../../../../common_audio",
     "../../../../rtc_base:logging",
+    "../../../../rtc_base:safe_conversions",
     "../../../../test:fileutils",
     "../../../../test:test_support",
     "//testing/gtest",

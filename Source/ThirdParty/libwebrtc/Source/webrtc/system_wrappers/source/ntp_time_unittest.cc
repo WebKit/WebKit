@@ -13,10 +13,13 @@
 #include <random>
 
 #include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+using testing::Lt;
 
 constexpr uint32_t kNtpSec = 0x12345678;
 constexpr uint32_t kNtpFrac = 0x23456789;
@@ -273,6 +276,48 @@ TEST(NtpTimeTest, VerifyInt64MsToUQ32x32RoundTrip) {
         << "iteration = " << iteration << ", input_ms = " << input_ms
         << ", transit_uq32x32 = " << transit_uq32x32
         << ", output_ms = " << output_ms;
+  }
+}
+
+TEST(NtpTimeTest, VerifyInt64MsToUQ32x32UsRoundTrip) {
+  constexpr int kIterations = 50000;
+
+  std::mt19937 generator(123456789);
+  std::uniform_int_distribution<uint64_t> distribution(
+      UQ32x32ToInt64Ms(std::numeric_limits<uint64_t>::min()),
+      UQ32x32ToInt64Ms(std::numeric_limits<uint64_t>::max()));
+
+  for (int iteration = 0; iteration < kIterations; ++iteration) {
+    uint64_t input_ms = distribution(generator);
+    uint64_t transit_uq32x32 = Int64MsToUQ32x32(input_ms);
+    uint64_t output_ms = UQ32x32ToInt64Us(transit_uq32x32);
+
+    int64_t difference = input_ms * 1000 - output_ms;
+    ASSERT_THAT(abs(difference), Lt(2))
+        << "iteration = " << iteration << ", input_ms = " << input_ms
+        << ", transit_uq32x32 = " << transit_uq32x32
+        << ", output_us = " << output_ms;
+  }
+}
+
+TEST(NtpTimeTest, VerifySignedInt64MsToUQ32x32UsRoundTrip) {
+  constexpr int kIterations = 50000;
+
+  std::mt19937 generator(123456789);
+  std::uniform_int_distribution<int64_t> distribution(
+      UQ32x32ToInt64Ms(std::numeric_limits<int64_t>::min()),
+      UQ32x32ToInt64Ms(std::numeric_limits<int64_t>::max()));
+
+  for (int iteration = 0; iteration < kIterations; ++iteration) {
+    int64_t input_ms = distribution(generator);
+    uint64_t transit_uq32x32 = Int64MsToUQ32x32(input_ms);
+    int64_t output_ms = UQ32x32ToInt64Us(transit_uq32x32);
+
+    int64_t difference = input_ms * 1000 - output_ms;
+    ASSERT_THAT(abs(difference), Lt(2))
+        << "iteration = " << iteration << ", input_ms = " << input_ms
+        << ", transit_uq32x32 = " << transit_uq32x32
+        << ", output_us = " << output_ms;
   }
 }
 

@@ -67,8 +67,6 @@ private:
 
     Style::PaddingBox popupInternalPaddingBox(const RenderStyle&) const override;
 
-    LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const override;
-
     int baselinePosition(const RenderBox&) const override;
 
     bool isControlStyled(const RenderStyle&) const override;

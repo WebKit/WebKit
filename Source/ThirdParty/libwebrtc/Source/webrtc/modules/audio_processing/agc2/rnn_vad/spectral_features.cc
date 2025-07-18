@@ -27,7 +27,7 @@ constexpr float kSilenceThreshold = 0.04f;
 // Computes the new cepstral difference stats and pushes them into the passed
 // symmetric matrix buffer.
 void UpdateCepstralDifferenceStats(
-    rtc::ArrayView<const float, kNumBands> new_cepstral_coeffs,
+    ArrayView<const float, kNumBands> new_cepstral_coeffs,
     const RingBuffer<float, kNumBands, kCepstralCoeffsHistorySize>& ring_buf,
     SymmetricMatrixBuffer<float, kCepstralCoeffsHistorySize>* sym_matrix_buf) {
   RTC_DCHECK(sym_matrix_buf);
@@ -64,7 +64,7 @@ std::array<float, kFrameSize20ms24kHz / 2> ComputeScaledHalfVorbisWindow(
 // applied. The Fourier coefficient corresponding to the Nyquist frequency is
 // set to zero (it is never used and this allows to simplify the code).
 void ComputeWindowedForwardFft(
-    rtc::ArrayView<const float, kFrameSize20ms24kHz> frame,
+    ArrayView<const float, kFrameSize20ms24kHz> frame,
     const std::array<float, kFrameSize20ms24kHz / 2>& half_window,
     Pffft::FloatBuffer* fft_input_buffer,
     Pffft::FloatBuffer* fft_output_buffer,
@@ -72,8 +72,8 @@ void ComputeWindowedForwardFft(
   RTC_DCHECK_EQ(frame.size(), 2 * half_window.size());
   // Apply windowing.
   auto in = fft_input_buffer->GetView();
-  for (int i = 0, j = kFrameSize20ms24kHz - 1;
-       rtc::SafeLt(i, half_window.size()); ++i, --j) {
+  for (int i = 0, j = kFrameSize20ms24kHz - 1; SafeLt(i, half_window.size());
+       ++i, --j) {
     in[i] = frame[i] * half_window[i];
     in[j] = frame[j] * half_window[i];
   }
@@ -102,13 +102,13 @@ void SpectralFeaturesExtractor::Reset() {
 }
 
 bool SpectralFeaturesExtractor::CheckSilenceComputeFeatures(
-    rtc::ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
-    rtc::ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
-    rtc::ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
-    rtc::ArrayView<float, kNumLowerBands> average,
-    rtc::ArrayView<float, kNumLowerBands> first_derivative,
-    rtc::ArrayView<float, kNumLowerBands> second_derivative,
-    rtc::ArrayView<float, kNumLowerBands> bands_cross_corr,
+    ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
+    ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
+    ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
+    ArrayView<float, kNumLowerBands> average,
+    ArrayView<float, kNumLowerBands> first_derivative,
+    ArrayView<float, kNumLowerBands> second_derivative,
+    ArrayView<float, kNumLowerBands> bands_cross_corr,
     float* variability) {
   // Compute the Opus band energies for the reference frame.
   ComputeWindowedForwardFft(reference_frame, half_window_, fft_buffer_.get(),
@@ -154,16 +154,16 @@ bool SpectralFeaturesExtractor::CheckSilenceComputeFeatures(
 }
 
 void SpectralFeaturesExtractor::ComputeAvgAndDerivatives(
-    rtc::ArrayView<float, kNumLowerBands> average,
-    rtc::ArrayView<float, kNumLowerBands> first_derivative,
-    rtc::ArrayView<float, kNumLowerBands> second_derivative) const {
+    ArrayView<float, kNumLowerBands> average,
+    ArrayView<float, kNumLowerBands> first_derivative,
+    ArrayView<float, kNumLowerBands> second_derivative) const {
   auto curr = cepstral_coeffs_ring_buf_.GetArrayView(0);
   auto prev1 = cepstral_coeffs_ring_buf_.GetArrayView(1);
   auto prev2 = cepstral_coeffs_ring_buf_.GetArrayView(2);
   RTC_DCHECK_EQ(average.size(), first_derivative.size());
   RTC_DCHECK_EQ(first_derivative.size(), second_derivative.size());
   RTC_DCHECK_LE(average.size(), curr.size());
-  for (int i = 0; rtc::SafeLt(i, average.size()); ++i) {
+  for (int i = 0; SafeLt(i, average.size()); ++i) {
     // Average, kernel: [1, 1, 1].
     average[i] = curr[i] + prev1[i] + prev2[i];
     // First derivative, kernel: [1, 0, - 1].
@@ -174,12 +174,12 @@ void SpectralFeaturesExtractor::ComputeAvgAndDerivatives(
 }
 
 void SpectralFeaturesExtractor::ComputeNormalizedCepstralCorrelation(
-    rtc::ArrayView<float, kNumLowerBands> bands_cross_corr) {
+    ArrayView<float, kNumLowerBands> bands_cross_corr) {
   spectral_correlator_.ComputeCrossCorrelation(
       reference_frame_fft_->GetConstView(), lagged_frame_fft_->GetConstView(),
       bands_cross_corr_);
   // Normalize.
-  for (int i = 0; rtc::SafeLt(i, bands_cross_corr_.size()); ++i) {
+  for (int i = 0; SafeLt(i, bands_cross_corr_.size()); ++i) {
     bands_cross_corr_[i] =
         bands_cross_corr_[i] /
         std::sqrt(0.001f + reference_frame_bands_energy_[i] *

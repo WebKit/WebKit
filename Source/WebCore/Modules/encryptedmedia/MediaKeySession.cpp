@@ -833,12 +833,13 @@ void MediaKeySession::stop()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_instanceSession->closeSession(m_sessionId, [this, weakThis = WeakPtr { this }, logIdentifier = LOGIDENTIFIER] {
-        if (!weakThis)
+    m_instanceSession->closeSession(m_sessionId, [weakThis = WeakPtr { this }, logIdentifier = LOGIDENTIFIER] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        ALWAYS_LOG(logIdentifier, "::lambda, closed");
-        sessionClosed();
+        ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "::lambda, closed");
+        protectedThis->sessionClosed();
     });
 }
 

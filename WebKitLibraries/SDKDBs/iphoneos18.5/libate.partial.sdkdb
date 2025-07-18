@@ -1,0 +1,298 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_alpha_not_premultiplied"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_opaque"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_premultiplied"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_count"}
+     ],
+     "name": "at_alpha_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_block_format_invalid"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_4x4_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_5x4_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_5x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_6x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_6x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x8_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x8_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x10_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_12x10_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_12x12_ldr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_4x4_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_5x4_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_5x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_6x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_6x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x8_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x8_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x10_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_12x10_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_12x12_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc1"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc2"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc3"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc4"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc4s"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc5"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc5s"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc6"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc6u"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc7"},
+      {"access": "public", "name": "at_block_format_count"}
+     ],
+     "name": "at_block_format_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_error_success"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_parameter"},
+      {"access": "public", "introduced": "10", "name": "at_error_operation_unsupported"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_source_data"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_flag"},
+      {"access": "public", "introduced": "13", "name": "at_error_hdr_block_format_required"}
+     ],
+     "name": "at_error_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_flags_default"},
+      {"access": "public", "introduced": "10", "name": "at_flags_skip_parameter_checking"},
+      {"access": "public", "introduced": "10", "name": "at_flags_print_debug_info"},
+      {"access": "public", "introduced": "10", "name": "at_flags_disable_multithreading"},
+      {"access": "public", "introduced": "10", "name": "at_flags_skip_error_calculation"},
+      {"access": "public", "introduced": "10", "name": "at_flags_flip_texel_region_vertically"},
+      {"access": "public", "introduced": "10", "name": "at_flags_srgb_linear_texels"},
+      {"access": "public", "introduced": "10", "name": "at_flags_weight_channels_equally"}
+     ],
+     "name": "at_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_texel_format_invalid"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_bgra8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_count"}
+     ],
+     "name": "at_texel_format_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13.2.2", "kind": "function", "linkage": "exported", "name": "_at_block_format_convert_to_MTLPixelFormat"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_block_format_to_MTLPixelFormat"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_block_get_features"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_compress_texels"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_create"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_decompress_texels"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_address"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_alpha"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_counts"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_dimensions"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_format"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_size"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_texel_alpha"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_texel_format"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_version"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_is_compression_monolithic"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_is_decompression_monolithic"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_texel_format_to_MTLPixelFormat"}
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "name": "OS_at_encoder",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "at_alpha_t"},
+    {"access": "public", "name": "at_block_buffer_t"},
+    {"access": "public", "name": "at_block_features_t"},
+    {"access": "public", "name": "at_block_format_t"},
+    {"access": "public", "name": "at_encoder_t"},
+    {"access": "public", "name": "at_error_t"},
+    {"access": "public", "name": "at_flags_t"},
+    {"access": "public", "name": "at_size_t"},
+    {"access": "public", "name": "at_texel_format_t"},
+    {"access": "public", "name": "at_texel_region_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_alpha_not_premultiplied"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_opaque"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_premultiplied"},
+      {"access": "public", "introduced": "10", "name": "at_alpha_count"}
+     ],
+     "name": "at_alpha_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_block_format_invalid"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_4x4_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_5x4_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_5x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_6x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_6x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_8x8_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x5_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x6_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x8_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_10x10_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_12x10_ldr"},
+      {"access": "public", "introduced": "10", "name": "at_block_format_astc_12x12_ldr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_4x4_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_5x4_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_5x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_6x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_6x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_8x8_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x5_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x6_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x8_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_10x10_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_12x10_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_astc_12x12_hdr"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc1"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc2"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc3"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc4"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc4s"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc5"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc5s"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc6"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc6u"},
+      {"access": "public", "introduced": "13", "name": "at_block_format_bc7"},
+      {"access": "public", "name": "at_block_format_count"}
+     ],
+     "name": "at_block_format_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_error_success"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_parameter"},
+      {"access": "public", "introduced": "10", "name": "at_error_operation_unsupported"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_source_data"},
+      {"access": "public", "introduced": "10", "name": "at_error_invalid_flag"},
+      {"access": "public", "introduced": "13", "name": "at_error_hdr_block_format_required"}
+     ],
+     "name": "at_error_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_flags_default"},
+      {"access": "public", "introduced": "10", "name": "at_flags_skip_parameter_checking"},
+      {"access": "public", "introduced": "10", "name": "at_flags_print_debug_info"},
+      {"access": "public", "introduced": "10", "name": "at_flags_disable_multithreading"},
+      {"access": "public", "introduced": "10", "name": "at_flags_skip_error_calculation"},
+      {"access": "public", "introduced": "10", "name": "at_flags_flip_texel_region_vertically"},
+      {"access": "public", "introduced": "10", "name": "at_flags_srgb_linear_texels"},
+      {"access": "public", "introduced": "10", "name": "at_flags_weight_channels_equally"}
+     ],
+     "name": "at_flags_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "at_texel_format_invalid"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_bgra8_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba16_unorm"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_l16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_la16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_rgba16_float"},
+      {"access": "public", "introduced": "10", "name": "at_texel_format_count"}
+     ],
+     "name": "at_texel_format_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13.2.2", "kind": "function", "linkage": "exported", "name": "_at_block_format_convert_to_MTLPixelFormat"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_block_format_to_MTLPixelFormat"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_block_get_features"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_compress_texels"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_create"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_decompress_texels"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_address"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_alpha"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_counts"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_dimensions"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_format"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_block_size"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_texel_alpha"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_texel_format"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_get_version"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_is_compression_monolithic"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_at_encoder_is_decompression_monolithic"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_at_texel_format_to_MTLPixelFormat"}
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "name": "OS_at_encoder",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "at_alpha_t"},
+    {"access": "public", "name": "at_block_buffer_t"},
+    {"access": "public", "name": "at_block_features_t"},
+    {"access": "public", "name": "at_block_format_t"},
+    {"access": "public", "name": "at_encoder_t"},
+    {"access": "public", "name": "at_error_t"},
+    {"access": "public", "name": "at_flags_t"},
+    {"access": "public", "name": "at_size_t"},
+    {"access": "public", "name": "at_texel_format_t"},
+    {"access": "public", "name": "at_texel_region_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

@@ -10,10 +10,18 @@
 
 #include "video/adaptation/pixel_limit_resource.h"
 
+#include <optional>
+
+#include "api/adaptation/resource.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "call/adaptation/video_stream_adapter.h"
+#include "call/adaptation/video_stream_input_state_provider.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/task_utils/repeating_task.h"
 
 namespace webrtc {
 
@@ -24,11 +32,10 @@ constexpr TimeDelta kResourceUsageCheckIntervalMs = TimeDelta::Seconds(5);
 }  // namespace
 
 // static
-rtc::scoped_refptr<PixelLimitResource> PixelLimitResource::Create(
+scoped_refptr<PixelLimitResource> PixelLimitResource::Create(
     TaskQueueBase* task_queue,
     VideoStreamInputStateProvider* input_state_provider) {
-  return rtc::make_ref_counted<PixelLimitResource>(task_queue,
-                                                   input_state_provider);
+  return make_ref_counted<PixelLimitResource>(task_queue, input_state_provider);
 }
 
 PixelLimitResource::PixelLimitResource(
@@ -83,11 +90,11 @@ void PixelLimitResource::SetResourceListener(ResourceListener* listener) {
       int target_pixels_lower_bounds =
           GetLowerResolutionThan(target_pixel_upper_bounds);
       if (current_pixels > target_pixel_upper_bounds) {
-        listener_->OnResourceUsageStateMeasured(
-            rtc::scoped_refptr<Resource>(this), ResourceUsageState::kOveruse);
+        listener_->OnResourceUsageStateMeasured(scoped_refptr<Resource>(this),
+                                                ResourceUsageState::kOveruse);
       } else if (current_pixels < target_pixels_lower_bounds) {
-        listener_->OnResourceUsageStateMeasured(
-            rtc::scoped_refptr<Resource>(this), ResourceUsageState::kUnderuse);
+        listener_->OnResourceUsageStateMeasured(scoped_refptr<Resource>(this),
+                                                ResourceUsageState::kUnderuse);
       }
       return kResourceUsageCheckIntervalMs;
     });

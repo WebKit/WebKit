@@ -33,10 +33,10 @@ class RtpGenericFrameDescriptorExtension00 {
   }
   static constexpr int kMaxSizeBytes = 16;
 
-  static bool Parse(rtc::ArrayView<const uint8_t> data,
+  static bool Parse(ArrayView<const uint8_t> data,
                     RtpGenericFrameDescriptor* descriptor);
   static size_t ValueSize(const RtpGenericFrameDescriptor& descriptor);
-  static bool Write(rtc::ArrayView<uint8_t> data,
+  static bool Write(ArrayView<uint8_t> data,
                     const RtpGenericFrameDescriptor& descriptor);
 };
 

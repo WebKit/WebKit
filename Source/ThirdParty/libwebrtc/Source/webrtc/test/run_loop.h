@@ -39,7 +39,7 @@ class RunLoop {
   }
 
  private:
-  class FakeSocketServer : public rtc::SocketServer {
+  class FakeSocketServer : public SocketServer {
    public:
     FakeSocketServer();
     ~FakeSocketServer();
@@ -50,15 +50,15 @@ class RunLoop {
     bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
     void WakeUp() override;
 
-    rtc::Socket* CreateSocket(int family, int type) override;
+    Socket* CreateSocket(int family, int type) override;
 
    private:
     bool fail_next_wait_ = false;
   };
 
-  class WorkerThread : public rtc::Thread {
+  class WorkerThread : public Thread {
    public:
-    explicit WorkerThread(rtc::SocketServer* ss);
+    explicit WorkerThread(SocketServer* ss);
 
    private:
     CurrentTaskQueueSetter tq_setter_;

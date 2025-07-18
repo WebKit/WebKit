@@ -29,6 +29,7 @@
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
+#include "ContainerNodeInlines.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
 #include "CSSUnitValue.h"

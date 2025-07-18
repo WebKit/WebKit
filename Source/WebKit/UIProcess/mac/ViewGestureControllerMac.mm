@@ -437,8 +437,8 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr snapshotLayerParent = determineSnapshotLayerParent();
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent.get());
 
-    RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    if (RefPtr<ViewSnapshot> snapshot = targetItem->snapshot()) {
+    RetainPtr backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    if (RefPtr snapshot = targetItem->snapshot()) {
         if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), obscuredContentInsets))
             [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
 
@@ -459,7 +459,12 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:deviceScaleFactor];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
-    [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width() - obscuredContentInsets.left(), swipeArea.height() - obscuredContentInsets.top())];
+    [m_swipeSnapshotLayer setFrame:CGRectMake(
+        obscuredContentInsets.left(),
+        obscuredContentInsets.bottom(),
+        swipeArea.width() - obscuredContentInsets.right() - obscuredContentInsets.left(),
+        swipeArea.height() - obscuredContentInsets.top() - obscuredContentInsets.bottom()
+    )];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
     [m_swipeSnapshotLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
@@ -658,16 +663,25 @@ void ViewGestureController::reset()
     resetState();
 }
 
-bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection)
+bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    notImplemented();
-    return false;
+    RefPtr item = itemForSwipeDirection(direction);
+    if (!item)
+        return false;
+
+    beginSwipeGesture(item.get(), direction);
+    return true;
 }
 
-bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
+bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    notImplemented();
-    return false;
+    RefPtr item = itemForSwipeDirection(direction);
+    if (!item)
+        return false;
+
+    willEndSwipeGesture(*item, false);
+    endSwipeGesture(item.get(), false);
+    return true;
 }
 
 } // namespace WebKit

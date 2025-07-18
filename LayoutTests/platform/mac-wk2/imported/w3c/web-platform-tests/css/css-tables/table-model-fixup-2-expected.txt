@@ -1,0 +1,212 @@
+Table fixup
+
+Check that replaced elements display types are handled properly in fixup
+
+Both input fields should look identical, on their own line:
+Replaced elements inside a table cannot be table-row and are considered inline -- input elements (width)
+
+
+
+Both input fields should look identical and be on the same line:
+Replaced elements inside a table cannot be table-row and are considered inline -- input elements (top)
+
+
+Both images should look identical, on their own line:
+Replaced elements inside a table cannot be table-row and are considered inline -- img elements (width)
+
+
+
+Both images should look identical and be on the same line:
+Replaced elements inside a table cannot be table-row and are considered inline -- img elements (top)
+
+
+Both input fields should look identical, on their own line:
+Replaced elements inside a table cannot be table-column and are considered inline -- input elements (width)
+
+
+
+Both input fields should look identical and be on the same line:
+Replaced elements inside a table cannot be table-column and are considered inline -- input elements (top)
+
+
+Both images should look identical, on their own line:
+Replaced elements inside a table cannot be table-column and are considered inline -- img elements (width)
+
+
+
+Both images should look identical and be on the same line:
+Replaced elements inside a table cannot be table-column and are considered inline -- img elements (top)
+
+
+Both input fields should look identical, on their own line:
+Replaced elements inside a table cannot be table-cell and are considered inline -- input elements (width)
+
+
+
+Both input fields should look identical and be on the same line:
+Replaced elements inside a table cannot be table-cell and are considered inline -- input elements (top)
+
+
+Both images should look identical, on their own line:
+Replaced elements inside a table cannot be table-cell and are considered inline -- img elements (width)
+
+
+
+Both images should look identical and be on the same line:
+Replaced elements inside a table cannot be table-cell and are considered inline -- img elements (top)
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be inline-table and are considered inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be inline-table and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be inline-table and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be inline-table and are considered inline -- img elements
+
+
+Both text inputs should stand on their own line:
+Replaced elements outside a table cannot be table and are considered block -- input=text elements
+
+
+Both button inputs should stand on their own line:
+Replaced elements outside a table cannot be table and are considered block -- input=button elements
+
+
+Both file inputs should stand on their own line:
+Replaced elements outside a table cannot be table and are considered block -- input=file elements
+
+
+Both images should stand on their own line:
+Replaced elements outside a table cannot be table and are considered block -- img elements
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be table-row and are considered inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be table-row and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be table-row and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be table-row and are considered inline -- img elements
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be table-row-group and are considered inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be table-row-group and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be table-row-group and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be table-row-group and are considered inline -- img elements
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be table-column and are considered inline inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be table-column and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be table-column and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be table-column and are considered inline -- img elements
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be table-cell and are considered inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be table-cell and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be table-cell and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be table-cell and are considered inline -- img elements
+
+
+Both text inputs should share the same line:
+Replaced elements outside a table cannot be table-caption and are considered inline -- input=text elements
+
+
+Both button inputs should share the same line:
+Replaced elements outside a table cannot be table-caption and are considered inline -- input=button elements
+
+
+Both file inputs should share the same line:
+Replaced elements outside a table cannot be table-caption and are considered inline -- input=file elements
+
+
+Both images should share the same line:
+Replaced elements outside a table cannot be table-caption and are considered inline -- img elements
+
+
+
+PASS Replaced elements inside a table cannot be table-row and are considered inline -- input elements (width)
+PASS Replaced elements inside a table cannot be table-row and are considered inline -- input elements (top)
+PASS Replaced elements inside a table cannot be table-row and are considered inline -- img elements (width)
+FAIL Replaced elements inside a table cannot be table-row and are considered inline -- img elements (top) assert_equals: expected 808.875 but got 840.875
+PASS Replaced elements inside a table cannot be table-column and are considered inline -- input elements (width)
+PASS Replaced elements inside a table cannot be table-column and are considered inline -- input elements (top)
+PASS Replaced elements inside a table cannot be table-column and are considered inline -- img elements (width)
+FAIL Replaced elements inside a table cannot be table-column and are considered inline -- img elements (top) assert_equals: expected 1561.875 but got 1593.875
+PASS Replaced elements inside a table cannot be table-cell and are considered inline -- input elements (width)
+PASS Replaced elements inside a table cannot be table-cell and are considered inline -- input elements (top)
+PASS Replaced elements inside a table cannot be table-cell and are considered inline -- img elements (width)
+FAIL Replaced elements inside a table cannot be table-cell and are considered inline -- img elements (top) assert_equals: expected 2304.875 but got 2336.875
+PASS Replaced elements outside a table cannot be inline-table and are considered inline -- input=text elements
+PASS Replaced elements outside a table cannot be inline-table and are considered inline -- input=button elements
+PASS Replaced elements outside a table cannot be inline-table and are considered inline -- input=file elements
+PASS Replaced elements outside a table cannot be inline-table and are considered inline -- img elements
+PASS Replaced elements outside a table cannot be table and are considered block -- input=text elements
+PASS Replaced elements outside a table cannot be table and are considered block -- input=button elements
+PASS Replaced elements outside a table cannot be table and are considered block -- input=file elements
+PASS Replaced elements outside a table cannot be table and are considered block -- img elements
+PASS Replaced elements outside a table cannot be table-row and are considered inline -- input=text elements
+PASS Replaced elements outside a table cannot be table-row and are considered inline -- input=button elements
+FAIL Replaced elements outside a table cannot be table-row and are considered inline -- input=file elements assert_equals: expected 3747.875 but got 3765.875
+FAIL Replaced elements outside a table cannot be table-row and are considered inline -- img elements assert_equals: expected 3879.875 but got 3911.875
+PASS Replaced elements outside a table cannot be table-row-group and are considered inline -- input=text elements
+PASS Replaced elements outside a table cannot be table-row-group and are considered inline -- input=button elements
+FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- input=file elements assert_equals: expected 4271.875 but got 4289.875
+FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- img elements assert_equals: expected 4403.875 but got 4435.875
+PASS Replaced elements outside a table cannot be table-column and are considered inline inline -- input=text elements
+PASS Replaced elements outside a table cannot be table-column and are considered inline -- input=button elements
+FAIL Replaced elements outside a table cannot be table-column and are considered inline -- input=file elements assert_equals: expected 4795.875 but got 4813.875
+FAIL Replaced elements outside a table cannot be table-column and are considered inline -- img elements assert_equals: expected 4927.875 but got 4959.875
+PASS Replaced elements outside a table cannot be table-cell and are considered inline -- input=text elements
+PASS Replaced elements outside a table cannot be table-cell and are considered inline -- input=button elements
+FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- input=file elements assert_equals: expected 5319.875 but got 5337.875
+FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- img elements assert_equals: expected 5451.875 but got 5483.875
+PASS Replaced elements outside a table cannot be table-caption and are considered inline -- input=text elements
+PASS Replaced elements outside a table cannot be table-caption and are considered inline -- input=button elements
+FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- input=file elements assert_equals: expected 5843.875 but got 5861.875
+FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- img elements assert_equals: expected 5975.875 but got 6007.875
+

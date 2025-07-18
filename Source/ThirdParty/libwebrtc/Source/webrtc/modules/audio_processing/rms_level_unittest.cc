@@ -25,7 +25,7 @@ namespace {
 constexpr int kSampleRateHz = 48000;
 constexpr size_t kBlockSizeSamples = kSampleRateHz / 100;
 
-std::unique_ptr<RmsLevel> RunTest(rtc::ArrayView<const int16_t> input) {
+std::unique_ptr<RmsLevel> RunTest(ArrayView<const int16_t> input) {
   std::unique_ptr<RmsLevel> level(new RmsLevel);
   for (size_t n = 0; n + kBlockSizeSamples <= input.size();
        n += kBlockSizeSamples) {
@@ -34,7 +34,7 @@ std::unique_ptr<RmsLevel> RunTest(rtc::ArrayView<const int16_t> input) {
   return level;
 }
 
-std::unique_ptr<RmsLevel> RunTest(rtc::ArrayView<const float> input) {
+std::unique_ptr<RmsLevel> RunTest(ArrayView<const float> input) {
   std::unique_ptr<RmsLevel> level(new RmsLevel);
   for (size_t n = 0; n + kBlockSizeSamples <= input.size();
        n += kBlockSizeSamples) {
@@ -48,7 +48,7 @@ std::vector<int16_t> CreateInt16Sinusoid(int frequency_hz,
                                          size_t num_samples) {
   std::vector<int16_t> x(num_samples);
   for (size_t n = 0; n < num_samples; ++n) {
-    x[n] = rtc::saturated_cast<int16_t>(
+    x[n] = saturated_cast<int16_t>(
         amplitude * std::sin(2 * M_PI * n * frequency_hz / kSampleRateHz));
   }
   return x;
@@ -143,8 +143,8 @@ TEST(RmsLevelTest, Reset) {
 TEST(RmsLevelTest, ProcessMuted) {
   auto x = CreateInt16Sinusoid(1000, INT16_MAX, kSampleRateHz);
   auto level = RunTest(x);
-  const size_t kBlocksPerSecond = rtc::CheckedDivExact(
-      static_cast<size_t>(kSampleRateHz), kBlockSizeSamples);
+  const size_t kBlocksPerSecond =
+      CheckedDivExact(static_cast<size_t>(kSampleRateHz), kBlockSizeSamples);
   for (size_t i = 0; i < kBlocksPerSecond; ++i) {
     level->AnalyzeMuted(kBlockSizeSamples);
   }

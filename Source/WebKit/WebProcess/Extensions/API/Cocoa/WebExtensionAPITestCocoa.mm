@@ -438,7 +438,7 @@ JSValue *WebExtensionAPITest::addTest(JSContextRef context, JSValue *testFunctio
     if (!m_runningTest) {
         m_runningTest = true;
 
-        WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }] {
+        WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
             startNextTest();
         });
     }

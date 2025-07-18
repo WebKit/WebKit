@@ -39,7 +39,7 @@ namespace WTF {
 
 template<typename PassedType>
 class Range {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Range);
 public:
     typedef PassedType Type;
     

@@ -32,7 +32,7 @@ const size_t kAvccHeaderByteSize = sizeof(uint32_t);
 
 bool H264CMSampleBufferToAnnexBBuffer(CMSampleBufferRef avcc_sample_buffer,
                                       bool is_keyframe,
-                                      rtc::Buffer* annexb_buffer) {
+                                      webrtc::Buffer* annexb_buffer) {
   RTC_DCHECK(avcc_sample_buffer);
 
   // Get format description from the sample buffer.
@@ -229,7 +229,7 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
 bool H265CMSampleBufferToAnnexBBuffer(
     CMSampleBufferRef hvcc_sample_buffer,
     bool is_keyframe,
-    rtc::Buffer* annexb_buffer) {
+    webrtc::Buffer* annexb_buffer) {
   RTC_DCHECK(hvcc_sample_buffer);
 
   // Get format description from the sample buffer.

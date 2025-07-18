@@ -88,7 +88,7 @@ float WebKitGetMinimumZoomFontSize(void)
     return DEFAULT_VALUE_FOR_MinimumZoomFontSize;
 }
 
-int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)
+int WebKitGetLastLineBreakInBuffer(char16_t *characters, int position, int length)
 {
     unsigned lastBreakPos = position;
     unsigned breakPos = 0;

@@ -18,7 +18,11 @@ namespace
 class WebGLCompressedTextureAvailabilityTest : public ANGLETest<>
 {
   public:
-    WebGLCompressedTextureAvailabilityTest() { setWebGLCompatibilityEnabled(true); }
+    WebGLCompressedTextureAvailabilityTest()
+    {
+        setWebGLCompatibilityEnabled(true);
+        setExtensionsEnabled(false);
+    }
 };
 
 const char kDXT1[]     = "GL_EXT_texture_compression_dxt1";

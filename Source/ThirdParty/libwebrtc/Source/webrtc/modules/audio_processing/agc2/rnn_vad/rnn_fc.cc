@@ -22,7 +22,7 @@ namespace webrtc {
 namespace rnn_vad {
 namespace {
 
-std::vector<float> GetScaledParams(rtc::ArrayView<const int8_t> params) {
+std::vector<float> GetScaledParams(ArrayView<const int8_t> params) {
   std::vector<float> scaled_params(params.size());
   std::transform(params.begin(), params.end(), scaled_params.begin(),
                  [](int8_t x) -> float {
@@ -34,14 +34,14 @@ std::vector<float> GetScaledParams(rtc::ArrayView<const int8_t> params) {
 // TODO(bugs.chromium.org/10480): Hard-code optimized layout and remove this
 // function to improve setup time.
 // Casts and scales `weights` and re-arranges the layout.
-std::vector<float> PreprocessWeights(rtc::ArrayView<const int8_t> weights,
+std::vector<float> PreprocessWeights(ArrayView<const int8_t> weights,
                                      int output_size) {
   if (output_size == 1) {
     return GetScaledParams(weights);
   }
   // Transpose, scale and cast.
-  const int input_size = rtc::CheckedDivExact(
-      rtc::dchecked_cast<int>(weights.size()), output_size);
+  const int input_size =
+      CheckedDivExact(dchecked_cast<int>(weights.size()), output_size);
   std::vector<float> w(weights.size());
   for (int o = 0; o < output_size; ++o) {
     for (int i = 0; i < input_size; ++i) {
@@ -52,7 +52,7 @@ std::vector<float> PreprocessWeights(rtc::ArrayView<const int8_t> weights,
   return w;
 }
 
-rtc::FunctionView<float(float)> GetActivationFunction(
+FunctionView<float(float)> GetActivationFunction(
     ActivationFunction activation_function) {
   switch (activation_function) {
     case ActivationFunction::kTansigApproximated:
@@ -67,8 +67,8 @@ rtc::FunctionView<float(float)> GetActivationFunction(
 FullyConnectedLayer::FullyConnectedLayer(
     const int input_size,
     const int output_size,
-    const rtc::ArrayView<const int8_t> bias,
-    const rtc::ArrayView<const int8_t> weights,
+    const ArrayView<const int8_t> bias,
+    const ArrayView<const int8_t> weights,
     ActivationFunction activation_function,
     const AvailableCpuFeatures& cpu_features,
     absl::string_view layer_name)
@@ -90,9 +90,9 @@ FullyConnectedLayer::FullyConnectedLayer(
 
 FullyConnectedLayer::~FullyConnectedLayer() = default;
 
-void FullyConnectedLayer::ComputeOutput(rtc::ArrayView<const float> input) {
+void FullyConnectedLayer::ComputeOutput(ArrayView<const float> input) {
   RTC_DCHECK_EQ(input.size(), input_size_);
-  rtc::ArrayView<const float> weights(weights_);
+  ArrayView<const float> weights(weights_);
   for (int o = 0; o < output_size_; ++o) {
     output_[o] = activation_function_(
         bias_[o] + vector_math_.DotProduct(

@@ -55,11 +55,13 @@ static bool isPredefinedCounterStyle(CSSValueID valueID)
 
 RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    // <counter-style> = <counter-style-name> | <symbols()>
+    // <counter-style> = <counter-style-name excluding=none> | <symbols()>
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 
     // FIXME: Implement support for `symbols()`.
 
+    if (range.peek().id() == CSSValueNone)
+        return nullptr;
     if (auto predefinedValues = consumeIdent(range, isPredefinedCounterStyle))
         return predefinedValues;
     return consumeCustomIdent(range);

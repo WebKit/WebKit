@@ -63,6 +63,7 @@ template<typename Descriptor> struct RelativeColor;
 
 struct Color {
 private:
+    friend struct MarkableTraits<Color>;
     struct EmptyToken { constexpr bool operator==(const EmptyToken&) const = default; };
 
     // FIXME: Replace Variant with a generic CompactPointerVariant type.
@@ -150,11 +151,6 @@ public:
     // as const references, pretending the UniqueRefs don't exist.
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const Color&);
-        static Color emptyValue();
-    };
-
     String debugDescription() const;
 
 private:
@@ -228,5 +224,15 @@ template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
 
 } // namespace Style
 } // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::Color> {
+    static bool isEmptyValue(const WebCore::Style::Color& color) { return std::holds_alternative<WebCore::Style::Color::EmptyToken>(color.value); }
+    static WebCore::Style::Color emptyValue() { return WebCore::Style::Color(WebCore::Style::Color::EmptyToken()); }
+};
+
+}
 
 template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::Color> = true;

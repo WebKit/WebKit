@@ -27,7 +27,7 @@
 #include "rtc_base/socket_factory.h"
 #include "rtc_base/time_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 AsyncUDPSocket* AsyncUDPSocket::Create(Socket* socket,
                                        const SocketAddress& bind_address) {
@@ -64,9 +64,9 @@ SocketAddress AsyncUDPSocket::GetRemoteAddress() const {
 
 int AsyncUDPSocket::Send(const void* pv,
                          size_t cb,
-                         const rtc::PacketOptions& options) {
-  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
-                              options.info_signaled_after_sent);
+                         const AsyncSocketPacketOptions& options) {
+  SentPacketInfo sent_packet(options.packet_id, TimeMillis(),
+                             options.info_signaled_after_sent);
   CopySocketInformationToPacketInfo(cb, *this, &sent_packet.info);
   int ret = socket_->Send(pv, cb);
   SignalSentPacket(this, sent_packet);
@@ -76,9 +76,9 @@ int AsyncUDPSocket::Send(const void* pv,
 int AsyncUDPSocket::SendTo(const void* pv,
                            size_t cb,
                            const SocketAddress& addr,
-                           const rtc::PacketOptions& options) {
-  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
-                              options.info_signaled_after_sent);
+                           const AsyncSocketPacketOptions& options) {
+  SentPacketInfo sent_packet(options.packet_id, TimeMillis(),
+                             options.info_signaled_after_sent);
   CopySocketInformationToPacketInfo(cb, *this, &sent_packet.info);
   if (has_set_ect1_options_ != options.ecn_1) {
     // It is unclear what is most efficient, setting options on every sent
@@ -141,22 +141,22 @@ void AsyncUDPSocket::OnReadEvent(Socket* socket) {
 
   if (!receive_buffer.arrival_time) {
     // Timestamp from socket is not available.
-    receive_buffer.arrival_time = webrtc::Timestamp::Micros(rtc::TimeMicros());
+    receive_buffer.arrival_time = Timestamp::Micros(TimeMicros());
   } else {
     if (!socket_time_offset_) {
       // Estimate timestamp offset from first packet arrival time.
-      socket_time_offset_ = webrtc::Timestamp::Micros(rtc::TimeMicros()) -
-                            *receive_buffer.arrival_time;
+      socket_time_offset_ =
+          Timestamp::Micros(TimeMicros()) - *receive_buffer.arrival_time;
     }
     *receive_buffer.arrival_time += *socket_time_offset_;
   }
   NotifyPacketReceived(
-      ReceivedPacket(receive_buffer.payload, receive_buffer.source_address,
-                     receive_buffer.arrival_time, receive_buffer.ecn));
+      ReceivedIpPacket(receive_buffer.payload, receive_buffer.source_address,
+                       receive_buffer.arrival_time, receive_buffer.ecn));
 }
 
 void AsyncUDPSocket::OnWriteEvent(Socket* socket) {
   SignalReadyToSend(this);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

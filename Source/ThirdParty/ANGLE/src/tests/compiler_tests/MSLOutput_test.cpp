@@ -1048,7 +1048,6 @@ TEST_F(MSLOutputTest, UnnamedOutParameterNoCrash)
 TEST_F(MSLOutputTest, ExplicitBoolCastsNoCrash)
 {
     ShCompileOptions options     = defaultOptions();
-    options.addExplicitBoolCasts = 1;
     const char kShader[]         = R"(
 precision mediump float;
 void main(){vec2 c;bvec2 U=bvec2(c.xx);if (U.x) gl_FragColor = vec4(1);})";

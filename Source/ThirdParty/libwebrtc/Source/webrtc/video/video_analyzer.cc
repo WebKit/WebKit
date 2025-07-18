@@ -12,25 +12,58 @@
 #include <inttypes.h>
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/call/transport.h"
+#include "api/media_types.h"
+#include "api/numerics/samples_stats_counter.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
+#include "call/audio_receive_stream.h"
+#include "call/call.h"
+#include "call/packet_receiver.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/rtp_rtcp/source/create_video_rtp_depacketizer.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
-#include "modules/rtp_rtcp/source/rtp_util.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/cpu_time.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/memory_usage.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system_time.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/cpu_info.h"
-#include "test/call_test.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
+#include "test/layer_filtering_transport.h"
+#include "test/rtp_file_reader.h"
+#include "test/rtp_file_writer.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_writer.h"
 #include "test/testsupport/test_artifacts.h"
@@ -45,10 +78,10 @@ ABSL_FLAG(bool,
 namespace webrtc {
 namespace {
 
-using ::webrtc::test::GetGlobalMetricsLogger;
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Metric;
-using ::webrtc::test::Unit;
+using test::GetGlobalMetricsLogger;
+using test::ImprovementDirection;
+using test::Metric;
+using test::Unit;
 
 constexpr TimeDelta kSendStatsPollingInterval = TimeDelta::Seconds(1);
 constexpr size_t kMaxComparisons = 10;
@@ -136,8 +169,7 @@ VideoAnalyzer::VideoAnalyzer(test::LayerFilteringTransport* transport,
   // Also, don't allocate more than kMaxComparisonThreads, even if there are
   // spare cores.
 
-  uint32_t num_cores = CpuInfo::DetectNumberOfCores();
-  RTC_DCHECK_GE(num_cores, 1);
+  uint32_t num_cores = cpu_info::DetectNumberOfCores();
   static const uint32_t kMinCoresLeft = 4;
   static const uint32_t kMaxComparisonThreads = 8;
 
@@ -149,7 +181,7 @@ VideoAnalyzer::VideoAnalyzer(test::LayerFilteringTransport* transport,
   }
 
   for (uint32_t i = 0; i < num_cores; ++i) {
-    comparison_thread_pool_.push_back(rtc::PlatformThread::SpawnJoinable(
+    comparison_thread_pool_.push_back(PlatformThread::SpawnJoinable(
         [this] {
           while (CompareFrames()) {
           }
@@ -177,12 +209,11 @@ void VideoAnalyzer::SetReceiver(PacketReceiver* receiver) {
   receiver_ = receiver;
 }
 
-void VideoAnalyzer::SetSource(
-    rtc::VideoSourceInterface<VideoFrame>* video_source,
-    bool respect_sink_wants) {
+void VideoAnalyzer::SetSource(VideoSourceInterface<VideoFrame>* video_source,
+                              bool respect_sink_wants) {
   if (respect_sink_wants)
     captured_frame_forwarder_.SetSource(video_source);
-  rtc::VideoSinkWants wants;
+  VideoSinkWants wants;
   video_source->AddOrUpdateSink(InputInterface(), wants);
 }
 
@@ -211,15 +242,15 @@ void VideoAnalyzer::SetAudioReceiveStream(
   audio_receive_stream_ = recv_stream;
 }
 
-rtc::VideoSinkInterface<VideoFrame>* VideoAnalyzer::InputInterface() {
+VideoSinkInterface<VideoFrame>* VideoAnalyzer::InputInterface() {
   return &captured_frame_forwarder_;
 }
 
-rtc::VideoSourceInterface<VideoFrame>* VideoAnalyzer::OutputInterface() {
+VideoSourceInterface<VideoFrame>* VideoAnalyzer::OutputInterface() {
   return &captured_frame_forwarder_;
 }
 
-void VideoAnalyzer::DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) {
+void VideoAnalyzer::DeliverRtcpPacket(CopyOnWriteBuffer packet) {
   return receiver_->DeliverRtcpPacket(std::move(packet));
 }
 
@@ -272,7 +303,7 @@ void VideoAnalyzer::PostEncodeOnFrame(size_t stream_id, uint32_t timestamp) {
   }
 }
 
-bool VideoAnalyzer::SendRtp(rtc::ArrayView<const uint8_t> packet,
+bool VideoAnalyzer::SendRtp(ArrayView<const uint8_t> packet,
                             const PacketOptions& options) {
   RtpPacket rtp_packet;
   rtp_packet.Parse(packet);
@@ -305,8 +336,9 @@ bool VideoAnalyzer::SendRtp(rtc::ArrayView<const uint8_t> packet,
   return result;
 }
 
-bool VideoAnalyzer::SendRtcp(rtc::ArrayView<const uint8_t> packet) {
-  return transport_->SendRtcp(packet);
+bool VideoAnalyzer::SendRtcp(ArrayView<const uint8_t> packet,
+                             const PacketOptions& options) {
+  return transport_->SendRtcp(packet, options);
 }
 
 void VideoAnalyzer::OnFrame(const VideoFrame& video_frame) {
@@ -411,24 +443,24 @@ void VideoAnalyzer::Wait() {
 
 void VideoAnalyzer::StartMeasuringCpuProcessTime() {
   MutexLock lock(&cpu_measurement_lock_);
-  cpu_time_ -= rtc::GetProcessCpuTimeNanos();
-  wallclock_time_ -= rtc::SystemTimeNanos();
+  cpu_time_ -= GetProcessCpuTimeNanos();
+  wallclock_time_ -= SystemTimeNanos();
 }
 
 void VideoAnalyzer::StopMeasuringCpuProcessTime() {
   MutexLock lock(&cpu_measurement_lock_);
-  cpu_time_ += rtc::GetProcessCpuTimeNanos();
-  wallclock_time_ += rtc::SystemTimeNanos();
+  cpu_time_ += GetProcessCpuTimeNanos();
+  wallclock_time_ += SystemTimeNanos();
 }
 
 void VideoAnalyzer::StartExcludingCpuThreadTime() {
   MutexLock lock(&cpu_measurement_lock_);
-  cpu_time_ += rtc::GetThreadCpuTimeNanos();
+  cpu_time_ += GetThreadCpuTimeNanos();
 }
 
 void VideoAnalyzer::StopExcludingCpuThreadTime() {
   MutexLock lock(&cpu_measurement_lock_);
-  cpu_time_ -= rtc::GetThreadCpuTimeNanos();
+  cpu_time_ -= GetThreadCpuTimeNanos();
 }
 
 double VideoAnalyzer::GetCpuUsagePercent() {
@@ -441,7 +473,7 @@ bool VideoAnalyzer::IsInSelectedSpatialAndTemporalLayer(
   if (rtp_packet.PayloadType() == test::VideoTestConstants::kPayloadTypeVP8) {
     auto parsed_payload = vp8_depacketizer_->Parse(rtp_packet.PayloadBuffer());
     RTC_DCHECK(parsed_payload);
-    const auto& vp8_header = absl::get<RTPVideoHeaderVP8>(
+    const auto& vp8_header = std::get<RTPVideoHeaderVP8>(
         parsed_payload->video_header.video_type_header);
     int temporal_idx = vp8_header.temporalIdx;
     return selected_tl_ < 0 || temporal_idx == kNoTemporalIdx ||
@@ -451,7 +483,7 @@ bool VideoAnalyzer::IsInSelectedSpatialAndTemporalLayer(
   if (rtp_packet.PayloadType() == test::VideoTestConstants::kPayloadTypeVP9) {
     auto parsed_payload = vp9_depacketizer_->Parse(rtp_packet.PayloadBuffer());
     RTC_DCHECK(parsed_payload);
-    const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
+    const auto& vp9_header = std::get<RTPVideoHeaderVP9>(
         parsed_payload->video_header.video_type_header);
     int temporal_idx = vp9_header.temporal_idx;
     int spatial_idx = vp9_header.spatial_idx;
@@ -538,7 +570,7 @@ void VideoAnalyzer::PollStats() {
     audio_jitter_buffer_ms_.AddSample(receive_stats.jitter_buffer_ms);
   }
 
-  memory_usage_.AddSample(rtc::GetProcessResidentSizeBytes());
+  memory_usage_.AddSample(GetProcessResidentSizeBytes());
 }
 
 bool VideoAnalyzer::CompareFrames() {
@@ -669,7 +701,7 @@ void VideoAnalyzer::PrintResults() {
   const double total_freezes_duration_ms_double =
       static_cast<double>(total_freezes_duration_ms_);
   const double total_frames_duration_ms_double =
-      total_inter_frame_delay_ * rtc::kNumMillisecsPerSec;
+      total_inter_frame_delay_ * kNumMillisecsPerSec;
 
   if (total_frames_duration_ms_double > 0) {
     GetGlobalMetricsLogger()->LogSingleValueMetric(
@@ -1026,8 +1058,8 @@ void VideoAnalyzer::CapturedFrameForwarder::OnFrame(
 }
 
 void VideoAnalyzer::CapturedFrameForwarder::AddOrUpdateSink(
-    rtc::VideoSinkInterface<VideoFrame>* sink,
-    const rtc::VideoSinkWants& wants) {
+    VideoSinkInterface<VideoFrame>* sink,
+    const VideoSinkWants& wants) {
   {
     MutexLock lock(&lock_);
     RTC_DCHECK(!send_stream_input_ || send_stream_input_ == sink);
@@ -1039,7 +1071,7 @@ void VideoAnalyzer::CapturedFrameForwarder::AddOrUpdateSink(
 }
 
 void VideoAnalyzer::CapturedFrameForwarder::RemoveSink(
-    rtc::VideoSinkInterface<VideoFrame>* sink) {
+    VideoSinkInterface<VideoFrame>* sink) {
   MutexLock lock(&lock_);
   RTC_DCHECK(sink == send_stream_input_);
   send_stream_input_ = nullptr;

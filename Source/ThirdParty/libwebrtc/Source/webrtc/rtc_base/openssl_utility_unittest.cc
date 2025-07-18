@@ -40,7 +40,7 @@
 #include "rtc_base/ssl_roots.h"
 #include "test/gmock.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 // Fake P-256 key for use with the test certificates below.
 const unsigned char kFakeSSLPrivateKey[] = {
@@ -305,4 +305,4 @@ TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHostLegacy) {
   SSL_free(ssl);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

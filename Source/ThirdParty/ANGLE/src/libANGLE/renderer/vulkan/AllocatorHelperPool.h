@@ -33,20 +33,12 @@ class DedicatedCommandBlockAllocator
     DedicatedCommandBlockAllocator() = default;
     void resetAllocator();
 
-    static constexpr size_t kDefaultPoolAllocatorPageSize = 16 * 1024;
-    void init()
-    {
-        mAllocator.initialize(kDefaultPoolAllocatorPageSize, 1);
-        // Push a scope into the pool allocator so we can easily free and re-init on reset()
-        mAllocator.push();
-    }
-
     DedicatedCommandMemoryAllocator *getAllocator() { return &mAllocator; }
 
   private:
     // Using a pool allocator per CBH to avoid threading issues that occur w/ shared allocator
     // between multiple CBHs.
-    DedicatedCommandMemoryAllocator mAllocator;
+    DedicatedCommandMemoryAllocator mAllocator{1};
 };
 
 // Used in SecondaryCommandBuffer

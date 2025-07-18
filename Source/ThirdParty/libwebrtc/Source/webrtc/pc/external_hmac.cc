@@ -13,8 +13,11 @@
 #include <stdlib.h>  // For malloc/free.
 #include <string.h>
 
+#include <cstdint>
+
 #include "rtc_base/logging.h"
 #include "rtc_base/zero_memory.h"
+#include "third_party/libsrtp/crypto/include/auth.h"
 #include "third_party/libsrtp/include/srtp.h"
 
 // Begin test case 0 */
@@ -36,7 +39,7 @@ static const srtp_auth_test_case_t kExternalHmacTestCase0 = {
     const_cast<uint8_t*>(kExternalHmacTestCase0Data),  // Data
     10,                                                // Octets in tag
     const_cast<uint8_t*>(kExternalHmacFakeTag),        // Tag
-    NULL                                               // Pointer to next
+    nullptr                                            // Pointer to next
                                                        // testcase
 };
 
@@ -72,7 +75,7 @@ srtp_err_status_t external_hmac_alloc(srtp_auth_t** a,
 
   // Allocate memory for auth and hmac_ctx_t structures.
   pointer = new uint8_t[(sizeof(ExternalHmacContext) + sizeof(srtp_auth_t))];
-  if (pointer == NULL)
+  if (pointer == nullptr)
     return srtp_err_status_alloc_fail;
 
   // Set pointers
@@ -90,7 +93,8 @@ srtp_err_status_t external_hmac_alloc(srtp_auth_t** a,
 }
 
 srtp_err_status_t external_hmac_dealloc(srtp_auth_t* a) {
-  rtc::ExplicitZeroMemory(a, sizeof(ExternalHmacContext) + sizeof(srtp_auth_t));
+  webrtc::ExplicitZeroMemory(a,
+                             sizeof(ExternalHmacContext) + sizeof(srtp_auth_t));
 
   // Free memory
   delete[] a;

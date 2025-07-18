@@ -55,18 +55,13 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGImage);
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTFMove(style))
-    , m_imageResource(makeUnique<RenderImageResource>())
+    , m_imageResource(makeUniqueRef<RenderImageResource>())
 {
     ASSERT(isRenderSVGImage());
     imageResource().initialize(*this);
 }
 
 RenderSVGImage::~RenderSVGImage() = default;
-
-CheckedRef<RenderImageResource> RenderSVGImage::checkedImageResource() const
-{
-    return *m_imageResource;
-}
 
 void RenderSVGImage::willBeDestroyed()
 {

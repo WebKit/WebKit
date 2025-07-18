@@ -60,7 +60,7 @@ VirtualLocalConnection::VirtualLocalConnection(const VirtualAuthenticatorConfigu
 void VirtualLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&& callback)
 {
     // Mock async operations.
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             callback(UserVerification::No, adoptNS([allocLAContextInstance() init]).get());
@@ -77,7 +77,7 @@ void VirtualLocalConnection::verifyUser(const String&, ClientDataType, SecAccess
 void VirtualLocalConnection::verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&& callback)
 {
     // Mock async operations.
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             callback(UserVerification::No);

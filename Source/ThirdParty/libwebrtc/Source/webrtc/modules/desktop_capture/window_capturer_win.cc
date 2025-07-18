@@ -28,7 +28,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
       WindowCapturerWinGdi::CreateRawWindowCapturer(options));
 #if defined(RTC_ENABLE_WIN_WGC)
   if (options.allow_wgc_capturer_fallback() &&
-      rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_WIN11) {
+      rtc_win::GetVersion() >= rtc_win::Version::VERSION_WIN11) {
     // BlankDectector capturer will send an error when it detects a failed
     // GDI rendering, then Fallback capturer will try to capture it again with
     // WGC.

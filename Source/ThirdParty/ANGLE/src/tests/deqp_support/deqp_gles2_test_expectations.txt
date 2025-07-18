@@ -394,7 +394,8 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 // These tests crash because redeclarations of gl_ variables as invariant are not yet supported in the WGSL translator.
 42267100 WGPU : dEQP-GLES2.functional.shaders.invariance.* = SKIP
 // Other WebGPU failures.
-356399840 WGPU : dEQP-GLES2.functional.buffer.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.buffer.write.use.index_array.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.buffer.write.random.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.clipping.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.color_clear.*complex* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.color_clear.*masked* = FAIL
@@ -402,7 +403,6 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.default_vertex_attrib.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.depth_range.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.depth_stencil_clear.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.dither.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.draw.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.api.attachment_query_tex2d = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.api.delete_tex_2d_attached_to_bound_fbo = FAIL
@@ -413,7 +413,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.depth.* = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.stencil.* = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.* = FAIL
-370690274 WGPU : dEQP-GLES2.functional.fragment_ops.scissor.* = FAIL
+370690274 WGPU : dEQP-GLES2.functional.fragment_ops.scissor.clear_* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fragment_ops.blend.*constant_alpha* = FAIL
 370690274 WGPU MAC INTEL : dEQP-GLES2.functional.fragment_ops.blend.* = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.random.* = FAIL
@@ -423,8 +423,44 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_output.renderbuffer_framebuffer = FAIL
 356399840 WGPU : dEQP-GLES2.functional.negative_api.texture.generatemipmap_npot_wdt_hgt = FAIL
 356399840 WGPU : dEQP-GLES2.functional.polygon_offset.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.rasterization.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.rasterization.primitives.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.rasterization.culling.*triangle_fan* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.rasterization.culling.*both_triangle* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.rasterization.interpolation.*triangle_fan* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.depth_range* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.fragcoord_xyz = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.frontfacing = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.conditionals.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.constant_expressions.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.constants.bool_* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.conversions.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.discard.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.fragdata.valid_static_index = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.fragdata.valid_static_index.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.function.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.array_arguments.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.control_flow.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.datatypes.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.declarations.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.misc.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.overloading.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.functions.qualifiers.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.indexing.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.linkage.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.loops.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.matrix.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.misc.compound_assignment.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.operator.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.qualification_order.parameters.valid.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.random.comparison_ops.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.random.conditionals.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.random.texture.vertex.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.random.all_features.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.scoping.valid.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.struct.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.swizzles.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.texture_functions.vertex.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.state_query.shader.uniform_value_* = FAIL
 // Unfortunately Intel and AMD GPUs on Mac fail texture filtering tests.
 389145696 WGPU MAC INTEL : dEQP-GLES2.functional.texture.filtering.2d.* = FAIL
@@ -444,4 +480,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 389145696 WGPU : dEQP-GLES2.functional.texture.completeness.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.vertex.* = SKIP
 356399840 WGPU : dEQP-GLES2.functional.uniform_api.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.*.bool_* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.value.*.render.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.random.* = FAIL
 392542001 WGPU : dEQP-GLES2.functional.vertex_arrays.multiple_attributes* = FAIL

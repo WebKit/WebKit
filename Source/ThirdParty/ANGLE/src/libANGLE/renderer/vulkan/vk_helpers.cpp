@@ -1810,7 +1810,6 @@ CommandBufferHelperCommon::~CommandBufferHelperCommon() {}
 
 void CommandBufferHelperCommon::initializeImpl()
 {
-    mCommandAllocator.init();
 }
 
 void CommandBufferHelperCommon::resetImpl(ErrorContext *context)
@@ -13343,6 +13342,31 @@ angle::Result BufferViewHelper::getView(ErrorContext *context,
     viewCreateInfo.format                 = viewVkFormat;
     viewCreateInfo.offset                 = mOffset + bufferOffset;
     viewCreateInfo.range                  = size;
+
+    VkBufferUsageFlags2CreateInfoKHR usageFlagsCreateInfo = {};
+    if (renderer->getFeatures().supportsMaintenance5.enabled)
+    {
+        // The usage for bufferview should only contain the uniform texel and storage texel bits.
+        usageFlagsCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR;
+        constexpr VkFormatFeatureFlags kViewUsageFormatFeatureMask =
+            VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT | VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT;
+        VkBufferUsageFlags2KHR viewUsage = 0;
+
+        VkFormatFeatureFlags bufferFormatFeatureBits =
+            renderer->getBufferFormatFeatureBits(bufferFormat.id, kViewUsageFormatFeatureMask);
+        if ((bufferFormatFeatureBits & VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT) != 0)
+        {
+            viewUsage |= VK_BUFFER_USAGE_2_UNIFORM_TEXEL_BUFFER_BIT_KHR;
+        }
+        if ((bufferFormatFeatureBits & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT) != 0)
+        {
+            viewUsage |= VK_BUFFER_USAGE_2_STORAGE_TEXEL_BUFFER_BIT_KHR;
+        }
+
+        ASSERT(viewUsage != 0);
+        usageFlagsCreateInfo.usage = viewUsage;
+        AddToPNextChain(&viewCreateInfo, &usageFlagsCreateInfo);
+    }
 
     BufferView view;
     ANGLE_VK_TRY(context, view.init(context->getDevice(), viewCreateInfo));

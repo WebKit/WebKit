@@ -179,6 +179,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 {
     cocoaResetStateToConsistentValues(options);
 
+    if (RetainPtr webView = m_mainWebView ? m_mainWebView->platformView() : nil) {
+        auto newObscuredInsetTop = options.obscuredInsetTop();
+        auto newObscuredInsetLeft = options.obscuredInsetLeft();
+        auto obscuredInset = [webView _obscuredContentInsets];
+        if (obscuredInset.top != newObscuredInsetTop || obscuredInset.left != newObscuredInsetLeft) {
+            obscuredInset.top = newObscuredInsetTop;
+            obscuredInset.left = newObscuredInsetLeft;
+            [webView _setObscuredContentInsets:obscuredInset immediate:YES];
+        }
+    }
+
     if (m_defaultAppAccentColor && ![NSApp._effectiveAccentColor isEqual:m_defaultAppAccentColor.get()])
         NSApp._accentColor = m_defaultAppAccentColor.get();
 

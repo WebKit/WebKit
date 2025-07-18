@@ -85,7 +85,7 @@ static bool isSupportedEncoderCodec(const String& codec, const SettingsValues& s
 
 static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
 {
-    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+    if (StringView(config.codec).trim(isASCIIWhitespace<char16_t>).isEmpty())
         return false;
 
     if (!config.width || !config.height)

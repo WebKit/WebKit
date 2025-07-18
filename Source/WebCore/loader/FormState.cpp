@@ -31,25 +31,27 @@
 #include "FrameDestructionObserverInlines.h"
 
 #include "Document.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 
 namespace WebCore {
 
-inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
+inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
     : FrameDestructionObserver(sourceDocument.frame())
     , m_form(form)
     , m_textFieldValues(WTFMove(textFieldValues))
     , m_sourceDocument(sourceDocument)
     , m_formSubmissionTrigger(formSubmissionTrigger)
+    , m_submitter(submitter)
 {
     RELEASE_ASSERT(sourceDocument.frame());
 }
 
 FormState::~FormState() = default;
 
-Ref<FormState> FormState::create(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
+Ref<FormState> FormState::create(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
 {
-    return adoptRef(*new FormState(form, WTFMove(textFieldValues), sourceDocument, formSubmissionTrigger));
+    return adoptRef(*new FormState(form, WTFMove(textFieldValues), sourceDocument, formSubmissionTrigger, submitter));
 }
 
 void FormState::willDetachPage()

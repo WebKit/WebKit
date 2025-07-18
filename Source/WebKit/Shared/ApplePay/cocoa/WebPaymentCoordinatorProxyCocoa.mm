@@ -89,7 +89,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
             completionHandler(canMakePayments);
         });
     }).get());
@@ -104,7 +104,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
 
     auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier.createNSString().get() domain:domainName.createNSString().get() completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), result] {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result] {
             completionHandler(result);
         });
     }).get()];
@@ -467,7 +467,7 @@ void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguratio
 #endif
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)](NSArray<PKPaymentSetupFeature *> *features) mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply), features = retainPtr(features)]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply), features = retainPtr(features)]() mutable {
             reply(PaymentSetupFeatures { WTFMove(features) });
         });
     });
@@ -503,7 +503,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
     [request setPaymentSetupFeatures:features.platformFeatures()];
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)](BOOL success) mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply), success]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply), success]() mutable {
             reply(success);
         });
     });
@@ -540,7 +540,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
     }
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)]() mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply)]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply)]() mutable {
             reply(true);
         });
     });

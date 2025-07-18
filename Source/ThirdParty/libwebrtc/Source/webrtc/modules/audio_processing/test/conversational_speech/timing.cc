@@ -30,15 +30,15 @@ bool Turn::operator==(const Turn& b) const {
 std::vector<Turn> LoadTiming(absl::string_view timing_filepath) {
   // Line parser.
   auto parse_line = [](absl::string_view line) {
-    std::vector<absl::string_view> fields = rtc::split(line, ' ');
+    std::vector<absl::string_view> fields = split(line, ' ');
     RTC_CHECK_GE(fields.size(), 3);
     RTC_CHECK_LE(fields.size(), 4);
     int gain = 0;
     if (fields.size() == 4) {
-      gain = rtc::StringToNumber<int>(fields[3]).value_or(0);
+      gain = StringToNumber<int>(fields[3]).value_or(0);
     }
     return Turn(fields[0], fields[1],
-                rtc::StringToNumber<int>(fields[2]).value_or(0), gain);
+                StringToNumber<int>(fields[2]).value_or(0), gain);
   };
 
   // Init.
@@ -58,7 +58,7 @@ std::vector<Turn> LoadTiming(absl::string_view timing_filepath) {
 }
 
 void SaveTiming(absl::string_view timing_filepath,
-                rtc::ArrayView<const Turn> timing) {
+                ArrayView<const Turn> timing) {
   std::ofstream outfile(std::string{timing_filepath});
   RTC_CHECK(outfile.is_open());
   for (const Turn& turn : timing) {

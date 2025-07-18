@@ -149,8 +149,8 @@ void MockRealtimeAudioSource::startProducingData()
 {
 #if PLATFORM(IOS_FAMILY)
     PlatformMediaSessionManager::singleton().sessionCanProduceAudioChanged();
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
-    ASSERT(AudioSession::sharedSession().mode() == AudioSession::Mode::VideoChat);
+    ASSERT(AudioSession::singleton().category() == AudioSession::CategoryType::PlayAndRecord);
+    ASSERT(AudioSession::singleton().mode() == AudioSession::Mode::VideoChat);
 #endif
 
     if (!sampleRate())

@@ -119,40 +119,40 @@ private:
 #endif
     class Continuation;
 
-    FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
-    List& listBuilder() { return *m_listBuilder; }
-    MultiColumn& multiColumnBuilder() { return *m_multiColumnBuilder; }
-    Table& tableBuilder() { return *m_tableBuilder; }
-    Ruby& rubyBuilder() { return *m_rubyBuilder; }
-    FormControls& formControlsBuilder() { return *m_formControlsBuilder; }
-    Block& blockBuilder() { return *m_blockBuilder; }
-    BlockFlow& blockFlowBuilder() { return *m_blockFlowBuilder; }
-    Inline& inlineBuilder() { return *m_inlineBuilder; }
-    SVG& svgBuilder() { return *m_svgBuilder; }
+    FirstLetter& firstLetterBuilder() { return m_firstLetterBuilder; }
+    List& listBuilder() { return m_listBuilder; }
+    MultiColumn& multiColumnBuilder() { return m_multiColumnBuilder; }
+    Table& tableBuilder() { return m_tableBuilder; }
+    Ruby& rubyBuilder() { return m_rubyBuilder; }
+    FormControls& formControlsBuilder() { return m_formControlsBuilder; }
+    Block& blockBuilder() { return m_blockBuilder; }
+    BlockFlow& blockFlowBuilder() { return m_blockFlowBuilder; }
+    Inline& inlineBuilder() { return m_inlineBuilder; }
+    SVG& svgBuilder() { return m_svgBuilder; }
 #if ENABLE(MATHML)
-    MathML& mathMLBuilder() { return *m_mathMLBuilder; }
+    MathML& mathMLBuilder() { return m_mathMLBuilder; }
 #endif
-    Continuation& continuationBuilder() { return *m_continuationBuilder; }
+    Continuation& continuationBuilder() { return m_continuationBuilder; }
 
     WidgetHierarchyUpdatesSuspensionScope m_widgetHierarchyUpdatesSuspensionScope;
     RenderView& m_view;
     RenderTreeBuilder* m_previous { nullptr };
     static RenderTreeBuilder* s_current;
 
-    std::unique_ptr<FirstLetter> m_firstLetterBuilder;
-    std::unique_ptr<List> m_listBuilder;
-    std::unique_ptr<MultiColumn> m_multiColumnBuilder;
-    std::unique_ptr<Table> m_tableBuilder;
-    std::unique_ptr<Ruby> m_rubyBuilder;
-    std::unique_ptr<FormControls> m_formControlsBuilder;
-    std::unique_ptr<Block> m_blockBuilder;
-    std::unique_ptr<BlockFlow> m_blockFlowBuilder;
-    std::unique_ptr<Inline> m_inlineBuilder;
-    std::unique_ptr<SVG> m_svgBuilder;
+    const UniqueRef<FirstLetter> m_firstLetterBuilder;
+    const UniqueRef<List> m_listBuilder;
+    const UniqueRef<MultiColumn> m_multiColumnBuilder;
+    const UniqueRef<Table> m_tableBuilder;
+    const UniqueRef<Ruby> m_rubyBuilder;
+    const UniqueRef<FormControls> m_formControlsBuilder;
+    const UniqueRef<Block> m_blockBuilder;
+    const UniqueRef<BlockFlow> m_blockFlowBuilder;
+    const UniqueRef<Inline> m_inlineBuilder;
+    const UniqueRef<SVG> m_svgBuilder;
 #if ENABLE(MATHML)
-    std::unique_ptr<MathML> m_mathMLBuilder;
+    const UniqueRef<MathML> m_mathMLBuilder;
 #endif
-    std::unique_ptr<Continuation> m_continuationBuilder;
+    const UniqueRef<Continuation> m_continuationBuilder;
     bool m_hasBrokenContinuation { false };
     IsInternalMove m_internalMovesType { IsInternalMove::No };
     TearDownType m_tearDownType { TearDownType::Root };

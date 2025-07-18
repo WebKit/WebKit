@@ -82,6 +82,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/qemu-mac-x64',
     'third_party/r8/cipd',
     'third_party/r8/d8/cipd',
+    'third_party/re2/src',
     'third_party/requests/src',
     'third_party/rust',
     'third_party/siso/cipd',

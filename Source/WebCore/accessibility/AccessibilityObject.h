@@ -233,7 +233,6 @@ public:
 
     WallTime dateTimeValue() const override { return { }; }
     DateComponentsType dateTimeComponentsType() const final;
-    bool supportsDatetimeAttribute() const final;
     String datetimeAttributeValue() const final;
 
     bool canSetFocusAttribute() const override { return false; }
@@ -243,6 +242,7 @@ public:
     Element* element() const final;
     Node* node() const override { return nullptr; }
     RenderObject* renderer() const override { return nullptr; }
+    RenderObject* rendererOrNearestAncestor() const;
     // Resolves the computed style if necessary (and safe to do so).
     const RenderStyle* style() const;
 
@@ -713,7 +713,7 @@ public:
     bool isHidden() const { return isAXHidden() || isRenderHidden(); }
     bool isOnScreen() const final;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     void overrideAttachmentParent(AccessibilityObject* parent);
 #else
     void overrideAttachmentParent(AccessibilityObject*) { }

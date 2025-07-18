@@ -34,6 +34,7 @@
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "Settings.h"
 #include "markup.h"

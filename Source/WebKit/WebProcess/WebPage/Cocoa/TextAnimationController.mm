@@ -74,7 +74,7 @@ RefPtr<WebCore::Document> TextAnimationController::document() const
         return nullptr;
     }
 
-    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = corePage->focusController().focusedOrMainFrame();
     if (!frame) {
         ASSERT_NOT_REACHED();
         return nullptr;

@@ -15,6 +15,8 @@
 
 #include "absl/strings/string_view.h"
 #include "call/adaptation/adaptation_constraint.h"
+#include "call/adaptation/video_source_restrictions.h"
+#include "call/adaptation/video_stream_input_state.h"
 
 namespace webrtc {
 

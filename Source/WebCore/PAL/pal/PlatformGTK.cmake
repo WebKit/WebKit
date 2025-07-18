@@ -20,8 +20,6 @@ list(APPEND PAL_SOURCES
     system/gtk/SoundGtk.cpp
 
     text/KillRing.cpp
-
-    unix/LoggingUnix.cpp
 )
 
 list(APPEND PAL_LIBRARIES

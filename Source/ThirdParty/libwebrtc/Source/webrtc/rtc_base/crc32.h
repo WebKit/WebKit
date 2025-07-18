@@ -18,7 +18,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Updates a CRC32 checksum with `len` bytes from `buf`. `initial` holds the
 // checksum result from the previous update; for the first call, it should be 0.
@@ -32,6 +32,15 @@ inline uint32_t ComputeCrc32(absl::string_view str) {
   return ComputeCrc32(str.data(), str.size());
 }
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::ComputeCrc32;
+using ::webrtc::UpdateCrc32;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_CRC32_H_

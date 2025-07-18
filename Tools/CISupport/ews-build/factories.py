@@ -176,8 +176,6 @@ class TestFactory(Factory):
             self.addStep(InstallGtkDependencies())
         elif platform == 'wpe':
             self.addStep(InstallWpeDependencies())
-        elif platform == 'win':
-            self.addStep(InstallWinDependencies())
         self.addStep(KillOldProcesses())
         self.getProduct()
         if self.willTriggerCrashLogSubmission:

@@ -2647,24 +2647,33 @@ def prepareBundle
                 end
             end
 
-            if $remote and $hostOS == "linux"
-                bundle_binary = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'bundle-binary').realpath
-                Dir.mktmpdir {
-                    | tmpdir |
-                    # Generate bundle in a temporary directory so that
-                    # we can safely pick it up regardless of its name
-                    # (it's the only zip file there).
-                    cmdline = [
-                        bundle_binary.to_s,
-                        "--dest-dir=#{$jscPath.dirname}",
-                        "--log-level=debug",
-                        $jscPath.to_s
-                    ]
-                    if not $ldd.nil?
-                        cmdline << "--ldd=#{$ldd}"
+            if $hostOS == "linux"
+                if $remote
+                    bundle_binary = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'bundle-binary').realpath
+                    Dir.mktmpdir {
+                        | tmpdir |
+                        # Generate bundle in a temporary directory so that
+                        # we can safely pick it up regardless of its name
+                        # (it's the only zip file there).
+                        cmdline = [
+                            bundle_binary.to_s,
+                            "--dest-dir=#{$jscPath.dirname}",
+                            "--log-level=debug",
+                            $jscPath.to_s
+                        ]
+                        if not $ldd.nil?
+                            cmdline << "--ldd=#{$ldd}"
+                        end
+                        mysys(cmdline)
+                    }
+                else
+                    if originalJSCPath.dirname.basename.to_s == "bin" && originalJSCPath.basename.to_s == "jsc"
+                        libPath = originalJSCPath.dirname.dirname + "lib"
+                        if libPath.directory?
+                            ENV["LD_LIBRARY_PATH"] ||= "#{libPath}"
+                        end
                     end
-                    mysys(cmdline)
-                }
+                end
             end
         }
     end

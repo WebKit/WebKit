@@ -61,6 +61,4 @@ private:
     RefPtr<ToggleEventTask> m_toggleEventTask;
 };
 
-WEBCORE_EXPORT void revealClosedDetailsAncestors(Node&);
-
 } // namespace WebCore

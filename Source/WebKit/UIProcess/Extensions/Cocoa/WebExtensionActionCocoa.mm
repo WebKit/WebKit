@@ -461,7 +461,10 @@ static void* kvoContext = &kvoContext;
         [_popupWebView _clearOverrideLayoutParameters];
 
         if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
             CGFloat widthOfDeviceInPortrait = CGRectGetWidth(UIScreen.mainScreen._referenceBounds);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
             CGSize contentSize = self.preferredContentSize;
             contentSize.width = std::max(contentSize.width, widthOfDeviceInPortrait);

@@ -23,7 +23,7 @@ class PrintResultProxyMetricsExporter : public MetricsExporter {
  public:
   ~PrintResultProxyMetricsExporter() override = default;
 
-  bool Export(rtc::ArrayView<const Metric> metrics) override;
+  bool Export(ArrayView<const Metric> metrics) override;
 };
 
 }  // namespace test

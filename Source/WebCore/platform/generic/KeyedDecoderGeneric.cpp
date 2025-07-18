@@ -27,7 +27,6 @@
 #include "KeyedDecoderGeneric.h"
 
 #include "KeyedEncoderGeneric.h"
-#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -40,7 +39,7 @@ typedef KeyedDecoderGeneric::Dictionary KeyedDecoderGenericDictionary;
 class KeyedDecoderGeneric::Dictionary {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedDecoderGenericDictionary);
 public:
-    using Node = std::variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
+    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
     void add(const String& key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }

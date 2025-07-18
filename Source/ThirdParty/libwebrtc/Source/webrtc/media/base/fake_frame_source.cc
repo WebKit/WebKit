@@ -10,13 +10,16 @@
 
 #include "media/base/fake_frame_source.h"
 
+#include <cstdint>
+
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
-#include "api/video/video_frame_buffer.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/time_utils.h"
 
-namespace cricket {
+namespace webrtc {
 
 FakeFrameSource::FakeFrameSource(int width,
                                  int height,
@@ -33,24 +36,24 @@ FakeFrameSource::FakeFrameSource(int width,
 }
 
 FakeFrameSource::FakeFrameSource(int width, int height, int interval_us)
-    : FakeFrameSource(width, height, interval_us, rtc::TimeMicros()) {}
+    : FakeFrameSource(width, height, interval_us, TimeMicros()) {}
 
-webrtc::VideoRotation FakeFrameSource::GetRotation() const {
+VideoRotation FakeFrameSource::GetRotation() const {
   return rotation_;
 }
 
-void FakeFrameSource::SetRotation(webrtc::VideoRotation rotation) {
+void FakeFrameSource::SetRotation(VideoRotation rotation) {
   rotation_ = rotation;
 }
 
-webrtc::VideoFrame FakeFrameSource::GetFrameRotationApplied() {
+VideoFrame FakeFrameSource::GetFrameRotationApplied() {
   switch (rotation_) {
-    case webrtc::kVideoRotation_0:
-    case webrtc::kVideoRotation_180:
-      return GetFrame(width_, height_, webrtc::kVideoRotation_0, interval_us_);
-    case webrtc::kVideoRotation_90:
-    case webrtc::kVideoRotation_270:
-      return GetFrame(height_, width_, webrtc::kVideoRotation_0, interval_us_);
+    case kVideoRotation_0:
+    case kVideoRotation_180:
+      return GetFrame(width_, height_, kVideoRotation_0, interval_us_);
+    case kVideoRotation_90:
+    case kVideoRotation_270:
+      return GetFrame(height_, width_, kVideoRotation_0, interval_us_);
   }
   RTC_DCHECK_NOTREACHED() << "Invalid rotation value: "
                           << static_cast<int>(rotation_);
@@ -59,30 +62,29 @@ webrtc::VideoFrame FakeFrameSource::GetFrameRotationApplied() {
   return GetFrame();
 }
 
-webrtc::VideoFrame FakeFrameSource::GetFrame() {
+VideoFrame FakeFrameSource::GetFrame() {
   return GetFrame(width_, height_, rotation_, interval_us_);
 }
 
-webrtc::VideoFrame FakeFrameSource::GetFrame(int width,
-                                             int height,
-                                             webrtc::VideoRotation rotation,
-                                             int interval_us) {
+VideoFrame FakeFrameSource::GetFrame(int width,
+                                     int height,
+                                     VideoRotation rotation,
+                                     int interval_us) {
   RTC_CHECK_GT(width, 0);
   RTC_CHECK_GT(height, 0);
   RTC_CHECK_GT(interval_us, 0);
 
-  rtc::scoped_refptr<webrtc::I420Buffer> buffer(
-      webrtc::I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
 
   buffer->InitializeData();
-  webrtc::VideoFrame frame = webrtc::VideoFrame::Builder()
-                                 .set_video_frame_buffer(buffer)
-                                 .set_rotation(rotation)
-                                 .set_timestamp_us(next_timestamp_us_)
-                                 .build();
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_video_frame_buffer(buffer)
+                         .set_rotation(rotation)
+                         .set_timestamp_us(next_timestamp_us_)
+                         .build();
 
   next_timestamp_us_ += interval_us;
   return frame;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

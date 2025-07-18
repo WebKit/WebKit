@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_CHECKS_H_
 #define RTC_BASE_CHECKS_H_
 
-// If you for some reson need to know if DCHECKs are on, test the value of
+// If you for some reason need to know if DCHECKs are on, test the value of
 // RTC_DCHECK_IS_ON. (Test its value, not if it's defined; it'll always be
 // defined, to either a true or a false value.)
 #if !defined(NDEBUG) || defined(DCHECK_ALWAYS_ON)
@@ -52,9 +52,10 @@ RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #ifdef __cplusplus
 // C++ version.
 
+#include <cstdint>
 #include <string>
+#include <type_traits>
 
-#include "absl/meta/type_traits.h"
 #include "absl/strings/has_absl_stringify.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
@@ -101,7 +102,10 @@ RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 //
 // - RTC_FATAL() aborts unconditionally.
 
-namespace rtc {
+// TODO(bugs.webrtc.org/42232595): Remove this macro once Chrome has migrated.
+#define RTC_CHECKS_IN_WEBRTC_NAMESPACE 1
+
+namespace webrtc {
 namespace webrtc_checks_impl {
 enum class CheckArgType : int8_t {
   kEnd = 0,
@@ -205,17 +209,18 @@ inline Val<CheckArgType::kVoidP, const void*> MakeVal(const void* x) {
 
 template <typename T>
 inline Val<CheckArgType::kVoidP, const void*> MakeVal(
-    const rtc::scoped_refptr<T>& p) {
+    const webrtc::scoped_refptr<T>& p) {
   return {p.get()};
 }
 
 // The enum class types are not implicitly convertible to arithmetic types.
 template <typename T,
-          absl::enable_if_t<std::is_enum<T>::value &&
-                            !std::is_arithmetic<T>::value>* = nullptr>
-inline decltype(MakeVal(std::declval<absl::underlying_type_t<T>>())) MakeVal(
+          std::enable_if_t<std::is_enum<T>::value &&
+                           !absl::HasAbslStringify<T>::value &&
+                           !std::is_arithmetic<T>::value>* = nullptr>
+inline decltype(MakeVal(std::declval<std::underlying_type_t<T>>())) MakeVal(
     T x) {
-  return {static_cast<absl::underlying_type_t<T>>(x)};
+  return {static_cast<std::underlying_type_t<T>>(x)};
 }
 
 template <typename T,
@@ -234,16 +239,16 @@ class LogStreamer<> final {
  public:
   template <typename U,
             typename V = decltype(MakeVal(std::declval<U>())),
-            absl::enable_if_t<std::is_arithmetic<U>::value ||
-                              std::is_enum<U>::value>* = nullptr>
+            std::enable_if_t<std::is_arithmetic<U>::value ||
+                             std::is_enum<U>::value>* = nullptr>
   RTC_FORCE_INLINE LogStreamer<V> operator<<(U arg) const {
     return LogStreamer<V>(MakeVal(arg), this);
   }
 
   template <typename U,
             typename V = decltype(MakeVal(std::declval<U>())),
-            absl::enable_if_t<!std::is_arithmetic<U>::value &&
-                              !std::is_enum<U>::value>* = nullptr>
+            std::enable_if_t<!std::is_arithmetic<U>::value &&
+                             !std::is_enum<U>::value>* = nullptr>
   RTC_FORCE_INLINE LogStreamer<V> operator<<(const U& arg) const {
     return LogStreamer<V>(MakeVal(arg), this);
   }
@@ -286,16 +291,16 @@ class LogStreamer<T, Ts...> final {
 
   template <typename U,
             typename V = decltype(MakeVal(std::declval<U>())),
-            absl::enable_if_t<std::is_arithmetic<U>::value ||
-                              std::is_enum<U>::value>* = nullptr>
+            std::enable_if_t<std::is_arithmetic<U>::value ||
+                             std::is_enum<U>::value>* = nullptr>
   RTC_FORCE_INLINE LogStreamer<V, T, Ts...> operator<<(U arg) const {
     return LogStreamer<V, T, Ts...>(MakeVal(arg), this);
   }
 
   template <typename U,
             typename V = decltype(MakeVal(std::declval<U>())),
-            absl::enable_if_t<!std::is_arithmetic<U>::value &&
-                              !std::is_enum<U>::value>* = nullptr>
+            std::enable_if_t<!std::is_arithmetic<U>::value &&
+                             !std::is_enum<U>::value>* = nullptr>
   RTC_FORCE_INLINE LogStreamer<V, T, Ts...> operator<<(const U& arg) const {
     return LogStreamer<V, T, Ts...>(MakeVal(arg), this);
   }
@@ -379,17 +384,17 @@ RTC_NORETURN RTC_EXPORT void UnreachableCodeReached();
 // in a particularly convoluted way with an extra ?: because that appears to be
 // the simplest construct that keeps Visual Studio from complaining about
 // condition being unused).
-#define RTC_EAT_STREAM_PARAMETERS(ignored)                          \
-  (true ? true : ((void)(ignored), true))                           \
-      ? static_cast<void>(0)                                        \
-      : ::rtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") & \
-            ::rtc::webrtc_checks_impl::LogStreamer<>()
+#define RTC_EAT_STREAM_PARAMETERS(ignored)                             \
+  (true ? true : ((void)(ignored), true))                              \
+      ? static_cast<void>(0)                                           \
+      : ::webrtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") & \
+            ::webrtc::webrtc_checks_impl::LogStreamer<>()
 
 // Call RTC_EAT_STREAM_PARAMETERS with an argument that fails to compile if
 // values of the same types as `a` and `b` can't be compared with the given
 // operation, and that would evaluate `a` and `b` if evaluated.
 #define RTC_EAT_STREAM_PARAMETERS_OP(op, a, b) \
-  RTC_EAT_STREAM_PARAMETERS(((void)::rtc::Safe##op(a, b)))
+  RTC_EAT_STREAM_PARAMETERS(((void)::webrtc::Safe##op(a, b)))
 
 // RTC_CHECK dies with a fatal error if condition is not true. It is *not*
 // controlled by NDEBUG or anything else, so the check will be executed
@@ -401,34 +406,34 @@ RTC_NORETURN RTC_EXPORT void UnreachableCodeReached();
 // RTC_CHECK_OP is a helper macro for binary operators.
 // Don't use this macro directly in your code, use RTC_CHECK_EQ et al below.
 #if RTC_CHECK_MSG_ENABLED
-#define RTC_CHECK(condition)                                    \
-  (condition) ? static_cast<void>(0)                            \
-              : ::rtc::webrtc_checks_impl::FatalLogCall<false>( \
-                    __FILE__, __LINE__, #condition) &           \
-                    ::rtc::webrtc_checks_impl::LogStreamer<>()
+#define RTC_CHECK(condition)                                       \
+  (condition) ? static_cast<void>(0)                               \
+              : ::webrtc::webrtc_checks_impl::FatalLogCall<false>( \
+                    __FILE__, __LINE__, #condition) &              \
+                    ::webrtc::webrtc_checks_impl::LogStreamer<>()
 
 #define RTC_CHECK_OP(name, op, val1, val2)                 \
-  ::rtc::Safe##name((val1), (val2))                        \
+  ::webrtc::Safe##name((val1), (val2))                     \
       ? static_cast<void>(0)                               \
-      : ::rtc::webrtc_checks_impl::FatalLogCall<true>(     \
+      : ::webrtc::webrtc_checks_impl::FatalLogCall<true>(  \
             __FILE__, __LINE__, #val1 " " #op " " #val2) & \
-            ::rtc::webrtc_checks_impl::LogStreamer<>() << (val1) << (val2)
+            ::webrtc::webrtc_checks_impl::LogStreamer<>() << (val1) << (val2)
 #else
-#define RTC_CHECK(condition)                                                  \
-  (condition) ? static_cast<void>(0)                                          \
-  : true ? ::rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
-                                                          "") &               \
-               ::rtc::webrtc_checks_impl::LogStreamer<>()                     \
-         : ::rtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") &        \
-               ::rtc::webrtc_checks_impl::LogStreamer<>()
+#define RTC_CHECK(condition)                                                      \
+  (condition) ? static_cast<void>(0)                                              \
+  : true      ? ::webrtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__,       \
+                                                                  __LINE__, "") & \
+               ::webrtc::webrtc_checks_impl::LogStreamer<>()                      \
+         : ::webrtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") &         \
+               ::webrtc::webrtc_checks_impl::LogStreamer<>()
 
-#define RTC_CHECK_OP(name, op, val1, val2)                                   \
-  ::rtc::Safe##name((val1), (val2)) ? static_cast<void>(0)                   \
-  : true ? ::rtc::webrtc_checks_impl::FatalLogCall<true>(__FILE__, __LINE__, \
-                                                         "") &               \
-               ::rtc::webrtc_checks_impl::LogStreamer<>()                    \
-         : ::rtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") &       \
-               ::rtc::webrtc_checks_impl::LogStreamer<>()
+#define RTC_CHECK_OP(name, op, val1, val2)                                  \
+  ::webrtc::Safe##name((val1), (val2)) ? static_cast<void>(0)               \
+  : true ? ::webrtc::webrtc_checks_impl::FatalLogCall<true>(__FILE__,       \
+                                                            __LINE__, "") & \
+               ::webrtc::webrtc_checks_impl::LogStreamer<>()                \
+         : ::webrtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") &   \
+               ::webrtc::webrtc_checks_impl::LogStreamer<>()
 #endif
 
 #define RTC_CHECK_EQ(val1, val2) RTC_CHECK_OP(Eq, ==, val1, val2)
@@ -464,16 +469,16 @@ RTC_NORETURN RTC_EXPORT void UnreachableCodeReached();
 
 // Kills the process with an error message. Never returns. Use when you wish to
 // assert that a point in the code is never reached.
-#define RTC_CHECK_NOTREACHED()                         \
-  do {                                                 \
-    ::rtc::webrtc_checks_impl::UnreachableCodeReached( \
-        RTC_UNREACHABLE_FILE_AND_LINE_CALL_ARGS);      \
+#define RTC_CHECK_NOTREACHED()                            \
+  do {                                                    \
+    ::webrtc::webrtc_checks_impl::UnreachableCodeReached( \
+        RTC_UNREACHABLE_FILE_AND_LINE_CALL_ARGS);         \
   } while (0)
 
-#define RTC_FATAL()                                                  \
-  ::rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
-                                                 "FATAL()") &        \
-      ::rtc::webrtc_checks_impl::LogStreamer<>()
+#define RTC_FATAL()                                                     \
+  ::webrtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
+                                                    "FATAL()") &        \
+      ::webrtc::webrtc_checks_impl::LogStreamer<>()
 
 // Performs the integer division a/b and returns the result. CHECKs that the
 // remainder is zero.
@@ -483,7 +488,15 @@ inline T CheckedDivExact(T a, T b) {
   return a / b;
 }
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::CheckedDivExact;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #else  // __cplusplus not defined
 // C version. Lacks many features compared to the C++ version, but usage

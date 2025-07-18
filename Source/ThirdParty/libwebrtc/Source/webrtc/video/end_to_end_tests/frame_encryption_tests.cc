@@ -8,14 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+#include <vector>
+
+#include "api/environment/environment.h"
+#include "api/make_ref_counted.h"
+#include "api/rtp_parameters.h"
 #include "api/test/fake_frame_decryptor.h"
 #include "api/test/fake_frame_encryptor.h"
+#include "api/test/video/function_video_encoder_factory.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "media/engine/internal_decoder_factory.h"
-#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
+#include "test/encoder_settings.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -27,7 +42,7 @@ enum : int {  // The first valid value is 1.
 };
 
 class DecryptedFrameObserver : public test::EndToEndTest,
-                               public rtc::VideoSinkInterface<VideoFrame> {
+                               public VideoSinkInterface<VideoFrame> {
  public:
   DecryptedFrameObserver()
       : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
@@ -56,7 +71,7 @@ class DecryptedFrameObserver : public test::EndToEndTest,
       recv_config.decoders.clear();
       recv_config.decoders.push_back(decoder);
       recv_config.renderer = this;
-      recv_config.frame_decryptor = rtc::make_ref_counted<FakeFrameDecryptor>();
+      recv_config.frame_decryptor = make_ref_counted<FakeFrameDecryptor>();
       recv_config.crypto_options.sframe.require_frame_encryption = true;
     }
   }

@@ -31,8 +31,6 @@
 
 namespace Inspector {
 
-class BackendDispatcher;
-class FrontendRouter;
 class InspectorAgentBase;
 
 enum class DisconnectReason;
@@ -44,7 +42,7 @@ public:
 
     JS_EXPORT_PRIVATE void append(std::unique_ptr<InspectorAgentBase>);
 
-    JS_EXPORT_PRIVATE void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*);
+    JS_EXPORT_PRIVATE void didCreateFrontendAndBackend();
     JS_EXPORT_PRIVATE void willDestroyFrontendAndBackend(DisconnectReason);
     JS_EXPORT_PRIVATE void discardValues();
 

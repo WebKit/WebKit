@@ -87,7 +87,7 @@ class NetworkResourceLoader final
     , public CanMakeWeakPtr<NetworkResourceLoader>
 #endif
     , public WebCore::ReportingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkResourceLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkResourceLoader);
 public:
 #if ENABLE(CONTENT_FILTERING)
@@ -204,6 +204,7 @@ private:
     WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
     void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&&) final;
+    CheckedPtr<WebCore::ContentFilter> checkedContentFilter();
 #if HAVE(WEBCONTENTRESTRICTIONS)
     bool usesWebContentRestrictions() final;
 #endif

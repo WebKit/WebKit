@@ -117,12 +117,12 @@ public:
     ~CurrentEventScope();
 
 private:
-    RetainPtr<NSEvent> m_savedCurrentEvent;
+    const RetainPtr<NSEvent> m_savedCurrentEvent;
 #if ASSERT_ENABLED
-    RetainPtr<NSEvent> m_event;
+    const RetainPtr<NSEvent> m_event;
 #endif
-    RetainPtr<NSEvent> m_savedPressureEvent;
-    RetainPtr<NSEvent> m_correspondingPressureEvent;
+    const RetainPtr<NSEvent> m_savedPressureEvent;
+    const RetainPtr<NSEvent> m_correspondingPressureEvent;
 };
 
 inline CurrentEventScope::CurrentEventScope(NSEvent *event, NSEvent *correspondingPressureEvent)
@@ -192,7 +192,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
+    page->focusController().setFocusedFrame(protectedFrame().ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)

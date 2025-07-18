@@ -27,21 +27,18 @@
 #import "UTIUtilities.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <pal/spi/cg/ImageIOSPI.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
-#include <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-#include <pal/spi/cg/ImageIOSPI.h>
 #endif
 
 namespace WebCore {
@@ -148,7 +145,6 @@ bool isDeclaredUTI(const String& uti)
 
 void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
 {
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     // A WebPage might be reinitialized. So restrict ImageIO to the default and
     // the additional supported image formats only once.
     static std::once_flag onceFlag;
@@ -157,9 +153,6 @@ void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
         auto status = CGImageSourceSetAllowableTypes((__bridge CFArrayRef)allowableTypes.get());
         RELEASE_ASSERT_WITH_MESSAGE(supportedImageTypes.isEmpty() || status == noErr, "CGImageSourceSetAllowableTypes() returned error: %d.", status);
     });
-#else
-    UNUSED_PARAM(supportedImageTypes);
-#endif
 }
 
 } // namespace WebCore

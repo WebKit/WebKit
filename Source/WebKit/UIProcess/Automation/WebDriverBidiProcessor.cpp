@@ -52,29 +52,19 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     : m_session(session)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-    , m_browserAgent(makeUnique<BidiBrowserAgent>(session, m_backendDispatcher))
-    , m_browsingContextAgent(makeUnique<BidiBrowsingContextAgent>(session, m_backendDispatcher))
-    , m_scriptAgent(makeUnique<BidiScriptAgent>(session, m_backendDispatcher))
-    , m_storageAgent(makeUnique<BidiStorageAgent>(session, m_backendDispatcher))
-    , m_browsingContextDomainNotifier(makeUnique<BidiBrowsingContextFrontendDispatcher>(m_frontendRouter))
-    , m_logDomainNotifier(makeUnique<BidiLogFrontendDispatcher>(m_frontendRouter))
+    , m_browserAgent(makeUniqueRef<BidiBrowserAgent>(session, m_backendDispatcher))
+    , m_browsingContextAgent(makeUniqueRef<BidiBrowsingContextAgent>(session, m_backendDispatcher))
+    , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))
+    , m_storageAgent(makeUniqueRef<BidiStorageAgent>(session, m_backendDispatcher))
+    , m_browsingContextDomainNotifier(makeUniqueRef<BidiBrowsingContextFrontendDispatcher>(m_frontendRouter))
+    , m_logDomainNotifier(makeUniqueRef<BidiLogFrontendDispatcher>(m_frontendRouter))
 {
-    protectedFrontendRouter()->connectFrontend(*this);
+    m_frontendRouter->connectFrontend(*this);
 }
 
 WebDriverBidiProcessor::~WebDriverBidiProcessor()
 {
-    protectedFrontendRouter()->disconnectFrontend(*this);
-}
-
-Ref<Inspector::FrontendRouter> WebDriverBidiProcessor::protectedFrontendRouter() const
-{
-    return m_frontendRouter;
-}
-
-Ref<Inspector::BackendDispatcher> WebDriverBidiProcessor::protectedBackendDispatcher() const
-{
-    return m_backendDispatcher;
+    m_frontendRouter->disconnectFrontend(*this);
 }
 
 void WebDriverBidiProcessor::processBidiMessage(const String& message)
@@ -88,7 +78,7 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
     LOG(Automation, "[s:%s] processBidiMessage of length %d", session->sessionIdentifier().utf8().data(), message.length());
     LOG(Automation, "%s", message.utf8().data());
 
-    protectedBackendDispatcher()->dispatch(message);
+    m_backendDispatcher->dispatch(message);
 }
 
 // Translate internal error messages that come from the inspector protocol payload.

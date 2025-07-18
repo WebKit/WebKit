@@ -268,7 +268,7 @@ void WorkerGlobalScope::resume()
 WorkerStorageConnection& WorkerGlobalScope::storageConnection()
 {
     if (!m_storageConnection)
-        m_storageConnection = WorkerStorageConnection::create(*this);
+        lazyInitialize(m_storageConnection, WorkerStorageConnection::create(*this));
 
     return *m_storageConnection;
 }
@@ -298,7 +298,7 @@ WorkerFileSystemStorageConnection* WorkerGlobalScope::fileSystemStorageConnectio
 WorkerLocation& WorkerGlobalScope::location() const
 {
     if (!m_location)
-        m_location = WorkerLocation::create(URL { m_url }, origin());
+        lazyInitialize(m_location, WorkerLocation::create(URL { m_url }, origin()));
     return *m_location;
 }
 
@@ -323,7 +323,7 @@ void WorkerGlobalScope::close()
 WorkerNavigator& WorkerGlobalScope::navigator()
 {
     if (!m_navigator)
-        m_navigator = WorkerNavigator::create(*this, m_userAgent, m_isOnline);
+        lazyInitialize(m_navigator, WorkerNavigator::create(*this, m_userAgent, m_isOnline));
     return *m_navigator;
 }
 
@@ -572,7 +572,7 @@ CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
             RELEASE_LOG_INFO(ServiceWorker, "Creating worker dummy CacheStorageConnection");
             mainThreadConnection = CacheStorageProvider::DummyCacheStorageConnection::create();
         }
-        m_cacheStorageConnection = mainThreadConnection.releaseNonNull();
+        lazyInitialize(m_cacheStorageConnection, mainThreadConnection.releaseNonNull());
     }
     return *m_cacheStorageConnection;
 }
@@ -580,14 +580,14 @@ CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
 MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
 {
     if (!m_messagePortChannelProvider)
-        m_messagePortChannelProvider = makeUnique<WorkerMessagePortChannelProvider>(*this);
+        lazyInitialize(m_messagePortChannelProvider, makeUnique<WorkerMessagePortChannelProvider>(*this));
     return *m_messagePortChannelProvider;
 }
 
 WorkerSWClientConnection& WorkerGlobalScope::swClientConnection()
 {
     if (!m_swClientConnection)
-        m_swClientConnection = WorkerSWClientConnection::create(*this);
+        lazyInitialize(m_swClientConnection, WorkerSWClientConnection::create(*this));
     return *m_swClientConnection;
 }
 
@@ -611,7 +611,7 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
 CSSFontSelector* WorkerGlobalScope::cssFontSelector()
 {
     if (!m_cssFontSelector)
-        m_cssFontSelector = CSSFontSelector::create(*this);
+        lazyInitialize(m_cssFontSelector, CSSFontSelector::create(*this));
     return m_cssFontSelector.get();
 }
 

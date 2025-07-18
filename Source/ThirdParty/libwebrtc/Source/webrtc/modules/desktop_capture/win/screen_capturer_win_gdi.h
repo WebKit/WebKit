@@ -61,7 +61,7 @@ class ScreenCapturerWinGdi : public DesktopCapturer {
   Callback* callback_ = nullptr;
   std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
   SourceId current_screen_id_ = kFullDesktopScreenId;
-  std::wstring current_device_key_;
+  std::optional<std::wstring> current_device_key_;
 
   ScopedThreadDesktop desktop_;
 

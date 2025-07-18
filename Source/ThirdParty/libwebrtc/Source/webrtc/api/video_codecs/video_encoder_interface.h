@@ -14,9 +14,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <variant>
 #include <vector>
 
-#include "absl/types/variant.h"
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
@@ -39,11 +39,11 @@ class VideoEncoderInterface {
     FrameType frame_type;
     int encoded_qp;
   };
-  using EncodeResult = absl::variant<EncodingError, EncodedData>;
+  using EncodeResult = std::variant<EncodingError, EncodedData>;
 
   struct FrameOutput {
     virtual ~FrameOutput() = default;
-    virtual rtc::ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) = 0;
+    virtual ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) = 0;
     virtual void EncodeComplete(const EncodeResult& encode_result) = 0;
   };
 
@@ -62,7 +62,7 @@ class VideoEncoderInterface {
       int target_qp;
     };
 
-    absl::variant<Cqp, Cbr> rate_options;
+    std::variant<Cqp, Cbr> rate_options;
 
     FrameType frame_type = FrameType::kDeltaFrame;
     int temporal_id = 0;
@@ -75,7 +75,7 @@ class VideoEncoderInterface {
     std::unique_ptr<FrameOutput> frame_output;
   };
 
-  virtual void Encode(rtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer,
+  virtual void Encode(scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer,
                       const TemporalUnitSettings& settings,
                       std::vector<FrameEncodeSettings> frame_settings) = 0;
 };

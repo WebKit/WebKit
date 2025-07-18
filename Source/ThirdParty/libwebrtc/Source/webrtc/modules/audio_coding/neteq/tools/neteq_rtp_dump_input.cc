@@ -10,8 +10,18 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_rtp_dump_input.h"
 
+#include <algorithm>
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <optional>
+
 #include "absl/strings/string_view.h"
+#include "api/rtp_headers.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 namespace test {

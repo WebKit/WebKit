@@ -1054,16 +1054,16 @@ CSSAppearanceBaseEnabled:
 CSSAxisRelativePositionKeywordsEnabled:
   type: bool
   category: css
-  status: preview
+  status: stable
   humanReadableName: "CSS axis relative keywords in <position>"
   humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 axis relative keywords in <position>"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSBackgroundClipBorderAreaEnabled:
   type: bool
@@ -1201,6 +1201,7 @@ CSSFontVariantEmojiEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
@@ -1704,19 +1705,6 @@ CaptureAudioInGPUProcessEnabled:
     WebKit:
       default: WebKit::defaultCaptureAudioInGPUProcessEnabled()
 
-CaptureAudioInUIProcessEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "Capture audio in UI Process"
-  humanReadableDescription: "Enable audio capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultCaptureAudioInUIProcessEnabled()
-
 CaptureVideoInGPUProcessEnabled:
   type: bool
   status: internal
@@ -1729,19 +1717,6 @@ CaptureVideoInGPUProcessEnabled:
   defaultValue:
     WebKit:
       "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
-      default: false
-
-CaptureVideoInUIProcessEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "Capture video in UI Process"
-  humanReadableDescription: "Enable video capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
       default: false
 
 CaretBrowsingEnabled:
@@ -2368,7 +2343,7 @@ DetachableMediaSourceEnabled:
 
 DetailsAutoExpandEnabled:
   type: bool
-  status: testable
+  status: preview
   category: html
   humanReadableName: "HTML auto-expanding <details>"
   humanReadableDescription: "Enable HTML auto-expanding <details>"
@@ -2608,6 +2583,20 @@ EnableDebuggingFeaturesInSandbox:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      default: false
+
+EnableElementCurrentCSSZoom:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Enable Element.currentCSSZoom"
+  humanReadableDescription: "Enable Element.currentCSSZoom"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 EnableInheritURIQueryComponent:
@@ -2991,9 +2980,9 @@ FormControlRefreshEnabled:
   condition: ENABLE(FORM_CONTROL_REFRESH)
   defaultValue:
     WebKit:
-      default: defaultFormControlRefreshEnabled()
+      default: true
     WebKitLegacy:
-      default: WebKit::defaultFormControlRefreshEnabled()
+      default: true
     WebCore:
       default: false
 
@@ -3215,6 +3204,22 @@ GoogleAntiFlickerOptimizationQuirkEnabled:
     WebCore:
       default: true
 
+GraphicsContextFiltersEnabled:
+   type: bool
+   status: mature
+   category: media
+   webcoreOnChange: setNeedsRelayoutAllFrames
+   humanReadableName: "GraphicsContext Filter Rendering"
+   humanReadableDescription: "GraphicsContext Filter Rendering"
+   condition: USE(GRAPHICS_CONTEXT_FILTERS)
+   defaultValue:
+     WebKitLegacy:
+       default: true
+     WebKit:
+       default: true
+     WebCore:
+       default: true
+
 HTMLLegacyAttributeValueSerializationEnabled:
    type: bool
    status: internal
@@ -3301,7 +3306,7 @@ HiddenPageDOMTimerThrottlingEnabled:
 
 HiddenUntilFoundEnabled:
    type: bool
-   status: testable
+   status: preview
    category: html
    humanReadableName: "hidden=until-found"
    humanReadableDescription: "Enable support for hidden=until-found"
@@ -3321,7 +3326,7 @@ HostedBlurMaterialInMediaControlsEnabled:
   condition: HAVE(MATERIAL_HOSTING)
   defaultValue:
     WebKit:
-      default: true
+      default: defaultHostedBlurMaterialInMediaControlsEnabled()
     WebKitLegacy:
       default: false
     WebCore:
@@ -3592,6 +3597,21 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       default: false
     WebCore:
       default: false
+
+InputMethodUsesCorrectKeyEventOrder:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Correct key event ordering with composition events"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeColorEnabled:
   type: bool
@@ -6357,7 +6377,6 @@ ScreenOrientationLockingAPIEnabled:
 ScreenTimeEnabled:
   type: bool
   status: internal
-  defaultsOverridable: true
   condition: ENABLE(SCREEN_TIME)
   humanReadableName: "Screen Time"
   humanReadableDescription: "Enable Screen Time"
@@ -6506,6 +6525,20 @@ ScrollToTextFragmentMarkingEnabled:
       default: true
     WebCore:
       default: true
+      
+ScrollendEventEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "scrollend event"
+  humanReadableDescription: "Enable scrollend event"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 ScrollingPerformanceTestingEnabled:
   type: bool
@@ -7275,6 +7308,21 @@ StorageBlockingPolicy:
     WebCore:
       default: StorageBlockingPolicy::AllowAll
 
+SupportHDRCompositorTonemappingEnabled:
+  type: bool
+  status: testable
+  category: media
+  webcoreOnChange: updateDisplayEDRHeadroom
+  humanReadableName: "Support HDR Compositor tonemapping"
+  humanReadableDescription: "Support HDR tonemapping during compositing"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SupportHDRDisplayEnabled:
   type: bool
   status: Supporthdrdisplay_feature_status
@@ -7578,6 +7626,19 @@ TiledScrollingIndicatorVisible:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
+      default: false
+
+TopContentInsetBackgroundCanChangeAfterScrolling:
+  type: bool
+  status: internal
+  humanReadableName: "Top Content Inset Background Can Change After Scrolling"
+  humanReadableDescription: "Top content inset background can change after scrolling"
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultTopContentInsetBackgroundCanChangeAfterScrolling()
+    WebKitLegacy:
       default: false
     WebCore:
       default: false
@@ -8414,17 +8475,17 @@ WebAnimationsCustomFrameRateEnabled:
 
 WebAnimationsOverallProgressPropertyEnabled:
   type: bool
-  status: preview
+  status: stable
   category: animation
   humanReadableName: "Web Animations 'overallProgress' property"
   humanReadableDescription: "Support for Animation's overallProgress property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebArchiveDebugModeEnabled:
   type: bool

@@ -45,7 +45,7 @@ class Element;
 struct ResizeObserverOptions;
 
 struct ResizeObserverData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ResizeObserverData);
     Vector<WeakPtr<ResizeObserver>> observers;
 };
 

@@ -26,7 +26,7 @@
 import Combine
 import Spatial
 import Foundation
-@_spi(Observation) @_spi(RealityKit) import RealityKit
+@_spi(RealityKit) import RealityKit
 import os
 import simd
 
@@ -208,9 +208,9 @@ import simd
     
     private func subscribeToPitchChanges() {
         withObservationTracking {
-#if canImport(RealityFoundation, _version: 395)
-            _ = interactionContainer.proto_observable.components[Transform.self]
-#endif
+            #if canImport(RealityFoundation, _version: "403.0.4")
+            _ = interactionContainer.observable.components[Transform.self]
+            #endif
         } onChange: { [self] in
             Task { @MainActor in
                 guard allowAnimationObservation else {
@@ -229,10 +229,10 @@ import simd
     
     private func subscribeToYawChanges() {
         withObservationTracking {
-#if canImport(RealityFoundation, _version: 395)
+            #if canImport(RealityFoundation, _version: "403.0.4")
             // By default, we do not care about the proxy, but we use the update to set the deceleration of the turntable container
-            _ = turntableAnimationProxyEntity.proto_observable.components[Transform.self]
-#endif
+            _ = turntableAnimationProxyEntity.observable.components[Transform.self]
+            #endif
         } onChange: { [self] in
             Task { @MainActor in
                 guard allowAnimationObservation else {

@@ -34,6 +34,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginMode.h"
 #include "CrossOriginOpenerPolicy.h"
+#include "DocumentInlines.h"
 #include "DOMTimer.h"
 #include "DatabaseContext.h"
 #include "Document.h"
@@ -997,6 +998,9 @@ bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrack
     RefPtr page = document->page();
     if (!page)
         return true;
+
+    if (page->shouldAllowScriptAccess(taintedURL, protectedTopOrigin(), category))
+        return false;
 
     if (!page->settings().scriptTrackingPrivacyLoggingEnabled())
         return true;

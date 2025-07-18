@@ -2263,7 +2263,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_testFeatureGetSecret
 
 JSC::GCClient::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestGlobalObject, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSTestGlobalObject, UseCustomHeapCellType::Yes>(vm, "JSTestGlobalObject"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGlobalObject.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGlobalObject = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGlobalObject.get(); },

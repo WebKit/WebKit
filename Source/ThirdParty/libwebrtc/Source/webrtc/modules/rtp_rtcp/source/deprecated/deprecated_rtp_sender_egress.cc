@@ -217,8 +217,15 @@ void DEPRECATED_RtpSenderEgress::GetDataCounters(
     StreamDataCounters* rtp_stats,
     StreamDataCounters* rtx_stats) const {
   MutexLock lock(&lock_);
-  *rtp_stats = rtp_stats_;
-  *rtx_stats = rtx_rtp_stats_;
+  if (rtp_stats_callback_) {
+    *rtp_stats = rtp_stats_callback_->GetDataCounters(ssrc_);
+    if (rtx_ssrc_.has_value()) {
+      *rtx_stats = rtp_stats_callback_->GetDataCounters(*rtx_ssrc_);
+    }
+  } else {
+    *rtp_stats = rtp_stats_;
+    *rtx_stats = rtx_rtp_stats_;
+  }
 }
 
 void DEPRECATED_RtpSenderEgress::ForceIncludeSendPacketsInAllocation(
@@ -244,7 +251,7 @@ void DEPRECATED_RtpSenderEgress::SetTimestampOffset(uint32_t timestamp) {
 
 std::vector<RtpSequenceNumberMap::Info>
 DEPRECATED_RtpSenderEgress::GetSentRtpPacketInfos(
-    rtc::ArrayView<const uint16_t> sequence_numbers) const {
+    ArrayView<const uint16_t> sequence_numbers) const {
   RTC_DCHECK(!sequence_numbers.empty());
   if (!need_rtp_packet_infos_) {
     return std::vector<RtpSequenceNumberMap::Info>();
@@ -329,8 +336,13 @@ bool DEPRECATED_RtpSenderEgress::SendPacketToNetwork(
 void DEPRECATED_RtpSenderEgress::UpdateRtpStats(const RtpPacketToSend& packet) {
   Timestamp now = env_.clock().CurrentTime();
 
-  StreamDataCounters* counters =
-      packet.Ssrc() == rtx_ssrc_ ? &rtx_rtp_stats_ : &rtp_stats_;
+  StreamDataCounters* counters = nullptr;
+  if (rtp_stats_callback_) {
+    rtp_stats_ = rtp_stats_callback_->GetDataCounters(packet.Ssrc());
+    counters = &rtp_stats_;
+  } else {
+    counters = packet.Ssrc() == rtx_ssrc_ ? &rtx_rtp_stats_ : &rtp_stats_;
+  }
 
   counters->MaybeSetFirstPacketTime(now);
 

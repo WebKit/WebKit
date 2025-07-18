@@ -192,7 +192,7 @@ auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 }
 
 class StringView::GraphemeClusters::Iterator::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Impl);
 public:
     Impl(StringView stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
         : m_stringView(stringView)
@@ -496,7 +496,7 @@ String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned fi
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.
 
 struct StringView::UnderlyingString {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnderlyingString);
     std::atomic_uint refCount { 1u };
     bool isValid { true };
     SUPPRESS_UNCOUNTED_MEMBER const StringImpl& string;

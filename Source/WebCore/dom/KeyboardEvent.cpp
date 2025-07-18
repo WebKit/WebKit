@@ -240,4 +240,9 @@ unsigned KeyboardEvent::which() const
     return static_cast<unsigned>(keyCode());
 }
 
+FocusEventData KeyboardEvent::focusEventData() const
+{
+    return { type(), keyIdentifier(), altKey() };
+}
+
 } // namespace WebCore

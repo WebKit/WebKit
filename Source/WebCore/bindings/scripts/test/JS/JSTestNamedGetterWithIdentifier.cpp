@@ -362,7 +362,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunction_getter
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterWithIdentifier::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedGetterWithIdentifier, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedGetterWithIdentifier, UseCustomHeapCellType::No>(vm, "JSTestNamedGetterWithIdentifier"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedGetterWithIdentifier.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedGetterWithIdentifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedGetterWithIdentifier.get(); },

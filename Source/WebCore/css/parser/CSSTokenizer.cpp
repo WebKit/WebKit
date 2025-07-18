@@ -144,36 +144,36 @@ bool CSSTokenizer::isWhitespace(CSSParserTokenType type)
     return type == NonNewlineWhitespaceToken || type == NewlineToken;
 }
 
-bool CSSTokenizer::isNewline(UChar cc)
+bool CSSTokenizer::isNewline(char16_t cc)
 {
     // We check \r and \f here, since we have no preprocessing stage
     return (cc == '\r' || cc == '\n' || cc == '\f');
 }
 
-CSSParserToken CSSTokenizer::newline(UChar)
+CSSParserToken CSSTokenizer::newline(char16_t)
 {
     return CSSParserToken(NewlineToken);
 }
 
 // http://dev.w3.org/csswg/css-syntax/#check-if-two-code-points-are-a-valid-escape
-static bool twoCharsAreValidEscape(UChar first, UChar second)
+static bool twoCharsAreValidEscape(char16_t first, char16_t second)
 {
     return first == '\\' && !CSSTokenizer::isNewline(second);
 }
 
-void CSSTokenizer::reconsume(UChar c)
+void CSSTokenizer::reconsume(char16_t c)
 {
     m_input.pushBack(c);
 }
 
-UChar CSSTokenizer::consume()
+char16_t CSSTokenizer::consume()
 {
-    UChar current = m_input.nextInputChar();
+    char16_t current = m_input.nextInputChar();
     m_input.advance();
     return current;
 }
 
-CSSParserToken CSSTokenizer::whitespace(UChar)
+CSSParserToken CSSTokenizer::whitespace(char16_t)
 {
     auto startOffset = m_input.offset();
     m_input.advanceUntilNewlineOrNonWhitespace();
@@ -202,37 +202,37 @@ CSSParserToken CSSTokenizer::blockEnd(CSSParserTokenType type, CSSParserTokenTyp
     return CSSParserToken(type);
 }
 
-CSSParserToken CSSTokenizer::leftParenthesis(UChar)
+CSSParserToken CSSTokenizer::leftParenthesis(char16_t)
 {
     return blockStart(LeftParenthesisToken);
 }
 
-CSSParserToken CSSTokenizer::rightParenthesis(UChar)
+CSSParserToken CSSTokenizer::rightParenthesis(char16_t)
 {
     return blockEnd(RightParenthesisToken, LeftParenthesisToken);
 }
 
-CSSParserToken CSSTokenizer::leftBracket(UChar)
+CSSParserToken CSSTokenizer::leftBracket(char16_t)
 {
     return blockStart(LeftBracketToken);
 }
 
-CSSParserToken CSSTokenizer::rightBracket(UChar)
+CSSParserToken CSSTokenizer::rightBracket(char16_t)
 {
     return blockEnd(RightBracketToken, LeftBracketToken);
 }
 
-CSSParserToken CSSTokenizer::leftBrace(UChar)
+CSSParserToken CSSTokenizer::leftBrace(char16_t)
 {
     return blockStart(LeftBraceToken);
 }
 
-CSSParserToken CSSTokenizer::rightBrace(UChar)
+CSSParserToken CSSTokenizer::rightBrace(char16_t)
 {
     return blockEnd(RightBraceToken, LeftBraceToken);
 }
 
-CSSParserToken CSSTokenizer::plusOrFullStop(UChar cc)
+CSSParserToken CSSTokenizer::plusOrFullStop(char16_t cc)
 {
     if (nextCharsAreNumber(cc)) {
         reconsume(cc);
@@ -241,7 +241,7 @@ CSSParserToken CSSTokenizer::plusOrFullStop(UChar cc)
     return CSSParserToken(DelimiterToken, cc);
 }
 
-CSSParserToken CSSTokenizer::asterisk(UChar cc)
+CSSParserToken CSSTokenizer::asterisk(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '*');
     if (consumeIfNext('='))
@@ -249,7 +249,7 @@ CSSParserToken CSSTokenizer::asterisk(UChar cc)
     return CSSParserToken(DelimiterToken, '*');
 }
 
-CSSParserToken CSSTokenizer::lessThan(UChar cc)
+CSSParserToken CSSTokenizer::lessThan(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '<');
     if (m_input.peek(0) == '!' && m_input.peek(1) == '-' && m_input.peek(2) == '-') {
@@ -259,12 +259,12 @@ CSSParserToken CSSTokenizer::lessThan(UChar cc)
     return CSSParserToken(DelimiterToken, '<');
 }
 
-CSSParserToken CSSTokenizer::comma(UChar)
+CSSParserToken CSSTokenizer::comma(char16_t)
 {
     return CSSParserToken(CommaToken);
 }
 
-CSSParserToken CSSTokenizer::hyphenMinus(UChar cc)
+CSSParserToken CSSTokenizer::hyphenMinus(char16_t cc)
 {
     if (nextCharsAreNumber(cc)) {
         reconsume(cc);
@@ -281,7 +281,7 @@ CSSParserToken CSSTokenizer::hyphenMinus(UChar cc)
     return CSSParserToken(DelimiterToken, cc);
 }
 
-CSSParserToken CSSTokenizer::solidus(UChar cc)
+CSSParserToken CSSTokenizer::solidus(char16_t cc)
 {
     if (consumeIfNext('*')) {
         // These get ignored, but we need a value to return.
@@ -292,19 +292,19 @@ CSSParserToken CSSTokenizer::solidus(UChar cc)
     return CSSParserToken(DelimiterToken, cc);
 }
 
-CSSParserToken CSSTokenizer::colon(UChar)
+CSSParserToken CSSTokenizer::colon(char16_t)
 {
     return CSSParserToken(ColonToken);
 }
 
-CSSParserToken CSSTokenizer::semiColon(UChar)
+CSSParserToken CSSTokenizer::semiColon(char16_t)
 {
     return CSSParserToken(SemicolonToken);
 }
 
-CSSParserToken CSSTokenizer::hash(UChar cc)
+CSSParserToken CSSTokenizer::hash(char16_t cc)
 {
-    UChar nextChar = m_input.peek(0);
+    char16_t nextChar = m_input.peek(0);
     if (isNameCodePoint(nextChar) || twoCharsAreValidEscape(nextChar, m_input.peek(1))) {
         HashTokenType type = nextCharsAreIdentifier() ? HashTokenId : HashTokenUnrestricted;
         return CSSParserToken(type, consumeName());
@@ -313,7 +313,7 @@ CSSParserToken CSSTokenizer::hash(UChar cc)
     return CSSParserToken(DelimiterToken, cc);
 }
 
-CSSParserToken CSSTokenizer::circumflexAccent(UChar cc)
+CSSParserToken CSSTokenizer::circumflexAccent(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '^');
     if (consumeIfNext('='))
@@ -321,7 +321,7 @@ CSSParserToken CSSTokenizer::circumflexAccent(UChar cc)
     return CSSParserToken(DelimiterToken, '^');
 }
 
-CSSParserToken CSSTokenizer::dollarSign(UChar cc)
+CSSParserToken CSSTokenizer::dollarSign(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '$');
     if (consumeIfNext('='))
@@ -329,7 +329,7 @@ CSSParserToken CSSTokenizer::dollarSign(UChar cc)
     return CSSParserToken(DelimiterToken, '$');
 }
 
-CSSParserToken CSSTokenizer::verticalLine(UChar cc)
+CSSParserToken CSSTokenizer::verticalLine(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '|');
     if (consumeIfNext('='))
@@ -339,7 +339,7 @@ CSSParserToken CSSTokenizer::verticalLine(UChar cc)
     return CSSParserToken(DelimiterToken, '|');
 }
 
-CSSParserToken CSSTokenizer::tilde(UChar cc)
+CSSParserToken CSSTokenizer::tilde(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '~');
     if (consumeIfNext('='))
@@ -347,7 +347,7 @@ CSSParserToken CSSTokenizer::tilde(UChar cc)
     return CSSParserToken(DelimiterToken, '~');
 }
 
-CSSParserToken CSSTokenizer::commercialAt(UChar cc)
+CSSParserToken CSSTokenizer::commercialAt(char16_t cc)
 {
     ASSERT_UNUSED(cc, cc == '@');
     if (nextCharsAreIdentifier())
@@ -355,7 +355,7 @@ CSSParserToken CSSTokenizer::commercialAt(UChar cc)
     return CSSParserToken(DelimiterToken, '@');
 }
 
-CSSParserToken CSSTokenizer::reverseSolidus(UChar cc)
+CSSParserToken CSSTokenizer::reverseSolidus(char16_t cc)
 {
     if (twoCharsAreValidEscape(cc, m_input.peek(0))) {
         reconsume(cc);
@@ -364,24 +364,24 @@ CSSParserToken CSSTokenizer::reverseSolidus(UChar cc)
     return CSSParserToken(DelimiterToken, cc);
 }
 
-CSSParserToken CSSTokenizer::asciiDigit(UChar cc)
+CSSParserToken CSSTokenizer::asciiDigit(char16_t cc)
 {
     reconsume(cc);
     return consumeNumericToken();
 }
 
-CSSParserToken CSSTokenizer::nameStart(UChar cc)
+CSSParserToken CSSTokenizer::nameStart(char16_t cc)
 {
     reconsume(cc);
     return consumeIdentLikeToken();
 }
 
-CSSParserToken CSSTokenizer::stringStart(UChar cc)
+CSSParserToken CSSTokenizer::stringStart(char16_t cc)
 {
     return consumeStringTokenUntil(cc);
 }
 
-CSSParserToken CSSTokenizer::endOfFile(UChar)
+CSSParserToken CSSTokenizer::endOfFile(char16_t)
 {
     return CSSParserToken(EOFToken);
 }
@@ -529,7 +529,7 @@ CSSParserToken CSSTokenizer::nextToken()
     // State-machine tokenizers are easier to write to handle
     // incremental tokenization of partial sources.
     // However, for now we follow the spec exactly.
-    UChar cc = consume();
+    char16_t cc = consume();
     CodePoint codePointFunc = 0;
 
     if (isASCII(cc)) {
@@ -556,7 +556,7 @@ CSSParserToken CSSTokenizer::consumeNumber()
     NumericSign sign = NoSign;
     unsigned numberLength = 0;
 
-    UChar next = m_input.peek(0);
+    char16_t next = m_input.peek(0);
     if (next == '+') {
         ++numberLength;
         sign = PlusSign;
@@ -610,7 +610,7 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
             // The spec is slightly different so as to avoid dropping whitespace
             // tokens, but they wouldn't be used and this is easier.
             m_input.advanceUntilNonWhitespace();
-            UChar next = m_input.peek(0);
+            char16_t next = m_input.peek(0);
             if (next != '"' && next != '\'')
                 return consumeURLToken();
         }
@@ -620,11 +620,11 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
 }
 
 // http://dev.w3.org/csswg/css-syntax/#consume-a-string-token
-CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
+CSSParserToken CSSTokenizer::consumeStringTokenUntil(char16_t endingCodePoint)
 {
     // Strings without escapes get handled without allocations
     for (unsigned size = 0; ; size++) {
-        UChar cc = m_input.peek(size);
+        char16_t cc = m_input.peek(size);
         if (cc == endingCodePoint) {
             unsigned startOffset = m_input.offset();
             m_input.advance(size + 1);
@@ -640,7 +640,7 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
 
     StringBuilder output;
     while (true) {
-        UChar cc = consume();
+        char16_t cc = consume();
         if (cc == endingCodePoint || cc == kEndOfFileMarker)
             return CSSParserToken(StringToken, registerString(output.toString()));
         if (isNewline(cc)) {
@@ -660,7 +660,7 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
 }
 
 // http://dev.w3.org/csswg/css-syntax/#non-printable-code-point
-static bool isNonPrintableCodePoint(UChar cc)
+static bool isNonPrintableCodePoint(char16_t cc)
 {
     return cc <= '\x8' || cc == '\xb' || (cc >= '\xe' && cc <= '\x1f') || cc == '\x7f';
 }
@@ -672,7 +672,7 @@ CSSParserToken CSSTokenizer::consumeURLToken()
 
     // URL tokens without escapes get handled without allocations
     for (unsigned size = 0; ; size++) {
-        UChar cc = m_input.peek(size);
+        char16_t cc = m_input.peek(size);
         if (cc == ')') {
             unsigned startOffset = m_input.offset();
             m_input.advance(size + 1);
@@ -684,7 +684,7 @@ CSSParserToken CSSTokenizer::consumeURLToken()
 
     StringBuilder result;
     while (true) {
-        UChar cc = consume();
+        char16_t cc = consume();
         if (cc == ')' || cc == kEndOfFileMarker)
             return CSSParserToken(UrlToken, registerString(result.toString()));
 
@@ -717,7 +717,7 @@ CSSParserToken CSSTokenizer::consumeURLToken()
 void CSSTokenizer::consumeBadUrlRemnants()
 {
     while (true) {
-        UChar cc = consume();
+        char16_t cc = consume();
         if (cc == ')' || cc == kEndOfFileMarker)
             return;
         if (twoCharsAreValidEscape(cc, m_input.peek(0)))
@@ -728,7 +728,7 @@ void CSSTokenizer::consumeBadUrlRemnants()
 void CSSTokenizer::consumeSingleWhitespaceIfNext()
 {
     // We check for \r\n and ASCII whitespace since we don't do preprocessing
-    UChar next = m_input.peek(0);
+    char16_t next = m_input.peek(0);
     if (next == '\r' && m_input.peek(1) == '\n')
         m_input.advance(2);
     else if (isASCIIWhitespace(next))
@@ -737,7 +737,7 @@ void CSSTokenizer::consumeSingleWhitespaceIfNext()
 
 void CSSTokenizer::consumeUntilCommentEndFound()
 {
-    UChar c = consume();
+    char16_t c = consume();
     while (true) {
         if (c == kEndOfFileMarker)
             return;
@@ -751,7 +751,7 @@ void CSSTokenizer::consumeUntilCommentEndFound()
     }
 }
 
-bool CSSTokenizer::consumeIfNext(UChar character)
+bool CSSTokenizer::consumeIfNext(char16_t character)
 {
     // Since we're not doing replacement we can't tell the difference from
     // a NUL in the middle and the kEndOfFileMarker, so character must not be
@@ -769,7 +769,7 @@ StringView CSSTokenizer::consumeName()
 {
     // Names without escapes get handled without allocations
     for (unsigned size = 0; ; ++size) {
-        UChar cc = m_input.peek(size);
+        char16_t cc = m_input.peek(size);
         if (isNameCodePoint(cc))
             continue;
         // peek will return NUL when we hit the end of the
@@ -786,7 +786,7 @@ StringView CSSTokenizer::consumeName()
 
     StringBuilder result;
     while (true) {
-        UChar cc = consume();
+        char16_t cc = consume();
         if (isNameCodePoint(cc)) {
             result.append(cc);
             continue;
@@ -803,7 +803,7 @@ StringView CSSTokenizer::consumeName()
 // http://dev.w3.org/csswg/css-syntax/#consume-an-escaped-code-point
 char32_t CSSTokenizer::consumeEscape()
 {
-    UChar cc = consume();
+    char16_t cc = consume();
     ASSERT(!isNewline(cc));
     if (isASCIIHexDigit(cc)) {
         unsigned consumedHexDigits = 1;
@@ -832,9 +832,9 @@ bool CSSTokenizer::nextTwoCharsAreValidEscape()
 }
 
 // http://www.w3.org/TR/css3-syntax/#starts-with-a-number
-bool CSSTokenizer::nextCharsAreNumber(UChar first)
+bool CSSTokenizer::nextCharsAreNumber(char16_t first)
 {
-    UChar second = m_input.peek(0);
+    char16_t second = m_input.peek(0);
     if (isASCIIDigit(first))
         return true;
     if (first == '+' || first == '-')
@@ -846,16 +846,16 @@ bool CSSTokenizer::nextCharsAreNumber(UChar first)
 
 bool CSSTokenizer::nextCharsAreNumber()
 {
-    UChar first = consume();
+    char16_t first = consume();
     bool areNumber = nextCharsAreNumber(first);
     reconsume(first);
     return areNumber;
 }
 
 // http://dev.w3.org/csswg/css-syntax/#would-start-an-identifier
-bool CSSTokenizer::nextCharsAreIdentifier(UChar first)
+bool CSSTokenizer::nextCharsAreIdentifier(char16_t first)
 {
-    UChar second = m_input.peek(0);
+    char16_t second = m_input.peek(0);
     if (isNameStartCodePoint(first) || twoCharsAreValidEscape(first, second))
         return true;
 
@@ -867,7 +867,7 @@ bool CSSTokenizer::nextCharsAreIdentifier(UChar first)
 
 bool CSSTokenizer::nextCharsAreIdentifier()
 {
-    UChar first = consume();
+    char16_t first = consume();
     bool areIdentifier = nextCharsAreIdentifier(first);
     reconsume(first);
     return areIdentifier;

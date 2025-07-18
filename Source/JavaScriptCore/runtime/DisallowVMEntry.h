@@ -25,11 +25,10 @@
 
 #pragma once
 
+#include "VM.h"
 #include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {
-
-class VM;
 
 // The only reason we implement DisallowVMEntry as specialization of a template
 // is so that we can work around having to #include VM.h, which can hurt build

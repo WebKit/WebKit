@@ -4,7 +4,8 @@
         const firstTypeOnly = container == "std::span"
             || container == "Vector"
             || container == "std::array"
-            || container == "HashSet";
+            || container == "HashSet"
+            || container == "Markable";
         const firstTwoTypesOnly = container == "HashMap";
 
         const set = new Set();
@@ -121,18 +122,13 @@
             "short",
             "float",
             "bool",
-            "NSUInteger",
-            "NSInteger",
-            "size_t",
             "std::nullptr_t",
             "uint32_t",
             "int32_t",
             "uint8_t",
             "UInt32",
-            "long",
             "unsigned",
             "unsigned long long",
-            "unsigned long",
             "unsigned char",
             "unsigned short",
             "void",
@@ -140,12 +136,10 @@
             "uint16_t",
             "int64_t",
             "pid_t",
-            "CGFloat",
             "String",
             "uint32_t",
             "int16_t",
             "uint64_t",
-            "uintptr_t",
             "int",
             "long long",
             "GCGLint",
@@ -153,7 +147,6 @@
             "OSStatus",
             "GCGLErrorCodeSet",
             "CGBitmapInfo",
-            "uintptr_t",
         ];
         return result.union(new Set(fundamentalTypes));
     }

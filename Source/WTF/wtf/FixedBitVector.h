@@ -39,7 +39,7 @@ namespace WTF {
 
 // FIXME: This should be `: private BitVector`.
 class FixedBitVector final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FixedBitVector);
     using WordType = decltype(BitVector::m_bitsOrPointer);
 
 public:
@@ -98,7 +98,7 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndSet(size_t bitIndex, Depende
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* data = dependency.consume(m_bitVector.bits()) + wordIndex;
+    WordType* data = dependency.consume(m_bitVector.words().data()) + wordIndex;
     return !std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (value & mask)
@@ -116,7 +116,7 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndClear(size_t bitIndex, Depen
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* data = dependency.consume(m_bitVector.bits()) + wordIndex;
+    WordType* data = dependency.consume(m_bitVector.words().data()) + wordIndex;
     return std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (!(value & mask))
@@ -134,7 +134,7 @@ ALWAYS_INLINE bool FixedBitVector::testAndSet(size_t bitIndex)
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* bits = m_bitVector.bits();
+    WordType* bits = m_bitVector.words().data();
     bool previousValue = bits[wordIndex] & mask;
     bits[wordIndex] |= mask;
     return previousValue;
@@ -147,7 +147,7 @@ ALWAYS_INLINE bool FixedBitVector::testAndClear(size_t bitIndex)
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* bits = m_bitVector.bits();
+    WordType* bits = m_bitVector.words().data();
     bool previousValue = bits[wordIndex] & mask;
     bits[wordIndex] &= ~mask;
     return previousValue;
@@ -160,7 +160,7 @@ ALWAYS_INLINE bool FixedBitVector::test(size_t bitIndex)
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    return m_bitVector.bits()[wordIndex] & mask;
+    return m_bitVector.words().data()[wordIndex] & mask;
 }
 
 ALWAYS_INLINE size_t FixedBitVector::findBit(size_t startIndex, bool value) const

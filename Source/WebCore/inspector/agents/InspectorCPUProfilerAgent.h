@@ -43,7 +43,7 @@ public:
     ~InspectorCPUProfilerAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // CPUProfilerBackendDispatcherHandler
@@ -53,8 +53,8 @@ public:
 private:
     void collectSample(const ResourceUsageData&);
 
-    std::unique_ptr<Inspector::CPUProfilerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::CPUProfilerBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::CPUProfilerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::CPUProfilerBackendDispatcher> m_backendDispatcher;
     bool m_tracking { false };
 };
 

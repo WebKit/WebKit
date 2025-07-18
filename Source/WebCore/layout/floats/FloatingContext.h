@@ -75,7 +75,7 @@ private:
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
-    const LayoutState& containingBlockGeometries() const { return m_layoutState; }
+    const LayoutState& containingBlockGeometries() const;
 
     void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 
@@ -85,7 +85,7 @@ private:
     Point mapPointFromFloatingContextRootToBlockFormattingContextRoot(Point) const;
 
     CheckedRef<const ElementBox> m_formattingContextRoot;
-    const LayoutState& m_layoutState;
+    const CheckedRef<const LayoutState> m_layoutState;
     const PlacedFloats& m_placedFloats;
 };
 

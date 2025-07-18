@@ -41,8 +41,6 @@ class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBuffer;
 #endif
 
-enum class ContentsFormat : uint8_t;
-
 // Platform specific interface for attaching contents to GraphicsLayer.
 // Responsible for creating compositor resources to show the particular contents
 // in the platform specific GraphicsLayer.
@@ -67,11 +65,10 @@ class GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDi
 public:
     virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
 
-    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&) = 0;
+    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&, bool opaque) = 0;
 
     virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
     virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }
-    virtual void setContentsFormat(ContentsFormat) { }
 };
 
 }

@@ -454,6 +454,12 @@ void GraphicsLayer::setDrawsHDRContent(bool b)
     m_drawsHDRContent = b;
 }
 
+void GraphicsLayer::setTonemappingEnabled(bool b)
+{
+    ASSERT(m_type != Type::Structural);
+    m_tonemappingEnabled = b;
+}
+
 void GraphicsLayer::setNeedsDisplayIfEDRHeadroomExceeds(float)
 {
 }
@@ -596,20 +602,6 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
 
     for (auto& layer : children())
         layer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
-}
-
-void GraphicsLayer::noteScreenSupportedContentsFormatsChangedIncludingDescendants()
-{
-    screenSupportedContentsFormatsChanged();
-
-    if (m_maskLayer)
-        m_maskLayer->screenSupportedContentsFormatsChanged();
-
-    if (m_replicaLayer)
-        m_replicaLayer->noteScreenSupportedContentsFormatsChangedIncludingDescendants();
-
-    for (auto& layer : children())
-        layer->noteScreenSupportedContentsFormatsChangedIncludingDescendants();
 }
 
 void GraphicsLayer::setIsInWindow(bool inWindow)

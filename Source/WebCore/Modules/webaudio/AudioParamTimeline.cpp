@@ -25,12 +25,12 @@
  */
 
 #include "config.h"
+#include "AudioParamTimeline.h"
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioParamTimeline.h"
-
 #include "AudioUtilities.h"
+#include "ExceptionOr.h"
 #include "FloatConversion.h"
 #include "VectorMath.h"
 #include <algorithm>

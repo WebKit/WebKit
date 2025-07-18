@@ -43,7 +43,7 @@ namespace WebKit {
 Ref<WebCore::WebTransportSessionPromise> WebTransportSession::initialize(Ref<IPC::Connection>&& connection, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&& client, const URL& url, const WebPageProxyIdentifier& pageID, const WebCore::ClientOrigin& clientOrigin)
 {
     ASSERT(RunLoop::isMain());
-    return connection->sendWithPromisedReply(Messages::NetworkConnectionToWebProcess::InitializeWebTransportSession(url, pageID, clientOrigin))->whenSettled(RunLoop::protectedMain(), [connection, client = WTFMove(client)] (auto&& identifier) mutable {
+    return connection->sendWithPromisedReply(Messages::NetworkConnectionToWebProcess::InitializeWebTransportSession(url, pageID, clientOrigin))->whenSettled(RunLoop::mainSingleton(), [connection, client = WTFMove(client)] (auto&& identifier) mutable {
         ASSERT(RunLoop::isMain());
         if (!identifier || !*identifier)
             return WebCore::WebTransportSessionPromise::createAndReject();
@@ -119,7 +119,7 @@ void WebTransportSession::streamReceiveBytes(WebCore::WebTransportStreamIdentifi
 
 Ref<WebCore::WebTransportSendPromise> WebTransportSession::sendDatagram(std::span<const uint8_t> datagram)
 {
-    return sendWithPromisedReply(Messages::NetworkTransportSession::SendDatagram(datagram))->whenSettled(RunLoop::protectedMain(), [] (auto&& exception) {
+    return sendWithPromisedReply(Messages::NetworkTransportSession::SendDatagram(datagram))->whenSettled(RunLoop::mainSingleton(), [] (auto&& exception) {
         ASSERT(RunLoop::isMain());
         if (!exception)
             return WebCore::WebTransportSendPromise::createAndReject();
@@ -129,7 +129,7 @@ Ref<WebCore::WebTransportSendPromise> WebTransportSession::sendDatagram(std::spa
 
 Ref<WebCore::WritableStreamPromise> WebTransportSession::createOutgoingUnidirectionalStream()
 {
-    return sendWithPromisedReply(Messages::NetworkTransportSession::CreateOutgoingUnidirectionalStream())->whenSettled(RunLoop::protectedMain(), [weakThis = ThreadSafeWeakPtr { *this }] (auto&& identifier) mutable {
+    return sendWithPromisedReply(Messages::NetworkTransportSession::CreateOutgoingUnidirectionalStream())->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }] (auto&& identifier) mutable {
         ASSERT(RunLoop::isMain());
         RefPtr strongThis = weakThis.get();
         if (!identifier || !*identifier || !strongThis)
@@ -140,7 +140,7 @@ Ref<WebCore::WritableStreamPromise> WebTransportSession::createOutgoingUnidirect
 
 Ref<WebCore::BidirectionalStreamPromise> WebTransportSession::createBidirectionalStream()
 {
-    return sendWithPromisedReply(Messages::NetworkTransportSession::CreateBidirectionalStream())->whenSettled(RunLoop::protectedMain(), [weakThis = ThreadSafeWeakPtr { *this }] (auto&& identifier) mutable {
+    return sendWithPromisedReply(Messages::NetworkTransportSession::CreateBidirectionalStream())->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }] (auto&& identifier) mutable {
         ASSERT(RunLoop::isMain());
         RefPtr strongThis = weakThis.get();
         if (!identifier || !*identifier || !strongThis)
@@ -154,7 +154,7 @@ Ref<WebCore::BidirectionalStreamPromise> WebTransportSession::createBidirectiona
 
 Ref<WebCore::WebTransportSendPromise> WebTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
 {
-    return sendWithPromisedReply(Messages::NetworkTransportSession::StreamSendBytes(identifier, bytes, withFin))->whenSettled(RunLoop::protectedMain(), [] (auto&& exception) {
+    return sendWithPromisedReply(Messages::NetworkTransportSession::StreamSendBytes(identifier, bytes, withFin))->whenSettled(RunLoop::mainSingleton(), [] (auto&& exception) {
         if (!exception)
             return WebCore::WebTransportSendPromise::createAndReject();
         return WebCore::WebTransportSendPromise::createAndResolve(*exception);

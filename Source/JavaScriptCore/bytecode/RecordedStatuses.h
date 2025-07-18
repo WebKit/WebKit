@@ -36,7 +36,7 @@
 namespace JSC {
 
 struct RecordedStatuses {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED(RecordedStatuses);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RecordedStatuses);
 
     RecordedStatuses() = default;
 

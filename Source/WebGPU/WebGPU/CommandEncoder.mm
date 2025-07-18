@@ -141,7 +141,7 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
     , m_device(device)
     , m_uniqueId(uniqueId)
 {
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     m_managedTextures = [NSMutableSet set];
     m_managedBuffers = [NSMutableSet set];
 #endif
@@ -1449,7 +1449,7 @@ void CommandEncoder::addBuffer(id<MTLBuffer> buffer)
     if (!buffer)
         return;
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     if (buffer.storageMode == MTLStorageModeManaged)
         [m_managedBuffers addObject:buffer];
     else
@@ -1461,7 +1461,7 @@ void CommandEncoder::addTexture(id<MTLTexture> texture)
     if (!texture)
         return;
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     if (texture.storageMode == MTLStorageModeManaged)
         [m_managedTextures addObject:texture];
     else
@@ -2095,7 +2095,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     commandBuffer.label = fromAPI(descriptor.label).createNSString().get();
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     if (m_managedBuffers.count || m_managedTextures.count) {
         id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
         for (id<MTLBuffer> buffer in m_managedBuffers)

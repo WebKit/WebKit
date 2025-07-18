@@ -32,6 +32,7 @@
 #include "DOMPromiseProxy.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -44,6 +45,7 @@
 #include "JSPushSubscription.h"
 #include "JSServiceWorkerRegistration.h"
 #include "LegacySchemeRegistry.h"
+#include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "NavigatorBase.h"
@@ -51,6 +53,7 @@
 #include "PushSubscriptionOptions.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -105,22 +108,22 @@ ServiceWorkerContainer::~ServiceWorkerContainer()
 
 void ServiceWorkerContainer::refEventTarget()
 {
-    m_navigator.ref();
+    m_navigator->ref();
 }
 
 void ServiceWorkerContainer::derefEventTarget()
 {
-    m_navigator.deref();
+    m_navigator->deref();
 }
 
 void ServiceWorkerContainer::ref() const
 {
-    m_navigator.ref();
+    m_navigator->ref();
 }
 
 void ServiceWorkerContainer::deref() const
 {
-    m_navigator.deref();
+    m_navigator->deref();
 }
 
 auto ServiceWorkerContainer::ready() -> ReadyPromise&
@@ -588,7 +591,16 @@ void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)
 {
     ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(m_jobMap.contains(job.identifier()));
+
+    bool isRegisterJob = job.data().type == ServiceWorkerJobType::Register;
+
     m_jobMap.remove(job.identifier());
+
+    if (!isRegisterJob)
+        return;
+
+    if (auto callback = std::exchange(m_whenRegisterJobsAreFinished, { }))
+        whenRegisterJobsAreFinished(WTFMove(callback));
 }
 
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
@@ -801,6 +813,28 @@ void ServiceWorkerContainer::cookieChangeSubscriptions(ServiceWorkerRegistration
             }));
         }
     });
+}
+
+void ServiceWorkerContainer::whenRegisterJobsAreFinished(CompletionHandler<void()>&& completionHandler)
+{
+    bool isRegistering = std::ranges::any_of(m_jobMap.values(), [](auto& ongoing) {
+        return ongoing.job->isRegistering();
+    });
+
+    if (!isRegistering) {
+        completionHandler();
+        return;
+    }
+
+    if (m_whenRegisterJobsAreFinished) {
+        m_whenRegisterJobsAreFinished = [oldCompletionHandler = std::exchange(m_whenRegisterJobsAreFinished, { }), newCompletionHandler = WTFMove(completionHandler)]() mutable {
+            oldCompletionHandler();
+            newCompletionHandler();
+        };
+        return;
+    }
+
+    m_whenRegisterJobsAreFinished = WTFMove(completionHandler);
 }
 
 } // namespace WebCore

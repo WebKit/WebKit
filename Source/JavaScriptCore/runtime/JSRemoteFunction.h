@@ -30,6 +30,7 @@
 #include "AuxiliaryBarrier.h"
 #include "JSFunction.h"
 #include "JSObject.h"
+#include "JSString.h"
 #include <wtf/TaggedArrayStoragePtr.h>
 
 namespace JSC {

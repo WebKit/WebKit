@@ -277,9 +277,9 @@ class YarrCodeBlock final : public YarrBoyerMooreData {
 
 public:
     using YarrJITCode8 = UGPRPair SYSV_ABI (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
-    using YarrJITCode16 = UGPRPair SYSV_ABI (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCode16 = UGPRPair SYSV_ABI (*)(const char16_t* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
     using YarrJITCodeMatchOnly8 = UGPRPair SYSV_ABI (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
-    using YarrJITCodeMatchOnly16 = UGPRPair SYSV_ABI (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCodeMatchOnly16 = UGPRPair SYSV_ABI (*)(const char16_t* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
 
     YarrCodeBlock(RegExp* regExp)
         : m_regExp(regExp)
@@ -342,7 +342,7 @@ public:
         return MatchResult(untagCFunctionPtr<YarrJITCode8, Yarr8BitPtrTag>(m_ref8.code().taggedPtr())(input.data(), start, input.size(), output, matchingContext));
     }
 
-    MatchResult execute(std::span<const UChar> input, unsigned start, int* output, MatchingContextHolder* matchingContext)
+    MatchResult execute(std::span<const char16_t> input, unsigned start, int* output, MatchingContextHolder* matchingContext)
     {
         ASSERT(has16BitCode());
 #if CPU(ARM64E)
@@ -362,7 +362,7 @@ public:
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().taggedPtr())(input.data(), start, input.size(), nullptr, matchingContext));
     }
 
-    MatchResult execute(std::span<const UChar> input, unsigned start, MatchingContextHolder* matchingContext)
+    MatchResult execute(std::span<const char16_t> input, unsigned start, MatchingContextHolder* matchingContext)
     {
         ASSERT(has16BitCodeMatchOnly());
 #if CPU(ARM64E)

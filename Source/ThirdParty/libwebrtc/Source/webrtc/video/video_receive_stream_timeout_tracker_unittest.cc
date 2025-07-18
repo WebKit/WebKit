@@ -10,10 +10,10 @@
 
 #include "video/video_receive_stream_timeout_tracker.h"
 
-#include <utility>
 #include <vector>
 
-#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"

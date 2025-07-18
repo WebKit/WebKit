@@ -22,9 +22,10 @@
 #import "ARDSettingsModel.h"
 #import "ARDVideoCallView.h"
 
-@interface ARDVideoCallViewController () <ARDAppClientDelegate,
-                                          ARDVideoCallViewDelegate,
-                                          RTC_OBJC_TYPE (RTCAudioSessionDelegate)>
+@interface ARDVideoCallViewController () <
+    ARDAppClientDelegate,
+    ARDVideoCallViewDelegate,
+    RTC_OBJC_TYPE (RTCAudioSessionDelegate)>
 @property(nonatomic, strong) RTC_OBJC_TYPE(RTCVideoTrack) * remoteVideoTrack;
 @property(nonatomic, readonly) ARDVideoCallView *videoCallView;
 @property(nonatomic, assign) AVAudioSessionPortOverride portOverride;
@@ -51,7 +52,9 @@
     _delegate = delegate;
 
     _client = [[ARDAppClient alloc] initWithDelegate:self];
-    [_client connectToRoomWithId:room settings:settingsModel isLoopback:isLoopback];
+    [_client connectToRoomWithId:room
+                        settings:settingsModel
+                      isLoopback:isLoopback];
   }
   return self;
 }
@@ -63,7 +66,8 @@
       [self statusTextForState:RTCIceConnectionStateNew];
   self.view = _videoCallView;
 
-  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session =
+      [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session addDelegate:self];
 }
 
@@ -101,19 +105,23 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer {
+    didCreateLocalCapturer:
+        (RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer {
   _videoCallView.localVideoView.captureSession = localCapturer.captureSession;
   ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
   _captureController =
-      [[ARDCaptureController alloc] initWithCapturer:localCapturer settings:settingsModel];
+      [[ARDCaptureController alloc] initWithCapturer:localCapturer
+                                            settings:settingsModel];
   [_captureController startCapture];
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalFileCapturer:(RTC_OBJC_TYPE(RTCFileVideoCapturer) *)fileCapturer {
+    didCreateLocalFileCapturer:
+        (RTC_OBJC_TYPE(RTCFileVideoCapturer) *)fileCapturer {
 #if defined(__IPHONE_11_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)
   if (@available(iOS 10, *)) {
-    _fileCaptureController = [[ARDFileCaptureController alloc] initWithCapturer:fileCapturer];
+    _fileCaptureController =
+        [[ARDFileCaptureController alloc] initWithCapturer:fileCapturer];
     [_fileCaptureController startCapture];
   }
 #endif
@@ -124,7 +132,8 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didReceiveRemoteVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
+    didReceiveRemoteVideoTrack:
+        (RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
   self.remoteVideoTrack = remoteVideoTrack;
   __weak ARDVideoCallViewController *weakSelf = self;
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -133,13 +142,13 @@
   });
 }
 
-- (void)appClient:(ARDAppClient *)client didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
+- (void)appClient:(ARDAppClient *)client
+      didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
   _videoCallView.statsView.stats = stats;
   [_videoCallView setNeedsLayout];
 }
 
-- (void)appClient:(ARDAppClient *)client
-         didError:(NSError *)error {
+- (void)appClient:(ARDAppClient *)client didError:(NSError *)error {
   NSString *message =
       [NSString stringWithFormat:@"%@", error.localizedDescription];
   [self hangup];
@@ -164,22 +173,23 @@
   if (_portOverride == AVAudioSessionPortOverrideNone) {
     override = AVAudioSessionPortOverrideSpeaker;
   }
-  [RTC_OBJC_TYPE(RTCDispatcher) dispatchAsyncOnType:RTCDispatcherTypeAudioSession
-                                              block:^{
-                                                RTC_OBJC_TYPE(RTCAudioSession) *session =
-                                                    [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
-                                                [session lockForConfiguration];
-                                                NSError *error = nil;
-                                                if ([session overrideOutputAudioPort:override
-                                                                               error:&error]) {
-                                                  self.portOverride = override;
-                                                } else {
-                                                  RTCLogError(@"Error overriding output port: %@",
-                                                              error.localizedDescription);
-                                                }
-                                                [session unlockForConfiguration];
-                                                completion();
-                                              }];
+  [RTC_OBJC_TYPE(RTCDispatcher)
+      dispatchAsyncOnType:RTCDispatcherTypeAudioSession
+                    block:^{
+                      RTC_OBJC_TYPE(RTCAudioSession) *session =
+                          [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+                      [session lockForConfiguration];
+                      NSError *error = nil;
+                      if ([session overrideOutputAudioPort:override
+                                                     error:&error]) {
+                        self.portOverride = override;
+                      } else {
+                        RTCLogError(@"Error overriding output port: %@",
+                                    error.localizedDescription);
+                      }
+                      [session unlockForConfiguration];
+                      completion();
+                    }];
 }
 
 - (void)videoCallViewDidEnableStats:(ARDVideoCallView *)view {
@@ -233,16 +243,17 @@
   }
 }
 
-- (void)showAlertWithMessage:(NSString*)message {
+- (void)showAlertWithMessage:(NSString *)message {
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:nil
                                           message:message
                                    preferredStyle:UIAlertControllerStyleAlert];
 
-  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:@"OK"
-                                                          style:UIAlertActionStyleDefault
-                                                        handler:^(UIAlertAction *action){
-                                                        }];
+  UIAlertAction *defaultAction =
+      [UIAlertAction actionWithTitle:@"OK"
+                               style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction *action){
+                             }];
 
   [alert addAction:defaultAction];
   [self presentViewController:alert animated:YES completion:nil];

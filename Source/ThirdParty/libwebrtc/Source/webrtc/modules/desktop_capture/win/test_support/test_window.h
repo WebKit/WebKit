@@ -25,6 +25,8 @@ const uint8_t kTestWindowRValue = 191;
 const uint8_t kTestWindowGValue = 99;
 const uint8_t kTestWindowBValue = 12;
 
+const WCHAR kWindowClass[] = L"DesktopCaptureTestWindowClass";
+
 struct WindowInfo {
   HWND hwnd;
   HINSTANCE window_instance;
@@ -34,7 +36,8 @@ struct WindowInfo {
 WindowInfo CreateTestWindow(const WCHAR* window_title,
                             int height = 0,
                             int width = 0,
-                            LONG extended_styles = 0);
+                            LONG extended_styles = 0,
+                            const WCHAR* window_class = kWindowClass);
 
 void ResizeTestWindow(HWND hwnd, int width, int height);
 

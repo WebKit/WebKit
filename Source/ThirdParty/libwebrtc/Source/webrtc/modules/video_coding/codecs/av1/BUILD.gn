@@ -15,6 +15,8 @@ rtc_library("av1_svc_config") {
     "av1_svc_config.h",
   ]
   deps = [
+    "../../../../api/video:video_frame",
+    "../../../../api/video_codecs:scalability_mode",
     "../../../../api/video_codecs:video_codecs_api",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:logging",
@@ -34,7 +36,9 @@ rtc_library("dav1d_decoder") {
 
   deps = [
     "../..:video_codec_interface",
+    "../../../../api:refcountedbase",
     "../../../../api:scoped_refptr",
+    "../../../../api/environment",
     "../../../../api/video:encoded_image",
     "../../../../api/video:video_frame",
     "../../../../api/video_codecs:video_codecs_api",
@@ -56,10 +60,15 @@ rtc_library("libaom_av1_encoder") {
     "../../../../api:scoped_refptr",
     "../../../../api/environment",
     "../../../../api/video:encoded_image",
+    "../../../../api/video:render_resolution",
+    "../../../../api/video:video_codec_constants",
     "../../../../api/video:video_frame",
+    "../../../../api/video:video_frame_type",
+    "../../../../api/video:video_rtp_headers",
     "../../../../api/video_codecs:scalability_mode",
     "../../../../api/video_codecs:video_codecs_api",
     "../../../../common_video",
+    "../../../../common_video/generic_frame_descriptor",
     "../../../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:logging",
@@ -70,6 +79,7 @@ rtc_library("libaom_av1_encoder") {
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/libaom",
   ]
@@ -79,10 +89,30 @@ if (rtc_include_tests) {
   rtc_library("video_coding_codecs_av1_tests") {
     testonly = true
 
-    sources = [ "av1_svc_config_unittest.cc" ]
+    sources = [
+      "av1_svc_config_unittest.cc",
+      "dav1d_decoder_unittest.cc",
+    ]
+
     deps = [
       ":av1_svc_config",
+      ":dav1d_decoder",
+      "../..:video_codec_interface",
+      "../../../../api:array_view",
+      "../../../../api/environment",
+      "../../../../api/environment:environment_factory",
+      "../../../../api/transport/rtp:dependency_descriptor",
+      "../../../../api/units:data_rate",
+      "../../../../api/units:timestamp",
+      "../../../../api/video:encoded_image",
+      "../../../../api/video:render_resolution",
+      "../../../../api/video:video_bitrate_allocation",
+      "../../../../api/video:video_frame",
+      "../../../../api/video:video_frame_type",
+      "../../../../api/video_codecs:scalability_mode",
       "../../../../api/video_codecs:video_codecs_api",
+      "../../../../rtc_base:checks",
+      "../../../../test:explicit_key_value_config",
       "../../../../test:test_support",
     ]
 
@@ -92,20 +122,17 @@ if (rtc_include_tests) {
         "libaom_av1_unittest.cc",
       ]
       deps += [
-        ":dav1d_decoder",
         ":libaom_av1_encoder",
         "../..:encoded_video_frame_producer",
-        "../..:video_codec_interface",
         "../../../../api:create_frame_generator",
         "../../../../api:frame_generator_api",
         "../../../../api:mock_video_encoder",
-        "../../../../api/environment",
-        "../../../../api/environment:environment_factory",
         "../../../../api/units:data_size",
         "../../../../api/units:time_delta",
-        "../../../../api/video:video_frame",
         "../../../../modules/rtp_rtcp:rtp_rtcp_format",
+        "../../../../test:fileutils",
         "../../../../test:scoped_key_value_config",
+        "../../../../test:video_test_support",
         "../../svc:scalability_mode_util",
         "../../svc:scalability_structures",
         "../../svc:scalable_video_controller",

@@ -35,7 +35,7 @@ namespace TelephoneNumberDetector {
 
 void prewarm();
 bool isSupported();
-bool find(std::span<const UChar> buffer, int* startPos, int* endPos);
+bool find(std::span<const char16_t> buffer, int* startPos, int* endPos);
 
 } // namespace TelephoneNumberDetector
 } // namespace WebCore

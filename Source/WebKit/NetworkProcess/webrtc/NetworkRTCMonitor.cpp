@@ -91,7 +91,7 @@ public:
     const RTCNetwork::IPAddress& ipv4() const { return m_ipv4; }
     const RTCNetwork::IPAddress& ipv6()  const { return m_ipv6; }
 
-    rtc::AdapterType adapterTypeFromInterfaceName(const char*) const;
+    webrtc::AdapterType adapterTypeFromInterfaceName(const char*) const;
 
 #if PLATFORM(COCOA)
     void updateNetworksFromPath(nw_path_t);
@@ -119,7 +119,7 @@ private:
     HashMap<String, RTCNetwork> m_networkMap;
 #if PLATFORM(COCOA)
     RetainPtr<nw_path_monitor> m_nwMonitor;
-    HashMap<String, rtc::AdapterType> m_adapterTypes;
+    HashMap<String, webrtc::AdapterType> m_adapterTypes;
 #endif
 };
 
@@ -200,25 +200,25 @@ static std::optional<std::pair<RTCNetwork::InterfaceAddress, RTCNetwork::IPAddre
 {
     RTCNetwork::IPAddress address { *interface.ifa_addr };
     RTCNetwork::IPAddress mask { *interface.ifa_netmask };
-    return std::make_pair(RTCNetwork::InterfaceAddress { address, rtc::IPV6_ADDRESS_FLAG_NONE }, mask);
+    return std::make_pair(RTCNetwork::InterfaceAddress { address, webrtc::IPV6_ADDRESS_FLAG_NONE }, mask);
 }
 
 #if PLATFORM(COCOA)
-static rtc::AdapterType interfaceAdapterType(nw_interface_t interface)
+static webrtc::AdapterType interfaceAdapterType(nw_interface_t interface)
 {
     switch (nw_interface_get_type(interface)) {
     case nw_interface_type_other:
-        return rtc::ADAPTER_TYPE_VPN;
+        return webrtc::ADAPTER_TYPE_VPN;
     case nw_interface_type_wifi:
-        return rtc::ADAPTER_TYPE_WIFI;
+        return webrtc::ADAPTER_TYPE_WIFI;
     case nw_interface_type_cellular:
-        return rtc::ADAPTER_TYPE_CELLULAR;
+        return webrtc::ADAPTER_TYPE_CELLULAR;
     case nw_interface_type_wired:
-        return rtc::ADAPTER_TYPE_ETHERNET;
+        return webrtc::ADAPTER_TYPE_ETHERNET;
     case nw_interface_type_loopback:
-        return rtc::ADAPTER_TYPE_LOOPBACK;
+        return webrtc::ADAPTER_TYPE_LOOPBACK;
     }
-    return rtc::ADAPTER_TYPE_UNKNOWN;
+    return webrtc::ADAPTER_TYPE_UNKNOWN;
 }
 #endif
 
@@ -250,7 +250,7 @@ static HashMap<String, RTCNetwork> gatherNetworkMap()
         if (auto* address = dynamicCastToIPV6SocketAddress(*iterator->ifa_addr))
             scopeID = address->sin6_scope_id;
 
-        auto prefixLength = rtc::CountIPMaskBits(address->second.rtcAddress());
+        auto prefixLength = webrtc::CountIPMaskBits(address->second.rtcAddress());
 
         auto name = unsafeSpan(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
@@ -345,14 +345,14 @@ static std::optional<RTCNetwork::IPAddress> getDefaultIPAddress(bool useIPv4)
     return getSocketLocalAddress(socket, useIPv4);
 }
 
-rtc::AdapterType NetworkRTCSharedMonitor::adapterTypeFromInterfaceName(const char* interfaceName) const
+webrtc::AdapterType NetworkRTCSharedMonitor::adapterTypeFromInterfaceName(const char* interfaceName) const
 {
 #if PLATFORM(COCOA)
     auto iterator = m_adapterTypes.find(String::fromUTF8(interfaceName));
     if (iterator != m_adapterTypes.end())
         return iterator->value;
 #endif
-    return rtc::GetAdapterTypeFromName(interfaceName);
+    return webrtc::GetAdapterTypeFromName(interfaceName);
 }
 
 void NetworkRTCSharedMonitor::updateNetworks()
@@ -425,8 +425,8 @@ static bool sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (a.type != b.type)
         return a.type < b.type;
 
-    int precedenceA = rtc::IPAddressPrecedence(a.ips[0].rtcAddress());
-    int precedenceB = rtc::IPAddressPrecedence(b.ips[0].rtcAddress());
+    int precedenceA = webrtc::IPAddressPrecedence(a.ips[0].rtcAddress());
+    int precedenceB = webrtc::IPAddressPrecedence(b.ips[0].rtcAddress());
 
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;

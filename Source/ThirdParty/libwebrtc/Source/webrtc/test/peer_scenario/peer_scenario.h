@@ -112,7 +112,7 @@ class PeerScenario {
 
   const std::unique_ptr<LogWriterFactoryInterface> log_writer_manager_;
   NetworkEmulationManagerImpl net_;
-  rtc::Thread* const signaling_thread_;
+  Thread* const signaling_thread_;
   std::list<PeerVideoQualityPair> video_quality_pairs_;
   std::list<PeerScenarioClient> peer_clients_;
 };

@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include <limits>
+#include <numbers>
 #include <vector>
 
 #include "rtc_base/numerics/math_utils.h"  // unsigned difference
@@ -286,7 +287,7 @@ TEST(RandomNumberGeneratorTest, Gaussian) {
     }
   }
 
-  const double kPi = 3.14159265358979323846;
+  const double kPi = std::numbers::pi;
   const double kScale = 1 / (kStddev * sqrt(2.0 * kPi));
   const double kDiv = -2.0 * kStddev * kStddev;
   for (int n = 0; n < kBuckets; ++n) {

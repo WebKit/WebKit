@@ -114,7 +114,7 @@ void GStreamerDTMFSenderPrivate::playTone(const RefPtr<RealtimeOutgoingAudioSour
     GST_DEBUG_OBJECT(pad.get(), "Playing tone %c for %zu milliseconds", tone, duration);
     sendEvent(pad, toneNumber, 25, true);
 
-    RunLoop::protectedMain()->dispatchAfter(Seconds::fromMilliseconds(duration), [toneNumber, pad = WTFMove(pad), weakThis = ThreadSafeWeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatchAfter(Seconds::fromMilliseconds(duration), [toneNumber, pad = WTFMove(pad), weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr self = weakThis.get();
         if (!self)
             return;

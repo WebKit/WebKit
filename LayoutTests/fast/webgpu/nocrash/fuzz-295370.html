@@ -1,0 +1,245 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let adapter1 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter1.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'core-features-and-limits',
+    'shader-f16',
+  ],
+});
+// START
+a = await adapter0.requestDevice()
+veryExplicitBindGroupLayout1 = a.createBindGroupLayout({
+  entries : [ {
+    binding : 3,
+    visibility :
+        GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+    externalTexture : {}
+  } ]
+})
+c = new VideoFrame(
+    new ArrayBuffer(16),
+    {codedWidth : 2, codedHeight : 2, format : 'NV12', timestamp : 0})
+veryExplicitBindGroupLayout3 = a.createBindGroupLayout({
+  entries : [ {
+    binding : 3,
+    visibility :
+        GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+    externalTexture : {}
+  } ]
+})
+pipelineLayout5 = a.createPipelineLayout({
+  bindGroupLayouts : [
+    veryExplicitBindGroupLayout3, veryExplicitBindGroupLayout1,
+    veryExplicitBindGroupLayout3, veryExplicitBindGroupLayout3
+  ]
+})
+d = a.createShaderModule({
+  code : ` enable f16;
+              @group(1) @binding(3) var e: texture_external;
+              
+              var<private> h = modf(0.06523);
+              struct i {
+              @location(0) j: vec4u,   @location(5) k: vec4i}
+              struct l {
+              @builtin(local_invocation_index) local_invocation_index: u32}
+              fn m(v: f16) -> f16 {
+            return v;
+            }
+              struct VertexOutput1 {
+              @location(2) n: vec4h,   @builtin(position) position: vec4f,   @location(15) @interpolate(flat) o: i32}
+              fn p(a0: texture_external) -> array<mat3x4h, 1> {
+              var aa: array<mat3x4h, 1>;
+              h = modf(bitcast<f32>(clamp(vec2i(q(120517399), q(140421516)), bitcast<vec2i>(aa[r(918813200)][q(1)]), vec2i(q(194565119), q(213139276))).y));
+              aa[u32(sqrt(vec4h(m(23740.1), m(31744.3), m(10788.2), m(13512.0)))[0])] += mat3x4h(vec4h(textureLoad(e, vec2u(r(74411865), r(744372268)))), vec4h(textureLoad(e, vec2u(r(74411865), r(744372268)))), vec4h(textureLoad(e, vec2u(r(74411865), r(744372268))).arab.zyxy));
+              return aa;
+            }
+              fn q(v: i32) -> i32 {
+            return v;
+            }
+              fn s() -> array<array<vec2i, 1>, 2> {
+              var aa: array<array<vec2i, 1>, 2>;
+              return aa;
+            }
+              struct FragmentInput5 {
+              @location(2) n: vec4h}
+              fn t() {
+              p(e);
+            }
+              struct ab {
+              @builtin(num_workgroups) num_workgroups: vec3u}
+              fn r(v: u32) -> u32 {
+            return v;
+            }
+              @vertex fn ac() -> VertexOutput1 {
+              var aa: VertexOutput1;
+              t();
+              return aa;
+            }
+              @fragment fn u(a0: FragmentInput5) -> i {
+              var aa: i;
+              return aa;
+            }
+              `
+})
+ad = a.createRenderPipeline({
+  layout : pipelineLayout5,
+  fragment : {module : d, targets : [ {format : 'rgba16uint'} ]},
+  vertex : {module : d}
+})
+externalTexture0 = a.importExternalTexture({source : c});
+w = a.createTexture({
+  size : {width : 1, depthOrArrayLayers : 13},
+  dimension : '3d',
+  format : 'rgba16uint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT
+})
+x = new VideoFrame(
+    new ArrayBuffer(16),
+    {codedWidth : 2, codedHeight : 2, format : 'BGRX', timestamp : 0})
+ae = await a.createRenderPipelineAsync({
+  layout : pipelineLayout5,
+  vertex : {
+    module : d}
+})
+bindGroup1 = a.createBindGroup({
+  layout : veryExplicitBindGroupLayout3,
+  entries : [ {binding : 3, resource : externalTexture0} ]
+})
+af = a.createBindGroup({
+  layout : veryExplicitBindGroupLayout3,
+  entries : [ {binding : 3, resource : externalTexture0} ]
+})
+recycledExplicitBindGroupLayout0 = ae.getBindGroupLayout(0)
+ag = w.createView()
+ah = a.importExternalTexture({source : c})
+videoFrame2 = new VideoFrame(
+    new ArrayBuffer(16),
+    {codedWidth : 2, codedHeight : 2, format : 'RGBX', timestamp : 0})
+ai = a.importExternalTexture({source : videoFrame2})
+aj = a.createBindGroup({
+  layout : veryExplicitBindGroupLayout1,
+  entries : [ {binding : 3, resource : ai} ]
+})
+pipeline7 = await a.createRenderPipelineAsync({
+  layout : pipelineLayout5,
+  fragment : {module : d, targets : [ {format : 'rgba16uint'} ]},
+  vertex : {module : d}
+});
+ak = a.createCommandEncoder();
+al = pipeline7.getBindGroupLayout(2);
+am = ak.beginRenderPass({
+  colorAttachments :
+      [ {view : ag, depthSlice : 5, loadOp : 'load', storeOp : 'store'} ]
+})
+try {
+  am.setBindGroup(2, aj)
+} catch {
+}
+try {
+  am.setPipeline(ad)
+am.setBindGroup(3, af)
+am.setBindGroup(0, bindGroup1)
+} catch {
+}
+externalTexture8 = a.importExternalTexture({source : x})
+let an = a.createBindGroup(
+    {layout : al, entries : [ {binding : 3, resource : externalTexture8} ]})
+try {
+  am.setBindGroup(1, an)
+} catch {
+}
+try {
+  am.draw(801)
+} catch {
+}
+a.createBindGroup({
+  layout : recycledExplicitBindGroupLayout0,
+  entries : [ {binding : 3, resource : ah} ]
+})
+try {
+  am.end()
+} catch {
+}
+commandBuffer8 = ak.finish()
+gc()
+try {
+  a.queue.submit([ commandBuffer8 ])
+} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+log('Pass');
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.notifyDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+};
+</script>

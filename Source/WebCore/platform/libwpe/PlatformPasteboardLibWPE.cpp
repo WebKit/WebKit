@@ -134,7 +134,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-int64_t PlatformPasteboard::write(const PasteboardCustomData& customData)
+int64_t PlatformPasteboard::write(const PasteboardCustomData& customData, PasteboardDataLifetime)
 {
     PasteboardWebContent contents;
     customData.forEachPlatformStringOrBuffer([&contents] (auto& type, auto& stringOrBuffer) {
@@ -152,7 +152,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& customData)
     return m_changeCount;
 }
 
-int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& data)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& data, PasteboardDataLifetime)
 {
     if (data.isEmpty() || data.size() > 1)
         return m_changeCount;

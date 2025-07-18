@@ -29,7 +29,7 @@
     EnabledBy=UseGPUProcessForMediaEnabled
 ]
 messages -> RemoteAudioMediaStreamTrackRendererInternalUnitManager {
-    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, String deviceID) -> (std::optional<WebCore::CAAudioStreamDescription> description, size_t frameChunkSize)
+    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, String deviceID) -> (std::optional<WebCore::CAAudioStreamDescription> description, uint64_t frameChunkSize)
     DeleteUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 
     StartUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, IPC::Semaphore renderSemaphore)

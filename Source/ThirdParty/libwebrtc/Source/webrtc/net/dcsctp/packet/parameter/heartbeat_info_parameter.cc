@@ -38,7 +38,7 @@ namespace dcsctp {
 constexpr int HeartbeatInfoParameter::kType;
 
 std::optional<HeartbeatInfoParameter> HeartbeatInfoParameter::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -52,7 +52,7 @@ void HeartbeatInfoParameter::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string HeartbeatInfoParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Heartbeat Info parameter (info_length=" << info_.size() << ")";
   return sb.Release();
 }

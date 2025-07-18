@@ -554,7 +554,7 @@ public:
                 allocationRoom = 1;
             int count = cryptographicallyRandomNumber<uint32_t>() % allocationRoom;
 
-            randomAllocations.resize(count);
+            randomAllocations.grow(count);
 
             for (int i = 0; i < count; ++i) {
                 void* result = jit_heap_try_allocate(sizeInBytes);
@@ -562,7 +562,7 @@ public:
                     // We are running out of memory, so make sure this allocation will succeed.
                     for (int j = 0; j < i; ++j)
                         jit_heap_deallocate(randomAllocations[j]);
-                    randomAllocations.resize(0);
+                    randomAllocations.shrink(0);
                     break;
                 }
                 randomAllocations[i] = result;

@@ -160,6 +160,7 @@ private:
     double duration() const final { return m_duration; }
     double currentTime() const final { return m_currentTime; }
     double bufferedTime() const final { return m_bufferedTime; }
+    OptionSet<PlaybackState> playbackState() const final { return m_playbackState; }
     bool isPlaying() const final { return m_playbackState.contains(PlaybackState::Playing); }
     bool isStalled() const final { return m_playbackState.contains(PlaybackState::Stalled); }
     bool isScrubbing() const final { return m_isScrubbing; }

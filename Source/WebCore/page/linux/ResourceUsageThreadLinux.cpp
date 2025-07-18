@@ -58,10 +58,10 @@ static float cpuPeriod()
         return 0;
 
     static const unsigned statMaxLineLength = 512;
-    char buffer[statMaxLineLength + 1];
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    char* line = fgets(buffer, statMaxLineLength, file);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    std::array<char, statMaxLineLength + 1> buffer;
+    std::span bufferSpan { buffer };
+    char* line = fgets(bufferSpan.data(), statMaxLineLength, file);
+
     if (!line) {
         fclose(file);
         return 0;
@@ -70,7 +70,7 @@ static float cpuPeriod()
     unsigned long long userTime, niceTime, systemTime, idleTime;
     unsigned long long ioWait, irq, softIrq, steal, guest, guestnice;
     ioWait = irq = softIrq = steal = guest = guestnice = 0;
-    int retVal = sscanf(buffer, "cpu  %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu",
+    int retVal = sscanf(bufferSpan.data(), "cpu  %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu",
         &userTime, &niceTime, &systemTime, &idleTime, &ioWait, &irq, &softIrq, &steal, &guest, &guestnice);
     // We expect 10 values to be matched by sscanf
     if (retVal != 10) {
@@ -82,7 +82,7 @@ static float cpuPeriod()
     // Keep parsing if we still don't know cpuCount.
     static unsigned cpuCount = 0;
     if (!cpuCount) {
-        while ((line = fgets(buffer, statMaxLineLength, file))) {
+        while ((line = fgets(bufferSpan.data(), statMaxLineLength, file))) {
             if (strlen(line) > 4 && line[0] == 'c' && line[1] == 'p' && line[2] == 'u')
                 cpuCount++;
             else

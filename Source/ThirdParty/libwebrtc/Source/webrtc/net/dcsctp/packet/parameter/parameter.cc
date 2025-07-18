@@ -54,7 +54,7 @@ Parameters::Builder& Parameters::Builder::Add(const Parameter& p) {
 }
 
 std::vector<ParameterDescriptor> Parameters::descriptors() const {
-  rtc::ArrayView<const uint8_t> span(data_);
+  webrtc::ArrayView<const uint8_t> span(data_);
   std::vector<ParameterDescriptor> result;
   while (!span.empty()) {
     BoundedByteReader<kParameterHeaderSize> header(span);
@@ -71,9 +71,9 @@ std::vector<ParameterDescriptor> Parameters::descriptors() const {
 }
 
 std::optional<Parameters> Parameters::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   // Validate the parameter descriptors
-  rtc::ArrayView<const uint8_t> span(data);
+  webrtc::ArrayView<const uint8_t> span(data);
   while (!span.empty()) {
     if (span.size() < kParameterHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Insufficient parameter length";

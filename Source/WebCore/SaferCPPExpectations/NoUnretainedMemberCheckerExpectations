@@ -15,6 +15,5 @@ platform/ios/WebAVPlayerController.mm
 platform/mac/WebCoreFullScreenPlaceholderView.h
 platform/mac/WebPlaybackControlsManager.h
 platform/network/cf/FormDataStreamCFNet.cpp
-platform/network/cocoa/CookieStorageObserver.mm
 platform/network/cocoa/WebCoreNSURLSession.h
 platform/network/cocoa/WebCoreNSURLSession.mm

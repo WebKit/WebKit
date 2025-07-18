@@ -43,7 +43,7 @@ VideoSendStream::StreamStats::~StreamStats() = default;
 
 std::string VideoSendStream::StreamStats::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "type: " << StreamTypeToString(type);
   if (referenced_media_ssrc.has_value())
     ss << " (for: " << referenced_media_ssrc.value() << ")";
@@ -72,9 +72,9 @@ VideoSendStream::Stats::~Stats() = default;
 
 std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
   char buf[2048];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "VideoSendStream stats: " << time_ms << ", {";
-  ss << "input_fps: " << rtc::StringFormat("%.1f", input_frame_rate) << ", ";
+  ss << "input_fps: " << StringFormat("%.1f", input_frame_rate) << ", ";
   ss << "encode_fps: " << encode_frame_rate << ", ";
   ss << "encode_ms: " << avg_encode_time_ms << ", ";
   ss << "encode_usage_perc: " << encode_usage_percent << ", ";
@@ -114,7 +114,7 @@ VideoSendStream::Config::Config::~Config() = default;
 
 std::string VideoSendStream::Config::ToString() const {
   char buf[2 * 1024];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "{encoder_settings: { experiment_cpu_load_estimator: "
      << (encoder_settings.experiment_cpu_load_estimator ? "on" : "off") << "}}";
   ss << ", rtp: " << rtp.ToString();

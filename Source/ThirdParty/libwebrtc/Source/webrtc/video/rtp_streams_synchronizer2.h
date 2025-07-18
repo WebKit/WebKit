@@ -11,12 +11,14 @@
 #ifndef VIDEO_RTP_STREAMS_SYNCHRONIZER2_H_
 #define VIDEO_RTP_STREAMS_SYNCHRONIZER2_H_
 
+#include <cstdint>
 #include <memory>
 
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/repeating_task.h"
+#include "rtc_base/thread_annotations.h"
 #include "video/stream_synchronization.h"
 
 namespace webrtc {
@@ -52,7 +54,7 @@ class RtpStreamsSynchronizer {
 
   // Used to check if we're running on the main thread/task queue.
   // The reason we currently don't use RTC_DCHECK_RUN_ON(task_queue_) is because
-  // we might be running on an rtc::Thread implementation of TaskQueue, which
+  // we might be running on an webrtc::Thread implementation of TaskQueue, which
   // does not consistently set itself as the active TaskQueue.
   // Instead, we rely on a SequenceChecker for now.
   RTC_NO_UNIQUE_ADDRESS SequenceChecker main_checker_;

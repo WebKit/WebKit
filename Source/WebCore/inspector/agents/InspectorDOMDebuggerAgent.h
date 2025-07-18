@@ -61,7 +61,7 @@ public:
     ~InspectorDOMDebuggerAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void didCreateFrontendAndBackend() override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     void discardAgent() override;
     virtual bool enabled() const;
@@ -99,7 +99,7 @@ protected:
 private:
     void breakOnURLIfNeeded(const String&);
 
-    RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
     struct EventBreakpoint {

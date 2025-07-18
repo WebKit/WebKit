@@ -20,11 +20,14 @@
 #include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 #include "video/corruption_detection/halton_sequence.h"
 
 namespace webrtc {
 namespace {
 
+const double kCutoff = 0.2;
+const int kLowerBoundKernelSize = 3;
 constexpr int kMaxFramesBetweenSamples = 33;
 
 // Corresponds to 1 second for RTP timestamps (which are 90kHz).
@@ -107,26 +110,26 @@ double GetFilteredElement(int width,
   RTC_CHECK_GE(column, 0);
   RTC_CHECK_LT(column, width);
   RTC_CHECK_GE(stride, width);
-  RTC_CHECK_GE(std_dev, 0.0);
+  RTC_CHECK_GT(std_dev, 0.0)
+      << "Standard deviation = 0 yields improper Gaussian weights.";
 
-  if (std_dev == 0.0) {
-    return data[row * stride + column];
-  }
-
-  const double kCutoff = 0.2;
-  const int kMaxDistance =
-      std::ceil(sqrt(-2.0 * std::log(kCutoff) * std::pow(std_dev, 2.0))) - 1;
-  RTC_CHECK_GE(kMaxDistance, 0);
-  if (kMaxDistance == 0) {
-    return data[row * stride + column];
-  }
+  int max_distance =
+      std::ceil(std::sqrt(-2.0 * std::log(kCutoff) * std::pow(std_dev, 2.0))) -
+      1;
+  // In order to counteract unexpected distortions (such as noise), a lower
+  // bound for blurring is introduced. This is done to reduce false positives
+  // caused by these distortions.
+  // False positives are decreased since for small `std_dev`s the quantization
+  // is strong and would cut of many of the small continuous weights used for
+  // robust comparision.
+  max_distance = std::max(kLowerBoundKernelSize, max_distance);
 
   double element_sum = 0.0;
   double total_weight = 0.0;
-  for (int r = std::max(row - kMaxDistance, 0);
-       r < std::min(row + kMaxDistance + 1, height); ++r) {
-    for (int c = std::max(column - kMaxDistance, 0);
-         c < std::min(column + kMaxDistance + 1, width); ++c) {
+  for (int r = std::max(row - max_distance, 0);
+       r < std::min(row + max_distance + 1, height); ++r) {
+    for (int c = std::max(column - max_distance, 0);
+         c < std::min(column + max_distance + 1, width); ++c) {
       double weight =
           std::exp(-1.0 * (std::pow(row - r, 2) + std::pow(column - c, 2)) /
                    (2.0 * std::pow(std_dev, 2)));
@@ -134,7 +137,9 @@ double GetFilteredElement(int width,
       total_weight += weight;
     }
   }
-  return element_sum / total_weight;
+
+  // Take the rounding errors into consideration.
+  return SafeClamp(element_sum / total_weight, 0.0, 255.0);
 }
 
 std::vector<FilteredSample> GetSampleValuesForFrame(
@@ -171,6 +176,13 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
     RTC_LOG(LS_WARNING)
         << "The standard deviation for the Gaussian blur must not be negative: "
         << std_dev_gaussian_blur << ".\n";
+    return {};
+  }
+  if (scaled_width > i420_frame_buffer->width() ||
+      scaled_height > i420_frame_buffer->height()) {
+    RTC_LOG(LS_WARNING)
+        << "Upscaling causes corruption. Therefore, only down-scaling is "
+           "permissible.";
     return {};
   }
 

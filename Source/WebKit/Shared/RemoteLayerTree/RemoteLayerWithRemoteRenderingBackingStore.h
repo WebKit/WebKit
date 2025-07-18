@@ -33,7 +33,7 @@ namespace WebKit {
 class RemoteDisplayListRecorderProxy;
 class RemoteImageBufferSetProxy;
 
-class RemoteLayerWithRemoteRenderingBackingStore final : public RemoteLayerBackingStore {
+class RemoteLayerWithRemoteRenderingBackingStore final : public RemoteLayerBackingStore, public ImageBufferSetClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithRemoteRenderingBackingStore);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerWithRemoteRenderingBackingStore);
 public:
@@ -43,9 +43,17 @@ public:
     bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
     ProcessModel processModel() const final { return ProcessModel::Remote; }
 
+    // CheckedPtr interface
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
     void prepareToDisplay() final;
     void clearBackingStore() final;
     void createContextAndPaintContents() final;
+
+    void setNeedsDisplay() final;
 
     RemoteImageBufferSetProxy* bufferSet() { return m_bufferSet.get(); }
     RefPtr<RemoteImageBufferSetProxy> protectedBufferSet() { return m_bufferSet; }

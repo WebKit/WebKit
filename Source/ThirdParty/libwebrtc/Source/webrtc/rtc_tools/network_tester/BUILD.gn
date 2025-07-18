@@ -45,12 +45,12 @@ if (rtc_enable_protobuf) {
       "../../api/task_queue:pending_task_safety_flag",
       "../../api/units:timestamp",
       "../../p2p:basic_packet_socket_factory",
-      "../../p2p:rtc_p2p",
       "../../rtc_base:async_packet_socket",
       "../../rtc_base:checks",
       "../../rtc_base:ip_address",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
+      "../../rtc_base:net_helpers",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:socket_address",
       "../../rtc_base:socket_server",
@@ -83,11 +83,13 @@ if (rtc_enable_protobuf) {
 
     deps = [
       ":network_tester",
+      "../../api:rtc_error_matchers",
       "../../rtc_base:gunit_helpers",
       "../../rtc_base:random",
       "../../rtc_base:threading",
       "../../test:fileutils",
       "../../test:test_support",
+      "../../test:wait_until",
       "//testing/gtest",
     ]
 

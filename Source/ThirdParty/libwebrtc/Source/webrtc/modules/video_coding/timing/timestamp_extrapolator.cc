@@ -11,16 +11,23 @@
 #include "modules/video_coding/timing/timestamp_extrapolator.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <cstdlib>
 #include <optional>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
 namespace {
 
+constexpr int kMinimumSamplesToLogEstimatedClockDrift =
+    3000;  // 100 seconds at 30 fps.
 constexpr double kLambda = 1;
-constexpr uint32_t kStartUpFilterDelayInPackets = 2;
+constexpr int kStartUpFilterDelayInPackets = 2;
 constexpr double kAlarmThreshold = 60e3;
 // in timestamp ticks, i.e. 15 ms
 constexpr double kAccDrift = 6600;
@@ -36,6 +43,15 @@ TimestampExtrapolator::TimestampExtrapolator(Timestamp start)
       detector_accumulator_pos_(0),
       detector_accumulator_neg_(0) {
   Reset(start);
+}
+
+TimestampExtrapolator::~TimestampExtrapolator() {
+  if (packet_count_ >= kMinimumSamplesToLogEstimatedClockDrift) {
+    // Relative clock drift per million (ppm).
+    double clock_drift_ppm = 1e6 * (w_[0] - 90.0) / 90.0;
+    RTC_HISTOGRAM_COUNTS_100000("WebRTC.Video.EstimatedClockDrift_ppm",
+                                static_cast<int>(std::abs(clock_drift_ppm)));
+  }
 }
 
 void TimestampExtrapolator::Reset(Timestamp start) {
@@ -117,8 +133,10 @@ void TimestampExtrapolator::Update(Timestamp now, uint32_t ts90khz) {
       1 / kLambda * (p_[1][1] - (K[1] * t_ms * p_[0][1] + K[1] * p_[1][1]));
   p_[0][0] = p00;
   p_[0][1] = p01;
+
   prev_unwrapped_timestamp_ = unwrapped_ts90khz;
-  if (packet_count_ < kStartUpFilterDelayInPackets) {
+  if (packet_count_ < kStartUpFilterDelayInPackets ||
+      packet_count_ < kMinimumSamplesToLogEstimatedClockDrift) {
     packet_count_++;
   }
 }

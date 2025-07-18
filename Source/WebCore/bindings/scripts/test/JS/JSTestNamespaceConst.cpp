@@ -89,7 +89,7 @@ void JSTestNamespaceConst::destroy(JSC::JSCell* cell)
 
 JSC::GCClient::IsoSubspace* JSTestNamespaceConst::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamespaceConst, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamespaceConst, UseCustomHeapCellType::No>(vm, "JSTestNamespaceConst"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamespaceConst.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamespaceConst = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamespaceConst.get(); },

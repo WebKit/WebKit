@@ -11,6 +11,8 @@
 #ifndef MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
 #define MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
 
+#include <cstdint>
+
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "test/gmock.h"
 

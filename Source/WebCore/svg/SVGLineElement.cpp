@@ -22,12 +22,14 @@
 #include "config.h"
 #include "SVGLineElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGShape.h"
 #include "NodeName.h"
 #include "RenderSVGShape.h"
 #include "SVGLengthValue.h"
 #include "SVGParsingError.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

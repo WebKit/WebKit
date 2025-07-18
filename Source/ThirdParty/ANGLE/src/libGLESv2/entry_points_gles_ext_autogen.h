@@ -1002,6 +1002,21 @@ ANGLE_EXPORT void GL_APIENTRY GL_BufferStorageExternalEXT(GLenum target,
 
 // GL_EXT_float_blend
 
+// GL_EXT_fragment_shading_rate
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferShadingRateEXT(GLenum target,
+                                                           GLenum attachment,
+                                                           GLuint texture,
+                                                           GLint baseLayer,
+                                                           GLsizei numLayers,
+                                                           GLsizei texelWidth,
+                                                           GLsizei texelHeight);
+ANGLE_EXPORT void GL_APIENTRY GL_GetFragmentShadingRatesEXT(GLsizei samples,
+                                                            GLsizei maxCount,
+                                                            GLsizei *count,
+                                                            GLenum *shadingRates);
+ANGLE_EXPORT void GL_APIENTRY GL_ShadingRateEXT(GLenum rate);
+ANGLE_EXPORT void GL_APIENTRY GL_ShadingRateCombinerOpsEXT(GLenum combinerOp0, GLenum combinerOp1);
+
 // GL_EXT_geometry_shader
 ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTextureEXT(GLenum target,
                                                        GLenum attachment,

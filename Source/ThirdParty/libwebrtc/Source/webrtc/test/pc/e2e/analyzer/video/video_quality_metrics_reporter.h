@@ -12,25 +12,25 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_METRICS_REPORTER_H_
 
 #include <map>
+#include <optional>
 #include <string>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
 #include "api/test/track_id_stream_info_map.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
-
-struct VideoBweStats {
-  SamplesStatsCounter available_send_bandwidth;
-  SamplesStatsCounter transmission_bitrate;
-  SamplesStatsCounter retransmission_bitrate;
-};
 
 class VideoQualityMetricsReporter
     : public PeerConnectionE2EQualityTestFixture::QualityMetricsReporter {
@@ -43,22 +43,24 @@ class VideoQualityMetricsReporter
              const TrackIdStreamInfoMap* reporter_helper) override;
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
   void StopAndReportResults() override;
 
  private:
+  struct VideoBweStats {
+    SamplesStatsCounter available_send_bandwidth;
+    SamplesStatsCounter transmission_bitrate;
+    SamplesStatsCounter retransmission_bitrate;
+  };
   struct StatsSample {
+    std::optional<Timestamp> timestamp;
     DataSize bytes_sent = DataSize::Zero();
     DataSize header_bytes_sent = DataSize::Zero();
     DataSize retransmitted_bytes_sent = DataSize::Zero();
-
-    Timestamp sample_time = Timestamp::Zero();
   };
 
-  std::string GetTestCaseName(const std::string& peer_name) const;
   void ReportVideoBweResults(const std::string& peer_name,
                              const VideoBweStats& video_bwe_stats);
-  Timestamp Now() const { return clock_->CurrentTime(); }
 
   Clock* const clock_;
   test::MetricsLogger* const metrics_logger_;
@@ -66,13 +68,13 @@ class VideoQualityMetricsReporter
   std::string test_case_name_;
   std::optional<Timestamp> start_time_;
 
-  Mutex video_bwe_stats_lock_;
+  Mutex stats_lock_;
   // Map between a peer connection label (provided by the framework) and
   // its video BWE stats.
   std::map<std::string, VideoBweStats> video_bwe_stats_
-      RTC_GUARDED_BY(video_bwe_stats_lock_);
+      RTC_GUARDED_BY(stats_lock_);
   std::map<std::string, StatsSample> last_stats_sample_
-      RTC_GUARDED_BY(video_bwe_stats_lock_);
+      RTC_GUARDED_BY(stats_lock_);
 };
 
 }  // namespace webrtc_pc_e2e

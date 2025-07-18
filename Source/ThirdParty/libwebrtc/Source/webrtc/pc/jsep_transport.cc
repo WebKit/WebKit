@@ -15,22 +15,45 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "api/array_view.h"
 #include "api/candidate.h"
+#include "api/ice_transport_interface.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/rtc_error.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "call/payload_type_picker.h"
+#include "media/sctp/sctp_transport_internal.h"
+#include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/p2p_transport_channel.h"
+#include "p2p/base/transport_description.h"
+#include "pc/dtls_srtp_transport.h"
+#include "pc/dtls_transport.h"
+#include "pc/rtp_transport.h"
+#include "pc/sctp_transport.h"
+#include "pc/session_description.h"
+#include "pc/srtp_transport.h"
+#include "pc/transport_stats.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/rtc_certificate.h"
+#include "rtc_base/ssl_fingerprint.h"
+#include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/trace_event.h"
 
 using webrtc::SdpType;
 
-namespace cricket {
+namespace webrtc {
 
 JsepTransportDescription::JsepTransportDescription() {}
 
@@ -68,18 +91,18 @@ JsepTransportDescription& JsepTransportDescription::operator=(
 
 JsepTransport::JsepTransport(
     const std::string& mid,
-    const rtc::scoped_refptr<rtc::RTCCertificate>& local_certificate,
-    rtc::scoped_refptr<webrtc::IceTransportInterface> ice_transport,
-    rtc::scoped_refptr<webrtc::IceTransportInterface> rtcp_ice_transport,
-    std::unique_ptr<webrtc::RtpTransport> unencrypted_rtp_transport,
-    std::unique_ptr<webrtc::SrtpTransport> sdes_transport,
-    std::unique_ptr<webrtc::DtlsSrtpTransport> dtls_srtp_transport,
+    const scoped_refptr<RTCCertificate>& local_certificate,
+    scoped_refptr<IceTransportInterface> ice_transport,
+    scoped_refptr<IceTransportInterface> rtcp_ice_transport,
+    std::unique_ptr<RtpTransport> unencrypted_rtp_transport,
+    std::unique_ptr<SrtpTransport> sdes_transport,
+    std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport,
     std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
     std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport,
     std::unique_ptr<SctpTransportInternal> sctp_transport,
     std::function<void()> rtcp_mux_active_callback,
-    webrtc::PayloadTypePicker& suggester)
-    : network_thread_(rtc::Thread::Current()),
+    PayloadTypePicker& suggester)
+    : network_thread_(Thread::Current()),
       mid_(mid),
       local_certificate_(local_certificate),
       ice_transport_(std::move(ice_transport)),
@@ -87,16 +110,16 @@ JsepTransport::JsepTransport(
       unencrypted_rtp_transport_(std::move(unencrypted_rtp_transport)),
       sdes_transport_(std::move(sdes_transport)),
       dtls_srtp_transport_(std::move(dtls_srtp_transport)),
-      rtp_dtls_transport_(rtp_dtls_transport
-                              ? rtc::make_ref_counted<webrtc::DtlsTransport>(
-                                    std::move(rtp_dtls_transport))
-                              : nullptr),
-      rtcp_dtls_transport_(rtcp_dtls_transport
-                               ? rtc::make_ref_counted<webrtc::DtlsTransport>(
-                                     std::move(rtcp_dtls_transport))
-                               : nullptr),
+      rtp_dtls_transport_(
+          rtp_dtls_transport
+              ? make_ref_counted<DtlsTransport>(std::move(rtp_dtls_transport))
+              : nullptr),
+      rtcp_dtls_transport_(
+          rtcp_dtls_transport
+              ? make_ref_counted<DtlsTransport>(std::move(rtcp_dtls_transport))
+              : nullptr),
       sctp_transport_(sctp_transport
-                          ? rtc::make_ref_counted<webrtc::SctpTransport>(
+                          ? make_ref_counted<::webrtc::SctpTransport>(
                                 std::move(sctp_transport),
                                 rtp_dtls_transport_)
                           : nullptr),
@@ -140,27 +163,26 @@ JsepTransport::~JsepTransport() {
   // ICE will be the last transport to be deleted.
 }
 
-webrtc::RTCError JsepTransport::SetLocalJsepTransportDescription(
+RTCError JsepTransport::SetLocalJsepTransportDescription(
     const JsepTransportDescription& jsep_description,
     SdpType type) {
-  webrtc::RTCError error;
+  RTCError error;
   TRACE_EVENT0("webrtc", "JsepTransport::SetLocalJsepTransportDescription");
   RTC_DCHECK_RUN_ON(network_thread_);
 
   IceParameters ice_parameters =
       jsep_description.transport_desc.GetIceParameters();
-  webrtc::RTCError ice_parameters_result = ice_parameters.Validate();
+  RTCError ice_parameters_result = ice_parameters.Validate();
   if (!ice_parameters_result.ok()) {
-    rtc::StringBuilder sb;
+    StringBuilder sb;
     sb << "Invalid ICE parameters: " << ice_parameters_result.message();
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            sb.Release());
+    return RTCError(RTCErrorType::INVALID_PARAMETER, sb.Release());
   }
 
   if (!SetRtcpMux(jsep_description.rtcp_mux_enabled, type,
                   ContentSource::CS_LOCAL)) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "Failed to setup RTCP mux.");
+    return RTCError(RTCErrorType::INVALID_PARAMETER,
+                    "Failed to setup RTCP mux.");
   }
 
   if (dtls_srtp_transport_) {
@@ -176,7 +198,7 @@ webrtc::RTCError JsepTransport::SetLocalJsepTransportDescription(
                             ice_parameters.ufrag, ice_parameters.pwd);
   local_description_.reset(new JsepTransportDescription(jsep_description));
 
-  rtc::SSLFingerprint* local_fp =
+  SSLFingerprint* local_fp =
       local_description_->transport_desc.identity_fingerprint.get();
 
   if (!local_fp) {
@@ -212,32 +234,31 @@ webrtc::RTCError JsepTransport::SetLocalJsepTransportDescription(
                         << mid();
   }
 
-  return webrtc::RTCError::OK();
+  return RTCError::OK();
 }
 
-webrtc::RTCError JsepTransport::SetRemoteJsepTransportDescription(
+RTCError JsepTransport::SetRemoteJsepTransportDescription(
     const JsepTransportDescription& jsep_description,
-    webrtc::SdpType type) {
+    SdpType type) {
   TRACE_EVENT0("webrtc", "JsepTransport::SetLocalJsepTransportDescription");
-  webrtc::RTCError error;
+  RTCError error;
 
   RTC_DCHECK_RUN_ON(network_thread_);
 
   IceParameters ice_parameters =
       jsep_description.transport_desc.GetIceParameters();
-  webrtc::RTCError ice_parameters_result = ice_parameters.Validate();
+  RTCError ice_parameters_result = ice_parameters.Validate();
   if (!ice_parameters_result.ok()) {
     remote_description_.reset();
-    rtc::StringBuilder sb;
+    StringBuilder sb;
     sb << "Invalid ICE parameters: " << ice_parameters_result.message();
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            sb.Release());
+    return RTCError(RTCErrorType::INVALID_PARAMETER, sb.Release());
   }
 
   if (!SetRtcpMux(jsep_description.rtcp_mux_enabled, type,
                   ContentSource::CS_REMOTE)) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "Failed to setup RTCP mux.");
+    return RTCError(RTCErrorType::INVALID_PARAMETER,
+                    "Failed to setup RTCP mux.");
   }
 
   if (dtls_srtp_transport_) {
@@ -266,35 +287,32 @@ webrtc::RTCError JsepTransport::SetRemoteJsepTransportDescription(
     remote_description_.reset();
     return error;
   }
-  return webrtc::RTCError::OK();
+  return RTCError::OK();
 }
 
-webrtc::RTCError JsepTransport::AddRemoteCandidates(
-    const Candidates& candidates) {
+RTCError JsepTransport::AddRemoteCandidates(const Candidates& candidates) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (!local_description_ || !remote_description_) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE,
-                            mid() +
-                                " is not ready to use the remote candidate "
-                                "because the local or remote description is "
-                                "not set.");
+    return RTCError(RTCErrorType::INVALID_STATE,
+                    mid() +
+                        " is not ready to use the remote candidate "
+                        "because the local or remote description is "
+                        "not set.");
   }
 
-  for (const cricket::Candidate& candidate : candidates) {
-    auto transport =
-        candidate.component() == cricket::ICE_CANDIDATE_COMPONENT_RTP
-            ? rtp_dtls_transport_
-            : rtcp_dtls_transport_;
+  for (const Candidate& candidate : candidates) {
+    auto transport = candidate.component() == ICE_CANDIDATE_COMPONENT_RTP
+                         ? rtp_dtls_transport_
+                         : rtcp_dtls_transport_;
     if (!transport) {
-      return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                              "Candidate has an unknown component: " +
-                                  candidate.ToSensitiveString() + " for mid " +
-                                  mid());
+      return RTCError(RTCErrorType::INVALID_PARAMETER,
+                      "Candidate has an unknown component: " +
+                          candidate.ToSensitiveString() + " for mid " + mid());
     }
     RTC_DCHECK(transport->internal() && transport->internal()->ice_transport());
     transport->internal()->ice_transport()->AddRemoteCandidate(candidate);
   }
-  return webrtc::RTCError::OK();
+  return RTCError::OK();
 }
 
 void JsepTransport::SetNeedsIceRestartFlag() {
@@ -305,16 +323,16 @@ void JsepTransport::SetNeedsIceRestartFlag() {
   }
 }
 
-std::optional<rtc::SSLRole> JsepTransport::GetDtlsRole() const {
+std::optional<SSLRole> JsepTransport::GetDtlsRole() const {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DCHECK(rtp_dtls_transport_);
   RTC_DCHECK(rtp_dtls_transport_->internal());
-  rtc::SSLRole dtls_role;
+  SSLRole dtls_role;
   if (!rtp_dtls_transport_->internal()->GetDtlsRole(&dtls_role)) {
-    return std::optional<rtc::SSLRole>();
+    return std::optional<SSLRole>();
   }
 
-  return std::optional<rtc::SSLRole>(dtls_role);
+  return std::optional<SSLRole>(dtls_role);
 }
 
 bool JsepTransport::GetStats(TransportStats* stats) const {
@@ -334,33 +352,30 @@ bool JsepTransport::GetStats(TransportStats* stats) const {
   return ret;
 }
 
-webrtc::RTCError JsepTransport::VerifyCertificateFingerprint(
-    const rtc::RTCCertificate* certificate,
-    const rtc::SSLFingerprint* fingerprint) const {
+RTCError JsepTransport::VerifyCertificateFingerprint(
+    const RTCCertificate* certificate,
+    const SSLFingerprint* fingerprint) const {
   TRACE_EVENT0("webrtc", "JsepTransport::VerifyCertificateFingerprint");
   RTC_DCHECK_RUN_ON(network_thread_);
   if (!fingerprint) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "No fingerprint");
+    return RTCError(RTCErrorType::INVALID_PARAMETER, "No fingerprint");
   }
   if (!certificate) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "Fingerprint provided but no identity available.");
+    return RTCError(RTCErrorType::INVALID_PARAMETER,
+                    "Fingerprint provided but no identity available.");
   }
-  std::unique_ptr<rtc::SSLFingerprint> fp_tmp =
-      rtc::SSLFingerprint::CreateUnique(fingerprint->algorithm,
-                                        *certificate->identity());
-  RTC_DCHECK(fp_tmp.get() != NULL);
+  std::unique_ptr<SSLFingerprint> fp_tmp = SSLFingerprint::CreateUnique(
+      fingerprint->algorithm, *certificate->identity());
+  RTC_DCHECK(fp_tmp.get() != nullptr);
   if (*fp_tmp == *fingerprint) {
-    return webrtc::RTCError::OK();
+    return RTCError::OK();
   }
   char ss_buf[1024];
-  rtc::SimpleStringBuilder desc(ss_buf);
+  SimpleStringBuilder desc(ss_buf);
   desc << "Local fingerprint does not match identity. Expected: ";
   desc << fp_tmp->ToString();
   desc << " Got: " << fingerprint->ToString();
-  return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                          std::string(desc.str()));
+  return RTCError(RTCErrorType::INVALID_PARAMETER, std::string(desc.str()));
 }
 
 void JsepTransport::SetActiveResetSrtpParams(bool active_reset_srtp_params) {
@@ -373,16 +388,16 @@ void JsepTransport::SetActiveResetSrtpParams(bool active_reset_srtp_params) {
   }
 }
 
-webrtc::RTCError JsepTransport::RecordPayloadTypes(bool local,
-                                                   webrtc::SdpType type,
-                                                   const ContentInfo& content) {
+RTCError JsepTransport::RecordPayloadTypes(bool local,
+                                           SdpType type,
+                                           const ContentInfo& content) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (local) {
     local_payload_types_.DisallowRedefinition();
   } else {
     remote_payload_types_.DisallowRedefinition();
   }
-  webrtc::RTCError result = webrtc::RTCError::OK();
+  RTCError result = RTCError::OK();
   for (auto codec : content.media_description()->codecs()) {
     if (local) {
       result = local_payload_types_.AddMapping(codec.id, codec);
@@ -412,10 +427,10 @@ void JsepTransport::SetRemoteIceParameters(
   ice_transport->SetRemoteIceMode(remote_description_->transport_desc.ice_mode);
 }
 
-webrtc::RTCError JsepTransport::SetNegotiatedDtlsParameters(
+RTCError JsepTransport::SetNegotiatedDtlsParameters(
     DtlsTransportInternal* dtls_transport,
-    std::optional<rtc::SSLRole> dtls_role,
-    rtc::SSLFingerprint* remote_fingerprint) {
+    std::optional<SSLRole> dtls_role,
+    SSLFingerprint* remote_fingerprint) {
   RTC_DCHECK(dtls_transport);
   return dtls_transport->SetRemoteParameters(
       remote_fingerprint->algorithm, remote_fingerprint->digest.cdata(),
@@ -423,7 +438,7 @@ webrtc::RTCError JsepTransport::SetNegotiatedDtlsParameters(
 }
 
 bool JsepTransport::SetRtcpMux(bool enable,
-                               webrtc::SdpType type,
+                               SdpType type,
                                ContentSource source) {
   RTC_DCHECK_RUN_ON(network_thread_);
   bool ret = false;
@@ -476,24 +491,24 @@ void JsepTransport::ActivateRtcpMux() {
   rtcp_mux_active_callback_();
 }
 
-webrtc::RTCError JsepTransport::NegotiateAndSetDtlsParameters(
+RTCError JsepTransport::NegotiateAndSetDtlsParameters(
     SdpType local_description_type) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (!local_description_ || !remote_description_) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE,
-                            "Applying an answer transport description "
-                            "without applying any offer.");
+    return RTCError(RTCErrorType::INVALID_STATE,
+                    "Applying an answer transport description "
+                    "without applying any offer.");
   }
-  std::unique_ptr<rtc::SSLFingerprint> remote_fingerprint;
-  std::optional<rtc::SSLRole> negotiated_dtls_role;
+  std::unique_ptr<SSLFingerprint> remote_fingerprint;
+  std::optional<SSLRole> negotiated_dtls_role;
 
-  rtc::SSLFingerprint* local_fp =
+  SSLFingerprint* local_fp =
       local_description_->transport_desc.identity_fingerprint.get();
-  rtc::SSLFingerprint* remote_fp =
+  SSLFingerprint* remote_fp =
       remote_description_->transport_desc.identity_fingerprint.get();
   if (remote_fp && local_fp) {
-    remote_fingerprint = std::make_unique<rtc::SSLFingerprint>(*remote_fp);
-    webrtc::RTCError error =
+    remote_fingerprint = std::make_unique<SSLFingerprint>(*remote_fp);
+    RTCError error =
         NegotiateDtlsRole(local_description_type,
                           local_description_->transport_desc.connection_role,
                           remote_description_->transport_desc.connection_role,
@@ -502,13 +517,13 @@ webrtc::RTCError JsepTransport::NegotiateAndSetDtlsParameters(
       return error;
     }
   } else if (local_fp && (local_description_type == SdpType::kAnswer)) {
-    return webrtc::RTCError(
-        webrtc::RTCErrorType::INVALID_PARAMETER,
+    return RTCError(
+        RTCErrorType::INVALID_PARAMETER,
         "Local fingerprint supplied when caller didn't offer DTLS.");
   } else {
     // We are not doing DTLS
-    remote_fingerprint = std::make_unique<rtc::SSLFingerprint>(
-        "", rtc::ArrayView<const uint8_t>());
+    remote_fingerprint =
+        std::make_unique<SSLFingerprint>("", ArrayView<const uint8_t>());
   }
   // Now that we have negotiated everything, push it downward.
   // Note that we cache the result so that if we have race conditions
@@ -516,7 +531,7 @@ webrtc::RTCError JsepTransport::NegotiateAndSetDtlsParameters(
   // creation, we have the negotiation state saved until a new
   // negotiation happens.
   RTC_DCHECK(rtp_dtls_transport());
-  webrtc::RTCError error = SetNegotiatedDtlsParameters(
+  RTCError error = SetNegotiatedDtlsParameters(
       rtp_dtls_transport(), negotiated_dtls_role, remote_fingerprint.get());
   if (!error.ok()) {
     return error;
@@ -529,11 +544,11 @@ webrtc::RTCError JsepTransport::NegotiateAndSetDtlsParameters(
   return error;
 }
 
-webrtc::RTCError JsepTransport::NegotiateDtlsRole(
+RTCError JsepTransport::NegotiateDtlsRole(
     SdpType local_description_type,
     ConnectionRole local_connection_role,
     ConnectionRole remote_connection_role,
-    std::optional<rtc::SSLRole>* negotiated_dtls_role) {
+    std::optional<SSLRole>* negotiated_dtls_role) {
   // From RFC 4145, section-4.1, The following are the values that the
   // 'setup' attribute can take in an offer/answer exchange:
   //       Offer      Answer
@@ -563,9 +578,8 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
   bool is_remote_server = false;
   if (local_description_type == SdpType::kOffer) {
     if (local_connection_role != CONNECTIONROLE_ACTPASS) {
-      return webrtc::RTCError(
-          webrtc::RTCErrorType::INVALID_PARAMETER,
-          "Offerer must use actpass value for setup attribute.");
+      return RTCError(RTCErrorType::INVALID_PARAMETER,
+                      "Offerer must use actpass value for setup attribute.");
     }
 
     if (remote_connection_role == CONNECTIONROLE_ACTIVE ||
@@ -573,10 +587,9 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
         remote_connection_role == CONNECTIONROLE_NONE) {
       is_remote_server = (remote_connection_role == CONNECTIONROLE_PASSIVE);
     } else {
-      return webrtc::RTCError(
-          webrtc::RTCErrorType::INVALID_PARAMETER,
-          "Answerer must use either active or passive value "
-          "for setup attribute.");
+      return RTCError(RTCErrorType::INVALID_PARAMETER,
+                      "Answerer must use either active or passive value "
+                      "for setup attribute.");
     }
     // If remote is NONE or ACTIVE it will act as client.
   } else {
@@ -595,15 +608,15 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
         switch (remote_connection_role) {
           case CONNECTIONROLE_ACTIVE:
             if (local_connection_role != CONNECTIONROLE_PASSIVE) {
-              return webrtc::RTCError(
-                  webrtc::RTCErrorType::INVALID_PARAMETER,
+              return RTCError(
+                  RTCErrorType::INVALID_PARAMETER,
                   "Answerer must be passive when offerer is active");
             }
             break;
           case CONNECTIONROLE_PASSIVE:
             if (local_connection_role != CONNECTIONROLE_ACTIVE) {
-              return webrtc::RTCError(
-                  webrtc::RTCErrorType::INVALID_PARAMETER,
+              return RTCError(
+                  RTCErrorType::INVALID_PARAMETER,
                   "Answerer must be active when offerer is passive");
             }
             break;
@@ -612,14 +625,13 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
             break;
         }
       } else {
-        if ((*current_dtls_role == rtc::SSL_CLIENT &&
+        if ((*current_dtls_role == SSL_CLIENT &&
              remote_connection_role == CONNECTIONROLE_ACTIVE) ||
-            (*current_dtls_role == rtc::SSL_SERVER &&
+            (*current_dtls_role == SSL_SERVER &&
              remote_connection_role == CONNECTIONROLE_PASSIVE)) {
-          return webrtc::RTCError(
-              webrtc::RTCErrorType::INVALID_PARAMETER,
-              "Offerer must use current negotiated role for "
-              "setup attribute.");
+          return RTCError(RTCErrorType::INVALID_PARAMETER,
+                          "Offerer must use current negotiated role for "
+                          "setup attribute.");
         }
       }
     }
@@ -628,18 +640,16 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
         local_connection_role == CONNECTIONROLE_PASSIVE) {
       is_remote_server = (local_connection_role == CONNECTIONROLE_ACTIVE);
     } else {
-      return webrtc::RTCError(
-          webrtc::RTCErrorType::INVALID_PARAMETER,
-          "Answerer must use either active or passive value "
-          "for setup attribute.");
+      return RTCError(RTCErrorType::INVALID_PARAMETER,
+                      "Answerer must use either active or passive value "
+                      "for setup attribute.");
     }
 
     // If local is passive, local will act as server.
   }
 
-  *negotiated_dtls_role =
-      (is_remote_server ? rtc::SSL_CLIENT : rtc::SSL_SERVER);
-  return webrtc::RTCError::OK();
+  *negotiated_dtls_role = (is_remote_server ? SSL_CLIENT : SSL_SERVER);
+  return RTCError::OK();
 }
 
 bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
@@ -654,7 +664,7 @@ bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
   dtls_transport->GetSslCipherSuite(&substats.ssl_cipher_suite);
   substats.tls_cipher_suite_name = dtls_transport->GetTlsCipherSuiteName();
   substats.dtls_state = dtls_transport->dtls_state();
-  rtc::SSLRole dtls_role;
+  SSLRole dtls_role;
   if (dtls_transport->GetDtlsRole(&dtls_role)) {
     substats.dtls_role = dtls_role;
   }
@@ -668,4 +678,4 @@ bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
   return true;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

@@ -10,14 +10,19 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace rtcp {
 
-rtc::Buffer RtcpPacket::Build() const {
-  rtc::Buffer packet(BlockLength());
+Buffer RtcpPacket::Build() const {
+  Buffer packet(BlockLength());
 
   size_t length = 0;
   bool created = Create(packet.data(), &length, packet.capacity(), nullptr);
@@ -43,7 +48,7 @@ bool RtcpPacket::OnBufferFull(uint8_t* packet,
   if (*index == 0)
     return false;
   RTC_DCHECK(callback) << "Fragmentation not supported.";
-  callback(rtc::ArrayView<const uint8_t>(packet, *index));
+  callback(ArrayView<const uint8_t>(packet, *index));
   *index = 0;
   return true;
 }

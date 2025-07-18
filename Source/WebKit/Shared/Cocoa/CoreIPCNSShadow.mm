@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "DoubleGeometry.h"
 #import <WebCore/AttributedString.h>
 
 #if USE(APPKIT)
@@ -50,7 +51,7 @@ CoreIPCNSShadow::CoreIPCNSShadow(NSShadow *shadow)
 RetainPtr<id> CoreIPCNSShadow::toID() const
 {
     RetainPtr<NSShadow> result = adoptNS([PlatformNSShadow new]);
-    [result setShadowOffset:m_shadowOffset];
+    [result setShadowOffset:m_shadowOffset.toCG()];
     [result setShadowBlurRadius:m_shadowBlurRadius];
     [result setShadowColor:m_shadowColor.get()];
     return result;

@@ -44,7 +44,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* intersectionObserverData;
     void* typedOMData[2];
     void* resizeObserverData;
-    Markable<LayoutUnit, LayoutUnitMarkableTraits> lastRemembedSize[2];
+    Markable<LayoutUnit> lastRemembedSize[2];
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
     uint8_t visibilityAdjustment;
     HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> randomCachingKeyMaps;

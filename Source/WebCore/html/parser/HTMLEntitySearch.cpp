@@ -37,9 +37,9 @@ HTMLEntitySearch::HTMLEntitySearch()
 {
 }
 
-HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableEntry* entry, UChar nextCharacter) const
+HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableEntry* entry, char16_t nextCharacter) const
 {
-    UChar entryNextCharacter;
+    char16_t entryNextCharacter;
     if (entry->nameLengthExcludingSemicolon < m_currentLength + 1) {
         if (!entry->nameIncludesTrailingSemicolon || entry->nameLengthExcludingSemicolon < m_currentLength)
             return Before;
@@ -51,7 +51,7 @@ HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableE
     return entryNextCharacter < nextCharacter ? Before : After;
 }
 
-const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) const
+const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(char16_t nextCharacter) const
 {
     auto span = m_entries;
     if (span.size() == 1)
@@ -75,7 +75,7 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) con
     return &span.back();
 }
 
-const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) const
+const HTMLEntityTableEntry* HTMLEntitySearch::findLast(char16_t nextCharacter) const
 {
     auto span = m_entries;
     if (span.size() == 1)
@@ -99,7 +99,7 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) cons
     return &span.front();
 }
 
-void HTMLEntitySearch::advance(UChar nextCharacter)
+void HTMLEntitySearch::advance(char16_t nextCharacter)
 {
     ASSERT(isEntityPrefix());
     if (!m_currentLength) {

@@ -38,7 +38,7 @@ namespace WTF {
 // helper. Note that the type it operates on must be usable as a UncheckedKeyHashMap key.
 template<typename T>
 class OrderMaker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OrderMaker);
     WTF_MAKE_NONCOPYABLE(OrderMaker);
     
     struct Node : BasicRawSentinelNode<Node> {

@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("neteq_api") {
+rtc_library("neteq_api") {
   visibility = [ "*" ]
   sources = [
     "neteq.cc",
@@ -28,7 +28,7 @@ rtc_source_set("neteq_api") {
   ]
 }
 
-rtc_source_set("default_neteq_factory") {
+rtc_library("default_neteq_factory") {
   visibility = [ "*" ]
   sources = [
     "default_neteq_factory.cc",
@@ -44,7 +44,7 @@ rtc_source_set("default_neteq_factory") {
   ]
 }
 
-rtc_source_set("custom_neteq_factory") {
+rtc_library("custom_neteq_factory") {
   visibility = [ "*" ]
   sources = [
     "custom_neteq_factory.cc",
@@ -75,7 +75,7 @@ rtc_source_set("neteq_controller_api") {
   ]
 }
 
-rtc_source_set("default_neteq_controller_factory") {
+rtc_library("default_neteq_controller_factory") {
   visibility = [ "*" ]
   sources = [
     "default_neteq_controller_factory.cc",
@@ -89,7 +89,7 @@ rtc_source_set("default_neteq_controller_factory") {
   ]
 }
 
-rtc_source_set("tick_timer") {
+rtc_library("tick_timer") {
   visibility = [ "*" ]
   sources = [
     "tick_timer.cc",
@@ -98,7 +98,7 @@ rtc_source_set("tick_timer") {
   deps = [ "../../rtc_base:checks" ]
 }
 
-rtc_source_set("tick_timer_unittest") {
+rtc_library("tick_timer_unittest") {
   visibility = [ "*" ]
   testonly = true
   sources = [ "tick_timer_unittest.cc" ]

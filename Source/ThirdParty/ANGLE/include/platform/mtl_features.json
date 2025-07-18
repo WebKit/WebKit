@@ -158,21 +158,6 @@
             ]
         },
         {
-            "name": "intel_explicit_bool_cast_workaround",
-            "category": "Workarounds",
-            "description": [
-                "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel ",
-                "driver"
-            ]
-        },
-        {
-            "name": "intel_disable_fast_math",
-            "category": "Workarounds",
-            "description": [
-                "Disable fast math in atan and invariance cases when running below macOS 12.0"
-            ]
-        },
-        {
             "name": "allow_renderpass_without_attachment",
             "category": "Features",
             "description": [

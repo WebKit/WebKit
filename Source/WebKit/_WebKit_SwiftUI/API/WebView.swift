@@ -28,7 +28,7 @@ public import WebKit
 ///
 /// Connect a ``WebView`` with a ``WebPage`` to fully control the browsing experience, including essential functionality such as loading a URL.
 /// Any updates to the webpage propagate the information to the view.
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 public struct WebView: View {
@@ -43,22 +43,24 @@ public struct WebView: View {
     ///
     /// For example, you can create a WebView that displays one of two URLs depending on the state of a toggle:
     ///
-    ///     struct URLView: View {
-    ///         @State private var url: URL? = nil
-    ///         @State private var toggle = false
+    /// ```swift
+    /// struct URLView: View {
+    ///     @State private var url: URL? = nil
+    ///     @State private var toggle = false
     ///
-    ///         var body: some View {
-    ///             VStack {
-    ///                 Button("Toggle") {
-    ///                     toggle.toggle()
-    ///                 }
-    ///                 WebView(url: url)
+    ///     var body: some View {
+    ///         VStack {
+    ///             Button("Toggle") {
+    ///                 toggle.toggle()
     ///             }
-    ///             .onChange(of: toggle, initial: true) {
-    ///                 url = toggle ? URL(string: "https://www.webkit.org") : URL(string: "https://www.apple.com")
-    ///             }
+    ///             WebView(url: url)
+    ///         }
+    ///         .onChange(of: toggle, initial: true) {
+    ///             url = toggle ? URL(string: "https://www.webkit.org") : URL(string: "https://www.apple.com")
     ///         }
     ///     }
+    /// }
+    /// ```
     ///
     /// - Parameter url: The URL to display in the view. If this value is non-nil or changes to become a non-nil value, the new URL is loaded into the view.
     public init(url: URL?) {
@@ -94,7 +96,7 @@ public struct WebView: View {
 
 extension WebView {
     /// A type that defines the behavior of how horizontal swipe gestures trigger backward and forward page navigation.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct BackForwardNavigationGesturesBehavior: Sendable {
@@ -128,7 +130,7 @@ extension WebView {
     }
 
     /// The options for controlling the behavior for how magnification gestures interact with web views.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct MagnificationGesturesBehavior: Sendable {
@@ -162,7 +164,7 @@ extension WebView {
     }
 
     /// A type specifying the behavior for the presentation of link previews when pressing a link.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct LinkPreviewBehavior: Sendable {
@@ -196,7 +198,7 @@ extension WebView {
     }
 
     /// The behavior that determines whether a web view can display content full screen.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct ElementFullscreenBehavior: Sendable {
@@ -232,7 +234,7 @@ extension WebView {
     /// Contains information about an element the user activated in a webpage, which may be used to configure a context menu for that element.
     ///
     /// For links, the information contains the URL that is linked to.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct ActivatedElementInfo: Hashable, Sendable {

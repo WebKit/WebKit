@@ -59,16 +59,16 @@ private:
         : m_runLoop(runLoop)
     {
         if (mode)
-            m_mode = adoptCF(CFStringCreateCopy(nullptr, mode));
+            lazyInitialize(m_mode, adoptCF(CFStringCreateCopy(nullptr, mode)));
     }
 
 #if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE SchedulePair(NSRunLoop*, CFStringRef);
-    RetainPtr<NSRunLoop> m_nsRunLoop;
+    const RetainPtr<NSRunLoop> m_nsRunLoop;
 #endif
 
-    RetainPtr<CFRunLoopRef> m_runLoop;
-    RetainPtr<CFStringRef> m_mode;
+    const RetainPtr<CFRunLoopRef> m_runLoop;
+    const RetainPtr<CFStringRef> m_mode;
 };
 
 inline void add(Hasher& hasher, const SchedulePair& pair)

@@ -105,13 +105,13 @@ void print_freezing_metrics(const std::vector<double>& psnr_per_frame,
   printf("\n");
 }
 
-void compute_metrics(const rtc::scoped_refptr<webrtc::test::Video>& video,
+void compute_metrics(const webrtc::scoped_refptr<webrtc::test::Video>& video,
                      std::vector<double>* psnr_per_frame,
                      std::vector<double>* ssim_per_frame) {
   for (size_t i = 0; i < video->number_of_frames() - 1; ++i) {
-    const rtc::scoped_refptr<webrtc::I420BufferInterface> current_frame =
+    const webrtc::scoped_refptr<webrtc::I420BufferInterface> current_frame =
         video->GetFrame(i);
-    const rtc::scoped_refptr<webrtc::I420BufferInterface> next_frame =
+    const webrtc::scoped_refptr<webrtc::I420BufferInterface> next_frame =
         video->GetFrame(i + 1);
     double result_psnr = webrtc::test::Psnr(current_frame, next_frame);
     double result_ssim = webrtc::test::Ssim(current_frame, next_frame);
@@ -124,7 +124,7 @@ void compute_metrics(const rtc::scoped_refptr<webrtc::test::Video>& video,
 int run_analysis(const std::string& video_file) {
   std::vector<double> psnr_per_frame;
   std::vector<double> ssim_per_frame;
-  rtc::scoped_refptr<webrtc::test::Video> video =
+  webrtc::scoped_refptr<webrtc::test::Video> video =
       webrtc::test::OpenY4mFile(video_file);
   if (video) {
     compute_metrics(video, &psnr_per_frame, &ssim_per_frame);

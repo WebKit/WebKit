@@ -14,11 +14,11 @@
 #include <optional>
 #include <vector>
 
-#include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/environment/environment.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
 #include "rtc_base/checks.h"
 

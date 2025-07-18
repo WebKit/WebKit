@@ -46,7 +46,7 @@ private:
 
     bool m_littleEndian;
     std::optional<uint8_t> m_leadByte;
-    std::optional<UChar> m_leadSurrogate;
+    std::optional<char16_t> m_leadSurrogate;
     bool m_shouldStripByteOrderMark { false };
 };
 

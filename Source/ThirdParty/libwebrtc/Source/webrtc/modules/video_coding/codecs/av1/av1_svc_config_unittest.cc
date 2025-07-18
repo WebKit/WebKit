@@ -10,8 +10,9 @@
 
 #include "modules/video_coding/codecs/av1/av1_svc_config.h"
 
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

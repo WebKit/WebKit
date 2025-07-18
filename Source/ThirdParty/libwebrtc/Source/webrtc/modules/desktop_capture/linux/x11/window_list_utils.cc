@@ -120,8 +120,7 @@ int32_t GetWindowState(XAtomCache* cache, ::Window window) {
   return window_state.is_valid() ? *window_state.data() : WithdrawnState;
 }
 
-bool GetWindowList(XAtomCache* cache,
-                   rtc::FunctionView<bool(::Window)> on_window) {
+bool GetWindowList(XAtomCache* cache, FunctionView<bool(::Window)> on_window) {
   RTC_DCHECK(cache);
   RTC_DCHECK(on_window);
   ::Display* const display = cache->display();

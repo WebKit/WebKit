@@ -45,7 +45,7 @@ class TestController;
 class EventSenderProxyClient;
 #endif
 class EventSenderProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventSenderProxy);
 public:
     explicit EventSenderProxy(TestController*);
     ~EventSenderProxy();

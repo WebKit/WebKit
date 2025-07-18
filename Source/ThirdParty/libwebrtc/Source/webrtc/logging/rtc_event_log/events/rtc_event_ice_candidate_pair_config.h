@@ -118,7 +118,7 @@ class RtcEventIceCandidatePairConfig final : public RtcEvent {
     return candidate_pair_desc_;
   }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

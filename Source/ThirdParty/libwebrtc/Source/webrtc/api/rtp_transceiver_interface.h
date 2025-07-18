@@ -63,7 +63,7 @@ class RTC_EXPORT RtpTransceiverInterface : public webrtc::RefCountInterface {
  public:
   // Media type of the transceiver. Any sender(s)/receiver(s) will have this
   // type as well.
-  virtual cricket::MediaType media_type() const = 0;
+  virtual webrtc::MediaType media_type() const = 0;
 
   // The mid attribute is the mid negotiated and present in the local and
   // remote descriptions. Before negotiation is complete, the mid value may be
@@ -75,13 +75,13 @@ class RTC_EXPORT RtpTransceiverInterface : public webrtc::RefCountInterface {
   // that may be sent with the transceiver's mid. The sender is always present,
   // regardless of the direction of media.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver-sender
-  virtual rtc::scoped_refptr<RtpSenderInterface> sender() const = 0;
+  virtual scoped_refptr<RtpSenderInterface> sender() const = 0;
 
   // The receiver attribute exposes the RtpReceiver corresponding to the RTP
   // media that may be received with the transceiver's mid. The receiver is
   // always present, regardless of the direction of media.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver-receiver
-  virtual rtc::scoped_refptr<RtpReceiverInterface> receiver() const = 0;
+  virtual scoped_refptr<RtpReceiverInterface> receiver() const = 0;
 
   // The stopped attribute indicates that the sender of this transceiver will no
   // longer send, and that the receiver will no longer receive. It is true if
@@ -146,7 +146,7 @@ class RTC_EXPORT RtpTransceiverInterface : public webrtc::RefCountInterface {
   // by WebRTC for this transceiver.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver-setcodecpreferences
   virtual RTCError SetCodecPreferences(
-      rtc::ArrayView<RtpCodecCapability> codecs) = 0;
+      ArrayView<RtpCodecCapability> codecs) = 0;
   virtual std::vector<RtpCodecCapability> codec_preferences() const = 0;
 
   // Returns the set of header extensions that was set
@@ -166,7 +166,7 @@ class RTC_EXPORT RtpTransceiverInterface : public webrtc::RefCountInterface {
   // so that it negotiates use of header extensions which are not kStopped.
   // https://w3c.github.io/webrtc-extensions/#rtcrtptransceiver-interface
   virtual webrtc::RTCError SetHeaderExtensionsToNegotiate(
-      rtc::ArrayView<const RtpHeaderExtensionCapability> header_extensions) = 0;
+      ArrayView<const RtpHeaderExtensionCapability> header_extensions) = 0;
 
  protected:
   ~RtpTransceiverInterface() override = default;

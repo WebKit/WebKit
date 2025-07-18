@@ -131,7 +131,7 @@ struct PlatformMediaSessionRemoteCommandArgument {
 
 class PlatformMediaSessionClient : public CanMakeCheckedPtr<PlatformMediaSessionClient> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaSessionClient);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformMediaSessionClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformMediaSessionClient);
 public:
     PlatformMediaSessionClient() = default;

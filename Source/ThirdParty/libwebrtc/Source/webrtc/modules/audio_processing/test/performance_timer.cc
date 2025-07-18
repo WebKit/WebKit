@@ -20,7 +20,7 @@ namespace webrtc {
 namespace test {
 
 PerformanceTimer::PerformanceTimer(int num_frames_to_process)
-    : clock_(webrtc::Clock::GetRealTimeClock()) {
+    : clock_(Clock::GetRealTimeClock()) {
   timestamps_us_.reserve(num_frames_to_process);
 }
 

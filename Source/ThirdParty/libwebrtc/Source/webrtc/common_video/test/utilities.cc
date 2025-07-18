@@ -9,7 +9,11 @@
  */
 #include "common_video/test/utilities.h"
 
-#include <utility>
+#include <cstddef>
+
+#include "api/rtp_packet_infos.h"
+#include "api/video/color_space.h"
+#include "api/video/hdr_metadata.h"
 
 namespace webrtc {
 

@@ -650,7 +650,7 @@ public:
     {
         m_contextMenuDownloadItem = nullptr;
         auto id = g_signal_connect(m_webView.get(), "context-menu", G_CALLBACK(contextMenuCallback), this);
-        RunLoop::protectedMain()->dispatch([this, x, y] {
+        RunLoop::mainSingleton().dispatch([this, x, y] {
             clickMouseButton(x, y, WebViewTest::MouseButton::Secondary);
         });
         g_main_loop_run(m_mainLoop);

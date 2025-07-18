@@ -28,7 +28,7 @@ std::string ProduceDebugText(bool initial_silence,
                              bool prefer_first_two_channels,
                              int num_channels,
                              int strongest_ch) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << ", Initial silence: " << initial_silence;
   ss << ", Huge activity threshold: " << huge_activity_threshold;
   ss << ", Prefer first two channels: " << prefer_first_two_channels;

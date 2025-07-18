@@ -58,7 +58,7 @@ class MemoryIndexCursor;
 class MemoryObjectStore;
 
 class MemoryIndex : public RefCounted<MemoryIndex>, public CanMakeThreadSafeCheckedPtr<MemoryIndex> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryIndex);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryIndex);
 public:
     static Ref<MemoryIndex> create(const IDBIndexInfo&, MemoryObjectStore&);

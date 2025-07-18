@@ -64,7 +64,7 @@ namespace WTF {
 
 template<typename Type>
 class ParallelJobs {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParallelJobs);
 public:
     typedef void (*WorkerFunction)(Type*);
 

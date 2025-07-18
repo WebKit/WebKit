@@ -10,8 +10,9 @@
 
 #include "pc/jitter_buffer_delay.h"
 
+#include <optional>
+
 #include "api/sequence_checker.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -29,9 +30,8 @@ void JitterBufferDelay::Set(std::optional<double> delay_seconds) {
 
 int JitterBufferDelay::GetMs() const {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  return rtc::SafeClamp(
-      rtc::saturated_cast<int>(cached_delay_seconds_.value_or(kDefaultDelay) *
-                               1000),
+  return SafeClamp(
+      saturated_cast<int>(cached_delay_seconds_.value_or(kDefaultDelay) * 1000),
       0, kMaximumDelayMs);
 }
 

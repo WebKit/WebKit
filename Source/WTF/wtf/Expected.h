@@ -273,7 +273,7 @@ struct voidbase {
 
 template<class T, class E>
 class expected : private __expected_detail::base<T, E> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(expected);
     typedef __expected_detail::base<T, E> base;
 
 public:

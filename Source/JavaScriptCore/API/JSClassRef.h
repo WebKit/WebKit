@@ -37,7 +37,7 @@
     WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticValueEntry." #method) method
 
 struct StaticValueEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticValueEntry);
 public:
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, String& propertyName)
         : getProperty(_getProperty)
@@ -59,7 +59,7 @@ public:
     WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticFunctionEntry." #method) method
 
 struct StaticFunctionEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticFunctionEntry);
 public:
     StaticFunctionEntry(JSObjectCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
         : callAsFunction(_callAsFunction), attributes(_attributes)
@@ -80,7 +80,7 @@ struct OpaqueJSClass;
 // An OpaqueJSClass (JSClass) is created without a context, so it can be used with any context, even across context groups.
 // This structure holds data members that vary across context groups.
 struct OpaqueJSClassContextData {
-    WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaqueJSClassContextData);
 public:
     OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass*);
 

@@ -14,7 +14,14 @@
 
 #include <algorithm>
 
+#include "api/sequence_checker.h"
+#include "api/video/recordable_encoded_frame.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
+#include "pc/video_track_source.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -26,17 +33,17 @@ void VideoRtpTrackSource::ClearCallback() {
   callback_ = nullptr;
 }
 
-rtc::VideoSourceInterface<VideoFrame>* VideoRtpTrackSource::source() {
+VideoSourceInterface<VideoFrame>* VideoRtpTrackSource::source() {
   return &broadcaster_;
 }
-rtc::VideoSinkInterface<VideoFrame>* VideoRtpTrackSource::sink() {
+VideoSinkInterface<VideoFrame>* VideoRtpTrackSource::sink() {
   return &broadcaster_;
 }
 
 void VideoRtpTrackSource::BroadcastRecordableEncodedFrame(
     const RecordableEncodedFrame& frame) const {
   MutexLock lock(&mu_);
-  for (rtc::VideoSinkInterface<RecordableEncodedFrame>* sink : encoded_sinks_) {
+  for (VideoSinkInterface<RecordableEncodedFrame>* sink : encoded_sinks_) {
     sink->OnFrame(frame);
   }
 }
@@ -53,7 +60,7 @@ void VideoRtpTrackSource::GenerateKeyFrame() {
 }
 
 void VideoRtpTrackSource::AddEncodedSink(
-    rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) {
+    VideoSinkInterface<RecordableEncodedFrame>* sink) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
   RTC_DCHECK(sink);
   size_t size = 0;
@@ -70,7 +77,7 @@ void VideoRtpTrackSource::AddEncodedSink(
 }
 
 void VideoRtpTrackSource::RemoveEncodedSink(
-    rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) {
+    VideoSinkInterface<RecordableEncodedFrame>* sink) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
   size_t size = 0;
   {

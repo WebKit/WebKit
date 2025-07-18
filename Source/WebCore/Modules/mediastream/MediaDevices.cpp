@@ -66,7 +66,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaDevices);
 
 inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
-    , m_scheduledEventTimer(RunLoop::main(), this, &MediaDevices::scheduledEventTimerFired)
+    , m_scheduledEventTimer(RunLoop::mainSingleton(), this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
 {
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Monitor) == static_cast<size_t>(DisplaySurfaceType::Monitor), "MediaDevices::DisplayCaptureSurfaceType::Monitor is not equal to DisplaySurfaceType::Monitor as expected");
@@ -162,7 +162,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
 
 #if USE(AUDIO_SESSION)
     if (audioConstraints.isValid) {
-        auto categoryOverride = AudioSession::protectedSharedSession()->categoryOverride();
+        auto categoryOverride = AudioSession::singleton().categoryOverride();
         if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
             promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
             return;

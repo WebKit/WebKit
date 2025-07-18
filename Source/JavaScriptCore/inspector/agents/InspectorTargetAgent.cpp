@@ -36,14 +36,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetAgent);
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
     : InspectorAgentBase("Target"_s)
     , m_router(frontendRouter)
-    , m_frontendDispatcher(makeUnique<TargetFrontendDispatcher>(frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<TargetFrontendDispatcher>(frontendRouter))
     , m_backendDispatcher(TargetBackendDispatcher::create(backendDispatcher, this))
 {
 }
 
 InspectorTargetAgent::~InspectorTargetAgent() = default;
 
-void InspectorTargetAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorTargetAgent::didCreateFrontendAndBackend()
 {
     m_isConnected = true;
 

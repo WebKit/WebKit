@@ -1,13 +1,14 @@
+hello
 spacer
 
-FAIL Verifies that fragment navigation reveals hidden=until-found elements. assert_false: expected false got true
-FAIL Verifies that fragment navigation reveals all parent hidden=until-found elements. assert_false: parentid should not have the hidden attribute. expected false got true
-FAIL Verifies that the beforematch event is fired synchronously and bubbles after fragment navigation. assert_true: beforematch should have been fired on parentid. expected true got false
-FAIL Verifies that when a beforematch event handler moves a matching element, we scroll to its final location. assert_true: The beforematch event should have been fired. expected true got false
-FAIL Verifies that the beforematch event is fired on the right element when there are multiple hidden=until-found elements. assert_true: bar was navigated to, so it should get the beforematch event. expected true got false
-FAIL Verifies that no scrolling occurs when an element selected by the fragment identifier is detached by the beforematch event handler. assert_true: beforematch should be called when window.location.hash is set to #detach. expected true got false
-FAIL No scrolling should occur when the beforematch event handler sets the target element's style to display: none. assert_true: beforematch should be called when window.location.hash is set to #displaynone. expected true got false
-FAIL Scrolling should still occur when beforematch sets visiblity:hidden on the target element. assert_true: beforematch should be called when window.location.hash is set to #visibilityhidden. expected true got false
+PASS Verifies that fragment navigation reveals hidden=until-found elements.
+PASS Verifies that fragment navigation reveals all parent hidden=until-found elements.
+PASS Verifies that the beforematch event is fired synchronously and bubbles after fragment navigation.
+PASS Verifies that when a beforematch event handler moves a matching element, we scroll to its final location.
+PASS Verifies that the beforematch event is fired on the right element when there are multiple hidden=until-found elements.
+PASS Verifies that no scrolling occurs when an element selected by the fragment identifier is detached by the beforematch event handler.
+PASS No scrolling should occur when the beforematch event handler sets the target element's style to display: none.
+PASS Scrolling should still occur when beforematch sets visiblity:hidden on the target element.
 PASS Verifies that the beforematch event is not fired on elements without hidden=until-found.
-FAIL The hidden attribute should still be set inside the beforematch event handler. assert_true: expected true got false
+PASS The hidden attribute should still be set inside the beforematch event handler.
 

@@ -241,7 +241,7 @@ inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
 }
 
 struct FontCascadeCacheEntry {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FontCascadeCacheEntry);
 
     FontCascadeCacheKey key;
     Ref<FontCascadeFonts> fonts;

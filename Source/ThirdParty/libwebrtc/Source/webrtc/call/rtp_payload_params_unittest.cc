@@ -14,9 +14,10 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <variant>
+#include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/variant.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/color_space.h"
@@ -95,7 +96,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp8) {
   EXPECT_EQ(1, header.simulcastIdx);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   const auto& vp8_header =
-      absl::get<RTPVideoHeaderVP8>(header.video_type_header);
+      std::get<RTPVideoHeaderVP8>(header.video_type_header);
   EXPECT_EQ(kPictureId + 2, vp8_header.pictureId);
   EXPECT_EQ(kTemporalIdx, vp8_header.temporalIdx);
   EXPECT_EQ(kTl0PicIdx + 1, vp8_header.tl0PicIdx);
@@ -129,7 +130,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp9) {
   EXPECT_EQ(kVideoCodecVP9, header.codec);
   EXPECT_FALSE(header.color_space);
   const auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(header.video_type_header);
+      std::get<RTPVideoHeaderVP9>(header.video_type_header);
   EXPECT_EQ(kPictureId + 1, vp9_header.picture_id);
   EXPECT_EQ(kTl0PicIdx, vp9_header.tl0_pic_idx);
   EXPECT_EQ(vp9_header.temporal_idx, codec_info.codecSpecific.VP9.temporal_idx);
@@ -176,7 +177,7 @@ TEST(RtpPayloadParamsTest, PictureIdIsSetForVp8) {
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   EXPECT_EQ(kInitialPictureId1 + 1,
-            absl::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
+            std::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
 
   // State should hold latest used picture id and tl0_pic_idx.
   state = params.state();
@@ -198,8 +199,7 @@ TEST(RtpPayloadParamsTest, PictureIdWraps) {
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
-  EXPECT_EQ(0,
-            absl::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
+  EXPECT_EQ(0, std::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
 
   // State should hold latest used picture id and tl0_pic_idx.
   EXPECT_EQ(0, params.state().picture_id);  // Wrapped.
@@ -305,7 +305,7 @@ TEST(RtpPayloadParamsTest, Tl0PicIdxUpdatedForVp8) {
 
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   const auto& vp8_header =
-      absl::get<RTPVideoHeaderVP8>(header.video_type_header);
+      std::get<RTPVideoHeaderVP8>(header.video_type_header);
   EXPECT_EQ(kInitialPictureId1 + 1, vp8_header.pictureId);
   EXPECT_EQ(kInitialTl0PicIdx1, vp8_header.tl0PicIdx);
 
@@ -341,7 +341,7 @@ TEST(RtpPayloadParamsTest, Tl0PicIdxUpdatedForVp9) {
 
   EXPECT_EQ(kVideoCodecVP9, header.codec);
   const auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(header.video_type_header);
+      std::get<RTPVideoHeaderVP9>(header.video_type_header);
   EXPECT_EQ(kInitialPictureId1 + 1, vp9_header.picture_id);
   EXPECT_EQ(kInitialTl0PicIdx1, vp9_header.tl0_pic_idx);
 
@@ -407,14 +407,13 @@ TEST(RtpPayloadParamsTest, PictureIdForOldGenericFormat) {
 
   EXPECT_EQ(kVideoCodecGeneric, header.codec);
   const auto* generic =
-      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+      std::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
   ASSERT_TRUE(generic);
   EXPECT_EQ(0, generic->picture_id);
 
   encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
   header = params.GetRtpVideoHeader(encoded_image, &codec_info, 20);
-  generic =
-      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+  generic = std::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
   ASSERT_TRUE(generic);
   EXPECT_EQ(1, generic->picture_id);
 }

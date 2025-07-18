@@ -43,13 +43,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingAreaProxy);
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
-    : m_type(type)
-    , m_webPageProxy(webPageProxy)
+DrawingAreaProxy::DrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
+    : m_webPageProxy(webPageProxy)
     , m_webProcessProxy(webProcessProxy)
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
-    , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
+    , m_viewExposedRectChangedTimer(RunLoop::mainSingleton(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
 #endif
 {
 }

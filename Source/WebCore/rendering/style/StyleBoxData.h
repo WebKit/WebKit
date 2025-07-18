@@ -40,7 +40,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
 class StyleBoxData : public RefCounted<StyleBoxData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBoxData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBoxData, StyleBoxData);
 public:
     static Ref<StyleBoxData> create() { return adoptRef(*new StyleBoxData); }
     Ref<StyleBoxData> copy() const;
@@ -91,11 +91,11 @@ private:
 
     int m_specifiedZIndex;
     int m_usedZIndex;
-    unsigned m_hasAutoSpecifiedZIndex : 1;
-    unsigned m_hasAutoUsedZIndex : 1;
-    unsigned m_boxSizing : 1; // BoxSizing
-    unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
-    unsigned m_verticalAlign : 4; // VerticalAlign
+    PREFERRED_TYPE(bool) unsigned m_hasAutoSpecifiedZIndex : 1;
+    PREFERRED_TYPE(bool) unsigned m_hasAutoUsedZIndex : 1;
+    PREFERRED_TYPE(BoxSizing) unsigned m_boxSizing : 1;
+    PREFERRED_TYPE(BoxDecorationBreak) unsigned m_boxDecorationBreak : 1;
+    PREFERRED_TYPE(VerticalAlign) unsigned m_verticalAlign : 4;
 };
 
 } // namespace WebCore

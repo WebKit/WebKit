@@ -41,7 +41,7 @@ struct WebExtensionTabQueryParameters {
     std::optional<OptionSet<WebExtensionWindow::TypeFilter>> windowType;
     std::optional<bool> currentWindow;
     std::optional<bool> frontmostWindow;
-    std::optional<size_t> index;
+    std::optional<uint64_t> index;
 
     std::optional<bool> active;
     std::optional<bool> audible;

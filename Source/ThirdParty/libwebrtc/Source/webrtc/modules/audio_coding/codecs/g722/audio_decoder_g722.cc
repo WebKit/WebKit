@@ -12,10 +12,14 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/codecs/g722/g722_interface.h"
 #include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -51,7 +55,7 @@ void AudioDecoderG722Impl::Reset() {
 }
 
 std::vector<AudioDecoder::ParseResult> AudioDecoderG722Impl::ParsePayload(
-    rtc::Buffer&& payload,
+    Buffer&& payload,
     uint32_t timestamp) {
   return LegacyEncodedAudioFrame::SplitBySamples(this, std::move(payload),
                                                  timestamp, 8, 16);
@@ -147,7 +151,7 @@ void AudioDecoderG722StereoImpl::Reset() {
 }
 
 std::vector<AudioDecoder::ParseResult> AudioDecoderG722StereoImpl::ParsePayload(
-    rtc::Buffer&& payload,
+    Buffer&& payload,
     uint32_t timestamp) {
   return LegacyEncodedAudioFrame::SplitBySamples(this, std::move(payload),
                                                  timestamp, 2 * 8, 16);

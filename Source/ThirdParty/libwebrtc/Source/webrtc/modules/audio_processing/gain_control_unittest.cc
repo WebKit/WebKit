@@ -70,13 +70,13 @@ void RunBitExactnessTest(int sample_rate_hz,
                          int analog_level_min,
                          int analog_level_max,
                          int achieved_stream_analog_level_reference,
-                         rtc::ArrayView<const float> output_reference) {
+                         ArrayView<const float> output_reference) {
   GainControlImpl gain_controller;
   SetupComponent(sample_rate_hz, mode, target_level_dbfs, stream_analog_level,
                  compression_gain_db, enable_limiter, analog_level_min,
                  analog_level_max, &gain_controller);
 
-  const int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
+  const int samples_per_channel = CheckedDivExact(sample_rate_hz, 100);
   const StreamConfig render_config(sample_rate_hz, num_channels);
   AudioBuffer render_buffer(
       render_config.sample_rate_hz(), render_config.num_channels(),

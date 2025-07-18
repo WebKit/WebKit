@@ -1,0 +1,17 @@
+Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3   Popover8 invoker (no action)  Open convoluted popover  Open popover 29  Popover 30 Open popover 30 Non-invoker
+
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover assert_true: expected true got false
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case) assert_true: button2 should activate popover2 expected true got false
+PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation)
+PASS Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover
+FAIL Clicking on command/commandfor element, even if it wasn't used for activation, should hide it exactly once assert_false: popover1 should be hidden by command/commandfor expected false got true
+FAIL A popover inside an invoking element doesn't participate in that invoker's ancestor chain assert_true: invoking element should open popover expected true got false
+PASS An invoking element that was not used to invoke the popover is not part of the ancestor chain
+PASS Clicking inside a shadow DOM popover does not close that popover
+FAIL Clicking outside a shadow DOM popover should close that popover assert_false: expected false got true
+FAIL Moving focus back to the invoker element should not dismiss the popover assert_equals: Focus should move to the invoker element expected Element node <button id="p8invoker" commandfor="p8" command="toggle-po... but got Element node <body><button id="b1t" commandfor="p1" command="toggle-po...
+PASS Ensure circular/convoluted ancestral relationships are functional
+PASS Ensure circular/convoluted ancestral relationships are functional, with a direct showPopover()
+PASS Pointer down in one document and pointer up in another document shouldn't dismiss popover
+PASS Pointer down inside invoker and up outside that invoker shouldn't dismiss popover
+

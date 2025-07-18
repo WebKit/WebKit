@@ -204,7 +204,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
                 implicitZeroKeyframe = &keyframe;
         }
         if (keyframe.hasResolvedOffset())
-            expectedExplicitProperties.formUnion(keyframe.properties());
+            expectedExplicitProperties.addAll(keyframe.properties());
     }
 
     auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableCSSProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, BlendingKeyframe* existingImplicitBlendingKeyframe) {
@@ -398,9 +398,9 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
     auto analyzeKeyframeForExplicitProperties = [&] {
         auto& properties = keyframe.properties();
         if (!keyframe.offset())
-            m_explicitFromProperties.add(properties.begin(), properties.end());
+            m_explicitFromProperties.addAll(properties);
         if (keyframe.offset() == 1)
-            m_explicitToProperties.add(properties.begin(), properties.end());
+            m_explicitToProperties.addAll(properties);
     };
 
     auto analyzeKeyframeRangeOffset = [&] {

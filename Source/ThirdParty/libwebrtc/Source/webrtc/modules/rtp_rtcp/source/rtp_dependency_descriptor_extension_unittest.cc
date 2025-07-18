@@ -10,10 +10,15 @@
 
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 
+#include <bitset>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
-#include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -59,7 +64,7 @@ TEST(RtpDependencyDescriptorExtensionTest, WriteZeroInUnusedBits) {
   const uint8_t* unused_bytes = buffer + value_size;
   size_t num_unused_bytes = buffer + sizeof(buffer) - unused_bytes;
   // Check remaining bytes are zeroed.
-  EXPECT_THAT(rtc::MakeArrayView(unused_bytes, num_unused_bytes), Each(0));
+  EXPECT_THAT(MakeArrayView(unused_bytes, num_unused_bytes), Each(0));
 }
 
 // In practice chain diff for inactive chain will grow uboundly because no
@@ -124,6 +129,49 @@ TEST(RtpDependencyDescriptorExtensionTest, FailsToWriteInvalidDescriptor) {
   DependencyDescriptor descriptor;
   descriptor.frame_dependencies = structure.templates[0];
   descriptor.frame_dependencies.temporal_id = 1;
+
+  EXPECT_EQ(
+      RtpDependencyDescriptorExtension::ValueSize(structure, 0b11, descriptor),
+      0u);
+  EXPECT_FALSE(RtpDependencyDescriptorExtension::Write(buffer, structure, 0b11,
+                                                       descriptor));
+}
+
+TEST(RtpDependencyDescriptorExtensionTest,
+     FailsToWriteWhenNumberOfChainsMismatch) {
+  uint8_t buffer[256];
+  FrameDependencyStructure structure;
+  structure.num_decode_targets = 2;
+  structure.num_chains = 2;
+  structure.templates = {
+      FrameDependencyTemplate().T(0).Dtis("SR").ChainDiffs({2, 2})};
+  DependencyDescriptor descriptor;
+  descriptor.frame_dependencies = structure.templates[0];
+
+  // Structure has 2 chains, but frame provide 1 chain diff,
+  descriptor.frame_dependencies.chain_diffs = {2};
+
+  EXPECT_EQ(
+      RtpDependencyDescriptorExtension::ValueSize(structure, 0b11, descriptor),
+      0u);
+  EXPECT_FALSE(RtpDependencyDescriptorExtension::Write(buffer, structure, 0b11,
+                                                       descriptor));
+}
+
+TEST(RtpDependencyDescriptorExtensionTest,
+     FailsToWriteWhenNumberOfDecodeTargetsMismatch) {
+  uint8_t buffer[256];
+  FrameDependencyStructure structure;
+  structure.num_decode_targets = 2;
+  structure.num_chains = 2;
+  structure.templates = {
+      FrameDependencyTemplate().T(0).Dtis("SR").ChainDiffs({2, 2})};
+  DependencyDescriptor descriptor;
+  descriptor.frame_dependencies = structure.templates[0];
+
+  // Structure has 2 decode targets, but frame provide 1 indication,
+  descriptor.frame_dependencies.decode_target_indications = {
+      DecodeTargetIndication::kSwitch};
 
   EXPECT_EQ(
       RtpDependencyDescriptorExtension::ValueSize(structure, 0b11, descriptor),

@@ -10,6 +10,11 @@
 
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <string>
+
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 

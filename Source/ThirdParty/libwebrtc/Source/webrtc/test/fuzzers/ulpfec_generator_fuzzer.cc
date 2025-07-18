@@ -8,13 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "modules/include/module_common_types_public.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
-#include "modules/rtp_rtcp/source/fec_test_helper.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/ulpfec_generator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -47,7 +52,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     size_t payload_size = data[i++] % 10;
     if (i + payload_size + rtp_header_length + 2 > size)
       break;
-    rtc::CopyOnWriteBuffer packet(&data[i], payload_size + rtp_header_length);
+    webrtc::CopyOnWriteBuffer packet(&data[i],
+                                     payload_size + rtp_header_length);
     packet.EnsureCapacity(IP_PACKET_SIZE);
     // Write a valid parsable header (version = 2, no padding, no extensions,
     // no CSRCs).

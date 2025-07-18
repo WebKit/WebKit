@@ -1,0 +1,17 @@
+This test ensures that the proper attributes are present when "lazy" spellchecking happens.
+
+Attributed string with range: wrods is misspelled aab lotsi nowadays. euep.{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXDidSpellCheck = 0;
+    AXFont =     {
+        AXFontFamily = Times;
+        AXFontName = "Times-Roman";
+        AXFontSize = 16;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+wrods is misspelled aab lotsi nowadays. euep.

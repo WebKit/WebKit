@@ -71,11 +71,11 @@ enum class Synchronous : bool { No, Yes };
 typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 
 struct MemoryPressureHandlerConfiguration {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MemoryPressureHandlerConfiguration);
     WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration();
-    WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration(size_t, double, double, std::optional<double>, Seconds);
+    WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration(uint64_t, double, double, std::optional<double>, Seconds);
 
-    size_t baseThreshold;
+    uint64_t baseThreshold;
     double conservativeThresholdFraction;
     double strictThresholdFraction;
     std::optional<double> killThresholdFraction;
@@ -83,7 +83,7 @@ struct MemoryPressureHandlerConfiguration {
 };
 
 class MemoryPressureHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryPressureHandler);
     friend class WTF::LazyNeverDestroyed<MemoryPressureHandler>;
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
@@ -145,7 +145,7 @@ public:
 #endif
 
     class ReliefLogger {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ReliefLogger);
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
@@ -173,7 +173,7 @@ public:
 
     private:
         struct MemoryUsage {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+            WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MemoryUsage);
             MemoryUsage() = default;
             MemoryUsage(size_t resident, size_t physical)
                 : resident(resident)
@@ -215,7 +215,7 @@ public:
 
     // Runs the provided callback the first time that this process's footprint exceeds any of the given thresholds.
     // Only works in processes that use PeriodicMemoryMonitor.
-    WTF_EXPORT_PRIVATE void setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds, WTF::Function<void(size_t)>&&);
+    WTF_EXPORT_PRIVATE void setMemoryFootprintNotificationThresholds(Vector<uint64_t>&& thresholds, WTF::Function<void(uint64_t)>&&);
 
 private:
     std::optional<size_t> thresholdForMemoryKill();
@@ -257,8 +257,8 @@ private:
     WTF::Function<void()> m_memoryPressureStatusChangedCallback;
     WTF::Function<void(ProcessMemoryLimit)> m_didExceedProcessMemoryLimitCallback;
     LowMemoryHandler m_lowMemoryHandler;
-    Vector<size_t> m_memoryFootprintNotificationThresholds;
-    WTF::Function<void(size_t)> m_memoryFootprintNotificationHandler;
+    Vector<uint64_t> m_memoryFootprintNotificationThresholds;
+    WTF::Function<void(uint64_t)> m_memoryFootprintNotificationHandler;
 
     Configuration m_configuration;
 

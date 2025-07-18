@@ -1,9 +1,4 @@
 Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm
-Modules/applepay/ApplePayLogoSystemImage.mm
-Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
-Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm
-Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
-Modules/notifications/NotificationPayloadCocoa.mm
 accessibility/cocoa/AXCoreObjectCocoa.mm
 accessibility/cocoa/AccessibilityObjectCocoa.mm
 accessibility/mac/AXObjectCacheMac.mm
@@ -22,7 +17,6 @@ editing/cocoa/AlternativeTextUIController.mm
 editing/cocoa/AttributedString.mm
 editing/cocoa/DataDetection.mm
 editing/cocoa/HTMLConverter.mm
-loader/ContentFilter.cpp
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
 loader/cocoa/BundleResourceLoader.mm

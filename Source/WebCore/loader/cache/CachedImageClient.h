@@ -35,7 +35,7 @@ class IntRect;
 enum class VisibleInViewportState { Unknown, Yes, No };
 
 class CachedImageClient : public CachedResourceClient, public CanMakeCheckedPtr<CachedImageClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedImageClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedImageClient);
 public:
     virtual ~CachedImageClient() = default;

@@ -10,36 +10,42 @@
 
 #include "pc/session_description.h"
 
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
+#include "p2p/base/transport_info.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
-namespace cricket {
+namespace webrtc {
 namespace {
 
 ContentInfo* FindContentInfoByName(ContentInfos* contents,
-                                   const std::string& name) {
+                                   absl::string_view name) {
   RTC_DCHECK(contents);
   for (ContentInfo& content : *contents) {
-    if (content.name == name) {
+    if (content.mid() == name) {
       return &content;
     }
   }
   return nullptr;
 }
 
-}  // namespace
-
 const ContentInfo* FindContentInfoByName(const ContentInfos& contents,
-                                         const std::string& name) {
+                                         absl::string_view name) {
   for (ContentInfos::const_iterator content = contents.begin();
        content != contents.end(); ++content) {
-    if (content->name == name) {
+    if (content->mid() == name) {
       return &(*content);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 const ContentInfo* FindContentInfoByType(const ContentInfos& contents,
@@ -52,6 +58,8 @@ const ContentInfo* FindContentInfoByType(const ContentInfos& contents,
   return nullptr;
 }
 
+}  // namespace
+
 ContentGroup::ContentGroup(const std::string& semantics)
     : semantics_(semantics) {}
 
@@ -62,7 +70,7 @@ ContentGroup& ContentGroup::operator=(ContentGroup&&) = default;
 ContentGroup::~ContentGroup() = default;
 
 const std::string* ContentGroup::FirstContentName() const {
-  return (!content_names_.empty()) ? &(*content_names_.begin()) : NULL;
+  return (!content_names_.empty()) ? &(*content_names_.begin()) : nullptr;
 }
 
 bool ContentGroup::HasContentName(absl::string_view content_name) const {
@@ -85,7 +93,7 @@ bool ContentGroup::RemoveContentName(absl::string_view content_name) {
 }
 
 std::string ContentGroup::ToString() const {
-  rtc::StringBuilder acc;
+  StringBuilder acc;
   acc << semantics_ << "(";
   if (!content_names_.empty()) {
     for (const auto& name : content_names_) {
@@ -117,20 +125,20 @@ ContentInfo* SessionDescription::GetContentByName(const std::string& name) {
 }
 
 const MediaContentDescription* SessionDescription::GetContentDescriptionByName(
-    const std::string& name) const {
+    absl::string_view name) const {
   const ContentInfo* cinfo = FindContentInfoByName(contents_, name);
-  if (cinfo == NULL) {
-    return NULL;
+  if (cinfo == nullptr) {
+    return nullptr;
   }
 
   return cinfo->media_description();
 }
 
 MediaContentDescription* SessionDescription::GetContentDescriptionByName(
-    const std::string& name) {
+    absl::string_view name) {
   ContentInfo* cinfo = FindContentInfoByName(&contents_, name);
-  if (cinfo == NULL) {
-    return NULL;
+  if (cinfo == nullptr) {
+    return nullptr;
   }
 
   return cinfo->media_description();
@@ -142,17 +150,14 @@ const ContentInfo* SessionDescription::FirstContentByType(
 }
 
 const ContentInfo* SessionDescription::FirstContent() const {
-  return (contents_.empty()) ? NULL : &(*contents_.begin());
+  return (contents_.empty()) ? nullptr : &(*contents_.begin());
 }
 
 void SessionDescription::AddContent(
     const std::string& name,
     MediaProtocolType type,
     std::unique_ptr<MediaContentDescription> description) {
-  ContentInfo content(type);
-  content.name = name;
-  content.set_media_description(std::move(description));
-  AddContent(std::move(content));
+  AddContent(ContentInfo(type, name, std::move(description)));
 }
 
 void SessionDescription::AddContent(
@@ -160,11 +165,7 @@ void SessionDescription::AddContent(
     MediaProtocolType type,
     bool rejected,
     std::unique_ptr<MediaContentDescription> description) {
-  ContentInfo content(type);
-  content.name = name;
-  content.rejected = rejected;
-  content.set_media_description(std::move(description));
-  AddContent(std::move(content));
+  AddContent(ContentInfo(type, name, std::move(description), rejected));
 }
 
 void SessionDescription::AddContent(
@@ -173,12 +174,8 @@ void SessionDescription::AddContent(
     bool rejected,
     bool bundle_only,
     std::unique_ptr<MediaContentDescription> description) {
-  ContentInfo content(type);
-  content.name = name;
-  content.rejected = rejected;
-  content.bundle_only = bundle_only;
-  content.set_media_description(std::move(description));
-  AddContent(std::move(content));
+  AddContent(
+      ContentInfo(type, name, std::move(description), rejected, bundle_only));
 }
 
 void SessionDescription::AddContent(ContentInfo&& content) {
@@ -193,7 +190,7 @@ void SessionDescription::AddContent(ContentInfo&& content) {
 bool SessionDescription::RemoveContentByName(const std::string& name) {
   for (ContentInfos::iterator content = contents_.begin();
        content != contents_.end(); ++content) {
-    if (content->name == name) {
+    if (content->mid() == name) {
       contents_.erase(content);
       return true;
     }
@@ -225,7 +222,7 @@ const TransportInfo* SessionDescription::GetTransportInfoByName(
       return &(*iter);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 TransportInfo* SessionDescription::GetTransportInfoByName(
@@ -236,7 +233,7 @@ TransportInfo* SessionDescription::GetTransportInfoByName(
       return &(*iter);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 void SessionDescription::RemoveGroupByName(const std::string& name) {
@@ -267,7 +264,7 @@ const ContentGroup* SessionDescription::GetGroupByName(
       return &(*iter);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 std::vector<const ContentGroup*> SessionDescription::GetGroupsByName(
@@ -285,20 +282,11 @@ ContentInfo::~ContentInfo() {}
 
 // Copy operator.
 ContentInfo::ContentInfo(const ContentInfo& o)
-    : name(o.name),
-      type(o.type),
+    : type(o.type),
       rejected(o.rejected),
       bundle_only(o.bundle_only),
+      mid_(o.mid_),
       description_(o.description_->Clone()) {}
-
-ContentInfo& ContentInfo::operator=(const ContentInfo& o) {
-  name = o.name;
-  type = o.type;
-  rejected = o.rejected;
-  bundle_only = o.bundle_only;
-  description_ = o.description_->Clone();
-  return *this;
-}
 
 const MediaContentDescription* ContentInfo::media_description() const {
   return description_.get();
@@ -308,4 +296,4 @@ MediaContentDescription* ContentInfo::media_description() {
   return description_.get();
 }
 
-}  // namespace cricket
+}  // namespace webrtc

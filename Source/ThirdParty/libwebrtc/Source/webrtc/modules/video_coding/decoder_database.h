@@ -21,6 +21,7 @@
 #include "api/video/encoded_frame.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/generic_decoder.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

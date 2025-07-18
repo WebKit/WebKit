@@ -41,7 +41,7 @@
 namespace WTR {
 
 class TestInvocation final : public RefCounted<TestInvocation>, public UIScriptContextDelegate, public CanMakeWeakPtr<TestInvocation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestInvocation);
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
     static Ref<TestInvocation> create(WKURLRef, const TestOptions&);

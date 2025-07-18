@@ -93,7 +93,7 @@ private:
     friend class NeverDestroyed<SharedJSContext, MainRunLoopAccessTraits>;
 
     SharedJSContext()
-        : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContextIfNecessary)
+        : m_timer(RunLoop::mainSingleton(), this, &SharedJSContext::releaseContextIfNecessary)
     {
     }
 

@@ -15,12 +15,13 @@
 
 namespace webrtc {
 
-ErleEstimator::ErleEstimator(size_t startup_phase_length_blocks,
+ErleEstimator::ErleEstimator(const Environment& env,
+                             size_t startup_phase_length_blocks,
                              const EchoCanceller3Config& config,
                              size_t num_capture_channels)
     : startup_phase_length_blocks_(startup_phase_length_blocks),
       fullband_erle_estimator_(config.erle, num_capture_channels),
-      subband_erle_estimator_(config, num_capture_channels) {
+      subband_erle_estimator_(env, config, num_capture_channels) {
   if (config.erle.num_sections > 1) {
     signal_dependent_erle_estimator_ =
         std::make_unique<SignalDependentErleEstimator>(config,
@@ -44,13 +45,11 @@ void ErleEstimator::Reset(bool delay_change) {
 
 void ErleEstimator::Update(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         filter_frequency_responses,
-    rtc::ArrayView<const float, kFftLengthBy2Plus1>
-        avg_render_spectrum_with_reverb,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectra,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-        subtractor_spectra,
+    ArrayView<const float, kFftLengthBy2Plus1> avg_render_spectrum_with_reverb,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectra,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> subtractor_spectra,
     const std::vector<bool>& converged_filters) {
   RTC_DCHECK_EQ(subband_erle_estimator_.Erle(/*onset_compensated=*/true).size(),
                 capture_spectra.size());

@@ -12,9 +12,9 @@
 
 #include <stdlib.h>
 
-#include <algorithm>
 #include <cstdint>
 #include <optional>
+#include <utility>
 
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
@@ -29,7 +29,7 @@ EncodedImageBuffer::EncodedImageBuffer(size_t size) : buffer_(size) {}
 EncodedImageBuffer::EncodedImageBuffer(const uint8_t* data, size_t size)
     : buffer_(data, size) {}
 
-EncodedImageBuffer::EncodedImageBuffer(rtc::Buffer buffer)
+EncodedImageBuffer::EncodedImageBuffer(Buffer buffer)
     : buffer_(std::move(buffer)) {}
 
 // static
@@ -43,8 +43,7 @@ scoped_refptr<EncodedImageBuffer> EncodedImageBuffer::Create(
   return make_ref_counted<EncodedImageBuffer>(data, size);
 }
 // static
-scoped_refptr<EncodedImageBuffer> EncodedImageBuffer::Create(
-    rtc::Buffer buffer) {
+scoped_refptr<EncodedImageBuffer> EncodedImageBuffer::Create(Buffer buffer) {
   return make_ref_counted<EncodedImageBuffer>(std::move(buffer));
 }
 
@@ -78,7 +77,7 @@ void EncodedImage::SetEncodeTime(int64_t encode_start_ms,
   timing_.encode_finish_ms = encode_finish_ms;
 }
 
-webrtc::Timestamp EncodedImage::CaptureTime() const {
+Timestamp EncodedImage::CaptureTime() const {
   return capture_time_ms_ > 0 ? Timestamp::Millis(capture_time_ms_)
                               : Timestamp::MinusInfinity();
 }

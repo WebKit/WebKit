@@ -25,7 +25,7 @@
 // Protect against max macro inclusion.
 #undef max
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -75,8 +75,8 @@ static const char kUuidDigit17[4] = {'8', '9', 'a', 'b'};
 
 // Lock for the global random generator, only needed to serialize changing the
 // generator.
-webrtc::Mutex& GetRandomGeneratorLock() {
-  static webrtc::Mutex& mutex = *new webrtc::Mutex();
+Mutex& GetRandomGeneratorLock() {
+  static Mutex& mutex = *new Mutex();
   return mutex;
 }
 
@@ -96,17 +96,17 @@ RandomGenerator& Rng() {
 }  // namespace
 
 void SetDefaultRandomGenerator() {
-  webrtc::MutexLock lock(&GetRandomGeneratorLock());
+  MutexLock lock(&GetRandomGeneratorLock());
   GetGlobalRng().reset(new SecureRandomGenerator());
 }
 
 void SetRandomGenerator(std::unique_ptr<RandomGenerator> generator) {
-  webrtc::MutexLock lock(&GetRandomGeneratorLock());
+  MutexLock lock(&GetRandomGeneratorLock());
   GetGlobalRng() = std::move(generator);
 }
 
 void SetRandomTestMode(bool test) {
-  webrtc::MutexLock lock(&GetRandomGeneratorLock());
+  MutexLock lock(&GetRandomGeneratorLock());
   if (!test) {
     GetGlobalRng().reset(new SecureRandomGenerator());
   } else {
@@ -225,4 +225,4 @@ double CreateRandomDouble() {
                              std::numeric_limits<double>::epsilon());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

@@ -180,12 +180,12 @@ template<typename Op> struct IndirectNode {
     UniqueRef<Op> op;
 
     // Forward * and -> to the operation for convenience.
-    const Op& operator*() const { return *op; }
-    Op& operator*() { return *op; }
+    const Op& operator*() const { return op.get(); }
+    Op& operator*() { return op.get(); }
     const Op* operator->() const { return op.ptr(); }
     Op* operator->() { return op.ptr(); }
-    operator const Op&() const { return *op; }
-    operator Op&() { return *op; }
+    operator const Op&() const { return op.get(); }
+    operator Op&() { return op.get(); }
 
     bool operator==(const IndirectNode<Op>& other) const { return type == other.type && arePointingToEqualData(op, other.op); }
 };

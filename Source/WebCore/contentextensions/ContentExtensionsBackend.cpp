@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,17 +128,6 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
             return !frameURLActions.contains(actionAndFlags);
         case ActionCondition::UnlessFrameURL:
             return frameURLActions.contains(actionAndFlags);
-        case ActionCondition::IfAncestorSubframeURL:
-            if (frameURLActions.contains(actionAndFlags))
-                return false;
-
-            for (const auto& ancestorURL : resourceLoadInfo.ancestorSubframeURLs) {
-                auto& ancestorURLActions = contentExtension.frameURLActions(ancestorURL);
-                if (ancestorURLActions.contains(actionAndFlags))
-                    return false;
-            }
-
-            return true;
         }
         ASSERT_NOT_REACHED();
         return false;
@@ -256,22 +245,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     URL frameURL;
     bool mainFrameContext = false;
     RequestMethod requestMethod = readRequestMethod(initiatingDocumentLoader.request().httpMethod()).value_or(RequestMethod::None);
-    Vector<URL> ancestorSubframeURLs;
 
-    if (RefPtr frame = initiatingDocumentLoader.frame()) {
+    if (auto* frame = initiatingDocumentLoader.frame()) {
         mainFrameContext = frame->isMainFrame();
         currentDocument = frame->document();
-
-        RefPtr currentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
-        while (currentFrame && !currentFrame->isMainFrame()) {
-            if (RefPtr currentDocument = currentFrame->document()) {
-                URL ancestorURL = currentDocument->url();
-                if (ancestorURL.isValid())
-                    ancestorSubframeURLs.append(ancestorURL);
-            }
-
-            currentFrame = dynamicDowncast<LocalFrame>(currentFrame->tree().parent());
-        }
 
         if (initiatingDocumentLoader.isLoadingMainResource()
             && frame->isMainFrame()
@@ -286,7 +263,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     else
         frameURL = url;
 
-    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext, requestMethod, ancestorSubframeURLs };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext, requestMethod };
     auto actions = actionsForResourceLoad(resourceLoadInfo, ruleListFilter);
 
     ContentRuleListResults results;
@@ -355,7 +332,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from "_s, url.string(), " to "_s, newProtocol));
         }
-        if (results.summary.blockedLoad) {
+
+        if (results.shouldBlock()) {
             String consoleMessage;
             if (auto message = customTrackerBlockingMessageForConsole(results, url, mainDocumentURL))
                 consoleMessage = WTFMove(*message);

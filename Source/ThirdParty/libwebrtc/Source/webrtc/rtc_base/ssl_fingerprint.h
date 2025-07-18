@@ -14,30 +14,30 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <memory>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/rtc_certificate.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
-
-class RTCCertificate;
-class SSLCertificate;
-class SSLIdentity;
+namespace webrtc {
 
 struct RTC_EXPORT SSLFingerprint {
   // TODO(steveanton): Remove once downstream projects have moved off of this.
   static SSLFingerprint* Create(absl::string_view algorithm,
-                                const rtc::SSLIdentity* identity);
+                                const SSLIdentity* identity);
   // TODO(steveanton): Rename to Create once projects have migrated.
   static std::unique_ptr<SSLFingerprint> CreateUnique(
       absl::string_view algorithm,
-      const rtc::SSLIdentity& identity);
+      const SSLIdentity& identity);
 
-  static std::unique_ptr<SSLFingerprint> Create(
-      absl::string_view algorithm,
-      const rtc::SSLCertificate& cert);
+  static std::unique_ptr<SSLFingerprint> Create(absl::string_view algorithm,
+                                                const SSLCertificate& cert);
 
   // TODO(steveanton): Remove once downstream projects have moved off of this.
   static SSLFingerprint* CreateFromRfc4572(absl::string_view algorithm,
@@ -69,9 +69,17 @@ struct RTC_EXPORT SSLFingerprint {
   std::string ToString() const;
 
   std::string algorithm;
-  rtc::CopyOnWriteBuffer digest;
+  CopyOnWriteBuffer digest;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SSLFingerprint;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SSL_FINGERPRINT_H_

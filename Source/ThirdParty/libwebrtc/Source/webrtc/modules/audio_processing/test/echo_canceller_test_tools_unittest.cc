@@ -28,10 +28,10 @@ TEST(EchoCancellerTestTools, FloatDelayBuffer) {
   }
   std::vector<float> v_delayed = v;
   constexpr size_t kBlockSize = 50;
-  for (size_t k = 0; k < rtc::CheckedDivExact(v.size(), kBlockSize); ++k) {
+  for (size_t k = 0; k < CheckedDivExact(v.size(), kBlockSize); ++k) {
     delay_buffer.Delay(
-        rtc::ArrayView<const float>(&v[k * kBlockSize], kBlockSize),
-        rtc::ArrayView<float>(&v_delayed[k * kBlockSize], kBlockSize));
+        ArrayView<const float>(&v[k * kBlockSize], kBlockSize),
+        ArrayView<float>(&v_delayed[k * kBlockSize], kBlockSize));
   }
   for (size_t k = kDelay; k < v.size(); ++k) {
     EXPECT_EQ(v[k - kDelay], v_delayed[k]);
@@ -47,10 +47,9 @@ TEST(EchoCancellerTestTools, IntDelayBuffer) {
   }
   std::vector<int> v_delayed = v;
   const size_t kBlockSize = 50;
-  for (size_t k = 0; k < rtc::CheckedDivExact(v.size(), kBlockSize); ++k) {
-    delay_buffer.Delay(
-        rtc::ArrayView<const int>(&v[k * kBlockSize], kBlockSize),
-        rtc::ArrayView<int>(&v_delayed[k * kBlockSize], kBlockSize));
+  for (size_t k = 0; k < CheckedDivExact(v.size(), kBlockSize); ++k) {
+    delay_buffer.Delay(ArrayView<const int>(&v[k * kBlockSize], kBlockSize),
+                       ArrayView<int>(&v_delayed[k * kBlockSize], kBlockSize));
   }
   for (size_t k = kDelay; k < v.size(); ++k) {
     EXPECT_EQ(v[k - kDelay], v_delayed[k]);

@@ -138,7 +138,7 @@ namespace WTF {
  *        // invokeAsync returns a promise of same type as what the function returns,
  *        // and it will be resolved or rejected when the original promise is settled.
  *        invokeAsync(workQueue, [arg = WTFMove(arg)] () mutable { return methodB(WTFMove(arg); })
- *        ->then(RunLoop::main(),
+ *        ->then(RunLoop::mainSingleton(),
  *            []() {
  *                assertIsMainThread();
  *                // Method succeeded
@@ -150,7 +150,7 @@ namespace WTF {
  *
  * 2. Using lambdas
  *    auto p = MyAsyncMethod(); // MyAsyncMethod returns a Ref<NativePromise>, and perform some work on some thread.
- *    p->then(RunLoop::main(), [] (NativePromise::Result&& result) {
+ *    p->then(RunLoop::mainSingleton(), [] (NativePromise::Result&& result) {
  *        assertIsMainThread();
  *        if (result) {
  *            auto resolveValue = WTFMove(result.value());
@@ -164,7 +164,7 @@ namespace WTF {
  *
  *    GenericPromise::Producer p;
  *    // Note that if you're not interested in the result you can provide a Function<void()>
- *    p->then(RunLoop::main(),
+ *    p->then(RunLoop::mainSingleton(),
  *            [] { CRASH("resolve callback won't be run"); },
  *            [] { CRASH("reject callback won't be run"); })
  *      ->track(request);
@@ -177,7 +177,7 @@ namespace WTF {
  *
  * 4. Chaining promises of different types
  *    auto p = MyAsyncMethod(); // MyAsyncMethod returns a Ref<MyNativePromise>, and perform some work on some thread.
- *    auto p2 = p->then(RunLoop::main(), [] (MyNativePromise::ResolveValueType val) {
+ *    auto p2 = p->then(RunLoop::mainSingleton(), [] (MyNativePromise::ResolveValueType val) {
  *            assertIsMainThread();
  *            if (val)
  *                return MyOtherPromise::createAndResolve(val);
@@ -185,7 +185,7 @@ namespace WTF {
  *        }, [] (MyOtherPromise::RejectValueType val) {
  *            return MyOtherPromise::createAndReject(val);
  *        }) // The type returned by then() is of the last PromiseType returned in the chain.
- *        ->whenSettled(RunLoop::protectedMain(), [] (const MyOtherPromise::Result&) -> void {
+ *        ->whenSettled(RunLoop::mainSingleton(), [] (const MyOtherPromise::Result&) -> void {
  *            // do something else
  *        });
  *
@@ -247,7 +247,7 @@ namespace WTF {
  *
  * And usage would be:
  *  auto photoProducer = PhotoProducer::create(PhotoSettings { });
- *  photoProducer->takePhoto()->whenSettled(RunLoop::protectedMain(), [] (PhotoProducer::PhotoPromise::Result&& result) mutable {
+ *  photoProducer->takePhoto()->whenSettled(RunLoop::mainSingleton(), [] (PhotoProducer::PhotoPromise::Result&& result) mutable {
  *      static_assert(std::is_same_v<decltype(result.value()), std::pair<Vector<uint8_t>, String>&>);
  *      if (result)
  *          EXPECT_EQ(result.value().second, "image/jpeg"_s);
@@ -286,7 +286,7 @@ public:
 class ConvertibleToNativePromise { };
 
 class NativePromiseRequest :  public CanMakeWeakPtr<NativePromiseRequest> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NativePromiseRequest);
 public:
     NativePromiseRequest() = default;
     NativePromiseRequest(NativePromiseRequest&& other) = default;
@@ -1322,7 +1322,7 @@ private:
 
 template<typename ResolveValueT, typename RejectValueT, unsigned options>
 class NativePromiseProducer final : public ConvertibleToNativePromise {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NativePromiseProducer);
 public:
     // used by IsConvertibleToNativePromise to determine how to cast the result.
     using PromiseType = NativePromise<ResolveValueT, RejectValueT, options & ~static_cast<unsigned>(PromiseOption::AutoRejectProducer)>;

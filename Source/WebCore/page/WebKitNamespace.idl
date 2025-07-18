@@ -31,4 +31,5 @@
     Exposed=Window
 ] interface WebKitNamespace {
     readonly attribute UserMessageHandlersNamespace messageHandlers;
+    [EnabledForWorld=nodeInfoEnabled] WebKitNodeInfo createNodeInfo(Node node);
 };

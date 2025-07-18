@@ -3,6 +3,7 @@ Short Name: m4sugar
 URL: https://git.savannah.gnu.org/r/autoconf.git/
 Version: N/A
 Date: 2019-12-01
+Update Mechanism: Static.HardFork (https://crbug.com/422061086)
 License: GPL-2.0
 License File: LICENSE
 Shipped: no

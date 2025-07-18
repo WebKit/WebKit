@@ -82,7 +82,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDisplayLinkClient);
 // This is called off the main thread.
 void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplayID /* displayID */, WebCore::DisplayUpdate /* displayUpdate */, bool /* wantsFullSpeedUpdates */, bool /* anyObserverWantsCallback */)
 {
-    RunLoop::protectedMain()->dispatch([pageIdentifier = m_pageIdentifier]() {
+    RunLoop::mainSingleton().dispatch([pageIdentifier = m_pageIdentifier]() {
         auto page = WebProcessProxy::webPage(pageIdentifier);
         if (!page)
             return;
@@ -99,7 +99,7 @@ Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeDrawingAreaProxyMac::crea
 
 RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
-    , m_displayLinkClient(makeUnique<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
+    , m_displayLinkClient(makeUniqueRef<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
 {
 }
 
@@ -107,9 +107,9 @@ RemoteLayerTreeDrawingAreaProxyMac::~RemoteLayerTreeDrawingAreaProxyMac()
 {
     if (auto* displayLink = existingDisplayLink()) {
         if (m_fullSpeedUpdateObserverID)
-            displayLink->removeObserver(*m_displayLinkClient, *m_fullSpeedUpdateObserverID);
+            displayLink->removeObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID);
         if (m_displayRefreshObserverID)
-            displayLink->removeObserver(*m_displayLinkClient, *m_displayRefreshObserverID);
+            displayLink->removeObserver(m_displayLinkClient, *m_displayRefreshObserverID);
     }
 }
 
@@ -149,7 +149,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
         return;
 
     if (auto* displayLink = existingDisplayLink())
-        displayLink->removeObserver(*m_displayLinkClient, *observerID);
+        displayLink->removeObserver(m_displayLinkClient, *observerID);
 
     observerID = { };
 }
@@ -470,7 +470,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
 
     auto& displayLink = this->displayLink();
     m_displayRefreshObserverID = DisplayLinkObserverID::generate();
-    displayLink.addObserver(*m_displayLinkClient, *m_displayRefreshObserverID, m_clientPreferredFramesPerSecond);
+    displayLink.addObserver(m_displayLinkClient, *m_displayRefreshObserverID, m_clientPreferredFramesPerSecond);
     if (m_shouldLogNextObserverChange) {
         RefPtr webPageProxy = page();
         if (webPageProxy) {
@@ -502,7 +502,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(IPC::Connec
 
     auto* displayLink = existingDisplayLink();
     if (m_displayRefreshObserverID && displayLink)
-        displayLink->setObserverPreferredFramesPerSecond(*m_displayLinkClient, *m_displayRefreshObserverID, preferredFramesPerSecond);
+        displayLink->setObserverPreferredFramesPerSecond(m_displayLinkClient, *m_displayRefreshObserverID, preferredFramesPerSecond);
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::setDisplayLinkWantsFullSpeedUpdates(bool wantsFullSpeedUpdates)
@@ -518,7 +518,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::setDisplayLinkWantsFullSpeedUpdates(boo
             return;
 
         m_fullSpeedUpdateObserverID = DisplayLinkObserverID::generate();
-        displayLink.addObserver(*m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink.nominalFramesPerSecond());
+        displayLink.addObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink.nominalFramesPerSecond());
     } else if (m_fullSpeedUpdateObserverID)
         removeObserver(m_fullSpeedUpdateObserverID);
 }
@@ -548,7 +548,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
     if (hadFullSpeedOberver) {
         m_fullSpeedUpdateObserverID = DisplayLinkObserverID::generate();
         if (auto* displayLink = existingDisplayLink())
-            displayLink->addObserver(*m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink->nominalFramesPerSecond());
+            displayLink->addObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink->nominalFramesPerSecond());
     }
 }
 

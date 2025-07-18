@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMPointReadOnly.h"
 #include "Document.h"
 #include "WebXRRigidTransform.h"

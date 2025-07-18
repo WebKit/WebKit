@@ -23,6 +23,7 @@
 
 #include "CommonVM.h"
 #include "DOMWrapperWorld.h"
+#include "FrameInlines.h"
 #include "GCController.h"
 #include "JSDOMWindowBase.h"
 #include "JSWindowProxy.h"

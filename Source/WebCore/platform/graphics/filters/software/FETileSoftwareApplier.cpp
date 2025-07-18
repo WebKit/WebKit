@@ -37,17 +37,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FETileSoftwareApplier);
 
 bool FETileSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr inputImage = input->imageBuffer();
+    RefPtr inputImage = input.imageBuffer();
     if (!resultImage || !inputImage)
         return false;
 
-    auto inputImageRect = input->absoluteImageRect();
+    auto inputImageRect = input.absoluteImageRect();
     auto resultImageRect = result.absoluteImageRect();
 
-    auto tileRect = input->maxEffectRect(filter);
+    auto tileRect = input.maxEffectRect(filter);
     tileRect.scale(filter.filterScale());
 
     auto maxResultRect = result.maxEffectRect(filter);

@@ -625,6 +625,9 @@ angle::Result ProgramPipeline::link(const Context *context)
         mState.mExecutable->copySamplerBindingsFromProgram(*executable);
         mState.mExecutable->copyImageBindingsFromProgram(*executable);
     }
+    // Update active uniform and storage buffer block indices mask
+    mState.mExecutable->updateActiveUniformBufferBlocks();
+    mState.mExecutable->updateActiveStorageBufferBlocks();
 
     if (mState.mExecutable->hasLinkedShaderStage(ShaderType::Fragment))
     {

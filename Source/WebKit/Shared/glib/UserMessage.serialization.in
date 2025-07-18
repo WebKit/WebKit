@@ -23,7 +23,7 @@
 #
 
 [CreateUsing=fromIPCData] struct WebKit::UserMessage {
-    std::variant<WebKit::UserMessage::NullMessage, WebKit::UserMessage::ErrorMessage, WebKit::UserMessage::DataMessage> toIPCData();
+    Variant<WebKit::UserMessage::NullMessage, WebKit::UserMessage::ErrorMessage, WebKit::UserMessage::DataMessage> toIPCData();
 }
 
 [Nested] struct WebKit::UserMessage::NullMessage {

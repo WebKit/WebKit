@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ExceptionOr.h"
 #include "HTMLMediaElement.h"

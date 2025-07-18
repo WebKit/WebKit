@@ -1,0 +1,67 @@
+
+[graphics."rdar://147613178"]
+symbols = ["_kCAContentsFormatRGBA10XR"]
+
+# We don't expect other browsers to support our app extension model of web
+# extensions and to provide their own native messaging implementation.
+[web-extensions.not-web-essential]
+classes = ["NSExtension"]
+selectors = [
+    "beginExtensionRequestWithInputItems:completion:",
+    "extensionWithIdentifier:error:",
+    "setRequestCancellationBlock:",
+    "setRequestCompletionBlock:",
+    "setRequestInterruptionBlock:",
+    "_dynamicAssetNamed:generator:",
+    "_imageWithCGSVGDocument:scale:orientation:",
+    "_rasterizedImage",
+]
+
+# Added in rdar://112101742.
+[passkeys.equivalent-api]
+symbols = ["_kSecAttrAlias"]
+
+[private-browsing."rdar://147535351"]
+selectors = [
+    "privateBrowsingSessionId", # [ASDInstallWebAttributionService privateBrowsingSessionId]
+    "removeInstallWebAttributionParamsFromPrivateBrowsingSessionID:completionHandler:", # [ASDInstallWebAttributionService removeInstallWebAttributionParamsFromPrivateBrowsingSessionID:completionHandler:]
+    "setPrivateBrowsingSessionId:", # [ASDInstallWebAttributionParamsConfig setPrivateBrowsingSessionId:]
+]
+
+# Despite being part of WebKit, webpushd is a system daemon that other browsers
+# interact with. cf. rdar://133559977
+[webpushd.not-web-essential]
+selectors = [
+    "_registerBSActionHandler:", # [UIApplication _registerBSActionHandler:]
+    "emptySettings", # [UNMutableNotificationSettings emptySettings]
+    "hostProcess", # [RBSProcessHandle hostProcess]
+    "iconForApplicationIdentifier:", # [UNNotificationIcon iconForApplicationIdentifier:]
+    "initWithInfo:responder:", # [BSAction initWithInfo:responder:]
+    "notificationWithRequest:date:", # [UNNotification notificationWithRequest:date:]
+    "optionsWithDictionary:", # [FBSOpenApplicationOptions optionsWithDictionary:]
+    "pageURL", # -[UIWebClip pageURL]
+    "pathForWebClipWithIdentifier:", # [UIWebClip pathForWebClipWithIdentifier:]
+    "responderWithHandler:", # [BSActionResponder responderWithHandler:]
+    "responseForError:", # [BSActionResponse responseForError:]
+    "setAuthorizationStatus:", # [UNNotificationSettings setAuthorizationStatus:]
+    "setObject:forSetting:", # [BSMutableSettings setObject:forSetting:]
+    "trustedClientBundleIdentifiers", # [UIWebClip trustedClientBundleIdentifiers]
+    "webClipWithIdentifier:", # [UIWebClip webClipWithIdentifier:]
+    "webClips", # [UIWebClip webClips]
+]
+symbols = [
+    "_FBSOpenApplicationOptionKeyActions",
+    "_FBSOpenApplicationOptionKeyActivateSuspended",
+    "_SBSCreateOpenApplicationService",
+]
+classes = [
+    "BSAction",
+    "BSActionResponder",
+    "BSActionResponse",
+    "BSMutableSettings",
+    "FBSOpenApplicationOptions",
+    "UISApplicationState",
+    "UIWebClip",
+    "UNMutableNotificationSettings",
+    "UNNotificationIcon",
+]

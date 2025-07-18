@@ -12,29 +12,29 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <memory>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_device/audio_device_impl.h"
-#include "modules/audio_device/include/audio_device_default.h"
 #include "modules/audio_device/test_audio_device_impl.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/event.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/task_utils/repeating_task.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
@@ -43,26 +43,7 @@ namespace webrtc {
 namespace {
 
 constexpr int kFrameLengthUs = 10000;
-constexpr int kFramesPerSecond = rtc::kNumMicrosecsPerSec / kFrameLengthUs;
-
-class TestAudioDeviceModuleImpl : public AudioDeviceModuleImpl {
- public:
-  TestAudioDeviceModuleImpl(
-      TaskQueueFactory* task_queue_factory,
-      std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
-      std::unique_ptr<TestAudioDeviceModule::Renderer> renderer,
-      float speed = 1)
-      : AudioDeviceModuleImpl(
-            AudioLayer::kDummyAudio,
-            std::make_unique<TestAudioDevice>(task_queue_factory,
-                                              std::move(capturer),
-                                              std::move(renderer),
-                                              speed),
-            task_queue_factory,
-            /*create_detached=*/true) {}
-
-  ~TestAudioDeviceModuleImpl() override = default;
-};
+constexpr int kFramesPerSecond = kNumMicrosecsPerSec / kFrameLengthUs;
 
 // A fake capturer that generates pulses with random samples between
 // -max_amplitude and +max_amplitude.
@@ -85,7 +66,7 @@ class PulsedNoiseCapturerImpl final
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Capture(rtc::BufferT<int16_t>* buffer) override {
+  bool Capture(BufferT<int16_t>* buffer) override {
     fill_with_zero_ = !fill_with_zero_;
     int16_t max_amplitude;
     {
@@ -95,7 +76,7 @@ class PulsedNoiseCapturerImpl final
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(sampling_frequency_in_hz_) *
             num_channels_,
-        [&](rtc::ArrayView<int16_t> data) {
+        [&](ArrayView<int16_t> data) {
           if (fill_with_zero_) {
             std::fill(data.begin(), data.end(), 0);
           } else {
@@ -137,11 +118,11 @@ class WavFileReader final : public TestAudioDeviceModule::Capturer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Capture(rtc::BufferT<int16_t>* buffer) override {
+  bool Capture(BufferT<int16_t>* buffer) override {
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(sampling_frequency_in_hz_) *
             num_channels_,
-        [&](rtc::ArrayView<int16_t> data) {
+        [&](ArrayView<int16_t> data) {
           size_t read = wav_reader_->ReadSamples(data.size(), data.data());
           if (read < data.size() && repeat_) {
             do {
@@ -191,7 +172,7 @@ class WavFileWriter final : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(rtc::ArrayView<const int16_t> data) override {
+  bool Render(ArrayView<const int16_t> data) override {
     wav_writer_->WriteSamples(data.data(), data.size());
     return true;
   }
@@ -228,7 +209,7 @@ class BoundedWavFileWriter : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(rtc::ArrayView<const int16_t> data) override {
+  bool Render(ArrayView<const int16_t> data) override {
     const int16_t kAmplitudeThreshold = 5;
 
     const int16_t* begin = data.begin();
@@ -287,7 +268,7 @@ class DiscardRenderer final : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(rtc::ArrayView<const int16_t> data) override { return true; }
+  bool Render(ArrayView<const int16_t> /* data */) override { return true; }
 
  private:
   int sampling_frequency_in_hz_;
@@ -319,12 +300,12 @@ class RawFileReader final : public TestAudioDeviceModule::Capturer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Capture(rtc::BufferT<int16_t>* buffer) override {
+  bool Capture(BufferT<int16_t>* buffer) override {
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(SamplingFrequency()) *
             NumChannels(),
-        [&](rtc::ArrayView<int16_t> data) {
-          rtc::ArrayView<int8_t> read_buffer_view = ReadBufferView();
+        [&](ArrayView<int16_t> data) {
+          ArrayView<int8_t> read_buffer_view = ReadBufferView();
           size_t size = data.size() * 2;
           size_t read = input_file_.Read(read_buffer_view.data(), size);
           if (read < size && repeat_) {
@@ -343,7 +324,7 @@ class RawFileReader final : public TestAudioDeviceModule::Capturer {
   }
 
  private:
-  rtc::ArrayView<int8_t> ReadBufferView() { return read_buffer_; }
+  ArrayView<int8_t> ReadBufferView() { return read_buffer_; }
 
   const std::string input_file_name_;
   const int sampling_frequency_in_hz_;
@@ -381,7 +362,7 @@ class RawFileWriter : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(rtc::ArrayView<const int16_t> data) override {
+  bool Render(ArrayView<const int16_t> data) override {
     const int16_t kAmplitudeThreshold = 5;
 
     const int16_t* begin = data.begin();
@@ -441,16 +422,30 @@ class RawFileWriter : public TestAudioDeviceModule::Renderer {
 }  // namespace
 
 size_t TestAudioDeviceModule::SamplesPerFrame(int sampling_frequency_in_hz) {
-  return rtc::CheckedDivExact(sampling_frequency_in_hz, kFramesPerSecond);
+  return CheckedDivExact(sampling_frequency_in_hz, kFramesPerSecond);
 }
 
-rtc::scoped_refptr<AudioDeviceModule> TestAudioDeviceModule::Create(
+scoped_refptr<AudioDeviceModule> TestAudioDeviceModule::Create(
     TaskQueueFactory* task_queue_factory,
     std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
     std::unique_ptr<TestAudioDeviceModule::Renderer> renderer,
     float speed) {
-  auto audio_device = rtc::make_ref_counted<TestAudioDeviceModuleImpl>(
-      task_queue_factory, std::move(capturer), std::move(renderer), speed);
+  return Create(CreateEnvironment(task_queue_factory), std::move(capturer),
+                std::move(renderer), speed);
+}
+
+scoped_refptr<AudioDeviceModule> TestAudioDeviceModule::Create(
+    const Environment& env,
+    std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
+    std::unique_ptr<TestAudioDeviceModule::Renderer> renderer,
+    float speed) {
+  auto audio_device = make_ref_counted<AudioDeviceModuleImpl>(
+      AudioDeviceModule::AudioLayer::kDummyAudio,
+      std::make_unique<TestAudioDevice>(&env.task_queue_factory(),
+                                        std::move(capturer),
+                                        std::move(renderer), speed),
+      &env.task_queue_factory(),
+      /*create_detached=*/true);
 
   // Ensure that the current platform is supported.
   if (audio_device->CheckPlatform() == -1) {
@@ -458,7 +453,7 @@ rtc::scoped_refptr<AudioDeviceModule> TestAudioDeviceModule::Create(
   }
 
   // Create the platform-dependent implementation.
-  if (audio_device->CreatePlatformSpecificObjects() == -1) {
+  if (audio_device->CreatePlatformSpecificObjects(env) == -1) {
     return nullptr;
   }
 
@@ -499,7 +494,7 @@ TestAudioDeviceModule::CreateWavFileReader(absl::string_view filename,
                                            bool repeat) {
   WavReader reader(filename);
   int sampling_frequency_in_hz = reader.sample_rate();
-  int num_channels = rtc::checked_cast<int>(reader.num_channels());
+  int num_channels = checked_cast<int>(reader.num_channels());
   return std::make_unique<WavFileReader>(filename, sampling_frequency_in_hz,
                                          num_channels, repeat);
 }

@@ -838,8 +838,8 @@ private:
     bool m_shouldDoOpportunisticFullCollection { false };
     bool m_isInOpportunisticTask { false };
     bool m_shouldDoFullCollection { false };
-    Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
-    Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
+    Markable<CollectionScope> m_collectionScope;
+    Markable<CollectionScope> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
 
     MarkedSpace m_objectSpace;
@@ -1124,7 +1124,7 @@ public:
     std::unique_ptr<type> m_##name;
     
     struct SpaceAndSet {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SpaceAndSet);
 
         IsoSubspace space;
         IsoCellSet set;
@@ -1155,7 +1155,7 @@ public:
     }
 
     struct ScriptExecutableSpaceAndSets {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScriptExecutableSpaceAndSets);
 
         IsoSubspace space;
         IsoCellSet clearableCodeSet;

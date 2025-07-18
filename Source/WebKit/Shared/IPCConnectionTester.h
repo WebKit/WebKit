@@ -41,7 +41,7 @@ namespace WebKit {
 
 // Interface to test various IPC::Connection related activities.
 class IPCConnectionTester final : public RefCounted<IPCConnectionTester>, private IPC::Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IPCConnectionTester);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IPCConnectionTester);
 public:
     ~IPCConnectionTester();

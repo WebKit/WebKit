@@ -200,15 +200,28 @@ void Path::addRoundedRect(const LayoutRoundedRect& rect)
     addRoundedRect(FloatRoundedRect(rect));
 }
 
+void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerRadius)
+{
+    if (rect.isEmpty())
+        return;
+
+    PathContinuousRoundedRect continuousRoundedRect { rect, cornerRadius, cornerRadius };
+    if (isEmpty())
+        m_data = PathSegment(continuousRoundedRect);
+    else
+        ensureProtectedImpl()->add(continuousRoundedRect);
+}
+
 void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerWidth, const float cornerHeight)
 {
     if (rect.isEmpty())
         return;
 
+    PathContinuousRoundedRect continuousRoundedRect { rect, cornerWidth, cornerHeight };
     if (isEmpty())
-        m_data = PathSegment(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+        m_data = PathSegment(continuousRoundedRect);
     else
-        ensureProtectedImpl()->add(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+        ensureProtectedImpl()->add(continuousRoundedRect);
 }
 
 void Path::addPath(const Path& path, const AffineTransform& transform)

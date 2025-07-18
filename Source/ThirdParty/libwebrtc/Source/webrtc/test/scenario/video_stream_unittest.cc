@@ -14,6 +14,7 @@
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 namespace test {
@@ -103,9 +104,9 @@ TEST(VideoStreamTest, ReceivesVp8SimulcastFrames) {
       c->encoder.implementation = CodecImpl::kSoftware;
       c->encoder.codec = Codec::kVideoCodecVP8;
       // Enable simulcast.
-      c->encoder.simulcast_streams = {webrtc::ScalabilityMode::kL1T1,
-                                      webrtc::ScalabilityMode::kL1T1,
-                                      webrtc::ScalabilityMode::kL1T1};
+      c->encoder.simulcast_streams = {ScalabilityMode::kL1T1,
+                                      ScalabilityMode::kL1T1,
+                                      ScalabilityMode::kL1T1};
     });
     s.RunFor(kRunTime);
   }
@@ -176,7 +177,9 @@ TEST(VideoStreamTest, SendsFecWithFlexFec) {
   s.RunFor(TimeDelta::Seconds(5));
   VideoSendStream::Stats video_stats;
   route->first()->SendTask([&]() { video_stats = video->send()->GetStats(); });
-  EXPECT_GT(video_stats.substreams.begin()->second.rtp_stats.fec.packets, 0u);
+  EXPECT_GT(video_stats.substreams[VideoTestConstants::kFlexfecSendSsrc]
+                .rtp_stats.fec.packets,
+            0u);
 }
 
 TEST(VideoStreamTest, ResolutionAdaptsToAvailableBandwidth) {
@@ -215,7 +218,7 @@ TEST(VideoStreamTest, ResolutionAdaptsToAvailableBandwidth) {
     c->encoder.implementation = CodecImpl::kSoftware;
     c->encoder.codec = Codec::kVideoCodecVP9;
     // Enable SVC.
-    c->encoder.simulcast_streams = {webrtc::ScalabilityMode::kL2T1};
+    c->encoder.simulcast_streams = {ScalabilityMode::kL2T1};
   });
 
   // Run for a few seconds, until streams have stabilized,

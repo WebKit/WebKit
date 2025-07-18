@@ -150,7 +150,7 @@ void determineTrackingPreventionState()
     itpQueue() = queue.copyRef();
     queue->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
-        RunLoop::protectedMain()->dispatch([] {
+        RunLoop::mainSingleton().dispatch([] {
             itpQueue() = nullptr;
         });
     });

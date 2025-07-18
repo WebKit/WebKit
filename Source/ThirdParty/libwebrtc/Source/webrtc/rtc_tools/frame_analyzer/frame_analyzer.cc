@@ -110,9 +110,9 @@ int main(int argc, char* argv[]) {
 
   webrtc::test::ResultsContainer results;
 
-  rtc::scoped_refptr<webrtc::test::Video> reference_video =
+  webrtc::scoped_refptr<webrtc::test::Video> reference_video =
       webrtc::test::OpenYuvOrY4mFile(reference_file_name, width, height);
-  rtc::scoped_refptr<webrtc::test::Video> test_video =
+  webrtc::scoped_refptr<webrtc::test::Video> test_video =
       webrtc::test::OpenYuvOrY4mFile(test_file_name, width, height);
 
   if (!reference_video || !test_video) {
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
   // Align the reference video both temporally and geometrically. I.e. align the
   // frames to match up in order to the test video, and align a crop region of
   // the reference video to match up to the test video.
-  const rtc::scoped_refptr<webrtc::test::Video> aligned_reference_video =
+  const webrtc::scoped_refptr<webrtc::test::Video> aligned_reference_video =
       AdjustCropping(ReorderVideo(reference_video, matching_indices),
                      test_video);
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
       CalculateColorTransformationMatrix(aligned_reference_video, test_video);
 
   char buf[256];
-  rtc::SimpleStringBuilder string_builder(buf);
+  webrtc::SimpleStringBuilder string_builder(buf);
   for (int i = 0; i < 3; ++i) {
     string_builder << "\n";
     for (int j = 0; j < 4; ++j)
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
 
   // Adjust all frames in the test video with the calculated color
   // transformation.
-  const rtc::scoped_refptr<webrtc::test::Video> color_adjusted_test_video =
+  const webrtc::scoped_refptr<webrtc::test::Video> color_adjusted_test_video =
       AdjustColors(color_transformation, test_video);
 
   results.frames = webrtc::test::RunAnalysis(

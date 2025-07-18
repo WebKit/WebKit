@@ -70,6 +70,7 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FocusEventData.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/HTMLFormElement.h>
@@ -1535,6 +1536,23 @@ std::optional<ResourceResponse> WebFrame::resourceResponseForURL(const URL& url)
         return resource->response();
 
     return std::nullopt;
+}
+
+void WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
+{
+    auto foundElementInRemoteFrame = WebCore::FoundElementInRemoteFrame::No;
+
+    if (m_coreFrame) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
+            if (RefPtr page = localFrame->page()) {
+                auto result = page->focusController().findAndFocusElementStartingWithLocalFrame(direction, focusEventData, *localFrame);
+                if (result.element)
+                    foundElementInRemoteFrame = WebCore::FoundElementInRemoteFrame::Yes;
+            }
+        }
+    }
+
+    completionHandler(foundElementInRemoteFrame);
 }
 
 } // namespace WebKit

@@ -49,7 +49,7 @@ public:
 private:
     static ASCIILiteral supplementName();
 
-    mutable RefPtr<Geolocation> m_geolocation;
+    const RefPtr<Geolocation> m_geolocation;
     const CheckedRef<Navigator> m_navigator;
 };
 

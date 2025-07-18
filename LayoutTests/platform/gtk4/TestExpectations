@@ -44,8 +44,6 @@ webkit.org/b/277426 editing/async-clipboard/clipboard-read-text-same-origin.html
 
 webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ] # Timeout
 
-webkit.org/b/279016 gamepad/ [ Skip ] # Timing out, seemingly due to lack of sandbox permissions, see bug for details.
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.

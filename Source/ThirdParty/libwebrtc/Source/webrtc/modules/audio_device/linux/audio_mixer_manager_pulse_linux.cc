@@ -43,10 +43,10 @@ class AutoPulseLock {
 AudioMixerManagerLinuxPulse::AudioMixerManagerLinuxPulse()
     : _paOutputDeviceIndex(-1),
       _paInputDeviceIndex(-1),
-      _paPlayStream(NULL),
-      _paRecStream(NULL),
-      _paMainloop(NULL),
-      _paContext(NULL),
+      _paPlayStream(nullptr),
+      _paRecStream(nullptr),
+      _paMainloop(nullptr),
+      _paContext(nullptr),
       _paVolume(0),
       _paMute(0),
       _paVolSteps(0),
@@ -95,8 +95,8 @@ int32_t AudioMixerManagerLinuxPulse::Close() {
   CloseSpeaker();
   CloseMicrophone();
 
-  _paMainloop = NULL;
-  _paContext = NULL;
+  _paMainloop = nullptr;
+  _paContext = nullptr;
   _paObjectsSet = false;
 
   return 0;
@@ -108,7 +108,7 @@ int32_t AudioMixerManagerLinuxPulse::CloseSpeaker() {
 
   // Reset the index to -1
   _paOutputDeviceIndex = -1;
-  _paPlayStream = NULL;
+  _paPlayStream = nullptr;
 
   return 0;
 }
@@ -119,7 +119,7 @@ int32_t AudioMixerManagerLinuxPulse::CloseMicrophone() {
 
   // Reset the index to -1
   _paInputDeviceIndex = -1;
-  _paRecStream = NULL;
+  _paRecStream = nullptr;
 
   return 0;
 }
@@ -226,10 +226,10 @@ int32_t AudioMixerManagerLinuxPulse::SetSpeakerVolume(uint32_t volume) {
     pa_cvolume cVolumes;
     LATE(pa_cvolume_set)(&cVolumes, spec->channels, volume);
 
-    pa_operation* paOperation = NULL;
+    pa_operation* paOperation = nullptr;
     paOperation = LATE(pa_context_set_sink_input_volume)(
         _paContext, LATE(pa_stream_get_index)(_paPlayStream), &cVolumes,
-        PaSetVolumeCallback, NULL);
+        PaSetVolumeCallback, nullptr);
     if (!paOperation) {
       setFailed = true;
     }
@@ -346,10 +346,10 @@ int32_t AudioMixerManagerLinuxPulse::SetSpeakerMute(bool enable) {
     // We can only really mute if we have a connected stream
     AutoPulseLock auto_lock(_paMainloop);
 
-    pa_operation* paOperation = NULL;
+    pa_operation* paOperation = nullptr;
     paOperation = LATE(pa_context_set_sink_input_mute)(
         _paContext, LATE(pa_stream_get_index)(_paPlayStream), (int)enable,
-        PaSetVolumeCallback, NULL);
+        PaSetVolumeCallback, nullptr);
     if (!paOperation) {
       setFailed = true;
     }
@@ -442,7 +442,7 @@ int32_t AudioMixerManagerLinuxPulse::StereoRecordingIsAvailable(
     deviceIndex = LATE(pa_stream_get_device_index)(_paRecStream);
   }
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   // Get info for this source
   // We want to know if the actual device can record in stereo
@@ -487,7 +487,7 @@ int32_t AudioMixerManagerLinuxPulse::SetMicrophoneMute(bool enable) {
   }
 
   bool setFailed(false);
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   uint32_t deviceIndex = (uint32_t)_paInputDeviceIndex;
 
@@ -503,7 +503,7 @@ int32_t AudioMixerManagerLinuxPulse::SetMicrophoneMute(bool enable) {
 
   // Set mute switch for the source
   paOperation = LATE(pa_context_set_source_mute_by_index)(
-      _paContext, deviceIndex, enable, PaSetVolumeCallback, NULL);
+      _paContext, deviceIndex, enable, PaSetVolumeCallback, nullptr);
 
   if (!paOperation) {
     setFailed = true;
@@ -599,7 +599,7 @@ int32_t AudioMixerManagerLinuxPulse::SetMicrophoneVolume(uint32_t volume) {
   }
 
   bool setFailed(false);
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   // Get the number of channels for this source
   paOperation = LATE(pa_context_get_source_info_by_index)(
@@ -613,7 +613,7 @@ int32_t AudioMixerManagerLinuxPulse::SetMicrophoneVolume(uint32_t volume) {
 
   // Set the volume for the source
   paOperation = LATE(pa_context_set_source_volume_by_index)(
-      _paContext, deviceIndex, &cVolumes, PaSetVolumeCallback, NULL);
+      _paContext, deviceIndex, &cVolumes, PaSetVolumeCallback, nullptr);
 
   if (!paOperation) {
     setFailed = true;
@@ -807,7 +807,7 @@ void AudioMixerManagerLinuxPulse::WaitForOperationCompletion(
 }
 
 bool AudioMixerManagerLinuxPulse::GetSinkInputInfo() const {
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   AutoPulseLock auto_lock(_paMainloop);
   // Get info for this stream (sink input).
@@ -820,7 +820,7 @@ bool AudioMixerManagerLinuxPulse::GetSinkInputInfo() const {
 }
 
 bool AudioMixerManagerLinuxPulse::GetSinkInfoByIndex(int device_index) const {
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   AutoPulseLock auto_lock(_paMainloop);
   paOperation = LATE(pa_context_get_sink_info_by_index)(
@@ -831,7 +831,7 @@ bool AudioMixerManagerLinuxPulse::GetSinkInfoByIndex(int device_index) const {
 }
 
 bool AudioMixerManagerLinuxPulse::GetSourceInfoByIndex(int device_index) const {
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   AutoPulseLock auto_lock(_paMainloop);
   paOperation = LATE(pa_context_get_source_info_by_index)(

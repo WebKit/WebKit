@@ -81,7 +81,7 @@ class TLVTrait {
   // Validates the data with regards to size, alignment and type.
   // If valid, returns a bounded buffer.
   static std::optional<BoundedByteReader<Config::kHeaderSize>> ParseTLV(
-      rtc::ArrayView<const uint8_t> data) {
+      webrtc::ArrayView<const uint8_t> data) {
     if (data.size() < Config::kHeaderSize) {
       tlv_trait_impl::ReportInvalidSize(data.size(), Config::kHeaderSize);
       return std::nullopt;
@@ -137,7 +137,7 @@ class TLVTrait {
     out.resize(offset + size);
 
     BoundedByteWriter<kTlvHeaderSize> tlv_header(
-        rtc::ArrayView<uint8_t>(out.data() + offset, kTlvHeaderSize));
+        webrtc::ArrayView<uint8_t>(out.data() + offset, kTlvHeaderSize));
     if (Config::kTypeSizeInBytes == 1) {
       tlv_header.template Store8<0>(static_cast<uint8_t>(Config::kType));
     } else {
@@ -146,7 +146,7 @@ class TLVTrait {
     tlv_header.template Store16<2>(size);
 
     return BoundedByteWriter<Config::kHeaderSize>(
-        rtc::ArrayView<uint8_t>(out.data() + offset, size));
+        webrtc::ArrayView<uint8_t>(out.data() + offset, size));
   }
 
  private:

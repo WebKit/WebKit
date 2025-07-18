@@ -168,7 +168,7 @@ struct ScrollUpdate {
     
     bool canMerge(const ScrollUpdate& other) const
     {
-        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType;
+        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType && updateType == ScrollUpdateType::PositionUpdate;
     }
     
     void merge(ScrollUpdate&& other)
@@ -213,6 +213,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventHandlingR
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollRequestType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollUpdateType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollUpdate&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const RequestedScrollData&);
 
 } // namespace WebCore

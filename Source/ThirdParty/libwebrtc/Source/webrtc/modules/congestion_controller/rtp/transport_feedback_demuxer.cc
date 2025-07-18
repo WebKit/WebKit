@@ -9,16 +9,17 @@
  */
 #include "modules/congestion_controller/rtp/transport_feedback_demuxer.h"
 
+#include <cstdint>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "api/sequence_checker.h"
+#include "api/transport/network_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
-namespace {
-static const size_t kMaxPacketsInHistory = 5000;
-}
 
 TransportFeedbackDemuxer::TransportFeedbackDemuxer() {
   // In case the construction thread is different from where the registration
@@ -47,40 +48,20 @@ void TransportFeedbackDemuxer::DeRegisterStreamFeedbackObserver(
   observers_.erase(it);
 }
 
-void TransportFeedbackDemuxer::AddPacket(const RtpPacketSendInfo& packet_info) {
-  RTC_DCHECK_RUN_ON(&observer_checker_);
-
-  StreamFeedbackObserver::StreamPacketInfo info;
-  info.ssrc = packet_info.media_ssrc;
-  info.rtp_sequence_number = packet_info.rtp_sequence_number;
-  info.received = false;
-  info.is_retransmission =
-      packet_info.packet_type == RtpPacketMediaType::kRetransmission;
-  history_.insert(
-      {seq_num_unwrapper_.Unwrap(packet_info.transport_sequence_number), info});
-
-  while (history_.size() > kMaxPacketsInHistory) {
-    history_.erase(history_.begin());
-  }
-}
-
 void TransportFeedbackDemuxer::OnTransportFeedback(
-    const rtcp::TransportFeedback& feedback) {
+    const TransportPacketsFeedback& feedback) {
   RTC_DCHECK_RUN_ON(&observer_checker_);
 
   std::vector<StreamFeedbackObserver::StreamPacketInfo> stream_feedbacks;
-  feedback.ForAllPackets(
-      [&](uint16_t sequence_number, TimeDelta delta_since_base) {
-        RTC_DCHECK_RUN_ON(&observer_checker_);
-        auto it = history_.find(seq_num_unwrapper_.PeekUnwrap(sequence_number));
-        if (it != history_.end()) {
-          auto packet_info = it->second;
-          packet_info.received = delta_since_base.IsFinite();
-          stream_feedbacks.push_back(std::move(packet_info));
-          if (delta_since_base.IsFinite())
-            history_.erase(it);
-        }
-      });
+  for (const PacketResult& packet : feedback.packet_feedbacks) {
+    if (packet.rtp_packet_info.has_value()) {
+      stream_feedbacks.push_back(
+          {.received = packet.receive_time.IsFinite(),
+           .ssrc = packet.rtp_packet_info->ssrc,
+           .rtp_sequence_number = packet.rtp_packet_info->rtp_sequence_number,
+           .is_retransmission = packet.rtp_packet_info->is_retransmission});
+    }
+  }
 
   for (auto& observer : observers_) {
     std::vector<StreamFeedbackObserver::StreamPacketInfo> selected_feedback;

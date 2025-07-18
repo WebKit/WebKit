@@ -706,8 +706,8 @@ section = "JSBoundSlotBaseFunction";
 {
     if (typeof document !== "undefined") {
         let desc = Object.getOwnPropertyDescriptor(document, "location");
-        test(desc.get, "get location", "function get location() { [native code] }");
-        test(desc.set, "set location", "function set location() { [native code] }");
+        test(desc.get, "get location", "function location() { [native code] }");
+        test(desc.set, "set location", "function location() { [native code] }");
 
         section = "bound JSBoundSlotBaseFunction";
         {

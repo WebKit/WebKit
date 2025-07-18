@@ -1870,9 +1870,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
     return nullptr;
 }
 
-void AccessibilityUIElement::dismiss()
+bool AccessibilityUIElement::dismiss()
 {
-    performAction(@"AXDismissAction");
+    return performAction(@"AXDismissAction");
 }
 
 bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
@@ -2543,8 +2543,10 @@ static NSString *descriptionForColor(CGColorRef color)
     auto string = adoptNS([[NSMutableString alloc] init]);
     [string appendFormat:@"%@", color];
     NSArray *stringComponents = [string componentsSeparatedByString:@">"];
-    if (stringComponents.count)
-        return [[stringComponents objectAtIndex:stringComponents.count - 1] stringByReplacingOccurrencesOfString:@"]" withString:@""];
+    if (stringComponents.count) {
+        NSString *bracketsRemovedString = [[stringComponents objectAtIndex:stringComponents.count - 1] stringByReplacingOccurrencesOfString:@"]" withString:@""];
+        return [bracketsRemovedString stringByReplacingOccurrencesOfString:@"headroom = 1.000000 " withString:@""];
+    }
     return nil;
 }
 
@@ -3012,13 +3014,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
     return nullptr;
 }
 
-void AccessibilityUIElement::performAction(NSString *actionName) const
+bool AccessibilityUIElement::performAction(NSString *actionName) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     s_controller->executeOnAXThread([actionName, this] {
         [m_element accessibilityPerformAction:actionName];
     });
     END_AX_OBJC_EXCEPTIONS
+
+    // macOS actions don't return a value.
+    return true;
 }
 
 bool AccessibilityUIElement::isInsertion() const

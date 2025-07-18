@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 376
+#if ANGLE_SH_VERSION != 378
 #    error Check if there are added options and update this check.
 #endif
 
@@ -54,7 +54,6 @@
     MACRO(initOutputVariables, 15, any, none)                                 \
     MACRO(scalarizeVecAndMatConstructorArgs, 16, appleGLSL, none)             \
     MACRO(regenerateStructNames, 17, glsl, none)                              \
-    MACRO(rewriteDoWhileLoops, 18, appleGLSL, none)                           \
     MACRO(expandSelectHLSLIntegerPowExpressions, 19, hlsl, none)              \
     MACRO(flattenPragmaSTDGLInvariantAll, 20, any, none)                      \
     MACRO(HLSLGetDimensionsIgnoresBaseLevel, 21, hlsl, none)                  \
@@ -63,7 +62,6 @@
     MACRO(rewriteIntegerUnaryMinusOperator, 24, hlsl, none)                   \
     MACRO(emulateIsnanFloatFunction, 25, glsl || hlsl, none)                  \
     MACRO(useUnusedStandardSharedBlocks, 26, glsl, none)                      \
-    MACRO(rewriteFloatUnaryMinusOperator, 27, appleGLSL, none)                \
     MACRO(emulateAtan2FloatFunction, 28, glsl, none)                          \
     MACRO(initializeUninitializedLocals, 29, any, msl)                        \
     MACRO(initializeBuiltinsForInstancedMultiview, 30, glsl || hlsl, none)    \
@@ -92,7 +90,6 @@
     MACRO(addVulkanXfbEmulationSupportCode, 54, spirvVk, none)                \
     MACRO(addVulkanXfbExtensionSupportCode, 55, spirvVk, none)                \
     MACRO(initFragmentOutputVariables, 56, glsl, none)                        \
-    MACRO(addExplicitBoolCasts, 57, msl, none)                                \
     MACRO(roundOutputAfterDithering, 58, spirvVk, none)                       \
     MACRO(castMediumpFloatTo16Bit, 59, spirvVk, none)                         \
     MACRO(passHighpToPackUnormSnormBuiltins, 60, glsl, none)                  \

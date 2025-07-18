@@ -16,7 +16,7 @@
 
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
+namespace webrtc {
 
 // CN_ == "content name".  When we initiate a session, we choose the
 // name, and when we receive a Gingle session, we provide default
@@ -124,6 +124,61 @@ enum IcePriorityValue : uint8_t {
   ICE_TYPE_PREFERENCE_HOST = 126
 };
 
+const int kMaxTurnUsernameLength = 509;  // RFC 8489 section 14.3
+
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::BACKUP_CONNECTION_PING_INTERVAL;
+using ::webrtc::CN_AUDIO;
+using ::webrtc::CN_DATA;
+using ::webrtc::CN_OTHER;
+using ::webrtc::CN_VIDEO;
+using ::webrtc::CONNECTION_RESPONSE_TIMEOUT;
+using ::webrtc::CONNECTION_WRITE_CONNECT_FAILURES;
+using ::webrtc::CONNECTION_WRITE_CONNECT_TIMEOUT;
+using ::webrtc::CONNECTION_WRITE_TIMEOUT;
+using ::webrtc::CONNECTIONROLE_ACTIVE_STR;
+using ::webrtc::CONNECTIONROLE_ACTPASS_STR;
+using ::webrtc::CONNECTIONROLE_HOLDCONN_STR;
+using ::webrtc::CONNECTIONROLE_PASSIVE_STR;
+using ::webrtc::DEAD_CONNECTION_RECEIVE_TIMEOUT;
+using ::webrtc::GROUP_TYPE_BUNDLE;
+using ::webrtc::ICE_CANDIDATE_COMPONENT_DEFAULT;
+using ::webrtc::ICE_CANDIDATE_COMPONENT_RTCP;
+using ::webrtc::ICE_CANDIDATE_COMPONENT_RTP;
+using ::webrtc::ICE_PWD_LENGTH;
+using ::webrtc::ICE_PWD_MAX_LENGTH;
+using ::webrtc::ICE_PWD_MIN_LENGTH;
+using ::webrtc::ICE_TYPE_PREFERENCE_HOST;
+using ::webrtc::ICE_TYPE_PREFERENCE_HOST_TCP;
+using ::webrtc::ICE_TYPE_PREFERENCE_PRFLX;
+using ::webrtc::ICE_TYPE_PREFERENCE_PRFLX_TCP;
+using ::webrtc::ICE_TYPE_PREFERENCE_RELAY_TCP;
+using ::webrtc::ICE_TYPE_PREFERENCE_RELAY_TLS;
+using ::webrtc::ICE_TYPE_PREFERENCE_RELAY_UDP;
+using ::webrtc::ICE_TYPE_PREFERENCE_SRFLX;
+using ::webrtc::ICE_UFRAG_LENGTH;
+using ::webrtc::ICE_UFRAG_MAX_LENGTH;
+using ::webrtc::ICE_UFRAG_MIN_LENGTH;
+using ::webrtc::IcePriorityValue;
+using ::webrtc::LOCAL_TLD;
+using ::webrtc::MIN_CHECK_RECEIVING_INTERVAL;
+using ::webrtc::MIN_CONNECTION_LIFETIME;
+using ::webrtc::MIN_PINGS_AT_WEAK_PING_INTERVAL;
+using ::webrtc::RECEIVING_SWITCHING_DELAY;
+using ::webrtc::RECEIVING_TIMEOUT;
+using ::webrtc::REGATHER_ON_FAILED_NETWORKS_INTERVAL;
+using ::webrtc::STRONG_AND_STABLE_WRITABLE_CONNECTION_PING_INTERVAL;
+using ::webrtc::STRONG_PING_INTERVAL;
+using ::webrtc::STUN_KEEPALIVE_INTERVAL;
+using ::webrtc::WEAK_CONNECTION_RECEIVE_TIMEOUT;
+using ::webrtc::WEAK_OR_STABILIZING_WRITABLE_CONNECTION_PING_INTERVAL;
+using ::webrtc::WEAK_PING_INTERVAL;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_P2P_CONSTANTS_H_

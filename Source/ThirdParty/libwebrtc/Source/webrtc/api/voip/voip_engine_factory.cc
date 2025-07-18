@@ -27,18 +27,15 @@ namespace webrtc {
 std::unique_ptr<VoipEngine> CreateVoipEngine(VoipEngineConfig config) {
   RTC_CHECK(config.encoder_factory);
   RTC_CHECK(config.decoder_factory);
-  RTC_CHECK(config.task_queue_factory);
   RTC_CHECK(config.audio_device_module);
 
-  Environment env = CreateEnvironment(std::move(config.task_queue_factory));
+  RTC_CHECK(config.task_queue_factory == nullptr || !config.env.has_value());
+  Environment env =
+      config.env.has_value()
+          ? *config.env
+          : CreateEnvironment(std::move(config.task_queue_factory));
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  RTC_CHECK(config.audio_processing == nullptr ||
-            config.audio_processing_builder == nullptr);
-  scoped_refptr<AudioProcessing> audio_processing =
-      std::move(config.audio_processing);
-#pragma clang diagnostic pop
+  scoped_refptr<AudioProcessing> audio_processing;
   if (config.audio_processing_builder != nullptr) {
     audio_processing = std::move(config.audio_processing_builder)->Build(env);
   }

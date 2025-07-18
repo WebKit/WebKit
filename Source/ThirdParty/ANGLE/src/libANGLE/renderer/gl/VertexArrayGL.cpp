@@ -1022,9 +1022,9 @@ angle::Result VertexArrayGL::syncState(const gl::Context *context,
                 // internal storage and take action if buffer has changed while not observing.
                 // For now we just simply assume buffer storage has changed and always dirty all
                 // binding points.
-                iter.setLaterBits(
-                    gl::VertexArray::DirtyBits(mState.getBufferBindingMask().to_ulong()
-                                               << gl::VertexArray::DIRTY_BIT_BINDING_0));
+                uint64_t bits = mState.getBufferBindingMask().bits();
+                bits <<= gl::VertexArray::DIRTY_BIT_BINDING_0;
+                iter.setLaterBits(gl::VertexArray::DirtyBits(bits));
                 break;
             }
 

@@ -52,9 +52,13 @@ class WPEPort(GLibPort):
         if self._display_server == 'xvfb':
             # While not supported by WPE, xvfb is used as the default value in the main scripts
             self._display_server = 'headless'
+        self._wpe_legacy_api = self.get_option("wpe_legacy_api")
 
     def _port_flag_for_scripts(self):
-        return "--wpe"
+        port = "--wpe"
+        if self._wpe_legacy_api:
+            port += " --wpe-legacy-api"
+        return port
 
     @memoized
     def _driver_class(self):
@@ -95,7 +99,16 @@ class WPEPort(GLibPort):
         return self._path_to_image_diff()
 
     def _search_paths(self):
-        return [self.port_name, 'glib', 'wk2'] + self.get_option("additional_platform_directory", [])
+        search_paths = []
+
+        if self._wpe_legacy_api:
+            search_paths.append('wpe-legacy-api')
+
+        search_paths.append(self.port_name)
+        search_paths.append('glib')
+        search_paths.append('wk2')
+        search_paths.extend(self.get_option("additional_platform_directory", []))
+        return search_paths
 
     def default_baseline_search_path(self, **kwargs):
         return list(map(self._webkit_baseline_path, self._search_paths()))

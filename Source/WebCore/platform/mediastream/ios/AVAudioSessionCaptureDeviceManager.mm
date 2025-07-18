@@ -187,7 +187,7 @@ void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& spe
     } else
         m_isReceiverPreferredSpeaker = false;
 
-    AudioSession::sharedSession().setCategory(AudioSession::sharedSession().category(), AudioSession::sharedSession().mode(), AudioSession::sharedSession().routeSharingPolicy());
+    AudioSession::singleton().setCategory(AudioSession::singleton().category(), AudioSession::singleton().mode(), AudioSession::singleton().routeSharingPolicy());
 }
 
 bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()

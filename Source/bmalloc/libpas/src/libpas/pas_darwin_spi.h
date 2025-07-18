@@ -85,6 +85,18 @@ VM_FLAGS_ALIAS_MASK);
 #define pas_stack_logging_flag_zone        8    /* NSZoneMalloc, etc... */
 #define pas_stack_logging_flag_cleared    64    /* for NewEmptyHandle */
 
+PAS_END_EXTERN_C;
+
+// In a build using clang modules, we must never redeclare items
+// from other headers, but instead include those headers.
+#if defined(__has_include) && __has_include(<stack_logging.h>)
+#include <stack_logging.h>
+#else
+// But, we want to ensure these symbols are available even
+// in the case that we don't have such headers available.
+
+PAS_BEGIN_EXTERN_C;
+
 typedef void(malloc_logger_t)(uint32_t type,
                               uintptr_t arg1,
                               uintptr_t arg2,
@@ -97,6 +109,8 @@ extern malloc_logger_t* malloc_logger;
 #endif
 
 PAS_END_EXTERN_C;
+
+#endif /* defined(__has_include) && __has_include(<stack_logging.h>) */
 
 #endif /* PAS_OS(DARWIN) */
 

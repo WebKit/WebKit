@@ -10,8 +10,9 @@
 
 #include "modules/video_coding/timing/frame_delay_variation_kalman_filter.h"
 
-#include "api/units/data_size.h"
-#include "api/units/time_delta.h"
+#include <cmath>
+
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

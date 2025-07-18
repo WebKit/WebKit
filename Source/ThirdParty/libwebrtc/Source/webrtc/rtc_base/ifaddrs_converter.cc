@@ -10,7 +10,9 @@
 
 #include "rtc_base/ifaddrs_converter.h"
 
-namespace rtc {
+#include "rtc_base/ip_address.h"
+
+namespace webrtc {
 
 IfAddrsConverter::IfAddrsConverter() {}
 
@@ -59,4 +61,4 @@ IfAddrsConverter* CreateIfAddrsConverter() {
   return new IfAddrsConverter();
 }
 #endif
-}  // namespace rtc
+}  // namespace webrtc

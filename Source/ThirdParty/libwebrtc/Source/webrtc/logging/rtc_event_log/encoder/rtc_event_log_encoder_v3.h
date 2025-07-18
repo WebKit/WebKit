@@ -39,7 +39,7 @@ class RtcEventLogEncoderV3 final : public RtcEventLogEncoder {
 
  private:
   std::map<RtcEvent::Type,
-           std::function<std::string(rtc::ArrayView<const RtcEvent*>)>>
+           std::function<std::string(webrtc::ArrayView<const RtcEvent*>)>>
       encoders_;
 };
 

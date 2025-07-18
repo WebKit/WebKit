@@ -206,7 +206,7 @@ bool LoadAudiosesDll() {
       L"%WINDIR%\\system32\\audioses.dll";
   wchar_t path[MAX_PATH] = {0};
   ExpandEnvironmentStringsW(kAudiosesDLL, path, arraysize(path));
-  RTC_DLOG(LS_INFO) << rtc::ToUtf8(path);
+  RTC_DLOG(LS_INFO) << webrtc::ToUtf8(path);
   return (LoadLibraryExW(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH) !=
           nullptr);
 }
@@ -215,7 +215,7 @@ bool LoadAvrtDll() {
   static const wchar_t* const kAvrtDLL = L"%WINDIR%\\system32\\Avrt.dll";
   wchar_t path[MAX_PATH] = {0};
   ExpandEnvironmentStringsW(kAvrtDLL, path, arraysize(path));
-  RTC_DLOG(LS_INFO) << rtc::ToUtf8(path);
+  RTC_DLOG(LS_INFO) << webrtc::ToUtf8(path);
   return (LoadLibraryExW(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH) !=
           nullptr);
 }
@@ -267,7 +267,7 @@ bool IsSupportedInternal() {
   if (!device_enumerator) {
     RTC_LOG(LS_ERROR)
         << "Failed to create Core Audio device enumerator on thread with ID "
-        << rtc::CurrentThreadId();
+        << webrtc::CurrentThreadId();
     return false;
   }
 
@@ -314,7 +314,7 @@ ComPtr<IMMDevice> CreateDeviceInternal(absl::string_view device_id,
   } else {
     // Ask for an audio endpoint device that is identified by an endpoint ID
     // string.
-    error = device_enum->GetDevice(rtc::ToUtf16(device_id).c_str(),
+    error = device_enum->GetDevice(webrtc::ToUtf16(device_id).c_str(),
                                    audio_endpoint_device.GetAddressOf());
     if (FAILED(error.Error())) {
       RTC_LOG(LS_ERROR) << "IMMDeviceEnumerator::GetDevice failed: "
@@ -338,7 +338,7 @@ std::string GetDeviceIdInternal(IMMDevice* device) {
   // Example: "{0.0.1.00000000}.{8db6020f-18e3-4f25-b6f5-7726c9122574}".
   LPWSTR device_id;
   if (SUCCEEDED(device->GetId(&device_id))) {
-    std::string device_id_utf8 = rtc::ToUtf8(device_id, wcslen(device_id));
+    std::string device_id_utf8 = webrtc::ToUtf8(device_id, wcslen(device_id));
     CoTaskMemFree(device_id);
     return device_id_utf8;
   } else {
@@ -362,8 +362,8 @@ std::string GetDeviceFriendlyNameInternal(IMMDevice* device) {
 
   if (friendly_name_pv.get().vt == VT_LPWSTR &&
       friendly_name_pv.get().pwszVal) {
-    return rtc::ToUtf8(friendly_name_pv.get().pwszVal,
-                       wcslen(friendly_name_pv.get().pwszVal));
+    return webrtc::ToUtf8(friendly_name_pv.get().pwszVal,
+                          wcslen(friendly_name_pv.get().pwszVal));
   } else {
     return std::string();
   }
@@ -705,9 +705,9 @@ int NumberOfActiveDevices(EDataFlow data_flow) {
 
 uint32_t GetAudioClientVersion() {
   uint32_t version = 1;
-  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::VERSION_WIN10) {
+  if (webrtc::rtc_win::GetVersion() >= webrtc::rtc_win::VERSION_WIN10) {
     version = 3;
-  } else if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::VERSION_WIN8) {
+  } else if (webrtc::rtc_win::GetVersion() >= webrtc::rtc_win::VERSION_WIN8) {
     version = 2;
   }
   return version;
@@ -851,7 +851,7 @@ int NumberOfActiveSessions(IMMDevice* device) {
     LPWSTR display_name;
     if (SUCCEEDED(session_control->GetDisplayName(&display_name))) {
       RTC_DLOG(LS_INFO) << "display name: "
-                        << rtc::ToUtf8(display_name, wcslen(display_name));
+                        << webrtc::ToUtf8(display_name, wcslen(display_name));
       CoTaskMemFree(display_name);
     }
 
@@ -940,7 +940,7 @@ HRESULT SetClientProperties(IAudioClient2* client) {
   // an appropriate interface to use for communications scenarios.
   // This interface is mainly meant for pro audio scenarios.
   // props.Options |= AUDCLNT_STREAMOPTIONS_MATCH_FORMAT;
-  RTC_DLOG(LS_INFO) << "options: 0x" << rtc::ToHex(props.Options);
+  RTC_DLOG(LS_INFO) << "options: 0x" << webrtc::ToHex(props.Options);
 #endif
   error = client->SetClientProperties(&props);
   if (FAILED(error.Error())) {
@@ -1205,7 +1205,7 @@ HRESULT SharedModeInitialize(IAudioClient* client,
     stream_flags |= AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM;
     stream_flags |= AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY;
   }
-  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
+  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << webrtc::ToHex(stream_flags);
 
   // Initialize the shared mode client for minimal delay if `buffer_duration`
   // is 0 or possibly a higher delay (more robust) if `buffer_duration` is
@@ -1294,7 +1294,7 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
     stream_flags |= AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM;
     stream_flags |= AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY;
   }
-  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
+  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << webrtc::ToHex(stream_flags);
 
   // Initialize the shared mode client for lowest possible latency.
   // It is assumed that GetSharedModeEnginePeriod() has been used to query the
@@ -1478,7 +1478,7 @@ bool FillRenderEndpointBufferWithSilence(IAudioClient* client,
 
 std::string WaveFormatToString(const WaveFormatWrapper format) {
   char ss_buf[1024];
-  rtc::SimpleStringBuilder ss(ss_buf);
+  webrtc::SimpleStringBuilder ss(ss_buf);
   // Start with the WAVEFORMATEX part (which always exists).
   ss.AppendFormat("wFormatTag: %s (0x%X)",
                   WaveFormatTagToString(format->wFormatTag),
@@ -1519,7 +1519,7 @@ double FramesToMilliseconds(uint32_t num_frames, uint16_t sample_rate) {
 
 std::string ErrorToString(const _com_error& error) {
   char ss_buf[1024];
-  rtc::SimpleStringBuilder ss(ss_buf);
+  webrtc::SimpleStringBuilder ss(ss_buf);
   ss.AppendFormat("(HRESULT: 0x%08X)", error.Error());
   return ss.str();
 }

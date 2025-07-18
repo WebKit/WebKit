@@ -26,23 +26,20 @@
 import WebGPU_Internal
 
 extension WebGPU.Buffer {
-    var bufferContents: UnsafeMutableRawBufferPointer {
-        UnsafeMutableRawBufferPointer(start: m_buffer.contents(), count: m_buffer.length)
-    }
-
-    func copy(from data: SpanConstUInt8, offset: Int) {
-        let slice = bufferContents[offset...]
-        // copyBytes(from:) checks bounds in debug builds only.
+    func copy(from data: Span<UInt8>, offset: Int) {
         // FIXME: Use a bounds-checking implementation when one is available.
-        precondition(slice.count >= data.size_bytes())
-        slice.copyBytes(from: data)
+        var bufferContents = unsafe MutableSpan<UInt8>(_unsafeCxxSpan: getBufferContents());
+        precondition(bufferContents.count >= offset + data.count)
+        for i in 0..<data.count {
+            bufferContents[offset + i] = data[i]
+        }
     }
 }
 
 // FIXME(emw): Find a way to generate thunks like these, maybe via a macro?
 @_expose(Cxx)
 public func Buffer_copyFrom_thunk(_ buffer: WebGPU.Buffer, from data: SpanConstUInt8, offset: Int) {
-    buffer.copy(from: data, offset: offset)
+    buffer.copy(from: unsafe Span<UInt8>(_unsafeCxxSpan: data), offset: offset)
 }
 
 @_expose(Cxx)
@@ -63,7 +60,7 @@ extension WebGPU.Buffer {
     public func getMappedRange(offset: Int, size: Int) -> SpanUInt8
     {
         if !isValid() {
-            return SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
         var rangeSize = size
@@ -72,16 +69,16 @@ extension WebGPU.Buffer {
         }
 
         if !validateGetMappedRange(offset, rangeSize) {
-            return SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
         m_mappedRanges.add(WTFRangeSizeT(UInt(offset), UInt(offset + rangeSize)))
         m_mappedRanges.compact()
 
         if m_buffer.storageMode == .private || m_buffer.storageMode == .memoryless || m_buffer.length == 0 {
-            return SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
-        return getBufferContents().subspan(offset, rangeSize)
+        return unsafe getBufferContents().subspan(offset, rangeSize)
     }
 }

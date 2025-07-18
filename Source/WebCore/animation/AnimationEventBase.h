@@ -50,7 +50,7 @@ protected:
 
 private:
     RefPtr<WebAnimation> m_animation;
-    Markable<Seconds, Seconds::MarkableTraits> m_scheduledTime;
+    Markable<Seconds> m_scheduledTime;
 };
 
 }

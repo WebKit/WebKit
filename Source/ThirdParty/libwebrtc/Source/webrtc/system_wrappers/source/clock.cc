@@ -17,9 +17,9 @@ namespace {
 
 int64_t NtpOffsetUsCalledOnce() {
   constexpr int64_t kNtpJan1970Sec = 2208988800;
-  int64_t clock_time = rtc::TimeMicros();
-  int64_t utc_time = rtc::TimeUTCMicros();
-  return utc_time - clock_time + kNtpJan1970Sec * rtc::kNumMicrosecsPerSec;
+  int64_t clock_time = TimeMicros();
+  int64_t utc_time = TimeUTCMicros();
+  return utc_time - clock_time + kNtpJan1970Sec * kNumMicrosecsPerSec;
 }
 
 NtpTime TimeMicrosToNtp(int64_t time_us) {
@@ -31,13 +31,13 @@ NtpTime TimeMicrosToNtp(int64_t time_us) {
   // Convert seconds to uint32 through uint64 for a well-defined cast.
   // A wrap around, which will happen in 2036, is expected for NTP time.
   uint32_t ntp_seconds =
-      static_cast<uint64_t>(time_ntp_us / rtc::kNumMicrosecsPerSec);
+      static_cast<uint64_t>(time_ntp_us / kNumMicrosecsPerSec);
 
   // Scale fractions of the second to NTP resolution.
   constexpr int64_t kNtpFractionsInSecond = 1LL << 32;
-  int64_t us_fractions = time_ntp_us % rtc::kNumMicrosecsPerSec;
+  int64_t us_fractions = time_ntp_us % kNumMicrosecsPerSec;
   uint32_t ntp_fractions =
-      us_fractions * kNtpFractionsInSecond / rtc::kNumMicrosecsPerSec;
+      us_fractions * kNtpFractionsInSecond / kNumMicrosecsPerSec;
 
   return NtpTime(ntp_seconds, ntp_fractions);
 }
@@ -48,9 +48,7 @@ class RealTimeClock : public Clock {
  public:
   RealTimeClock() = default;
 
-  Timestamp CurrentTime() override {
-    return Timestamp::Micros(rtc::TimeMicros());
-  }
+  Timestamp CurrentTime() override { return Timestamp::Micros(TimeMicros()); }
 
   NtpTime ConvertTimestampToNtpTime(Timestamp timestamp) override {
     return TimeMicrosToNtp(timestamp.us());

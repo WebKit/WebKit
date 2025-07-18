@@ -87,6 +87,9 @@
                   { "name": "wincairo-release-tests-01", "platform": "win" },
                   { "name": "wincairo-release-tests-02", "platform": "win" },
 
+                  { "name": "win-build-bot-001", "platform": "win" },
+                  { "name": "win-build-bot-002", "platform": "win" },
+
                   { "name": "playstation-release-build-01", "platform": "playstation" },
                   { "name": "playstation-debug-build-01", "platform": "playstation" },
 
@@ -215,7 +218,7 @@
                   },
                   { "name": "Apple-Sequoia-Release-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures", "--site-isolation" ],
+                  "additionalArguments": ["--no-retry-failures", "--site-isolation", "--load-in-cross-origin-iframe"],
                   "workernames": ["bot303"]
                   },
                   { "name": "Apple-Sequoia-Debug-Build", "factory": "BuildFactory",
@@ -535,7 +538,7 @@
                     "name": "Windows-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["win-release-tests"],
-                    "workernames": ["wincairo-release-build-01"]
+                    "workernames": ["wincairo-release-build-01", "win-build-bot-002"]
                   },
                   {
                     "name": "Windows-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
@@ -546,7 +549,7 @@
                     "name": "Windows-64-bit-Debug-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
                     "triggers": ["win-debug-tests"],
-                    "workernames": ["wincairo-debug-build-01"]
+                    "workernames": ["wincairo-debug-build-01", "win-build-bot-001"]
                   },
                   {
                     "name": "Windows-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",

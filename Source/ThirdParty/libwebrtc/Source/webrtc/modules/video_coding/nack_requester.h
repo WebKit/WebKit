@@ -26,6 +26,7 @@
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/histogram.h"
 #include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"

@@ -15,7 +15,8 @@ button
 
       (interaction regions [
         (interaction (0,3) width=58.50 height=30)
-        (cornerRadius 15.00)])
+        (cornerRadius 15.00)
+        (useContinuousCorners 1)])
       )
     )
   )

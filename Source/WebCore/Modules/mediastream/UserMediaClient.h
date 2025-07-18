@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaProducer.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
 
@@ -47,10 +48,8 @@ class UserMediaRequest;
 
 struct MediaDeviceHashSalts;
 
-class UserMediaClient {
+class UserMediaClient : public AbstractRefCounted {
 public:
-    virtual void pageDestroyed() = 0;
-
     virtual void requestUserMediaAccess(UserMediaRequest&) = 0;
     virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
 
@@ -65,11 +64,13 @@ public:
     virtual void updateCaptureState(const Document&, bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void setShouldListenToVoiceActivity(bool) = 0;
 
-protected:
     virtual ~UserMediaClient() = default;
+
+protected:
+    UserMediaClient() = default;
 };
 
-WEBCORE_EXPORT void provideUserMediaTo(Page*, UserMediaClient*);
+WEBCORE_EXPORT void provideUserMediaTo(Page*, Ref<UserMediaClient>&&);
 
 } // namespace WebCore
 

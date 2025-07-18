@@ -10,6 +10,8 @@
 
 #include "video/stats_counter.h"
 
+#include <cstdint>
+
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 

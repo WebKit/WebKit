@@ -43,7 +43,7 @@ class AddOutgoingStreamsRequestParameter
         nbr_of_new_streams_(nbr_of_new_streams) {}
 
   static std::optional<AddOutgoingStreamsRequestParameter> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

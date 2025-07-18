@@ -81,7 +81,7 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
 
         LOG_ERROR("Couldn't complete the authenticator presentation context: %@", error);
         // This block can be executed in another thread.
-        RunLoop::protectedMain()->dispatch([manager] () mutable {
+        RunLoop::mainSingleton().dispatch([manager] () mutable {
             if (manager)
                 manager->cancel();
         });
@@ -153,7 +153,7 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
 
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
         [m_presenter presentError:error.get() forService:[m_context serviceName] completionHandler:makeBlockPtr([manager = m_manager] {
-            RunLoop::protectedMain()->dispatch([manager] () mutable {
+            RunLoop::mainSingleton().dispatch([manager] () mutable {
                 if (manager)
                     manager->cancel();
             });

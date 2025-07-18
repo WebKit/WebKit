@@ -60,7 +60,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
 
   void RegisterRtpExtension(const RtpExtension& extension);
   // Returns header extensions that can be parsed by the transport.
-  rtc::ArrayView<const RtpExtension> GetRegisteredExtensions() {
+  ArrayView<const RtpExtension> GetRegisteredExtensions() {
     return rtp_extensions_;
   }
 
@@ -131,7 +131,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void CreateMatchingAudioConfigs(Transport* transport, std::string sync_group);
   static AudioReceiveStreamInterface::Config CreateMatchingAudioConfig(
       const AudioSendStream::Config& send_config,
-      rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
+      scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
       Transport* transport,
       std::string sync_group);
   void CreateMatchingFecConfig(
@@ -236,8 +236,8 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   size_t num_video_streams_;
   size_t num_audio_streams_;
   size_t num_flexfec_streams_;
-  rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
-  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
+  scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
+  scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
   test::FakeVideoRenderer fake_renderer_;
 
  private:
@@ -249,10 +249,10 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
 
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
   std::vector<RtpExtension> rtp_extensions_;
-  rtc::scoped_refptr<AudioProcessing> apm_send_;
-  rtc::scoped_refptr<AudioProcessing> apm_recv_;
-  rtc::scoped_refptr<AudioDeviceModule> fake_send_audio_device_;
-  rtc::scoped_refptr<AudioDeviceModule> fake_recv_audio_device_;
+  scoped_refptr<AudioProcessing> apm_send_;
+  scoped_refptr<AudioProcessing> apm_recv_;
+  scoped_refptr<AudioDeviceModule> fake_send_audio_device_;
+  scoped_refptr<AudioDeviceModule> fake_recv_audio_device_;
 };
 
 class BaseTest : public RtpRtcpObserver {

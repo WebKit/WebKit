@@ -269,6 +269,15 @@ struct Extensions
     // GL_EXT_frag_depth
     bool fragDepthEXT = false;
 
+    // GL_EXT_fragment_shading_rate
+    bool fragmentShadingRateEXT = false;
+
+    // GL_EXT_fragment_shading_rate_attachment
+    bool fragmentShadingRateAttachmentEXT = false;
+
+    // GL_EXT_fragment_shading_rate_primitive
+    bool fragmentShadingRatePrimitiveEXT = false;
+
     // GL_ANGLE_framebuffer_blit
     bool framebufferBlitANGLE = false;
 

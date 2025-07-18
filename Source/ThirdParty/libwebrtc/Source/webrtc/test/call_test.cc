@@ -10,26 +10,59 @@
 
 #include "test/call_test.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <list>
+#include <map>
 #include <memory>
+#include <optional>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/builtin_audio_processing_builder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
-#include "api/task_queue/task_queue_base.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/create_frame_generator.h"
+#include "api/test/simulated_network.h"
+#include "api/transport/bitrate_settings.h"
+#include "api/units/time_delta.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_rotation.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
+#include "call/audio_state.h"
+#include "call/call.h"
+#include "call/call_config.h"
 #include "call/fake_network_pipe.h"
+#include "call/flexfec_receive_stream.h"
 #include "call/packet_receiver.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "test/encoder_settings.h"
+#include "test/fake_decoder.h"
 #include "test/fake_encoder.h"
+#include "test/fake_vp8_encoder.h"
+#include "test/frame_generator_capturer.h"
+#include "test/gtest.h"
 #include "test/network/simulated_network.h"
 #include "test/rtp_rtcp_observer.h"
 #include "test/testsupport/file_utils.h"
@@ -457,7 +490,7 @@ void CallTest::CreateMatchingAudioConfigs(Transport* transport,
 
 AudioReceiveStreamInterface::Config CallTest::CreateMatchingAudioConfig(
     const AudioSendStream::Config& send_config,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
+    scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
     Transport* transport,
     std::string sync_group) {
   AudioReceiveStreamInterface::Config audio_config;
@@ -531,10 +564,10 @@ void CallTest::CreateFrameGeneratorCapturer(int framerate,
 void CallTest::CreateFakeAudioDevices(
     std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
     std::unique_ptr<TestAudioDeviceModule::Renderer> renderer) {
-  fake_send_audio_device_ = TestAudioDeviceModule::Create(
-      &env_.task_queue_factory(), std::move(capturer), nullptr, 1.f);
-  fake_recv_audio_device_ = TestAudioDeviceModule::Create(
-      &env_.task_queue_factory(), nullptr, std::move(renderer), 1.f);
+  fake_send_audio_device_ =
+      TestAudioDeviceModule::Create(env_, std::move(capturer), nullptr, 1.f);
+  fake_recv_audio_device_ =
+      TestAudioDeviceModule::Create(env_, nullptr, std::move(renderer), 1.f);
 }
 
 void CallTest::CreateVideoStreams() {

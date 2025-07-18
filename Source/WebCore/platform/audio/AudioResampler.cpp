@@ -62,7 +62,7 @@ void AudioResampler::configureChannels(unsigned numberOfChannels)
         for (unsigned i = currentSize; i < numberOfChannels; ++i)
             m_kernels.append(makeUnique<AudioResamplerKernel>(this));
     } else
-        m_kernels.resize(numberOfChannels);
+        m_kernels.shrink(numberOfChannels);
 
     // Reconfigure our source bus to the new channel size.
     m_sourceBus = AudioBus::create(numberOfChannels, 0, false);

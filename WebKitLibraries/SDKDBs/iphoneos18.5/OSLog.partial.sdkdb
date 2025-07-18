@@ -1,0 +1,488 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "OSLogEntry",
+     "introduced": "15",
+     "name": "",
+     "protocols": [
+      "NSSecureCoding"
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntryLogLevelUndefined"},
+      {"access": "public", "name": "OSLogEntryLogLevelDebug"},
+      {"access": "public", "name": "OSLogEntryLogLevelInfo"},
+      {"access": "public", "name": "OSLogEntryLogLevelNotice"},
+      {"access": "public", "name": "OSLogEntryLogLevelError"},
+      {"access": "public", "name": "OSLogEntryLogLevelFault"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntryLogLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntrySignpostTypeUndefined"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeIntervalBegin"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeIntervalEnd"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeEvent"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntrySignpostType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntryStoreCategoryUndefined"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryMetadata"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryShortTerm"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTermAuto"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm1"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm3"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm7"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm14"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm30"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntryStoreCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEnumeratorReverse"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEnumeratorOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryUndefined"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryData"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryDouble"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryInt64"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryString"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryUInt64"}
+     ],
+     "introduced": "15",
+     "name": "OSLogMessageComponentArgumentCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogStoreSystem", "unavailable": true},
+      {"access": "public", "name": "OSLogStoreCurrentProcessIdentifier"}
+     ],
+     "introduced": "15",
+     "name": "OSLogStoreScope"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "composedMessage", "introduced": "15", "name": "composedMessage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "introduced": "15", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "storeCategory", "introduced": "15", "name": "storeCategory"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryActivity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "parentActivityIdentifier", "introduced": "15", "name": "parentActivityIdentifier"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryBoundary",
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "level", "introduced": "15", "name": "level"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess",
+      "OSLogEntryWithPayload"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntrySignpost",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostIdentifier", "introduced": "15", "name": "signpostIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostName", "introduced": "15", "name": "signpostName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostType", "introduced": "15", "name": "signpostType"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess",
+      "OSLogEntryWithPayload"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEnumerator",
+     "super": "NSEnumerator"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogMessageComponent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatSubstring", "introduced": "15", "name": "formatSubstring"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholder", "introduced": "15", "name": "placeholder"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentCategory", "introduced": "15", "name": "argumentCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentDataValue", "introduced": "15", "name": "argumentDataValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentDoubleValue", "introduced": "15", "name": "argumentDoubleValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentInt64Value", "introduced": "15", "name": "argumentInt64Value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentNumberValue", "introduced": "15", "name": "argumentNumberValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentStringValue", "introduced": "15", "name": "argumentStringValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentUInt64Value", "introduced": "15", "name": "argumentUInt64Value"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogPosition",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "localStoreAndReturnError:", "unavailable": true},
+      {"access": "public", "introduced": "15", "name": "storeWithScope:error:"},
+      {"access": "public", "introduced": "15", "name": "storeWithURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "15", "name": "entriesEnumeratorWithOptions:position:predicate:error:"},
+      {"access": "public", "introduced": "15", "name": "entriesEnumeratorAndReturnError:"},
+      {"access": "public", "introduced": "15", "name": "positionWithDate:"},
+      {"access": "public", "introduced": "15", "name": "positionWithTimeIntervalSinceEnd:"},
+      {"access": "public", "introduced": "15", "name": "positionWithTimeIntervalSinceLatestBoot:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogStore",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "name": "OSLogEntryFromProcess",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityIdentifier", "introduced": "15", "name": "activityIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "process", "introduced": "15", "name": "process"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "processIdentifier", "introduced": "15", "name": "processIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "introduced": "15", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "threadIdentifier", "introduced": "15", "name": "threadIdentifier"}
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "name": "OSLogEntryWithPayload",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "category", "introduced": "15", "name": "category"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "components", "introduced": "15", "name": "components"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatString", "introduced": "15", "name": "formatString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subsystem", "introduced": "15", "name": "subsystem"}
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "OSLogEntryLogLevel"},
+    {"access": "public", "name": "OSLogEntrySignpostType"},
+    {"access": "public", "name": "OSLogEntryStoreCategory"},
+    {"access": "public", "name": "OSLogEnumeratorOptions"},
+    {"access": "public", "name": "OSLogMessageComponentArgumentCategory"},
+    {"access": "public", "name": "OSLogStoreScope"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "OSLogEntry",
+     "introduced": "15",
+     "name": "",
+     "protocols": [
+      "NSSecureCoding"
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntryLogLevelUndefined"},
+      {"access": "public", "name": "OSLogEntryLogLevelDebug"},
+      {"access": "public", "name": "OSLogEntryLogLevelInfo"},
+      {"access": "public", "name": "OSLogEntryLogLevelNotice"},
+      {"access": "public", "name": "OSLogEntryLogLevelError"},
+      {"access": "public", "name": "OSLogEntryLogLevelFault"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntryLogLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntrySignpostTypeUndefined"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeIntervalBegin"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeIntervalEnd"},
+      {"access": "public", "name": "OSLogEntrySignpostTypeEvent"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntrySignpostType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEntryStoreCategoryUndefined"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryMetadata"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryShortTerm"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTermAuto"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm1"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm3"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm7"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm14"},
+      {"access": "public", "name": "OSLogEntryStoreCategoryLongTerm30"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEntryStoreCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogEnumeratorReverse"}
+     ],
+     "introduced": "15",
+     "name": "OSLogEnumeratorOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryUndefined"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryData"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryDouble"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryInt64"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryString"},
+      {"access": "public", "name": "OSLogMessageComponentArgumentCategoryUInt64"}
+     ],
+     "introduced": "15",
+     "name": "OSLogMessageComponentArgumentCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OSLogStoreSystem", "unavailable": true},
+      {"access": "public", "name": "OSLogStoreCurrentProcessIdentifier"}
+     ],
+     "introduced": "15",
+     "name": "OSLogStoreScope"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "composedMessage", "introduced": "15", "name": "composedMessage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "introduced": "15", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "storeCategory", "introduced": "15", "name": "storeCategory"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryActivity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "parentActivityIdentifier", "introduced": "15", "name": "parentActivityIdentifier"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryBoundary",
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntryLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "level", "introduced": "15", "name": "level"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess",
+      "OSLogEntryWithPayload"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEntrySignpost",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostIdentifier", "introduced": "15", "name": "signpostIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostName", "introduced": "15", "name": "signpostName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signpostType", "introduced": "15", "name": "signpostType"}
+     ],
+     "protocols": [
+      "OSLogEntryFromProcess",
+      "OSLogEntryWithPayload"
+     ],
+     "super": "OSLogEntry"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogEnumerator",
+     "super": "NSEnumerator"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogMessageComponent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatSubstring", "introduced": "15", "name": "formatSubstring"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholder", "introduced": "15", "name": "placeholder"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentCategory", "introduced": "15", "name": "argumentCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentDataValue", "introduced": "15", "name": "argumentDataValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentDoubleValue", "introduced": "15", "name": "argumentDoubleValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentInt64Value", "introduced": "15", "name": "argumentInt64Value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentNumberValue", "introduced": "15", "name": "argumentNumberValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentStringValue", "introduced": "15", "name": "argumentStringValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "argumentUInt64Value", "introduced": "15", "name": "argumentUInt64Value"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogPosition",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "localStoreAndReturnError:", "unavailable": true},
+      {"access": "public", "introduced": "15", "name": "storeWithScope:error:"},
+      {"access": "public", "introduced": "15", "name": "storeWithURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "15", "name": "entriesEnumeratorWithOptions:position:predicate:error:"},
+      {"access": "public", "introduced": "15", "name": "entriesEnumeratorAndReturnError:"},
+      {"access": "public", "introduced": "15", "name": "positionWithDate:"},
+      {"access": "public", "introduced": "15", "name": "positionWithTimeIntervalSinceEnd:"},
+      {"access": "public", "introduced": "15", "name": "positionWithTimeIntervalSinceLatestBoot:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "OSLogStore",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "name": "OSLogEntryFromProcess",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityIdentifier", "introduced": "15", "name": "activityIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "process", "introduced": "15", "name": "process"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "processIdentifier", "introduced": "15", "name": "processIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "introduced": "15", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "threadIdentifier", "introduced": "15", "name": "threadIdentifier"}
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "name": "OSLogEntryWithPayload",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "category", "introduced": "15", "name": "category"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "components", "introduced": "15", "name": "components"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatString", "introduced": "15", "name": "formatString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subsystem", "introduced": "15", "name": "subsystem"}
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "OSLogEntryLogLevel"},
+    {"access": "public", "name": "OSLogEntrySignpostType"},
+    {"access": "public", "name": "OSLogEntryStoreCategory"},
+    {"access": "public", "name": "OSLogEnumeratorOptions"},
+    {"access": "public", "name": "OSLogMessageComponentArgumentCategory"},
+    {"access": "public", "name": "OSLogStoreScope"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

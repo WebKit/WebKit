@@ -37,7 +37,7 @@ Agc::Agc()
 
 Agc::~Agc() = default;
 
-void Agc::Process(rtc::ArrayView<const int16_t> audio) {
+void Agc::Process(ArrayView<const int16_t> audio) {
   const int sample_rate_hz = audio.size() * kNum10msFramesInOneSecond;
   RTC_DCHECK_LE(sample_rate_hz, kMaxSampleRateHz);
   vad_.ProcessChunk(audio.data(), audio.size(), sample_rate_hz);

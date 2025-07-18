@@ -40,7 +40,7 @@ SmoothingFilterImpl::SmoothingFilterImpl(int init_time_ms)
 SmoothingFilterImpl::~SmoothingFilterImpl() = default;
 
 void SmoothingFilterImpl::AddSample(float sample) {
-  const int64_t now_ms = rtc::TimeMillis();
+  const int64_t now_ms = TimeMillis();
 
   if (!init_end_time_ms_) {
     // This is equivalent to assuming the filter has been receiving the same
@@ -60,7 +60,7 @@ std::optional<float> SmoothingFilterImpl::GetAverage() {
     // `init_end_time_ms_` undefined since we have not received any sample.
     return std::nullopt;
   }
-  ExtrapolateLastSample(rtc::TimeMillis());
+  ExtrapolateLastSample(TimeMillis());
   return state_;
 }
 

@@ -33,7 +33,7 @@ namespace WebCore {
 class GraphicsContext;
 
 struct GradientData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GradientData);
 
     struct Inputs {
         friend bool operator==(const Inputs&, const Inputs&) = default;

@@ -66,7 +66,7 @@ static CompilationResult compileImpl(
 {
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionsSize())
         || !ensureGlobalDFGAllowlist().contains(codeBlock))
-        return CompilationFailed;
+        return CompilationResult::CompilationFailed;
     
     numCompilations++;
     
@@ -92,7 +92,7 @@ static CompilationResult compileImpl(
     VM&, CodeBlock*, CodeBlock*, JITCompilationMode, BytecodeIndex, const Operands<std::optional<JSValue>>&,
     Ref<DeferredCompilationCallback>&&)
 {
-    return CompilationFailed;
+    return CompilationResult::CompilationFailed;
 }
 #endif // ENABLE(DFG_JIT)
 

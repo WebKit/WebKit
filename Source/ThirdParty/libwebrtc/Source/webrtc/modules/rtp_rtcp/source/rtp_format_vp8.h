@@ -43,7 +43,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
  public:
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded VP8 frame.
-  RtpPacketizerVp8(rtc::ArrayView<const uint8_t> payload,
+  RtpPacketizerVp8(ArrayView<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    const RTPVideoHeaderVP8& hdr_info);
 
@@ -65,7 +65,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
   static RawHeader BuildHeader(const RTPVideoHeaderVP8& header);
 
   RawHeader hdr_;
-  rtc::ArrayView<const uint8_t> remaining_payload_;
+  ArrayView<const uint8_t> remaining_payload_;
   std::vector<int> payload_sizes_;
   std::vector<int>::const_iterator current_packet_;
 };

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGTextPositioningElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderElementInlines.h"

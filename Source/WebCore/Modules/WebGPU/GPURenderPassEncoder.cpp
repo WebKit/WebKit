@@ -48,28 +48,28 @@ String GPURenderPassEncoder::label() const
 
 void GPURenderPassEncoder::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    protectedBacking()->setLabel(WTFMove(label));
 }
 
 void GPURenderPassEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
-    m_backing->setPipeline(renderPipeline.backing());
+    protectedBacking()->setPipeline(renderPipeline.backing());
 }
 
 void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    m_backing->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
+    protectedBacking()->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
 void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    m_backing->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
+    protectedBacking()->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
 }
 
 void GPURenderPassEncoder::draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
     std::optional<GPUSize32> firstVertex, std::optional<GPUSize32> firstInstance)
 {
-    m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    protectedBacking()->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, std::optional<GPUSize32> instanceCount,
@@ -77,23 +77,23 @@ void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, std::optional<GPUSi
     std::optional<GPUSignedOffset32> baseVertex,
     std::optional<GPUSize32> firstInstance)
 {
-    m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    protectedBacking()->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void GPURenderPassEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    m_backing->drawIndirect(indirectBuffer.backing(), indirectOffset);
+    protectedBacking()->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderPassEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    m_backing->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
+    protectedBacking()->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTFMove(dynamicOffsets));
+    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTFMove(dynamicOffsets));
 }
 
 ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -105,56 +105,56 @@ ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPU
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     return { };
 }
 
 void GPURenderPassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    m_backing->pushDebugGroup(WTFMove(groupLabel));
+    protectedBacking()->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void GPURenderPassEncoder::popDebugGroup()
 {
-    m_backing->popDebugGroup();
+    protectedBacking()->popDebugGroup();
 }
 
 void GPURenderPassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    m_backing->insertDebugMarker(WTFMove(markerLabel));
+    protectedBacking()->insertDebugMarker(WTFMove(markerLabel));
 }
 
 void GPURenderPassEncoder::setViewport(float x, float y,
     float width, float height,
     float minDepth, float maxDepth)
 {
-    m_backing->setViewport(x, y, width, height, minDepth, maxDepth);
+    protectedBacking()->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
 void GPURenderPassEncoder::setScissorRect(GPUIntegerCoordinate x, GPUIntegerCoordinate y,
     GPUIntegerCoordinate width, GPUIntegerCoordinate height)
 {
-    m_backing->setScissorRect(x, y, width, height);
+    protectedBacking()->setScissorRect(x, y, width, height);
 }
 
 void GPURenderPassEncoder::setBlendConstant(GPUColor color)
 {
-    m_backing->setBlendConstant(convertToBacking(color));
+    protectedBacking()->setBlendConstant(convertToBacking(color));
 }
 
 void GPURenderPassEncoder::setStencilReference(GPUStencilValue stencilValue)
 {
-    m_backing->setStencilReference(stencilValue);
+    protectedBacking()->setStencilReference(stencilValue);
 }
 
 void GPURenderPassEncoder::beginOcclusionQuery(GPUSize32 queryIndex)
 {
-    m_backing->beginOcclusionQuery(queryIndex);
+    protectedBacking()->beginOcclusionQuery(queryIndex);
 }
 
 void GPURenderPassEncoder::endOcclusionQuery()
 {
-    m_backing->endOcclusionQuery();
+    protectedBacking()->endOcclusionQuery();
 }
 
 void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles)
@@ -162,14 +162,14 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
     auto result = WTF::map(bundles, [](auto& bundle) -> Ref<WebGPU::RenderBundle> {
         return bundle->backing();
     });
-    m_backing->executeBundles(WTFMove(result));
+    protectedBacking()->executeBundles(WTFMove(result));
 }
 
 void GPURenderPassEncoder::end()
 {
-    m_backing->end();
-    if (m_device)
-        m_backing = m_device->invalidRenderPassEncoder();
+    protectedBacking()->end();
+    if (RefPtr device = m_device.get())
+        m_backing = device->invalidRenderPassEncoder();
 }
 
 }

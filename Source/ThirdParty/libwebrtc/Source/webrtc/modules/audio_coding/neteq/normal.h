@@ -41,9 +41,9 @@ class Normal {
         decoder_database_(decoder_database),
         background_noise_(background_noise),
         expand_(expand),
-        samples_per_ms_(rtc::CheckedDivExact(fs_hz_, 1000)),
+        samples_per_ms_(CheckedDivExact(fs_hz_, 1000)),
         default_win_slope_Q14_(
-            rtc::dchecked_cast<uint16_t>((1 << 14) / samples_per_ms_)),
+            dchecked_cast<uint16_t>((1 << 14) / samples_per_ms_)),
         statistics_(statistics) {}
 
   virtual ~Normal() {}

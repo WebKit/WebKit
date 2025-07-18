@@ -1,0 +1,32 @@
+# Longstanding SPI used by JavaScriptCore before we started auditing SPI use.
+# NEVER add to this list, only remove!
+
+[legacy.legacy]
+selectors = [
+    "_web_looksLikeIPAddress",
+    "matchedLanguagesFromAvailableLanguages:forPreferredLanguages:",
+    "minimizedLanguagesFromLanguages:",
+]
+symbols = [
+    "_BOMCopierCopyWithOptions",
+    "_BOMCopierFree",
+    "_BOMCopierNew",
+    "_CFBundleCopyLocalizationForLocalizationInfo",
+    "_CFBundleGetLocalizationInfoForLocalization",
+    "_CFStringGetRangeOfCharacterClusterAtIndex",
+    "_SecTaskCopyValueForEntitlement",
+    "_SecTaskCreateFromSelf",
+    "_SecTaskCreateWithAuditToken",
+    "__CFProcessPath",
+    "__CFXPCCreateCFObjectFromXPCMessage",
+    "__CFXPCCreateXPCMessageWithCFObject",
+    "__dyld_get_dlopen_image_header",
+    "__dyld_get_image_uuid",
+    "__dyld_get_shared_cache_uuid",
+    "_cache_simulate_memory_warning_event",
+    "_dyld_get_program_sdk_version",
+    "_dyld_image_header_containing_address",
+    "_dyld_shared_cache_file_path",
+    "_xpc_connection_copy_entitlement_value",
+]
+

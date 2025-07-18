@@ -47,7 +47,7 @@ struct HashableActionList {
     {
         std::ranges::sort(actions);
         SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(actions.span().data()), actions.size() * sizeof(uint64_t) / sizeof(UChar));
+        hasher.addCharactersAssumingAligned(reinterpret_cast<const char16_t*>(actions.span().data()), actions.size() * sizeof(uint64_t) / sizeof(char16_t));
         hash = hasher.hash();
     }
 

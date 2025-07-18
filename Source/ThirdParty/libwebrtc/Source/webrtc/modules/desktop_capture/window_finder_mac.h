@@ -22,14 +22,15 @@ class DesktopConfigurationMonitor;
 class WindowFinderMac final : public WindowFinder {
  public:
   explicit WindowFinderMac(
-      rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
+      webrtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
   ~WindowFinderMac() override;
 
   // WindowFinder implementation.
   WindowId GetWindowUnderPoint(DesktopVector point) override;
 
  private:
-  const rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
+  const webrtc::scoped_refptr<DesktopConfigurationMonitor>
+      configuration_monitor_;
 };
 
 }  // namespace webrtc

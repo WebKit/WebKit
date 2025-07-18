@@ -39,6 +39,8 @@ final class WKURLSchemeHandlerAdapter: NSObject, WKURLSchemeHandler {
         let task = Task {
             do {
                 for try await result in wrapped.reply(for: urlSchemeTask.request) {
+                    try Task.checkCancellation()
+
                     switch result {
                     case .response(let response):
                         urlSchemeTask.didReceive(response)
@@ -48,10 +50,19 @@ final class WKURLSchemeHandlerAdapter: NSObject, WKURLSchemeHandler {
                     }
                 }
 
+                try Task.checkCancellation()
+
                 urlSchemeTask.didFinish()
+            } catch is CancellationError {
+                // If a CancellationError is thrown, that implies the Task has been cancelled, which itself implies that
+                // the task has failed or finished. Consequently, the for-try-await loop needs to check for cancellation
+                // and switch into this branch to avoid calling any of the `WKURLSchemeTask` methods, which throw Obj-C
+                // exceptions, rightfully, if they are called after the task has failed or finished.
             } catch {
                 urlSchemeTask.didFailWithError(error)
             }
+
+            tasks[ObjectIdentifier(urlSchemeTask)] = nil
         }
 
         tasks[ObjectIdentifier(urlSchemeTask)] = task

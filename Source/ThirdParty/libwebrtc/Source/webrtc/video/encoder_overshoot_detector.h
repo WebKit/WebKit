@@ -11,11 +11,13 @@
 #ifndef VIDEO_ENCODER_OVERSHOOT_DETECTOR_H_
 #define VIDEO_ENCODER_OVERSHOOT_DETECTOR_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <optional>
 
 #include "api/units/data_rate.h"
-#include "api/video_codecs/video_codec.h"
+#include "api/video/video_codec_type.h"
 
 namespace webrtc {
 

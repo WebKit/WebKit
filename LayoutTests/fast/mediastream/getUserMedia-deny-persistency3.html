@@ -14,10 +14,12 @@ promise_test(async (test) => {
     });
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
-    await navigator.mediaDevices.getUserMedia({audio:true});
+    let stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(t => t.stop());
     if (window.testRunner)
         testRunner.setUserMediaPermission(false);
-    await navigator.mediaDevices.getUserMedia({audio:true});
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(t => t.stop());
 
     await navigator.mediaDevices.getUserMedia({video:true}).then(assert_unreached, (e) => {
         assert_equals(e.name, "NotAllowedError");

@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"

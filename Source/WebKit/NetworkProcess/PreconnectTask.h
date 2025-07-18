@@ -41,7 +41,7 @@ class NetworkSession;
 struct NetworkLoadParameters;
 
 class PreconnectTask final : public RefCounted<PreconnectTask>, public NetworkLoadClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PreconnectTask);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PreconnectTask);
 public:
     static Ref<PreconnectTask> create(NetworkSession&, NetworkLoadParameters&&);

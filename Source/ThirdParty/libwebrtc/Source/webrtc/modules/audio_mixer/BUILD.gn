@@ -116,6 +116,7 @@ if (rtc_include_tests) {
       ":audio_mixer_test_utils",
       "../../api:array_view",
       "../../api:rtp_packet_info",
+      "../../api/audio:audio_frame_api",
       "../../api/audio:audio_mixer_api",
       "../../api/units:timestamp",
       "../../audio/utility:audio_frame_operations",

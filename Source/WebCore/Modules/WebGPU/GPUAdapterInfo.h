@@ -43,6 +43,7 @@ public:
     String architecture() const { return vendor(); }
     String device() const { return vendor(); }
     String description() const { return vendor(); }
+    bool isFallbackAdapter() const { return false; }
 
 private:
     GPUAdapterInfo(String&& name)

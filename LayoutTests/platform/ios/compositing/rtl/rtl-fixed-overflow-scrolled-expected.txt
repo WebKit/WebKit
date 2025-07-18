@@ -10,22 +10,34 @@
       (backgroundColor #FF0000)
       (children 2
         (GraphicsLayer
-          (position 51.00 50.00)
-          (preserves3D 1)
+          (position -199.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 100.00)
-              (contentsOpaque 1)
+              (position 250.00 50.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 51.00 50.00)
-          (preserves3D 1)
+          (position -199.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 100.00)
-              (contentsOpaque 1)
+              (position 250.00 50.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )

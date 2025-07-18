@@ -10,11 +10,19 @@
 
 #include "modules/audio_coding/acm2/acm_remixing.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include "api/array_view.h"
+#include "api/audio/audio_frame.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 
-void DownMixFrame(const AudioFrame& input, rtc::ArrayView<int16_t> output) {
+void DownMixFrame(const AudioFrame& input, ArrayView<int16_t> output) {
   RTC_DCHECK_EQ(input.num_channels_, 2);
   RTC_DCHECK_EQ(output.size(), input.samples_per_channel_);
 
@@ -23,7 +31,7 @@ void DownMixFrame(const AudioFrame& input, rtc::ArrayView<int16_t> output) {
   } else {
     const int16_t* const input_data = input.data();
     for (size_t n = 0; n < input.samples_per_channel_; ++n) {
-      output[n] = rtc::dchecked_cast<int16_t>(
+      output[n] = dchecked_cast<int16_t>(
           (int32_t{input_data[2 * n]} + int32_t{input_data[2 * n + 1]}) >> 1);
     }
   }
@@ -94,7 +102,7 @@ void ReMixFrame(const AudioFrame& input,
   // When downmixing is needed, and the input is stereo, average the channels.
   if (input.num_channels_ == 2) {
     for (size_t n = 0; n < input.samples_per_channel_; ++n) {
-      (*output)[n] = rtc::dchecked_cast<int16_t>(
+      (*output)[n] = dchecked_cast<int16_t>(
           (int32_t{input_data[2 * n]} + int32_t{input_data[2 * n + 1]}) >> 1);
     }
     return;

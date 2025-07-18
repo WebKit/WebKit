@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    
+
 struct ContentRuleListResults {
     struct Result {
         bool blockedLoad { false };
@@ -53,6 +53,7 @@ struct ContentRuleListResults {
                 || !notifications.isEmpty();
         }
     };
+
     struct Summary {
         bool blockedLoad { false };
         bool madeHTTPS { false };
@@ -63,14 +64,17 @@ struct ContentRuleListResults {
         Vector<ContentExtensions::ModifyHeadersAction> modifyHeadersActions { };
         Vector<std::pair<ContentExtensions::RedirectAction, URL>> redirectActions { };
     };
+
     using ContentRuleListIdentifier = String;
 
     Summary summary;
     Vector<std::pair<ContentRuleListIdentifier, Result>> results;
-    
+
+    bool shouldBlock() const { return summary.blockedLoad && !summary.redirectedPriorToBlock; }
+
     bool shouldNotifyApplication() const
     {
-        return summary.blockedLoad
+        return shouldBlock()
             || summary.madeHTTPS
             || summary.blockedCookies
             || !summary.modifyHeadersActions.isEmpty()

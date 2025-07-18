@@ -8,25 +8,45 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <set>
+#include <vector>
 
-#include "api/task_queue/task_queue_base.h"
+#include "api/array_view.h"
+#include "api/environment/environment.h"
+#include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
-#include "call/fake_network_pipe.h"
+#include "api/transport/bitrate_settings.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "media/engine/internal_decoder_factory.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
+#include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/call_test.h"
-#include "test/field_trial.h"
+#include "test/encoder_settings.h"
+#include "test/frame_generator_capturer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
+#include "test/rtp_rtcp_observer.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 using ::testing::Contains;
 using ::testing::Not;
@@ -51,7 +71,7 @@ class FecEndToEndTest : public test::CallTest {
 
 TEST_F(FecEndToEndTest, ReceivesUlpfec) {
   class UlpfecRenderObserver : public test::EndToEndTest,
-                               public rtc::VideoSinkInterface<VideoFrame> {
+                               public VideoSinkInterface<VideoFrame> {
    public:
     UlpfecRenderObserver()
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
@@ -63,7 +83,7 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
           num_packets_sent_(0) {}
 
    private:
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
@@ -169,7 +189,7 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
 }
 
 class FlexfecRenderObserver : public test::EndToEndTest,
-                              public rtc::VideoSinkInterface<VideoFrame> {
+                              public VideoSinkInterface<VideoFrame> {
  public:
   static constexpr uint32_t kVideoLocalSsrc = 123;
   static constexpr uint32_t kFlexfecLocalSsrc = 456;
@@ -185,7 +205,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
   size_t GetNumFlexfecStreams() const override { return 1; }
 
  private:
-  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+  Action OnSendRtp(ArrayView<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     RtpPacket rtp_packet;
     EXPECT_TRUE(rtp_packet.Parse(packet));
@@ -258,7 +278,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     return SEND_PACKET;
   }
 
-  Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
+  Action OnReceiveRtcp(ArrayView<const uint8_t> data) override {
     test::RtcpPacketParser parser;
 
     parser.Parse(data);
@@ -381,7 +401,7 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
               }) {}
 
    private:
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
       MutexLock lock_(&mutex_);
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
@@ -449,7 +469,7 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnReceiveRtcp(ArrayView<const uint8_t> packet) override {
       MutexLock lock_(&mutex_);
       if (state_ == kVerifyUlpfecPacketNotInNackList) {
         test::RtcpPacketParser rtcp_parser;

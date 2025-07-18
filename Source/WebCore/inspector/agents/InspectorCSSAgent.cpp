@@ -284,7 +284,7 @@ private:
 
 InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
-    , m_frontendDispatcher(makeUnique<CSSFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
     , m_nodesWithPendingLayoutFlagsChangeDispatchTimer(*this, &InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired)
@@ -293,7 +293,7 @@ InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
 
 InspectorCSSAgent::~InspectorCSSAgent() = default;
 
-void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorCSSAgent::didCreateFrontendAndBackend()
 {
 }
 

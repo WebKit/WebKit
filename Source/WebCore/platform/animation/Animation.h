@@ -57,17 +57,9 @@ public:
     bool isRangeStartSet() const { return m_rangeStartSet; }
     bool isRangeEndSet() const { return m_rangeEndSet; }
 
-    // Flags this to be the special "none" animation (animation-name: none)
-    bool isNoneAnimation() const { return m_isNone; }
-
-    // We can make placeholder Animation objects to keep the comma-separated lists
-    // of properties in sync. isValidAnimation means this is not a placeholder.
-    bool isValidAnimation() const { return !m_isNone && !m_name.name.isEmpty(); }
-
     bool isEmpty() const
     {
         return !m_nameSet
-            && !m_isNone
             && (!m_directionSet || m_directionFilled)
             && (!m_durationSet || m_durationFilled)
             && (!m_fillModeSet || m_fillModeFilled)
@@ -155,7 +147,7 @@ public:
     };
     struct AnonymousViewTimeline {
         ScrollAxis axis;
-        ViewTimelineInsets insets;
+        ViewTimelineInsetItem insets;
         bool operator==(const AnonymousViewTimeline& o) const { return axis == o.axis && insets == o.insets; }
     };
     using Timeline = Variant<TimelineKeyword, AtomString, AnonymousScrollTimeline, AnonymousViewTimeline>;
@@ -165,7 +157,7 @@ public:
 
     AnimationFillMode fillMode() const { return static_cast<AnimationFillMode>(m_fillMode); }
 
-    MarkableDouble duration() const { return m_duration; }
+    Markable<double> duration() const { return m_duration; }
     double playbackRate() const { return m_playbackRate; }
 
     static constexpr double IterationCountInfinite = -1;
@@ -183,7 +175,7 @@ public:
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(Direction d) { m_direction = static_cast<unsigned>(d); m_directionSet = true; }
-    void setDuration(MarkableDouble d) { ASSERT(!d || *d >= 0); m_duration = d; m_durationSet = true; }
+    void setDuration(Markable<double> d) { ASSERT(!d || *d >= 0); m_duration = d; m_durationSet = true; }
     void setPlaybackRate(double d) { m_playbackRate = d; }
     void setFillMode(AnimationFillMode f) { m_fillMode = static_cast<unsigned>(f); m_fillModeSet = true; }
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
@@ -201,11 +193,9 @@ public:
     void setRangeEnd(SingleTimelineRange range) { m_range.end = range; m_rangeEndSet = true; }
     void setRange(TimelineRange range) { setRangeStart(range.start); setRangeEnd(range.end); }
 
-    void setIsNoneAnimation(bool n) { m_isNone = n; }
-
     void fillDelay(double delay) { setDelay(delay); m_delayFilled = true; }
     void fillDirection(Direction direction) { setDirection(direction); m_directionFilled = true; }
-    void fillDuration(MarkableDouble duration) { setDuration(duration); m_durationFilled = true; }
+    void fillDuration(Markable<double> duration) { setDuration(duration); m_durationFilled = true; }
     void fillFillMode(AnimationFillMode fillMode) { setFillMode(fillMode); m_fillModeFilled = true; }
     void fillIterationCount(double iterationCount) { setIterationCount(iterationCount); m_iterationCountFilled = true; }
     void fillPlayState(AnimationPlayState playState) { setPlayState(playState); m_playStateFilled = true; }
@@ -258,7 +248,7 @@ private:
     Style::ScopedName m_name;
     double m_iterationCount;
     double m_delay;
-    MarkableDouble m_duration;
+    Markable<double> m_duration;
     double m_playbackRate { 1 };
     Timeline m_timeline;
     RefPtr<TimingFunction> m_timingFunction;
@@ -286,8 +276,6 @@ private:
     bool m_rangeStartSet : 1;
     bool m_rangeEndSet : 1;
 
-    bool m_isNone : 1;
-
     bool m_delayFilled : 1;
     bool m_directionFilled : 1;
     bool m_durationFilled : 1;
@@ -305,7 +293,7 @@ private:
 public:
     static double initialDelay() { return 0; }
     static Direction initialDirection() { return Direction::Normal; }
-    static MarkableDouble initialDuration() { return std::nullopt; }
+    static Markable<double> initialDuration() { return std::nullopt; }
     static AnimationFillMode initialFillMode() { return AnimationFillMode::None; }
     static double initialIterationCount() { return 1.0; }
     static const Style::ScopedName& initialName();

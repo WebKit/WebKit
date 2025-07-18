@@ -63,7 +63,7 @@ CodeBlockHash::CodeBlockHash(StringView codeBlockSourceCode, StringView entireSo
 
         sha1.addBytes(std::span { std::bit_cast<uint8_t*>(&length), sizeof(length) });
         do {
-            UChar character = entireSourceCode[index];
+            char16_t character = entireSourceCode[index];
             sha1.addBytes(std::span { std::bit_cast<uint8_t*>(&character), sizeof(character) });
             oldIndex = index;
             index += step;
@@ -76,8 +76,8 @@ CodeBlockHash::CodeBlockHash(StringView codeBlockSourceCode, StringView entireSo
 
     if (m_hash == 0 || m_hash == 1)
         m_hash += 0x2d5a93d0; // Ensures a non-zero hash, and gets us #Azero0 for CodeForCall and #Azero1 for CodeForConstruct.
-    static_assert(static_cast<unsigned>(CodeForCall) == 0);
-    static_assert(static_cast<unsigned>(CodeForConstruct) == 1);
+    static_assert(!static_cast<unsigned>(CodeSpecializationKind::CodeForCall));
+    static_assert(static_cast<unsigned>(CodeSpecializationKind::CodeForConstruct));
     m_hash ^= static_cast<unsigned>(kind);
     ASSERT(m_hash);
 }

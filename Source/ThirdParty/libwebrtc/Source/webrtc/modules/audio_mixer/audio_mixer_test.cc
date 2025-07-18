@@ -78,7 +78,7 @@ class FilePlayingSource : public AudioMixer::Source {
   bool FileHasEnded() const { return file_has_ended_; }
 
   std::string ToString() const {
-    rtc::StringBuilder ss;
+    StringBuilder ss;
     ss << "{rate: " << sample_rate_hz_ << ", channels: " << number_of_channels_
        << ", samples_tot: " << wav_reader_->num_samples() << "}";
     return ss.Release();
@@ -112,7 +112,7 @@ const std::vector<std::string> parse_input_files() {
 int main(int argc, char* argv[]) {
   absl::ParseCommandLine(argc, argv);
 
-  rtc::scoped_refptr<webrtc::AudioMixerImpl> mixer(
+  webrtc::scoped_refptr<webrtc::AudioMixerImpl> mixer(
       webrtc::AudioMixerImpl::Create(
           std::unique_ptr<webrtc::OutputRateCalculator>(
               new webrtc::DefaultOutputRateCalculator()),

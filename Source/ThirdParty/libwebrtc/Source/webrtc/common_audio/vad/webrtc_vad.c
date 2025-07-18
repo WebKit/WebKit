@@ -17,7 +17,7 @@
 #include "common_audio/vad/vad_core.h"
 
 static const int kInitCheck = 42;
-static const int kValidRates[] = { 8000, 16000, 32000, 48000 };
+static const int kValidRates[] = {8000, 16000, 32000, 48000};
 static const size_t kRatesSize = sizeof(kValidRates) / sizeof(*kValidRates);
 static const int kMaxFrameLengthMs = 30;
 
@@ -36,12 +36,12 @@ void WebRtcVad_Free(VadInst* handle) {
 // TODO(bjornv): Move WebRtcVad_InitCore() code here.
 int WebRtcVad_Init(VadInst* handle) {
   // Initialize the core VAD component.
-  return WebRtcVad_InitCore((VadInstT*) handle);
+  return WebRtcVad_InitCore((VadInstT*)handle);
 }
 
 // TODO(bjornv): Move WebRtcVad_set_mode_core() code here.
 int WebRtcVad_set_mode(VadInst* handle, int mode) {
-  VadInstT* self = (VadInstT*) handle;
+  VadInstT* self = (VadInstT*)handle;
 
   if (handle == NULL) {
     return -1;
@@ -53,10 +53,12 @@ int WebRtcVad_set_mode(VadInst* handle, int mode) {
   return WebRtcVad_set_mode_core(self, mode);
 }
 
-int WebRtcVad_Process(VadInst* handle, int fs, const int16_t* audio_frame,
+int WebRtcVad_Process(VadInst* handle,
+                      int fs,
+                      const int16_t* audio_frame,
                       size_t frame_length) {
   int vad = -1;
-  VadInstT* self = (VadInstT*) handle;
+  VadInstT* self = (VadInstT*)handle;
 
   if (handle == NULL) {
     return -1;
@@ -73,7 +75,7 @@ int WebRtcVad_Process(VadInst* handle, int fs, const int16_t* audio_frame,
   }
 
   if (fs == 48000) {
-      vad = WebRtcVad_CalcVad48khz(self, audio_frame, frame_length);
+    vad = WebRtcVad_CalcVad48khz(self, audio_frame, frame_length);
   } else if (fs == 32000) {
     vad = WebRtcVad_CalcVad32khz(self, audio_frame, frame_length);
   } else if (fs == 16000) {
@@ -99,7 +101,7 @@ int WebRtcVad_ValidRateAndFrameLength(int rate, size_t frame_length) {
   for (i = 0; i < kRatesSize; i++) {
     if (kValidRates[i] == rate) {
       for (valid_length_ms = 10; valid_length_ms <= kMaxFrameLengthMs;
-          valid_length_ms += 10) {
+           valid_length_ms += 10) {
         valid_length = (size_t)(kValidRates[i] / 1000 * valid_length_ms);
         if (frame_length == valid_length) {
           return_value = 0;

@@ -104,7 +104,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 
 FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect& viewportRect) const
 {
-    // This logic follows ScrollingTreeStickyNode::computeAnchorLayerPosition().
+    // This logic follows ScrollingTreeStickyNode::computeConstrainingRectAndAnchorLayerPosition().
     FloatSize offsetFromStickyAncestors;
     auto computeLayerPositionForScrollingNode = [&](ScrollingStateNode& scrollingStateNode) {
         FloatRect constrainingRect;

@@ -40,7 +40,6 @@ rtc_library("pacing") {
     "../../api/rtc_event_log",
     "../../api/task_queue:pending_task_safety_flag",
     "../../api/task_queue:task_queue",
-    "../../api/transport:field_trial_based_config",
     "../../api/transport:network_control",
     "../../api/units:data_rate",
     "../../api/units:data_size",

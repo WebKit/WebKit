@@ -219,6 +219,7 @@ onbeforecopy
 onbeforecut
 onbeforeinput
 onbeforeload
+onbeforematch
 onbeforepaste
 onbeforeprint
 onbeforetoggle
@@ -310,6 +311,7 @@ onrejectionhandled
 onreset
 onresize
 onscroll
+onscrollend
 onsecuritypolicyviolation
 onseeked
 onseeking

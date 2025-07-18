@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLTableRowElement.h"
 
+#include "ExceptionOr.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"

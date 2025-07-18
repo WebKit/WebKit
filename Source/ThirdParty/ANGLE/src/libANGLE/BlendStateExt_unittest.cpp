@@ -42,16 +42,16 @@ TEST(BlendStateExt, Init)
         const gl::BlendStateExt blendStateExt = gl::BlendStateExt(c);
         ASSERT_EQ(blendStateExt.getDrawBufferCount(), c);
 
-        ASSERT_EQ(blendStateExt.getEnabledMask().to_ulong(), 0u);
-        ASSERT_EQ(blendStateExt.getAllEnabledMask().to_ulong(), allEnabledMasks[c]);
+        ASSERT_EQ(blendStateExt.getEnabledMask().bits(), 0u);
+        ASSERT_EQ(blendStateExt.getAllEnabledMask().bits(), allEnabledMasks[c]);
 
         ASSERT_EQ(blendStateExt.getColorMaskBits(), blendStateExt.getAllColorMaskBits());
         ASSERT_EQ(blendStateExt.getAllColorMaskBits(),
                   is64Bit ? allColorMasks64[c] : allColorMasks32[c]);
 
-        ASSERT_EQ(blendStateExt.getUsesAdvancedBlendEquationMask().to_ulong(), 0u);
+        ASSERT_EQ(blendStateExt.getUsesAdvancedBlendEquationMask().bits(), 0u);
 
-        ASSERT_EQ(blendStateExt.getUsesExtendedBlendFactorMask().to_ulong(), 0u);
+        ASSERT_EQ(blendStateExt.getUsesExtendedBlendFactorMask().bits(), 0u);
 
         ASSERT_EQ(blendStateExt.getSrcColorBits(), sourceColorAlpha[c]);
         ASSERT_EQ(blendStateExt.getSrcAlphaBits(), sourceColorAlpha[c]);
@@ -93,16 +93,16 @@ TEST(BlendStateExt, BlendEnabled)
         gl::BlendStateExt blendStateExt = gl::BlendStateExt(c);
 
         blendStateExt.setEnabled(true);
-        ASSERT_EQ(blendStateExt.getEnabledMask().to_ulong(), enabled[c]);
+        ASSERT_EQ(blendStateExt.getEnabledMask().bits(), enabled[c]);
 
         blendStateExt.setEnabled(false);
-        ASSERT_EQ(blendStateExt.getEnabledMask().to_ulong(), 0u);
+        ASSERT_EQ(blendStateExt.getEnabledMask().bits(), 0u);
 
         blendStateExt.setEnabledIndexed(c / 2, true);
-        ASSERT_EQ(blendStateExt.getEnabledMask().to_ulong(), 1u << (c / 2));
+        ASSERT_EQ(blendStateExt.getEnabledMask().bits(), 1u << (c / 2));
 
         blendStateExt.setEnabledIndexed(c / 2, false);
-        ASSERT_EQ(blendStateExt.getEnabledMask().to_ulong(), 0u);
+        ASSERT_EQ(blendStateExt.getEnabledMask().bits(), 0u);
     }
 }
 
@@ -188,7 +188,7 @@ TEST(BlendStateExt, ColorMask)
         // All masks are different except the c-th
         {
             const gl::DrawBufferMask diff = blendStateExt.compareColorMask(otherColorMask);
-            ASSERT_EQ(diff.to_ulong(), 127u >> (8 - c));
+            ASSERT_EQ(diff.bits(), 127u >> (8 - c));
         }
 
         // Test that all-enabled color mask correctly compares with the current color mask
@@ -197,7 +197,7 @@ TEST(BlendStateExt, ColorMask)
             blendStateExt.setColorMaskIndexed(c / 2, false, false, true, false);
             const gl::DrawBufferMask diff =
                 blendStateExt.compareColorMask(blendStateExt.getAllColorMaskBits());
-            ASSERT_EQ(diff.to_ulong(), 1u << (c / 2));
+            ASSERT_EQ(diff.bits(), 1u << (c / 2));
         }
     }
 }
@@ -228,7 +228,7 @@ TEST(BlendStateExt, BlendEquations)
 
     const gl::DrawBufferMask diff =
         blendStateExt.compareEquations(otherEquationColor, otherEquationAlpha);
-    ASSERT_EQ(diff.to_ulong(), 40u);
+    ASSERT_EQ(diff.bits(), 40u);
 
     // Copy buffer 3 to buffer 0
     blendStateExt.setEquationsIndexed(0, 3, blendStateExt);
@@ -278,7 +278,7 @@ TEST(BlendStateExt, BlendFactors)
 
     const gl::DrawBufferMask diff =
         blendStateExt.compareFactors(otherSrcColor, otherDstColor, otherSrcAlpha, otherDstAlpha);
-    ASSERT_EQ(diff.to_ulong(), 169u);
+    ASSERT_EQ(diff.bits(), 169u);
 
     // Copy buffer 0 to buffer 1
     blendStateExt.setFactorsIndexed(1, 0, blendStateExt);

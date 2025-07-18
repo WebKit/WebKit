@@ -37,17 +37,17 @@ class UnrecognizedParametersCause
   static constexpr int kType = UnrecognizedParametersCauseConfig::kType;
 
   explicit UnrecognizedParametersCause(
-      rtc::ArrayView<const uint8_t> unrecognized_parameters)
+      webrtc::ArrayView<const uint8_t> unrecognized_parameters)
       : unrecognized_parameters_(unrecognized_parameters.begin(),
                                  unrecognized_parameters.end()) {}
 
   static std::optional<UnrecognizedParametersCause> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  rtc::ArrayView<const uint8_t> unrecognized_parameters() const {
+  webrtc::ArrayView<const uint8_t> unrecognized_parameters() const {
     return unrecognized_parameters_;
   }
 

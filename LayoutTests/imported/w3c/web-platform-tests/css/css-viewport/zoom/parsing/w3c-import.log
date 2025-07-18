@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/parsing/zoom-computed-with-sign-expression.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/parsing/zoom-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/parsing/zoom-valid.html

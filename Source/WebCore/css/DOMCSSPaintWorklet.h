@@ -58,7 +58,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet);
 class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet, DOMCSSPaintWorklet);
 public:
     explicit DOMCSSPaintWorklet(DOMCSSNamespace&) { }
 

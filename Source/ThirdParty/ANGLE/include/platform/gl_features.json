@@ -50,14 +50,6 @@
             ]
         },
         {
-            "name": "do_while_GLSL_causes_GPU_hang",
-            "category": "Workarounds",
-            "description": [
-                "Some GLSL constructs involving do-while loops cause GPU hangs"
-            ],
-            "issue": "http://crbug.com/644669"
-        },
-        {
             "name": "vertex_ID_does_not_include_base_vertex",
             "category": "Workarounds",
             "description": [
@@ -132,14 +124,6 @@
             "issue": "http://anglebug.com/42260492"
         },
         {
-            "name": "emulate_isnan_float",
-            "category": "Workarounds",
-            "description": [
-                "Using isnan() on highp float will get wrong answer"
-            ],
-            "issue": "http://crbug.com/650547"
-        },
-        {
             "name": "use_unused_blocks_with_standard_or_shared_layout",
             "category": "Workarounds",
             "description": [
@@ -152,14 +136,6 @@
             "description": [
                 "Fix spec difference between GLSL 4.1 or lower and ESSL3"
             ]
-        },
-        {
-            "name": "rewrite_float_unary_minus_operator",
-            "category": "Workarounds",
-            "description": [
-                "Using '-<float>' will get wrong answer"
-            ],
-            "issue": "http://crbug.com/308366"
         },
         {
             "name": "emulate_atan_2_float",
@@ -239,14 +215,6 @@
             ]
         },
         {
-            "name": "disable_blend_func_extended",
-            "category": "Workarounds",
-            "description": [
-                "ARB_blend_func_extended does not pass the tests"
-            ],
-            "issue": "http://anglebug.com/40644593"
-        },
-        {
             "name": "unsized_SRGB_read_pixels_doesnt_transform",
             "category": "Workarounds",
             "description": [
@@ -314,14 +282,6 @@
                 "work around pixel comparison failure."
             ],
             "issue": "https://crbug.com/705865"
-        },
-        {
-            "name": "clear_to_zero_or_one_broken",
-            "category": "Workarounds",
-            "description": [
-                "Clears when the clear color is all zeros or ones do not work."
-            ],
-            "issue": "https://crbug.com/710443"
         },
         {
             "name": "limit_max_3d_array_texture_size_to_1024",

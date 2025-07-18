@@ -119,7 +119,7 @@ TEST(AbortableTaskQueue, SyncTasks)
         EXPECT_EQ(100, response->fancyInt);
         response = std::nullopt;
         EXPECT_TRUE(destructedResponseFlag);
-        RunLoop::protectedMain()->dispatch([&]() {
+        RunLoop::mainSingleton().dispatch([&]() {
             testFinished = true;
         });
     };
@@ -254,7 +254,7 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
         // Main thread has called startAborting().
         EXPECT_FALSE(response);
 
-        RunLoop::protectedMain()->dispatch([&]() {
+        RunLoop::mainSingleton().dispatch([&]() {
             testFinished = true;
         });
     };
@@ -301,7 +301,7 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
         // The response object has not been leaked.
         EXPECT_TRUE(destructedResponseFlag);
 
-        RunLoop::protectedMain()->dispatch([&]() {
+        RunLoop::mainSingleton().dispatch([&]() {
             testFinished = true;
         });
     };

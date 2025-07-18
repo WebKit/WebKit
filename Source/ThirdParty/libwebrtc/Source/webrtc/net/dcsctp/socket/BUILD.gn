@@ -156,7 +156,6 @@ rtc_library("dcsctp_socket") {
     "//third_party/abseil-cpp/absl/functional:bind_front",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings:string_view",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
   sources = [
     "callback_deferrer.cc",

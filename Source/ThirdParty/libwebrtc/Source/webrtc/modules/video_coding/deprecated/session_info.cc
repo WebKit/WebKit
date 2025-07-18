@@ -12,16 +12,22 @@
 
 #include <string.h>
 
+#include <cstdint>
+#include <iterator>
+#include <variant>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/types/variant.h"
-#include "modules/include/module_common_types.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "modules/include/module_common_types_public.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/deprecated/jitter_buffer_common.h"
 #include "modules/video_coding/deprecated/packet.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -48,8 +54,8 @@ VCMSessionInfo::~VCMSessionInfo() {}
 void VCMSessionInfo::UpdateDataPointers(const uint8_t* old_base_ptr,
                                         const uint8_t* new_base_ptr) {
   for (PacketIterator it = packets_.begin(); it != packets_.end(); ++it)
-    if ((*it).dataPtr != NULL) {
-      RTC_DCHECK(old_base_ptr != NULL && new_base_ptr != NULL);
+    if ((*it).dataPtr != nullptr) {
+      RTC_DCHECK(old_base_ptr != nullptr && new_base_ptr != nullptr);
       (*it).dataPtr = new_base_ptr + ((*it).dataPtr - old_base_ptr);
     }
 }
@@ -72,11 +78,11 @@ int VCMSessionInfo::PictureId() const {
   if (packets_.empty())
     return kNoPictureId;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return absl::get<RTPVideoHeaderVP8>(
+    return std::get<RTPVideoHeaderVP8>(
                packets_.front().video_header.video_type_header)
         .pictureId;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
-    return absl::get<RTPVideoHeaderVP9>(
+    return std::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
         .picture_id;
   } else {
@@ -88,11 +94,11 @@ int VCMSessionInfo::TemporalId() const {
   if (packets_.empty())
     return kNoTemporalIdx;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return absl::get<RTPVideoHeaderVP8>(
+    return std::get<RTPVideoHeaderVP8>(
                packets_.front().video_header.video_type_header)
         .temporalIdx;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
-    return absl::get<RTPVideoHeaderVP9>(
+    return std::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
         .temporal_idx;
   } else {
@@ -104,11 +110,11 @@ bool VCMSessionInfo::LayerSync() const {
   if (packets_.empty())
     return false;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return absl::get<RTPVideoHeaderVP8>(
+    return std::get<RTPVideoHeaderVP8>(
                packets_.front().video_header.video_type_header)
         .layerSync;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
-    return absl::get<RTPVideoHeaderVP9>(
+    return std::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
         .temporal_up_switch;
   } else {
@@ -120,11 +126,11 @@ int VCMSessionInfo::Tl0PicId() const {
   if (packets_.empty())
     return kNoTl0PicIdx;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return absl::get<RTPVideoHeaderVP8>(
+    return std::get<RTPVideoHeaderVP8>(
                packets_.front().video_header.video_type_header)
         .tl0PicIdx;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
-    return absl::get<RTPVideoHeaderVP9>(
+    return std::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
         .tl0_pic_idx;
   } else {
@@ -139,7 +145,7 @@ std::vector<NaluInfo> VCMSessionInfo::GetNaluInfos() const {
   std::vector<NaluInfo> nalu_infos;
   for (const VCMPacket& packet : packets_) {
     const auto& h264 =
-        absl::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
+        std::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
     absl::c_copy(h264.nalus, std::back_inserter(nalu_infos));
   }
   return nalu_infos;
@@ -149,7 +155,7 @@ void VCMSessionInfo::SetGofInfo(const GofInfoVP9& gof_info, size_t idx) {
   if (packets_.empty())
     return;
 
-  auto* vp9_header = absl::get_if<RTPVideoHeaderVP9>(
+  auto* vp9_header = std::get_if<RTPVideoHeaderVP9>(
       &packets_.front().video_header.video_type_header);
   if (!vp9_header || vp9_header->flexible_mode)
     return;
@@ -205,7 +211,7 @@ size_t VCMSessionInfo::InsertBuffer(uint8_t* frame_buffer,
   const size_t kH264NALHeaderLengthInBytes = 1;
   const size_t kLengthFieldLength = 2;
   const auto* h264 =
-      absl::get_if<RTPVideoHeaderH264>(&packet.video_header.video_type_header);
+      std::get_if<RTPVideoHeaderH264>(&packet.video_header.video_type_header);
   if (h264 && h264->packetization_type == kH264StapA) {
     size_t required_length = 0;
     const uint8_t* nalu_ptr = packet_buffer + kH264NALHeaderLengthInBytes;
@@ -266,7 +272,7 @@ void VCMSessionInfo::ShiftSubsequentPackets(PacketIterator it,
   // Calculate the total move length and move the data pointers in advance.
   for (; it != packets_.end(); ++it) {
     shift_length += (*it).sizeBytes;
-    if ((*it).dataPtr != NULL)
+    if ((*it).dataPtr != nullptr)
       (*it).dataPtr += steps_to_shift;
   }
   memmove(first_packet_ptr + steps_to_shift, first_packet_ptr, shift_length);
@@ -328,7 +334,7 @@ size_t VCMSessionInfo::DeletePacketData(PacketIterator start,
   for (PacketIterator it = start; it != packet_after_end; ++it) {
     bytes_to_delete += (*it).sizeBytes;
     (*it).sizeBytes = 0;
-    (*it).dataPtr = NULL;
+    (*it).dataPtr = nullptr;
   }
   if (bytes_to_delete > 0)
     ShiftSubsequentPackets(end, -static_cast<int>(bytes_to_delete));
@@ -338,7 +344,7 @@ size_t VCMSessionInfo::DeletePacketData(PacketIterator start,
 VCMSessionInfo::PacketIterator VCMSessionInfo::FindNextPartitionBeginning(
     PacketIterator it) const {
   while (it != packets_.end()) {
-    if (absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+    if (std::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
             .beginningOfPartition) {
       return it;
     }
@@ -352,14 +358,14 @@ VCMSessionInfo::PacketIterator VCMSessionInfo::FindPartitionEnd(
   RTC_DCHECK_EQ((*it).codec(), kVideoCodecVP8);
   PacketIterator prev_it = it;
   const int partition_id =
-      absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+      std::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
           .partitionId;
   while (it != packets_.end()) {
     bool beginning =
-        absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+        std::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
             .beginningOfPartition;
     int current_partition_id =
-        absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+        std::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
             .partitionId;
     bool packet_loss_found = (!beginning && !InSequence(it, prev_it));
     if (packet_loss_found ||
@@ -420,7 +426,7 @@ bool VCMSessionInfo::HaveLastPacket() const {
 
 int VCMSessionInfo::InsertPacket(const VCMPacket& packet,
                                  uint8_t* frame_buffer,
-                                 const FrameData& frame_data) {
+                                 const FrameData& /* frame_data */) {
   if (packet.video_header.frame_type == VideoFrameType::kEmptyFrame) {
     // Update sequence number of an empty packet.
     // Only media packets are inserted into the packet list.

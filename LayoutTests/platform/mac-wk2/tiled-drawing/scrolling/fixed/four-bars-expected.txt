@@ -1,0 +1,41 @@
+
+(Frame scrolling node
+  (scroll position 0 200)
+  (scrollable area size 785 600)
+  (contents size 785 2221)
+  (requested scroll position 0 200)
+  (requested scroll position represents programmatic scroll 1)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (layout viewport at (0,200) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,1621))
+  (behavior for fixed 1)
+  (children 4
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout at (0,200) size 785x600)
+      (layer position at last layout (0,200))
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout at (0,200) size 785x600)
+      (layer position at last layout (0,200))
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeRight AnchorEdgeTop)
+      (viewport rect at last layout at (0,200) size 785x600)
+      (layer position at last layout (0,200))
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
+      (viewport rect at last layout at (0,200) size 785x600)
+      (layer position at last layout (0,200))
+    )
+  )
+)
+This is the top bar. This is the left bar. This is the right bar. This is the bottom bar.

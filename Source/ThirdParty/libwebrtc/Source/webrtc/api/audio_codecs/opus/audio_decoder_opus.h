@@ -29,7 +29,7 @@ struct RTC_EXPORT AudioDecoderOpus {
   struct Config {
     bool IsOk() const;  // Checks if the values are currently OK.
     int sample_rate_hz = 48000;
-    int num_channels = 1;
+    std::optional<int> num_channels;
   };
   static std::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);
   static void AppendSupportedDecoders(std::vector<AudioCodecSpec>* specs);

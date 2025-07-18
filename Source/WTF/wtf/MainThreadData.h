@@ -27,7 +27,7 @@ namespace WTF {
 
 template<typename T>
 class MainThreadData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MainThreadData);
 public:
     MainThreadData() { }
     explicit MainThreadData(T&& data)

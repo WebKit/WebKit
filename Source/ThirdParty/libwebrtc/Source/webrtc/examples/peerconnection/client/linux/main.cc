@@ -12,8 +12,17 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 
+#include <memory>
+#include <string>
+
+#include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
 #include "examples/peerconnection/client/conductor.h"
 #include "examples/peerconnection/client/flag_defs.h"
 #include "examples/peerconnection/client/linux/main_wnd.h"
@@ -21,16 +30,16 @@
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/thread.h"
-#include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 
-class CustomSocketServer : public rtc::PhysicalSocketServer {
+class CustomSocketServer : public webrtc::PhysicalSocketServer {
  public:
   explicit CustomSocketServer(GtkMainWnd* wnd)
-      : wnd_(wnd), conductor_(NULL), client_(NULL) {}
+      : wnd_(wnd), conductor_(nullptr), client_(nullptr) {}
   virtual ~CustomSocketServer() {}
 
-  void SetMessageQueue(rtc::Thread* queue) override { message_queue_ = queue; }
+  void SetMessageQueue(webrtc::Thread* queue) override {
+    message_queue_ = queue;
+  }
 
   void set_client(PeerConnectionClient* client) { client_ = client; }
   void set_conductor(Conductor* conductor) { conductor_ = conductor; }
@@ -47,15 +56,15 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
       gtk_main_iteration();
 
     if (!wnd_->IsWindow() && !conductor_->connection_active() &&
-        client_ != NULL && !client_->is_connected()) {
+        client_ != nullptr && !client_->is_connected()) {
       message_queue_->Quit();
     }
-    return rtc::PhysicalSocketServer::Wait(webrtc::TimeDelta::Zero(),
-                                           process_io);
+    return webrtc::PhysicalSocketServer::Wait(webrtc::TimeDelta::Zero(),
+                                              process_io);
   }
 
  protected:
-  rtc::Thread* message_queue_;
+  webrtc::Thread* message_queue_;
   GtkMainWnd* wnd_;
   Conductor* conductor_;
   PeerConnectionClient* client_;
@@ -76,11 +85,9 @@ int main(int argc, char* argv[]) {
 
   absl::ParseCommandLine(argc, argv);
 
-  // InitFieldTrialsFromString stores the char*, so the char array must outlive
-  // the application.
-  const std::string forced_field_trials =
-      absl::GetFlag(FLAGS_force_fieldtrials);
-  webrtc::field_trial::InitFieldTrialsFromString(forced_field_trials.c_str());
+  webrtc::Environment env =
+      webrtc::CreateEnvironment(std::make_unique<webrtc::FieldTrials>(
+          absl::GetFlag(FLAGS_force_fieldtrials)));
 
   // Abort if the user specifies a port that is outside the allowed
   // range [1, 65535].
@@ -96,12 +103,12 @@ int main(int argc, char* argv[]) {
   wnd.Create();
 
   CustomSocketServer socket_server(&wnd);
-  rtc::AutoSocketServerThread thread(&socket_server);
+  webrtc::AutoSocketServerThread thread(&socket_server);
 
-  rtc::InitializeSSL();
+  webrtc::InitializeSSL();
   // Must be constructed after we set the socketserver.
   PeerConnectionClient client;
-  auto conductor = rtc::make_ref_counted<Conductor>(&client, &wnd);
+  auto conductor = webrtc::make_ref_counted<Conductor>(env, &client, &wnd);
   socket_server.set_client(&client);
   socket_server.set_conductor(conductor.get());
 
@@ -116,6 +123,6 @@ int main(int argc, char* argv[]) {
     gtk_main_iteration();
   }
   */
-  rtc::CleanupSSL();
+  webrtc::CleanupSSL();
   return 0;
 }

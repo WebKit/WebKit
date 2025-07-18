@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool shouldFillWithVerticalGlyphs(std::span<const UChar> buffer, const Font& font)
+static bool shouldFillWithVerticalGlyphs(std::span<const char16_t> buffer, const Font& font)
 {
     if (!font.hasVerticalGlyphs())
         return false;
@@ -48,7 +48,7 @@ static bool shouldFillWithVerticalGlyphs(std::span<const UChar> buffer, const Fo
 }
 
 
-bool GlyphPage::fill(std::span<const UChar> buffer)
+bool GlyphPage::fill(std::span<const char16_t> buffer)
 {
     ASSERT(buffer.size() == GlyphPage::size || buffer.size() == 2 * GlyphPage::size);
 

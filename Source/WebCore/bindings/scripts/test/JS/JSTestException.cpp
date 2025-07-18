@@ -177,7 +177,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestException_name, (JSGlobalObject* lexicalGlobalObj
 
 JSC::GCClient::IsoSubspace* JSTestException::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestException, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestException, UseCustomHeapCellType::No>(vm, "JSTestException"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestException.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestException = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestException.get(); },

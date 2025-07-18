@@ -1,24 +1,24 @@
 
 PASS __Host: Non-secure origin: Does not set 'Path=/;'
-FAIL __HoSt: Non-secure origin: Does not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "0.4352760571301042"
+FAIL __HoSt: Non-secure origin: Does not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "bar2"
 PASS __Host: Non-secure origin: Does not set 'Secure; Path=/;'
 PASS __HoSt: Non-secure origin: Does not set 'Secure; Path=/;'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; '
 PASS __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; '
 PASS __Host: Non-secure origin: Does not set 'Path=/;domain=localhost'
-FAIL __HoSt: Non-secure origin: Does not set 'Path=/;domain=localhost' assert_equals: expected (undefined) undefined but got (string) "0.2586018799905354"
+FAIL __HoSt: Non-secure origin: Does not set 'Path=/;domain=localhost' assert_equals: expected (undefined) undefined but got (string) "bar8"
 PASS __Host: Non-secure origin: Does not set 'Secure; Path=/;domain=localhost'
 PASS __HoSt: Non-secure origin: Does not set 'Secure; Path=/;domain=localhost'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; domain=localhost'
 PASS __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; domain=localhost'
 PASS __Host: Non-secure origin: Does not set 'Path=/;MaxAge=10'
-FAIL __HoSt: Non-secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "0.21950010948218235"
+FAIL __HoSt: Non-secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar14"
 PASS __Host: Non-secure origin: Does not set 'Secure; Path=/;MaxAge=10'
 PASS __HoSt: Non-secure origin: Does not set 'Secure; Path=/;MaxAge=10'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10'
 PASS __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10'
 PASS __Host: Non-secure origin: Does not set 'Path=/;HttpOnly'
-FAIL __HoSt: Non-secure origin: Does not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "0.023582010753375293"
+FAIL __HoSt: Non-secure origin: Does not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar20"
 PASS __Host: Non-secure origin: Does not set 'Secure; Path=/;HttpOnly'
 PASS __HoSt: Non-secure origin: Does not set 'Secure; Path=/;HttpOnly'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; HttpOnly'

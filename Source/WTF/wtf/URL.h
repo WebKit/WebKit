@@ -52,7 +52,7 @@ protected:
 };
 
 class URL {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(URL);
 public:
     // Generates a URL which contains a null string.
     URL() { invalidate(); }

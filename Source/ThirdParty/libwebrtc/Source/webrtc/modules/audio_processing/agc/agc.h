@@ -27,7 +27,7 @@ class Agc {
 
   // `audio` must be mono; in a multi-channel stream, provide the first (usually
   // left) channel.
-  virtual void Process(rtc::ArrayView<const int16_t> audio);
+  virtual void Process(ArrayView<const int16_t> audio);
 
   // Retrieves the difference between the target RMS level and the current
   // signal RMS level in dB. Returns true if an update is available and false

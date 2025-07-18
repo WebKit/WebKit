@@ -35,6 +35,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "PathOperation.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"

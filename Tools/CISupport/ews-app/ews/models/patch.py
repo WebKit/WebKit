@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ _log = logging.getLogger(__name__)
 class Change(models.Model):
     change_id = models.TextField(primary_key=True)
     bug_id = models.IntegerField()
-    pr_id = models.IntegerField(default=-1)
+    pr_number = models.IntegerField(default=-1)
     pr_project = models.TextField(default='')
     comment_id = models.BigIntegerField(default=-1)
     obsolete = models.BooleanField(default=False)
@@ -47,7 +47,7 @@ class Change(models.Model):
         return str(self.change_id)
 
     @classmethod
-    def save_change(cls, change_id, bug_id=-1, pr_id=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
+    def save_change(cls, change_id, bug_id=-1, pr_number=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
         if not Change.is_valid_change_id(change_id):
             _log.warn('Change id {} in invalid. Skipped saving.'.format(change_id))
             return ERR_INVALID_CHANGE_ID
@@ -55,8 +55,8 @@ class Change(models.Model):
         if Change.is_existing_change_id(change_id):
             _log.debug('Change id {} already exists in database. Skipped saving.'.format(change_id))
             return ERR_EXISTING_CHANGE
-        Change(change_id=change_id, bug_id=bug_id, pr_id=pr_id, pr_project=pr_project, obsolete=obsolete, sent_to_buildbot=sent_to_buildbot, sent_to_commit_queue=sent_to_commit_queue).save()
-        _log.info('Saved change in database, id: {}, pr_id: {}, pr_project: {}'.format(change_id, pr_id, pr_project))
+        Change(change_id=change_id, bug_id=bug_id, pr_number=pr_number, pr_project=pr_project, obsolete=obsolete, sent_to_buildbot=sent_to_buildbot, sent_to_commit_queue=sent_to_commit_queue).save()
+        _log.info(f'Saved change in database, id: {change_id}, pr_number: {pr_number}, pr_project: {pr_project}')
         return SUCCESS
 
     @classmethod
@@ -97,19 +97,19 @@ class Change(models.Model):
             return None
 
     @classmethod
-    def mark_old_changes_as_obsolete(cls, pr_id, change_id):
-        changes = Change.objects.filter(pr_id=pr_id).order_by('-created')
+    def mark_old_changes_as_obsolete(cls, pr_number, change_id):
+        changes = Change.objects.filter(pr_number=pr_number).order_by('-created')
         if not changes or len(changes) == 1:
             return []
         obsolete_changes = []
         for change in changes[1:]:
             if not change.obsolete:
                 if change.change_id == change_id:
-                    _log.info('Marking change {} on pr {} as obsolete, even though we just received builds for it. Latest commit:'.format(change_id, pr_id, change[0].pr_id))
+                    _log.info(f'Marking change {change_id} on pr {pr_number} as obsolete, even though we just received builds for it. Latest commit:{change[0].pr_number}')
                 change.obsolete = True
                 change.save()
                 obsolete_changes.append(change)
-                _log.info('Marked change {} on pr {} as obsolete'.format(change.change_id, pr_id))
+                _log.info(f'Marked change {change.change_id} on pr {pr_number} as obsolete')
         return obsolete_changes
 
     @classmethod

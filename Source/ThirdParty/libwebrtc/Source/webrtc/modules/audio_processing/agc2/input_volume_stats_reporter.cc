@@ -52,7 +52,7 @@ constexpr absl::string_view MetricNamePrefix(
 
 metrics::Histogram* CreateVolumeHistogram(InputVolumeType input_volume_type) {
   char buffer[64];
-  rtc::SimpleStringBuilder builder(buffer);
+  SimpleStringBuilder builder(buffer);
   builder << MetricNamePrefix(input_volume_type) << "OnChange";
   return metrics::HistogramFactoryGetCountsLinear(/*name=*/builder.str(),
                                                   /*min=*/1,
@@ -63,7 +63,7 @@ metrics::Histogram* CreateVolumeHistogram(InputVolumeType input_volume_type) {
 metrics::Histogram* CreateRateHistogram(InputVolumeType input_volume_type,
                                         absl::string_view name) {
   char buffer[64];
-  rtc::SimpleStringBuilder builder(buffer);
+  SimpleStringBuilder builder(buffer);
   builder << MetricNamePrefix(input_volume_type) << name;
   return metrics::HistogramFactoryGetCountsLinear(/*name=*/builder.str(),
                                                   /*min=*/1,
@@ -74,7 +74,7 @@ metrics::Histogram* CreateRateHistogram(InputVolumeType input_volume_type,
 metrics::Histogram* CreateAverageHistogram(InputVolumeType input_volume_type,
                                            absl::string_view name) {
   char buffer[64];
-  rtc::SimpleStringBuilder builder(buffer);
+  SimpleStringBuilder builder(buffer);
   builder << MetricNamePrefix(input_volume_type) << name;
   return metrics::HistogramFactoryGetCountsLinear(/*name=*/builder.str(),
                                                   /*min=*/1,

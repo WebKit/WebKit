@@ -11,11 +11,12 @@
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
 
 #include <math.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 
 #include "api/transport/bandwidth_usage.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -32,7 +33,7 @@ void OveruseEstimator::Update(int64_t t_delta,
                               double ts_delta,
                               int size_delta,
                               BandwidthUsage current_hypothesis,
-                              int64_t now_ms) {
+                              int64_t /* now_ms */) {
   const double min_frame_period = UpdateMinFramePeriod(ts_delta);
   const double t_ts_delta = t_delta - ts_delta;
   double fs_delta = size_delta;

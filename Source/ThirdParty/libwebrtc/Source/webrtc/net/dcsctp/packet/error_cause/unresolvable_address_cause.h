@@ -37,17 +37,17 @@ class UnresolvableAddressCause
   static constexpr int kType = UnresolvableAddressCauseConfig::kType;
 
   explicit UnresolvableAddressCause(
-      rtc::ArrayView<const uint8_t> unresolvable_address)
+      webrtc::ArrayView<const uint8_t> unresolvable_address)
       : unresolvable_address_(unresolvable_address.begin(),
                               unresolvable_address.end()) {}
 
   static std::optional<UnresolvableAddressCause> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  rtc::ArrayView<const uint8_t> unresolvable_address() const {
+  webrtc::ArrayView<const uint8_t> unresolvable_address() const {
     return unresolvable_address_;
   }
 

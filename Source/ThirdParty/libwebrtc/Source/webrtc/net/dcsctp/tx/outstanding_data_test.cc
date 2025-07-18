@@ -59,7 +59,8 @@ class OutstandingDataTest : public testing::Test {
 
 TEST_F(OutstandingDataTest, HasInitialState) {
   EXPECT_TRUE(buf_.empty());
-  EXPECT_EQ(buf_.unacked_bytes(), 0u);
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 0u);
+  EXPECT_EQ(buf_.unacked_packet_bytes(), 0u);
   EXPECT_EQ(buf_.unacked_items(), 0u);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_EQ(buf_.last_cumulative_tsn_ack().Wrap(), TSN(9));
@@ -76,7 +77,7 @@ TEST_F(OutstandingDataTest, InsertChunk) {
 
   EXPECT_EQ(tsn.Wrap(), TSN(10));
 
-  EXPECT_EQ(buf_.unacked_bytes(), DataChunk::kHeaderSize + RoundUpTo4(1));
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 1u);
   EXPECT_EQ(buf_.unacked_items(), 1u);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_EQ(buf_.last_cumulative_tsn_ack().Wrap(), TSN(9));
@@ -96,7 +97,7 @@ TEST_F(OutstandingDataTest, AcksSingleChunk) {
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(10));
   EXPECT_FALSE(ack.has_packet_loss);
 
-  EXPECT_EQ(buf_.unacked_bytes(), 0u);
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 0u);
   EXPECT_EQ(buf_.unacked_items(), 0u);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_EQ(buf_.last_cumulative_tsn_ack().Wrap(), TSN(10));
@@ -110,7 +111,7 @@ TEST_F(OutstandingDataTest, AcksPreviousChunkDoesntUpdate) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
   buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), {}, false);
 
-  EXPECT_EQ(buf_.unacked_bytes(), DataChunk::kHeaderSize + RoundUpTo4(1));
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 1u);
   EXPECT_EQ(buf_.unacked_items(), 1u);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_EQ(buf_.last_cumulative_tsn_ack().Wrap(), TSN(9));
@@ -132,7 +133,7 @@ TEST_F(OutstandingDataTest, AcksAndNacksWithGapAckBlocks) {
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(11));
   EXPECT_FALSE(ack.has_packet_loss);
 
-  EXPECT_EQ(buf_.unacked_bytes(), 0u);
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 0u);
   EXPECT_EQ(buf_.unacked_items(), 0u);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_EQ(buf_.last_cumulative_tsn_ack().Wrap(), TSN(9));
@@ -655,6 +656,21 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
 
   buf_.HandleSack(unwrapper_.Unwrap(TSN(15)), {}, false);
   EXPECT_FALSE(buf_.ShouldSendForwardTsn());
+}
+
+TEST_F(OutstandingDataTest, TreatsUnackedPayloadBytesDifferentFromPacketBytes) {
+  buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
+
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 1u);
+  EXPECT_EQ(buf_.unacked_packet_bytes(),
+            DataChunk::kHeaderSize + RoundUpTo4(1));
+  EXPECT_EQ(buf_.unacked_items(), 1u);
+
+  buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
+  EXPECT_EQ(buf_.unacked_payload_bytes(), 2u);
+  EXPECT_EQ(buf_.unacked_packet_bytes(),
+            2 * (DataChunk::kHeaderSize + RoundUpTo4(1)));
+  EXPECT_EQ(buf_.unacked_items(), 2u);
 }
 
 }  // namespace

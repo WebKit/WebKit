@@ -11,21 +11,27 @@
 #include "api/audio/audio_device.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
+#include <limits>
 #include <list>
-#include <memory>
 #include <numeric>
 #include <optional>
+#include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_device_defines.h"
+#include "api/audio/create_audio_device_module.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
-#include "api/task_queue/default_task_queue_factory.h"
-#include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_device/audio_device_impl.h"
 #include "modules/audio_device/include/mock_audio_transport.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -35,6 +41,7 @@
 #include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+
 #ifdef WEBRTC_WIN
 #include "modules/audio_device/include/audio_device_factory.h"
 #include "modules/audio_device/win/core_audio_utility_win.h"
@@ -106,8 +113,8 @@ enum class TransportType {
 // measurements.
 class AudioStream {
  public:
-  virtual void Write(rtc::ArrayView<const int16_t> source) = 0;
-  virtual void Read(rtc::ArrayView<int16_t> destination) = 0;
+  virtual void Write(ArrayView<const int16_t> source) = 0;
+  virtual void Read(ArrayView<int16_t> destination) = 0;
 
   virtual ~AudioStream() = default;
 };
@@ -116,7 +123,7 @@ class AudioStream {
 // delay value in milliseconds.
 // Example: index=240, frames_per_10ms_buffer=480 => 5ms as output.
 int IndexToMilliseconds(size_t index, size_t frames_per_10ms_buffer) {
-  return rtc::checked_cast<int>(
+  return checked_cast<int>(
       10.0 * (static_cast<double>(index) / frames_per_10ms_buffer) + 0.5);
 }
 
@@ -134,7 +141,7 @@ int IndexToMilliseconds(size_t index, size_t frames_per_10ms_buffer) {
 // change over time and that both sides will in most cases use the same size.
 class FifoAudioStream : public AudioStream {
  public:
-  void Write(rtc::ArrayView<const int16_t> source) override {
+  void Write(ArrayView<const int16_t> source) override {
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
     const size_t size = [&] {
       MutexLock lock(&lock_);
@@ -151,7 +158,7 @@ class FifoAudioStream : public AudioStream {
     written_elements_ += size;
   }
 
-  void Read(rtc::ArrayView<int16_t> destination) override {
+  void Read(ArrayView<int16_t> destination) override {
     MutexLock lock(&lock_);
     if (fifo_.empty()) {
       std::fill(destination.begin(), destination.end(), 0);
@@ -197,10 +204,10 @@ class FifoAudioStream : public AudioStream {
     return 0.5 + static_cast<float>(written_elements_ / write_count_);
   }
 
-  using Buffer16 = rtc::BufferT<int16_t>;
+  using Buffer16 = BufferT<int16_t>;
 
   mutable Mutex lock_;
-  rtc::RaceChecker race_checker_;
+  RaceChecker race_checker_;
 
   std::list<Buffer16> fifo_ RTC_GUARDED_BY(lock_);
   size_t write_count_ RTC_GUARDED_BY(race_checker_) = 0;
@@ -220,7 +227,7 @@ class LatencyAudioStream : public AudioStream {
   }
 
   // Insert periodic impulses in first two samples of `destination`.
-  void Read(rtc::ArrayView<int16_t> destination) override {
+  void Read(ArrayView<int16_t> destination) override {
     RTC_DCHECK_RUN_ON(&read_thread_checker_);
     if (read_count_ == 0) {
       PRINT("[");
@@ -232,7 +239,7 @@ class LatencyAudioStream : public AudioStream {
       {
         MutexLock lock(&lock_);
         if (!pulse_time_) {
-          pulse_time_ = rtc::TimeMillis();
+          pulse_time_ = TimeMillis();
         }
       }
       constexpr int16_t impulse = std::numeric_limits<int16_t>::max();
@@ -242,7 +249,7 @@ class LatencyAudioStream : public AudioStream {
 
   // Detect received impulses in `source`, derive time between transmission and
   // detection and add the calculated delay to list of latencies.
-  void Write(rtc::ArrayView<const int16_t> source) override {
+  void Write(ArrayView<const int16_t> source) override {
     RTC_DCHECK_RUN_ON(&write_thread_checker_);
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
     MutexLock lock(&lock_);
@@ -260,9 +267,9 @@ class LatencyAudioStream : public AudioStream {
     const size_t max = source[index_of_max];
     if (max > kImpulseThreshold) {
       PRINTD("(%zu, %zu)", max, index_of_max);
-      int64_t now_time = rtc::TimeMillis();
+      int64_t now_time = TimeMillis();
       int extra_delay = IndexToMilliseconds(index_of_max, source.size());
-      PRINTD("[%d]", rtc::checked_cast<int>(now_time - pulse_time_));
+      PRINTD("[%d]", webrtc::checked_cast<int>(now_time - pulse_time_));
       PRINTD("[%d]", extra_delay);
       // Total latency is the difference between transmit time and detection
       // tome plus the extra delay within the buffer in which we detected the
@@ -316,7 +323,7 @@ class LatencyAudioStream : public AudioStream {
   }
 
   Mutex lock_;
-  rtc::RaceChecker race_checker_;
+  RaceChecker race_checker_;
   SequenceChecker read_thread_checker_;
   SequenceChecker write_thread_checker_;
 
@@ -338,7 +345,7 @@ class MockAudioTransport : public test::MockAudioTransport {
   // implementation where the number of callbacks is counted and an event
   // is set after a certain number of callbacks. Audio parameters are also
   // checked.
-  void HandleCallbacks(rtc::Event* event,
+  void HandleCallbacks(Event* event,
                        AudioStream* audio_stream,
                        int num_callbacks) {
     event_ = event;
@@ -396,8 +403,8 @@ class MockAudioTransport : public test::MockAudioTransport {
     // Write audio data to audio stream object if one has been injected.
     if (audio_stream_) {
       audio_stream_->Write(
-          rtc::MakeArrayView(static_cast<const int16_t*>(audio_buffer),
-                             samples_per_channel * channels));
+          MakeArrayView(static_cast<const int16_t*>(audio_buffer),
+                        samples_per_channel * channels));
     }
     // Signal the event after given amount of callbacks.
     if (event_ && ReceivedEnoughCallbacks()) {
@@ -436,8 +443,8 @@ class MockAudioTransport : public test::MockAudioTransport {
     samples_out = samples_per_channel * channels;
     // Read audio data from audio stream object if one has been injected.
     if (audio_stream_) {
-      audio_stream_->Read(rtc::MakeArrayView(
-          static_cast<int16_t*>(audio_buffer), samples_per_channel * channels));
+      audio_stream_->Read(MakeArrayView(static_cast<int16_t*>(audio_buffer),
+                                        samples_per_channel * channels));
     } else {
       // Fill the audio buffer with zeros to avoid disturbing audio.
       const size_t num_bytes = samples_per_channel * bytes_per_frame;
@@ -491,7 +498,7 @@ class MockAudioTransport : public test::MockAudioTransport {
  private:
   Mutex lock_;
   TransportType type_ = TransportType::kInvalid;
-  rtc::Event* event_ = nullptr;
+  Event* event_ = nullptr;
   AudioStream* audio_stream_ = nullptr;
   size_t num_callbacks_ = 0;
   size_t play_count_ RTC_GUARDED_BY(lock_) = 0;
@@ -515,15 +522,14 @@ class MockAudioTransport : public test::MockAudioTransport {
 #endif
 
 class MAYBE_AudioDeviceTest
-    : public ::testing::TestWithParam<webrtc::AudioDeviceModule::AudioLayer> {
+    : public ::testing::TestWithParam<AudioDeviceModule::AudioLayer> {
  protected:
   MAYBE_AudioDeviceTest()
-      : audio_layer_(GetParam()),
-        task_queue_factory_(CreateDefaultTaskQueueFactory()) {
-    rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+      : audio_layer_(GetParam()), env_(CreateEnvironment()) {
+    LogMessage::LogToDebug(LS_INFO);
     // Add extra logging fields here if needed for debugging.
-    rtc::LogMessage::LogTimestamps();
-    rtc::LogMessage::LogThreads();
+    LogMessage::LogTimestamps();
+    LogMessage::LogThreads();
     audio_device_ = CreateAudioDevice();
     EXPECT_NE(audio_device_.get(), nullptr);
     AudioDeviceModule::AudioLayer audio_layer;
@@ -573,24 +579,23 @@ class MAYBE_AudioDeviceTest
   }
 
   bool requirements_satisfied() const { return requirements_satisfied_; }
-  rtc::Event* event() { return &event_; }
+  Event* event() { return &event_; }
   AudioDeviceModule::AudioLayer audio_layer() const { return audio_layer_; }
 
   // AudioDeviceModuleForTest extends the default ADM interface with some extra
   // test methods. Intended for usage in tests only and requires a unique
   // factory method. See CreateAudioDevice() for details.
-  const rtc::scoped_refptr<AudioDeviceModuleForTest>& audio_device() const {
+  const scoped_refptr<AudioDeviceModuleForTest>& audio_device() const {
     return audio_device_;
   }
 
-  rtc::scoped_refptr<AudioDeviceModuleForTest> CreateAudioDevice() {
+  scoped_refptr<AudioDeviceModuleForTest> CreateAudioDevice() {
     // Use the default factory for kPlatformDefaultAudio and a special factory
     // CreateWindowsCoreAudioAudioDeviceModuleForTest() for kWindowsCoreAudio2.
     // The value of `audio_layer_` is set at construction by GetParam() and two
     // different layers are tested on Windows only.
     if (audio_layer_ == AudioDeviceModule::kPlatformDefaultAudio) {
-      return AudioDeviceModule::CreateForTest(audio_layer_,
-                                              task_queue_factory_.get());
+      return AudioDeviceModuleImpl::Create(env_, audio_layer_);
     } else if (audio_layer_ == AudioDeviceModule::kWindowsCoreAudio2) {
 #ifdef WEBRTC_WIN
       // We must initialize the COM library on a thread before we calling any of
@@ -602,7 +607,7 @@ class MAYBE_AudioDeviceTest
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsSupported());
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsMMCSSSupported());
       return CreateWindowsCoreAudioAudioDeviceModuleForTest(
-          task_queue_factory_.get(), true);
+          &env_.task_queue_factory(), true);
 #else
       return nullptr;
 #endif
@@ -659,23 +664,22 @@ class MAYBE_AudioDeviceTest
   std::unique_ptr<ScopedCOMInitializer> com_initializer_;
 #endif
   AudioDeviceModule::AudioLayer audio_layer_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
+  const Environment env_;
   bool requirements_satisfied_ = true;
-  rtc::Event event_;
-  rtc::scoped_refptr<AudioDeviceModuleForTest> audio_device_;
+  Event event_;
+  scoped_refptr<AudioDeviceModuleForTest> audio_device_;
   bool stereo_playout_ = false;
 };
 
 // Instead of using the test fixture, verify that the different factory methods
 // work as intended.
 TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
-  std::unique_ptr<TaskQueueFactory> task_queue_factory =
-      CreateDefaultTaskQueueFactory();
-  rtc::scoped_refptr<AudioDeviceModule> audio_device;
-  // The default factory should work for all platforms when a default ADM is
+  const Environment env = CreateEnvironment();
+  scoped_refptr<AudioDeviceModule> audio_device;
+  // The default environment should work for all platforms when a default ADM is
   // requested.
-  audio_device = AudioDeviceModule::Create(
-      AudioDeviceModule::kPlatformDefaultAudio, task_queue_factory.get());
+  audio_device =
+      CreateAudioDeviceModule(env, AudioDeviceModule::kPlatformDefaultAudio);
   EXPECT_TRUE(audio_device);
   audio_device = nullptr;
 #ifdef WEBRTC_WIN
@@ -683,8 +687,8 @@ TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
   // specific parts are implemented by an AudioDeviceGeneric object. Verify
   // that the old factory can't be used in combination with the latest audio
   // layer AudioDeviceModule::kWindowsCoreAudio2.
-  audio_device = AudioDeviceModule::Create(
-      AudioDeviceModule::kWindowsCoreAudio2, task_queue_factory.get());
+  audio_device =
+      CreateAudioDeviceModule(env, AudioDeviceModule::kWindowsCoreAudio2);
   EXPECT_FALSE(audio_device);
   audio_device = nullptr;
   // Instead, ensure that the new dedicated factory method called
@@ -694,7 +698,7 @@ TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
   ScopedCOMInitializer com_initializer(ScopedCOMInitializer::kMTA);
   EXPECT_TRUE(com_initializer.Succeeded());
   audio_device =
-      CreateWindowsCoreAudioAudioDeviceModule(task_queue_factory.get());
+      CreateWindowsCoreAudioAudioDeviceModule(&env.task_queue_factory());
   EXPECT_TRUE(audio_device);
   AudioDeviceModule::AudioLayer audio_layer;
   EXPECT_EQ(0, audio_device->ActiveAudioLayer(&audio_layer));
@@ -827,8 +831,8 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopPlayoutWithRealDevice) {
   AudioDeviceModule::WindowsDeviceType device_role[] = {
       AudioDeviceModule::kDefaultDevice,
       AudioDeviceModule::kDefaultCommunicationDevice};
-  for (size_t i = 0; i < arraysize(device_role); ++i) {
-    EXPECT_EQ(0, audio_device()->SetPlayoutDevice(device_role[i]));
+  for (AudioDeviceModule::WindowsDeviceType device_type : device_role) {
+    EXPECT_EQ(0, audio_device()->SetPlayoutDevice(device_type));
     StartPlayout();
     StopPlayout();
   }
@@ -854,8 +858,8 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopRecordingWithRealDevice) {
   AudioDeviceModule::WindowsDeviceType device_role[] = {
       AudioDeviceModule::kDefaultDevice,
       AudioDeviceModule::kDefaultCommunicationDevice};
-  for (size_t i = 0; i < arraysize(device_role); ++i) {
-    EXPECT_EQ(0, audio_device()->SetRecordingDevice(device_role[i]));
+  for (AudioDeviceModule::WindowsDeviceType device_type : device_role) {
+    EXPECT_EQ(0, audio_device()->SetRecordingDevice(device_type));
     StartRecording();
     StopRecording();
   }

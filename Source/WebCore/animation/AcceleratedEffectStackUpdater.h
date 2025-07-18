@@ -39,7 +39,7 @@ class Element;
 struct Styleable;
 
 class AcceleratedEffectStackUpdater {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AcceleratedEffectStackUpdater, Animation);
 public:
     AcceleratedEffectStackUpdater(Document&);
 

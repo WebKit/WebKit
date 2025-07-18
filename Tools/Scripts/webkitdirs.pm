@@ -3159,6 +3159,7 @@ sub setupUnixWebKitEnvironment($)
 {
     my ($productDir) = @_;
 
+    prependToEnvironmentVariableList("LD_LIBRARY_PATH", File::Spec->catfile($productDir, "lib"));
     $ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = File::Spec->catfile($productDir, "lib", "libTestRunnerInjectedBundle.so");
 }
 

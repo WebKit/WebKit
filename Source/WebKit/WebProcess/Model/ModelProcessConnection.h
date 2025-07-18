@@ -46,7 +46,7 @@ struct WebPageCreationParameters;
 class ModelProcessConnection
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelProcessConnection>
     , public IPC::Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelProcessConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcessConnection);
 public:
     static RefPtr<ModelProcessConnection> create(IPC::Connection& parentConnection);

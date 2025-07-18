@@ -44,7 +44,7 @@ class IntRect;
 // Use MemoryMappedGPUBuffer to create a OpenGL texture, that's baked by a dma-buf.
 class MemoryMappedGPUBuffer {
     WTF_MAKE_NONCOPYABLE(MemoryMappedGPUBuffer);
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
 public:
     ~MemoryMappedGPUBuffer();
 
@@ -76,7 +76,7 @@ public:
 
     class AccessScope {
         WTF_MAKE_NONCOPYABLE(AccessScope);
-        WTF_MAKE_FAST_ALLOCATED();
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
     public:
         ~AccessScope();
 

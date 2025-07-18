@@ -774,6 +774,9 @@ std::string RenderTestParams::backend() const
         case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
             strstr << "_metal";
             break;
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+            strstr << "_webgpu";
+            break;
         default:
             assert(0);
             return "_unk";

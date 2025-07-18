@@ -893,7 +893,7 @@ static void enableFeatureForPreferences(NSString *featureName, WKPreferences *pr
 }
 
 class WebPushDTestWebView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPushDTestWebView);
 public:
     WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
         : m_pushPartition(pushPartition)

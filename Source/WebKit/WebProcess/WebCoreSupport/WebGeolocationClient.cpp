@@ -50,26 +50,25 @@ WebGeolocationClient::~WebGeolocationClient() = default;
 void WebGeolocationClient::geolocationDestroyed()
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(*page);
-    delete this;
+        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->unregisterWebPage(*page);
 }
 
 void WebGeolocationClient::startUpdating(const String& authorizationToken, bool needsHighAccuracy)
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().supplement<WebGeolocationManager>()->registerWebPage(*page, authorizationToken, needsHighAccuracy);
+        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->registerWebPage(*page, authorizationToken, needsHighAccuracy);
 }
 
 void WebGeolocationClient::stopUpdating()
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(*page);
+        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->unregisterWebPage(*page);
 }
 
 void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().supplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(*page, enabled);
+        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(*page, enabled);
 }
 
 std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()

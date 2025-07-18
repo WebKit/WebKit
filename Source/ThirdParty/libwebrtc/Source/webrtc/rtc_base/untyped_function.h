@@ -30,8 +30,9 @@ enum : size_t { kInlineStorageWords = 4 };
 union VoidUnion {
   void* void_ptr;
   FunVoid* fun_ptr;
-  typename std::aligned_storage<kInlineStorageWords * sizeof(uintptr_t)>::type
-      inline_storage;
+  // std::max_align_t satisfies alignment requirements for every type.
+  alignas(std::max_align_t) char inline_storage[kInlineStorageWords *
+                                                sizeof(uintptr_t)];
 };
 
 // Returns the number of elements of the `inline_storage` array required to

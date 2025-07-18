@@ -2287,7 +2287,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
     JSRetainPtr<JSStringRef> protectedResult(result);
 #if !PLATFORM(IOS_FAMILY)
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, callbackID, protectedResult]() mutable {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, callbackID, protectedResult]() mutable {
         JSContextRef context = protectedThis->mainFrameJSContext();
         JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
         protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);

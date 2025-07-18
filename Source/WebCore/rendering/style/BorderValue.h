@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,40 +33,34 @@ namespace WebCore {
 class RenderStyle;
 
 class BorderValue {
-friend class RenderStyle;
+    friend class RenderStyle;
 public:
-    BorderValue();
-
-    bool nonZero() const
+    BorderValue()
+        : m_style(static_cast<unsigned>(BorderStyle::None))
     {
-        return width() && style() != BorderStyle::None;
-    }
-
-    bool isTransparent() const;
-
-    bool isVisible() const;
-
-    friend bool operator==(const BorderValue&, const BorderValue&) = default;
-
-    void setColor(const Style::Color& color)
-    {
-        m_color = color;
     }
 
     const Style::Color& color() const { return m_color; }
-
     float width() const { return m_width; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
 
+    bool isVisible() const;
+    bool nonZero() const;
+    bool isTransparent() const;
+
+    bool operator==(const BorderValue&) const = default;
+
 protected:
-    Style::Color m_color;
-
+    Style::Color m_color { Style::Color::currentColor() };
     float m_width { 3 };
-
-    unsigned m_style : 4; // BorderStyle
-
-    // This is only used by OutlineValue but moved here to keep the bits packed.
-    unsigned m_isAuto : 1; // bool
+    PREFERRED_TYPE(BorderStyle) unsigned m_style : 4;
 };
+
+inline bool BorderValue::nonZero() const
+{
+    return width() && style() != BorderStyle::None;
+}
+
+TextStream& operator<<(TextStream&, const BorderValue&);
 
 } // namespace WebCore

@@ -36,7 +36,7 @@ class NullModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
   void OnRequestSendReport() override {}
   void OnReceivedNack(const std::vector<uint16_t>&) override {}
   void OnReceivedRtcpReportBlocks(
-      rtc::ArrayView<const ReportBlockData> report_blocks) override {}
+      webrtc::ArrayView<const ReportBlockData> report_blocks) override {}
 };
 
 }  // namespace
@@ -57,6 +57,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   RTCPReceiver receiver(CreateEnvironment(&clock, &field_trials), config,
                         &rtp_rtcp_module);
 
-  receiver.IncomingPacket(rtc::MakeArrayView(data, size));
+  receiver.IncomingPacket(webrtc::MakeArrayView(data, size));
 }
 }  // namespace webrtc

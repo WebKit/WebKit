@@ -46,7 +46,7 @@ bool ValidReferences(const EncodedFrame& frame) {
 // Since FrameBuffer::FrameInfo is private it can't be used in the function
 // signature, hence the FrameIteratorT type.
 template <typename FrameIteratorT>
-rtc::ArrayView<const int64_t> GetReferences(const FrameIteratorT& it) {
+ArrayView<const int64_t> GetReferences(const FrameIteratorT& it) {
   return {it->second.encoded_frame->references,
           std::min<size_t>(it->second.encoded_frame->num_references,
                            EncodedFrame::kMaxFrameReferences)};

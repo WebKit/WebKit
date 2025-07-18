@@ -35,6 +35,7 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasRenderingContext2DSettings.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
@@ -542,6 +543,9 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        m_context->setDynamicRangeLimit(m_dynamicRangeLimit);
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
     }
 
     return downcast<GPUCanvasContext>(m_context.get());
@@ -1011,6 +1015,25 @@ void HTMLCanvasElement::prepareForDisplay()
     if (m_context)
         m_context->prepareForDisplay();
     notifyObserversCanvasDisplayBufferPrepared();
+}
+
+void HTMLCanvasElement::dynamicRangeLimitDidChange(PlatformDynamicRangeLimit dynamicRangeLimit)
+{
+    if (m_dynamicRangeLimit == dynamicRangeLimit)
+        return;
+
+    m_dynamicRangeLimit = dynamicRangeLimit;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (m_context)
+        m_context->setDynamicRangeLimit(dynamicRangeLimit);
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+}
+
+std::optional<double> HTMLCanvasElement::getContextEffectiveDynamicRangeLimitValue() const
+{
+    if (m_context)
+        return m_context->getEffectiveDynamicRangeLimitValue();
+    return std::nullopt;
 }
 
 bool HTMLCanvasElement::isControlledByOffscreen() const

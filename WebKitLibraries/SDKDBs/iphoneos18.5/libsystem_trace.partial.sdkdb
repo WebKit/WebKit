@@ -1,0 +1,214 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_DEFAULT"},
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_DETACHED"},
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_IF_NONE_PRESENT"}
+     ],
+     "name": "os_activity_flag_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_LOG_TYPE_DEFAULT"},
+      {"access": "public", "name": "OS_LOG_TYPE_INFO"},
+      {"access": "public", "name": "OS_LOG_TYPE_DEBUG"},
+      {"access": "public", "name": "OS_LOG_TYPE_ERROR"},
+      {"access": "public", "name": "OS_LOG_TYPE_FAULT"}
+     ],
+     "name": "os_log_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_SIGNPOST_EVENT"},
+      {"access": "public", "name": "OS_SIGNPOST_INTERVAL_BEGIN"},
+      {"access": "public", "name": "OS_SIGNPOST_INTERVAL_END"}
+     ],
+     "name": "os_signpost_type_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "___dso_handle"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_activity_create"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "__os_activity_current"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_initiate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_initiate_f"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_activity_label_useraction"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "__os_activity_none"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_set_breadcrumb"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_start"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "__os_log_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "__os_log_debug_impl"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "__os_log_default"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "__os_log_disabled"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "__os_log_error_impl"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "__os_log_fault_impl"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_log_impl"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "__os_log_internal"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "internal", "name": "__os_log_sensitive_deprecated"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "__os_signpost_emit_with_name_impl"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "__os_trace_verify_printf"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_trace_with_buffer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_apply"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_apply_f"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_activity_end"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_activity_get_active"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_get_identifier"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_scope_enter"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_scope_leave"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_log_create"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_os_log_is_debug_enabled"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_os_log_is_enabled"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_log_type_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_id_generate"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_id_make_with_pointer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_trace_debug_enabled"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_trace_info_enabled"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "internal", "name": "_os_trace_type_enabled"}
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "OS_os_activity",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_os_log",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "os_activity_flag_t"},
+    {"access": "public", "introduced": "8", "name": "os_activity_id_t"},
+    {"access": "public", "introduced": "10", "name": "os_activity_scope_state_t"},
+    {"access": "public", "name": "os_activity_t"},
+    {"access": "public", "introduced": "8", "name": "os_breadcrumb_t"},
+    {"access": "public", "name": "os_log_t"},
+    {"access": "public", "name": "os_log_type_t"},
+    {"access": "public", "name": "os_signpost_id_t"},
+    {"access": "public", "name": "os_signpost_type_t"},
+    {"access": "public", "name": "os_trace_payload_object_t"},
+    {"access": "public", "name": "os_trace_payload_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_DEFAULT"},
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_DETACHED"},
+      {"access": "public", "name": "OS_ACTIVITY_FLAG_IF_NONE_PRESENT"}
+     ],
+     "name": "os_activity_flag_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_LOG_TYPE_DEFAULT"},
+      {"access": "public", "name": "OS_LOG_TYPE_INFO"},
+      {"access": "public", "name": "OS_LOG_TYPE_DEBUG"},
+      {"access": "public", "name": "OS_LOG_TYPE_ERROR"},
+      {"access": "public", "name": "OS_LOG_TYPE_FAULT"}
+     ],
+     "name": "os_log_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_SIGNPOST_EVENT"},
+      {"access": "public", "name": "OS_SIGNPOST_INTERVAL_BEGIN"},
+      {"access": "public", "name": "OS_SIGNPOST_INTERVAL_END"}
+     ],
+     "name": "os_signpost_type_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "___dso_handle"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_activity_create"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "__os_activity_current"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_initiate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_initiate_f"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_activity_label_useraction"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "__os_activity_none"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_set_breadcrumb"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_activity_start"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "__os_log_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "__os_log_debug_impl"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "__os_log_default"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "__os_log_disabled"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "__os_log_error_impl"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "__os_log_fault_impl"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "__os_log_impl"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "__os_log_internal"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "internal", "name": "__os_log_sensitive_deprecated"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "__os_signpost_emit_with_name_impl"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "__os_trace_verify_printf"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__os_trace_with_buffer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_apply"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_apply_f"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_activity_end"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_activity_get_active"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_get_identifier"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_scope_enter"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_activity_scope_leave"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_log_create"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_os_log_is_debug_enabled"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_os_log_is_enabled"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_log_type_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_id_generate"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_os_signpost_id_make_with_pointer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_os_trace_debug_enabled"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_os_trace_info_enabled"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "internal", "name": "_os_trace_type_enabled"}
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "OS_os_activity",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_os_log",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "os_activity_flag_t"},
+    {"access": "public", "introduced": "8", "name": "os_activity_id_t"},
+    {"access": "public", "introduced": "10", "name": "os_activity_scope_state_t"},
+    {"access": "public", "name": "os_activity_t"},
+    {"access": "public", "introduced": "8", "name": "os_breadcrumb_t"},
+    {"access": "public", "name": "os_log_t"},
+    {"access": "public", "name": "os_log_type_t"},
+    {"access": "public", "name": "os_signpost_id_t"},
+    {"access": "public", "name": "os_signpost_type_t"},
+    {"access": "public", "name": "os_trace_payload_object_t"},
+    {"access": "public", "name": "os_trace_payload_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

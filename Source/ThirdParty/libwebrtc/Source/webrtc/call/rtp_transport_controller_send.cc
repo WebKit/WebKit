@@ -50,7 +50,6 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
@@ -91,7 +90,7 @@ TargetRateConstraints ConvertConstraints(const BitrateConstraints& contraints,
                             contraints.start_bitrate_bps, clock);
 }
 
-bool IsRelayed(const rtc::NetworkRoute& route) {
+bool IsRelayed(const NetworkRoute& route) {
   return route.local.uses_turn() || route.remote.uses_turn();
 }
 }  // namespace
@@ -166,7 +165,7 @@ RtpVideoSenderInterface* RtpTransportControllerSend::CreateRtpVideoSender(
     const RtpSenderObservers& observers,
     std::unique_ptr<FecController> fec_controller,
     const RtpSenderFrameEncryptionConfig& frame_encryption_config,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
+    scoped_refptr<FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   video_rtp_senders_.push_back(std::make_unique<RtpVideoSender>(
       env_, task_queue_, suspended_ssrcs, states, rtp_config,
@@ -320,8 +319,8 @@ void RtpTransportControllerSend::RegisterTargetTransferRateObserver(
 }
 
 bool RtpTransportControllerSend::IsRelevantRouteChange(
-    const rtc::NetworkRoute& old_route,
-    const rtc::NetworkRoute& new_route) const {
+    const NetworkRoute& old_route,
+    const NetworkRoute& new_route) const {
   bool connected_changed = old_route.connected != new_route.connected;
   bool route_ids_changed = false;
   bool relaying_changed = false;
@@ -343,7 +342,7 @@ bool RtpTransportControllerSend::IsRelevantRouteChange(
 
 void RtpTransportControllerSend::OnNetworkRouteChanged(
     absl::string_view transport_name,
-    const rtc::NetworkRoute& network_route) {
+    const NetworkRoute& network_route) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Check if the network route is connected.
   if (!network_route.connected) {
@@ -380,7 +379,7 @@ void RtpTransportControllerSend::OnNetworkRouteChanged(
     return;
   }
 
-  const rtc::NetworkRoute old_route = kv->second;
+  const NetworkRoute old_route = kv->second;
   kv->second = network_route;
 
   // Check if enough conditions of the new/old route has changed
@@ -396,6 +395,10 @@ void RtpTransportControllerSend::OnNetworkRouteChanged(
 
     env_.event_log().Log(std::make_unique<RtcEventRouteChange>(
         network_route.connected, network_route.packet_overhead));
+    if (transport_maybe_support_ecn_) {
+      sending_packets_as_ect1_ = true;
+      packet_router_.ConfigureForRfc8888Feedback(sending_packets_as_ect1_);
+    }
     NetworkRouteChange msg;
     msg.at_time = Timestamp::Millis(env_.clock().TimeInMilliseconds());
     msg.constraints = ConvertConstraints(bitrate_config, &env_.clock());
@@ -450,7 +453,7 @@ void RtpTransportControllerSend::EnablePeriodicAlrProbing(bool enable) {
   UpdateStreamsConfig();
 }
 void RtpTransportControllerSend::OnSentPacket(
-    const rtc::SentPacket& sent_packet) {
+    const SentPacketInfo& sent_packet) {
   // Normally called on the network thread!
   // TODO(crbug.com/1373439): Clarify other thread contexts calling in,
   // and simplify task posting logic when the combined network/worker project
@@ -468,7 +471,7 @@ void RtpTransportControllerSend::OnSentPacket(
 }
 
 void RtpTransportControllerSend::ProcessSentPacket(
-    const rtc::SentPacket& sent_packet) {
+    const SentPacketInfo& sent_packet) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   std::optional<SentPacket> packet_msg =
       transport_feedback_adapter_.ProcessSentPacket(sent_packet);
@@ -620,35 +623,30 @@ void RtpTransportControllerSend::NotifyBweOfPacedSentPacket(
     RTC_DCHECK_NOTREACHED() << "Unknown packet type";
     return;
   }
-  if (packet.HasExtension<TransportSequenceNumber>()) {
-    // TODO: bugs.webrtc.org/42225697 - Refactor TransportFeedbackDemuxer to use
-    // TransportPacketsFeedback instead of directly using
-    // rtcp::TransportFeedback. For now, only use it if TransportSeqeunce number
-    // header extension is used.
-    RtpPacketSendInfo packet_info =
-        RtpPacketSendInfo::From(packet, pacing_info);
-    feedback_demuxer_.AddPacket(packet_info);
-  }
   Timestamp creation_time =
       Timestamp::Millis(env_.clock().TimeInMilliseconds());
   transport_feedback_adapter_.AddPacket(
       packet, pacing_info, transport_overhead_bytes_per_packet_, creation_time);
 }
 
+void RtpTransportControllerSend::
+    EnableCongestionControlFeedbackAccordingToRfc8888() {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  transport_maybe_support_ecn_ = true;
+  sending_packets_as_ect1_ = true;
+  packet_router_.ConfigureForRfc8888Feedback(sending_packets_as_ect1_);
+}
+
 void RtpTransportControllerSend::OnTransportFeedback(
     Timestamp receive_time,
     const rtcp::TransportFeedback& feedback) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  feedback_demuxer_.OnTransportFeedback(feedback);
+  ++transport_cc_feedback_count_;
   std::optional<TransportPacketsFeedback> feedback_msg =
       transport_feedback_adapter_.ProcessTransportFeedback(feedback,
                                                            receive_time);
   if (feedback_msg) {
-    if (controller_)
-      PostUpdates(controller_->OnTransportPacketsFeedback(*feedback_msg));
-
-    // Only update outstanding data if any packet is first time acked.
-    UpdateCongestedState();
+    HandleTransportPacketsFeedback(*feedback_msg);
   }
 }
 
@@ -656,19 +654,34 @@ void RtpTransportControllerSend::OnCongestionControlFeedback(
     Timestamp receive_time,
     const rtcp::CongestionControlFeedback& feedback) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  // TODO: bugs.webrtc.org/42225697 - update feedback demuxer for RFC 8888.
-  // Suggest feedback_demuxer_.OnTransportFeedback use TransportPacketFeedback
-  // instead. See usage in OnTransportFeedback.
+  ++feedback_count_;
   std::optional<TransportPacketsFeedback> feedback_msg =
       transport_feedback_adapter_.ProcessCongestionControlFeedback(
           feedback, receive_time);
   if (feedback_msg) {
-    if (controller_)
-      PostUpdates(controller_->OnTransportPacketsFeedback(*feedback_msg));
-
-    // Only update outstanding data if any packet is first time acked.
-    UpdateCongestedState();
+    HandleTransportPacketsFeedback(*feedback_msg);
   }
+}
+
+void RtpTransportControllerSend::HandleTransportPacketsFeedback(
+    const TransportPacketsFeedback& feedback) {
+  if (sending_packets_as_ect1_) {
+    // If transport does not support ECN, packets should not be sent as ECT(1).
+    // TODO: bugs.webrtc.org/42225697 - adapt to ECN feedback and continue to
+    // send packets as ECT(1) if transport is ECN capable.
+    sending_packets_as_ect1_ = false;
+    RTC_LOG(LS_INFO) << " Transport is "
+                     << (feedback.transport_supports_ecn ? "" : " not ")
+                     << " ECN capable. Stop sending ECT(1).";
+    packet_router_.ConfigureForRfc8888Feedback(sending_packets_as_ect1_);
+  }
+
+  feedback_demuxer_.OnTransportFeedback(feedback);
+  if (controller_)
+    PostUpdates(controller_->OnTransportPacketsFeedback(feedback));
+
+  // Only update outstanding data if any packet is first time acked.
+  UpdateCongestedState();
 }
 
 void RtpTransportControllerSend::OnRemoteNetworkEstimate(
@@ -784,7 +797,7 @@ void RtpTransportControllerSend::PostUpdates(NetworkControlUpdate update) {
 
 void RtpTransportControllerSend::OnReport(
     Timestamp receive_time,
-    rtc::ArrayView<const ReportBlockData> report_blocks) {
+    ArrayView<const ReportBlockData> report_blocks) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (report_blocks.empty())
     return;

@@ -66,7 +66,7 @@ class HeartbeatInfo {
   }
 
   static std::optional<HeartbeatInfo> Deserialize(
-      rtc::ArrayView<const uint8_t> data) {
+      webrtc::ArrayView<const uint8_t> data) {
     if (data.size() != kBufferSize) {
       RTC_LOG(LS_WARNING) << "Invalid heartbeat info: " << data.size()
                           << " bytes";
@@ -100,8 +100,7 @@ HeartbeatHandler::HeartbeatHandler(absl::string_view log_prefix,
       interval_timer_(timer_manager_->CreateTimer(
           "heartbeat-interval",
           absl::bind_front(&HeartbeatHandler::OnIntervalTimerExpiry, this),
-          TimerOptions(interval_duration_,
-                       TimerBackoffAlgorithm::kFixed))),
+          TimerOptions(interval_duration_, TimerBackoffAlgorithm::kFixed))),
       timeout_timer_(timer_manager_->CreateTimer(
           "heartbeat-timeout",
           absl::bind_front(&HeartbeatHandler::OnTimeoutTimerExpiry, this),
@@ -121,8 +120,7 @@ void HeartbeatHandler::RestartTimer() {
   if (interval_duration_should_include_rtt_) {
     // The RTT should be used, but it's not easy accessible. The RTO will
     // suffice.
-    interval_timer_->set_duration(
-        interval_duration_ + ctx_->current_rto());
+    interval_timer_->set_duration(interval_duration_ + ctx_->current_rto());
   } else {
     interval_timer_->set_duration(interval_duration_);
   }

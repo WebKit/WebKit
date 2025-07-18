@@ -1,0 +1,4 @@
+PASS if green
+
+FAIL if-testing the initial keyword without any property registrations assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

@@ -13,13 +13,17 @@
 #include <string.h>
 
 #include <cstdint>
+#include <string>
+#include <utility>
 
-#include "rtc_base/arraysize.h"
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/byte_order.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
@@ -102,7 +106,7 @@ TEST(ByteBufferTest, TestBufferLength) {
 
 TEST(ByteBufferTest, TestReadWriteBuffer) {
   ByteBufferWriter buffer;
-  ByteBufferReader read_buf(rtc::ArrayView<const uint8_t>(nullptr, 0));
+  ByteBufferReader read_buf(ArrayView<const uint8_t>(nullptr, 0));
   uint8_t ru8;
   EXPECT_FALSE(read_buf.ReadUInt8(&ru8));
 
@@ -168,12 +172,24 @@ TEST(ByteBufferTest, TestReadWriteBuffer) {
 
   // Write and read bytes
   uint8_t write_bytes[] = {3, 2, 1};
-  buffer.WriteBytes(write_bytes, 3);
+  buffer.Write(ArrayView<const uint8_t>(write_bytes, 3));
   ByteBufferReader read_buf7(buffer);
   uint8_t read_bytes[3];
   EXPECT_TRUE(read_buf7.ReadBytes(read_bytes));
   EXPECT_THAT(read_bytes, ElementsAreArray(write_bytes));
   EXPECT_EQ(read_buf7.Length(), 0U);
+  buffer.Clear();
+
+  // Write and read bytes with deprecated function
+  // TODO: issues.webrtc.org/42225170 - delete
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  buffer.WriteBytes(write_bytes, 3);
+#pragma clang diagnostic pop
+  ByteBufferReader read_buf75(buffer);
+  EXPECT_TRUE(read_buf75.ReadBytes(read_bytes));
+  EXPECT_THAT(read_bytes, ElementsAreArray(write_bytes));
+  EXPECT_EQ(read_buf75.Length(), 0U);
   buffer.Clear();
 
   // Write and read reserved buffer space
@@ -261,8 +277,8 @@ TEST(ByteBufferTest, TestReadStringView) {
   for (const auto& test : tests)
     buffer += test;
 
-  rtc::ArrayView<const uint8_t> bytes(
-      reinterpret_cast<const uint8_t*>(&buffer[0]), buffer.size());
+  ArrayView<const uint8_t> bytes(reinterpret_cast<const uint8_t*>(&buffer[0]),
+                                 buffer.size());
 
   ByteBufferReader read_buf(bytes);
   size_t consumed = 0;
@@ -352,13 +368,13 @@ TEST(ByteBufferTest, ReadToArrayView) {
   ArrayView<const uint8_t> stored_view(buf, 3);
   ByteBufferReader read_buffer(stored_view);
   uint8_t result[] = {'1', '2', '3'};
-  EXPECT_TRUE(read_buffer.ReadBytes(rtc::MakeArrayView(result, 2)));
+  EXPECT_TRUE(read_buffer.ReadBytes(MakeArrayView(result, 2)));
   EXPECT_EQ(result[0], 'a');
   EXPECT_EQ(result[1], 'b');
   EXPECT_EQ(result[2], '3');
-  EXPECT_TRUE(read_buffer.ReadBytes(rtc::MakeArrayView(&result[2], 1)));
+  EXPECT_TRUE(read_buffer.ReadBytes(MakeArrayView(&result[2], 1)));
   EXPECT_EQ(result[2], 'c');
-  EXPECT_FALSE(read_buffer.ReadBytes(rtc::MakeArrayView(result, 1)));
+  EXPECT_FALSE(read_buffer.ReadBytes(MakeArrayView(result, 1)));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

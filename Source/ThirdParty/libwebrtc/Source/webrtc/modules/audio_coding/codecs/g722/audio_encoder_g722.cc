@@ -10,11 +10,18 @@
 
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <optional>
+#include <utility>
 
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/g722/audio_encoder_g722_config.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/g722/g722_interface.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 
@@ -87,8 +94,8 @@ AudioEncoderG722Impl::GetFrameLengthRange() const {
 
 AudioEncoder::EncodedInfo AudioEncoderG722Impl::EncodeImpl(
     uint32_t rtp_timestamp,
-    rtc::ArrayView<const int16_t> audio,
-    rtc::Buffer* encoded) {
+    ArrayView<const int16_t> audio,
+    Buffer* encoded) {
   if (num_10ms_frames_buffered_ == 0)
     first_timestamp_in_buffer_ = rtp_timestamp;
 
@@ -116,8 +123,8 @@ AudioEncoder::EncodedInfo AudioEncoderG722Impl::EncodeImpl(
 
   const size_t bytes_to_encode = samples_per_channel / 2 * num_channels_;
   EncodedInfo info;
-  info.encoded_bytes = encoded->AppendData(
-      bytes_to_encode, [&](rtc::ArrayView<uint8_t> encoded) {
+  info.encoded_bytes =
+      encoded->AppendData(bytes_to_encode, [&](ArrayView<uint8_t> encoded) {
         // Interleave the encoded bytes of the different channels. Each separate
         // channel and the interleaved stream encodes two samples per byte, most
         // significant half first.

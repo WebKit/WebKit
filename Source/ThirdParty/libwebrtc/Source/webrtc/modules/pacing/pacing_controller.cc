@@ -114,7 +114,7 @@ PacingController::PacingController(Clock* clock,
 PacingController::~PacingController() = default;
 
 void PacingController::CreateProbeClusters(
-    rtc::ArrayView<const ProbeClusterConfig> probe_cluster_configs) {
+    ArrayView<const ProbeClusterConfig> probe_cluster_configs) {
   for (const ProbeClusterConfig probe_cluster_config : probe_cluster_configs) {
     prober_.CreateProbeCluster(probe_cluster_config);
   }
@@ -221,7 +221,7 @@ void PacingController::EnqueuePacket(std::unique_ptr<RtpPacketToSend> packet) {
     }
   }
 
-  prober_.OnIncomingPacket(DataSize::Bytes(packet->payload_size()));
+  prober_.OnIncomingPacket(DataSize::Bytes(packet->size()));
 
   const Timestamp now = CurrentTime();
   if (packet_queue_.Empty()) {
@@ -272,7 +272,7 @@ TimeDelta PacingController::ExpectedQueueTime() const {
 }
 
 size_t PacingController::QueueSizePackets() const {
-  return rtc::checked_cast<size_t>(packet_queue_.SizeInPackets());
+  return checked_cast<size_t>(packet_queue_.SizeInPackets());
 }
 
 const std::array<int, kNumMediaTypes>&
@@ -415,8 +415,8 @@ void PacingController::ProcessPackets() {
         keepalive_data_sent +=
             DataSize::Bytes(packet->payload_size() + packet->padding_size());
         packet_sender_->SendPacket(std::move(packet), PacedPacketInfo());
-        for (auto& packet : packet_sender_->FetchFec()) {
-          EnqueuePacket(std::move(packet));
+        for (auto& fec_packet : packet_sender_->FetchFec()) {
+          EnqueuePacket(std::move(fec_packet));
         }
       }
     }

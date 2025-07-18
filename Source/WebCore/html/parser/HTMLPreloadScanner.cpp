@@ -202,7 +202,7 @@ private:
         if (match(attributeName, srcAttr))
             setURLToLoad(attributeValue);
         else if (match(attributeName, crossoriginAttr))
-            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
+            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<char16_t>).toString();
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue.toString();
     }
@@ -212,7 +212,7 @@ private:
         if (match(attributeName, posterAttr))
             setURLToLoad(attributeValue);
         else if (match(attributeName, crossoriginAttr))
-            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
+            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<char16_t>).toString();
     }
 
     void processAttribute(const AtomString& attributeName, StringView attributeValue, const Vector<bool>& pictureState)
@@ -310,7 +310,7 @@ private:
             else if (match(attributeName, charsetAttr))
                 m_charset = attributeValue.toString();
             else if (match(attributeName, crossoriginAttr))
-                m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
+                m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<char16_t>).toString();
             else if (match(attributeName, nonceAttr))
                 m_nonceAttribute = attributeValue.toString();
             else if (match(attributeName, asAttr))
@@ -364,7 +364,7 @@ private:
 
     void setURLToLoadAllowingReplacement(StringView value)
     {
-        auto trimmedURL = value.trim(isASCIIWhitespace<UChar>);
+        auto trimmedURL = value.trim(isASCIIWhitespace<char16_t>);
         if (trimmedURL.isEmpty())
             return;
         m_urlToLoad = trimmedURL.toString();
@@ -489,7 +489,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         TagId tagId = tagIdFor(token.name());
         if (tagId == TagId::Template) {
             bool isDeclarativeShadowRoot = false;
-            static constexpr UChar shadowRootAsUChar[] = { 's', 'h', 'a', 'd', 'o', 'w', 'r', 'o', 'o', 't', 'm', 'o', 'd', 'e' };
+            static constexpr char16_t shadowRootAsUChar[] = { 's', 'h', 'a', 'd', 'o', 'w', 'r', 'o', 'o', 't', 'm', 'o', 'd', 'e' };
             const auto* shadowRootModeAttribute = findAttribute(token.attributes(), shadowRootAsUChar);
             if (shadowRootModeAttribute) {
                 String shadowRootValue(shadowRootModeAttribute->value);
@@ -535,7 +535,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool shouldRestrictBaseURLSchemes)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    static constexpr UChar hrefAsUChar[] = { 'h', 'r', 'e', 'f' };
+    static constexpr char16_t hrefAsUChar[] = { 'h', 'r', 'e', 'f' };
     auto* hrefAttribute = findAttribute(token.attributes(), hrefAsUChar);
     if (!hrefAttribute)
         return;

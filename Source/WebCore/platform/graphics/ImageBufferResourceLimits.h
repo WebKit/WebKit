@@ -28,14 +28,14 @@
 namespace WebCore {
 
 struct ImageBufferResourceLimits {
-    size_t acceleratedImageBufferForCanvasCount;
-    size_t acceleratedImageBufferForCanvasLimit;
-    size_t globalAcceleratedImageBufferCount;
-    size_t globalAcceleratedImageBufferLimit;
-    size_t globalImageBufferForCanvasCount;
-    size_t globalImageBufferForCanvasLimit;
-    size_t imageBufferForCanvasCount;
-    size_t imageBufferForCanvasLimit;
+    uint64_t acceleratedImageBufferForCanvasCount;
+    uint64_t acceleratedImageBufferForCanvasLimit;
+    uint64_t globalAcceleratedImageBufferCount;
+    uint64_t globalAcceleratedImageBufferLimit;
+    uint64_t globalImageBufferForCanvasCount;
+    uint64_t globalImageBufferForCanvasLimit;
+    uint64_t imageBufferForCanvasCount;
+    uint64_t imageBufferForCanvasLimit;
 };
 
 } // namespace WebCore

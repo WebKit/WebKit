@@ -20,6 +20,7 @@
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -114,8 +115,8 @@ bool RedPayloadSplitter::SplitRed(PacketList* packet_list) {
       PacketList new_packets;  // An empty list to store the split packets in.
       for (size_t i = 0; i != new_headers.size(); ++i) {
         const auto& new_header = new_headers[i];
-        size_t payload_length = new_header.payload_length;
-        if (payload_ptr + payload_length >
+        size_t block_length = new_header.payload_length;
+        if (payload_ptr + block_length >
             red_packet.payload.data() + red_packet.payload.size()) {
           // The block lengths in the RED headers do not match the overall
           // packet length. Something is corrupt. Discard this and the remaining
@@ -130,10 +131,10 @@ bool RedPayloadSplitter::SplitRed(PacketList* packet_list) {
         new_packet.payload_type = new_header.payload_type;
         new_packet.sequence_number = red_packet.sequence_number;
         new_packet.priority.red_level =
-            rtc::dchecked_cast<int>((new_headers.size() - 1) - i);
-        new_packet.payload.SetData(payload_ptr, payload_length);
+            dchecked_cast<int>((new_headers.size() - 1) - i);
+        new_packet.payload.SetData(payload_ptr, block_length);
         new_packets.push_front(std::move(new_packet));
-        payload_ptr += payload_length;
+        payload_ptr += block_length;
       }
       // Insert new packets into original list, before the element pointed to by
       // iterator `it`.

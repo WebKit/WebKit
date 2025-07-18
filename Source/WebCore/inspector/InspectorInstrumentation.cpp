@@ -37,6 +37,7 @@
 #include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"
 #include "Event.h"
+#include "EventTargetInlines.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"

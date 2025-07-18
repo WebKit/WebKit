@@ -59,7 +59,7 @@ class SimpleEncoderWrapper {
 
   void SetEncodeFps(int fps);
 
-  void Encode(rtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer,
+  void Encode(scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer,
               bool force_keyframe,
               EncodeResultCallback callback);
 

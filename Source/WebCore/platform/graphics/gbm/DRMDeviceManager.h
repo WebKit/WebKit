@@ -45,7 +45,7 @@ class DRMDeviceNode;
 
 class DRMDeviceManager {
     WTF_MAKE_NONCOPYABLE(DRMDeviceManager);
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
 public:
     static DRMDeviceManager& singleton();
 

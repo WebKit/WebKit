@@ -58,24 +58,24 @@ static inline RTCDtlsTransportState toRTCDtlsTransportState(webrtc::DtlsTranspor
 
 class LibWebRTCDtlsTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCDtlsTransportBackendObserver>, public webrtc::DtlsTransportObserverInterface {
 public:
-    static Ref<LibWebRTCDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, rtc::scoped_refptr<webrtc::DtlsTransportInterface>& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, backend)); }
+    static Ref<LibWebRTCDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, webrtc::scoped_refptr<webrtc::DtlsTransportInterface>& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, backend)); }
 
     void start();
     void stop();
 
 private:
-    LibWebRTCDtlsTransportBackendObserver(RTCDtlsTransportBackendClient&, rtc::scoped_refptr<webrtc::DtlsTransportInterface>&);
+    LibWebRTCDtlsTransportBackendObserver(RTCDtlsTransportBackendClient&, webrtc::scoped_refptr<webrtc::DtlsTransportInterface>&);
 
     void OnStateChange(webrtc::DtlsTransportInformation) final;
     void OnError(webrtc::RTCError) final;
 
     void updateState(webrtc::DtlsTransportInformation&&);
 
-    rtc::scoped_refptr<webrtc::DtlsTransportInterface> m_backend;
+    webrtc::scoped_refptr<webrtc::DtlsTransportInterface> m_backend;
     WeakPtr<RTCDtlsTransportBackendClient> m_client;
 };
 
-LibWebRTCDtlsTransportBackendObserver::LibWebRTCDtlsTransportBackendObserver(RTCDtlsTransportBackendClient& client, rtc::scoped_refptr<webrtc::DtlsTransportInterface>& backend)
+LibWebRTCDtlsTransportBackendObserver::LibWebRTCDtlsTransportBackendObserver(RTCDtlsTransportBackendClient& client, webrtc::scoped_refptr<webrtc::DtlsTransportInterface>& backend)
     : m_backend(backend)
     , m_client(client)
 {
@@ -87,10 +87,10 @@ void LibWebRTCDtlsTransportBackendObserver::updateState(webrtc::DtlsTransportInf
     if (!m_client)
         return;
 
-    Vector<rtc::Buffer> certificates;
+    Vector<webrtc::Buffer> certificates;
     if (auto* remoteCertificates = info.remote_ssl_certificates()) {
         for (size_t i = 0; i < remoteCertificates->GetSize(); ++i) {
-            rtc::Buffer certificate;
+            webrtc::Buffer certificate;
             remoteCertificates->Get(i).ToDER(&certificate);
             certificates.append(WTFMove(certificate));
         }
@@ -135,7 +135,7 @@ void LibWebRTCDtlsTransportBackendObserver::OnError(webrtc::RTCError)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDtlsTransportBackend);
 
-LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend(rtc::scoped_refptr<webrtc::DtlsTransportInterface>&& backend)
+LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend(webrtc::scoped_refptr<webrtc::DtlsTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
 {
     ASSERT(m_backend);

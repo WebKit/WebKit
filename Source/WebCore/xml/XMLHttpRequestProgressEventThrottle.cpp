@@ -34,7 +34,6 @@
 #include "EventTargetInlines.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
-#include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 
 namespace WebCore {
@@ -54,7 +53,11 @@ void XMLHttpRequestProgressEventThrottle::updateProgress(bool isAsync, bool leng
     m_loaded = loaded;
     m_total = total;
 
-    if (!isAsync || !m_target.hasEventListeners(eventNames().progressEvent))
+    if (!isAsync)
+        return;
+
+    Ref target = m_target.get();
+    if (!target->hasEventListeners(eventNames().progressEvent))
         return;
 
     if (!m_shouldDeferEventsDueToSuspension && !m_dispatchThrottledProgressEventTimer) {
@@ -64,7 +67,7 @@ void XMLHttpRequestProgressEventThrottle::updateProgress(bool isAsync, bool leng
         ASSERT(!m_hasPendingThrottledProgressEvent);
 
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total));
-        m_dispatchThrottledProgressEventTimer = m_target.protectedScriptExecutionContext()->checkedEventLoop()->scheduleRepeatingTask(
+        m_dispatchThrottledProgressEventTimer = target->protectedScriptExecutionContext()->checkedEventLoop()->scheduleRepeatingTask(
             minimumProgressEventDispatchingInterval, minimumProgressEventDispatchingInterval, TaskSource::Networking, [weakThis = WeakPtr { *this }] {
                 if (weakThis)
                     weakThis->dispatchThrottledProgressEventTimerFired();
@@ -87,10 +90,11 @@ void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(Event& e
 
 void XMLHttpRequestProgressEventThrottle::dispatchEventWhenPossible(Event& event)
 {
+    Ref target = m_target.get();
     if (m_shouldDeferEventsDueToSuspension)
-        m_target.queueTaskToDispatchEvent(m_target, TaskSource::Networking, event);
+        target->queueTaskToDispatchEvent(target.get(), TaskSource::Networking, event);
     else
-        m_target.dispatchEvent(event);
+        target->dispatchEvent(event);
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomString& type)
@@ -103,7 +107,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomString
         m_total = 0;
     }
 
-    if (m_target.hasEventListeners(type))
+    if (protectedTarget()->hasEventListeners(type))
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
 
@@ -111,7 +115,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchErrorProgressEvent(const AtomS
 {
     ASSERT(type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
-    if (m_target.hasEventListeners(type))
+    if (protectedTarget()->hasEventListeners(type))
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(type, false, 0, 0));
 }
 
@@ -145,7 +149,7 @@ void XMLHttpRequestProgressEventThrottle::suspend()
     m_shouldDeferEventsDueToSuspension = true;
 
     if (m_hasPendingThrottledProgressEvent) {
-        ActiveDOMObject::queueTaskKeepingObjectAlive(m_target, TaskSource::Networking, [this](auto&) {
+        ActiveDOMObject::queueTaskKeepingObjectAlive(protectedTarget().get(), TaskSource::Networking, [this](auto&) {
             flushProgressEvent();
         });
     }
@@ -153,7 +157,7 @@ void XMLHttpRequestProgressEventThrottle::suspend()
 
 void XMLHttpRequestProgressEventThrottle::resume()
 {
-    ActiveDOMObject::queueTaskKeepingObjectAlive(m_target, TaskSource::Networking, [this](auto&) {
+    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedTarget().get(), TaskSource::Networking, [this](auto&) {
         m_shouldDeferEventsDueToSuspension = false;
     });
 }

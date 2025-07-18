@@ -151,7 +151,7 @@ struct Vp9UncompressedHeader {
 // Parses the uncompressed header and populates (most) values in a
 // UncompressedHeader struct. Returns nullopt on failure.
 std::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
-    rtc::ArrayView<const uint8_t> buf);
+    ArrayView<const uint8_t> buf);
 
 }  // namespace webrtc
 

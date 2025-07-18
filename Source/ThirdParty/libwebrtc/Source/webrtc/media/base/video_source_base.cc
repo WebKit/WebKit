@@ -11,18 +11,22 @@
 #include "media/base/video_source_base.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/sequence_checker.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 VideoSourceBase::VideoSourceBase() = default;
 VideoSourceBase::~VideoSourceBase() = default;
 
-void VideoSourceBase::AddOrUpdateSink(
-    VideoSinkInterface<webrtc::VideoFrame>* sink,
-    const VideoSinkWants& wants) {
+void VideoSourceBase::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                                      const VideoSinkWants& wants) {
   RTC_DCHECK(sink != nullptr);
 
   SinkPair* sink_pair = FindSinkPair(sink);
@@ -33,7 +37,7 @@ void VideoSourceBase::AddOrUpdateSink(
   }
 }
 
-void VideoSourceBase::RemoveSink(VideoSinkInterface<webrtc::VideoFrame>* sink) {
+void VideoSourceBase::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK(sink != nullptr);
   RTC_DCHECK(FindSinkPair(sink));
   sinks_.erase(std::remove_if(sinks_.begin(), sinks_.end(),
@@ -44,7 +48,7 @@ void VideoSourceBase::RemoveSink(VideoSinkInterface<webrtc::VideoFrame>* sink) {
 }
 
 VideoSourceBase::SinkPair* VideoSourceBase::FindSinkPair(
-    const VideoSinkInterface<webrtc::VideoFrame>* sink) {
+    const VideoSinkInterface<VideoFrame>* sink) {
   auto sink_pair_it = absl::c_find_if(
       sinks_,
       [sink](const SinkPair& sink_pair) { return sink_pair.sink == sink; });
@@ -58,7 +62,7 @@ VideoSourceBaseGuarded::VideoSourceBaseGuarded() = default;
 VideoSourceBaseGuarded::~VideoSourceBaseGuarded() = default;
 
 void VideoSourceBaseGuarded::AddOrUpdateSink(
-    VideoSinkInterface<webrtc::VideoFrame>* sink,
+    VideoSinkInterface<VideoFrame>* sink,
     const VideoSinkWants& wants) {
   RTC_DCHECK_RUN_ON(&source_sequence_);
   RTC_DCHECK(sink != nullptr);
@@ -71,8 +75,7 @@ void VideoSourceBaseGuarded::AddOrUpdateSink(
   }
 }
 
-void VideoSourceBaseGuarded::RemoveSink(
-    VideoSinkInterface<webrtc::VideoFrame>* sink) {
+void VideoSourceBaseGuarded::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK_RUN_ON(&source_sequence_);
   RTC_DCHECK(sink != nullptr);
   RTC_DCHECK(FindSinkPair(sink));
@@ -84,7 +87,7 @@ void VideoSourceBaseGuarded::RemoveSink(
 }
 
 VideoSourceBaseGuarded::SinkPair* VideoSourceBaseGuarded::FindSinkPair(
-    const VideoSinkInterface<webrtc::VideoFrame>* sink) {
+    const VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK_RUN_ON(&source_sequence_);
   auto sink_pair_it = absl::c_find_if(
       sinks_,
@@ -101,4 +104,4 @@ VideoSourceBaseGuarded::sink_pairs() const {
   return sinks_;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

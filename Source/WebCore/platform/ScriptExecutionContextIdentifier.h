@@ -62,11 +62,6 @@ public:
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const ProcessQualified<WTF::UUID>& identifier) { return WTF::UUID::MarkableTraits::isEmptyValue(identifier.object()); }
-        static ProcessQualified<WTF::UUID> emptyValue() { return { WTF::UUID::MarkableTraits::emptyValue(), ProcessIdentifier::MarkableTraits::emptyValue() }; }
-    };
-
 private:
     WTF::UUID m_object;
     ProcessIdentifier m_processIdentifier;
@@ -100,4 +95,15 @@ inline TextStream& operator<<(TextStream& ts, const ProcessQualified<WTF::UUID>&
 
 using ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+
+template<>
+struct MarkableTraits<WebCore::ProcessQualified<UUID>> {
+    static bool isEmptyValue(const WebCore::ProcessQualified<UUID>& identifier) { return MarkableTraits<UUID>::isEmptyValue(identifier.object()); }
+    static WebCore::ProcessQualified<UUID> emptyValue() { return { MarkableTraits<UUID>::emptyValue(), MarkableTraits<WebCore::ProcessIdentifier>::emptyValue() }; }
+};
+
+} // namespace WTF

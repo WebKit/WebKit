@@ -199,6 +199,29 @@ using WPFingerprintingScriptCompletionHandler = void (^)(NSArray<WPFingerprintin
 
 #endif // !__has_include(<WebPrivacy/WPFingerprintingScript.h>)
 
+#if !defined(WP_SUPPORTS_SCRIPT_ACCESS_CATEGORY)
+
+typedef NS_OPTIONS(NSUInteger, WPScriptAccessCategories) {
+    WPScriptAccessCategoryNone                  = 0,
+    WPScriptAccessCategoryAudio                 = 1 << 0,
+    WPScriptAccessCategoryCanvas                = 1 << 1,
+    WPScriptAccessCategoryCookies               = 1 << 2,
+    WPScriptAccessCategoryHardwareConcurrency   = 1 << 3,
+    WPScriptAccessCategoryLocalStorage          = 1 << 4,
+    WPScriptAccessCategoryPayments              = 1 << 5,
+    WPScriptAccessCategoryQueryParameters       = 1 << 6,
+    WPScriptAccessCategoryReferrer              = 1 << 7,
+    WPScriptAccessCategoryScreenOrViewport      = 1 << 8,
+    WPScriptAccessCategorySpeech                = 1 << 9,
+    WPScriptAccessCategoryFormControls          = 1 << 10,
+};
+
+@interface WPFingerprintingScript (Staging_155749047)
+@property (nonatomic, readonly) WPScriptAccessCategories allowedCategories;
+@end
+
+#endif // !defined(WP_SUPPORTS_SCRIPT_ACCESS_CATEGORY)
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;

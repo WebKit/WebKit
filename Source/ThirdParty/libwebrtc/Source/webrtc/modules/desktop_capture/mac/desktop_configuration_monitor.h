@@ -25,7 +25,7 @@ namespace webrtc {
 // The class provides functions to synchronize capturing and display
 // reconfiguring across threads, and the up-to-date MacDesktopConfiguration.
 class DesktopConfigurationMonitor final
-    : public rtc::RefCountedNonVirtual<DesktopConfigurationMonitor> {
+    : public webrtc::RefCountedNonVirtual<DesktopConfigurationMonitor> {
  public:
   DesktopConfigurationMonitor();
   ~DesktopConfigurationMonitor();

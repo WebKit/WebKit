@@ -105,15 +105,14 @@ static unsigned modifierForButton(unsigned button)
     return 0;
 }
 
-void EventSenderProxyClientWPE::mouseDown(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, unsigned& mouseButtonsCurrentlyDown)
+void EventSenderProxyClientWPE::mouseDown(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, int clickCount, unsigned& mouseButtonsCurrentlyDown)
 {
     auto wpeButton = eventSenderButtonToWPEButton(button);
     mouseButtonsCurrentlyDown |= modifierForButton(wpeButton);
     auto modifiers = static_cast<WPEModifiers>(wkEventModifiersToWPE(wkModifiers) | mouseButtonsCurrentlyDown);
     auto timestamp = secToMsTimestamp(time);
     auto* view = WKViewGetView(m_testController.mainWebView()->platformView());
-    unsigned pressCount = wpe_view_compute_press_count(view, x, y, wpeButton, timestamp);
-    auto* event = wpe_event_pointer_button_new(WPE_EVENT_POINTER_DOWN, view, WPE_INPUT_SOURCE_MOUSE, timestamp, modifiers, wpeButton, x, y, pressCount);
+    auto* event = wpe_event_pointer_button_new(WPE_EVENT_POINTER_DOWN, view, WPE_INPUT_SOURCE_MOUSE, timestamp, modifiers, wpeButton, x, y, clickCount);
     wpe_view_event(view, event);
     wpe_event_unref(event);
 }

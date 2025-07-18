@@ -24,13 +24,18 @@ be found in the AUTHORS file in the root of the source tree.
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/> <!-- From Chromium -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> <!-- From Chromium -->
+    <uses-permission android:name="android.permission.SET_TIME_ZONE"/> <!-- From Chromium -->
 
     <application android:label="NativeTests"
-            android:name="org.chromium.native_test.NativeTestApplication">
+            android:name="org.webrtc.native_test.RTCNativeTestApplication">
         <uses-library android:name="android.test.runner"/>
         <activity android:name=".RTCNativeUnitTestActivity"
                 android:label="NativeTest"
                 android:configChanges="orientation|keyboardHidden"
+                android:requestLegacyExternalStorage="true"
+                android:memtagMode="sync"
                 android:process=":test_process">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

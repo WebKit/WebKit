@@ -36,7 +36,7 @@ namespace JSC {
 class JSObject;
 
 class WrapperMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WrapperMap);
 public:
     explicit WrapperMap(JSGlobalContextRef);
     ~WrapperMap();

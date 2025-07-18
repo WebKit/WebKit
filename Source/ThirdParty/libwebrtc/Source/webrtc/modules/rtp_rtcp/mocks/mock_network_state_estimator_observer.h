@@ -10,6 +10,7 @@
 #ifndef MODULES_RTP_RTCP_MOCKS_MOCK_NETWORK_STATE_ESTIMATOR_OBSERVER_H_
 #define MODULES_RTP_RTCP_MOCKS_MOCK_NETWORK_STATE_ESTIMATOR_OBSERVER_H_
 
+#include "api/transport/network_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "test/gmock.h"
 

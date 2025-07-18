@@ -32,28 +32,32 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <webrtc/api/transport/ecn_marking.h>
+#include <webrtc/rtc_base/ip_address.h>
 #include <webrtc/rtc_base/socket_address.h>
 #include <webrtc/rtc_base/network.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebKit {
 
-namespace RTC::Network {
+namespace WebRTCNetwork {
 
-// This enums corresponds to rtc::EcnMarking.
+// This enums corresponds to webrtc::EcnMarking.
 enum class EcnMarking : int {
-    kNotEct = 0, // Not ECN-Capable Transport
-    kEct1 = 1, // ECN-Capable Transport
-    kEct0 = 2, // Not used by L4s (or webrtc.)
-    kCe = 3, // Congestion experienced
+    kNotEct = static_cast<int>(webrtc::EcnMarking::kNotEct), // Not ECN-Capable Transport
+    kEct1 = static_cast<int>(webrtc::EcnMarking::kEct1), // ECN-Capable Transport
+    kEct0 = static_cast<int>(webrtc::EcnMarking::kEct0), // Not used by L4s (or webrtc.)
+    kCe = static_cast<int>(webrtc::EcnMarking::kCe), // Congestion experienced
 };
 
 struct IPAddress {
     struct UnspecifiedFamily { };
 
     IPAddress() = default;
-    explicit IPAddress(const rtc::IPAddress&);
+    explicit IPAddress(const webrtc::IPAddress&);
     explicit IPAddress(const struct sockaddr&);
     explicit IPAddress(Variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value)
         : value(value)
@@ -61,7 +65,7 @@ struct IPAddress {
     }
 
     IPAddress isolatedCopy() const { return *this; }
-    rtc::IPAddress rtcAddress() const;
+    webrtc::IPAddress rtcAddress() const;
 
     bool isUnspecified() const { return std::holds_alternative<UnspecifiedFamily>(value); }
 
@@ -74,7 +78,7 @@ struct InterfaceAddress {
     {
     }
 
-    rtc::InterfaceAddress rtcAddress() const;
+    webrtc::InterfaceAddress rtcAddress() const;
     InterfaceAddress isolatedCopy() const { return *this; }
 
     IPAddress address;
@@ -82,14 +86,14 @@ struct InterfaceAddress {
 };
 
 struct SocketAddress {
-    explicit SocketAddress(const rtc::SocketAddress&);
+    explicit SocketAddress(const webrtc::SocketAddress&);
     explicit SocketAddress(uint16_t port, int scopeID, Vector<char>&& hostname, std::optional<IPAddress> ipAddress)
         : port(port)
         , scopeID(scopeID)
         , hostname(WTFMove(hostname))
         , ipAddress(ipAddress) { }
 
-    rtc::SocketAddress rtcAddress() const;
+    webrtc::SocketAddress rtcAddress() const;
 
     uint16_t port;
     int scopeID;
@@ -97,18 +101,18 @@ struct SocketAddress {
     std::optional<IPAddress> ipAddress;
 };
 
-}
+} // namespace WebRTCNetwork
 
 struct RTCNetwork {
-    using SocketAddress = RTC::Network::SocketAddress;
-    using IPAddress = RTC::Network::IPAddress;
-    using InterfaceAddress = RTC::Network::InterfaceAddress;
+    using SocketAddress = WebRTCNetwork::SocketAddress;
+    using IPAddress = WebRTCNetwork::IPAddress;
+    using InterfaceAddress = WebRTCNetwork::InterfaceAddress;
 
     RTCNetwork() = default;
     explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
     RTCNetwork isolatedCopy() const;
 
-    rtc::Network value() const;
+    webrtc::Network value() const;
 
     Vector<char> name;
     Vector<char> description;

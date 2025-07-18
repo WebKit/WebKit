@@ -54,6 +54,7 @@
 #import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
+#import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"
 #import "WebPrivacyHelpers.h"
 #import "WebProcessCache.h"
@@ -537,6 +538,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.notifyState = WTF::map(m_notifyState, [] (auto&& item) {
         return std::make_pair(item.key, item.value);
     });
+#endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    parameters.shouldInitializeAccessibility = m_hasReceivedAXRequestInUIProcess;
+#endif
+
+#if HAVE(LIQUID_GLASS)
+    parameters.isLiquidGlassEnabled = isLiquidGlassEnabled();
 #endif
 }
 
@@ -1261,13 +1270,10 @@ void WebProcessPool::screenPropertiesChanged()
 #if HAVE(SUPPORT_HDR_DISPLAY)
     if (m_suppressEDR) {
         for (auto& properties : screenProperties.screenDataMap.values()) {
-            constexpr auto maxStudioDisplayHeadroom = 2.f;
-            constexpr auto threeQuartersStudioDisplayHeadroom = 1.5f;
-            constexpr auto halfMaxHeadroomMultiplier = 0.5f;
-            auto maxHeadroom = std::clamp(properties.maxEDRHeadroom * halfMaxHeadroomMultiplier, std::min(properties.maxEDRHeadroom, threeQuartersStudioDisplayHeadroom), maxStudioDisplayHeadroom);
-            properties.currentEDRHeadroom = maxHeadroom;
-            properties.maxEDRHeadroom = maxHeadroom;
-            properties.suppressEDR = m_suppressEDR;
+            constexpr auto maxSuppressedHeadroom = 1.6f;
+            auto suppressedHeadroom = std::min(maxSuppressedHeadroom, properties.currentEDRHeadroom);
+            properties.currentEDRHeadroom = suppressedHeadroom;
+            properties.suppressEDR = true;
         }
     }
 #endif
@@ -1295,7 +1301,7 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
 
 static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    RunLoop::protectedMain()->dispatch([displayID, flags]() {
+    RunLoop::mainSingleton().dispatch([displayID, flags]() {
         auto screenProperties = WebCore::collectScreenProperties();
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->displayPropertiesChanged(screenProperties, displayID, flags);
@@ -1314,7 +1320,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
 
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
-    RunLoop::protectedMain()->dispatch([] {
+    RunLoop::mainSingleton().dispatch([] {
         auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
             pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
@@ -1517,7 +1523,7 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
 
     RELEASE_LOG(Process, "WebProcessPool::registerUserInstalledFonts: start registering fonts");
     RetainPtr requestedProperties = [NSSet setWithArray:@[@"NSFontNameAttribute", @"NSFontFamilyAttribute", @"NSCTFontFileURLAttribute", @"NSCTFontUserInstalledAttribute"]];
-    RetainPtr fontProperties = XTCopyPropertiesForAllFonts(bridge_cast(requestedProperties.get()), kXTScopeAll);
+    RetainPtr fontProperties = adoptCF(XTCopyPropertiesForAllFonts(bridge_cast(requestedProperties.get()), kXTScopeAll));
     if (!fontProperties)
         return;
     for (CFIndex i = 0; i < CFArrayGetCount(fontProperties.get()); ++i) {
@@ -1551,8 +1557,10 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
     }
     RELEASE_LOG(Process, "WebProcessPool::registerUserInstalledFonts: done registering fonts");
 
-    RetainPtr assetFontURL = adoptNS([[NSURL alloc] initFileURLWithPath:@"/System/Library/AssetsV2/com_apple_MobileAsset_Font7" isDirectory:YES]);
-    sandboxExtensionURLs.append(URL(assetFontURL.get()));
+    RetainPtr assetFontURL7 = adoptNS([[NSURL alloc] initFileURLWithPath:@"/System/Library/AssetsV2/com_apple_MobileAsset_Font7" isDirectory:YES]);
+    RetainPtr assetFontURL8 = adoptNS([[NSURL alloc] initFileURLWithPath:@"/System/Library/AssetsV2/com_apple_MobileAsset_Font8" isDirectory:YES]);
+    sandboxExtensionURLs.append(URL(assetFontURL7.get()));
+    sandboxExtensionURLs.append(URL(assetFontURL8.get()));
 
     process.send(Messages::WebProcess::RegisterFontMap(fontURLs, fontFamilyMap, sandboxExtensionsForUserInstalledFonts(sandboxExtensionURLs, process.auditToken())), 0);
     m_userInstalledFontURLs = WTFMove(fontURLs);
@@ -1623,7 +1631,7 @@ void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
         if (state != kCTFontDescriptorMatchingDidFinish)
             return true;
         RELEASE_LOG(Process, "Font matching finished, progress parameter = %@", (__bridge id)progressParameter);
-        RunLoop::protectedMain()->dispatch([assetFonts = WTFMove(assetFonts), weakProcess = WTFMove(weakProcess), weakThis = WTFMove(weakThis)] {
+        RunLoop::mainSingleton().dispatch([assetFonts = WTFMove(assetFonts), weakProcess = WTFMove(weakProcess), weakThis = WTFMove(weakThis)] {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

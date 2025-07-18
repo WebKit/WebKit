@@ -239,19 +239,19 @@ private:
 
     void inferred(const Type*);
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
-    bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
+    bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&) WARN_UNUSED_RETURN;
 
     Result<void> binaryExpression(const SourceSpan&, AST::Expression*, AST::BinaryOperation, AST::Expression&, AST::Expression&) WARN_UNUSED_RETURN;
 
     template<typename TargetConstructor, typename Validator, typename... Arguments>
-    Result<void> allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...);
-    Result<void> allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
+    Result<void> allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...) WARN_UNUSED_RETURN;
+    Result<void> allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind) WARN_UNUSED_RETURN;
 
     bool isModuleScope() const;
 
-    Result<AccessMode> accessMode(AST::Expression&);
-    Result<TexelFormat> texelFormat(AST::Expression&);
-    Result<AddressSpace> addressSpace(AST::Expression&);
+    Result<AccessMode> accessMode(AST::Expression&) WARN_UNUSED_RETURN;
+    Result<TexelFormat> texelFormat(AST::Expression&) WARN_UNUSED_RETURN;
+    Result<AddressSpace> addressSpace(AST::Expression&) WARN_UNUSED_RETURN;
 
     template<typename CallArguments>
     Result<const Type*> chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments) WARN_UNUSED_RETURN;
@@ -305,13 +305,13 @@ Result<void> TypeChecker::declareBuiltins()
 
     CHECK(introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
         "ptr"_s,
-        [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+        [this](AST::ElaboratedTypeExpression& type) WARN_UNUSED_RETURN -> Result<const Type*> {
             auto argumentCount = type.arguments().size();
             if (argumentCount < 2) [[unlikely]]
-                TYPE_ERROR(type.span(), "'ptr' requires at least 2 template argument"_s);
+                TYPE_ERROR(type.span(), "'ptr' requires at least 2 template arguments"_s);
 
             if (argumentCount > 3) [[unlikely]]
-                TYPE_ERROR(type.span(), "'ptr' requires at most 3 template argument"_s);
+                TYPE_ERROR(type.span(), "'ptr' requires at most 3 template arguments"_s);
 
             UNWRAP(addressSpace, addressSpace(type.arguments()[0]));
             UNWRAP(elementType, resolve(type.arguments()[1]));
@@ -352,9 +352,9 @@ Result<void> TypeChecker::declareBuiltins()
 
     CHECK(introduceType(AST::Identifier::make("atomic"_s), m_types.typeConstructorType(
         "atomic"_s,
-        [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+        [this](AST::ElaboratedTypeExpression& type) WARN_UNUSED_RETURN -> Result<const Type*> {
             if (type.arguments().size() != 1) [[unlikely]]
-                TYPE_ERROR(type.span(), "'atomic' requires 1 template arguments"_s);
+                TYPE_ERROR(type.span(), "'atomic' requires 1 template argument"_s);
 
             UNWRAP(elementType, resolve(type.arguments()[0]));
 
@@ -444,10 +444,12 @@ Result<void> TypeChecker::declareBuiltins()
 
 std::optional<FailedCheck> TypeChecker::check()
 {
-    ContextScope moduleScope(this);
 
-    auto result = [&] -> Result<void> {
+    auto result = [&] WARN_UNUSED_RETURN -> Result<void> {
         CHECK(declareBuiltins());
+
+        ContextScope moduleScope(this);
+
         CHECK(visit(m_shaderModule));
         return { };
     }();
@@ -846,12 +848,12 @@ Result<void> TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
     const Type* yType = nullptr;
     const Type* zType = nullptr;
     if (auto* y = attribute.maybeY()) {
-        UNWRAP(yType, infer(*y, Evaluation::Override));
+        UNWRAP_ASSIGN(yType, infer(*y, Evaluation::Override));
         if (!satisfies(yType, Constraints::ConcreteInteger)) [[unlikely]]
             TYPE_ERROR(attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value"_s);
 
         if (auto* z = attribute.maybeZ()) {
-            UNWRAP(zType, infer(*z, Evaluation::Override));
+            UNWRAP_ASSIGN(zType, infer(*z, Evaluation::Override));
             if (!satisfies(zType, Constraints::ConcreteInteger)) [[unlikely]]
                 TYPE_ERROR(attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value"_s);
         }
@@ -1090,7 +1092,7 @@ Result<void> TypeChecker::visit(AST::SwitchStatement& statement)
     if (!satisfies(valueType, Constraints::ConcreteInteger)) [[unlikely]]
         TYPE_ERROR(statement.value().span(), "switch selector must be of type i32 or u32"_s);
 
-    const auto& visitClause = [&](AST::SwitchClause& clause) -> Result<void> {
+    const auto& visitClause = [&](AST::SwitchClause& clause) WARN_UNUSED_RETURN -> Result<void> {
         for (auto& selector : clause.selectors) {
             UNWRAP(selectorType, infer(selector, Evaluation::Runtime));
             if (unify(valueType, selectorType)) {
@@ -1171,7 +1173,7 @@ Result<void> TypeChecker::visit(AST::Expression& expression)
 
 Result<void> TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr, bool* isVector = nullptr) -> Result<const Type*> {
+    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr, bool* isVector = nullptr) WARN_UNUSED_RETURN -> Result<const Type*> {
         if (std::holds_alternative<Types::Struct>(*baseType)) {
             auto& structType = std::get<Types::Struct>(*baseType);
             auto it = structType.fields.find(access.fieldName().id());
@@ -1212,7 +1214,7 @@ Result<void> TypeChecker::visit(AST::FieldAccessExpression& access)
         TYPE_ERROR(access.span(), "invalid member access expression. Expected vector or struct, got '"_s, *baseType, '\'');
     };
 
-    const auto& referenceImpl = [&](const auto& type) -> Result<void> {
+    const auto& referenceImpl = [&](const auto& type) WARN_UNUSED_RETURN -> Result<void> {
         bool canBeReference = true;
         bool isVector = false;
 
@@ -1240,7 +1242,7 @@ Result<void> TypeChecker::visit(AST::FieldAccessExpression& access)
 
 Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
 {
-    const auto& constantAccess = [&]<typename T>(std::optional<unsigned> typeSize) -> Result<void> {
+    const auto& constantAccess = [&]<typename T>(std::optional<unsigned> typeSize) WARN_UNUSED_RETURN -> Result<void> {
         auto constantBase = access.base().constantValue();
         auto constantIndex = access.index().constantValue();
 
@@ -1262,22 +1264,22 @@ Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
         return { };
     };
 
-    const auto& accessImpl = [&](const Type* base, bool* isVector = nullptr) -> Result<const Type*> {
+    const auto& accessImpl = [&](const Type* base, bool* isVector = nullptr) WARN_UNUSED_RETURN -> Result<const Type*> {
         const Type* result = nullptr;
         if (auto* array = std::get_if<Types::Array>(base)) {
             result = array->element;
             std::optional<unsigned> size;
             if (auto* constantSize = std::get_if<unsigned>(&array->size))
                 size = *constantSize;
-            constantAccess.operator()<ConstantArray>(size);
+            CHECK(constantAccess.operator()<ConstantArray>(size));
         } else if (auto* vector = std::get_if<Types::Vector>(base)) {
             if (isVector)
                 *isVector = true;
             result = vector->element;
-            constantAccess.operator()<ConstantVector>(vector->size);
+            CHECK(constantAccess.operator()<ConstantVector>(vector->size));
         } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
             result = m_types.vectorType(matrix->rows, matrix->element);
-            constantAccess.operator()<ConstantMatrix>(matrix->columns);
+            CHECK(constantAccess.operator()<ConstantMatrix>(matrix->columns));
         }
 
         if (!result) [[unlikely]]
@@ -1296,7 +1298,7 @@ Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
     if (!unify(m_types.i32Type(), index) && !unify(m_types.u32Type(), index) && !unify(m_types.abstractIntType(), index)) [[unlikely]]
         TYPE_ERROR(access.span(), "index must be of type 'i32' or 'u32', found: '"_s, *index, '\'');
 
-    const auto& referenceImpl = [&](const auto& type) -> Result<void> {
+    const auto& referenceImpl = [&](const auto& type) WARN_UNUSED_RETURN -> Result<void> {
         bool isVector = false;
         UNWRAP(result, accessImpl(type.element, &isVector));
         result = m_types.referenceType(type.addressSpace, result, type.accessMode, isVector);
@@ -1305,12 +1307,12 @@ Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
     };
 
     if (const auto* reference = std::get_if<Types::Reference>(base)) {
-        referenceImpl(*reference);
+        CHECK(referenceImpl(*reference));
         return { };
     }
 
     if (const auto* pointer = std::get_if<Types::Pointer>(base)) {
-        referenceImpl(*pointer);
+        CHECK(referenceImpl(*pointer));
         return { };
     }
 
@@ -1380,7 +1382,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
     bool isArrayType = is<AST::ArrayTypeExpression>(target);
 
     Vector<const Type*> typeArguments;
-    UNWRAP(targetName, [&]() -> Result<String> {
+    UNWRAP(targetName, [&]() WARN_UNUSED_RETURN -> Result<String> {
         if (isNamedType)
             return { downcast<AST::IdentifierExpression>(target).identifier() };
         if (isArrayType)
@@ -2636,7 +2638,7 @@ Result<void> TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetCon
 {
     return introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
         name,
-        [this, constructor, &validate, arguments...](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+        [this, constructor, &validate, arguments...](AST::ElaboratedTypeExpression& type) WARN_UNUSED_RETURN -> Result<const Type*> {
             if (type.arguments().size() != 1) [[unlikely]]
                 TYPE_ERROR(type.span(), '\'', type.base(), "' requires 1 template argument"_s);
 
@@ -2654,7 +2656,7 @@ Result<void> TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, T
 {
     return introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
         name,
-        [this, kind](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+        [this, kind](AST::ElaboratedTypeExpression& type) WARN_UNUSED_RETURN -> Result<const Type*> {
             if (type.arguments().size() != 2) [[unlikely]]
                 TYPE_ERROR(type.span(), '\'', type.base(), "' requires 2 template argument"_s);
 

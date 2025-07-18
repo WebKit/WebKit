@@ -10,11 +10,14 @@
 
 #include "p2p/base/transport_description.h"
 
+#include <string>
+
+#include "api/rtc_error.h"
 #include "test/gtest.h"
 
 using webrtc::RTCErrorType;
 
-namespace cricket {
+namespace webrtc {
 
 TEST(IceParameters, SuccessfulParse) {
   auto result = IceParameters::Parse("ufrag", "22+characters+long+pwd");
@@ -56,4 +59,4 @@ TEST(IceParameters, FailedParseBadPwdChar) {
   EXPECT_EQ(RTCErrorType::SYNTAX_ERROR, result.error().type());
 }
 
-}  // namespace cricket
+}  // namespace webrtc

@@ -554,7 +554,7 @@ bool Database::hasPendingTransaction()
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 
-SQLTransactionCoordinator* Database::transactionCoordinator()
+SQLTransactionCoordinator& Database::transactionCoordinator()
 {
     return databaseThread().transactionCoordinator();
 }

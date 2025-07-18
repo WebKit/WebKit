@@ -1,0 +1,90 @@
+# Copyright 2025 The WebRTC project authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("picture_pair_provider") {
+  testonly = true
+  sources = [ "picture_pair_provider.h" ]
+  deps = [
+    ":test_clip",
+    "../../../api/units:data_rate",
+    "../../../api/video:video_frame",
+    "../../../test:fileutils",
+  ]
+}
+
+rtc_library("test_clip") {
+  testonly = true
+  sources = [
+    "test_clip.cc",
+    "test_clip.h",
+  ]
+  deps = [
+    ":utils",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../rtc_base:checks",
+    "../../../test:fileutils",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("utils") {
+  testonly = true
+  sources = [
+    "utils.cc",
+    "utils.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:stringutils",
+    "../../../rtc_base/system:file_wrapper",
+    "../../../test:fileutils",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("test_clip_unittest") {
+    testonly = true
+    sources = [ "test_clip_unittest.cc" ]
+    deps = [
+      ":test_clip",
+      ":utils",
+      "../../../api/video_codecs:video_codecs_api",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    data = [ "../../../resources/ConferenceMotion_1280_720_50.yuv" ]
+  }
+
+  rtc_library("utils_unittest") {
+    testonly = true
+    sources = [ "utils_unittest.cc" ]
+    deps = [
+      ":utils",
+      "../../../api:scoped_refptr",
+      "../../../api/video:video_frame",
+      "../../../rtc_base/system:file_wrapper",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "../../../test:video_test_support",
+    ]
+  }
+
+  rtc_library("corruption_detection_eval_tests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":test_clip_unittest",
+      ":utils_unittest",
+    ]
+  }
+}

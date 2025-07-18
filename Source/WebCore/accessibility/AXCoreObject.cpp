@@ -1169,6 +1169,12 @@ String AXCoreObject::ariaLandmarkRoleDescription() const
     }
 }
 
+bool AXCoreObject::supportsDatetimeAttribute() const
+{
+    auto elementName = this->elementName();
+    return elementName == ElementName::HTML_ins || elementName == ElementName::HTML_del || elementName == ElementName::HTML_time;
+}
+
 unsigned AXCoreObject::blockquoteLevel() const
 {
     unsigned level = 0;
@@ -1591,12 +1597,26 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
         return std::partial_ordering::equivalent;
     };
 
+    // I got into an infinite loop here that I wasn't able to reproduce again in order to debug.
+    // For now, add a failsafe and ASSERT() so we can try to debug the root cause when it does
+    // happen again.
+    unsigned failsafeCounter = 0;
+    // This variable is 2 times the max render tree depth because the accessibility tree can be
+    // larger than the the render tree, e.g. when considering things like scroll views which don't
+    // have renderers but are in the accessibility tree. This huge limit ensures that we don't
+    // activate the failsafe loop exit unless something is 100% wrong.
+    static constexpr unsigned maxIterations = Settings::defaultMaximumRenderTreeDepth * 2;
+
     // ListHashSet chosen intentionally because it has O(1) lookup time. This is important
     // because we need to repeatedly query these lists, once every time we find a new ancestor.
     ListHashSet<Ref<AXCoreObject>> ourAncestors;
     ListHashSet<Ref<AXCoreObject>> otherAncestors;
-    while (current || otherCurrent) {
+    while (failsafeCounter < maxIterations && (current || otherCurrent)) {
+        ++failsafeCounter;
+
         if (RefPtr maybeParent = current ? current->parentObject() : nullptr) {
+            ASSERT(current != maybeParent);
+
             if (maybeParent == &other) {
                 // We are a descendant of the other object, so we come after it.
                 return std::partial_ordering::greater;
@@ -1621,6 +1641,8 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
         }
 
         if (RefPtr maybeParent = otherCurrent ? otherCurrent->parentObject() : nullptr) {
+            ASSERT(otherCurrent != maybeParent);
+
             if (maybeParent == this) {
                 // The other object is a descendant of ours, so we come before it in tree-order.
                 return std::partial_ordering::less;
@@ -1640,6 +1662,9 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
         }
     }
 
+    ASSERT(failsafeCounter < maxIterations);
+    // If we pass the above ASSERT but hit this one, it means we didn't loop infinitely,
+    // but also did not find a shared ancestor between the two objects, which shouldn't ever happen.
     ASSERT_NOT_REACHED();
     return std::partial_ordering::unordered;
 }

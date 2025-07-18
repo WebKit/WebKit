@@ -40,7 +40,7 @@ namespace webrtc {
 //
 // class ExampleClass {
 // ....
-//    rtc::scoped_refptr<PendingTaskSafetyFlag> flag = safety_flag_;
+//    webrtc::scoped_refptr<PendingTaskSafetyFlag> flag = safety_flag_;
 //    my_task_queue_->PostTask(
 //        [flag = std::move(flag), this] {
 //          // Now running on the main thread.
@@ -61,23 +61,23 @@ namespace webrtc {
 //   my_task_queue_->PostTask(SafeTask(safety_flag_, [this] { MyMethod(); }));
 //
 class RTC_EXPORT PendingTaskSafetyFlag final
-    : public rtc::RefCountedNonVirtual<PendingTaskSafetyFlag> {
+    : public RefCountedNonVirtual<PendingTaskSafetyFlag> {
  public:
-  static rtc::scoped_refptr<PendingTaskSafetyFlag> Create();
+  static scoped_refptr<PendingTaskSafetyFlag> Create();
 
   // Creates a flag, but with its SequenceChecker initially detached. Hence, it
   // may be created on a different thread than the flag will be used on.
-  static rtc::scoped_refptr<PendingTaskSafetyFlag> CreateDetached();
+  static scoped_refptr<PendingTaskSafetyFlag> CreateDetached();
 
   // Creates a flag, but with its SequenceChecker explicitly initialized for
   // a given task queue and the `alive()` flag specified.
-  static rtc::scoped_refptr<PendingTaskSafetyFlag> CreateAttachedToTaskQueue(
+  static scoped_refptr<PendingTaskSafetyFlag> CreateAttachedToTaskQueue(
       bool alive,
-      absl::Nonnull<TaskQueueBase*> attached_queue);
+      TaskQueueBase* absl_nonnull attached_queue);
 
   // Same as `CreateDetached()` except the initial state of the returned flag
   // will be `!alive()`.
-  static rtc::scoped_refptr<PendingTaskSafetyFlag> CreateDetachedInactive();
+  static scoped_refptr<PendingTaskSafetyFlag> CreateDetachedInactive();
 
   ~PendingTaskSafetyFlag() = default;
 
@@ -102,12 +102,11 @@ class RTC_EXPORT PendingTaskSafetyFlag final
 
  protected:
   explicit PendingTaskSafetyFlag(bool alive) : alive_(alive) {}
-  PendingTaskSafetyFlag(bool alive,
-                        absl::Nonnull<TaskQueueBase*> attached_queue)
+  PendingTaskSafetyFlag(bool alive, TaskQueueBase* absl_nonnull attached_queue)
       : alive_(alive), main_sequence_(attached_queue) {}
 
  private:
-  static rtc::scoped_refptr<PendingTaskSafetyFlag> CreateInternal(bool alive);
+  static scoped_refptr<PendingTaskSafetyFlag> CreateInternal(bool alive);
 
   bool alive_ = true;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker main_sequence_;
@@ -130,23 +129,22 @@ class RTC_EXPORT PendingTaskSafetyFlag final
 class RTC_EXPORT ScopedTaskSafety final {
  public:
   ScopedTaskSafety() = default;
-  explicit ScopedTaskSafety(rtc::scoped_refptr<PendingTaskSafetyFlag> flag)
+  explicit ScopedTaskSafety(scoped_refptr<PendingTaskSafetyFlag> flag)
       : flag_(std::move(flag)) {}
   ~ScopedTaskSafety() { flag_->SetNotAlive(); }
 
   // Returns a new reference to the safety flag.
-  rtc::scoped_refptr<PendingTaskSafetyFlag> flag() const { return flag_; }
+  scoped_refptr<PendingTaskSafetyFlag> flag() const { return flag_; }
 
   // Marks the current flag as not-alive and attaches to a new one.
-  void reset(rtc::scoped_refptr<PendingTaskSafetyFlag> new_flag =
+  void reset(scoped_refptr<PendingTaskSafetyFlag> new_flag =
                  PendingTaskSafetyFlag::Create()) {
     flag_->SetNotAlive();
     flag_ = std::move(new_flag);
   }
 
  private:
-  rtc::scoped_refptr<PendingTaskSafetyFlag> flag_ =
-      PendingTaskSafetyFlag::Create();
+  scoped_refptr<PendingTaskSafetyFlag> flag_ = PendingTaskSafetyFlag::Create();
 };
 
 // Like ScopedTaskSafety, but allows construction on a different thread than
@@ -157,15 +155,15 @@ class RTC_EXPORT ScopedTaskSafetyDetached final {
   ~ScopedTaskSafetyDetached() { flag_->SetNotAlive(); }
 
   // Returns a new reference to the safety flag.
-  rtc::scoped_refptr<PendingTaskSafetyFlag> flag() const { return flag_; }
+  scoped_refptr<PendingTaskSafetyFlag> flag() const { return flag_; }
 
  private:
-  rtc::scoped_refptr<PendingTaskSafetyFlag> flag_ =
+  scoped_refptr<PendingTaskSafetyFlag> flag_ =
       PendingTaskSafetyFlag::CreateDetached();
 };
 
 inline absl::AnyInvocable<void() &&> SafeTask(
-    rtc::scoped_refptr<PendingTaskSafetyFlag> flag,
+    scoped_refptr<PendingTaskSafetyFlag> flag,
     absl::AnyInvocable<void() &&> task) {
   return [flag = std::move(flag), task = std::move(task)]() mutable {
     if (flag->alive()) {

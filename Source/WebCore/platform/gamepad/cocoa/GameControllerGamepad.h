@@ -62,12 +62,12 @@ private:
     Ref<GameControllerHapticEngines> ensureProtectedHapticEngines() { return ensureHapticEngines(); }
 #endif
 
-    RetainPtr<GCController> m_gcController;
+    const RetainPtr<GCController> m_gcController;
 
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
-    RefPtr<GameControllerHapticEngines> m_hapticEngines;
+    const RefPtr<GameControllerHapticEngines> m_hapticEngines;
 #endif
 };
 

@@ -33,12 +33,11 @@ namespace webrtc {
 // an implementation detail.
 BEGIN_PROXY_MAP(RtpReceiver)
 PROXY_PRIMARY_THREAD_DESTRUCTOR()
-BYPASS_PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
-PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtlsTransportInterface>, dtls_transport)
+BYPASS_PROXY_CONSTMETHOD0(scoped_refptr<MediaStreamTrackInterface>, track)
+PROXY_CONSTMETHOD0(scoped_refptr<DtlsTransportInterface>, dtls_transport)
 PROXY_CONSTMETHOD0(std::vector<std::string>, stream_ids)
-PROXY_CONSTMETHOD0(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
-                   streams)
-BYPASS_PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
+PROXY_CONSTMETHOD0(std::vector<scoped_refptr<MediaStreamInterface>>, streams)
+BYPASS_PROXY_CONSTMETHOD0(webrtc::MediaType, media_type)
 BYPASS_PROXY_CONSTMETHOD0(std::string, id)
 PROXY_SECONDARY_CONSTMETHOD0(RtpParameters, GetParameters)
 PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*)
@@ -49,13 +48,13 @@ PROXY_SECONDARY_CONSTMETHOD0(std::vector<RtpSource>, GetSources)
 // TODO(bugs.webrtc.org/12772): Remove.
 PROXY_SECONDARY_METHOD1(void,
                         SetFrameDecryptor,
-                        rtc::scoped_refptr<FrameDecryptorInterface>)
+                        scoped_refptr<FrameDecryptorInterface>)
 // TODO(bugs.webrtc.org/12772): Remove.
-PROXY_SECONDARY_CONSTMETHOD0(rtc::scoped_refptr<FrameDecryptorInterface>,
+PROXY_SECONDARY_CONSTMETHOD0(scoped_refptr<FrameDecryptorInterface>,
                              GetFrameDecryptor)
 PROXY_SECONDARY_METHOD1(void,
                         SetFrameTransformer,
-                        rtc::scoped_refptr<FrameTransformerInterface>)
+                        scoped_refptr<FrameTransformerInterface>)
 #if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD0(void, GenerateKeyFrame)
 #endif

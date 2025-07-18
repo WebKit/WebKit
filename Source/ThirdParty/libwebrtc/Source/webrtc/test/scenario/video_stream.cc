@@ -115,7 +115,7 @@ VideoSendStream::Config CreateVideoSendStreamConfig(
   }
   return send_config;
 }
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateVp9SpecificSettings(VideoStreamConfig video_config) {
   constexpr auto kScreen = VideoStreamConfig::Encoder::ContentType::kScreen;
   VideoStreamConfig::Encoder conf = video_config.encoder;
@@ -143,11 +143,10 @@ CreateVp9SpecificSettings(VideoStreamConfig video_config) {
     vp9.automaticResizeOn = conf.single.automatic_scaling;
     vp9.denoisingOn = conf.single.denoising;
   }
-  return rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
-      vp9);
+  return make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9);
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateVp8SpecificSettings(VideoStreamConfig config) {
   VideoCodecVP8 vp8_settings = VideoEncoder::GetDefaultVp8Settings();
   vp8_settings.keyFrameInterval = config.encoder.key_frame_interval.value_or(0);
@@ -164,11 +163,11 @@ CreateVp8SpecificSettings(VideoStreamConfig config) {
     vp8_settings.automaticResizeOn = config.encoder.single.automatic_scaling;
     vp8_settings.denoisingOn = config.encoder.single.denoising;
   }
-  return rtc::make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
+  return make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
       vp8_settings);
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateH264SpecificSettings(VideoStreamConfig config) {
   RTC_DCHECK_EQ(config.encoder.simulcast_streams.size(), 1);
   RTC_DCHECK(config.encoder.simulcast_streams[0] == ScalabilityMode::kL1T1);
@@ -178,7 +177,7 @@ CreateH264SpecificSettings(VideoStreamConfig config) {
   return nullptr;
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateEncoderSpecificSettings(VideoStreamConfig config) {
   using Codec = VideoStreamConfig::Encoder::Codec;
   switch (config.encoder.codec) {
@@ -196,7 +195,7 @@ CreateEncoderSpecificSettings(VideoStreamConfig config) {
 }
 
 VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
-  webrtc::VideoEncoder::EncoderInfo encoder_info;
+  VideoEncoder::EncoderInfo encoder_info;
   VideoEncoderConfig encoder_config;
   encoder_config.codec_type = config.encoder.codec;
   encoder_config.content_type = ConvertContentType(config.encoder.content_type);
@@ -283,7 +282,7 @@ VideoReceiveStreamInterface::Config CreateVideoReceiveStreamConfig(
     Transport* feedback_transport,
     VideoDecoderFactory* decoder_factory,
     VideoReceiveStreamInterface::Decoder decoder,
-    rtc::VideoSinkInterface<VideoFrame>* renderer,
+    VideoSinkInterface<VideoFrame>* renderer,
     uint32_t local_ssrc,
     uint32_t ssrc,
     uint32_t rtx_ssrc) {
@@ -492,7 +491,7 @@ VideoSendStream::Stats SendVideoStream::GetStats() const {
 ColumnPrinter SendVideoStream::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "video_target_rate video_sent_rate width height",
-      [this](rtc::SimpleStringBuilder& sb) {
+      [this](SimpleStringBuilder& sb) {
         VideoSendStream::Stats video_stats = send_stream_->GetStats();
         int width = 0;
         int height = 0;
@@ -528,7 +527,7 @@ ReceiveVideoStream::ReceiveVideoStream(CallClient* receiver,
                             CodecTypeToPayloadString(config.encoder.codec));
   size_t num_streams = config.encoder.simulcast_streams.size();
   for (size_t i = 0; i < num_streams; ++i) {
-    rtc::VideoSinkInterface<VideoFrame>* renderer = &fake_renderer_;
+    VideoSinkInterface<VideoFrame>* renderer = &fake_renderer_;
     if (matcher->Active()) {
       render_taps_.emplace_back(std::make_unique<DecodedFrameTap>(
           &receiver_->env_.clock(), matcher, i));

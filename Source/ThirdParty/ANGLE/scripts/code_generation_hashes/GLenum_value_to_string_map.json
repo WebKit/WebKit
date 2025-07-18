@@ -4,11 +4,11 @@
   "scripts/gl_angle_ext.xml":
     "2cba159af592da788a15449eae941cb4",
   "scripts/registry_xml.py":
-    "bb960e9dd67776385b3300528a499988",
+    "3d16f678c0485ddb6ba7c69761a4fc8f",
   "src/common/gl_enum_utils_autogen.cpp":
-    "dcbb1ecc28a9c354532ac4eb04d905e3",
+    "74f2cc3b092053f5832fd7b2c1fd015b",
   "src/common/gl_enum_utils_autogen.h":
-    "51f421ef562d771b3cded2ad207d0fd9",
+    "e3dc3844be83f15653389012e4c21b6b",
   "third_party/OpenGL-Registry/src/xml/gl.xml":
     "d7ed846c15f72e084763c22d70adf1e2"
 }

@@ -41,8 +41,8 @@ int main(int argc, char **argv)
     if (!HasArg(argc, argv, "--list-tests") && !HasArg(argc, argv, "--gtest_list_tests") &&
         HasArg(argc, argv, "--use-gl"))
     {
-        std::cerr << "--use-gl isn't supported by end2end tests - use *_EGL configs instead "
-                     "(angle_test_enable_system_egl=true)\n";
+        std::cerr << "--use-gl isn't supported by end2end tests - use the GN arg instead: "
+                     "angle_test_enable_system_egl=true\n";
         return EXIT_FAILURE;
     }
 

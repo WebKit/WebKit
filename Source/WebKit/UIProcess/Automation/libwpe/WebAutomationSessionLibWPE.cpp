@@ -319,7 +319,7 @@ static uint32_t modifiersForKeyCode(unsigned keyCode)
     return 0;
 }
 
-void platformSimulateKeyboardInteractionLibWPE(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key, unsigned& currentModifiers)
+void platformSimulateKeyboardInteractionLibWPE(WebPageProxy& page, KeyboardInteraction interaction, Variant<VirtualKey, CharKey>&& key, unsigned& currentModifiers)
 {
     uint32_t keyCode;
     WTF::switchOn(key,

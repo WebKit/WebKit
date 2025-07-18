@@ -95,11 +95,11 @@ void SharedWorkerObjectConnection::postErrorToWorkerObject(SharedWorkerObjectIde
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void SharedWorkerObjectConnection::reportNetworkUsageToWorkerObject(SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, size_t bytesTransferredOverNetworkDelta)
+void SharedWorkerObjectConnection::reportNetworkUsageToWorkerObject(SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, uint64_t bytesTransferredOverNetworkDelta)
 {
     ASSERT(isMainThread());
     RefPtr workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
-    CONNECTION_RELEASE_LOG("reportNetworkUsageToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, bytesTransferredOverNetworkDelta=%zu", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject.get(), bytesTransferredOverNetworkDelta);
+    CONNECTION_RELEASE_LOG("reportNetworkUsageToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, bytesTransferredOverNetworkDelta=%" PRIu64, sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject.get(), bytesTransferredOverNetworkDelta);
     if (workerObject)
         workerObject->reportNetworkUsage(bytesTransferredOverNetworkDelta);
 }

@@ -51,7 +51,7 @@ class TimeDelta final : public rtc_units_impl::RelativeUnit<TimeDelta> {
     return FromValue(value);
   }
 
-  TimeDelta() = delete;
+  constexpr TimeDelta() = default;
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, TimeDelta value);

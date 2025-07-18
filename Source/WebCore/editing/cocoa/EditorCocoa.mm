@@ -33,6 +33,7 @@
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DOMURL.h"
+#import "DataTransfer.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -331,11 +332,20 @@ String Editor::platformContentTypeForBlobType(const String& type) const
 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
-    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), pasteboardName);
+    Ref dataTransfer = DataTransfer::createForCopyAndPaste(document(),
+        DataTransfer::StoreMode::Readonly,
+        makeUnique<Pasteboard>(PagePasteboardContext::create(document().pageID()), pasteboardName));
+
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Paste, dataTransfer.copyRef()))
+        return;
+
+    if (!canEdit())
+        return;
+
     if (document().selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
+        pasteWithPasteboard(&dataTransfer->pasteboard(), { PasteOption::AllowPlainText });
     else
-        pasteAsPlainTextWithPasteboard(pasteboard);
+        pasteAsPlainTextWithPasteboard(dataTransfer->pasteboard());
 }
 
 static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)

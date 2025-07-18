@@ -258,7 +258,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString,
 
 JSC::GCClient::IsoSubspace* JSTestCEReactionsStringifier::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestCEReactionsStringifier, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestCEReactionsStringifier, UseCustomHeapCellType::No>(vm, "JSTestCEReactionsStringifier"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCEReactionsStringifier.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactionsStringifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCEReactionsStringifier.get(); },

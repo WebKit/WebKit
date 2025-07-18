@@ -50,18 +50,6 @@ class CSSTransition;
 class StyleOriginatedAnimation;
 class WebAnimation;
 
-struct WebAnimationsMarkableDoubleTraits {
-    static bool isEmptyValue(double value)
-    {
-        return std::isnan(value);
-    }
-
-    static constexpr double emptyValue()
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-};
-
 enum class AnimationImpact : uint8_t {
     RequiresRecomposite     = 1 << 0,
     ForcesStackingContext   = 1 << 1
@@ -71,8 +59,6 @@ enum class UseAcceleratedAction : bool { No, Yes };
 enum class UseCachedCurrentTime : bool { No, Yes };
 
 enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
-
-using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
 using WeakStyleOriginatedAnimations = Vector<WeakPtr<StyleOriginatedAnimation, WeakPtrImplWithEventTargetData>>;
 using AnimationCollection = ListHashSet<Ref<WebAnimation>>;
@@ -118,11 +104,14 @@ using TimelineRangeValue = Variant<TimelineRangeOffset, RefPtr<CSSNumericValue>,
 
 enum class Scroller : uint8_t { Nearest, Root, Self };
 
-struct ViewTimelineInsets {
+struct ViewTimelineInsetItem {
     std::optional<Length> start;
     std::optional<Length> end;
-    bool operator==(const ViewTimelineInsets&) const = default;
+    bool operator==(const ViewTimelineInsetItem&) const = default;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, Scroller);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewTimelineInsetItem&);
 
 } // namespace WebCore
 

@@ -43,7 +43,7 @@
 #include "EditorClient.h"
 #include "Frame.h"
 #include "HistoryItem.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "LocalFrameLoaderClient.h"
 #include "ModelPlayerProvider.h"
 #include "PerformanceLoggingClient.h"

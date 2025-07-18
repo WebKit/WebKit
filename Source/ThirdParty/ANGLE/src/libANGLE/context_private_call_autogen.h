@@ -619,6 +619,13 @@ void ContextPrivateClipControl(PrivateState *privateState,
                                PrivateStateCache *privateStateCache,
                                ClipOrigin originPacked,
                                ClipDepthMode depthPacked);
+void ContextPrivateShadingRate(PrivateState *privateState,
+                               PrivateStateCache *privateStateCache,
+                               GLenum rate);
+void ContextPrivateShadingRateCombinerOps(PrivateState *privateState,
+                                          PrivateStateCache *privateStateCache,
+                                          GLenum combinerOp0,
+                                          GLenum combinerOp1);
 void ContextPrivatePolygonOffsetClamp(PrivateState *privateState,
                                       PrivateStateCache *privateStateCache,
                                       GLfloat factor,
@@ -628,9 +635,6 @@ void ContextPrivatePolygonModeNV(PrivateState *privateState,
                                  PrivateStateCache *privateStateCache,
                                  GLenum face,
                                  PolygonMode modePacked);
-void ContextPrivateShadingRate(PrivateState *privateState,
-                               PrivateStateCache *privateStateCache,
-                               GLenum rate);
 }  // namespace gl
 
 #endif  // LIBANGLE_CONTEXT_PRIVATE_CALL_AUTOGEN_H_

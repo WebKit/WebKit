@@ -196,6 +196,7 @@ rtc_library("input_volume_controller") {
   ]
 
   visibility = [
+    "..:audio_processing",
     "..:gain_controller2",
     "./*",
   ]
@@ -216,7 +217,6 @@ rtc_library("input_volume_controller") {
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",
-    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
   ]
 }
@@ -407,7 +407,9 @@ rtc_library("input_volume_controller_unittests") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_controller",
+    "..:audio_buffer",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:random",
     "../../../rtc_base:safe_conversions",

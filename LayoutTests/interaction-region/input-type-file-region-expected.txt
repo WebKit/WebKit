@@ -13,7 +13,8 @@
 
       (interaction regions [
         (interaction (0,1) width=85.50 height=20)
-        (cornerRadius 10.00)])
+        (cornerRadius 10.00)
+        (useContinuousCorners 1)])
       )
     )
   )

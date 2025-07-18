@@ -32,12 +32,12 @@ namespace WTF {
 
 void printInternal(PrintStream& out, JSC::CodeSpecializationKind kind)
 {
-    if (kind == JSC::CodeForCall) {
+    if (kind == JSC::CodeSpecializationKind::CodeForCall) {
         out.print("Call");
         return;
     }
     
-    ASSERT(kind == JSC::CodeForConstruct);
+    ASSERT(kind == JSC::CodeSpecializationKind::CodeForConstruct);
     out.print("Construct");
 }
 

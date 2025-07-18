@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "ExceptionOr.h"
 #include "FloatRect.h"
 #include "SVGAngleValue.h"
 #include "SVGAnimationAdditiveValueFunction.h"

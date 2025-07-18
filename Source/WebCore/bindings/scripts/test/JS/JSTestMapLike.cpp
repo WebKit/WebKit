@@ -362,7 +362,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_delete, (JSGlobalObject*
 
 JSC::GCClient::IsoSubspace* JSTestMapLike::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestMapLike, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestMapLike, UseCustomHeapCellType::No>(vm, "JSTestMapLike"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestMapLike.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestMapLike.get(); },

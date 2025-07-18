@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
+class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public webrtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCNetworkManager);
 public:
     static RefPtr<LibWebRTCNetworkManager> getOrCreate(WebCore::ScriptExecutionContextIdentifier);
@@ -65,8 +65,8 @@ private:
     webrtc::MdnsResponderInterface* GetMdnsResponder() const final;
 
     // webrtc::MdnsResponderInterface
-    void CreateNameForAddress(const rtc::IPAddress&, NameCreatedCallback);
-    void RemoveNameForAddress(const rtc::IPAddress&, NameRemovedCallback);
+    void CreateNameForAddress(const webrtc::IPAddress&, NameCreatedCallback);
+    void RemoveNameForAddress(const webrtc::IPAddress&, NameRemovedCallback);
 
     // WebRTCMonitorObserver
     void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) final;

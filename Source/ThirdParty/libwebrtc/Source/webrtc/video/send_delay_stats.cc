@@ -10,10 +10,18 @@
 
 #include "video/send_delay_stats.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "call/video_send_stream.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
+#include "video/stats_counter.h"
 
 namespace webrtc {
 namespace {

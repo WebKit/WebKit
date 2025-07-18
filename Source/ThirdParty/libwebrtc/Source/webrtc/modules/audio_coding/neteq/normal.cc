@@ -13,8 +13,15 @@
 #include <string.h>  // memset, memcpy
 
 #include <algorithm>  // min
+#include <cstdint>
+#include <memory>
 
+#include "api/array_view.h"
+#include "api/neteq/neteq.h"
+#include "common_audio/signal_processing/dot_product_with_scale.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
@@ -40,7 +47,7 @@ int Normal::Process(const int16_t* input,
     output->Clear();
     return 0;
   }
-  output->PushBackInterleaved(rtc::ArrayView<const int16_t>(input, length));
+  output->PushBackInterleaved(ArrayView<const int16_t>(input, length));
 
   const int fs_mult = fs_hz_ / 8000;
   RTC_DCHECK_GT(fs_mult, 0);

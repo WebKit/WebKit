@@ -43,6 +43,7 @@
 #import "WebContextMenuItemData.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
@@ -54,10 +55,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
-
-#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "WebExtensionController.h"
@@ -270,11 +267,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     bool isPDFAttachment = false;
     auto attachment = protectedPage()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
     if (attachment) {
-#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
         isPDFAttachment = attachment->utiType() == String(UTTypePDF.identifier);
-#else
-        isPDFAttachment = attachment->utiType() == String(kUTTypePDF);
-#endif
     }
     NSArray *items = nil;
     RetainPtr<NSItemProvider> itemProvider;
@@ -514,7 +507,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
         return nil;
 
     RetainPtr sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
-    RetainPtr shareMenuItem = [sharingServicePicker standardShareMenuItem];
+    RetainPtr shareMenuItem = [sharingServicePicker standardShareMenuItemRelativeToRect:hitTestData.elementBoundingBox ofView:m_webView.get().get() preferredEdge:NSMinYEdge];
 
     if (!shareMenuItem)
         return nil;

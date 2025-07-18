@@ -13,35 +13,57 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/container/inlined_vector.h"
+#include "api/environment/environment.h"
+#include "api/fec_controller_override.h"
+#include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
-#include "api/video/video_content_type.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/encoded_image.h"
+#include "api/video/render_resolution.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_bitrate_allocator.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
-#include "api/video/video_timing.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/scalability_mode.h"
-#include "api/video_codecs/vp8_temporal_layers.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
+#include "api/video_codecs/vp8_frame_config.h"
 #include "api/video_codecs/vp8_temporal_layers_factory.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp8/vp8_scalability.h"
+#include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
-#include "modules/video_coding/svc/scalability_mode_util.h"
+#include "modules/video_coding/utility/corruption_detection_settings_generator.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
+#include "modules/video_coding/utility/vp8_constants.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/experiments/field_trial_units.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/trace_event.h"
-#include "third_party/libyuv/include/libyuv/scale.h"
 #include "vpx/vp8cx.h"
+#include "vpx/vpx_codec.h"
+#include "vpx/vpx_encoder.h"
+#include "vpx/vpx_image.h"
 
 #if (defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)) && \
     (defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS))
@@ -477,7 +499,7 @@ void LibvpxVp8Encoder::SetFecControllerOverride(
 // TODO(eladalon): s/inst/codec_settings/g.
 int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
                                  const VideoEncoder::Settings& settings) {
-  if (inst == NULL) {
+  if (inst == nullptr) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
   if (inst->maxFramerate < 1) {
@@ -674,7 +696,7 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
   // Actual pointer will be set in encode. Setting align to 1, as it
   // is meaningless (no memory allocation is done here).
   libvpx_->img_wrap(&raw_images_[0], pixel_format, inst->width, inst->height, 1,
-                    NULL);
+                    nullptr);
 
   // Note the order we use is different from webm, we have lowest resolution
   // at position 0 and they have highest resolution at position 0.
@@ -741,6 +763,31 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
                                           vpx_configs_[i].rc_max_quantizer);
     UpdateVpxConfiguration(stream_idx);
   }
+
+  corruption_detection_settings_generator_ =
+      std::make_unique<CorruptionDetectionSettingsGenerator>(
+          CorruptionDetectionSettingsGenerator::ExponentialFunctionParameters{
+              .scale = 0.006,
+              .exponent_factor = 0.01857465,
+              .exponent_offset = -4.26470513},
+          CorruptionDetectionSettingsGenerator::ErrorThresholds{.luma = 5,
+                                                                .chroma = 6},
+          // On large changes, increase error threshold by one and std_dev
+          // by 2.0. Trigger on qp changes larger than 30, and fade down the
+          // adjusted value over 4 * num_temporal_layers to allow the base layer
+          // to converge somewhat. Set a minim filter size of 1.25 since some
+          // outlier pixels deviate a bit from truth even at very low QP,
+          // seeminly by bleeding into neighbours.
+          CorruptionDetectionSettingsGenerator::TransientParameters{
+              .max_qp = 127,
+              .keyframe_threshold_offset = 1,
+              .keyframe_stddev_offset = 2.0,
+              .keyframe_offset_duration_frames =
+                  std::max(1,
+                           SimulcastUtility::NumberOfTemporalLayers(*inst, 0)) *
+                  4,
+              .large_qp_change_threshold = 30,
+              .std_dev_lower_bound = 1.25});
 
   return InitAndSetControlSettings();
 }
@@ -973,7 +1020,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
 
   if (!inited_)
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
-  if (encoded_complete_callback_ == NULL)
+  if (encoded_complete_callback_ == nullptr)
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
   bool key_frame_requested = false;
@@ -1049,7 +1096,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   // Because `raw_images_` are set to hold pointers to the prepared buffers, we
   // need to keep these buffers alive through reference counting until after
   // encoding is complete.
-  std::vector<rtc::scoped_refptr<VideoFrameBuffer>> prepared_buffers =
+  std::vector<scoped_refptr<VideoFrameBuffer>> prepared_buffers =
       PrepareBuffers(frame.video_frame_buffer());
   if (prepared_buffers.empty()) {
     return WEBRTC_VIDEO_CODEC_ERROR;
@@ -1057,7 +1104,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   struct CleanUpOnExit {
     explicit CleanUpOnExit(
         vpx_image_t* raw_image,
-        std::vector<rtc::scoped_refptr<VideoFrameBuffer>> prepared_buffers)
+        std::vector<scoped_refptr<VideoFrameBuffer>> prepared_buffers)
         : raw_image_(raw_image),
           prepared_buffers_(std::move(prepared_buffers)) {}
     ~CleanUpOnExit() {
@@ -1066,7 +1113,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
       raw_image_->planes[VPX_PLANE_V] = nullptr;
     }
     vpx_image_t* raw_image_;
-    std::vector<rtc::scoped_refptr<VideoFrameBuffer>> prepared_buffers_;
+    std::vector<scoped_refptr<VideoFrameBuffer>> prepared_buffers_;
   } clean_up_on_exit(&raw_images_[0], std::move(prepared_buffers));
 
   if (send_key_frame) {
@@ -1189,15 +1236,15 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
   int result = WEBRTC_VIDEO_CODEC_OK;
   for (size_t encoder_idx = 0; encoder_idx < encoders_.size();
        ++encoder_idx, --stream_idx) {
-    vpx_codec_iter_t iter = NULL;
+    vpx_codec_iter_t iter = nullptr;
     encoded_images_[encoder_idx].set_size(0);
     encoded_images_[encoder_idx]._frameType = VideoFrameType::kVideoFrameDelta;
     CodecSpecificInfo codec_specific;
-    const vpx_codec_cx_pkt_t* pkt = NULL;
+    const vpx_codec_cx_pkt_t* pkt = nullptr;
 
     size_t encoded_size = 0;
     while ((pkt = libvpx_->codec_get_cx_data(&encoders_[encoder_idx], &iter)) !=
-           NULL) {
+           nullptr) {
       if (pkt->kind == VPX_CODEC_CX_FRAME_PKT) {
         encoded_size += pkt->data.frame.sz;
       }
@@ -1205,10 +1252,10 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
 
     auto buffer = EncodedImageBuffer::Create(encoded_size);
 
-    iter = NULL;
+    iter = nullptr;
     size_t encoded_pos = 0;
     while ((pkt = libvpx_->codec_get_cx_data(&encoders_[encoder_idx], &iter)) !=
-           NULL) {
+           nullptr) {
       switch (pkt->kind) {
         case VPX_CODEC_CX_FRAME_PKT: {
           RTC_CHECK_LE(encoded_pos + pkt->data.frame.sz, buffer->size());
@@ -1260,6 +1307,12 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
         encoded_images_[encoder_idx].qp_ = qp_128;
         last_encoder_output_time_[stream_idx] =
             Timestamp::Micros(input_image.timestamp_us());
+
+        encoded_images_[encoder_idx].set_corruption_detection_filter_settings(
+            corruption_detection_settings_generator_->OnFrame(
+                encoded_images_[encoder_idx].FrameType() ==
+                    VideoFrameType::kVideoFrameKey,
+                qp_128));
 
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
                                                    &codec_specific);
@@ -1342,7 +1395,7 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
         for (size_t ti = 0; ti < vpx_configs_[encoder_idx].ts_number_layers;
              ++ti) {
           RTC_DCHECK_GT(vpx_configs_[encoder_idx].ts_rate_decimator[ti], 0);
-          info.fps_allocation[si].push_back(rtc::saturated_cast<uint8_t>(
+          info.fps_allocation[si].push_back(saturated_cast<uint8_t>(
               EncoderInfo::kMaxFramerateFraction /
                   vpx_configs_[encoder_idx].ts_rate_decimator[ti] +
               0.5));
@@ -1382,22 +1435,22 @@ void LibvpxVp8Encoder::MaybeUpdatePixelFormat(vpx_img_fmt fmt) {
     libvpx_->img_free(&img);
     // First image is wrapping the input frame, the rest are allocated.
     if (i == 0) {
-      libvpx_->img_wrap(&img, fmt, d_w, d_h, 1, NULL);
+      libvpx_->img_wrap(&img, fmt, d_w, d_h, 1, nullptr);
     } else {
       libvpx_->img_alloc(&img, fmt, d_w, d_h, kVp832ByteAlign);
     }
   }
 }
 
-std::vector<rtc::scoped_refptr<VideoFrameBuffer>>
-LibvpxVp8Encoder::PrepareBuffers(rtc::scoped_refptr<VideoFrameBuffer> buffer) {
+std::vector<scoped_refptr<VideoFrameBuffer>> LibvpxVp8Encoder::PrepareBuffers(
+    scoped_refptr<VideoFrameBuffer> buffer) {
   RTC_DCHECK_EQ(buffer->width(), raw_images_[0].d_w);
   RTC_DCHECK_EQ(buffer->height(), raw_images_[0].d_h);
   absl::InlinedVector<VideoFrameBuffer::Type, kMaxPreferredPixelFormats>
       supported_formats = {VideoFrameBuffer::Type::kI420,
                            VideoFrameBuffer::Type::kNV12};
 
-  rtc::scoped_refptr<VideoFrameBuffer> mapped_buffer;
+  scoped_refptr<VideoFrameBuffer> mapped_buffer;
   if (buffer->type() != VideoFrameBuffer::Type::kNative) {
     // `buffer` is already mapped.
     mapped_buffer = buffer;
@@ -1442,7 +1495,7 @@ LibvpxVp8Encoder::PrepareBuffers(rtc::scoped_refptr<VideoFrameBuffer> buffer) {
 
   // Prepare `raw_images_` from `mapped_buffer` and, if simulcast, scaled
   // versions of `buffer`.
-  std::vector<rtc::scoped_refptr<VideoFrameBuffer>> prepared_buffers;
+  std::vector<scoped_refptr<VideoFrameBuffer>> prepared_buffers;
   SetRawImagePlanes(&raw_images_[0], mapped_buffer.get());
   prepared_buffers.push_back(mapped_buffer);
   for (size_t i = 1; i < encoders_.size(); ++i) {

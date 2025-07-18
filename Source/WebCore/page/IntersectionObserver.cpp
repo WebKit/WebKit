@@ -27,10 +27,12 @@
 #include "config.h"
 #include "IntersectionObserver.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSTokenizer.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameView.h"
@@ -106,7 +108,7 @@ static ExceptionOr<LengthBox> parseMargin(String& margin, const String& marginNa
     return LengthBox(WTFMove(margins[0]), WTFMove(margins[1]), WTFMove(margins[2]), WTFMove(margins[3]));
 }
 
-ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& document, Ref<IntersectionObserverCallback>&& callback, IntersectionObserver::Init&& init, IncludeObscuredInsets includeObscuredInsets, IntersectionObserver::NotificationDelivery notificationDelivery)
+ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& document, Ref<IntersectionObserverCallback>&& callback, IntersectionObserver::Init&& init, IncludeObscuredInsets includeObscuredInsets)
 {
     RefPtr<ContainerNode> root;
     if (init.root) {
@@ -140,19 +142,18 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
             return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
     }
 
-    return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTFMove(thresholds), includeObscuredInsets, notificationDelivery));
+    return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTFMove(thresholds), includeObscuredInsets));
 }
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntersectionObserver);
 
-IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, LengthBox&& parsedRootMargin, LengthBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets includeObscuredInsets, IntersectionObserver::NotificationDelivery notificationDelivery)
+IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, LengthBox&& parsedRootMargin, LengthBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets includeObscuredInsets)
     : m_root(root)
     , m_rootMargin(WTFMove(parsedRootMargin))
     , m_scrollMargin(WTFMove(parsedScrollMargin))
     , m_thresholds(WTFMove(thresholds))
     , m_callback(WTFMove(callback))
     , m_includeObscuredInsets(includeObscuredInsets)
-    , m_notificationDelivery(notificationDelivery)
 {
     if (RefPtr rootDocument = dynamicDowncast<Document>(root)) {
         auto& observerData = rootDocument->ensureIntersectionObserverData();
@@ -498,17 +499,17 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     return intersectionState;
 }
 
-bool IntersectionObserver::updateObservations(Document& hostDocument)
+auto IntersectionObserver::updateObservations(Document& hostDocument) -> NeedNotify
 {
     RefPtr frameView = hostDocument.view();
     if (!frameView)
-        return false;
+        return NeedNotify::No;
 
     auto timestamp = nowTimestamp();
     if (!timestamp)
-        return false;
+        return NeedNotify::No;
 
-    bool needNotify = false;
+    auto needNotify = NeedNotify::No;
 
     for (auto& target : observationTargets()) {
         auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
@@ -559,7 +560,7 @@ bool IntersectionObserver::updateObservations(Document& hostDocument)
                 intersectionState.thresholdIndex > 0,
             }));
 
-            needNotify = true;
+            needNotify = NeedNotify::Yes;
             registration.previousThresholdIndex = intersectionState.thresholdIndex;
         }
     }

@@ -8,12 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <map>
 #include <memory>
 
+#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
@@ -87,10 +94,10 @@ class TargetDelayTest : public ::testing::Test {
   void Push() {
     rtp_header_.timestamp += kFrameSizeSamples;
     rtp_header_.sequenceNumber++;
-    ASSERT_EQ(0, neteq_->InsertPacket(rtp_header_,
-                                      rtc::ArrayView<const uint8_t>(
-                                          payload_, kFrameSizeSamples * 2),
-                                      Timestamp::MinusInfinity()));
+    ASSERT_EQ(0, neteq_->InsertPacket(
+                     rtp_header_,
+                     ArrayView<const uint8_t>(payload_, kFrameSizeSamples * 2),
+                     Timestamp::MinusInfinity()));
   }
 
   // Pull audio equivalent to the amount of audio in one RTP packet.
@@ -115,9 +122,9 @@ class TargetDelayTest : public ::testing::Test {
       }
 
       if (!clean) {
-        for (int m = 0; m < 10; ++m) {  // Long enough to trigger delay change.
+        for (int o = 0; o < 10; ++o) {  // Long enough to trigger delay change.
           Push();
-          for (int n = 0; n < kInterarrivalJitterPacket; ++n)
+          for (int p = 0; p < kInterarrivalJitterPacket; ++p)
             Pull();
         }
       }

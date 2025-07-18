@@ -15,15 +15,16 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
-
-class OpenSSLKeyPair;
+namespace webrtc {
 
 // OpenSSLCertificate encapsulates an OpenSSL X509* certificate object,
 // which is also reference counted inside the OpenSSL library.
@@ -55,16 +56,7 @@ class OpenSSLCertificate final : public SSLCertificate {
 
   // Compute the digest of the certificate given algorithm
   bool ComputeDigest(absl::string_view algorithm,
-                     unsigned char* digest,
-                     size_t size,
-                     size_t* length) const override;
-
-  // Compute the digest of a certificate as an X509 *
-  static bool ComputeDigest(const X509* x509,
-                            absl::string_view algorithm,
-                            unsigned char* digest,
-                            size_t size,
-                            size_t* length);
+                     Buffer& digest) const override;
 
   bool GetSignatureDigestAlgorithm(std::string* algorithm) const override;
 
@@ -74,6 +66,16 @@ class OpenSSLCertificate final : public SSLCertificate {
   X509* x509_;  // NOT OWNED
 };
 
-}  // namespace rtc
+}  // namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+
+using ::webrtc::OpenSSLCertificate;
+
+}
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_CERTIFICATE_H_

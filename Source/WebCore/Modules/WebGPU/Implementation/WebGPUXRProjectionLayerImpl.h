@@ -41,7 +41,7 @@ namespace WebCore::WebGPU {
 class ConvertToBackingContext;
 
 class XRProjectionLayerImpl final : public XRProjectionLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayerImpl);
 public:
     static Ref<XRProjectionLayerImpl> create(WebGPUPtr<WGPUXRProjectionLayer>&& projectionLayer, ConvertToBackingContext& convertToBackingContext)
     {

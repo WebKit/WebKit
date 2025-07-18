@@ -42,7 +42,7 @@ public:
 
 private:
 #if USE(APPKIT)
-    RetainPtr<NSGraphicsContext> m_savedNSGraphicsContext;
+    const RetainPtr<NSGraphicsContext> m_savedNSGraphicsContext;
 #endif
     bool m_didSetGraphicsContext { false };
 };

@@ -10,15 +10,22 @@
 
 #include "modules/audio_coding/include/audio_coding_module.h"
 
-#include <algorithm>
+#include <array>
+#include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
-#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/audio/audio_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/function_view.h"
+#include "common_audio/resampler/include/push_resampler.h"
 #include "modules/audio_coding/acm2/acm_remixing.h"
-#include "modules/audio_coding/acm2/acm_resampler.h"
-#include "modules/include/module_common_types.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/include/module_common_types_public.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -49,8 +56,8 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   //   Sender
   //
 
-  void ModifyEncoder(rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)>
-                         modifier) override;
+  void ModifyEncoder(
+      FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) override;
 
   // Register a transport callback which will be
   // called to deliver the encoded buffers.
@@ -116,6 +123,13 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   bool HaveValidEncoder(absl::string_view caller_name) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
 
+  // Updates or checks `expected_in_ts_` and `expected_codec_ts` based on the
+  // timestamps in `in_frame`. If no audio frame has been received, the fields
+  // are just set. For subsequent frames, the expected timestamps are checked
+  // for consistency.
+  void SetInputTimestamps(const AudioFrame& in_frame)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
+
   // Preprocessing of input audio, including resampling and down-mixing if
   // required, before pushing audio into encoder's buffer.
   //
@@ -131,15 +145,23 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
                           const AudioFrame** ptr_out)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
 
+  // Called from `PreprocessToAddData` when no resampling or downmixing is
+  // required. Returns a pointer to an output audio_frame. If timestamps are as
+  // expected the return value will point to `in_frame`, otherwise the data will
+  // have been copied into `preprocess_frame_` and the returned pointer points
+  // to `preprocess_frame_`.
+  const AudioFrame* AddDataNoPreProcess(const AudioFrame& in_frame)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
+
   // Change required states after starting to receive the codec corresponding
   // to `index`.
   int UpdateUponReceivingCodec(int index);
 
   mutable Mutex acm_mutex_;
-  rtc::Buffer encode_buffer_ RTC_GUARDED_BY(acm_mutex_);
+  Buffer encode_buffer_ RTC_GUARDED_BY(acm_mutex_);
   uint32_t expected_codec_ts_ RTC_GUARDED_BY(acm_mutex_);
   uint32_t expected_in_ts_ RTC_GUARDED_BY(acm_mutex_);
-  acm2::ACMResampler resampler_ RTC_GUARDED_BY(acm_mutex_);
+  PushResampler<int16_t> resampler_ RTC_GUARDED_BY(acm_mutex_);
   ChangeLogger bitrate_logger_ RTC_GUARDED_BY(acm_mutex_);
 
   // Current encoder stack, provided by a call to RegisterEncoder.
@@ -164,14 +186,17 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   int codec_histogram_bins_log_[static_cast<size_t>(
       AudioEncoder::CodecType::kMaxLoggedAudioCodecTypes)];
   int number_of_consecutive_empty_packets_;
+
+  mutable Mutex stats_mutex_;
+  ANAStats ana_stats_ RTC_GUARDED_BY(stats_mutex_);
+  int target_bitrate_ RTC_GUARDED_BY(stats_mutex_) = -1;
 };
 
 // Adds a codec usage sample to the histogram.
 void UpdateCodecTypeHistogram(size_t codec_type) {
   RTC_HISTOGRAM_ENUMERATION(
       "WebRTC.Audio.Encoder.CodecType", static_cast<int>(codec_type),
-      static_cast<int>(
-          webrtc::AudioEncoder::CodecType::kMaxLoggedAudioCodecTypes));
+      static_cast<int>(AudioEncoder::CodecType::kMaxLoggedAudioCodecTypes));
 }
 
 void AudioCodingModuleImpl::ChangeLogger::MaybeLog(int value) {
@@ -190,7 +215,7 @@ AudioCodingModuleImpl::AudioCodingModuleImpl()
       previous_pltype_(255),
       first_10ms_data_(false),
       first_frame_(true),
-      packetization_callback_(NULL),
+      packetization_callback_(nullptr),
       codec_histogram_bins_log_(),
       number_of_consecutive_empty_packets_(0) {
   RTC_LOG(LS_INFO) << "Created";
@@ -220,7 +245,7 @@ int32_t AudioCodingModuleImpl::Encode(
       first_frame_
           ? input_data.input_timestamp
           : last_rtp_timestamp_ +
-                rtc::dchecked_cast<uint32_t>(rtc::CheckedDivExact(
+                dchecked_cast<uint32_t>(CheckedDivExact(
                     int64_t{input_data.input_timestamp - last_timestamp_} *
                         encoder_stack_->RtpTimestampRateHz(),
                     int64_t{encoder_stack_->SampleRateHz()}));
@@ -237,7 +262,7 @@ int32_t AudioCodingModuleImpl::Encode(
   encode_buffer_.Clear();
   encoded_info = encoder_stack_->Encode(
       rtp_timestamp,
-      rtc::ArrayView<const int16_t>(
+      ArrayView<const int16_t>(
           input_data.audio,
           input_data.audio_channel * input_data.length_per_channel),
       &encode_buffer_);
@@ -284,6 +309,11 @@ int32_t AudioCodingModuleImpl::Encode(
   }
   absolute_capture_timestamp_ms_.reset();
   previous_pltype_ = encoded_info.payload_type;
+  {
+    MutexLock lock(&stats_mutex_);
+    ana_stats_ = encoder_stack_->GetANAStats();
+    target_bitrate_ = encoder_stack_->GetTargetBitrate();
+  }
   return static_cast<int32_t>(encode_buffer_.size());
 }
 
@@ -300,7 +330,7 @@ void AudioCodingModuleImpl::Reset() {
 }
 
 void AudioCodingModuleImpl::ModifyEncoder(
-    rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) {
+    FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) {
   MutexLock lock(&acm_mutex_);
   modifier(&encoder_stack_);
 }
@@ -396,24 +426,7 @@ int AudioCodingModuleImpl::Add10MsDataInternal(const AudioFrame& audio_frame,
   return 0;
 }
 
-// Perform a resampling and down-mix if required. We down-mix only if
-// encoder is mono and input is stereo. In case of dual-streaming, both
-// encoders has to be mono for down-mix to take place.
-// |*ptr_out| will point to the pre-processed audio-frame. If no pre-processing
-// is required, |*ptr_out| points to `in_frame`.
-// TODO(yujo): Make this more efficient for muted frames.
-int AudioCodingModuleImpl::PreprocessToAddData(const AudioFrame& in_frame,
-                                               const AudioFrame** ptr_out) {
-  const bool resample =
-      in_frame.sample_rate_hz_ != encoder_stack_->SampleRateHz();
-
-  // This variable is true if primary codec and secondary codec (if exists)
-  // are both mono and input is stereo.
-  // TODO(henrik.lundin): This condition should probably be
-  //   in_frame.num_channels_ > encoder_stack_->NumChannels()
-  const bool down_mix =
-      in_frame.num_channels_ == 2 && encoder_stack_->NumChannels() == 1;
-
+void AudioCodingModuleImpl::SetInputTimestamps(const AudioFrame& in_frame) {
   if (!first_10ms_data_) {
     expected_in_ts_ = in_frame.timestamp_;
     expected_codec_ts_ = in_frame.timestamp_;
@@ -428,68 +441,75 @@ int AudioCodingModuleImpl::PreprocessToAddData(const AudioFrame& in_frame,
             static_cast<double>(in_frame.sample_rate_hz_));
     expected_in_ts_ = in_frame.timestamp_;
   }
+}
+
+// Perform a resampling and down-mix if required. We down-mix only if
+// encoder is mono and input is stereo. In case of dual-streaming, both
+// encoders has to be mono for down-mix to take place.
+// |*ptr_out| will point to the pre-processed audio-frame. If no pre-processing
+// is required, |*ptr_out| points to `in_frame`.
+// TODO(yujo): Make this more efficient for muted frames.
+int AudioCodingModuleImpl::PreprocessToAddData(const AudioFrame& in_frame,
+                                               const AudioFrame** ptr_out) {
+  SetInputTimestamps(in_frame);
+
+  const bool resample =
+      in_frame.sample_rate_hz_ != encoder_stack_->SampleRateHz();
+
+  // This variable is true if primary codec and secondary codec (if exists)
+  // are both mono and input is stereo.
+  // TODO(henrik.lundin): This condition should probably be
+  //   in_frame.num_channels_ > encoder_stack_->NumChannels()
+  const bool down_mix =
+      in_frame.num_channels_ == 2 && encoder_stack_->NumChannels() == 1;
 
   if (!down_mix && !resample) {
-    // No pre-processing is required.
-    if (expected_in_ts_ == expected_codec_ts_) {
-      // If we've never resampled, we can use the input frame as-is
-      *ptr_out = &in_frame;
-    } else {
-      // Otherwise we'll need to alter the timestamp. Since in_frame is const,
-      // we'll have to make a copy of it.
-      preprocess_frame_.CopyFrom(in_frame);
-      preprocess_frame_.timestamp_ = expected_codec_ts_;
-      *ptr_out = &preprocess_frame_;
-    }
-
-    expected_in_ts_ += static_cast<uint32_t>(in_frame.samples_per_channel_);
-    expected_codec_ts_ += static_cast<uint32_t>(in_frame.samples_per_channel_);
+    // No preprocessing is required.
+    *ptr_out = AddDataNoPreProcess(in_frame);
     return 0;
   }
 
+  // Some pre-processing will be required, so we'll use the internal buffer.
   *ptr_out = &preprocess_frame_;
-  preprocess_frame_.num_channels_ = in_frame.num_channels_;
+  preprocess_frame_.timestamp_ = expected_codec_ts_;
   preprocess_frame_.samples_per_channel_ = in_frame.samples_per_channel_;
-  std::array<int16_t, AudioFrame::kMaxDataSizeSamples> audio;
-  const int16_t* src_ptr_audio;
-  if (down_mix) {
-    // If a resampling is required, the output of a down-mix is written into a
-    // local buffer, otherwise, it will be written to the output frame.
-    int16_t* dest_ptr_audio =
-        resample ? audio.data() : preprocess_frame_.mutable_data();
-    RTC_DCHECK_GE(audio.size(), preprocess_frame_.samples_per_channel_);
-    RTC_DCHECK_GE(audio.size(), in_frame.samples_per_channel_);
-    DownMixFrame(in_frame,
-                 rtc::ArrayView<int16_t>(
-                     dest_ptr_audio, preprocess_frame_.samples_per_channel_));
-    preprocess_frame_.num_channels_ = 1;
 
-    // Set the input of the resampler to the down-mixed signal.
-    src_ptr_audio = audio.data();
+  // Temporary buffer in case both downmixing and resampling is required.
+  std::array<int16_t, AudioFrame::kMaxDataSizeSamples> audio;
+  // When resampling is needed, this view will represent the buffer to resample.
+  InterleavedView<const int16_t> resample_src_audio;
+
+  if (down_mix) {
+    RTC_DCHECK_GE(audio.size(), in_frame.samples_per_channel());
+    preprocess_frame_.num_channels_ = 1;  // We always downmix to mono.
+    // If a resampling is also required, the output of a down-mix is written
+    // into a local buffer, otherwise, it will be written to the output frame.
+    auto downmixed =
+        resample
+            ? InterleavedView<int16_t>(audio.data(),
+                                       in_frame.samples_per_channel(), 1)
+            : preprocess_frame_.mutable_data(in_frame.samples_per_channel(), 1);
+    DownMixFrame(in_frame, downmixed.AsMono());
+    if (resample) {
+      // Set the input for the resampler to the down-mixed signal.
+      resample_src_audio = downmixed;
+    }
   } else {
-    // Set the input of the resampler to the original data.
-    src_ptr_audio = in_frame.data();
+    preprocess_frame_.num_channels_ = in_frame.num_channels_;
+    if (resample) {
+      // Set the input of the resampler to the original data.
+      resample_src_audio = in_frame.data_view();
+    }
   }
 
-  preprocess_frame_.timestamp_ = expected_codec_ts_;
-  preprocess_frame_.sample_rate_hz_ = in_frame.sample_rate_hz_;
-  // If it is required, we have to do a resampling.
+  RTC_DCHECK(resample_src_audio.empty() || resample);
+  preprocess_frame_.SetSampleRateAndChannelSize(encoder_stack_->SampleRateHz());
+
   if (resample) {
-    // The result of the resampler is written to output frame.
-    int16_t* dest_ptr_audio = preprocess_frame_.mutable_data();
-
-    int samples_per_channel = resampler_.Resample10Msec(
-        src_ptr_audio, in_frame.sample_rate_hz_, encoder_stack_->SampleRateHz(),
-        preprocess_frame_.num_channels_, AudioFrame::kMaxDataSizeSamples,
-        dest_ptr_audio);
-
-    if (samples_per_channel < 0) {
-      RTC_LOG(LS_ERROR) << "Cannot add 10 ms audio, resampling failed";
-      return -1;
-    }
-    preprocess_frame_.samples_per_channel_ =
-        static_cast<size_t>(samples_per_channel);
-    preprocess_frame_.sample_rate_hz_ = encoder_stack_->SampleRateHz();
+    resampler_.Resample(
+        resample_src_audio,
+        preprocess_frame_.mutable_data(preprocess_frame_.samples_per_channel(),
+                                       preprocess_frame_.num_channels()));
   }
 
   expected_codec_ts_ +=
@@ -497,6 +517,27 @@ int AudioCodingModuleImpl::PreprocessToAddData(const AudioFrame& in_frame,
   expected_in_ts_ += static_cast<uint32_t>(in_frame.samples_per_channel_);
 
   return 0;
+}
+
+const AudioFrame* AudioCodingModuleImpl::AddDataNoPreProcess(
+    const AudioFrame& in_frame) {
+  const AudioFrame* ret = nullptr;
+  // No preprocessing is required.
+  if (expected_in_ts_ == expected_codec_ts_) {
+    // Timestamps as expected, we can use the input frame as-is.
+    ret = &in_frame;
+  } else {
+    // Otherwise we'll need to alter the timestamp. Since in_frame is const,
+    // we'll have to make a copy of it.
+    preprocess_frame_.CopyFrom(in_frame);
+    preprocess_frame_.timestamp_ = expected_codec_ts_;
+    ret = &preprocess_frame_;
+  }
+
+  expected_in_ts_ += static_cast<uint32_t>(in_frame.samples_per_channel_);
+  expected_codec_ts_ += static_cast<uint32_t>(in_frame.samples_per_channel_);
+
+  return ret;
 }
 
 /////////////////////////////////////////
@@ -525,19 +566,13 @@ bool AudioCodingModuleImpl::HaveValidEncoder(
 }
 
 ANAStats AudioCodingModuleImpl::GetANAStats() const {
-  MutexLock lock(&acm_mutex_);
-  if (encoder_stack_)
-    return encoder_stack_->GetANAStats();
-  // If no encoder is set, return default stats.
-  return ANAStats();
+  MutexLock lock(&stats_mutex_);
+  return ana_stats_;
 }
 
 int AudioCodingModuleImpl::GetTargetBitrate() const {
-  MutexLock lock(&acm_mutex_);
-  if (!encoder_stack_) {
-    return -1;
-  }
-  return encoder_stack_->GetTargetBitrate();
+  MutexLock lock(&stats_mutex_);
+  return target_bitrate_;
 }
 
 }  // namespace

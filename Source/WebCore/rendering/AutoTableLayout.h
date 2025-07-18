@@ -22,6 +22,7 @@
 
 #include "LayoutUnit.h"
 #include "Length.h"
+#include "StylePreferredSize.h"
 #include "TableLayout.h"
 #include <wtf/Vector.h>
 

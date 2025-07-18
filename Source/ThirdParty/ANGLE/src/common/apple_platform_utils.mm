@@ -121,13 +121,8 @@ bool IsMetalRendererAvailable()
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 bool GetMacosMachineModel(std::string *outMachineModel)
 {
-#    if TARGET_OS_OSX && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#    else
-    const mach_port_t mainPort = kIOMainPortDefault;
-#    endif
-    io_service_t platformExpert =
-        IOServiceGetMatchingService(mainPort, IOServiceMatching("IOPlatformExpertDevice"));
+    io_service_t platformExpert = IOServiceGetMatchingService(
+        kIOMainPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
 
     if (platformExpert == IO_OBJECT_NULL)
     {

@@ -80,8 +80,7 @@ class TestPeer final : public StatsProvider {
 
   // Tell underlying `PeerConnection` to create an Offer.
   // `observer` will be invoked on the signaling thread when offer is created.
-  void CreateOffer(
-      rtc::scoped_refptr<CreateSessionDescriptionObserver> observer) {
+  void CreateOffer(scoped_refptr<CreateSessionDescriptionObserver> observer) {
     RTC_CHECK(wrapper_) << "TestPeer is already closed";
     pc()->CreateOffer(observer.get(), params_.rtc_offer_answer_options);
   }
@@ -105,21 +104,21 @@ class TestPeer final : public StatsProvider {
   bool SetRemoteDescription(std::unique_ptr<SessionDescriptionInterface> desc,
                             std::string* error_out = nullptr);
 
-  rtc::scoped_refptr<RtpTransceiverInterface> AddTransceiver(
-      cricket::MediaType media_type,
+  scoped_refptr<RtpTransceiverInterface> AddTransceiver(
+      webrtc::MediaType media_type,
       const RtpTransceiverInit& init) {
     RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->AddTransceiver(media_type, init);
   }
 
-  rtc::scoped_refptr<RtpSenderInterface> AddTrack(
-      rtc::scoped_refptr<MediaStreamTrackInterface> track,
+  scoped_refptr<RtpSenderInterface> AddTrack(
+      scoped_refptr<MediaStreamTrackInterface> track,
       const std::vector<std::string>& stream_ids = {}) {
     RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->AddTrack(track, stream_ids);
   }
 
-  rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
+  scoped_refptr<DataChannelInterface> CreateDataChannel(
       const std::string& label,
       const std::optional<DataChannelInit>& config = std::nullopt) {
     RTC_CHECK(wrapper_) << "TestPeer is already closed";
@@ -141,7 +140,7 @@ class TestPeer final : public StatsProvider {
     return wrapper_->IsIceConnected();
   }
 
-  rtc::scoped_refptr<const RTCStatsReport> GetStats() {
+  scoped_refptr<const RTCStatsReport> GetStats() {
     RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->GetStats();
   }
@@ -161,13 +160,13 @@ class TestPeer final : public StatsProvider {
 
  protected:
   friend class TestPeerFactory;
-  TestPeer(rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
-           rtc::scoped_refptr<PeerConnectionInterface> pc,
+  TestPeer(scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
+           scoped_refptr<PeerConnectionInterface> pc,
            std::unique_ptr<MockPeerConnectionObserver> observer,
            Params params,
            ConfigurableParams configurable_params,
            std::vector<PeerConfigurer::VideoSource> video_sources,
-           std::unique_ptr<rtc::Thread> worker_thread);
+           std::unique_ptr<Thread> worker_thread);
 
  private:
   const Params params_;
@@ -177,13 +176,12 @@ class TestPeer final : public StatsProvider {
 
   // Safety flag to protect all tasks posted on the signaling thread to not be
   // executed after `wrapper_` object is destructed.
-  rtc::scoped_refptr<PendingTaskSafetyFlag> signaling_thread_task_safety_ =
-      nullptr;
+  scoped_refptr<PendingTaskSafetyFlag> signaling_thread_task_safety_ = nullptr;
 
   // Keeps ownership of worker thread. It has to be destroyed after `wrapper_`.
   // `worker_thread_`can be null if the Peer use only one thread as both the
   // worker thread and network thread.
-  std::unique_ptr<rtc::Thread> worker_thread_;
+  std::unique_ptr<Thread> worker_thread_;
   std::unique_ptr<PeerConnectionWrapper> wrapper_;
   std::vector<PeerConfigurer::VideoSource> video_sources_;
 

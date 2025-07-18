@@ -47,8 +47,8 @@ std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFo
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        return DestinationColorSpace::ExtendedDisplayP3();
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+        return DestinationColorSpace::ExtendedSRGB();
 #endif
         break;
 #endif

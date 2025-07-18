@@ -190,7 +190,7 @@ size_t PlatformRawAudioDataGStreamer::memoryCost() const
     return gst_buffer_get_size(gst_sample_get_buffer(m_sample.get()));
 }
 
-std::optional<std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
+std::optional<Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
 {
     GstMappedAudioBuffer mappedBuffer(m_sample, GST_MAP_READ);
     if (!mappedBuffer)

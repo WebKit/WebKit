@@ -32,6 +32,7 @@
 #include "config.h"
 #include "BaseDateAndTimeInputType.h"
 
+#include "AXObjectCache.h"
 #include "BaseClickableWithKeyInputType.h"
 #include "Chrome.h"
 #include "ContainerNodeInlines.h"
@@ -283,7 +284,7 @@ bool BaseDateAndTimeInputType::valueMissing(const String& value) const
     return protectedElement()->isMutable() && element()->isRequired() && value.isEmpty();
 }
 
-bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
+bool BaseDateAndTimeInputType::isKeyboardFocusable(const FocusEventData&) const
 {
     ASSERT(element());
     Ref input = *element();
@@ -510,7 +511,7 @@ void BaseDateAndTimeInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirec
         // so that this element no longer has focus. In this case, one of the children should
         // not be focused as the element is losing focus entirely.
         if (RefPtr page = element()->document().page())
-            page->checkedFocusController()->advanceFocus(direction, 0);
+            page->focusController().advanceFocus(direction, 0);
 
     } else {
         // If the element received focus in any other direction, transfer focus to the first focusable child.
@@ -543,8 +544,16 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
 
     InputType::setValue(value, valueChanged, DispatchNoEvent, DoNotSet);
 
-    if (!valueChanged)
+    if (!valueChanged) {
+        if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache()) {
+            // This method is called when a sub-field of a date or time input changes. An HTML input's DOM value
+            // only changes when all fields are filled out, but accessibility needs to represent the partial value
+            // for assistive technologies, so notify accessibility here so it can take the appropriate actions, e.g.
+            // updating the accessibility tree.
+            cache->valueChanged(input.get());
+        }
         return;
+    }
 
     if (input->protectedUserAgentShadowRoot()->containsFocusedElement())
         input->dispatchFormControlInputEvent();

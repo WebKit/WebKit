@@ -116,12 +116,15 @@ public:
 
     virtual ImageBufferPixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
+    virtual bool isOpaque() const;
     virtual bool willReadFrequently() const;
     virtual std::optional<RenderingMode> renderingModeForTesting() const { return std::nullopt; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     bool isHDR() const { return pixelFormat() == ImageBufferPixelFormat::RGBA16F; }
+    virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit) { };
 #endif
+    virtual std::optional<double> getEffectiveDynamicRangeLimitValue() const { return std::nullopt; };
 
     void setIsInPreparationForDisplayOrFlush(bool flag) { m_isInPreparationForDisplayOrFlush = flag; }
     bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }

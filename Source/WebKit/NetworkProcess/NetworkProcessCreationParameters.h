@@ -31,6 +31,7 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
+#include <wtf/Markable.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -82,6 +83,8 @@ struct NetworkProcessCreationParameters {
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
+
+    Markable<double> defaultRequestTimeoutInterval;
 };
 
 } // namespace WebKit

@@ -12,16 +12,22 @@
 
 #include <string.h>
 
+#include <cstdint>
+#include <iterator>
 #include <list>
 #include <memory>
 #include <utility>
 
+#include "api/units/timestamp.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/mocks/mock_recovered_packet_receiver.h"
-#include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -41,7 +47,7 @@ constexpr uint32_t kMediaSsrc = 835424;
 
 class NullRecoveredPacketReceiver : public RecoveredPacketReceiver {
  public:
-  void OnRecoveredPacket(const RtpPacketReceived& packet) override {}
+  void OnRecoveredPacket(const RtpPacketReceived& /* packet */) override {}
 };
 
 }  // namespace

@@ -33,6 +33,7 @@
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessageHandler.h>
 #import <WebKit/WKWebViewPrivate.h>

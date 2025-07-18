@@ -16,7 +16,9 @@
 #include <utility>
 #include <vector>
 
-#include "absl/types/variant.h"
+#include "api/array_view.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
@@ -24,6 +26,8 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -36,10 +40,10 @@ constexpr size_t kNalHeaderSize = 1;
 constexpr size_t kFuAHeaderSize = 2;
 constexpr size_t kLengthFieldSize = 2;
 
-std::vector<rtc::ArrayView<const uint8_t>> ParseStapA(
-    rtc::ArrayView<const uint8_t> data) {
-  std::vector<rtc::ArrayView<const uint8_t>> nal_units;
-  rtc::ByteBufferReader reader(data);
+std::vector<ArrayView<const uint8_t>> ParseStapA(
+    ArrayView<const uint8_t> data) {
+  std::vector<ArrayView<const uint8_t>> nal_units;
+  ByteBufferReader reader(data);
   if (!reader.Consume(kNalHeaderSize)) {
     return nal_units;
   }
@@ -59,12 +63,12 @@ std::vector<rtc::ArrayView<const uint8_t>> ParseStapA(
 }
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
-    rtc::CopyOnWriteBuffer rtp_payload) {
-  rtc::ArrayView<const uint8_t> payload_data(rtp_payload);
+    CopyOnWriteBuffer rtp_payload) {
+  ArrayView<const uint8_t> payload_data(rtp_payload);
   std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed_payload(
       std::in_place);
   bool modified_buffer = false;
-  rtc::Buffer output_buffer;
+  Buffer output_buffer;
   parsed_payload->video_payload = rtp_payload;
   parsed_payload->video_header.width = 0;
   parsed_payload->video_header.height = 0;
@@ -75,7 +79,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
                           .emplace<RTPVideoHeaderH264>();
 
   uint8_t nal_type = payload_data[0] & kH264TypeMask;
-  std::vector<rtc::ArrayView<const uint8_t>> nal_units;
+  std::vector<ArrayView<const uint8_t>> nal_units;
   if (nal_type == H264::NaluType::kStapA) {
     nal_units = ParseStapA(payload_data);
     if (nal_units.empty()) {
@@ -92,13 +96,12 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
 
   parsed_payload->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
 
-  for (const rtc::ArrayView<const uint8_t>& nal_unit : nal_units) {
+  for (const ArrayView<const uint8_t>& nal_unit : nal_units) {
     NaluInfo nalu;
     nalu.type = nal_unit[0] & kH264TypeMask;
     nalu.sps_id = -1;
     nalu.pps_id = -1;
-    rtc::ArrayView<const uint8_t> nalu_data =
-        nal_unit.subview(H264::kNaluTypeSize);
+    ArrayView<const uint8_t> nalu_data = nal_unit.subview(H264::kNaluTypeSize);
 
     if (nalu_data.empty()) {
       RTC_LOG(LS_WARNING) << "Skipping empty NAL unit.";
@@ -224,7 +227,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
 }
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
-    rtc::CopyOnWriteBuffer rtp_payload) {
+    CopyOnWriteBuffer rtp_payload) {
   if (rtp_payload.size() < kFuAHeaderSize) {
     RTC_LOG(LS_ERROR) << "FU-A NAL units truncated.";
     return std::nullopt;
@@ -243,7 +246,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
     if (original_nal_type == H264::NaluType::kIdr ||
         original_nal_type == H264::NaluType::kSlice) {
       std::optional<PpsParser::SliceHeader> slice_header =
-          PpsParser::ParseSliceHeader(rtc::ArrayView<const uint8_t>(rtp_payload)
+          PpsParser::ParseSliceHeader(ArrayView<const uint8_t>(rtp_payload)
                                           .subview(2 * kNalHeaderSize));
       if (slice_header) {
         nalu.pps_id = slice_header->pic_parameter_set_id;
@@ -289,7 +292,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
 }  // namespace
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
-VideoRtpDepacketizerH264::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
+VideoRtpDepacketizerH264::Parse(CopyOnWriteBuffer rtp_payload) {
   if (rtp_payload.size() == 0) {
     RTC_LOG(LS_ERROR) << "Empty payload.";
     return std::nullopt;

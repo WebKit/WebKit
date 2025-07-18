@@ -10,19 +10,27 @@
 
 #include "video/adaptation/bandwidth_quality_scaler_resource.h"
 
-#include <utility>
+#include <cstdint>
+#include <memory>
+#include <vector>
 
+#include "api/adaptation/resource.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_encoder.h"
+#include "modules/video_coding/utility/bandwidth_quality_scaler.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/balanced_degradation_settings.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
+#include "video/adaptation/video_stream_encoder_resource.h"
 
 namespace webrtc {
 
 // static
-rtc::scoped_refptr<BandwidthQualityScalerResource>
+scoped_refptr<BandwidthQualityScalerResource>
 BandwidthQualityScalerResource::Create() {
-  return rtc::make_ref_counted<BandwidthQualityScalerResource>();
+  return make_ref_counted<BandwidthQualityScalerResource>();
 }
 
 BandwidthQualityScalerResource::BandwidthQualityScalerResource()
@@ -40,7 +48,8 @@ bool BandwidthQualityScalerResource::is_started() const {
 
 void BandwidthQualityScalerResource::StartCheckForOveruse(
     const std::vector<VideoEncoder::ResolutionBitrateLimits>&
-        resolution_bitrate_limits) {
+        resolution_bitrate_limits,
+    VideoCodecType codec_type) {
   RTC_DCHECK_RUN_ON(encoder_queue());
   RTC_DCHECK(!is_started());
   bandwidth_quality_scaler_ = std::make_unique<BandwidthQualityScaler>(this);
@@ -48,7 +57,7 @@ void BandwidthQualityScalerResource::StartCheckForOveruse(
   // If the configuration parameters more than one, we should define and
   // declare the function BandwidthQualityScaler::Initialize() and call it.
   bandwidth_quality_scaler_->SetResolutionBitrateLimits(
-      resolution_bitrate_limits);
+      resolution_bitrate_limits, codec_type);
 }
 
 void BandwidthQualityScalerResource::StopCheckForOveruse() {

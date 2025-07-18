@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-state.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-info-and-state.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-intercept-history-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url-utf8.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html

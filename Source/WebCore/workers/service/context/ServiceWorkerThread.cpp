@@ -65,7 +65,7 @@ using namespace PAL;
 namespace WebCore {
 
 class DummyServiceWorkerThreadProxy final : public WorkerObjectProxy, public CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DummyServiceWorkerThreadProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DummyServiceWorkerThreadProxy);
 public:
     static DummyServiceWorkerThreadProxy& shared()

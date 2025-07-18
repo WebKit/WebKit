@@ -10,6 +10,10 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 
+#include <cstdint>
+
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -36,7 +40,7 @@ TEST(RtcpPacketTmmbnTest, Create) {
   tmmbn.SetSenderSsrc(kSenderSsrc);
   tmmbn.AddTmmbr(TmmbItem(kRemoteSsrc, kBitrateBps, kOverhead));
 
-  rtc::Buffer packet = tmmbn.Build();
+  Buffer packet = tmmbn.Build();
 
   EXPECT_THAT(make_tuple(packet.data(), packet.size()),
               ElementsAreArray(kPacket));
@@ -59,7 +63,7 @@ TEST(RtcpPacketTmmbnTest, CreateAndParseWithoutItems) {
   Tmmbn tmmbn;
   tmmbn.SetSenderSsrc(kSenderSsrc);
 
-  rtc::Buffer packet = tmmbn.Build();
+  Buffer packet = tmmbn.Build();
   Tmmbn parsed;
   EXPECT_TRUE(test::ParseSinglePacket(packet, &parsed));
 
@@ -73,7 +77,7 @@ TEST(RtcpPacketTmmbnTest, CreateAndParseWithTwoItems) {
   tmmbn.AddTmmbr(TmmbItem(kRemoteSsrc, kBitrateBps, kOverhead));
   tmmbn.AddTmmbr(TmmbItem(kRemoteSsrc + 1, 4 * kBitrateBps, 40));
 
-  rtc::Buffer packet = tmmbn.Build();
+  Buffer packet = tmmbn.Build();
   Tmmbn parsed;
   EXPECT_TRUE(test::ParseSinglePacket(packet, &parsed));
 

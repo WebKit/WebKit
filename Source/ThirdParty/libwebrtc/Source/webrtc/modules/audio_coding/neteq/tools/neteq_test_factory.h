@@ -11,11 +11,14 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_FACTORY_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_FACTORY_H_
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/neteq/neteq_factory.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 
 namespace webrtc {
@@ -80,6 +83,9 @@ class NetEqTestFactory {
     // RTP payload type for redundant audio (RED).
     static constexpr int default_red() { return 117; }
     int red = default_red();
+
+    static constexpr int default_opus_red() { return 63; }
+    int opus_red = default_opus_red();
     // RTP payload type for comfort noise (8 kHz).
     static constexpr int default_cn_nb() { return 13; }
     int cn_nb = default_cn_nb();

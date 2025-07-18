@@ -30,6 +30,7 @@
 #include "APINavigation.h"
 #include "FrameInfoData.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 
 namespace API {
 

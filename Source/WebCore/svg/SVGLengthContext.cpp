@@ -24,6 +24,7 @@
 #include "config.h"
 #include "SVGLengthContext.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSUnits.h"
 #include "FontCascade.h"
 #include "FontMetrics.h"

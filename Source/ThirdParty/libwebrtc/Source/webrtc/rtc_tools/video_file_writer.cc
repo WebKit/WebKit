@@ -23,7 +23,7 @@ namespace webrtc {
 namespace test {
 namespace {
 
-void WriteVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteVideoToFile(const scoped_refptr<Video>& video,
                       const std::string& file_name,
                       int fps,
                       bool isY4m) {
@@ -43,23 +43,23 @@ void WriteVideoToFile(const rtc::scoped_refptr<Video>& video,
       std::string frame = "FRAME\n";
       fwrite(frame.c_str(), 1, 6, output_file);
     }
-    rtc::scoped_refptr<I420BufferInterface> buffer = video->GetFrame(i);
+    scoped_refptr<I420BufferInterface> buffer = video->GetFrame(i);
     RTC_CHECK(buffer) << "Frame: " << i
                       << "\nWhile trying to create: " << file_name;
     const uint8_t* data_y = buffer->DataY();
     int stride = buffer->StrideY();
-    for (int i = 0; i < video->height(); ++i) {
-      fwrite(data_y + i * stride, /*size=*/1, stride, output_file);
+    for (int j = 0; j < video->height(); ++j) {
+      fwrite(data_y + j * stride, /*size=*/1, stride, output_file);
     }
     const uint8_t* data_u = buffer->DataU();
     stride = buffer->StrideU();
-    for (int i = 0; i < buffer->ChromaHeight(); ++i) {
-      fwrite(data_u + i * stride, /*size=*/1, stride, output_file);
+    for (int j = 0; j < buffer->ChromaHeight(); ++j) {
+      fwrite(data_u + j * stride, /*size=*/1, stride, output_file);
     }
     const uint8_t* data_v = buffer->DataV();
     stride = buffer->StrideV();
-    for (int i = 0; i < buffer->ChromaHeight(); ++i) {
-      fwrite(data_v + i * stride, /*size=*/1, stride, output_file);
+    for (int j = 0; j < buffer->ChromaHeight(); ++j) {
+      fwrite(data_v + j * stride, /*size=*/1, stride, output_file);
     }
   }
   if (ferror(output_file) != 0) {
@@ -70,20 +70,20 @@ void WriteVideoToFile(const rtc::scoped_refptr<Video>& video,
 
 }  // Anonymous namespace
 
-void WriteVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteVideoToFile(const scoped_refptr<Video>& video,
                       const std::string& file_name,
                       int fps) {
   WriteVideoToFile(video, file_name, fps,
                    /*isY4m=*/absl::EndsWith(file_name, ".y4m"));
 }
 
-void WriteY4mVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteY4mVideoToFile(const scoped_refptr<Video>& video,
                          const std::string& file_name,
                          int fps) {
   WriteVideoToFile(video, file_name, fps, /*isY4m=*/true);
 }
 
-void WriteYuvVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteYuvVideoToFile(const scoped_refptr<Video>& video,
                          const std::string& file_name,
                          int fps) {
   WriteVideoToFile(video, file_name, fps, /*isY4m=*/false);

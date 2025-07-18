@@ -17,6 +17,7 @@
 #include <list>
 #include <vector>
 
+#include "api/video/video_frame_type.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/deprecated/packet.h"

@@ -144,11 +144,19 @@ void ModelProcessModelPlayer::didFinishEnvironmentMapLoading(bool succeeded)
 
 std::optional<WebCore::ModelPlayerAnimationState> ModelProcessModelPlayer::currentAnimationState() const
 {
+    // Has no current state to return if the model load hasn't returned with its extents.
+    if (!m_boundingBoxExtents)
+        return std::nullopt;
+
     return m_animationState;
 }
 
 std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> ModelProcessModelPlayer::currentTransformState() const
 {
+    // Has no current state to return if the model load hasn't returned with its extents.
+    if (!m_boundingBoxExtents)
+        return std::nullopt;
+
     return ModelProcessModelPlayerTransformState::create(m_entityTransform, m_boundingBoxCenter, m_boundingBoxExtents, m_hasPortal, m_stageModeOperation);
 }
 

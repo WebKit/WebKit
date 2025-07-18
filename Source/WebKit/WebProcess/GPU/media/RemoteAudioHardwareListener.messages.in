@@ -32,7 +32,7 @@
 messages -> RemoteAudioHardwareListener {
     AudioHardwareDidBecomeActive()
     AudioHardwareDidBecomeInactive()
-    AudioOutputDeviceChanged(size_t bufferSizeMinimum, size_t bufferSizeMaximum)
+    AudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
 }
 
 #endif

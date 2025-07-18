@@ -39,7 +39,7 @@ class DcSctpMessage {
   PPID ppid() const { return ppid_; }
 
   // The payload of the message.
-  rtc::ArrayView<const uint8_t> payload() const { return payload_; }
+  webrtc::ArrayView<const uint8_t> payload() const { return payload_; }
 
   // When destructing the message, extracts the payload.
   std::vector<uint8_t> ReleasePayload() && { return std::move(payload_); }

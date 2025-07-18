@@ -69,6 +69,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-iframe-location.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-location.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-meta-refresh.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-location.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document.html
@@ -86,7 +88,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-navigates-top-and-same-doc-child-and-cross-doc-child.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-top-cancels-cross-document-child.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-in-unload-then-remove-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-same-document.html

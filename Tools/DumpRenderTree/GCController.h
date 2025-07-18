@@ -32,7 +32,7 @@
 #include <wtf/FastMalloc.h>
 
 class GCController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GCController);
 public:
     void makeWindowObject(JSContextRef);
 

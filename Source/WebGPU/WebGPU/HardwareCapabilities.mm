@@ -452,7 +452,7 @@ static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& prev
 
     Vector<WGPUFeatureName> result(previous.size() + next.size());
     auto end = mergeDeduplicatedSorted(previous.begin(), previous.end(), next.begin(), next.end(), result.begin());
-    result.resize(end - result.begin());
+    result.shrink(end - result.begin());
     return result;
 }
 

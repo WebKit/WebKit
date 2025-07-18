@@ -11,8 +11,10 @@
 #include "video/stats_counter.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <limits>
 #include <map>
+#include <string>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
@@ -31,7 +33,7 @@ std::string AggregatedStats::ToString() const {
 }
 
 std::string AggregatedStats::ToStringWithMultiplier(int multiplier) const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "periodic_samples:" << num_samples << ", {";
   ss << "min:" << (min * multiplier) << ", ";
   ss << "avg:" << (average * multiplier) << ", ";

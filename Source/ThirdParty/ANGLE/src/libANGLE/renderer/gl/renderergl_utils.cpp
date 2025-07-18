@@ -1935,9 +1935,8 @@ void GenerateCaps(const FunctionsGL *functions,
 
     // EXT_blend_func_extended is not implemented on top of ARB_blend_func_extended
     // because the latter does not support fragment shader output layout qualifiers.
-    extensions->blendFuncExtendedEXT = !features.disableBlendFuncExtended.enabled &&
-                                       (functions->isAtLeastGL(gl::Version(3, 3)) ||
-                                        functions->hasGLESExtension("GL_EXT_blend_func_extended"));
+    extensions->blendFuncExtendedEXT = functions->isAtLeastGL(gl::Version(3, 3)) ||
+                                       functions->hasGLESExtension("GL_EXT_blend_func_extended");
     if (extensions->blendFuncExtendedEXT)
     {
         // TODO(http://anglebug.com/40644593): Support greater values of
@@ -2298,11 +2297,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, addAndTrueToLoopCondition, IsApple() && isIntel);
 
-    // Ported from gpu_driver_bug_list.json (#191)
-    ANGLE_FEATURE_CONDITION(
-        features, emulateIsnanFloat,
-        isIntel && IsApple() && IsSkylake(device) && GetMacOSVersion() < OSVersion(10, 13, 2));
-
     // https://anglebug.com/42266803
     ANGLE_FEATURE_CONDITION(features, clearsWithGapsNeedFlush,
                             !isMesa && isQualcomm && qualcommVersion < 490);
@@ -2315,15 +2309,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(
         features, useUnusedBlocksWithStandardOrSharedLayout,
         (IsApple() && functions->standard == STANDARD_GL_DESKTOP) || (IsLinux() && isAMD));
-
-    // Ported from gpu_driver_bug_list.json (#187)
-    ANGLE_FEATURE_CONDITION(features, doWhileGLSLCausesGPUHang,
-                            IsApple() && functions->standard == STANDARD_GL_DESKTOP &&
-                                GetMacOSVersion() < OSVersion(10, 11, 0));
-
-    // Ported from gpu_driver_bug_list.json (#211)
-    ANGLE_FEATURE_CONDITION(features, rewriteFloatUnaryMinusOperator,
-                            IsApple() && isIntel && GetMacOSVersion() < OSVersion(10, 12, 0));
 
     ANGLE_FEATURE_CONDITION(features, vertexIDDoesNotIncludeBaseVertex, IsApple() && isAMD);
 
@@ -2374,10 +2359,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, dontUseLoopsToInitializeVariables,
                             (!isMesa && isQualcomm) || (isIntel && IsApple()));
 
-    // Intel macOS condition ported from gpu_driver_bug_list.json (#327)
-    ANGLE_FEATURE_CONDITION(features, disableBlendFuncExtended,
-                            IsApple() && isIntel && GetMacOSVersion() < OSVersion(10, 14, 0));
-
     ANGLE_FEATURE_CONDITION(features, avoidBindFragDataLocation, !isMesa && isQualcomm);
 
     ANGLE_FEATURE_CONDITION(features, unsizedSRGBReadPixelsDoesntTransform, !isMesa && isQualcomm);
@@ -2415,9 +2396,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, resetTexImage2DBaseLevel,
                             IsApple() && isIntel && GetMacOSVersion() >= OSVersion(10, 12, 4));
-
-    ANGLE_FEATURE_CONDITION(features, clearToZeroOrOneBroken,
-                            IsApple() && isIntel && GetMacOSVersion() < OSVersion(10, 12, 6));
 
     ANGLE_FEATURE_CONDITION(features, adjustSrcDstRegionForBlitFramebuffer,
                             IsLinux() || (IsAndroid() && isNvidia) || (IsWindows() && isNvidia) ||

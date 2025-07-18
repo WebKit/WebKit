@@ -47,7 +47,7 @@ class BitWriter final {
 
  private:
   std::string buffer_;
-  rtc::BitBufferWriter bit_writer_;
+  BitBufferWriter bit_writer_;
   // Note: Counting bits instead of bytes wraps around earlier than it has to,
   // which means the maximum length is lower than it could be. We don't expect
   // to go anywhere near the limit, though, so this is good enough.

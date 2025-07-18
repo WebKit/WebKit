@@ -32,7 +32,7 @@ varies by platform, but they all have the [webrtc::TaskQueueBase][3] API.
 
 This API offers primitives for posting tasks, with or without delay.
 
-Some core parts use the [rtc::Thread][2], which is a subclass of TaskQueueBase.
+Some core parts use the [webrtc::Thread][2], which is a subclass of TaskQueueBase.
 This may contain a SocketServer for processing I/O, and is used for policing
 certain calling pattern between a few core threads (the NetworkThread cannot
 do Invoke on the Worker thread, for instance).
@@ -47,7 +47,7 @@ behave as follows:
 
 * FooFactory: Has a Create function that creates a Foo object and returns the
   object or an owning reference to it (for instance std::unique_ptr or
-  rtc::scoped_refptr<Foo>). The Create function should NOT alter the factory
+  webrtc::scoped_refptr<Foo>). The Create function should NOT alter the factory
   state; ideally, it is marked const. Ownership of the returned object is only
   with the caller.
 
@@ -58,7 +58,7 @@ behave as follows:
   Build() &&```), which means it is invoked as ```std::move(builder).Build()```,
   and C++ will ensure that it is not used again.
 
-* FooManager: Has a Create function that returns an rtc::scoped_refptr<Foo> (if
+* FooManager: Has a Create function that returns an webrtc::scoped_refptr<Foo> (if
   shared ownership) or a Foo* (if the Manager retains sole ownership). If
   Create() cannot fail, consider returning a Foo&. The Manager is responsible
   for keeping track of the object; if the Create function returns a Foo*, the

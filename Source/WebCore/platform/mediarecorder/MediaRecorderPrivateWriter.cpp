@@ -60,11 +60,6 @@ std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(S
 
 std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(MediaRecorderContainerType type, MediaRecorderPrivateWriterListener& listener)
 {
-    if (hasPlatformStrategies()) {
-        auto writer = platformStrategies()->mediaStrategy().createMediaRecorderPrivateWriter(type, listener);
-        if (writer)
-            return writer;
-    }
     switch (type) {
     case MediaRecorderContainerType::Mp4:
         return MediaRecorderPrivateWriterAVFObjC::create(listener);

@@ -35,6 +35,7 @@
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "Exception.h"
 #include "HRTFDatabaseLoader.h"
 #include "OfflineAudioContext.h"
 #include "WorkerRunLoop.h"

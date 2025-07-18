@@ -11,10 +11,10 @@
 #ifndef MODULES_VIDEO_CODING_TIMING_JITTER_ESTIMATOR_H_
 #define MODULES_VIDEO_CODING_TIMING_JITTER_ESTIMATOR_H_
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
-#include <queue>
 
 #include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
@@ -209,7 +209,7 @@ class JitterEstimator {
   RttFilter rtt_filter_;
 
   // Tracks frame rates in microseconds.
-  rtc::RollingAccumulator<uint64_t> fps_counter_;
+  RollingAccumulator<uint64_t> fps_counter_;
   Clock* clock_;
 };
 

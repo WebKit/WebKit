@@ -10,7 +10,14 @@
 
 #include "modules/video_coding/deprecated/packet.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+
 #include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_codec_type.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 
 namespace webrtc {
 
@@ -19,14 +26,13 @@ VCMPacket::VCMPacket()
       timestamp(0),
       ntp_time_ms_(0),
       seqNum(0),
-      dataPtr(NULL),
+      dataPtr(nullptr),
       sizeBytes(0),
       markerBit(false),
       timesNacked(-1),
       completeNALU(kNaluUnset),
       insertStartCode(false),
-      video_header() {
-}
+      video_header() {}
 
 VCMPacket::VCMPacket(const uint8_t* ptr,
                      size_t size,

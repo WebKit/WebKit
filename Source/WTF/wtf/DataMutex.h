@@ -44,7 +44,7 @@ template <typename T> class DataMutexLocker;
 
 template<typename T>
 class DataMutex {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DataMutex);
     WTF_MAKE_NONCOPYABLE(DataMutex);
 public:
     template<typename ...Args>

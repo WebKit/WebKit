@@ -41,6 +41,7 @@
 @end
 
 @implementation VideoPresentationModeUIDelegate {
+    bool _willEnterFullscreen;
     bool _didEnterFullscreen;
     bool _didExitFullscreen;
     bool _didEnterStandby;
@@ -49,7 +50,9 @@
 
 - (void)waitForDidEnterFullscreen
 {
+    _willEnterFullscreen = false;
     _didEnterFullscreen = false;
+    TestWebKitAPI::Util::run(&_willEnterFullscreen);
     TestWebKitAPI::Util::run(&_didEnterFullscreen);
 }
 
@@ -72,6 +75,11 @@
 }
 
 #pragma mark WKUIDelegate
+
+- (void)_webViewWillEnterFullscreen:(WKWebView *)webView
+{
+    _willEnterFullscreen = true;
+}
 
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView
 {

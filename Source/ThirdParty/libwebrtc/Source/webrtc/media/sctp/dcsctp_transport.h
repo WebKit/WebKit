@@ -11,22 +11,31 @@
 #ifndef MEDIA_SCTP_DCSCTP_TRANSPORT_H_
 #define MEDIA_SCTP_DCSCTP_TRANSPORT_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
 #include "api/priority.h"
+#include "api/rtc_error.h"
+#include "api/sctp_transport_interface.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/transport/data_channel_transport_interface.h"
 #include "media/sctp/sctp_transport_internal.h"
-#include "net/dcsctp/public/dcsctp_options.h"
+#include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/dcsctp_socket_factory.h"
+#include "net/dcsctp/public/timeout.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/timer/task_queue_timeout.h"
 #include "p2p/base/packet_transport_internal.h"
+#include "p2p/dtls/dtls_transport_internal.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/network/received_packet.h"
@@ -34,35 +43,32 @@
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
-class DcSctpTransport : public cricket::SctpTransportInternal,
+class DcSctpTransport : public SctpTransportInternal,
                         public dcsctp::DcSctpSocketCallbacks,
                         public sigslot::has_slots<> {
  public:
   DcSctpTransport(const Environment& env,
-                  rtc::Thread* network_thread,
-                  rtc::PacketTransportInternal* transport);
+                  Thread* network_thread,
+                  DtlsTransportInternal* transport);
   DcSctpTransport(const Environment& env,
-                  rtc::Thread* network_thread,
-                  rtc::PacketTransportInternal* transport,
+                  Thread* network_thread,
+                  DtlsTransportInternal* transport,
                   std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory);
   ~DcSctpTransport() override;
 
-  // cricket::SctpTransportInternal
+  // webrtc::SctpTransportInternal
   void SetOnConnectedCallback(std::function<void()> callback) override;
   void SetDataChannelSink(DataChannelSink* sink) override;
-  void SetDtlsTransport(rtc::PacketTransportInternal* transport) override;
-  bool Start(int local_sctp_port,
-             int remote_sctp_port,
-             int max_message_size) override;
+  void SetDtlsTransport(DtlsTransportInternal* transport) override;
+  bool Start(const SctpOptions& options) override;
   bool OpenStream(int sid, PriorityValue priority) override;
   bool ResetStream(int sid) override;
   RTCError SendData(int sid,
                     const SendDataParams& params,
-                    const rtc::CopyOnWriteBuffer& payload) override;
+                    const CopyOnWriteBuffer& payload) override;
   bool ReadyToSendData() override;
   int max_message_size() const override;
   std::optional<int> max_outbound_streams() const override;
@@ -75,7 +81,7 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
  private:
   // dcsctp::DcSctpSocketCallbacks
   dcsctp::SendPacketStatus SendPacketWithStatus(
-      rtc::ArrayView<const uint8_t> data) override;
+      ArrayView<const uint8_t> data) override;
   std::unique_ptr<dcsctp::Timeout> CreateTimeout(
       TaskQueueBase::DelayPrecision precision) override;
   dcsctp::TimeMs TimeMillis() override;
@@ -88,24 +94,25 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   void OnConnected() override;
   void OnClosed() override;
   void OnConnectionRestarted() override;
-  void OnStreamsResetFailed(
-      rtc::ArrayView<const dcsctp::StreamID> outgoing_streams,
-      absl::string_view reason) override;
+  void OnStreamsResetFailed(ArrayView<const dcsctp::StreamID> outgoing_streams,
+                            absl::string_view reason) override;
   void OnStreamsResetPerformed(
-      rtc::ArrayView<const dcsctp::StreamID> outgoing_streams) override;
+      ArrayView<const dcsctp::StreamID> outgoing_streams) override;
   void OnIncomingStreamsReset(
-      rtc::ArrayView<const dcsctp::StreamID> incoming_streams) override;
+      ArrayView<const dcsctp::StreamID> incoming_streams) override;
 
   // Transport callbacks
   void ConnectTransportSignals();
   void DisconnectTransportSignals();
-  void OnTransportWritableState(rtc::PacketTransportInternal* transport);
-  void OnTransportReadPacket(rtc::PacketTransportInternal* transport,
-                             const rtc::ReceivedPacket& packet);
+  void OnTransportWritableState(PacketTransportInternal* transport);
+  void OnTransportReadPacket(PacketTransportInternal* transport,
+                             const ReceivedIpPacket& packet);
+  void OnDtlsTransportState(DtlsTransportInternal* transport,
+                            webrtc::DtlsTransportState);
   void MaybeConnectSocket();
 
-  rtc::Thread* network_thread_;
-  rtc::PacketTransportInternal* transport_;
+  Thread* network_thread_;
+  DtlsTransportInternal* transport_;
   Environment env_;
   Random random_;
 
@@ -113,7 +120,7 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   dcsctp::TaskQueueTimeoutFactory task_queue_timeout_factory_;
   std::unique_ptr<dcsctp::DcSctpSocketInterface> socket_;
   std::string debug_name_ = "DcSctpTransport";
-  rtc::CopyOnWriteBuffer receive_buffer_;
+  CopyOnWriteBuffer receive_buffer_;
 
   // Used to keep track of the state of data channels.
   // Reset needs to happen both ways before signaling the transport

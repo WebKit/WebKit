@@ -36,7 +36,7 @@ namespace {
 using ::testing::Eq;
 using ::testing::Test;
 
-using ::webrtc::webrtc_pc_e2e::PeerConfigurer;
+using webrtc_pc_e2e::PeerConfigurer;
 
 // Remove files and directories in a directory non-recursively.
 void CleanDir(absl::string_view dir, size_t expected_output_files_count) {
@@ -116,12 +116,12 @@ TEST_F(PeerConnectionE2EQualityTestTest, OutputVideoIsDumpedWhenRequested) {
 
   VideoConfig alice_video("alice_video", 320, 180, 15);
   alice_video.output_dump_options = VideoDumpOptions(test_directory_);
-  PeerConfigurer alice(alice_network->network_dependencies());
+  PeerConfigurer alice(*alice_network);
   alice.SetName("alice");
   alice.AddVideoConfig(std::move(alice_video));
   fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(alice)));
 
-  PeerConfigurer bob(bob_network->network_dependencies());
+  PeerConfigurer bob(*bob_network);
   bob.SetName("bob");
   fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(bob)));
 

@@ -10,6 +10,10 @@
 
 #include <immintrin.h>
 
+#include <algorithm>
+#include <cstddef>
+
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
 #include "rtc_base/checks.h"
 
@@ -28,17 +32,16 @@ inline __m128 hsum_ab(__m256 a, __m256 b) {
   return s;
 }
 
-void MatchedFilterCore_AccumulatedError_AVX2(
-    size_t x_start_index,
-    float x2_sum_threshold,
-    float smoothing,
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<const float> y,
-    rtc::ArrayView<float> h,
-    bool* filters_updated,
-    float* error_sum,
-    rtc::ArrayView<float> accumulated_error,
-    rtc::ArrayView<float> scratch_memory) {
+void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
+                                             float x2_sum_threshold,
+                                             float smoothing,
+                                             ArrayView<const float> x,
+                                             ArrayView<const float> y,
+                                             ArrayView<float> h,
+                                             bool* filters_updated,
+                                             float* error_sum,
+                                             ArrayView<float> accumulated_error,
+                                             ArrayView<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 16);
@@ -90,9 +93,9 @@ void MatchedFilterCore_AccumulatedError_AVX2(
       s_acum += s_inst_hadd_256[5];
       e_128[3] = s_acum - y[i];
 
-      __m128 accumulated_error = _mm_load_ps(a_p);
-      accumulated_error = _mm_fmadd_ps(e_128, e_128, accumulated_error);
-      _mm_storeu_ps(a_p, accumulated_error);
+      __m128 acum_error = _mm_load_ps(a_p);
+      acum_error = _mm_fmadd_ps(e_128, e_128, acum_error);
+      _mm_storeu_ps(a_p, acum_error);
     }
     // Sum components together.
     x2_sum_256 = _mm256_add_ps(x2_sum_256, x2_sum_256_8);
@@ -114,20 +117,20 @@ void MatchedFilterCore_AccumulatedError_AVX2(
       const __m256 alpha_256 = _mm256_set1_ps(alpha);
 
       // filter = filter + smoothing * (y - filter * x) * x / x * x.
-      float* h_p = &h[0];
-      const float* x_p =
+      float* h_p2 = &h[0];
+      const float* x_p2 =
           chunk1 != h_size ? scratch_memory.data() : &x[x_start_index];
       // Perform 256 bit vector operations.
       const int limit_by_8 = h_size >> 3;
-      for (int k = limit_by_8; k > 0; --k, h_p += 8, x_p += 8) {
+      for (int k = limit_by_8; k > 0; --k, h_p2 += 8, x_p2 += 8) {
         // Load the data into 256 bit vectors.
-        __m256 h_k = _mm256_loadu_ps(h_p);
-        __m256 x_k = _mm256_loadu_ps(x_p);
+        __m256 h_k = _mm256_loadu_ps(h_p2);
+        __m256 x_k = _mm256_loadu_ps(x_p2);
         // Compute h = h + alpha * x.
         h_k = _mm256_fmadd_ps(x_k, alpha_256, h_k);
 
         // Store the result.
-        _mm256_storeu_ps(h_p, h_k);
+        _mm256_storeu_ps(h_p2, h_k);
       }
       *filters_updated = true;
     }
@@ -139,14 +142,14 @@ void MatchedFilterCore_AccumulatedError_AVX2(
 void MatchedFilterCore_AVX2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            ArrayView<const float> x,
+                            ArrayView<const float> y,
+                            ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory) {
+                            ArrayView<float> accumulated_error,
+                            ArrayView<float> scratch_memory) {
   if (compute_accumulated_error) {
     return MatchedFilterCore_AccumulatedError_AVX2(
         x_start_index, x2_sum_threshold, smoothing, x, y, h, filters_updated,
@@ -224,27 +227,27 @@ void MatchedFilterCore_AVX2(size_t x_start_index,
       const __m256 alpha_256 = _mm256_set1_ps(alpha);
 
       // filter = filter + smoothing * (y - filter * x) * x / x * x.
-      float* h_p = &h[0];
+      float* h_p2 = &h[0];
       x_p = &x[x_start_index];
 
       // Perform the loop in two chunks.
       for (int limit : {chunk1, chunk2}) {
         // Perform 256 bit vector operations.
         const int limit_by_8 = limit >> 3;
-        for (int k = limit_by_8; k > 0; --k, h_p += 8, x_p += 8) {
+        for (int k = limit_by_8; k > 0; --k, h_p2 += 8, x_p += 8) {
           // Load the data into 256 bit vectors.
-          __m256 h_k = _mm256_loadu_ps(h_p);
+          __m256 h_k = _mm256_loadu_ps(h_p2);
           __m256 x_k = _mm256_loadu_ps(x_p);
           // Compute h = h + alpha * x.
           h_k = _mm256_fmadd_ps(x_k, alpha_256, h_k);
 
           // Store the result.
-          _mm256_storeu_ps(h_p, h_k);
+          _mm256_storeu_ps(h_p2, h_k);
         }
 
         // Perform non-vector operations for any remaining items.
-        for (int k = limit - limit_by_8 * 8; k > 0; --k, ++h_p, ++x_p) {
-          *h_p += alpha * *x_p;
+        for (int k = limit - limit_by_8 * 8; k > 0; --k, ++h_p2, ++x_p) {
+          *h_p2 += alpha * *x_p;
         }
 
         x_p = &x[0];

@@ -50,11 +50,11 @@ class VideoColorAlignerTest : public ::testing::Test {
     ASSERT_TRUE(reference_video_);
   }
 
-  rtc::scoped_refptr<Video> reference_video_;
+  scoped_refptr<Video> reference_video_;
 };
 
 TEST_F(VideoColorAlignerTest, AdjustColorsFrameIdentity) {
-  const rtc::scoped_refptr<I420BufferInterface> test_frame =
+  const scoped_refptr<I420BufferInterface> test_frame =
       reference_video_->GetFrame(0);
 
   // Assume perfect match, i.e. ssim == 1.
@@ -69,11 +69,11 @@ TEST_F(VideoColorAlignerTest, AdjustColorsFrame1x1) {
   const uint8_t data_y[] = {2};
   const uint8_t data_u[] = {6};
   const uint8_t data_v[] = {7};
-  const rtc::scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
+  const scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
       /* width= */ 1, /* height= */ 1, data_y, /* stride_y= */ 1, data_u,
       /* stride_u= */ 1, data_v, /* stride_v= */ 1);
 
-  const rtc::scoped_refptr<I420BufferInterface> adjusted_buffer =
+  const scoped_refptr<I420BufferInterface> adjusted_buffer =
       AdjustColors(color_matrix, i420_buffer);
 
   EXPECT_EQ(2 * 1 + 6 * 2 + 7 * 3 + 4, adjusted_buffer->DataY()[0]);
@@ -88,11 +88,11 @@ TEST_F(VideoColorAlignerTest, AdjustColorsFrame1x1Negative) {
   const uint8_t data_y[] = {2};
   const uint8_t data_u[] = {6};
   const uint8_t data_v[] = {7};
-  const rtc::scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
+  const scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
       /* width= */ 1, /* height= */ 1, data_y, /* stride_y= */ 1, data_u,
       /* stride_u= */ 1, data_v, /* stride_v= */ 1);
 
-  const rtc::scoped_refptr<I420BufferInterface> adjusted_buffer =
+  const scoped_refptr<I420BufferInterface> adjusted_buffer =
       AdjustColors(color_matrix, i420_buffer);
 
   EXPECT_EQ(255 - 2, adjusted_buffer->DataY()[0]);
@@ -107,11 +107,11 @@ TEST_F(VideoColorAlignerTest, AdjustColorsFrame2x2) {
   const uint8_t data_y[] = {0, 1, 3, 4};
   const uint8_t data_u[] = {6};
   const uint8_t data_v[] = {7};
-  const rtc::scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
+  const scoped_refptr<I420BufferInterface> i420_buffer = I420Buffer::Copy(
       /* width= */ 2, /* height= */ 2, data_y, /* stride_y= */ 2, data_u,
       /* stride_u= */ 1, data_v, /* stride_v= */ 1);
 
-  const rtc::scoped_refptr<I420BufferInterface> adjusted_buffer =
+  const scoped_refptr<I420BufferInterface> adjusted_buffer =
       AdjustColors(color_matrix, i420_buffer);
 
   EXPECT_EQ(0 * 1 + 6 * 2 + 7 * 3 + 4, adjusted_buffer->DataY()[0]);
@@ -133,10 +133,9 @@ TEST_F(VideoColorAlignerTest, CalculateColorTransformationMatrixOffset) {
                                   8, 9, 10, 11, 12, 13, 14, 15};
   const uint8_t small_data_u[] = {15, 13, 17, 29};
   const uint8_t small_data_v[] = {3, 200, 170, 29};
-  const rtc::scoped_refptr<I420BufferInterface> small_i420_buffer =
-      I420Buffer::Copy(
-          /* width= */ 4, /* height= */ 4, small_data_y, /* stride_y= */ 4,
-          small_data_u, /* stride_u= */ 2, small_data_v, /* stride_v= */ 2);
+  const scoped_refptr<I420BufferInterface> small_i420_buffer = I420Buffer::Copy(
+      /* width= */ 4, /* height= */ 4, small_data_y, /* stride_y= */ 4,
+      small_data_u, /* stride_u= */ 2, small_data_v, /* stride_v= */ 2);
 
   uint8_t big_data_y[16];
   uint8_t big_data_u[4];
@@ -149,10 +148,9 @@ TEST_F(VideoColorAlignerTest, CalculateColorTransformationMatrixOffset) {
   for (int i = 0; i < 4; ++i)
     big_data_v[i] = small_data_v[i] + 10;
 
-  const rtc::scoped_refptr<I420BufferInterface> big_i420_buffer =
-      I420Buffer::Copy(
-          /* width= */ 4, /* height= */ 4, big_data_y, /* stride_y= */ 4,
-          big_data_u, /* stride_u= */ 2, big_data_v, /* stride_v= */ 2);
+  const scoped_refptr<I420BufferInterface> big_i420_buffer = I420Buffer::Copy(
+      /* width= */ 4, /* height= */ 4, big_data_y, /* stride_y= */ 4,
+      big_data_u, /* stride_u= */ 2, big_data_v, /* stride_v= */ 2);
 
   const ColorTransformationMatrix color_matrix =
       CalculateColorTransformationMatrix(big_i420_buffer, small_i420_buffer);

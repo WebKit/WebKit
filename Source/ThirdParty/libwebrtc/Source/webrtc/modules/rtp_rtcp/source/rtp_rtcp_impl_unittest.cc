@@ -95,15 +95,16 @@ class SendTransport : public Transport {
     clock_ = clock;
     delay_ms_ = delay_ms;
   }
-  bool SendRtp(rtc::ArrayView<const uint8_t> data,
-               const PacketOptions& options) override {
+  bool SendRtp(ArrayView<const uint8_t> data,
+               const PacketOptions& /* options */) override {
     RtpPacket packet;
     EXPECT_TRUE(packet.Parse(data));
     ++rtp_packets_sent_;
     last_rtp_sequence_number_ = packet.SequenceNumber();
     return true;
   }
-  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
+  bool SendRtcp(ArrayView<const uint8_t> data,
+                const PacketOptions& /* options */) override {
     test::RtcpPacketParser parser;
     parser.Parse(data);
     last_nack_list_ = parser.nack()->packet_ids();

@@ -42,7 +42,7 @@ namespace WTF {
 // and lock by up to 58x.
 class Condition final {
     WTF_MAKE_NONCOPYABLE(Condition);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Condition);
 public:
     // Condition will accept any kind of time and convert it internally, but this typedef tells
     // you what kind of time Condition would be able to use without conversions. However, if you

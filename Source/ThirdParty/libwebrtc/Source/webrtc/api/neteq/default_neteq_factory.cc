@@ -10,9 +10,13 @@
 
 #include "api/neteq/default_neteq_factory.h"
 
+#include <memory>
 #include <utility>
 
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/environment/environment.h"
+#include "api/neteq/neteq.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/neteq/neteq_impl.h"
 
 namespace webrtc {

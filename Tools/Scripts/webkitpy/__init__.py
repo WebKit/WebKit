@@ -87,13 +87,14 @@ AutoInstall.register(Package('mozprocess', Version(1, 3, 0)))
 AutoInstall.register(Package('mozlog', Version(7, 1, 0), wheel=True))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
-AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
+AutoInstall.register(Package('pycodestyle', Version(2, 14, 0)))
 AutoInstall.register(Package('pyfakefs', Version(5, 7, 3)))
 AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
 
 if sys.platform == 'linux':
-    AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=[
-        Package('websocket', Version(1, 8, 0), pypi_name='websocket-client')]))
+    # Keep websocket toplevel for WebDriverTests' imported selenium
+    AutoInstall.register(Package('websocket', Version(1, 8, 0), pypi_name='websocket-client'))
+    AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=['websocket']))
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 

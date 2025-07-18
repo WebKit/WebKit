@@ -3398,7 +3398,7 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
+                signature="char16_t CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",
@@ -3605,7 +3605,7 @@ class GenerateCSSPropertyNames:
 
         to.write(f"struct CSSPropertySettings {{")
         with to.indent():
-            to.write(f"WTF_MAKE_STRUCT_FAST_ALLOCATED;")
+            to.write(f"WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSPropertySettings);")
             to.newline()
 
             to.write_lines(settings_variable_declarations)
@@ -4024,7 +4024,7 @@ class GenerateStyleBuilderGenerated:
         to.write(f"        previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
         to.write(f"        child = previousChild->next();")
         to.write(f"    }}")
-        to.write(f"    child->{property.codegen_properties.fill_layer_setter}(parent->{property.codegen_properties.fill_layer_getter}());")
+        to.write(f"    child->{property.codegen_properties.fill_layer_setter}(forwardInheritedValue(parent->{property.codegen_properties.fill_layer_getter}()));")
         to.write(f"    previousChild = child;")
         to.write(f"    child = previousChild->next();")
         to.write(f"}}")

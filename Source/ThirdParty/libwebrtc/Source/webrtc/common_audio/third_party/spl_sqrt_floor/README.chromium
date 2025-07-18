@@ -1,7 +1,7 @@
-Name: sql sqrt floor
-Short Name: sql_sqrt_floor
+Name: spl sqrt floor
+Short Name: spl_sqrt_floor
 URL: http://www.pertinentdetail.org/sqrt
-Version: 0
+Version: N/A
 Date: 2018-03-22
 License: SPL-SQRT-FLOOR
 License File: LICENSE

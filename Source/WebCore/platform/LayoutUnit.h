@@ -705,4 +705,17 @@ template<> struct HashTraits<WebCore::LayoutUnit> : GenericHashTraits<WebCore::L
     static bool isDeletedValue(WebCore::LayoutUnit value) { return value.rawValue() == std::numeric_limits<int>::max(); }
 };
 
+template<>
+struct MarkableTraits<WebCore::LayoutUnit> {
+    static bool isEmptyValue(WebCore::LayoutUnit value)
+    {
+        return value == WebCore::LayoutUnit(-1);
+    }
+
+    static WebCore::LayoutUnit emptyValue()
+    {
+        return WebCore::LayoutUnit(-1);
+    }
+};
+
 } // namespace WTF

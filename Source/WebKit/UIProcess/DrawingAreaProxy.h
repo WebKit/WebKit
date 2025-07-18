@@ -73,7 +73,9 @@ class DrawingAreaProxy : public IPC::MessageReceiver, public IPC::MessageSender,
 public:
     virtual ~DrawingAreaProxy();
 
-    DrawingAreaType type() const { return m_type; }
+#if ENABLE(TILED_CA_DRAWING_AREA)
+    virtual DrawingAreaType type() const = 0;
+#endif
 
     virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
     virtual bool isRemoteLayerTreeDrawingAreaProxyIOS() const { return false; }
@@ -97,7 +99,6 @@ public:
 
     virtual void minimumSizeForAutoLayoutDidChange() { }
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
-    virtual void windowKindDidChange() { }
 
     virtual void adjustTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */, WebCore::FloatPoint /* originInVisibleRect */) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */) { }
@@ -121,8 +122,6 @@ public:
     virtual void hideContentUntilAnyUpdate() { ASSERT_NOT_REACHED(); }
 
     virtual bool hasVisibleContent() const { return true; }
-
-    virtual void prepareForAppSuspension() { }
 
 #if PLATFORM(COCOA)
     virtual WTF::MachSendRight createFence();
@@ -152,7 +151,7 @@ public:
     virtual void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) { }
 
 protected:
-    DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
+    DrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
 
     RefPtr<WebPageProxy> protectedPage() const;
     WebProcessProxy& webProcessProxy() const { return m_webProcessProxy; }
@@ -171,7 +170,6 @@ private:
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, UpdateInfo&&) { }
 #endif
 
-    DrawingAreaType m_type;
     WeakPtr<WebPageProxy> m_webPageProxy;
     const Ref<WebProcessProxy> m_webProcessProxy;
 
@@ -186,8 +184,19 @@ private:
 
 } // namespace WebKit
 
+#if ENABLE(TILED_CA_DRAWING_AREA)
+
 #define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(ToValueTypeName, ProxyType) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
     static bool isType(const WebKit::DrawingAreaProxy& proxy) { return proxy.type() == WebKit::ProxyType; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
+#else
+
+// There is only one type of DrawingArea.
+#define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(ToValueTypeName, ProxyType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+    static bool isType(const WebKit::DrawingAreaProxy&) { return true; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif

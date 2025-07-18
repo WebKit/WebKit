@@ -46,5 +46,5 @@ messages -> WebSWServerToContextConnection {
     [EnabledBySetting=ServiceWorkersEnabled] SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 
     [EnabledBySetting=ServiceWorkersEnabled] OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
-    [EnabledBySetting=ServiceWorkersEnabled] ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, unsigned long requestIdentifier);
+    [EnabledBySetting=ServiceWorkersEnabled] ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestIdentifier);
 }

@@ -31,6 +31,7 @@
 #include "HTMLCanvasElement.h"
 #include "InspectorInstrumentation.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 
 namespace WebCore {
 

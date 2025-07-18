@@ -28,6 +28,7 @@
 
 #include "DebugPageOverlays.h"
 #include "Document.h"
+#include "DocumentEnums.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
@@ -674,7 +675,7 @@ void LocalFrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
 
 bool LocalFrameViewLayoutContext::isSkippedContentForLayout(const RenderElement& renderer) const
 {
-    if (isVisiblityHiddenIgnored() || isVisiblityAutoIgnored()) {
+    if (isVisiblityHiddenIgnored() || isVisiblityAutoIgnored() || (isRevealedWhenFoundIgnored() && renderer.style().autoRevealsWhenFound())) {
         // In theory we should only descend into a hidden/auto subree when hidden/auto root is ignored (see isSkippedContentRootForLayout below).
         return false;
     }
@@ -691,6 +692,9 @@ bool LocalFrameViewLayoutContext::isSkippedContentRootForLayout(const RenderBox&
         return false;
 
     if (contentVisibility == ContentVisibility::Auto && isVisiblityAutoIgnored())
+        return false;
+
+    if (renderBox.style().autoRevealsWhenFound() && isRevealedWhenFoundIgnored())
         return false;
 
     return true;

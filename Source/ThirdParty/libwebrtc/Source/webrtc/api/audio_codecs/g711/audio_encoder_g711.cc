@@ -16,7 +16,6 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
@@ -40,13 +39,13 @@ std::optional<AudioEncoderG711::Config> AudioEncoderG711::SdpToConfig(
       (is_pcmu || is_pcma)) {
     Config config;
     config.type = is_pcmu ? Config::Type::kPcmU : Config::Type::kPcmA;
-    config.num_channels = rtc::dchecked_cast<int>(format.num_channels);
+    config.num_channels = dchecked_cast<int>(format.num_channels);
     config.frame_size_ms = 20;
     auto ptime_iter = format.parameters.find("ptime");
     if (ptime_iter != format.parameters.end()) {
-      const auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+      const auto ptime = StringToNumber<int>(ptime_iter->second);
       if (ptime && *ptime > 0) {
-        config.frame_size_ms = rtc::SafeClamp(10 * (*ptime / 10), 10, 60);
+        config.frame_size_ms = SafeClamp(10 * (*ptime / 10), 10, 60);
       }
     }
     if (!config.IsOk()) {
@@ -68,7 +67,7 @@ void AudioEncoderG711::AppendSupportedEncoders(
 
 AudioCodecInfo AudioEncoderG711::QueryAudioEncoder(const Config& config) {
   RTC_DCHECK(config.IsOk());
-  return {8000, rtc::dchecked_cast<size_t>(config.num_channels),
+  return {8000, dchecked_cast<size_t>(config.num_channels),
           64000 * config.num_channels};
 }
 

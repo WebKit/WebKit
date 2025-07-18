@@ -11,6 +11,8 @@
 #ifndef COMMON_VIDEO_H265_H265_VPS_PARSER_H_
 #define COMMON_VIDEO_H265_H265_VPS_PARSER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 
 #include "api/array_view.h"
@@ -38,18 +40,17 @@ class RTC_EXPORT H265VpsParser {
   };
 
   // Unpack RBSP and parse VPS state from the supplied buffer.
-  static std::optional<VpsState> ParseVps(rtc::ArrayView<const uint8_t> data);
+  static std::optional<VpsState> ParseVps(ArrayView<const uint8_t> data);
   // TODO: bugs.webrtc.org/42225170 - Deprecate.
   static inline std::optional<VpsState> ParseVps(const uint8_t* data,
                                                  size_t length) {
-    return ParseVps(rtc::MakeArrayView(data, length));
+    return ParseVps(MakeArrayView(data, length));
   }
 
  protected:
   // Parse the VPS state, for a bit buffer where RBSP decoding has already been
   // performed.
-  static std::optional<VpsState> ParseInternal(
-      rtc::ArrayView<const uint8_t> buffer);
+  static std::optional<VpsState> ParseInternal(ArrayView<const uint8_t> buffer);
 };
 
 }  // namespace webrtc

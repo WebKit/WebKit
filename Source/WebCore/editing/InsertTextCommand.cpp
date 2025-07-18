@@ -95,7 +95,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (!endingSelection().isRange())
         return false;
 
-    if (text.contains([](UChar c) { return c == '\t' || c == ' ' || c == '\n'; }))
+    if (text.contains([](char16_t c) { return c == '\t' || c == ' ' || c == '\n'; }))
         return false;
 
     Position start = endingSelection().start();

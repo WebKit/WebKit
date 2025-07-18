@@ -57,7 +57,7 @@ static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier ha
     if (CCRSACryptorDecrypt(key, ccOAEPPadding, data.span().data(), data.size(), plainText.mutableSpan().data(), &plainTextLength, label.span().data(), label.size(), digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
 
-    plainText.resize(plainTextLength);
+    plainText.shrink(plainTextLength);
     return WTFMove(plainText);
 }
 

@@ -175,7 +175,7 @@ unsigned CommandResult::errorCodeToHTTPStatusCode(ErrorCode errorCode)
 String CommandResult::errorString() const
 {
     ASSERT(isError());
-    return errorCodeToString(m_errorCode.value());
+    return errorCodeToString(m_errorCode.value_or(ErrorCode::UnknownError));
 }
 
 String CommandResult::errorCodeToString(ErrorCode errorCode)

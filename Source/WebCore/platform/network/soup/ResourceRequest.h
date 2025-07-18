@@ -40,7 +40,7 @@ struct ResourceRequestPlatformData {
     bool acceptEncoding;
     uint16_t redirectCount;
 };
-using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
+using ResourceRequestData = Variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
 
 class ResourceRequest : public ResourceRequestBase {
 public:

@@ -85,8 +85,8 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdate* 
 
 RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCallbackDisabler&)
     : m_document(document)
-    , m_generatedContent(makeUnique<GeneratedContent>(*this))
-    , m_viewTransition(makeUnique<ViewTransition>(*this))
+    , m_generatedContent(makeUniqueRef<GeneratedContent>(*this))
+    , m_viewTransition(makeUniqueRef<ViewTransition>(*this))
     , m_builder(renderView())
 {
 }
@@ -469,9 +469,9 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.clearDisplayContentsOrNoneStyle();
 
     if (!hasDisplayContentsOrNone) {
-        if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalWidth().hasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalHeight().hasAuto())
             element.clearLastRememberedLogicalHeight();
     }
 

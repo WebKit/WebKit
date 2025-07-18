@@ -17,7 +17,7 @@
 namespace webrtc {
 namespace test {
 
-class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+class FakeVideoRenderer : public VideoSinkInterface<webrtc::VideoFrame> {
  public:
   void OnFrame(const webrtc::VideoFrame& frame) override {}
 };

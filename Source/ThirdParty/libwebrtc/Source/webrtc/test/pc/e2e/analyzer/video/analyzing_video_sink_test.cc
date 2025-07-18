@@ -160,8 +160,8 @@ TEST_F(AnalyzingVideoSinkTest, VideoFramesAreDumpedCorrectly) {
   auto frame_reader = test::CreateY4mFrameReader(
       test::JoinFilename(test_directory_, "alice_video_bob_640x360_30.y4m"));
   EXPECT_THAT(frame_reader->num_frames(), Eq(1));
-  rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-  rtc::scoped_refptr<I420BufferInterface> expected_frame =
+  scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+  scoped_refptr<I420BufferInterface> expected_frame =
       frame.video_frame_buffer()->ToI420();
   double psnr = I420PSNR(*expected_frame, *actual_frame);
   double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -200,8 +200,8 @@ TEST_F(AnalyzingVideoSinkTest,
   auto frame_reader = test::CreateY4mFrameReader(
       test::JoinFilename(test_directory_, "alice_video_bob_320x240_30.y4m"));
   EXPECT_THAT(frame_reader->num_frames(), Eq(1));
-  rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-  rtc::scoped_refptr<I420BufferInterface> expected_frame =
+  scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+  scoped_refptr<I420BufferInterface> expected_frame =
       frame.video_frame_buffer()->ToI420();
   double psnr = I420PSNR(*expected_frame, *actual_frame);
   double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -242,8 +242,8 @@ TEST_F(AnalyzingVideoSinkTest,
   auto frame_reader = test::CreateY4mFrameReader(
       test::JoinFilename(test_directory_, "alice_video_bob_320x240_30.y4m"));
   EXPECT_THAT(frame_reader->num_frames(), Eq(1));
-  rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-  rtc::scoped_refptr<I420BufferInterface> expected_frame =
+  scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+  scoped_refptr<I420BufferInterface> expected_frame =
       frame.video_frame_buffer()->ToI420();
   double psnr = I420PSNR(*expected_frame, *actual_frame);
   double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -295,8 +295,8 @@ TEST_F(AnalyzingVideoSinkTest,
     auto frame_reader = test::CreateY4mFrameReader(
         test::JoinFilename(test_directory_, "alice_video_bob_1280x720_30.y4m"));
     EXPECT_THAT(frame_reader->num_frames(), Eq(1));
-    rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-    rtc::scoped_refptr<I420BufferInterface> expected_frame =
+    scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+    scoped_refptr<I420BufferInterface> expected_frame =
         frame_before.video_frame_buffer()->ToI420();
     double psnr = I420PSNR(*expected_frame, *actual_frame);
     double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -308,8 +308,8 @@ TEST_F(AnalyzingVideoSinkTest,
     auto frame_reader = test::CreateY4mFrameReader(
         test::JoinFilename(test_directory_, "alice_video_bob_640x360_30.y4m"));
     EXPECT_THAT(frame_reader->num_frames(), Eq(1));
-    rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-    rtc::scoped_refptr<I420BufferInterface> expected_frame =
+    scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+    scoped_refptr<I420BufferInterface> expected_frame =
         frame_after.video_frame_buffer()->ToI420();
     double psnr = I420PSNR(*expected_frame, *actual_frame);
     double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -319,6 +319,74 @@ TEST_F(AnalyzingVideoSinkTest,
   }
 
   ExpectOutputFilesCount(2);
+}
+
+TEST_F(AnalyzingVideoSinkTest, KeepsCountingFrameWhenUnsucsribed) {
+  VideoSubscription subscription_before;
+  subscription_before.SubscribeToPeer(
+      "alice", VideoResolution(/*width=*/1280, /*height=*/720, /*fps=*/30));
+
+  VideoConfig video_config("alice_video", /*width=*/1280, /*height=*/720,
+                           /*fps=*/30);
+
+  ExampleVideoQualityAnalyzer analyzer;
+  std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
+      CreateFrameGenerator(/*width=*/1280, /*height=*/720);
+  VideoFrame frame_before = CreateFrame(*frame_generator);
+  frame_before.set_id(
+      analyzer.OnFrameCaptured("alice", "alice_video", frame_before));
+  VideoFrame frame_after = CreateFrame(*frame_generator);
+  frame_after.set_id(
+      analyzer.OnFrameCaptured("alice", "alice_video", frame_after));
+
+  {
+    AnalyzingVideoSinksHelper helper;
+    helper.AddConfig("alice", video_config);
+    AnalyzingVideoSink sink("bob", Clock::GetRealTimeClock(), analyzer, helper,
+                            subscription_before, /*report_infra_stats=*/false);
+    sink.OnFrame(frame_before);
+
+    sink.UpdateSubscription(VideoSubscription());
+    sink.OnFrame(frame_after);
+  }
+
+  EXPECT_THAT(analyzer.frames_rendered(), Eq(2));
+}
+
+TEST_F(AnalyzingVideoSinkTest,
+       KeepsCountingFrameWhenUnsucsribedUsingEmptyResolution) {
+  VideoSubscription subscription_before;
+  subscription_before.SubscribeToPeer(
+      "alice", VideoResolution(/*width=*/1280, /*height=*/720, /*fps=*/30));
+  VideoSubscription subscription_after;
+  subscription_after.SubscribeToPeer(
+      "alice", VideoResolution(/*width=*/0, /*height=*/0, /*fps=*/0));
+
+  VideoConfig video_config("alice_video", /*width=*/1280, /*height=*/720,
+                           /*fps=*/30);
+
+  ExampleVideoQualityAnalyzer analyzer;
+  std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
+      CreateFrameGenerator(/*width=*/1280, /*height=*/720);
+  VideoFrame frame_before = CreateFrame(*frame_generator);
+  frame_before.set_id(
+      analyzer.OnFrameCaptured("alice", "alice_video", frame_before));
+  VideoFrame frame_after = CreateFrame(*frame_generator);
+  frame_after.set_id(
+      analyzer.OnFrameCaptured("alice", "alice_video", frame_after));
+
+  {
+    AnalyzingVideoSinksHelper helper;
+    helper.AddConfig("alice", video_config);
+    AnalyzingVideoSink sink("bob", Clock::GetRealTimeClock(), analyzer, helper,
+                            subscription_before, /*report_infra_stats=*/false);
+    sink.OnFrame(frame_before);
+
+    sink.UpdateSubscription(subscription_after);
+    sink.OnFrame(frame_after);
+  }
+
+  EXPECT_THAT(analyzer.frames_rendered(), Eq(2));
 }
 
 TEST_F(AnalyzingVideoSinkTest,
@@ -363,8 +431,8 @@ TEST_F(AnalyzingVideoSinkTest,
         test::JoinFilename(test_directory_, "alice_video_bob_640x360_30.y4m"));
     EXPECT_THAT(frame_reader->num_frames(), Eq(2));
     // Read the first frame.
-    rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-    rtc::scoped_refptr<I420BufferInterface> expected_frame =
+    scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+    scoped_refptr<I420BufferInterface> expected_frame =
         frame_before.video_frame_buffer()->ToI420();
     // Frames should be equal.
     EXPECT_DOUBLE_EQ(I420SSIM(*expected_frame, *actual_frame), 1.00);
@@ -412,8 +480,8 @@ TEST_F(AnalyzingVideoSinkTest, SmallDiviationsInAspectRationAreAllowed) {
         test::JoinFilename(test_directory_, "alice_video_bob_480x270_30.y4m"));
     EXPECT_THAT(frame_reader->num_frames(), Eq(1));
     // Read the first frame.
-    rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-    rtc::scoped_refptr<I420BufferInterface> expected_frame =
+    scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+    scoped_refptr<I420BufferInterface> expected_frame =
         frame.video_frame_buffer()->ToI420();
     // Actual frame is upscaled version of the expected. But because rendered
     // resolution is equal to the actual frame size we need to upscale expected
@@ -507,8 +575,8 @@ TEST_F(AnalyzingVideoSinkTest,
       test::JoinFilename(test_directory_, "alice_video_bob_320x240_10.y4m"));
   EXPECT_THAT(frame_reader->num_frames(), Eq(11));
   for (int i = 0; i < 10; ++i) {
-    rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-    rtc::scoped_refptr<I420BufferInterface> expected_frame =
+    scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+    scoped_refptr<I420BufferInterface> expected_frame =
         frame1.video_frame_buffer()->ToI420();
     double psnr = I420PSNR(*expected_frame, *actual_frame);
     double ssim = I420SSIM(*expected_frame, *actual_frame);
@@ -516,8 +584,8 @@ TEST_F(AnalyzingVideoSinkTest,
     EXPECT_DOUBLE_EQ(ssim, 1.00);
     EXPECT_DOUBLE_EQ(psnr, 48);
   }
-  rtc::scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
-  rtc::scoped_refptr<I420BufferInterface> expected_frame =
+  scoped_refptr<I420Buffer> actual_frame = frame_reader->PullFrame();
+  scoped_refptr<I420BufferInterface> expected_frame =
       frame2.video_frame_buffer()->ToI420();
   double psnr = I420PSNR(*expected_frame, *actual_frame);
   double ssim = I420SSIM(*expected_frame, *actual_frame);

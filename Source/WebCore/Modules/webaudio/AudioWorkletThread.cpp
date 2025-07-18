@@ -56,7 +56,7 @@ void AudioWorkletThread::clearProxies()
     m_messagingProxy = nullptr;
 }
 
-WorkerLoaderProxy* AudioWorkletThread::workerLoaderProxy()
+WorkerLoaderProxy* AudioWorkletThread::workerLoaderProxy() const
 {
     return m_messagingProxy.get();
 }

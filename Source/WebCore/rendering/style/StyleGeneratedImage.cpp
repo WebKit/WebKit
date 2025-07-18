@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "GeneratedImage.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 

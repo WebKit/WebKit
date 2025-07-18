@@ -109,7 +109,7 @@ String ContentType::parameter(const String& parameterName) const
         start = equalSignPosition + 1;
         end = m_type.find(';', start);
     }
-    return StringView { m_type }.substring(start, end - start).trim(isASCIIWhitespace<UChar>).toString();
+    return StringView { m_type }.substring(start, end - start).trim(isASCIIWhitespace<char16_t>).toString();
 }
 
 String ContentType::containerType() const
@@ -123,7 +123,7 @@ static inline Vector<String> splitParameters(StringView parametersView)
 {
     Vector<String> result;
     for (auto view : parametersView.split(','))
-        result.append(view.trim(isASCIIWhitespace<UChar>).toString());
+        result.append(view.trim(isASCIIWhitespace<char16_t>).toString());
     return result;
 }
 

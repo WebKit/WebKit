@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGClipPathElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceClipper.h"

@@ -27,6 +27,7 @@
 #include "Site.h"
 
 #include <wtf/HashFunctions.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verifies that the target page has scrolled as a result of a ScrollToTextFragment navigation. Test timed out
+PASS Verifies that the target page has scrolled as a result of a ScrollToTextFragment navigation.
 

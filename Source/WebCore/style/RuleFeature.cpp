@@ -474,11 +474,11 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
-    idsInRules.add(other.idsInRules.begin(), other.idsInRules.end());
-    idsMatchingAncestorsInRules.add(other.idsMatchingAncestorsInRules.begin(), other.idsMatchingAncestorsInRules.end());
-    attributeLowercaseLocalNamesInRules.add(other.attributeLowercaseLocalNamesInRules.begin(), other.attributeLowercaseLocalNamesInRules.end());
-    attributeLocalNamesInRules.add(other.attributeLocalNamesInRules.begin(), other.attributeLocalNamesInRules.end());
-    contentAttributeNamesInRules.add(other.contentAttributeNamesInRules.begin(), other.contentAttributeNamesInRules.end());
+    idsInRules.addAll(other.idsInRules);
+    idsMatchingAncestorsInRules.addAll(other.idsMatchingAncestorsInRules);
+    attributeLowercaseLocalNamesInRules.addAll(other.attributeLowercaseLocalNamesInRules);
+    attributeLocalNamesInRules.addAll(other.attributeLocalNamesInRules);
+    contentAttributeNamesInRules.addAll(other.contentAttributeNamesInRules);
 
     auto addMap = [&](auto& map, auto& otherMap) {
         for (auto& keyValuePair : otherMap) {
@@ -491,14 +491,14 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     addMap(idRules, other.idRules);
 
     addMap(classRules, other.classRules);
-    classesAffectingHost.add(other.classesAffectingHost.begin(), other.classesAffectingHost.end());
+    classesAffectingHost.addAll(other.classesAffectingHost);
 
     addMap(attributeRules, other.attributeRules);
-    attributesAffectingHost.add(other.attributesAffectingHost.begin(), other.attributesAffectingHost.end());
+    attributesAffectingHost.addAll(other.attributesAffectingHost);
 
     addMap(pseudoClassRules, other.pseudoClassRules);
-    pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
-    pseudoClasses.add(other.pseudoClasses.begin(), other.pseudoClasses.end());
+    pseudoClassesAffectingHost.addAll(other.pseudoClassesAffectingHost);
+    pseudoClasses.addAll(other.pseudoClasses);
 
     addMap(hasPseudoClassRules, other.hasPseudoClassRules);
     scopeBreakingHasPseudoClassRules.appendVector(other.scopeBreakingHasPseudoClassRules);

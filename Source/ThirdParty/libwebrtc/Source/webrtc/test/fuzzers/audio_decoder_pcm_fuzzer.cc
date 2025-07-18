@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"

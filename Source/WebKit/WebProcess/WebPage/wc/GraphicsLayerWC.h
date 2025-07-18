@@ -108,7 +108,7 @@ protected:
     
 private:
     struct VisibleAndCoverageRects {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VisibleAndCoverageRects);
         WebCore::FloatRect visibleRect;
         WebCore::FloatRect coverageRect;
         WebCore::TransformationMatrix animatingTransform;

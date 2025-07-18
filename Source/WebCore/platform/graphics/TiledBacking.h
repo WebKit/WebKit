@@ -202,6 +202,10 @@ public:
 #if USE(CA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;
 #endif
+
+    virtual void clearObscuredInsetsAdjustments() = 0;
+    virtual void obscuredInsetsWillChange(FloatBoxExtent&&) = 0;
+    virtual FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const = 0;
 };
 
 } // namespace WebCore

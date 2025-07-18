@@ -39,7 +39,6 @@ class ScrollingTreeStickyNodeCocoa : public ScrollingTreeStickyNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeStickyNodeCocoa, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<ScrollingTreeStickyNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
-    WEBCORE_EXPORT bool isCurrentlySticking() const;
 
     virtual ~ScrollingTreeStickyNodeCocoa() = default;
 
@@ -51,7 +50,9 @@ private:
     FloatPoint layerTopLeft() const final;
     CALayer *layer() const final { return m_layer.get(); }
     bool hasViewportClippingLayer() const final;
+    void setIsSticking(bool) WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
 
+    bool m_isSticking { false };
     RetainPtr<CALayer> m_layer;
     RetainPtr<CALayer> m_viewportAnchorLayer;
 };

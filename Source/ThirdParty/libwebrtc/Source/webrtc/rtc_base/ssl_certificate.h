@@ -26,7 +26,7 @@
 #include "rtc_base/buffer.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 struct RTC_EXPORT SSLCertificateStats {
   SSLCertificateStats(std::string&& fingerprint,
@@ -77,9 +77,7 @@ class RTC_EXPORT SSLCertificate {
 
   // Compute the digest of the certificate given algorithm
   virtual bool ComputeDigest(absl::string_view algorithm,
-                             unsigned char* digest,
-                             size_t size,
-                             size_t* length) const = 0;
+                             Buffer& digest) const = 0;
 
   // Returns the time in seconds relative to epoch, 1970-01-01T00:00:00Z (UTC),
   // or -1 if an expiration time could not be retrieved.
@@ -137,6 +135,17 @@ class SSLCertificateVerifier {
   virtual bool Verify(const SSLCertificate& certificate) = 0;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SSLCertChain;
+using ::webrtc::SSLCertificate;
+using ::webrtc::SSLCertificateStats;
+using ::webrtc::SSLCertificateVerifier;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SSL_CERTIFICATE_H_

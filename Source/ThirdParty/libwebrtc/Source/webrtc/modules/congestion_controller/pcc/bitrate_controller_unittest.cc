@@ -10,10 +10,19 @@
 
 #include "modules/congestion_controller/pcc/bitrate_controller.h"
 
+#include <cstddef>
 #include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/pcc/monitor_interval.h"
+#include "modules/congestion_controller/pcc/utility_function.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

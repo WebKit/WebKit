@@ -44,11 +44,6 @@ inline IdTargetObserverRegistry& TreeScope::idTargetObserverRegistry()
     return ensureIdTargetObserverRegistry();
 }
 
-inline Ref<ContainerNode> TreeScope::protectedRootNode() const
-{
-    return rootNode();
-}
-
 inline bool TreeScope::hasElementWithId(const AtomString& id) const
 {
     return m_elementsById && m_elementsById->contains(id);

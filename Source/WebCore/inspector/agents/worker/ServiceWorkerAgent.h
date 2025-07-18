@@ -41,7 +41,7 @@ public:
     ~ServiceWorkerAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // ServiceWorkerBackendDispatcherHandler
@@ -49,7 +49,7 @@ public:
 
 private:
     WeakRef<ServiceWorkerGlobalScope, WeakPtrImplWithEventTargetData> m_serviceWorkerGlobalScope;
-    const RefPtr<Inspector::ServiceWorkerBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::ServiceWorkerBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

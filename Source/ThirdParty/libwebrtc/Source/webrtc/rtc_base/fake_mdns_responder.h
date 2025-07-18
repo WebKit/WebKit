@@ -27,10 +27,10 @@ namespace webrtc {
 // depends on, e.g., using WeakPtrFactory or PendingTaskSafetyFlag.
 class FakeMdnsResponder : public MdnsResponderInterface {
  public:
-  explicit FakeMdnsResponder(rtc::Thread* thread) : thread_(thread) {}
+  explicit FakeMdnsResponder(Thread* thread) : thread_(thread) {}
   ~FakeMdnsResponder() = default;
 
-  void CreateNameForAddress(const rtc::IPAddress& addr,
+  void CreateNameForAddress(const IPAddress& addr,
                             NameCreatedCallback callback) override {
     std::string name;
     if (addr_name_map_.find(addr) != addr_name_map_.end()) {
@@ -41,7 +41,7 @@ class FakeMdnsResponder : public MdnsResponderInterface {
     }
     thread_->PostTask([callback, addr, name]() { callback(addr, name); });
   }
-  void RemoveNameForAddress(const rtc::IPAddress& addr,
+  void RemoveNameForAddress(const IPAddress& addr,
                             NameRemovedCallback callback) override {
     auto it = addr_name_map_.find(addr);
     if (it != addr_name_map_.end()) {
@@ -51,19 +51,19 @@ class FakeMdnsResponder : public MdnsResponderInterface {
     thread_->PostTask([callback, result]() { callback(result); });
   }
 
-  rtc::IPAddress GetMappedAddressForName(absl::string_view name) const {
+  IPAddress GetMappedAddressForName(absl::string_view name) const {
     for (const auto& addr_name_pair : addr_name_map_) {
       if (addr_name_pair.second == name) {
         return addr_name_pair.first;
       }
     }
-    return rtc::IPAddress();
+    return IPAddress();
   }
 
  private:
   uint32_t next_available_id_ = 0;
-  std::map<rtc::IPAddress, std::string> addr_name_map_;
-  rtc::Thread* const thread_;
+  std::map<IPAddress, std::string> addr_name_map_;
+  Thread* const thread_;
 };
 
 }  // namespace webrtc

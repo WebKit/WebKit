@@ -35,6 +35,7 @@
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderStyleInlines.h"
@@ -102,7 +103,7 @@ enum class IncludeReasons : bool {
 
 static inline bool mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style)
 {
-    return !style.isOverflowVisible() || style.scrollbarGutter() != RenderStyle::initialScrollbarGutter();
+    return !style.isOverflowVisible() || !style.scrollbarGutter().isAuto();
 }
 
 static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
@@ -215,7 +216,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
             auto text = downcast<RenderText>(child).text();
-            auto textView = StringView { text }.trim(isASCIIWhitespace<UChar>);
+            auto textView = StringView { text }.trim(isASCIIWhitespace<char16_t>);
             auto length = std::min<size_t>(charactersLeft, textView.length());
             stream << textView.left(length);
             charactersLeft -= length;

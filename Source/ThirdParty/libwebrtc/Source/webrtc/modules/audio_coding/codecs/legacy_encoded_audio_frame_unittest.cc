@@ -10,6 +10,11 @@
 
 #include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 
@@ -122,7 +127,7 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
     // resulting frames can be checked and we can be reasonably certain no
     // sample was missed or repeated.
     const auto generate_payload = [](size_t num_bytes) {
-      rtc::Buffer payload(num_bytes);
+      Buffer payload(num_bytes);
       uint8_t value = 0;
       // Allow wrap-around of value in counter below.
       for (size_t i = 0; i != payload.size(); ++i, ++value) {
@@ -146,13 +151,13 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
       const size_t length_bytes = expected_split.frame_sizes[i] * bytes_per_ms_;
       EXPECT_EQ(length_bytes, frame->payload().size());
       EXPECT_EQ(expected_timestamp, result.timestamp);
-      const rtc::Buffer& payload = frame->payload();
+      const Buffer& payload = frame->payload();
       // Allow wrap-around of value in counter below.
-      for (size_t i = 0; i != payload.size(); ++i, ++value) {
-        ASSERT_EQ(value, payload[i]);
+      for (size_t j = 0; j != payload.size(); ++j, ++value) {
+        ASSERT_EQ(value, payload[j]);
       }
 
-      expected_timestamp += rtc::checked_cast<uint32_t>(
+      expected_timestamp += checked_cast<uint32_t>(
           expected_split.frame_sizes[i] * samples_per_ms_);
     }
   }

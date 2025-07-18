@@ -10,12 +10,20 @@
 
 #include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
 
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "api/environment/environment_factory.h"
+#include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_bitrate_allocator.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"

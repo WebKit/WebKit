@@ -56,7 +56,8 @@ public:
     void beginRecording();
     SkiaImageToFenceMap endRecording();
 
-    void didUpdateState(GraphicsContextState&);
+    void didUpdateState(GraphicsContextState&) final;
+    void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
 
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;

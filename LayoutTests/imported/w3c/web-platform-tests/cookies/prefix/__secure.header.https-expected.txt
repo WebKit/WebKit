@@ -1,10 +1,18 @@
 
 PASS __Secure: secure origin: Should not set 'Path=/;'
+FAIL __SeCuRe: secure origin: Should not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "bar2"
 PASS __Secure: secure origin: Should set 'Secure;Path=/;'
+PASS __SeCuRe: secure origin: Should set 'Secure;Path=/;'
 PASS __Secure: secure origin: Should not set 'Path=/;MaxAge=10'
+FAIL __SeCuRe: secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar6"
 PASS __Secure: secure origin: Should set 'Secure;Path=/;MaxAge=10'
+PASS __SeCuRe: secure origin: Should set 'Secure;Path=/;MaxAge=10'
 PASS __Secure: secure origin: Should not set 'Path=/;HttpOnly'
+FAIL __SeCuRe: secure origin: Should not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar10"
 PASS __Secure: secure origin: Should set 'Secure;Path=/;HttpOnly'
+PASS __SeCuRe: secure origin: Should set 'Secure;Path=/;HttpOnly'
 PASS __Secure: secure origin: Should not set 'Path=/;domain=127.0.0.1'
-FAIL __Secure: secure origin: Should set 'Secure;Path=/;domain=127.0.0.1' assert_equals: expected (string) "0.26261606557964934" but got (undefined) undefined
+PASS __SeCuRe: secure origin: Should not set 'Path=/;domain=127.0.0.1'
+FAIL __Secure: secure origin: Should set 'Secure;Path=/;domain=127.0.0.1' assert_equals: expected (string) "bar15" but got (undefined) undefined
+FAIL __SeCuRe: secure origin: Should set 'Secure;Path=/;domain=127.0.0.1' assert_equals: expected (string) "bar16" but got (undefined) undefined
 

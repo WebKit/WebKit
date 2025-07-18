@@ -1,5 +1,3 @@
 AutomationFrontendDispatchers.h
-NetworkConnectionToWebProcessMessages.h
-Platform/IPC/StreamClientConnection.h
 Shared/Cocoa/WKObject.h
 WebDriverBidiFrontendDispatchers.h

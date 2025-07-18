@@ -46,7 +46,7 @@ public:
 private:
     explicit RealtimeOutgoingVideoSourceCocoa(Ref<MediaStreamTrackPrivate>&&);
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) final;
+    webrtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) final;
 
     // RealtimeMediaSource::VideoFrameObserver API
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;

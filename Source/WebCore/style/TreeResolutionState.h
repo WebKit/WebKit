@@ -35,7 +35,7 @@ namespace Style {
 struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState> {
     AnchorPositionedStates anchorPositionedStates;
 
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TreeResolutionState);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(TreeResolutionState);
 };
 

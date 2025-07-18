@@ -16,7 +16,7 @@
 #include <memory>
 #include <utility>
 
-#include "api/environment/environment_factory.h"
+#include "api/environment/environment.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -30,15 +30,19 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/network/sent_packet.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 LogBasedNetworkControllerSimulation::LogBasedNetworkControllerSimulation(
+    const Environment& env,
     std::unique_ptr<NetworkControllerFactoryInterface> factory,
     std::function<void(const NetworkControlUpdate&, Timestamp)> update_handler)
-    : update_handler_(update_handler), factory_(std::move(factory)) {}
+    : env_(env),
+      update_handler_(update_handler),
+      factory_(std::move(factory)) {}
 
 LogBasedNetworkControllerSimulation::~LogBasedNetworkControllerSimulation() {}
 
@@ -49,7 +53,7 @@ void LogBasedNetworkControllerSimulation::HandleStateUpdate(
 
 void LogBasedNetworkControllerSimulation::ProcessUntil(Timestamp to_time) {
   if (last_process_.IsInfinite()) {
-    NetworkControllerConfig config(CreateEnvironment(&null_event_log_));
+    NetworkControllerConfig config(env_);
     config.constraints.at_time = to_time;
     config.constraints.min_data_rate = DataRate::KilobitsPerSec(30);
     config.constraints.starting_rate = DataRate::KilobitsPerSec(300);
@@ -108,7 +112,7 @@ void LogBasedNetworkControllerSimulation::OnPacketSent(
     transport_feedback_.AddPacket(send_packet, probe_info, packet.overhead,
                                   packet.log_packet_time);
   }
-  rtc::SentPacket sent_packet;
+  SentPacketInfo sent_packet;
   sent_packet.send_time_ms = packet.log_packet_time.ms();
   sent_packet.info.included_in_allocation = true;
   sent_packet.info.packet_size_bytes = packet.size + packet.overhead;

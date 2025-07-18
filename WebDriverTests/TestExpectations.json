@@ -3460,6 +3460,32 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288110"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/get_cookies/invalid.py": {
+        "subtests": {
+            "test_params_filter_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[foo]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[value3]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[foo]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[value3]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            }
+        },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288110"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/get_cookies/partition.py": {
@@ -3469,6 +3495,32 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288112"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/delete_cookies/invalid.py": {
+        "subtests": {
+            "test_params_filter_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[foo]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_filter_invalid_type[value3]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[foo]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_params_partition_invalid_type[value3]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            }
+        },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288112"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/delete_cookies/partition.py": {
@@ -3499,6 +3551,35 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/set_cookie/invalid.py": {
+        "subtests": {
+            "test_cookie_invalid_type[None]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_cookie_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_cookie_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_cookie_invalid_type[foo]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_cookie_invalid_type[cookie4]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_partition_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_partition_invalid_type[False]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_partition_invalid_type[SOME_STRING_VALUE]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_partition_invalid_type[partition5]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            }
+        },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
     },
     "imported/w3c/webdriver/tests/bidi/storage/set_cookie/page_protocols.py": {

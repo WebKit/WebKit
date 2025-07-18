@@ -445,7 +445,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
     return types;
 }
 
-void InspectorRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorRuntimeAgent::didCreateFrontendAndBackend()
 {
 }
 

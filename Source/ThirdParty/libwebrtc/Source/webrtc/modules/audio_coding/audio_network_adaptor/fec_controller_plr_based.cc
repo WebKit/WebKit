@@ -10,9 +10,13 @@
 
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 
-#include <string>
+#include <memory>
+#include <optional>
 #include <utility>
 
+#include "common_audio/smoothing_filter.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
+#include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

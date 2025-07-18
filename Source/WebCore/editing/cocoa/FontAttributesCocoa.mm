@@ -39,37 +39,45 @@
 
 namespace WebCore {
 
-static NSString *cocoaTextListMarkerName(ListStyleType styleType, bool ordered)
+static NSString *cocoaTextListMarkerName(const Style::ListStyleType& styleType, bool ordered)
 {
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDisc))
-        return NSTextListMarkerDisc;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueCircle))
-        return NSTextListMarkerCircle;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueSquare))
-        return NSTextListMarkerSquare;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDecimal))
-        return NSTextListMarkerDecimal;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueOctal))
-        return NSTextListMarkerOctal;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerRoman))
-        return NSTextListMarkerLowercaseRoman;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperRoman))
-        return NSTextListMarkerUppercaseRoman;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerAlpha))
-        return NSTextListMarkerLowercaseAlpha;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperAlpha))
-        return NSTextListMarkerUppercaseAlpha;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerLatin))
-        return NSTextListMarkerLowercaseLatin;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperLatin))
-        return NSTextListMarkerUppercaseLatin;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerHexadecimal))
-        return NSTextListMarkerLowercaseHexadecimal;
-    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperHexadecimal))
-        return NSTextListMarkerUppercaseHexadecimal;
-    // The remaining web-exposed list style types have no Cocoa equivalents.
-    // Fall back to default styles for ordered and unordered lists.
-    return ordered ? NSTextListMarkerDecimal : NSTextListMarkerDisc;
+    return WTF::switchOn(styleType,
+        [&](const Style::CounterStyle& counterStyle) {
+            if (counterStyle == CSSValueDisc)
+                return NSTextListMarkerDisc;
+            if (counterStyle == CSSValueCircle)
+                return NSTextListMarkerCircle;
+            if (counterStyle == CSSValueSquare)
+                return NSTextListMarkerSquare;
+            if (counterStyle == CSSValueDecimal)
+                return NSTextListMarkerDecimal;
+            if (counterStyle == CSSValueOctal)
+                return NSTextListMarkerOctal;
+            if (counterStyle == CSSValueLowerRoman)
+                return NSTextListMarkerLowercaseRoman;
+            if (counterStyle == CSSValueUpperRoman)
+                return NSTextListMarkerUppercaseRoman;
+            if (counterStyle == CSSValueLowerAlpha)
+                return NSTextListMarkerLowercaseAlpha;
+            if (counterStyle == CSSValueUpperAlpha)
+                return NSTextListMarkerUppercaseAlpha;
+            if (counterStyle == CSSValueLowerLatin)
+                return NSTextListMarkerLowercaseLatin;
+            if (counterStyle == CSSValueUpperLatin)
+                return NSTextListMarkerUppercaseLatin;
+            if (counterStyle == CSSValueLowerHexadecimal)
+                return NSTextListMarkerLowercaseHexadecimal;
+            if (counterStyle == CSSValueUpperHexadecimal)
+                return NSTextListMarkerUppercaseHexadecimal;
+
+            // The remaining web-exposed list style types have no Cocoa equivalents.
+            // Fall back to default styles for ordered and unordered lists.
+            return ordered ? NSTextListMarkerDecimal : NSTextListMarkerDisc;
+        },
+        [&](const auto&) {
+            return ordered ? NSTextListMarkerDecimal : NSTextListMarkerDisc;
+        }
+    );
 }
 
 RetainPtr<NSTextList> TextList::createTextList() const

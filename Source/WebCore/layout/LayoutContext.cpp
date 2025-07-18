@@ -58,7 +58,7 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize)
     // Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
     // ICB establishes the initial BFC, but it does not live in a formatting context and while a non-ICB root(subtree layout) has to have a formatting context,
     // we could not lay it out even if we wanted to since it's outside of this LayoutContext.
-    auto& boxGeometry = layoutState().geometryForRootBox();
+    auto& boxGeometry = m_layoutState->geometryForRootBox();
     boxGeometry.setHorizontalMargin({ });
     boxGeometry.setVerticalMargin({ });
     boxGeometry.setBorder({ });
@@ -68,13 +68,18 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize)
     boxGeometry.setContentBoxWidth(rootContentBoxSize.width());
 
     auto scope = PhaseScope { Phase::Type::Layout };
-    layoutFormattingContextSubtree(m_layoutState.root());
+    layoutFormattingContextSubtree(m_layoutState->root());
 }
 
 
 void LayoutContext::layoutFormattingContextSubtree(const ElementBox& formattingContextRoot)
 {
     UNUSED_PARAM(formattingContextRoot);
+}
+
+LayoutState& LayoutContext::layoutState()
+{
+    return m_layoutState.get();
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState)

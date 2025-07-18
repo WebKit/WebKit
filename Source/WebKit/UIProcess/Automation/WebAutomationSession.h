@@ -352,23 +352,17 @@ private:
     std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
-    Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
-    Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
-#if ENABLE(REMOTE_INSPECTOR)
-    Ref<Debuggable> protectedDebuggable() const;
-#endif
-
     WeakPtr<WebProcessPool> m_processPool;
 
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { "Untitled Session"_s };
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
-    Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
-    std::unique_ptr<Inspector::AutomationFrontendDispatcher> m_domainNotifier;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
+    const UniqueRef<Inspector::AutomationFrontendDispatcher> m_domainNotifier;
 
 #if ENABLE(WEBDRIVER_BIDI)
-    std::unique_ptr<WebDriverBidiProcessor> m_bidiProcessor;
+    const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
@@ -430,7 +424,7 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
-    Ref<Debuggable> m_debuggable;
+    const Ref<Debuggable> m_debuggable;
 #endif
 
 };

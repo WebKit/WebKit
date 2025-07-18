@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=1600">
+    <style>
+        body { margin: 0; }
+        input { display: block; }
+        .clipped { clip-path: polygon(100% 50%, 0 0, 0 100%); }
+        .zoomed { zoom: 3; }
+    </style>
+</head>
+<body>
+<div id="test">
+    <input type="radio">
+    <input class="clipped" type="radio">
+    <input class="zoomed" type="radio">
+    <input class="clipped zoomed" type="radio">
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+       return;
+
+   results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>

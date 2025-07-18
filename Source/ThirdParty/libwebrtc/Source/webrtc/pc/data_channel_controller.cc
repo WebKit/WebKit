@@ -10,19 +10,41 @@
 
 #include "pc/data_channel_controller.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/array_view.h"
+#include "api/data_channel_event_observer_interface.h"
+#include "api/data_channel_interface.h"
 #include "api/peer_connection_interface.h"
 #include "api/priority.h"
 #include "api/rtc_error.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/transport/data_channel_transport_interface.h"
+#include "media/sctp/sctp_transport_internal.h"
+#include "pc/data_channel_utils.h"
 #include "pc/peer_connection_internal.h"
+#include "pc/sctp_data_channel.h"
 #include "pc/sctp_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/ssl_stream_adapter.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
+
+using Message = DataChannelEventObserverInterface::Message;
+using Direction = DataChannelEventObserverInterface::Message::Direction;
 
 DataChannelController::~DataChannelController() {
   RTC_DCHECK(sctp_data_channels_n_.empty())
@@ -41,17 +63,31 @@ bool DataChannelController::HasUsedDataChannels() const {
   return channel_usage_ != DataChannelUsage::kNeverUsed;
 }
 
-RTCError DataChannelController::SendData(
-    StreamId sid,
-    const SendDataParams& params,
-    const rtc::CopyOnWriteBuffer& payload) {
+void DataChannelController::SetEventObserver(
+    std::unique_ptr<DataChannelEventObserverInterface> observer) {
+  RTC_DCHECK_RUN_ON(network_thread());
+  event_observer_ = std::move(observer);
+}
+
+RTCError DataChannelController::SendData(StreamId sid,
+                                         const SendDataParams& params,
+                                         const CopyOnWriteBuffer& payload) {
   RTC_DCHECK_RUN_ON(network_thread());
   if (!data_channel_transport_) {
     RTC_LOG(LS_ERROR) << "SendData called before transport is ready";
     return RTCError(RTCErrorType::INVALID_STATE);
   }
-  return data_channel_transport_->SendData(sid.stream_id_int(), params,
-                                           payload);
+  RTCError result =
+      data_channel_transport_->SendData(sid.stream_id_int(), params, payload);
+
+  if (event_observer_ && result.ok()) {
+    if (std::optional<Message> message =
+            BuildObserverMessage(sid, params.type, payload, Direction::kSend)) {
+      event_observer_->OnMessage(*message);
+    }
+  }
+
+  return result;
 }
 
 void DataChannelController::AddSctpDataStream(StreamId sid,
@@ -120,10 +156,9 @@ void DataChannelController::SetBufferedAmountLowThreshold(StreamId sid,
                                                          bytes);
 }
 
-void DataChannelController::OnDataReceived(
-    int channel_id,
-    DataMessageType type,
-    const rtc::CopyOnWriteBuffer& buffer) {
+void DataChannelController::OnDataReceived(int channel_id,
+                                           DataMessageType type,
+                                           const CopyOnWriteBuffer& buffer) {
   RTC_DCHECK_RUN_ON(network_thread());
 
   if (HandleOpenMessage_n(channel_id, type, buffer))
@@ -133,8 +168,16 @@ void DataChannelController::OnDataReceived(
     return c->sid_n().has_value() && c->sid_n()->stream_id_int() == channel_id;
   });
 
-  if (it != sctp_data_channels_n_.end())
+  if (it != sctp_data_channels_n_.end()) {
     (*it)->OnDataReceived(type, buffer);
+
+    if (event_observer_) {
+      if (std::optional<Message> message = BuildObserverMessage(
+              StreamId(channel_id), type, buffer, Direction::kReceive)) {
+        event_observer_->OnMessage(*message);
+      }
+    }
+  }
 }
 
 void DataChannelController::OnChannelClosing(int channel_id) {
@@ -155,7 +198,7 @@ void DataChannelController::OnChannelClosed(int channel_id) {
                             [&](const auto& c) { return c->sid_n() == sid; });
 
   if (it != sctp_data_channels_n_.end()) {
-    rtc::scoped_refptr<SctpDataChannel> channel = std::move(*it);
+    scoped_refptr<SctpDataChannel> channel = std::move(*it);
     sctp_data_channels_n_.erase(it);
     channel->OnClosingProcedureComplete();
   }
@@ -184,7 +227,7 @@ void DataChannelController::OnTransportClosed(RTCError error) {
   // `OnSctpDataChannelClosed`. We'll empty `sctp_data_channels_n_`, first
   // and `OnSctpDataChannelClosed` will become a noop but we'll release the
   // StreamId here.
-  std::vector<rtc::scoped_refptr<SctpDataChannel>> temp_sctp_dcs;
+  std::vector<scoped_refptr<SctpDataChannel>> temp_sctp_dcs;
   temp_sctp_dcs.swap(sctp_data_channels_n_);
   for (const auto& channel : temp_sctp_dcs) {
     channel->OnTransportChannelClosed(error);
@@ -250,7 +293,7 @@ std::vector<DataChannelStats> DataChannelController::GetDataChannelStats()
 bool DataChannelController::HandleOpenMessage_n(
     int channel_id,
     DataMessageType type,
-    const rtc::CopyOnWriteBuffer& buffer) {
+    const CopyOnWriteBuffer& buffer) {
   if (type != DataMessageType::kControl || !IsOpenMessage(buffer))
     return false;
 
@@ -282,7 +325,7 @@ bool DataChannelController::HandleOpenMessage_n(
 }
 
 void DataChannelController::OnDataChannelOpenMessage(
-    rtc::scoped_refptr<SctpDataChannel> channel,
+    scoped_refptr<SctpDataChannel> channel,
     bool ready_to_send) {
   channel_usage_ = DataChannelUsage::kInUse;
   auto proxy = SctpDataChannel::CreateProxy(channel, signaling_safety_.flag());
@@ -301,7 +344,7 @@ void DataChannelController::OnDataChannelOpenMessage(
 // RTC_RUN_ON(network_thread())
 RTCError DataChannelController::ReserveOrAllocateSid(
     std::optional<StreamId>& sid,
-    std::optional<rtc::SSLRole> fallback_ssl_role) {
+    std::optional<SSLRole> fallback_ssl_role) {
   if (sid.has_value()) {
     return sid_allocator_.ReserveSid(*sid)
                ? RTCError::OK()
@@ -309,7 +352,7 @@ RTCError DataChannelController::ReserveOrAllocateSid(
   }
 
   // Attempt to allocate an ID based on the negotiated role.
-  std::optional<rtc::SSLRole> role = pc_->GetSctpSslRole_n();
+  std::optional<SSLRole> role = pc_->GetSctpSslRole_n();
   if (!role)
     role = fallback_ssl_role;
   if (role) {
@@ -324,12 +367,12 @@ RTCError DataChannelController::ReserveOrAllocateSid(
 }
 
 // RTC_RUN_ON(network_thread())
-RTCErrorOr<rtc::scoped_refptr<SctpDataChannel>>
+RTCErrorOr<scoped_refptr<SctpDataChannel>>
 DataChannelController::CreateDataChannel(const std::string& label,
                                          InternalDataChannelInit& config) {
   std::optional<StreamId> sid = std::nullopt;
   if (config.id != -1) {
-    if (config.id < 0 || config.id > cricket::kMaxSctpSid) {
+    if (config.id < 0 || config.id > kMaxSctpSid) {
       return RTCError(RTCErrorType::INVALID_RANGE, "StreamId out of range.");
     }
     sid = StreamId(config.id);
@@ -344,7 +387,7 @@ DataChannelController::CreateDataChannel(const std::string& label,
     config.id = sid->stream_id_int();
   }
 
-  rtc::scoped_refptr<SctpDataChannel> channel = SctpDataChannel::Create(
+  scoped_refptr<SctpDataChannel> channel = SctpDataChannel::Create(
       weak_factory_.GetWeakPtr(), label, data_channel_transport_ != nullptr,
       config, signaling_thread(), network_thread());
   RTC_DCHECK(channel);
@@ -358,7 +401,7 @@ DataChannelController::CreateDataChannel(const std::string& label,
   return channel;
 }
 
-RTCErrorOr<rtc::scoped_refptr<DataChannelInterface>>
+RTCErrorOr<scoped_refptr<DataChannelInterface>>
 DataChannelController::InternalCreateDataChannelWithProxy(
     const std::string& label,
     const InternalDataChannelInit& config) {
@@ -372,7 +415,7 @@ DataChannelController::InternalCreateDataChannelWithProxy(
   bool ready_to_send = false;
   InternalDataChannelInit new_config = config;
   auto ret = network_thread()->BlockingCall(
-      [&]() -> RTCErrorOr<rtc::scoped_refptr<SctpDataChannel>> {
+      [&]() -> RTCErrorOr<scoped_refptr<SctpDataChannel>> {
         RTC_DCHECK_RUN_ON(network_thread());
         auto channel = CreateDataChannel(label, new_config);
         if (!channel.ok())
@@ -402,14 +445,14 @@ DataChannelController::InternalCreateDataChannelWithProxy(
                                       signaling_safety_.flag());
 }
 
-void DataChannelController::AllocateSctpSids(rtc::SSLRole role) {
+void DataChannelController::AllocateSctpSids(SSLRole role) {
   RTC_DCHECK_RUN_ON(network_thread());
 
   const bool ready_to_send =
       data_channel_transport_ && data_channel_transport_->IsReadyToSend();
 
   std::vector<std::pair<SctpDataChannel*, StreamId>> channels_to_update;
-  std::vector<rtc::scoped_refptr<SctpDataChannel>> channels_to_close;
+  std::vector<scoped_refptr<SctpDataChannel>> channels_to_close;
   for (auto it = sctp_data_channels_n_.begin();
        it != sctp_data_channels_n_.end();) {
     if (!(*it)->sid_n().has_value()) {
@@ -469,6 +512,39 @@ void DataChannelController::set_data_channel_transport(
   }
 }
 
+std::optional<Message> DataChannelController::BuildObserverMessage(
+    StreamId sid,
+    DataMessageType type,
+    ArrayView<const uint8_t> payload,
+    Message::Direction direction) const {
+  RTC_DCHECK_RUN_ON(network_thread());
+
+  if (type != DataMessageType::kText && type != DataMessageType::kBinary) {
+    return std::nullopt;
+  }
+
+  auto it = absl::c_find_if(sctp_data_channels_n_, [sid](const auto& channel) {
+    return channel->sid_n() == sid;
+  });
+
+  if (it == sctp_data_channels_n_.end()) {
+    return std::nullopt;
+  }
+
+  Message message;
+  Message::DataType data_type = type == DataMessageType::kBinary
+                                    ? Message::DataType::kBinary
+                                    : Message::DataType::kString;
+  message.set_data_type(data_type);
+  message.set_unix_timestamp_ms(TimeUTCMillis());
+  message.set_datachannel_id(sid.stream_id_int());
+  message.set_label((*it)->label());
+  message.set_direction(direction);
+  message.set_data(payload);
+
+  return message;
+}
+
 void DataChannelController::NotifyDataChannelsOfTransportCreated() {
   RTC_DCHECK_RUN_ON(network_thread());
   RTC_DCHECK(data_channel_transport_);
@@ -480,11 +556,11 @@ void DataChannelController::NotifyDataChannelsOfTransportCreated() {
   }
 }
 
-rtc::Thread* DataChannelController::network_thread() const {
+Thread* DataChannelController::network_thread() const {
   return pc_->network_thread();
 }
 
-rtc::Thread* DataChannelController::signaling_thread() const {
+Thread* DataChannelController::signaling_thread() const {
   return pc_->signaling_thread();
 }
 

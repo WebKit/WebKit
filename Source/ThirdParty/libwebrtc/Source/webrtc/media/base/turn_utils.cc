@@ -10,10 +10,13 @@
 
 #include "media/base/turn_utils.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "api/transport/stun.h"
 #include "rtc_base/byte_order.h"
 
-namespace cricket {
+namespace webrtc {
 
 namespace {
 
@@ -28,7 +31,7 @@ bool IsTurnSendIndicationPacket(const uint8_t* data, size_t length) {
     return false;
   }
 
-  uint16_t type = rtc::GetBE16(data);
+  uint16_t type = GetBE16(data);
   return (type == TURN_SEND_INDICATION);
 }
 
@@ -49,7 +52,7 @@ bool UnwrapTurnPacket(const uint8_t* packet,
     // /                       Application Data                        /
     // /                                                               /
     // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    size_t length = rtc::GetBE16(&packet[2]);
+    size_t length = GetBE16(&packet[2]);
     if (length + kTurnChannelHeaderLength > packet_size) {
       return false;
     }
@@ -61,7 +64,7 @@ bool UnwrapTurnPacket(const uint8_t* packet,
 
   if (IsTurnSendIndicationPacket(packet, packet_size)) {
     // Validate STUN message length.
-    const size_t stun_message_length = rtc::GetBE16(&packet[2]);
+    const size_t stun_message_length = GetBE16(&packet[2]);
     if (stun_message_length + kStunHeaderSize != packet_size) {
       return false;
     }
@@ -91,8 +94,8 @@ bool UnwrapTurnPacket(const uint8_t* packet,
       }
 
       // Getting attribute type and length.
-      attr_type = rtc::GetBE16(&packet[pos]);
-      attr_length = rtc::GetBE16(&packet[pos + sizeof(attr_type)]);
+      attr_type = GetBE16(&packet[pos]);
+      attr_length = GetBE16(&packet[pos + sizeof(attr_type)]);
 
       pos += kAttrHeaderLength;  // Skip STUN_DATA_ATTR header.
 
@@ -123,4 +126,4 @@ bool UnwrapTurnPacket(const uint8_t* packet,
   return true;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

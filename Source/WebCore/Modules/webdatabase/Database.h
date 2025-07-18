@@ -77,7 +77,7 @@ public:
     void didCommitWriteTransaction();
     bool didExceedQuota();
 
-    SQLTransactionCoordinator* transactionCoordinator();
+    SQLTransactionCoordinator& transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;

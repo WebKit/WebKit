@@ -30,6 +30,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
+#include <WebCore/PageIdentifier.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {

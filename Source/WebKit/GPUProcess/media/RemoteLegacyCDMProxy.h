@@ -39,7 +39,7 @@
 namespace WebKit {
 
 class RemoteLegacyCDMProxy : public IPC::MessageReceiver, public WebCore::LegacyCDMClient, public RefCounted<RemoteLegacyCDMProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteLegacyCDMProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLegacyCDMProxy);
 public:
     static Ref<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, std::optional<WebCore::MediaPlayerIdentifier>, Ref<WebCore::LegacyCDM>&&);

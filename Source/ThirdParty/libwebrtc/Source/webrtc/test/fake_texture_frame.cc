@@ -21,8 +21,7 @@ VideoFrame FakeNativeBuffer::CreateFrame(int width,
                                          int64_t render_time_ms,
                                          VideoRotation rotation) {
   return VideoFrame::Builder()
-      .set_video_frame_buffer(
-          rtc::make_ref_counted<FakeNativeBuffer>(width, height))
+      .set_video_frame_buffer(make_ref_counted<FakeNativeBuffer>(width, height))
       .set_rtp_timestamp(timestamp)
       .set_timestamp_ms(render_time_ms)
       .set_rotation(rotation)
@@ -41,8 +40,8 @@ int FakeNativeBuffer::height() const {
   return height_;
 }
 
-rtc::scoped_refptr<I420BufferInterface> FakeNativeBuffer::ToI420() {
-  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
+scoped_refptr<I420BufferInterface> FakeNativeBuffer::ToI420() {
+  scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
   I420Buffer::SetBlack(buffer.get());
   return buffer;
 }

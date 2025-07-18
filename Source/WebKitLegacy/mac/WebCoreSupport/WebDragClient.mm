@@ -140,7 +140,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name().createNSString().get()]];
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame, const std::optional<ElementIdentifier>& elementID)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame, const std::optional<NodeIdentifier>& nodeID)
 {
     auto& dragImage = dragItem.image;
     auto dragLocationInContentCoordinates = dragItem.dragLocationInContentCoordinates;
@@ -235,7 +235,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(WebCore::DragItem, DataTransfer&, LocalFrame&, const std::optional<ElementIdentifier>& elementID)
+void WebDragClient::startDrag(WebCore::DragItem, DataTransfer&, LocalFrame&, const std::optional<NodeIdentifier>& nodeID)
 {
 }
 
@@ -270,7 +270,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame&, const std::optional<ElementIdentifier>&)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame&, const std::optional<NodeIdentifier>&)
 {
     [m_webView _startDrag:dragItem];
 }

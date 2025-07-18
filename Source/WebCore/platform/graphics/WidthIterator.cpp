@@ -187,7 +187,7 @@ void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, GlyphBufferAdv
 
 bool WidthIterator::hasExtraSpacing() const
 {
-    return (m_fontCascade->letterSpacing() || m_fontCascade->wordSpacing() || m_expansion || !m_fontCascade->textAutospace().isNoAutospace()) && !m_run->spacingDisabled();
+    return (m_fontCascade->letterSpacing() || m_fontCascade->wordSpacing() || m_expansion) && !m_run->spacingDisabled();
 }
 
 static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
@@ -855,7 +855,7 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
         m_leftoverJustificationWidth = 0;
     }
 
-    if (hasExtraSpacing() || m_containsTabs || m_run->horizontalGlyphStretch() != 1)
+    if (hasExtraSpacing() || m_containsTabs || m_run->horizontalGlyphStretch() != 1 || !m_fontCascade->textAutospace().isNoAutospace())
         applyExtraSpacingAfterShaping(glyphBuffer, characterStartIndex, glyphBufferStartIndex, offset, startingRunWidth);
 
     applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);

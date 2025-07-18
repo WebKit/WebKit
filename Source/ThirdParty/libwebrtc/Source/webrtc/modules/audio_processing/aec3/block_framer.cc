@@ -50,7 +50,7 @@ void BlockFramer::InsertBlock(const Block& block) {
 
 void BlockFramer::InsertBlockAndExtractSubFrame(
     const Block& block,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame) {
   RTC_DCHECK(sub_frame);
   RTC_DCHECK_EQ(num_bands_, block.NumBands());
   RTC_DCHECK_EQ(num_channels_, block.NumChannels());

@@ -169,7 +169,7 @@ void GameControllerGamepad::setupElements()
 GameControllerHapticEngines& GameControllerGamepad::ensureHapticEngines()
 {
     if (!m_hapticEngines)
-        m_hapticEngines = GameControllerHapticEngines::create(m_gcController.get());
+        lazyInitialize(m_hapticEngines, GameControllerHapticEngines::create(m_gcController.get()));
     return *m_hapticEngines;
 }
 #endif
@@ -188,8 +188,8 @@ void GameControllerGamepad::playEffect(GamepadHapticEffectType type, const Gamep
 void GameControllerGamepad::stopEffects(CompletionHandler<void()>&& completionHandler)
 {
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
-    if (RefPtr hapticEngines = m_hapticEngines)
-        hapticEngines->stopEffects();
+    if (m_hapticEngines)
+        m_hapticEngines->stopEffects();
 #endif
     completionHandler();
 }
@@ -198,8 +198,8 @@ void GameControllerGamepad::noLongerHasAnyClient()
 {
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     // Stop the haptics engine if it is running.
-    if (RefPtr hapticEngines = m_hapticEngines)
-        hapticEngines->stop([] { });
+    if (m_hapticEngines)
+        m_hapticEngines->stop([] { });
 #endif
 }
 

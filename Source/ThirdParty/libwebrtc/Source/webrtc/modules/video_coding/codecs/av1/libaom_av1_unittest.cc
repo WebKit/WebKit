@@ -15,14 +15,23 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/codecs/av1/dav1d_decoder.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
@@ -32,7 +41,7 @@
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
-#include "modules/video_coding/svc/scalable_video_controller_no_layering.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -76,8 +85,8 @@ VideoEncoder::Settings DefaultEncoderSettings() {
 
 class TestAv1Decoder {
  public:
-  explicit TestAv1Decoder(int decoder_id)
-      : decoder_id_(decoder_id), decoder_(CreateDav1dDecoder()) {
+  explicit TestAv1Decoder(const Environment& env, int decoder_id)
+      : decoder_id_(decoder_id), decoder_(CreateDav1dDecoder(env)) {
     if (decoder_ == nullptr) {
       ADD_FAILURE() << "Failed to create a decoder#" << decoder_id_;
       return;
@@ -137,7 +146,7 @@ class TestAv1Decoder {
 
 TEST(LibaomAv1Test, EncodeDecode) {
   const Environment env = CreateEnvironment();
-  TestAv1Decoder decoder(0);
+  TestAv1Decoder decoder(env, /*decoder_id=*/0);
   std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
   VideoCodec codec_settings = DefaultCodecSettings();
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
@@ -219,8 +228,8 @@ TEST_P(LibaomAv1SvcTest, EncodeAndDecodeAllDecodeTargets) {
   size_t num_decode_targets =
       svc_controller->DependencyStructure().num_decode_targets;
 
-  std::unique_ptr<VideoEncoder> encoder =
-      CreateLibaomAv1Encoder(CreateEnvironment());
+  const Environment env = CreateEnvironment();
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.SetScalabilityMode(GetParam().GetScalabilityMode());
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
@@ -242,7 +251,7 @@ TEST_P(LibaomAv1SvcTest, EncodeAndDecodeAllDecodeTargets) {
       })));
 
   for (size_t dt = 0; dt < num_decode_targets; ++dt) {
-    TestAv1Decoder decoder(dt);
+    TestAv1Decoder decoder(env, dt);
     std::vector<int64_t> requested_ids;
     for (int64_t frame_id = 0;
          frame_id < static_cast<int64_t>(encoded_frames.size()); ++frame_id) {

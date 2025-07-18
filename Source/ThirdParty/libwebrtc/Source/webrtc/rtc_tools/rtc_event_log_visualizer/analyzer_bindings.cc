@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment_factory.h"
 #include "api/units/time_delta.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -82,7 +83,8 @@ void analyze_rtc_event_log(const char* log_contents,
     return;
   }
 
-  webrtc::EventLogAnalyzer analyzer(parsed_log, config);
+  webrtc::EventLogAnalyzer analyzer(webrtc::CreateEnvironment(), parsed_log,
+                                    config);
   analyzer.InitializeMapOfNamedGraphs(/*show_detector_state=*/false,
                                       /*show_alr_state=*/false,
                                       /*show_link_capacity=*/false);
@@ -96,7 +98,7 @@ void analyze_rtc_event_log(const char* log_contents,
   webrtc::analytics::ChartCollection proto_charts;
   collection.ExportProtobuf(&proto_charts);
   std::string serialized_charts = proto_charts.SerializeAsString();
-  if (rtc::checked_cast<uint32_t>(serialized_charts.size()) > *output_size) {
+  if (webrtc::checked_cast<uint32_t>(serialized_charts.size()) > *output_size) {
     std::cerr << "Serialized charts larger than available output buffer: "
               << serialized_charts.size() << " vs " << *output_size
               << std::endl;
@@ -105,5 +107,5 @@ void analyze_rtc_event_log(const char* log_contents,
   }
 
   memcpy(output, serialized_charts.data(), serialized_charts.size());
-  *output_size = rtc::checked_cast<uint32_t>(serialized_charts.size());
+  *output_size = webrtc::checked_cast<uint32_t>(serialized_charts.size());
 }

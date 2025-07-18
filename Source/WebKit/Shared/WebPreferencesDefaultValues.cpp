@@ -123,15 +123,6 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 #endif
 }
 
-bool defaultCaptureAudioInUIProcessEnabled()
-{
-#if PLATFORM(MAC)
-    return !defaultCaptureAudioInGPUProcessEnabled();
-#endif
-
-    return false;
-}
-
 bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -408,8 +399,15 @@ bool defaultTrustedTypesEnabled()
 #endif
 }
 
-#if !ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+#if !PLATFORM(COCOA)
 bool defaultContentInsetBackgroundFillEnabled()
+{
+    return false;
+}
+#endif
+
+#if !PLATFORM(COCOA)
+bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
 {
     return false;
 }

@@ -23,7 +23,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -300,11 +300,11 @@ TEST(ArrayViewTest, TestStdArray) {
   constexpr size_t size = 5;
   std::array<float, size> arr{};
   // Fixed size view.
-  rtc::ArrayView<float, size> arr_view_fixed(arr);
+  ArrayView<float, size> arr_view_fixed(arr);
   EXPECT_EQ(arr.data(), arr_view_fixed.data());
   static_assert(size == arr_view_fixed.size(), "");
   // Variable size view.
-  rtc::ArrayView<float> arr_view(arr);
+  ArrayView<float> arr_view(arr);
   EXPECT_EQ(arr.data(), arr_view.data());
   EXPECT_EQ(size, arr_view.size());
 }
@@ -313,17 +313,17 @@ TEST(ArrayViewTest, TestConstStdArray) {
   constexpr size_t size = 5;
 
   constexpr std::array<float, size> constexpr_arr{};
-  rtc::ArrayView<const float, size> constexpr_arr_view(constexpr_arr);
+  ArrayView<const float, size> constexpr_arr_view(constexpr_arr);
   EXPECT_EQ(constexpr_arr.data(), constexpr_arr_view.data());
   static_assert(constexpr_arr.size() == constexpr_arr_view.size(), "");
 
   const std::array<float, size> const_arr{};
-  rtc::ArrayView<const float, size> const_arr_view(const_arr);
+  ArrayView<const float, size> const_arr_view(const_arr);
   EXPECT_EQ(const_arr.data(), const_arr_view.data());
   static_assert(const_arr.size() == const_arr_view.size(), "");
 
   std::array<float, size> non_const_arr{};
-  rtc::ArrayView<const float, size> non_const_arr_view(non_const_arr);
+  ArrayView<const float, size> non_const_arr_view(non_const_arr);
   EXPECT_EQ(non_const_arr.data(), non_const_arr_view.data());
   static_assert(non_const_arr.size() == non_const_arr_view.size(), "");
 }
@@ -354,7 +354,7 @@ TEST(ArrayViewTest, TestStdVector) {
 }
 
 TEST(ArrayViewTest, TestRtcBuffer) {
-  rtc::Buffer b = "so buffer";
+  Buffer b = "so buffer";
   EXPECT_EQ(10u, Call<const uint8_t>(b));
   EXPECT_EQ(10u, Call<uint8_t>(b));
   // Call<int8_t>(b);  // Compile error, because incompatible types.
@@ -366,7 +366,7 @@ TEST(ArrayViewTest, TestRtcBuffer) {
   EXPECT_EQ(10u, y.size());
   EXPECT_EQ(b.data(), y.data());
   // ArrayView<char> d = b;  // Compile error, because incompatible types.
-  const rtc::Buffer cb = "very const";
+  const Buffer cb = "very const";
   EXPECT_EQ(11u, Call<const uint8_t>(cb));
   // Call<uint8_t>(cb);  // Compile error, because can't drop const.
   ArrayView<const uint8_t> z = cb;
@@ -629,4 +629,4 @@ TEST(ArrayViewTest, TestReinterpretCastVariableSize) {
   EXPECT_EQ(uint8_av[1], 2);
   EXPECT_EQ(uint8_av[2], 3);
 }
-}  // namespace rtc
+}  // namespace webrtc

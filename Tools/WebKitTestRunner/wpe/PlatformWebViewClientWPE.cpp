@@ -44,9 +44,6 @@ namespace WTR {
 PlatformWebViewClientWPE::PlatformWebViewClientWPE(WKPageConfigurationRef configuration)
     : m_display(adoptGRef(wpe_display_headless_new()))
 {
-    // Increase the double click time to 500 to match what tests expect.
-    auto* settings = wpe_display_get_settings(m_display.get());
-    wpe_settings_set_uint32(settings, WPE_SETTING_DOUBLE_CLICK_TIME, 500, WPE_SETTINGS_SOURCE_APPLICATION, nullptr);
     m_view = WKViewCreate(m_display.get(), configuration);
     auto* wpeView = WKViewGetView(m_view);
     wpe_view_focus_in(wpeView);

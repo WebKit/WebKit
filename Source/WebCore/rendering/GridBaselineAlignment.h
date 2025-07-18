@@ -49,30 +49,30 @@ public:
     // Collects the items participating in baseline alignment and updates the corresponding baseline-sharing
     // group of the Baseline Context the items belongs to.
     // All the baseline offsets are updated accordingly based on the added item.
-    void updateBaselineAlignmentContext(ItemPosition, unsigned sharedContext, const RenderBox&, GridTrackSizingDirection alignmentContextType);
+    void updateBaselineAlignmentContext(ItemPosition, unsigned sharedContext, const RenderBox&, Style::GridTrackSizingDirection alignmentContextType);
 
     // Returns the baseline offset of a particular item, based on the max-ascent for its associated
     // baseline-sharing group
-    LayoutUnit baselineOffsetForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
+    LayoutUnit baselineOffsetForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
     // Sets the Grid Container's writing mode so that we can avoid the dependecy of the LayoutGrid class for
     // determining whether a grid item is orthogonal or not.
     void setWritingMode(WritingMode writingMode) { m_writingMode = writingMode; };
 
     // Clearing the Baseline Alignment context and their internal classes and data structures.
-    void clear(GridTrackSizingDirection alignmentContextType);
+    void clear(Style::GridTrackSizingDirection alignmentContextType);
 
 private:
-    const BaselineGroup& baselineGroupForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
-    LayoutUnit marginOverForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
-    LayoutUnit marginUnderForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
-    LayoutUnit logicalAscentForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType, ItemPosition) const;
-    LayoutUnit ascentForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType, ItemPosition) const;
-    LayoutUnit descentForGridItem(const RenderBox&, LayoutUnit, GridTrackSizingDirection alignmentContextType, ExtraMarginsFromSubgrids) const;
-    bool isDescentBaselineForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
-    bool isVerticalAlignmentContext(GridTrackSizingDirection alignmentContextType) const;
+    const BaselineGroup& baselineGroupForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    LayoutUnit marginOverForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    LayoutUnit marginUnderForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    LayoutUnit logicalAscentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
+    LayoutUnit ascentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
+    LayoutUnit descentForGridItem(const RenderBox&, LayoutUnit, Style::GridTrackSizingDirection alignmentContextType, ExtraMarginsFromSubgrids) const;
+    bool isDescentBaselineForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool isVerticalAlignmentContext(Style::GridTrackSizingDirection alignmentContextType) const;
     bool isOrthogonalGridItemForBaseline(const RenderBox&) const;
-    bool isParallelToAlignmentAxisForGridItem(const RenderBox&, GridTrackSizingDirection alignmentContextType) const;
+    bool isParallelToAlignmentAxisForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
     typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 

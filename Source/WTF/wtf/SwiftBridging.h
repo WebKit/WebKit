@@ -29,6 +29,22 @@
 
 #include <swift/bridging>
 
+#ifndef SWIFT_NONESCAPABLE
+#define SWIFT_NONESCAPABLE
+#endif
+
+#ifndef SWIFT_ESCAPABLE
+#define SWIFT_ESCAPABLE
+#endif
+
+#ifndef SWIFT_ESCAPABLE_IF
+#define SWIFT_ESCAPABLE_IF(...)
+#endif
+
+#ifndef SWIFT_PRIVATE_FILEID
+#define SWIFT_PRIVATE_FILEID(_fileID)
+#endif
+
 #else
 
 // Copied from https://github.com/swiftlang/swift/blob/ff8b9f145320b02bc6de75163d78528f210bdba6/lib/ClangImporter/SwiftBridging/swift/bridging

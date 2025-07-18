@@ -44,7 +44,7 @@ class PerfTestResultWriter {
   virtual void LogResultList(
       absl::string_view graph_name,
       absl::string_view trace_name,
-      rtc::ArrayView<const double> values,
+      ArrayView<const double> values,
       absl::string_view units,
       bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;

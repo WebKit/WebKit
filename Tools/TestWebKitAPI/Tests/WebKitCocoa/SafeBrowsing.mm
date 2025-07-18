@@ -33,6 +33,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestResourceLoadDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <Foundation/NSURLError.h>
@@ -567,7 +568,7 @@ static Seconds delayDuration;
 - (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(TestLookupResult *, NSError *))completionHandler
 {
     BOOL phishing = ![URL isEqual:resourceURL(@"simple2")] && ![[URL path] isEqual:@"/safe"];
-    RunLoop::protectedMain()->dispatchAfter(delayDuration, [completionHandler = makeBlockPtr(completionHandler), phishing] {
+    RunLoop::mainSingleton().dispatchAfter(delayDuration, [completionHandler = makeBlockPtr(completionHandler), phishing] {
         completionHandler.get()([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"SSBProviderApple" phishing:phishing malware:NO unwantedSoftware:NO]]], nil);
     });
 }
@@ -661,7 +662,7 @@ TEST(SafeBrowsing, PreresponseSafeBrowsingWarning)
     [webView setNavigationDelegate:delegate.get()];
 
     [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        RunLoop::protectedMain()->dispatchAfter(1000_s, [task = retainPtr(task)] {
+        RunLoop::mainSingleton().dispatchAfter(1000_s, [task = retainPtr(task)] {
             auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.get().request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
             [task didReceiveResponse:response.get()];
             [task didReceiveData:[NSData dataWithBytes:mainResource length:strlen(mainResource)]];

@@ -48,6 +48,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
     void intrinsicSizeChanged() override { canvasSizeChanged(); }
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 };
 
 } // namespace WebCore

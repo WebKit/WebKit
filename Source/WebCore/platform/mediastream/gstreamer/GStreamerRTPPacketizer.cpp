@@ -304,25 +304,7 @@ void GStreamerRTPPacketizer::stopUpdatingStats()
 void GStreamerRTPPacketizer::applyEncodingParameters(const GstStructure* encodingParameters) const
 {
     ASSERT(encodingParameters);
-
     configure(encodingParameters);
-
-    auto isActive = gstStructureGet<bool>(encodingParameters, "active"_s).value_or(true);
-    GST_DEBUG_OBJECT(m_bin.get(), "Packetizer is active: %s", boolForPrinting(isActive));
-    g_object_set(m_valve.get(), "drop", !isActive, nullptr);
-    if (isActive)
-        return;
-
-    auto srcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
-    if (!srcPad)
-        return;
-
-    auto peer = adoptGRef(gst_pad_get_peer(srcPad.get()));
-    if (!peer)
-        return;
-
-    gst_pad_send_event(peer.get(), gst_event_new_flush_start());
-    gst_pad_send_event(peer.get(), gst_event_new_flush_stop(FALSE));
 }
 
 void GStreamerRTPPacketizer::reconfigure(GUniquePtr<GstStructure>&& encodingParameters)

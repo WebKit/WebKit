@@ -353,7 +353,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class Network3FrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Network3FrontendDispatcher);
 public:
     Network3FrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void resourceLoaded();
@@ -626,7 +626,7 @@ namespace Inspector {
 
 
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorNetwork1BackendDispatcher);
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
     void loadResource(long protocol_requestId) final;

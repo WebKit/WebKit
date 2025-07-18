@@ -50,7 +50,7 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
         return;
     }
 
-    m_bufferSet = collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet();
+    m_bufferSet = collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }.get());
 }
 
 RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()
@@ -73,6 +73,17 @@ bool RemoteLayerWithRemoteRenderingBackingStore::frontBufferMayBeVolatile() cons
 
 void RemoteLayerWithRemoteRenderingBackingStore::prepareToDisplay()
 {
+    if (performDelegatedLayerDisplay())
+        return;
+
+    RefPtr bufferSet = this->bufferSet();
+    if (!bufferSet)
+        return;
+
+    if (!hasFrontBuffer() || !supportsPartialRepaint())
+        setNeedsDisplay();
+
+    bufferSet->prepareToDisplay(dirtyRegion(), supportsPartialRepaint(), hasEmptyDirtyRegion(), drawingRequiresClearedPixels());
     m_contentsBufferHandle = std::nullopt;
 
     if (!hasFrontBuffer() || !supportsPartialRepaint())
@@ -83,7 +94,6 @@ void RemoteLayerWithRemoteRenderingBackingStore::prepareToDisplay()
 
 void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
 {
-    m_contentsBufferHandle = std::nullopt;
     m_cleared = true;
 }
 
@@ -115,7 +125,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
         return;
 
     m_parameters = parameters;
-    m_cleared = true;
+    clearBackingStore();
     if (m_bufferSet) {
         RemoteImageBufferSetConfiguration configuration {
             .logicalSize = size(),
@@ -154,6 +164,11 @@ std::optional<RemoteImageBufferSetIdentifier> RemoteLayerWithRemoteRenderingBack
     if (!m_bufferSet)
         return std::nullopt;
     return m_bufferSet->identifier();
+}
+
+void RemoteLayerWithRemoteRenderingBackingStore::setNeedsDisplay()
+{
+    RemoteLayerBackingStore::setNeedsDisplay();
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

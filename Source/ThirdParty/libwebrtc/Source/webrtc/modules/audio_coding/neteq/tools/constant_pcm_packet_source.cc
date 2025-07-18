@@ -10,11 +10,15 @@
 
 #include "modules/audio_coding/neteq/tools/constant_pcm_packet_source.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
 
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 namespace test {
@@ -37,7 +41,7 @@ ConstantPcmPacketSource::ConstantPcmPacketSource(size_t payload_len_samples,
 
 std::unique_ptr<Packet> ConstantPcmPacketSource::NextPacket() {
   RTC_CHECK_GT(packet_len_bytes_, kHeaderLenBytes);
-  rtc::CopyOnWriteBuffer packet_buffer(packet_len_bytes_);
+  CopyOnWriteBuffer packet_buffer(packet_len_bytes_);
   uint8_t* packet_memory = packet_buffer.MutableData();
   // Fill the payload part of the packet memory with the pre-encoded value.
   for (unsigned i = 0; i < 2 * payload_len_samples_; ++i)

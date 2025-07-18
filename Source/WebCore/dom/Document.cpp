@@ -397,6 +397,10 @@
 #include "MediaStreamTrack.h"
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+#include "LazyLoadModelObserver.h"
+#endif
+
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
 #endif
@@ -473,12 +477,12 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
-            if (box->style().containIntrinsicLogicalWidthHasAuto()) {
+            if (box->style().containIntrinsicLogicalWidth().hasAuto()) {
                 auto adjustedWidth = LayoutUnit { applyZoom(contentBoxSize->inlineSize(), box->style()) };
                 target->setLastRememberedLogicalWidth(adjustedWidth);
             }
 
-            if (box->style().containIntrinsicLogicalHeightHasAuto()) {
+            if (box->style().containIntrinsicLogicalHeight().hasAuto()) {
                 auto adjustedHeight = LayoutUnit { applyZoom(contentBoxSize->blockSize(), box->style()) };
                 target->setLastRememberedLogicalHeight(adjustedHeight);
             }
@@ -977,6 +981,7 @@ void Document::commonTeardown()
         appHighlightRegistry->clear();
 #endif
     m_pendingScrollEventTargetList = nullptr;
+    m_pendingScrollendEventTargetList = nullptr;
 
     if (m_timelinesController)
         m_timelinesController->detachFromDocument();
@@ -1171,7 +1176,7 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
         auto body = HTMLBodyElement::create(*this);
         html->appendChild(body);
         body->beginParsingChildren();
-        if (tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy)) [[likely]] {
+        if (tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<char16_t>)), *this, body, body, policy)) [[likely]] {
             body->finishParsingChildren();
             auto head = HTMLHeadElement::create(*this);
             html->insertBefore(head, body.ptr());
@@ -1227,7 +1232,7 @@ void Document::invalidateAccessKeyCacheSlowCase()
 }
 
 struct QuerySelectorAllResults {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(QuerySelectorAllResults);
 public:
     static constexpr unsigned maxSize = 8;
 
@@ -2671,6 +2676,11 @@ WakeLockManager& Document::wakeLockManager()
     return *m_wakeLockManager;
 }
 
+Ref<WakeLockManager> Document::protectedWakeLockManager()
+{
+    return wakeLockManager();
+}
+
 FormController& Document::formController()
 {
     if (!m_formController)
@@ -3030,7 +3040,7 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
 
             auto& layoutContext = frameView->layoutContext();
             auto runForcedLayoutOnSkippedContentIfNeeded = [&] {
-                if (!layoutOptions.containsAny({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }))
+                if (!layoutOptions.containsAny({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::TreatRevealedWhenFoundAsVisible }))
                     return false;
 
                 if (context && (!context->renderer() || !context->renderer()->style().isSkippedRootOrSkippedContent()))
@@ -3054,10 +3064,13 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
                 if (layoutOptions.contains(LayoutOptions::TreatContentVisibilityHiddenAsVisible)) {
                     for (auto& descendant : descendantsOfType<RenderObject>(*rootForLayout))
                         isSkippedContentStale |= markRendererDirtyIfNeeded(descendant);
-                } else if (layoutOptions.contains(LayoutOptions::TreatContentVisibilityAutoAsVisible)) {
+                } else if (layoutOptions.contains(LayoutOptions::TreatContentVisibilityAutoAsVisible) || layoutOptions.contains(LayoutOptions::TreatRevealedWhenFoundAsVisible)) {
                     for (auto& descendant : descendantsOfType<RenderObject>(*rootForLayout)) {
                         // FIXME: While 'c-v: auto' is used 'hidden' inside 'c-v: hidden' we could entirly skip hidden subtrees here.
-                        if (descendant.style().usedContentVisibility() == ContentVisibility::Auto)
+                        auto shouldLayoutSkippedContent = (layoutOptions.contains(LayoutOptions::TreatContentVisibilityAutoAsVisible) && descendant.style().usedContentVisibility() == ContentVisibility::Auto)
+                            || (layoutOptions.contains(LayoutOptions::TreatRevealedWhenFoundAsVisible) && descendant.style().autoRevealsWhenFound());
+
+                        if (shouldLayoutSkippedContent)
                             isSkippedContentStale |= markRendererDirtyIfNeeded(descendant);
                     }
                 }
@@ -3072,6 +3085,8 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
                         types.add(ContentVisibilityOverrideScope::OverrideType::Hidden);
                     if (layoutOptions.contains(LayoutOptions::TreatContentVisibilityAutoAsVisible))
                         types.add(ContentVisibilityOverrideScope::OverrideType::Auto);
+                    if (layoutOptions.contains(LayoutOptions::TreatRevealedWhenFoundAsVisible))
+                        types.add(ContentVisibilityOverrideScope::OverrideType::RevealedWhenFound);
                     return types;
                 };
                 auto contentVisibilityOverrideScope = ContentVisibilityOverrideScope { layoutContext, overrideTypes() };
@@ -3794,7 +3809,7 @@ HighlightRegistry& Document::appHighlightRegistry()
 
 Ref<HighlightRegistry> Document::protectedAppHighlightRegistry()
 {
-    return highlightRegistry();
+    return appHighlightRegistry();
 }
 
 AppHighlightStorage& Document::appHighlightStorage()
@@ -5436,7 +5451,7 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
     return true;
 }
 
-Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry) const
 {
     Ref clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
@@ -5550,6 +5565,23 @@ void Document::flushDeferredResizeEvents()
     runResizeSteps();
 }
 
+void Document::addPendingScrollendEventTarget(ContainerNode& target)
+{
+    if (!settings().scrollendEventEnabled())
+        return;
+    if (!m_pendingScrollendEventTargetList)
+        m_pendingScrollendEventTargetList = makeUnique<PendingScrollEventTargetList>();
+
+    auto& targets = m_pendingScrollendEventTargetList->targets;
+    if (targets.containsIf([&] (auto& entry) { return entry.ptr() == &target; }))
+        return;
+
+    if (targets.isEmpty())
+        scheduleRenderingUpdate(RenderingUpdateStep::Scroll);
+
+    targets.append(target);
+}
+
 void Document::addPendingScrollEventTarget(ContainerNode& target)
 {
     if (!m_pendingScrollEventTargetList)
@@ -5628,6 +5660,14 @@ void Document::runScrollSteps()
         m_needsVisualViewportScrollEvent = false;
         if (RefPtr window = this->window())
             window->visualViewport().dispatchEvent(Event::create(eventNames().scrollEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    }
+    if (m_pendingScrollendEventTargetList && !m_pendingScrollendEventTargetList->targets.isEmpty()) {
+        LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scrollend events to pending scrollend event targets");
+        auto currentTargets = std::exchange(m_pendingScrollendEventTargetList->targets, { });
+        for (auto& target : currentTargets) {
+            auto bubbles = target->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
+            target->dispatchEvent(Event::create(eventNames().scrollendEvent, bubbles, Event::IsCancelable::No));
+        }
     }
 }
 
@@ -6114,7 +6154,7 @@ void Document::updateAccessibilityObjectRegions()
         cache->willUpdateObjectRegions();
 
     if (CheckedPtr view = renderView())
-        view->protectedFrameView()->updateAccessibilityObjectRegions();
+        view->frameView().updateAccessibilityObjectRegions();
 #endif
 }
 
@@ -7136,7 +7176,7 @@ static bool isValidNameNonASCII(std::span<const LChar> characters)
     return true;
 }
 
-static bool isValidNameNonASCII(std::span<const UChar> characters)
+static bool isValidNameNonASCII(std::span<const char16_t> characters)
 {
     for (size_t i = 0; i < characters.size();) {
         bool first = !i;
@@ -10036,48 +10076,23 @@ void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionO
         return;
     }
 
-    Vector<WeakPtr<IntersectionObserver>> intersectionObserversToNotifyAsynchronously;
-    Vector<RefPtr<IntersectionObserver>> intersectionObserversToNotifySynchronously;
+    Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
     for (auto& weakObserver : intersectionObservers) {
         RefPtr observer = weakObserver.get();
         if (!observer)
             continue;
 
-        if (observer->updateObservations(*this)) {
-            switch (observer->notificationDelivery()) {
-            case IntersectionObserver::NotificationDelivery::Asynchronous:
-                intersectionObserversToNotifyAsynchronously.append(observer);
-                break;
-            case IntersectionObserver::NotificationDelivery::Synchronous:
-                intersectionObserversToNotifySynchronously.append(observer);
-                break;
-            }
-        }
+        auto needNotify = observer->updateObservations(*this);
+        if (needNotify == IntersectionObserver::NeedNotify::Yes)
+            intersectionObserversWithPendingNotifications.append(observer);
     }
 
-    if (!m_intersectionObserverUpdateTaskQueued && intersectionObserversToNotifyAsynchronously.size()) {
-        LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - queueing task to notify JavaScript observers");
-        m_intersectionObserverUpdateTaskQueued = true;
+    if (intersectionObserversWithPendingNotifications.size())
+        LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - notifying observers");
 
-        eventLoop().queueTask(TaskSource::IntersectionObserver, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, weakObservers = WTFMove(intersectionObserversToNotifyAsynchronously)]() mutable {
-            RefPtr protectedDocument = weakThis.get();
-
-            if (!protectedDocument)
-                return;
-
-            for (auto& weakObserver : weakObservers) {
-                if (RefPtr observer = weakObserver.get())
-                    observer->notify();
-            }
-            protectedDocument->m_intersectionObserverUpdateTaskQueued = false;
-        });
-    }
-
-    if (intersectionObserversToNotifySynchronously.size()) {
-        LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - notifying internal observers.");
-
-        for (const auto& observer : intersectionObserversToNotifySynchronously)
+    for (auto& weakObserver : intersectionObserversWithPendingNotifications) {
+        if (RefPtr observer = weakObserver.get())
             observer->notify();
     }
 }
@@ -11106,16 +11121,16 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 #if USE(SYSTEM_PREVIEW)
 void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
 {
-    RefPtr element = systemPreviewInfo.element.elementIdentifier ? Element::fromIdentifier(*systemPreviewInfo.element.elementIdentifier) : nullptr;
-    if (!is<HTMLAnchorElement>(element))
+    RefPtr node = systemPreviewInfo.element.nodeIdentifier ? Node::fromIdentifier(*systemPreviewInfo.element.nodeIdentifier) : nullptr;
+    if (!is<HTMLAnchorElement>(node))
         return;
 
-    if (&element->document() != this)
+    if (&node->document() != this)
         return;
 
     auto event = MessageEvent::create(message, securityOrigin().toString());
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, this);
-    element->dispatchEvent(event);
+    node->dispatchEvent(event);
 }
 #endif
 
@@ -11168,6 +11183,15 @@ LazyLoadImageObserver& Document::lazyLoadImageObserver()
         m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
     return *m_lazyLoadImageObserver;
 }
+
+#if ENABLE(MODEL_ELEMENT)
+LazyLoadModelObserver& Document::lazyLoadModelObserver()
+{
+    if (!m_lazyLoadModelObserver)
+        m_lazyLoadModelObserver = makeUnique<LazyLoadModelObserver>();
+    return *m_lazyLoadModelObserver;
+}
+#endif
 
 const CrossOriginOpenerPolicy& Document::crossOriginOpenerPolicy() const
 {

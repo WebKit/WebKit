@@ -31,6 +31,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 

@@ -28,6 +28,7 @@
 #include "LayoutUnit.h"
 
 #include <optional>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 namespace Layout {
@@ -45,7 +46,7 @@ public:
     LayoutUnit minContentHeight(const ElementBox&) const;
 
 private:
-    const LayoutState& m_globalLayoutState;
+    const CheckedRef<const LayoutState> m_globalLayoutState;
 };
 
 }

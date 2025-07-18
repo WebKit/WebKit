@@ -64,7 +64,7 @@ Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackVa
         return fallbackValue;
 
     // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
-    const UChar firstCharacter = string[0];
+    const char16_t firstCharacter = string[0];
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
@@ -93,7 +93,7 @@ double parseToDoubleForNumberType(StringView string, double fallbackValue)
         return fallbackValue;
 
     // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
-    UChar firstCharacter = string[0];
+    char16_t firstCharacter = string[0];
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
@@ -272,7 +272,7 @@ static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
     return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
-static inline bool isNumberStart(UChar character)
+static inline bool isNumberStart(char16_t character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }

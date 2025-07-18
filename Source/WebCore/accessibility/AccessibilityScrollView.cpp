@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "AXRemoteFrame.h"
 #include "AccessibilityScrollbar.h"
+#include "ContainerNodeInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"

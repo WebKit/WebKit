@@ -130,7 +130,7 @@ private:
     void setTrustedEvalEnabled(const bool& enabled) { m_trustedEvalEnabled = enabled; }
 
     // FIXME: Make this a const reference once we teach applySandboxPolicy() to store its policy as opposed to applying it directly onto ContentSecurityPolicy.
-    ContentSecurityPolicy& m_policy;
+    const CheckedRef<ContentSecurityPolicy> m_policy;
 
     String m_header;
     ContentSecurityPolicyHeaderType m_headerType;

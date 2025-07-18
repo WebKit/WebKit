@@ -319,8 +319,16 @@ sub processCLI {
     print "---\n\n";
 }
 
+sub setupEnvironment()
+{
+    if ($^O eq "linux") {
+        setupUnixWebKitEnvironment(productDir());
+    }
+}
+
 sub main {
     processCLI();
+    setupEnvironment();
 
     my @defaultHarnessFiles = (
         "$harnessDir/sta.js",

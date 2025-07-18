@@ -1,0 +1,6 @@
+
+PASS navigator.credentials.get() calling the API without user activation should reject with NotAllowedError.
+FAIL navigator.credentials.get() consumes user activation. promise_rejects_dom: function "function() { throw e }" threw object "NotSupportedError: Digital credentials are not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL navigator.credentials.create() calling the API without user activation should reject with NotAllowedError. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.credentials.create() consumes user activation. assert_unreached: Should have rejected: undefined Reached unreachable code
+

@@ -33,6 +33,7 @@
 #include "JSInspectorAuditAccessibilityObject.h"
 #include "JSInspectorAuditDOMObject.h"
 #include "JSInspectorAuditResourcesObject.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include <JavaScriptCore/CallFrame.h>

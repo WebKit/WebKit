@@ -49,15 +49,15 @@ class TestInputs {
              size_t num_capture_channels);
   ~TestInputs();
   const RenderBuffer& GetRenderBuffer() { return *render_buffer_; }
-  rtc::ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
+  ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
     return Y2_;
   }
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
     return E2_;
   }
-  rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
-  GetH2() const {
+  ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>> GetH2()
+      const {
     return H2_;
   }
   const std::vector<bool>& GetConvergedFilters() const {

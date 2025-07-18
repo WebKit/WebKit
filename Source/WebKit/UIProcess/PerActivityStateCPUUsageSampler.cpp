@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PerActivityStateCPUUsageSampler);
 
 PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool& processPool)
     : m_processPool(processPool)
-    , m_loggingTimer(RunLoop::main(), this, &PerActivityStateCPUUsageSampler::loggingTimerFired)
+    , m_loggingTimer(RunLoop::mainSingleton(), this, &PerActivityStateCPUUsageSampler::loggingTimerFired)
 {
     m_lastCPUTime = MonotonicTime::now();
     m_loggingTimer.startRepeating(loggingInterval);

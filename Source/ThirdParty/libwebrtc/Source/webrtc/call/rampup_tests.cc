@@ -61,9 +61,9 @@ ABSL_FLAG(std::string,
 namespace webrtc {
 namespace {
 
-using ::webrtc::test::GetGlobalMetricsLogger;
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Unit;
+using test::GetGlobalMetricsLogger;
+using test::ImprovementDirection;
+using test::Unit;
 
 constexpr TimeDelta kPollInterval = TimeDelta::Millis(20);
 static const int kExpectedHighVideoBitrateBps = 80000;
@@ -177,7 +177,7 @@ void RampUpTester::ModifyVideoConfigs(
   encoder_config->number_of_streams = num_video_streams_;
   encoder_config->max_bitrate_bps = 2000000;
   encoder_config->video_stream_factory =
-      rtc::make_ref_counted<RampUpTester::VideoStreamFactory>();
+      make_ref_counted<RampUpTester::VideoStreamFactory>();
   if (num_video_streams_ == 1) {
     // For single stream rampup until 1mbps
     expected_bitrate_bps_ = kSingleStreamTargetBps;
@@ -450,7 +450,7 @@ void RampUpDownUpTester::PollStats() {
   int transmit_bitrate_bps = 0;
   bool suspended = false;
   if (num_video_streams_ > 0 && send_stream_) {
-    webrtc::VideoSendStream::Stats stats = send_stream_->GetStats();
+    VideoSendStream::Stats stats = send_stream_->GetStats();
     for (const auto& it : stats.substreams) {
       transmit_bitrate_bps += it.second.total_bitrate_bps;
     }
@@ -473,13 +473,13 @@ void RampUpDownUpTester::ModifyReceiverBitrateConfig(
 std::string RampUpDownUpTester::GetModifierString() const {
   std::string str("_");
   if (num_video_streams_ > 0) {
-    str += rtc::ToString(num_video_streams_);
+    str += absl::StrCat(num_video_streams_);
     str += "stream";
     str += (num_video_streams_ > 1 ? "s" : "");
     str += "_";
   }
   if (num_audio_streams_ > 0) {
-    str += rtc::ToString(num_audio_streams_);
+    str += absl::StrCat(num_audio_streams_);
     str += "stream";
     str += (num_audio_streams_ > 1 ? "s" : "");
     str += "_";
@@ -503,7 +503,7 @@ int RampUpDownUpTester::GetExpectedHighBitrate() const {
 size_t RampUpDownUpTester::GetFecBytes() const {
   size_t flex_fec_bytes = 0;
   if (num_flexfec_streams_ > 0) {
-    webrtc::VideoSendStream::Stats stats = send_stream_->GetStats();
+    VideoSendStream::Stats stats = send_stream_->GetStats();
     for (const auto& kv : stats.substreams)
       flex_fec_bytes += kv.second.rtp_stats.fec.TotalBytes();
   }

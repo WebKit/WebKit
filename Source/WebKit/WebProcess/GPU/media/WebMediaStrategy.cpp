@@ -40,7 +40,6 @@
 #include <WebCore/SharedAudioDestination.h>
 
 #if PLATFORM(COCOA)
-#include "RemoteMediaRecorderPrivateWriter.h"
 #include <WebCore/MediaSessionManagerCocoa.h>
 #endif
 
@@ -119,25 +118,6 @@ void WebMediaStrategy::enableMockMediaSource()
     }
 #endif
     WebCore::MediaStrategy::addMockMediaSourceEngine();
-}
-#endif
-
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-std::unique_ptr<MediaRecorderPrivateWriter> WebMediaStrategy::createMediaRecorderPrivateWriter(MediaRecorderContainerType type, WebCore::MediaRecorderPrivateWriterListener& listener) const
-{
-    ASSERT(isMainRunLoop());
-#if ENABLE(GPU_PROCESS)
-    if (type != MediaRecorderContainerType::Mp4)
-        return nullptr;
-    if (m_useGPUProcess) {
-        Ref connection = WebProcess::singleton().ensureGPUProcessConnection();
-        return RemoteMediaRecorderPrivateWriter::create(connection, listener);
-    }
-#else
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(listener);
-#endif
-    return nullptr;
 }
 #endif
 

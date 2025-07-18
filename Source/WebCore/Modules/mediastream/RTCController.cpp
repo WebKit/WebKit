@@ -154,18 +154,18 @@ void RTCController::enableICECandidateFiltering()
 }
 
 #if USE(LIBWEBRTC)
-static String toWebRTCLogLevel(rtc::LoggingSeverity severity)
+static String toWebRTCLogLevel(webrtc::LoggingSeverity severity)
 {
     switch (severity) {
-    case rtc::LoggingSeverity::LS_VERBOSE:
+    case webrtc::LoggingSeverity::LS_VERBOSE:
         return "verbose"_s;
-    case rtc::LoggingSeverity::LS_INFO:
+    case webrtc::LoggingSeverity::LS_INFO:
         return "info"_s;
-    case rtc::LoggingSeverity::LS_WARNING:
+    case webrtc::LoggingSeverity::LS_WARNING:
         return "warning"_s;
-    case rtc::LoggingSeverity::LS_ERROR:
+    case webrtc::LoggingSeverity::LS_ERROR:
         return "error"_s;
-    case rtc::LoggingSeverity::LS_NONE:
+    case webrtc::LoggingSeverity::LS_NONE:
         return "none"_s;
     }
     ASSERT_NOT_REACHED();

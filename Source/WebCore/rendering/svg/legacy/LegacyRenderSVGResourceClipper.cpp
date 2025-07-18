@@ -24,6 +24,7 @@
 #include "config.h"
 #include "LegacyRenderSVGResourceClipper.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"

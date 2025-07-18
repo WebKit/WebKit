@@ -30,6 +30,7 @@
 #include "SVGHKernElement.h"
 #include "SVGMissingGlyphElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGVKernElement.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/TZoneMallocInlines.h>

@@ -39,7 +39,7 @@ enum class CompositeOperationType : uint8_t {
 };
 
 class FEComposite final : public FilterEffect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEComposite);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComposite);
 public:
     WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace = DestinationColorSpace::SRGB());

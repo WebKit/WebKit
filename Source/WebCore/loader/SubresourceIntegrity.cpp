@@ -28,6 +28,7 @@
 
 #include "CachedResource.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "ResourceCryptographicDigest.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"

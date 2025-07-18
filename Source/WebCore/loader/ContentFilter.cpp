@@ -315,15 +315,15 @@ URL ContentFilter::url()
 const URL& ContentFilter::blockedPageURL()
 {
     static NeverDestroyed blockedPageURL = [] () -> URL {
-        auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
-        return adoptCF(CFBundleCopyResourceURL(webCoreBundle, CFSTR("ContentFilterBlockedPage"), CFSTR("html"), nullptr)).get();
+        RetainPtr webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
+        return adoptCF(CFBundleCopyResourceURL(webCoreBundle.get(), CFSTR("ContentFilterBlockedPage"), CFSTR("html"), nullptr)).get();
     }();
     return blockedPageURL;
 }
 
 bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData& substituteData)
 {
-    if (auto contentFilter = activeLoader.contentFilter()) {
+    if (CheckedPtr contentFilter = activeLoader.contentFilter()) {
         if (contentFilter->m_state == State::Blocked && !contentFilter->m_isLoadingBlockedPage)
             return contentFilter->m_blockedError.failingURL() != substituteData.failingURL();
     }

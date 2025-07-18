@@ -11,11 +11,13 @@
 #include <math.h>
 #include <string.h>
 
-#include <algorithm>
 #include <bitset>
+#include <cstdint>
 #include <vector>
 
+#include "api/audio/audio_processing.h"
 #include "api/audio/echo_detector_creator.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -42,7 +44,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   read_idx += 2;
   std::bitset<16> call_order(call_order_int);
 
-  rtc::scoped_refptr<EchoDetector> echo_detector = CreateEchoDetector();
+  webrtc::scoped_refptr<EchoDetector> echo_detector = CreateEchoDetector();
   std::vector<float> input(1);
   // Call AnalyzeCaptureAudio once to prevent the flushing of the buffer.
   echo_detector->AnalyzeCaptureAudio(input);

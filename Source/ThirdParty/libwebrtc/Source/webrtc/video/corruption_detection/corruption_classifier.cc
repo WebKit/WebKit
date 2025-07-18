@@ -39,8 +39,8 @@ CorruptionClassifier::CorruptionClassifier(float growth_rate, float midpoint)
 }
 
 double CorruptionClassifier::CalculateCorruptionProbability(
-    rtc::ArrayView<const FilteredSample> filtered_original_samples,
-    rtc::ArrayView<const FilteredSample> filtered_compressed_samples,
+    ArrayView<const FilteredSample> filtered_original_samples,
+    ArrayView<const FilteredSample> filtered_compressed_samples,
     int luma_threshold,
     int chroma_threshold) const {
   double loss = GetScore(filtered_original_samples, filtered_compressed_samples,
@@ -67,8 +67,8 @@ double CorruptionClassifier::CalculateCorruptionProbability(
 // either `luma_threshold` or `chroma_threshold` depending on whether the
 // sample is luma or chroma.
 double CorruptionClassifier::GetScore(
-    rtc::ArrayView<const FilteredSample> filtered_original_samples,
-    rtc::ArrayView<const FilteredSample> filtered_compressed_samples,
+    ArrayView<const FilteredSample> filtered_original_samples,
+    ArrayView<const FilteredSample> filtered_compressed_samples,
     int luma_threshold,
     int chroma_threshold) const {
   RTC_DCHECK_GE(luma_threshold, 0);

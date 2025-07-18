@@ -142,7 +142,7 @@ def message(source=None, sha=None):
         return '''{title}\n{revert}'''.format(
             title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
             revert=revert_msg,
-        )
+        ), combined_changes, amend_changes
     else:
         bugs_string = get_bugs_string()
         return '''{title}

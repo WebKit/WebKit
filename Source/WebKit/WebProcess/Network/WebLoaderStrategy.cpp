@@ -121,7 +121,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLoaderStrategy);
 
 WebLoaderStrategy::WebLoaderStrategy(WebProcess& webProcess)
     : m_webProcess(webProcess)
-    , m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
+    , m_internallyFailedLoadTimer(RunLoop::mainSingleton(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
 {
 }
 
@@ -427,7 +427,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
             && resourceLoader.frameLoader()->notifier().isInitialRequestIdentifier(identifier)
             ? MainFrameMainResource::Yes : MainFrameMainResource::No;
         if (!page->allowsLoadFromURL(request.url(), mainFrameMainResource)) {
-            RunLoop::protectedMain()->dispatch([resourceLoader = Ref { resourceLoader }, error = blockedError(request)] {
+            RunLoop::mainSingleton().dispatch([resourceLoader = Ref { resourceLoader }, error = blockedError(request)] {
                 resourceLoader->didFail(error);
             });
             return;

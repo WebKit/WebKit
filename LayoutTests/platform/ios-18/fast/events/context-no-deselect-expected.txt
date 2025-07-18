@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTextControl {INPUT} at (0,0) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (15,11) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 93x14
+      text run at (0,0) width 93: "some sample text"
+selection start: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body
+selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body

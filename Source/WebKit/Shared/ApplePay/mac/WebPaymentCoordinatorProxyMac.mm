@@ -47,7 +47,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
         return completionHandler(false);
 
     protectedCanMakePaymentsQueue()->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClass()), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::protectedMain()->dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(canMakePayments);
         });
     });

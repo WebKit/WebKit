@@ -810,7 +810,7 @@ void SetDependencies(const SimulationSettings& settings,
 }
 
 int RunSimulation(
-    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface> ap_builder,
     bool builtin_builder_provided,
     int argc,
     char* argv[]) {
@@ -869,7 +869,7 @@ int RunSimulation(
 }  // namespace
 
 int AudioprocFloatImpl(
-    absl::Nonnull<std::unique_ptr<BuiltinAudioProcessingBuilder>> ap_builder,
+    absl_nonnull std::unique_ptr<BuiltinAudioProcessingBuilder> ap_builder,
     int argc,
     char* argv[]) {
   return RunSimulation(std::move(ap_builder), /*builtin_builder_provided=*/true,
@@ -877,7 +877,7 @@ int AudioprocFloatImpl(
 }
 
 int AudioprocFloatImpl(
-    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface> ap_builder,
     int argc,
     char* argv[]) {
   return RunSimulation(std::move(ap_builder),

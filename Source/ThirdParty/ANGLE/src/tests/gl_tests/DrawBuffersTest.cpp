@@ -601,18 +601,47 @@ TEST_P(DrawBuffersTest, FirstHalfNULL)
     glDeleteProgram(program);
 }
 
-// Test that non-zero draw buffers can be queried on the default framebuffer
+// Test draw buffers query on the default framebuffer
 TEST_P(DrawBuffersTest, DefaultFramebufferDrawBufferQuery)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    EGLSurface surface = window->getSurface();
     GLint drawbuffer = 0;
+
+    if (EGL_NO_SURFACE != surface)
+    {
+        // Check that the draw buffer state is GL_BACK
+        glGetIntegerv(GL_DRAW_BUFFER0, &drawbuffer);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(GL_BACK, drawbuffer);
+    }
+
+    // Test that non-zero draw buffers can be queried on the default framebuffer
     glGetIntegerv(GL_DRAW_BUFFER1, &drawbuffer);
     EXPECT_GL_NO_ERROR();
-
     EXPECT_EQ(GL_NONE, drawbuffer);
+
+    // Make our context current with no surfaces
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, window->getContext());
+    // Check that the draw buffer state is GL_NONE
+    glGetIntegerv(GL_DRAW_BUFFER0, &drawbuffer);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_NONE, drawbuffer);
+
+    if (EGL_NO_SURFACE != surface)
+    {
+        // Make our context current with a surface again
+        eglMakeCurrent(display, surface, surface, window->getContext());
+        // Test that the draw buffer state is GL_BACK once again
+        glGetIntegerv(GL_DRAW_BUFFER0, &drawbuffer);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(GL_BACK, drawbuffer);
+    }
 }
 
 // Test that drawing with all color buffers disabled works.

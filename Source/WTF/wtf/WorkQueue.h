@@ -72,7 +72,7 @@ protected:
 #endif
 
 #if USE(COCOA_EVENT_LOOP)
-    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
+    const OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 #else
     RunLoop* m_runLoop;
 #endif
@@ -91,8 +91,7 @@ private:
  */
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public GuaranteedSerialFunctionDispatcher {
 public:
-    static WorkQueue& main();
-    static Ref<WorkQueue> protectedMain() { return main(); }
+    static WorkQueue& mainSingleton();
     static Ref<WorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
 
 

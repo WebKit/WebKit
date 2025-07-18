@@ -156,8 +156,8 @@ TEST(AudioDecoderFactoryTemplateTest,
 
 TEST(AudioDecoderFactoryTemplateTest, NoDecoderTypes) {
   const Environment env = CreateEnvironment();
-  rtc::scoped_refptr<AudioDecoderFactory> factory(
-      rtc::make_ref_counted<
+  scoped_refptr<AudioDecoderFactory> factory(
+      make_ref_counted<
           audio_decoder_factory_template_impl::AudioDecoderFactoryT<>>());
   EXPECT_THAT(factory->GetSupportedDecoders(), ::testing::IsEmpty());
   EXPECT_FALSE(factory->IsSupportedDecoder({"foo", 8000, 1}));
@@ -279,6 +279,15 @@ TEST(AudioDecoderFactoryTemplateTest, Opus) {
   auto dec = factory->Create(env, {"opus", 48000, 2}, std::nullopt);
   ASSERT_NE(nullptr, dec);
   EXPECT_EQ(48000, dec->SampleRateHz());
+}
+
+TEST(AudioDecoderFactoryTemplateTest, G711TooManyChannels) {
+  auto factory = CreateAudioDecoderFactory<AudioDecoderG711>();
+  const Environment env = CreateEnvironment();
+  EXPECT_EQ(nullptr, factory->Create(env,
+                                     {"pcmu", 16000,
+                                      /* num_channels=*/1000},
+                                     std::nullopt));
 }
 
 }  // namespace

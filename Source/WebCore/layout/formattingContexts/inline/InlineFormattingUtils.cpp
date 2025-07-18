@@ -168,7 +168,7 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
         }
         break;
     case PreviousLineState::EndsWithLineBreak:
-        shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine;
+        shouldIndent = root.style().textIndent().eachLine.has_value();
         break;
     case PreviousLineState::DoesNotEndWithLineBreak:
         shouldIndent = false;
@@ -176,21 +176,21 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
     }
 
     // Specifying 'hanging' inverts whether the line should be indented or not.
-    if (root.style().textIndentType() == TextIndentType::Hanging)
+    if (root.style().textIndent().hanging.has_value())
         shouldIndent = !shouldIndent;
 
     if (!shouldIndent)
         return { };
 
-    auto textIndent = root.style().textIndent();
-    if (textIndent == RenderStyle::initialTextIndent())
+    auto& textIndentLength = root.style().textIndent().length;
+    if (textIndentLength == 0_css_px)
         return { };
-    if (isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes && textIndent.isPercent()) {
+    if (isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes && textIndentLength.isPercent()) {
         // Percentages must be treated as 0 for the purpose of calculating intrinsic size contributions.
         // https://drafts.csswg.org/css-text/#text-indent-property
         return { };
     }
-    return { minimumValueForLength(textIndent, availableWidth) };
+    return Style::evaluate(textIndentLength, availableWidth);
 }
 
 InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const
@@ -558,7 +558,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     ASSERT(layoutBox.isInlineBox() || &layoutBox == &rootBox);
 
     auto& style = layoutBox.style();
-    auto hasTextEmphasis =  style.textEmphasisMark() != TextEmphasisMark::None;
+    auto hasTextEmphasis =  !style.textEmphasisStyle().isNone();
     if (!hasTextEmphasis)
         return { };
     auto emphasisPosition = style.textEmphasisPosition();
@@ -592,7 +592,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
             return { };
         }
     }
-    auto annotationSize = style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString());
+    auto annotationSize = style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisStyle().markString());
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 

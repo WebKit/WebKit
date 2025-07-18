@@ -71,12 +71,12 @@ VoiceActivityDetectorWrapper::VoiceActivityDetectorWrapper(
     std::unique_ptr<MonoVad> vad,
     int sample_rate_hz)
     : vad_reset_period_frames_(
-          rtc::CheckedDivExact(vad_reset_period_ms, kFrameDurationMs)),
-      frame_size_(rtc::CheckedDivExact(sample_rate_hz, kNumFramesPerSecond)),
+          CheckedDivExact(vad_reset_period_ms, kFrameDurationMs)),
+      frame_size_(CheckedDivExact(sample_rate_hz, kNumFramesPerSecond)),
       time_to_vad_reset_(vad_reset_period_frames_),
       vad_(std::move(vad)),
       resampled_buffer_(
-          rtc::CheckedDivExact(vad_->SampleRateHz(), kNumFramesPerSecond)),
+          CheckedDivExact(vad_->SampleRateHz(), kNumFramesPerSecond)),
       resampler_(frame_size_,
                  resampled_buffer_.size(),
                  /*num_channels=*/1) {

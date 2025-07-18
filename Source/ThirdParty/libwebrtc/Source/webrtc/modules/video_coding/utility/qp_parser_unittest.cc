@@ -12,6 +12,11 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+#include <optional>
+
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
 #include "test/gtest.h"
 
 namespace webrtc {

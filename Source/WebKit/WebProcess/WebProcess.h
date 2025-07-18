@@ -111,6 +111,7 @@ class UserGestureToken;
 enum class EventMakesGamepadsVisible : bool;
 enum class RenderAsTextFlag : uint16_t;
 enum class RenderingPurpose : uint8_t;
+enum class ScriptTrackingPrivacyCategory : uint8_t;
 
 struct ClientOrigin;
 struct DisplayUpdate;
@@ -196,6 +197,12 @@ public:
     T* supplement()
     {
         return static_cast<T*>(m_supplements.get(T::supplementName()));
+    }
+
+    template <typename T>
+    RefPtr<T> protectedSupplement()
+    {
+        return supplement<T>();
     }
 
     template <typename T>
@@ -458,6 +465,7 @@ public:
 #endif
 
     bool requiresScriptTrackingPrivacyProtections(const URL&, const WebCore::SecurityOrigin& topOrigin) const;
+    bool shouldAllowScriptAccess(const URL&, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory) const;
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
@@ -502,6 +510,11 @@ public:
 #if PLATFORM(COCOA)
     void registerAdditionalFonts(AdditionalFonts&&);
     void registerFontMap(HashMap<String, URL>&&, HashMap<String, Vector<String>>&&, Vector<SandboxExtension::Handle>&& sandboxExtensions);
+#endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    void initializeAccessibility(Vector<SandboxExtension::Handle>&&);
+    bool shouldInitializeAccessibility() const { return m_shouldInitializeAccessibility; }
 #endif
 
 private:
@@ -923,6 +936,9 @@ private:
 #endif
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
     String m_pendingDisplayName;
+#endif
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    bool m_shouldInitializeAccessibility { false };
 #endif
 };
 

@@ -11,6 +11,7 @@
 #include <stddef.h>
 
 #include "api/test/videocodec_test_fixture.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_codec.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -41,20 +42,20 @@ TEST(Config, NumberOfCoresWithoutUseSingleCore) {
 
 TEST(Config, NumberOfTemporalLayersIsOne) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecH264, &config.codec_settings);
+  test::CodecSettings(kVideoCodecH264, &config.codec_settings);
   EXPECT_EQ(1u, config.NumberOfTemporalLayers());
 }
 
 TEST(Config, NumberOfTemporalLayers_Vp8) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecVP8, &config.codec_settings);
+  test::CodecSettings(kVideoCodecVP8, &config.codec_settings);
   config.codec_settings.VP8()->numberOfTemporalLayers = kNumTemporalLayers;
   EXPECT_EQ(kNumTemporalLayers, config.NumberOfTemporalLayers());
 }
 
 TEST(Config, NumberOfTemporalLayers_Vp9) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecVP9, &config.codec_settings);
+  test::CodecSettings(kVideoCodecVP9, &config.codec_settings);
   config.codec_settings.VP9()->numberOfTemporalLayers = kNumTemporalLayers;
   EXPECT_EQ(kNumTemporalLayers, config.NumberOfTemporalLayers());
 }

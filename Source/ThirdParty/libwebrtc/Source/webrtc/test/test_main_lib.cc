@@ -11,35 +11,32 @@
 #include "test/test_main_lib.h"
 
 #include <cstddef>
-#include <cstdio>
+#include <cstdlib>
 #include <fstream>
-#include <ios>
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
-#include "absl/memory/memory.h"
-#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/test/metrics/chrome_perf_dashboard_metrics_exporter.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 #include "api/test/metrics/metrics_set_proto_file_exporter.h"
 #include "api/test/metrics/print_result_proxy_metrics_exporter.h"
 #include "api/test/metrics/stdout_metrics_exporter.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/event_tracer.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/test_flags.h"
+#include "test/testsupport/file_utils.h"
 #include "test/testsupport/perf_test.h"
 #include "test/testsupport/resources_dir_flag.h"
 
@@ -134,28 +131,28 @@ class TestMainImpl : public TestMain {
 
     // Default to LS_INFO, even for release builds to provide better test
     // logging.
-    if (rtc::LogMessage::GetLogToDebug() > rtc::LS_INFO)
-      rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+    if (LogMessage::GetLogToDebug() > LS_INFO)
+      LogMessage::LogToDebug(LS_INFO);
 
     if (absl::GetFlag(FLAGS_verbose))
-      rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+      LogMessage::LogToDebug(LS_VERBOSE);
 
-    rtc::LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs) ||
-                                    absl::GetFlag(FLAGS_verbose));
+    LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs) ||
+                               absl::GetFlag(FLAGS_verbose));
 
     // InitFieldTrialsFromString stores the char*, so the char array must
     // outlive the application.
     field_trials_ = absl::GetFlag(FLAGS_force_fieldtrials);
-    webrtc::field_trial::InitFieldTrialsFromString(field_trials_.c_str());
-    webrtc::metrics::Enable();
+    field_trial::InitFieldTrialsFromString(field_trials_.c_str());
+    metrics::Enable();
 
 #if defined(WEBRTC_WIN)
-    winsock_init_ = std::make_unique<rtc::WinsockInitializer>();
+    winsock_init_ = std::make_unique<WinsockInitializer>();
 #endif
 
     // Initialize SSL which are used by several tests.
-    rtc::InitializeSSL();
-    rtc::SSLStreamAdapter::EnableTimeCallbackForTesting();
+    InitializeSSL();
+    SSLStreamAdapter::EnableTimeCallbackForTesting();
 
     return 0;
   }
@@ -192,12 +189,12 @@ class TestMainImpl : public TestMain {
     }
 
 #if defined(WEBRTC_IOS)
-    rtc::test::InitTestSuite(
-        RUN_ALL_TESTS, argc, argv,
-        absl::GetFlag(FLAGS_write_perf_output_on_ios),
-        absl::GetFlag(FLAGS_export_perf_results_new_api),
-        absl::GetFlag(FLAGS_webrtc_test_metrics_output_path), metrics_to_plot);
-    rtc::test::RunTestsFromIOSApp();
+    test::InitTestSuite(RUN_ALL_TESTS, argc, argv,
+                        absl::GetFlag(FLAGS_write_perf_output_on_ios),
+                        absl::GetFlag(FLAGS_export_perf_results_new_api),
+                        absl::GetFlag(FLAGS_webrtc_test_metrics_output_path),
+                        metrics_to_plot);
+    test::RunTestsFromIOSApp();
     int exit_code = 0;
 #else
     int exit_code = RUN_ALL_TESTS();
@@ -206,10 +203,9 @@ class TestMainImpl : public TestMain {
     if (absl::GetFlag(FLAGS_export_perf_results_new_api)) {
       exporters.push_back(std::make_unique<test::StdoutMetricsExporter>());
       if (!absl::GetFlag(FLAGS_webrtc_test_metrics_output_path).empty()) {
-        exporters.push_back(
-            std::make_unique<webrtc::test::MetricsSetProtoFileExporter>(
-                webrtc::test::MetricsSetProtoFileExporter::Options(
-                    absl::GetFlag(FLAGS_webrtc_test_metrics_output_path))));
+        exporters.push_back(std::make_unique<test::MetricsSetProtoFileExporter>(
+            test::MetricsSetProtoFileExporter::Options(
+                absl::GetFlag(FLAGS_webrtc_test_metrics_output_path))));
       }
       if (!absl::GetFlag(FLAGS_isolated_script_test_perf_output).empty()) {
         exporters.push_back(
@@ -220,18 +216,42 @@ class TestMainImpl : public TestMain {
       exporters.push_back(
           std::make_unique<test::PrintResultProxyMetricsExporter>());
     }
+    // Log number of tests that should be run, are disabled or skipped and total
+    // number.
+    int total_test_count =
+        ::testing::UnitTest::GetInstance()->total_test_count();
+    int test_to_run_count =
+        ::testing::UnitTest::GetInstance()->test_to_run_count();
+    int disabled_test_count =
+        ::testing::UnitTest::GetInstance()->disabled_test_count();
+    int skipped_test_count =
+        ::testing::UnitTest::GetInstance()->skipped_test_count();
+    absl::string_view test_suite_name = test::FileName(argv[0]);
+    test::GetGlobalMetricsLogger()->LogSingleValueMetric(
+        "TotalTestCount", test_suite_name, total_test_count, test::Unit::kCount,
+        test::ImprovementDirection::kBiggerIsBetter);
+    test::GetGlobalMetricsLogger()->LogSingleValueMetric(
+        "RunTestCount", test_suite_name, test_to_run_count, test::Unit::kCount,
+        test::ImprovementDirection::kBiggerIsBetter);
+    test::GetGlobalMetricsLogger()->LogSingleValueMetric(
+        "DisabledTestCount", test_suite_name, disabled_test_count,
+        test::Unit::kCount, test::ImprovementDirection::kSmallerIsBetter);
+    test::GetGlobalMetricsLogger()->LogSingleValueMetric(
+        "SkippedTestCount", test_suite_name, skipped_test_count,
+        test::Unit::kCount, test::ImprovementDirection::kSmallerIsBetter);
+
     test::ExportPerfMetric(*test::GetGlobalMetricsLogger(),
                            std::move(exporters));
     if (!absl::GetFlag(FLAGS_export_perf_results_new_api)) {
       std::string perf_output_file =
           absl::GetFlag(FLAGS_isolated_script_test_perf_output);
       if (!perf_output_file.empty()) {
-        if (!webrtc::test::WritePerfResults(perf_output_file)) {
+        if (!test::WritePerfResults(perf_output_file)) {
           return 1;
         }
       }
       if (metrics_to_plot) {
-        webrtc::test::PrintPlottableResults(*metrics_to_plot);
+        test::PrintPlottableResults(*metrics_to_plot);
       }
     }
 
@@ -262,7 +282,7 @@ class TestMainImpl : public TestMain {
 
  private:
 #if defined(WEBRTC_WIN)
-  std::unique_ptr<rtc::WinsockInitializer> winsock_init_;
+  std::unique_ptr<WinsockInitializer> winsock_init_;
 #endif
 #if defined(RTC_USE_PERFETTO)
   std::unique_ptr<perfetto::TracingSession> tracing_session_;
@@ -290,8 +310,8 @@ class TestMainImpl : public TestMain {
         << trace_output_file << "\"";
     tracing_session_->StartBlocking();
 #else
-    rtc::tracing::SetupInternalTracer();
-    rtc::tracing::StartInternalCapture(trace_output_file);
+    tracing::SetupInternalTracer();
+    tracing::StartInternalCapture(trace_output_file);
 #endif
   }
 
@@ -314,7 +334,7 @@ class TestMainImpl : public TestMain {
     }
 
 #else
-    rtc::tracing::StopInternalCapture();
+    tracing::StopInternalCapture();
 #endif
   }
 };

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>video-setSinkId-default</title>
+    <script src="video-test.js"></script>
+    <script>
+    async function runTest() {
+        await runMP4Test();
+        await runWebMTest();
+    }
+
+    function runSetDefaultSinkId(sinkId) {
+        return new Promise(resolve => {
+            runWithKeyDown(() => {
+                run('video.setSinkId("default")').then(resolve);
+            })
+        });
+    }
+
+    async function runMP4Test() {
+        consoleWrite('Test default sinkId with an MP4 source');
+        video = document.body.appendChild(document.createElement('video'));
+        await shouldResolve(runSetDefaultSinkId())
+        run('video.src = "content/test.mp4"');
+        waitFor(video, 'error').then(failTest);
+        await waitFor(video, 'canplay');
+        consoleWrite('PASS');
+        consoleWrite('-');
+        document.body.removeChild(video);
+        video = null;
+    }
+
+    async function runWebMTest() {
+        consoleWrite('Test default sinkId with a WebM source');
+        video = document.body.appendChild(document.createElement('video'));
+        await shouldResolve(runSetDefaultSinkId())
+        run('video.src = "content/test-vp8.webm"');
+        waitFor(video, 'error').then(failTest);
+        await waitFor(video, 'canplay');
+        document.body.removeChild(video);
+        consoleWrite('PASS');
+        consoleWrite('-');
+        video = null;
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -30,6 +30,7 @@
 #include "JSWindowProxy.h"
 
 #include "CommonVM.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "GCController.h"

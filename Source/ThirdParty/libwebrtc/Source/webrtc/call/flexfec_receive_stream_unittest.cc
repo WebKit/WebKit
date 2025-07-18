@@ -33,7 +33,6 @@ namespace webrtc {
 
 namespace {
 
-using ::testing::_;
 using ::testing::Eq;
 using ::testing::Property;
 
@@ -52,7 +51,7 @@ FlexfecReceiveStream::Config CreateDefaultConfig(
   return config;
 }
 
-RtpPacketReceived ParsePacket(rtc::ArrayView<const uint8_t> packet) {
+RtpPacketReceived ParsePacket(ArrayView<const uint8_t> packet) {
   RtpPacketReceived parsed_packet(nullptr);
   EXPECT_TRUE(parsed_packet.Parse(packet));
   return parsed_packet;
@@ -92,7 +91,7 @@ class FlexfecReceiveStreamTest : public ::testing::Test {
 
   ~FlexfecReceiveStreamTest() { receive_stream_->UnregisterFromTransport(); }
 
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   MockTransport rtcp_send_transport_;
   FlexfecReceiveStream::Config config_;
   MockRecoveredPacketReceiver recovered_packet_receiver_;

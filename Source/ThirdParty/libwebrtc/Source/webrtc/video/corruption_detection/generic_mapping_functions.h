@@ -11,17 +11,17 @@
 #ifndef VIDEO_CORRUPTION_DETECTION_GENERIC_MAPPING_FUNCTIONS_H_
 #define VIDEO_CORRUPTION_DETECTION_GENERIC_MAPPING_FUNCTIONS_H_
 
+#include "api/video/corruption_detection_filter_settings.h"
 #include "api/video/video_codec_type.h"
 
 namespace webrtc {
 
-struct FilterSettings {
-  double std_dev = 0.0;
-  int luma_error_threshold = 0;
-  int chroma_error_threshold = 0;
-};
+// TODO: bugs.webrtc.org/358039777 - Remove when downstream usage is gone.
+using FilterSettings = CorruptionDetectionFilterSettings;
 
-FilterSettings GetCorruptionFilterSettings(int qp, VideoCodecType codec_type);
+CorruptionDetectionFilterSettings GetCorruptionFilterSettings(
+    int qp,
+    VideoCodecType codec_type);
 
 }  // namespace webrtc
 

@@ -34,17 +34,17 @@ namespace webrtc {
 // conflicting access, so we'd need to override those methods anyway in this
 // class in order to make sure things are correctly checked.
 class VideoTrack : public MediaStreamTrack<VideoTrackInterface>,
-                   public rtc::VideoSourceBaseGuarded,
+                   public VideoSourceBaseGuarded,
                    public ObserverInterface {
  public:
-  static rtc::scoped_refptr<VideoTrack> Create(
+  static scoped_refptr<VideoTrack> Create(
       absl::string_view label,
-      rtc::scoped_refptr<VideoTrackSourceInterface> source,
-      rtc::Thread* worker_thread);
+      scoped_refptr<VideoTrackSourceInterface> source,
+      Thread* worker_thread);
 
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+  void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                       const VideoSinkWants& wants) override;
+  void RemoveSink(VideoSinkInterface<VideoFrame>* sink) override;
   void RequestRefreshFrame() override;
   VideoTrackSourceInterface* GetSource() const override;
 
@@ -61,9 +61,9 @@ class VideoTrack : public MediaStreamTrack<VideoTrackInterface>,
  protected:
   VideoTrack(
       absl::string_view id,
-      rtc::scoped_refptr<
+      scoped_refptr<
           VideoTrackSourceProxyWithInternal<VideoTrackSourceInterface>> source,
-      rtc::Thread* worker_thread);
+      Thread* worker_thread);
   ~VideoTrack();
 
  private:
@@ -71,8 +71,8 @@ class VideoTrack : public MediaStreamTrack<VideoTrackInterface>,
   void OnChanged() override;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker signaling_thread_;
-  rtc::Thread* const worker_thread_;
-  const rtc::scoped_refptr<
+  Thread* const worker_thread_;
+  const scoped_refptr<
       VideoTrackSourceProxyWithInternal<VideoTrackSourceInterface>>
       video_source_;
   ContentHint content_hint_ RTC_GUARDED_BY(&signaling_thread_);

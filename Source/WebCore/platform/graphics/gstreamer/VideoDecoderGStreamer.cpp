@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "VideoDecoderGStreamer.h"
+#include "VideoFrameContentHint.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -245,7 +246,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
             m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(outputSample.get())));
 
         GST_TRACE_OBJECT(m_harness->element(), "Handling decoded frame with PTS: %" GST_TIME_FORMAT " and duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp), GST_TIME_ARGS(duration));
-        auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), { *m_videoInfo }, IntSize(m_presentationSize), fromGstClockTime(timestamp));
+        VideoFrameGStreamer::CreateOptions options(IntSize(m_presentationSize), { *m_videoInfo });
+        options.presentationTime = fromGstClockTime(timestamp);
+        options.contentHint = VideoFrameContentHint::WebCodecs;
+        auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), options);
         m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
     }, std::nullopt, WTFMove(allowedSinkCaps));
 

@@ -12,6 +12,9 @@
 
 #include <stdint.h>
 
+#include <bitset>
+#include <cstddef>
+
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -24,7 +27,7 @@ namespace {
 // missing. That assumptions allows a simple detection when previous frame is
 // part of a chain.
 std::bitset<32> LastSendOnChain(int frame_diff,
-                                rtc::ArrayView<const int> chain_diffs) {
+                                ArrayView<const int> chain_diffs) {
   std::bitset<32> bitmask = 0;
   for (size_t i = 0; i < chain_diffs.size(); ++i) {
     if (frame_diff == chain_diffs[i]) {
@@ -42,7 +45,7 @@ std::bitset<32> AllActive(size_t num) {
 
 // Returns bitmask of chains that protect at least one active decode target.
 std::bitset<32> ActiveChains(
-    rtc::ArrayView<const int> decode_target_protected_by_chain,
+    ArrayView<const int> decode_target_protected_by_chain,
     int num_chains,
     std::bitset<32> active_decode_targets) {
   std::bitset<32> active_chains = 0;
@@ -60,11 +63,11 @@ std::bitset<32> ActiveChains(
 }  // namespace
 
 void ActiveDecodeTargetsHelper::OnFrame(
-    rtc::ArrayView<const int> decode_target_protected_by_chain,
+    ArrayView<const int> decode_target_protected_by_chain,
     std::bitset<32> active_decode_targets,
     bool is_keyframe,
     int64_t frame_id,
-    rtc::ArrayView<const int> chain_diffs) {
+    ArrayView<const int> chain_diffs) {
   const int num_chains = chain_diffs.size();
   if (num_chains == 0) {
     // Avoid printing the warning

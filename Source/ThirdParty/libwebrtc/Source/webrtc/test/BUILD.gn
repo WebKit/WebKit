@@ -10,6 +10,7 @@ import("//build/config/ui.gni")
 import("../webrtc.gni")
 if (is_android) {
   import("//build/config/android/rules.gni")
+  import("//third_party/jni_zero/jni_zero.gni")
 }
 
 if (!build_with_chromium) {
@@ -153,8 +154,10 @@ rtc_library("frame_generator_capturer") {
     "frame_generator_capturer.h",
   ]
   deps = [
+    ":frame_utils",
     ":test_video_capturer",
     "../api:frame_generator_api",
+    "../api:scoped_refptr",
     "../api/task_queue",
     "../api/units:time_delta",
     "../api/video:video_frame",
@@ -326,16 +329,9 @@ rtc_library("field_trial") {
 }
 
 rtc_library("explicit_key_value_config") {
-  sources = [
-    "explicit_key_value_config.cc",
-    "explicit_key_value_config.h",
-  ]
+  sources = [ "explicit_key_value_config.h" ]
 
-  deps = [
-    "../api:field_trials_registry",
-    "../rtc_base:checks",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
+  deps = [ "../api:field_trials" ]
 }
 
 rtc_library("scoped_key_value_config") {
@@ -591,12 +587,14 @@ if (rtc_include_tests) {
 
       deps = [
         ":field_trial",
+        ":fileutils",
         ":perf_test",
         ":resources_dir_flag",
         ":test_flags",
         ":test_support",
         "../api/test/metrics:chrome_perf_dashboard_metrics_exporter",
         "../api/test/metrics:global_metrics_logger_and_exporter",
+        "../api/test/metrics:metric",
         "../api/test/metrics:metrics_exporter",
         "../api/test/metrics:metrics_set_proto_file_exporter",
         "../api/test/metrics:print_result_proxy_metrics_exporter",
@@ -709,16 +707,21 @@ if (rtc_include_tests) {
         ":video_frame_writer",
         ":video_test_common",
         ":video_test_support",
+        ":wait_until",
         ":y4m_frame_generator",
         "../api:array_view",
         "../api:create_frame_generator",
         "../api:create_simulcast_test_fixture_api",
+        "../api:create_time_controller",
         "../api:frame_generator_api",
         "../api:mock_video_codec_factory",
         "../api:mock_video_decoder",
         "../api:mock_video_encoder",
+        "../api:rtc_error",
+        "../api:rtc_error_matchers",
         "../api:scoped_refptr",
         "../api:simulcast_test_fixture_api",
+        "../api:time_controller",
         "../api/environment",
         "../api/environment:environment_factory",
         "../api/task_queue",
@@ -729,8 +732,10 @@ if (rtc_include_tests) {
         "../api/units:data_size",
         "../api/units:frequency",
         "../api/units:time_delta",
+        "../api/units:timestamp",
         "../api/video:encoded_image",
         "../api/video:video_frame",
+        "../api/video:video_frame_type",
         "../api/video_codecs:builtin_video_decoder_factory",
         "../api/video_codecs:builtin_video_encoder_factory",
         "../api/video_codecs:scalability_mode",
@@ -748,9 +753,12 @@ if (rtc_include_tests) {
         "../modules/video_coding:webrtc_vp9",
         "../modules/video_coding/svc:scalability_mode_util",
         "../rtc_base:criticalsection",
+        "../rtc_base:rtc_base_tests_utils",
         "../rtc_base:rtc_event",
+        "../rtc_base:threading",
         "../rtc_base/synchronization:mutex",
         "../rtc_base/system:file_wrapper",
+        "../system_wrappers",
         "jitter:jitter_unittests",
         "pc/e2e:e2e_unittests",
         "pc/e2e/analyzer/video:video_analyzer_unittests",
@@ -782,6 +790,7 @@ if (rtc_include_tests) {
         "testsupport/yuv_frame_reader_unittest.cc",
         "testsupport/yuv_frame_writer_unittest.cc",
         "video_codec_tester_unittest.cc",
+        "wait_until_unittest.cc",
       ]
 
       if (rtc_enable_protobuf) {
@@ -791,7 +800,6 @@ if (rtc_include_tests) {
 
       data = test_support_unittests_resources
       if (is_android) {
-        deps += [ "//testing/android/native_test:native_test_support" ]
         shard_timeout = 900
       }
 
@@ -948,18 +956,23 @@ rtc_library("direct_transport") {
     "direct_transport.h",
   ]
   deps = [
+    "../api:array_view",
+    "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api:sequence_checker",
     "../api:simulated_network_api",
     "../api:transport_api",
     "../api/task_queue",
     "../api/units:time_delta",
+    "../api/units:timestamp",
     "../call:call_interfaces",
     "../call:simulated_packet_receiver",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
+    "../rtc_base:copy_on_write_buffer",
     "../rtc_base:macromagic",
     "../rtc_base:timeutils",
+    "../rtc_base/network:sent_packet",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/task_utils:repeating_task",
   ]
@@ -1000,6 +1013,7 @@ rtc_library("fake_video_codecs") {
     "../rtc_base:checks",
     "../rtc_base:criticalsection",
     "../rtc_base:macromagic",
+    "../rtc_base:threading",
     "../rtc_base:timeutils",
     "../rtc_base/synchronization:mutex",
     "../system_wrappers",
@@ -1013,7 +1027,10 @@ rtc_library("null_transport") {
     "null_transport.cc",
     "null_transport.h",
   ]
-  deps = [ "../api:transport_api" ]
+  deps = [
+    "../api:array_view",
+    "../api:transport_api",
+  ]
 }
 
 rtc_library("encoder_settings") {
@@ -1068,6 +1085,7 @@ rtc_library("mock_transport") {
   ]
   deps = [
     ":test_support",
+    "../api:array_view",
     "../api:transport_api",
   ]
 }
@@ -1245,10 +1263,12 @@ if (!build_with_chromium) {
       "../api:frame_generator_api",
       "../api:rtp_headers",
       "../api:rtp_parameters",
+      "../api:scoped_refptr",
       "../api:simulated_network_api",
       "../api:transport_api",
       "../api/audio:audio_device",
       "../api/audio:builtin_audio_processing_builder",
+      "../api/audio_codecs:audio_codecs_api",
       "../api/audio_codecs:builtin_audio_decoder_factory",
       "../api/audio_codecs:builtin_audio_encoder_factory",
       "../api/environment",
@@ -1256,16 +1276,19 @@ if (!build_with_chromium) {
       "../api/rtc_event_log",
       "../api/task_queue",
       "../api/test/video:function_video_factory",
+      "../api/transport:bitrate_settings",
       "../api/transport:field_trial_based_config",
       "../api/units:time_delta",
       "../api/video:builtin_video_bitrate_allocator_factory",
       "../api/video:video_bitrate_allocator_factory",
       "../api/video:video_frame",
+      "../api/video:video_rtp_headers",
       "../api/video_codecs:video_codecs_api",
       "../call",
       "../call:call_interfaces",
       "../call:fake_network",
       "../call:simulated_packet_receiver",
+      "../call:video_receive_stream_api",
       "../call:video_send_stream_api",
       "../modules/audio_device:test_audio_device_module",
       "../modules/audio_mixer:audio_mixer_impl",
@@ -1294,13 +1317,42 @@ if (!build_with_chromium && is_android) {
   rtc_android_library("native_test_java") {
     testonly = true
     sources = [
+      "android/org/webrtc/native_test/NativeTestWebrtc.java",
+      "android/org/webrtc/native_test/RTCNativeTestApplication.java",
       "android/org/webrtc/native_test/RTCNativeUnitTest.java",
       "android/org/webrtc/native_test/RTCNativeUnitTestActivity.java",
+      "android/org/webrtc/native_test/StrictModeContext.java",
+    ]
+    srcjar_deps = [ ":native_test_jni" ]
+    deps = [
+      ":native_test_support",
+      "../rtc_base:base_java",
+      "//build/android:build_java",
+      "//build/android/gtest_apk:native_test_instrumentation_test_runner_java",
+      "//testing/android/reporter:reporter_java",
+      "//third_party/jni_zero:jni_zero_java",
+    ]
+  }
+
+  source_set("native_test_support") {
+    testonly = true
+    sources = [
+      "android/native_test_launcher.cc",
+      "android/native_test_launcher.h",
+      "android/native_test_util.cc",
+      "android/native_test_util.h",
     ]
     deps = [
-      "../rtc_base:base_java",
-      "//testing/android/native_test:native_test_java",
+      ":native_test_jni",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/jni_zero:jni_zero",
     ]
+  }
+
+  generate_jni("native_test_jni") {
+    testonly = true
+    sources = [ "android/org/webrtc/native_test/NativeTestWebrtc.java" ]
   }
 }
 
@@ -1347,12 +1399,16 @@ rtc_library("video_codec_tester") {
     ":video_test_support",
     "../api:array_view",
     "../api:create_frame_generator",
+    "../api:field_trials_view",
     "../api:frame_generator_api",
+    "../api:make_ref_counted",
+    "../api:scoped_refptr",
     "../api/environment",
     "../api/environment:environment_factory",
     "../api/numerics:numerics",
     "../api/test/metrics:metric",
     "../api/test/metrics:metrics_logger",
+    "../api/test/video:video_frame_writer",
     "../api/units:data_rate",
     "../api/units:data_size",
     "../api/units:frequency",
@@ -1361,8 +1417,11 @@ rtc_library("video_codec_tester") {
     "../api/video:builtin_video_bitrate_allocator_factory",
     "../api/video:encoded_image",
     "../api/video:resolution",
+    "../api/video:video_bitrate_allocation",
     "../api/video:video_bitrate_allocator",
     "../api/video:video_frame",
+    "../api/video:video_frame_type",
+    "../api/video_codecs:scalability_mode",
     "../api/video_codecs:video_codecs_api",
     "../media:media_constants",
     "../modules/video_coding:video_codec_interface",
@@ -1373,15 +1432,43 @@ rtc_library("video_codec_tester") {
     "../modules/video_coding/svc:scalability_mode_util",
     "../rtc_base:checks",
     "../rtc_base:logging",
+    "../rtc_base:macromagic",
     "../rtc_base:rtc_event",
     "../rtc_base:stringutils",
     "../rtc_base:task_queue_for_test",
+    "../rtc_base:threading",
     "../rtc_base:timeutils",
     "../rtc_base/synchronization:mutex",
-    "../system_wrappers",
+    "../rtc_base/system:file_wrapper",
     "../test:fileutils",
+    "../video/config:encoder_config",
     "../video/config:streams_config",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/libyuv",
+  ]
+}
+
+rtc_library("wait_until") {
+  testonly = true
+  sources = [
+    "wait_until.cc",
+    "wait_until.h",
+    "wait_until_internal.h",
+  ]
+  deps = [
+    ":test_support",
+    "../api:rtc_error",
+    "../api:time_controller",
+    "../api/units:time_delta",
+    "../api/units:timestamp",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_tests_utils",
+    "../rtc_base:threading",
+    "../rtc_base:timeutils",
+    "../system_wrappers",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/functional:overload",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }

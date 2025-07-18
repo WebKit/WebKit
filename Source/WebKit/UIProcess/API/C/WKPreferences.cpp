@@ -1610,14 +1610,13 @@ bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef prefere
     return toProtectedImpl(preferencesRef)->punchOutWhiteBackgroundsInDarkMode();
 }
 
-void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef, bool)
 {
-    toProtectedImpl(preferencesRef)->setCaptureAudioInUIProcessEnabled(flag);
 }
 
-bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef)
 {
-    return toProtectedImpl(preferencesRef)->captureAudioInUIProcessEnabled();
+    return false;
 }
 
 void WKPreferencesSetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -1630,14 +1629,13 @@ bool WKPreferencesGetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preference
     return toProtectedImpl(preferencesRef)->captureAudioInGPUProcessEnabled();
 }
 
-void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef, bool)
 {
-    toProtectedImpl(preferencesRef)->setCaptureVideoInUIProcessEnabled(flag);
 }
 
-bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef)
 {
-    return toProtectedImpl(preferencesRef)->captureVideoInUIProcessEnabled();
+    return false;
 }
 
 void WKPreferencesSetCaptureVideoInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)

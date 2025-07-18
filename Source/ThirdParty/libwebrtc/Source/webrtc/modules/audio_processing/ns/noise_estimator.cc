@@ -11,18 +11,29 @@
 #include "modules/audio_processing/ns/noise_estimator.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <numbers>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/ns/fast_math.h"
+#include "modules/audio_processing/ns/ns_common.h"
+#include "modules/audio_processing/ns/suppression_params.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 
 namespace {
 
+using std::numbers::ln10_v;
+
 // Log(i).
+// clang-format off
 constexpr std::array<float, 129> log_table = {
     0.f,       0.f,       0.f,       0.f,       0.f,       1.609438f, 1.791759f,
-    1.945910f, 2.079442f, 2.197225f, 2.302585f, 2.397895f, 2.484907f, 2.564949f,
+    1.945910f, 2.079442f, 2.197225f, ln10_v<float>, 2.397895f, 2.484907f,
+    2.564949f,
     2.639057f, 2.708050f, 2.772589f, 2.833213f, 2.890372f, 2.944439f, 2.995732f,
     3.044522f, 3.091043f, 3.135494f, 3.178054f, 3.218876f, 3.258097f, 3.295837f,
     3.332205f, 3.367296f, 3.401197f, 3.433987f, 3.465736f, 3.496507f, 3.526361f,
@@ -40,6 +51,7 @@ constexpr std::array<float, 129> log_table = {
     4.718499f, 4.727388f, 4.736198f, 4.744932f, 4.753591f, 4.762174f, 4.770685f,
     4.779124f, 4.787492f, 4.795791f, 4.804021f, 4.812184f, 4.820282f, 4.828314f,
     4.836282f, 4.844187f, 4.852030f};
+// clang-format on
 
 }  // namespace
 
@@ -58,7 +70,7 @@ void NoiseEstimator::PrepareAnalysis() {
 
 void NoiseEstimator::PreUpdate(
     int32_t num_analyzed_frames,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
     float signal_spectral_sum) {
   quantile_noise_estimator_.Estimate(signal_spectrum, noise_spectrum_);
 
@@ -129,9 +141,9 @@ void NoiseEstimator::PreUpdate(
       } else {
         // Use pink noise estimate.
         float use_band = i < kStartBand ? kStartBand : i;
-        float denom = PowApproximation(use_band, parametric_exp);
-        RTC_DCHECK_NE(denom, 0.f);
-        parametric_noise_spectrum_[i] = parametric_num / denom;
+        float parametric_denom = PowApproximation(use_band, parametric_exp);
+        RTC_DCHECK_NE(parametric_denom, 0.f);
+        parametric_noise_spectrum_[i] = parametric_num / parametric_denom;
       }
     }
 
@@ -147,8 +159,8 @@ void NoiseEstimator::PreUpdate(
 }
 
 void NoiseEstimator::PostUpdate(
-    rtc::ArrayView<const float> speech_probability,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum) {
+    ArrayView<const float> speech_probability,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum) {
   // Time-avg parameter for noise_spectrum update.
   constexpr float kNoiseUpdate = 0.9f;
 

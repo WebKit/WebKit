@@ -123,7 +123,7 @@ static uint32_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
     return modifiers;
 }
 
-void EventSenderProxyClientLibWPE::mouseDown(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, unsigned& mouseButtonsCurrentlyDown)
+void EventSenderProxyClientLibWPE::mouseDown(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, int /*clickCount*/, unsigned& mouseButtonsCurrentlyDown)
 {
     m_buttonState = ButtonPressed;
     auto wpeButton = senderButtonToWPEButton(button);

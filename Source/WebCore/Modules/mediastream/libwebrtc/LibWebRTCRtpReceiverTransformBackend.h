@@ -45,18 +45,18 @@ namespace WebCore {
 
 class LibWebRTCRtpReceiverTransformBackend final : public LibWebRTCRtpTransformBackend {
 public:
-    static Ref<LibWebRTCRtpReceiverTransformBackend> create(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTFMove(receiver))); }
+    static Ref<LibWebRTCRtpReceiverTransformBackend> create(webrtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTFMove(receiver))); }
     ~LibWebRTCRtpReceiverTransformBackend();
 
 private:
-    explicit LibWebRTCRtpReceiverTransformBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>);
+    explicit LibWebRTCRtpReceiverTransformBackend(webrtc::scoped_refptr<webrtc::RtpReceiverInterface>);
 
     // RTCRtpTransformBackend
     void setTransformableFrameCallback(Callback&&) final;
     bool requestKeyFrame(const String&) final;
 
     bool m_isRegistered { false };
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
+    webrtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
 };
 
 } // namespace WebCore

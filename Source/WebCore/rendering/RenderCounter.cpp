@@ -467,16 +467,7 @@ String RenderCounter::originalText() const
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
     auto counterText = [&](int value) {
-        if (m_counter.listStyleType().type == ListStyleType::Type::None)
-            return emptyString();
-
-        if (m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
-            ASSERT(counterStyle());
-            return counterStyle()->text(value, writingMode());
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
+        return counterStyle()->text(value, writingMode());
     };
     auto text = counterText(value);
     if (!m_counter.separator().isNull()) {
@@ -594,9 +585,9 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
     }
 }
 
-RefPtr<CSSCounterStyle> RenderCounter::counterStyle() const
+Ref<CSSCounterStyle> RenderCounter::counterStyle() const
 {
-    return document().counterStyleRegistry().resolvedCounterStyle(m_counter.listStyleType());
+    return document().counterStyleRegistry().resolvedCounterStyle(m_counter.style());
 }
 
 } // namespace WebCore

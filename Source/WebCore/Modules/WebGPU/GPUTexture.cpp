@@ -116,11 +116,6 @@ void GPUTexture::destroy()
     m_backing->destroy();
 }
 
-bool GPUTexture::isDestroyed() const
-{
-    return m_isDestroyed;
-}
-
 GPUIntegerCoordinateOut GPUTexture::width() const
 {
     return m_width;

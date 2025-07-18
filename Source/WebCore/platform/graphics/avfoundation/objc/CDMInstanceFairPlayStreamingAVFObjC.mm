@@ -1354,7 +1354,7 @@ RetainPtr<NSDictionary> CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKe
             seedData.append(toASCIIHexValue(character));
     }
     if (seedData.size() > kMaximumDeviceIdentifierSeedSize)
-        seedData.resize(kMaximumDeviceIdentifierSeedSize);
+        seedData.shrink(kMaximumDeviceIdentifierSeedSize);
     else if (seedData.size() < kMaximumDeviceIdentifierSeedSize)
         seedData.insertFill(seedData.size(), 0, kMaximumDeviceIdentifierSeedSize - seedData.size());
 

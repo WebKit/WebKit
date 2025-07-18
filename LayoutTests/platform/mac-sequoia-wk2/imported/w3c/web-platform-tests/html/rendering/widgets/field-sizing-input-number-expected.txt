@@ -1,0 +1,11 @@
+
+
+PASS number: Empty value
+PASS number: Auto width and auto height with a long text
+PASS number: Explicit width and height
+PASS number: Explicit width and auto height
+PASS number: Explicit height and auto width
+PASS number: Text caret is taller than the placeholder
+FAIL number: Text caret is shorter than the placeholder assert_less_than: expected a number less than 36 but got 36
+PASS number: Update field-sizing property dynamically
+

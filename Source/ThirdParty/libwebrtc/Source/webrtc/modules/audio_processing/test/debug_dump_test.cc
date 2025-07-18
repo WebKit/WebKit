@@ -112,7 +112,7 @@ class DebugDumpGenerator {
   bool enable_pre_amplifier_;
 
   TaskQueueForTest worker_queue_;
-  rtc::scoped_refptr<AudioProcessing> apm_;
+  scoped_refptr<AudioProcessing> apm_;
 
   const std::string dump_file_name_;
 };

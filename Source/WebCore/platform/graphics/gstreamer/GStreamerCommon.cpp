@@ -85,6 +85,7 @@
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 #include "CDMThunder.h"
 #include "WebKitThunderDecryptorGStreamer.h"
+#include "WebKitThunderParser.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -442,8 +443,12 @@ void registerWebKitGStreamerElements()
         // - Use GST_RANK_NONE for elements explicitely created by WebKit (no auto-plugging).
 
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
-        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty())
+        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
+            // The Thunder parser is auto-plugged by parsebin and its internal parsebin can
+            // auto-plug the Thunder decryptor.
             gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
+            gst_element_register(nullptr, "webkitthunderparser", GST_RANK_PRIMARY + 101, WEBKIT_TYPE_MEDIA_THUNDER_PARSER);
+        }
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1153,7 +1158,25 @@ static ASCIILiteral webrtcStatsTypeName(int value)
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif
+
+#if GST_CHECK_VERSION(1, 27, 0)
+static ASCIILiteral webrtcIceTcpCandidateTypeName(int value)
+{
+    switch (value) {
+    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_NONE:
+        return "none"_s;
+    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_ACTIVE:
+        return "active"_s;
+    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_PASSIVE:
+        return "passive"_s;
+    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_SO:
+        return "so"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#endif // GST_CHECK_VERSION
+#endif // USE(GSTREAMER_WEBRTC)
 
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key)
@@ -1391,7 +1414,14 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         if (!name.isEmpty()) [[likely]]
             return JSON::Value::create(makeString(name))->asValue();
     }
-#endif
+#if GST_CHECK_VERSION(1, 27, 0)
+    if (valueType == GST_TYPE_WEBRTC_ICE_TCP_CANDIDATE_TYPE) {
+        auto name = webrtcIceTcpCandidateTypeName(g_value_get_enum(value));
+        if (!name.isEmpty()) [[likely]]
+            return JSON::Value::create(makeString(name))->asValue();
+    }
+#endif // GST_CHECK_VERSION
+#endif // USE(GSTREAMER_WEBRTC)
 
     GST_WARNING("Unhandled GValue type: %s", G_VALUE_TYPE_NAME(value));
     return { };

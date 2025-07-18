@@ -34,11 +34,11 @@ class ActiveDecodeTargetsHelper {
 
   // Decides if active decode target bitmask should be attached to the frame
   // that is about to be sent.
-  void OnFrame(rtc::ArrayView<const int> decode_target_protected_by_chain,
+  void OnFrame(ArrayView<const int> decode_target_protected_by_chain,
                std::bitset<32> active_decode_targets,
                bool is_keyframe,
                int64_t frame_id,
-               rtc::ArrayView<const int> chain_diffs);
+               ArrayView<const int> chain_diffs);
 
   // Returns active decode target to attach to the dependency descriptor.
   std::optional<uint32_t> ActiveDecodeTargetsBitmask() const {

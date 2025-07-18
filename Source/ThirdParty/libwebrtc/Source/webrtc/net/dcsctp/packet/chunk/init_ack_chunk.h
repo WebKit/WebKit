@@ -51,7 +51,8 @@ class InitAckChunk : public Chunk, public TLVTrait<InitAckChunkConfig> {
   InitAckChunk(InitAckChunk&& other) = default;
   InitAckChunk& operator=(InitAckChunk&& other) = default;
 
-  static std::optional<InitAckChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<InitAckChunk> Parse(
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

@@ -51,6 +51,6 @@ messages -> WebSWClientConnection {
     NotifyRecordResponseBodyEnd(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError error);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ReportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, size_t bytesTransferredOverNetworkDelta);
+    ReportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, uint64_t bytesTransferredOverNetworkDelta);
 #endif
 }

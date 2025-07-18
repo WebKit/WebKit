@@ -186,7 +186,7 @@ template<> struct Coder<WTF::String> {
 
         if (*is8Bit)
             return decodeStringText<LChar>(decoder, *length);
-        return decodeStringText<UChar>(decoder, *length);
+        return decodeStringText<char16_t>(decoder, *length);
     }
 };
 

@@ -41,7 +41,7 @@ class TimeWithDynamicClockType;
 class WallTime;
 
 class Seconds final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Seconds);
 public:
     constexpr Seconds() { }
     
@@ -218,15 +218,14 @@ public:
         return Seconds(reduced);
     }
 
-    struct MarkableTraits;
-
 private:
     double m_value { 0 };
 };
 
 WTF_EXPORT_PRIVATE void sleep(Seconds);
 
-struct Seconds::MarkableTraits {
+template<>
+struct MarkableTraits<Seconds> {
     static bool isEmptyValue(Seconds seconds)
     {
         return seconds.isNaN();

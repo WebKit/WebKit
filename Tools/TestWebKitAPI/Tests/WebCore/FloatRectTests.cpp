@@ -775,7 +775,7 @@ TEST(FloatRect, RoundedIntRect)
 TEST(FloatRect, Markable)
 {
     WebCore::FloatRect rect(10.0f, 20.0f, 1024.3f, 768.6f);
-    Markable<WebCore::FloatRect, WebCore::FloatRect::MarkableTraits> optional;
+    Markable<WebCore::FloatRect> optional;
     EXPECT_FALSE(optional) << "nullopt";
     optional = rect;
     EXPECT_EQ((optional.value_or(WebCore::FloatRect { })), rect) << "retained";

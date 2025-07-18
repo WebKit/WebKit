@@ -29,7 +29,7 @@ class DataSize final : public rtc_units_impl::RelativeUnit<DataSize> {
   }
   static constexpr DataSize Infinity() { return PlusInfinity(); }
 
-  DataSize() = delete;
+  constexpr DataSize() = default;
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, DataSize value);

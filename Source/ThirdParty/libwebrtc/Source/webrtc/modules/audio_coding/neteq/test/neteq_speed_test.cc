@@ -10,7 +10,9 @@
 
 #include <stdio.h>
 
+#include <cstdint>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "absl/flags/flag.h"

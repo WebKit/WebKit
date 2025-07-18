@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class DateTimeChooserClient : public CanMakeCheckedPtr<DateTimeChooserClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DateTimeChooserClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeChooserClient);
 public:
     virtual ~DateTimeChooserClient() = default;

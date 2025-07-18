@@ -703,7 +703,7 @@ void PlaybackSessionManager::setSoundStageSize(WebCore::HTMLMediaElementIdentifi
         if (model.soundStageSize() > maxSize)
             maxSize = model.soundStageSize();
     });
-    AudioSession::sharedSession().setSoundStageSize(maxSize);
+    AudioSession::singleton().setSoundStageSize(maxSize);
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

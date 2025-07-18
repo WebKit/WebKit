@@ -39,7 +39,7 @@ DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
 template<typename Derived>
 class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
     WTF_MAKE_NONCOPYABLE(WeakPtrImplBase);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
+    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase, WeakPtrImplBase);
 public:
     ~WeakPtrImplBase() = default;
 
@@ -85,7 +85,7 @@ DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
 template<typename Derived>
 class WeakPtrImplBaseSingleThread {
     WTF_MAKE_NONCOPYABLE(WeakPtrImplBaseSingleThread);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
+    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread, WeakPtrImplBaseSingleThread);
 public:
     ~WeakPtrImplBaseSingleThread() = default;
 

@@ -55,7 +55,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FTPDirectoryDocument);
 using namespace HTMLNames;
     
 class FTPDirectoryDocumentParser final : public HTMLDocumentParser {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FTPDirectoryDocumentParser, HTMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FTPDirectoryDocumentParser);
 public:
     static Ref<FTPDirectoryDocumentParser> create(HTMLDocument& document)
@@ -94,7 +94,7 @@ private:
     bool m_skipLF { false };
     
     size_t m_size { 254 };
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
     size_t m_destIndex { 0 };
     StringBuilder m_carryOver;
     
@@ -355,7 +355,7 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     m_destIndex = 0;
     SegmentedString string { String { WTFMove(inputSource) } };
     while (!string.isEmpty()) {
-        UChar c = string.currentCharacter();
+        char16_t c = string.currentCharacter();
 
         if (c == '\r') {
             m_buffer[m_destIndex++] = '\n';

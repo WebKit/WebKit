@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 
+#include <cstdlib>
 #include <memory>
 
 #include "rtc_base/checks.h"
@@ -28,13 +29,13 @@ int main(int argc, char* argv[]) {
 
   std::unique_ptr<RtpFileWriter> output(
       RtpFileWriter::Create(RtpFileWriter::kRtpDump, argv[argc - 1]));
-  RTC_CHECK(output.get() != NULL) << "Cannot open output file.";
+  RTC_CHECK(output.get() != nullptr) << "Cannot open output file.";
   printf("Output RTP file: %s\n", argv[argc - 1]);
 
   for (int i = 1; i < argc - 1; i++) {
     std::unique_ptr<RtpFileReader> input(
         RtpFileReader::Create(RtpFileReader::kRtpDump, argv[i]));
-    RTC_CHECK(input.get() != NULL) << "Cannot open input file " << argv[i];
+    RTC_CHECK(input.get() != nullptr) << "Cannot open input file " << argv[i];
     printf("Input RTP file: %s\n", argv[i]);
 
     webrtc::test::RtpPacket packet;

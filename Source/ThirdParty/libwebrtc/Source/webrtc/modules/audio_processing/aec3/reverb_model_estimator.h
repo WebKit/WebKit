@@ -37,11 +37,11 @@ class ReverbModelEstimator {
 
   // Updates the estimates based on new data.
   void Update(
-      rtc::ArrayView<const std::vector<float>> impulse_responses,
-      rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+      ArrayView<const std::vector<float>> impulse_responses,
+      ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           frequency_responses,
-      rtc::ArrayView<const std::optional<float>> linear_filter_qualities,
-      rtc::ArrayView<const int> filter_delays_blocks,
+      ArrayView<const std::optional<float>> linear_filter_qualities,
+      ArrayView<const int> filter_delays_blocks,
       const std::vector<bool>& usable_linear_estimates,
       bool stationary_block);
 
@@ -55,7 +55,7 @@ class ReverbModelEstimator {
 
   // Return the frequency response of the reverberant echo.
   // TODO(peah): Correct to properly support multiple channels.
-  rtc::ArrayView<const float> GetReverbFrequencyResponse() const {
+  ArrayView<const float> GetReverbFrequencyResponse() const {
     return reverb_frequency_responses_[0].FrequencyResponse();
   }
 

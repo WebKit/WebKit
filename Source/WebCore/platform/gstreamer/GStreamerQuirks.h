@@ -53,7 +53,7 @@ public:
 
     // Interface of classes supplied to MediaPlayerPrivateGStreamer to store values that the quirks will need for their job.
     class GStreamerQuirkState {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GStreamerQuirkState);
         // Prevent accidental https://en.wikipedia.org/wiki/Object_slicing.
         WTF_MAKE_NONCOPYABLE(GStreamerQuirkState);
         WTF_MAKE_NONMOVABLE(GStreamerQuirkState);

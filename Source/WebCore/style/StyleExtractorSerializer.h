@@ -89,7 +89,6 @@ public:
     static void serializeImageOrNone(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StyleImage*);
     static void serializeGlyphOrientation(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GlyphOrientation);
     static void serializeGlyphOrientationOrAuto(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GlyphOrientation);
-    static void serializeListStyleType(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ListStyleType&);
     static void serializeMarginTrim(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<MarginTrimType>);
     static void serializeShapeValue(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ShapeValue*);
     static void serializeDPath(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StylePathData*);
@@ -110,24 +109,17 @@ public:
     static void serializeLineFitEdge(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TextEdge&);
     static void serializeTextBoxEdge(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TextEdge&);
     static void serializeQuotes(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const QuotesData*);
-    static void serializeContainerNames(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<ScopedName>&);
-    static void serializeViewTransitionClasses(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<ScopedName>&);
     static void serializeViewTransitionName(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ViewTransitionName&);
-    static void serializeBoxShadow(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<BoxShadow>&);
-    static void serializeTextShadow(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<TextShadow>&);
     static void serializePositionTryFallbacks(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<PositionTryFallback>&);
     static void serializeWillChange(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WillChangeData*);
-    static void serializeBlockEllipsis(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const BlockEllipsis&);
     static void serializeBlockStepSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, std::optional<WebCore::Length>);
     static void serializeTabSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TabSize&);
     static void serializeScrollSnapType(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapType&);
     static void serializeScrollSnapAlign(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapAlign&);
     static void serializeScrollbarColor(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, std::optional<ScrollbarColor>);
-    static void serializeScrollbarGutter(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollbarGutter&);
     static void serializeLineBoxContain(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<Style::LineBoxContain>);
     static void serializeWebkitRubyPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, RubyPosition);
     static void serializePosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const LengthPoint&);
-    static void serializeContainIntrinsicSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ContainIntrinsicSizeType&, const std::optional<WebCore::Length>&);
     static void serializeTouchAction(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TouchAction>);
     static void serializeTextTransform(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextTransform>);
     static void serializeTextDecorationLine(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextDecorationLine>);
@@ -143,14 +135,9 @@ public:
     static void serializeSelfOrDefaultAlignmentData(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StyleSelfAlignmentData&);
     static void serializeContentAlignmentData(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StyleContentAlignmentData&);
     static void serializePaintOrder(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, PaintOrder);
-    static void serializeScrollTimelineAxes(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<ScrollAxis>&);
-    static void serializeScrollTimelineNames(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<AtomString>&);
-    static void serializeAnchorNames(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<ScopedName>&);
     static void serializePositionAnchor(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const std::optional<ScopedName>&);
     static void serializePositionArea(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const std::optional<PositionArea>&);
     static void serializeNameScope(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const NameScope&);
-    static void serializeSingleViewTimelineInsets(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ViewTimelineInsets&);
-    static void serializeViewTimelineInsets(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<ViewTimelineInsets>&);
     static void serializePositionVisibility(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<PositionVisibility>);
 #if ENABLE(TEXT_AUTOSIZING)
     static void serializeWebkitTextSizeAdjust(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TextSizeAdjustment&);
@@ -168,8 +155,6 @@ public:
     static void serializeFillLayerBlendMode(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, BlendMode);
     static void serializeFillLayerClip(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillBox);
     static void serializeFillLayerOrigin(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillBox);
-    static void serializeFillLayerXPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeFillLayerYPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
     static void serializeFillLayerRepeat(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillRepeatXY);
     static void serializeFillLayerBackgroundSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillSize);
     static void serializeFillLayerMaskSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillSize);
@@ -201,7 +186,7 @@ public:
     static void serializeAnimationName(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScopedName&, const Animation*, const AnimationList*);
     static void serializeAnimationProperty(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const Animation::TransitionProperty&, const Animation*, const AnimationList*);
     static void serializeAnimationAllowsDiscreteTransitions(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, bool, const Animation*, const AnimationList*);
-    static void serializeAnimationDuration(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, MarkableDouble, const Animation*, const AnimationList*);
+    static void serializeAnimationDuration(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, Markable<double>, const Animation*, const AnimationList*);
     static void serializeAnimationDelay(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, double, const Animation*, const AnimationList*);
     static void serializeAnimationIterationCount(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, double, const Animation*, const AnimationList*);
     static void serializeAnimationDirection(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, Animation::Direction, const Animation*, const AnimationList*);
@@ -221,10 +206,6 @@ public:
     // MARK: Grid serializations
 
     static void serializeGridAutoFlow(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GridAutoFlow);
-    static void serializeGridPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridPosition&);
-    static void serializeGridTrackBreadth(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridLength&);
-    static void serializeGridTrackSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const GridTrackSize&);
-    static void serializeGridTrackSizeList(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const Vector<GridTrackSize>&);
 };
 
 // MARK: - Strong value serializations
@@ -710,20 +691,6 @@ inline void ExtractorSerializer::serializeGlyphOrientationOrAuto(ExtractorState&
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline void ExtractorSerializer::serializeListStyleType(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ListStyleType& listStyleType)
-{
-    if (listStyleType.type == ListStyleType::Type::String) {
-        serializationForCSS(builder, context, state.style, listStyleType.identifier);
-        return;
-    }
-    if (listStyleType.type == ListStyleType::Type::CounterStyle) {
-        serializationForCSS(builder, context, state.style, CustomIdentifier { listStyleType.identifier });
-        return;
-    }
-
-    serialize(state, builder, context, listStyleType.type);
-}
-
 inline void ExtractorSerializer::serializeMarginTrim(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<MarginTrimType> marginTrim)
 {
     if (marginTrim.isEmpty()) {
@@ -1075,30 +1042,6 @@ inline void ExtractorSerializer::serializeQuotes(ExtractorState& state, StringBu
     builder.append(CSSValueList::createSpaceSeparated(WTFMove(list))->cssText(context));
 }
 
-inline void ExtractorSerializer::serializeContainerNames(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ScopedName>& containerNames)
-{
-    if (containerNames.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    builder.append(interleave(containerNames, [&](auto& builder, auto& containerName) {
-        serialize(state, builder, context, containerName);
-    }, ' '));
-}
-
-inline void ExtractorSerializer::serializeViewTransitionClasses(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ScopedName>& classList)
-{
-    if (classList.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    builder.append(interleave(classList, [&](auto& builder, auto& className) {
-        serialize(state, builder, context, className);
-    }, ' '));
-}
-
 inline void ExtractorSerializer::serializeViewTransitionName(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ViewTransitionName& viewTransitionName)
 {
     if (viewTransitionName.isNone()) {
@@ -1117,36 +1060,6 @@ inline void ExtractorSerializer::serializeViewTransitionName(ExtractorState& sta
     }
 
     serializationForCSS(builder, context, state.style, CustomIdentifier { viewTransitionName.customIdent() });
-}
-
-inline void ExtractorSerializer::serializeBoxShadow(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<BoxShadow>& shadows)
-{
-    if (shadows.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    CSS::BoxShadowProperty::List list;
-
-    for (const auto& shadow : makeReversedRange(shadows))
-        list.value.append(toCSS(shadow, state.style));
-
-    CSS::serializationForCSS(builder, context, CSS::BoxShadowProperty { WTFMove(list) });
-}
-
-inline void ExtractorSerializer::serializeTextShadow(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<TextShadow>& shadows)
-{
-    if (shadows.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    CSS::TextShadowProperty::List list;
-
-    for (const auto& shadow : makeReversedRange(shadows))
-        list.value.append(toCSS(shadow, state.style));
-
-    CSS::serializationForCSS(builder, context, CSS::TextShadowProperty { WTFMove(list) });
 }
 
 inline void ExtractorSerializer::serializePositionTryFallbacks(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<PositionTryFallback>& fallbacks)
@@ -1202,23 +1115,6 @@ inline void ExtractorSerializer::serializeWillChange(ExtractorState& state, Stri
         }
     }
     builder.append(CSSValueList::createCommaSeparated(WTFMove(list))->cssText(context));
-}
-
-inline void ExtractorSerializer::serializeBlockEllipsis(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const BlockEllipsis& blockEllipsis)
-{
-    switch (blockEllipsis.type) {
-    case BlockEllipsis::Type::None:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    case BlockEllipsis::Type::Auto:
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        return;
-    case BlockEllipsis::Type::String:
-        serializationForCSS(builder, context, state.style, blockEllipsis.string);
-        return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline void ExtractorSerializer::serializeBlockStepSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, std::optional<WebCore::Length> blockStepSize)
@@ -1281,21 +1177,6 @@ inline void ExtractorSerializer::serializeScrollbarColor(ExtractorState& state, 
     serializeStyleType(state, builder, context, scrollbarColor->trackColor);
 }
 
-inline void ExtractorSerializer::serializeScrollbarGutter(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ScrollbarGutter& gutter)
-{
-    if (!gutter.bothEdges) {
-        if (gutter.isAuto)
-            serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        else
-            serializationForCSS(builder, context, state.style, CSS::Keyword::Stable { });
-        return;
-    }
-
-    serializationForCSS(builder, context, state.style, CSS::Keyword::Stable { });
-    builder.append(' ');
-    serializationForCSS(builder, context, state.style, CSS::Keyword::BothEdges { });
-}
-
 inline void ExtractorSerializer::serializeLineBoxContain(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<Style::LineBoxContain> lineBoxContain)
 {
     if (!lineBoxContain) {
@@ -1344,30 +1225,6 @@ inline void ExtractorSerializer::serializePosition(ExtractorState& state, String
     serializeLength(state, builder, context, position.x);
     builder.append(' ');
     serializeLength(state, builder, context, position.y);
-}
-
-inline void ExtractorSerializer::serializeContainIntrinsicSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ContainIntrinsicSizeType& type, const std::optional<WebCore::Length>& containIntrinsicLength)
-{
-    switch (type) {
-    case ContainIntrinsicSizeType::None:
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
-        return;
-    case ContainIntrinsicSizeType::Length:
-        serializeLength(state, builder, context, *containIntrinsicLength);
-        return;
-    case ContainIntrinsicSizeType::AutoAndLength:
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
-        builder.append(' ');
-        serializeLength(state, builder, context, *containIntrinsicLength);
-        return;
-    case ContainIntrinsicSizeType::AutoAndNone:
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
-        builder.append(' ');
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
-        return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline void ExtractorSerializer::serializeTouchAction(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<TouchAction> touchActions)
@@ -1700,45 +1557,6 @@ inline void ExtractorSerializer::serializePaintOrder(ExtractorState& state, Stri
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline void ExtractorSerializer::serializeScrollTimelineAxes(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ScrollAxis>& axes)
-{
-    if (axes.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Block { });
-        return;
-    }
-
-    builder.append(interleave(axes, [&](auto& builder, auto& axis) {
-        builder.append(nameLiteralForSerialization(toCSSValueID(axis)));
-    }, ", "_s));
-}
-
-inline void ExtractorSerializer::serializeScrollTimelineNames(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<AtomString>& names)
-{
-    if (names.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    builder.append(interleave(names, [&](auto& builder, auto& name) {
-        if (name.isNull())
-            serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        else
-            serializationForCSS(builder, context, state.style, CustomIdentifier { name });
-    }, ", "_s));
-}
-
-inline void ExtractorSerializer::serializeAnchorNames(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ScopedName>& anchorNames)
-{
-    if (anchorNames.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    builder.append(interleave(anchorNames, [&](auto& builder, auto& anchorName) {
-        serialize(state, builder, context, anchorName);
-    }, ", "_s));
-}
-
 inline void ExtractorSerializer::serializePositionAnchor(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const std::optional<ScopedName>& positionAnchor)
 {
     if (!positionAnchor) {
@@ -1782,32 +1600,6 @@ inline void ExtractorSerializer::serializeNameScope(ExtractorState& state, Strin
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-inline void ExtractorSerializer::serializeSingleViewTimelineInsets(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ViewTimelineInsets& insets)
-{
-    ASSERT(insets.start);
-
-    if (!insets.end || insets.start == insets.end) {
-        serializeLength(state, builder, context, *insets.start);
-        return;
-    }
-
-    serializeLength(state, builder, context, *insets.start);
-    builder.append(' ');
-    serializeLength(state, builder, context, *insets.end);
-}
-
-inline void ExtractorSerializer::serializeViewTimelineInsets(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FixedVector<ViewTimelineInsets>& insets)
-{
-    if (insets.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        return;
-    }
-
-    builder.append(interleave(insets, [&](auto& builder, auto& singleInsets) {
-        serializeSingleViewTimelineInsets(state, builder, context, singleInsets);
-    }, ", "_s));
 }
 
 inline void ExtractorSerializer::serializePositionVisibility(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<PositionVisibility> positionVisibility)
@@ -1879,16 +1671,6 @@ inline void ExtractorSerializer::serializeFillLayerClip(ExtractorState& state, S
 inline void ExtractorSerializer::serializeFillLayerOrigin(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillBox origin)
 {
     serialize(state, builder, context, origin);
-}
-
-inline void ExtractorSerializer::serializeFillLayerXPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& xPosition)
-{
-    serializeLength(state, builder, context, xPosition);
-}
-
-inline void ExtractorSerializer::serializeFillLayerYPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& yPosition)
-{
-    serializeLength(state, builder, context, yPosition);
 }
 
 inline void ExtractorSerializer::serializeFillLayerRepeat(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillRepeatXY repeat)
@@ -2277,7 +2059,7 @@ inline void ExtractorSerializer::serializeAnimationAllowsDiscreteTransitions(Ext
     builder.append(nameLiteralForSerialization(allowsDiscreteTransitions ? CSSValueAllowDiscrete : CSSValueNormal));
 }
 
-inline void ExtractorSerializer::serializeAnimationDuration(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, MarkableDouble duration, const Animation* animation, const AnimationList* animationList)
+inline void ExtractorSerializer::serializeAnimationDuration(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, Markable<double> duration, const Animation* animation, const AnimationList* animationList)
 {
     auto animationListHasMultipleExplicitTimelines = [&] {
         if (!animationList || animationList->size() <= 1)
@@ -2696,87 +2478,6 @@ inline void ExtractorSerializer::serializeGridAutoFlow(ExtractorState& state, St
             builder.append(' ');
         serializationForCSS(builder, context, state.style, CSS::Keyword::Dense { });
     }
-}
-
-inline void ExtractorSerializer::serializeGridPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridPosition& position)
-{
-    if (position.isAuto()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        return;
-    }
-
-    if (position.isNamedGridArea()) {
-        serializationForCSS(builder, context, state.style, CustomIdentifier { AtomString { position.namedGridLine() } });
-        return;
-    }
-
-    bool hasNamedGridLine = !position.namedGridLine().isNull();
-
-    if (position.isSpan()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Span { });
-
-        if (!hasNamedGridLine || position.spanPosition() != 1) {
-            builder.append(' ');
-            serialize(state, builder, context, position.spanPosition());
-        }
-    } else
-        serialize(state, builder, context, position.integerPosition());
-
-    if (hasNamedGridLine) {
-        builder.append(' ');
-        serializationForCSS(builder, context, state.style, CustomIdentifier { AtomString { position.namedGridLine() } });
-    }
-}
-
-inline void ExtractorSerializer::serializeGridTrackBreadth(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridLength& trackBreadth)
-{
-    if (!trackBreadth.isLength()) {
-        CSS::serializationForCSS(builder, context, CSS::FlexRaw<> { CSS::FlexUnit::Fr, trackBreadth.flex() });
-        return;
-    }
-
-    auto& trackBreadthLength = trackBreadth.length();
-    if (trackBreadthLength.isAuto()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
-        return;
-    }
-
-    serializeLength(state, builder, context, trackBreadthLength);
-}
-
-inline void ExtractorSerializer::serializeGridTrackSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const GridTrackSize& trackSize)
-{
-    switch (trackSize.type()) {
-    case LengthTrackSizing:
-        serializeGridTrackBreadth(state, builder, context, trackSize.minTrackBreadth());
-        return;
-    case FitContentTrackSizing:
-        builder.append(nameLiteral(CSSValueFitContent), '(');
-        serializeLength(state, builder, context, trackSize.fitContentTrackBreadth().length());
-        builder.append(')');
-        return;
-    case MinMaxTrackSizing:
-        if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex()) {
-            CSS::serializationForCSS(builder, context, CSS::FlexRaw<> { CSS::FlexUnit::Fr, trackSize.maxTrackBreadth().flex() });
-            return;
-        }
-
-        builder.append(nameLiteral(CSSValueMinmax), '(');
-        serializeGridTrackBreadth(state, builder, context, trackSize.minTrackBreadth());
-        builder.append(", "_s);
-        serializeGridTrackBreadth(state, builder, context, trackSize.maxTrackBreadth());
-        builder.append(')');
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-inline void ExtractorSerializer::serializeGridTrackSizeList(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const Vector<GridTrackSize>& gridTrackSizeList)
-{
-    builder.append(interleave(gridTrackSizeList, [&](auto& builder, auto& gridTrackSize) {
-        serializeGridTrackSize(state, builder, context, gridTrackSize);
-    }, ' '));
 }
 
 } // namespace Style

@@ -36,6 +36,7 @@
 #include "BaseAudioContext.h"
 #include "CacheStorageConnection.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "Settings.h"

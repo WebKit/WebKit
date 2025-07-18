@@ -36,7 +36,7 @@ EncodedImageFileWriter::EncodedImageFileWriter(
   for (int i = 0; i < spatial_layers_; ++i) {
     for (int j = 0; j < temporal_layers_; ++j) {
       char buffer[256];
-      rtc::SimpleStringBuilder name(buffer);
+      SimpleStringBuilder name(buffer);
       name << "output-" << codec_string << "-"
            << ScalabilityModeToString(*scalability_mode) << "-L" << i << "T"
            << j << ".ivf";

@@ -66,6 +66,7 @@ class SharedBuffer;
 class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
+class Element;
 class Event;
 class Frame;
 class FormState;
@@ -105,7 +106,7 @@ using ContentPolicyDecisionFunction = CompletionHandler<void(PolicyAction)>;
 
 class FrameLoader final : public CanMakeWeakPtr<FrameLoader> {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FrameLoader, Loader);
     friend class PolicyChecker;
 public:
     FrameLoader(LocalFrame&, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator);
@@ -120,16 +121,15 @@ public:
     WEBCORE_EXPORT LocalFrame& frame() const;
     WEBCORE_EXPORT Ref<LocalFrame> protectedFrame() const;
 
-    PolicyChecker& policyChecker() const { return *m_policyChecker; }
+    PolicyChecker& policyChecker() const { return m_policyChecker; }
 
     HistoryController& history() const { return m_history; }
-    WEBCORE_EXPORT Ref<HistoryController> protectedHistory() const;
 
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
     class SubframeLoader;
-    SubframeLoader& subframeLoader() { return *m_subframeLoader; }
-    const SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
+    SubframeLoader& subframeLoader() { return m_subframeLoader; }
+    const SubframeLoader& subframeLoader() const { return m_subframeLoader; }
 
     void setupForReplace();
 
@@ -468,15 +468,15 @@ private:
 
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
-    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const AtomString&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
+    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const AtomString&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr, Element* sourceElement = nullptr);
 
     WeakRef<LocalFrame> m_frame;
     const UniqueRef<LocalFrameLoaderClient> m_client;
 
-    const std::unique_ptr<PolicyChecker> m_policyChecker;
+    const UniqueRef<PolicyChecker> m_policyChecker;
     const UniqueRef<HistoryController> m_history;
     mutable ResourceLoadNotifier m_notifier;
-    const std::unique_ptr<SubframeLoader> m_subframeLoader;
+    const UniqueRef<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
 
     class FrameProgressTracker;

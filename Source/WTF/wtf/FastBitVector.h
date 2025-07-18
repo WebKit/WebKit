@@ -31,8 +31,6 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 class PrintStream;
@@ -42,7 +40,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FastBitVector);
 inline constexpr size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
 class FastBitVectorWordView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorWordView);
 public:
     typedef FastBitVectorWordView ViewType;
     
@@ -54,24 +52,19 @@ public:
     {
     }
     
-    size_t numBits() const
-    {
-        return m_numBits;
-    }
+    size_t numBits() const { return m_numBits; }
     
-    uint32_t word(size_t index) const
-    {
-        RELEASE_ASSERT(index < fastBitVectorArrayLength(numBits()));
-        return m_words[index];
-    }
+    uint32_t word(size_t index) const { return words()[index]; }
     
 private:
+    std::span<const uint32_t> words() const { return unsafeMakeSpan(m_words, fastBitVectorArrayLength(m_numBits)); }
+
     const uint32_t* m_words { nullptr };
     size_t m_numBits { 0 };
 };
 
 class FastBitVectorWordOwner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorWordOwner);
 public:
     typedef FastBitVectorWordView ViewType;
     
@@ -101,7 +94,7 @@ public:
         if (arrayLength() != other.arrayLength())
             setEqualsSlow(other);
         else {
-            memcpySpan(wordsSpan(), other.wordsSpan());
+            memcpySpan(words(), other.words());
             m_numBits = other.m_numBits;
         }
         return *this;
@@ -116,29 +109,23 @@ public:
     
     void setAll()
     {
-        memsetSpan(wordsSpan(), 255);
+        memsetSpan(words(), 255);
     }
     
     void clearAll()
     {
-        zeroSpan(wordsSpan());
+        zeroSpan(words());
     }
     
     void set(const FastBitVectorWordOwner& other)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_numBits == other.m_numBits);
-        memcpySpan(wordsSpan(), other.wordsSpan());
+        memcpySpan(words(), other.words());
     }
     
-    size_t numBits() const
-    {
-        return m_numBits;
-    }
+    size_t numBits() const { return m_numBits; }
     
-    size_t arrayLength() const
-    {
-        return fastBitVectorArrayLength(numBits());
-    }
+    size_t arrayLength() const { return fastBitVectorArrayLength(numBits()); }
     
     void resize(size_t numBits)
     {
@@ -147,23 +134,11 @@ public:
         m_numBits = numBits;
     }
     
-    uint32_t word(size_t index) const
-    {
-        RELEASE_ASSERT(index < arrayLength());
-        return m_words[index];
-    }
-    
-    uint32_t& word(size_t index)
-    {
-        RELEASE_ASSERT(index < arrayLength());
-        return m_words[index];
-    }
-    
-    const uint32_t* words() const { return m_words; }
-    uint32_t* words() { return m_words; }
+    uint32_t word(size_t index) const { return words()[index]; }
+    uint32_t& word(size_t index) { return words()[index]; }
 
-    std::span<uint32_t> wordsSpan() { return unsafeMakeSpan(m_words, arrayLength()); }
-    std::span<const uint32_t> wordsSpan() const { return unsafeMakeSpan(m_words, arrayLength()); }
+    std::span<uint32_t> words() { return unsafeMakeSpan(m_words, arrayLength()); }
+    std::span<const uint32_t> words() const { return unsafeMakeSpan(m_words, arrayLength()); }
 
 private:
     WTF_EXPORT_PRIVATE void setEqualsSlow(const FastBitVectorWordOwner& other);
@@ -175,7 +150,7 @@ private:
 
 template<typename Left, typename Right>
 class FastBitVectorAndWords {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorAndWords);
 public:
     typedef FastBitVectorAndWords ViewType;
     
@@ -205,7 +180,7 @@ private:
     
 template<typename Left, typename Right>
 class FastBitVectorOrWords {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorOrWords);
 public:
     typedef FastBitVectorOrWords ViewType;
     
@@ -235,7 +210,7 @@ private:
     
 template<typename View>
 class FastBitVectorNotWords {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorNotWords);
 public:
     typedef FastBitVectorNotWords ViewType;
     
@@ -264,7 +239,7 @@ class FastBitVector;
 
 template<typename Words>
 class FastBitVectorImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitVectorImpl);
 public:
     FastBitVectorImpl()
         : m_words()
@@ -440,7 +415,7 @@ private:
 };
 
 class FastBitReference {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FastBitReference);
 public:
     FastBitReference() = default;
 
@@ -608,5 +583,3 @@ public:
 
 using WTF::FastBitReference;
 using WTF::FastBitVector;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

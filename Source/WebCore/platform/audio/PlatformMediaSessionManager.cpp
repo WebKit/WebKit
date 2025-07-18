@@ -39,7 +39,10 @@
 #include "VP9UtilitiesCocoa.h"
 #endif
 
-#define PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Media, fmt, ##__VA_ARGS__)
+#define PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(formatString, ...) \
+if (willLog(WTFLogLevel::Always)) { \
+    RELEASE_LOG_FORWARDABLE(Media, PLATFORMMEDIASESSIONMANAGER_##formatString, ##__VA_ARGS__); \
+} \
 
 namespace WebCore {
 
@@ -209,7 +212,7 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 void PlatformMediaSessionManager::addSession(PlatformMediaSessionInterface& session)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_ADDSESSION, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(ADDSESSION, session.logIdentifier());
 #endif
 
     m_sessions.append(session);
@@ -233,7 +236,7 @@ bool PlatformMediaSessionManager::hasNoSession() const
 void PlatformMediaSessionManager::removeSession(PlatformMediaSessionInterface& session)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_REMOVESESSION, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(REMOVESESSION, session.logIdentifier());
 #endif
 
     size_t index = m_sessions.find(&session);
@@ -306,7 +309,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSessionI
 void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSessionInterface& session, DelayCallingUpdateNowPlaying)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_SESSIONWILLENDPLAYBACK, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(SESSIONWILLENDPLAYBACK, session.logIdentifier());
 #endif
 
     if (m_sessions.size() < 2)
@@ -516,7 +519,7 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
 {
-    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_SESSIONCANPRODUCEAUDIOCHANGED);
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(SESSIONCANPRODUCEAUDIOCHANGED);
 
     if (m_alreadyScheduledSessionStatedUpdate)
         return;
@@ -729,7 +732,7 @@ void PlatformMediaSessionManager::maybeDeactivateAudioSession()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "tried to set inactive AudioSession");
-    AudioSession::protectedSharedSession()->tryToSetActive(false);
+    AudioSession::singleton().tryToSetActive(false);
     m_becameActive = false;
 #endif
 }
@@ -738,11 +741,11 @@ bool PlatformMediaSessionManager::maybeActivateAudioSession()
 {
 #if USE(AUDIO_SESSION)
     if (!activeAudioSessionRequired()) {
-        PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_MAYBEACTIVATEAUDIOSESSION_ACTIVE_SESSION_NOT_REQUIRED);
+        PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(MAYBEACTIVATEAUDIOSESSION_ACTIVE_SESSION_NOT_REQUIRED);
         return true;
     }
 
-    m_becameActive = AudioSession::protectedSharedSession()->tryToSetActive(true);
+    m_becameActive = AudioSession::singleton().tryToSetActive(true);
     ALWAYS_LOG(LOGIDENTIFIER, m_becameActive ? "successfully activated" : "failed to activate", " AudioSession");
     return m_becameActive;
 #else
@@ -861,5 +864,15 @@ void PlatformMediaSessionManager::dumpSessionStates()
     ALWAYS_LOG(LOGIDENTIFIER, " Sessions:\n", builder.toString());
 }
 #endif
+
+bool PlatformMediaSessionManager::willLog(WTFLogLevel level) const
+{
+#if !RELEASE_LOG_DISABLED
+    return m_logger->willLog(logChannel(), level);
+#else
+    UNUSED_PARAM(level);
+    return false;
+#endif
+}
 
 } // namespace WebCore

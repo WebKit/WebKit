@@ -152,6 +152,8 @@ public:
     virtual void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) { }
 
+    virtual void stickyScrollingTreeNodeBeganSticking(ScrollingNodeID) { }
+
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::EventType, IntPoint);
 
     virtual void receivedWheelEventWithPhases(PlatformWheelEventPhase /* phase */, PlatformWheelEventPhase /* momentumPhase */) { }

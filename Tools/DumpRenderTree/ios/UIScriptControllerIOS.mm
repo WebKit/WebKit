@@ -50,7 +50,7 @@ void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, scale, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, scale, callbackID] {
         [gWebScrollView zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
             if (!m_context)
                 return;

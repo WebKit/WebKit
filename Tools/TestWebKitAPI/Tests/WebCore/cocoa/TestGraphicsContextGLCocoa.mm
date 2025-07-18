@@ -56,7 +56,7 @@ private:
 };
 
 class TestedGraphicsContextGLCocoa : public GraphicsContextGLCocoa {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestedGraphicsContextGLCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TestedGraphicsContextGLCocoa);
 public:
     static RefPtr<TestedGraphicsContextGLCocoa> create(GraphicsContextGLAttributes&& attributes)

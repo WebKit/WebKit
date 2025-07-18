@@ -39,7 +39,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WTF {
 
 class StackShotProfiler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackShotProfiler);
 public:
     StackShotProfiler(unsigned numFrames, unsigned framesToSkip, unsigned stacksToReport)
         : m_numFrames(numFrames)

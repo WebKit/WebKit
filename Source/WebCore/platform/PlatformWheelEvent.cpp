@@ -96,6 +96,7 @@ TextStream& operator<<(TextStream& ts, PlatformWheelEventPhase phase)
     case PlatformWheelEventPhase::Ended: ts << "ended"_s; break;
     case PlatformWheelEventPhase::Cancelled: ts << "cancelled"_s; break;
     case PlatformWheelEventPhase::MayBegin: ts << "mayBegin"_s; break;
+    case PlatformWheelEventPhase::WillBegin: ts << "willBegin"_s; break;
 #endif
     }
     return ts;

@@ -151,7 +151,7 @@ constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSPr
 extern const std::array<CSSPropertyID, 102> computedPropertyIDs;
 
 struct CSSPropertySettings {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSPropertySettings);
 
     bool cssDescriptorEnabled : 1 { false };
     bool cssSettingsOneEnabled : 1 { false };

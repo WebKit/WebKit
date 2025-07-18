@@ -12,16 +12,25 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <set>
-#include <type_traits>
+#include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/jsep.h"
+#include "api/peer_connection_interface.h"
+#include "api/sequence_checker.h"
 #include "p2p/base/p2p_constants.h"
+#include "pc/jsep_transport.h"
+#include "pc/session_description.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
 
-void BundleManager::Update(const cricket::SessionDescription* description,
+void BundleManager::Update(const SessionDescription* description,
                            SdpType type) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Rollbacks should call Rollback, not Update.
@@ -37,10 +46,10 @@ void BundleManager::Update(const cricket::SessionDescription* description,
     // groups.
     bundle_groups_changed = true;
     bundle_groups_.clear();
-    for (const cricket::ContentGroup* new_bundle_group :
-         description->GetGroupsByName(cricket::GROUP_TYPE_BUNDLE)) {
+    for (const ContentGroup* new_bundle_group :
+         description->GetGroupsByName(GROUP_TYPE_BUNDLE)) {
       bundle_groups_.push_back(
-          std::make_unique<cricket::ContentGroup>(*new_bundle_group));
+          std::make_unique<ContentGroup>(*new_bundle_group));
       RTC_DLOG(LS_VERBOSE) << "Establishing bundle group "
                            << new_bundle_group->ToString();
     }
@@ -51,8 +60,8 @@ void BundleManager::Update(const cricket::SessionDescription* description,
     // Thus any m= sections added to a BUNDLE group in this offer can
     // preemptively start using the bundled transport, as there is no possible
     // non-bundled fallback.
-    for (const cricket::ContentGroup* new_bundle_group :
-         description->GetGroupsByName(cricket::GROUP_TYPE_BUNDLE)) {
+    for (const ContentGroup* new_bundle_group :
+         description->GetGroupsByName(GROUP_TYPE_BUNDLE)) {
       // Attempt to find a matching existing group.
       for (const std::string& mid : new_bundle_group->content_names()) {
         auto it = established_bundle_groups_by_mid_.find(mid);
@@ -71,7 +80,7 @@ void BundleManager::Update(const cricket::SessionDescription* description,
   }
 }
 
-const cricket::ContentGroup* BundleManager::LookupGroupByMid(
+const ContentGroup* BundleManager::LookupGroupByMid(
     const std::string& mid) const {
   auto it = established_bundle_groups_by_mid_.find(mid);
   return it != established_bundle_groups_by_mid_.end() ? it->second : nullptr;
@@ -84,12 +93,12 @@ bool BundleManager::IsFirstMidInGroup(const std::string& mid) const {
   return mid == *(group->FirstContentName());
 }
 
-cricket::ContentGroup* BundleManager::LookupGroupByMid(const std::string& mid) {
+ContentGroup* BundleManager::LookupGroupByMid(const std::string& mid) {
   auto it = established_bundle_groups_by_mid_.find(mid);
   return it != established_bundle_groups_by_mid_.end() ? it->second : nullptr;
 }
 
-void BundleManager::DeleteMid(const cricket::ContentGroup* bundle_group,
+void BundleManager::DeleteMid(const ContentGroup* bundle_group,
                               const std::string& mid) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_LOG(LS_VERBOSE) << "Deleting mid " << mid << " from bundle group "
@@ -97,26 +106,26 @@ void BundleManager::DeleteMid(const cricket::ContentGroup* bundle_group,
   // Remove the rejected content from the `bundle_group`.
   // The const pointer arg is used to identify the group, we verify
   // it before we use it to make a modification.
-  auto bundle_group_it = std::find_if(
-      bundle_groups_.begin(), bundle_groups_.end(),
-      [bundle_group](std::unique_ptr<cricket::ContentGroup>& group) {
-        return bundle_group == group.get();
-      });
+  auto bundle_group_it =
+      std::find_if(bundle_groups_.begin(), bundle_groups_.end(),
+                   [bundle_group](std::unique_ptr<ContentGroup>& group) {
+                     return bundle_group == group.get();
+                   });
   RTC_DCHECK(bundle_group_it != bundle_groups_.end());
   (*bundle_group_it)->RemoveContentName(mid);
   established_bundle_groups_by_mid_.erase(
       established_bundle_groups_by_mid_.find(mid));
 }
 
-void BundleManager::DeleteGroup(const cricket::ContentGroup* bundle_group) {
+void BundleManager::DeleteGroup(const ContentGroup* bundle_group) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DLOG(LS_VERBOSE) << "Deleting bundle group " << bundle_group->ToString();
 
-  auto bundle_group_it = std::find_if(
-      bundle_groups_.begin(), bundle_groups_.end(),
-      [bundle_group](std::unique_ptr<cricket::ContentGroup>& group) {
-        return bundle_group == group.get();
-      });
+  auto bundle_group_it =
+      std::find_if(bundle_groups_.begin(), bundle_groups_.end(),
+                   [bundle_group](std::unique_ptr<ContentGroup>& group) {
+                     return bundle_group == group.get();
+                   });
   RTC_DCHECK(bundle_group_it != bundle_groups_.end());
   auto mid_list = (*bundle_group_it)->content_names();
   for (const auto& content_name : mid_list) {
@@ -129,8 +138,7 @@ void BundleManager::Rollback() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   bundle_groups_.clear();
   for (const auto& bundle_group : stable_bundle_groups_) {
-    bundle_groups_.push_back(
-        std::make_unique<cricket::ContentGroup>(*bundle_group));
+    bundle_groups_.push_back(std::make_unique<ContentGroup>(*bundle_group));
   }
   RefreshEstablishedBundleGroupsByMid();
 }
@@ -140,7 +148,7 @@ void BundleManager::Commit() {
   stable_bundle_groups_.clear();
   for (const auto& bundle_group : bundle_groups_) {
     stable_bundle_groups_.push_back(
-        std::make_unique<cricket::ContentGroup>(*bundle_group));
+        std::make_unique<ContentGroup>(*bundle_group));
   }
 }
 
@@ -155,31 +163,29 @@ void BundleManager::RefreshEstablishedBundleGroupsByMid() {
 
 void JsepTransportCollection::RegisterTransport(
     const std::string& mid,
-    std::unique_ptr<cricket::JsepTransport> transport) {
+    std::unique_ptr<JsepTransport> transport) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   SetTransportForMid(mid, transport.get());
   jsep_transports_by_name_[mid] = std::move(transport);
   RTC_DCHECK(IsConsistent());
 }
 
-std::vector<cricket::JsepTransport*> JsepTransportCollection::Transports() {
+std::vector<JsepTransport*> JsepTransportCollection::Transports() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  std::vector<cricket::JsepTransport*> result;
+  std::vector<JsepTransport*> result;
   for (auto& kv : jsep_transports_by_name_) {
     result.push_back(kv.second.get());
   }
   return result;
 }
 
-std::vector<cricket::JsepTransport*>
-JsepTransportCollection::ActiveTransports() {
+std::vector<JsepTransport*> JsepTransportCollection::ActiveTransports() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  std::set<cricket::JsepTransport*> transports;
+  std::set<JsepTransport*> transports;
   for (const auto& kv : mid_to_transport_) {
     transports.insert(kv.second);
   }
-  return std::vector<cricket::JsepTransport*>(transports.begin(),
-                                              transports.end());
+  return std::vector<JsepTransport*>(transports.begin(), transports.end());
 }
 
 void JsepTransportCollection::DestroyAllTransports() {
@@ -191,35 +197,35 @@ void JsepTransportCollection::DestroyAllTransports() {
   RTC_DCHECK(IsConsistent());
 }
 
-const cricket::JsepTransport* JsepTransportCollection::GetTransportByName(
+const JsepTransport* JsepTransportCollection::GetTransportByName(
     const std::string& transport_name) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   auto it = jsep_transports_by_name_.find(transport_name);
   return (it == jsep_transports_by_name_.end()) ? nullptr : it->second.get();
 }
 
-cricket::JsepTransport* JsepTransportCollection::GetTransportByName(
+JsepTransport* JsepTransportCollection::GetTransportByName(
     const std::string& transport_name) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   auto it = jsep_transports_by_name_.find(transport_name);
   return (it == jsep_transports_by_name_.end()) ? nullptr : it->second.get();
 }
 
-cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
+JsepTransport* JsepTransportCollection::GetTransportForMid(
     const std::string& mid) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   auto it = mid_to_transport_.find(mid);
   return it == mid_to_transport_.end() ? nullptr : it->second;
 }
 
-const cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
+const JsepTransport* JsepTransportCollection::GetTransportForMid(
     const std::string& mid) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   auto it = mid_to_transport_.find(mid);
   return it == mid_to_transport_.end() ? nullptr : it->second;
 }
 
-cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
+JsepTransport* JsepTransportCollection::GetTransportForMid(
     absl::string_view mid) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // TODO(hta): should be a better way.
@@ -227,7 +233,7 @@ cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
   return it == mid_to_transport_.end() ? nullptr : it->second;
 }
 
-const cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
+const JsepTransport* JsepTransportCollection::GetTransportForMid(
     absl::string_view mid) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // TODO(hta): Should be a better way
@@ -237,7 +243,7 @@ const cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
 
 bool JsepTransportCollection::SetTransportForMid(
     const std::string& mid,
-    cricket::JsepTransport* jsep_transport) {
+    JsepTransport* jsep_transport) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(jsep_transport);
 
@@ -313,7 +319,7 @@ void JsepTransportCollection::CommitTransports() {
 }
 
 bool JsepTransportCollection::TransportInUse(
-    cricket::JsepTransport* jsep_transport) const {
+    JsepTransport* jsep_transport) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   for (const auto& kv : mid_to_transport_) {
     if (kv.second == jsep_transport) {
@@ -324,7 +330,7 @@ bool JsepTransportCollection::TransportInUse(
 }
 
 bool JsepTransportCollection::TransportNeededForRollback(
-    cricket::JsepTransport* jsep_transport) const {
+    JsepTransport* jsep_transport) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   for (const auto& kv : stable_mid_to_transport_) {
     if (kv.second == jsep_transport) {
@@ -335,7 +341,7 @@ bool JsepTransportCollection::TransportNeededForRollback(
 }
 
 void JsepTransportCollection::MaybeDestroyJsepTransport(
-    cricket::JsepTransport* transport) {
+    JsepTransport* transport) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Don't destroy the JsepTransport if there are still media sections referring
   // to it, or if it will be needed in case of rollback.

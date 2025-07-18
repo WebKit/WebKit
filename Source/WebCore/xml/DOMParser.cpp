@@ -25,6 +25,7 @@
 #include "NodeInlines.h"
 #include "SVGDocument.h"
 #include "SecurityOriginPolicy.h"
+#include "Settings.h"
 #include "TrustedType.h"
 #include "XMLDocument.h"
 

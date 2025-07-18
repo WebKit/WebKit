@@ -1,0 +1,4 @@
+
+PASS Initially, the sibling-index() is 2 for #target
+FAIL Removing a preceding sibling of #target reduces the sibling-index() assert_equals: expected "100px" but got "200px"
+

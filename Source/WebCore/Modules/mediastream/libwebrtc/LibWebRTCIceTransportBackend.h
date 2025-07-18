@@ -47,7 +47,7 @@ class LibWebRTCIceTransportBackendObserver;
 class LibWebRTCIceTransportBackend final : public RTCIceTransportBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCIceTransportBackend);
 public:
-    explicit LibWebRTCIceTransportBackend(rtc::scoped_refptr<webrtc::IceTransportInterface>&&);
+    explicit LibWebRTCIceTransportBackend(webrtc::scoped_refptr<webrtc::IceTransportInterface>&&);
     ~LibWebRTCIceTransportBackend();
 
 private:
@@ -56,7 +56,7 @@ private:
     void registerClient(RTCIceTransportBackendClient&) final;
     void unregisterClient() final;
 
-    rtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
+    webrtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
     RefPtr<LibWebRTCIceTransportBackendObserver> m_observer;
 };
 

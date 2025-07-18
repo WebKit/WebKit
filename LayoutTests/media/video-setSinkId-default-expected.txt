@@ -1,0 +1,16 @@
+Test default sinkId with an MP4 source
+RUN(video.setSinkId("default"))
+Promise resolved OK
+RUN(video.src = "content/test.mp4")
+EVENT(canplay)
+PASS
+-
+Test default sinkId with a WebM source
+RUN(video.setSinkId("default"))
+Promise resolved OK
+RUN(video.src = "content/test-vp8.webm")
+EVENT(canplay)
+PASS
+-
+END OF TEST
+

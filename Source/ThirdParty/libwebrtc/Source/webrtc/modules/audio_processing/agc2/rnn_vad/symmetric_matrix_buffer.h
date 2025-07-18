@@ -51,12 +51,12 @@ class SymmetricMatrixBuffer {
   // most recent one in the ring buffer, whereas the last element in `values`
   // must correspond to the comparison between the most recent item and the
   // oldest one in the ring buffer.
-  void Push(rtc::ArrayView<T, S - 1> values) {
+  void Push(ArrayView<T, S - 1> values) {
     // Move the lower-right sub-matrix of size (S-2) x (S-2) one row up and one
     // column left.
     std::memmove(buf_.data(), buf_.data() + S, (buf_.size() - S) * sizeof(T));
     // Copy new values in the last column in the right order.
-    for (int i = 0; rtc::SafeLt(i, values.size()); ++i) {
+    for (int i = 0; SafeLt(i, values.size()); ++i) {
       const int index = (S - 1 - i) * (S - 1) - 1;
       RTC_DCHECK_GE(index, 0);
       RTC_DCHECK_LT(index, buf_.size());

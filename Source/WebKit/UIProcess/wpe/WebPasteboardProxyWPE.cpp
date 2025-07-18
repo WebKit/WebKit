@@ -34,6 +34,7 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(WPE_PLATFORM)
 #include "GRefPtrWPE.h"
@@ -256,7 +257,7 @@ void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection&, const String&, 
     completionHandler(std::nullopt);
 }
 
-void WebPasteboardProxy::informationForItemAtIndex(IPC::Connection&, size_t index, const String&, int64_t changeCount, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(std::optional<PasteboardItemInfo>&&)>&& completionHandler)
+void WebPasteboardProxy::informationForItemAtIndex(IPC::Connection&, uint64_t index, const String&, int64_t changeCount, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(std::optional<PasteboardItemInfo>&&)>&& completionHandler)
 {
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI() && index) {
@@ -286,7 +287,7 @@ void WebPasteboardProxy::getPasteboardItemsCount(IPC::Connection&, const String&
     completionHandler(0);
 }
 
-void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size_t index, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, uint64_t index, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
 {
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {
@@ -307,7 +308,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
     completionHandler({ }, { });
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, std::optional<size_t> index, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, std::optional<uint64_t> index, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {

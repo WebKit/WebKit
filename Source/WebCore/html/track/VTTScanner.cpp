@@ -184,8 +184,8 @@ auto VTTScanner::createRun(Position start, Position end) const -> Run
         return Run { span8.subspan(start8 - span8.data(), end8 - start8) };
     }
     auto span16 = m_source.span16();
-    auto* start16 = static_cast<const UChar*>(start);
-    auto* end16 = static_cast<const UChar*>(end);
+    auto* start16 = static_cast<const char16_t*>(start);
+    auto* end16 = static_cast<const char16_t*>(end);
     RELEASE_ASSERT(start16 >= span16.data());
     return Run { span16.subspan(start16 - span16.data(), end16 - start16) };
 }

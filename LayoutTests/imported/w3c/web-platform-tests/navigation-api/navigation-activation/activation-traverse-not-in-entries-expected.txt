@@ -1,4 +1,4 @@
 
 
-PASS navigation.activation - traverse from a non-contiguous same-origin url
+FAIL navigation.activation - traverse from a non-contiguous same-origin url assert_equals: expected 1 but got 3
 

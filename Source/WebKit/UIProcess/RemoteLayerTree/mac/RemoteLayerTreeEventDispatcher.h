@@ -112,8 +112,6 @@ private:
 
     WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&);
 
-    RemoteScrollingCoordinatorProxyMac* scrollingCoordinator() const { return m_scrollingCoordinator.get(); }
-
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 
     void willHandleWheelEvent(const WebWheelEvent&);
@@ -156,6 +154,8 @@ private:
 #endif
 
     RefPtr<RemoteScrollingTree> scrollingTree();
+
+    CheckedPtr<RemoteLayerTreeEventDispatcherDisplayLinkClient> checkedDisplayLinkClient();
 
     Lock m_scrollingTreeLock;
     RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);

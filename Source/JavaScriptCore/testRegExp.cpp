@@ -218,7 +218,7 @@ static int scanString(char* buffer, int bufferLength, StringBuilder& builder, ch
     bool escape = false;
     
     for (int i = 0; i < bufferLength; ++i) {
-        UChar c = buffer[i];
+        char16_t c = buffer[i];
         
         if (escape) {
             switch (c) {
@@ -258,7 +258,7 @@ static int scanString(char* buffer, int bufferLength, StringBuilder& builder, ch
                 unsigned int charValue;
                 if (sscanf(buffer+i+1, "%04x", &charValue) != 1)
                     return -1;
-                c = static_cast<UChar>(charValue);
+                c = static_cast<char16_t>(charValue);
                 i += 4;
                 break;
             }

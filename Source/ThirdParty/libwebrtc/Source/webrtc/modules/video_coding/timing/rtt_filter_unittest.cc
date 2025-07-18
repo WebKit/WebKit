@@ -11,7 +11,6 @@
 #include "modules/video_coding/timing/rtt_filter.h"
 
 #include "api/units/time_delta.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

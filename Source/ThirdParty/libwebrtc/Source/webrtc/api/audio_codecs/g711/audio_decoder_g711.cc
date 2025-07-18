@@ -34,7 +34,7 @@ std::optional<AudioDecoderG711::Config> AudioDecoderG711::SdpToConfig(
       (is_pcmu || is_pcma)) {
     Config config;
     config.type = is_pcmu ? Config::Type::kPcmU : Config::Type::kPcmA;
-    config.num_channels = rtc::dchecked_cast<int>(format.num_channels);
+    config.num_channels = dchecked_cast<int>(format.num_channels);
     if (!config.IsOk()) {
       RTC_DCHECK_NOTREACHED();
       return std::nullopt;

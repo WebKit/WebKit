@@ -52,22 +52,24 @@ class AndroidCallClient {
 
   const std::unique_ptr<PCObserver> pc_observer_;
 
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pcf_
+  webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pcf_
       RTC_GUARDED_BY(thread_checker_);
-  std::unique_ptr<rtc::Thread> network_thread_ RTC_GUARDED_BY(thread_checker_);
-  std::unique_ptr<rtc::Thread> worker_thread_ RTC_GUARDED_BY(thread_checker_);
-  std::unique_ptr<rtc::Thread> signaling_thread_
+  std::unique_ptr<webrtc::Thread> network_thread_
+      RTC_GUARDED_BY(thread_checker_);
+  std::unique_ptr<webrtc::Thread> worker_thread_
+      RTC_GUARDED_BY(thread_checker_);
+  std::unique_ptr<webrtc::Thread> signaling_thread_
       RTC_GUARDED_BY(thread_checker_);
 
-  std::unique_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> local_sink_
+  std::unique_ptr<webrtc::VideoSinkInterface<webrtc::VideoFrame>> local_sink_
       RTC_GUARDED_BY(thread_checker_);
-  std::unique_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> remote_sink_
+  std::unique_ptr<webrtc::VideoSinkInterface<webrtc::VideoFrame>> remote_sink_
       RTC_GUARDED_BY(thread_checker_);
-  rtc::scoped_refptr<webrtc::JavaVideoTrackSourceInterface> video_source_
+  webrtc::scoped_refptr<webrtc::JavaVideoTrackSourceInterface> video_source_
       RTC_GUARDED_BY(thread_checker_);
 
   webrtc::Mutex pc_mutex_;
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc_
+  webrtc::scoped_refptr<webrtc::PeerConnectionInterface> pc_
       RTC_GUARDED_BY(pc_mutex_);
 };
 

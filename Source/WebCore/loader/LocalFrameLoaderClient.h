@@ -30,6 +30,7 @@
 #pragma once
 
 #include "FrameLoaderClient.h"
+#include "IntPoint.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
 #include "LoaderMalloc.h"
@@ -112,7 +113,7 @@ struct StringWithDirection;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 
 class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LocalFrameLoaderClient, Loader);
 public:
     ~LocalFrameLoaderClient();
 

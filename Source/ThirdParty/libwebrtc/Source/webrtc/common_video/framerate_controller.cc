@@ -10,7 +10,10 @@
 
 #include "common_video/framerate_controller.h"
 
+#include <cstdint>
+#include <cstdlib>
 #include <limits>
+#include <optional>
 
 #include "rtc_base/time_utils.h"
 
@@ -41,7 +44,7 @@ bool FramerateController::ShouldDropFrame(int64_t in_timestamp_ns) {
 
   // If `max_framerate_` is not set (i.e. maxdouble), `frame_interval_ns` is
   // rounded to 0.
-  int64_t frame_interval_ns = rtc::kNumNanosecsPerSec / max_framerate_;
+  int64_t frame_interval_ns = kNumNanosecsPerSec / max_framerate_;
   if (frame_interval_ns <= 0) {
     // Frame rate throttling not enabled.
     return false;
@@ -79,7 +82,7 @@ void FramerateController::KeepFrame(int64_t in_timestamp_ns) {
     if (max_framerate_ < kMinFramerate)
       return;
 
-    int64_t frame_interval_ns = rtc::kNumNanosecsPerSec / max_framerate_;
+    int64_t frame_interval_ns = kNumNanosecsPerSec / max_framerate_;
     if (next_frame_timestamp_ns_)
       *next_frame_timestamp_ns_ += frame_interval_ns;
   }

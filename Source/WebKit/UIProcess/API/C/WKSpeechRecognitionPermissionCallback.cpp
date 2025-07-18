@@ -35,9 +35,3 @@ WKTypeID WKSpeechRecognitionPermissionCallbackGetTypeID()
 {
     return toAPI(SpeechRecognitionPermissionCallback::APIType);
 }
-
-void WKSpeechRecognitionPermissionCallbackComplete(WKSpeechRecognitionPermissionCallbackRef speechRecognitionPermissionCallback, bool granted)
-{
-    // FIXME: Deprecate and remove this.
-    return toProtectedImpl(speechRecognitionPermissionCallback)->complete(granted);
-}

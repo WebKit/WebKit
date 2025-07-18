@@ -142,12 +142,12 @@ public:
         {
         }
 
-        T* operator->() { return m_writer->rawSlotAt<T>(m_offset); }
-        T operator*() { return *m_writer->rawSlotAt<T>(m_offset); }
+        T* operator->() { return m_writer->template rawSlotAt<T>(m_offset); }
+        T operator*() { return *m_writer->template rawSlotAt<T>(m_offset); }
 
         void set(const T& value)
         {
-            writeUnalignedValue(m_writer->addressAt<T>(m_offset), value);
+            writeUnalignedValue(m_writer->template addressAt<T>(m_offset), value);
         }
 
         Slot<T> at(int i) { return Slot<T>(m_writer, m_offset + sizeof(T) * i); }
@@ -341,7 +341,7 @@ static void unregisterCodeEntry(JITCodeEntry* entry)
 
 template <typename THeader>
 class DebugSectionBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DebugSectionBase);
 
 public:
     virtual ~DebugSectionBase() = default;
@@ -645,7 +645,7 @@ void ELFSection::populateHeader(Writer::Slot<ELFSection::Header> header, ELFStri
 
 #if OS(DARWIN)
 class MachO {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachO);
 
 public:
     size_t addSection(std::unique_ptr<MachOSection> section)

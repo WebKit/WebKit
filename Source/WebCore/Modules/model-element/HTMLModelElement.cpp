@@ -52,6 +52,7 @@
 #include "JSHTMLModelElementCamera.h"
 #include "LayoutRect.h"
 #include "LayoutSize.h"
+#include "LazyLoadModelObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -70,6 +71,7 @@
 #include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include "RenderReplaced.h"
+#include "ScriptController.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -114,6 +116,10 @@ HTMLModelElement::~HTMLModelElement()
     }
 #endif
 
+    LazyLoadModelObserver::unobserve(*this, document());
+
+    m_loadModelTimer = nullptr;
+
     deleteModelPlayer();
 }
 
@@ -135,7 +141,7 @@ void HTMLModelElement::suspend(ReasonForSuspension reasonForSuspension)
 void HTMLModelElement::resume()
 {
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::resume()", this);
-    startReloadModelTimer();
+    startLoadModelTimer();
 }
 
 RefPtr<Model> HTMLModelElement::model() const
@@ -180,14 +186,14 @@ void HTMLModelElement::visibilityStateChanged()
         m_modelPlayer->visibilityStateDidChange();
 
     if (!isVisible()) {
-        m_reloadModelTimer = nullptr;
+        m_loadModelTimer = nullptr;
         return;
     }
 
     if (m_modelPlayer && !m_modelPlayer->isPlaceholder())
         return;
 
-    startReloadModelTimer();
+    startLoadModelTimer();
 }
 
 void HTMLModelElement::sourcesChanged()
@@ -251,19 +257,10 @@ void HTMLModelElement::setSourceURL(const URL& url)
         return;
     }
 
-    auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);
-    auto resource = document().protectedCachedResourceLoader()->requestModelResource(WTFMove(request));
-    if (!resource.has_value()) {
-        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        if (!m_readyPromise->isFulfilled())
-            m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
+    if (shouldDeferLoading())
         return;
-    }
 
-    m_data.empty();
-
-    m_resource = resource.value();
-    m_resource->addClient(*this);
+    sourceRequestResource();
 }
 
 HTMLModelElement& HTMLModelElement::readyPromiseResolve()
@@ -466,26 +463,32 @@ void HTMLModelElement::reloadModelPlayer()
 #endif
 }
 
-void HTMLModelElement::startReloadModelTimer()
+void HTMLModelElement::startLoadModelTimer()
 {
-    if (m_reloadModelTimer)
+    if (m_loadModelTimer)
         return;
 
     Seconds delay = document().page() && document().page()->shouldDisableModelLoadDelaysForTesting() ? 0_s : reloadModelDelay;
-    m_reloadModelTimer = document().checkedEventLoop()->scheduleTask(delay, TaskSource::ModelElement, [weakThis = WeakPtr { *this }] {
+    m_loadModelTimer = document().checkedEventLoop()->scheduleTask(delay, TaskSource::ModelElement, [weakThis = WeakPtr { *this }] {
         if (weakThis)
-            weakThis->reloadModelTimerFired();
+            weakThis->loadModelTimerFired();
     });
 }
 
-void HTMLModelElement::reloadModelTimerFired()
+void HTMLModelElement::loadModelTimerFired()
 {
-    m_reloadModelTimer = nullptr;
+    m_loadModelTimer = nullptr;
 
     if (!isVisible())
         return;
 
-    RELEASE_LOG(ModelElement, "%p - HTMLModelElement: Reloading model player after becoming visible", this);
+    RELEASE_LOG(ModelElement, "%p - HTMLModelElement: Timer fired for loading model", this);
+
+    if (isModelDeferred()) {
+        sourceRequestResource();
+        return;
+    }
+
     reloadModelPlayer();
 }
 
@@ -550,6 +553,8 @@ void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceEr
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->reject(Exception { ExceptionCode::AbortError });
 
+    deleteModelPlayer();
+
     m_dataMemoryCost.store(0, std::memory_order_relaxed);
     reportExtraMemoryCost();
 }
@@ -590,7 +595,7 @@ std::optional<PlatformLayerIdentifier> HTMLModelElement::modelContentsLayerID() 
 
 bool HTMLModelElement::isVisible() const
 {
-    return !document().hidden();
+    return !document().hidden() && m_isIntersectingViewport;
 }
 
 #if ENABLE(MODEL_PROCESS)
@@ -716,7 +721,7 @@ void HTMLModelElement::didUnload(ModelPlayer& modelPlayer)
         return;
 
     // FIXME: rdar://148027600 Prevent infinite reloading of model.
-    startReloadModelTimer();
+    startLoadModelTimer();
 }
 
 #endif // ENABLE(MODEL_PROCESS)
@@ -1035,7 +1040,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 
     if (hasAttributeWithoutSynchronization(environmentmapAttr)) {
         const auto& attr = attributeWithoutSynchronization(environmentmapAttr).string().trim(isASCIIWhitespace);
-        if (StringView(attr).containsOnly<isASCIIWhitespace<UChar>>())
+        if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>())
             return { };
         return getURLAttribute(environmentmapAttr);
     }
@@ -1097,6 +1102,14 @@ void HTMLModelElement::environmentMapResourceFinished()
 
 #endif // ENABLE(MODEL_PROCESS)
 
+bool HTMLModelElement::shouldDeferLoading() const
+{
+    if (!document().frame() || !document().frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+        return false;
+
+    return isModelDeferred() && !document().page()->shouldDisableModelLoadDelaysForTesting();
+}
+
 void HTMLModelElement::modelResourceFinished()
 {
     auto invalidateResourceHandleAndUpdateRenderer = [&] {
@@ -1111,11 +1124,11 @@ void HTMLModelElement::modelResourceFinished()
         m_data.reset();
 
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-
         invalidateResourceHandleAndUpdateRenderer();
 
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
+
         return;
     }
 
@@ -1303,6 +1316,10 @@ void HTMLModelElement::stop()
 {
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::stop()", this);
 
+    LazyLoadModelObserver::unobserve(*this, document());
+
+    m_loadModelTimer = nullptr;
+
     // Once an active DOM object has been stopped it cannot be restarted,
     // so we can delete the model player now.
     deleteModelPlayer();
@@ -1369,6 +1386,7 @@ Node::InsertedIntoAncestorResult HTMLModelElement::insertedIntoAncestor(Insertio
     if (insertionType.connectedToDocument) {
         document().registerForVisibilityStateChangedCallbacks(*this);
         m_modelPlayerProvider = document().page()->modelPlayerProvider();
+        LazyLoadModelObserver::observe(*this);
     }
 
     return insertResult;
@@ -1380,6 +1398,10 @@ void HTMLModelElement::removedFromAncestor(RemovalType removalType, ContainerNod
 
     if (removalType.disconnectedFromDocument) {
         document().unregisterForVisibilityStateChangedCallbacks(*this);
+        LazyLoadModelObserver::unobserve(*this, document());
+
+        m_loadModelTimer = nullptr;
+
         deleteModelPlayer();
     }
 }
@@ -1418,6 +1440,78 @@ size_t HTMLModelElement::externalMemoryCost() const
     return memoryCost();
 }
 #endif
+
+void HTMLModelElement::sourceRequestResource()
+{
+    if (m_sourceURL.isEmpty())
+        return;
+
+    auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);
+    auto resource = document().protectedCachedResourceLoader()->requestModelResource(WTFMove(request));
+    if (!resource.has_value()) {
+        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
+        return;
+    }
+
+    m_data.empty();
+
+    m_resource = resource.value();
+    m_resource->addClient(*this);
+}
+
+void HTMLModelElement::viewportIntersectionChanged(bool isIntersecting)
+{
+    if (isIntersecting == m_isIntersectingViewport)
+        return;
+
+    m_isIntersectingViewport = isIntersecting;
+
+    visibilityStateChanged();
+}
+
+bool HTMLModelElement::isModelDeferred() const
+{
+    return !m_model && !m_resource;
+}
+
+bool HTMLModelElement::isModelLoading() const
+{
+    return isVisible() && ((!m_model && m_resource) || (m_model && !m_modelPlayer) || (m_modelPlayer && m_modelPlayer->isPlaceholder()));
+}
+
+bool HTMLModelElement::isModelLoaded() const
+{
+    return isVisible() && m_modelPlayer && !m_modelPlayer->isPlaceholder();
+}
+
+bool HTMLModelElement::isModelUnloading() const
+{
+    return !isVisible() && m_modelPlayer && !m_modelPlayer->isPlaceholder();
+}
+
+bool HTMLModelElement::isModelUnloaded() const
+{
+    return !isVisible() && (m_model && (!m_modelPlayer || m_modelPlayer->isPlaceholder()));
+}
+
+String HTMLModelElement::modelElementStateForTesting() const
+{
+    if (isModelDeferred())
+        return "Deferred"_s;
+    if (isModelLoading())
+        return "Loading"_s;
+    if (isModelLoaded())
+        return "Loaded"_s;
+    if (isModelUnloading())
+        return "Unloading"_s;
+    if (isModelUnloaded())
+        return "Unloaded"_s;
+
+    ASSERT_NOT_REACHED();
+    return "Unknown"_s;
+}
 
 }
 

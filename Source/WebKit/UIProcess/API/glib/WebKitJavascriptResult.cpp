@@ -34,9 +34,9 @@
  */
 
 struct _WebKitJavascriptResult {
-    explicit _WebKitJavascriptResult(WebCore::SerializedScriptValue& serializedScriptValue)
+    explicit _WebKitJavascriptResult(WebKit::JavaScriptEvaluationResult&& result)
     {
-        jsValue = API::SerializedScriptValue::deserialize(serializedScriptValue);
+        jsValue = result.toJSC();
     }
 
     GRefPtr<JSCValue> jsValue;

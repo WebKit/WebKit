@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include "api/candidate.h"
+
 namespace webrtc {
 
 std::string IceCandidateInterface::server_url() const {
@@ -22,7 +24,7 @@ std::string IceCandidateInterface::server_url() const {
 }
 
 size_t SessionDescriptionInterface::RemoveCandidates(
-    const std::vector<cricket::Candidate>& /* candidates */) {
+    const std::vector<Candidate>& /* candidates */) {
   return 0;
 }
 

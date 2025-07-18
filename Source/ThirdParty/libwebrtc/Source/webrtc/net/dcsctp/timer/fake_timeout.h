@@ -79,7 +79,7 @@ class FakeTimeoutManager {
     return timer;
   }
   std::unique_ptr<FakeTimeout> CreateTimeout(
-      webrtc::TaskQueueBase::DelayPrecision precision) {
+      webrtc::TaskQueueBase::DelayPrecision /* precision */) {
     // FakeTimeout does not support implement |precision|.
     return CreateTimeout();
   }

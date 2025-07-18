@@ -11,15 +11,13 @@
 #ifndef P2P_BASE_ACTIVE_ICE_CONTROLLER_INTERFACE_H_
 #define P2P_BASE_ACTIVE_ICE_CONTROLLER_INTERFACE_H_
 
-#include <optional>
 
-#include "api/array_view.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_switch_reason.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/transport_description.h"
 
-namespace cricket {
+namespace webrtc {
 
 // ActiveIceControllerInterface defines the methods for a module that actively
 // manages the connection used by an ICE transport.
@@ -80,6 +78,14 @@ class ActiveIceControllerInterface {
   virtual const Connection* FindNextPingableConnection() = 0;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::ActiveIceControllerInterface;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_ACTIVE_ICE_CONTROLLER_INTERFACE_H_

@@ -24,7 +24,7 @@ class RtpDependencyDescriptorWriter {
  public:
   // Assumes `structure` and `descriptor` are valid and
   // `descriptor` matches the `structure`.
-  RtpDependencyDescriptorWriter(rtc::ArrayView<uint8_t> data,
+  RtpDependencyDescriptorWriter(ArrayView<uint8_t> data,
                                 const FrameDependencyStructure& structure,
                                 std::bitset<32> active_chains,
                                 const DependencyDescriptor& descriptor);
@@ -80,7 +80,7 @@ class RtpDependencyDescriptorWriter {
   const DependencyDescriptor& descriptor_;
   const FrameDependencyStructure& structure_;
   std::bitset<32> active_chains_;
-  rtc::BitBufferWriter bit_writer_;
+  BitBufferWriter bit_writer_;
   TemplateMatch best_template_;
 };
 

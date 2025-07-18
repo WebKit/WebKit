@@ -22,7 +22,7 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/platform_thread_types.h"
 
-namespace rtc {
+namespace webrtc {
 
 enum class ThreadPriority {
   kLow = 1,
@@ -71,7 +71,7 @@ class PlatformThread final {
   // For a PlatformThread that's been spawned joinable, the destructor suspends
   // the calling thread until the created thread exits unless the thread has
   // already exited.
-  virtual ~PlatformThread();
+  ~PlatformThread();
 
   // Finalizes any allocated resources.
   // For a PlatformThread that's been spawned joinable, Finalize() suspends
@@ -116,6 +116,16 @@ class PlatformThread final {
   bool joinable_ = false;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::PlatformThread;
+using ::webrtc::ThreadAttributes;
+using ::webrtc::ThreadPriority;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_PLATFORM_THREAD_H_

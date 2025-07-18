@@ -13,6 +13,8 @@
 
 #include <memory>
 
+#include "api/audio/audio_frame.h"
+#include "api/rtp_sender_interface.h"
 #include "call/audio_send_stream.h"
 #include "test/gmock.h"
 

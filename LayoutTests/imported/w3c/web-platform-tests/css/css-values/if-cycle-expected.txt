@@ -49,7 +49,7 @@ FAIL CSS Values and Units Test: CSS if() function cycles 27 assert_equals: "if(s
 FAIL CSS Values and Units Test: CSS if() function cycles 28 assert_equals: "if(style(--x: attr(data-foo type(*))): true_value;
           else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--x: attr(data-foo type(*))): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS if() function cycles 29 assert_equals: "if(style(--x: attr(data-foo, var(--y))): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got ""
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got ""
 FAIL CSS Values and Units Test: CSS if() function cycles 30 assert_equals: "if(style(--x: 0): value1; style(--prop): value2)" should be substituted to "value1". expected "value1" but got "if(style(--x: 0): value1; style(--prop): value2)"
 FAIL CSS Values and Units Test: CSS if() function cycles 31 assert_equals: "if(style(--x: 3): value1;
           style(--y: 3): value2;

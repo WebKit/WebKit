@@ -14,15 +14,32 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/memory/memory.h"
+#include "api/audio_options.h"
+#include "api/candidate.h"
+#include "api/data_channel_interface.h"
+#include "api/environment/environment.h"
+#include "api/jsep.h"
+#include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
+#include "api/rtp_receiver_interface.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
-#include "api/test/time_controller.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "pc/test/frame_generator_capturer_video_track_source.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 #include "test/create_frame_generator_capturer.h"
+#include "test/frame_generator_capturer.h"
 #include "test/logging/log_writer.h"
 
 namespace webrtc {
@@ -37,7 +54,8 @@ class PeerScenarioClient {
   struct CallbackHandlers {
     std::vector<std::function<void(PeerConnectionInterface::SignalingState)>>
         on_signaling_change;
-    std::vector<std::function<void(rtc::scoped_refptr<DataChannelInterface>)>>
+    std::vector<
+        std::function<void(webrtc::scoped_refptr<DataChannelInterface>)>>
         on_data_channel;
     std::vector<std::function<void()>> on_renegotiation_needed;
     std::vector<
@@ -56,16 +74,17 @@ class PeerScenarioClient {
                                    int,
                                    const std::string&)>>
         on_ice_candidate_error;
-    std::vector<std::function<void(const std::vector<cricket::Candidate>&)>>
+    std::vector<std::function<void(const std::vector<webrtc::Candidate>&)>>
         on_ice_candidates_removed;
     std::vector<std::function<void(
-        rtc::scoped_refptr<RtpReceiverInterface>,
-        const std::vector<rtc::scoped_refptr<MediaStreamInterface>>&)>>
+        webrtc::scoped_refptr<RtpReceiverInterface>,
+        const std::vector<webrtc::scoped_refptr<MediaStreamInterface>>&)>>
         on_add_track;
     std::vector<
-        std::function<void(rtc::scoped_refptr<RtpTransceiverInterface>)>>
+        std::function<void(webrtc::scoped_refptr<RtpTransceiverInterface>)>>
         on_track;
-    std::vector<std::function<void(rtc::scoped_refptr<RtpReceiverInterface>)>>
+    std::vector<
+        std::function<void(webrtc::scoped_refptr<RtpReceiverInterface>)>>
         on_remove_track;
   };
   struct Config {
@@ -100,21 +119,21 @@ class PeerScenarioClient {
   };
 
   struct AudioSendTrack {
-    rtc::scoped_refptr<AudioTrackInterface> track;
-    rtc::scoped_refptr<RtpSenderInterface> sender;
+    scoped_refptr<AudioTrackInterface> track;
+    scoped_refptr<RtpSenderInterface> sender;
   };
 
   struct VideoSendTrack {
     // Raw pointer to the capturer owned by `source`.
     FrameGeneratorCapturer* capturer;
-    rtc::scoped_refptr<FrameGeneratorCapturerVideoTrackSource> source;
-    rtc::scoped_refptr<VideoTrackInterface> track;
-    rtc::scoped_refptr<RtpSenderInterface> sender;
+    scoped_refptr<FrameGeneratorCapturerVideoTrackSource> source;
+    scoped_refptr<VideoTrackInterface> track;
+    scoped_refptr<RtpSenderInterface> sender;
   };
 
   PeerScenarioClient(
       NetworkEmulationManager* net,
-      rtc::Thread* signaling_thread,
+      Thread* signaling_thread,
       std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
       Config config);
 
@@ -123,19 +142,18 @@ class PeerScenarioClient {
     RTC_DCHECK_RUN_ON(signaling_thread_);
     return peer_connection_.get();
   }
-  rtc::Thread* thread() { return signaling_thread_; }
+  Thread* thread() { return signaling_thread_; }
   Clock* clock() { return Clock::GetRealTimeClock(); }
 
   // Returns the endpoint created from the EmulatedEndpointConfig with the same
   // index in PeerScenarioClient::config.
   EmulatedEndpoint* endpoint(int index = 0);
 
-  AudioSendTrack CreateAudio(std::string track_id,
-                             cricket::AudioOptions options);
+  AudioSendTrack CreateAudio(std::string track_id, AudioOptions options);
   VideoSendTrack CreateVideo(std::string track_id, VideoSendTrackConfig config);
 
   void AddVideoReceiveSink(std::string track_id,
-                           rtc::VideoSinkInterface<VideoFrame>* video_sink);
+                           VideoSinkInterface<VideoFrame>* video_sink);
 
   CallbackHandlers* handlers() { return &handlers_; }
 
@@ -158,20 +176,20 @@ class PeerScenarioClient {
   void AddIceCandidate(std::unique_ptr<IceCandidateInterface> candidate);
 
  private:
+  const Environment env_;
   const std::map<int, EmulatedEndpoint*> endpoints_;
-  TaskQueueFactory* const task_queue_factory_;
-  rtc::Thread* const signaling_thread_;
+  Thread* const signaling_thread_;
   const std::unique_ptr<LogWriterFactoryInterface> log_writer_factory_;
-  const std::unique_ptr<rtc::Thread> worker_thread_;
+  const std::unique_ptr<Thread> worker_thread_;
   CallbackHandlers handlers_ RTC_GUARDED_BY(signaling_thread_);
   const std::unique_ptr<PeerConnectionObserver> observer_;
-  std::map<std::string, std::vector<rtc::VideoSinkInterface<VideoFrame>*>>
+  std::map<std::string, std::vector<VideoSinkInterface<VideoFrame>*>>
       track_id_to_video_sinks_ RTC_GUARDED_BY(signaling_thread_);
   std::list<std::unique_ptr<IceCandidateInterface>> pending_ice_candidates_
       RTC_GUARDED_BY(signaling_thread_);
 
-  rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
-  rtc::scoped_refptr<PeerConnectionInterface> peer_connection_
+  scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
+  scoped_refptr<PeerConnectionInterface> peer_connection_
       RTC_GUARDED_BY(signaling_thread_);
 };
 

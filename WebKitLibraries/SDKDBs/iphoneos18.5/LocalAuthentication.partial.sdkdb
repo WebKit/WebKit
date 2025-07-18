@@ -1,0 +1,898 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LAAccessControlOperationCreateItem"},
+      {"access": "public", "name": "LAAccessControlOperationUseItem"},
+      {"access": "public", "name": "LAAccessControlOperationCreateKey"},
+      {"access": "public", "name": "LAAccessControlOperationUseKeySign"},
+      {"access": "public", "introduced": "10", "name": "LAAccessControlOperationUseKeyDecrypt"},
+      {"access": "public", "introduced": "10", "name": "LAAccessControlOperationUseKeyKeyExchange"}
+     ],
+     "introduced": "9",
+     "name": "LAAccessControlOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "11.2", "name": "LABiometryTypeNone"},
+      {"access": "public", "introduced": "11", "name": "LABiometryNone"},
+      {"access": "public", "name": "LABiometryTypeTouchID"},
+      {"access": "public", "name": "LABiometryTypeFaceID"},
+      {"access": "public", "introduced": "17", "name": "LABiometryTypeOpticID"}
+     ],
+     "introduced": "11",
+     "name": "LABiometryType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LACompanionTypeWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LACompanionTypeMac"}
+     ],
+     "introduced": "18",
+     "name": "LACompanionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LACredentialTypeApplicationPassword"},
+      {"access": "public", "introduced": "13.4", "name": "LACredentialTypeSmartCardPIN"}
+     ],
+     "introduced": "9",
+     "name": "LACredentialType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LAErrorAuthenticationFailed"},
+      {"access": "public", "name": "LAErrorUserCancel"},
+      {"access": "public", "name": "LAErrorUserFallback"},
+      {"access": "public", "name": "LAErrorSystemCancel"},
+      {"access": "public", "name": "LAErrorPasscodeNotSet"},
+      {"access": "public", "introduced": "8", "name": "LAErrorTouchIDNotAvailable"},
+      {"access": "public", "introduced": "8", "name": "LAErrorTouchIDNotEnrolled"},
+      {"access": "public", "introduced": "9", "name": "LAErrorTouchIDLockout"},
+      {"access": "public", "introduced": "9", "name": "LAErrorAppCancel"},
+      {"access": "public", "introduced": "9", "name": "LAErrorInvalidContext"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryNotAvailable"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryNotEnrolled"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryLockout"},
+      {"access": "public", "introduced": "8", "name": "LAErrorNotInteractive"},
+      {"access": "public", "name": "LAErrorWatchNotAvailable", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAErrorCompanionNotAvailable"},
+      {"access": "public", "name": "LAErrorBiometryNotPaired", "unavailable": true},
+      {"access": "public", "name": "LAErrorBiometryDisconnected", "unavailable": true},
+      {"access": "public", "name": "LAErrorInvalidDimensions", "unavailable": true}
+     ],
+     "introduced": "8",
+     "name": "LAError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometrics"},
+      {"access": "public", "introduced": "9", "name": "LAPolicyDeviceOwnerAuthentication"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAPolicyDeviceOwnerAuthenticationWithCompanion"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometricsOrWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithWristDetection", "unavailable": true}
+     ],
+     "introduced": "8",
+     "name": "LAPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LARightStateUnknown"},
+      {"access": "public", "name": "LARightStateAuthorizing"},
+      {"access": "public", "name": "LARightStateAuthorized"},
+      {"access": "public", "name": "LARightStateNotAuthorized"}
+     ],
+     "introduced": "16",
+     "name": "LARightState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "8.3", "kind": "variable", "linkage": "exported", "name": "_LAErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_LATouchIDAuthenticationMaximumAllowableReuseDuration"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "biometryRequirementWithFallback:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAAuthenticationRequirement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRequirement", "name": "defaultRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "biometryRequirement", "name": "biometryRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "biometryCurrentSetRequirement", "name": "biometryCurrentSetRequirement"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LABiometryFallbackRequirement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRequirement", "name": "defaultRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "devicePasscodeRequirement", "name": "devicePasscodeRequirement"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canEvaluatePolicy:error:"},
+      {"access": "public", "introduced": "8", "name": "evaluatePolicy:localizedReason:reply:"},
+      {"access": "public", "introduced": "9", "name": "invalidate"},
+      {"access": "public", "introduced": "9", "name": "setCredential:type:"},
+      {"access": "public", "introduced": "9", "name": "isCredentialSet:"},
+      {"access": "public", "introduced": "9", "name": "evaluateAccessControl:operation:localizedReason:reply:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "LAContext",
+     "properties": [
+      {"access": "public", "getter": "localizedFallbackTitle", "introduced": "8", "name": "localizedFallbackTitle", "setter": "setLocalizedFallbackTitle:"},
+      {"access": "public", "getter": "maxBiometryFailures", "introduced": "8.3", "name": "maxBiometryFailures", "setter": "setMaxBiometryFailures:"},
+      {"access": "public", "getter": "localizedCancelTitle", "introduced": "10", "name": "localizedCancelTitle", "setter": "setLocalizedCancelTitle:"},
+      {"access": "public", "getter": "touchIDAuthenticationAllowableReuseDuration", "introduced": "9", "name": "touchIDAuthenticationAllowableReuseDuration", "setter": "setTouchIDAuthenticationAllowableReuseDuration:"},
+      {"access": "public", "getter": "localizedReason", "introduced": "11", "name": "localizedReason", "setter": "setLocalizedReason:"},
+      {"access": "public", "getter": "interactionNotAllowed", "introduced": "11", "name": "interactionNotAllowed", "setter": "setInteractionNotAllowed:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "introduced": "11", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "evaluatedPolicyDomainState", "introduced": "9", "name": "evaluatedPolicyDomainState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "domainState", "introduced": "18", "name": "domainState"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometry", "name": "biometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "companion", "introduced": "18", "name": "companion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainStateBiometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "stateHashForCompanionType:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainStateCompanion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableCompanionTypes", "name": "availableCompanionTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "currentUser", "name": "currentUser"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanism",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUsable", "name": "isUsable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedName", "name": "localizedName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "iconSystemName", "name": "iconSystemName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismBiometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEnrolled", "name": "isEnrolled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLockedOut", "name": "isLockedOut"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "builtInSensorInaccessible", "name": "builtInSensorInaccessible"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismCompanion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismUserPassword",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSet", "name": "isSet"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometry", "name": "biometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userPassword", "name": "userPassword"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "companions", "introduced": "18", "name": "companions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allMechanisms", "name": "allMechanisms"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPersistedRight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "key", "name": "key"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "secret", "name": "secret"}
+     ],
+     "super": "LARight"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "signData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canSignUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "decryptData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canDecryptUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "exchangeKeysWithPublicKey:secKeyAlgorithm:secKeyParameters:completion:"},
+      {"access": "public", "name": "canExchangeKeysUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPrivateKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "publicKey", "name": "publicKey"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "exportBytesWithCompletion:"},
+      {"access": "public", "name": "encryptData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canEncryptUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "verifyData:signature:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canVerifyUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPublicKey",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRequirement:"},
+      {"access": "public", "name": "authorizeWithLocalizedReason:completion:"},
+      {"access": "public", "name": "checkCanAuthorizeWithCompletion:"},
+      {"access": "public", "name": "deauthorizeWithCompletion:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LARight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "getter": "tag", "name": "tag", "setter": "setTag:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "rightForIdentifier:completion:"},
+      {"access": "public", "name": "saveRight:identifier:completion:"},
+      {"access": "public", "name": "saveRight:identifier:secret:completion:"},
+      {"access": "public", "name": "removeRight:completion:"},
+      {"access": "public", "name": "removeRightForIdentifier:completion:"},
+      {"access": "public", "name": "removeAllRightsWithCompletion:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LARightStore",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedStore", "name": "sharedStore"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "loadDataWithCompletion:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LASecret",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "environment:stateDidChangeFromOldState:", "optional": true}
+     ],
+     "introduced": "18",
+     "name": "LAEnvironmentObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LAAccessControlOperation"},
+    {"access": "public", "name": "LABiometryType"},
+    {"access": "public", "name": "LACompanionType"},
+    {"access": "public", "name": "LACredentialType"},
+    {"access": "public", "name": "LAError"},
+    {"access": "public", "name": "LAPolicy"},
+    {"access": "public", "name": "LARightState"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LAAccessControlOperationCreateItem"},
+      {"access": "public", "name": "LAAccessControlOperationUseItem"},
+      {"access": "public", "name": "LAAccessControlOperationCreateKey"},
+      {"access": "public", "name": "LAAccessControlOperationUseKeySign"},
+      {"access": "public", "introduced": "10", "name": "LAAccessControlOperationUseKeyDecrypt"},
+      {"access": "public", "introduced": "10", "name": "LAAccessControlOperationUseKeyKeyExchange"}
+     ],
+     "introduced": "9",
+     "name": "LAAccessControlOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "11.2", "name": "LABiometryTypeNone"},
+      {"access": "public", "introduced": "11", "name": "LABiometryNone"},
+      {"access": "public", "name": "LABiometryTypeTouchID"},
+      {"access": "public", "name": "LABiometryTypeFaceID"},
+      {"access": "public", "introduced": "17", "name": "LABiometryTypeOpticID"}
+     ],
+     "introduced": "11",
+     "name": "LABiometryType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LACompanionTypeWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LACompanionTypeMac"}
+     ],
+     "introduced": "18",
+     "name": "LACompanionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LACredentialTypeApplicationPassword"},
+      {"access": "public", "introduced": "13.4", "name": "LACredentialTypeSmartCardPIN"}
+     ],
+     "introduced": "9",
+     "name": "LACredentialType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LAErrorAuthenticationFailed"},
+      {"access": "public", "name": "LAErrorUserCancel"},
+      {"access": "public", "name": "LAErrorUserFallback"},
+      {"access": "public", "name": "LAErrorSystemCancel"},
+      {"access": "public", "name": "LAErrorPasscodeNotSet"},
+      {"access": "public", "introduced": "8", "name": "LAErrorTouchIDNotAvailable"},
+      {"access": "public", "introduced": "8", "name": "LAErrorTouchIDNotEnrolled"},
+      {"access": "public", "introduced": "9", "name": "LAErrorTouchIDLockout"},
+      {"access": "public", "introduced": "9", "name": "LAErrorAppCancel"},
+      {"access": "public", "introduced": "9", "name": "LAErrorInvalidContext"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryNotAvailable"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryNotEnrolled"},
+      {"access": "public", "introduced": "11", "name": "LAErrorBiometryLockout"},
+      {"access": "public", "introduced": "8", "name": "LAErrorNotInteractive"},
+      {"access": "public", "name": "LAErrorWatchNotAvailable", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAErrorCompanionNotAvailable"},
+      {"access": "public", "name": "LAErrorBiometryNotPaired", "unavailable": true},
+      {"access": "public", "name": "LAErrorBiometryDisconnected", "unavailable": true},
+      {"access": "public", "name": "LAErrorInvalidDimensions", "unavailable": true}
+     ],
+     "introduced": "8",
+     "name": "LAError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometrics"},
+      {"access": "public", "introduced": "9", "name": "LAPolicyDeviceOwnerAuthentication"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAPolicyDeviceOwnerAuthenticationWithCompanion"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometricsOrWatch", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion"},
+      {"access": "public", "name": "LAPolicyDeviceOwnerAuthenticationWithWristDetection", "unavailable": true}
+     ],
+     "introduced": "8",
+     "name": "LAPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LARightStateUnknown"},
+      {"access": "public", "name": "LARightStateAuthorizing"},
+      {"access": "public", "name": "LARightStateAuthorized"},
+      {"access": "public", "name": "LARightStateNotAuthorized"}
+     ],
+     "introduced": "16",
+     "name": "LARightState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "8.3", "kind": "variable", "linkage": "exported", "name": "_LAErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_LATouchIDAuthenticationMaximumAllowableReuseDuration"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "biometryRequirementWithFallback:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAAuthenticationRequirement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRequirement", "name": "defaultRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "biometryRequirement", "name": "biometryRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "biometryCurrentSetRequirement", "name": "biometryCurrentSetRequirement"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LABiometryFallbackRequirement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRequirement", "name": "defaultRequirement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "devicePasscodeRequirement", "name": "devicePasscodeRequirement"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canEvaluatePolicy:error:"},
+      {"access": "public", "introduced": "8", "name": "evaluatePolicy:localizedReason:reply:"},
+      {"access": "public", "introduced": "9", "name": "invalidate"},
+      {"access": "public", "introduced": "9", "name": "setCredential:type:"},
+      {"access": "public", "introduced": "9", "name": "isCredentialSet:"},
+      {"access": "public", "introduced": "9", "name": "evaluateAccessControl:operation:localizedReason:reply:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "LAContext",
+     "properties": [
+      {"access": "public", "getter": "localizedFallbackTitle", "introduced": "8", "name": "localizedFallbackTitle", "setter": "setLocalizedFallbackTitle:"},
+      {"access": "public", "getter": "maxBiometryFailures", "introduced": "8.3", "name": "maxBiometryFailures", "setter": "setMaxBiometryFailures:"},
+      {"access": "public", "getter": "localizedCancelTitle", "introduced": "10", "name": "localizedCancelTitle", "setter": "setLocalizedCancelTitle:"},
+      {"access": "public", "getter": "touchIDAuthenticationAllowableReuseDuration", "introduced": "9", "name": "touchIDAuthenticationAllowableReuseDuration", "setter": "setTouchIDAuthenticationAllowableReuseDuration:"},
+      {"access": "public", "getter": "localizedReason", "introduced": "11", "name": "localizedReason", "setter": "setLocalizedReason:"},
+      {"access": "public", "getter": "interactionNotAllowed", "introduced": "11", "name": "interactionNotAllowed", "setter": "setInteractionNotAllowed:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "introduced": "11", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "evaluatedPolicyDomainState", "introduced": "9", "name": "evaluatedPolicyDomainState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "domainState", "introduced": "18", "name": "domainState"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometry", "name": "biometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "companion", "introduced": "18", "name": "companion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainStateBiometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "stateHashForCompanionType:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LADomainStateCompanion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableCompanionTypes", "name": "availableCompanionTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "currentUser", "name": "currentUser"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanism",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUsable", "name": "isUsable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedName", "name": "localizedName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "iconSystemName", "name": "iconSystemName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismBiometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometryType", "name": "biometryType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEnrolled", "name": "isEnrolled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLockedOut", "name": "isLockedOut"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "builtInSensorInaccessible", "name": "builtInSensorInaccessible"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismCompanion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateHash", "name": "stateHash"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentMechanismUserPassword",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSet", "name": "isSet"}
+     ],
+     "super": "LAEnvironmentMechanism"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "LAEnvironmentState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "biometry", "name": "biometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userPassword", "name": "userPassword"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "companions", "introduced": "18", "name": "companions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allMechanisms", "name": "allMechanisms"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPersistedRight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "key", "name": "key"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "secret", "name": "secret"}
+     ],
+     "super": "LARight"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "signData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canSignUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "decryptData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canDecryptUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "exchangeKeysWithPublicKey:secKeyAlgorithm:secKeyParameters:completion:"},
+      {"access": "public", "name": "canExchangeKeysUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPrivateKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "publicKey", "name": "publicKey"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "exportBytesWithCompletion:"},
+      {"access": "public", "name": "encryptData:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canEncryptUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "verifyData:signature:secKeyAlgorithm:completion:"},
+      {"access": "public", "name": "canVerifyUsingSecKeyAlgorithm:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LAPublicKey",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRequirement:"},
+      {"access": "public", "name": "authorizeWithLocalizedReason:completion:"},
+      {"access": "public", "name": "checkCanAuthorizeWithCompletion:"},
+      {"access": "public", "name": "deauthorizeWithCompletion:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LARight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "getter": "tag", "name": "tag", "setter": "setTag:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "rightForIdentifier:completion:"},
+      {"access": "public", "name": "saveRight:identifier:completion:"},
+      {"access": "public", "name": "saveRight:identifier:secret:completion:"},
+      {"access": "public", "name": "removeRight:completion:"},
+      {"access": "public", "name": "removeRightForIdentifier:completion:"},
+      {"access": "public", "name": "removeAllRightsWithCompletion:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LARightStore",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedStore", "name": "sharedStore"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "loadDataWithCompletion:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "LASecret",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "environment:stateDidChangeFromOldState:", "optional": true}
+     ],
+     "introduced": "18",
+     "name": "LAEnvironmentObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LAAccessControlOperation"},
+    {"access": "public", "name": "LABiometryType"},
+    {"access": "public", "name": "LACompanionType"},
+    {"access": "public", "name": "LACredentialType"},
+    {"access": "public", "name": "LAError"},
+    {"access": "public", "name": "LAPolicy"},
+    {"access": "public", "name": "LARightState"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC11Observation10Observable19LocalAuthenticationMc"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC7Combine16ObservableObject19LocalAuthenticationMc"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC11Observation10Observable19LocalAuthenticationMc"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC7Combine16ObservableObject19LocalAuthenticationMc"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

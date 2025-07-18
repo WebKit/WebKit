@@ -23,36 +23,36 @@
 #if USE(LIBWEBRTC)
 
 header: "RTCNetwork.h"
-enum class WebKit::RTC::Network::EcnMarking : int {
+enum class WebKit::WebRTCNetwork::EcnMarking : int {
     kNotEct,
     kEct1,
     kEct0,
     kCe
 }
 
-[CustomHeader] struct WebKit::RTC::Network::IPAddress {
-    Variant<WebKit::RTC::Network::IPAddress::UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
+[CustomHeader] struct WebKit::WebRTCNetwork::IPAddress {
+    Variant<WebKit::WebRTCNetwork::IPAddress::UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
 };
 
-[Nested] struct WebKit::RTC::Network::IPAddress::UnspecifiedFamily {
+[Nested] struct WebKit::WebRTCNetwork::IPAddress::UnspecifiedFamily {
 };
 
-[CustomHeader] struct WebKit::RTC::Network::InterfaceAddress {
-    WebKit::RTC::Network::IPAddress address;
+[CustomHeader] struct WebKit::WebRTCNetwork::InterfaceAddress {
+    WebKit::WebRTCNetwork::IPAddress address;
     int ipv6Flags;
 };
 
-[CustomHeader] struct WebKit::RTC::Network::SocketAddress {
+[CustomHeader] struct WebKit::WebRTCNetwork::SocketAddress {
     uint16_t port;
     int scopeID;
     Vector<char> hostname;
-    std::optional<WebKit::RTC::Network::IPAddress> ipAddress;
+    std::optional<WebKit::WebRTCNetwork::IPAddress> ipAddress;
 };
 
 struct WebKit::RTCNetwork {
     Vector<char> name;
     Vector<char> description;
-    WebKit::RTC::Network::IPAddress prefix;
+    WebKit::WebRTCNetwork::IPAddress prefix;
     int prefixLength;
     int type;
     uint16_t id;
@@ -60,7 +60,7 @@ struct WebKit::RTCNetwork {
     bool active;
     bool ignored;
     int scopeID;
-    Vector<WebKit::RTC::Network::InterfaceAddress> ips;
+    Vector<WebKit::WebRTCNetwork::InterfaceAddress> ips;
 };
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)

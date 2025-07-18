@@ -120,7 +120,7 @@ NetworkDataTask::~NetworkDataTask()
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
     m_failureScheduled = true;
-    RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, type] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, type] {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;

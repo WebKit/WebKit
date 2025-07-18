@@ -29,6 +29,7 @@
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"

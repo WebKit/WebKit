@@ -91,7 +91,7 @@ static inline void processRenderSVGInlineText(const RenderSVGInlineText& text, u
 
     // FIXME: This is not a complete whitespace collapsing implementation; it doesn't handle newlines or tabs.
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = string[i];
+        char16_t character = string[i];
         if (character == ' ' && lastCharacterWasSpace)
             continue;
 

@@ -1,0 +1,15 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+window?.testRunner?.dumpAsText();
+function createSVGPathSeg() {
+    svgvar.pathSegList.appendItem(svgvar.createSVGPathSegCurvetoCubicRel());
+}
+</script>
+<body onload=createSVGPathSeg()>
+</form>
+</template>
+<svg k3="0">
+<marker id="markervar" in="Texture">
+<circle r="29px" />
+</marker>
+<path id="svgvar" d="M 0 1 stroke-dashoffset="3" marker-end="url(#markervar)" />

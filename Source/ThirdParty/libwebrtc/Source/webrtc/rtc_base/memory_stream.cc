@@ -14,16 +14,19 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/stream.h"
 
-namespace rtc {
+namespace webrtc {
 
 StreamState MemoryStream::GetState() const {
   return SS_OPEN;
 }
 
-StreamResult MemoryStream::Read(rtc::ArrayView<uint8_t> buffer,
+StreamResult MemoryStream::Read(ArrayView<uint8_t> buffer,
                                 size_t& bytes_read,
                                 int& error) {
   if (seek_position_ >= data_length_) {
@@ -43,7 +46,7 @@ StreamResult MemoryStream::Read(rtc::ArrayView<uint8_t> buffer,
   return SR_SUCCESS;
 }
 
-StreamResult MemoryStream::Write(rtc::ArrayView<const uint8_t> buffer,
+StreamResult MemoryStream::Write(ArrayView<const uint8_t> buffer,
                                  size_t& bytes_written,
                                  int& error) {
   size_t available = buffer_length_ - seek_position_;
@@ -141,4 +144,4 @@ StreamResult MemoryStream::DoReserve(size_t size, int* error) {
   return SR_ERROR;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

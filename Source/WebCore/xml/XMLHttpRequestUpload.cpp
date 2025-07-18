@@ -46,7 +46,7 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
 
 void XMLHttpRequestUpload::eventListenersDidChange()
 {
-    m_request.updateHasRelevantEventListener();
+    Ref { m_request.get() }->updateHasRelevantEventListener();
 }
 
 bool XMLHttpRequestUpload::hasRelevantEventListener() const

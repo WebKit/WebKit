@@ -61,7 +61,7 @@ public:
 private:
     StorageAreaIdentifier addStorageArea(Ref<MemoryStorageArea>&&, StorageNamespaceIdentifier);
 
-    CheckedRef<StorageAreaRegistry> m_registry;
+    const CheckedRef<StorageAreaRegistry> m_registry;
     HashMap<StorageAreaIdentifier, Ref<MemoryStorageArea>> m_storageAreas;
     HashMap<StorageNamespaceIdentifier, StorageAreaIdentifier> m_storageAreasByNamespace;
 };

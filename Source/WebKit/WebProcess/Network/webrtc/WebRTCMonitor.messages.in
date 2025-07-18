@@ -27,7 +27,7 @@
     DispatchedTo=WebContent
 ]
 messages -> WebRTCMonitor {
-    void NetworksChanged(Vector<WebKit::RTCNetwork> networks, WebKit::RTC::Network::IPAddress defaultIPV4Address, WebKit::RTC::Network::IPAddress defaultIPV6Address)
+    void NetworksChanged(Vector<WebKit::RTCNetwork> networks, WebKit::WebRTCNetwork::IPAddress defaultIPV4Address, WebKit::WebRTCNetwork::IPAddress defaultIPV6Address)
 }
 
 #endif // USE(LIBWEBRTC)

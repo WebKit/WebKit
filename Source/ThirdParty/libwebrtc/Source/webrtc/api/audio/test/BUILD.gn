@@ -23,7 +23,10 @@ if (rtc_include_tests) {
     deps = [
       "..:aec3_config",
       "..:audio_frame_api",
+      "../..:array_view",
       "../../../modules/audio_processing:aec3_config_json",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:macromagic",
       "../../../test:test_support",
     ]
   }

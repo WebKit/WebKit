@@ -1,16 +1,13 @@
 EventTargetFactory.cpp
 HTMLNames.cpp
 MathMLNames.cpp
-Modules/WebGPU/GPUQueue.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
-Modules/async-clipboard/NavigatorClipboard.cpp
 Modules/audiosession/NavigatorAudioSession.cpp
 Modules/beacon/NavigatorBeacon.cpp
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/contact-picker/NavigatorContacts.cpp
-Modules/cookie-consent/NavigatorCookieConsent.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
 Modules/encryptedmedia/MediaKeySystemController.cpp
 Modules/gamepad/NavigatorGamepad.cpp
@@ -23,7 +20,6 @@ Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/UserMediaController.h
-Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
 Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
@@ -137,6 +133,5 @@ testing/InternalSettings.cpp
 testing/Internals.cpp
 testing/cocoa/WebArchiveDumpSupport.mm
 workers/WorkerGlobalScope.cpp
-workers/WorkerMessagingProxy.cpp
 workers/WorkerThread.cpp
 workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.cpp

@@ -20,7 +20,7 @@ namespace {
 
 EncodedImage CreateEncodedImageOfSizeN(size_t n) {
   EncodedImage image;
-  rtc::scoped_refptr<EncodedImageBuffer> buffer = EncodedImageBuffer::Create(n);
+  scoped_refptr<EncodedImageBuffer> buffer = EncodedImageBuffer::Create(n);
   for (size_t i = 0; i < n; ++i) {
     buffer->data()[i] = static_cast<uint8_t>(i);
   }

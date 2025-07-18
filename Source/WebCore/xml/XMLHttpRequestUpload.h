@@ -38,8 +38,8 @@ class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
 public:
     explicit XMLHttpRequestUpload(XMLHttpRequest&);
 
-    void ref() { m_request.ref(); }
-    void deref() { m_request.deref(); }
+    void ref() { m_request->ref(); }
+    void deref() { m_request->deref(); }
 
     void dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total);
 
@@ -52,9 +52,9 @@ private:
     void derefEventTarget() final { deref(); }
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::XMLHttpRequestUpload; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_request.scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_request->scriptExecutionContext(); }
 
-    XMLHttpRequest& m_request;
+    WeakRef<XMLHttpRequest, WeakPtrImplWithEventTargetData> m_request;
 };
 
 WebCoreOpaqueRoot root(XMLHttpRequestUpload*);

@@ -34,8 +34,7 @@ class FakeDecoder : public VideoDecoder {
 
   bool Configure(const Settings& settings) override;
 
-  int32_t Decode(const EncodedImage& input,
-                 int64_t render_time_ms) override;
+  int32_t Decode(const EncodedImage& input, int64_t render_time_ms) override;
 
   int32_t RegisterDecodeCompleteCallback(
       DecodedImageCallback* callback) override;
@@ -62,8 +61,7 @@ class FakeH264Decoder : public FakeDecoder {
  public:
   virtual ~FakeH264Decoder() {}
 
-  int32_t Decode(const EncodedImage& input,
-                 int64_t render_time_ms) override;
+  int32_t Decode(const EncodedImage& input, int64_t render_time_ms) override;
 };
 
 }  // namespace test

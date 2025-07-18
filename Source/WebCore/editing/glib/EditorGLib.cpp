@@ -29,6 +29,7 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "CachedImage.h"
+#include "ContainerNodeInlines.h"
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "HTMLEmbedElement.h"

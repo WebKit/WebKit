@@ -102,7 +102,7 @@ public:
 
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
 
-    CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
+    CGRect pluginBoundsForAnnotation(PDFAnnotation*) const final;
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 
@@ -170,7 +170,7 @@ private:
     bool drawsFindOverlay() const final { return true; }
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final { return { }; }
-    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) final { return { }; }
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) final { return { }; }
 
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
@@ -194,8 +194,8 @@ private:
     RetainPtr<CALayer> m_horizontalScrollbarLayer;
     RetainPtr<CALayer> m_verticalScrollbarLayer;
     RetainPtr<CALayer> m_scrollCornerLayer;
-    RetainPtr<PDFLayerController> m_pdfLayerController;
-    RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
+    const RetainPtr<PDFLayerController> m_pdfLayerController;
+    const RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
     
     RefPtr<PDFPluginPasswordField> m_passwordField;
 

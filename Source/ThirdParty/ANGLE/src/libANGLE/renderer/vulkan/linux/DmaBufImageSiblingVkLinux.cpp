@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/vulkan/linux/DmaBufImageSiblingVkLinux.h"
 
 #include "common/linux/dma_buf_utils.h"
+#include "common/system_utils.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
@@ -282,7 +283,8 @@ angle::Result GetAllocateInfo(const egl::AttributeMap &attribs,
         bool areFdsIdentical = true;
         for (uint32_t plane = 1; plane < planeCount; ++plane)
         {
-            if (attribs.getAsInt(kFds[plane]) != attribs.getAsInt(kFds[0]))
+            if (!angle::IsSameFileDescriptor(attribs.getAsInt(kFds[plane]),
+                                             attribs.getAsInt(kFds[0])))
             {
                 areFdsIdentical = false;
                 break;

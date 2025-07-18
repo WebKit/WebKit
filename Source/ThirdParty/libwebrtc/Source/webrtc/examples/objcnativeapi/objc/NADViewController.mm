@@ -23,7 +23,8 @@
 
 @property(nonatomic) RTC_OBJC_TYPE(RTCCameraVideoCapturer) * capturer;
 @property(nonatomic) RTC_OBJC_TYPE(RTCCameraPreviewView) * localVideoView;
-@property(nonatomic) __kindof UIView<RTC_OBJC_TYPE(RTCVideoRenderer)> *remoteVideoView;
+@property(nonatomic)
+    __kindof UIView<RTC_OBJC_TYPE(RTCVideoRenderer)> *remoteVideoView;
 @property(nonatomic) UIButton *callButton;
 @property(nonatomic) UIButton *hangUpButton;
 
@@ -46,18 +47,22 @@
 - (void)loadView {
   _view = [[UIView alloc] initWithFrame:CGRectZero];
 
-  _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
+  _remoteVideoView =
+      [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
   _remoteVideoView.translatesAutoresizingMaskIntoConstraints = NO;
   [_view addSubview:_remoteVideoView];
 
-  _localVideoView = [[RTC_OBJC_TYPE(RTCCameraPreviewView) alloc] initWithFrame:CGRectZero];
+  _localVideoView =
+      [[RTC_OBJC_TYPE(RTCCameraPreviewView) alloc] initWithFrame:CGRectZero];
   _localVideoView.translatesAutoresizingMaskIntoConstraints = NO;
   [_view addSubview:_localVideoView];
 
   _callButton = [UIButton buttonWithType:UIButtonTypeSystem];
   _callButton.translatesAutoresizingMaskIntoConstraints = NO;
   [_callButton setTitle:@"Call" forState:UIControlStateNormal];
-  [_callButton addTarget:self action:@selector(call:) forControlEvents:UIControlEventTouchUpInside];
+  [_callButton addTarget:self
+                  action:@selector(call:)
+        forControlEvents:UIControlEventTouchUpInside];
   [_view addSubview:_callButton];
 
   _hangUpButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -69,27 +74,40 @@
   [_view addSubview:_hangUpButton];
 
   UILayoutGuide *margin = _view.layoutMarginsGuide;
-  [_remoteVideoView.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor].active = YES;
-  [_remoteVideoView.topAnchor constraintEqualToAnchor:margin.topAnchor].active = YES;
-  [_remoteVideoView.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor].active = YES;
-  [_remoteVideoView.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor].active = YES;
-
-  [_localVideoView.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor constant:8.0].active =
+  [_remoteVideoView.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor]
+      .active = YES;
+  [_remoteVideoView.topAnchor constraintEqualToAnchor:margin.topAnchor].active =
       YES;
-  [_localVideoView.topAnchor constraintEqualToAnchor:margin.topAnchor constant:8.0].active = YES;
+  [_remoteVideoView.trailingAnchor
+      constraintEqualToAnchor:margin.trailingAnchor]
+      .active = YES;
+  [_remoteVideoView.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor]
+      .active = YES;
+
+  [_localVideoView.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor
+                                                constant:8.0]
+      .active = YES;
+  [_localVideoView.topAnchor constraintEqualToAnchor:margin.topAnchor
+                                            constant:8.0]
+      .active = YES;
   [_localVideoView.widthAnchor constraintEqualToConstant:60].active = YES;
   [_localVideoView.heightAnchor constraintEqualToConstant:60].active = YES;
 
-  [_callButton.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor constant:8.0].active =
-      YES;
-  [_callButton.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor constant:8.0].active = YES;
+  [_callButton.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor
+                                            constant:8.0]
+      .active = YES;
+  [_callButton.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor
+                                           constant:8.0]
+      .active = YES;
   [_callButton.widthAnchor constraintEqualToConstant:100].active = YES;
   [_callButton.heightAnchor constraintEqualToConstant:40].active = YES;
 
-  [_hangUpButton.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor constant:8.0].active =
-      YES;
-  [_hangUpButton.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor constant:8.0].active =
-      YES;
+  [_hangUpButton.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor
+                                               constant:8.0]
+      .active = YES;
+  [_hangUpButton.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor
+                                             constant:8.0]
+      .active = YES;
   [_hangUpButton.widthAnchor constraintEqualToConstant:100].active = YES;
   [_hangUpButton.heightAnchor constraintEqualToConstant:40].active = YES;
 
@@ -120,20 +138,27 @@
   int targetHeight = 480;
   int currentDiff = INT_MAX;
   NSArray<AVCaptureDeviceFormat *> *formats =
-      [RTC_OBJC_TYPE(RTCCameraVideoCapturer) supportedFormatsForDevice:selectedDevice];
+      [RTC_OBJC_TYPE(RTCCameraVideoCapturer)
+          supportedFormatsForDevice:selectedDevice];
   for (AVCaptureDeviceFormat *format in formats) {
-    CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-    FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    int diff = abs(targetWidth - dimension.width) + abs(targetHeight - dimension.height);
+    CMVideoDimensions dimension =
+        CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+    FourCharCode pixelFormat =
+        CMFormatDescriptionGetMediaSubType(format.formatDescription);
+    int diff = abs(targetWidth - dimension.width) +
+        abs(targetHeight - dimension.height);
     if (diff < currentDiff) {
       selectedFormat = format;
       currentDiff = diff;
-    } else if (diff == currentDiff && pixelFormat == [_capturer preferredOutputPixelFormat]) {
+    } else if (diff == currentDiff &&
+               pixelFormat == [_capturer preferredOutputPixelFormat]) {
       selectedFormat = format;
     }
   }
 
-  [self.capturer startCaptureWithDevice:selectedDevice format:selectedFormat fps:30];
+  [self.capturer startCaptureWithDevice:selectedDevice
+                                 format:selectedFormat
+                                    fps:30];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -131,7 +131,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     sendFrame(WTFMove(webrtcBuffer));
 }
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceCocoa::createBlackFrame(size_t  width, size_t  height)
+webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceCocoa::createBlackFrame(size_t  width, size_t  height)
 {
     return webrtc::pixelBufferToFrame(createBlackPixelBuffer(width, height).get());
 }

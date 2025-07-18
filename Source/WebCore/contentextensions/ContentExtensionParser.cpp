@@ -83,7 +83,7 @@ static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array
             domain = domain.substring(1);
         }
 
-        std::array<std::pair<UChar, ASCIILiteral>, 9> escapeTable { {
+        std::array<std::pair<char16_t, ASCIILiteral>, 9> escapeTable { {
             { '\\', "\\\\"_s },
             { '{', "\\{"_s },
             { '}', "\\}"_s },
@@ -208,9 +208,6 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
         return makeUnexpected(error);
 
     if (auto error = checkCondition("unless-frame-url"_s, getStringList, ActionCondition::UnlessFrameURL))
-        return makeUnexpected(error);
-
-    if (auto error = checkCondition("if-ancestor-subframe-url"_s, getStringList, ActionCondition::IfAncestorSubframeURL))
         return makeUnexpected(error);
 
     trigger.checkValidity();

@@ -137,7 +137,7 @@ void* prepareOSREntry(
     
     callFrame->setCodeBlock(entryCodeBlock);
     
-    void* result = entryCode->addressForCall(ArityCheckNotRequired).taggedPtr();
+    void* result = entryCode->addressForCall(ArityCheckMode::ArityCheckNotRequired).taggedPtr();
     dataLogLnIf(Options::verboseOSR(), "    Entry will succeed, going to address ", RawPointer(result));
 
     // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.

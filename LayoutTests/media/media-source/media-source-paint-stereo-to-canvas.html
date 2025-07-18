@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-paint-stereo-to-canvas</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+
+    var canvas;
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function runTest() {
+        mediaElement = video = document.createElement('video');
+        if (window.internals)
+            internals.forceStereoDecoding(mediaElement);
+
+        loader = new MediaSourceLoader('content/test-spatial-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('source.duration = loader.duration()');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        const framePromise = waitForVideoFrame(video);
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
+        await waitFor(sourceBuffer, 'update');
+        run('source.endOfStream()');
+        await waitFor(source, 'sourceended');
+        await framePromise;
+
+        canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth / 2;
+        canvas.height = video.videoHeight / 2;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById('canvases').appendChild(canvas);
+        testExpected('canvas.getContext("2d").getImageData(250, 130, 1, 1).data[0]', '0', '!=');
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div id="canvases"></canvas>
+</body>
+</html>

@@ -20,7 +20,10 @@ namespace webrtc {
 class MockAgc : public Agc {
  public:
   virtual ~MockAgc() {}
-  MOCK_METHOD(void, Process, (rtc::ArrayView<const int16_t> audio), (override));
+  MOCK_METHOD(void,
+              Process,
+              (webrtc::ArrayView<const int16_t> audio),
+              (override));
   MOCK_METHOD(bool, GetRmsErrorDb, (int* error), (override));
   MOCK_METHOD(void, Reset, (), (override));
   MOCK_METHOD(int, set_target_level_dbfs, (int level), (override));

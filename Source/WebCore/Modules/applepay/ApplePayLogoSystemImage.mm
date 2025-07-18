@@ -101,20 +101,20 @@ void ApplePayLogoSystemImage::draw(GraphicsContext& context, const FloatRect& de
     auto page = applePayLogoForStyle(m_applePayLogoStyle);
     if (!page)
         return;
-    CGContextRef cgContext = context.platformContext();
-    CGContextSaveGState(cgContext);
+    RetainPtr cgContext = context.platformContext();
+    CGContextSaveGState(cgContext.get());
     CGSize pdfSize = CGPDFPageGetBoxRect(page.get(), kCGPDFMediaBox).size;
 
     auto largestRect = largestRectWithAspectRatioInsideRect(pdfSize.width / pdfSize.height, destinationRect);
-    CGContextTranslateCTM(cgContext, largestRect.x(), largestRect.y());
+    CGContextTranslateCTM(cgContext.get(), largestRect.x(), largestRect.y());
     auto scale = largestRect.width() / pdfSize.width;
-    CGContextScaleCTM(cgContext, scale, scale);
+    CGContextScaleCTM(cgContext.get(), scale, scale);
 
-    CGContextTranslateCTM(cgContext, 0, pdfSize.height);
-    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext.get(), 0, pdfSize.height);
+    CGContextScaleCTM(cgContext.get(), 1, -1);
 
-    CGContextDrawPDFPage(cgContext, page.get());
-    CGContextRestoreGState(cgContext);
+    CGContextDrawPDFPage(cgContext.get(), page.get());
+    CGContextRestoreGState(cgContext.get());
 }
 
 } // namespace WebCore

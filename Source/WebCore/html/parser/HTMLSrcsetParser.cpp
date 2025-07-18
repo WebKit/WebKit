@@ -129,7 +129,7 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
         if (descriptor.isEmpty())
             continue;
         unsigned descriptorCharPosition = descriptor.length() - 1;
-        UChar descriptorChar = descriptor[descriptorCharPosition];
+        char16_t descriptorChar = descriptor[descriptorCharPosition];
         descriptor = descriptor.left(descriptorCharPosition);
         if (descriptorChar == 'x') {
             if (result.hasDensity() || result.hasHeight() || result.hasWidth())
@@ -214,7 +214,7 @@ Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attrib
     if (attribute.is8Bit())
         return parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.span8());
     else
-        return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.span16());
+        return parseImageCandidatesFromSrcsetAttribute<char16_t>(attribute.span16());
 }
 
 void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, ListHashSet<URL>& urls)

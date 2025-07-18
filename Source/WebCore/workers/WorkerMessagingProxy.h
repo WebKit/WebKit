@@ -100,7 +100,7 @@ private:
     
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     ScriptExecutionContextIdentifier m_loaderContextIdentifier;
-    RefPtr<WorkerInspectorProxy> m_inspectorProxy;
+    const Ref<WorkerInspectorProxy> m_inspectorProxy;
     RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
     Worker* m_workerObject;
     bool m_mayBeDestroyed { false };

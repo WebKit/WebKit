@@ -192,8 +192,8 @@ private:
     CString text(int, int) const;
     CString textAtOffset(int, TextGranularity, int&, int&) const;
     int characterAtOffset(int) const;
-    std::optional<unsigned> characterOffset(UChar, int) const;
-    std::optional<unsigned> characterIndex(UChar, unsigned) const;
+    std::optional<unsigned> characterOffset(char16_t, int) const;
+    std::optional<unsigned> characterIndex(char16_t, unsigned) const;
     IntRect textExtents(int, int, Atspi::CoordinateType) const; 
     int offsetAtPoint(const IntPoint&, Atspi::CoordinateType) const;
     IntPoint boundsForSelection(const VisibleSelection&) const;

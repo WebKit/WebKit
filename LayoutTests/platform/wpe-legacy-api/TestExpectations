@@ -1,0 +1,44 @@
+# These are the layout test expectations for the WPE port of WebKit using the legacy api.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+# Never add any tests to this file without opening a bug on bugzilla.webkit.org.
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS PASSING
+#
+# These tests are passing on WPE using the legacy API but they do not in the WPE port
+# Note: Passing tests should be on the top of the file to ensure that
+#       expected failures below are not overriden by a folder that is
+#       set to Pass to unskip it from the main expectations file and
+#       declared after the expected failure.
+#       The layout test runner evaluates the rules from top to bottom and
+#       it picks as the valid rule the last one matching.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+fast/events/touch/touch-inside-iframe-scrolled.html [ Pass ]
+fast/events/touch/send-oncancel-event.html [ Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of PASSING tests. See below where to put expected failures.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Triaged Expectations
+# * KEEP THE SECTIONS SORTED ALPHABETICALLY.
+# * ALWAYS WITH BUG ENTRIES for things like Timeout, Failure and Crash.
+#
+# For more info, check the glib/TestExpectations file
+# If unsure of where to put the expectations, add the test to the end of the file and
+# ask for triaging.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+fast/events/touch/touch-event-pageXY.html [ Skip ] # Timeout.
+fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ] # Timeout.
+fast/events/touch/touch-target-limited.html [ Skip ] # Timeout.
+fast/events/touch/multi-touch-inside-nested-iframes.html [ Skip ] # Timeout.
+fast/events/touch/multi-touch-grouped-targets.html [ Skip ] # Timeout.
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End of Triaged Expectations
+#//////////////////////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ std::vector<uint8_t> StateCookie::Serialize() {
 }
 
 std::optional<StateCookie> StateCookie::Deserialize(
-    rtc::ArrayView<const uint8_t> cookie) {
+    webrtc::ArrayView<const uint8_t> cookie) {
   if (cookie.size() != kCookieSize) {
     RTC_DLOG(LS_WARNING) << "Invalid state cookie: " << cookie.size()
                          << " bytes";

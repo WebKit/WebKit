@@ -84,7 +84,7 @@ void LoadA8ToRGBA8(const ImageLoadContext &context,
                 size_t x = 0;
 
                 // Make output writes aligned
-                for (; ((reinterpret_cast<intptr_t>(&dest[x]) & 0xF) != 0 && x < width); x++)
+                for (; x < width && (reinterpret_cast<intptr_t>(&dest[x]) & 0xF) != 0; x++)
                 {
                     dest[x] = static_cast<uint32_t>(source[x]) << 24;
                 }
@@ -702,7 +702,7 @@ void LoadRGBA8ToBGRA8(const ImageLoadContext &context,
                 size_t x = 0;
 
                 // Make output writes aligned
-                for (; ((reinterpret_cast<intptr_t>(&dest[x]) & 15) != 0) && x < width; x++)
+                for (; x < width && (reinterpret_cast<intptr_t>(&dest[x]) & 15) != 0; x++)
                 {
                     uint32_t rgba = source[x];
                     dest[x]       = (ANGLE_ROTL(rgba, 16) & 0x00ff00ff) | (rgba & 0xff00ff00);

@@ -27,9 +27,11 @@
 #include "config.h"
 #include "ActiveDOMObject.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventLoop.h"
+#include "EventTargetInlines.h"
 #include "ScriptExecutionContextInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 

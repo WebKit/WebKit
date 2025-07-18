@@ -24,6 +24,7 @@
 #include "ImageInputType.h"
 
 #include "CachedImage.h"
+#include "ContainerNodeInlines.h"
 #include "DOMFormData.h"
 #include "ElementInlines.h"
 #include "HTMLFormElement.h"

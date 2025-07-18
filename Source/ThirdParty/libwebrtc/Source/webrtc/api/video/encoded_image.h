@@ -23,6 +23,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
+#include "api/video/corruption_detection_filter_settings.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_type.h"
@@ -58,7 +59,7 @@ class RTC_EXPORT EncodedImageBuffer : public EncodedImageBufferInterface {
   static scoped_refptr<EncodedImageBuffer> Create(size_t size);
   static scoped_refptr<EncodedImageBuffer> Create(const uint8_t* data,
                                                   size_t size);
-  static scoped_refptr<EncodedImageBuffer> Create(rtc::Buffer buffer);
+  static scoped_refptr<EncodedImageBuffer> Create(Buffer buffer);
 
   const uint8_t* data() const override;
   uint8_t* data() override;
@@ -68,9 +69,9 @@ class RTC_EXPORT EncodedImageBuffer : public EncodedImageBufferInterface {
  protected:
   explicit EncodedImageBuffer(size_t size);
   EncodedImageBuffer(const uint8_t* data, size_t size);
-  explicit EncodedImageBuffer(rtc::Buffer buffer);
+  explicit EncodedImageBuffer(Buffer buffer);
 
-  rtc::Buffer buffer_;
+  Buffer buffer_;
 };
 
 // TODO(bug.webrtc.org/9378): This is a legacy api class, which is slowly being
@@ -178,8 +179,7 @@ class RTC_EXPORT EncodedImage {
     size_ = new_size;
   }
 
-  void SetEncodedData(
-      rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data) {
+  void SetEncodedData(scoped_refptr<EncodedImageBufferInterface> encoded_data) {
     encoded_data_ = encoded_data;
     size_ = encoded_data->size();
   }
@@ -189,7 +189,7 @@ class RTC_EXPORT EncodedImage {
     size_ = 0;
   }
 
-  rtc::scoped_refptr<EncodedImageBufferInterface> GetEncodedData() const {
+  scoped_refptr<EncodedImageBufferInterface> GetEncodedData() const {
     return encoded_data_;
   }
 
@@ -228,6 +228,15 @@ class RTC_EXPORT EncodedImage {
   VideoContentType contentType() const { return content_type_; }
   VideoRotation rotation() const { return rotation_; }
 
+  std::optional<CorruptionDetectionFilterSettings>
+  corruption_detection_filter_settings() const {
+    return corruption_detection_filter_settings_;
+  }
+  void set_corruption_detection_filter_settings(
+      const CorruptionDetectionFilterSettings& settings) {
+    corruption_detection_filter_settings_ = settings;
+  }
+
   uint32_t _encodedWidth = 0;
   uint32_t _encodedHeight = 0;
   // NTP time of the capture time in local timebase in milliseconds.
@@ -260,7 +269,7 @@ class RTC_EXPORT EncodedImage {
   // limits until the application indicates a change again.
   std::optional<VideoPlayoutDelay> playout_delay_;
 
-  rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data_;
+  scoped_refptr<EncodedImageBufferInterface> encoded_data_;
   size_t size_ = 0;  // Size of encoded frame data.
   uint32_t timestamp_rtp_ = 0;
   std::optional<int> simulcast_index_;
@@ -283,6 +292,12 @@ class RTC_EXPORT EncodedImage {
   // True if the frame that was encoded is a steady-state refresh frame intended
   // to improve the visual quality.
   bool is_steady_state_refresh_frame_ = false;
+
+  // Filter settings for corruption detection suggested by the encoder
+  // implementation, if any. Otherwise generic per-codec-type settings will be
+  // used.
+  std::optional<CorruptionDetectionFilterSettings>
+      corruption_detection_filter_settings_;
 };
 
 }  // namespace webrtc

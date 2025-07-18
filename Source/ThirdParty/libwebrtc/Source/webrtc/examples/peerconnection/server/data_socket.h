@@ -33,7 +33,6 @@ typedef int NativeSocket;
 #endif
 #endif
 
-
 class SocketBase {
  public:
   SocketBase() : socket_(INVALID_SOCKET) {}

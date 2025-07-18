@@ -234,10 +234,10 @@ NetEq::Operation DecisionLogic::CngOperation(
     // The waiting time for this packet will be longer than 1.5
     // times the wanted buffer delay. Apply fast-forward to cut the
     // waiting time down to the optimal.
-    noise_fast_forward_ = rtc::saturated_cast<size_t>(noise_fast_forward_ +
-                                                      excess_waiting_time_samp);
+    noise_fast_forward_ =
+        saturated_cast<size_t>(noise_fast_forward_ + excess_waiting_time_samp);
     timestamp_diff =
-        rtc::saturated_cast<int32_t>(timestamp_diff + excess_waiting_time_samp);
+        saturated_cast<int32_t>(timestamp_diff + excess_waiting_time_samp);
   }
 
   if (timestamp_diff < 0 && status.last_mode == NetEq::Mode::kRfc3389Cng) {

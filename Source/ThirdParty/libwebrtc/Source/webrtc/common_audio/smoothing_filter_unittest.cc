@@ -28,7 +28,7 @@ struct SmoothingFilterStates {
       : smoothing_filter(init_time_ms) {
     fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTime));
   }
-  rtc::ScopedFakeClock fake_clock;
+  ScopedFakeClock fake_clock;
   SmoothingFilterImpl smoothing_filter;
 };
 

@@ -109,8 +109,6 @@ void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& pr
 
 void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
 {
-    ASSERT(!m_processes.hasNullReferences());
-
     if (m_processes.add(webProcessProxy).isNewEntry)
         webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier(), *this);
 }
@@ -159,7 +157,6 @@ Vector<std::pair<WebCompiledContentRuleListData, URL>> WebUserContentControllerP
 void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessProxy)
 {
     ASSERT(m_processes.contains(webProcessProxy));
-    ASSERT(!m_processes.hasNullReferences());
 
     m_processes.remove(webProcessProxy);
     webProcessProxy.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());

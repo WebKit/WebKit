@@ -51,7 +51,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   PeerScenarioClient::VideoSendTrackConfig video_conf;
   video_conf.generator.squares_video->framerate = 15;
   auto video = caller->CreateVideo("VIDEO", video_conf);
-  auto audio = caller->CreateAudio("AUDIO", cricket::AudioOptions());
+  auto audio = caller->CreateAudio("AUDIO", AudioOptions());
 
   // Start ICE and exchange SDP.
   s.SimpleConnection(caller, callee, {send_node}, {ret_node});
@@ -74,8 +74,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   ASSERT_EQ(num_video_streams, 1);  // Exactly 1 video stream.
 
   auto get_bwe = [&] {
-    auto callback =
-        rtc::make_ref_counted<webrtc::MockRTCStatsCollectorCallback>();
+    auto callback = make_ref_counted<MockRTCStatsCollectorCallback>();
     caller->pc()->GetStats(callback.get());
     s.net()->time_controller()->Wait([&] { return callback->called(); });
     auto stats =

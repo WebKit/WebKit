@@ -14,20 +14,29 @@
 #include <shellapi.h>  // must come after windows.h
 // clang-format on
 
+#include <cstddef>
+#include <cstdio>
+#include <cwchar>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
+#include "api/make_ref_counted.h"
 #include "examples/peerconnection/client/conductor.h"
 #include "examples/peerconnection/client/flag_defs.h"
 #include "examples/peerconnection/client/main_wnd.h"
 #include "examples/peerconnection/client/peer_connection_client.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/physical_socket_server.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/string_utils.h"  // For ToUtf8
+#include "rtc_base/thread.h"
 #include "rtc_base/win32_socket_init.h"
-#include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 
 namespace {
 // A helper class to translate Windows command line arguments into UTF8,
@@ -61,7 +70,7 @@ WindowsCommandLineArguments::WindowsCommandLineArguments() {
 
   // iterate over the returned wide strings;
   for (int i = 0; i < argc; ++i) {
-    args_.push_back(rtc::ToUtf8(wide_argv[i], wcslen(wide_argv[i])));
+    args_.push_back(webrtc::ToUtf8(wide_argv[i], wcslen(wide_argv[i])));
     // make sure the argv array points to the string data.
     argv_.push_back(const_cast<char*>(args_.back().c_str()));
   }
@@ -73,9 +82,9 @@ int PASCAL wWinMain(HINSTANCE instance,
                     HINSTANCE prev_instance,
                     wchar_t* cmd_line,
                     int cmd_show) {
-  rtc::WinsockInitializer winsock_init;
-  rtc::PhysicalSocketServer ss;
-  rtc::AutoSocketServerThread main_thread(&ss);
+  webrtc::WinsockInitializer winsock_init;
+  webrtc::PhysicalSocketServer ss;
+  webrtc::AutoSocketServerThread main_thread(&ss);
 
   WindowsCommandLineArguments win_args;
   int argc = win_args.argc();
@@ -83,11 +92,9 @@ int PASCAL wWinMain(HINSTANCE instance,
 
   absl::ParseCommandLine(argc, argv);
 
-  // InitFieldTrialsFromString stores the char*, so the char array must outlive
-  // the application.
-  const std::string forced_field_trials =
-      absl::GetFlag(FLAGS_force_fieldtrials);
-  webrtc::field_trial::InitFieldTrialsFromString(forced_field_trials.c_str());
+  webrtc::Environment env =
+      webrtc::CreateEnvironment(std::make_unique<webrtc::FieldTrials>(
+          absl::GetFlag(FLAGS_force_fieldtrials)));
 
   // Abort if the user specifies a port that is outside the allowed
   // range [1, 65535].
@@ -104,9 +111,9 @@ int PASCAL wWinMain(HINSTANCE instance,
     return -1;
   }
 
-  rtc::InitializeSSL();
+  webrtc::InitializeSSL();
   PeerConnectionClient client;
-  auto conductor = rtc::make_ref_counted<Conductor>(&client, &wnd);
+  auto conductor = webrtc::make_ref_counted<Conductor>(env, &client, &wnd);
 
   // Main loop.
   MSG msg;
@@ -128,6 +135,6 @@ int PASCAL wWinMain(HINSTANCE instance,
     }
   }
 
-  rtc::CleanupSSL();
+  webrtc::CleanupSSL();
   return 0;
 }

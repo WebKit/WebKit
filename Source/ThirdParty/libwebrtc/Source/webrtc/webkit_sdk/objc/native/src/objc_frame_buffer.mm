@@ -83,12 +83,12 @@ int ObjCFrameBuffer::height() const {
   return height_;
 }
 
-rtc::scoped_refptr<I420BufferInterface> ObjCFrameBuffer::ToI420() {
+webrtc::scoped_refptr<I420BufferInterface> ObjCFrameBuffer::ToI420() {
   auto frameBuffer = wrapped_frame_buffer();
   if (!frameBuffer)
     return nullptr;
-  rtc::scoped_refptr<I420BufferInterface> buffer =
-    rtc::make_ref_counted<ObjCI420FrameBuffer>([wrapped_frame_buffer() toI420]);
+  webrtc::scoped_refptr<I420BufferInterface> buffer =
+    webrtc::make_ref_counted<ObjCI420FrameBuffer>([wrapped_frame_buffer() toI420]);
 
   if (width_ != buffer->width() || height_ != buffer->height())
       buffer = buffer->Scale(width_, height_)->ToI420();
@@ -107,21 +107,21 @@ id<RTCVideoFrameBuffer> ObjCFrameBuffer::wrapped_frame_buffer() const {
   return frame_buffer_;
 }
 
-rtc::scoped_refptr<VideoFrameBuffer> ObjCFrameBuffer::CropAndScale(int offset_x, int offset_y, int crop_width, int crop_height, int scaled_width, int scaled_height)
+webrtc::scoped_refptr<VideoFrameBuffer> ObjCFrameBuffer::CropAndScale(int offset_x, int offset_y, int crop_width, int crop_height, int scaled_width, int scaled_height)
 {
   if (offset_x || offset_y || crop_width != width() || crop_height != height())
     return VideoFrameBuffer::CropAndScale(offset_x, offset_y, crop_width, crop_height, scaled_width, scaled_height);
 
   webrtc::MutexLock lock(&mutex_);
   auto newFrame = (!frame_buffer_ && frame_buffer_provider_.getBuffer && frame_buffer_provider_.pointer) ?
-    rtc::make_ref_counted<ObjCFrameBuffer>(frame_buffer_provider_, scaled_width, scaled_height) :
-    rtc::make_ref_counted<ObjCFrameBuffer>(frame_buffer_, scaled_width, scaled_height);
+    webrtc::make_ref_counted<ObjCFrameBuffer>(frame_buffer_provider_, scaled_width, scaled_height) :
+    webrtc::make_ref_counted<ObjCFrameBuffer>(frame_buffer_, scaled_width, scaled_height);
 
   newFrame->set_original_frame(original_frame_ ? *original_frame_ : *this);
   return newFrame;
 }
 
-id<RTCVideoFrameBuffer> ToObjCVideoFrameBuffer(const rtc::scoped_refptr<VideoFrameBuffer>& buffer) {
+id<RTCVideoFrameBuffer> ToObjCVideoFrameBuffer(const webrtc::scoped_refptr<VideoFrameBuffer>& buffer) {
   if (buffer->type() == VideoFrameBuffer::Type::kNative) {
     return static_cast<ObjCFrameBuffer*>(buffer.get())->wrapped_frame_buffer();
   } else {

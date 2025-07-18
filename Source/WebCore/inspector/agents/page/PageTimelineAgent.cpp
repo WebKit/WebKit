@@ -30,7 +30,7 @@
 
 #include "FrameSnapshotting.h"
 #include "ImageBuffer.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "InspectorController.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
@@ -148,7 +148,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 
     InspectorTimelineAgent::internalStart(WTFMove(maxCallStackDepth));
 
-    if (auto* client = m_inspectedPage->inspectorController().inspectorClient())
+    if (auto* client = m_inspectedPage->inspectorController().inspectorBackendClient())
         client->timelineRecordingChanged(true);
 }
 
@@ -168,7 +168,7 @@ void PageTimelineAgent::internalStop()
 
     InspectorTimelineAgent::internalStop();
 
-    if (auto* client = m_inspectedPage->inspectorController().inspectorClient())
+    if (auto* client = m_inspectedPage->inspectorController().inspectorBackendClient())
         client->timelineRecordingChanged(false);
 }
 

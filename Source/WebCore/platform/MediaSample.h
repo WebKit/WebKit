@@ -214,7 +214,7 @@ private:
 };
 
 class MediaSamplesBlock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaSamplesBlock);
 public:
     struct MediaSampleItem {
         using MediaSampleDataType = RefPtr<FragmentedSharedBuffer>;

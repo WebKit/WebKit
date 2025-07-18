@@ -11,6 +11,10 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MERGE_H_
 #define MODULES_AUDIO_CODING_NETEQ_MERGE_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 
 namespace webrtc {

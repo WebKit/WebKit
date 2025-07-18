@@ -10,7 +10,10 @@
 
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 
+#include <array>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <utility>
@@ -19,6 +22,7 @@
 #include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
@@ -26,6 +30,7 @@
 #include "modules/audio_coding/test/PCMFile.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/random.h"
 #include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
@@ -38,8 +43,8 @@ namespace {
 using test::ExplicitKeyValueConfig;
 using testing::SizeIs;
 
-using DecodeResult = ::webrtc::AudioDecoder::EncodedAudioFrame::DecodeResult;
-using ParseResult = ::webrtc::AudioDecoder::ParseResult;
+using DecodeResult = AudioDecoder::EncodedAudioFrame::DecodeResult;
+using ParseResult = AudioDecoder::ParseResult;
 
 constexpr int kSampleRateHz = 48000;
 
@@ -73,13 +78,13 @@ class WhiteNoiseGenerator {
  public:
   explicit WhiteNoiseGenerator(double amplitude_dbfs)
       : amplitude_(
-            rtc::saturated_cast<int16_t>(std::pow(10, amplitude_dbfs / 20) *
-                                         std::numeric_limits<int16_t>::max())),
+            saturated_cast<int16_t>(std::pow(10, amplitude_dbfs / 20) *
+                                    std::numeric_limits<int16_t>::max())),
         random_generator_(42) {}
 
-  void GenerateNextFrame(rtc::ArrayView<int16_t> frame) {
+  void GenerateNextFrame(ArrayView<int16_t> frame) {
     for (size_t i = 0; i < frame.size(); ++i) {
-      frame[i] = rtc::saturated_cast<int16_t>(
+      frame[i] = saturated_cast<int16_t>(
           random_generator_.Rand(-amplitude_, amplitude_));
     }
   }
@@ -89,7 +94,7 @@ class WhiteNoiseGenerator {
   Random random_generator_;
 };
 
-bool IsZeroedFrame(rtc::ArrayView<const int16_t> audio) {
+bool IsZeroedFrame(ArrayView<const int16_t> audio) {
   for (const int16_t& v : audio) {
     if (v != 0)
       return false;
@@ -97,9 +102,8 @@ bool IsZeroedFrame(rtc::ArrayView<const int16_t> audio) {
   return true;
 }
 
-bool IsTrivialStereo(rtc::ArrayView<const int16_t> audio) {
-  const int num_samples =
-      rtc::CheckedDivExact(audio.size(), static_cast<size_t>(2));
+bool IsTrivialStereo(ArrayView<const int16_t> audio) {
+  const int num_samples = CheckedDivExact(audio.size(), static_cast<size_t>(2));
   for (int i = 0, j = 0; i < num_samples; ++i, j += 2) {
     if (audio[j] != audio[j + 1]) {
       return false;
@@ -131,7 +135,7 @@ void EncodeDecodeSpeech(AudioEncoderOpusImpl& encoder,
       break;
     }
     pcm_file.Read10MsData(audio_frame);
-    rtc::Buffer payload;
+    Buffer payload;
     encoder.Encode(rtp_timestamp++, audio_frame.data_view().data(), &payload);
 
     // Ignore empty payloads: the encoder needs more audio to produce a packet.
@@ -162,7 +166,7 @@ void EncodeDecodeNoiseUntilDecoderInDtxMode(AudioEncoderOpusImpl& encoder,
 
   for (int i = 0; i < 50; ++i) {
     generator.GenerateNextFrame(input_frame);
-    rtc::Buffer payload;
+    Buffer payload;
     const AudioEncoder::EncodedInfo info =
         encoder.Encode(rtp_timestamp++, input_frame, &payload);
 
@@ -214,7 +218,7 @@ std::vector<int16_t> EncodeDecodeSpeechUntilOneFrameIsDecoded(
       break;
     }
     pcm_file.Read10MsData(audio_frame);
-    rtc::Buffer payload;
+    Buffer payload;
     encoder.Encode(rtp_timestamp++, audio_frame.data_view().data(), &payload);
 
     // Ignore empty payloads: the encoder needs more audio to produce a packet.
@@ -259,7 +263,7 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereo) {
   uint32_t timestamp = 0;
   for (int i = 0; i < 30; ++i) {
     generator.GenerateNextFrame(input_frame);
-    rtc::Buffer payload;
+    Buffer payload;
     encoder.Encode(rtp_timestamp++, input_frame, &payload);
     if (payload.size() == 0) {
       continue;
@@ -309,8 +313,8 @@ TEST(AudioDecoderOpusTest,
   ASSERT_EQ(speech_type, AudioDecoder::SpeechType::kComfortNoise);
   RTC_CHECK_GT(num_decoded_samples, 0);
   RTC_CHECK_LE(num_decoded_samples, decoded_frame.size());
-  rtc::ArrayView<const int16_t> decoded_view(decoded_frame.data(),
-                                             num_decoded_samples);
+  ArrayView<const int16_t> decoded_view(decoded_frame.data(),
+                                        num_decoded_samples);
   // Make sure that comfort noise is not a muted frame.
   ASSERT_FALSE(IsZeroedFrame(decoded_view));
   EXPECT_TRUE(IsTrivialStereo(decoded_view));
@@ -344,13 +348,13 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoPlc) {
                      /*max_frames=*/100);
 
   // Generate packet loss concealment.
-  rtc::BufferT<int16_t> concealment_audio;
+  BufferT<int16_t> concealment_audio;
   constexpr int kIgnored = 123;
   decoder.GeneratePlc(/*requested_samples_per_channel=*/kIgnored,
                       &concealment_audio);
   RTC_CHECK_GT(concealment_audio.size(), 0);
-  rtc::ArrayView<const int16_t> decoded_view(concealment_audio.data(),
-                                             concealment_audio.size());
+  ArrayView<const int16_t> decoded_view(concealment_audio.data(),
+                                        concealment_audio.size());
   // Make sure that packet loss concealment is not a muted frame.
   ASSERT_FALSE(IsZeroedFrame(decoded_view));
   EXPECT_TRUE(IsTrivialStereo(decoded_view));
@@ -393,8 +397,8 @@ TEST(AudioDecoderOpusTest,
   ASSERT_EQ(speech_type, AudioDecoder::SpeechType::kComfortNoise);
   RTC_CHECK_GT(num_decoded_samples, 0);
   RTC_CHECK_LE(num_decoded_samples, decoded_frame.size());
-  rtc::ArrayView<const int16_t> decoded_view(decoded_frame.data(),
-                                             num_decoded_samples);
+  ArrayView<const int16_t> decoded_view(decoded_frame.data(),
+                                        num_decoded_samples);
   // Make sure that comfort noise is not a muted frame.
   ASSERT_FALSE(IsZeroedFrame(decoded_view));
 
@@ -423,13 +427,13 @@ TEST(AudioDecoderOpusTest,
                      /*max_frames=*/100);
 
   // Generate packet loss concealment.
-  rtc::BufferT<int16_t> concealment_audio;
+  BufferT<int16_t> concealment_audio;
   constexpr int kIgnored = 123;
   decoder.GeneratePlc(/*requested_samples_per_channel=*/kIgnored,
                       &concealment_audio);
   RTC_CHECK_GT(concealment_audio.size(), 0);
-  rtc::ArrayView<const int16_t> decoded_view(concealment_audio.data(),
-                                             concealment_audio.size());
+  ArrayView<const int16_t> decoded_view(concealment_audio.data(),
+                                        concealment_audio.size());
   // Make sure that packet loss concealment is not a muted frame.
   ASSERT_FALSE(IsZeroedFrame(decoded_view));
 

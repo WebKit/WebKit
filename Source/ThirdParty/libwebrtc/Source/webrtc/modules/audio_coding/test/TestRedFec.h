@@ -11,15 +11,19 @@
 #ifndef MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
 #define MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
 
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <optional>
 
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
+#include "api/scoped_refptr.h"
 #include "common_audio/vad/include/vad.h"
 #include "modules/audio_coding/acm2/acm_resampler.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "test/scoped_key_value_config.h"
@@ -43,8 +47,8 @@ class TestRedFec final {
 
   test::ScopedKeyValueConfig field_trials_;
   const Environment env_;
-  const rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
-  const rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
+  const scoped_refptr<AudioEncoderFactory> encoder_factory_;
+  const scoped_refptr<AudioDecoderFactory> decoder_factory_;
   std::unique_ptr<AudioCodingModule> _acmA;
   std::unique_ptr<NetEq> _neteq;
   acm2::ResamplerHelper _resampler_helper;

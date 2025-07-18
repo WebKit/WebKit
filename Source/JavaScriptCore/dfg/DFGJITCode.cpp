@@ -332,18 +332,18 @@ void JITCode::setOptimizationThresholdBasedOnCompilationResult(
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     switch (result) {
-    case CompilationSuccessful:
+    case CompilationResult::CompilationSuccessful:
         optimizeNextInvocation(codeBlock);
         codeBlock->baselineVersion()->m_hasBeenCompiledWithFTL = true;
         return;
-    case CompilationFailed:
+    case CompilationResult::CompilationFailed:
         dontOptimizeAnytimeSoon(codeBlock);
         codeBlock->baselineVersion()->m_didFailFTLCompilation = true;
         return;
-    case CompilationDeferred:
+    case CompilationResult::CompilationDeferred:
         optimizeAfterWarmUp(codeBlock);
         return;
-    case CompilationInvalidated:
+    case CompilationResult::CompilationInvalidated:
         // This is weird - it will only happen in cases when the DFG code block (i.e.
         // the code block that this JITCode belongs to) is also invalidated. So it
         // doesn't really matter what we do. But, we do the right thing anyway. Note
@@ -361,7 +361,7 @@ void JITCode::setOSREntryBlock(VM& vm, const JSCell* owner, CodeBlock* osrEntryB
 {
     if (Options::verboseOSR()) {
         dataLogLn(RawPointer(this), ": Setting OSR entry block to ", RawPointer(osrEntryBlock));
-        dataLogLn("OSR entries will go to ", osrEntryBlock->jitCode()->ftlForOSREntry()->addressForCall(ArityCheckNotRequired));
+        dataLogLn("OSR entries will go to ", osrEntryBlock->jitCode()->ftlForOSREntry()->addressForCall(ArityCheckMode::ArityCheckNotRequired));
     }
     m_osrEntryBlock.set(vm, owner, osrEntryBlock);
 }
@@ -374,7 +374,7 @@ void JITCode::clearOSREntryBlockAndResetThresholds(CodeBlock *dfgCodeBlock)
     m_osrEntryBlock.clear();
     osrEntryRetry = 0;
     tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::DontTrigger);
-    setOptimizationThresholdBasedOnCompilationResult(dfgCodeBlock, CompilationDeferred);
+    setOptimizationThresholdBasedOnCompilationResult(dfgCodeBlock, CompilationResult::CompilationDeferred);
 }
 #endif // ENABLE(FTL_JIT)
 

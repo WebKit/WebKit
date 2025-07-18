@@ -53,7 +53,7 @@ private:
     void muteConsole() { }
     void unmuteConsole() { }
 
-    RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 

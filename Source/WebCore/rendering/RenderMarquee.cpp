@@ -50,6 +50,7 @@
 #include "HTMLNames.h"
 #include "LocalFrameView.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"

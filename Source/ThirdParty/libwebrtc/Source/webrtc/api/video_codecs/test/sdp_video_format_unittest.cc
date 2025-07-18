@@ -141,14 +141,13 @@ TEST(SdpVideoFormatTest, DifferentCodecNameSameParameters) {
 
 TEST(SdpVideoFormatTest, H264PacketizationMode) {
   // The default packetization mode is 0.
-  EXPECT_TRUE(Sdp("H264", Params{{cricket::kH264FmtpPacketizationMode, "0"}})
+  EXPECT_TRUE(Sdp("H264", Params{{kH264FmtpPacketizationMode, "0"}})
                   .IsSameCodec(Sdp("H264")));
-  EXPECT_FALSE(Sdp("H264", Params{{cricket::kH264FmtpPacketizationMode, "1"}})
+  EXPECT_FALSE(Sdp("H264", Params{{kH264FmtpPacketizationMode, "1"}})
                    .IsSameCodec(Sdp("H264")));
 
   EXPECT_TRUE(
-      Sdp("H264", Params{{cricket::kH264FmtpPacketizationMode, "1"}})
-          .IsSameCodec(
-              Sdp("H264", Params{{cricket::kH264FmtpPacketizationMode, "1"}})));
+      Sdp("H264", Params{{kH264FmtpPacketizationMode, "1"}})
+          .IsSameCodec(Sdp("H264", Params{{kH264FmtpPacketizationMode, "1"}})));
 }
 }  // namespace webrtc

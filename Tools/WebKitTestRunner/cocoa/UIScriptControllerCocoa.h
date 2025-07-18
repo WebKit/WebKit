@@ -99,6 +99,8 @@ private:
 
     JSObjectRef fixedContainerEdgeColors() const final;
     void cancelFixedColorExtensionFadeAnimations() const final;
+
+    void setObscuredInsets(double top, double right, double bottom, double left) final;
 };
 
 } // namespace WTR

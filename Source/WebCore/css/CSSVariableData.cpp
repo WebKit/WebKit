@@ -77,7 +77,7 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSPars
         if (m_backingString.is8Bit())
             updateBackingStringsInTokens<LChar>();
         else
-            updateBackingStringsInTokens<UChar>();
+            updateBackingStringsInTokens<char16_t>();
     }
 }
 

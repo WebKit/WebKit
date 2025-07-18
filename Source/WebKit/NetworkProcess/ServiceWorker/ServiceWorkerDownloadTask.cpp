@@ -178,7 +178,7 @@ void ServiceWorkerDownloadTask::start()
     m_state = State::Running;
 
     CheckedRef manager = m_networkProcess->downloadManager();
-    Ref download = Download::create(manager.get(), m_downloadID, *this, *networkSession());
+    Ref download = Download::create(manager.get(), m_downloadID, *this, CheckedRef { *networkSession() });
     manager->dataTaskBecameDownloadTask(m_downloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
 }
@@ -199,7 +199,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, bytesWritten = *bytesWritten] {
         m_downloadBytesWritten += bytesWritten;
-        if (RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID))
             download->didReceiveData(bytesWritten, m_downloadBytesWritten, std::max(m_expectedContentLength.value_or(0), m_downloadBytesWritten));
     });
 }
@@ -228,7 +228,7 @@ void ServiceWorkerDownloadTask::didFinish()
             sandboxExtension->revoke();
 #endif
 
-        if (RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID)) {
+        if (RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID)) {
 #if HAVE(MODERN_DOWNLOADPROGRESS)
             if (RefPtr sandboxExtension = std::exchange(m_sandboxExtension, nullptr))
                 download->setSandboxExtension(WTFMove(sandboxExtension));
@@ -265,7 +265,7 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
         if (RefPtr client = m_client.get())

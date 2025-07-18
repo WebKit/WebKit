@@ -347,6 +347,10 @@ enum class EventTrackingRegionsEventType : uint8_t;
 enum class MediaSessionAction : uint8_t;
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+class LazyLoadModelObserver;
+#endif
+
 using IntDegrees = int32_t;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -614,6 +618,7 @@ public:
     WEBCORE_EXPORT Ref<NodeList> getElementsByName(const AtomString& elementName);
 
     WakeLockManager& wakeLockManager();
+    Ref<WakeLockManager> protectedWakeLockManager();
 
     // Other methods (not part of DOM)
     bool isSynthesized() const { return m_isSynthesized; }
@@ -696,8 +701,8 @@ public:
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
 
-    inline Quirks& quirks();
-    inline const Quirks& quirks() const;
+    inline Quirks& quirks(); // Defined in DocumentInlines.h
+    inline const Quirks& quirks() const; // Defined in DocumentInlines.h
 
     float deviceScaleFactor() const;
 
@@ -763,7 +768,7 @@ public:
     void stopActiveDOMObjects() final;
     GraphicsClient* graphicsClient() final;
 
-    inline const SettingsValues& settingsValues() const final;
+    inline const SettingsValues& settingsValues() const final; // Defined in DocumentInlines.h.
 
     void suspendDeviceMotionAndOrientationUpdates();
     void resumeDeviceMotionAndOrientationUpdates();
@@ -1637,6 +1642,7 @@ public:
     void runResizeSteps();
     void flushDeferredResizeEvents();
 
+    void addPendingScrollendEventTarget(ContainerNode&);
     void addPendingScrollEventTarget(ContainerNode&);
     void setNeedsVisualViewportScrollEvent();
     void runScrollSteps();
@@ -1913,6 +1919,9 @@ public:
     bool allowsContentJavaScript() const;
 
     LazyLoadImageObserver& lazyLoadImageObserver();
+#if ENABLE(MODEL_ELEMENT)
+    LazyLoadModelObserver& lazyLoadModelObserver();
+#endif
 
     ContentVisibilityDocumentState& contentVisibilityDocumentState();
 
@@ -1942,7 +1951,7 @@ public:
     WEBCORE_EXPORT JSC::VM& vm() final;
     JSC::VM* vmIfExists() const final;
 
-    String debugDescription() const;
+    String debugDescription() const override;
 
     URL fallbackBaseURL() const;
 
@@ -2069,7 +2078,7 @@ private:
 
     String nodeName() const final;
     bool childTypeAllowed(NodeType) const final;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     void cloneDataFromDocument(const Document&);
 
     Seconds minimumDOMTimerInterval() const final;
@@ -2272,6 +2281,9 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
+#if ENABLE(MODEL_ELEMENT)
+    std::unique_ptr<LazyLoadModelObserver> m_lazyLoadModelObserver;
+#endif
 
     std::unique_ptr<ContentVisibilityDocumentState> m_contentVisibilityDocumentState;
 
@@ -2537,6 +2549,7 @@ private:
 
     struct PendingScrollEventTargetList;
     std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
+    std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollendEventTargetList;
 
     WeakHashSet<ValidationMessage> m_validationMessagesToPosition;
 
@@ -2719,8 +2732,6 @@ private:
     bool m_visualUpdatesAllowedChangeCompletesPageTransition { false };
 
     bool m_requiresTrustedTypes { false };
-
-    bool m_intersectionObserverUpdateTaskQueued { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

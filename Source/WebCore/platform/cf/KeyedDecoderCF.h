@@ -58,7 +58,7 @@ private:
     void endArrayElement() override;
     void endArray() override;
 
-    RetainPtr<CFDictionaryRef> m_rootDictionary;
+    const RetainPtr<CFDictionaryRef> m_rootDictionary;
 
     Vector<CFDictionaryRef, 16> m_dictionaryStack;
     Vector<CFArrayRef, 16> m_arrayStack;

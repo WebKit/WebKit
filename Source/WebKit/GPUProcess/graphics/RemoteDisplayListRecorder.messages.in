@@ -61,7 +61,7 @@ messages -> RemoteDisplayListRecorder Stream {
     SetShadowsIgnoreTransforms(bool shouldIgnore) StreamBatched
     SetDrawLuminanceMask(bool shouldDraw) StreamBatched
     SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
-    SetLineDash(WebCore::DashArray dashArray, float dashOffset) StreamBatched
+    SetLineDash(FixedVector<double> dashArray, float dashOffset) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
     Clip(WebCore::FloatRect rect)
@@ -72,7 +72,7 @@ messages -> RemoteDisplayListRecorder Stream {
     ClipOutToPath(WebCore::Path path)
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
     ResetClip()
-    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::GlyphBufferAdvance> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode)
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)

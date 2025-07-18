@@ -54,7 +54,6 @@ rtc_library("rnn_vad_auto_correlation") {
 }
 
 rtc_source_set("rnn_vad_common") {
-  # TODO(alessiob): Make this target visibility private.
   visibility = [
     ":*",
     "..:vad_wrapper",
@@ -78,7 +77,7 @@ rtc_library("rnn_vad_lp_residual") {
   ]
 }
 
-rtc_source_set("rnn_vad_layers") {
+rtc_library("rnn_vad_layers") {
   sources = [
     "rnn_fc.cc",
     "rnn_fc.h",

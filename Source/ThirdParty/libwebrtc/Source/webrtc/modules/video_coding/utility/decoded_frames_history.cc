@@ -11,6 +11,9 @@
 #include "modules/video_coding/utility/decoded_frames_history.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

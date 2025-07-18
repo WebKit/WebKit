@@ -12,17 +12,21 @@
 
 #include <stdint.h>
 
-#include <list>
+#include <cstddef>
+#include <string>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "api/array_view.h"
+#include "media/base/rid_description.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/unique_id_generator.h"
 
-namespace cricket {
+namespace webrtc {
 namespace {
 
-void AppendSsrcs(rtc::ArrayView<const uint32_t> ssrcs,
-                 rtc::SimpleStringBuilder* sb) {
+void AppendSsrcs(ArrayView<const uint32_t> ssrcs, SimpleStringBuilder* sb) {
   *sb << "ssrcs:[";
   const char* delimiter = "";
   for (uint32_t ssrc : ssrcs) {
@@ -32,8 +36,8 @@ void AppendSsrcs(rtc::ArrayView<const uint32_t> ssrcs,
   *sb << "]";
 }
 
-void AppendSsrcGroups(rtc::ArrayView<const SsrcGroup> ssrc_groups,
-                      rtc::SimpleStringBuilder* sb) {
+void AppendSsrcGroups(ArrayView<const SsrcGroup> ssrc_groups,
+                      SimpleStringBuilder* sb) {
   *sb << "ssrc_groups:";
   const char* delimiter = "";
   for (const SsrcGroup& ssrc_group : ssrc_groups) {
@@ -42,8 +46,8 @@ void AppendSsrcGroups(rtc::ArrayView<const SsrcGroup> ssrc_groups,
   }
 }
 
-void AppendStreamIds(rtc::ArrayView<const std::string> stream_ids,
-                     rtc::SimpleStringBuilder* sb) {
+void AppendStreamIds(ArrayView<const std::string> stream_ids,
+                     SimpleStringBuilder* sb) {
   *sb << "stream_ids:";
   const char* delimiter = "";
   for (const std::string& stream_id : stream_ids) {
@@ -52,8 +56,7 @@ void AppendStreamIds(rtc::ArrayView<const std::string> stream_ids,
   }
 }
 
-void AppendRids(rtc::ArrayView<const RidDescription> rids,
-                rtc::SimpleStringBuilder* sb) {
+void AppendRids(ArrayView<const RidDescription> rids, SimpleStringBuilder* sb) {
   *sb << "rids:[";
   const char* delimiter = "";
   for (const RidDescription& rid : rids) {
@@ -95,7 +98,7 @@ bool SsrcGroup::has_semantics(const std::string& semantics_in) const {
 
 std::string SsrcGroup::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << "{";
   sb << "semantics:" << semantics << ";";
   AppendSsrcs(ssrcs, &sb);
@@ -120,7 +123,7 @@ bool StreamParams::operator==(const StreamParams& other) const {
 
 std::string StreamParams::ToString() const {
   char buf[2 * 1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << "{";
   if (!id.empty()) {
     sb << "id:" << id << ";";
@@ -145,7 +148,7 @@ std::string StreamParams::ToString() const {
 void StreamParams::GenerateSsrcs(int num_layers,
                                  bool generate_fid,
                                  bool generate_fec_fr,
-                                 rtc::UniqueRandomIdGenerator* ssrc_generator) {
+                                 UniqueRandomIdGenerator* ssrc_generator) {
   RTC_DCHECK_GE(num_layers, 0);
   RTC_DCHECK(ssrc_generator);
   std::vector<uint32_t> primary_ssrcs;
@@ -173,13 +176,13 @@ void StreamParams::GenerateSsrcs(int num_layers,
   }
 }
 
-void StreamParams::GetPrimarySsrcs(std::vector<uint32_t>* ssrcs) const {
+void StreamParams::GetPrimarySsrcs(std::vector<uint32_t>* primary_ssrcs) const {
   const SsrcGroup* sim_group = get_ssrc_group(kSimSsrcGroupSemantics);
-  if (sim_group == NULL) {
-    ssrcs->push_back(first_ssrc());
+  if (sim_group == nullptr) {
+    primary_ssrcs->push_back(first_ssrc());
   } else {
-    ssrcs->insert(ssrcs->end(), sim_group->ssrcs.begin(),
-                  sim_group->ssrcs.end());
+    primary_ssrcs->insert(primary_ssrcs->end(), sim_group->ssrcs.begin(),
+                          sim_group->ssrcs.end());
   }
 }
 
@@ -237,4 +240,4 @@ std::string StreamParams::first_stream_id() const {
   return stream_ids_.empty() ? "" : stream_ids_[0];
 }
 
-}  // namespace cricket
+}  // namespace webrtc

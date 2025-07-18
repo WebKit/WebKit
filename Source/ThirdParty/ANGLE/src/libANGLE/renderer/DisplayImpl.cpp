@@ -126,7 +126,7 @@ angle::NativeWindowSystem DisplayImpl::getWindowSystem() const
     return angle::NativeWindowSystem::Other;
 }
 
-bool DisplayImpl::supportsDmaBufFormat(EGLint format) const
+bool DisplayImpl::supportsDmaBufFormat(EGLint format)
 {
     UNREACHABLE();
     return false;

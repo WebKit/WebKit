@@ -18,7 +18,7 @@
 
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 enum class PacketType {
   kUnknown,
@@ -56,18 +56,29 @@ struct RTC_EXPORT PacketInfo {
   size_t ip_overhead_bytes = 0;
 };
 
-struct RTC_EXPORT SentPacket {
-  SentPacket();
-  SentPacket(int64_t packet_id, int64_t send_time_ms);
-  SentPacket(int64_t packet_id,
-             int64_t send_time_ms,
-             const rtc::PacketInfo& info);
+struct RTC_EXPORT SentPacketInfo {
+  SentPacketInfo();
+  SentPacketInfo(int64_t packet_id, int64_t send_time_ms);
+  SentPacketInfo(int64_t packet_id,
+                 int64_t send_time_ms,
+                 const PacketInfo& info);
 
   int64_t packet_id = -1;
   int64_t send_time_ms = -1;
-  rtc::PacketInfo info;
+  PacketInfo info;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::PacketInfo;
+using SentPacket = ::webrtc::SentPacketInfo;
+using ::webrtc::PacketInfoProtocolType;
+using ::webrtc::PacketType;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NETWORK_SENT_PACKET_H_

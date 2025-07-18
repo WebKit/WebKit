@@ -47,7 +47,7 @@ class LibWebRTCSctpTransportBackendObserver;
 class LibWebRTCSctpTransportBackend final : public RTCSctpTransportBackend, public CanMakeWeakPtr<LibWebRTCSctpTransportBackend> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSctpTransportBackend);
 public:
-    explicit LibWebRTCSctpTransportBackend(rtc::scoped_refptr<webrtc::SctpTransportInterface>&&, rtc::scoped_refptr<webrtc::DtlsTransportInterface>&&);
+    explicit LibWebRTCSctpTransportBackend(webrtc::scoped_refptr<webrtc::SctpTransportInterface>&&, webrtc::scoped_refptr<webrtc::DtlsTransportInterface>&&);
     ~LibWebRTCSctpTransportBackend();
 
 private:
@@ -57,8 +57,8 @@ private:
     void registerClient(RTCSctpTransportBackendClient&) final;
     void unregisterClient() final;
 
-    rtc::scoped_refptr<webrtc::SctpTransportInterface> m_backend;
-    rtc::scoped_refptr<webrtc::DtlsTransportInterface> m_dtlsBackend;
+    webrtc::scoped_refptr<webrtc::SctpTransportInterface> m_backend;
+    webrtc::scoped_refptr<webrtc::DtlsTransportInterface> m_dtlsBackend;
     RefPtr<LibWebRTCSctpTransportBackendObserver> m_observer;
 };
 

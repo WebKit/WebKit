@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -220,7 +220,7 @@ class GitHubEWS(GitHub):
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
-        description = description.split(self.STATUS_BUBBLE_START)[0]
+        description = "" if description is None else description.split(self.STATUS_BUBBLE_START)[0]
         return u'{}{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
@@ -246,7 +246,7 @@ class GitHubEWS(GitHub):
         regular_comment = u'{}{}'.format(hash_url, comment)
         folded_comment = u'EWS run on current version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
         if change.comment_id == -1:
-            pr_url = GitHub.pr_url(change.pr_id, repository_url=repository_url)
+            pr_url = GitHub.pr_url(change.pr_number, repository_url=repository_url)
             folded_comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
 
         return (regular_comment, folded_comment)
@@ -349,9 +349,9 @@ class GitHubEWS(GitHub):
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
     @classmethod
-    def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None, allow_new_comment=False):
-        if not pr_id or pr_id == -1:
-            _log.error('Invalid pr_id: {}'.format(pr_id))
+    def add_or_update_comment_for_change_id(self, sha, pr_number, pr_project=None, allow_new_comment=False):
+        if not pr_number or pr_number == -1:
+            _log.error(f'Invalid pr_number: {pr_number}')
             return -1
 
         if is_test_mode_enabled or is_dev_instance:
@@ -367,24 +367,24 @@ class GitHubEWS(GitHub):
         gh = GitHubEWS()
         comment_text, folded_comment = gh.generate_comment_text_for_change(change)
         if not change.obsolete:
-            gh.update_pr_description_with_status_bubble(pr_id, comment_text, repository_url)
+            gh.update_pr_description_with_status_bubble(pr_number, comment_text, repository_url)
 
         comment_id = change.comment_id
         if comment_id == -1:
             if not allow_new_comment:
                 # FIXME: improve this logic to use locking instead
                 return -1
-            _log.info('Adding comment for hash: {}, PR: {}'.format(sha, pr_id))
-            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, folded_comment, repository_url=repository_url, change=change)
-            obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
+            _log.info(f'Adding comment for hash: {sha}, PR: {pr_number}')
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_number, folded_comment, repository_url=repository_url, change=change)
+            obsolete_changes = Change.mark_old_changes_as_obsolete(pr_number, sha)
             for obsolete_change in obsolete_changes:
                 obsolete_comment_text, _ = gh.generate_comment_text_for_change(obsolete_change)
-                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, repository_url=repository_url, comment_id=obsolete_change.comment_id, change=obsolete_change)
-                _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_id, obsolete_change.change_id))
+                gh.update_or_leave_comment_on_pr(pr_number, obsolete_comment_text, repository_url=repository_url, comment_id=obsolete_change.comment_id, change=obsolete_change)
+                _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_number, obsolete_change.change_id))
 
         else:
-            _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
-            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, folded_comment, repository_url=repository_url, comment_id=comment_id)
+            _log.info(f'Updating comment for hash: {sha}, pr_number: {pr_number}, pr_number from db: {change.pr_number}.')
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_number, folded_comment, repository_url=repository_url, comment_id=comment_id)
 
         return comment_id
 

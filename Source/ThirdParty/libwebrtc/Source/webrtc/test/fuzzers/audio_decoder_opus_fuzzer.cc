@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 #include "test/explicit_key_value_config.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"

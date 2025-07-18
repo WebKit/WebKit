@@ -2180,6 +2180,167 @@ TEST_P(UniformTestES31, UnusedUniformArraysConflictingLocation)
     EXPECT_EQ(0u, mProgram);
 }
 
+// Test that having a combination of different float type uniforms with different precisions work
+// properly with uniform sort
+TEST_P(UniformTestES31, PackUniformFP16Test)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+    constexpr char kFragShader[] = R"(#version 310 es
+layout(std140, binding=0) buffer debugBlock {
+    uvec4 data[];
+};
+precision mediump float;
+struct Structs{
+    float floatInStructs;
+};
+uniform float floatUniform;
+uniform highp float highpFloatUniform;
+uniform mat4 mat4Uniform;
+uniform highp mat4 highpMat4Uniform;
+uniform vec4 vec4Uniform;
+uniform highp vec4 highpVec4Uniform;
+uniform mat3x2 mat32Uniform;
+uniform highp mat3x2 highpMat32Uniform;
+uniform mat2x3 mat23Uniform;
+uniform highp mat2x3 highpMat23Uniform;
+uniform Structs structUniform;
+
+out vec4 fragColor;
+
+void main() {
+  data[0] = floatBitsToUint(vec4(floatUniform, highpFloatUniform, structUniform.floatInStructs, 1.0));
+
+  vec4 verifyMat4Uniform = vec4(1.0, 1.0, 1.0, 1.0) * mat4Uniform;
+  data[1] = floatBitsToUint(verifyMat4Uniform);
+
+  highp vec4 verifyHighpMat4Uniform = vec4(1.0, 1.0, 1.0, 1.0) * highpMat4Uniform;
+  data[2] = floatBitsToUint(verifyHighpMat4Uniform);
+
+  data[3] = floatBitsToUint(vec4Uniform);
+
+  data[4] = floatBitsToUint(highpVec4Uniform);
+
+  vec3 verifyMat3x2Uniform = vec2(1.0, 1.0) * mat32Uniform;
+  data[5] = floatBitsToUint(vec4(verifyMat3x2Uniform, 1.0));
+
+  highp vec3 verifyMat3x2HighpUniform = vec2(1.0, 1.0) * highpMat32Uniform;
+  data[6] = floatBitsToUint(vec4(verifyMat3x2HighpUniform, 1.0));
+
+  vec2 verifyMat2x3Uniform = vec3(1.0, 1.0, 1.0) * mat23Uniform;
+  highp vec2 verifyMat2x3HighpUniform = vec3(1.0, 1.0, 1.0) * highpMat23Uniform;
+  data[7] = floatBitsToUint(vec4(verifyMat2x3Uniform, verifyMat2x3HighpUniform));
+
+  fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLint floatUniformLocation = glGetUniformLocation(program, "floatUniform");
+    ASSERT_NE(floatUniformLocation, -1);
+    GLint highpFloatUniformLocation = glGetUniformLocation(program, "highpFloatUniform");
+    ASSERT_NE(highpFloatUniformLocation, -1);
+    GLint mat4UniformLocation = glGetUniformLocation(program, "mat4Uniform");
+    ASSERT_NE(mat4UniformLocation, -1);
+    GLint highpMat4UniformLocation = glGetUniformLocation(program, "highpMat4Uniform");
+    ASSERT_NE(highpMat4UniformLocation, -1);
+    GLint vec4UniformLocation = glGetUniformLocation(program, "vec4Uniform");
+    ASSERT_NE(vec4UniformLocation, -1);
+    GLint highpVec4UniformLocation = glGetUniformLocation(program, "highpVec4Uniform");
+    ASSERT_NE(highpVec4UniformLocation, -1);
+    GLint mat32UniformLocation = glGetUniformLocation(program, "mat32Uniform");
+    ASSERT_NE(mat32UniformLocation, -1);
+    GLint highpMat32UniformLocation = glGetUniformLocation(program, "highpMat32Uniform");
+    ASSERT_NE(highpMat32UniformLocation, -1);
+    GLint mat23UniformLocation = glGetUniformLocation(program, "mat23Uniform");
+    ASSERT_NE(mat23UniformLocation, -1);
+    GLint highpMat23UniformLocation = glGetUniformLocation(program, "highpMat23Uniform");
+    ASSERT_NE(highpMat23UniformLocation, -1);
+    GLint structUniformLocation = glGetUniformLocation(program, "structUniform.floatInStructs");
+    ASSERT_NE(structUniformLocation, -1);
+
+    GLfloat floatUniformValue         = 1.0;
+    GLfloat highpFloatUniformValue    = 131072.0;
+    GLfloat mat4UniformValue[16]      = {1.0, 2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,
+                                         9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0};
+    GLfloat highpMat4UniformValue[16] = {131072.0, 131073.0, 131074.0, 131075.0, 131076.0, 131077.0,
+                                         131078.0, 131079.0, 131080.0, 131081.0, 131082.0, 131083.0,
+                                         131084.0, 131085.0, 131086.0, 131087.0};
+    GLfloat vec4UniformValue[4]       = {17.0, 18.0, 19.0, 20.0};
+    GLfloat highpVec4UniformValue[4]  = {131088.0, 131089.0, 131090.0, 131091.0};
+    GLfloat mat32UniformValue[6]      = {21.0, 22.0, 23.0, 24.0, 25.0, 26.0};
+    GLfloat highpMat32UniformValue[6] = {131092.0, 131093.0, 131094.0,
+                                         131095.0, 131096.0, 131097.0};
+    GLfloat mat23UniformValue[6]      = {27.0, 28.0, 29.0, 30.0, 31.0, 32.0};
+    GLfloat highpMat23UniformValue[6] = {131098.0, 131099.0, 131100.0,
+                                         131101.0, 131102.0, 131103.0};
+    GLfloat structUniformValue        = 33.0;
+    glUniform1f(floatUniformLocation, floatUniformValue);
+    glUniform1f(highpFloatUniformLocation, highpFloatUniformValue);
+    glUniformMatrix4fv(mat4UniformLocation, 1, GL_FALSE, mat4UniformValue);
+    glUniformMatrix4fv(highpMat4UniformLocation, 1, GL_FALSE, highpMat4UniformValue);
+    glUniform4fv(vec4UniformLocation, 1, vec4UniformValue);
+    glUniform4fv(highpVec4UniformLocation, 1, highpVec4UniformValue);
+    glUniformMatrix3x2fv(mat32UniformLocation, 1, GL_FALSE, mat32UniformValue);
+    glUniformMatrix3x2fv(highpMat32UniformLocation, 1, GL_FALSE, highpMat32UniformValue);
+    glUniformMatrix2x3fv(mat23UniformLocation, 1, GL_FALSE, mat23UniformValue);
+    glUniformMatrix2x3fv(highpMat23UniformLocation, 1, GL_FALSE, highpMat23UniformValue);
+    glUniform1f(structUniformLocation, structUniformValue);
+    constexpr GLint kBufferSize = 8 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+    ASSERT_EQ(data[0], 1);
+    ASSERT_EQ(data[1], 131072);
+    ASSERT_EQ(data[2], 33);
+    ASSERT_EQ(data[3], 1);
+    ASSERT_EQ(data[4], 10);
+    ASSERT_EQ(data[5], 26);
+    ASSERT_EQ(data[6], 42);
+    ASSERT_EQ(data[7], 58);
+    ASSERT_EQ(data[8], 524294);
+    ASSERT_EQ(data[9], 524310);
+    ASSERT_EQ(data[10], 524326);
+    ASSERT_EQ(data[11], 524342);
+    ASSERT_EQ(data[12], 17);
+    ASSERT_EQ(data[13], 18);
+    ASSERT_EQ(data[14], 19);
+    ASSERT_EQ(data[15], 20);
+    ASSERT_EQ(data[16], 131088);
+    ASSERT_EQ(data[17], 131089);
+    ASSERT_EQ(data[18], 131090);
+    ASSERT_EQ(data[19], 131091);
+    ASSERT_EQ(data[20], 43);
+    ASSERT_EQ(data[21], 47);
+    ASSERT_EQ(data[22], 51);
+    ASSERT_EQ(data[23], 1);
+    ASSERT_EQ(data[24], 262185);
+    ASSERT_EQ(data[25], 262189);
+    ASSERT_EQ(data[26], 262193);
+    ASSERT_EQ(data[27], 1);
+    ASSERT_EQ(data[28], 84);
+    ASSERT_EQ(data[29], 93);
+    ASSERT_EQ(data[30], 393297);
+    ASSERT_EQ(data[31], 393306);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+    glDeleteProgram(program);
+}
+
 // Test a uniform struct containing a non-square matrix and a boolean.
 // Minimal test case for a bug revealed by dEQP tests.
 TEST_P(UniformTestES3, StructWithNonSquareMatrixAndBool)

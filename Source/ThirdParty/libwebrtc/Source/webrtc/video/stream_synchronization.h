@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "system_wrappers/include/rtp_to_ntp_estimator.h"
+#include "rtc_base/rtp_to_ntp_estimator.h"
 
 namespace webrtc {
 

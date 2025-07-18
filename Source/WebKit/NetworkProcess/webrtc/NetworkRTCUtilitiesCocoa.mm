@@ -71,37 +71,37 @@ bool isKnownTracker(const WebCore::RegistrableDomain& domain)
     return !!NEHelperTrackerGetDisposition(nullptr, bridge_cast(domains.get()), context, &index);
 }
 
-std::optional<uint32_t> trafficClassFromDSCP(rtc::DiffServCodePoint dscpValue)
+std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint dscpValue)
 {
     switch (dscpValue) {
-    case rtc::DiffServCodePoint::DSCP_NO_CHANGE:
+    case webrtc::DiffServCodePoint::DSCP_NO_CHANGE:
         return { };
-    case rtc::DiffServCodePoint::DSCP_CS0:
+    case webrtc::DiffServCodePoint::DSCP_CS0:
         return SO_TC_BE;
-    case rtc::DiffServCodePoint::DSCP_CS1:
+    case webrtc::DiffServCodePoint::DSCP_CS1:
         return SO_TC_BK_SYS;
-    case rtc::DiffServCodePoint::DSCP_AF41:
+    case webrtc::DiffServCodePoint::DSCP_AF41:
         return SO_TC_VI;
-    case rtc::DiffServCodePoint::DSCP_AF42:
+    case webrtc::DiffServCodePoint::DSCP_AF42:
         return SO_TC_VI;
-    case rtc::DiffServCodePoint::DSCP_EF:
+    case webrtc::DiffServCodePoint::DSCP_EF:
         return SO_TC_VO;
-    case rtc::DiffServCodePoint::DSCP_AF11:
-    case rtc::DiffServCodePoint::DSCP_AF12:
-    case rtc::DiffServCodePoint::DSCP_AF13:
-    case rtc::DiffServCodePoint::DSCP_CS2:
-    case rtc::DiffServCodePoint::DSCP_AF21:
-    case rtc::DiffServCodePoint::DSCP_AF22:
-    case rtc::DiffServCodePoint::DSCP_AF23:
-    case rtc::DiffServCodePoint::DSCP_CS3:
-    case rtc::DiffServCodePoint::DSCP_AF31:
-    case rtc::DiffServCodePoint::DSCP_AF32:
-    case rtc::DiffServCodePoint::DSCP_AF33:
-    case rtc::DiffServCodePoint::DSCP_CS4:
-    case rtc::DiffServCodePoint::DSCP_AF43:
-    case rtc::DiffServCodePoint::DSCP_CS5:
-    case rtc::DiffServCodePoint::DSCP_CS6:
-    case rtc::DiffServCodePoint::DSCP_CS7:
+    case webrtc::DiffServCodePoint::DSCP_AF11:
+    case webrtc::DiffServCodePoint::DSCP_AF12:
+    case webrtc::DiffServCodePoint::DSCP_AF13:
+    case webrtc::DiffServCodePoint::DSCP_CS2:
+    case webrtc::DiffServCodePoint::DSCP_AF21:
+    case webrtc::DiffServCodePoint::DSCP_AF22:
+    case webrtc::DiffServCodePoint::DSCP_AF23:
+    case webrtc::DiffServCodePoint::DSCP_CS3:
+    case webrtc::DiffServCodePoint::DSCP_AF31:
+    case webrtc::DiffServCodePoint::DSCP_AF32:
+    case webrtc::DiffServCodePoint::DSCP_AF33:
+    case webrtc::DiffServCodePoint::DSCP_CS4:
+    case webrtc::DiffServCodePoint::DSCP_AF43:
+    case webrtc::DiffServCodePoint::DSCP_CS5:
+    case webrtc::DiffServCodePoint::DSCP_CS6:
+    case webrtc::DiffServCodePoint::DSCP_CS7:
         break;
     };
     return { };

@@ -1,0 +1,97 @@
+
+
+  XXXXXXX
+    XXXXXXX
+
+
+XXXXXXX
+
+FAIL .webkit-box 1 assert_equals:
+<div class="webkit-box">
+    <img src="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 30'&gt;&lt;/svg&gt;" data-expected-height="50">
+  </div>
+height expected 50 but got 0
+FAIL .webkit-box 2 assert_equals:
+<div class="webkit-box">
+    <img src="data:image/svg+xml,&lt;svg width='100' height='300' xmlns='http://www.w3.org/2000/svg'&gt;&lt;/svg&gt;" data-expected-height="50">
+  </div>
+height expected 50 but got 300
+FAIL .webkit-box 3 assert_equals:
+<div class="webkit-box">
+    <svg width="100" height="300" data-expected-client-height="50"></svg>
+  </div>
+clientHeight expected 50 but got 300
+FAIL .webkit-box 4 assert_equals:
+<div class="webkit-box">
+    <input type="text" data-expected-height="50">
+  </div>
+height expected 50 but got 402
+FAIL .webkit-box 5 assert_equals:
+<div class="webkit-box">
+    <input type="range" data-expected-height="50">
+  </div>
+height expected 50 but got 129
+FAIL .webkit-box 6 assert_equals:
+<div class="webkit-box">
+    <input type="button" value="XXXXXXX" data-expected-height="50">
+  </div>
+height expected 50 but got 140
+FAIL .webkit-box 7 assert_equals:
+<div class="webkit-box">
+    <input type="submit" value="XXXXXXX" data-expected-height="50">
+  </div>
+height expected 50 but got 140
+FAIL .webkit-box 8 assert_equals:
+<div class="webkit-box">
+    <input type="reset" value="XXXXXXX" data-expected-height="50">
+  </div>
+height expected 50 but got 140
+FAIL .webkit-box 9 assert_equals:
+<div class="webkit-box">
+    <textarea data-expected-height="50">XXXXXXX</textarea>
+  </div>
+height expected 50 but got 415
+FAIL .webkit-box 10 assert_equals:
+<div class="webkit-box">
+    <select data-expected-height="50">
+      <option>XXXXXXX</option>
+    </select>
+  </div>
+height expected 50 but got 180
+PASS .webkit-box 11
+FAIL .webkit-box 12 assert_equals:
+<div class="webkit-box">
+    <iframe data-expected-height="50"></iframe>
+  </div>
+height expected 50 but got 150
+FAIL .webkit-box 13 assert_equals:
+<div class="webkit-box">
+    <button data-expected-height="50">XXXXXXX</button>
+  </div>
+height expected 50 but got 140
+FAIL .webkit-box 14 assert_equals:
+<div class="webkit-box">
+    <canvas width="100" height="300" data-expected-height="50"></canvas>
+  </div>
+height expected 50 but got 0
+FAIL .webkit-box 15 assert_equals:
+<div class="webkit-box">
+    <progress data-expected-height="50"></progress>
+  </div>
+height expected 50 but got 200
+FAIL .webkit-box 16 assert_equals:
+<div class="webkit-box">
+    <meter data-expected-height="50"></meter>
+  </div>
+height expected 50 but got 100
+FAIL .webkit-box 17 assert_equals:
+<div class="webkit-box">
+    <details data-expected-height="50">XXXXXXX</details>
+  </div>
+height expected 50 but got 140
+FAIL .webkit-box 18 assert_equals:
+<div class="webkit-box">
+    <div style="height: 200px" data-expected-height="50">XXXXXXX</div>
+  </div>
+height expected 50 but got 200
+

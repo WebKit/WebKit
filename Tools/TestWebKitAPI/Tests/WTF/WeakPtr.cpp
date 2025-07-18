@@ -125,7 +125,7 @@ struct Int : public CanMakeWeakPtr<Int> {
 };
 
 class Base : public CanMakeWeakPtr<Base> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Base);
 public:
     Base() { }
 
@@ -3181,7 +3181,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
 
 class DidUpdateRefCountWeakPtrImpl final {
     WTF_MAKE_NONCOPYABLE(DidUpdateRefCountWeakPtrImpl);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl, DidUpdateRefCountWeakPtrImpl);
 public:
     ~DidUpdateRefCountWeakPtrImpl() = default;
 

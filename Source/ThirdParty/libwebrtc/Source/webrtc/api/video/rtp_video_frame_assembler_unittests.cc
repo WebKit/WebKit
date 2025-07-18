@@ -56,7 +56,7 @@ class PacketBuilder {
     return *this;
   }
 
-  PacketBuilder& WithPayload(rtc::ArrayView<const uint8_t> payload) {
+  PacketBuilder& WithPayload(ArrayView<const uint8_t> payload) {
     payload_.assign(payload.begin(), payload.end());
     return *this;
   }
@@ -135,12 +135,12 @@ void AppendFrames(RtpVideoFrameAssembler::FrameVector from,
             std::make_move_iterator(from.end()));
 }
 
-rtc::ArrayView<int64_t> References(const std::unique_ptr<EncodedFrame>& frame) {
-  return rtc::MakeArrayView(frame->references, frame->num_references);
+ArrayView<int64_t> References(const std::unique_ptr<EncodedFrame>& frame) {
+  return MakeArrayView(frame->references, frame->num_references);
 }
 
-rtc::ArrayView<uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
-  return rtc::ArrayView<uint8_t>(*frame->GetEncodedData());
+ArrayView<uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
+  return ArrayView<uint8_t>(*frame->GetEncodedData());
 }
 
 TEST(RtpVideoFrameAssembler, Vp8Packetization) {

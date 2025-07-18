@@ -40,7 +40,7 @@ TEST(EchoCanceller3JsonHelpers, ToStringAndParseJson) {
   std::string json_string = Aec3ConfigToJsonString(cfg);
   EchoCanceller3Config cfg_transformed;
   bool parsing_successful;
-  Aec3ConfigFromJsonString(json_string, &cfg_transformed, & parsing_successful);
+  Aec3ConfigFromJsonString(json_string, &cfg_transformed, &parsing_successful);
   ASSERT_TRUE(parsing_successful);
 
   // Expect unchanged values to remain default.

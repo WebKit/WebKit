@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_RED_PAYLOAD_SPLITTER_H_
 #define MODULES_AUDIO_CODING_NETEQ_RED_PAYLOAD_SPLITTER_H_
 
+#include <cstddef>
+
 #include "modules/audio_coding/neteq/packet.h"
 
 namespace webrtc {

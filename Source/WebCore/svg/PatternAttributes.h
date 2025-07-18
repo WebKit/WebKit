@@ -40,7 +40,7 @@ struct PatternAttributes {
     SVGPreserveAspectRatioValue preserveAspectRatio() const { return m_preserveAspectRatio; }
     SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits; }
     SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits; }
-    AffineTransform patternTransform() const { return m_patternTransform; }
+    const AffineTransform& patternTransform() const { return m_patternTransform; }
     const SVGPatternElement* patternContentElement() const { return m_patternContentElement.get(); }
 
     void setX(SVGLengthValue value)

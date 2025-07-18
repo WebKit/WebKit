@@ -10,12 +10,27 @@
 
 #include "modules/video_coding/codecs/test/video_codec_unittest.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "api/test/create_frame_generator.h"
+#include "api/test/frame_generator_interface.h"
+#include "api/units/time_delta.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "test/gtest.h"
 #include "test/video_codec_settings.h"
 
 static constexpr webrtc::TimeDelta kEncodeTimeout =
@@ -57,7 +72,7 @@ VideoCodecUnitTest::FakeEncodeCompleteCallback::OnEncodedImage(
 
 void VideoCodecUnitTest::FakeDecodeCompleteCallback::Decoded(
     VideoFrame& frame,
-    std::optional<int32_t> decode_time_ms,
+    std::optional<int32_t> /* decode_time_ms */,
     std::optional<uint8_t> qp) {
   MutexLock lock(&test_->decoded_frame_section_);
   test_->decoded_frame_.emplace(frame);
@@ -66,7 +81,7 @@ void VideoCodecUnitTest::FakeDecodeCompleteCallback::Decoded(
 }
 
 void VideoCodecUnitTest::SetUp() {
-  webrtc::test::CodecSettings(kVideoCodecVP8, &codec_settings_);
+  test::CodecSettings(kVideoCodecVP8, &codec_settings_);
   codec_settings_.startBitrate = kStartBitrate;
   codec_settings_.maxBitrate = kMaxBitrate;
   codec_settings_.maxFramerate = kMaxFramerate;
@@ -97,7 +112,8 @@ void VideoCodecUnitTest::SetUp() {
   EXPECT_TRUE(decoder_->Configure(decoder_settings));
 }
 
-void VideoCodecUnitTest::ModifyCodecSettings(VideoCodec* codec_settings) {}
+void VideoCodecUnitTest::ModifyCodecSettings(VideoCodec* /* codec_settings */) {
+}
 
 VideoFrame VideoCodecUnitTest::NextInputFrame() {
   test::FrameGeneratorInterface::VideoFrameData frame_data =

@@ -10,6 +10,8 @@
 
 #include "modules/rtp_rtcp/source/fec_private_tables_bursty.h"
 
+#include <cstdint>
+
 namespace {
 // clang-format off
 #define kMaskBursty1_1 \

@@ -131,7 +131,7 @@ Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
 }
 
-Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
+Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
     return adoptRef(*new HTMLInputElement(tagQName(), document, nullptr, CreationType::ByCloning));
 }
@@ -422,9 +422,9 @@ int HTMLInputElement::defaultTabIndex() const
     return 0;
 }
 
-bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLInputElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return m_inputType->isKeyboardFocusable(event);
+    return m_inputType->isKeyboardFocusable(focusEventData);
 }
 
 bool HTMLInputElement::isMouseFocusable() const
@@ -442,9 +442,9 @@ bool HTMLInputElement::isTextFormControlFocusable() const
     return HTMLTextFormControlElement::isFocusable();
 }
 
-bool HTMLInputElement::isTextFormControlKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLInputElement::isTextFormControlKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return HTMLTextFormControlElement::isKeyboardFocusable(event);
+    return HTMLTextFormControlElement::isKeyboardFocusable(focusEventData);
 }
 
 bool HTMLInputElement::isTextFormControlMouseFocusable() const
@@ -1128,9 +1128,9 @@ bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
     return m_inputType->sizeShouldIncludeDecoration(defaultSize, preferredSize);
 }
 
-float HTMLInputElement::decorationWidth() const
+float HTMLInputElement::decorationWidth(float inputWidth) const
 {
-    return m_inputType->decorationWidth();
+    return m_inputType->decorationWidth(inputWidth);
 }
 
 void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& source)
@@ -1451,7 +1451,7 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     return { };
 }
 
-static inline bool isRFC2616TokenCharacter(UChar ch)
+static inline bool isRFC2616TokenCharacter(char16_t ch)
 {
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
@@ -1482,7 +1482,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.trim(isASCIIWhitespace<UChar>);
+        auto trimmedType = splitType.trim(isASCIIWhitespace<char16_t>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))
@@ -2406,7 +2406,7 @@ String HTMLInputElement::placeholder() const
     if (!containsHTMLLineBreak(attributeValue)) [[likely]]
         return attributeValue;
 
-    return attributeValue.removeCharacters([](UChar character) {
+    return attributeValue.removeCharacters([](char16_t character) {
         return isHTMLLineBreak(character);
     });
 }

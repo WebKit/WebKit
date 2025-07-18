@@ -30,6 +30,7 @@
 #include "ParseInt.h"
 #include "Uint16WithFraction.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/double-conversion.h>
@@ -54,6 +55,8 @@ static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToPrecision);
 #include "NumberPrototype.lut.h"
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NumericStrings::DoubleCache);
 
 const ClassInfo NumberPrototype::s_info = { "Number"_s, &NumberObject::s_info, &numberPrototypeTable, nullptr, CREATE_METHOD_TABLE(NumberPrototype) };
 
@@ -509,6 +512,8 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
 
 JSString* NumericStrings::addJSString(VM& vm, double value)
 {
+    if (!m_doubleCache) [[unlikely]]
+        initializeDoubleCache();
     auto& entry = lookup(value);
     if (value != entry.key || entry.value.isNull()) {
         entry.key = value;
@@ -672,6 +677,12 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
 
     throwRangeError(globalObject, throwScope, "toString() radix argument must be between 2 and 36"_s);
     return 0;
+}
+
+void NumericStrings::initializeDoubleCache()
+{
+    ASSERT(!m_doubleCache);
+    m_doubleCache = makeUnique<DoubleCache>();
 }
 
 } // namespace JSC

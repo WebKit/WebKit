@@ -54,6 +54,13 @@
   }, `cookieStore.set with ${prefix} prefix a path option`);
 });
 
+['__HostHttp-', '__hosthttp-', '__Http-', '__http-'].forEach(prefix => {
+  promise_test(async testCase => {
+    await promise_rejects_js(testCase, TypeError,
+        cookieStore.set({ name: `${prefix}cookie-name`, value: 'cookie-value'}));
+  }, `cookieStore.set with ${prefix} prefix rejects`);
+});
+
 promise_test(async testCase => {
     let exceptionThrown = false;
     try {
@@ -64,3 +71,33 @@ promise_test(async testCase => {
     }
     assert_true(exceptionThrown, "No exception thrown.");
 }, 'cookieStore.set with malformed name.');
+
+promise_test(async testCase => {
+  // Nameless cookies cannot have a __Host- prefix
+  await cookieStore.delete('');
+
+  const currentUrl = new URL(self.location.href);
+  const currentDomain = currentUrl.hostname;
+
+  await promise_rejects_js(testCase, TypeError, cookieStore.set(
+      { name: '',
+        value: '__Host-nameless-cookie',
+        domain: `.${currentDomain}` }));
+  const cookie = await cookieStore.get('');
+  assert_equals(cookie, null);
+}, 'cookieStore.set a nameless cookie cannot have __Host- prefix');
+
+promise_test(async testCase => {
+  // Nameless cookies cannot have a __Secure- prefix
+  await cookieStore.delete('');
+
+  const currentUrl = new URL(self.location.href);
+  const currentDomain = currentUrl.hostname;
+
+  await promise_rejects_js(testCase, TypeError, cookieStore.set(
+      { name: '',
+        value: '__Secure-nameless-cookie',
+        domain: `.${currentDomain}` }));
+  const cookie = await cookieStore.get('');
+  assert_equals(cookie, null);
+}, 'cookieStore.set a nameless cookie cannot have __Secure- prefix');

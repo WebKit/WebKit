@@ -12,24 +12,12 @@
 
 #include <memory>
 
-#include "api/peer_connection_interface.h"
 #include "api/test/time_controller.h"
 
 namespace webrtc {
 
-// Creates a time coltroller that wraps `alarm`.
-std::unique_ptr<TimeController> CreateTimeController(
-    ControlledAlarmClock* alarm);
-
 // Creates a time controller that runs in simulated time.
 std::unique_ptr<TimeController> CreateSimulatedTimeController();
-
-// Adjusts media `deps` to use clock `time_controller` provides, fills media
-// related dependencies, and enables media support for a PeerConnectionFactory
-// created from `deps`.
-void EnableMediaWithDefaultsAndTimeController(
-    TimeController& time_controller,
-    PeerConnectionFactoryDependencies& deps);
 
 }  // namespace webrtc
 

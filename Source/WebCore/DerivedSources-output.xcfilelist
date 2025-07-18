@@ -1714,6 +1714,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
@@ -2394,8 +2396,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtlsTransport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtlsTransport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtlsTransportState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtlsTransportState.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedVideoFrame.cpp
@@ -2464,8 +2464,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpContributingSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpContributingSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpEncodingParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpEncodingParameters.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpFecParameters.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpFecParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpHeaderExtensionParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpHeaderExtensionParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpParameters.cpp
@@ -2474,8 +2472,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver+Transform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver+Transform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSFrameTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSFrameTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSFrameTransformErrorEvent.cpp
@@ -3346,6 +3342,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeys.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeys.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeInfo.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeInfo.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp

@@ -10,13 +10,24 @@
 
 #include "rtc_base/async_dns_resolver.h"
 
-#include "rtc_base/gunit.h"
+#include <memory>
+
+#include "api/test/rtc_error_matchers.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/net_helpers.h"
+#include "rtc_base/socket_address.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 namespace {
-const int kDefaultTimeout = 1000;
+
+using ::testing::IsTrue;
+
+const TimeDelta kDefaultTimeout = TimeDelta::Millis(1000);
 const int kPortNumber = 3027;
 
 TEST(AsyncDnsResolver, ConstructorWorks) {
@@ -26,15 +37,17 @@ TEST(AsyncDnsResolver, ConstructorWorks) {
 TEST(AsyncDnsResolver, ResolvingLocalhostWorks) {
   test::RunLoop loop;  // Ensure that posting back to main thread works
   AsyncDnsResolver resolver;
-  rtc::SocketAddress address("localhost",
-                             kPortNumber);  // Port number does not matter
-  rtc::SocketAddress resolved_address;
+  SocketAddress address("localhost",
+                        kPortNumber);  // Port number does not matter
+  SocketAddress resolved_address;
   bool done = false;
   resolver.Start(address, [&done] { done = true; });
-  ASSERT_TRUE_WAIT(done, kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return done; }, IsTrue(), {.timeout = kDefaultTimeout}),
+      IsRtcOk());
   EXPECT_EQ(resolver.result().GetError(), 0);
   if (resolver.result().GetResolvedAddress(AF_INET, &resolved_address)) {
-    EXPECT_EQ(resolved_address, rtc::SocketAddress("127.0.0.1", kPortNumber));
+    EXPECT_EQ(resolved_address, SocketAddress("127.0.0.1", kPortNumber));
   } else {
     RTC_LOG(LS_INFO) << "Resolution gave no address, skipping test";
   }
@@ -44,13 +57,13 @@ TEST(AsyncDnsResolver, ResolveAfterDeleteDoesNotReturn) {
   test::RunLoop loop;
   std::unique_ptr<AsyncDnsResolver> resolver =
       std::make_unique<AsyncDnsResolver>();
-  rtc::SocketAddress address("localhost",
-                             kPortNumber);  // Port number does not matter
-  rtc::SocketAddress resolved_address;
+  SocketAddress address("localhost",
+                        kPortNumber);  // Port number does not matter
+  SocketAddress resolved_address;
   bool done = false;
   resolver->Start(address, [&done] { done = true; });
   resolver.reset();                    // Deletes resolver.
-  rtc::Thread::Current()->SleepMs(1);  // Allows callback to execute
+  loop.Flush();                        // Allows callback to execute
   EXPECT_FALSE(done);                  // Expect no result.
 }
 

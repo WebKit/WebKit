@@ -286,7 +286,7 @@ String WindowsKeyNames::domKeyFromParams(WPARAM virtualKey, LPARAM lParam)
     return "Unidentified"_s;
 }
 
-String WindowsKeyNames::domKeyFromChar(UChar c)
+String WindowsKeyNames::domKeyFromChar(char16_t c)
 {
     switch (c) {
     case '\x1b':

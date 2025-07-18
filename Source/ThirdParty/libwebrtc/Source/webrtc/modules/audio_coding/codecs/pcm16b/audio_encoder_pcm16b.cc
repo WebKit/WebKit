@@ -10,8 +10,12 @@
 
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/audio_codecs/audio_encoder.h"
+#include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 

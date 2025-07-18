@@ -90,7 +90,7 @@ private:
     friend class NeverDestroyed<SharedJSContextWK, MainRunLoopAccessTraits>;
 
     SharedJSContextWK()
-        : m_timer(RunLoop::main(), this, &SharedJSContextWK::releaseContextIfNecessary)
+        : m_timer(RunLoop::mainSingleton(), this, &SharedJSContextWK::releaseContextIfNecessary)
     {
     }
 
@@ -165,6 +165,11 @@ WKRetainPtr<WKTypeRef> SerializedScriptValue::deserializeWK(WebCore::SerializedS
         return nullptr;
 
     return valueToWKObject(context.get(), value);
+}
+
+JSRetainPtr<JSGlobalContextRef> SerializedScriptValue::deserializationContext()
+{
+    return SharedJSContextWK::singleton().ensureContext();
 }
 
 #endif // !PLATFORM(COCOA)

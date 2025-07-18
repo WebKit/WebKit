@@ -97,6 +97,9 @@ GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderEle
         return makeUnique<GradientData>();
     }).iterator->value;
 
+    if (!gradientTransform().isInvertible())
+        return nullptr;
+
     if (gradientData.invalidate(inputs)) {
         gradientData.gradient = buildGradient(style);
         ASSERT(gradientData.userspaceTransform.isIdentity());

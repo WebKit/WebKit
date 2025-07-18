@@ -28,6 +28,7 @@
 #include "CodeSpecializationKind.h"
 #include <wtf/PrintStream.h>
 #include <wtf/SixCharacterHash.h>
+#include <wtf/text/StringImpl.h>
 
 // CodeBlock hashes are useful for informally identifying code blocks. They correspond
 // to the low 32 bits of a SHA1 hash of the source code with two low bit flipped

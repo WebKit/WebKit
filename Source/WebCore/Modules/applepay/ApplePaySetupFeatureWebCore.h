@@ -63,7 +63,7 @@ protected:
 private:
     WEBCORE_EXPORT explicit ApplePaySetupFeature(PKPaymentSetupFeature *);
 
-    RetainPtr<PKPaymentSetupFeature> m_feature;
+    const RetainPtr<PKPaymentSetupFeature> m_feature;
 };
 
 } // namespace WebCore

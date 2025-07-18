@@ -22,7 +22,7 @@ namespace webrtc_pc_e2e {
 // original was discarded and some frame is required to be passed upstream
 // to make WebRTC pipeline happy and not request key frame on the received
 // stream due to lack of incoming frames.
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer();
+scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer();
 
 // Tests if provided frame contains a buffer created by
 // `CreateDummyFrameBuffer`.

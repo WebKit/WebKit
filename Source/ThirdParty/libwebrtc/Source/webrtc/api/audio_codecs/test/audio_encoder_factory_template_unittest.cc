@@ -184,8 +184,8 @@ TEST(AudioEncoderFactoryTemplateTest, CanUseTraitWithOnlyV2MakeAudioEncoder) {
 
 TEST(AudioEncoderFactoryTemplateTest, NoEncoderTypes) {
   const Environment env = CreateEnvironment();
-  rtc::scoped_refptr<AudioEncoderFactory> factory(
-      rtc::make_ref_counted<
+  scoped_refptr<AudioEncoderFactory> factory(
+      make_ref_counted<
           audio_encoder_factory_template_impl::AudioEncoderFactoryT<>>());
   EXPECT_THAT(factory->GetSupportedEncoders(), ::testing::IsEmpty());
   EXPECT_EQ(std::nullopt, factory->QueryAudioEncoder({"foo", 8000, 1}));

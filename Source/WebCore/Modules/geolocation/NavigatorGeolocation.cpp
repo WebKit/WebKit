@@ -84,7 +84,7 @@ Geolocation* NavigatorGeolocation::optionalGeolocation(Navigator& navigator)
 Geolocation* NavigatorGeolocation::geolocation() const
 {
     if (!m_geolocation)
-        m_geolocation = Geolocation::create(Ref { m_navigator.get() });
+        lazyInitialize(m_geolocation, Geolocation::create(Ref { m_navigator.get() }));
     return m_geolocation.get();
 }
 

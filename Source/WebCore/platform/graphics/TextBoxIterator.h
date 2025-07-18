@@ -42,7 +42,7 @@ public:
     unsigned offset() const { return m_offset; }
     void increment() { m_offset++; }
     bool atEnd() const { return !m_textRun || m_offset >= m_textRun->length(); }
-    UChar current() const { return (*m_textRun)[m_offset]; }
+    char16_t current() const { return (*m_textRun)[m_offset]; }
     UCharDirection direction() const { return atEnd() ? U_OTHER_NEUTRAL : u_charDirection(current()); }
 
     friend bool operator==(const TextBoxIterator&, const TextBoxIterator&) = default;

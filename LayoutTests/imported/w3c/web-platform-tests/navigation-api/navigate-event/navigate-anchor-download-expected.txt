@@ -1,6 +1,6 @@
 
-PASS <a> fires navigate and populates downloadRequest with ''
-PASS <a> fires navigate and populates downloadRequest with 'filename'
-PASS <area> fires navigate and populates downloadRequest with ''
-PASS <area> fires navigate and populates downloadRequest with 'filename'
+FAIL <a> fires navigate and populates downloadRequest with '' assert_equals: expected (object) Element node <a href="foo.html" download=""></a> but got (undefined) undefined
+FAIL <a> fires navigate and populates downloadRequest with 'filename' assert_equals: expected (object) Element node <a href="foo.html" download="filename"></a> but got (undefined) undefined
+FAIL <area> fires navigate and populates downloadRequest with '' assert_equals: expected (object) Element node <area href="foo.html" download=""></area> but got (undefined) undefined
+FAIL <area> fires navigate and populates downloadRequest with 'filename' assert_equals: expected (object) Element node <area href="foo.html" download="filename"></area> but got (undefined) undefined
 

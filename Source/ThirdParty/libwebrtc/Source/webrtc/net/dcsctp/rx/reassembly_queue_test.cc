@@ -74,6 +74,15 @@ MATCHER_P3(SctpMessageIs, stream_id, ppid, expected_payload, "") {
   return true;
 }
 
+std::vector<DcSctpMessage> FlushMessages(ReassemblyQueue& reasm) {
+  std::vector<DcSctpMessage> messages;
+  while (reasm.HasMessages()) {
+    messages.emplace_back(reasm.GetNextMessage().value());
+  }
+  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  return messages;
+}
+
 class ReassemblyQueueTest : public testing::Test {
  protected:
   ReassemblyQueueTest() {}
@@ -90,14 +99,13 @@ TEST_F(ReassemblyQueueTest, SingleUnorderedChunkMessage) {
   ReassemblyQueue reasm("log: ", kBufferSize);
   reasm.Add(TSN(10), gen_.Unordered({1, 2, 3, 4}, "BE"));
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
 }
 
 TEST_F(ReassemblyQueueTest, LargeUnorderedChunkAllPermutations) {
   std::vector<uint32_t> tsns = {10, 11, 12, 13};
-  rtc::ArrayView<const uint8_t> payload(kLongPayload);
+  webrtc::ArrayView<const uint8_t> payload(kLongPayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize);
 
@@ -114,9 +122,8 @@ TEST_F(ReassemblyQueueTest, LargeUnorderedChunkAllPermutations) {
         EXPECT_FALSE(reasm.HasMessages());
       } else {
         EXPECT_TRUE(reasm.HasMessages());
-        EXPECT_THAT(reasm.FlushMessages(),
+        EXPECT_THAT(FlushMessages(reasm),
                     ElementsAre(SctpMessageIs(kStreamID, kPPID, kLongPayload)));
-        EXPECT_EQ(reasm.queued_bytes(), 0u);
       }
     }
   } while (std::next_permutation(std::begin(tsns), std::end(tsns)));
@@ -125,15 +132,15 @@ TEST_F(ReassemblyQueueTest, LargeUnorderedChunkAllPermutations) {
 TEST_F(ReassemblyQueueTest, SingleOrderedChunkMessage) {
   ReassemblyQueue reasm("log: ", kBufferSize);
   reasm.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
 }
 
 TEST_F(ReassemblyQueueTest, ManySmallOrderedMessages) {
   std::vector<uint32_t> tsns = {10, 11, 12, 13};
-  rtc::ArrayView<const uint8_t> payload(kLongPayload);
+  webrtc::ArrayView<const uint8_t> payload(kLongPayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize);
     for (size_t i = 0; i < tsns.size(); i++) {
@@ -148,12 +155,11 @@ TEST_F(ReassemblyQueueTest, ManySmallOrderedMessages) {
                      is_beginning, is_end, IsUnordered(false)));
     }
     EXPECT_THAT(
-        reasm.FlushMessages(),
+        FlushMessages(reasm),
         ElementsAre(SctpMessageIs(kStreamID, kPPID, payload.subview(0, 4)),
                     SctpMessageIs(kStreamID, kPPID, payload.subview(4, 4)),
                     SctpMessageIs(kStreamID, kPPID, payload.subview(8, 4)),
                     SctpMessageIs(kStreamID, kPPID, payload.subview(12, 4))));
-    EXPECT_EQ(reasm.queued_bytes(), 0u);
   } while (std::next_permutation(std::begin(tsns), std::end(tsns)));
 }
 
@@ -177,9 +183,8 @@ TEST_F(ReassemblyQueueTest, RetransmissionInLargeOrdered) {
 
   reasm.Add(TSN(20), gen_.Ordered({11, 12, 13, 14, 15, 16}, "E"));
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kLongPayload)));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
 }
 
 TEST_F(ReassemblyQueueTest, ForwardTSNRemoveUnordered) {
@@ -201,7 +206,7 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveUnordered) {
   // The second lost chunk comes, message is assembled.
   reasm.Add(TSN(16), gen_.Unordered({7}));
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
 }
 
 TEST_F(ReassemblyQueueTest, ForwardTSNRemoveOrdered) {
@@ -220,11 +225,11 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveOrdered) {
 
   reasm.HandleForwardTsn(
       TSN(13), std::vector<SkippedStream>({SkippedStream(kStreamID, kSSN)}));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
 
   // The lost chunk comes, but too late.
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kMessage2Payload)));
 }
 
@@ -244,11 +249,11 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveALotOrdered) {
 
   reasm.HandleForwardTsn(
       TSN(13), std::vector<SkippedStream>({SkippedStream(kStreamID, kSSN)}));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
 
   // The lost chunk comes, but too late.
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kMessage2Payload)));
 }
 
@@ -256,7 +261,7 @@ TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenResetStreamIsDeferred) {
   ReassemblyQueue reasm("log: ", kBufferSize);
   reasm.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(0)}));
   reasm.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(1)}));
-  EXPECT_THAT(reasm.FlushMessages(), SizeIs(2));
+  EXPECT_THAT(FlushMessages(reasm), SizeIs(2));
 
   reasm.EnterDeferredReset(TSN(12), std::vector<StreamID>({StreamID(1)}));
   EXPECT_EQ(reasm.GetHandoverReadiness(),
@@ -281,13 +286,14 @@ TEST_F(ReassemblyQueueTest, HandoverInInitialState) {
   reasm2.RestoreFromState(state);
 
   reasm2.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_THAT(reasm2.FlushMessages(), SizeIs(1));
+  EXPECT_THAT(FlushMessages(reasm2), SizeIs(1));
 }
 
 TEST_F(ReassemblyQueueTest, HandoverAfterHavingAssembedOneMessage) {
   ReassemblyQueue reasm1("log: ", kBufferSize);
   reasm1.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_THAT(reasm1.FlushMessages(), SizeIs(1));
+  EXPECT_TRUE(reasm1.GetNextMessage().has_value());
+  EXPECT_FALSE(reasm1.HasMessages());
 
   EXPECT_EQ(reasm1.GetHandoverReadiness(), HandoverReadinessStatus());
   DcSctpSocketHandoverState state;
@@ -298,7 +304,8 @@ TEST_F(ReassemblyQueueTest, HandoverAfterHavingAssembedOneMessage) {
   reasm2.RestoreFromState(state);
 
   reasm2.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_THAT(reasm2.FlushMessages(), SizeIs(1));
+  EXPECT_TRUE(reasm2.GetNextMessage().has_value());
+  EXPECT_FALSE(reasm2.HasMessages());
 }
 
 TEST_F(ReassemblyQueueTest, SingleUnorderedChunkMessageInRfc8260) {
@@ -307,9 +314,9 @@ TEST_F(ReassemblyQueueTest, SingleUnorderedChunkMessageInRfc8260) {
   reasm.Add(TSN(10), Data(StreamID(1), SSN(0), MID(0), FSN(0), kPPID,
                           {1, 2, 3, 4}, Data::IsBeginning(true),
                           Data::IsEnd(true), IsUnordered(true)));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
 }
 
@@ -326,13 +333,13 @@ TEST_F(ReassemblyQueueTest, TwoInterleavedChunks) {
   reasm.Add(TSN(12), Data(StreamID(1), SSN(0), MID(0), FSN(1), kPPID,
                           {5, 6, 7, 8}, Data::IsBeginning(false),
                           Data::IsEnd(true), IsUnordered(true)));
-  EXPECT_EQ(reasm.queued_bytes(), 4u);
+  EXPECT_EQ(reasm.queued_bytes(), 12u);
   reasm.Add(TSN(13), Data(StreamID(2), SSN(0), MID(0), FSN(1), kPPID,
                           {13, 14, 15, 16}, Data::IsBeginning(false),
                           Data::IsEnd(true), IsUnordered(true)));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 16u);
   EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(StreamID(1), kPPID, kMediumPayload1),
                           SctpMessageIs(StreamID(2), kPPID, kMediumPayload2)));
 }
@@ -343,7 +350,7 @@ TEST_F(ReassemblyQueueTest, UnorderedInterleavedMessagesAllPermutations) {
   StreamID stream_ids[] = {StreamID(1), StreamID(2), StreamID(1),
                            StreamID(1), StreamID(2), StreamID(2)};
   FSN fsns[] = {FSN(0), FSN(0), FSN(1), FSN(2), FSN(1), FSN(2)};
-  rtc::ArrayView<const uint8_t> payload(kSixBytePayload);
+  webrtc::ArrayView<const uint8_t> payload(kSixBytePayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize,
                           /*use_message_interleaving=*/true);
@@ -356,11 +363,10 @@ TEST_F(ReassemblyQueueTest, UnorderedInterleavedMessagesAllPermutations) {
                               is_beginning, is_end, IsUnordered(true)));
     }
     EXPECT_TRUE(reasm.HasMessages());
-    EXPECT_THAT(reasm.FlushMessages(),
+    EXPECT_THAT(FlushMessages(reasm),
                 UnorderedElementsAre(
                     SctpMessageIs(StreamID(1), kPPID, kSixBytePayload),
                     SctpMessageIs(StreamID(2), kPPID, kSixBytePayload)));
-    EXPECT_EQ(reasm.queued_bytes(), 0u);
   } while (std::next_permutation(std::begin(indexes), std::end(indexes)));
 }
 
@@ -381,11 +387,11 @@ TEST_F(ReassemblyQueueTest, IForwardTSNRemoveALotOrdered) {
 
   reasm.HandleForwardTsn(TSN(13), std::vector<SkippedStream>({SkippedStream(
                                       IsUnordered(false), kStreamID, MID(0))}));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  EXPECT_EQ(reasm.queued_bytes(), 4u);
 
   // The lost chunk comes, but too late.
   ASSERT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
+  EXPECT_THAT(FlushMessages(reasm),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kMessage2Payload)));
 }
 

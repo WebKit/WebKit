@@ -69,6 +69,7 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
+#import <WebKit/WKURLRequest.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCache.h>
@@ -101,6 +102,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
@@ -1276,7 +1278,7 @@ static const char **_argv;
 - (void)_webThreadInvoked
 {
     ASSERT(WebThreadIsCurrent());
-    WorkQueue::protectedMain()->dispatch([self, retainedSelf = retainPtr(self)] {
+    WorkQueue::mainSingleton().dispatch([self, retainedSelf = retainPtr(self)] {
         [self _webThreadEventLoopHasRun];
     });
 }
@@ -1985,6 +1987,8 @@ static void runTest(const std::string& inputLine)
 
     gTestRunner->clearAllDatabases();
     gTestRunner->clearNotificationPermissionState();
+
+    WKURLRequestSetDefaultTimeoutInterval((60_s).value());
 
     std::span pathOrURLSpan { pathOrURL };
     if (disallowedURLs)

@@ -134,21 +134,21 @@ void LibWebRTCNetwork::dispatch(Function<void()>&& callback)
 }
 
 #if USE(LIBWEBRTC)
-static rtc::EcnMarking convertToWebRTCEcnMarking(RTC::Network::EcnMarking ecn)
+static webrtc::EcnMarking convertToWebRTCEcnMarking(WebRTCNetwork::EcnMarking ecn)
 {
     switch (ecn) {
-    case RTC::Network::EcnMarking::kNotEct:
-        return rtc::EcnMarking::kNotEct;
-    case RTC::Network::EcnMarking::kEct1:
-        return rtc::EcnMarking::kEct1;
-    case RTC::Network::EcnMarking::kEct0:
-        return rtc::EcnMarking::kEct0;
-    case RTC::Network::EcnMarking::kCe:
-        return rtc::EcnMarking::kCe;
+    case WebRTCNetwork::EcnMarking::kNotEct:
+        return webrtc::EcnMarking::kNotEct;
+    case WebRTCNetwork::EcnMarking::kEct1:
+        return webrtc::EcnMarking::kEct1;
+    case WebRTCNetwork::EcnMarking::kEct0:
+        return webrtc::EcnMarking::kEct0;
+    case WebRTCNetwork::EcnMarking::kCe:
+        return webrtc::EcnMarking::kCe;
     }
 
     ASSERT_NOT_REACHED();
-    return rtc::EcnMarking::kNotEct;
+    return webrtc::EcnMarking::kNotEct;
 }
 
 void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address)
@@ -158,11 +158,11 @@ void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier ide
         socket->signalAddressReady(address.rtcAddress());
 }
 
-void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp, RTC::Network::EcnMarking ecn)
+void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp, WebRTCNetwork::EcnMarking ecn)
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalReadPacket(data, rtc::SocketAddress(address.rtcAddress(), port), timestamp, convertToWebRTCEcnMarking(ecn));
+        socket->signalReadPacket(data, webrtc::SocketAddress(address.rtcAddress(), port), timestamp, convertToWebRTCEcnMarking(ecn));
 }
 
 void LibWebRTCNetwork::signalSentPacket(WebCore::LibWebRTCSocketIdentifier identifier, int64_t rtcPacketID, int64_t sendTimeMs)

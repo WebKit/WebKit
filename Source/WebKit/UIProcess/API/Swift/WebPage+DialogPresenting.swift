@@ -29,7 +29,7 @@ import Foundation
 
 extension WebPage {
     /// The result of handling a JavaScript confirm invocation.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public enum JavaScriptConfirmResult: Hashable, Sendable {
@@ -41,7 +41,7 @@ extension WebPage {
     }
 
     /// The result of handling a JavaScript confirm invocation.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public enum JavaScriptPromptResult: Hashable, Sendable {
@@ -53,7 +53,7 @@ extension WebPage {
     }
 
     /// The result of handling a JavaScript open invocation.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public enum FileInputPromptResult: Hashable, Sendable {
@@ -74,7 +74,7 @@ extension WebPage {
     /// which will then be communicated back to JavaScript.
     ///
     /// When these methods are invoked, JavaScript is blocked until the async method returns.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public protocol DialogPresenting {
@@ -125,7 +125,7 @@ extension WebPage {
 
 // MARK: Default implementation
 
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WebPage.DialogPresenting {

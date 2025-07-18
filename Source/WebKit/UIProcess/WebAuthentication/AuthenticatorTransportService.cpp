@@ -84,7 +84,7 @@ AuthenticatorTransportService::AuthenticatorTransportService(AuthenticatorTransp
 
 void AuthenticatorTransportService::startDiscovery()
 {
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->startDiscoveryInternal();
@@ -93,7 +93,7 @@ void AuthenticatorTransportService::startDiscovery()
 
 void AuthenticatorTransportService::restartDiscovery()
 {
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->restartDiscoveryInternal();

@@ -116,6 +116,10 @@ struct Headroom {
     constexpr operator float() const { return headroom; }
 
     friend constexpr bool operator==(const Headroom&, const Headroom&) = default;
+    friend constexpr bool operator<(const Headroom& a, const Headroom& b)
+    {
+        return a.headroom < b.headroom;
+    }
 
     static const Headroom FromImage;
     static const Headroom None;
@@ -132,5 +136,15 @@ enum class StrictImageClamping : bool {
     Yes
 };
 #endif
+
+}
+
+namespace IPC {
+
+template<typename AsyncReplyResult> struct AsyncReplyError;
+
+template<> struct AsyncReplyError<WebCore::Headroom> {
+    static WebCore::Headroom create() { return WebCore::Headroom::None; }
+};
 
 }

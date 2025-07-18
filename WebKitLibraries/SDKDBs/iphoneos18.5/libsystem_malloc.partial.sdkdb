@@ -1,0 +1,198 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_NONE"},
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_FIXED_SIZE"},
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_ARRAY"}
+     ],
+     "name": "malloc_type_callsite_flags_v0_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_OTHER"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_OBJC"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_SWIFT"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_CXX"}
+     ],
+     "name": "malloc_type_kind_v0_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_aligned_alloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_calloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_create_zone"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_default_purgeable_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_default_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_destroy_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_get_all_zones"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_get_zone_name"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_good_size"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_make_nonpurgeable"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_make_purgeable"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_printf"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_set_zone_name"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_size"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_aligned_alloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_calloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_free"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_malloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_posix_memalign"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_realloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_valloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_calloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_free"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_malloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_memalign"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_realloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_valloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_batch_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_batch_malloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_calloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_check"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_disable_discharge_checking"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_discharge"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_enable_discharge_checking"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_enumerate_discharged_pointers"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_from_ptr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_log"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_malloc"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_memalign"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_pressure_relief"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_print"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_print_ptr_info"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_realloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_register"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_statistics"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_unregister"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_valloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_mstats"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_posix_memalign"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_realloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_reallocf"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_valloc"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "malloc_introspection_t"},
+    {"access": "public", "name": "malloc_statistics_t"},
+    {"access": "public", "name": "malloc_type_callsite_flags_v0_t"},
+    {"access": "public", "name": "malloc_type_descriptor_v0_t"},
+    {"access": "public", "name": "malloc_type_id_t"},
+    {"access": "public", "name": "malloc_type_kind_v0_t"},
+    {"access": "public", "name": "malloc_type_layout_semantics_v0_t"},
+    {"access": "public", "name": "malloc_type_summary_v0_t"},
+    {"access": "public", "name": "malloc_zone_t"},
+    {"access": "public", "name": "memory_reader_t"},
+    {"access": "public", "name": "print_task_printer_t"},
+    {"access": "public", "name": "vm_range_recorder_t"},
+    {"access": "public", "name": "vm_range_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_NONE"},
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_FIXED_SIZE"},
+      {"access": "public", "name": "MALLOC_TYPE_CALLSITE_FLAGS_V0_ARRAY"}
+     ],
+     "name": "malloc_type_callsite_flags_v0_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_OTHER"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_OBJC"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_SWIFT"},
+      {"access": "public", "name": "MALLOC_TYPE_KIND_V0_CXX"}
+     ],
+     "name": "malloc_type_kind_v0_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_aligned_alloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_calloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_create_zone"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_default_purgeable_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_default_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_destroy_zone"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_get_all_zones"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_get_zone_name"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_good_size"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_make_nonpurgeable"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_make_purgeable"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_printf"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_set_zone_name"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_size"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_aligned_alloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_calloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_free"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_malloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_posix_memalign"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_realloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_valloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_calloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_free"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_malloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_memalign"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_realloc"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_malloc_type_zone_valloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_batch_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_batch_malloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_calloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_check"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_disable_discharge_checking"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_discharge"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_enable_discharge_checking"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_enumerate_discharged_pointers"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_from_ptr"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_log"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_malloc"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_memalign"},
+    {"access": "public", "introduced": "4.3", "kind": "function", "linkage": "exported", "name": "_malloc_zone_pressure_relief"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_print"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_print_ptr_info"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_realloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_register"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_statistics"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_unregister"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_malloc_zone_valloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_mstats"},
+    {"access": "public", "introduced": "3", "kind": "function", "linkage": "exported", "name": "_posix_memalign"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_realloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_reallocf"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_valloc"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "malloc_introspection_t"},
+    {"access": "public", "name": "malloc_statistics_t"},
+    {"access": "public", "name": "malloc_type_callsite_flags_v0_t"},
+    {"access": "public", "name": "malloc_type_descriptor_v0_t"},
+    {"access": "public", "name": "malloc_type_id_t"},
+    {"access": "public", "name": "malloc_type_kind_v0_t"},
+    {"access": "public", "name": "malloc_type_layout_semantics_v0_t"},
+    {"access": "public", "name": "malloc_type_summary_v0_t"},
+    {"access": "public", "name": "malloc_zone_t"},
+    {"access": "public", "name": "memory_reader_t"},
+    {"access": "public", "name": "print_task_printer_t"},
+    {"access": "public", "name": "vm_range_recorder_t"},
+    {"access": "public", "name": "vm_range_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

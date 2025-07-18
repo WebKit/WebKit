@@ -27,6 +27,7 @@
 #include "CSSStyleDeclaration.h"
 
 #include "Document.h"
+#include "NodeInlines.h"
 #include "Settings.h"
 #include "StyledElement.h"
 #include <wtf/TZoneMallocInlines.h>

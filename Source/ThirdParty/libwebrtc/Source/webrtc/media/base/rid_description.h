@@ -15,7 +15,9 @@
 #include <string>
 #include <vector>
 
-namespace cricket {
+#include "media/base/codec.h"
+
+namespace webrtc {
 
 enum class RidDirection { kSend, kReceive };
 
@@ -73,9 +75,11 @@ struct RidDescription final {
   // the stream were changed to "sendrecv" or "recvonly".
   RidDirection direction;
 
-  // The list of codec payload types for this stream.
-  // It should be a subset of the payloads supported for the media section.
-  std::vector<int> payload_types;
+  // The list of codecs for this stream.
+  // When the RID is serialized/deserialized, these codecs are mapped to/from
+  // the payload types listed in the media section, ensuring PT consistency in
+  // the SDP even when `codecs[i].id` cannot be trusted.
+  std::vector<Codec> codecs;
 
   // Contains key-value pairs for restrictions.
   // The keys are not validated against a known set.
@@ -88,6 +92,15 @@ struct RidDescription final {
   std::map<std::string, std::string> restrictions;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::RidDescription;
+using ::webrtc::RidDirection;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_RID_DESCRIPTION_H_

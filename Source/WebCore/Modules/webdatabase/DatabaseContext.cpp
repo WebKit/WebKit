@@ -30,6 +30,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "DatabaseTask.h"

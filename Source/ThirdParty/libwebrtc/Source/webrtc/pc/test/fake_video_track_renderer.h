@@ -12,20 +12,22 @@
 #define PC_TEST_FAKE_VIDEO_TRACK_RENDERER_H_
 
 #include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_source_interface.h"
 #include "media/base/fake_video_renderer.h"
 
 namespace webrtc {
 
-class FakeVideoTrackRenderer : public cricket::FakeVideoRenderer {
+class FakeVideoTrackRenderer : public FakeVideoRenderer {
  public:
   explicit FakeVideoTrackRenderer(VideoTrackInterface* video_track)
       : video_track_(video_track) {
-    video_track_->AddOrUpdateSink(this, rtc::VideoSinkWants());
+    video_track_->AddOrUpdateSink(this, VideoSinkWants());
   }
   ~FakeVideoTrackRenderer() { video_track_->RemoveSink(this); }
 
  private:
-  rtc::scoped_refptr<VideoTrackInterface> video_track_;
+  scoped_refptr<VideoTrackInterface> video_track_;
 };
 
 }  // namespace webrtc

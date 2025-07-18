@@ -543,10 +543,12 @@ def one_argument_coder_declaration(type, template_argument):
     return result
 
 
-def argument_coder_declarations(serialized_types, skip_nested):
+def argument_coder_declarations(serialized_types, skip_nested, webkit_platform):
     result = []
     for type in serialized_types:
         if type.nested == skip_nested:
+            continue
+        if (webkit_platform is not None and type.webkit_platform != webkit_platform):
             continue
         if type.templates:
             for template in type.templates:
@@ -682,7 +684,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('class Decoder;')
     result.append('class Encoder;')
     result.append('class StreamConnectionEncoder;')
-    result = result + argument_coder_declarations(serialized_types, True)
+    result = result + argument_coder_declarations(serialized_types, True, None)
     result.append('')
     result.append('} // namespace IPC\n')
     result.append('')
@@ -1158,9 +1160,9 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append(f'#endif // {type.condition}')
         result.append('')
 
-    if not generating_webkit_platform_impl:
-        result = result + argument_coder_declarations(serialized_types, False)
-        result.append('')
+    result = result + argument_coder_declarations(serialized_types, False, generating_webkit_platform_impl)
+    result.append('')
+
     for type in serialized_types:
         if type.webkit_platform != generating_webkit_platform_impl:
             continue

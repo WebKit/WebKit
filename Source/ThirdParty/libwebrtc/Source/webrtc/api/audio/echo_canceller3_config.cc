@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -18,7 +19,7 @@
 namespace webrtc {
 namespace {
 bool Limit(float* value, float min, float max) {
-  float clamped = rtc::SafeClamp(*value, min, max);
+  float clamped = SafeClamp(*value, min, max);
   clamped = std::isfinite(clamped) ? clamped : min;
   bool res = *value == clamped;
   *value = clamped;
@@ -26,14 +27,14 @@ bool Limit(float* value, float min, float max) {
 }
 
 bool Limit(size_t* value, size_t min, size_t max) {
-  size_t clamped = rtc::SafeClamp(*value, min, max);
+  size_t clamped = SafeClamp(*value, min, max);
   bool res = *value == clamped;
   *value = clamped;
   return res;
 }
 
 bool Limit(int* value, int min, int max) {
-  int clamped = rtc::SafeClamp(*value, min, max);
+  int clamped = SafeClamp(*value, min, max);
   bool res = *value == clamped;
   *value = clamped;
   return res;
@@ -275,4 +276,20 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
 
   return res;
 }
+
+EchoCanceller3Config EchoCanceller3Config::CreateDefaultMultichannelConfig() {
+  EchoCanceller3Config cfg;
+  // Use shorter and more rapidly adapting coarse filter to compensate for
+  // the increased number of total filter parameters to adapt.
+  cfg.filter.coarse.length_blocks = 11;
+  cfg.filter.coarse.rate = 0.95f;
+  cfg.filter.coarse_initial.length_blocks = 11;
+  cfg.filter.coarse_initial.rate = 0.95f;
+
+  // Use more conservative suppressor behavior for non-nearend speech.
+  cfg.suppressor.normal_tuning.max_dec_factor_lf = 0.35f;
+  cfg.suppressor.normal_tuning.max_inc_factor = 1.5f;
+  return cfg;
+}
+
 }  // namespace webrtc

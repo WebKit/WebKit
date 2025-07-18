@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
-#include "ListStyleType.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
@@ -38,6 +37,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
 #include <wtf/StackStats.h>
@@ -112,7 +112,7 @@ static String reversed(StringView string)
     auto length = string.length();
     if (length <= 1)
         return string.toString();
-    std::span<UChar> characters;
+    std::span<char16_t> characters;
     auto result = String::createUninitialized(length, characters);
     for (unsigned i = 0; i < length; ++i)
         characters[i] = string[length - i - 1];
@@ -324,36 +324,33 @@ void RenderListMarker::updateContent()
         return TextDirection::RTL;
     };
 
-    auto styleType = style().listStyleType();
-    switch (styleType.type) {
-    case ListStyleType::Type::String: {
-        m_textContent = {
-            .textWithSuffix = styleType.identifier,
-            .textWithoutSuffixLength = styleType.identifier.length(),
-            .textDirection = contentTextDirection(StringView { styleType.identifier }),
-        };
-        break;
-    }
-    case ListStyleType::Type::CounterStyle: {
-        auto counter = counterStyle();
-        ASSERT(counter);
+    WTF::switchOn(style().listStyleType(),
+        [&](const CSS::Keyword::None&) {
+            m_textContent = {
+                .textWithSuffix = " "_s,
+                .textWithoutSuffixLength = 0,
+                .textDirection = TextDirection::LTR,
+            };
+        },
+        [&](const AtomString& identifier) {
+            m_textContent = {
+                .textWithSuffix = identifier,
+                .textWithoutSuffixLength = identifier.length(),
+                .textDirection = contentTextDirection(StringView { identifier }),
+            };
+        },
+        [&](const Style::CounterStyle&) {
+            auto counter = counterStyle();
+            ASSERT(counter);
 
-        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), writingMode()));
-        m_textContent = {
-            .textWithSuffix = makeString(text, counter->suffix().text),
-            .textWithoutSuffixLength = text.length(),
-            .textDirection = contentTextDirection(text),
-        };
-        break;
-    }
-    case ListStyleType::Type::None:
-        m_textContent = {
-            .textWithSuffix = " "_s,
-            .textWithoutSuffixLength = 0,
-            .textDirection = TextDirection::LTR,
-        };
-        break;
-    }
+            auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), writingMode()));
+            m_textContent = {
+                .textWithSuffix = makeString(text, counter->suffix().text),
+                .textWithoutSuffixLength = text.length(),
+                .textDirection = contentTextDirection(text),
+            };
+        }
+    );
 }
 
 void RenderListMarker::computePreferredLogicalWidths()
@@ -411,7 +408,7 @@ void RenderListMarker::updateInlineMargins()
         if (m_textContent.isEmpty())
             return { };
 
-        if (style().listStyleType().type == ListStyleType::Type::String)
+        if (style().listStyleType().isString())
             return { -minPreferredLogicalWidth(), 0 };
 
         return { -minPreferredLogicalWidth() - offset / 2, offset / 2 };
@@ -420,20 +417,6 @@ void RenderListMarker::updateInlineMargins()
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
     mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart });
     mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd });
-}
-
-LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (!isImage())
-        return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::lineHeight(firstLine, direction, linePositionMode);
-}
-
-LayoutUnit RenderListMarker::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (!isImage())
-        return m_listItem->baselinePosition(firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
 }
 
 bool RenderListMarker::isInside() const
@@ -482,12 +465,15 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
 
 RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
 {
-    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleType());
+    auto counterStyle = style().listStyleType().tryCounterStyle();
+    if (!counterStyle)
+        return nullptr;
+    return document().counterStyleRegistry().resolvedCounterStyle(*counterStyle);
 }
 
 bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
 {
-    auto listType = style().listStyleType();
+    auto& listType = style().listStyleType();
     return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 

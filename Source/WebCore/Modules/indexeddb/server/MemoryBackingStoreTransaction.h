@@ -62,7 +62,7 @@ public:
     void addExistingObjectStore(MemoryObjectStore&);
 
     void objectStoreDeleted(Ref<MemoryObjectStore>&&);
-    void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&, std::unique_ptr<IDBKeyDataSet>&&);
+    void objectStoreCleared(MemoryObjectStore&, KeyValueMap&&, std::unique_ptr<IDBKeyDataSet>&&);
     void objectStoreRenamed(MemoryObjectStore&, const String& oldName);
     void indexRenamed(MemoryIndex&, const String& oldName);
 

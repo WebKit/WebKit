@@ -14,6 +14,8 @@
 #include <memory>
 
 #include "absl/container/inlined_vector.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_frame.h"
 
 namespace webrtc {

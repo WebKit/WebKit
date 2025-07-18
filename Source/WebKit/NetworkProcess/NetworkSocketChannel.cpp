@@ -57,13 +57,13 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     , m_webPageProxyID(webPageProxyID)
 {
     relaxAdoptionRequirement();
-    if (!m_session)
+    if (!session)
         return;
 
-    m_socket = m_session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy);
+    m_socket = session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy);
     if (CheckedPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        m_session->addWebSocketTask(webPageProxyID, *socket);
+        session->addWebSocketTask(webPageProxyID, *socket);
 #endif
         socket->resume();
     }
@@ -74,7 +74,7 @@ NetworkSocketChannel::~NetworkSocketChannel()
     if (CheckedPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
         if (RefPtr sessionSet = m_session ? socket->sessionSet() : nullptr)
-            m_session->removeWebSocketTask(*sessionSet, *socket);
+            CheckedRef { *m_session }->removeWebSocketTask(*sessionSet, *socket);
 #endif
         socket->cancel();
     }

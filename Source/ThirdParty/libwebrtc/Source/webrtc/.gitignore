@@ -25,6 +25,7 @@
 *_proto.xml
 *_proto_cpp.xml
 *~
+\#*#
 .*.sw?
 .cache
 .cipd
@@ -72,3 +73,4 @@
 /xcodebuild
 /.vscode
 !webrtc/*
+rust-project.json

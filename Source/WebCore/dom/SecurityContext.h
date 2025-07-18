@@ -31,6 +31,7 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "ReferrerPolicy.h"
 #include <memory>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>

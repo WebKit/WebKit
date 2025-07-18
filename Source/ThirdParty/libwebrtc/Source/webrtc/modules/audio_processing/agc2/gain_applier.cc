@@ -28,7 +28,7 @@ void ClipSignal(DeinterleavedView<float> signal) {
   for (size_t k = 0; k < signal.num_channels(); ++k) {
     MonoView<float> channel_view = signal[k];
     for (auto& sample : channel_view) {
-      sample = rtc::SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
+      sample = SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
     }
   }
 }

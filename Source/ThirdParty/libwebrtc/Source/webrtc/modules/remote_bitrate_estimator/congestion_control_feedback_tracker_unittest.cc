@@ -31,7 +31,7 @@ using ::testing::SizeIs;
 
 RtpPacketReceived CreatePacket(Timestamp arrival_time,
                                uint16_t seq = 1,
-                               rtc::EcnMarking ecn = rtc::EcnMarking::kNotEct) {
+                               EcnMarking ecn = EcnMarking::kNotEct) {
   RtpPacketReceived packet;
   packet.SetSsrc(1234);
   packet.SetSequenceNumber(seq);
@@ -75,14 +75,12 @@ TEST(CongestionControlFeedbackTrackerTest,
 
 TEST(CongestionControlFeedbackTrackerTest,
      ReportsFirstReceivedPacketArrivalTimeButEcnFromCePacketIfDuplicate) {
-  RtpPacketReceived packet_1 =
-      CreatePacket(/*arrival_time=*/Timestamp::Millis(123), /*seq =*/1,
-                   rtc::EcnMarking::kEct1);
+  RtpPacketReceived packet_1 = CreatePacket(
+      /*arrival_time=*/Timestamp::Millis(123), /*seq =*/1, EcnMarking::kEct1);
   RtpPacketReceived packet_2 = CreatePacket(
-      /*arrival_time=*/Timestamp::Millis(125), /*seq=*/1, rtc::EcnMarking::kCe);
+      /*arrival_time=*/Timestamp::Millis(125), /*seq=*/1, EcnMarking::kCe);
   RtpPacketReceived packet_3 = CreatePacket(
-      /*arrival_time=*/Timestamp::Millis(126), /*seq=*/1,
-      rtc::EcnMarking::kEct1);
+      /*arrival_time=*/Timestamp::Millis(126), /*seq=*/1, EcnMarking::kEct1);
 
   CongestionControlFeedbackTracker tracker;
   tracker.ReceivedPacket(packet_1);
@@ -100,7 +98,7 @@ TEST(CongestionControlFeedbackTrackerTest,
               &rtcp::CongestionControlFeedback::PacketInfo::arrival_time_offset,
               feedback_time - packet_1.arrival_time()),
           Field(&rtcp::CongestionControlFeedback::PacketInfo::ecn,
-                rtc::EcnMarking::kCe)));
+                EcnMarking::kCe)));
 }
 
 TEST(CongestionControlFeedbackTrackerTest,

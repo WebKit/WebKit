@@ -26,7 +26,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <utility>
 
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
@@ -37,7 +36,6 @@
 #include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -591,7 +589,7 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
   // representation of the input is returned. Returns true/false to indicate
   // whether an output returned.
   virtual bool GetLinearAecOutput(
-      rtc::ArrayView<std::array<float, 160>> linear_output) const = 0;
+      ArrayView<std::array<float, 160>> linear_output) const = 0;
 
   // This must be called prior to ProcessStream() if and only if adaptive analog
   // gain control is enabled, to pass the current analog level from the audio
@@ -633,14 +631,14 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
   // return value of true indicates that the file has been
   // sucessfully opened, while a value of false indicates that
   // opening the file failed.
-  virtual bool CreateAndAttachAecDump(
-      absl::string_view file_name,
-      int64_t max_log_size_bytes,
-      absl::Nonnull<TaskQueueBase*> worker_queue) = 0;
-  virtual bool CreateAndAttachAecDump(
-      absl::Nonnull<FILE*> handle,
-      int64_t max_log_size_bytes,
-      absl::Nonnull<TaskQueueBase*> worker_queue) = 0;
+  virtual bool CreateAndAttachAecDump(absl::string_view file_name,
+                                      int64_t max_log_size_bytes,
+                                      TaskQueueBase* absl_nonnull
+                                          worker_queue) = 0;
+  virtual bool CreateAndAttachAecDump(FILE* absl_nonnull handle,
+                                      int64_t max_log_size_bytes,
+                                      TaskQueueBase* absl_nonnull
+                                          worker_queue) = 0;
 
   // TODO(webrtc:5298) Deprecated variant.
   // Attaches provided webrtc::AecDump for recording debugging
@@ -692,22 +690,16 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
   };
 
   // Native rates supported by the integer interfaces.
-  enum NativeRate {
+  enum NativeRate : int {
     kSampleRate8kHz = 8000,
     kSampleRate16kHz = 16000,
     kSampleRate32kHz = 32000,
     kSampleRate48kHz = 48000
   };
 
-  // TODO(kwiberg): We currently need to support a compiler (Visual C++) that
-  // complains if we don't explicitly state the size of the array here. Remove
-  // the size when that's no longer the case.
-  static constexpr int kNativeSampleRatesHz[4] = {
+  static constexpr std::array kNativeSampleRatesHz = {
       kSampleRate8kHz, kSampleRate16kHz, kSampleRate32kHz, kSampleRate48kHz};
-  static constexpr size_t kNumNativeSampleRates =
-      arraysize(kNativeSampleRatesHz);
-  static constexpr int kMaxNativeSampleRateHz =
-      kNativeSampleRatesHz[kNumNativeSampleRates - 1];
+  static constexpr int kMaxNativeSampleRateHz = kNativeSampleRatesHz.back();
 
   // APM processes audio in chunks of about 10 ms. See GetFrameSize() for
   // details.
@@ -738,7 +730,7 @@ class AudioProcessingBuilderInterface {
  public:
   virtual ~AudioProcessingBuilderInterface() = default;
 
-  virtual absl::Nullable<scoped_refptr<AudioProcessing>> Build(
+  virtual absl_nullable scoped_refptr<AudioProcessing> Build(
       const Environment& env) = 0;
 };
 
@@ -747,9 +739,9 @@ class AudioProcessingBuilderInterface {
 // nullptr `audio_processing` is not supported as in some scenarios that imply
 // no audio processing, while in others - default builtin audio processing.
 // Callers should be explicit which of these two behaviors they want.
-absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>>
+absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface>
 CustomAudioProcessing(
-    absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
+    absl_nonnull scoped_refptr<AudioProcessing> audio_processing);
 
 // Experimental interface for a custom analysis submodule.
 class CustomAudioAnalyzer {
@@ -778,70 +770,6 @@ class CustomProcessing {
   virtual void SetRuntimeSetting(AudioProcessing::RuntimeSetting setting);
 
   virtual ~CustomProcessing() {}
-};
-
-// Use BuiltinAudioProcessingBuilder instead, see bugs.webrtc.org/369904700
-class RTC_EXPORT [[deprecated]] AudioProcessingBuilder {
- public:
-  AudioProcessingBuilder();
-  AudioProcessingBuilder(const AudioProcessingBuilder&) = delete;
-  AudioProcessingBuilder& operator=(const AudioProcessingBuilder&) = delete;
-  ~AudioProcessingBuilder();
-
-  // Sets the APM configuration.
-  AudioProcessingBuilder& SetConfig(const AudioProcessing::Config& config) {
-    config_ = config;
-    return *this;
-  }
-
-  // Sets the echo controller factory to inject when APM is created.
-  AudioProcessingBuilder& SetEchoControlFactory(
-      std::unique_ptr<EchoControlFactory> echo_control_factory) {
-    echo_control_factory_ = std::move(echo_control_factory);
-    return *this;
-  }
-
-  // Sets the capture post-processing sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetCapturePostProcessing(
-      std::unique_ptr<CustomProcessing> capture_post_processing) {
-    capture_post_processing_ = std::move(capture_post_processing);
-    return *this;
-  }
-
-  // Sets the render pre-processing sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetRenderPreProcessing(
-      std::unique_ptr<CustomProcessing> render_pre_processing) {
-    render_pre_processing_ = std::move(render_pre_processing);
-    return *this;
-  }
-
-  // Sets the echo detector to inject when APM is created.
-  AudioProcessingBuilder& SetEchoDetector(
-      rtc::scoped_refptr<EchoDetector> echo_detector) {
-    echo_detector_ = std::move(echo_detector);
-    return *this;
-  }
-
-  // Sets the capture analyzer sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetCaptureAnalyzer(
-      std::unique_ptr<CustomAudioAnalyzer> capture_analyzer) {
-    capture_analyzer_ = std::move(capture_analyzer);
-    return *this;
-  }
-
-  // Creates an APM instance with the specified config or the default one if
-  // unspecified. Injects the specified components transferring the ownership
-  // to the newly created APM instance - i.e., except for the config, the
-  // builder is reset to its initial state.
-  rtc::scoped_refptr<AudioProcessing> Create();
-
- private:
-  AudioProcessing::Config config_;
-  std::unique_ptr<EchoControlFactory> echo_control_factory_;
-  std::unique_ptr<CustomProcessing> capture_post_processing_;
-  std::unique_ptr<CustomProcessing> render_pre_processing_;
-  rtc::scoped_refptr<EchoDetector> echo_detector_;
-  std::unique_ptr<CustomAudioAnalyzer> capture_analyzer_;
 };
 
 class StreamConfig {
@@ -943,11 +871,10 @@ class EchoDetector : public RefCountInterface {
                           int num_render_channels) = 0;
 
   // Analysis (not changing) of the first channel of the render signal.
-  virtual void AnalyzeRenderAudio(rtc::ArrayView<const float> render_audio) = 0;
+  virtual void AnalyzeRenderAudio(ArrayView<const float> render_audio) = 0;
 
   // Analysis (not changing) of the capture signal.
-  virtual void AnalyzeCaptureAudio(
-      rtc::ArrayView<const float> capture_audio) = 0;
+  virtual void AnalyzeCaptureAudio(ArrayView<const float> capture_audio) = 0;
 
   struct Metrics {
     std::optional<double> echo_likelihood;

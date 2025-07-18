@@ -11,20 +11,28 @@
 // Test to verify correct stereo and multi-channel operation.
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <list>
 #include <memory>
+#include <ostream>
 #include <string>
 
+#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
+#include "api/rtp_headers.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
@@ -92,7 +100,7 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
 
   virtual void SetUp() {
     const std::string file_name =
-        webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
+        test::ResourcePath("audio_coding/testfile32kHz", "pcm");
     input_file_.reset(new test::InputAudioFile(file_name));
     RTC_CHECK_GE(num_channels_, 2);
     ASSERT_TRUE(neteq_mono_->RegisterPayloadType(
@@ -168,16 +176,16 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
       while (time_now_ms >= next_arrival_time_ms) {
         // Insert packet in mono instance.
         ASSERT_EQ(NetEq::kOK,
-                  neteq_mono_->InsertPacket(rtp_header_mono_,
-                                            rtc::ArrayView<const uint8_t>(
-                                                encoded_, payload_size_bytes_),
-                                            Timestamp::Millis(time_now_ms)));
+                  neteq_mono_->InsertPacket(
+                      rtp_header_mono_,
+                      ArrayView<const uint8_t>(encoded_, payload_size_bytes_),
+                      Timestamp::Millis(time_now_ms)));
         // Insert packet in multi-channel instance.
         ASSERT_EQ(NetEq::kOK,
                   neteq_->InsertPacket(
                       rtp_header_,
-                      rtc::ArrayView<const uint8_t>(encoded_multi_channel_,
-                                                    multi_payload_size_bytes_),
+                      ArrayView<const uint8_t>(encoded_multi_channel_,
+                                               multi_payload_size_bytes_),
                       Timestamp::Millis(time_now_ms)));
         // Get next input packets (mono and multi-channel).
         do {
@@ -198,7 +206,7 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
       EXPECT_EQ(num_channels_, output_multi_channel_.num_channels_);
       EXPECT_EQ(output_size_samples_,
                 output_multi_channel_.samples_per_channel_);
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Lap number " << k << ".";
       SCOPED_TRACE(ss.str());  // Print out the parameter values on failure.
       // Compare mono and multi-channel.

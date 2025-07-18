@@ -16,6 +16,8 @@
 #include <utility>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block_processor.h"
 #include "modules/audio_processing/aec3/frame_blocker.h"
@@ -24,13 +26,14 @@
 #include "modules/audio_processing/high_pass_filter.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
+using test::ExplicitKeyValueConfig;
 using ::testing::_;
 using ::testing::StrictMock;
 
@@ -88,8 +91,8 @@ bool VerifyOutputFrameBitexactness(size_t frame_length,
   return true;
 }
 
-bool VerifyOutputFrameBitexactness(rtc::ArrayView<const float> reference,
-                                   rtc::ArrayView<const float> frame,
+bool VerifyOutputFrameBitexactness(ArrayView<const float> reference,
+                                   ArrayView<const float> frame,
                                    int offset) {
   for (size_t k = 0; k < frame.size(); ++k) {
     int reference_index = static_cast<int>(k) + offset;
@@ -164,22 +167,22 @@ class RenderTransportVerificationProcessor : public BlockProcessor {
 
   void GetMetrics(EchoControl::Metrics* /* metrics */) const override {}
 
-  void SetAudioBufferDelay(int delay_ms) override {}
+  void SetAudioBufferDelay(int /* delay_ms */) override {}
 
-  void SetCaptureOutputUsage(bool capture_output_used) {}
+  void SetCaptureOutputUsage(bool /* capture_output_used */) {}
 
  private:
   std::deque<Block> received_render_blocks_;
 };
 
 std::string ProduceDebugText(int sample_rate_hz) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   return ss.Release();
 }
 
 std::string ProduceDebugText(int sample_rate_hz, int variant) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz << ", variant: " << variant;
   return ss.Release();
 }
@@ -188,11 +191,11 @@ void RunAecInStereo(AudioBuffer& buffer,
                     EchoCanceller3& aec3,
                     float channel_0_value,
                     float channel_1_value) {
-  rtc::ArrayView<float> data_channel_0(&buffer.channels()[0][0],
-                                       buffer.num_frames());
+  ArrayView<float> data_channel_0(&buffer.channels()[0][0],
+                                  buffer.num_frames());
   std::fill(data_channel_0.begin(), data_channel_0.end(), channel_0_value);
-  rtc::ArrayView<float> data_channel_1(&buffer.channels()[1][0],
-                                       buffer.num_frames());
+  ArrayView<float> data_channel_1(&buffer.channels()[1][0],
+                                  buffer.num_frames());
   std::fill(data_channel_1.begin(), data_channel_1.end(), channel_1_value);
   aec3.AnalyzeRender(&buffer);
   aec3.AnalyzeCapture(&buffer);
@@ -202,8 +205,8 @@ void RunAecInStereo(AudioBuffer& buffer,
 void RunAecInSMono(AudioBuffer& buffer,
                    EchoCanceller3& aec3,
                    float channel_0_value) {
-  rtc::ArrayView<float> data_channel_0(&buffer.channels()[0][0],
-                                       buffer.num_frames());
+  ArrayView<float> data_channel_0(&buffer.channels()[0][0],
+                                  buffer.num_frames());
   std::fill(data_channel_0.begin(), data_channel_0.end(), channel_0_value);
   aec3.AnalyzeRender(&buffer);
   aec3.AnalyzeCapture(&buffer);
@@ -218,7 +221,7 @@ class EchoCanceller3Tester {
       : sample_rate_hz_(sample_rate_hz),
         num_bands_(NumBandsForRate(sample_rate_hz_)),
         frame_length_(160),
-        fullband_frame_length_(rtc::CheckedDivExact(sample_rate_hz_, 100)),
+        fullband_frame_length_(CheckedDivExact(sample_rate_hz_, 100)),
         capture_buffer_(fullband_frame_length_ * 100,
                         1,
                         fullband_frame_length_ * 100,
@@ -240,7 +243,7 @@ class EchoCanceller3Tester {
   // and that the processor data is properly passed to the EchoCanceller3
   // output.
   void RunCaptureTransportVerificationTest() {
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
     aec3.SetBlockProcessorForTesting(
@@ -266,7 +269,7 @@ class EchoCanceller3Tester {
   // Test method for testing that the render data is properly received by the
   // block processor.
   void RunRenderTransportVerificationTest() {
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
     aec3.SetBlockProcessorForTesting(
@@ -313,9 +316,8 @@ class EchoCanceller3Tester {
     constexpr size_t kNumFullBlocksPerFrame = 160 / kBlockSize;
     constexpr size_t kExpectedNumBlocksToProcess =
         (kNumFramesToProcess * 160) / kBlockSize;
-    std::unique_ptr<testing::StrictMock<webrtc::test::MockBlockProcessor>>
-        block_processor_mock(
-            new StrictMock<webrtc::test::MockBlockProcessor>());
+    std::unique_ptr<testing::StrictMock<test::MockBlockProcessor>>
+        block_processor_mock(new StrictMock<test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
         .Times(kExpectedNumBlocksToProcess);
     EXPECT_CALL(*block_processor_mock, UpdateEchoLeakageStatus(_)).Times(0);
@@ -337,7 +339,7 @@ class EchoCanceller3Tester {
         break;
     }
 
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
     aec3.SetBlockProcessorForTesting(std::move(block_processor_mock));
@@ -390,9 +392,8 @@ class EchoCanceller3Tester {
       EchoLeakageTestVariant leakage_report_variant) {
     constexpr size_t kExpectedNumBlocksToProcess =
         (kNumFramesToProcess * 160) / kBlockSize;
-    std::unique_ptr<testing::StrictMock<webrtc::test::MockBlockProcessor>>
-        block_processor_mock(
-            new StrictMock<webrtc::test::MockBlockProcessor>());
+    std::unique_ptr<testing::StrictMock<test::MockBlockProcessor>>
+        block_processor_mock(new StrictMock<test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
         .Times(kExpectedNumBlocksToProcess);
     EXPECT_CALL(*block_processor_mock, ProcessCapture(_, _, _, _))
@@ -419,7 +420,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
     aec3.SetBlockProcessorForTesting(std::move(block_processor_mock));
@@ -479,9 +480,8 @@ class EchoCanceller3Tester {
     const size_t kNumFullBlocksPerFrame = 160 / kBlockSize;
     const size_t kExpectedNumBlocksToProcess =
         (kNumFramesToProcess * 160) / kBlockSize;
-    std::unique_ptr<testing::StrictMock<webrtc::test::MockBlockProcessor>>
-        block_processor_mock(
-            new StrictMock<webrtc::test::MockBlockProcessor>());
+    std::unique_ptr<testing::StrictMock<test::MockBlockProcessor>>
+        block_processor_mock(new StrictMock<test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
         .Times(kExpectedNumBlocksToProcess);
     EXPECT_CALL(*block_processor_mock, UpdateEchoLeakageStatus(_)).Times(0);
@@ -507,7 +507,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
     aec3.SetBlockProcessorForTesting(std::move(block_processor_mock));
@@ -548,8 +548,9 @@ class EchoCanceller3Tester {
   // capture and render API calls.
   void RunRenderSwapQueueVerificationTest() {
     const EchoCanceller3Config config;
-    EchoCanceller3 aec3(config, /*multichannel_config=*/std::nullopt,
-                        sample_rate_hz_, 1, 1);
+    EchoCanceller3 aec3(CreateEnvironment(), config,
+                        /*multichannel_config=*/std::nullopt, sample_rate_hz_,
+                        1, 1);
     aec3.SetBlockProcessorForTesting(
         std::make_unique<RenderTransportVerificationProcessor>(num_bands_));
 
@@ -597,7 +598,7 @@ class EchoCanceller3Tester {
   // This test verifies that a buffer overrun in the render swapqueue is
   // properly reported.
   void RunRenderPipelineSwapQueueOverrunReturnValueTest() {
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt, sample_rate_hz_,
                         1, 1);
 
@@ -624,7 +625,7 @@ class EchoCanceller3Tester {
     // Set aec3_sample_rate_hz to be different from sample_rate_hz_ in such a
     // way that the number of bands for the rates are different.
     const int aec3_sample_rate_hz = sample_rate_hz_ == 48000 ? 32000 : 48000;
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         aec3_sample_rate_hz, 1, 1);
     PopulateInputFrame(frame_length_, 0, &render_buffer_.channels_f()[0][0], 0);
@@ -639,7 +640,7 @@ class EchoCanceller3Tester {
     // Set aec3_sample_rate_hz to be different from sample_rate_hz_ in such a
     // way that the number of bands for the rates are different.
     const int aec3_sample_rate_hz = sample_rate_hz_ == 48000 ? 32000 : 48000;
-    EchoCanceller3 aec3(EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         aec3_sample_rate_hz, 1, 1);
     PopulateInputFrame(frame_length_, num_bands_, 0,
@@ -735,14 +736,15 @@ TEST(EchoCanceller3Messaging, EchoLeakage) {
 // anti-howling gain.
 TEST(EchoCanceller3FieldTrials, Aec3SuppressorAntiHowlingGainOverride) {
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, ExplicitKeyValueConfig(""));
   ASSERT_EQ(
       default_config.suppressor.high_bands_suppression.anti_howling_gain,
       adjusted_config.suppressor.high_bands_suppression.anti_howling_gain);
 
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3SuppressorAntiHowlingGainOverride/0.02/");
-  adjusted_config = AdjustConfig(default_config);
+  adjusted_config = AdjustConfig(default_config, field_trials);
 
   ASSERT_NE(
       default_config.suppressor.high_bands_suppression.anti_howling_gain,
@@ -756,13 +758,14 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorAntiHowlingGainOverride) {
 // limit.
 TEST(EchoCanceller3FieldTrials, Aec3EnforceLowActiveRenderLimit) {
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, ExplicitKeyValueConfig(""));
   ASSERT_EQ(default_config.render_levels.active_render_limit,
             adjusted_config.render_levels.active_render_limit);
 
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3EnforceLowActiveRenderLimit/Enabled/");
-  adjusted_config = AdjustConfig(default_config);
+  adjusted_config = AdjustConfig(default_config, field_trials);
 
   ASSERT_NE(default_config.render_levels.active_render_limit,
             adjusted_config.render_levels.active_render_limit);
@@ -772,7 +775,7 @@ TEST(EchoCanceller3FieldTrials, Aec3EnforceLowActiveRenderLimit) {
 // Testing the field trial-based override of the suppressor parameters for a
 // joint passing of all parameters.
 TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3SuppressorTuningOverride/"
       "nearend_tuning_mask_lf_enr_transparent:0.1,nearend_tuning_mask_lf_enr_"
       "suppress:0.2,nearend_tuning_mask_hf_enr_transparent:0.3,nearend_tuning_"
@@ -787,7 +790,8 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
       "threshold:11/");
 
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, field_trials);
 
   ASSERT_NE(adjusted_config.suppressor.nearend_tuning.mask_lf.enr_transparent,
             default_config.suppressor.nearend_tuning.mask_lf.enr_transparent);
@@ -866,11 +870,12 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
 // Testing the field trial-based override of the suppressor parameters for
 // passing one parameter.
 TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideOneParam) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3SuppressorTuningOverride/nearend_tuning_max_inc_factor:0.5/");
 
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, field_trials);
 
   ASSERT_EQ(adjusted_config.suppressor.nearend_tuning.mask_lf.enr_transparent,
             default_config.suppressor.nearend_tuning.mask_lf.enr_transparent);
@@ -916,10 +921,11 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideOneParam) {
 
 // Testing the field trial-based that override the exponential decay parameters.
 TEST(EchoCanceller3FieldTrials, Aec3UseNearendReverb) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3UseNearendReverbLen/default_len:0.9,nearend_len:0.8/");
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, field_trials);
   EXPECT_FLOAT_EQ(adjusted_config.ep_strength.default_len, 0.9);
   EXPECT_FLOAT_EQ(adjusted_config.ep_strength.nearend_len, 0.8);
 }
@@ -927,10 +933,11 @@ TEST(EchoCanceller3FieldTrials, Aec3UseNearendReverb) {
 // Testing the field trial-based that overrides the maximum allowed ecess render
 // blocks in the render buffering.
 TEST(EchoCanceller3FieldTrials, Aec3BufferingMaxAllowedExcessRenderBlocks) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Aec3BufferingMaxAllowedExcessRenderBlocksOverride/2/");
   EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EchoCanceller3Config adjusted_config =
+      AdjustConfig(default_config, field_trials);
   EXPECT_EQ(adjusted_config.buffering.max_allowed_excess_render_blocks, 2ul);
 }
 
@@ -957,7 +964,7 @@ TEST(EchoCanceller3, DetectionOfProperStereo) {
   multichannel_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(mono_config, multichannel_config,
+  EchoCanceller3 aec3(CreateEnvironment(), mono_config, multichannel_config,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
                       /*num_capture_input_channels=*/kNumChannels);
@@ -1005,7 +1012,7 @@ TEST(EchoCanceller3, DetectionOfProperStereoUsingThreshold) {
   multichannel_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(mono_config, multichannel_config,
+  EchoCanceller3 aec3(CreateEnvironment(), mono_config, multichannel_config,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
                       /*num_capture_input_channels=*/kNumChannels);
@@ -1052,7 +1059,7 @@ TEST(EchoCanceller3, DetectionOfProperStereoUsingHysteresis) {
   surround_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(mono_config, surround_config,
+  EchoCanceller3 aec3(CreateEnvironment(), mono_config, surround_config,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
                       /*num_capture_input_channels=*/kNumChannels);
@@ -1100,6 +1107,7 @@ TEST(EchoCanceller3, StereoContentDetectionForMonoSignals) {
 
   constexpr size_t kNumBlocksForMonoConfig = 1;
   constexpr size_t kNumBlocksForSurroundConfig = 2;
+  const Environment env = CreateEnvironment();
   EchoCanceller3Config mono_config;
   std::optional<EchoCanceller3Config> multichannel_config;
 
@@ -1117,7 +1125,7 @@ TEST(EchoCanceller3, StereoContentDetectionForMonoSignals) {
                             /*output_rate=*/kSampleRateHz,
                             /*output_num_channels=*/1);
 
-    EchoCanceller3 aec3(mono_config, multichannel_config,
+    EchoCanceller3 aec3(env, mono_config, multichannel_config,
                         /*sample_rate_hz=*/kSampleRateHz,
                         /*num_render_channels=*/1,
                         /*num_capture_input_channels=*/1);
@@ -1148,7 +1156,7 @@ TEST(EchoCanceller3InputCheckDeathTest, WrongCaptureNumBandsCheckVerification) {
 // call works.
 TEST(EchoCanceller3InputCheckDeathTest, NullCaptureProcessingParameter) {
   EXPECT_DEATH(
-      EchoCanceller3(EchoCanceller3Config(),
+      EchoCanceller3(CreateEnvironment(), EchoCanceller3Config(),
                      /*multichannel_config_=*/std::nullopt, 16000, 1, 1)
           .ProcessCapture(nullptr, false),
       "");
@@ -1160,7 +1168,7 @@ TEST(EchoCanceller3InputCheckDeathTest, NullCaptureProcessingParameter) {
 TEST(EchoCanceller3InputCheckDeathTest, DISABLED_WrongSampleRate) {
   ApmDataDumper data_dumper(0);
   EXPECT_DEATH(
-      EchoCanceller3(EchoCanceller3Config(),
+      EchoCanceller3(CreateEnvironment(), EchoCanceller3Config(),
                      /*multichannel_config_=*/std::nullopt, 8001, 1, 1),
       "");
 }

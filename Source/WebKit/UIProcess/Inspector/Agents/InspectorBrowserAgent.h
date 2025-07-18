@@ -47,7 +47,7 @@ public:
     bool enabled() const;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // BrowserBackendDispatcherHandler
@@ -58,8 +58,8 @@ public:
     void extensionsDisabled(HashSet<String>&&);
 
 private:
-    std::unique_ptr<Inspector::BrowserFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::BrowserBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::BrowserFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::BrowserBackendDispatcher> m_backendDispatcher;
     WeakRef<WebPageProxy> m_inspectedPage;
 };
 

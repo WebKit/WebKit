@@ -215,7 +215,7 @@ SharedStringHash computeSharedStringHash(const String& url)
     return computeSharedStringHashInline(url.span16());
 }
 
-SharedStringHash computeSharedStringHash(std::span<const UChar> url)
+SharedStringHash computeSharedStringHash(std::span<const char16_t> url)
 {
     return computeSharedStringHashInline(url);
 }

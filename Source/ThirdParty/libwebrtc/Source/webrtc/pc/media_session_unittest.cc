@@ -23,21 +23,29 @@
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/candidate.h"
+#include "api/field_trials_view.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
+#include "api/sctp_transport_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/fake_payload_type_suggester.h"
+#include "call/payload_type.h"
 #include "media/base/codec.h"
+#include "media/base/codec_list.h"
 #include "media/base/media_constants.h"
 #include "media/base/rid_description.h"
 #include "media/base/stream_params.h"
 #include "media/base/test_utils.h"
-#include "media/sctp/sctp_transport_internal.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_description_factory.h"
 #include "p2p/base/transport_info.h"
+#include "pc/codec_vendor.h"
+#include "pc/media_options.h"
 #include "pc/media_protocol_names.h"
 #include "pc/rtp_media_utils.h"
 #include "pc/rtp_parameters_conversion.h"
@@ -55,10 +63,9 @@
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 
-namespace cricket {
+namespace webrtc {
 namespace {
 
-using ::rtc::UniqueRandomIdGenerator;
 using ::testing::Bool;
 using ::testing::Combine;
 using ::testing::Contains;
@@ -66,6 +73,7 @@ using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 using ::testing::Eq;
 using ::testing::Field;
+using ::testing::Gt;
 using ::testing::IsEmpty;
 using ::testing::Not;
 using ::testing::Pointwise;
@@ -73,10 +81,24 @@ using ::testing::SizeIs;
 using ::testing::UnorderedElementsAreArray;
 using ::testing::Values;
 using ::testing::ValuesIn;
-using ::webrtc::RtpExtension;
-using ::webrtc::RtpTransceiverDirection;
+using ::webrtc::UniqueRandomIdGenerator;
+using ::webrtc::test::ScopedKeyValueConfig;
 
 using Candidates = std::vector<Candidate>;
+
+class CodecLookupHelperForTesting : public CodecLookupHelper {
+ public:
+  explicit CodecLookupHelperForTesting(const FieldTrialsView& field_trials)
+      : codec_vendor_(nullptr, false, field_trials) {}
+  webrtc::PayloadTypeSuggester* PayloadTypeSuggester() override {
+    return &payload_type_suggester_;
+  }
+  CodecVendor* GetCodecVendor() override { return &codec_vendor_; }
+
+ private:
+  FakePayloadTypeSuggester payload_type_suggester_;
+  CodecVendor codec_vendor_;
+};
 
 Codec CreateRedAudioCodec(absl::string_view encoding_id) {
   Codec red = CreateAudioCodec(63, "red", 48000, 2);
@@ -87,7 +109,7 @@ Codec CreateRedAudioCodec(absl::string_view encoding_id) {
 
 const Codec kAudioCodecs1[] = {CreateAudioCodec(111, "opus", 48000, 2),
                                CreateRedAudioCodec("111"),
-                               CreateAudioCodec(102, "iLBC", 8000, 1),
+                               CreateAudioCodec(103, "G722", 16000, 1),
                                CreateAudioCodec(0, "PCMU", 8000, 1),
                                CreateAudioCodec(8, "PCMA", 8000, 1),
                                CreateAudioCodec(107, "CN", 48000, 1)};
@@ -95,11 +117,11 @@ const Codec kAudioCodecs1[] = {CreateAudioCodec(111, "opus", 48000, 2),
 const Codec kAudioCodecs2[] = {
     CreateAudioCodec(126, "foo", 16000, 1),
     CreateAudioCodec(0, "PCMU", 8000, 1),
-    CreateAudioCodec(127, "iLBC", 8000, 1),
+    CreateAudioCodec(127, "G722", 16000, 1),
 };
 
 const Codec kAudioCodecsAnswer[] = {
-    CreateAudioCodec(102, "iLBC", 8000, 1),
+    CreateAudioCodec(103, "G722", 16000, 1),
     CreateAudioCodec(0, "PCMU", 8000, 1),
 };
 
@@ -113,6 +135,76 @@ const Codec kVideoCodecs2[] = {CreateVideoCodec(126, "H264"),
                                CreateVideoCodec(127, "H263")};
 
 const Codec kVideoCodecsAnswer[] = {CreateVideoCodec(97, "H264")};
+
+// H.265 level-id, according to H.265 spec, is calculated this way:
+// For any given H.265 level a.b, level-id = (a * 10 + b) * 3. For level 6.0,
+// level-id = (6 * 10 + 0) * 3 = 180. Similar for all other H.265 levels.
+const char kVideoCodecsH265Level6LevelId[] = "180";
+const char kVideoCodecsH265Level52LevelId[] = "156";
+const char kVideoCodecsH265Level5LevelId[] = "150";
+const char kVideoCodecsH265Level4LevelId[] = "120";
+const char kVideoCodecsH265Level31LevelId[] = "93";
+
+const SdpVideoFormat kH265MainProfileLevel31Sdp(
+    "H265",
+    {{"profile-id", "1"},
+     {"tier-flag", "0"},
+     {"level-id", kVideoCodecsH265Level31LevelId},
+     {"tx-mode", "SRST"}});
+const SdpVideoFormat kH265MainProfileLevel4Sdp("H265",
+                                               {{"profile-id", "1"},
+                                                {"tier-flag", "0"},
+                                                {"level-id",
+                                                 kVideoCodecsH265Level4LevelId},
+                                                {"tx-mode", "SRST"}});
+const SdpVideoFormat kH265MainProfileLevel5Sdp("H265",
+                                               {{"profile-id", "1"},
+                                                {"tier-flag", "0"},
+                                                {"level-id",
+                                                 kVideoCodecsH265Level5LevelId},
+                                                {"tx-mode", "SRST"}});
+const SdpVideoFormat kH265MainProfileLevel52Sdp(
+    "H265",
+    {{"profile-id", "1"},
+     {"tier-flag", "0"},
+     {"level-id", kVideoCodecsH265Level52LevelId},
+     {"tx-mode", "SRST"}});
+const SdpVideoFormat kH265MainProfileLevel6Sdp("H265",
+                                               {{"profile-id", "1"},
+                                                {"tier-flag", "0"},
+                                                {"level-id",
+                                                 kVideoCodecsH265Level6LevelId},
+                                                {"tx-mode", "SRST"}});
+
+const Codec kVideoCodecsH265Level31[] = {
+    CreateVideoCodec(96, kH265MainProfileLevel31Sdp)};
+const Codec kVideoCodecsH265Level4[] = {
+    CreateVideoCodec(96, kH265MainProfileLevel4Sdp)};
+const Codec kVideoCodecsH265Level5[] = {
+    CreateVideoCodec(96, kH265MainProfileLevel5Sdp)};
+const Codec kVideoCodecsH265Level52[] = {
+    CreateVideoCodec(96, kH265MainProfileLevel52Sdp)};
+const Codec kVideoCodecsH265Level6[] = {
+    CreateVideoCodec(96, kH265MainProfileLevel6Sdp)};
+// Match two codec lists for content, but ignore the ID.
+bool CodecListsMatch(ArrayView<const Codec> list1,
+                     ArrayView<const Codec> list2) {
+  if (list1.size() != list2.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < list1.size(); ++i) {
+    Codec codec1 = list1[i];
+    Codec codec2 = list2[i];
+    codec1.id = Codec::kIdNotSet;
+    codec2.id = Codec::kIdNotSet;
+    if (codec1 != codec2) {
+      RTC_LOG(LS_ERROR) << "Mismatch at position " << i << " between " << codec1
+                        << " and " << codec2;
+      return false;
+    }
+  }
+  return true;
+}
 
 const RtpExtension kAudioRtpExtension1[] = {
     RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
@@ -286,7 +378,7 @@ constexpr bool kActive = false;
 
 // Helper used for debugging. It reports the media type and the parameters.
 std::string FullMimeType(Codec codec) {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   switch (codec.type) {
     case Codec::Type::kAudio:
       sb << "audio/";
@@ -302,7 +394,8 @@ std::string FullMimeType(Codec codec) {
   return sb.Release();
 }
 
-bool IsMediaContentOfType(const ContentInfo* content, MediaType media_type) {
+bool IsMediaContentOfType(const ContentInfo* content,
+                          webrtc::MediaType media_type) {
   RTC_DCHECK(content);
   return content->media_description()->type() == media_type;
 }
@@ -347,7 +440,7 @@ FindFirstMediaDescriptionByMid(const std::string& mid,
 }
 
 // Add a media section to the `session_options`.
-void AddMediaDescriptionOptions(MediaType type,
+void AddMediaDescriptionOptions(webrtc::MediaType type,
                                 const std::string& mid,
                                 RtpTransceiverDirection direction,
                                 bool stopped,
@@ -358,20 +451,21 @@ void AddMediaDescriptionOptions(MediaType type,
 
 void AddAudioVideoSections(RtpTransceiverDirection direction,
                            MediaSessionOptions* opts) {
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio", direction, kActive,
-                             opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video", direction, kActive,
-                             opts);
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio", direction,
+                             kActive, opts);
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video", direction,
+                             kActive, opts);
 }
 
 void AddDataSection(RtpTransceiverDirection direction,
                     MediaSessionOptions* opts) {
-  AddMediaDescriptionOptions(MEDIA_TYPE_DATA, "data", direction, kActive, opts);
+  AddMediaDescriptionOptions(webrtc::MediaType::DATA, "data", direction,
+                             kActive, opts);
 }
 
 void AttachSenderToMediaDescriptionOptions(
     const std::string& mid,
-    MediaType type,
+    webrtc::MediaType type,
     const std::string& track_id,
     const std::vector<std::string>& stream_ids,
     const std::vector<RidDescription>& rids,
@@ -380,10 +474,10 @@ void AttachSenderToMediaDescriptionOptions(
     MediaSessionOptions* session_options) {
   auto it = FindFirstMediaDescriptionByMid(mid, session_options);
   switch (type) {
-    case MEDIA_TYPE_AUDIO:
+    case webrtc::MediaType::AUDIO:
       it->AddAudioSender(track_id, stream_ids);
       break;
-    case MEDIA_TYPE_VIDEO:
+    case webrtc::MediaType::VIDEO:
       it->AddVideoSender(track_id, stream_ids, rids, simulcast_layers,
                          num_sim_layer);
       break;
@@ -394,7 +488,7 @@ void AttachSenderToMediaDescriptionOptions(
 
 void AttachSenderToMediaDescriptionOptions(
     const std::string& mid,
-    MediaType type,
+    webrtc::MediaType type,
     const std::string& track_id,
     const std::vector<std::string>& stream_ids,
     int num_sim_layer,
@@ -420,7 +514,7 @@ void DetachSenderFromMediaSection(const std::string& mid,
 // Helper function used to create recv-only audio MediaSessionOptions.
 MediaSessionOptions CreateAudioMediaSession() {
   MediaSessionOptions session_options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &session_options);
   return session_options;
@@ -435,20 +529,22 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
   MediaSessionDescriptionFactoryTest()
       : tdf1_(field_trials),
         tdf2_(field_trials),
-        f1_(nullptr, false, &ssrc_generator1, &tdf1_, nullptr),
-        f2_(nullptr, false, &ssrc_generator2, &tdf2_, nullptr) {
-    f1_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs1),
-                         MAKE_VECTOR(kAudioCodecs1));
-    f1_.set_video_codecs(MAKE_VECTOR(kVideoCodecs1),
-                         MAKE_VECTOR(kVideoCodecs1));
-    f2_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs2),
-                         MAKE_VECTOR(kAudioCodecs2));
-    f2_.set_video_codecs(MAKE_VECTOR(kVideoCodecs2),
-                         MAKE_VECTOR(kVideoCodecs2));
-    tdf1_.set_certificate(rtc::RTCCertificate::Create(
-        std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id1"))));
-    tdf2_.set_certificate(rtc::RTCCertificate::Create(
-        std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id2"))));
+        codec_lookup_helper_1_(field_trials),
+        codec_lookup_helper_2_(field_trials),
+        f1_(nullptr, false, &ssrc_generator1, &tdf1_, &codec_lookup_helper_1_),
+        f2_(nullptr, false, &ssrc_generator2, &tdf2_, &codec_lookup_helper_2_) {
+    codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(
+        MAKE_VECTOR(kAudioCodecs1), MAKE_VECTOR(kAudioCodecs1));
+    codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(
+        MAKE_VECTOR(kVideoCodecs1), MAKE_VECTOR(kVideoCodecs1));
+    codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(
+        MAKE_VECTOR(kAudioCodecs2), MAKE_VECTOR(kAudioCodecs2));
+    codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(
+        MAKE_VECTOR(kVideoCodecs2), MAKE_VECTOR(kVideoCodecs2));
+    tdf1_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id1"))));
+    tdf2_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id2"))));
   }
 
   // Create a video StreamParamsVec object with:
@@ -646,13 +742,13 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
                                       ->rtp_header_extensions()));
   }
 
-  std::vector<webrtc::RtpHeaderExtensionCapability>
+  std::vector<RtpHeaderExtensionCapability>
   HeaderExtensionCapabilitiesFromRtpExtensions(RtpHeaderExtensions extensions) {
-    std::vector<webrtc::RtpHeaderExtensionCapability> capabilities;
+    std::vector<RtpHeaderExtensionCapability> capabilities;
     for (const auto& extension : extensions) {
-      webrtc::RtpHeaderExtensionCapability capability(
+      RtpHeaderExtensionCapability capability(
           extension.uri, extension.id, extension.encrypt,
-          webrtc::RtpTransceiverDirection::kSendRecv);
+          RtpTransceiverDirection::kSendRecv);
       capabilities.push_back(capability);
     }
     return capabilities;
@@ -661,16 +757,16 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
   void SetAudioVideoRtpHeaderExtensions(RtpHeaderExtensions audio_exts,
                                         RtpHeaderExtensions video_exts,
                                         MediaSessionOptions* opts) {
-    std::vector<webrtc::RtpHeaderExtensionCapability> audio_caps =
+    std::vector<RtpHeaderExtensionCapability> audio_caps =
         HeaderExtensionCapabilitiesFromRtpExtensions(audio_exts);
-    std::vector<webrtc::RtpHeaderExtensionCapability> video_caps =
+    std::vector<RtpHeaderExtensionCapability> video_caps =
         HeaderExtensionCapabilitiesFromRtpExtensions(video_exts);
     for (auto& entry : opts->media_description_options) {
       switch (entry.type) {
-        case MEDIA_TYPE_AUDIO:
+        case webrtc::MediaType::AUDIO:
           entry.header_extensions = audio_caps;
           break;
-        case MEDIA_TYPE_VIDEO:
+        case webrtc::MediaType::VIDEO:
           entry.header_extensions = video_caps;
           break;
         default:
@@ -680,11 +776,13 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
   }
 
  protected:
-  webrtc::test::ScopedKeyValueConfig field_trials;
+  ScopedKeyValueConfig field_trials;
   UniqueRandomIdGenerator ssrc_generator1;
   UniqueRandomIdGenerator ssrc_generator2;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
+  CodecLookupHelperForTesting codec_lookup_helper_1_;
+  CodecLookupHelperForTesting codec_lookup_helper_2_;
   MediaSessionDescriptionFactory f1_;
   MediaSessionDescriptionFactory f2_;
 };
@@ -700,10 +798,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOffer) {
   EXPECT_FALSE(vc);
   EXPECT_EQ(MediaProtocolType::kRtp, ac->type);
   const MediaContentDescription* acd = ac->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
-  EXPECT_THAT(f1_.audio_sendrecv_codecs(), ElementsAreArray(acd->codecs()));
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
+  EXPECT_THAT(codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs(),
+              ElementsAreArray(acd->codecs()));
   EXPECT_EQ(0U, acd->first_ssrc());             // no sender is attached.
-  EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            acd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
   EXPECT_EQ(kMediaProtocolDtlsSavpf, acd->protocol());
 }
@@ -712,11 +812,11 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOffer) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateAudioOfferWithJustOpusAndRed) {
   // First, prefer to only use opus and red.
-  std::vector<webrtc::RtpCodecCapability> preferences;
-  preferences.push_back(
-      webrtc::ToRtpCodecCapability(f1_.audio_sendrecv_codecs()[0]));
-  preferences.push_back(
-      webrtc::ToRtpCodecCapability(f1_.audio_sendrecv_codecs()[1]));
+  std::vector<RtpCodecCapability> preferences;
+  preferences.push_back(webrtc::ToRtpCodecCapability(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs()[0]));
+  preferences.push_back(webrtc::ToRtpCodecCapability(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs()[1]));
   EXPECT_EQ("opus", preferences[0].name);
   EXPECT_EQ("red", preferences[1].name);
 
@@ -727,11 +827,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   ASSERT_TRUE(offer.get());
   const ContentInfo* ac = offer->GetContentByName("audio");
   const ContentInfo* vc = offer->GetContentByName("video");
-  ASSERT_TRUE(ac != NULL);
-  ASSERT_TRUE(vc == NULL);
+  ASSERT_TRUE(ac != nullptr);
+  ASSERT_TRUE(vc == nullptr);
   EXPECT_EQ(MediaProtocolType::kRtp, ac->type);
   const MediaContentDescription* acd = ac->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_EQ(2U, acd->codecs().size());
   EXPECT_EQ("opus", acd->codecs()[0].name);
   EXPECT_EQ("red", acd->codecs()[1].name);
@@ -740,11 +840,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 // Create an offer with RED before Opus, which enables RED with Opus encoding.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOfferWithRedForOpus) {
   // First, prefer to only use opus and red.
-  std::vector<webrtc::RtpCodecCapability> preferences;
-  preferences.push_back(
-      webrtc::ToRtpCodecCapability(f1_.audio_sendrecv_codecs()[1]));
-  preferences.push_back(
-      webrtc::ToRtpCodecCapability(f1_.audio_sendrecv_codecs()[0]));
+  std::vector<RtpCodecCapability> preferences;
+  preferences.push_back(webrtc::ToRtpCodecCapability(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs()[1]));
+  preferences.push_back(webrtc::ToRtpCodecCapability(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs()[0]));
   EXPECT_EQ("red", preferences[0].name);
   EXPECT_EQ("opus", preferences[1].name);
 
@@ -755,11 +855,11 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOfferWithRedForOpus) {
   ASSERT_TRUE(offer.get());
   const ContentInfo* ac = offer->GetContentByName("audio");
   const ContentInfo* vc = offer->GetContentByName("video");
-  ASSERT_TRUE(ac != NULL);
-  ASSERT_TRUE(vc == NULL);
+  ASSERT_TRUE(ac != nullptr);
+  ASSERT_TRUE(vc == nullptr);
   EXPECT_EQ(MediaProtocolType::kRtp, ac->type);
   const MediaContentDescription* acd = ac->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_EQ(2U, acd->codecs().size());
   EXPECT_EQ("red", acd->codecs()[0].name);
   EXPECT_EQ("opus", acd->codecs()[1].name);
@@ -780,16 +880,22 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoOffer) {
   EXPECT_EQ(MediaProtocolType::kRtp, vc->type);
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
-  EXPECT_EQ(f1_.audio_sendrecv_codecs(), acd->codecs());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
+  EXPECT_EQ(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs().codecs(),
+      acd->codecs());
   EXPECT_EQ(0U, acd->first_ssrc());             // no sender is attached
-  EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            acd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
   EXPECT_EQ(kMediaProtocolDtlsSavpf, acd->protocol());
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
-  EXPECT_EQ(f1_.video_sendrecv_codecs(), vcd->codecs());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
+  EXPECT_EQ(
+      codec_lookup_helper_1_.GetCodecVendor()->video_sendrecv_codecs().codecs(),
+      vcd->codecs());
   EXPECT_EQ(0U, vcd->first_ssrc());             // no sender is attached
-  EXPECT_EQ(kAutoBandwidth, vcd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            vcd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(vcd->rtcp_mux());                 // rtcp-mux defaults on
   EXPECT_EQ(kMediaProtocolDtlsSavpf, vcd->protocol());
 }
@@ -797,18 +903,20 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoOffer) {
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateOfferWithCustomCodecs) {
   MediaSessionOptions opts;
 
-  webrtc::SdpAudioFormat audio_format("custom-audio", 8000, 2);
+  SdpAudioFormat audio_format("custom-audio", 8000, 2);
   Codec custom_audio_codec = CreateAudioCodec(audio_format);
   custom_audio_codec.id = 123;  // picked at random, but valid
-  auto audio_options = MediaDescriptionOptions(
-      MEDIA_TYPE_AUDIO, "0", RtpTransceiverDirection::kSendRecv, kActive);
+  auto audio_options =
+      MediaDescriptionOptions(webrtc::MediaType::AUDIO, "0",
+                              RtpTransceiverDirection::kSendRecv, kActive);
   audio_options.codecs_to_include.push_back(custom_audio_codec);
   opts.media_description_options.push_back(audio_options);
 
   Codec custom_video_codec = CreateVideoCodec("custom-video");
   custom_video_codec.id = 124;  // picked at random, but valid
-  auto video_options = MediaDescriptionOptions(
-      MEDIA_TYPE_VIDEO, "1", RtpTransceiverDirection::kSendRecv, kActive);
+  auto video_options =
+      MediaDescriptionOptions(webrtc::MediaType::VIDEO, "1",
+                              RtpTransceiverDirection::kSendRecv, kActive);
   video_options.codecs_to_include.push_back(custom_video_codec);
   opts.media_description_options.push_back(video_options);
 
@@ -823,14 +931,13 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateOfferWithCustomCodecs) {
   EXPECT_EQ(MediaProtocolType::kRtp, vc->type);
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   ASSERT_EQ(acd->codecs().size(), 1U);
   // Fields in codec are set during the gen process, so simple compare
   // does not work.
   EXPECT_EQ(acd->codecs()[0].name, custom_audio_codec.name);
-  RTC_LOG(LS_ERROR) << "DEBUG: audio PT assigned is " << acd->codecs()[0].id;
 
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
   ASSERT_EQ(vcd->codecs().size(), 1U);
   EXPECT_EQ(vcd->codecs()[0].name, custom_video_codec.name);
 }
@@ -844,18 +951,20 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerWithCustomCodecs) {
   // the normally generated codec list in the answer.
   // This breaks O/A rules - the responsibility for obeying those is
   // on the caller, not on this function.
-  webrtc::SdpAudioFormat audio_format("custom-audio", 8000, 2);
+  SdpAudioFormat audio_format("custom-audio", 8000, 2);
   Codec custom_audio_codec = CreateAudioCodec(audio_format);
   custom_audio_codec.id = 123;  // picked at random, but valid
-  auto audio_options = MediaDescriptionOptions(
-      MEDIA_TYPE_AUDIO, "audio", RtpTransceiverDirection::kSendRecv, kActive);
+  auto audio_options =
+      MediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
+                              RtpTransceiverDirection::kSendRecv, kActive);
   audio_options.codecs_to_include.push_back(custom_audio_codec);
   answer_opts.media_description_options.push_back(audio_options);
 
   Codec custom_video_codec = CreateVideoCodec("custom-video");
   custom_video_codec.id = 124;
-  auto video_options = MediaDescriptionOptions(
-      MEDIA_TYPE_VIDEO, "video", RtpTransceiverDirection::kSendRecv, kActive);
+  auto video_options =
+      MediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                              RtpTransceiverDirection::kSendRecv, kActive);
   video_options.codecs_to_include.push_back(custom_video_codec);
   answer_opts.media_description_options.push_back(video_options);
 
@@ -872,13 +981,13 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerWithCustomCodecs) {
   EXPECT_EQ(MediaProtocolType::kRtp, vc->type);
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   ASSERT_EQ(acd->codecs().size(), 1U);
   // Fields in codec are set during the gen process, so simple compare
   // does not work.
   EXPECT_EQ(acd->codecs()[0].name, custom_audio_codec.name);
 
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
   ASSERT_EQ(vcd->codecs().size(), 1U);
   EXPECT_EQ(vcd->codecs()[0].name, custom_video_codec.name);
 }
@@ -887,8 +996,10 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerWithCustomCodecs) {
 // RTP paylod type. The test verifies that the offer don't contain the
 // duplicate RTP payload types.
 TEST_F(MediaSessionDescriptionFactoryTest, TestBundleOfferWithSameCodecPlType) {
-  const Codec& offered_video_codec = f2_.video_sendrecv_codecs()[0];
-  const Codec& offered_audio_codec = f2_.audio_sendrecv_codecs()[0];
+  Codec offered_video_codec =
+      codec_lookup_helper_2_.GetCodecVendor()->video_sendrecv_codecs()[0];
+  Codec offered_audio_codec =
+      codec_lookup_helper_2_.GetCodecVendor()->audio_sendrecv_codecs()[0];
   ASSERT_EQ(offered_video_codec.id, offered_audio_codec.id);
 
   MediaSessionOptions opts;
@@ -912,10 +1023,10 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestBundleOfferWithSameCodecPlType) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateUpdatedVideoOfferWithBundle) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kInactive, kStopped,
                              &opts);
   opts.bundle_enabled = true;
@@ -995,7 +1106,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateImplicitSctpDataOffer) {
 TEST_F(MediaSessionDescriptionFactoryTest, ReOfferNoBundleGroupIfAllRejected) {
   MediaSessionOptions opts;
   opts.bundle_enabled = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -1014,7 +1125,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, ReOfferNoBundleGroupIfAllRejected) {
 TEST_F(MediaSessionDescriptionFactoryTest, ReAnswerNoBundleGroupIfAllRejected) {
   MediaSessionOptions opts;
   opts.bundle_enabled = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -1037,7 +1148,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, ReAnswerNoBundleGroupIfAllRejected) {
 TEST_F(MediaSessionDescriptionFactoryTest, ReOfferChangeBundleOffererTagged) {
   MediaSessionOptions opts;
   opts.bundle_enabled = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -1045,7 +1156,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, ReOfferChangeBundleOffererTagged) {
 
   // Reject the audio m= section and add a video m= section.
   opts.media_description_options[0].stopped = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> reoffer =
@@ -1063,7 +1174,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, ReOfferChangeBundleOffererTagged) {
 TEST_F(MediaSessionDescriptionFactoryTest, ReAnswerChangedBundleOffererTagged) {
   MediaSessionOptions opts;
   opts.bundle_enabled = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -1073,7 +1184,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, ReAnswerChangedBundleOffererTagged) {
 
   // Reject the audio m= section and add a video m= section.
   opts.media_description_options[0].stopped = true;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> reoffer =
@@ -1093,16 +1204,16 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // Create an offer with 4 m= sections, initially without BUNDLE groups.
   MediaSessionOptions opts;
   opts.bundle_enabled = false;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "3",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "3",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "4",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "4",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -1232,17 +1343,21 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateSendOnlyOffer) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kSendOnly, &opts);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, 1, &opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack1,
-                                        {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack1, {kMediaStream1}, 1,
+                                        &opts);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   ASSERT_TRUE(offer.get());
   EXPECT_EQ(2u, offer->contents().size());
-  EXPECT_TRUE(IsMediaContentOfType(&offer->contents()[0], MEDIA_TYPE_AUDIO));
-  EXPECT_TRUE(IsMediaContentOfType(&offer->contents()[1], MEDIA_TYPE_VIDEO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer->contents()[0], webrtc::MediaType::AUDIO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer->contents()[1], webrtc::MediaType::VIDEO));
 
   EXPECT_EQ(RtpTransceiverDirection::kSendOnly,
             GetMediaDirection(&offer->contents()[0]));
@@ -1260,28 +1375,34 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateOfferContentOrder) {
       f1_.CreateOfferOrError(opts, nullptr).MoveValue());
   ASSERT_TRUE(offer1.get());
   EXPECT_EQ(1u, offer1->contents().size());
-  EXPECT_TRUE(IsMediaContentOfType(&offer1->contents()[0], MEDIA_TYPE_DATA));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer1->contents()[0], webrtc::MediaType::DATA));
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer2(
       f1_.CreateOfferOrError(opts, offer1.get()).MoveValue());
   ASSERT_TRUE(offer2.get());
   EXPECT_EQ(2u, offer2->contents().size());
-  EXPECT_TRUE(IsMediaContentOfType(&offer2->contents()[0], MEDIA_TYPE_DATA));
-  EXPECT_TRUE(IsMediaContentOfType(&offer2->contents()[1], MEDIA_TYPE_VIDEO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer2->contents()[0], webrtc::MediaType::DATA));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer2->contents()[1], webrtc::MediaType::VIDEO));
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer3(
       f1_.CreateOfferOrError(opts, offer2.get()).MoveValue());
   ASSERT_TRUE(offer3.get());
   EXPECT_EQ(3u, offer3->contents().size());
-  EXPECT_TRUE(IsMediaContentOfType(&offer3->contents()[0], MEDIA_TYPE_DATA));
-  EXPECT_TRUE(IsMediaContentOfType(&offer3->contents()[1], MEDIA_TYPE_VIDEO));
-  EXPECT_TRUE(IsMediaContentOfType(&offer3->contents()[2], MEDIA_TYPE_AUDIO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer3->contents()[0], webrtc::MediaType::DATA));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer3->contents()[1], webrtc::MediaType::VIDEO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&offer3->contents()[2], webrtc::MediaType::AUDIO));
 }
 
 // Create a typical audio answer, and ensure it matches what we expect.
@@ -1298,7 +1419,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswer) {
   EXPECT_FALSE(vc);
   EXPECT_EQ(MediaProtocolType::kRtp, ac->type);
   const MediaContentDescription* acd = ac->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecsAnswer));
   EXPECT_EQ(0U, acd->first_ssrc());             // no sender is attached
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
@@ -1321,7 +1442,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswerGcm) {
   EXPECT_FALSE(vc);
   EXPECT_EQ(MediaProtocolType::kRtp, ac->type);
   const MediaContentDescription* acd = ac->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecsAnswer));
   EXPECT_EQ(0U, acd->first_ssrc());             // no sender is attached
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
@@ -1333,14 +1454,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswerGcm) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateAudioAnswerWithNoCommonCodecs) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::vector f1_codecs = {CreateAudioCodec(96, "opus", 48000, 1)};
-  f1_.set_audio_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateAudioCodec(0, "PCMU", 8000, 1)};
-  f2_.set_audio_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -1368,12 +1491,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswer) {
   EXPECT_EQ(MediaProtocolType::kRtp, vc->type);
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecsAnswer));
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
   EXPECT_EQ(0U, acd->first_ssrc());             // no sender is attached
   EXPECT_TRUE(acd->rtcp_mux());                 // negotiated rtcp-mux
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
   EXPECT_THAT(vcd->codecs(), ElementsAreArray(kVideoCodecsAnswer));
   EXPECT_EQ(0U, vcd->first_ssrc());  // no sender is attached
   EXPECT_TRUE(vcd->rtcp_mux());      // negotiated rtcp-mux
@@ -1384,14 +1507,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswer) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateVideoAnswerWithNoCommonCodecs) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::vector f1_codecs = {CreateVideoCodec(96, "H264")};
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(97, "VP8")};
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -1407,16 +1532,18 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateVideoAnswerWithOnlyFecCodecsCommon) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::vector f1_codecs = {CreateVideoCodec(96, "H264"),
                            CreateVideoCodec(118, "flexfec-03")};
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(97, "VP8"),
                            CreateVideoCodec(118, "flexfec-03")};
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -1545,7 +1672,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   const SctpDataContentDescription* dcd_answer =
       dc_answer->media_description()->as_sctp();
   EXPECT_FALSE(dc_answer->rejected);
-  EXPECT_EQ(kSctpSendBufferSize, dcd_answer->max_message_size());
+  EXPECT_EQ(webrtc::kSctpSendBufferSize, dcd_answer->max_message_size());
 }
 
 // Verifies that the order of the media contents in the offer is preserved in
@@ -1560,7 +1687,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerContentOrder) {
   ASSERT_TRUE(offer1.get());
 
   // Appends audio to the offer.
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer2(
@@ -1568,7 +1695,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerContentOrder) {
   ASSERT_TRUE(offer2.get());
 
   // Appends video to the offer.
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer3(
@@ -1579,9 +1706,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAnswerContentOrder) {
       f2_.CreateAnswerOrError(offer3.get(), opts, nullptr).MoveValue();
   ASSERT_TRUE(answer.get());
   EXPECT_EQ(3u, answer->contents().size());
-  EXPECT_TRUE(IsMediaContentOfType(&answer->contents()[0], MEDIA_TYPE_DATA));
-  EXPECT_TRUE(IsMediaContentOfType(&answer->contents()[1], MEDIA_TYPE_AUDIO));
-  EXPECT_TRUE(IsMediaContentOfType(&answer->contents()[2], MEDIA_TYPE_VIDEO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&answer->contents()[0], webrtc::MediaType::DATA));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&answer->contents()[1], webrtc::MediaType::AUDIO));
+  EXPECT_TRUE(
+      IsMediaContentOfType(&answer->contents()[2], webrtc::MediaType::VIDEO));
 }
 
 // TODO(deadbeef): Extend these tests to ensure the correct direction with other
@@ -1865,22 +1995,22 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        OffersUnstoppedExtensionsWithAudioVideoExtensionStopped) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kStopped),
-      webrtc::RtpHeaderExtensionCapability("uri2", 3,
-                                           RtpTransceiverDirection::kSendOnly)};
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kStopped),
+      RtpHeaderExtensionCapability("uri2", 3,
+                                   RtpTransceiverDirection::kSendOnly)};
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kStopped),
-      webrtc::RtpHeaderExtensionCapability("uri3", 7,
-                                           RtpTransceiverDirection::kSendOnly)};
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kStopped),
+      RtpHeaderExtensionCapability("uri3", 7,
+                                   RtpTransceiverDirection::kSendOnly)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   EXPECT_THAT(
       offer->contents(),
@@ -1898,22 +2028,22 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        OffersUnstoppedExtensionsWithAudioExtensionStopped) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kSendOnly),
-      webrtc::RtpHeaderExtensionCapability("uri2", 3,
-                                           RtpTransceiverDirection::kStopped)};
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kSendOnly),
+      RtpHeaderExtensionCapability("uri2", 3,
+                                   RtpTransceiverDirection::kStopped)};
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri42", 42,
-                                           RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri3", 7,
-                                           RtpTransceiverDirection::kSendOnly)};
+      RtpHeaderExtensionCapability("uri42", 42,
+                                   RtpTransceiverDirection::kSendRecv),
+      RtpHeaderExtensionCapability("uri3", 7,
+                                   RtpTransceiverDirection::kSendOnly)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   EXPECT_THAT(
       offer->contents(),
@@ -1933,22 +2063,22 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        OffersUnstoppedExtensionsWithVideoExtensionStopped) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 5,
-                                           RtpTransceiverDirection::kSendOnly),
-      webrtc::RtpHeaderExtensionCapability("uri2", 7,
-                                           RtpTransceiverDirection::kSendRecv)};
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+      RtpHeaderExtensionCapability("uri1", 5,
+                                   RtpTransceiverDirection::kSendOnly),
+      RtpHeaderExtensionCapability("uri2", 7,
+                                   RtpTransceiverDirection::kSendRecv)};
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri42", 42,
-                                           RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri3", 7,
-                                           RtpTransceiverDirection::kStopped)};
+      RtpHeaderExtensionCapability("uri42", 42,
+                                   RtpTransceiverDirection::kSendRecv),
+      RtpHeaderExtensionCapability("uri3", 7,
+                                   RtpTransceiverDirection::kStopped)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   EXPECT_THAT(
       offer->contents(),
@@ -1967,28 +2097,28 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
 TEST_F(MediaSessionDescriptionFactoryTest, AnswersUnstoppedExtensions) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 4,
-                                           RtpTransceiverDirection::kStopped),
-      webrtc::RtpHeaderExtensionCapability("uri2", 3,
-                                           RtpTransceiverDirection::kSendOnly),
-      webrtc::RtpHeaderExtensionCapability("uri3", 2,
-                                           RtpTransceiverDirection::kRecvOnly),
-      webrtc::RtpHeaderExtensionCapability("uri4", 1,
-                                           RtpTransceiverDirection::kSendRecv)};
+      RtpHeaderExtensionCapability("uri1", 4,
+                                   RtpTransceiverDirection::kStopped),
+      RtpHeaderExtensionCapability("uri2", 3,
+                                   RtpTransceiverDirection::kSendOnly),
+      RtpHeaderExtensionCapability("uri3", 2,
+                                   RtpTransceiverDirection::kRecvOnly),
+      RtpHeaderExtensionCapability("uri4", 1,
+                                   RtpTransceiverDirection::kSendRecv)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 4,
-                                           RtpTransceiverDirection::kSendOnly),
-      webrtc::RtpHeaderExtensionCapability("uri2", 3,
-                                           RtpTransceiverDirection::kRecvOnly),
-      webrtc::RtpHeaderExtensionCapability("uri3", 2,
-                                           RtpTransceiverDirection::kStopped),
-      webrtc::RtpHeaderExtensionCapability("uri4", 1,
-                                           RtpTransceiverDirection::kSendRecv)};
+      RtpHeaderExtensionCapability("uri1", 4,
+                                   RtpTransceiverDirection::kSendOnly),
+      RtpHeaderExtensionCapability("uri2", 3,
+                                   RtpTransceiverDirection::kRecvOnly),
+      RtpHeaderExtensionCapability("uri3", 2,
+                                   RtpTransceiverDirection::kStopped),
+      RtpHeaderExtensionCapability("uri4", 1,
+                                   RtpTransceiverDirection::kSendRecv)};
   auto answer = f2_.CreateAnswerOrError(offer.get(), opts, nullptr).MoveValue();
   EXPECT_THAT(
       answer->contents(),
@@ -2002,22 +2132,22 @@ TEST_F(MediaSessionDescriptionFactoryTest, AnswersUnstoppedExtensions) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        AppendsUnstoppedExtensionsToCurrentDescription) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kSendRecv)};
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kSendRecv)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 2,
-                                           RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri2", 3,
-                                           RtpTransceiverDirection::kRecvOnly),
-      webrtc::RtpHeaderExtensionCapability("uri3", 5,
-                                           RtpTransceiverDirection::kStopped),
-      webrtc::RtpHeaderExtensionCapability("uri4", 6,
-                                           RtpTransceiverDirection::kSendRecv)};
+      RtpHeaderExtensionCapability("uri1", 2,
+                                   RtpTransceiverDirection::kSendRecv),
+      RtpHeaderExtensionCapability("uri2", 3,
+                                   RtpTransceiverDirection::kRecvOnly),
+      RtpHeaderExtensionCapability("uri3", 5,
+                                   RtpTransceiverDirection::kStopped),
+      RtpHeaderExtensionCapability("uri4", 6,
+                                   RtpTransceiverDirection::kSendRecv)};
   auto offer2 = f1_.CreateOfferOrError(opts, offer.get()).MoveValue();
   EXPECT_THAT(
       offer2->contents(),
@@ -2032,23 +2162,23 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        AllowsStoppedExtensionsToBeRemovedFromSubsequentOffer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri2", 2,
-                                           RtpTransceiverDirection::kSendRecv)};
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kSendRecv),
+      RtpHeaderExtensionCapability("uri2", 2,
+                                   RtpTransceiverDirection::kSendRecv)};
   auto offer = f1_.CreateOfferOrError(opts, nullptr).MoveValue();
 
   // Check that a subsequent offer after setting "uri2" to stopped no longer
   // contains the extension.
   opts.media_description_options.back().header_extensions = {
-      webrtc::RtpHeaderExtensionCapability("uri1", 1,
-                                           RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri2", 2,
-                                           RtpTransceiverDirection::kStopped)};
+      RtpHeaderExtensionCapability("uri1", 1,
+                                   RtpTransceiverDirection::kSendRecv),
+      RtpHeaderExtensionCapability("uri2", 2,
+                                   RtpTransceiverDirection::kStopped)};
   auto offer2 = f1_.CreateOfferOrError(opts, offer.get()).MoveValue();
   EXPECT_THAT(
       offer2->contents(),
@@ -2124,11 +2254,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,
-       TestOfferAnswerWithEncryptedRtpExtensionHeadersEnabledInOffer) {
+       NegotiationWithEncryptedRtpExtensionHeadersDisabledInReceiver) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  f1_.set_enable_encrypted_rtp_header_extensions(true);
+  f2_.set_enable_encrypted_rtp_header_extensions(false);
 
   SetAudioVideoRtpHeaderExtensions(MAKE_VECTOR(kAudioRtpExtensionEncrypted1),
                                    MAKE_VECTOR(kVideoRtpExtensionEncrypted1),
@@ -2157,11 +2287,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,
-       TestOfferAnswerWithEncryptedRtpExtensionHeadersEnabledInReceiver) {
+       NegotiationWithEncryptedRtpExtensionHeadersDisabledInSender) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  f2_.set_enable_encrypted_rtp_header_extensions(true);
+  f1_.set_enable_encrypted_rtp_header_extensions(false);
 
   SetAudioVideoRtpHeaderExtensions(MAKE_VECTOR(kAudioRtpExtensionEncrypted1),
                                    MAKE_VECTOR(kVideoRtpExtensionEncrypted1),
@@ -2190,12 +2320,9 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,
-       TestOfferAnswerPreferEncryptedRtpHeaderExtensionsWhenEncryptionEnabled) {
+       PreferEncryptedRtpHeaderExtensionsWhenEncryptionEnabled) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
-
-  f1_.set_enable_encrypted_rtp_header_extensions(true);
-  f2_.set_enable_encrypted_rtp_header_extensions(true);
 
   SetAudioVideoRtpHeaderExtensions(
       MAKE_VECTOR(kAudioRtpExtensionMixedEncryption1),
@@ -2227,9 +2354,12 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,
-       TestOfferAnswerUseUnencryptedRtpHeaderExtensionsWhenEncryptionDisabled) {
+       UseUnencryptedRtpHeaderExtensionsWhenEncryptionDisabled) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
+
+  f1_.set_enable_encrypted_rtp_header_extensions(false);
+  f2_.set_enable_encrypted_rtp_header_extensions(false);
 
   SetAudioVideoRtpHeaderExtensions(
       MAKE_VECTOR(kAudioRtpExtensionMixedEncryption1),
@@ -2354,10 +2484,10 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswerRtcpMux) {
 // Create an audio-only answer to a video offer.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswerToVideo) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -2526,12 +2656,15 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kSendRecv, &opts);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, 1, &opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack1,
-                                        {kMediaStream1}, 1, &opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack2,
-                                        {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack1, {kMediaStream1}, 1,
+                                        &opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack2, {kMediaStream1}, 1,
+                                        &opts);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2543,8 +2676,10 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   ASSERT_TRUE(vc);
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
-  EXPECT_EQ(f1_.audio_sendrecv_codecs(), acd->codecs());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
+  EXPECT_EQ(
+      codec_lookup_helper_1_.GetCodecVendor()->audio_sendrecv_codecs().codecs(),
+      acd->codecs());
 
   const StreamParamsVec& audio_streams = acd->streams();
   ASSERT_EQ(2U, audio_streams.size());
@@ -2556,26 +2691,32 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   ASSERT_EQ(1U, audio_streams[1].ssrcs.size());
   EXPECT_NE(0U, audio_streams[1].ssrcs[0]);
 
-  EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            acd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
 
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
-  EXPECT_EQ(f1_.video_sendrecv_codecs(), vcd->codecs());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
+  EXPECT_EQ(
+      codec_lookup_helper_1_.GetCodecVendor()->video_sendrecv_codecs().codecs(),
+      vcd->codecs());
 
   const StreamParamsVec& video_streams = vcd->streams();
   ASSERT_EQ(1U, video_streams.size());
   EXPECT_EQ(video_streams[0].cname, audio_streams[0].cname);
   EXPECT_EQ(kVideoTrack1, video_streams[0].id);
-  EXPECT_EQ(kAutoBandwidth, vcd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            vcd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(vcd->rtcp_mux());                 // rtcp-mux defaults on
 
   // Update the offer. Add a new video track that is not synched to the
   // other tracks and replace audio track 2 with audio track 3.
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack2,
-                                        {kMediaStream2}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack2, {kMediaStream2}, 1,
+                                        &opts);
   DetachSenderFromMediaSection("audio", kAudioTrack2, &opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack3,
-                                        {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack3, {kMediaStream1}, 1,
+                                        &opts);
   std::unique_ptr<SessionDescription> updated_offer(
       f1_.CreateOfferOrError(opts, offer.get()).MoveValue());
 
@@ -2611,15 +2752,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
 // Create an offer with simulcast video stream.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateSimulcastVideoOffer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   const int num_sim_layers = 3;
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, num_sim_layers, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1},
+                                        num_sim_layers, &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
 
@@ -2673,7 +2815,7 @@ void CheckSimulcastInSessionDescription(
 // Create an offer with spec-compliant simulcast video stream.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastOffer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::vector<RidDescription> send_rids;
@@ -2684,9 +2826,9 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastOffer) {
   simulcast_layers.AddLayer(SimulcastLayer(send_rids[0].rid, false));
   simulcast_layers.AddLayer(SimulcastLayer(send_rids[1].rid, true));
   simulcast_layers.AddLayer(SimulcastLayer(send_rids[2].rid, false));
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, send_rids,
-                                        simulcast_layers, 0, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1},
+                                        send_rids, simulcast_layers, 0, &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
 
@@ -2698,12 +2840,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastOffer) {
 // In this scenario, RIDs do not need to be negotiated (there is only one).
 TEST_F(MediaSessionDescriptionFactoryTest, TestOfferWithRidsNoSimulcast) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   RidDescription rid("f", RidDirection::kSend);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, {rid},
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, {rid},
                                         SimulcastLayerList(), 0, &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2725,16 +2867,17 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestOfferWithRidsNoSimulcast) {
 // In this scenario, the SFU is the caller requesting that we send Simulcast.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastAnswer) {
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, 1, &offer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &offer_opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(offer_opts, nullptr).MoveValue();
 
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
 
@@ -2747,9 +2890,9 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastAnswer) {
   simulcast_layers.AddLayer(SimulcastLayer(rid_descriptions[0].rid, false));
   simulcast_layers.AddLayer(SimulcastLayer(rid_descriptions[1].rid, true));
   simulcast_layers.AddLayer(SimulcastLayer(rid_descriptions[2].rid, false));
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, rid_descriptions,
-                                        simulcast_layers, 0, &answer_opts);
+  AttachSenderToMediaDescriptionOptions(
+      "video", webrtc::MediaType::VIDEO, kVideoTrack1, {kMediaStream1},
+      rid_descriptions, simulcast_layers, 0, &answer_opts);
   std::unique_ptr<SessionDescription> answer =
       f2_.CreateAnswerOrError(offer.get(), answer_opts, nullptr).MoveValue();
 
@@ -2762,25 +2905,25 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateCompliantSimulcastAnswer) {
 // Note that RID Direction is not the same as the transceiver direction.
 TEST_F(MediaSessionDescriptionFactoryTest, TestAnswerWithRidsNoSimulcast) {
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
   RidDescription rid_offer("f", RidDirection::kSend);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, {rid_offer},
-                                        SimulcastLayerList(), 0, &offer_opts);
+  AttachSenderToMediaDescriptionOptions(
+      "video", webrtc::MediaType::VIDEO, kVideoTrack1, {kMediaStream1},
+      {rid_offer}, SimulcastLayerList(), 0, &offer_opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(offer_opts, nullptr).MoveValue();
 
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
 
   RidDescription rid_answer("f", RidDirection::kReceive);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, {rid_answer},
-                                        SimulcastLayerList(), 0, &answer_opts);
+  AttachSenderToMediaDescriptionOptions(
+      "video", webrtc::MediaType::VIDEO, kVideoTrack1, {kMediaStream1},
+      {rid_answer}, SimulcastLayerList(), 0, &answer_opts);
   std::unique_ptr<SessionDescription> answer =
       f2_.CreateAnswerOrError(offer.get(), answer_opts, nullptr).MoveValue();
 
@@ -2805,28 +2948,31 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestAnswerWithRidsNoSimulcast) {
 // adding a new video track and removes one of the audio tracks.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoAnswer) {
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &offer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &offer_opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(offer_opts, nullptr).MoveValue();
 
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack1,
-                                        {kMediaStream1}, 1, &answer_opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack1,
-                                        {kMediaStream1}, 1, &answer_opts);
-  AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO, kAudioTrack2,
-                                        {kMediaStream1}, 1, &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+  AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                        kAudioTrack2, {kMediaStream1}, 1,
+                                        &answer_opts);
 
   std::unique_ptr<SessionDescription> answer =
       f2_.CreateAnswerOrError(offer.get(), answer_opts, nullptr).MoveValue();
@@ -2839,7 +2985,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoAnswer) {
   const MediaContentDescription* acd = ac->media_description();
   const MediaContentDescription* vcd = vc->media_description();
 
-  EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
+  EXPECT_EQ(webrtc::MediaType::AUDIO, acd->type());
   EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecsAnswer));
 
   const StreamParamsVec& audio_streams = acd->streams();
@@ -2852,23 +2998,26 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoAnswer) {
   ASSERT_EQ(1U, audio_streams[1].ssrcs.size());
   EXPECT_NE(0U, audio_streams[1].ssrcs[0]);
 
-  EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            acd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
 
-  EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
+  EXPECT_EQ(webrtc::MediaType::VIDEO, vcd->type());
   EXPECT_THAT(vcd->codecs(), ElementsAreArray(kVideoCodecsAnswer));
 
   const StreamParamsVec& video_streams = vcd->streams();
   ASSERT_EQ(1U, video_streams.size());
   EXPECT_EQ(video_streams[0].cname, audio_streams[0].cname);
   EXPECT_EQ(kVideoTrack1, video_streams[0].id);
-  EXPECT_EQ(kAutoBandwidth, vcd->bandwidth());  // default bandwidth (auto)
+  EXPECT_EQ(kAutoBandwidth,
+            vcd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(vcd->rtcp_mux());                 // rtcp-mux defaults on
 
   // Update the answer. Add a new video track that is not synched to the
   // other tracks and remove 1 audio track.
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, kVideoTrack2,
-                                        {kMediaStream2}, 1, &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack2, {kMediaStream2}, 1,
+                                        &answer_opts);
   DetachSenderFromMediaSection("audio", kAudioTrack2, &answer_opts);
   std::unique_ptr<SessionDescription> updated_answer(
       f2_.CreateAnswerOrError(offer.get(), answer_opts, answer.get())
@@ -2944,22 +3093,24 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
   const AudioContentDescription* updated_acd =
       GetFirstAudioContentDescription(updated_offer.get());
-  EXPECT_THAT(updated_acd->codecs(), ElementsAreArray(kUpdatedAudioCodecOffer));
+  EXPECT_TRUE(CodecListsMatch(updated_acd->codecs(), kUpdatedAudioCodecOffer));
 
   const VideoContentDescription* updated_vcd =
       GetFirstVideoContentDescription(updated_offer.get());
-  EXPECT_THAT(updated_vcd->codecs(), ElementsAreArray(kUpdatedVideoCodecOffer));
+  EXPECT_TRUE(CodecListsMatch(updated_vcd->codecs(), kUpdatedVideoCodecOffer));
 }
 
 // Test that a reoffer does not reuse audio codecs from a previous media section
 // that is being recycled.
 TEST_F(MediaSessionDescriptionFactoryTest,
        ReOfferDoesNotReUseRecycledAudioCodecs) {
-  f1_.set_video_codecs({}, {});
-  f2_.set_video_codecs({}, {});
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(CodecList{},
+                                                            CodecList{});
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(CodecList{},
+                                                            CodecList{});
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "a0",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "a0",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -2976,18 +3127,26 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // section was not recycled the payload types would match the initial offerer.
   const AudioContentDescription* acd =
       GetFirstAudioContentDescription(reoffer.get());
-  EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecs2));
+  // EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecs2)),
+  // except that we don't want to check the PT numbers.
+  EXPECT_EQ(acd->codecs().size(),
+            sizeof(kAudioCodecs2) / sizeof(kAudioCodecs2[0]));
+  for (size_t i = 0; i < acd->codecs().size(); ++i) {
+    EXPECT_EQ(acd->codecs()[i].name, kAudioCodecs2[i].name);
+  }
 }
 
 // Test that a reoffer does not reuse video codecs from a previous media section
 // that is being recycled.
 TEST_F(MediaSessionDescriptionFactoryTest,
        ReOfferDoesNotReUseRecycledVideoCodecs) {
-  f1_.set_audio_codecs({}, {});
-  f2_.set_audio_codecs({}, {});
+  codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(CodecList{},
+                                                            CodecList{});
+  codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(CodecList{},
+                                                            CodecList{});
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "v0",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "v0",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -3003,20 +3162,22 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // section was not recycled the payload types would match the initial offerer.
   const VideoContentDescription* vcd =
       GetFirstVideoContentDescription(reoffer.get());
-  EXPECT_THAT(vcd->codecs(), ElementsAreArray(kVideoCodecs2));
+  EXPECT_TRUE(CodecListsMatch(vcd->codecs(), kVideoCodecs2));
 }
 
 // Test that a reanswer does not reuse audio codecs from a previous media
 // section that is being recycled.
 TEST_F(MediaSessionDescriptionFactoryTest,
        ReAnswerDoesNotReUseRecycledAudioCodecs) {
-  f1_.set_video_codecs({}, {});
-  f2_.set_video_codecs({}, {});
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(CodecList{},
+                                                            CodecList{});
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(CodecList{},
+                                                            CodecList{});
 
   // Perform initial offer/answer in reverse (`f2_` as offerer) so that the
   // second offer/answer is forward (`f1_` as offerer).
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "a0",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "a0",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -3042,13 +3203,15 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 // section that is being recycled.
 TEST_F(MediaSessionDescriptionFactoryTest,
        ReAnswerDoesNotReUseRecycledVideoCodecs) {
-  f1_.set_audio_codecs({}, {});
-  f2_.set_audio_codecs({}, {});
+  codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(CodecList{},
+                                                            CodecList{});
+  codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(CodecList{},
+                                                            CodecList{});
 
   // Perform initial offer/answer in reverse (`f2_` as offerer) so that the
   // second offer/answer is forward (`f1_` as offerer).
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "v0",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "v0",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -3076,18 +3239,20 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        RespondentCreatesOfferAfterCreatingAnswerWithRtx) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates rtx for H264 with the payload type `f1_` uses.
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
   // This creates rtx for H264 with the payload type `f2_` uses.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs2[0].id), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -3101,7 +3266,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   std::vector<Codec> expected_codecs = MAKE_VECTOR(kVideoCodecsAnswer);
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &expected_codecs);
 
-  EXPECT_EQ(expected_codecs, vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, vcd->codecs()));
 
   // Now, make sure we get same result (except for the order) if `f2_` creates
   // an updated offer even though the default payload types between `f1_` and
@@ -3116,7 +3281,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   const VideoContentDescription* updated_vcd =
       GetFirstVideoContentDescription(updated_answer.get());
 
-  EXPECT_EQ(expected_codecs, updated_vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, updated_vcd->codecs()));
 }
 
 // Regression test for:
@@ -3127,7 +3292,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        RespondentCreatesOfferAfterCreatingAnswerWithRemappedRtxPayloadType) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   // We specifically choose different preferred payload types for VP8 to
@@ -3144,11 +3309,15 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // *doesn't* honor the existing preferred codec (VP8) we'll notice.
   std::vector<Codec> f2_codecs = {vp9, vp9_rtx, vp8_answerer, vp8_answerer_rtx};
 
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
   std::vector<Codec> audio_codecs;
-  f1_.set_audio_codecs(audio_codecs, audio_codecs);
-  f2_.set_audio_codecs(audio_codecs, audio_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(audio_codecs,
+                                                            audio_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(audio_codecs,
+                                                            audio_codecs);
 
   // Offer will be {VP8, RTX for VP8}. Answer will be the same.
   std::unique_ptr<SessionDescription> offer =
@@ -3181,10 +3350,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates rtx for H264 with the payload type `f1_` uses.
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
 
@@ -3204,10 +3374,12 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
+  ASSERT_THAT(acd->codecs().size(), Gt(0));
   int used_pl_type = acd->codecs()[0].id;
   f2_codecs[0].id = used_pl_type;  // Set the payload type for H264.
   AddRtxCodec(CreateVideoRtxCodec(125, used_pl_type), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> updated_offer(
       f2_.CreateOfferOrError(opts, answer.get()).MoveValue());
@@ -3229,7 +3401,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   EXPECT_NE(used_pl_type, new_h264_pl_type);
   Codec rtx = updated_vcd->codecs()[1];
   int pt_referenced_by_rtx =
-      rtc::FromString<int>(rtx.params[kCodecParamAssociatedPayloadType]);
+      FromString<int>(rtx.params[kCodecParamAssociatedPayloadType]);
   EXPECT_EQ(new_h264_pl_type, pt_referenced_by_rtx);
 }
 
@@ -3244,7 +3416,8 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
   // This creates rtx for H264 with the payload type `f2_` uses.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs2[0].id), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -3271,24 +3444,26 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // New offer should attempt to add H263, and RTX for H264.
   expected_codecs.push_back(kVideoCodecs2[1]);
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[1].id), &expected_codecs);
-  EXPECT_EQ(expected_codecs, updated_vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, updated_vcd->codecs()));
 }
 
 // Test that RTX is ignored when there is no associated payload type parameter.
 TEST_F(MediaSessionDescriptionFactoryTest, RtxWithoutApt) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates RTX without associated payload type parameter.
   AddRtxCodec(CreateVideoCodec(126, kRtxCodecName), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
   // This creates RTX for H264 with the payload type `f2_` uses.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs2[0].id), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -3320,18 +3495,20 @@ TEST_F(MediaSessionDescriptionFactoryTest, RtxWithoutApt) {
 // type doesn't match the local value.
 TEST_F(MediaSessionDescriptionFactoryTest, FilterOutRtxIfAptDoesntMatch) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates RTX for H264 in sender.
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
   // This creates RTX for H263 in receiver.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs2[1].id), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -3351,22 +3528,25 @@ TEST_F(MediaSessionDescriptionFactoryTest, FilterOutRtxIfAptDoesntMatch) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        FilterOutUnsupportedRtxWhenCreatingAnswer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates RTX for H264-SVC in sender.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[0].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   // This creates RTX for H264 in sender.
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector<Codec> f2_codecs = MAKE_VECTOR(kVideoCodecs2);
   // This creates RTX for H264 in receiver.
   AddRtxCodec(CreateVideoRtxCodec(124, kVideoCodecs2[0].id), &f2_codecs);
-  f2_.set_video_codecs(f2_codecs, f1_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f1_codecs);
 
   // H264-SVC codec is removed in the answer, therefore, associated RTX codec
   // for H264-SVC should also be removed.
@@ -3380,20 +3560,21 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   std::vector<Codec> expected_codecs = MAKE_VECTOR(kVideoCodecsAnswer);
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &expected_codecs);
 
-  EXPECT_EQ(expected_codecs, vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, vcd->codecs()));
 }
 
 // Test that after one RTX codec has been negotiated, a new offer can attempt
 // to add another.
 TEST_F(MediaSessionDescriptionFactoryTest, AddSecondRtxInNewOffer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
   std::vector<Codec> f1_codecs = MAKE_VECTOR(kVideoCodecs1);
   // This creates RTX for H264 for the offerer.
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -3403,11 +3584,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, AddSecondRtxInNewOffer) {
 
   std::vector<Codec> expected_codecs = MAKE_VECTOR(kVideoCodecs1);
   AddRtxCodec(CreateVideoRtxCodec(126, kVideoCodecs1[1].id), &expected_codecs);
-  EXPECT_EQ(expected_codecs, vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, vcd->codecs()));
 
   // Now, attempt to add RTX for H264-SVC.
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[0].id), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::unique_ptr<SessionDescription> updated_offer(
       f1_.CreateOfferOrError(opts, offer.get()).MoveValue());
@@ -3415,25 +3597,26 @@ TEST_F(MediaSessionDescriptionFactoryTest, AddSecondRtxInNewOffer) {
   vcd = GetFirstVideoContentDescription(updated_offer.get());
 
   AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[0].id), &expected_codecs);
-  EXPECT_EQ(expected_codecs, vcd->codecs());
+  EXPECT_TRUE(CodecListsMatch(expected_codecs, vcd->codecs()));
 }
 
 // Test that when RTX is used in conjunction with simulcast, an RTX ssrc is
 // generated for each simulcast ssrc and correctly grouped.
 TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateMultipleRtxSsrcs) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Add simulcast streams.
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, "stream1",
-                                        {"stream1label"}, 3, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        "stream1", {"stream1label"}, 3, &opts);
 
   // Use a single real codec, and then add RTX for it.
   std::vector<Codec> f1_codecs;
   f1_codecs.push_back(CreateVideoCodec(97, "H264"));
   AddRtxCodec(CreateVideoRtxCodec(125, 97), &f1_codecs);
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   // Ensure that the offer has an RTX ssrc for each regular ssrc, and that there
   // is a FID ssrc + grouping for each.
@@ -3463,21 +3646,22 @@ TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateMultipleRtxSsrcs) {
 // Test that, when the FlexFEC codec is added, a FlexFEC ssrc is created
 // together with a FEC-FR grouping. Guarded by WebRTC-FlexFEC-03 trial.
 TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
-  webrtc::test::ScopedKeyValueConfig override_field_trials(
-      field_trials, "WebRTC-FlexFEC-03/Enabled/");
+  ScopedKeyValueConfig override_field_trials(field_trials,
+                                             "WebRTC-FlexFEC-03/Enabled/");
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Add single stream.
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, "stream1",
-                                        {"stream1label"}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        "stream1", {"stream1label"}, 1, &opts);
 
   // Use a single real codec, and then add FlexFEC for it.
   std::vector<Codec> f1_codecs;
   f1_codecs.push_back(CreateVideoCodec(97, "H264"));
   f1_codecs.push_back(CreateVideoCodec(118, "flexfec-03"));
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   // Ensure that the offer has a single FlexFEC ssrc and that
   // there is no FEC-FR ssrc + grouping for each.
@@ -3506,21 +3690,22 @@ TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
 // TODO(brandtr): Remove this test when we support simulcast, either through
 // multiple FlexfecSenders, or through multistream protection.
 TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateNoFlexfecSsrcs) {
-  webrtc::test::ScopedKeyValueConfig override_field_trials(
-      field_trials, "WebRTC-FlexFEC-03/Enabled/");
+  ScopedKeyValueConfig override_field_trials(field_trials,
+                                             "WebRTC-FlexFEC-03/Enabled/");
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Add simulcast streams.
-  AttachSenderToMediaDescriptionOptions("video", MEDIA_TYPE_VIDEO, "stream1",
-                                        {"stream1label"}, 3, &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        "stream1", {"stream1label"}, 3, &opts);
 
   // Use a single real codec, and then add FlexFEC for it.
   std::vector<Codec> f1_codecs;
   f1_codecs.push_back(CreateVideoCodec(97, "H264"));
   f1_codecs.push_back(CreateVideoCodec(118, "flexfec-03"));
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   // Ensure that the offer has no FlexFEC ssrcs for each regular ssrc, and that
   // there is no FEC-FR ssrc + grouping for each.
@@ -3680,7 +3865,7 @@ TEST(MediaSessionDescription, CopySessionDescription) {
 // ensure the TransportInfo in the SessionDescription matches what we expect.
 TEST_F(MediaSessionDescriptionFactoryTest, TestTransportInfoOfferAudio) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   TestTransportInfo(true, options, false);
@@ -3689,7 +3874,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestTransportInfoOfferAudio) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestTransportInfoOfferIceRenomination) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   options.media_description_options[0]
@@ -3699,7 +3884,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
 TEST_F(MediaSessionDescriptionFactoryTest, TestTransportInfoOfferAudioCurrent) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   TestTransportInfo(true, options, true);
@@ -3735,7 +3920,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
 TEST_F(MediaSessionDescriptionFactoryTest, TestTransportInfoAnswerAudio) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   TestTransportInfo(false, options, false);
@@ -3744,7 +3929,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestTransportInfoAnswerAudio) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestTransportInfoAnswerIceRenomination) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   options.media_description_options[0]
@@ -3755,7 +3940,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestTransportInfoAnswerAudioCurrent) {
   MediaSessionOptions options;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &options);
   TestTransportInfo(false, options, true);
@@ -3814,7 +3999,6 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestOfferDtlsSavpfCreateAnswer) {
       answer_content->media_description();
   EXPECT_EQ(kMediaProtocolDtlsSavpf, answer_audio_desc->protocol());
 }
-
 
 // Test that we accept a DTLS offer without SDES and create an appropriate
 // answer.
@@ -3879,13 +4063,13 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestVADEnableOption) {
 // Test that the generated MIDs match the existing offer.
 TEST_F(MediaSessionDescriptionFactoryTest, TestMIDsMatchesExistingOffer) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio_modified",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio_modified",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video_modified",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video_modified",
                              RtpTransceiverDirection::kRecvOnly, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_DATA, "data_modified",
+  AddMediaDescriptionOptions(webrtc::MediaType::DATA, "data_modified",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Create offer.
@@ -3900,9 +4084,9 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestMIDsMatchesExistingOffer) {
   ASSERT_TRUE(audio_content);
   ASSERT_TRUE(video_content);
   ASSERT_TRUE(data_content);
-  EXPECT_EQ("audio_modified", audio_content->name);
-  EXPECT_EQ("video_modified", video_content->name);
-  EXPECT_EQ("data_modified", data_content->name);
+  EXPECT_EQ("audio_modified", audio_content->mid());
+  EXPECT_EQ("video_modified", video_content->mid());
+  EXPECT_EQ("data_modified", data_content->mid());
 }
 
 // The following tests verify that the unified plan SDP is supported.
@@ -3911,29 +4095,33 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestMIDsMatchesExistingOffer) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        CreateOfferWithMultipleAVMediaSections) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio_1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio_1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "audio_1", MEDIA_TYPE_AUDIO, kAudioTrack1, {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("audio_1", webrtc::MediaType::AUDIO,
+                                        kAudioTrack1, {kMediaStream1}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video_1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video_1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "video_1", MEDIA_TYPE_VIDEO, kVideoTrack1, {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video_1", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio_2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio_2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "audio_2", MEDIA_TYPE_AUDIO, kAudioTrack2, {kMediaStream2}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("audio_2", webrtc::MediaType::AUDIO,
+                                        kAudioTrack2, {kMediaStream2}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video_2",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video_2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "video_2", MEDIA_TYPE_VIDEO, kVideoTrack2, {kMediaStream2}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video_2", webrtc::MediaType::VIDEO,
+                                        kVideoTrack2, {kMediaStream2}, 1,
+                                        &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   ASSERT_TRUE(offer);
@@ -3969,29 +4157,33 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        CreateAnswerWithMultipleAVMediaSections) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio_1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio_1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "audio_1", MEDIA_TYPE_AUDIO, kAudioTrack1, {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("audio_1", webrtc::MediaType::AUDIO,
+                                        kAudioTrack1, {kMediaStream1}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video_1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video_1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "video_1", MEDIA_TYPE_VIDEO, kVideoTrack1, {kMediaStream1}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video_1", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio_2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio_2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "audio_2", MEDIA_TYPE_AUDIO, kAudioTrack2, {kMediaStream2}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("audio_2", webrtc::MediaType::AUDIO,
+                                        kAudioTrack2, {kMediaStream2}, 1,
+                                        &opts);
 
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video_2",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video_2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AttachSenderToMediaDescriptionOptions(
-      "video_2", MEDIA_TYPE_VIDEO, kVideoTrack2, {kMediaStream2}, 1, &opts);
+  AttachSenderToMediaDescriptionOptions("video_2", webrtc::MediaType::VIDEO,
+                                        kVideoTrack2, {kMediaStream2}, 1,
+                                        &opts);
 
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -4033,10 +4225,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
        CreateOfferWithMediaSectionStoppedByOfferer) {
   // Create an offer with two audio sections and one of them is stopped.
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio2",
                              RtpTransceiverDirection::kInactive, kStopped,
                              &offer_opts);
   std::unique_ptr<SessionDescription> offer =
@@ -4053,10 +4245,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
        CreateAnswerWithMediaSectionStoppedByOfferer) {
   // Create an offer with two audio sections and one of them is stopped.
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio2",
                              RtpTransceiverDirection::kInactive, kStopped,
                              &offer_opts);
   std::unique_ptr<SessionDescription> offer =
@@ -4068,10 +4260,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
   // Create an answer based on the offer.
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
   std::unique_ptr<SessionDescription> answer =
@@ -4087,10 +4279,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
        CreateAnswerWithMediaSectionRejectedByAnswerer) {
   // Create an offer with two audio sections.
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &offer_opts);
   std::unique_ptr<SessionDescription> offer =
@@ -4102,10 +4294,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
   // The answerer rejects one of the audio sections.
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio1",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &answer_opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio2",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio2",
                              RtpTransceiverDirection::kInactive, kStopped,
                              &answer_opts);
   std::unique_ptr<SessionDescription> answer =
@@ -4126,10 +4318,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   // This tests put video section first because normally audio comes first by
   // default.
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -4137,8 +4329,8 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
   ASSERT_TRUE(offer);
   ASSERT_EQ(2u, offer->contents().size());
-  EXPECT_EQ("video", offer->contents()[0].name);
-  EXPECT_EQ("audio", offer->contents()[1].name);
+  EXPECT_EQ("video", offer->contents()[0].mid());
+  EXPECT_EQ("audio", offer->contents()[1].mid());
 }
 
 // Test that different media sections using the same codec have same payload
@@ -4146,10 +4338,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        PayloadTypesSharedByMediaSectionsOfSameType) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video2",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Create an offer with two video sections using same codecs.
@@ -4187,14 +4379,16 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest, H265TxModeIsEqualRetainIt) {
   std::vector f1_codecs = {CreateVideoCodec(96, "H265")};
   f1_codecs.back().tx_mode = "mrst";
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(96, "H265")};
   f2_codecs.back().tx_mode = "mrst";
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4223,14 +4417,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, H265TxModeIsEqualRetainIt) {
 TEST_F(MediaSessionDescriptionFactoryTest, H265TxModeIsDifferentDropCodecs) {
   std::vector f1_codecs = {CreateVideoCodec(96, "H265")};
   f1_codecs.back().tx_mode = "mrst";
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(96, "H265")};
   f2_codecs.back().tx_mode = "mrmt";
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4260,14 +4456,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, H265TxModeIsDifferentDropCodecs) {
 TEST_F(MediaSessionDescriptionFactoryTest, PacketizationIsEqual) {
   std::vector f1_codecs = {CreateVideoCodec(96, "H264")};
   f1_codecs.back().packetization = "raw";
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(96, "H264")};
   f2_codecs.back().packetization = "raw";
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4296,14 +4494,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, PacketizationIsEqual) {
 TEST_F(MediaSessionDescriptionFactoryTest, PacketizationIsDifferent) {
   std::vector f1_codecs = {CreateVideoCodec(96, "H264")};
   f1_codecs.back().packetization = "raw";
-  f1_.set_video_codecs(f1_codecs, f1_codecs);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(f1_codecs,
+                                                            f1_codecs);
 
   std::vector f2_codecs = {CreateVideoCodec(96, "H264")};
   f2_codecs.back().packetization = "notraw";
-  f2_.set_video_codecs(f2_codecs, f2_codecs);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(f2_codecs,
+                                                            f2_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4332,10 +4532,10 @@ TEST_F(MediaSessionDescriptionFactoryTest, PacketizationIsDifferent) {
 TEST_F(MediaSessionDescriptionFactoryTest,
        CreateOfferRespectsCodecPreferenceOrder) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video2",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Create an offer with two video sections using same codecs.
@@ -4368,10 +4568,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 TEST_F(MediaSessionDescriptionFactoryTest,
        CreateAnswerRespectsCodecPreferenceOrder) {
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video1",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video2",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video2",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   // Create an offer with two video sections using same codecs.
@@ -4420,16 +4620,20 @@ TEST_F(MediaSessionDescriptionFactoryTest, CreateAnswerWithLocalCodecParams) {
   audio_codecs2[0].SetParam(audio_param_name, audio_value2);
   video_codecs2[0].SetParam(video_param_name, video_value2);
 
-  f1_.set_audio_codecs(audio_codecs1, audio_codecs1);
-  f1_.set_video_codecs(video_codecs1, video_codecs1);
-  f2_.set_audio_codecs(audio_codecs2, audio_codecs2);
-  f2_.set_video_codecs(video_codecs2, video_codecs2);
+  codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(audio_codecs1,
+                                                            audio_codecs1);
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(video_codecs1,
+                                                            video_codecs1);
+  codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(audio_codecs2,
+                                                            audio_codecs2);
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(video_codecs2,
+                                                            video_codecs2);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4450,6 +4654,8 @@ TEST_F(MediaSessionDescriptionFactoryTest, CreateAnswerWithLocalCodecParams) {
   auto answer_acd = answer->contents()[0].media_description();
   auto answer_vcd = answer->contents()[1].media_description();
   // Use the parameters from the local codecs.
+  ASSERT_TRUE(answer_acd);
+  ASSERT_THAT(answer_acd->codecs().size(), Gt(0));
   EXPECT_TRUE(answer_acd->codecs()[0].GetParam(audio_param_name, &value));
   EXPECT_EQ(audio_value2, value);
   EXPECT_TRUE(answer_vcd->codecs()[0].GetParam(video_param_name, &value));
@@ -4474,11 +4680,13 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 
   // Offerer will send both codecs, answerer should choose the one with matching
   // packetization mode (and not the first one it sees).
-  f1_.set_video_codecs({h264_pm0, h264_pm1}, {h264_pm0, h264_pm1});
-  f2_.set_video_codecs({h264_pm1}, {h264_pm1});
+  codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(
+      {h264_pm0, h264_pm1}, {h264_pm0, h264_pm1});
+  codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs({h264_pm1},
+                                                            {h264_pm1});
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
 
@@ -4504,26 +4712,30 @@ class MediaProtocolTest : public testing::TestWithParam<const char*> {
   MediaProtocolTest()
       : tdf1_(field_trials_),
         tdf2_(field_trials_),
-        f1_(nullptr, false, &ssrc_generator1, &tdf1_, nullptr),
-        f2_(nullptr, false, &ssrc_generator2, &tdf2_, nullptr) {
-    f1_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs1),
-                         MAKE_VECTOR(kAudioCodecs1));
-    f1_.set_video_codecs(MAKE_VECTOR(kVideoCodecs1),
-                         MAKE_VECTOR(kVideoCodecs1));
-    f2_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs2),
-                         MAKE_VECTOR(kAudioCodecs2));
-    f2_.set_video_codecs(MAKE_VECTOR(kVideoCodecs2),
-                         MAKE_VECTOR(kVideoCodecs2));
-    tdf1_.set_certificate(rtc::RTCCertificate::Create(
-        std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id1"))));
-    tdf2_.set_certificate(rtc::RTCCertificate::Create(
-        std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id2"))));
+        codec_lookup_helper_1_(field_trials_),
+        codec_lookup_helper_2_(field_trials_),
+        f1_(nullptr, false, &ssrc_generator1, &tdf1_, &codec_lookup_helper_1_),
+        f2_(nullptr, false, &ssrc_generator2, &tdf2_, &codec_lookup_helper_2_) {
+    codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(
+        MAKE_VECTOR(kAudioCodecs1), MAKE_VECTOR(kAudioCodecs1));
+    codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(
+        MAKE_VECTOR(kVideoCodecs1), MAKE_VECTOR(kVideoCodecs1));
+    codec_lookup_helper_2_.GetCodecVendor()->set_audio_codecs(
+        MAKE_VECTOR(kAudioCodecs2), MAKE_VECTOR(kAudioCodecs2));
+    codec_lookup_helper_2_.GetCodecVendor()->set_video_codecs(
+        MAKE_VECTOR(kVideoCodecs2), MAKE_VECTOR(kVideoCodecs2));
+    tdf1_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id1"))));
+    tdf2_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id2"))));
   }
 
  protected:
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  ScopedKeyValueConfig field_trials_;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
+  CodecLookupHelperForTesting codec_lookup_helper_1_;
+  CodecLookupHelperForTesting codec_lookup_helper_2_;
   MediaSessionDescriptionFactory f1_;
   MediaSessionDescriptionFactory f2_;
   UniqueRandomIdGenerator ssrc_generator1;
@@ -4537,7 +4749,7 @@ TEST_P(MediaProtocolTest, TestAudioVideoAcceptance) {
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   ASSERT_TRUE(offer.get());
   // Set the protocol for all the contents.
-  for (auto& content : offer.get()->contents()) {
+  for (auto& content : offer->contents()) {
     content.media_description()->set_protocol(GetParam());
   }
   std::unique_ptr<SessionDescription> answer =
@@ -4561,63 +4773,6 @@ INSTANTIATE_TEST_SUITE_P(MediaProtocolDtlsPatternTest,
                          MediaProtocolTest,
                          ValuesIn(kMediaProtocolsDtls));
 
-TEST_F(MediaSessionDescriptionFactoryTest, TestSetAudioCodecs) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
-  TransportDescriptionFactory tdf(field_trials);
-  tdf.set_certificate(rtc::RTCCertificate::Create(
-      std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id"))));
-
-  UniqueRandomIdGenerator ssrc_generator;
-  MediaSessionDescriptionFactory sf(nullptr, false, &ssrc_generator, &tdf,
-                                    nullptr);
-  std::vector<Codec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
-  std::vector<Codec> recv_codecs = MAKE_VECTOR(kAudioCodecs2);
-
-  // The merged list of codecs should contain any send codecs that are also
-  // nominally in the receive codecs list. Payload types should be picked from
-  // the send codecs and a number-of-channels of 0 and 1 should be equivalent
-  // (set to 1). This equals what happens when the send codecs are used in an
-  // offer and the receive codecs are used in the following answer.
-  const std::vector<Codec> sendrecv_codecs = MAKE_VECTOR(kAudioCodecsAnswer);
-  const std::vector<Codec> no_codecs;
-
-  RTC_CHECK_EQ(send_codecs[2].name, "iLBC")
-      << "Please don't change shared test data!";
-  RTC_CHECK_EQ(recv_codecs[2].name, "iLBC")
-      << "Please don't change shared test data!";
-  // Alter iLBC send codec to have zero channels, to test that that is handled
-  // properly.
-  send_codecs[2].channels = 0;
-
-  // Alter iLBC receive codec to be lowercase, to test that case conversions
-  // are handled properly.
-  recv_codecs[2].name = "ilbc";
-
-  // Test proper merge
-  sf.set_audio_codecs(send_codecs, recv_codecs);
-  EXPECT_EQ(send_codecs, sf.audio_send_codecs());
-  EXPECT_EQ(recv_codecs, sf.audio_recv_codecs());
-  EXPECT_EQ(sendrecv_codecs, sf.audio_sendrecv_codecs());
-
-  // Test empty send codecs list
-  sf.set_audio_codecs(no_codecs, recv_codecs);
-  EXPECT_EQ(no_codecs, sf.audio_send_codecs());
-  EXPECT_EQ(recv_codecs, sf.audio_recv_codecs());
-  EXPECT_EQ(no_codecs, sf.audio_sendrecv_codecs());
-
-  // Test empty recv codecs list
-  sf.set_audio_codecs(send_codecs, no_codecs);
-  EXPECT_EQ(send_codecs, sf.audio_send_codecs());
-  EXPECT_EQ(no_codecs, sf.audio_recv_codecs());
-  EXPECT_EQ(no_codecs, sf.audio_sendrecv_codecs());
-
-  // Test all empty codec lists
-  sf.set_audio_codecs(no_codecs, no_codecs);
-  EXPECT_EQ(no_codecs, sf.audio_send_codecs());
-  EXPECT_EQ(no_codecs, sf.audio_recv_codecs());
-  EXPECT_EQ(no_codecs, sf.audio_sendrecv_codecs());
-}
-
 // Compare the two vectors of codecs ignoring the payload type.
 bool CodecsMatch(const std::vector<Codec>& codecs1,
                  const std::vector<Codec>& codecs2) {
@@ -4634,27 +4789,30 @@ bool CodecsMatch(const std::vector<Codec>& codecs1,
 }
 
 void TestAudioCodecsOffer(RtpTransceiverDirection direction) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
+  ScopedKeyValueConfig field_trials;
   TransportDescriptionFactory tdf(field_trials);
-  tdf.set_certificate(rtc::RTCCertificate::Create(
-      std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("id"))));
+  tdf.set_certificate(RTCCertificate::Create(
+      std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id"))));
 
   UniqueRandomIdGenerator ssrc_generator;
+  CodecLookupHelperForTesting codec_lookup_helper(field_trials);
   MediaSessionDescriptionFactory sf(nullptr, false, &ssrc_generator, &tdf,
-                                    nullptr);
+                                    &codec_lookup_helper);
   const std::vector<Codec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
   const std::vector<Codec> recv_codecs = MAKE_VECTOR(kAudioCodecs2);
   const std::vector<Codec> sendrecv_codecs = MAKE_VECTOR(kAudioCodecsAnswer);
-  sf.set_audio_codecs(send_codecs, recv_codecs);
+  codec_lookup_helper.GetCodecVendor()->set_audio_codecs(send_codecs,
+                                                         recv_codecs);
 
   MediaSessionOptions opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio", direction, kActive,
-                             &opts);
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio", direction,
+                             kActive, &opts);
 
   if (direction == RtpTransceiverDirection::kSendRecv ||
       direction == RtpTransceiverDirection::kSendOnly) {
-    AttachSenderToMediaDescriptionOptions(
-        "audio", MEDIA_TYPE_AUDIO, kAudioTrack1, {kMediaStream1}, 1, &opts);
+    AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
+                                          kAudioTrack1, {kMediaStream1}, 1,
+                                          &opts);
   }
 
   std::unique_ptr<SessionDescription> offer =
@@ -4682,13 +4840,15 @@ void TestAudioCodecsOffer(RtpTransceiverDirection direction) {
   }
 }
 
-const Codec kOfferAnswerCodecs[] = {CreateAudioCodec(0, "codec0", 16000, 1),
-                                    CreateAudioCodec(1, "codec1", 8000, 1),
-                                    CreateAudioCodec(2, "codec2", 8000, 1),
-                                    CreateAudioCodec(3, "codec3", 8000, 1),
-                                    CreateAudioCodec(4, "codec4", 8000, 2),
-                                    CreateAudioCodec(5, "codec5", 32000, 1),
-                                    CreateAudioCodec(6, "codec6", 48000, 1)};
+// Since the PT suggester reserves the static range for specific codecs,
+// PT numbers from the 36-63 range are used.
+const Codec kOfferAnswerCodecs[] = {CreateAudioCodec(40, "codec0", 16000, 1),
+                                    CreateAudioCodec(41, "codec1", 8000, 1),
+                                    CreateAudioCodec(42, "codec2", 8000, 1),
+                                    CreateAudioCodec(43, "codec3", 8000, 1),
+                                    CreateAudioCodec(44, "codec4", 8000, 2),
+                                    CreateAudioCodec(45, "codec5", 32000, 1),
+                                    CreateAudioCodec(46, "codec6", 48000, 1)};
 
 /* The codecs groups below are chosen as per the matrix below. The objective
  * is to have different sets of codecs in the inputs, to get unique sets of
@@ -4735,33 +4895,35 @@ std::vector<T> VectorFromIndices(const T* array, const int (&indices)[IDXS]) {
 void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
                            RtpTransceiverDirection answer_direction,
                            bool add_legacy_stream) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
+  ScopedKeyValueConfig field_trials;
   TransportDescriptionFactory offer_tdf(field_trials);
   TransportDescriptionFactory answer_tdf(field_trials);
-  offer_tdf.set_certificate(rtc::RTCCertificate::Create(
-      std::unique_ptr<rtc::SSLIdentity>(new rtc::FakeSSLIdentity("offer_id"))));
-  answer_tdf.set_certificate(
-      rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
-          new rtc::FakeSSLIdentity("answer_id"))));
+  offer_tdf.set_certificate(RTCCertificate::Create(
+      std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("offer_id"))));
+  answer_tdf.set_certificate(RTCCertificate::Create(
+      std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("answer_id"))));
   UniqueRandomIdGenerator ssrc_generator1, ssrc_generator2;
-  MediaSessionDescriptionFactory offer_factory(nullptr, false, &ssrc_generator1,
-                                               &offer_tdf, nullptr);
-  MediaSessionDescriptionFactory answer_factory(
-      nullptr, false, &ssrc_generator2, &answer_tdf, nullptr);
+  CodecLookupHelperForTesting offer_codec_lookup_helper(field_trials);
+  MediaSessionDescriptionFactory offer_factory(
+      nullptr, false, &ssrc_generator1, &offer_tdf, &offer_codec_lookup_helper);
+  CodecLookupHelperForTesting answer_codec_lookup_helper(field_trials);
+  MediaSessionDescriptionFactory answer_factory(nullptr, false,
+                                                &ssrc_generator2, &answer_tdf,
+                                                &answer_codec_lookup_helper);
 
-  offer_factory.set_audio_codecs(
+  offer_codec_lookup_helper.GetCodecVendor()->set_audio_codecs(
       VectorFromIndices(kOfferAnswerCodecs, kOfferSendCodecs),
       VectorFromIndices(kOfferAnswerCodecs, kOfferRecvCodecs));
-  answer_factory.set_audio_codecs(
+  answer_codec_lookup_helper.GetCodecVendor()->set_audio_codecs(
       VectorFromIndices(kOfferAnswerCodecs, kAnswerSendCodecs),
       VectorFromIndices(kOfferAnswerCodecs, kAnswerRecvCodecs));
 
   MediaSessionOptions offer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio", offer_direction,
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio", offer_direction,
                              kActive, &offer_opts);
 
   if (webrtc::RtpTransceiverDirectionHasSend(offer_direction)) {
-    AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO,
+    AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
                                           kAudioTrack1, {kMediaStream1}, 1,
                                           &offer_opts);
   }
@@ -4771,11 +4933,11 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
   ASSERT_TRUE(offer.get());
 
   MediaSessionOptions answer_opts;
-  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio", answer_direction,
-                             kActive, &answer_opts);
+  AddMediaDescriptionOptions(webrtc::MediaType::AUDIO, "audio",
+                             answer_direction, kActive, &answer_opts);
 
   if (webrtc::RtpTransceiverDirectionHasSend(answer_direction)) {
-    AttachSenderToMediaDescriptionOptions("audio", MEDIA_TYPE_AUDIO,
+    AttachSenderToMediaDescriptionOptions("audio", webrtc::MediaType::AUDIO,
                                           kAudioTrack1, {kMediaStream1}, 1,
                                           &answer_opts);
   }
@@ -4789,7 +4951,7 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
   // to send nor receive audio. The checks are still in place if at some point
   // we'd instead create an inactive stream.
   if (ac) {
-    ASSERT_EQ(MEDIA_TYPE_AUDIO, ac->media_description()->type());
+    ASSERT_EQ(webrtc::MediaType::AUDIO, ac->media_description()->type());
     const MediaContentDescription* acd = ac->media_description();
 
     std::vector<Codec> target_codecs;
@@ -4826,11 +4988,11 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
     }
 
     auto format_codecs = [](const std::vector<Codec>& codecs) {
-      rtc::StringBuilder os;
+      StringBuilder os;
       bool first = true;
       os << "{";
       for (const auto& c : codecs) {
-        os << (first ? " " : ", ") << c.id;
+        os << (first ? " " : ", ") << c.id << ":" << c.name;
         first = false;
       }
       os << " }";
@@ -4885,5 +5047,1168 @@ INSTANTIATE_TEST_SUITE_P(MediaSessionDescriptionFactoryTest,
                                         RtpTransceiverDirection::kInactive),
                                  Bool()));
 
+#ifdef RTC_ENABLE_H265
+class VideoCodecsOfferH265LevelIdTest : public testing::Test {
+ public:
+  VideoCodecsOfferH265LevelIdTest()
+      : tdf_offerer_(field_trials_),
+        tdf_answerer_(field_trials_),
+        sf_offerer_(nullptr,
+                    false,
+                    &ssrc_generator_offerer_,
+                    &tdf_offerer_,
+                    &codec_lookup_helper_offerer_),
+        sf_answerer_(nullptr,
+                     false,
+                     &ssrc_generator_answerer_,
+                     &tdf_answerer_,
+                     &codec_lookup_helper_answerer_),
+        codec_lookup_helper_offerer_(field_trials_),
+        codec_lookup_helper_answerer_(field_trials_) {
+    tdf_offerer_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("offer_id"))));
+    tdf_answerer_.set_certificate(RTCCertificate::Create(
+        std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("answer_id"))));
+  }
+
+  void CheckH265Level(const std::vector<Codec>& codecs,
+                      const std::string& expected_level) {
+    for (const auto& codec : codecs) {
+      if (codec.name == "H265") {
+        auto it = codec.params.find("level-id");
+        ASSERT_TRUE(it != codec.params.end());
+        EXPECT_EQ(it->second, expected_level);
+      }
+    }
+  }
+
+ protected:
+  ScopedKeyValueConfig field_trials_;
+  TransportDescriptionFactory tdf_offerer_;
+  TransportDescriptionFactory tdf_answerer_;
+  UniqueRandomIdGenerator ssrc_generator_offerer_;
+  UniqueRandomIdGenerator ssrc_generator_answerer_;
+  MediaSessionDescriptionFactory sf_offerer_;
+  MediaSessionDescriptionFactory sf_answerer_;
+  CodecLookupHelperForTesting codec_lookup_helper_offerer_;
+  CodecLookupHelperForTesting codec_lookup_helper_answerer_;
+};
+
+// Both sides support H.265 level 5.2 for encoding and decoding.
+// Offer: level 5.2, SendRecv
+// Answer: level 5.2, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest, TestSendRecvSymmetrical) {
+  const std::vector<Codec> send_codecs = MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> recv_codecs = MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(send_codecs,
+                                                                  recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(recv_codecs,
+                                                                   send_codecs);
+  EXPECT_EQ(sendrecv_codecs, codec_lookup_helper_offerer_.GetCodecVendor()
+                                 ->video_sendrecv_codecs()
+                                 .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Both sides support H.265 level 6.0 for encoding and decoding.
+// Offer: level 6.0, SendOnly
+// Answer: level 6.0, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest, TestSendOnlySymmetrical) {
+  const std::vector<Codec> send_codecs = MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> recv_codecs = MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(send_codecs,
+                                                                  recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(recv_codecs,
+                                                                   send_codecs);
+  EXPECT_EQ(sendrecv_codecs, codec_lookup_helper_offerer_.GetCodecVendor()
+                                 ->video_sendrecv_codecs()
+                                 .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level6LevelId);
+}
+
+// Both sides support H.265 level 5.2 for encoding and decoding.
+// Offer: level 5.2, RecvOnly
+// Answer: level 5.2, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest, TestRecvOnlySymmetrical) {
+  const std::vector<Codec> send_codecs = MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> recv_codecs = MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(send_codecs,
+                                                                  recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(recv_codecs,
+                                                                   send_codecs);
+  EXPECT_EQ(sendrecv_codecs, codec_lookup_helper_offerer_.GetCodecVendor()
+                                 ->video_sendrecv_codecs()
+                                 .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 5.2, and decodes up to level 6.0.
+// Answerer encodes up to level 6.0, and decodes up to level 5.2.
+// Offer: level 5.2, SendRecv
+// Answer: level 5.2, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendRecvOffererEncode52Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 5.2, and decodes up to level 6.0.
+// Offer: level 5.2, SendRecv
+// Answer: level 5.2, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendRecvOffererEncode60Decode52AnswererEncode52Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 3.1, and decodes up to level 5.0.
+// Offer: level 5.2, SendRecv
+// Answer: level 3.1, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendRecvOffererEncode60Decode52AnswererEncode31Decode50) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level31);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level5);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level31), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level31LevelId);
+
+  std::unique_ptr<SessionDescription> reoffer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(reoffer.get());
+  const ContentInfo* reoffer_oc = reoffer->GetContentByName("video");
+  ASSERT_TRUE(reoffer_oc);
+  const MediaContentDescription* reoffer_ocd = reoffer_oc->media_description();
+  EXPECT_TRUE(
+      CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), reoffer_ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 4, and decodes up to level 6.
+// Offer: level 5.2, SendRecv
+// Answer: level 4, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendRecvOffererEncode60Decode52AnswererEncode40Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level4LevelId);
+}
+
+// Offerer encodes up to level 4, and decodes up to level 6.
+// Answerer encodes up to level 6, and decodes up to level 5.2.
+// Offer: level 4, SendRecv
+// Answer: level 4, SendRecv
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendRecvOffererEncode40Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level4LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level4LevelId);
+}
+
+// Offerer encodes up to level 5.2, and decodes up to level 6.
+// Answerer encodes up to level 6, and decodes up to level 5.2.
+// Offer: level 6, RecvOnly
+// Answer: level 6, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       RecvOnlyOffererEncode52Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level6LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 5.2, and decodes up to level 6.
+// Offer: level 5.2, RecvOnly
+// Answer: level 5.2, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       RecvOnlyOffererEncode60Decode52AnswererEncode52Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 3.1, and decodes up to level 5.
+// Offer: level 5.2, RecvOnly
+// Answer: level 3.1, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       RecvOnlyOffererEncode60Decode52AnswererEncode31Decode50) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level31);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level5);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level31), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level31LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 4, and decodes up to level 6.
+// Offer: level 5.2, RecvOnly
+// Answer: level 4, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       RecvOnlyOffererEncode60Decode52AnswererEncode40Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level4LevelId);
+}
+
+// Offerer encodes up to level 4, and decodes up to level 6.
+// Answerer encodes up to level 6, and decodes up to level 5.2.
+// Offer: level 6, RecvOnly
+// Answer: level 6, SendOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       RecvOnlyOffererEncode40Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &answer_opts);
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level6LevelId);
+}
+
+// Offerer encodes up to level 5.2, and decodes up to level 6.
+// Answerer encodes up to level 6, and decodes up to level 5.2.
+// Offer: level 5.2, SendOnly
+// Answer: level 5.2, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode52Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level52LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level52), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level52LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 5.2, and decodes up to level 6.
+// Offer: level 6, SendOnly
+// Answer: level 6, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode60Decode52AnswererEncode52Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level6LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 3.1, and decodes up to level 5.
+// Offer: level 6, SendOnly
+// Answer: level 5, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode60Decode52AnswererEncode31Decode50) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level31);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level5);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level5), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level5LevelId);
+}
+
+// Offerer encodes up to level 6, and decodes up to level 5.2.
+// Answerer encodes up to level 4, and decodes up to level 6.
+// Offer: level 6, SendOnly
+// Answer: level 6, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode60Decode52AnswererEncode40Decode60) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level6LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level6), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level6LevelId);
+}
+
+// Offerer encodes up to level 4, and decodes up to level 6.
+// Answerer encodes up to level 6, and decodes up to level 5.2.
+// Offer: level 4, SendOnly
+// Answer: level 4, RecvOnly
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode40Decode60AnswererEncode60Decode52) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendOnly, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level4LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level4LevelId);
+}
+
+TEST_F(VideoCodecsOfferH265LevelIdTest,
+       SendOnlyOffererEncode40Decode60AnswererEncode60Decode52WithPreference) {
+  const std::vector<Codec> offerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> offerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> offerer_sendrecv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level4);
+  const std::vector<Codec> answerer_send_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level6);
+  const std::vector<Codec> answerer_recv_codecs =
+      MAKE_VECTOR(kVideoCodecsH265Level52);
+  codec_lookup_helper_offerer_.GetCodecVendor()->set_video_codecs(
+      offerer_send_codecs, offerer_recv_codecs);
+  codec_lookup_helper_answerer_.GetCodecVendor()->set_video_codecs(
+      answerer_send_codecs, answerer_recv_codecs);
+  EXPECT_EQ(offerer_sendrecv_codecs,
+            codec_lookup_helper_offerer_.GetCodecVendor()
+                ->video_sendrecv_codecs()
+                .codecs());
+
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+
+  AttachSenderToMediaDescriptionOptions("video", webrtc::MediaType::VIDEO,
+                                        kVideoTrack1, {kMediaStream1}, 1,
+                                        &opts);
+  std::vector<RtpCodecCapability> preferences;
+  for (const auto& codec :
+       codec_lookup_helper_offerer_.GetCodecVendor()->video_recv_codecs()) {
+    preferences.push_back(webrtc::ToRtpCodecCapability(codec));
+  }
+  opts.media_description_options[0].codec_preferences = preferences;
+
+  std::unique_ptr<SessionDescription> offer =
+      sf_offerer_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const ContentInfo* oc = offer->GetContentByName("video");
+  ASSERT_TRUE(oc);
+  const MediaContentDescription* ocd = oc->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), ocd->codecs()));
+  CheckH265Level(ocd->codecs(), kVideoCodecsH265Level4LevelId);
+
+  MediaSessionOptions answer_opts;
+  AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, "video",
+                             RtpTransceiverDirection::kRecvOnly, kActive,
+                             &answer_opts);
+
+  std::unique_ptr<SessionDescription> answer =
+      sf_answerer_.CreateAnswerOrError(offer.get(), answer_opts, nullptr)
+          .MoveValue();
+  ASSERT_TRUE(answer.get());
+  const ContentInfo* ac = answer->GetContentByName("video");
+  ASSERT_TRUE(ac);
+  const MediaContentDescription* acd = ac->media_description();
+  EXPECT_TRUE(CodecsMatch(MAKE_VECTOR(kVideoCodecsH265Level4), acd->codecs()));
+  CheckH265Level(acd->codecs(), kVideoCodecsH265Level4LevelId);
+}
+
+#endif
+
 }  // namespace
-}  // namespace cricket
+}  // namespace webrtc

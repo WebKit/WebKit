@@ -13,14 +13,20 @@
 #include <string.h>  // memmove, memcpy, memset, size_t
 
 #include <algorithm>  // min, max
+#include <cstdint>
+#include <limits>
 #include <memory>
 
+#include "api/array_view.h"
+#include "common_audio/signal_processing/dot_product_with_scale.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/cross_correlation.h"
 #include "modules/audio_coding/neteq/dsp_helper.h"
 #include "modules/audio_coding/neteq/expand.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -61,7 +67,7 @@ size_t Merge::Process(int16_t* input,
   // Transfer input signal to an AudioMultiVector.
   AudioMultiVector input_vector(num_channels_);
   input_vector.PushBackInterleaved(
-      rtc::ArrayView<const int16_t>(input, input_length));
+      ArrayView<const int16_t>(input, input_length));
   size_t input_length_per_channel = input_vector.Size();
   RTC_DCHECK_EQ(input_length_per_channel, input_length / num_channels_);
 
@@ -211,8 +217,8 @@ int16_t Merge::SignalScaling(const int16_t* input,
                              size_t input_length,
                              const int16_t* expanded_signal) const {
   // Adjust muting factor if new vector is more or less of the BGN energy.
-  const auto mod_input_length = rtc::SafeMin<size_t>(
-      64 * rtc::dchecked_cast<size_t>(fs_mult_), input_length);
+  const auto mod_input_length =
+      SafeMin<size_t>(64 * dchecked_cast<size_t>(fs_mult_), input_length);
   const int16_t expanded_max =
       WebRtcSpl_MaxAbsValueW16(expanded_signal, mod_input_length);
   int32_t factor =

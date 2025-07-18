@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 
+#include <cstddef>
 #include <limits>
 #include <optional>
 #include <string>
@@ -19,6 +20,8 @@
 #include <utility>
 #include <vector>
 
+#include "modules/include/module_common_types.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,7 +38,7 @@ struct Packet {
 
 Packet CreatePacket(
     bool first_in_frame,
-    bool last_in_frame,
+    bool /* last_in_frame */,
     uint16_t seq_num,
     uint16_t frame_id,
     bool is_key_frame,

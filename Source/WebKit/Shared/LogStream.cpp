@@ -104,7 +104,7 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WP[PID=%d] %{public}s", m_pid, byteCast<char>(nullTerminatedLogString).data());
+    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", m_pid, byteCast<char>(nullTerminatedLogString).data());
 }
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)

@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/transport/ecn_marking.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -62,7 +63,7 @@ void InFlightBytesTracker::RemoveInFlightPacketBytes(
 }
 
 DataSize InFlightBytesTracker::GetOutstandingData(
-    const rtc::NetworkRoute& network_route) const {
+    const NetworkRoute& network_route) const {
   auto it = in_flight_data_.find(network_route);
   if (it != in_flight_data_.end()) {
     return it->second;
@@ -73,8 +74,8 @@ DataSize InFlightBytesTracker::GetOutstandingData(
 
 // Comparator for consistent map with NetworkRoute as key.
 bool InFlightBytesTracker::NetworkRouteComparator::operator()(
-    const rtc::NetworkRoute& a,
-    const rtc::NetworkRoute& b) const {
+    const NetworkRoute& a,
+    const NetworkRoute& b) const {
   if (a.local.network_id() != b.local.network_id())
     return a.local.network_id() < b.local.network_id();
   if (a.remote.network_id() != b.remote.network_id())
@@ -115,6 +116,8 @@ void TransportFeedbackAdapter::AddPacket(const RtpPacketToSend& packet_to_send,
   feedback.sent.pacing_info = pacing_info;
   feedback.ssrc = packet_to_send.Ssrc();
   feedback.rtp_sequence_number = packet_to_send.SequenceNumber();
+  feedback.is_retransmission =
+      packet_to_send.packet_type() == RtpPacketMediaType::kRetransmission;
 
   while (!history_.empty() &&
          creation_time - history_.begin()->second.creation_time >
@@ -140,7 +143,7 @@ void TransportFeedbackAdapter::AddPacket(const RtpPacketToSend& packet_to_send,
 }
 
 std::optional<SentPacket> TransportFeedbackAdapter::ProcessSentPacket(
-    const rtc::SentPacket& sent_packet) {
+    const SentPacketInfo& sent_packet) {
   auto send_time = Timestamp::Millis(sent_packet.send_time_ms);
   // TODO(srte): Only use one way to indicate that packet feedback is used.
   if (sent_packet.info.included_in_feedback || sent_packet.packet_id != -1) {
@@ -222,14 +225,18 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
       ++failed_lookups;
       return;
     }
-    if (delta_since_base.IsFinite()) {
-      packet_feedback->receive_time =
-          current_offset_ + delta_since_base.RoundDownTo(TimeDelta::Millis(1));
-    }
+
     if (packet_feedback->network_route == network_route_) {
       PacketResult result;
       result.sent_packet = packet_feedback->sent;
-      result.receive_time = packet_feedback->receive_time;
+      if (delta_since_base.IsFinite()) {
+        result.receive_time = current_offset_ + delta_since_base.RoundDownTo(
+                                                    TimeDelta::Millis(1));
+      }
+      result.rtp_packet_info = {
+          .ssrc = packet_feedback->ssrc,
+          .rtp_sequence_number = packet_feedback->rtp_sequence_number,
+          .is_retransmission = packet_feedback->is_retransmission};
       packet_result_vector.push_back(result);
     } else {
       ++ignored;
@@ -247,7 +254,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
                      << " packets because they were sent on a different route.";
   }
   return ToTransportFeedback(std::move(packet_result_vector),
-                             feedback_receive_time);
+                             feedback_receive_time, /*suports_ecn=*/false);
 }
 
 std::optional<TransportPacketsFeedback>
@@ -277,6 +284,7 @@ TransportFeedbackAdapter::ProcessCongestionControlFeedback(
 
   int ignored_packets = 0;
   int failed_lookups = 0;
+  bool supports_ecn = true;
   std::vector<PacketResult> packet_result_vector;
   for (const rtcp::CongestionControlFeedback::PacketInfo& packet_info :
        feedback.packets()) {
@@ -296,8 +304,13 @@ TransportFeedbackAdapter::ProcessCongestionControlFeedback(
     result.sent_packet = packet_feedback->sent;
     if (packet_info.arrival_time_offset.IsFinite()) {
       result.receive_time = current_offset_ - packet_info.arrival_time_offset;
+      supports_ecn &= packet_info.ecn != EcnMarking::kNotEct;
     }
     result.ecn = packet_info.ecn;
+    result.rtp_packet_info = {
+        .ssrc = packet_feedback->ssrc,
+        .rtp_sequence_number = packet_feedback->rtp_sequence_number,
+        .is_retransmission = packet_feedback->is_retransmission};
     packet_result_vector.push_back(result);
   }
 
@@ -318,13 +331,14 @@ TransportFeedbackAdapter::ProcessCongestionControlFeedback(
     return lhs.sent_packet.sequence_number < rhs.sent_packet.sequence_number;
   });
   return ToTransportFeedback(std::move(packet_result_vector),
-                             feedback_receive_time);
+                             feedback_receive_time, supports_ecn);
 }
 
 std::optional<TransportPacketsFeedback>
 TransportFeedbackAdapter::ToTransportFeedback(
     std::vector<PacketResult> packet_results,
-    Timestamp feedback_receive_time) {
+    Timestamp feedback_receive_time,
+    bool supports_ecn) {
   TransportPacketsFeedback msg;
   msg.feedback_time = feedback_receive_time;
   if (packet_results.empty()) {
@@ -332,12 +346,13 @@ TransportFeedbackAdapter::ToTransportFeedback(
   }
   msg.packet_feedbacks = std::move(packet_results);
   msg.data_in_flight = in_flight_.GetOutstandingData(network_route_);
+  msg.transport_supports_ecn = supports_ecn;
 
   return msg;
 }
 
 void TransportFeedbackAdapter::SetNetworkRoute(
-    const rtc::NetworkRoute& network_route) {
+    const NetworkRoute& network_route) {
   network_route_ = network_route;
 }
 

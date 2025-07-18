@@ -25,15 +25,15 @@
 
 namespace webrtc {
 
-class ObjCNetworkMonitorFactory : public rtc::NetworkMonitorFactory {
+class ObjCNetworkMonitorFactory : public webrtc::NetworkMonitorFactory {
  public:
   ObjCNetworkMonitorFactory() = default;
   ~ObjCNetworkMonitorFactory() override = default;
 
-  rtc::NetworkMonitorInterface* CreateNetworkMonitor() override;
+  webrtc::NetworkMonitorInterface* CreateNetworkMonitor() override;
 };
 
-class ObjCNetworkMonitor : public rtc::NetworkMonitorInterface,
+class ObjCNetworkMonitor : public webrtc::NetworkMonitorInterface,
                            public NetworkMonitorObserver {
  public:
   ObjCNetworkMonitor() = default;
@@ -42,22 +42,22 @@ class ObjCNetworkMonitor : public rtc::NetworkMonitorInterface,
   void Start() override;
   void Stop() override;
 
-  rtc::AdapterType GetAdapterType(const std::string& interface_name) override;
-  rtc::AdapterType GetVpnUnderlyingAdapterType(
+  webrtc::AdapterType GetAdapterType(const std::string& interface_name) override;
+  webrtc::AdapterType GetVpnUnderlyingAdapterType(
       const std::string& interface_name) override;
-  rtc::NetworkPreference GetNetworkPreference(
+  webrtc::NetworkPreference GetNetworkPreference(
       const std::string& interface_name) override;
   bool IsAdapterAvailable(const std::string& interface_name) override;
 
   // NetworkMonitorObserver override.
   // Fans out updates to observers on the correct thread.
   void OnPathUpdate(
-      std::map<std::string, rtc::AdapterType> adapter_type_by_name) override;
+      std::map<std::string, webrtc::AdapterType> adapter_type_by_name) override;
 
  private:
-  rtc::Thread* thread_ = nullptr;
+  webrtc::Thread* thread_ = nullptr;
   bool started_ = false;
-  std::map<std::string, rtc::AdapterType> adapter_type_by_name_
+  std::map<std::string, webrtc::AdapterType> adapter_type_by_name_
       RTC_GUARDED_BY(thread_);
   rtc::AsyncInvoker invoker_;
   RTCNetworkMonitor* network_monitor_ = nil;

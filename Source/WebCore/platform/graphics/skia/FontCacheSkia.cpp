@@ -106,6 +106,18 @@ static SkFontStyle skiaFontStyle(const FontDescription& fontDescription)
     return SkFontStyle(skWeight, skWidth, skSlant);
 }
 
+static std::pair<bool, bool> computeSynthesisProperties(const SkTypeface& typeface, const FontDescription& fontDescription, OptionSet<FontLookupOptions> synthesisOptions)
+{
+    if (FontPlatformData::skiaTypefaceHasAnySupportedColorTable(typeface))
+        return { false, false };
+
+    bool allowsSyntheticBold = fontDescription.hasAutoFontSynthesisWeight() && !synthesisOptions.contains(FontLookupOptions::DisallowBoldSynthesis);
+    bool syntheticBold = allowsSyntheticBold && isFontWeightBold(fontDescription.weight()) && !typeface.isBold();
+    bool allowsSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle() && !synthesisOptions.contains(FontLookupOptions::DisallowObliqueSynthesis);
+    bool syntheticOblique = allowsSyntheticOblique && isItalic(fontDescription.italic()) && !typeface.isItalic();
+    return { syntheticBold, syntheticOblique };
+}
+
 RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription& description, const Font&, IsForPlatformFont, PreferColoredFont, StringView stringView)
 {
     // FIXME: matchFamilyStyleCharacter is slow, we need a cache here, see https://bugs.webkit.org/show_bug.cgi?id=203544.
@@ -123,10 +135,13 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     if (isEmoji)
         bcp47.append("und-Zsye");
 
-    // FIXME: handle synthetic properties.
     auto features = computeFeatures(description, { });
     auto typeface = fontManager().matchFamilyStyleCharacter(nullptr, skiaFontStyle(description), bcp47.mutableSpan().data(), bcp47.size(), baseCharacter);
-    FontPlatformData alternateFontData(WTFMove(typeface), description.computedSize(), false /* syntheticBold */, false /* syntheticOblique */, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features));
+    if (!typeface)
+        return nullptr;
+
+    auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, description, { });
+    FontPlatformData alternateFontData(WTFMove(typeface), description.computedSize(), syntheticBold, syntheticOblique, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features));
     return fontForPlatformData(alternateFontData);
 }
 
@@ -166,7 +181,8 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         typeface = SkTypeface::MakeEmpty();
     }
 
-    FontPlatformData platformData(WTFMove(typeface), fontDescription.computedSize(), false /* syntheticBold */, false /* syntheticOblique */,
+    auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, { });
+    FontPlatformData platformData(WTFMove(typeface), fontDescription.computedSize(), syntheticBold, syntheticOblique,
         fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), computeFeatures(fontDescription, { }));
     return fontForPlatformData(platformData);
 }
@@ -363,14 +379,15 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     auto familyName = getFamilyNameStringFromFamily(family);
-    auto typeface = fontManager().matchFamilyStyle(familyName.utf8().data(), skiaFontStyle(fontDescription));
+    auto skFontStyle = skiaFontStyle(fontDescription);
+    auto typeface = fontManager().matchFamilyStyle(familyName.utf8().data(), skFontStyle);
     if (!typeface)
         return nullptr;
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto features = computeFeatures(fontDescription, fontCreationContext);
-    UNUSED_PARAM(options);
-    FontPlatformData platformData(WTFMove(typeface), size, false /* syntheticBold */, false /* syntheticOblique */, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTFMove(features));
+    auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, options);
+    FontPlatformData platformData(WTFMove(typeface), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTFMove(features));
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);

@@ -70,9 +70,9 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DictionaryLookup.h>
-#import <WebCore/ElementIdentifier.h>
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/MediaSessionHelperIOS.h>
+#import <WebCore/NodeIdentifier.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
@@ -251,9 +251,9 @@ void PageClientImpl::didCreateContextInModelProcessForVisibilityPropagation(Laye
     [m_contentView _modelProcessDidCreateContextForVisibilityPropagation];
 }
 
-void PageClientImpl::didReceiveInteractiveModelElement(std::optional<WebCore::ElementIdentifier> elementID)
+void PageClientImpl::didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
 {
-    [m_contentView didReceiveInteractiveModelElement:elementID];
+    [m_contentView didReceiveInteractiveModelElement:nodeID];
 }
 #endif // ENABLE(MODEL_PROCESS)
 
@@ -1037,12 +1037,12 @@ void PageClientImpl::didPerformDragOperation(bool handled)
     [contentView() _didPerformDragOperation:handled];
 }
 
-void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<ElementIdentifier>& elementID)
+void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<NodeIdentifier>& nodeID)
 {
     auto bitmap = ShareableBitmap::create(WTFMove(image));
     if (!bitmap)
         return;
-    [contentView() _startDrag:bitmap->makeCGImageCopy() item:item elementID:elementID];
+    [contentView() _startDrag:bitmap->makeCGImageCopy() item:item nodeID:nodeID];
 }
 
 void PageClientImpl::willReceiveEditDragSnapshot()

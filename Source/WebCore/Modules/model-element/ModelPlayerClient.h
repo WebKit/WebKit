@@ -61,6 +61,7 @@ public:
 #endif
     virtual std::optional<PlatformLayerIdentifier> modelContentsLayerID() const = 0;
     virtual bool isVisible() const = 0;
+    virtual bool isIntersectingViewport() const = 0;
     virtual void logWarning(ModelPlayer&, const String& warningMessage) = 0;
 };
 

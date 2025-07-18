@@ -211,6 +211,11 @@ BindGroupLayout* PipelineLayout::optionalBindGroupLayout(size_t i) const
     return nullptr;
 }
 
+RefPtr<BindGroupLayout> PipelineLayout::protectedOptionalBindGroupLayout(size_t i) const
+{
+    return optionalBindGroupLayout(i);
+}
+
 void PipelineLayout::makeInvalid()
 {
     m_isValid = false;

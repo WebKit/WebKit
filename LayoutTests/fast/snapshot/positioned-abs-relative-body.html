@@ -9,6 +9,7 @@
     color: black;
 }
 </style>
+<script type="text/javascript" src="../../resources/snapshot-helper.js"></script>
 </head>
 <body>
     <div id="box" style="opacity: 0.9;">
@@ -16,44 +17,28 @@
             Is this included?
         </div>
     </div>
-    <canvas id="canvas"></canvas>
 <script>
 if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
 async function main() {
-    const box = document.getElementById('box');
-    const canvas = document.getElementById('canvas');
-
     if (!window.internals) {
         console.log('FAIL: window.internals is not available');
         return;
     }
-
-    const imageData = internals.snapshotNode(box);
-
-    if (!imageData) {
-        console.log('FAIL: snapshotNode returned null');
-        return;
-    }
-
-    canvas.width = imageData.width;
-    canvas.height = imageData.height;
     
-    const ctx = canvas.getContext('2d');
-    ctx.putImageData(imageData, 0, 0);
-
+    const box = document.getElementById('box');
+    const canvas = await SnapshotHelper.takeSnapshot(box);
     box.remove();
+    document.body.appendChild(canvas);
 
     if (window.testRunner) {
         testRunner.notifyDone();
     }
 }
 
-window.addEventListener('load', () => {
-    setTimeout(main, 200);
-}, false)
+window.addEventListener('load', main, false);
 </script>
 </body>
 </html>

@@ -1531,6 +1531,17 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
   public:
     void SetUp() override
     {
+        // TODO(b/429026255): ProgramBinariesAcrossPlatforms does not inherit from ANGLETest, so it
+        // cannot (1) be skipped with angle_end2end_tests_expectations.txt and (2) cannot call
+        // isDriverSystemEgl(). We need to use #ifdefs and skip the test here instead.
+#if defined(ANGLE_TEST_ENABLE_SYSTEM_EGL)
+        // TODO(b/424595860): Test fails on Android when testing SystemEGL.
+        if (IsAndroid())
+        {
+            GTEST_SKIP();
+        }
+#endif
+
         mOSWindow   = OSWindow::New();
         bool result = mOSWindow->initialize("ProgramBinariesAcrossRenderersTests", 100, 100);
 
@@ -1604,8 +1615,11 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
 
     void TearDown() override
     {
-        mOSWindow->destroy();
-        OSWindow::Delete(&mOSWindow);
+        if (mOSWindow != nullptr)
+        {
+            mOSWindow->destroy();
+            OSWindow::Delete(&mOSWindow);
+        }
     }
 
     OSWindow *mOSWindow = nullptr;

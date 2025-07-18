@@ -273,6 +273,8 @@ static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
         return NSEventPhaseCancelled;
     case PlatformWheelEventPhase::MayBegin:
         return NSEventPhaseMayBegin;
+    case PlatformWheelEventPhase::WillBegin:
+        return NSEventPhaseNone;
     }
 
     return NSEventPhaseNone;

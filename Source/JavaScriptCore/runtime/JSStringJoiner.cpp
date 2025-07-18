@@ -69,7 +69,7 @@ static inline void appendStringToData(std::span<CharacterType>& data, int32_t va
 }
 
 template<typename CharacterType>
-static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::span<CharacterType>& data, UChar separatorCharacter, StringView string, unsigned count)
+static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::span<CharacterType>& data, char16_t separatorCharacter, StringView string, unsigned count)
 {
 #if OS(DARWIN)
     if constexpr (std::is_same_v<CharacterType, LChar>) {
@@ -283,9 +283,9 @@ JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
         result = joinStrings<LChar>(m_strings, m_separator.span8(), length);
     else {
         if (m_separator.is8Bit())
-            result = joinStrings<UChar>(m_strings, m_separator.span8(), length);
+            result = joinStrings<char16_t>(m_strings, m_separator.span8(), length);
         else
-            result = joinStrings<UChar>(m_strings, m_separator.span16(), length);
+            result = joinStrings<char16_t>(m_strings, m_separator.span16(), length);
     }
 
     if (result.isNull()) [[unlikely]] {
@@ -317,9 +317,9 @@ JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, c
         result = joinStrings<LChar>(globalObject, data, length, m_separator.span8(), totalLength);
     else {
         if (m_separator.is8Bit())
-            result = joinStrings<UChar>(globalObject, data, length, m_separator.span8(), totalLength);
+            result = joinStrings<char16_t>(globalObject, data, length, m_separator.span8(), totalLength);
         else
-            result = joinStrings<UChar>(globalObject, data, length, m_separator.span16(), totalLength);
+            result = joinStrings<char16_t>(globalObject, data, length, m_separator.span16(), totalLength);
     }
 
     RETURN_IF_EXCEPTION(scope, { });

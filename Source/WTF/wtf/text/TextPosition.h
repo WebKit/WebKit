@@ -33,7 +33,7 @@ namespace WTF {
 // TextPosition structure specifies coordinates within an text resource. It is used mostly
 // for saving script source position.
 class TextPosition {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextPosition);
 public:
     TextPosition(OrdinalNumber line, OrdinalNumber column)
         : m_line(line)

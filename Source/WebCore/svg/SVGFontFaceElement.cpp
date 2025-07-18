@@ -42,6 +42,7 @@
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleScope.h"

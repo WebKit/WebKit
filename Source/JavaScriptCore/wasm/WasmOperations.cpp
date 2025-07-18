@@ -79,6 +79,10 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCa
 
     auto* globalObject = function->globalObject();
     VM& vm = globalObject->vm();
+
+    if (function->taintedness() >= SourceTaintedOrigin::IndirectlyTainted)
+        vm.setMightBeExecutingTaintedCode();
+
     NativeCallFrameTracer tracer(vm, callFrame);
     auto* callee = function->jsToWasmCallee();
     ASSERT(function);
@@ -750,7 +754,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
         Locker locker { tierUp.getLock() };
         switch (tierUp.compilationStatusForOMG(memoryMode)) {
         case TierUpCount::CompilationStatus::StartCompilation:
-            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
             return;
         case TierUpCount::CompilationStatus::NotCompiled:
             compile = true;
@@ -769,7 +773,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
         if (!Options::useConcurrentJIT()) [[unlikely]]
             plan->waitForCompletion();
         else
-            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
     }
 }
 
@@ -1091,7 +1095,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
 
     if (compilationStatus == TierUpCount::CompilationStatus::StartCompilation) {
         dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile still compiling for ", functionIndex);
-        tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+        tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
         return returnWithoutOSREntry();
     }
 
@@ -1164,7 +1168,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         };
 
         if (tryTriggerOuterLoopToCompile()) {
-            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
             return returnWithoutOSREntry();
         }
     }
@@ -1189,12 +1193,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         if (!Options::useConcurrentJIT()) [[unlikely]]
             plan->waitForCompletion();
         else
-            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+            tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
     }
 
     OMGOSREntryCallee* osrEntryCallee = callee.osrEntryCallee();
     if (!osrEntryCallee) {
-        tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
+        tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationResult::CompilationDeferred);
         return returnWithoutOSREntry();
     }
 

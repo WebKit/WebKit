@@ -10,14 +10,16 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_REMB_THROTTLER_H_
 #define MODULES_CONGESTION_CONTROLLER_REMB_THROTTLER_H_
 
+#include <cstdint>
 #include <functional>
 #include <vector>
 
 #include "api/units/data_rate.h"
-#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

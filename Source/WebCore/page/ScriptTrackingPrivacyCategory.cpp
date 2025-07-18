@@ -35,9 +35,6 @@ namespace WebCore {
 ASCIILiteral description(ScriptTrackingPrivacyCategory category)
 {
     switch (category) {
-    case ScriptTrackingPrivacyCategory::Unspecified:
-        ASSERT_NOT_REACHED();
-        return "Unspecified"_s;
     case ScriptTrackingPrivacyCategory::Audio:
         return "Audio"_s;
     case ScriptTrackingPrivacyCategory::Canvas:
@@ -63,6 +60,36 @@ ASCIILiteral description(ScriptTrackingPrivacyCategory category)
     }
     ASSERT_NOT_REACHED();
     return { };
+}
+
+ScriptTrackingPrivacyFlag scriptCategoryAsFlag(ScriptTrackingPrivacyCategory category)
+{
+    switch (category) {
+    case ScriptTrackingPrivacyCategory::Audio:
+        return ScriptTrackingPrivacyFlag::Audio;
+    case ScriptTrackingPrivacyCategory::Canvas:
+        return ScriptTrackingPrivacyFlag::Canvas;
+    case ScriptTrackingPrivacyCategory::Cookies:
+        return ScriptTrackingPrivacyFlag::Cookies;
+    case ScriptTrackingPrivacyCategory::HardwareConcurrency:
+        return ScriptTrackingPrivacyFlag::HardwareConcurrency;
+    case ScriptTrackingPrivacyCategory::LocalStorage:
+        return ScriptTrackingPrivacyFlag::LocalStorage;
+    case ScriptTrackingPrivacyCategory::Payments:
+        return ScriptTrackingPrivacyFlag::Payments;
+    case ScriptTrackingPrivacyCategory::QueryParameters:
+        return ScriptTrackingPrivacyFlag::QueryParameters;
+    case ScriptTrackingPrivacyCategory::Referrer:
+        return ScriptTrackingPrivacyFlag::Referrer;
+    case ScriptTrackingPrivacyCategory::ScreenOrViewport:
+        return ScriptTrackingPrivacyFlag::ScreenOrViewport;
+    case ScriptTrackingPrivacyCategory::Speech:
+        return ScriptTrackingPrivacyFlag::Speech;
+    case ScriptTrackingPrivacyCategory::FormControls:
+        return ScriptTrackingPrivacyFlag::FormControls;
+    }
+    ASSERT_NOT_REACHED();
+    return ScriptTrackingPrivacyFlag::FormControls;
 }
 
 bool shouldEnableScriptTrackingPrivacy(ScriptTrackingPrivacyCategory category, OptionSet<AdvancedPrivacyProtections> protections)

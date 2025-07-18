@@ -25,6 +25,7 @@
 #include "RenderSVGText.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
 #include <wtf/TZoneMallocInlines.h>

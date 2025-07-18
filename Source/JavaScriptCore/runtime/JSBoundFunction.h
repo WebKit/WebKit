@@ -49,8 +49,8 @@ public:
         return vm.boundFunctionSpace<mode>();
     }
 
-    JS_EXPORT_PRIVATE static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, ArgList, double length, JSString* nameMayBeNull);
-    static JSBoundFunction* createRaw(VM&, JSGlobalObject*, JSFunction* targetFunction, unsigned boundArgsLength, JSValue boundThis, JSValue arg0, JSValue arg1, JSValue arg2);
+    JS_EXPORT_PRIVATE static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, ArgList, double length, JSString* nameMayBeNull, const SourceCode&);
+    static JSBoundFunction* createRaw(VM&, JSGlobalObject*, JSFunction* targetFunction, unsigned boundArgsLength, JSValue boundThis, JSValue arg0, JSValue arg1, JSValue arg2, const SourceCode&);
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
@@ -131,7 +131,7 @@ public:
     DECLARE_INFO;
 
 private:
-    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length);
+    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length, const SourceCode&);
 
     JSString* nameSlow(VM&);
     double lengthSlow(VM&);
@@ -148,6 +148,7 @@ private:
     double m_length { PNaN };
     unsigned m_boundArgsLength { 0 };
     TriState m_canConstruct { TriState::Indeterminate };
+    bool m_isTainted;
 };
 
 JSC_DECLARE_HOST_FUNCTION(boundFunctionCall);

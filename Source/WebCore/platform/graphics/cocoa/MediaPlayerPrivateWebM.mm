@@ -28,6 +28,7 @@
 
 #if ENABLE(COCOA_WEBM_PLAYER)
 
+#import "AudioMediaStreamTrackRenderer.h"
 #import "AudioTrackPrivateWebM.h"
 #import "FloatSize.h"
 #import "GraphicsContext.h"
@@ -59,6 +60,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
@@ -97,7 +99,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     , m_appendQueue(WorkQueue::create("MediaPlayerPrivateWebM data parser queue"_s))
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
-    , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
+    , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
     , m_listener(WebAVSampleBufferListener::create(*this))
     , m_seekTimer(*this, &MediaPlayerPrivateWebM::seekInternal)
 {
@@ -168,10 +170,8 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
 static HashSet<String>& mimeTypeCache()
 {
     static NeverDestroyed cache = HashSet<String>();
-    if (cache->isEmpty()) {
-        auto types = SourceBufferParserWebM::supportedMIMETypes();
-        cache->add(types.begin(), types.end());
-    }
+    if (cache->isEmpty())
+        cache->addAll(SourceBufferParserWebM::supportedMIMETypes());
     return cache;
 }
 
@@ -311,7 +311,7 @@ void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer& buffer)
 
     invokeAsync(m_appendQueue, [buffer = Ref { buffer }, parser = m_parser]() mutable {
         return MediaPromise::createAndSettle(parser->appendData(WTFMove(buffer)));
-    })->whenSettled(RunLoop::protectedMain(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->appendCompleted(!!result);
     });
@@ -434,7 +434,7 @@ void MediaPlayerPrivateWebM::seekInternal()
 
     m_seekState = Seeking;
 
-    seekTo(m_lastSeekTime)->whenSettled(RunLoop::protectedMain(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+    seekTo(m_lastSeekTime)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (!result)
             return; // seek cancelled.
 
@@ -1404,9 +1404,14 @@ void MediaPlayerPrivateWebM::addAudioRenderer(TrackID trackId)
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
     auto deviceId = player->audioOutputDeviceIdOverride();
     if (!deviceId.isNull() && renderer) {
-        if (deviceId.isEmpty())
-            renderer.get().audioOutputDeviceUniqueID = nil;
-        else
+        if (deviceId.isEmpty() || deviceId == AudioMediaStreamTrackRenderer::defaultDeviceID()) {
+            // FIXME(rdar://155986053): Remove the @try/@catch when this exception is resolved.
+            @try {
+                renderer.get().audioOutputDeviceUniqueID = nil;
+            } @catch(NSException *exception) {
+                ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer setAudioOutputDeviceUniqueID:] threw an exception: ", exception.name, ", reason : ", exception.reason);
+            }
+        } else
             renderer.get().audioOutputDeviceUniqueID = deviceId.createNSString().get();
     }
 #endif
@@ -1522,16 +1527,30 @@ void MediaPlayerPrivateWebM::clearTracks()
     m_audioTracks.clear();
 }
 
+void MediaPlayerPrivateWebM::setVideoFrameMetadataGatheringCallbackIfNeeded(VideoMediaSampleRenderer& videoRenderer)
+{
+    if (!m_isGatheringVideoFrameMetadata)
+        return;
+    videoRenderer.notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);
+    });
+}
+
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
 {
     ASSERT(m_synchronizer);
     m_isGatheringVideoFrameMetadata = true;
+    if (RefPtr videoRenderer = m_videoRenderer)
+        setVideoFrameMetadataGatheringCallbackIfNeeded(*videoRenderer);
 }
 
 void MediaPlayerPrivateWebM::stopVideoFrameMetadataGathering()
 {
     m_isGatheringVideoFrameMetadata = false;
     m_videoFrameMetadata = { };
+    if (RefPtr videoRenderer = m_videoRenderer)
+        videoRenderer->notifyWhenHasAvailableVideoFrame(nullptr);
 }
 
 void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(const MediaTime& presentationTime, double displayTime)
@@ -1894,14 +1913,11 @@ void MediaPlayerPrivateWebM::setVideoRenderer(WebSampleBufferVideoRendering *ren
         protectedThis->setReadyState(MediaPlayer::ReadyState::HaveNothing);
         protectedThis->m_errored = true;
     });
-    videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-        protectedThis->setHasAvailableVideoFrame(true);
-        if (protectedThis->m_isGatheringVideoFrameMetadata)
-            protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);
+    videoRenderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }](const MediaTime&, double) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setHasAvailableVideoFrame(true);
     });
+    setVideoFrameMetadataGatheringCallbackIfNeeded(*videoRenderer);
     videoRenderer->notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->setLayerRequiresFlush();

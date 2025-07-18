@@ -90,7 +90,7 @@ private:
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseHashSource(StringParsingBuffer<CharacterType>);
 
-    const ContentSecurityPolicy& m_policy;
+    const CheckedRef<const ContentSecurityPolicy> m_policy;
     Vector<ContentSecurityPolicySource> m_list;
     MemoryCompactLookupOnlyRobinHoodHashSet<String> m_nonces;
     HashSet<ContentSecurityPolicyHash> m_hashes;

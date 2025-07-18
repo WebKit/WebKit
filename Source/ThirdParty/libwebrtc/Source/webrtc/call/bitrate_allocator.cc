@@ -18,7 +18,6 @@
 #include <map>
 #include <optional>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
@@ -284,8 +283,7 @@ std::map<BitrateAllocatorObserver*, int> NormalRateAllocation(
                               allocation[observer_config.observer];
     if (priority_margin > 0 && bitrate > 0) {
       int64_t extra_bitrate = std::min<int64_t>(priority_margin, bitrate);
-      allocation[observer_config.observer] +=
-          rtc::dchecked_cast<int>(extra_bitrate);
+      allocation[observer_config.observer] += dchecked_cast<int>(extra_bitrate);
       observers_capacities[observer_config.observer] -= extra_bitrate;
       bitrate -= extra_bitrate;
     }
@@ -494,7 +492,7 @@ void BitrateAllocator::OnNetworkEstimateChanged(TargetTransferRate msg) {
 
   int loss_ratio_255 = msg.network_estimate.loss_rate_ratio * 255;
   last_fraction_loss_ =
-      rtc::dchecked_cast<uint8_t>(rtc::SafeClamp(loss_ratio_255, 0, 255));
+      dchecked_cast<uint8_t>(SafeClamp(loss_ratio_255, 0, 255));
   last_rtt_ = msg.network_estimate.round_trip_time.ms();
   last_bwe_period_ms_ = msg.network_estimate.bwe_period.ms();
 
@@ -510,10 +508,10 @@ void BitrateAllocator::OnNetworkEstimateChanged(TargetTransferRate msg) {
   auto stable_bitrate_allocation = AllocateBitrates(
       allocatable_tracks_, last_stable_target_bps_, DataRate::Zero());
 
-  for (auto& config : allocatable_tracks_) {
-    uint32_t allocated_bitrate = allocation[config.observer];
+  for (auto& track : allocatable_tracks_) {
+    uint32_t allocated_bitrate = allocation[track.observer];
     uint32_t allocated_stable_target_rate =
-        stable_bitrate_allocation[config.observer];
+        stable_bitrate_allocation[track.observer];
     BitrateAllocationUpdate update;
     update.target_bitrate = DataRate::BitsPerSec(allocated_bitrate);
     update.stable_target_bitrate =
@@ -522,36 +520,36 @@ void BitrateAllocator::OnNetworkEstimateChanged(TargetTransferRate msg) {
     update.round_trip_time = TimeDelta::Millis(last_rtt_);
     update.bwe_period = TimeDelta::Millis(last_bwe_period_ms_);
     update.cwnd_reduce_ratio = msg.cwnd_reduce_ratio;
-    uint32_t protection_bitrate = config.observer->OnBitrateUpdated(update);
+    uint32_t protection_bitrate = track.observer->OnBitrateUpdated(update);
 
-    if (allocated_bitrate == 0 && config.allocated_bitrate_bps > 0) {
+    if (allocated_bitrate == 0 && track.allocated_bitrate_bps > 0) {
       if (last_target_bps_ > 0)
         ++num_pause_events_;
       // The protection bitrate is an estimate based on the ratio between media
       // and protection used before this observer was muted.
       uint32_t predicted_protection_bps =
-          (1.0 - config.media_ratio) * config.config.min_bitrate_bps;
-      RTC_LOG(LS_INFO) << "Pausing observer " << config.observer
+          (1.0 - track.media_ratio) * track.config.min_bitrate_bps;
+      RTC_LOG(LS_INFO) << "Pausing observer " << track.observer
                        << " with configured min bitrate "
-                       << config.config.min_bitrate_bps
+                       << track.config.min_bitrate_bps
                        << " and current estimate of " << last_target_bps_
                        << " and protection bitrate "
                        << predicted_protection_bps;
-    } else if (allocated_bitrate > 0 && config.allocated_bitrate_bps == 0) {
+    } else if (allocated_bitrate > 0 && track.allocated_bitrate_bps == 0) {
       if (last_target_bps_ > 0)
         ++num_pause_events_;
-      RTC_LOG(LS_INFO) << "Resuming observer " << config.observer
+      RTC_LOG(LS_INFO) << "Resuming observer " << track.observer
                        << ", configured min bitrate "
-                       << config.config.min_bitrate_bps
+                       << track.config.min_bitrate_bps
                        << ", current allocation " << allocated_bitrate
                        << " and protection bitrate " << protection_bitrate;
     }
 
     // Only update the media ratio if the observer got an allocation.
     if (allocated_bitrate > 0)
-      config.media_ratio = MediaRatio(allocated_bitrate, protection_bitrate);
-    config.allocated_bitrate_bps = allocated_bitrate;
-    config.last_used_bitrate = config.observer->GetUsedRate();
+      track.media_ratio = MediaRatio(allocated_bitrate, protection_bitrate);
+    track.allocated_bitrate_bps = allocated_bitrate;
+    track.last_used_bitrate = track.observer->GetUsedRate();
   }
   UpdateAllocationLimits();
 }
@@ -578,10 +576,10 @@ void BitrateAllocator::AddObserver(BitrateAllocatorObserver* observer,
                                        upper_elastic_rate_limit_);
     auto stable_bitrate_allocation = AllocateBitrates(
         allocatable_tracks_, last_stable_target_bps_, DataRate::Zero());
-    for (auto& config : allocatable_tracks_) {
-      uint32_t allocated_bitrate = allocation[config.observer];
+    for (auto& track : allocatable_tracks_) {
+      uint32_t allocated_bitrate = allocation[track.observer];
       uint32_t allocated_stable_bitrate =
-          stable_bitrate_allocation[config.observer];
+          stable_bitrate_allocation[track.observer];
       BitrateAllocationUpdate update;
       update.target_bitrate = DataRate::BitsPerSec(allocated_bitrate);
       update.stable_target_bitrate =
@@ -589,11 +587,11 @@ void BitrateAllocator::AddObserver(BitrateAllocatorObserver* observer,
       update.packet_loss_ratio = last_fraction_loss_ / 256.0;
       update.round_trip_time = TimeDelta::Millis(last_rtt_);
       update.bwe_period = TimeDelta::Millis(last_bwe_period_ms_);
-      uint32_t protection_bitrate = config.observer->OnBitrateUpdated(update);
-      config.allocated_bitrate_bps = allocated_bitrate;
-      config.last_used_bitrate = config.observer->GetUsedRate();
+      uint32_t protection_bitrate = track.observer->OnBitrateUpdated(update);
+      track.allocated_bitrate_bps = allocated_bitrate;
+      track.last_used_bitrate = track.observer->GetUsedRate();
       if (allocated_bitrate > 0)
-        config.media_ratio = MediaRatio(allocated_bitrate, protection_bitrate);
+        track.media_ratio = MediaRatio(allocated_bitrate, protection_bitrate);
     }
   } else {
     // Currently, an encoder is not allowed to produce frames.
@@ -625,19 +623,19 @@ bool BitrateAllocator::RecomputeAllocationIfNeeded() {
   // Recomputes if there is a kCanContribute* track whose current bitrate usage
   // has a jump (i.e., increase only) larger than 20% of allocated_bitrate.
   constexpr double kUsageJumpRatioThreshold = 0.2;
-  for (auto& config : allocatable_tracks_) {
-    if (config.config.rate_elasticity.has_value()) {
-      const TrackRateElasticity elasticity = *config.config.rate_elasticity;
+  for (auto& track : allocatable_tracks_) {
+    if (track.config.rate_elasticity.has_value()) {
+      const TrackRateElasticity elasticity = *track.config.rate_elasticity;
       if (elasticity == TrackRateElasticity::kCanContributeUnusedRate ||
           elasticity == TrackRateElasticity::kCanContributeAndConsume) {
         DataRate current_usage =
-            config.observer->GetUsedRate().value_or(DataRate::Zero());
+            track.observer->GetUsedRate().value_or(DataRate::Zero());
         DataRate last_usage =
-            config.last_used_bitrate.value_or(DataRate::Zero());
+            track.last_used_bitrate.value_or(DataRate::Zero());
         if (!last_usage.IsZero()) {
           has_contributor = true;
           DataRate recompute_threshold =
-              DataRate::BitsPerSec(config.LastAllocatedBitrate()) *
+              DataRate::BitsPerSec(track.LastAllocatedBitrate()) *
               kUsageJumpRatioThreshold;
           if (current_usage > last_usage + recompute_threshold) {
             need_recompute = true;
@@ -659,11 +657,11 @@ bool BitrateAllocator::RecomputeAllocationIfNeeded() {
                                        upper_elastic_rate_limit_);
     auto stable_bitrate_allocation = AllocateBitrates(
         allocatable_tracks_, last_stable_target_bps_, DataRate::Zero());
-    for (auto& config : allocatable_tracks_) {
+    for (auto& track : allocatable_tracks_) {
       DataRate allocated_bitrate =
-          DataRate::BitsPerSec(allocation[config.observer]);
+          DataRate::BitsPerSec(allocation[track.observer]);
       DataRate allocated_stable_bitrate =
-          DataRate::BitsPerSec(stable_bitrate_allocation[config.observer]);
+          DataRate::BitsPerSec(stable_bitrate_allocation[track.observer]);
       BitrateAllocationUpdate update;
       update.target_bitrate = allocated_bitrate;
       update.stable_target_bitrate = allocated_stable_bitrate;
@@ -671,11 +669,11 @@ bool BitrateAllocator::RecomputeAllocationIfNeeded() {
       update.round_trip_time = TimeDelta::Millis(last_rtt_);
       update.bwe_period = TimeDelta::Millis(last_bwe_period_ms_);
       DataRate protection_bitrate =
-          DataRate::BitsPerSec(config.observer->OnBitrateUpdated(update));
-      config.allocated_bitrate_bps = allocated_bitrate.bps();
-      config.last_used_bitrate = config.observer->GetUsedRate();
+          DataRate::BitsPerSec(track.observer->OnBitrateUpdated(update));
+      track.allocated_bitrate_bps = allocated_bitrate.bps();
+      track.last_used_bitrate = track.observer->GetUsedRate();
       if (allocated_bitrate.bps() > 0)
-        config.media_ratio =
+        track.media_ratio =
             MediaRatio(allocated_bitrate.bps(), protection_bitrate.bps());
     }
     UpdateAllocationLimits();
@@ -685,18 +683,18 @@ bool BitrateAllocator::RecomputeAllocationIfNeeded() {
 
 void BitrateAllocator::UpdateAllocationLimits() {
   BitrateAllocationLimits limits;
-  for (const auto& config : allocatable_tracks_) {
-    uint32_t stream_padding = config.config.pad_up_bitrate_bps;
-    if (config.config.enforce_min_bitrate) {
+  for (const auto& track : allocatable_tracks_) {
+    uint32_t stream_padding = track.config.pad_up_bitrate_bps;
+    if (track.config.enforce_min_bitrate) {
       limits.min_allocatable_rate +=
-          DataRate::BitsPerSec(config.config.min_bitrate_bps);
-    } else if (config.allocated_bitrate_bps == 0) {
+          DataRate::BitsPerSec(track.config.min_bitrate_bps);
+    } else if (track.allocated_bitrate_bps == 0) {
       stream_padding =
-          std::max(config.MinBitrateWithHysteresis(), stream_padding);
+          std::max(track.MinBitrateWithHysteresis(), stream_padding);
     }
     limits.max_padding_rate += DataRate::BitsPerSec(stream_padding);
     limits.max_allocatable_rate +=
-        DataRate::BitsPerSec(config.config.max_bitrate_bps);
+        DataRate::BitsPerSec(track.config.max_bitrate_bps);
   }
 
   if (limits.min_allocatable_rate == current_limits_.min_allocatable_rate &&

@@ -54,7 +54,7 @@ public:
     EventLoopTaskGroup& eventLoop() final
     {
         ASSERT_NOT_REACHED();
-        return *m_eventLoopTaskGroup;
+        return m_eventLoopTaskGroup;
     }
     const URL& url() const final { return m_url; }
     const URL& cookieURL() const final { return url(); }
@@ -96,7 +96,7 @@ private:
         , m_vm(vm)
         , m_origin(SecurityOrigin::createOpaque())
         , m_eventLoop(EmptyEventLoop::create(vm))
-        , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
+        , m_eventLoopTaskGroup(makeUniqueRef<EventLoopTaskGroup>(m_eventLoop))
     {
         relaxAdoptionRequirement();
         m_eventLoop->addAssociatedContext(*this);
@@ -136,7 +136,7 @@ private:
     const Ref<SecurityOrigin> m_origin;
     URL m_url;
     const Ref<EmptyEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_eventLoopTaskGroup;
+    const UniqueRef<EventLoopTaskGroup> m_eventLoopTaskGroup;
     SettingsValues m_settingsValues;
 };
 

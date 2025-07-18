@@ -41,7 +41,7 @@ public:
     {
     }
 
-    ALWAYS_INLINE UChar nextInputCharacter() const { return m_nextInputCharacter; }
+    ALWAYS_INLINE char16_t nextInputCharacter() const { return m_nextInputCharacter; }
 
     // Returns whether we succeeded in peeking at the next character.
     // The only way we can fail to peek is if there are no more
@@ -57,7 +57,7 @@ public:
         // fast-reject branch for characters that don't require special
         // handling. Please run the parser benchmark whenever you touch
         // this function. It's very hot.
-        constexpr UChar specialCharacterMask = '\n' | '\r' | '\0';
+        constexpr char16_t specialCharacterMask = '\n' | '\r' | '\0';
         if (m_nextInputCharacter & ~specialCharacterMask) [[likely]] {
             m_skipNextNewLine = false;
             return true;
@@ -117,7 +117,7 @@ private:
     Tokenizer& m_tokenizer;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
-    UChar m_nextInputCharacter { 0 };
+    char16_t m_nextInputCharacter { 0 };
     bool m_skipNextNewLine { false };
 };
 

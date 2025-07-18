@@ -12,9 +12,11 @@
 
 #include <stdlib.h>
 
+#include <cstdint>
+#include <iterator>
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "common_audio/vad/include/webrtc_vad.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
@@ -128,20 +130,21 @@ TEST_F(VadTest, ValidRatesFrameLengths) {
   // This test verifies valid and invalid rate/frame_length combinations. We
   // loop through some sampling rates and frame lengths from negative values to
   // values larger than possible.
-  const int kRates[] = {-8000, -4000, 0,     4000,  8000,  8001,
-                        15999, 16000, 32000, 48000, 48001, 96000};
+  const int kInvalidRates[] = {-8000, -4000, 0,     4000,  8000,  8001,
+                               15999, 16000, 32000, 48000, 48001, 96000};
 
-  const size_t kFrameLengths[] = {0,   80,  81,  159, 160,  240,
-                                  320, 480, 640, 960, 1440, 2000};
+  const size_t kInvalidFrameLengths[] = {0,   80,  81,  159, 160,  240,
+                                         320, 480, 640, 960, 1440, 2000};
 
-  for (size_t i = 0; i < arraysize(kRates); i++) {
-    for (size_t j = 0; j < arraysize(kFrameLengths); j++) {
-      if (ValidRatesAndFrameLengths(kRates[i], kFrameLengths[j])) {
-        EXPECT_EQ(
-            0, WebRtcVad_ValidRateAndFrameLength(kRates[i], kFrameLengths[j]));
+  for (size_t i = 0; i < std::size(kInvalidRates); i++) {
+    for (size_t j = 0; j < std::size(kInvalidFrameLengths); j++) {
+      if (ValidRatesAndFrameLengths(kInvalidRates[i],
+                                    kInvalidFrameLengths[j])) {
+        EXPECT_EQ(0, WebRtcVad_ValidRateAndFrameLength(
+                         kInvalidRates[i], kInvalidFrameLengths[j]));
       } else {
-        EXPECT_EQ(
-            -1, WebRtcVad_ValidRateAndFrameLength(kRates[i], kFrameLengths[j]));
+        EXPECT_EQ(-1, WebRtcVad_ValidRateAndFrameLength(
+                          kInvalidRates[i], kInvalidFrameLengths[j]));
       }
     }
   }

@@ -46,13 +46,9 @@ void InitializeElements(T* data, U&& element, Us&&... elements) {
 }
 
 // Default initializes uninitialized array elements.
-// TODO(kwiberg): Replace with std::uninitialized_default_construct_n() (C++17).
 template <typename T>
 void DefaultInitializeElements(T* data, int size) {
-  for (int i = 0; i < size; ++i) {
-    // Placement new, because we construct a new object in uninitialized memory.
-    ::new (&data[i]) T;
-  }
+  std::uninitialized_default_construct_n(data, size);
 }
 
 // Copies from source to uninitialized destination. Caller is responsible for
@@ -74,12 +70,7 @@ void MoveElements(T* src_data, int src_size, T* dst_data, int* dst_size) {
   if /*constexpr*/ (std::is_trivially_move_constructible<T>::value) {
     std::memcpy(dst_data, src_data, src_size * sizeof(T));
   } else {
-    // TODO(kwiberg): Use std::uninitialized_move_n() instead (C++17).
-    for (int i = 0; i < src_size; ++i) {
-      // Placement new, because we create a new object in uninitialized
-      // memory.
-      ::new (&dst_data[i]) T(std::move(src_data[i]));
-    }
+    std::uninitialized_move_n(src_data, src_size, dst_data);
   }
   *dst_size = src_size;
 }

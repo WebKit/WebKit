@@ -51,7 +51,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RangeRespons
 namespace WebCore {
 
 struct RangeResponseGeneratorDataTaskData : public CanMakeWeakPtr<RangeResponseGeneratorDataTaskData> {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RangeResponseGeneratorDataTaskData);
     RangeResponseGeneratorDataTaskData(ParsedRequestRange&& range)
         : range(WTFMove(range))
         , nextByteToGiveBufferIndex(range.begin) { }
@@ -62,7 +62,7 @@ struct RangeResponseGeneratorDataTaskData : public CanMakeWeakPtr<RangeResponseG
 };
 
 struct RangeResponseGenerator::Data {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Data);
     // The RangeResponseGenerator is used with a GuaranteedSerialFunctionDispatcher which can do thread hoping over time.
     // The ResourceResponse contains WTF::Strings which must first be copied via isolatedCopy().
     Data(const ResourceResponse& response, PlatformMediaResource& resource)

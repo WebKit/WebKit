@@ -44,7 +44,7 @@ class CongestionControlFeedbackTracker {
     uint32_t ssrc;
     int64_t unwrapped_sequence_number = 0;
     Timestamp arrival_time;
-    rtc::EcnMarking ecn = rtc::EcnMarking::kNotEct;
+    EcnMarking ecn = EcnMarking::kNotEct;
   };
 
   std::optional<int64_t> last_sequence_number_in_feedback_;

@@ -59,7 +59,7 @@ private:
     void unregisterBlobURLHandleIfNecessary();
 
     URL m_url;
-    Markable<SecurityOriginData, SecurityOriginDataMarkableTraits> m_topOrigin;
+    Markable<SecurityOriginData> m_topOrigin;
 };
 
 } // namespace WebCore

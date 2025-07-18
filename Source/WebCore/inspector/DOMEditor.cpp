@@ -37,6 +37,7 @@
 #include "Element.h"
 #include "InspectorHistory.h"
 #include "Node.h"
+#include "NodeInlines.h"
 #include "Text.h"
 #include "markup.h"
 #include <wtf/RefPtr.h>

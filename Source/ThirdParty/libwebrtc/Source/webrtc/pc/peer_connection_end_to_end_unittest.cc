@@ -15,7 +15,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -35,19 +34,22 @@
 #include "api/audio_options.h"
 #include "api/data_channel_interface.h"
 #include "api/environment/environment.h"
-#include "api/media_stream_interface.h"
+#include "api/make_ref_counted.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
+#include "api/test/rtc_error_matchers.h"
+#include "api/units/time_delta.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/wait_until.h"
 
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
@@ -66,7 +68,6 @@ using ::testing::StrictMock;
 using ::testing::Values;
 using ::webrtc::DataChannelInterface;
 using ::webrtc::Environment;
-using ::webrtc::MediaStreamInterface;
 using ::webrtc::PeerConnectionInterface;
 using ::webrtc::SdpSemantics;
 
@@ -79,16 +80,17 @@ const int kMaxWait = 25000;
 class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
                                        public ::testing::Test {
  public:
-  typedef std::vector<rtc::scoped_refptr<DataChannelInterface>> DataChannelList;
+  typedef std::vector<webrtc::scoped_refptr<DataChannelInterface>>
+      DataChannelList;
 
   explicit PeerConnectionEndToEndBaseTest(SdpSemantics sdp_semantics)
-      : network_thread_(std::make_unique<rtc::Thread>(&pss_)),
-        worker_thread_(rtc::Thread::Create()) {
+      : network_thread_(std::make_unique<webrtc::Thread>(&pss_)),
+        worker_thread_(webrtc::Thread::Create()) {
     RTC_CHECK(network_thread_->Start());
     RTC_CHECK(worker_thread_->Start());
-    caller_ = rtc::make_ref_counted<PeerConnectionTestWrapper>(
+    caller_ = webrtc::make_ref_counted<PeerConnectionTestWrapper>(
         "caller", &pss_, network_thread_.get(), worker_thread_.get());
-    callee_ = rtc::make_ref_counted<PeerConnectionTestWrapper>(
+    callee_ = webrtc::make_ref_counted<PeerConnectionTestWrapper>(
         "callee", &pss_, network_thread_.get(), worker_thread_.get());
     webrtc::PeerConnectionInterface::IceServer ice_server;
     ice_server.uri = "stun:stun.l.google.com:19302";
@@ -101,10 +103,11 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
   }
 
   void CreatePcs(
-      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory1,
-      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory1,
-      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory2,
-      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory2) {
+      webrtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory1,
+      webrtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory1,
+      webrtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory2,
+      webrtc::scoped_refptr<webrtc::AudioDecoderFactory>
+          audio_decoder_factory2) {
     EXPECT_TRUE(caller_->CreatePc(config_, audio_encoder_factory1,
                                   audio_decoder_factory1));
     EXPECT_TRUE(callee_->CreatePc(config_, audio_encoder_factory2,
@@ -118,19 +121,20 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
   }
 
   void CreatePcs(
-      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
-      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
+      webrtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
+      webrtc::scoped_refptr<webrtc::AudioDecoderFactory>
+          audio_decoder_factory) {
     CreatePcs(audio_encoder_factory, audio_decoder_factory,
               audio_encoder_factory, audio_decoder_factory);
   }
 
   void GetAndAddUserMedia() {
-    cricket::AudioOptions audio_options;
+    webrtc::AudioOptions audio_options;
     GetAndAddUserMedia(true, audio_options, true);
   }
 
   void GetAndAddUserMedia(bool audio,
-                          const cricket::AudioOptions& audio_options,
+                          const webrtc::AudioOptions& audio_options,
                           bool video) {
     caller_->GetAndAddUserMedia(audio, audio_options, video);
     callee_->GetAndAddUserMedia(audio, audio_options, video);
@@ -153,12 +157,12 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
 
   void OnCallerAddedDataChanel(DataChannelInterface* dc) {
     caller_signaled_data_channels_.push_back(
-        rtc::scoped_refptr<DataChannelInterface>(dc));
+        webrtc::scoped_refptr<DataChannelInterface>(dc));
   }
 
   void OnCalleeAddedDataChannel(DataChannelInterface* dc) {
     callee_signaled_data_channels_.push_back(
-        rtc::scoped_refptr<DataChannelInterface>(dc));
+        webrtc::scoped_refptr<DataChannelInterface>(dc));
   }
 
   // Tests that `dc1` and `dc2` can send to and receive from each other.
@@ -184,14 +188,24 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
     }
 
     EXPECT_TRUE(dc1->Send(buffer));
-    EXPECT_EQ_WAIT(buffer.data,
-                   rtc::CopyOnWriteBuffer(dc2_observer->last_message()),
-                   kMaxWait);
+    EXPECT_THAT(
+        webrtc::WaitUntil(
+            [&] {
+              return webrtc::CopyOnWriteBuffer(dc2_observer->last_message());
+            },
+            ::testing::Eq(buffer.data),
+            {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+        webrtc::IsRtcOk());
 
     EXPECT_TRUE(dc2->Send(buffer));
-    EXPECT_EQ_WAIT(buffer.data,
-                   rtc::CopyOnWriteBuffer(dc1_observer->last_message()),
-                   kMaxWait);
+    EXPECT_THAT(
+        webrtc::WaitUntil(
+            [&] {
+              return webrtc::CopyOnWriteBuffer(dc1_observer->last_message());
+            },
+            ::testing::Eq(buffer.data),
+            {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+        webrtc::IsRtcOk());
 
     EXPECT_EQ(1U, dc1_observer->received_message_count());
     EXPECT_EQ(size, dc1_observer->last_message().length());
@@ -202,11 +216,22 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
   void WaitForDataChannelsToOpen(DataChannelInterface* local_dc,
                                  const DataChannelList& remote_dc_list,
                                  size_t remote_dc_index) {
-    EXPECT_EQ_WAIT(DataChannelInterface::kOpen, local_dc->state(), kMaxWait);
+    EXPECT_THAT(
+        webrtc::WaitUntil([&] { return local_dc->state(); },
+                          ::testing::Eq(DataChannelInterface::kOpen),
+                          {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+        webrtc::IsRtcOk());
 
-    ASSERT_TRUE_WAIT(remote_dc_list.size() > remote_dc_index, kMaxWait);
-    EXPECT_EQ_WAIT(DataChannelInterface::kOpen,
-                   remote_dc_list[remote_dc_index]->state(), kMaxWait);
+    ASSERT_THAT(
+        webrtc::WaitUntil([&] { return remote_dc_list.size(); },
+                          ::testing::Gt(remote_dc_index),
+                          {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+        webrtc::IsRtcOk());
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return remote_dc_list[remote_dc_index]->state(); },
+                    ::testing::Eq(DataChannelInterface::kOpen),
+                    {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+                webrtc::IsRtcOk());
     EXPECT_EQ(local_dc->id(), remote_dc_list[remote_dc_index]->id());
   }
 
@@ -214,18 +239,25 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
                          const DataChannelList& remote_dc_list,
                          size_t remote_dc_index) {
     local_dc->Close();
-    EXPECT_EQ_WAIT(DataChannelInterface::kClosed, local_dc->state(), kMaxWait);
-    EXPECT_EQ_WAIT(DataChannelInterface::kClosed,
-                   remote_dc_list[remote_dc_index]->state(), kMaxWait);
+    EXPECT_THAT(
+        webrtc::WaitUntil([&] { return local_dc->state(); },
+                          ::testing::Eq(DataChannelInterface::kClosed),
+                          {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+        webrtc::IsRtcOk());
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return remote_dc_list[remote_dc_index]->state(); },
+                    ::testing::Eq(DataChannelInterface::kClosed),
+                    {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+                webrtc::IsRtcOk());
   }
 
  protected:
-  rtc::AutoThread main_thread_;
-  rtc::PhysicalSocketServer pss_;
-  std::unique_ptr<rtc::Thread> network_thread_;
-  std::unique_ptr<rtc::Thread> worker_thread_;
-  rtc::scoped_refptr<PeerConnectionTestWrapper> caller_;
-  rtc::scoped_refptr<PeerConnectionTestWrapper> callee_;
+  webrtc::AutoThread main_thread_;
+  webrtc::PhysicalSocketServer pss_;
+  std::unique_ptr<webrtc::Thread> network_thread_;
+  std::unique_ptr<webrtc::Thread> worker_thread_;
+  webrtc::scoped_refptr<PeerConnectionTestWrapper> caller_;
+  webrtc::scoped_refptr<PeerConnectionTestWrapper> callee_;
   DataChannelList caller_signaled_data_channels_;
   DataChannelList callee_signaled_data_channels_;
   webrtc::PeerConnectionInterface::RTCConfiguration config_;
@@ -283,11 +315,11 @@ std::unique_ptr<webrtc::AudioDecoder> CreateForwardingMockDecoder(
   return std::move(mock_decoder);
 }
 
-rtc::scoped_refptr<webrtc::AudioDecoderFactory>
+webrtc::scoped_refptr<webrtc::AudioDecoderFactory>
 CreateForwardingMockDecoderFactory(
     webrtc::AudioDecoderFactory* real_decoder_factory) {
-  rtc::scoped_refptr<webrtc::MockAudioDecoderFactory> mock_decoder_factory =
-      rtc::make_ref_counted<StrictMock<webrtc::MockAudioDecoderFactory>>();
+  webrtc::scoped_refptr<webrtc::MockAudioDecoderFactory> mock_decoder_factory =
+      webrtc::make_ref_counted<StrictMock<webrtc::MockAudioDecoderFactory>>();
   EXPECT_CALL(*mock_decoder_factory, GetSupportedDecoders())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke([real_decoder_factory] {
@@ -385,7 +417,7 @@ struct AudioDecoderUnicornSparklesRainbow {
 }  // namespace
 
 TEST_P(PeerConnectionEndToEndTest, Call) {
-  rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
+  webrtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
       webrtc::CreateOpusAudioDecoderFactory();
   CreatePcs(webrtc::CreateOpusAudioEncoderFactory(),
             CreateForwardingMockDecoderFactory(real_decoder_factory.get()));
@@ -409,7 +441,7 @@ TEST_P(PeerConnectionEndToEndTest, CallWithCustomCodec) {
   class IdLoggingAudioEncoderFactory : public webrtc::AudioEncoderFactory {
    public:
     IdLoggingAudioEncoderFactory(
-        rtc::scoped_refptr<AudioEncoderFactory> real_factory,
+        webrtc::scoped_refptr<AudioEncoderFactory> real_factory,
         std::vector<webrtc::AudioCodecPairId>* const codec_ids)
         : fact_(real_factory), codec_ids_(codec_ids) {}
     std::vector<webrtc::AudioCodecSpec> GetSupportedEncoders() override {
@@ -429,14 +461,14 @@ TEST_P(PeerConnectionEndToEndTest, CallWithCustomCodec) {
     }
 
    private:
-    const rtc::scoped_refptr<webrtc::AudioEncoderFactory> fact_;
+    const webrtc::scoped_refptr<webrtc::AudioEncoderFactory> fact_;
     std::vector<webrtc::AudioCodecPairId>* const codec_ids_;
   };
 
   class IdLoggingAudioDecoderFactory : public webrtc::AudioDecoderFactory {
    public:
     IdLoggingAudioDecoderFactory(
-        rtc::scoped_refptr<AudioDecoderFactory> real_factory,
+        webrtc::scoped_refptr<AudioDecoderFactory> real_factory,
         std::vector<webrtc::AudioCodecPairId>* const codec_ids)
         : fact_(real_factory), codec_ids_(codec_ids) {}
     std::vector<webrtc::AudioCodecSpec> GetSupportedDecoders() override {
@@ -455,25 +487,25 @@ TEST_P(PeerConnectionEndToEndTest, CallWithCustomCodec) {
     }
 
    private:
-    const rtc::scoped_refptr<webrtc::AudioDecoderFactory> fact_;
+    const webrtc::scoped_refptr<webrtc::AudioDecoderFactory> fact_;
     std::vector<webrtc::AudioCodecPairId>* const codec_ids_;
   };
 
   std::vector<webrtc::AudioCodecPairId> encoder_id1, encoder_id2, decoder_id1,
       decoder_id2;
-  CreatePcs(rtc::make_ref_counted<IdLoggingAudioEncoderFactory>(
+  CreatePcs(webrtc::make_ref_counted<IdLoggingAudioEncoderFactory>(
                 webrtc::CreateAudioEncoderFactory<
                     AudioEncoderUnicornSparklesRainbow>(),
                 &encoder_id1),
-            rtc::make_ref_counted<IdLoggingAudioDecoderFactory>(
+            webrtc::make_ref_counted<IdLoggingAudioDecoderFactory>(
                 webrtc::CreateAudioDecoderFactory<
                     AudioDecoderUnicornSparklesRainbow>(),
                 &decoder_id1),
-            rtc::make_ref_counted<IdLoggingAudioEncoderFactory>(
+            webrtc::make_ref_counted<IdLoggingAudioEncoderFactory>(
                 webrtc::CreateAudioEncoderFactory<
                     AudioEncoderUnicornSparklesRainbow>(),
                 &encoder_id2),
-            rtc::make_ref_counted<IdLoggingAudioDecoderFactory>(
+            webrtc::make_ref_counted<IdLoggingAudioDecoderFactory>(
                 webrtc::CreateAudioDecoderFactory<
                     AudioDecoderUnicornSparklesRainbow>(),
                 &decoder_id2));
@@ -500,9 +532,9 @@ TEST_P(PeerConnectionEndToEndTest, CreateDataChannelBeforeNegotiate) {
             webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc(
       caller_->CreateDataChannel("data", init));
-  rtc::scoped_refptr<DataChannelInterface> callee_dc(
+  webrtc::scoped_refptr<DataChannelInterface> callee_dc(
       callee_->CreateDataChannel("data", init));
 
   Negotiate();
@@ -529,7 +561,7 @@ TEST_P(PeerConnectionEndToEndTest, CreateDataChannelAfterNegotiate) {
   webrtc::DataChannelInit init;
 
   // This DataChannel is for creating the data content in the negotiation.
-  rtc::scoped_refptr<DataChannelInterface> dummy(
+  webrtc::scoped_refptr<DataChannelInterface> dummy(
       caller_->CreateDataChannel("data", init));
   Negotiate();
   WaitForConnection();
@@ -538,9 +570,9 @@ TEST_P(PeerConnectionEndToEndTest, CreateDataChannelAfterNegotiate) {
   WaitForDataChannelsToOpen(dummy.get(), callee_signaled_data_channels_, 0);
 
   // Create new DataChannels after the negotiation and verify their states.
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc(
       caller_->CreateDataChannel("hello", init));
-  rtc::scoped_refptr<DataChannelInterface> callee_dc(
+  webrtc::scoped_refptr<DataChannelInterface> callee_dc(
       callee_->CreateDataChannel("hello", init));
 
   WaitForDataChannelsToOpen(caller_dc.get(), callee_signaled_data_channels_, 1);
@@ -563,7 +595,7 @@ TEST_P(PeerConnectionEndToEndTest, CreateDataChannelLargeTransfer) {
   webrtc::DataChannelInit init;
 
   // This DataChannel is for creating the data content in the negotiation.
-  rtc::scoped_refptr<DataChannelInterface> dummy(
+  webrtc::scoped_refptr<DataChannelInterface> dummy(
       caller_->CreateDataChannel("data", init));
   Negotiate();
   WaitForConnection();
@@ -572,9 +604,9 @@ TEST_P(PeerConnectionEndToEndTest, CreateDataChannelLargeTransfer) {
   WaitForDataChannelsToOpen(dummy.get(), callee_signaled_data_channels_, 0);
 
   // Create new DataChannels after the negotiation and verify their states.
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc(
       caller_->CreateDataChannel("hello", init));
-  rtc::scoped_refptr<DataChannelInterface> callee_dc(
+  webrtc::scoped_refptr<DataChannelInterface> callee_dc(
       callee_->CreateDataChannel("hello", init));
 
   WaitForDataChannelsToOpen(caller_dc.get(), callee_signaled_data_channels_, 1);
@@ -595,9 +627,9 @@ TEST_P(PeerConnectionEndToEndTest, DataChannelIdAssignment) {
             webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
-  rtc::scoped_refptr<DataChannelInterface> caller_dc_1(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc_1(
       caller_->CreateDataChannel("data", init));
-  rtc::scoped_refptr<DataChannelInterface> callee_dc_1(
+  webrtc::scoped_refptr<DataChannelInterface> callee_dc_1(
       callee_->CreateDataChannel("data", init));
 
   Negotiate();
@@ -606,9 +638,9 @@ TEST_P(PeerConnectionEndToEndTest, DataChannelIdAssignment) {
   EXPECT_EQ(1, caller_dc_1->id() % 2);
   EXPECT_EQ(0, callee_dc_1->id() % 2);
 
-  rtc::scoped_refptr<DataChannelInterface> caller_dc_2(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc_2(
       caller_->CreateDataChannel("data", init));
-  rtc::scoped_refptr<DataChannelInterface> callee_dc_2(
+  webrtc::scoped_refptr<DataChannelInterface> callee_dc_2(
       callee_->CreateDataChannel("data", init));
 
   EXPECT_EQ(1, caller_dc_2->id() % 2);
@@ -624,9 +656,9 @@ TEST_P(PeerConnectionEndToEndTest,
 
   webrtc::DataChannelInit init;
 
-  rtc::scoped_refptr<DataChannelInterface> caller_dc_1(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc_1(
       caller_->CreateDataChannel("data", init));
-  rtc::scoped_refptr<DataChannelInterface> caller_dc_2(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc_2(
       caller_->CreateDataChannel("data", init));
 
   Negotiate();
@@ -648,10 +680,18 @@ TEST_P(PeerConnectionEndToEndTest,
   const std::string message_2 = "hello 2";
 
   caller_dc_1->Send(webrtc::DataBuffer(message_1));
-  EXPECT_EQ_WAIT(message_1, dc_1_observer->last_message(), kMaxWait);
+  EXPECT_THAT(
+      webrtc::WaitUntil([&] { return dc_1_observer->last_message(); },
+                        ::testing::Eq(message_1),
+                        {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+      webrtc::IsRtcOk());
 
   caller_dc_2->Send(webrtc::DataBuffer(message_2));
-  EXPECT_EQ_WAIT(message_2, dc_2_observer->last_message(), kMaxWait);
+  EXPECT_THAT(
+      webrtc::WaitUntil([&] { return dc_2_observer->last_message(); },
+                        ::testing::Eq(message_2),
+                        {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+      webrtc::IsRtcOk());
 
   EXPECT_EQ(1U, dc_1_observer->received_message_count());
   EXPECT_EQ(1U, dc_2_observer->received_message_count());
@@ -667,7 +707,7 @@ TEST_P(PeerConnectionEndToEndTest,
             webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc(
       caller_->CreateDataChannel("data", init));
 
   Negotiate();
@@ -679,7 +719,11 @@ TEST_P(PeerConnectionEndToEndTest,
   // Previously, the channel on which Close is called reported being closed
   // prematurely, and this caused issues; see bugs.webrtc.org/4453.
   caller_dc->Close();
-  EXPECT_EQ_WAIT(DataChannelInterface::kClosed, caller_dc->state(), kMaxWait);
+  EXPECT_THAT(
+      webrtc::WaitUntil([&] { return caller_dc->state(); },
+                        ::testing::Eq(DataChannelInterface::kClosed),
+                        {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+      webrtc::IsRtcOk());
 
   // Create a new channel and ensure it works after closing the previous one.
   caller_dc = caller_->CreateDataChannel("data2", init);
@@ -702,7 +746,7 @@ TEST_P(PeerConnectionEndToEndTest, CloseDataChannelRemotelyWhileNotReferenced) {
             webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  webrtc::scoped_refptr<DataChannelInterface> caller_dc(
       caller_->CreateDataChannel("data", init));
 
   Negotiate();
@@ -712,11 +756,15 @@ TEST_P(PeerConnectionEndToEndTest, CloseDataChannelRemotelyWhileNotReferenced) {
   // This removes the reference to the remote data channel that we hold.
   callee_signaled_data_channels_.clear();
   caller_dc->Close();
-  EXPECT_EQ_WAIT(DataChannelInterface::kClosed, caller_dc->state(), kMaxWait);
+  EXPECT_THAT(
+      webrtc::WaitUntil([&] { return caller_dc->state(); },
+                        ::testing::Eq(DataChannelInterface::kClosed),
+                        {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+      webrtc::IsRtcOk());
 
   // Wait for a bit longer so the remote data channel will receive the
   // close message and be destroyed.
-  rtc::Thread::Current()->ProcessMessages(100);
+  webrtc::Thread::Current()->ProcessMessages(100);
 }
 
 // Test behavior of creating too many datachannels.
@@ -725,26 +773,29 @@ TEST_P(PeerConnectionEndToEndTest, TooManyDataChannelsOpenedBeforeConnecting) {
             webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
-  std::vector<rtc::scoped_refptr<DataChannelInterface>> channels;
-  for (int i = 0; i <= cricket::kMaxSctpStreams / 2; i++) {
-    rtc::scoped_refptr<DataChannelInterface> caller_dc(
+  std::vector<webrtc::scoped_refptr<DataChannelInterface>> channels;
+  for (int i = 0; i <= webrtc::kMaxSctpStreams / 2; i++) {
+    webrtc::scoped_refptr<DataChannelInterface> caller_dc(
         caller_->CreateDataChannel("data", init));
     channels.push_back(std::move(caller_dc));
   }
   Negotiate();
   WaitForConnection();
-  EXPECT_EQ_WAIT(callee_signaled_data_channels_.size(),
-                 static_cast<size_t>(cricket::kMaxSctpStreams / 2), kMaxWait);
+  EXPECT_THAT(
+      webrtc::WaitUntil([&] { return callee_signaled_data_channels_; },
+                        ::testing::SizeIs(webrtc::kMaxSctpStreams / 2),
+                        {.timeout = webrtc::TimeDelta::Millis(kMaxWait)}),
+      webrtc::IsRtcOk());
   EXPECT_EQ(DataChannelInterface::kOpen,
-            channels[(cricket::kMaxSctpStreams / 2) - 1]->state());
+            channels[(webrtc::kMaxSctpStreams / 2) - 1]->state());
   EXPECT_EQ(DataChannelInterface::kClosed,
-            channels[cricket::kMaxSctpStreams / 2]->state());
+            channels[webrtc::kMaxSctpStreams / 2]->state());
 }
 
 #endif  // WEBRTC_HAVE_SCTP
 
 TEST_P(PeerConnectionEndToEndTest, CanRestartIce) {
-  rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
+  webrtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
       webrtc::CreateOpusAudioDecoderFactory();
   CreatePcs(webrtc::CreateOpusAudioEncoderFactory(),
             CreateForwardingMockDecoderFactory(real_decoder_factory.get()));

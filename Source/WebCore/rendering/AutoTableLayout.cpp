@@ -32,6 +32,7 @@
 #include "RenderTableInlines.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
+#include "StylePreferredSize.h"
 
 namespace WebCore {
 

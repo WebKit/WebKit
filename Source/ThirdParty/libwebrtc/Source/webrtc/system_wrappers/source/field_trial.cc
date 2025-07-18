@@ -30,7 +30,7 @@
 namespace webrtc {
 namespace field_trial {
 
-static const char* trials_init_string = NULL;
+static const char* trials_init_string = nullptr;
 
 namespace {
 
@@ -91,7 +91,7 @@ void InsertOrReplaceFieldTrialStringsInMap(
     std::map<std::string, std::string>* fieldtrial_map,
     const absl::string_view trials_string) {
   if (FieldTrialsStringIsValidInternal(trials_string)) {
-    std::vector<absl::string_view> tokens = rtc::split(trials_string, '/');
+    std::vector<absl::string_view> tokens = split(trials_string, '/');
     // Skip last token which is empty due to trailing '/'.
     for (size_t idx = 0; idx < tokens.size() - 1; idx += 2) {
       (*fieldtrial_map)[std::string(tokens[idx])] =
@@ -129,7 +129,7 @@ std::string FindFullName(absl::string_view name) {
       << name << " is not registered, see g3doc/field-trials.md.";
 #endif
 
-  if (trials_init_string == NULL)
+  if (trials_init_string == nullptr)
     return std::string();
 
   absl::string_view trials_string(trials_init_string);

@@ -329,24 +329,20 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       deps += [ "$angle_root:angle_json_serializer" ]
     }
 
-    if (build_angle_end2end_tests_aosp) {
-      # AOSP end2end tests builds don't bundle ANGLE libs or Vulkan tests and don't need the NDK path
+    if (angle_enable_vulkan) {
+      sources += [
+        "gl_tests/VulkanExternalImageTest.cpp",
+        "gl_tests/VulkanImageTest.cpp",
+        "test_utils/VulkanHelper.cpp",
+        "test_utils/VulkanHelper.h",
+      ]
+      deps += [ "$angle_root/src/common/vulkan" ]
+    }
+
+    if (angle_test_enable_system_egl) {
+      # Don't bundle the ANGLE libraries.
     } else {
-      if (is_android) {
-        include_dirs += [ "${android_ndk_root}/sysroot/usr/includes" ]
-      }
-
       data_deps = [ "$angle_root:angle" ]
-
-      if (angle_enable_vulkan) {
-        sources += [
-          "gl_tests/VulkanExternalImageTest.cpp",
-          "gl_tests/VulkanImageTest.cpp",
-          "test_utils/VulkanHelper.cpp",
-          "test_utils/VulkanHelper.h",
-        ]
-        deps += [ "$angle_root/src/common/vulkan" ]
-      }
     }
 
     if (is_android) {
@@ -1762,11 +1758,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       ":angle_deqp_framework_egl",
       ":angle_deqp_glshared",
     ]
-
-    # TODO(http://anglebug.com/420728429): It should be removed once the issue is resolved on the CTS code.
-    if (is_clang) {
-      cflags_cc = [ "-Wno-unused-private-field" ]
-    }
   }
 
   angle_deqp_source_set("angle_deqp_gles3_common") {
@@ -1783,11 +1774,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       ":angle_deqp_framework_egl",
       ":angle_deqp_glshared",
     ]
-
-    # TODO(http://anglebug.com/420728429): It should be removed once the issue is resolved on the CTS code.
-    if (is_clang) {
-      cflags_cc = [ "-Wno-unused-private-field" ]
-    }
   }
 
   template("angle_deqp_core_gtest") {

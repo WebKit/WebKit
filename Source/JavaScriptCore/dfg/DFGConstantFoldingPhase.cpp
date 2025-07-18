@@ -1184,6 +1184,10 @@ private:
                 if (m_graph.m_plan.isUnlinked())
                     break;
 
+                // Don't constant fold for tainted code
+                if (m_graph.m_profiledBlock->couldBeTainted())
+                    break;
+
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                 Edge target = m_graph.child(node, 0);
                 AbstractValue& targetValue = m_state.forNode(target);
@@ -1191,7 +1195,7 @@ private:
                 if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
                     RegisteredStructure structure = structureSet.onlyStructure();
                     if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
-                        node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true)));
+                        node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true, SourceTaintedOrigin::Untainted)));
                         changed = true;
                         break;
                     }

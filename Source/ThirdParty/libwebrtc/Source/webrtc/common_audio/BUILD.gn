@@ -191,6 +191,7 @@ rtc_library("common_audio_c") {
 }
 
 rtc_library("common_audio_cc") {
+  visibility += webrtc_default_visibility
   sources = [
     "signal_processing/dot_product_with_scale.cc",
     "signal_processing/dot_product_with_scale.h",
@@ -336,6 +337,8 @@ if (rtc_include_tests && !build_with_chromium) {
     testonly = true
 
     sources = [
+      "allocation_counter.cc",
+      "allocation_counter.h",
       "audio_converter_unittest.cc",
       "audio_util_unittest.cc",
       "channel_buffer_unittest.cc",
@@ -369,10 +372,12 @@ if (rtc_include_tests && !build_with_chromium) {
     deps = [
       ":common_audio",
       ":common_audio_c",
+      ":common_audio_cc",
       ":fir_filter",
       ":fir_filter_factory",
       ":sinc_resampler",
       "../rtc_base:checks",
+      "../rtc_base:logging",
       "../rtc_base:macromagic",
       "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:stringutils",
@@ -384,11 +389,10 @@ if (rtc_include_tests && !build_with_chromium) {
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/base:core_headers",
     ]
 
     if (is_android) {
-      deps += [ "//testing/android/native_test:native_test_support" ]
-
       shard_timeout = 900
     }
   }

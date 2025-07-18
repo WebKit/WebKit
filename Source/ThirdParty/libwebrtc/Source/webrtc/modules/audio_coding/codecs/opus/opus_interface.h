@@ -14,7 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "modules/audio_coding/codecs/opus/opus_inst.h"
+#include "modules/audio_coding/codecs/opus/opus_inst.h"  // IWYU pragma: export
 
 #ifdef __cplusplus
 extern "C" {

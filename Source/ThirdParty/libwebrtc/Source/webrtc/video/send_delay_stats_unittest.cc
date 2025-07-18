@@ -14,7 +14,11 @@
 #include <memory>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/rtp_config.h"
+#include "call/video_send_stream.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 

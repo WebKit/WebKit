@@ -297,7 +297,7 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<co
 }
 
 struct RTCFrameDecodeParams {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RTCFrameDecodeParams);
 
     BlockPtr<void(CVPixelBufferRef, long long, long long, bool)> callback;
     int64_t timestamp { 0 };

@@ -4994,9 +4994,9 @@ inline void CaseClauseNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 
 enum SwitchKind { 
     SwitchUnset = 0,
-    SwitchNumber = 1, 
-    SwitchString = 2, 
-    SwitchNeither = 3 
+    SwitchNumber = 1,
+    SwitchString = 2,
+    SwitchNeither = 3
 };
 
 static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& literalVector, SwitchKind& typeForTable, bool& singleCharacterSwitch, int32_t& min_num, int32_t& max_num)
@@ -5039,46 +5039,42 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
     }
 }
 
-static inline size_t length(ClauseListNode* list1, ClauseListNode* list2)
-{
-    size_t length = 0;
-    for (ClauseListNode* node = list1; node; node = node->getNext())
-        ++length;
-    for (ClauseListNode* node = list2; node; node = node->getNext())
-        ++length;
-    return length;
-}
-
 SwitchInfo::SwitchType CaseBlockNode::tryTableSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num)
 {
-    if (length(m_list1, m_list2) < s_tableSwitchMinimum)
-        return SwitchInfo::SwitchNone;
-
     SwitchKind typeForTable = SwitchUnset;
     bool singleCharacterSwitch = true;
     
     processClauseList(m_list1, literalVector, typeForTable, singleCharacterSwitch, min_num, max_num);
     processClauseList(m_list2, literalVector, typeForTable, singleCharacterSwitch, min_num, max_num);
+
+    if (literalVector.size() < s_tableSwitchMinimum)
+        return SwitchInfo::SwitchType::None;
     
     if (typeForTable == SwitchUnset || typeForTable == SwitchNeither)
-        return SwitchInfo::SwitchNone;
+        return SwitchInfo::SwitchType::None;
     
     if (typeForTable == SwitchNumber) {
         int32_t range = max_num - min_num;
-        if (min_num <= max_num && range <= 1000 && (range / literalVector.size()) < Options::switchJumpTableAmountThreshold())
-            return SwitchInfo::SwitchImmediate;
-        return SwitchInfo::SwitchNone;
+        if (min_num <= max_num) {
+            if (range <= 1000 && (range / literalVector.size()) < Options::switchJumpTableAmountThreshold())
+                return SwitchInfo::SwitchType::Immediate;
+            return SwitchInfo::SwitchType::ImmediateList;
+        }
+        return SwitchInfo::SwitchType::None;
     } 
     
     ASSERT(typeForTable == SwitchString);
     
     if (singleCharacterSwitch) {
         int32_t range = max_num - min_num;
-        if (min_num <= max_num && range <= 1000 && (range / literalVector.size()) < Options::switchJumpTableAmountThreshold())
-            return SwitchInfo::SwitchCharacter;
+        if (min_num <= max_num) {
+            if (range <= 1000 && (range / literalVector.size()) < Options::switchJumpTableAmountThreshold())
+                return SwitchInfo::SwitchType::Character;
+            return SwitchInfo::SwitchType::CharacterList;
+        }
     }
 
-    return SwitchInfo::SwitchString;
+    return SwitchInfo::SwitchType::String;
 }
 
 void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterID* switchExpression, RegisterID* dst)
@@ -5090,7 +5086,7 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
     SwitchInfo::SwitchType switchType = tryTableSwitch(literalVector, min_num, max_num);
 
     Ref<Label> defaultLabel = generator.newLabel();
-    if (switchType != SwitchInfo::SwitchNone) {
+    if (switchType != SwitchInfo::SwitchType::None) {
         // Prepare the various labels
         for (uint32_t i = 0; i < literalVector.size(); i++)
             labelVector.append(generator.newLabel());
@@ -5132,9 +5128,9 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
         generator.emitLabel(defaultLabel.get());
 
     ASSERT(i == labelVector.size());
-    if (switchType != SwitchInfo::SwitchNone) {
+    if (switchType != SwitchInfo::SwitchType::None) {
         ASSERT(labelVector.size() == literalVector.size());
-        generator.endSwitch(labelVector.size(), labelVector, literalVector.mutableSpan().data(), defaultLabel.get(), min_num, max_num);
+        generator.endSwitch(labelVector, literalVector.mutableSpan().data(), defaultLabel.get(), min_num, max_num);
     }
 }
 

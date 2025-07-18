@@ -62,7 +62,7 @@ class AudioDecoderProxyFactory : public AudioDecoderFactory {
     explicit DecoderProxy(AudioDecoder* decoder) : decoder_(decoder) {}
 
    private:
-    std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
+    std::vector<ParseResult> ParsePayload(Buffer&& payload,
                                           uint32_t timestamp) override {
       return decoder_->ParsePayload(std::move(payload), timestamp);
     }
@@ -92,7 +92,7 @@ class AudioDecoderProxyFactory : public AudioDecoderFactory {
     }
 
     void GeneratePlc(size_t requested_samples_per_channel,
-                     rtc::BufferT<int16_t>* concealment_audio) override {
+                     BufferT<int16_t>* concealment_audio) override {
       decoder_->GeneratePlc(requested_samples_per_channel, concealment_audio);
     }
 

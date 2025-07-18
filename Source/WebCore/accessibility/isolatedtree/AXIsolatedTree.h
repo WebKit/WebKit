@@ -53,7 +53,7 @@ class AXGeometryManager;
 class AXObjectCache;
 class AccessibilityObject;
 class Page;
-enum class AXStreamOptions : uint8_t;
+enum class AXStreamOptions : uint16_t;
 
 static constexpr uint16_t lastPropertyFlagIndex = 21;
 // The most common boolean properties are stored in a bitfield rather than in a HashMap.
@@ -273,7 +273,6 @@ enum class AXProperty : uint16_t {
     SupportsDropping,
     SupportsARIAOwns,
     SupportsCurrent,
-    SupportsDatetimeAttribute,
     SupportsExpandedTextValue,
     SupportsKeyShortcuts,
     TextContentPrefixFromListMarker,
@@ -418,7 +417,15 @@ public:
     std::optional<AXID> focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
-    AXIsolatedObject* objectForID(AXID) const;
+    inline AXIsolatedObject* objectForID(AXID axID) const
+    {
+        ASSERT(!isMainThread());
+
+        auto iterator = m_readerThreadNodeMap.find(axID);
+        if (iterator != m_readerThreadNodeMap.end())
+            return iterator->value.ptr();
+        return nullptr;
+    }
     inline AXIsolatedObject* objectForID(std::optional<AXID> axID) const
     {
         return axID ? objectForID(*axID) : nullptr;

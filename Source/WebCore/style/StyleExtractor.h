@@ -53,7 +53,7 @@ namespace Style {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Extractor);
 class Extractor {
 public:
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor, Extractor);
 public:
     Extractor(Node*, bool allowVisitedStyle = false);
     Extractor(Node*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);

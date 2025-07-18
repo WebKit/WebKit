@@ -453,13 +453,16 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
             b.location = location;
 
-            if (!a.scrollDelta->isZero())
-                b.scrollDelta->contract(a.scrollDelta->width(), a.scrollDelta->height());
+            auto aScrollDelta = a.scrollDelta.value_or(WebCore::IntSize());
+            auto bScrollDelta = b.scrollDelta.value_or(WebCore::IntSize());
+            auto usedScrollDelta = bScrollDelta;
+            if (!aScrollDelta.isZero())
+                usedScrollDelta.contract(aScrollDelta.width(), aScrollDelta.height());
 
-            if (!b.scrollDelta->isZero()) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.scrollDelta->width(), a.scrollDelta->height(), b.scrollDelta->width(), b.scrollDelta->height(), m_keyframeIndex, m_inputSourceStateIndex);
+            if (!usedScrollDelta.isZero()) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel from (%d, %d) to (%d, %d) for transition to %d.%d", this, aScrollDelta.width(), aScrollDelta.height(), bScrollDelta.width(), bScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mouse scrolls per the "perform a scroll" algorithm (§15.4.4 Wheel actions).
-                m_client.simulateWheelInteraction(protectedPage(), b.location.value(), b.scrollDelta.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateWheelInteraction(protectedPage(), b.location.value(), usedScrollDelta, WTFMove(eventDispatchFinished));
             } else
                 eventDispatchFinished(std::nullopt);
         });

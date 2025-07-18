@@ -41,11 +41,11 @@ struct FftData {
   }
 
   // Computes the power spectrum of the data.
-  void SpectrumAVX2(rtc::ArrayView<float> power_spectrum) const;
+  void SpectrumAVX2(ArrayView<float> power_spectrum) const;
 
   // Computes the power spectrum of the data.
   void Spectrum(Aec3Optimization optimization,
-                rtc::ArrayView<float> power_spectrum) const {
+                ArrayView<float> power_spectrum) const {
     RTC_DCHECK_EQ(kFftLengthBy2Plus1, power_spectrum.size());
     switch (optimization) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)

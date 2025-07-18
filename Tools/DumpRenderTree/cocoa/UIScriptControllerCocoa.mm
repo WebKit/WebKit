@@ -54,7 +54,7 @@ void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

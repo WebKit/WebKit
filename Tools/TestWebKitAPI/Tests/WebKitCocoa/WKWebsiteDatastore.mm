@@ -452,8 +452,8 @@ TEST(WKWebsiteDataStore, SessionSetCount)
 {
     auto countSessionSets = [] {
         __block bool done = false;
-        __block size_t result = 0;
-        [[WKWebsiteDataStore defaultDataStore] _countNonDefaultSessionSets:^(size_t count) {
+        __block uint64_t result = 0;
+        [[WKWebsiteDataStore defaultDataStore] _countNonDefaultSessionSets:^(uint64_t count) {
             result = count;
             done = true;
         }];

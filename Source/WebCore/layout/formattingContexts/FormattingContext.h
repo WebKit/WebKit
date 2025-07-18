@@ -91,8 +91,8 @@ protected:
 #endif
 
 private:
-    CheckedRef<const ElementBox> m_root;
-    LayoutState& m_layoutState;
+    const CheckedRef<const ElementBox> m_root;
+    const CheckedRef<LayoutState> m_layoutState;
 };
 
 }

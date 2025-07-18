@@ -72,8 +72,12 @@ function touchBytes(len)
 }
 
 @end
-
+// FIXME when rdar://problem/154211896 is resolved.
+#if !defined(NDEBUG)
+TEST(MemoryFootprintThreshold, DISABLED_TestDelegateMethod)
+#else
 TEST(MemoryFootprintThreshold, TestDelegateMethod)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { memoryFootprintBytes } },

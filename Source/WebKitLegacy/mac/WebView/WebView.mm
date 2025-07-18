@@ -1528,7 +1528,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
 #endif
-    pageConfiguration.inspectorClient = makeUnique<WebInspectorClient>(self);
+    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorClient>(self);
 
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
@@ -1546,7 +1546,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
     _private->page->setGroupName(groupName);
 
 #if ENABLE(GEOLOCATION)
-    WebCore::provideGeolocationTo(_private->page.get(), *new WebGeolocationClient(self));
+    WebCore::provideGeolocationTo(_private->page.get(), WebGeolocationClient::create(self));
 #endif
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(_private->page.get(), new WebNotificationClient(self));
@@ -1786,7 +1786,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
 #endif
 
-    pageConfiguration.inspectorClient = makeUnique<WebInspectorClient>(self);
+    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorClient>(self);
     pageConfiguration.applicationCacheStorage = webApplicationCacheStorage();
     pageConfiguration.databaseProvider = WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = _private->group->storageNamespaceProvider();
@@ -1863,7 +1863,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
     WebThreadRun(^{
         [WebView _releaseMemoryNow];
-        RunLoop::protectedMain()->dispatch([handler = makeBlockPtr(handler)] {
+        RunLoop::mainSingleton().dispatch([handler = makeBlockPtr(handler)] {
             handler();
         });
     });
@@ -4984,7 +4984,7 @@ IGNORE_WARNINGS_END
 {
     if (WebThreadIsCurrent()) {
         [invocation retainArguments];
-        RunLoop::protectedMain()->dispatch([forwarder = retainPtr(_forwarder), invocation = retainPtr(invocation)] {
+        RunLoop::mainSingleton().dispatch([forwarder = retainPtr(_forwarder), invocation = retainPtr(invocation)] {
             [forwarder forwardInvocation:invocation.get()];
         });
     } else
@@ -6399,7 +6399,7 @@ static bool needsWebViewInitThreadWorkaround()
                 if (errorOrNil)
                     return;
 
-                RunLoop::protectedMain()->dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
+                RunLoop::mainSingleton().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);
@@ -7924,7 +7924,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
             _private->page->setTabKeyCyclesThroughElements(!flag);
 #if PLATFORM(MAC)
         if (flag) {
-            RunLoop::protectedMain()->dispatch([] {
+            RunLoop::mainSingleton().dispatch([] {
                 [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
             });
         }

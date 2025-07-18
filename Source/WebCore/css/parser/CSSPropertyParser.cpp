@@ -432,6 +432,11 @@ bool CSSPropertyParser::isValidCustomPropertyValueForSyntax(const CSSCustomPrope
     return !!consumeCustomPropertyValueWithSyntax(range, state, syntax).first;
 }
 
+std::optional<CSSWideKeyword> CSSPropertyParser::parseCSSWideKeyword(CSSParserTokenRange range)
+{
+    return consumeCSSWideKeyword(range);
+}
+
 std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(CSSParserTokenRange& range, CSS::PropertyParserState& state, const CSSCustomPropertySyntax& syntax)
 {
     ASSERT(!syntax.isUniversal());

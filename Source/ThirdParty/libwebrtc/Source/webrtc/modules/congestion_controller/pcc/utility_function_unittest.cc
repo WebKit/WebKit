@@ -13,7 +13,6 @@
 #include <stddef.h>
 
 #include <cmath>
-#include <type_traits>
 #include <vector>
 
 #include "api/transport/network_types.h"
@@ -21,6 +20,7 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "test/gtest.h"
 
 namespace webrtc {

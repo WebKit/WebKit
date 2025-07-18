@@ -52,7 +52,7 @@ struct ResolutionContext;
 }
 
 class KeyframeEffectStack {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack, Animation);
 public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();

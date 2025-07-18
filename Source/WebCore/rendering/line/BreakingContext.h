@@ -275,7 +275,7 @@ inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkSta
 inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* renderer, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
 {
     if (CheckedPtr nextText = dynamicDowncast<RenderText>(nextInlineRendererSkippingEmpty(block, renderer)); nextText && nextText->text().length() > 0) {
-        UChar nextChar = nextText->characterAt(0);
+        char16_t nextChar = nextText->characterAt(0);
         if (nextText->style().isCollapsibleWhiteSpace(nextChar)) {
             lineWhitespaceCollapsingState.startIgnoringSpaces(LegacyInlineIterator(nullptr, renderer, 0));
             return true;
@@ -319,7 +319,7 @@ inline void BreakingContext::handleEmptyInline()
         m_hangsAtEnd = false;
 }
 
-inline void nextCharacter(UChar& currentCharacter, UChar& lastCharacter, UChar& secondToLastCharacter)
+inline void nextCharacter(char16_t& currentCharacter, char16_t& lastCharacter, char16_t& secondToLastCharacter)
 {
     secondToLastCharacter = lastCharacter;
     lastCharacter = currentCharacter;
@@ -385,8 +385,8 @@ inline bool BreakingContext::handleText()
     SingleThreadWeakHashSet<const Font> fallbackFonts;
     m_hasFormerOpportunity = false;
     bool canBreakMidWord = breakWords || breakAll;
-    UChar lastCharacter = m_renderTextInfo.lineBreakIteratorFactory.priorContext().lastCharacter();
-    UChar secondToLastCharacter = m_renderTextInfo.lineBreakIteratorFactory.priorContext().secondToLastCharacter();
+    char16_t lastCharacter = m_renderTextInfo.lineBreakIteratorFactory.priorContext().lastCharacter();
+    char16_t secondToLastCharacter = m_renderTextInfo.lineBreakIteratorFactory.priorContext().secondToLastCharacter();
     // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
     // words with their trailing space, then subtract its width.
     TextLayout* textLayout = m_renderTextInfo.layout.get();
@@ -395,7 +395,7 @@ inline bool BreakingContext::handleText()
         ASSERT(&renderer == m_current.renderer());
         bool previousCharacterIsSpace = m_currentCharacterIsSpace;
         bool previousCharacterIsWS = m_currentCharacterIsWS;
-        UChar c = m_current.current(); // FIXME: It's silly to pull out a single surrogate from the content and attempt to do anything useful with it.
+        char16_t c = m_current.current(); // FIXME: It's silly to pull out a single surrogate from the content and attempt to do anything useful with it.
         m_currentCharacterIsSpace = c == ' ' || c == '\t' || (!m_preservesNewline && (c == '\n'));
 
         // A single preserved leading white-space doesn't fulfill the 'betweenWords' condition, however it's indeed a

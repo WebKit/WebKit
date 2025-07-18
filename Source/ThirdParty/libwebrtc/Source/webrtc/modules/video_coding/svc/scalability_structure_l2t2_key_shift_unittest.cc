@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/transport/rtp/dependency_descriptor.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/svc/scalability_structure_test_helpers.h"
 #include "test/gmock.h"
@@ -237,8 +236,8 @@ TEST(ScalabilityStructureL2T2KeyShiftTest, ReenableS1TriggersKeyFrame) {
   EXPECT_THAT(frames[4].temporal_id, 1);
 
   // Expect frame[5] to be a key frame.
-  EXPECT_TRUE(wrapper.FrameReferencesAreValid(
-      rtc::MakeArrayView(frames.data() + 5, 4)));
+  EXPECT_TRUE(
+      wrapper.FrameReferencesAreValid(MakeArrayView(frames.data() + 5, 4)));
 
   EXPECT_THAT(frames[5].spatial_id, 0);
   EXPECT_THAT(frames[6].spatial_id, 1);

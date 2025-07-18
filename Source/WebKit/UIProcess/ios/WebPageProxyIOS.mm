@@ -69,8 +69,8 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
-#import <WebCore/ElementIdentifier.h>
 #import <WebCore/LocalFrameView.h>
+#import <WebCore/NodeIdentifier.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
@@ -629,10 +629,8 @@ void WebPageProxy::applicationDidEnterBackground()
 
 void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
 {
-    if (m_drawingArea) {
-        m_drawingArea->prepareForAppSuspension();
+    if (m_drawingArea)
         m_drawingArea->hideContentUntilPendingUpdate();
-    }
     m_legacyMainFrameProcess->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), webPageIDInMainFrameProcess());
 }
 
@@ -1371,10 +1369,10 @@ void WebPageProxy::didConcludeDrop()
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::ElementIdentifier> elementID)
+void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didReceiveInteractiveModelElement(elementID);
+        pageClient->didReceiveInteractiveModelElement(nodeID);
 }
 #endif
 
@@ -1657,7 +1655,7 @@ void WebPageProxy::willOpenAppLink()
     // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
     // to avoid assertion invalidation (or even termination).
     takeOpeningAppLinkActivity();
-    WorkQueue::protectedMain()->dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
+    WorkQueue::mainSingleton().dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->dropOpeningAppLinkActivity();
     });
@@ -1806,7 +1804,7 @@ void WebPageProxy::didRefreshDisplay()
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
 
-void WebPageProxy::createPDFPageNumberIndicator(PDFPluginIdentifier identifier, const IntRect& rect, size_t pageCount)
+void WebPageProxy::createPDFPageNumberIndicator(PDFPluginIdentifier identifier, const IntRect& rect, uint64_t pageCount)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->createPDFPageNumberIndicator(identifier, rect, pageCount);
@@ -1824,7 +1822,7 @@ void WebPageProxy::updatePDFPageNumberIndicatorLocation(PDFPluginIdentifier iden
         pageClient->updatePDFPageNumberIndicatorLocation(identifier, rect);
 }
 
-void WebPageProxy::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier identifier, size_t pageIndex)
+void WebPageProxy::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier identifier, uint64_t pageIndex)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->updatePDFPageNumberIndicatorCurrentPage(identifier, pageIndex);

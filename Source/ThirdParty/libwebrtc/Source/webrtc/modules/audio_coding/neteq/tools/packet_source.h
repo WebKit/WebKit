@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_PACKET_SOURCE_H_
 
 #include <bitset>
+#include <cstdint>
 #include <memory>
 
 #include "modules/audio_coding/neteq/tools/packet.h"

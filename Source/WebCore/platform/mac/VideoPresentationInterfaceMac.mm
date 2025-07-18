@@ -344,7 +344,8 @@ enum class PIPState {
     [self updatePrerollAttributes];
     if (self.isPlaybackStateEnabled) {
         [_pipViewController updatePlaybackStateUsingBlock:^(PIPMutablePlaybackState *playbackState) {
-            playbackState.contentType = PIPContentTypeVideoOnDemand;
+            // "Infinte" duration means "Live Video" by convention.
+            playbackState.contentType = std::isinf(_duration) ? PIPContentTypeLiveBroadcast : PIPContentTypeVideoOnDemand;
             playbackState.contentDuration = _duration;
             [playbackState setPlaybackRate:_rate elapsedTime:_elapsedTime timeControlStatus:_timeControlStatus];
         }];
@@ -672,17 +673,9 @@ WebVideoPresentationInterfaceMacObjC *VideoPresentationInterfaceMac::videoPresen
 
         auto model = m_playbackSessionInterface->playbackSessionModel();
 
-        AVPlayerTimeControlStatus timeControlStatus = AVPlayerTimeControlStatusPaused;
-        if (model->isStalled() && model->isPlaying())
-            timeControlStatus = AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate;
-        else if (model->isPlaying())
-            timeControlStatus = AVPlayerTimeControlStatusPlaying;
-
-        [videoPresentationInterfaceObjC() updateRate:model->playbackRate() andTimeControlStatus:timeControlStatus];
-
         durationChanged(model->duration());
         currentTimeChanged(model->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-        rateChanged({ }, model->playbackRate(), model->defaultPlaybackRate());
+        rateChanged(model->playbackState(), model->playbackRate(), model->defaultPlaybackRate());
     }
 
     return m_webVideoPresentationInterfaceObjC.get();
@@ -699,7 +692,7 @@ void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, 
 
     [videoPresentationInterfaceObjC() setUpPIPForVideoView:layerHostView() withFrame:(NSRect)initialRect inWindow:parentWindow];
 
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
         if (RefPtr model = videoPresentationModel()) {
             model->didSetupFullscreen();
             model->setRequiresTextTrackRepresentation(true);

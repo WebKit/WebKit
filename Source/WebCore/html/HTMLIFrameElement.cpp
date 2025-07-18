@@ -42,6 +42,7 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TrustedType.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 

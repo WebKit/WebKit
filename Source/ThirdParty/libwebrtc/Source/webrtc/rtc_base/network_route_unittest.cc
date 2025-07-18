@@ -10,10 +10,9 @@
 
 #include "rtc_base/network_route.h"
 
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(NetworkRoute, Equals) {
   NetworkRoute r1;
@@ -21,4 +20,4 @@ TEST(NetworkRoute, Equals) {
   EXPECT_TRUE(r1 == r2);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

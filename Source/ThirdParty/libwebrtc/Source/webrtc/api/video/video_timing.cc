@@ -27,7 +27,7 @@ uint16_t VideoSendTiming::GetDeltaCappedMs(int64_t base_ms, int64_t time_ms) {
     RTC_DLOG(LS_ERROR) << "Delta " << (time_ms - base_ms)
                        << "ms expected to be positive";
   }
-  return rtc::saturated_cast<uint16_t>(time_ms - base_ms);
+  return saturated_cast<uint16_t>(time_ms - base_ms);
 }
 
 uint16_t VideoSendTiming::GetDeltaCappedMs(TimeDelta delta) {
@@ -35,7 +35,7 @@ uint16_t VideoSendTiming::GetDeltaCappedMs(TimeDelta delta) {
     RTC_DLOG(LS_ERROR) << "Delta " << delta.ms()
                        << "ms expected to be positive";
   }
-  return rtc::saturated_cast<uint16_t>(delta.ms());
+  return saturated_cast<uint16_t>(delta.ms());
 }
 
 TimingFrameInfo::TimingFrameInfo()
@@ -89,7 +89,7 @@ std::string TimingFrameInfo::ToString() const {
   }
 
   char buf[1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
 
   sb << rtp_timestamp << ',' << capture_time_ms << ',' << encode_start_ms << ','
      << encode_finish_ms << ',' << packetization_finish_ms << ','

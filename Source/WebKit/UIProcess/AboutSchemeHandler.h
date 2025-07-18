@@ -31,10 +31,10 @@
 namespace WebKit {
 
 class AboutSchemeHandler final : public WebURLSchemeHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AboutSchemeHandler);
 public:
     class OpaquePathHandler {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaquePathHandler);
     public:
         virtual ~OpaquePathHandler() = default;
         virtual void loadContent(URL, CompletionHandler<void(WebCore::ResourceResponse&&, Ref<WebCore::SharedBuffer>&&)>&&) = 0;

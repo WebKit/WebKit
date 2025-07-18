@@ -163,7 +163,7 @@ TEST_F(ChannelMixerTest, ConstructAllPossibleLayouts) {
         continue;
       }
 
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Input Layout: " << input_layout
          << ", Output Layout: " << output_layout;
       SCOPED_TRACE(ss.str());

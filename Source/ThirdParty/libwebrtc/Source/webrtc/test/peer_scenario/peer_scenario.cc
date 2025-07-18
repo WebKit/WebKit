@@ -62,7 +62,7 @@ PeerScenario::PeerScenario(
 PeerScenarioClient* PeerScenario::CreateClient(
     PeerScenarioClient::Config config) {
   return CreateClient(
-      std::string("client_") + rtc::ToString(peer_clients_.size() + 1), config);
+      std::string("client_") + absl::StrCat(peer_clients_.size() + 1), config);
 }
 
 PeerScenarioClient* PeerScenario::CreateClient(
@@ -102,7 +102,7 @@ void PeerScenario::AttachVideoQualityAnalyzer(VideoQualityAnalyzer* analyzer,
                                               PeerScenarioClient* receiver) {
   video_quality_pairs_.emplace_back(clock(), analyzer);
   auto pair = &video_quality_pairs_.back();
-  send_track->AddOrUpdateSink(&pair->capture_tap_, rtc::VideoSinkWants());
+  send_track->AddOrUpdateSink(&pair->capture_tap_, VideoSinkWants());
   receiver->AddVideoReceiveSink(send_track->id(), &pair->decode_tap_);
 }
 

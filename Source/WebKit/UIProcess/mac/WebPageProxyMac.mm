@@ -61,6 +61,7 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -71,6 +72,7 @@
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/NSPasteboardSPI.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -174,9 +176,12 @@ void WebPageProxy::stopSpeaking()
 void WebPageProxy::searchTheWeb(const String& string)
 {
     RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:@[legacyStringPasteboardType()] owner:nil];
+    [pasteboard clearContents];
+    if (sessionID().isEphemeral())
+        [pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
+    [pasteboard addTypes:@[legacyStringPasteboardType()] owner:nil];
     [pasteboard setString:string.createNSString().get() forType:legacyStringPasteboardType()];
-    
+
     NSPerformService(@"Search With %WebSearchProvider@", pasteboard.get());
 }
 
@@ -413,6 +418,9 @@ void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
 
 void WebPageProxy::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
 {
+    if (m_automaticallyAdjustsContentInsets == automaticallyAdjustsContentInsets)
+        return;
+
     m_automaticallyAdjustsContentInsets = automaticallyAdjustsContentInsets;
     updateContentInsetsIfAutomatic();
 }
@@ -950,7 +958,10 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 
     RetainPtr<NSPasteboard> pasteboard = NSPasteboard.generalPasteboard;
     RetainPtr pasteboardType = bridge_cast(type.get());
-    [pasteboard declareTypes:@[pasteboardType.get()] owner:nil];
+    [pasteboard clearContents];
+    if (sessionID().isEphemeral())
+        [pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
+    [pasteboard addTypes:@[pasteboardType.get()] owner:nil];
     [pasteboard setData:data.get() forType:pasteboardType.get()];
 }
 

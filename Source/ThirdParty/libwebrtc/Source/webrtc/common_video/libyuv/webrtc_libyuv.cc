@@ -10,12 +10,21 @@
 
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 
+#include <cstddef>
 #include <cstdint>
 
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "rtc_base/checks.h"
-#include "third_party/libyuv/include/libyuv.h"
+#include "third_party/libyuv/include/libyuv/compare.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
+#include "third_party/libyuv/include/libyuv/convert_from.h"
+#include "third_party/libyuv/include/libyuv/planar_functions.h"
+#include "third_party/libyuv/include/libyuv/scale.h"
+#include "third_party/libyuv/include/libyuv/video_common.h"
 
 namespace webrtc {
 
@@ -50,7 +59,7 @@ size_t CalcBufferSize(VideoType type, int width, int height) {
   return 0;
 }
 
-int ExtractBuffer(const rtc::scoped_refptr<I420BufferInterface>& input_frame,
+int ExtractBuffer(const scoped_refptr<I420BufferInterface>& input_frame,
                   size_t size,
                   uint8_t* buffer) {
   RTC_DCHECK(buffer);
@@ -119,7 +128,7 @@ int ConvertFromI420(const VideoFrame& src_frame,
                     VideoType dst_video_type,
                     int dst_sample_size,
                     uint8_t* dst_frame) {
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer =
+  scoped_refptr<I420BufferInterface> i420_buffer =
       src_frame.video_frame_buffer()->ToI420();
   return libyuv::ConvertFromI420(
       i420_buffer->DataY(), i420_buffer->StrideY(), i420_buffer->DataU(),
@@ -128,20 +137,20 @@ int ConvertFromI420(const VideoFrame& src_frame,
       ConvertVideoType(dst_video_type));
 }
 
-rtc::scoped_refptr<I420ABufferInterface> ScaleI420ABuffer(
+scoped_refptr<I420ABufferInterface> ScaleI420ABuffer(
     const I420ABufferInterface& buffer,
     int target_width,
     int target_height) {
-  rtc::scoped_refptr<I420Buffer> yuv_buffer =
+  scoped_refptr<I420Buffer> yuv_buffer =
       I420Buffer::Create(target_width, target_height);
   yuv_buffer->ScaleFrom(buffer);
-  rtc::scoped_refptr<I420Buffer> axx_buffer =
+  scoped_refptr<I420Buffer> axx_buffer =
       I420Buffer::Create(target_width, target_height);
   libyuv::ScalePlane(buffer.DataA(), buffer.StrideA(), buffer.width(),
                      buffer.height(), axx_buffer->MutableDataY(),
                      axx_buffer->StrideY(), target_width, target_height,
                      libyuv::kFilterBox);
-  rtc::scoped_refptr<I420ABufferInterface> merged_buffer = WrapI420ABuffer(
+  scoped_refptr<I420ABufferInterface> merged_buffer = WrapI420ABuffer(
       yuv_buffer->width(), yuv_buffer->height(), yuv_buffer->DataY(),
       yuv_buffer->StrideY(), yuv_buffer->DataU(), yuv_buffer->StrideU(),
       yuv_buffer->DataV(), yuv_buffer->StrideV(), axx_buffer->DataY(),
@@ -151,11 +160,11 @@ rtc::scoped_refptr<I420ABufferInterface> ScaleI420ABuffer(
   return merged_buffer;
 }
 
-rtc::scoped_refptr<I420BufferInterface> ScaleVideoFrameBuffer(
+scoped_refptr<I420BufferInterface> ScaleVideoFrameBuffer(
     const I420BufferInterface& source,
     int dst_width,
     int dst_height) {
-  rtc::scoped_refptr<I420Buffer> scaled_buffer =
+  scoped_refptr<I420Buffer> scaled_buffer =
       I420Buffer::Create(dst_width, dst_height);
   scaled_buffer->ScaleFrom(source);
   return scaled_buffer;
@@ -190,7 +199,7 @@ double I420APSNR(const I420ABufferInterface& ref_buffer,
   RTC_DCHECK_GE(ref_buffer.height(), test_buffer.height());
   if ((ref_buffer.width() != test_buffer.width()) ||
       (ref_buffer.height() != test_buffer.height())) {
-    rtc::scoped_refptr<I420ABufferInterface> scaled_buffer =
+    scoped_refptr<I420ABufferInterface> scaled_buffer =
         ScaleI420ABuffer(test_buffer, ref_buffer.width(), ref_buffer.height());
     return I420APSNR(ref_buffer, *scaled_buffer);
   }
@@ -236,7 +245,7 @@ double I420PSNR(const I420BufferInterface& ref_buffer,
   RTC_DCHECK_GE(ref_buffer.height(), test_buffer.height());
   if ((ref_buffer.width() != test_buffer.width()) ||
       (ref_buffer.height() != test_buffer.height())) {
-    rtc::scoped_refptr<I420Buffer> scaled_buffer =
+    scoped_refptr<I420Buffer> scaled_buffer =
         I420Buffer::Create(ref_buffer.width(), ref_buffer.height());
     scaled_buffer->ScaleFrom(test_buffer);
     return I420PSNR(ref_buffer, *scaled_buffer);
@@ -266,7 +275,7 @@ double I420WeightedPSNR(const I420BufferInterface& ref_buffer,
   RTC_DCHECK_GE(ref_buffer.height(), test_buffer.height());
   if ((ref_buffer.width() != test_buffer.width()) ||
       (ref_buffer.height() != test_buffer.height())) {
-    rtc::scoped_refptr<I420Buffer> scaled_ref_buffer =
+    scoped_refptr<I420Buffer> scaled_ref_buffer =
         I420Buffer::Create(test_buffer.width(), test_buffer.height());
     scaled_ref_buffer->ScaleFrom(ref_buffer);
     return I420WeightedPSNR(*scaled_ref_buffer, test_buffer);
@@ -306,7 +315,7 @@ double I420ASSIM(const I420ABufferInterface& ref_buffer,
   RTC_DCHECK_GE(ref_buffer.height(), test_buffer.height());
   if ((ref_buffer.width() != test_buffer.width()) ||
       (ref_buffer.height() != test_buffer.height())) {
-    rtc::scoped_refptr<I420ABufferInterface> scaled_buffer =
+    scoped_refptr<I420ABufferInterface> scaled_buffer =
         ScaleI420ABuffer(test_buffer, ref_buffer.width(), ref_buffer.height());
     return I420ASSIM(ref_buffer, *scaled_buffer);
   }
@@ -341,7 +350,7 @@ double I420SSIM(const I420BufferInterface& ref_buffer,
   RTC_DCHECK_GE(ref_buffer.height(), test_buffer.height());
   if ((ref_buffer.width() != test_buffer.width()) ||
       (ref_buffer.height() != test_buffer.height())) {
-    rtc::scoped_refptr<I420Buffer> scaled_buffer =
+    scoped_refptr<I420Buffer> scaled_buffer =
         I420Buffer::Create(ref_buffer.width(), ref_buffer.height());
     scaled_buffer->ScaleFrom(test_buffer);
     return I420SSIM(ref_buffer, *scaled_buffer);

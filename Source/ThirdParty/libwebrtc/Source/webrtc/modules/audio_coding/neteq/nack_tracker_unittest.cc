@@ -13,9 +13,10 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <memory>
+#include <vector>
 
-#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 

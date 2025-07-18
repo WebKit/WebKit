@@ -28,10 +28,9 @@ static size_t GetBufferReadRegions(RingBuffer* buf,
                                    size_t* data_ptr_bytes_1,
                                    void** data_ptr_2,
                                    size_t* data_ptr_bytes_2) {
-
   const size_t readable_elements = WebRtc_available_read(buf);
-  const size_t read_elements = (readable_elements < element_count ?
-      readable_elements : element_count);
+  const size_t read_elements =
+      (readable_elements < element_count ? readable_elements : element_count);
   const size_t margin = buf->element_count - buf->read_pos;
 
   // Check to see if read is not contiguous.
@@ -99,7 +98,6 @@ size_t WebRtc_ReadBuffer(RingBuffer* self,
                          void** data_ptr,
                          void* data,
                          size_t element_count) {
-
   if (self == NULL) {
     return 0;
   }
@@ -112,17 +110,14 @@ size_t WebRtc_ReadBuffer(RingBuffer* self,
     void* buf_ptr_2 = NULL;
     size_t buf_ptr_bytes_1 = 0;
     size_t buf_ptr_bytes_2 = 0;
-    const size_t read_count = GetBufferReadRegions(self,
-                                                   element_count,
-                                                   &buf_ptr_1,
-                                                   &buf_ptr_bytes_1,
-                                                   &buf_ptr_2,
-                                                   &buf_ptr_bytes_2);
+    const size_t read_count =
+        GetBufferReadRegions(self, element_count, &buf_ptr_1, &buf_ptr_bytes_1,
+                             &buf_ptr_2, &buf_ptr_bytes_2);
     if (buf_ptr_bytes_2 > 0) {
       // We have a wrap around when reading the buffer. Copy the buffer data to
       // `data` and point to it.
       memcpy(data, buf_ptr_1, buf_ptr_bytes_1);
-      memcpy(((char*) data) + buf_ptr_bytes_1, buf_ptr_2, buf_ptr_bytes_2);
+      memcpy(((char*)data) + buf_ptr_bytes_1, buf_ptr_2, buf_ptr_bytes_2);
       buf_ptr_1 = data;
     } else if (!data_ptr) {
       // No wrap, but a memcpy was requested.
@@ -134,7 +129,7 @@ size_t WebRtc_ReadBuffer(RingBuffer* self,
     }
 
     // Update read position
-    WebRtc_MoveReadPtr(self, (int) read_count);
+    WebRtc_MoveReadPtr(self, (int)read_count);
 
     return read_count;
   }
@@ -152,21 +147,21 @@ size_t WebRtc_WriteBuffer(RingBuffer* self,
 
   {
     const size_t free_elements = WebRtc_available_write(self);
-    const size_t write_elements = (free_elements < element_count ? free_elements
-        : element_count);
+    const size_t write_elements =
+        (free_elements < element_count ? free_elements : element_count);
     size_t n = write_elements;
     const size_t margin = self->element_count - self->write_pos;
 
     if (write_elements > margin) {
       // Buffer wrap around when writing.
-      memcpy(self->data + self->write_pos * self->element_size,
-             data, margin * self->element_size);
+      memcpy(self->data + self->write_pos * self->element_size, data,
+             margin * self->element_size);
       self->write_pos = 0;
       n -= margin;
       self->rw_wrap = DIFF_WRAP;
     }
     memcpy(self->data + self->write_pos * self->element_size,
-           ((const char*) data) + ((write_elements - n) * self->element_size),
+           ((const char*)data) + ((write_elements - n) * self->element_size),
            n * self->element_size);
     self->write_pos += n;
 
@@ -182,9 +177,9 @@ int WebRtc_MoveReadPtr(RingBuffer* self, int element_count) {
   {
     // We need to be able to take care of negative changes, hence use "int"
     // instead of "size_t".
-    const int free_elements = (int) WebRtc_available_write(self);
-    const int readable_elements = (int) WebRtc_available_read(self);
-    int read_pos = (int) self->read_pos;
+    const int free_elements = (int)WebRtc_available_write(self);
+    const int readable_elements = (int)WebRtc_available_read(self);
+    int read_pos = (int)self->read_pos;
 
     if (element_count > readable_elements) {
       element_count = readable_elements;
@@ -194,18 +189,18 @@ int WebRtc_MoveReadPtr(RingBuffer* self, int element_count) {
     }
 
     read_pos += element_count;
-    if (read_pos > (int) self->element_count) {
+    if (read_pos > (int)self->element_count) {
       // Buffer wrap around. Restart read position and wrap indicator.
-      read_pos -= (int) self->element_count;
+      read_pos -= (int)self->element_count;
       self->rw_wrap = SAME_WRAP;
     }
     if (read_pos < 0) {
       // Buffer wrap around. Restart read position and wrap indicator.
-      read_pos += (int) self->element_count;
+      read_pos += (int)self->element_count;
       self->rw_wrap = DIFF_WRAP;
     }
 
-    self->read_pos = (size_t) read_pos;
+    self->read_pos = (size_t)read_pos;
 
     return element_count;
   }

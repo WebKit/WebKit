@@ -130,6 +130,7 @@ rtc_library("rtc_event_audio") {
 }
 
 rtc_library("rtc_event_begin_end") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_begin_log.cc",
     "rtc_event_log/events/rtc_event_begin_log.h",
@@ -472,6 +473,7 @@ rtc_library("fake_rtc_event_log") {
     "../api:libjingle_logging_api",
     "../api/environment",
     "../api/rtc_event_log",
+    "../api/rtc_event_log:rtc_event_log_factory_interface",
     "../rtc_base:macromagic",
     "../rtc_base/synchronization:mutex",
     "//third_party/abseil-cpp/absl/base:nullability",
@@ -545,6 +547,11 @@ if (rtc_enable_protobuf) {
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
+
+    # Normally public deps should not be used, but the proto must be included
+    # by all targets depending on rtc_event_log_parser.
+    public_deps +=  # no-presubmit-check TODO(webrtc:8603)
+        [ ":rtc_event_log_proto" ]
   }
 
   if (rtc_include_tests) {

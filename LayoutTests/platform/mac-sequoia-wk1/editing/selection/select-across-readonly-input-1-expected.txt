@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 744x36
+          text run at (0,0) width 744: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a"
+          text run at (0,18) width 79: "mouse drag."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 745x36
+          text run at (0,0) width 745: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"world\". Selection should only extend"
+          text run at (0,18) width 158: "inside the input element."
+      RenderBlock {DIV} at (0,104) size 784x24
+        RenderTextControl {INPUT} at (0,0) size 59x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderText {#text} at (58,4) size 5x18
+          text run at (58,4) width 5: " "
+        RenderInline {SPAN} at (62,4) size 39x18
+          RenderText {#text} at (62,4) size 39x18
+            text run at (62,4) width 39: "world"
+        RenderText {#text} at (0,0) size 0x0
+layer at (11,115) size 53x18
+  RenderBlock {DIV} at (3,3) size 53x18
+    RenderText {#text} at (0,0) size 35x18
+      text run at (0,0) width 35: "hello"
+selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body

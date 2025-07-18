@@ -831,6 +831,9 @@ VisualViewport& LocalDOMWindow::visualViewport()
 
 bool LocalDOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
 {
+    if (world.nodeInfoEnabled())
+        return true;
+
     RefPtr frame = this->frame();
     if (!frame)
         return false;
@@ -2687,7 +2690,7 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
     RefPtr mainFrameDocumentLoader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
     if (firstFrameDocument && page && mainFrameDocumentLoader) {
         auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, firstFrameDocument->completeURL(urlString), ContentExtensions::ResourceType::Popup, *mainFrameDocumentLoader);
-        if (results.summary.blockedLoad)
+        if (results.shouldBlock())
             return RefPtr<WindowProxy> { nullptr };
     }
 #endif

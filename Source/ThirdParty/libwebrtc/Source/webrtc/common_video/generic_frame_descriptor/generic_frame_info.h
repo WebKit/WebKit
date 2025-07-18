@@ -12,7 +12,7 @@
 #define COMMON_VIDEO_GENERIC_FRAME_DESCRIPTOR_GENERIC_FRAME_INFO_H_
 
 #include <bitset>
-#include <initializer_list>
+#include <cstdint>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"

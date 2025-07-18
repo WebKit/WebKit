@@ -40,7 +40,7 @@ struct ScopedName;
 
 // A ScopedName that has been resolved to determine which specific scope it belongs to.
 class ResolvedScopedName {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResolvedScopedName);
 public:
     ResolvedScopedName(AtomString, ScopeIdentifier);
 

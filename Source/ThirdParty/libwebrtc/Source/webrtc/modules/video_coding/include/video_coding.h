@@ -11,10 +11,12 @@
 #ifndef MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
 #define MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "api/environment/environment.h"
-#include "api/video/video_frame.h"
+#include "api/rtp_headers.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/include/video_coding_defines.h"

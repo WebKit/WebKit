@@ -111,14 +111,12 @@ public:
 
     RetainPtr<id> toID() const;
 
-    static bool isValidCNContactType(NSInteger);
-
 private:
     friend struct IPC::ArgumentCoder<CoreIPCCNContact, void>;
     CoreIPCCNContact() = default;
 
     String m_identifier;
-    NSInteger m_contactType { 0 };
+    bool m_personContactType { false };
 
     String m_namePrefix;
     String m_givenName;

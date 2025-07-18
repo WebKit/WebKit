@@ -223,17 +223,17 @@ private:
     String m_inspectorIdentifier;
     String m_userAgent;
 
-    mutable RefPtr<WorkerLocation> m_location;
-    mutable RefPtr<WorkerNavigator> m_navigator;
+    const RefPtr<WorkerLocation> m_location;
+    const RefPtr<WorkerNavigator> m_navigator;
 
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
 
     const Ref<SecurityOrigin> m_topOrigin;
 
-    RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    const RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
 
-    RefPtr<SocketProvider> m_socketProvider;
+    const RefPtr<SocketProvider> m_socketProvider;
 
     RefPtr<Performance> m_performance;
     const Ref<ReportingScope> m_reportingScope;
@@ -242,16 +242,16 @@ private:
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
     MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
 
-    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
-    std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
-    RefPtr<WorkerSWClientConnection> m_swClientConnection;
+    const RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    const std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
+    const RefPtr<WorkerSWClientConnection> m_swClientConnection;
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     std::unique_ptr<WorkerClient> m_workerClient;
-    RefPtr<CSSFontSelector> m_cssFontSelector;
+    const RefPtr<CSSFontSelector> m_cssFontSelector;
     SettingsValues m_settingsValues;
     WorkerType m_workerType;
     FetchOptions::Credentials m_credentials;
-    RefPtr<WorkerStorageConnection> m_storageConnection;
+    const RefPtr<WorkerStorageConnection> m_storageConnection;
     RefPtr<WorkerFileSystemStorageConnection> m_fileSystemStorageConnection;
 };
 

@@ -26,7 +26,7 @@ namespace dcsctp {
 constexpr int OutOfResourceErrorCause::kType;
 
 std::optional<OutOfResourceErrorCause> OutOfResourceErrorCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

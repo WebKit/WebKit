@@ -109,12 +109,12 @@ CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID,
 
 CoreAudioCaptureSourceFactory::CoreAudioCaptureSourceFactory()
 {
-    AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
+    AudioSession::singleton().addInterruptionObserver(*this);
 }
 
 CoreAudioCaptureSourceFactory::~CoreAudioCaptureSourceFactory()
 {
-    AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
+    AudioSession::singleton().removeInterruptionObserver(*this);
 }
 
 void CoreAudioCaptureSourceFactory::beginInterruption()

@@ -29,7 +29,7 @@ FAIL <select multiple=""><option>1 - border-bottom-color assert_equals: expected
 FAIL <select multiple=""><option>1 - border-left-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 255, 255)"
 FAIL <select multiple=""><option>1 - align-items assert_equals: expected "normal" but got "center"
 FAIL <select multiple=""><option>1 - white-space assert_equals: expected "normal" but got "pre"
-FAIL <select multiple=""><option>1 - color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <select multiple=""><option>1 - color
 FAIL <select multiple=""><option>1 - background-color assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(233, 233, 234)"
 FAIL <select multiple=""><option>1 - cursor assert_equals: expected "auto" but got "default"
 PASS <select multiple=""><option>1 - font-style
@@ -70,13 +70,13 @@ PASS <option>1 (in <select multiple="">) - border-top-style
 PASS <option>1 (in <select multiple="">) - border-right-style
 PASS <option>1 (in <select multiple="">) - border-bottom-style
 PASS <option>1 (in <select multiple="">) - border-left-style
-FAIL <option>1 (in <select multiple="">) - border-top-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>1 (in <select multiple="">) - border-right-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>1 (in <select multiple="">) - border-bottom-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>1 (in <select multiple="">) - border-left-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <option>1 (in <select multiple="">) - border-top-color
+PASS <option>1 (in <select multiple="">) - border-right-color
+PASS <option>1 (in <select multiple="">) - border-bottom-color
+PASS <option>1 (in <select multiple="">) - border-left-color
 PASS <option>1 (in <select multiple="">) - align-items
 FAIL <option>1 (in <select multiple="">) - white-space assert_equals: expected "normal" but got "nowrap"
-FAIL <option>1 (in <select multiple="">) - color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <option>1 (in <select multiple="">) - color
 PASS <option>1 (in <select multiple="">) - background-color
 FAIL <option>1 (in <select multiple="">) - cursor assert_equals: expected "auto" but got "default"
 PASS <option>1 (in <select multiple="">) - font-style
@@ -118,13 +118,13 @@ PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-style
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-style
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-style
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-left-style
-FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-top-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-right-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-left-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-color
+PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-color
+PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-color
+PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-left-color
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - align-items
 FAIL <optgroup label="2"><option>3 (in <select multiple="">) - white-space assert_equals: expected "normal" but got "pre"
-FAIL <optgroup label="2"><option>3 (in <select multiple="">) - color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <optgroup label="2"><option>3 (in <select multiple="">) - color
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - background-color
 FAIL <optgroup label="2"><option>3 (in <select multiple="">) - cursor assert_equals: expected "auto" but got "default"
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - font-style
@@ -166,13 +166,13 @@ PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-top-style
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-right-style
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-bottom-style
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-left-style
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - border-top-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - border-right-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - border-bottom-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - border-left-color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-top-color
+PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-right-color
+PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-bottom-color
+PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-left-color
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - align-items
 FAIL <option>3 (in <select multiple=""><optgroup label="2">) - white-space assert_equals: expected "normal" but got "nowrap"
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - color assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 122, 255)"
+PASS <option>3 (in <select multiple=""><optgroup label="2">) - color
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - background-color
 FAIL <option>3 (in <select multiple=""><optgroup label="2">) - cursor assert_equals: expected "auto" but got "default"
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - font-style

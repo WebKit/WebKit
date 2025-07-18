@@ -24,6 +24,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonVM.h"
+#include "ContainerNodeInlines.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"

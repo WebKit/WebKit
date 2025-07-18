@@ -81,7 +81,7 @@ double ExponentialUpdate(TimeDelta window, TimeDelta interval) {
   return 1.0f - exp(interval / window * -1.0);
 }
 
-bool IsEnabled(const webrtc::FieldTrialsView& key_value_config,
+bool IsEnabled(const FieldTrialsView& key_value_config,
                absl::string_view name) {
   return absl::StartsWith(key_value_config.Lookup(name), "Enabled");
 }

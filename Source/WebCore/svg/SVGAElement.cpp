@@ -180,19 +180,19 @@ bool SVGAElement::isMouseFocusable() const
     return SVGElement::isMouseFocusable();
 }
 
-bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool SVGAElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (isFocusable() && Element::supportsFocus())
-        return SVGElement::isKeyboardFocusable(event);
+        return SVGElement::isKeyboardFocusable(focusEventData);
 
     RefPtr frame = document().frame();
     if (!frame)
         return false;
 
-    if (isLink() && !frame->eventHandler().tabsToLinks(event))
+    if (isLink() && !frame->eventHandler().tabsToLinks(focusEventData))
         return false;
 
-    return SVGElement::isKeyboardFocusable(event);
+    return SVGElement::isKeyboardFocusable(focusEventData);
 }
 
 bool SVGAElement::canStartSelection() const

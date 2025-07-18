@@ -193,6 +193,9 @@ struct RtpConfig {
   uint32_t GetMediaSsrcAssociatedWithRtxSsrc(uint32_t rtx_ssrc) const;
   uint32_t GetMediaSsrcAssociatedWithFlexfecSsrc(uint32_t flexfec_ssrc) const;
   std::optional<std::string> GetRidForSsrc(uint32_t ssrc) const;
+
+  // Returns send config for RTP stream by provided simulcast `index`.
+  RtpStreamConfig GetStreamConfig(size_t index) const;
 };
 }  // namespace webrtc
 #endif  // CALL_RTP_CONFIG_H_

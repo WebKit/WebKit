@@ -10,10 +10,13 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/psfb.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {

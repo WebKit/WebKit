@@ -503,10 +503,10 @@ bool ValidateFragmentShaderColorBufferTypeMatch(const Context *context)
     const ProgramExecutable *executable = context->getState().getLinkedProgramExecutable(context);
     const Framebuffer *framebuffer      = context->getState().getDrawFramebuffer();
 
-    return ValidateComponentTypeMasks(executable->getFragmentOutputsTypeMask().to_ulong(),
-                                      framebuffer->getDrawBufferTypeMask().to_ulong(),
-                                      executable->getActiveOutputVariablesMask().to_ulong(),
-                                      framebuffer->getDrawBufferMask().to_ulong());
+    return ValidateComponentTypeMasks(executable->getFragmentOutputsTypeMask().bits(),
+                                      framebuffer->getDrawBufferTypeMask().bits(),
+                                      executable->getActiveOutputVariablesMask().bits(),
+                                      framebuffer->getDrawBufferMask().bits());
 }
 
 bool ValidateVertexShaderAttributeTypeMatch(const Context *context)
@@ -520,17 +520,16 @@ bool ValidateVertexShaderAttributeTypeMatch(const Context *context)
         return false;
     }
 
-    unsigned long stateCurrentValuesTypeBits = glState.getCurrentValuesTypeMask().to_ulong();
-    unsigned long vaoAttribTypeBits          = vao->getAttributesTypeMask().to_ulong();
-    unsigned long vaoAttribEnabledMask       = vao->getAttributesMask().to_ulong();
+    uint64_t stateCurrentValuesTypeBits = glState.getCurrentValuesTypeMask().bits();
+    uint64_t vaoAttribTypeBits          = vao->getAttributesTypeMask().bits();
+    uint64_t vaoAttribEnabledMask       = vao->getAttributesMask().bits();
 
     vaoAttribEnabledMask |= vaoAttribEnabledMask << kMaxComponentTypeMaskIndex;
     vaoAttribTypeBits = (vaoAttribEnabledMask & vaoAttribTypeBits);
     vaoAttribTypeBits |= (~vaoAttribEnabledMask & stateCurrentValuesTypeBits);
 
-    return ValidateComponentTypeMasks(executable->getAttributesTypeMask().to_ulong(),
-                                      vaoAttribTypeBits, executable->getAttributesMask().to_ulong(),
-                                      0xFFFF);
+    return ValidateComponentTypeMasks(executable->getAttributesTypeMask().bits(), vaoAttribTypeBits,
+                                      executable->getAttributesMask().bits(), 0xFFFF);
 }
 
 bool IsCompatibleDrawModeWithGeometryShader(PrimitiveMode drawMode,
@@ -3237,6 +3236,7 @@ bool ValidateCopyImageSubDataTargetRegion(const Context *context,
                                           GLint offsetZ,
                                           GLsizei width,
                                           GLsizei height,
+                                          GLsizei depth,
                                           GLsizei *samples)
 {
     // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the boundaries
@@ -3283,10 +3283,16 @@ bool ValidateCopyImageSubDataTargetRegion(const Context *context,
             texture->getWidth(PackParam<TextureTarget>(textureTargetToUse), level));
         const GLsizei textureHeight = static_cast<GLsizei>(
             texture->getHeight(PackParam<TextureTarget>(textureTargetToUse), level));
+        const GLsizei textureDepth =
+            target == GL_TEXTURE_CUBE_MAP
+                ? 6
+                : static_cast<GLsizei>(
+                      texture->getDepth(PackParam<TextureTarget>(textureTargetToUse), level));
 
         // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the
         // boundaries of the corresponding image object
-        if ((textureWidth - offsetX < width) || (textureHeight - offsetY < height))
+        if ((textureWidth - offsetX < width) || (textureHeight - offsetY < height) ||
+            (textureDepth - offsetZ < depth))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kSourceTextureTooSmall);
             return false;
@@ -3301,16 +3307,44 @@ bool ValidateCopyImageSubDataTargetRegion(const Context *context,
 
 bool ValidateCompressedRegion(const Context *context,
                               angle::EntryPoint entryPoint,
+                              const gl::Texture &Texture,
+                              GLenum textureTarget,
+                              const GLint textureLevel,
                               const InternalFormat &formatInfo,
-                              GLsizei width,
-                              GLsizei height)
+                              const GLint offsetX,
+                              const GLint offsetY,
+                              const GLint offsetZ,
+                              const GLsizei width,
+                              const GLsizei height,
+                              const GLsizei depth)
 {
     ASSERT(formatInfo.compressed);
 
+    bool subregionAlignedWithCompressedBlock = false;
+    if (textureTarget == GL_TEXTURE_CUBE_MAP)
+    {
+        // Use GL_TEXTURE_CUBE_MAP_POSITIVE_X to properly gather the textureWidth/textureHeight
+        textureTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+    }
+    const gl::TextureTarget textureTargetPacked = gl::PackParam<gl::TextureTarget>(textureTarget);
+    ASSERT(textureTargetPacked != gl::TextureTarget::InvalidEnum);
+
+    const gl::Extents &textureExtents   = Texture.getExtents(textureTargetPacked, textureLevel);
+    subregionAlignedWithCompressedBlock = ((offsetX % formatInfo.compressedBlockWidth) == 0) &&
+                                          ((offsetX + width == textureExtents.width) ||
+                                           (width % formatInfo.compressedBlockWidth == 0));
+    subregionAlignedWithCompressedBlock = subregionAlignedWithCompressedBlock &&
+                                          ((offsetY % formatInfo.compressedBlockHeight) == 0) &&
+                                          ((offsetY + height == textureExtents.height) ||
+                                           (height % formatInfo.compressedBlockHeight == 0));
+    subregionAlignedWithCompressedBlock = subregionAlignedWithCompressedBlock &&
+                                          ((offsetZ % formatInfo.compressedBlockDepth) == 0) &&
+                                          ((offsetZ + depth == textureExtents.depth) ||
+                                           (depth % formatInfo.compressedBlockDepth == 0));
+
     // INVALID_VALUE is generated if the image format is compressed and the dimensions of the
     // subregion fail to meet the alignment constraints of the format.
-    if ((width % formatInfo.compressedBlockWidth != 0) ||
-        (height % formatInfo.compressedBlockHeight != 0))
+    if (!subregionAlignedWithCompressedBlock)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInvalidCompressedRegionSize);
         return false;
@@ -3740,6 +3774,7 @@ bool ValidateCopyImageSubDataBase(const Context *context,
 
     GLsizei dstWidth   = srcWidth;
     GLsizei dstHeight  = srcHeight;
+    GLsizei dstDepth   = srcDepth;
     GLsizei srcSamples = 1;
     GLsizei dstSamples = 1;
 
@@ -3753,7 +3788,8 @@ bool ValidateCopyImageSubDataBase(const Context *context,
     }
 
     if (!ValidateCopyImageSubDataTargetRegion(context, entryPoint, srcName, srcTarget, srcLevel,
-                                              srcX, srcY, srcZ, srcWidth, srcHeight, &srcSamples))
+                                              srcX, srcY, srcZ, srcWidth, srcHeight, srcDepth,
+                                              &srcSamples))
     {
         return false;
     }
@@ -3779,32 +3815,24 @@ bool ValidateCopyImageSubDataBase(const Context *context,
     }
 
     if (!ValidateCopyImageSubDataTargetRegion(context, entryPoint, dstName, dstTarget, dstLevel,
-                                              dstX, dstY, dstZ, dstWidth, dstHeight, &dstSamples))
+                                              dstX, dstY, dstZ, dstWidth, dstHeight, dstDepth,
+                                              &dstSamples))
     {
         return false;
     }
 
-    bool fillsEntireMip               = false;
+    gl::Texture *srcTexture           = context->getTexture({srcName});
+    if (srcFormatInfo->compressed &&
+        !ValidateCompressedRegion(context, entryPoint, *srcTexture, srcTarget, srcLevel,
+                                  *srcFormatInfo, srcX, srcY, srcZ, srcWidth, srcHeight, srcDepth))
+    {
+        return false;
+    }
+
     gl::Texture *dstTexture           = context->getTexture({dstName});
-    gl::TextureTarget dstTargetPacked = gl::PackParam<gl::TextureTarget>(dstTarget);
-    // TODO(http://anglebug.com/42264179): Some targets (e.g., GL_TEXTURE_CUBE_MAP, GL_RENDERBUFFER)
-    // are unsupported when used with compressed formats due to gl::PackParam() returning
-    // TextureTarget::InvalidEnum.
-    if (dstTargetPacked != gl::TextureTarget::InvalidEnum)
-    {
-        const gl::Extents &dstExtents = dstTexture->getExtents(dstTargetPacked, dstLevel);
-        fillsEntireMip = dstX == 0 && dstY == 0 && dstZ == 0 && srcWidth == dstExtents.width &&
-                         srcHeight == dstExtents.height && srcDepth == dstExtents.depth;
-    }
-
-    if (srcFormatInfo->compressed && !fillsEntireMip &&
-        !ValidateCompressedRegion(context, entryPoint, *srcFormatInfo, srcWidth, srcHeight))
-    {
-        return false;
-    }
-
-    if (dstFormatInfo->compressed && !fillsEntireMip &&
-        !ValidateCompressedRegion(context, entryPoint, *dstFormatInfo, dstWidth, dstHeight))
+    if (dstFormatInfo->compressed &&
+        !ValidateCompressedRegion(context, entryPoint, *dstTexture, dstTarget, dstLevel,
+                                  *dstFormatInfo, dstX, dstY, dstZ, dstWidth, dstHeight, dstDepth))
     {
         return false;
     }
@@ -6106,6 +6134,24 @@ bool ValidateGetProgramivBase(const Context *context,
             }
             break;
         case GL_TESS_CONTROL_OUTPUT_VERTICES_EXT:
+            if (!context->getExtensions().tessellationShaderAny() &&
+                context->getClientVersion() < ES_3_2)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderEXTNotEnabled);
+                return false;
+            }
+            if (!programObject->isLinked())
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kProgramNotLinked);
+                return false;
+            }
+            if (!programObject->getExecutable().hasLinkedShaderStage(ShaderType::TessControl))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
+                                       kNoActiveTessellationControlShaderStage);
+                return false;
+            }
+            break;
         case GL_TESS_GEN_MODE_EXT:
         case GL_TESS_GEN_SPACING_EXT:
         case GL_TESS_GEN_VERTEX_ORDER_EXT:
@@ -6119,6 +6165,12 @@ bool ValidateGetProgramivBase(const Context *context,
             if (!programObject->isLinked())
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kProgramNotLinked);
+                return false;
+            }
+            if (!programObject->getExecutable().hasLinkedShaderStage(ShaderType::TessEvaluation))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
+                                       kNoActiveTessellationEvaluationShaderStage);
                 return false;
             }
             break;
@@ -8683,6 +8735,14 @@ bool ValidateGetTexLevelParameterBase(const Context *context,
         case GL_TEXTURE_WIDTH:
         case GL_TEXTURE_HEIGHT:
         case GL_TEXTURE_COMPRESSED:
+            break;
+
+        case GL_MEMORY_SIZE_ANGLE:
+            if (!context->getExtensions().memorySizeANGLE)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
+            }
             break;
 
         case GL_TEXTURE_DEPTH:

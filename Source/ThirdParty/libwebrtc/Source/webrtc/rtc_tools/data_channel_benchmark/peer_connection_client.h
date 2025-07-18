@@ -51,23 +51,22 @@ class PeerConnectionClient : public webrtc::PeerConnectionObserver {
   // Disconnect from the call.
   void Disconnect();
 
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection() {
+  scoped_refptr<webrtc::PeerConnectionInterface> peerConnection() {
     return peer_connection_;
   }
 
   // Set a callback to run when a DataChannel is created by the remote peer.
   void SetOnDataChannel(
-      std::function<void(rtc::scoped_refptr<webrtc::DataChannelInterface>)>
+      std::function<void(webrtc::scoped_refptr<webrtc::DataChannelInterface>)>
           callback);
 
-  std::vector<rtc::scoped_refptr<webrtc::DataChannelInterface>>&
-  dataChannels() {
+  std::vector<scoped_refptr<webrtc::DataChannelInterface>>& dataChannels() {
     return data_channels_;
   }
 
   // Creates a default PeerConnectionFactory object.
-  static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>
-  CreateDefaultFactory(rtc::Thread* signaling_thread);
+  static scoped_refptr<webrtc::PeerConnectionFactoryInterface>
+  CreateDefaultFactory(Thread* signaling_thread);
 
  private:
   void AddIceCandidate(
@@ -86,7 +85,7 @@ class PeerConnectionClient : public webrtc::PeerConnectionObserver {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " new state: " << new_state;
   }
   void OnDataChannel(
-      rtc::scoped_refptr<webrtc::DataChannelInterface> channel) override;
+      scoped_refptr<webrtc::DataChannelInterface> channel) override;
   void OnNegotiationNeededEvent(uint32_t event_id) override;
   void OnIceConnectionChange(
       webrtc::PeerConnectionInterface::IceConnectionState new_state) override;
@@ -97,10 +96,10 @@ class PeerConnectionClient : public webrtc::PeerConnectionObserver {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " receiving? " << receiving;
   }
 
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
-  std::function<void(rtc::scoped_refptr<webrtc::DataChannelInterface>)>
+  scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
+  std::function<void(webrtc::scoped_refptr<webrtc::DataChannelInterface>)>
       on_data_channel_callback_;
-  std::vector<rtc::scoped_refptr<webrtc::DataChannelInterface>> data_channels_;
+  std::vector<scoped_refptr<webrtc::DataChannelInterface>> data_channels_;
   webrtc::SignalingInterface* signaling_;
 };
 

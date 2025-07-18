@@ -47,6 +47,7 @@ rtc_library("frame_instrumentation_generator") {
     ":generic_mapping_functions",
     ":halton_frame_sampler",
     "../../api:scoped_refptr",
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:encoded_image",
     "../../api/video:video_frame",
     "../../api/video:video_frame_type",
@@ -56,8 +57,9 @@ rtc_library("frame_instrumentation_generator") {
     "../../modules/video_coding:video_coding_utility",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/synchronization:mutex",
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -72,6 +74,7 @@ rtc_library("frame_pair_corruption_score") {
     ":halton_frame_sampler",
     ":utils",
     "../../api:scoped_refptr",
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -84,6 +87,7 @@ rtc_library("generic_mapping_functions") {
     "generic_mapping_functions.h",
   ]
   deps = [
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
     "../../rtc_base:checks",
@@ -101,6 +105,7 @@ rtc_library("halton_frame_sampler") {
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../../rtc_base:safe_minmax",
   ]
 }
 
@@ -120,6 +125,7 @@ rtc_library("utils") {
   deps = [
     "../../api:scoped_refptr",
     "../../api/video:video_frame",
+    "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/strings:strings",
   ]
@@ -153,13 +159,15 @@ if (rtc_include_tests) {
     sources = [ "frame_instrumentation_generator_unittest.cc" ]
     deps = [
       ":frame_instrumentation_generator",
+      "../../api:make_ref_counted",
       "../../api:scoped_refptr",
+      "../../api/video:corruption_detection_filter_settings",
       "../../api/video:encoded_image",
       "../../api/video:video_frame",
       "../../api/video:video_frame_type",
       "../../common_video:frame_instrumentation_data",
+      "../../rtc_base:refcount",
       "../../test:test_support",
-      "//third_party/abseil-cpp/absl/types:variant",
     ]
   }
 

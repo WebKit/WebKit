@@ -10,32 +10,54 @@
 
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <memory>
 #include <optional>
-#include <set>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
-#include "api/field_trials_registry.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
-#include "rtc_base/logging.h"
+#include "modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "modules/rtp_rtcp/source/video_fec_generator.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/rate_limiter.h"
-#include "rtc_base/strings/string_builder.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
-#include "test/run_loop.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 using ::testing::AllOf;
@@ -103,13 +125,14 @@ class SendTransport : public Transport,
 
   void SetRtpRtcpModule(ModuleRtpRtcpImpl2* receiver) { receiver_ = receiver; }
   void SimulateNetworkDelay(TimeDelta delay) { delay_ = delay; }
-  bool SendRtp(rtc::ArrayView<const uint8_t> data,
-               const PacketOptions& options) override {
+  bool SendRtp(ArrayView<const uint8_t> data,
+               const PacketOptions& /* options */) override {
     EXPECT_TRUE(last_packet_.Parse(data));
     ++rtp_packets_sent_;
     return true;
   }
-  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
+  bool SendRtcp(ArrayView<const uint8_t> data,
+                const PacketOptions& /* options */) override {
     test::RtcpPacketParser parser;
     parser.Parse(data);
     last_nack_list_ = parser.nack()->packet_ids();
@@ -159,7 +182,8 @@ class SendTransport : public Transport,
 };
 
 class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
-                      public SendPacketObserver {
+                      public SendPacketObserver,
+                      public StreamDataCountersCallback {
  public:
   struct SentPacket {
     SentPacket(uint16_t packet_id, Timestamp capture_time, uint32_t ssrc)
@@ -200,6 +224,15 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     if (packet_id.has_value()) {
       last_sent_packet_.emplace(*packet_id, capture_time, ssrc);
     }
+  }
+
+  StreamDataCounters GetDataCounters(uint32_t ssrc) const override {
+    auto it = counters_by_ssrc.find(ssrc);
+    return it != counters_by_ssrc.end() ? it->second : StreamDataCounters();
+  }
+  void DataCountersUpdated(const StreamDataCounters& counters,
+                           uint32_t ssrc) override {
+    counters_by_ssrc[ssrc] = counters;
   }
 
   std::optional<SentPacket> last_sent_packet() const {
@@ -249,6 +282,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     config.need_rtp_packet_infos = true;
     config.non_sender_rtt_measurement = true;
     config.send_packet_observer = this;
+    config.rtp_stats_callback = this;
     config.fec_generator = fec_generator_;
     impl_ = std::make_unique<ModuleRtpRtcpImpl2>(env_, config);
     impl_->SetRemoteSSRC(is_sender_ ? kReceiverSsrc : kSenderSsrc);
@@ -257,6 +291,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
 
  private:
   std::map<uint32_t, RtcpPacketTypeCounter> counter_map_;
+  std::map<uint32_t, StreamDataCounters> counters_by_ssrc;
   std::optional<SentPacket> last_sent_packet_;
   VideoFecGenerator* fec_generator_ = nullptr;
   TimeDelta rtcp_report_interval_ = kDefaultReportInterval;
@@ -373,7 +408,7 @@ class RtpRtcpImpl2Test : public ::testing::Test {
     nack.SetSenderSsrc(sender ? kReceiverSsrc : kSenderSsrc);
     nack.SetMediaSsrc(sender ? kSenderSsrc : kReceiverSsrc);
     nack.SetPacketIds(list, kListLength);
-    rtc::Buffer packet = nack.Build();
+    Buffer packet = nack.Build();
     module->impl_->IncomingRtcpPacket(packet);
   }
 };

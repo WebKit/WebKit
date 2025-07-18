@@ -27,8 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-immediate-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-resolve.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-fragment-does-not-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-in-precommit-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-push.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-repeated.html

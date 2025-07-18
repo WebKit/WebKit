@@ -117,7 +117,7 @@ using ObjectValue = Variant<
 >;
 
 class CoreIPCNSCFObject {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CoreIPCNSCFObject);
 public:
     CoreIPCNSCFObject(id);
     CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);

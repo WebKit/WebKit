@@ -154,7 +154,7 @@ class AudioParameters {
   }
   std::string ToString() const {
     char ss_buf[1024];
-    rtc::SimpleStringBuilder ss(ss_buf);
+    SimpleStringBuilder ss(ss_buf);
     ss << "AudioParameters: ";
     ss << "sample_rate=" << sample_rate() << ", channels=" << channels();
     ss << ", frames_per_buffer=" << frames_per_buffer();

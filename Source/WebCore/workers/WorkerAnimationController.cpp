@@ -90,7 +90,7 @@ WorkerAnimationController::CallbackId WorkerAnimationController::requestAnimatio
     callback->m_id = callbackId;
     m_animationCallbacks.append(WTFMove(callback));
 
-    InspectorInstrumentation::didRequestAnimationFrame(m_workerGlobalScope, callbackId);
+    InspectorInstrumentation::didRequestAnimationFrame(m_workerGlobalScope.get(), callbackId);
 
     scheduleAnimation();
 
@@ -104,7 +104,7 @@ void WorkerAnimationController::cancelAnimationFrame(CallbackId callbackId)
         if (callback->m_id == callbackId) {
             callback->m_firedOrCancelled = true;
             m_animationCallbacks.removeAt(i);
-            InspectorInstrumentation::didCancelAnimationFrame(m_workerGlobalScope, callbackId);
+            InspectorInstrumentation::didCancelAnimationFrame(m_workerGlobalScope.get(), callbackId);
             return;
         }
     }
@@ -116,14 +116,14 @@ void WorkerAnimationController::scheduleAnimation()
         return;
 
     Seconds animationInterval = RequestAnimationFrameCallback::fullSpeedAnimationInterval;
-    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope.performance().now() - m_lastAnimationFrameTimestamp), 0_s);
+    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope->performance().now() - m_lastAnimationFrameTimestamp), 0_s);
 
     m_animationTimer.startOneShot(scheduleDelay);
 }
 
 void WorkerAnimationController::animationTimerFired()
 {
-    m_lastAnimationFrameTimestamp = m_workerGlobalScope.performance().now();
+    m_lastAnimationFrameTimestamp = m_workerGlobalScope->performance().now();
     serviceRequestAnimationFrameCallbacks(m_lastAnimationFrameTimestamp);
 }
 
@@ -140,9 +140,9 @@ void WorkerAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighRes
         if (callback->m_firedOrCancelled)
             continue;
         callback->m_firedOrCancelled = true;
-        InspectorInstrumentation::willFireAnimationFrame(m_workerGlobalScope, callback->m_id);
+        InspectorInstrumentation::willFireAnimationFrame(m_workerGlobalScope.get(), callback->m_id);
         callback->invoke(timestamp);
-        InspectorInstrumentation::didFireAnimationFrame(m_workerGlobalScope, callback->m_id);
+        InspectorInstrumentation::didFireAnimationFrame(m_workerGlobalScope.get(), callback->m_id);
     }
 
     // Remove any callbacks we fired from the list of pending callbacks.

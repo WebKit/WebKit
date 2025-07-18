@@ -50,7 +50,9 @@ bool IsValid(Timestamp timestamp) {
   return timestamp.IsFinite();
 }
 
-double ToKiloBytes(DataSize datasize) { return datasize.bytes() / 1000.0; }
+double ToKiloBytes(DataSize datasize) {
+  return datasize.bytes() / 1000.0;
+}
 
 double GetLossProbability(double inherent_loss,
                           DataRate loss_limited_bandwidth,
@@ -185,7 +187,7 @@ void LossBasedBweV2::SetMinMaxBitrate(DataRate min_bitrate,
 }
 
 void LossBasedBweV2::UpdateBandwidthEstimate(
-    rtc::ArrayView<const PacketResult> packet_results,
+    ArrayView<const PacketResult> packet_results,
     DataRate delay_based_estimate,
     bool in_alr) {
   delay_based_estimate_ = delay_based_estimate;
@@ -208,7 +210,7 @@ void LossBasedBweV2::UpdateBandwidthEstimate(
   if (!IsValid(current_best_estimate_.loss_limited_bandwidth)) {
     if (!IsValid(delay_based_estimate)) {
       RTC_LOG(LS_WARNING) << "The delay based estimate must be finite: "
-                        << ToString(delay_based_estimate);
+                          << ToString(delay_based_estimate);
       return;
     }
     current_best_estimate_.loss_limited_bandwidth = delay_based_estimate;
@@ -297,10 +299,9 @@ void LossBasedBweV2::UpdateBandwidthEstimate(
   }
   if (config_->bound_best_candidate &&
       bounded_bandwidth_estimate < best_candidate.loss_limited_bandwidth) {
-    RTC_LOG(LS_INFO) << "Resetting loss based BWE to "
-                     << bounded_bandwidth_estimate.kbps()
-                     << "due to loss. Avg loss rate: "
-                     << average_reported_loss_ratio_;
+    // If network is lossy, cap the best estimate by the instant upper bound,
+    // e.g. 450kbps if loss rate is 50%.
+    // Otherwise, cap the estimate by the delay-based estimate or max_bitrate.
     current_best_estimate_.loss_limited_bandwidth = bounded_bandwidth_estimate;
     current_best_estimate_.inherent_loss = 0;
   } else {
@@ -308,7 +309,7 @@ void LossBasedBweV2::UpdateBandwidthEstimate(
     if (config_->lower_bound_by_acked_rate_factor > 0.0) {
       current_best_estimate_.loss_limited_bandwidth =
           std::max(current_best_estimate_.loss_limited_bandwidth,
-                  GetInstantLowerBound());
+                   GetInstantLowerBound());
     }
   }
 
@@ -347,8 +348,7 @@ void LossBasedBweV2::UpdateBandwidthEstimate(
              bounded_bandwidth_estimate < max_bitrate_) {
     if (loss_based_result_.state != LossBasedState::kDecreasing &&
         config_->hold_duration_factor > 0) {
-      RTC_LOG(LS_INFO) << this << " "
-                       << "Switch to HOLD. Bounded BWE: "
+      RTC_LOG(LS_INFO) << this << " " << "Switch to HOLD. Bounded BWE: "
                        << bounded_bandwidth_estimate.kbps()
                        << ", duration: " << last_hold_info_.duration.ms();
       last_hold_info_ = {
@@ -385,7 +385,8 @@ void LossBasedBweV2::UpdateBandwidthEstimate(
 }
 
 bool LossBasedBweV2::IsEstimateIncreasingWhenLossLimited(
-    DataRate old_estimate, DataRate new_estimate) {
+    DataRate old_estimate,
+    DataRate new_estimate) {
   return (old_estimate < new_estimate ||
           (old_estimate == new_estimate &&
            (loss_based_result_.state == LossBasedState::kIncreasing ||
@@ -400,9 +401,9 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
     const FieldTrialsView* key_value_config) {
   FieldTrialParameter<bool> enabled("Enabled", true);
   FieldTrialParameter<double> bandwidth_rampup_upper_bound_factor(
-      "BwRampupUpperBoundFactor", 1000000.0);
+      "BwRampupUpperBoundFactor", 1.5);
   FieldTrialParameter<double> bandwidth_rampup_upper_bound_factor_in_hold(
-      "BwRampupUpperBoundInHoldFactor", 1000000.0);
+      "BwRampupUpperBoundInHoldFactor", 1.2);
   FieldTrialParameter<double> bandwidth_rampup_hold_threshold(
       "BwRampupUpperBoundHoldThreshold", 1.3);
   FieldTrialParameter<double> rampup_acceleration_max_factor(
@@ -418,11 +419,11 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
   FieldTrialParameter<double> inherent_loss_lower_bound(
       "InherentLossLowerBound", 1.0e-3);
   FieldTrialParameter<double> loss_threshold_of_high_bandwidth_preference(
-      "LossThresholdOfHighBandwidthPreference", 0.15);
+      "LossThresholdOfHighBandwidthPreference", 0.2);
   FieldTrialParameter<double> bandwidth_preference_smoothing_factor(
       "BandwidthPreferenceSmoothingFactor", 0.002);
   FieldTrialParameter<DataRate> inherent_loss_upper_bound_bandwidth_balance(
-      "InherentLossUpperBoundBwBalance", DataRate::KilobitsPerSec(75.0));
+      "InherentLossUpperBoundBwBalance", DataRate::KilobitsPerSec(100.0));
   FieldTrialParameter<double> inherent_loss_upper_bound_offset(
       "InherentLossUpperBoundOffset", 0.05);
   FieldTrialParameter<double> initial_inherent_loss_estimate(
@@ -437,13 +438,13 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
       "UpperBoundCandidateInAlr", false);
   FieldTrialParameter<TimeDelta> observation_duration_lower_bound(
       "ObservationDurationLowerBound", TimeDelta::Millis(250));
-  FieldTrialParameter<int> observation_window_size("ObservationWindowSize", 20);
+  FieldTrialParameter<int> observation_window_size("ObservationWindowSize", 15);
   FieldTrialParameter<double> sending_rate_smoothing_factor(
       "SendingRateSmoothingFactor", 0.0);
   FieldTrialParameter<double> instant_upper_bound_temporal_weight_factor(
       "InstantUpperBoundTemporalWeightFactor", 0.9);
   FieldTrialParameter<DataRate> instant_upper_bound_bandwidth_balance(
-      "InstantUpperBoundBwBalance", DataRate::KilobitsPerSec(75.0));
+      "InstantUpperBoundBwBalance", DataRate::KilobitsPerSec(100.0));
   FieldTrialParameter<double> instant_upper_bound_loss_offset(
       "InstantUpperBoundLossOffset", 0.05);
   FieldTrialParameter<double> temporal_weight_factor("TemporalWeightFactor",
@@ -458,17 +459,15 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
           "NotIncreaseIfInherentLossLessThanAverageLoss", true);
   FieldTrialParameter<bool> not_use_acked_rate_in_alr("NotUseAckedRateInAlr",
                                                       true);
-  FieldTrialParameter<bool> use_in_start_phase("UseInStartPhase", false);
+  FieldTrialParameter<bool> use_in_start_phase("UseInStartPhase", true);
   FieldTrialParameter<int> min_num_observations("MinNumObservations", 3);
   FieldTrialParameter<double> lower_bound_by_acked_rate_factor(
-      "LowerBoundByAckedRateFactor", 0.0);
-  FieldTrialParameter<double> hold_duration_factor("HoldDurationFactor", 0.0);
-  FieldTrialParameter<bool> use_byte_loss_rate("UseByteLossRate", false);
+      "LowerBoundByAckedRateFactor", 1.0);
+  FieldTrialParameter<double> hold_duration_factor("HoldDurationFactor", 2.0);
+  FieldTrialParameter<bool> use_byte_loss_rate("UseByteLossRate", true);
   FieldTrialParameter<TimeDelta> padding_duration("PaddingDuration",
-                                                  TimeDelta::Zero());
-  FieldTrialParameter<bool> bound_best_candidate("BoundBestCandidate", false);
-  FieldTrialParameter<bool> pace_at_loss_based_estimate(
-      "PaceAtLossBasedEstimate", false);
+                                                  TimeDelta::Seconds(2));
+  FieldTrialParameter<bool> bound_best_candidate("BoundBestCandidate", true);
   FieldTrialParameter<double> median_sending_rate_factor(
       "MedianSendingRateFactor", 2.0);
   if (key_value_config) {
@@ -511,7 +510,6 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
                      &use_byte_loss_rate,
                      &padding_duration,
                      &bound_best_candidate,
-                     &pace_at_loss_based_estimate,
                      &median_sending_rate_factor},
                     key_value_config->Lookup("WebRTC-Bwe-LossBasedBweV2"));
   }
@@ -577,7 +575,6 @@ std::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
   config.use_byte_loss_rate = use_byte_loss_rate.Get();
   config.padding_duration = padding_duration.Get();
   config.bound_best_candidate = bound_best_candidate.Get();
-  config.pace_at_loss_based_estimate = pace_at_loss_based_estimate.Get();
   config.median_sending_rate_factor = median_sending_rate_factor.Get();
   return config;
 }
@@ -856,6 +853,12 @@ double LossBasedBweV2::CalculateAverageReportedByteLossRatio() const {
     // the loss rate might not be due to a spike.
     return lost_bytes / total_bytes;
   }
+
+  if (total_bytes == max_bytes_received + min_bytes_received) {
+    // It could happen if the observation window was 2.
+    return lost_bytes / total_bytes;
+  }
+
   return (lost_bytes - min_lost_bytes - max_lost_bytes) /
          (total_bytes - max_bytes_received - min_bytes_received);
 }
@@ -1138,7 +1141,7 @@ void LossBasedBweV2::NewtonsMethodUpdate(
 }
 
 bool LossBasedBweV2::PushBackObservation(
-    rtc::ArrayView<const PacketResult> packet_results) {
+    ArrayView<const PacketResult> packet_results) {
   if (packet_results.empty()) {
     return false;
   }
@@ -1212,11 +1215,6 @@ bool LossBasedBweV2::CanKeepIncreasingState(DataRate estimate) const {
   return last_padding_info_.padding_timestamp + config_->padding_duration >=
              last_send_time_most_recent_observation_ ||
          last_padding_info_.padding_rate < estimate;
-}
-
-bool LossBasedBweV2::PaceAtLossBasedEstimate() const {
-  return config_->pace_at_loss_based_estimate &&
-         loss_based_result_.state != LossBasedState::kDelayBasedEstimate;
 }
 
 DataRate LossBasedBweV2::GetMedianSendingRate() const {

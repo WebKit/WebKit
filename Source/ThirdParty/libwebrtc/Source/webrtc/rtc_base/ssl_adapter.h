@@ -11,17 +11,21 @@
 #ifndef RTC_BASE_SSL_ADAPTER_H_
 #define RTC_BASE_SSL_ADAPTER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/async_socket.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 class SSLAdapter;
 
@@ -119,6 +123,17 @@ RTC_EXPORT bool InitializeSSL();
 // Call to cleanup additional threads, and also the main thread.
 RTC_EXPORT bool CleanupSSL();
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::CleanupSSL;
+using ::webrtc::InitializeSSL;
+using ::webrtc::SSLAdapter;
+using ::webrtc::SSLAdapterFactory;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SSL_ADAPTER_H_

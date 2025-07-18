@@ -764,7 +764,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
     auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
     jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), scratchJSR.payloadGPR());
     hasExecutable.link(&jit);
-    jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)), scratchJSR.payloadGPR());
+    jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeSpecializationKind::CodeForCall)), scratchJSR.payloadGPR());
     JIT_COMMENT(jit, "Slow path jump");
     jit.farJump(scratchJSR.payloadGPR(), JSEntryPtrTag);
 

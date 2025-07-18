@@ -26,12 +26,15 @@
 #include "config.h"
 #include "CSSFontStyleRangeValue.h"
 
+#include <wtf/PointerComparison.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 String CSSFontStyleRangeValue::customCSSText(const CSS::SerializationContext& context) const
 {
+    RefPtr obliqueValues = this->obliqueValues;
+    Ref fontStyleValue = this->fontStyleValue;
     if (!obliqueValues)
         return fontStyleValue->cssText(context);
 

@@ -9,7 +9,7 @@ function make_test_url(type, policy, expected) {
 function test_image_referrer_policy(descriptor) {
   var style = document.createElement("style");
   style.innerHTML = `
-  .test { 
+  .test {
     width: 200px;
     height: 200px;
     background-color: blue;

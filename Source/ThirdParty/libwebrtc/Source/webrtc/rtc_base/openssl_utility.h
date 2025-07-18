@@ -17,7 +17,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 // The openssl namespace holds static helper methods. All methods related
 // to OpenSSL that are commonly used and don't require global state should be
 // placed here.
@@ -55,6 +55,28 @@ CRYPTO_BUFFER_POOL* GetBufferPool();
 #endif
 
 }  // namespace openssl
+}  // namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+namespace openssl {
+
+#ifndef WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
+using ::webrtc::openssl::LoadBuiltinSSLRootCertificates;
+#endif
+
+using ::webrtc::openssl::LogSSLErrors;
+using ::webrtc::openssl::VerifyPeerCertMatchesHost;
+
+#ifdef OPENSSL_IS_BORINGSSL
+using ::webrtc::openssl::GetBufferPool;
+using ::webrtc::openssl::ParseCertificate;
+#endif
+
+}  // namespace openssl
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_UTILITY_H_

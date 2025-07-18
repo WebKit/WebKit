@@ -235,7 +235,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     formData->setIdentifier(generateFormDataIdentifier());
 
-    auto formState = FormState::create(form, WTFMove(formValues), document, trigger);
+    auto formState = FormState::create(form, WTFMove(formValues), document, trigger, submitter.get());
 
     return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, form.effectiveTarget(event, submitter.get()), encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
 }

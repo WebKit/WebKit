@@ -2882,15 +2882,19 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
                     b->yy_buf_size += b->yy_buf_size / 8;
                 }
                 else
+                {
                     b->yy_buf_size *= 2;
+                }
 
                 b->yy_ch_buf = (char *)
                     /* Include room in for 2 EOB chars. */
                     yyrealloc((void *)b->yy_ch_buf, (yy_size_t)(b->yy_buf_size + 2), yyscanner);
             }
             else
+            {
                 /* Can't grow it, we don't own it. */
                 b->yy_ch_buf = NULL;
+            }
 
             if (!b->yy_ch_buf)
             {
@@ -2928,10 +2932,12 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
             ret_val                                    = EOB_ACT_LAST_MATCH;
             YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_EOF_PENDING;
         }
-        }
+    }
 
     else
+    {
         ret_val = EOB_ACT_CONTINUE_SCAN;
+    }
 
     if ((yyg->yy_n_chars + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size)
     {
@@ -3314,7 +3320,9 @@ void yypush_buffer_state(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner)
 {
     struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
     if (new_buffer == NULL)
+    {
         return;
+    }
 
     yyensure_buffer_stack(yyscanner);
 
@@ -3329,7 +3337,9 @@ void yypush_buffer_state(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner)
 
     /* Only push if top exists. Otherwise, replace top. */
     if (YY_CURRENT_BUFFER)
+    {
         yyg->yy_buffer_stack_top++;
+    }
     YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
     /* copied from yy_switch_to_buffer. */
@@ -3345,12 +3355,16 @@ void yypop_buffer_state(yyscan_t yyscanner)
 {
     struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
     if (!YY_CURRENT_BUFFER)
+    {
         return;
+    }
 
     yy_delete_buffer(YY_CURRENT_BUFFER, yyscanner);
     YY_CURRENT_BUFFER_LVALUE = NULL;
     if (yyg->yy_buffer_stack_top > 0)
+    {
         --yyg->yy_buffer_stack_top;
+    }
 
     if (YY_CURRENT_BUFFER)
     {
@@ -3905,14 +3919,20 @@ yy_size_t string_input(char *buf, yy_size_t max_size, yyscan_t yyscanner)
     yyget_extra(yyscanner)->getPreprocessor().lex(&token);
     yy_size_t len = token.type == angle::pp::Token::LAST ? 0 : token.text.size();
     if (len < max_size)
+    {
         memcpy(buf, token.text.c_str(), len);
+    }
     yyset_column(token.location.file, yyscanner);
     yyset_lineno(token.location.line, yyscanner);
 
     if (len >= max_size)
+    {
         YY_FATAL_ERROR("Input buffer overflow");
+    }
     else if (len > 0)
+    {
         buf[len++] = ' ';
+    }
     return len;
 }
 
@@ -4299,7 +4319,9 @@ int uint_constant(TParseContext *context)
     }
 
     if (!atoi_clamp(yytext, &(yylval->lex.u)))
+    {
         yyextra->error(*yylloc, "Integer overflow", yytext);
+    }
 
     return UINTCONSTANT;
 }
@@ -4337,9 +4359,13 @@ int int_constant(TParseContext *context)
     if (!atoi_clamp(yytext, &u))
     {
         if (context->getShaderVersion() >= 300)
+        {
             yyextra->error(*yylloc, "Integer overflow", yytext);
+        }
         else
+        {
             yyextra->warning(*yylloc, "Integer overflow", yytext);
+        }
     }
     yylval->lex.i = static_cast<int>(u);
     return INTCONSTANT;
@@ -4378,7 +4404,9 @@ int glslang_initialize(TParseContext *context)
 {
     yyscan_t scanner = NULL;
     if (yylex_init_extra(context, &scanner))
+    {
         return 1;
+    }
 
     context->setScanner(scanner);
     return 0;
@@ -4411,10 +4439,14 @@ int glslang_scan(size_t count,
     angle::pp::Preprocessor *preprocessor = &context->getPreprocessor();
 
     if (!preprocessor->init(count, string, length))
+    {
         return 1;
+    }
 
     if (context->getFragmentPrecisionHigh())
+    {
         preprocessor->predefineMacro("GL_FRAGMENT_PRECISION_HIGH", 1);
+    }
 
     preprocessor->setMaxTokenSize(sh::GetGlobalMaxTokenSize(context->getShaderSpec()));
 

@@ -159,7 +159,7 @@ std::optional<uint32_t> ModuleRtpRtcpImpl2::FlexfecSsrc() const {
 }
 
 void ModuleRtpRtcpImpl2::IncomingRtcpPacket(
-    rtc::ArrayView<const uint8_t> rtcp_packet) {
+    ArrayView<const uint8_t> rtcp_packet) {
   RTC_DCHECK_RUN_ON(&rtcp_thread_checker_);
   rtcp_receiver_.IncomingPacket(rtcp_packet);
 }
@@ -169,7 +169,8 @@ void ModuleRtpRtcpImpl2::RegisterSendPayloadFrequency(int payload_type,
   rtcp_sender_.SetRtpClockRate(payload_type, payload_frequency);
 }
 
-int32_t ModuleRtpRtcpImpl2::DeRegisterSendPayload(const int8_t payload_type) {
+int32_t ModuleRtpRtcpImpl2::DeRegisterSendPayload(
+    const int8_t /* payload_type */) {
   return 0;
 }
 
@@ -408,14 +409,14 @@ ModuleRtpRtcpImpl2::FetchFecPackets() {
 }
 
 void ModuleRtpRtcpImpl2::OnAbortedRetransmissions(
-    rtc::ArrayView<const uint16_t> sequence_numbers) {
+    ArrayView<const uint16_t> sequence_numbers) {
   RTC_DCHECK(rtp_sender_);
   RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
   rtp_sender_->packet_sender.OnAbortedRetransmissions(sequence_numbers);
 }
 
 void ModuleRtpRtcpImpl2::OnPacketsAcknowledged(
-    rtc::ArrayView<const uint16_t> sequence_numbers) {
+    ArrayView<const uint16_t> sequence_numbers) {
   RTC_DCHECK(rtp_sender_);
   rtp_sender_->packet_history.CullAcknowledgedPackets(sequence_numbers);
 }
@@ -442,7 +443,7 @@ ModuleRtpRtcpImpl2::GeneratePadding(size_t target_size_bytes) {
 
 std::vector<RtpSequenceNumberMap::Info>
 ModuleRtpRtcpImpl2::GetSentRtpPacketInfos(
-    rtc::ArrayView<const uint16_t> sequence_numbers) const {
+    ArrayView<const uint16_t> sequence_numbers) const {
   RTC_DCHECK(rtp_sender_);
   return rtp_sender_->packet_sender.GetSentRtpPacketInfos(sequence_numbers);
 }
@@ -705,7 +706,7 @@ void ModuleRtpRtcpImpl2::OnReceivedNack(
 }
 
 void ModuleRtpRtcpImpl2::OnReceivedRtcpReportBlocks(
-    rtc::ArrayView<const ReportBlockData> report_blocks) {
+    ArrayView<const ReportBlockData> report_blocks) {
   if (rtp_sender_) {
     uint32_t ssrc = SSRC();
     std::optional<uint32_t> rtx_ssrc;

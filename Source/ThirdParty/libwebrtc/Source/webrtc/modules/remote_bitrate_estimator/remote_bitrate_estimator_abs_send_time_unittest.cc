@@ -10,6 +10,7 @@
 
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
 
+#include <cstdint>
 #include <memory>
 
 #include "api/environment/environment_factory.h"

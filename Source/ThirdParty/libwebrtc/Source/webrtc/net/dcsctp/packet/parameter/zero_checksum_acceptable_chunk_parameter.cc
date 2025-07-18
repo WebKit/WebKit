@@ -31,7 +31,7 @@ constexpr int ZeroChecksumAcceptableChunkParameter::kType;
 
 std::optional<ZeroChecksumAcceptableChunkParameter>
 ZeroChecksumAcceptableChunkParameter::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -51,7 +51,7 @@ void ZeroChecksumAcceptableChunkParameter::SerializeTo(
 }
 
 std::string ZeroChecksumAcceptableChunkParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Zero Checksum Acceptable (" << *error_detection_method_ << ")";
   return sb.Release();
 }

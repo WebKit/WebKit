@@ -50,7 +50,7 @@ public:
     void clearProxies() final;
 
     // WorkerOrWorkletThread.
-    WorkerLoaderProxy* workerLoaderProxy() final;
+    WorkerLoaderProxy* workerLoaderProxy() const final;
     WorkerDebuggerProxy* workerDebuggerProxy() const final;
 
     AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy.get(); }

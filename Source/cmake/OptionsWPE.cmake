@@ -23,6 +23,10 @@ find_package(WebP REQUIRED COMPONENTS demux)
 find_package(WPE REQUIRED)
 find_package(ZLIB REQUIRED)
 
+if (ANDROID)
+    find_package(Android REQUIRED COMPONENTS Log)
+endif ()
+
 WEBKIT_OPTION_BEGIN()
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})

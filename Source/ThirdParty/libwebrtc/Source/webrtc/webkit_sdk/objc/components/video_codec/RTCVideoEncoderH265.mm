@@ -347,7 +347,7 @@ void compressionOutputCallback(void* encoder,
   }
 
   CMTime presentationTimeStamp =
-      CMTimeMake(frame.timeStampNs / rtc::kNumNanosecsPerMillisec, 1000);
+      CMTimeMake(frame.timeStampNs / webrtc::kNumNanosecsPerMillisec, 1000);
   CFDictionaryRef frameProperties = nullptr;
   if (isKeyframeRequired) {
     CFTypeRef keys[] = {kVTEncodeFrameOptionKey_ForceKeyFrame};
@@ -357,7 +357,7 @@ void compressionOutputCallback(void* encoder,
 
   std::unique_ptr<RTCFrameEncodeParams> encodeParams;
   encodeParams.reset(new RTCFrameEncodeParams(
-      self, _width, _height, frame.timeStampNs / rtc::kNumNanosecsPerMillisec,
+      self, _width, _height, frame.timeStampNs / webrtc::kNumNanosecsPerMillisec,
       frame.timeStamp, frame.rotation));
 
   // Update the bitrate if needed.
@@ -567,7 +567,7 @@ void compressionOutputCallback(void* encoder,
     RTC_LOG(LS_INFO) << "Generated keyframe";
   }
 
-  std::unique_ptr<rtc::Buffer> buffer(new rtc::Buffer());
+  std::unique_ptr<webrtc::Buffer> buffer(new webrtc::Buffer());
   if (_useAnnexB) {
     if (!webrtc::H265CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
       RTC_LOG(LS_WARNING) << "Unable to parse H265 encoded buffer";

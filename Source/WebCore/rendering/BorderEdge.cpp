@@ -62,17 +62,16 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
     };
 }
 
-BorderEdges borderEdgesForOutline(const RenderStyle& style, float deviceScaleFactor)
+BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderStyle, float deviceScaleFactor)
 {
     auto color = style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     auto isTransparent = color.isValid() && !color.isVisible();
     auto size = style.outlineWidth();
-    auto outlineStyle = style.outlineStyle();
     return {
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor } 
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
     };
 }
 

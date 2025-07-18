@@ -210,7 +210,7 @@ std::optional<uint32_t> ModuleRtpRtcpImpl::FlexfecSsrc() const {
 }
 
 void ModuleRtpRtcpImpl::IncomingRtcpPacket(
-    rtc::ArrayView<const uint8_t> rtcp_packet) {
+    ArrayView<const uint8_t> rtcp_packet) {
   rtcp_receiver_.IncomingPacket(rtcp_packet);
 }
 
@@ -219,7 +219,8 @@ void ModuleRtpRtcpImpl::RegisterSendPayloadFrequency(int payload_type,
   rtcp_sender_.SetRtpClockRate(payload_type, payload_frequency);
 }
 
-int32_t ModuleRtpRtcpImpl::DeRegisterSendPayload(const int8_t payload_type) {
+int32_t ModuleRtpRtcpImpl::DeRegisterSendPayload(
+    const int8_t /* payload_type */) {
   return 0;
 }
 
@@ -402,13 +403,13 @@ ModuleRtpRtcpImpl::FetchFecPackets() {
 }
 
 void ModuleRtpRtcpImpl::OnAbortedRetransmissions(
-    rtc::ArrayView<const uint16_t> sequence_numbers) {
+    ArrayView<const uint16_t> /* sequence_numbers */) {
   RTC_DCHECK_NOTREACHED()
       << "Stream flushing not supported with legacy rtp modules.";
 }
 
 void ModuleRtpRtcpImpl::OnPacketsAcknowledged(
-    rtc::ArrayView<const uint16_t> sequence_numbers) {
+    ArrayView<const uint16_t> sequence_numbers) {
   RTC_DCHECK(rtp_sender_);
   rtp_sender_->packet_history.CullAcknowledgedPackets(sequence_numbers);
 }
@@ -434,7 +435,7 @@ ModuleRtpRtcpImpl::GeneratePadding(size_t target_size_bytes) {
 
 std::vector<RtpSequenceNumberMap::Info>
 ModuleRtpRtcpImpl::GetSentRtpPacketInfos(
-    rtc::ArrayView<const uint16_t> sequence_numbers) const {
+    ArrayView<const uint16_t> sequence_numbers) const {
   RTC_DCHECK(rtp_sender_);
   return rtp_sender_->packet_sender.GetSentRtpPacketInfos(sequence_numbers);
 }
@@ -687,7 +688,7 @@ void ModuleRtpRtcpImpl::OnReceivedNack(
 }
 
 void ModuleRtpRtcpImpl::OnReceivedRtcpReportBlocks(
-    rtc::ArrayView<const ReportBlockData> report_blocks) {
+    ArrayView<const ReportBlockData> report_blocks) {
   if (rtp_sender_) {
     uint32_t ssrc = SSRC();
     std::optional<uint32_t> rtx_ssrc;

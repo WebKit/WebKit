@@ -28,6 +28,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "ScriptSourceCode.h"

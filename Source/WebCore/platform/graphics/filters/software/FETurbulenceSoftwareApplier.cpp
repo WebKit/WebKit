@@ -296,7 +296,7 @@ void FETurbulenceSoftwareApplier::applyPlatformGeneric(const IntRect& filterRegi
 
 void FETurbulenceSoftwareApplier::applyPlatformWorker(ApplyParameters* parameters)
 {
-    applyPlatformGeneric(parameters->filterRegion, parameters->filterScale, Ref { *parameters->pixelBuffer }, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
+    applyPlatformGeneric(parameters->filterRegion, parameters->filterScale, *parameters->pixelBuffer, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
 void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, PixelBuffer& pixelBuffer, PaintingData& paintingData, StitchData& stitchData)
@@ -323,7 +323,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
                 ApplyParameters& params = parallelJobs.parameter(i);
                 params.filterRegion = filterRegion;
                 params.filterScale = filterScale;
-                params.pixelBuffer = pixelBuffer;
+                params.pixelBuffer = &pixelBuffer;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
                 params.startY = startY;
@@ -344,7 +344,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
 
 bool FETurbulenceSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 

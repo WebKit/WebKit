@@ -296,7 +296,7 @@ struct Type : public Variant<
     bool isTexture() const;
 };
 
-using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
+using ConversionRank = Markable<unsigned>;
 ConversionRank conversionRank(const Type* from, const Type* to);
 
 bool isPrimitive(const Type*, Types::Primitive::Kind);

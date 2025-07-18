@@ -32,8 +32,8 @@ namespace WebCore {
 
 std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
 {
-    auto trimmedName = StringView(unparsedName).trim(isTabOrSpace<UChar>);
-    auto trimmedValue = StringView(unparsedValue).trim(isTabOrSpace<UChar>);
+    auto trimmedName = StringView(unparsedName).trim(isTabOrSpace<char16_t>);
+    auto trimmedValue = StringView(unparsedValue).trim(isTabOrSpace<char16_t>);
     if (!RFC7230::isValidName(trimmedName) || !RFC7230::isValidValue(trimmedValue))
         return std::nullopt;
 

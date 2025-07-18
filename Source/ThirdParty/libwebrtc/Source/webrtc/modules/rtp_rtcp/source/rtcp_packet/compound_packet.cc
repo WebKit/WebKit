@@ -10,9 +10,12 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <utility>
 
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

@@ -26,7 +26,7 @@ namespace webrtc {
 
 class PeerConnectionMessageHandler {
  public:
-  explicit PeerConnectionMessageHandler(rtc::Thread* signaling_thread)
+  explicit PeerConnectionMessageHandler(Thread* signaling_thread)
       : signaling_thread_(signaling_thread) {}
   ~PeerConnectionMessageHandler() = default;
 

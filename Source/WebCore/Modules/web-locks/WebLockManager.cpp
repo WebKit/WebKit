@@ -106,7 +106,7 @@ WebLockManager::MainThreadBridge::MainThreadBridge(ScriptExecutionContext& conte
 void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTFMove(grantedHandler), lockStolenHandler = WTFMove(lockStolenHandler)]() mutable {
-        WebLockRegistry::shared().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTFMove(grantedHandler)] (bool success) mutable {
+        WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTFMove(grantedHandler)] (bool success) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTFMove(grantedHandler), success](auto&) mutable {
                 grantedHandler(success);
             });
@@ -121,14 +121,14 @@ void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentif
 void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentifier, const String& name)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name)] {
-        WebLockRegistry::shared().releaseLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name);
+        WebLockRegistry::singleton().releaseLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name);
     });
 }
 
 void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::shared().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](bool wasAborted) mutable {
+        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](bool wasAborted) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTFMove(completionHandler), wasAborted](auto&) mutable {
                 completionHandler(wasAborted);
             });
@@ -139,7 +139,7 @@ void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockId
 void WebLockManager::MainThreadBridge::query(CompletionHandler<void(Snapshot&&)>&& completionHandler)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::shared().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](Snapshot&& snapshot) mutable {
+        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](Snapshot&& snapshot) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTFMove(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
                 completionHandler(WTFMove(snapshot));
             });
@@ -150,7 +150,7 @@ void WebLockManager::MainThreadBridge::query(CompletionHandler<void(Snapshot&&)>
 void WebLockManager::MainThreadBridge::clientIsGoingAway()
 {
     callOnMainThread([this, protectedThis = Ref { *this }] {
-        WebLockRegistry::shared().clientIsGoingAway(m_sessionID, m_clientOrigin, m_clientID);
+        WebLockRegistry::singleton().clientIsGoingAway(m_sessionID, m_clientOrigin, m_clientID);
     });
 }
 
@@ -163,7 +163,7 @@ Ref<WebLockManager> WebLockManager::create(NavigatorBase& navigator)
 
 WebLockManager::WebLockManager(NavigatorBase& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
-    , m_mainThreadBridge(MainThreadBridge::create(navigator.scriptExecutionContext()))
+    , m_mainThreadBridge(MainThreadBridge::create(navigator.protectedScriptExecutionContext().get()))
 {
 }
 
@@ -229,8 +229,8 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
     m_releasePromises.add(lockIdentifier, WTFMove(releasePromise));
 
-    if (options.signal) {
-        options.signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
+    if (RefPtr signal = options.signal) {
+        signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
             if (weakThis)
                 weakThis->signalToAbortTheRequest(lockIdentifier, reason);
         });
@@ -358,6 +358,10 @@ void WebLockManager::clientIsGoingAway()
     if (m_pendingRequests.isEmpty() && m_releasePromises.isEmpty())
         return;
 
+    // Reject all pending promises before clearing
+    for (auto& pair : m_releasePromises)
+        RefPtr { pair.value }->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+
     m_pendingRequests.clear();
     m_releasePromises.clear();
 
@@ -368,6 +372,14 @@ void WebLockManager::clientIsGoingAway()
 bool WebLockManager::virtualHasPendingActivity() const
 {
     return !m_pendingRequests.isEmpty() || !m_releasePromises.isEmpty();
+}
+
+void WebLockManager::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::PageWillBeSuspended || reason == ReasonForSuspension::BackForwardCache)
+        clientIsGoingAway();
+
+    ActiveDOMObject::suspend(reason);
 }
 
 } // namespace WebCore

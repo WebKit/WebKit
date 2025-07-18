@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLTableColElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"

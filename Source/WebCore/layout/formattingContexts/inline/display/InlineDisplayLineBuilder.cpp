@@ -479,12 +479,17 @@ void InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy 
             // Legacy line clamp always uses ...
             return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
         }
-        auto& blockEllipsis = displayBoxes[0].layoutBox().style().blockEllipsis();
-        if (blockEllipsis.type == BlockEllipsis::Type::None)
-            return nullAtom();
-        if (blockEllipsis.type == BlockEllipsis::Type::Auto)
-            return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
-        return blockEllipsis.string;
+        return WTF::switchOn(displayBoxes[0].layoutBox().style().blockEllipsis(),
+            [&](const CSS::Keyword::None&) -> AtomString {
+                return nullAtom();
+            },
+            [&](const CSS::Keyword::Auto&) -> AtomString {
+                return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
+            },
+            [&](const AtomString& string) -> AtomString {
+                return string;
+            }
+        );
     }();
 
     if (ellipsisText.isNull())

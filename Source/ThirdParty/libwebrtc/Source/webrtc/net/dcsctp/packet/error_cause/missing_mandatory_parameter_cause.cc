@@ -41,7 +41,7 @@ namespace dcsctp {
 constexpr int MissingMandatoryParameterCause::kType;
 
 std::optional<MissingMandatoryParameterCause>
-MissingMandatoryParameterCause::Parse(rtc::ArrayView<const uint8_t> data) {
+MissingMandatoryParameterCause::Parse(webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -81,7 +81,7 @@ void MissingMandatoryParameterCause::SerializeTo(
 }
 
 std::string MissingMandatoryParameterCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Missing Mandatory Parameter, missing_parameter_types="
      << webrtc::StrJoin(missing_parameter_types_, ",");
   return sb.Release();

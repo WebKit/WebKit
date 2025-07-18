@@ -88,7 +88,7 @@ private:
 };
 
 class FormattedNumber {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FormattedNumber);
 public:
     static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, TrailingZerosPolicy trailingZerosTruncatingPolicy = TrailingZerosPolicy::Truncate)
     {
@@ -129,7 +129,7 @@ private:
 };
 
 class FormattedCSSNumber {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FormattedCSSNumber);
 public:
     static FormattedCSSNumber create(double number)
     {

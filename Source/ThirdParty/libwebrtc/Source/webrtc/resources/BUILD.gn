@@ -1,0 +1,180 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+modules_tests_resources = [
+  "audio_coding/testfile16kHz.pcm",
+  "audio_coding/testfile32kHz.pcm",
+  "audio_coding/teststereo32kHz.pcm",
+  "foreman_cif.yuv",
+]
+group("modules_tests_data") {
+  data = modules_tests_resources
+}
+if (is_ios) {
+  bundle_data("modules_tests_bundle_data") {
+    testonly = true
+    sources = modules_tests_resources
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+  }
+}
+
+modules_unittests_resources = [
+  "audio_coding/neteq_opus.rtp",
+  "audio_coding/neteq_opus_dtx.rtp",
+  "audio_coding/neteq_universal_new.rtp",
+  "audio_coding/speech_4_channels_48k_one_second.wav",
+  "audio_coding/speech_mono_16kHz.pcm",
+  "audio_coding/speech_mono_32_48kHz.pcm",
+  "audio_coding/testfile16kHz.pcm",
+  "audio_coding/testfile32kHz.pcm",
+  "audio_coding/testfile_fake_stereo_32kHz.pcm",
+  "audio_coding/teststereo32kHz.pcm",
+  "audio_device/audio_short16.pcm",
+  "audio_device/audio_short44.pcm",
+  "audio_device/audio_short48.pcm",
+  "audio_processing/agc/agc_audio.pcm",
+  "audio_processing/agc/agc_no_circular_buffer.dat",
+  "audio_processing/agc/agc_pitch_gain.dat",
+  "audio_processing/agc/agc_pitch_lag.dat",
+  "audio_processing/agc/agc_spectral_peak.dat",
+  "audio_processing/agc/agc_vad.dat",
+  "audio_processing/agc/agc_voicing_prob.dat",
+  "audio_processing/agc/agc_with_circular_buffer.dat",
+  "audio_processing/output_data_fixed.pb",
+  "audio_processing/output_data_float.pb",
+  "audio_processing/output_data_float_avx2.pb",
+  "audio_processing/output_data_mac.pb",
+  "audio_processing/transient/ajm-macbook-1-spke16m.pcm",
+  "audio_processing/transient/audio16kHz.pcm",
+  "audio_processing/transient/audio32kHz.pcm",
+  "audio_processing/transient/audio48kHz.pcm",
+  "audio_processing/transient/audio8kHz.pcm",
+  "audio_processing/transient/detect16kHz.dat",
+  "audio_processing/transient/detect32kHz.dat",
+  "audio_processing/transient/detect48kHz.dat",
+  "audio_processing/transient/detect8kHz.dat",
+  "audio_processing/transient/double-utils.dat",
+  "audio_processing/transient/float-utils.dat",
+  "audio_processing/transient/suppressed16kHz.pcm",
+  "audio_processing/transient/suppressed32kHz.pcm",
+  "audio_processing/transient/suppressed8kHz.pcm",
+  "audio_processing/transient/wpd0.dat",
+  "audio_processing/transient/wpd1.dat",
+  "audio_processing/transient/wpd2.dat",
+  "audio_processing/transient/wpd3.dat",
+  "audio_processing/transient/wpd4.dat",
+  "audio_processing/transient/wpd5.dat",
+  "audio_processing/transient/wpd6.dat",
+  "audio_processing/transient/wpd7.dat",
+  "far16_stereo.pcm",
+  "far176_stereo.pcm",
+  "far192_stereo.pcm",
+  "far22_stereo.pcm",
+  "far32_stereo.pcm",
+  "far44_stereo.pcm",
+  "far48_stereo.pcm",
+  "far88_stereo.pcm",
+  "far8_stereo.pcm",
+  "far96_stereo.pcm",
+  "foreman_cif.yuv",
+  "foreman_cif_short.yuv",
+  "near16_stereo.pcm",
+  "near176_stereo.pcm",
+  "near192_stereo.pcm",
+  "near22_stereo.pcm",
+  "near32_stereo.pcm",
+  "near44_stereo.pcm",
+  "near48_mono.pcm",
+  "near48_stereo.pcm",
+  "near88_stereo.pcm",
+  "near8_stereo.pcm",
+  "near96_stereo.pcm",
+  "ref03.aecdump",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_1_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_1_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_1_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_1_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingDelay1_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingDelay1_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingLoss1_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingLoss1_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_Multi1_1_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_Multi1_1_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_1_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_1_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyDelay_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyDelay_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyLoss_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyLoss_0_TOF.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_UnlimitedSpeed_0_AST.bin",
+  "remote_bitrate_estimator/VideoSendersTest_BweTest_UnlimitedSpeed_0_TOF.bin",
+  "short_mixed_mono_48.dat",
+  "short_mixed_mono_48.pcm",
+  "short_mixed_mono_48_arm.dat",
+  "short_mixed_stereo_48.dat",
+  "short_mixed_stereo_48.pcm",
+  "voice_engine/audio_tiny48.wav",
+]
+group("modules_unittests_data") {
+  data = modules_unittests_resources
+}
+if (is_ios) {
+  bundle_data("modules_unittests_bundle_data") {
+    testonly = true
+    sources = modules_unittests_resources
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+  }
+}
+
+webrtc_perf_tests_resources = [
+  "ConferenceMotion_1280_720_50.yuv",
+  "audio_coding/speech_mono_16kHz.pcm",
+  "audio_coding/speech_mono_32_48kHz.pcm",
+  "audio_coding/testfile32kHz.pcm",
+  "difficult_photo_1850_1110.yuv",
+  "foreman_cif.yuv",
+  "paris_qcif.yuv",
+  "photo_1850_1110.yuv",
+  "presentation_1850_1110.yuv",
+  "voice_engine/audio_long16.pcm",
+  "web_screenshot_1850_1110.yuv",
+]
+group("webrtc_perf_tests_data") {
+  data = webrtc_perf_tests_resources
+}
+if (is_ios) {
+  bundle_data("webrtc_perf_tests_bundle_data") {
+    testonly = true
+    sources = webrtc_perf_tests_resources
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+  }
+}
+
+video_engine_tests_resources = [
+  "ConferenceMotion_1280_720_50.yuv",
+  "foreman_cif_short.yuv",
+  "voice_engine/audio_long16.pcm",
+]
+group("video_engine_tests_data") {
+  data = video_engine_tests_resources
+}
+if (is_ios) {
+  bundle_data("video_engine_tests_bundle_data") {
+    testonly = true
+    sources = video_engine_tests_resources
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+  }
+}

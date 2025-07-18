@@ -57,7 +57,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
  public:
   AudioSendStream(const Environment& env,
                   const webrtc::AudioSendStream::Config& config,
-                  const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
+                  const scoped_refptr<webrtc::AudioState>& audio_state,
                   RtpTransportControllerSendInterface* rtp_transport,
                   BitrateAllocatorInterface* bitrate_allocator,
                   RtcpRttStats* rtcp_rtt_stats,
@@ -65,7 +65,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   // For unit tests, which need to supply a mock ChannelSend.
   AudioSendStream(const Environment& env,
                   const webrtc::AudioSendStream::Config& config,
-                  const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
+                  const scoped_refptr<webrtc::AudioState>& audio_state,
                   RtpTransportControllerSendInterface* rtp_transport,
                   BitrateAllocatorInterface* bitrate_allocator,
                   const std::optional<RtpState>& suspended_rtp_state,
@@ -154,7 +154,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   const Environment env_;
 
   SequenceChecker worker_thread_checker_;
-  rtc::RaceChecker audio_capture_race_checker_;
+  RaceChecker audio_capture_race_checker_;
 
   const bool allocate_audio_without_feedback_;
   const bool force_no_audio_feedback_ = allocate_audio_without_feedback_;
@@ -163,7 +163,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
 
   webrtc::AudioSendStream::Config config_
       RTC_GUARDED_BY(worker_thread_checker_);
-  rtc::scoped_refptr<webrtc::AudioState> audio_state_;
+  scoped_refptr<webrtc::AudioState> audio_state_;
   const std::unique_ptr<voe::ChannelSendInterface> channel_send_;
   const bool use_legacy_overhead_calculation_;
   const bool enable_priority_bitrate_;

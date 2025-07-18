@@ -10,15 +10,21 @@
 
 #include "rtc_base/fake_ssl_identity.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/message_digest.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 FakeSSLCertificate::FakeSSLCertificate(absl::string_view pem_string)
     : pem_string_(pem_string),
@@ -63,12 +69,12 @@ bool FakeSSLCertificate::GetSignatureDigestAlgorithm(
 }
 
 bool FakeSSLCertificate::ComputeDigest(absl::string_view algorithm,
-                                       unsigned char* digest,
-                                       size_t size,
-                                       size_t* length) const {
-  *length = rtc::ComputeDigest(algorithm, pem_string_.c_str(),
-                               pem_string_.size(), digest, size);
-  return (*length != 0);
+                                       Buffer& digest) const {
+  size_t length = ::webrtc::ComputeDigest(algorithm, pem_string_.c_str(),
+                                          pem_string_.size(), digest.data(),
+                                          digest.capacity());
+  digest.SetSize(length);
+  return length != 0;
 }
 
 FakeSSLIdentity::FakeSSLIdentity(absl::string_view pem_string)
@@ -118,4 +124,4 @@ bool FakeSSLIdentity::operator==(const SSLIdentity& other) const {
   return false;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

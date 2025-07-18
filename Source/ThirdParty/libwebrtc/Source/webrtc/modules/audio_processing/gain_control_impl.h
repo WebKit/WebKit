@@ -34,7 +34,7 @@ class GainControlImpl : public GainControl {
 
   ~GainControlImpl() override;
 
-  void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
+  void ProcessRenderAudio(ArrayView<const int16_t> packed_render_audio);
   int AnalyzeCaptureAudio(const AudioBuffer& audio);
   int ProcessCaptureAudio(AudioBuffer* audio, bool stream_has_echo);
 

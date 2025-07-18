@@ -10,11 +10,13 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_REMOTE_ESTIMATE_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_REMOTE_ESTIMATE_H_
 
-#include <memory>
-#include <vector>
+#include <cstdint>
 
+#include "api/array_view.h"
 #include "api/transport/network_types.h"
+#include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -22,9 +24,9 @@ namespace rtcp {
 class CommonHeader;
 class RemoteEstimateSerializer {
  public:
-  virtual bool Parse(rtc::ArrayView<const uint8_t> src,
+  virtual bool Parse(ArrayView<const uint8_t> src,
                      NetworkStateEstimate* target) const = 0;
-  virtual rtc::Buffer Serialize(const NetworkStateEstimate& src) const = 0;
+  virtual Buffer Serialize(const NetworkStateEstimate& src) const = 0;
   virtual ~RemoteEstimateSerializer() = default;
 };
 

@@ -123,7 +123,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 + (void)_makeNextNetworkProcessLaunchFailForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (BOOL)_networkProcessExists WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (BOOL)_defaultNetworkProcessExists WK_API_AVAILABLE(macos(12.0), ios(15.0));
-- (void)_countNonDefaultSessionSets:(void(^)(size_t))completionHandler;
+- (void)_countNonDefaultSessionSets:(void(^)(uint64_t))completionHandler;
 
 -(bool)_hasServiceWorkerBackgroundActivityForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 -(void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2));

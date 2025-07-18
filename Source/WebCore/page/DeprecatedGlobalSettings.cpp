@@ -95,12 +95,12 @@ void DeprecatedGlobalSettings::setTrackingPreventionEnabled(bool flag)
 #if PLATFORM(IOS_FAMILY)
 void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionCategory)
 {
-    AudioSession::sharedSession().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
+    AudioSession::singleton().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
 }
 
 unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
 {
-    return static_cast<unsigned>(AudioSession::sharedSession().categoryOverride());
+    return static_cast<unsigned>(AudioSession::singleton().categoryOverride());
 }
 
 void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)

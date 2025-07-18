@@ -27,7 +27,7 @@ class DefaultOutputRateCalculator : public OutputRateCalculator {
   // AudioProcessing::NativeRate. If `preferred_sample_rates` is
   // empty, returns `kDefaultFrequency`.
   int CalculateOutputRateFromRange(
-      rtc::ArrayView<const int> preferred_sample_rates) override;
+      ArrayView<const int> preferred_sample_rates) override;
   ~DefaultOutputRateCalculator() override {}
 };
 

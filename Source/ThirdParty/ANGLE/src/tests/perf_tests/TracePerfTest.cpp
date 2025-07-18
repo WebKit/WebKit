@@ -136,6 +136,7 @@ class TracePerfTest : public ANGLERenderTest
 
     bool loadTestExpectationsFromFileWithConfig(const GPUTestConfig &config,
                                                 const std::string &fileName);
+    void initializeConfigParams(GPUTestConfig::API api);
 
   private:
     struct QueryInfo
@@ -859,6 +860,27 @@ bool TracePerfTest::loadTestExpectationsFromFileWithConfig(const GPUTestConfig &
     return true;
 }
 
+void TracePerfTest::initializeConfigParams(GPUTestConfig::API api)
+{
+    // TODO (b/423678565): These config parameters will be overridden by ANGLERenderTest::SetUp().
+    ConfigParameters &configParams = getConfigParams();
+    configParams.redBits           = mParams->traceInfo.configRedBits;
+    configParams.greenBits         = mParams->traceInfo.configGreenBits;
+    configParams.blueBits          = mParams->traceInfo.configBlueBits;
+    configParams.alphaBits         = mParams->traceInfo.configAlphaBits;
+    configParams.depthBits         = mParams->traceInfo.configDepthBits;
+    configParams.stencilBits       = mParams->traceInfo.configStencilBits;
+    configParams.colorSpace        = mParams->traceInfo.drawSurfaceColorSpace;
+
+    // TODO (b/423680521): App traces shouldn't be relying on these extensions anyway, since they
+    // are not available when the real app is running on a real device, so these values should
+    // always match the defaults to begin with.
+    configParams.webGLCompatibility    = mParams->traceInfo.isWebGLCompatibilityEnabled;
+    configParams.robustResourceInit    = mParams->traceInfo.isRobustResourceInitEnabled;
+    configParams.bindGeneratesResource = mParams->traceInfo.isBindGeneratesResourcesEnabled;
+    configParams.clientArraysEnabled   = mParams->traceInfo.areClientArraysEnabled;
+}
+
 TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
     : ANGLERenderTest("TracePerf", *params.get(), "ms"),
       mParams(std::move(params)),
@@ -902,6 +924,8 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         failTest("Failed to load trace json.");
         return;
     }
+
+    initializeConfigParams(api);
 
     for (std::string extension : mParams->traceInfo.requiredExtensions)
     {

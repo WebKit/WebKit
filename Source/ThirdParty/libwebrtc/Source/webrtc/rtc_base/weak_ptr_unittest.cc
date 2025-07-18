@@ -17,7 +17,7 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -203,7 +203,7 @@ TEST(WeakPtrTest, HasWeakPtrs) {
 template <class T>
 std::unique_ptr<T> NewObjectCreatedOnTaskQueue() {
   std::unique_ptr<T> obj;
-  webrtc::TaskQueueForTest queue("NewObjectCreatedOnTaskQueue");
+  TaskQueueForTest queue("NewObjectCreatedOnTaskQueue");
   queue.SendTask([&] { obj = std::make_unique<T>(); });
   return obj;
 }
@@ -225,7 +225,7 @@ TEST(WeakPtrTest, WeakPtrInitiateAndUseOnDifferentThreads) {
   auto target = std::make_unique<TargetWithFactory>();
   // Create weak ptr on main thread
   WeakPtr<Target> weak_ptr = target->factory.GetWeakPtr();
-  webrtc::TaskQueueForTest queue("queue");
+  TaskQueueForTest queue("queue");
   queue.SendTask([&] {
     // Dereference and invalide weak_ptr on another thread.
     EXPECT_EQ(weak_ptr.get(), target.get());
@@ -233,4 +233,4 @@ TEST(WeakPtrTest, WeakPtrInitiateAndUseOnDifferentThreads) {
   });
 }
 
-}  // namespace rtc
+}  // namespace webrtc

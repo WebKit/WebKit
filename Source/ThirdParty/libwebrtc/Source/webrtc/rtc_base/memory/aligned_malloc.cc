@@ -41,10 +41,10 @@ bool ValidAlignment(size_t alignment) {
 
 void* GetRightAlign(const void* pointer, size_t alignment) {
   if (!pointer) {
-    return NULL;
+    return nullptr;
   }
   if (!ValidAlignment(alignment)) {
-    return NULL;
+    return nullptr;
   }
   uintptr_t start_pos = reinterpret_cast<uintptr_t>(pointer);
   return reinterpret_cast<void*>(GetRightAlign(start_pos, alignment));
@@ -52,10 +52,10 @@ void* GetRightAlign(const void* pointer, size_t alignment) {
 
 void* AlignedMalloc(size_t size, size_t alignment) {
   if (size == 0) {
-    return NULL;
+    return nullptr;
   }
   if (!ValidAlignment(alignment)) {
-    return NULL;
+    return nullptr;
   }
 
   // The memory is aligned towards the lowest address that so only
@@ -83,7 +83,7 @@ void* AlignedMalloc(size_t size, size_t alignment) {
 }
 
 void AlignedFree(void* mem_block) {
-  if (mem_block == NULL) {
+  if (mem_block == nullptr) {
     return;
   }
   uintptr_t aligned_pos = reinterpret_cast<uintptr_t>(mem_block);

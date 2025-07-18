@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 389x19
           text run at (0,0) width 389: "Text on the pop-up and in the list should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,90) size 784x20
-        RenderMenuList {SELECT} at (0,0) size 55x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (0,0) size 55x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 43x14
             RenderText at (0,0) size 31x14
               text run at (0,0) width 31 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"

@@ -63,7 +63,7 @@ public:
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
-    KeyboardScrollingAnimator *keyboardScrollingAnimator() const final { return m_keyboardScrollingAnimator.get(); }
+    KeyboardScrollingAnimator *keyboardScrollingAnimator() const final { return m_keyboardScrollingAnimator.ptr(); }
 
     enum ScrollBehavior {
         RespectScrollSnap   = 1 << 0,
@@ -174,7 +174,7 @@ protected:
     ScrollingEffectsController m_scrollController;
     FloatPoint m_currentPosition;
 
-    std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
+    const UniqueRef<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
 
 private:
     bool m_scrollAnimationScheduled { false };

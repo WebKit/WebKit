@@ -25,6 +25,7 @@
 #pragma once
 
 #include "EventModifierInit.h"
+#include "FocusEventData.h"
 #include "KeypressCommand.h"
 #include "UIEventWithKeyState.h"
 #include <memory>
@@ -34,6 +35,8 @@ namespace WebCore {
 
 class Node;
 class PlatformKeyboardEvent;
+
+struct FocusEventData;
 
 class KeyboardEvent final : public UIEventWithKeyState {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KeyboardEvent);
@@ -92,6 +95,8 @@ public:
     const Vector<KeypressCommand>& keypressCommands() const { return m_keypressCommands; }
     Vector<KeypressCommand>& keypressCommands() { return m_keypressCommands; }
 #endif
+
+    FocusEventData focusEventData() const;
 
 private:
     KeyboardEvent();

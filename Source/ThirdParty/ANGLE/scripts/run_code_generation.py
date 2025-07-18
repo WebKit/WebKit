@@ -209,7 +209,7 @@ def main():
     all_old_hashes = load_hashes()
     all_new_hashes = {}
     any_dirty = False
-    format_workaround = False
+    full_formats = []
 
     parser = argparse.ArgumentParser(description='Generate ANGLE internal code.')
     parser.add_argument(
@@ -248,8 +248,8 @@ def main():
             all_old_hashes[fname] = {}
         if any_hash_dirty(name, filenames, new_hashes, all_old_hashes[fname]):
             any_dirty = True
-            if "preprocessor" in name:
-                format_workaround = True
+            full_formats += [fn for fn in filenames if '_tab_' in fn or '_lex_' in fn]
+
 
             if not args.verify_only:
                 print('Running ' + name + ' code generator')
@@ -286,11 +286,13 @@ def main():
         args += ['cl', 'format']
         print('Calling git cl format')
         subprocess.check_call(args)
-        if format_workaround:
+
+        if full_formats:
             # Some formattings fail, and thus we can never submit such a cl because
             # of vicious circle of needing clean formatting but formatting not generating
             # clean formatting.
-            print('Calling git cl format again')
+            print('Calling git cl format --full' % full_formats)
+            args += ['--full'] + full_formats
             subprocess.check_call(args)
 
 

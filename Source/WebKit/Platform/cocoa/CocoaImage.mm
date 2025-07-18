@@ -26,15 +26,9 @@
 #import "config.h"
 #import "CocoaImage.h"
 
-#import <WebCore/UTIRegistry.h>
-
-#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#else
-#import <CoreServices/CoreServices.h>
-#endif
-
 #import <ImageIO/ImageIO.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/UTIRegistry.h>
 
 namespace WebKit {
 
@@ -55,11 +49,7 @@ RetainPtr<NSData> transcode(CGImageRef image, CFStringRef typeIdentifier)
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef image, CFStringRef preferredMIMEType)
 {
     ASSERT(CFStringGetLength(preferredMIMEType));
-#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
     auto preferredTypeIdentifier = RetainPtr { (__bridge CFStringRef)[UTType typeWithMIMEType:(__bridge NSString *)preferredMIMEType conformingToType:UTTypeImage].identifier };
-#else
-    auto preferredTypeIdentifier = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, preferredMIMEType, kUTTypeImage));
-#endif
     if (WebCore::isSupportedImageType(preferredTypeIdentifier.get())) {
         if (auto data = transcode(image, preferredTypeIdentifier.get()); [data length])
             return { WTFMove(data), WTFMove(preferredTypeIdentifier) };

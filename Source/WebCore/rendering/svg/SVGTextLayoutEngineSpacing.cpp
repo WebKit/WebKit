@@ -34,9 +34,9 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 {
 }
 
-float SVGTextLayoutEngineSpacing::calculateCSSSpacing(const UChar* currentCharacter)
+float SVGTextLayoutEngineSpacing::calculateCSSSpacing(const char16_t* currentCharacter)
 {
-    const UChar* lastCharacter = m_lastCharacter;
+    const char16_t* lastCharacter = m_lastCharacter;
     m_lastCharacter = currentCharacter;
 
     if (!m_font.letterSpacing() && !m_font.wordSpacing())

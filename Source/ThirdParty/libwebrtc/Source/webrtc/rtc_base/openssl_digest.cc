@@ -14,7 +14,7 @@
 #include "rtc_base/checks.h"  // RTC_DCHECK, RTC_CHECK
 #include "rtc_base/openssl.h"
 
-namespace rtc {
+namespace webrtc {
 
 OpenSSLDigest::OpenSSLDigest(absl::string_view algorithm) {
   ctx_ = EVP_MD_CTX_new();
@@ -115,4 +115,4 @@ bool OpenSSLDigest::GetDigestSize(absl::string_view algorithm, size_t* length) {
   return true;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

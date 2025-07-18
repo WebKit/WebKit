@@ -57,7 +57,7 @@ private:
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
     void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>);
     void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&);
-    void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t amount);
+    void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t amount);
 
     const Ref<WorkQueue> m_queue;
     HashMap<WebCore::ProcessIdentifier, IPC::Connection::UniqueID> m_webProcessConnections;

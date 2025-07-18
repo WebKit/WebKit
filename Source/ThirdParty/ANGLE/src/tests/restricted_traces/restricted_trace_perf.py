@@ -196,12 +196,15 @@ def pull_screenshot(args, screenshot_device_dir, renderer):
 
     # There might not be a screenshot if the test was skipped
     files = list(filter(None, (f.strip() for f in files)))  # Remove empty strings and whitespace
-    if files:
-        assert len(files) == 1, 'Multiple files(%s) in %s, expected 1: %s' % (
-            len(files), screenshot_device_dir, files)
+
+    # We should only look for png files as tmp dir might contain other files too
+    png_files = [f for f in files if f.lower().endswith('.png')]
+    if png_files:
+        assert len(png_files) == 1, 'Multiple PNG files(%s) in %s, expected 1: %s' % (
+            len(png_files), screenshot_device_dir, png_files)
 
         # Grab the single screenshot
-        src_file = files[0]
+        src_file = png_files[0]
 
         # Rename the file to reflect renderer, since we force everything through the platform using "native"
         dst_file = src_file.replace("native", renderer)

@@ -47,7 +47,7 @@ ALWAYS_INLINE CompactUniquePtrTuple<T, Type, Deleter> makeCompactUniquePtr(Args&
 
 template<typename T, typename Type, typename Deleter>
 class CompactUniquePtrTuple final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompactUniquePtrTuple);
     WTF_MAKE_NONCOPYABLE(CompactUniquePtrTuple);
 
     static_assert(::allowCompactPointers<T>());

@@ -224,8 +224,8 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
-    Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
-    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
     uint8_t maxRedirectCount { 20 };

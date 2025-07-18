@@ -18,15 +18,14 @@ namespace webrtc {
 ExampleVideoQualityAnalyzer::ExampleVideoQualityAnalyzer() = default;
 ExampleVideoQualityAnalyzer::~ExampleVideoQualityAnalyzer() = default;
 
-void ExampleVideoQualityAnalyzer::Start(
-    std::string test_case_name,
-    rtc::ArrayView<const std::string> peer_names,
-    int max_threads_count) {}
+void ExampleVideoQualityAnalyzer::Start(std::string test_case_name,
+                                        ArrayView<const std::string> peer_names,
+                                        int max_threads_count) {}
 
 uint16_t ExampleVideoQualityAnalyzer::OnFrameCaptured(
     absl::string_view peer_name,
     const std::string& stream_label,
-    const webrtc::VideoFrame& frame) {
+    const VideoFrame& frame) {
   MutexLock lock(&lock_);
   uint16_t frame_id = next_frame_id_++;
   if (frame_id == VideoFrame::kNotSetId) {
@@ -51,9 +50,8 @@ uint16_t ExampleVideoQualityAnalyzer::OnFrameCaptured(
   return frame_id;
 }
 
-void ExampleVideoQualityAnalyzer::OnFramePreEncode(
-    absl::string_view peer_name,
-    const webrtc::VideoFrame& frame) {
+void ExampleVideoQualityAnalyzer::OnFramePreEncode(absl::string_view peer_name,
+                                                   const VideoFrame& frame) {
   MutexLock lock(&lock_);
   ++frames_pre_encoded_;
 }
@@ -61,7 +59,7 @@ void ExampleVideoQualityAnalyzer::OnFramePreEncode(
 void ExampleVideoQualityAnalyzer::OnFrameEncoded(
     absl::string_view peer_name,
     uint16_t frame_id,
-    const webrtc::EncodedImage& encoded_image,
+    const EncodedImage& encoded_image,
     const EncoderStats& stats,
     bool discarded) {
   MutexLock lock(&lock_);
@@ -70,7 +68,7 @@ void ExampleVideoQualityAnalyzer::OnFrameEncoded(
 
 void ExampleVideoQualityAnalyzer::OnFrameDropped(
     absl::string_view peer_name,
-    webrtc::EncodedImageCallback::DropReason reason) {
+    EncodedImageCallback::DropReason reason) {
   RTC_LOG(LS_INFO) << "Frame dropped by encoder";
   MutexLock lock(&lock_);
   ++frames_dropped_;
@@ -79,31 +77,28 @@ void ExampleVideoQualityAnalyzer::OnFrameDropped(
 void ExampleVideoQualityAnalyzer::OnFramePreDecode(
     absl::string_view peer_name,
     uint16_t frame_id,
-    const webrtc::EncodedImage& encoded_image) {
+    const EncodedImage& encoded_image) {
   MutexLock lock(&lock_);
   ++frames_received_;
 }
 
-void ExampleVideoQualityAnalyzer::OnFrameDecoded(
-    absl::string_view peer_name,
-    const webrtc::VideoFrame& frame,
-    const DecoderStats& stats) {
+void ExampleVideoQualityAnalyzer::OnFrameDecoded(absl::string_view peer_name,
+                                                 const VideoFrame& frame,
+                                                 const DecoderStats& stats) {
   MutexLock lock(&lock_);
   ++frames_decoded_;
 }
 
-void ExampleVideoQualityAnalyzer::OnFrameRendered(
-    absl::string_view peer_name,
-    const webrtc::VideoFrame& frame) {
+void ExampleVideoQualityAnalyzer::OnFrameRendered(absl::string_view peer_name,
+                                                  const VideoFrame& frame) {
   MutexLock lock(&lock_);
   frames_in_flight_.erase(frame.id());
   ++frames_rendered_;
 }
 
-void ExampleVideoQualityAnalyzer::OnEncoderError(
-    absl::string_view peer_name,
-    const webrtc::VideoFrame& frame,
-    int32_t error_code) {
+void ExampleVideoQualityAnalyzer::OnEncoderError(absl::string_view peer_name,
+                                                 const VideoFrame& frame,
+                                                 int32_t error_code) {
   RTC_LOG(LS_ERROR) << "Failed to encode frame " << frame.id()
                     << ". Code: " << error_code;
 }

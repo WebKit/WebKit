@@ -82,12 +82,9 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
         );
     }
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const NumberOrPercentage& value) { return value.isEmpty(); }
-        static NumberOrPercentage emptyValue() { return NumberOrPercentage(PrimitiveDataEmptyToken()); }
-    };
-
 private:
+    friend struct MarkableTraits<NumberOrPercentage>;
+
     NumberOrPercentage(PrimitiveDataEmptyToken token)
         : value { WTFMove(token) }
     {
@@ -147,11 +144,6 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
         );
     }
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const NumberOrPercentageResolvedToNumber& value) { return value.isEmpty(); }
-        static NumberOrPercentageResolvedToNumber emptyValue() { return NumberOrPercentageResolvedToNumber(PrimitiveDataEmptyToken()); }
-    };
-
 private:
     NumberOrPercentageResolvedToNumber(PrimitiveDataEmptyToken token)
         : value { WTFMove(token) }
@@ -165,6 +157,22 @@ private:
 
 } // namespace CSS
 } // namespace WebCore
+
+namespace WTF {
+
+template<auto nR, auto pR, typename V>
+struct MarkableTraits<WebCore::CSS::NumberOrPercentage<nR, pR, V>> {
+    static bool isEmptyValue(const WebCore::CSS::NumberOrPercentage<nR, pR, V>& value) { return value.isEmpty(); }
+    static WebCore::CSS::NumberOrPercentage<nR, pR, V> emptyValue() { return WebCore::CSS::NumberOrPercentage<nR, pR, V>(WebCore::CSS::PrimitiveDataEmptyToken()); }
+};
+
+template<auto nR, auto pR, typename V>
+struct MarkableTraits<WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>> {
+    static bool isEmptyValue(const WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>& value) { return value.isEmpty(); }
+    static WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V> emptyValue() { return WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>(WebCore::CSS::PrimitiveDataEmptyToken()); }
+};
+
+} // namespace WTF
 
 template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::NumberOrPercentage<nR, pR, V>> = true;
 template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>> = true;

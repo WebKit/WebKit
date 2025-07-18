@@ -1,0 +1,878 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultAvailable"},
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultNotAvailable"},
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultError"}
+     ],
+     "name": "NLContextualEmbeddingAssetsResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLDistanceTypeCosine"}
+     ],
+     "name": "NLDistanceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLModelTypeClassifier"},
+      {"access": "public", "name": "NLModelTypeSequence"}
+     ],
+     "name": "NLModelType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTaggerAssetsResultAvailable"},
+      {"access": "public", "name": "NLTaggerAssetsResultNotAvailable"},
+      {"access": "public", "name": "NLTaggerAssetsResultError"}
+     ],
+     "name": "NLTaggerAssetsResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTaggerOmitWords"},
+      {"access": "public", "name": "NLTaggerOmitPunctuation"},
+      {"access": "public", "name": "NLTaggerOmitWhitespace"},
+      {"access": "public", "name": "NLTaggerOmitOther"},
+      {"access": "public", "name": "NLTaggerJoinNames"},
+      {"access": "public", "name": "NLTaggerJoinContractions"}
+     ],
+     "name": "NLTaggerOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTokenUnitWord"},
+      {"access": "public", "name": "NLTokenUnitSentence"},
+      {"access": "public", "name": "NLTokenUnitParagraph"},
+      {"access": "public", "name": "NLTokenUnitDocument"}
+     ],
+     "name": "NLTokenUnit"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTokenizerAttributeNumeric"},
+      {"access": "public", "name": "NLTokenizerAttributeSymbolic"},
+      {"access": "public", "name": "NLTokenizerAttributeEmoji"}
+     ],
+     "name": "NLTokenizerAttributes"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyLanguages"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyRevision"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyScripts"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageAmharic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageArabic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageArmenian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBengali"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBulgarian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBurmese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCatalan"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCherokee"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCroatian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCzech"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageDanish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageDutch"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageEnglish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageFinnish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageFrench"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGeorgian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGerman"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGreek"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGujarati"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHebrew"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHindi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHungarian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageIcelandic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageIndonesian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageItalian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageJapanese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKannada"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKazakh"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKhmer"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKorean"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageLao"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMalay"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMalayalam"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMarathi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMongolian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageNorwegian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageOriya"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePersian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePolish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePortuguese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePunjabi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageRomanian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageRussian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSimplifiedChinese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSinhalese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSlovak"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSpanish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSwedish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTamil"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTelugu"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageThai"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTibetan"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTraditionalChinese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTurkish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUkrainian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUndetermined"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUrdu"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageVietnamese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptArabic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptArmenian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptBengali"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCanadianAboriginalSyllabics"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCherokee"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCyrillic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptDevanagari"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptEthiopic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGeorgian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGreek"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGujarati"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGurmukhi"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptHebrew"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptJapanese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKannada"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKhmer"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKorean"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptLao"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptLatin"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMalayalam"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMongolian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMyanmar"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptOriya"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptSimplifiedChinese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptSinhala"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTamil"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTelugu"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptThai"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTibetan"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTraditionalChinese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptUndetermined"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagAdjective"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagAdverb"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagClassifier"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagCloseParenthesis"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagCloseQuote"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagConjunction"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagDash"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagDeterminer"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagIdiom"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagInterjection"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagNoun"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagNumber"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOpenParenthesis"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOpenQuote"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOrganizationName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOther"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherPunctuation"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherWhitespace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherWord"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagParagraphBreak"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagParticle"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPersonalName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPlaceName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPreposition"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPronoun"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPunctuation"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLanguage"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLemma"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLexicalClass"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeNameType"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeNameTypeOrLexicalClass"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeScript"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeSentimentScore"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeTokenType"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSentenceTerminator"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagVerb"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWhitespace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWord"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWordJoiner"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "contextualEmbeddingWithModelIdentifier:"},
+      {"access": "public", "name": "contextualEmbeddingsForValues:"},
+      {"access": "public", "name": "contextualEmbeddingWithLanguage:"},
+      {"access": "public", "name": "contextualEmbeddingWithScript:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "loadWithError:"},
+      {"access": "public", "name": "unload"},
+      {"access": "public", "name": "embeddingResultForString:language:error:"},
+      {"access": "public", "name": "requestEmbeddingAssetsWithCompletionHandler:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NLContextualEmbedding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelIdentifier", "name": "modelIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languages", "name": "languages"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scripts", "name": "scripts"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumSequenceLength", "name": "maximumSequenceLength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAvailableAssets", "name": "hasAvailableAssets"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "enumerateTokenVectorsInRange:usingBlock:"},
+      {"access": "public", "name": "tokenVectorAtIndex:tokenRange:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NLContextualEmbeddingResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceLength", "name": "sequenceLength"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "wordEmbeddingForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "wordEmbeddingForLanguage:revision:"},
+      {"access": "public", "introduced": "14", "name": "sentenceEmbeddingForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "sentenceEmbeddingForLanguage:revision:"},
+      {"access": "public", "introduced": "13", "name": "embeddingWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "supportedRevisionsForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "currentRevisionForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "supportedSentenceEmbeddingRevisionsForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "currentSentenceEmbeddingRevisionForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "writeEmbeddingForDictionary:language:revision:toURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "containsString:"},
+      {"access": "public", "introduced": "13", "name": "distanceBetweenString:andString:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForString:maximumCount:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForString:maximumCount:maximumDistance:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForString:maximumCount:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForString:maximumCount:maximumDistance:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "vectorForString:"},
+      {"access": "public", "introduced": "13", "name": "getVector:forString:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForVector:maximumCount:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForVector:maximumCount:maximumDistance:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForVector:maximumCount:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForVector:maximumCount:maximumDistance:distanceType:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "NLEmbedding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "introduced": "13", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vocabularySize", "introduced": "13", "name": "vocabularySize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "13", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "introduced": "13", "name": "revision"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "gazetteerWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "writeGazetteerForDictionary:language:toURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "initWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "initWithData:error:"},
+      {"access": "public", "introduced": "13", "name": "initWithDictionary:language:error:"},
+      {"access": "public", "introduced": "13", "name": "labelForString:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "NLGazetteer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "13", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "introduced": "13", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "dominantLanguageForString:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "init"},
+      {"access": "public", "introduced": "12", "name": "processString:"},
+      {"access": "public", "introduced": "12", "name": "reset"},
+      {"access": "public", "introduced": "12", "name": "languageHypothesesWithMaximum:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLLanguageRecognizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dominantLanguage", "introduced": "12", "name": "dominantLanguage"},
+      {"access": "public", "getter": "languageHints", "introduced": "12", "name": "languageHints", "setter": "setLanguageHints:"},
+      {"access": "public", "getter": "languageConstraints", "introduced": "12", "name": "languageConstraints", "setter": "setLanguageConstraints:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "modelWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "12", "name": "modelWithMLModel:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "predictedLabelForString:"},
+      {"access": "public", "introduced": "12", "name": "predictedLabelsForTokens:"},
+      {"access": "public", "introduced": "14", "name": "predictedLabelHypothesesForString:maximumCount:"},
+      {"access": "public", "introduced": "14", "name": "predictedLabelHypothesesForTokens:maximumCount:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLModel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "12", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "supportedRevisionsForType:"},
+      {"access": "public", "introduced": "12", "name": "currentRevisionForType:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLModelConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "12", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "12", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "introduced": "12", "name": "revision"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "availableTagSchemesForUnit:language:"},
+      {"access": "public", "introduced": "13", "name": "requestAssetsForLanguage:tagScheme:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "initWithTagSchemes:"},
+      {"access": "public", "introduced": "12", "name": "tokenRangeAtIndex:unit:"},
+      {"access": "public", "introduced": "14", "name": "tokenRangeForRange:unit:"},
+      {"access": "public", "introduced": "12", "name": "enumerateTagsInRange:unit:scheme:options:usingBlock:"},
+      {"access": "public", "introduced": "12", "name": "tagAtIndex:unit:scheme:tokenRange:"},
+      {"access": "public", "introduced": "12", "name": "tagsInRange:unit:scheme:options:tokenRanges:"},
+      {"access": "public", "introduced": "14", "name": "tagHypothesesAtIndex:unit:scheme:maximumCount:tokenRange:"},
+      {"access": "public", "introduced": "12", "name": "setLanguage:range:"},
+      {"access": "public", "introduced": "12", "name": "setOrthography:range:"},
+      {"access": "public", "introduced": "12", "name": "setModels:forTagScheme:"},
+      {"access": "public", "introduced": "12", "name": "modelsForTagScheme:"},
+      {"access": "public", "introduced": "13", "name": "setGazetteers:forTagScheme:"},
+      {"access": "public", "introduced": "13", "name": "gazetteersForTagScheme:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLTagger",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tagSchemes", "introduced": "12", "name": "tagSchemes"},
+      {"access": "public", "getter": "string", "introduced": "12", "name": "string", "setter": "setString:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dominantLanguage", "introduced": "12", "name": "dominantLanguage"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "initWithUnit:"},
+      {"access": "public", "introduced": "12", "name": "setLanguage:"},
+      {"access": "public", "introduced": "12", "name": "tokenRangeAtIndex:"},
+      {"access": "public", "introduced": "14", "name": "tokenRangeForRange:"},
+      {"access": "public", "introduced": "12", "name": "tokensForRange:"},
+      {"access": "public", "introduced": "12", "name": "enumerateTokensInRange:usingBlock:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLTokenizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "unit", "introduced": "12", "name": "unit"},
+      {"access": "public", "getter": "string", "introduced": "12", "name": "string", "setter": "setString:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "NLContextualEmbeddingAssetsResult"},
+    {"access": "public", "name": "NLContextualEmbeddingKey"},
+    {"access": "public", "name": "NLDistance"},
+    {"access": "public", "name": "NLDistanceType"},
+    {"access": "public", "name": "NLLanguage"},
+    {"access": "public", "name": "NLModelType"},
+    {"access": "public", "name": "NLScript"},
+    {"access": "public", "name": "NLTag"},
+    {"access": "public", "name": "NLTagScheme"},
+    {"access": "public", "name": "NLTaggerAssetsResult"},
+    {"access": "public", "name": "NLTaggerOptions"},
+    {"access": "public", "name": "NLTokenUnit"},
+    {"access": "public", "name": "NLTokenizerAttributes"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultAvailable"},
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultNotAvailable"},
+      {"access": "public", "name": "NLContextualEmbeddingAssetsResultError"}
+     ],
+     "name": "NLContextualEmbeddingAssetsResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLDistanceTypeCosine"}
+     ],
+     "name": "NLDistanceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLModelTypeClassifier"},
+      {"access": "public", "name": "NLModelTypeSequence"}
+     ],
+     "name": "NLModelType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTaggerAssetsResultAvailable"},
+      {"access": "public", "name": "NLTaggerAssetsResultNotAvailable"},
+      {"access": "public", "name": "NLTaggerAssetsResultError"}
+     ],
+     "name": "NLTaggerAssetsResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTaggerOmitWords"},
+      {"access": "public", "name": "NLTaggerOmitPunctuation"},
+      {"access": "public", "name": "NLTaggerOmitWhitespace"},
+      {"access": "public", "name": "NLTaggerOmitOther"},
+      {"access": "public", "name": "NLTaggerJoinNames"},
+      {"access": "public", "name": "NLTaggerJoinContractions"}
+     ],
+     "name": "NLTaggerOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTokenUnitWord"},
+      {"access": "public", "name": "NLTokenUnitSentence"},
+      {"access": "public", "name": "NLTokenUnitParagraph"},
+      {"access": "public", "name": "NLTokenUnitDocument"}
+     ],
+     "name": "NLTokenUnit"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NLTokenizerAttributeNumeric"},
+      {"access": "public", "name": "NLTokenizerAttributeSymbolic"},
+      {"access": "public", "name": "NLTokenizerAttributeEmoji"}
+     ],
+     "name": "NLTokenizerAttributes"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyLanguages"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyRevision"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_NLContextualEmbeddingKeyScripts"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageAmharic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageArabic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageArmenian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBengali"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBulgarian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageBurmese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCatalan"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCherokee"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCroatian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageCzech"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageDanish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageDutch"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageEnglish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageFinnish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageFrench"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGeorgian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGerman"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGreek"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageGujarati"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHebrew"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHindi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageHungarian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageIcelandic"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageIndonesian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageItalian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageJapanese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKannada"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKazakh"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKhmer"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageKorean"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageLao"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMalay"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMalayalam"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMarathi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageMongolian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageNorwegian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageOriya"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePersian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePolish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePortuguese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguagePunjabi"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageRomanian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageRussian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSimplifiedChinese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSinhalese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSlovak"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSpanish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageSwedish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTamil"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTelugu"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageThai"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTibetan"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTraditionalChinese"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageTurkish"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUkrainian"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUndetermined"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageUrdu"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLLanguageVietnamese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptArabic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptArmenian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptBengali"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCanadianAboriginalSyllabics"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCherokee"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptCyrillic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptDevanagari"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptEthiopic"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGeorgian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGreek"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGujarati"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptGurmukhi"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptHebrew"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptJapanese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKannada"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKhmer"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptKorean"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptLao"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptLatin"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMalayalam"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMongolian"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptMyanmar"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptOriya"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptSimplifiedChinese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptSinhala"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTamil"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTelugu"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptThai"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTibetan"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptTraditionalChinese"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NLScriptUndetermined"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagAdjective"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagAdverb"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagClassifier"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagCloseParenthesis"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagCloseQuote"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagConjunction"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagDash"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagDeterminer"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagIdiom"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagInterjection"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagNoun"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagNumber"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOpenParenthesis"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOpenQuote"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOrganizationName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOther"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherPunctuation"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherWhitespace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagOtherWord"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagParagraphBreak"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagParticle"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPersonalName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPlaceName"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPreposition"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPronoun"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagPunctuation"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLanguage"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLemma"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeLexicalClass"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeNameType"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeNameTypeOrLexicalClass"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeScript"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeSentimentScore"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSchemeTokenType"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagSentenceTerminator"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagVerb"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWhitespace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWord"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_NLTagWordJoiner"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "contextualEmbeddingWithModelIdentifier:"},
+      {"access": "public", "name": "contextualEmbeddingsForValues:"},
+      {"access": "public", "name": "contextualEmbeddingWithLanguage:"},
+      {"access": "public", "name": "contextualEmbeddingWithScript:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "loadWithError:"},
+      {"access": "public", "name": "unload"},
+      {"access": "public", "name": "embeddingResultForString:language:error:"},
+      {"access": "public", "name": "requestEmbeddingAssetsWithCompletionHandler:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NLContextualEmbedding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelIdentifier", "name": "modelIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languages", "name": "languages"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scripts", "name": "scripts"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumSequenceLength", "name": "maximumSequenceLength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAvailableAssets", "name": "hasAvailableAssets"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "enumerateTokenVectorsInRange:usingBlock:"},
+      {"access": "public", "name": "tokenVectorAtIndex:tokenRange:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NLContextualEmbeddingResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceLength", "name": "sequenceLength"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "wordEmbeddingForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "wordEmbeddingForLanguage:revision:"},
+      {"access": "public", "introduced": "14", "name": "sentenceEmbeddingForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "sentenceEmbeddingForLanguage:revision:"},
+      {"access": "public", "introduced": "13", "name": "embeddingWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "supportedRevisionsForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "currentRevisionForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "supportedSentenceEmbeddingRevisionsForLanguage:"},
+      {"access": "public", "introduced": "14", "name": "currentSentenceEmbeddingRevisionForLanguage:"},
+      {"access": "public", "introduced": "13", "name": "writeEmbeddingForDictionary:language:revision:toURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "containsString:"},
+      {"access": "public", "introduced": "13", "name": "distanceBetweenString:andString:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForString:maximumCount:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForString:maximumCount:maximumDistance:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForString:maximumCount:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForString:maximumCount:maximumDistance:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "vectorForString:"},
+      {"access": "public", "introduced": "13", "name": "getVector:forString:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForVector:maximumCount:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "enumerateNeighborsForVector:maximumCount:maximumDistance:distanceType:usingBlock:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForVector:maximumCount:distanceType:"},
+      {"access": "public", "introduced": "13", "name": "neighborsForVector:maximumCount:maximumDistance:distanceType:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "NLEmbedding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "introduced": "13", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vocabularySize", "introduced": "13", "name": "vocabularySize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "13", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "introduced": "13", "name": "revision"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "gazetteerWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "writeGazetteerForDictionary:language:toURL:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "initWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "13", "name": "initWithData:error:"},
+      {"access": "public", "introduced": "13", "name": "initWithDictionary:language:error:"},
+      {"access": "public", "introduced": "13", "name": "labelForString:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "NLGazetteer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "13", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "introduced": "13", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "dominantLanguageForString:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "init"},
+      {"access": "public", "introduced": "12", "name": "processString:"},
+      {"access": "public", "introduced": "12", "name": "reset"},
+      {"access": "public", "introduced": "12", "name": "languageHypothesesWithMaximum:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLLanguageRecognizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dominantLanguage", "introduced": "12", "name": "dominantLanguage"},
+      {"access": "public", "getter": "languageHints", "introduced": "12", "name": "languageHints", "setter": "setLanguageHints:"},
+      {"access": "public", "getter": "languageConstraints", "introduced": "12", "name": "languageConstraints", "setter": "setLanguageConstraints:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "modelWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "12", "name": "modelWithMLModel:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "predictedLabelForString:"},
+      {"access": "public", "introduced": "12", "name": "predictedLabelsForTokens:"},
+      {"access": "public", "introduced": "14", "name": "predictedLabelHypothesesForString:maximumCount:"},
+      {"access": "public", "introduced": "14", "name": "predictedLabelHypothesesForTokens:maximumCount:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLModel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "12", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "supportedRevisionsForType:"},
+      {"access": "public", "introduced": "12", "name": "currentRevisionForType:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLModelConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "12", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "language", "introduced": "12", "name": "language"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "introduced": "12", "name": "revision"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12", "name": "availableTagSchemesForUnit:language:"},
+      {"access": "public", "introduced": "13", "name": "requestAssetsForLanguage:tagScheme:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "initWithTagSchemes:"},
+      {"access": "public", "introduced": "12", "name": "tokenRangeAtIndex:unit:"},
+      {"access": "public", "introduced": "14", "name": "tokenRangeForRange:unit:"},
+      {"access": "public", "introduced": "12", "name": "enumerateTagsInRange:unit:scheme:options:usingBlock:"},
+      {"access": "public", "introduced": "12", "name": "tagAtIndex:unit:scheme:tokenRange:"},
+      {"access": "public", "introduced": "12", "name": "tagsInRange:unit:scheme:options:tokenRanges:"},
+      {"access": "public", "introduced": "14", "name": "tagHypothesesAtIndex:unit:scheme:maximumCount:tokenRange:"},
+      {"access": "public", "introduced": "12", "name": "setLanguage:range:"},
+      {"access": "public", "introduced": "12", "name": "setOrthography:range:"},
+      {"access": "public", "introduced": "12", "name": "setModels:forTagScheme:"},
+      {"access": "public", "introduced": "12", "name": "modelsForTagScheme:"},
+      {"access": "public", "introduced": "13", "name": "setGazetteers:forTagScheme:"},
+      {"access": "public", "introduced": "13", "name": "gazetteersForTagScheme:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLTagger",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tagSchemes", "introduced": "12", "name": "tagSchemes"},
+      {"access": "public", "getter": "string", "introduced": "12", "name": "string", "setter": "setString:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dominantLanguage", "introduced": "12", "name": "dominantLanguage"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "initWithUnit:"},
+      {"access": "public", "introduced": "12", "name": "setLanguage:"},
+      {"access": "public", "introduced": "12", "name": "tokenRangeAtIndex:"},
+      {"access": "public", "introduced": "14", "name": "tokenRangeForRange:"},
+      {"access": "public", "introduced": "12", "name": "tokensForRange:"},
+      {"access": "public", "introduced": "12", "name": "enumerateTokensInRange:usingBlock:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "NLTokenizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "unit", "introduced": "12", "name": "unit"},
+      {"access": "public", "getter": "string", "introduced": "12", "name": "string", "setter": "setString:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "NLContextualEmbeddingAssetsResult"},
+    {"access": "public", "name": "NLContextualEmbeddingKey"},
+    {"access": "public", "name": "NLDistance"},
+    {"access": "public", "name": "NLDistanceType"},
+    {"access": "public", "name": "NLLanguage"},
+    {"access": "public", "name": "NLModelType"},
+    {"access": "public", "name": "NLScript"},
+    {"access": "public", "name": "NLTag"},
+    {"access": "public", "name": "NLTagScheme"},
+    {"access": "public", "name": "NLTaggerAssetsResult"},
+    {"access": "public", "name": "NLTaggerOptions"},
+    {"access": "public", "name": "NLTokenUnit"},
+    {"access": "public", "name": "NLTokenizerAttributes"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "api/video/encoded_image.h"
-#include "api/video_codecs/spatial_layer.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"

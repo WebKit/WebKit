@@ -104,6 +104,8 @@ private:
     void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void networkProcessCrashed() final;
 
+    RefPtr<WebTransportSession> protectedSession();
+
     ListHashSet<Ref<WritableStream>> m_sendStreams;
     ListHashSet<Ref<ReadableStream>> m_receiveStreams;
     const Ref<ReadableStream> m_incomingBidirectionalStreams;
@@ -119,12 +121,12 @@ private:
     };
     State m_state { State::Connecting };
 
-    using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
-    PromiseAndWrapper m_ready;
+    using PromiseAndWrapper = const std::pair<const Ref<DOMPromise>, const Ref<DeferredPromise>>;
+    const PromiseAndWrapper m_ready;
     WebTransportReliabilityMode m_reliability { WebTransportReliabilityMode::Pending };
     WebTransportCongestionControl m_congestionControl;
-    PromiseAndWrapper m_closed;
-    PromiseAndWrapper m_draining;
+    const PromiseAndWrapper m_closed;
+    const PromiseAndWrapper m_draining;
     const Ref<WebTransportDatagramDuplexStream> m_datagrams;
     RefPtr<WebTransportSession> m_session;
     const Ref<DatagramSource> m_datagramSource;

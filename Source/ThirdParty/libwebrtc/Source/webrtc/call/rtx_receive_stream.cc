@@ -56,7 +56,7 @@ void RtxReceiveStream::OnRtpPacket(const RtpPacketReceived& rtx_packet) {
   if (rtp_receive_statistics_) {
     rtp_receive_statistics_->OnRtpPacket(rtx_packet);
   }
-  rtc::ArrayView<const uint8_t> payload = rtx_packet.payload();
+  ArrayView<const uint8_t> payload = rtx_packet.payload();
 
   if (payload.size() < kRtxHeaderSize) {
     return;
@@ -79,7 +79,7 @@ void RtxReceiveStream::OnRtpPacket(const RtpPacketReceived& rtx_packet) {
   media_packet.set_arrival_time(rtx_packet.arrival_time());
 
   // Skip the RTX header.
-  rtc::ArrayView<const uint8_t> rtx_payload = payload.subview(kRtxHeaderSize);
+  ArrayView<const uint8_t> rtx_payload = payload.subview(kRtxHeaderSize);
 
   uint8_t* media_payload = media_packet.AllocatePayload(rtx_payload.size());
   RTC_DCHECK(media_payload != nullptr);

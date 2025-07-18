@@ -81,7 +81,7 @@ struct CGSubimageCacheAdder {
 };
 
 CGSubimageCacheWithTimer::CGSubimageCacheWithTimer()
-    : m_timer(RunLoop::main(), this, &CGSubimageCacheWithTimer::pruneCacheTimerFired)
+    : m_timer(RunLoop::mainSingleton(), this, &CGSubimageCacheWithTimer::pruneCacheTimerFired)
 {
 }
 

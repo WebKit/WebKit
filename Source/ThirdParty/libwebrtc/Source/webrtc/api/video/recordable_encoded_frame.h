@@ -18,6 +18,7 @@
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
+#include "api/video/video_rotation.h"
 
 namespace webrtc {
 
@@ -36,12 +37,16 @@ class RecordableEncodedFrame {
   virtual ~RecordableEncodedFrame() = default;
 
   // Provides access to encoded data
-  virtual rtc::scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
+  virtual scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
       const = 0;
 
   // Optionally returns the colorspace of the encoded frame. This can differ
   // from the eventually decoded frame's colorspace.
   virtual std::optional<webrtc::ColorSpace> color_space() const = 0;
+
+  // Optionally returns the rotation of the encoded frame. This is limited to
+  // {0,90,180,270} degrees.
+  virtual std::optional<webrtc::VideoRotation> video_rotation() const = 0;
 
   // Returns the codec of the encoded frame
   virtual VideoCodecType codec() const = 0;

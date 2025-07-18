@@ -13,12 +13,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <cctype>
+#include <string>
+
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ip_address.h"
+#include "rtc_base/net_helpers.h"
+
 #if defined(WEBRTC_POSIX)
 #include <unistd.h>
 #endif
-
-#include "examples/peerconnection/server/utils.h"
-#include "rtc_base/checks.h"
 
 static const char kHeaderTerminator[] = "\r\n\r\n";
 static const int kHeaderTerminatorLength = sizeof(kHeaderTerminator) - 1;
@@ -138,8 +145,7 @@ bool DataSocket::Send(const std::string& status,
   if (!content_type.empty())
     buffer += "Content-Type: " + content_type + "\r\n";
 
-  buffer +=
-      "Content-Length: " + int2str(static_cast<int>(data.size())) + "\r\n";
+  buffer += "Content-Length: " + absl::StrCat(data.size()) + "\r\n";
 
   if (!extra_headers.empty()) {
     buffer += extra_headers;
@@ -197,14 +203,13 @@ bool DataSocket::ParseMethodAndPath(const char* begin, size_t len) {
       {"OPTIONS", 7, OPTIONS},
   };
 
-  const char* path = NULL;
-  for (size_t i = 0; i < ARRAYSIZE(supported_methods); ++i) {
-    if (len > supported_methods[i].method_name_len &&
-        isspace(begin[supported_methods[i].method_name_len]) &&
-        strncmp(begin, supported_methods[i].method_name,
-                supported_methods[i].method_name_len) == 0) {
-      method_ = supported_methods[i].id;
-      path = begin + supported_methods[i].method_name_len;
+  const char* path = nullptr;
+  for (const auto& method : supported_methods) {
+    if (len > method.method_name_len &&
+        isspace(begin[method.method_name_len]) &&
+        strncmp(begin, method.method_name, method.method_name_len) == 0) {
+      method_ = method.id;
+      path = begin + method.method_name_len;
       break;
     }
   }
@@ -230,23 +235,21 @@ bool DataSocket::ParseContentLengthAndType(const char* headers, size_t length) {
   const char* end = headers + length;
   while (headers && headers < end) {
     if (!isspace(headers[0])) {
-      static const char kContentLength[] = "Content-Length:";
-      static const char kContentType[] = "Content-Type:";
-      if ((headers + ARRAYSIZE(kContentLength)) < end &&
-          strncmp(headers, kContentLength, ARRAYSIZE(kContentLength) - 1) ==
-              0) {
-        headers += ARRAYSIZE(kContentLength) - 1;
+      static constexpr absl::string_view kContentLength = "Content-Length:";
+      static constexpr absl::string_view kContentType = "Content-Type:";
+      if (absl::string_view(headers, end - headers)
+              .starts_with(kContentLength)) {
+        headers += kContentLength.size();
         while (headers[0] == ' ')
           ++headers;
         content_length_ = atoi(headers);
-      } else if ((headers + ARRAYSIZE(kContentType)) < end &&
-                 strncmp(headers, kContentType, ARRAYSIZE(kContentType) - 1) ==
-                     0) {
-        headers += ARRAYSIZE(kContentType) - 1;
+      } else if (absl::string_view(headers, end - headers)
+                     .starts_with(kContentType)) {
+        headers += kContentType.size();
         while (headers[0] == ' ')
           ++headers;
         const char* type_end = strstr(headers, "\r\n");
-        if (type_end == NULL)
+        if (type_end == nullptr)
           type_end = end;
         content_type_.assign(headers, type_end);
       }
@@ -293,7 +296,7 @@ DataSocket* ListeningSocket::Accept() const {
   NativeSocket client =
       accept(socket_, reinterpret_cast<sockaddr*>(&addr), &size);
   if (client == INVALID_SOCKET)
-    return NULL;
+    return nullptr;
 
   return new DataSocket(client);
 }

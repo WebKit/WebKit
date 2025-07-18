@@ -26,15 +26,15 @@ class RealTimeController : public TimeController {
 
   Clock* GetClock() override;
   TaskQueueFactory* GetTaskQueueFactory() override;
-  std::unique_ptr<rtc::Thread> CreateThread(
+  std::unique_ptr<Thread> CreateThread(
       const std::string& name,
-      std::unique_ptr<rtc::SocketServer> socket_server) override;
-  rtc::Thread* GetMainThread() override;
+      std::unique_ptr<SocketServer> socket_server) override;
+  Thread* GetMainThread() override;
   void AdvanceTime(TimeDelta duration) override;
 
  private:
   const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
-  const std::unique_ptr<rtc::Thread> main_thread_;
+  const std::unique_ptr<Thread> main_thread_;
 };
 
 }  // namespace webrtc

@@ -24,7 +24,7 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 namespace test {
@@ -164,7 +164,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
 
 CodecSpecificInfo FakeEncoder::EncodeHook(
     EncodedImage& encoded_image,
-    rtc::scoped_refptr<EncodedImageBuffer> buffer) {
+    scoped_refptr<EncodedImageBuffer> buffer) {
   CodecSpecificInfo codec_specific;
   codec_specific.codecType = kVideoCodecGeneric;
   return codec_specific;
@@ -269,7 +269,7 @@ void FakeEncoder::SetRatesLocked(const RateControlParameters& parameters) {
           uint32_t bitrate = current_rate_settings_.bitrate.GetBitrate(
               spatial_idx, temporal_idx);
           bitrate = static_cast<uint32_t>(
-              (bitrate* int64_t{max_target_bitrate_kbps_}) /
+              (bitrate * int64_t{max_target_bitrate_kbps_}) /
               allocated_bitrate_kbps);
           current_rate_settings_.bitrate.SetBitrate(spatial_idx, temporal_idx,
                                                     bitrate);
@@ -317,7 +317,7 @@ FakeH264Encoder::FakeH264Encoder(const Environment& env)
 
 CodecSpecificInfo FakeH264Encoder::EncodeHook(
     EncodedImage& encoded_image,
-    rtc::scoped_refptr<EncodedImageBuffer> buffer) {
+    scoped_refptr<EncodedImageBuffer> buffer) {
   static constexpr std::array<uint8_t, 3> kStartCode = {0, 0, 1};
   const size_t kSpsSize = 8;
   const size_t kPpsSize = 11;
@@ -380,7 +380,7 @@ int32_t DelayedEncoder::Encode(const VideoFrame& input_image,
                                const std::vector<VideoFrameType>* frame_types) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
 
-  SleepMs(delay_ms_);
+  Thread::SleepMs(delay_ms_);
 
   return FakeEncoder::Encode(input_image, frame_types);
 }

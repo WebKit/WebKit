@@ -11,13 +11,24 @@
 #include "video/encoder_rtcp_feedback.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <iterator>
 #include <optional>
 #include <utility>
+#include <vector>
 
 #include "api/environment/environment.h"
+#include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_encoder.h"
+#include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/keyframe_interval_settings.h"
+#include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

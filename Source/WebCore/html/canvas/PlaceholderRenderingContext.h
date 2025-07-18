@@ -36,8 +36,6 @@ namespace WebCore {
 
 class PlaceholderRenderingContext;
 
-enum class ContentsFormat : uint8_t;
-
 // Thread-safe interface to submit frames from worker to the placeholder rendering context.
 class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
@@ -47,10 +45,10 @@ public:
     virtual ~PlaceholderRenderingContextSource() = default;
 
     // Called by the offscreen context to submit the frame.
-    void setPlaceholderBuffer(ImageBuffer&);
+    void setPlaceholderBuffer(ImageBuffer&, bool opaque);
 
     // Called by the placeholder context to attach to compositor layer.
-    void setContentsToLayer(GraphicsLayer&, ContentsFormat, ImageBuffer*);
+    void setContentsToLayer(GraphicsLayer&, ImageBuffer*, bool opaque);
 
 private:
     explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
@@ -71,7 +69,7 @@ public:
     HTMLCanvasElement& canvas() const;
     Ref<HTMLCanvasElement> protectedCanvas() const { return canvas(); }
     IntSize size() const;
-    void setPlaceholderBuffer(Ref<ImageBuffer>&&);
+    void setPlaceholderBuffer(Ref<ImageBuffer>&&, bool opaque);
 
     PlaceholderRenderingContextSource& source() const { return m_source; }
 
@@ -79,9 +77,10 @@ private:
     PlaceholderRenderingContext(HTMLCanvasElement&);
     void setContentsToLayer(GraphicsLayer&) final;
     ImageBufferPixelFormat pixelFormat() const final;
+    bool isOpaque() const final { return m_opaque; }
 
     const Ref<PlaceholderRenderingContextSource> m_source;
-    ImageBufferPixelFormat m_pixelFormat { ImageBufferPixelFormat::BGRA8 };
+    bool m_opaque { false };
 };
 
 }

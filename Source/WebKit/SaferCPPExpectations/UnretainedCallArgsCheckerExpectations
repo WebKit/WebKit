@@ -67,7 +67,6 @@ Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 Shared/JavaScriptEvaluationResult.mm
 Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
-Shared/cf/CookieStorageUtilsCF.mm
 Shared/cf/CoreIPCNumber.mm
 Shared/mac/AuxiliaryProcessMac.mm
 Shared/mac/ScrollingAccelerationCurveMac.mm
@@ -78,7 +77,6 @@ UIProcess/API/Cocoa/NSAttributedString.mm
 UIProcess/API/Cocoa/WKContentRuleListStore.mm
 UIProcess/API/Cocoa/WKDownload.mm
 UIProcess/API/Cocoa/WKFrameInfo.mm
-UIProcess/API/Cocoa/WKHTTPCookieStore.mm
 UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
 UIProcess/API/Cocoa/WKNavigationAction.mm
 UIProcess/API/Cocoa/WKNavigationResponse.mm
@@ -165,7 +163,6 @@ UIProcess/Inspector/mac/WKInspectorWKWebView.mm
 UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm
-UIProcess/PDF/WKPDFHUDView.mm
 UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm
 UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
 UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm
@@ -218,17 +215,12 @@ WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm
 WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm
 WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
-WebProcess/Plugins/PDF/PDFAnnotationTypeHelpers.mm
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm
 WebProcess/Plugins/PDF/PDFPluginBase.mm
 WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
-WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm
-WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorItem.mm
-WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
 WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm
-WebProcess/WebPage/Cocoa/WebCookieJarCocoa.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm

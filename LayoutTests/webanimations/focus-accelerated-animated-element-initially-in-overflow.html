@@ -59,8 +59,13 @@ const target = document.getElementById("target");
 const button = document.querySelector("button");
 
 promise_test(async test => {
-    // Initiate the transition.
+    // Wait for a few rendering updates for a most stable environment until
+    // we kick the test off to ensure stable results.
     await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // Initiate the transition.
     target.classList.add("showing");
     
     // 50ms later, focus the button which should no longer be in

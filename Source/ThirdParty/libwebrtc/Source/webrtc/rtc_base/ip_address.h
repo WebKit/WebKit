@@ -33,7 +33,7 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/system/rtc_export.h"
-namespace rtc {
+namespace webrtc {
 
 enum IPv6AddressFlag {
   IPV6_ADDRESS_FLAG_NONE = 0x00,
@@ -62,7 +62,7 @@ class RTC_EXPORT IPAddress {
 
   explicit IPAddress(uint32_t ip_in_host_byte_order) : family_(AF_INET) {
     memset(&u_, 0, sizeof(u_));
-    u_.ip4.s_addr = HostToNetwork32(ip_in_host_byte_order);
+    u_.ip4.s_addr = webrtc::HostToNetwork32(ip_in_host_byte_order);
   }
 
   IPAddress(const IPAddress& other) : family_(other.family_) {
@@ -194,6 +194,42 @@ IPAddress GetAnyIP(int family);
 // counted.
 int CountIPMaskBits(const IPAddress& mask);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::CountIPMaskBits;
+using ::webrtc::GetAnyIP;
+using ::webrtc::GetLoopbackIP;
+using ::webrtc::HashIP;
+using ::webrtc::InterfaceAddress;
+using ::webrtc::IPAddress;
+using ::webrtc::IPAddressPrecedence;
+using ::webrtc::IPFromAddrInfo;
+using ::webrtc::IPFromString;
+using ::webrtc::IPIs6Bone;
+using ::webrtc::IPIs6To4;
+using ::webrtc::IPIsAny;
+using ::webrtc::IPIsLinkLocal;
+using ::webrtc::IPIsLoopback;
+using ::webrtc::IPIsMacBased;
+using ::webrtc::IPIsPrivate;
+using ::webrtc::IPIsPrivateNetwork;
+using ::webrtc::IPIsSharedNetwork;
+using ::webrtc::IPIsSiteLocal;
+using ::webrtc::IPIsTeredo;
+using ::webrtc::IPIsULA;
+using ::webrtc::IPIsUnspec;
+using ::webrtc::IPIsV4Compatibility;
+using ::webrtc::IPIsV4Mapped;
+using ::webrtc::IPV6_ADDRESS_FLAG_DEPRECATED;
+using ::webrtc::IPV6_ADDRESS_FLAG_NONE;
+using ::webrtc::IPV6_ADDRESS_FLAG_TEMPORARY;
+using ::webrtc::IPv6AddressFlag;
+using ::webrtc::TruncateIP;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_IP_ADDRESS_H_

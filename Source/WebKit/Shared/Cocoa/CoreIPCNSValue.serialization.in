@@ -22,16 +22,15 @@
 
 #if PLATFORM(COCOA)
 
-webkit_platform_headers: "CoreIPCNSValue.h" <Foundation/NSRange.h>
+webkit_platform_headers: "CoreIPCNSValue.h"
 
-[WebKitPlatform] struct _NSRange {
-    NSUInteger location;
-    NSUInteger length;
+[WebKitPlatform, CustomHeader] struct WebKit::IPCRange {
+    uint64_t location;
+    uint64_t length;
 }
-using NSRange = _NSRange
 
 [WebKitPlatform] class WebKit::CoreIPCNSValue {
-    Variant<NSRange, CGRect, UniqueRef<WebKit::CoreIPCNSCFObject>> m_value
+    Variant<WebKit::IPCRange, WebKit::DoubleRect, UniqueRef<WebKit::CoreIPCNSCFObject>> m_value
 }
 
 #endif // PLATFORM(COCOA)

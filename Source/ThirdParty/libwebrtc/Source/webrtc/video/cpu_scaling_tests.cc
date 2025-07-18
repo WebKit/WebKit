@@ -71,8 +71,8 @@ void CpuOveruseTest::RunTestAndCheckForAdaptation(
     }
 
     // Called when FrameGeneratorCapturer::AddOrUpdateSink is called.
-    void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
-                            const rtc::VideoSinkWants& wants) override {
+    void OnSinkWantsChanged(VideoSinkInterface<VideoFrame>* sink,
+                            const VideoSinkWants& wants) override {
       if (wants.max_pixel_count == std::numeric_limits<int>::max() &&
           wants.max_framerate_fps == kFps) {
         // Max configured framerate is initially set.

@@ -53,7 +53,7 @@ void LoudnessHistogramTest::TestClean() {
 void LoudnessHistogramTest::RunTest(bool enable_circular_buff,
                                     absl::string_view filename) {
   FILE* in_file = fopen(std::string(filename).c_str(), "rb");
-  ASSERT_TRUE(in_file != NULL);
+  ASSERT_TRUE(in_file != nullptr);
   if (enable_circular_buff) {
     int buffer_size;
     EXPECT_EQ(fread(&buffer_size, sizeof(buffer_size), 1, in_file), 1u);

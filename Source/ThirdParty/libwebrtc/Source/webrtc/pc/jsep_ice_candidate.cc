@@ -10,6 +10,11 @@
 
 #include "api/jsep_ice_candidate.h"
 
+#include <cstddef>
+#include <memory>
+#include <string>
+
+#include "api/candidate.h"
 #include "pc/webrtc_sdp.h"
 
 // This file contains JsepIceCandidate-related functions that are not
@@ -26,7 +31,7 @@ IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
   JsepIceCandidate* jsep_ice = new JsepIceCandidate(sdp_mid, sdp_mline_index);
   if (!jsep_ice->Initialize(sdp, error)) {
     delete jsep_ice;
-    return NULL;
+    return nullptr;
   }
   return jsep_ice;
 }
@@ -34,7 +39,7 @@ IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
 std::unique_ptr<IceCandidateInterface> CreateIceCandidate(
     const std::string& sdp_mid,
     int sdp_mline_index,
-    const cricket::Candidate& candidate) {
+    const Candidate& candidate) {
   return std::make_unique<JsepIceCandidate>(sdp_mid, sdp_mline_index,
                                             candidate);
 }
@@ -45,7 +50,7 @@ JsepIceCandidate::JsepIceCandidate(const std::string& sdp_mid,
 
 JsepIceCandidate::JsepIceCandidate(const std::string& sdp_mid,
                                    int sdp_mline_index,
-                                   const cricket::Candidate& candidate)
+                                   const Candidate& candidate)
     : sdp_mid_(sdp_mid),
       sdp_mline_index_(sdp_mline_index),
       candidate_(candidate) {}

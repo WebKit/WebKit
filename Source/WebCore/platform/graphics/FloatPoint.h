@@ -197,23 +197,10 @@ public:
 
     friend bool operator==(const FloatPoint&, const FloatPoint&) = default;
 
-    struct MarkableTraits {
-        constexpr static bool isEmptyValue(const FloatPoint& point)
-        {
-            return point.isNaN();
-        }
-
-        constexpr static FloatPoint emptyValue()
-        {
-            return FloatPoint::nanPoint();
-        }
-    };
-
 private:
     float m_x { 0 };
     float m_y { 0 };
 };
-
 
 inline FloatPoint& operator+=(FloatPoint& a, const FloatSize& b)
 {
@@ -350,6 +337,19 @@ struct LogArgument<WebCore::FloatPoint> {
     static String toString(const WebCore::FloatPoint& point)
     {
         return point.toJSONString();
+    }
+};
+
+template<>
+struct MarkableTraits<WebCore::FloatPoint> {
+    constexpr static bool isEmptyValue(const WebCore::FloatPoint& point)
+    {
+        return point.isNaN();
+    }
+
+    constexpr static WebCore::FloatPoint emptyValue()
+    {
+        return WebCore::FloatPoint::nanPoint();
     }
 };
 

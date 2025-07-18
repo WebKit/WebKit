@@ -13,7 +13,9 @@
 #include <string.h>
 
 #include <cstdint>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "modules/rtp_rtcp/source/byte_io.h"

@@ -12,7 +12,8 @@
 
 #include <stddef.h>
 
-#include "rtc_base/arraysize.h"
+#include <iterator>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -170,7 +171,7 @@ static const int kChannelOrderings[CHANNEL_LAYOUT_MAX + 1][CHANNELS_MAX + 1] = {
 };
 
 int ChannelLayoutToChannelCount(ChannelLayout layout) {
-  RTC_DCHECK_LT(static_cast<size_t>(layout), arraysize(kLayoutToChannels));
+  RTC_DCHECK_LT(static_cast<size_t>(layout), std::size(kLayoutToChannels));
   RTC_DCHECK_LE(kLayoutToChannels[layout], kMaxConcurrentChannels);
   return kLayoutToChannels[layout];
 }
@@ -201,8 +202,8 @@ ChannelLayout GuessChannelLayout(int channels) {
 }
 
 int ChannelOrder(ChannelLayout layout, Channels channel) {
-  RTC_DCHECK_LT(static_cast<size_t>(layout), arraysize(kChannelOrderings));
-  RTC_DCHECK_LT(static_cast<size_t>(channel), arraysize(kChannelOrderings[0]));
+  RTC_DCHECK_LT(static_cast<size_t>(layout), std::size(kChannelOrderings));
+  RTC_DCHECK_LT(static_cast<size_t>(channel), std::size(kChannelOrderings[0]));
   return kChannelOrderings[layout][channel];
 }
 

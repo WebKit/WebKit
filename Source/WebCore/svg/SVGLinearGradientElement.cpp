@@ -25,6 +25,7 @@
 #include "config.h"
 #include "SVGLinearGradientElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "FloatPoint.h"
 #include "LegacyRenderSVGResourceLinearGradient.h"

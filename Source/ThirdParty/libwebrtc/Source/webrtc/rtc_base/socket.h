@@ -17,11 +17,13 @@
 #include <cstdint>
 #include <optional>
 
+// IWYU pragma: begin_exports
 #if defined(WEBRTC_POSIX)
 #include <arpa/inet.h>
 #include <sys/types.h>
 #define SOCKET_EACCES EACCES
 #endif
+// IWYU pragma: end_exports
 
 #include "api/units/timestamp.h"
 #include "rtc_base/buffer.h"
@@ -75,7 +77,7 @@
 #define closesocket(s) close(s)
 #endif  // WEBRTC_POSIX
 
-namespace rtc {
+namespace webrtc {
 
 inline bool IsBlockingError(int e) {
   return (e == EWOULDBLOCK) || (e == EAGAIN) || (e == EINPROGRESS);
@@ -88,7 +90,7 @@ class RTC_EXPORT Socket {
   struct ReceiveBuffer {
     ReceiveBuffer(Buffer& payload) : payload(payload) {}
 
-    std::optional<webrtc::Timestamp> arrival_time;
+    std::optional<Timestamp> arrival_time;
     SocketAddress source_address;
     EcnMarking ecn = EcnMarking::kNotEct;
     Buffer& payload;
@@ -170,6 +172,15 @@ class RTC_EXPORT Socket {
   Socket() {}
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::IsBlockingError;
+using ::webrtc::Socket;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SOCKET_H_

@@ -251,4 +251,10 @@ TextStream& operator<<(TextStream& ts, const RequestedScrollData& requestedScrol
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, const ScrollUpdate& update)
+{
+    ts << "updateType: " << update.updateType << " nodeID: " << update.nodeID << " scrollPosition: " << update.scrollPosition << " layoutViewportOrigin: " << update.layoutViewportOrigin << " updateLayerPositionAction: " << update.updateLayerPositionAction;
+    return ts;
+}
+
 } // namespace WebCore

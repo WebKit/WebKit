@@ -31,48 +31,72 @@
 
 namespace WebKit {
 
-static void initializeFilterRules(Vector<String>&& source, MemoryCompactRobinHoodHashSet<String>& target)
+static void initializeFilterRules(Vector<ScriptTrackingPrivacyHost>&& source, HostToAllowedCategoriesMap& target, WebCore::ScriptTrackingPrivacyFlags& categoriesWithAllowedHosts)
 {
     target.reserveInitialCapacity(source.size());
-    for (auto& host : source)
-        target.add(host);
+    for (auto&& [host, allowedCategories] : WTFMove(source)) {
+        if (host.isEmpty()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        categoriesWithAllowedHosts.add(allowedCategories);
+        target.add(WTFMove(host), WTFMove(allowedCategories));
+    }
 }
 
 ScriptTrackingPrivacyFilter::ScriptTrackingPrivacyFilter(ScriptTrackingPrivacyRules&& rules)
 {
-    initializeFilterRules(WTFMove(rules.thirdPartyHosts), m_thirdPartyHosts);
-    initializeFilterRules(WTFMove(rules.thirdPartyTopDomains), m_thirdPartyTopDomains);
-    initializeFilterRules(WTFMove(rules.firstPartyHosts), m_firstPartyHosts);
-    initializeFilterRules(WTFMove(rules.firstPartyTopDomains), m_firstPartyTopDomains);
+    initializeFilterRules(WTFMove(rules.thirdPartyHosts), m_thirdPartyHosts, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTFMove(rules.thirdPartyTopDomains), m_thirdPartyTopDomains, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTFMove(rules.firstPartyHosts), m_firstPartyHosts, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTFMove(rules.firstPartyTopDomains), m_firstPartyTopDomains, m_categoriesWithAllowedHosts);
 }
 
-bool ScriptTrackingPrivacyFilter::matches(const URL& url, const WebCore::SecurityOrigin& topOrigin)
+auto ScriptTrackingPrivacyFilter::lookup(const URL& url, const WebCore::SecurityOrigin& topOrigin) -> LookupResult
 {
     WebCore::RegistrableDomain scriptTopDomain { url };
 
     auto scriptTopDomainName = scriptTopDomain.string();
     if (scriptTopDomainName.isEmpty())
-        return false;
+        return { };
 
     auto hostName = url.host().toStringWithoutCopying();
     if (hostName.isEmpty())
-        return false;
+        return { };
 
     if (!scriptTopDomain.matches(topOrigin.data())) {
-        if (m_thirdPartyHosts.contains(hostName))
-            return true;
+        if (auto entry = m_thirdPartyHosts.getOptional(hostName))
+            return { true, *entry };
 
-        if (m_thirdPartyTopDomains.contains(scriptTopDomainName))
-            return true;
+        if (auto entry = m_thirdPartyTopDomains.getOptional(scriptTopDomainName))
+            return { true, *entry };
     }
 
-    if (m_firstPartyHosts.contains(hostName)) [[unlikely]]
-        return true;
+    if (auto entry = m_firstPartyHosts.getOptional(hostName)) [[unlikely]]
+        return { true, *entry };
 
-    if (m_firstPartyTopDomains.contains(scriptTopDomainName)) [[unlikely]]
-        return true;
+    if (auto entry = m_firstPartyTopDomains.getOptional(scriptTopDomainName)) [[unlikely]]
+        return { true, *entry };
 
-    return false;
+    return { };
+}
+
+bool ScriptTrackingPrivacyFilter::matches(const URL& url, const WebCore::SecurityOrigin& topOrigin)
+{
+    return lookup(url, topOrigin).foundMatch;
+}
+
+bool ScriptTrackingPrivacyFilter::shouldAllowAccess(const URL& url, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory category)
+{
+    if (url.isEmpty())
+        return false;
+
+    auto categoryFlag = WebCore::scriptCategoryAsFlag(category);
+    if (!m_categoriesWithAllowedHosts.contains(categoryFlag))
+        return false;
+
+    return lookup(url, topOrigin).allowedCategories.contains(categoryFlag);
 }
 
 } // namespace WebKit

@@ -300,7 +300,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor, (JSGlobalObjec
 
 JSC::GCClient::IsoSubspace* JSTestOverloadedConstructors::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestOverloadedConstructors, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestOverloadedConstructors, UseCustomHeapCellType::No>(vm, "JSTestOverloadedConstructors"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOverloadedConstructors.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOverloadedConstructors = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOverloadedConstructors.get(); },

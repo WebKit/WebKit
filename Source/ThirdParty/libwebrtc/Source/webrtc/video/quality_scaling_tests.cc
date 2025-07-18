@@ -8,19 +8,44 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
+#include "api/array_view.h"
+#include "api/environment/environment.h"
+#include "api/make_ref_counted.h"
+#include "api/rtp_parameters.h"
 #include "api/test/video/function_video_encoder_factory.h"
-#include "media/engine/internal_encoder_factory.h"
+#include "api/transport/bitrate_settings.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/experiments/encoder_info_settings.h"
 #include "test/call_test.h"
-#include "test/field_trial.h"
 #include "test/frame_generator_capturer.h"
+#include "test/gtest.h"
+#include "test/rtp_rtcp_observer.h"
+#include "test/scoped_key_value_config.h"
 #include "test/video_test_constants.h"
-#include "video/config/encoder_stream_factory.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -40,15 +65,13 @@ void SetEncoderSpecific(VideoEncoderConfig* encoder_config,
     VideoCodecVP8 vp8 = VideoEncoder::GetDefaultVp8Settings();
     vp8.automaticResizeOn = automatic_resize;
     encoder_config->encoder_specific_settings =
-        rtc::make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
-            vp8);
+        make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(vp8);
   } else if (type == kVideoCodecVP9) {
     VideoCodecVP9 vp9 = VideoEncoder::GetDefaultVp9Settings();
     vp9.automaticResizeOn = automatic_resize;
     vp9.numberOfSpatialLayers = num_spatial_layers;
     encoder_config->encoder_specific_settings =
-        rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
-            vp9);
+        make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9);
   }
 }
 }  // namespace
@@ -153,7 +176,7 @@ class ScalingObserver : public test::SendTest {
                        test_params_.size());
   }
 
-  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+  Action OnSendRtp(ArrayView<const uint8_t> packet) override {
     // The tests are expected to send at the configured start bitrate. Do not
     // send any packets to avoid receiving REMB and possibly go down in target
     // bitrate. A low bitrate estimate could result in downgrading due to other
@@ -194,8 +217,8 @@ class DownscalingObserver
     frame_generator_capturer->ChangeResolution(kInitialWidth, kInitialHeight);
   }
 
-  void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
-                          const rtc::VideoSinkWants& wants) override {
+  void OnSinkWantsChanged(VideoSinkInterface<VideoFrame>* sink,
+                          const VideoSinkWants& wants) override {
     if (wants.max_pixel_count < kInitialWidth * kInitialHeight)
       observation_complete_.Set();
   }
@@ -227,8 +250,8 @@ class UpscalingObserver
     frame_generator_capturer->ChangeResolution(kInitialWidth, kInitialHeight);
   }
 
-  void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
-                          const rtc::VideoSinkWants& wants) override {
+  void OnSinkWantsChanged(VideoSinkInterface<VideoFrame>* sink,
+                          const VideoSinkWants& wants) override {
     if (wants.max_pixel_count > last_wants_.max_pixel_count) {
       if (wants.max_pixel_count == std::numeric_limits<int>::max())
         observation_complete_.Set();
@@ -236,7 +259,7 @@ class UpscalingObserver
     last_wants_ = wants;
   }
 
-  rtc::VideoSinkWants last_wants_;
+  VideoSinkWants last_wants_;
 };
 
 TEST_F(QualityScalingTest, AdaptsDownForHighQp_Vp8) {

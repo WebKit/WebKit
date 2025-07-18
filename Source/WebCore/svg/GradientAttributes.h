@@ -36,7 +36,7 @@ struct GradientAttributes {
 
     SVGSpreadMethodType spreadMethod() const { return static_cast<SVGSpreadMethodType>(m_spreadMethod); }
     SVGUnitTypes::SVGUnitType gradientUnits() const { return static_cast<SVGUnitTypes::SVGUnitType>(m_gradientUnits); }
-    AffineTransform gradientTransform() const { return m_gradientTransform; }
+    const AffineTransform& gradientTransform() const { return m_gradientTransform; }
     const GradientColorStops& stops() const { return m_stops; }
 
     void setSpreadMethod(SVGSpreadMethodType value)

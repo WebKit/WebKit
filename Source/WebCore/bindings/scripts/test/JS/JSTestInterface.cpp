@@ -1118,7 +1118,7 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return WebCore::subspaceForImpl<TestInterfaceIterator, UseCustomHeapCellType::No>(vm,
+        return WebCore::subspaceForImpl<TestInterfaceIterator, UseCustomHeapCellType::No>(vm, "TestInterfaceIterator"_s,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterfaceIterator.get(); },
             [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestInterfaceIterator.get(); },
@@ -1196,7 +1196,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_forEach, (JSC::JSGloba
 
 JSC::GCClient::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestInterface, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestInterface, UseCustomHeapCellType::No>(vm, "JSTestInterface"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterface.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterface = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestInterface.get(); },

@@ -11,6 +11,6 @@
   <project remote="yocto"  revision="6879650b927c96a2464224cdc2bed8245511cbf1" name="poky" path="sources/poky"/>
   <project remote="github" revision="80e01188fa822d87d301ee71973c462d7a865493" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
   <project remote="github" revision="d330dfe4011a873d379cdf6228fa1f243cf5a6db" name="riscv/meta-riscv" path="sources/meta-riscv"/>
-  <project remote="github" revision="ec00a77f921f2443280f70bb9ca8eef9fe4bc679" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+  <project remote="github" revision="c2ff9fad3831a259256fc2643798f3c6829d15fc" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
 
 </manifest>

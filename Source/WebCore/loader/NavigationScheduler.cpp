@@ -65,7 +65,7 @@ namespace WebCore {
 unsigned NavigationDisabler::s_globalNavigationDisableCount = 0;
 
 class ScheduledNavigation {
-    WTF_MAKE_NONCOPYABLE(ScheduledNavigation); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_MAKE_NONCOPYABLE(ScheduledNavigation); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ScheduledNavigation, Loader);
 public:
     ScheduledNavigation(double delay, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool wasDuringLoad, bool isLocationChange)
         : m_delay(delay)

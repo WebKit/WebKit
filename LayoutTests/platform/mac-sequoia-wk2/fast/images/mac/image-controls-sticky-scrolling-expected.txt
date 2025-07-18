@@ -1,0 +1,14 @@
+layer at (0,0) size 2008x2020
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x2020
+  RenderBlock {HTML} at (0,0) size 785x2020
+    RenderBody {BODY} at (8,8) size 769x2004
+      RenderBlock (anonymous) at (0,0) size 769x2004
+        RenderImage {IMG} at (0,0) size 2000x2000
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,2004) size 769x0
+layer at (8,8) size 2000x2000
+  RenderBlock (relative positioned) {DIV} at (0,0) size 2000x2000 [color=#00000000]
+layer at (1980,500) size 28x26
+  RenderButton {BUTTON} at (1972,0) size 28x26 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+scrolled to 0,500

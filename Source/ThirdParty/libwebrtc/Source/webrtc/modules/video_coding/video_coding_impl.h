@@ -11,19 +11,20 @@
 #ifndef MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 #define MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
-#include <memory>
 #include <optional>
-#include <string>
-#include <vector>
 
 #include "api/field_trials_view.h"
+#include "api/rtp_headers.h"
 #include "api/sequence_checker.h"
-#include "modules/video_coding/deprecated/frame_buffer.h"
+#include "api/video_codecs/video_decoder.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/deprecated/jitter_buffer.h"
 #include "modules/video_coding/deprecated/receiver.h"
 #include "modules/video_coding/generic_decoder.h"
-#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/one_time_event.h"
 #include "rtc_base/synchronization/mutex.h"

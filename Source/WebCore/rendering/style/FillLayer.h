@@ -28,10 +28,13 @@
 #include "LengthSize.h"
 #include "RenderStyleConstants.h"
 #include "StyleImage.h"
+#include "StylePosition.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+using namespace CSS::Literals;
 
 class RenderElement;
 
@@ -47,7 +50,7 @@ struct FillSize {
     {
     }
 
-    friend bool operator==(const FillSize&, const FillSize&) = default;
+    bool operator==(const FillSize&) const = default;
 
     FillSizeType type;
     LengthSize size;
@@ -57,8 +60,12 @@ struct FillRepeatXY {
     FillRepeat x { FillRepeat::Repeat };
     FillRepeat y { FillRepeat::Repeat };
     
-    friend bool operator==(const FillRepeatXY&, const FillRepeatXY&) = default;
+    bool operator==(const FillRepeatXY&) const = default;
 };
+
+using FillPositionX = Style::PositionX;
+using FillPositionY = Style::PositionY;
+using FillPosition = Style::Position;
 
 class FillLayer : public RefCounted<FillLayer> {
     WTF_MAKE_TZONE_ALLOCATED(FillLayer);
@@ -72,8 +79,9 @@ public:
 
     StyleImage* image() const { return m_image.get(); }
     RefPtr<StyleImage> protectedImage() const { return m_image; }
-    const Length& xPosition() const { return m_xPosition; }
-    const Length& yPosition() const { return m_yPosition; }
+    const FillPosition& position() const { return m_position; }
+    const FillPositionX& xPosition() const { return m_position.x; }
+    const FillPositionY& yPosition() const { return m_position.y; }
     FillAttachment attachment() const { return static_cast<FillAttachment>(m_attachment); }
     FillBox clip() const { return static_cast<FillBox>(m_clip); }
     FillBox origin() const { return static_cast<FillBox>(m_origin); }
@@ -112,8 +120,8 @@ public:
     bool isEmpty() const { return (sizeType() == FillSizeType::Size && m_sizeLength.isEmpty()) || sizeType() == FillSizeType::None; }
 
     void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); m_imageSet = true; }
-    void setXPosition(Length length) { m_xPosition = WTFMove(length); m_xPosSet = true; }
-    void setYPosition(Length length) { m_yPosition = WTFMove(length); m_yPosSet = true; }
+    void setXPosition(FillPositionX&& positionX) { m_position.x = WTFMove(positionX); m_xPosSet = true; }
+    void setYPosition(FillPositionY&& positionY) { m_position.y = WTFMove(positionY); m_yPosSet = true; }
     void setAttachment(FillAttachment attachment) { m_attachment = static_cast<unsigned>(attachment); m_attachmentSet = true; }
     void setClip(FillBox b) { m_clip = static_cast<unsigned>(b); m_clipSet = true; }
     void setOrigin(FillBox b) { m_origin = static_cast<unsigned>(b); m_originSet = true; }
@@ -166,8 +174,8 @@ public:
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }
     static FillSize initialFillSize(FillLayerType) { return { }; }
-    static Length initialFillXPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
-    static Length initialFillYPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
+    static FillPositionX initialFillXPosition(FillLayerType) { return 0_css_percentage; }
+    static FillPositionY initialFillYPosition(FillLayerType) { return 0_css_percentage; }
     static StyleImage* initialFillImage(FillLayerType) { return nullptr; }
     static MaskMode initialFillMaskMode(FillLayerType) { return MaskMode::MatchSource; }
 
@@ -184,36 +192,32 @@ private:
     RefPtr<FillLayer> m_next;
 
     RefPtr<StyleImage> m_image;
-
-    Length m_xPosition;
-    Length m_yPosition;
-
+    FillPosition m_position;
     LengthSize m_sizeLength;
-    
     FillRepeatXY m_repeat;
 
-    unsigned m_attachment : 2; // FillAttachment
-    unsigned m_clip : 3; // FillBox
-    unsigned m_origin : 2; // FillBox
-    unsigned m_composite : 4; // CompositeOperator
-    unsigned m_sizeType : 2; // FillSizeType
-    unsigned m_blendMode : 5; // BlendMode
-    unsigned m_maskMode : 2; // MaskMode
+    PREFERRED_TYPE(FillAttachment) unsigned m_attachment : 2;
+    PREFERRED_TYPE(FillBox) unsigned m_clip : 3;
+    PREFERRED_TYPE(FillBox) unsigned m_origin : 2;
+    PREFERRED_TYPE(CompositeOperator) unsigned m_composite : 4;
+    PREFERRED_TYPE(FillSizeType) unsigned m_sizeType : 2;
+    PREFERRED_TYPE(BlendMode) unsigned m_blendMode : 5;
+    PREFERRED_TYPE(MaskMode) unsigned m_maskMode : 2;
 
-    unsigned m_imageSet : 1;
-    unsigned m_attachmentSet : 1;
-    unsigned m_clipSet : 1;
-    unsigned m_originSet : 1;
-    unsigned m_repeatSet : 1;
-    unsigned m_xPosSet : 1;
-    unsigned m_yPosSet : 1;
-    unsigned m_compositeSet : 1;
-    unsigned m_blendModeSet : 1;
-    unsigned m_maskModeSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_imageSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_attachmentSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_clipSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_originSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_repeatSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_xPosSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_yPosSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_compositeSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_blendModeSet : 1;
+    PREFERRED_TYPE(bool) unsigned m_maskModeSet : 1;
 
-    unsigned m_type : 1; // FillLayerType
+    PREFERRED_TYPE(FillLayerType) unsigned m_type : 1;
 
-    mutable unsigned m_clipMax : 2; // FillBox, maximum m_clip value from this to bottom layer
+    PREFERRED_TYPE(FillBox) mutable unsigned m_clipMax : 2; // maximum m_clip value from this to bottom layer
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FillSize);

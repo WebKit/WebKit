@@ -57,7 +57,7 @@ public:
     
 private:
     CombinedFiltersAlphabet m_alphabet;
-    std::unique_ptr<PrefixTreeVertex> m_prefixTreeRoot;
+    const UniqueRef<PrefixTreeVertex> m_prefixTreeRoot;
     HashMap<const PrefixTreeVertex*, ActionList> m_actions;
 };
 

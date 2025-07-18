@@ -29,12 +29,12 @@
   RTCInitFieldTrialDictionary(fieldTrials);
   RTCInitializeSSL();
   RTCSetupInternalTracer();
-  _window =  [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   [_window makeKeyAndVisible];
   ARDMainViewController *viewController = [[ARDMainViewController alloc] init];
 
-  UINavigationController *root =
-      [[UINavigationController alloc] initWithRootViewController:viewController];
+  UINavigationController *root = [[UINavigationController alloc]
+      initWithRootViewController:viewController];
   root.navigationBar.translucent = NO;
   _window.rootViewController = root;
 

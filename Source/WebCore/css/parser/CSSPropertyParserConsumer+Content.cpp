@@ -31,6 +31,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Attr.h"
+#include "CSSPropertyParserConsumer+CounterStyles.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Lists.h"
@@ -68,32 +69,56 @@ RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range, CSS::PropertyParserSt
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, CSS::PropertyParserState& state, bool counters)
+static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, CSS::PropertyParserState& state)
 {
+    // counter()  =  counter( <counter-name>, <counter-style>? )
+    // https://www.w3.org/TR/css-lists-3/#funcdef-counter
+
     AtomString identifier { consumeCustomIdentRaw(args) };
     if (identifier.isNull())
         return nullptr;
 
-    AtomString separator;
-    if (counters) {
-        if (!consumeCommaIncludingWhitespace(args) || args.peek().type() != StringToken)
-            return nullptr;
-        separator = args.consumeIncludingWhitespace().value().toAtomString();
-    }
-
-    RefPtr<CSSValue> listStyleType = CSSPrimitiveValue::create(CSSValueDecimal);
+    RefPtr<CSSValue> counterStyle;
     if (consumeCommaIncludingWhitespace(args)) {
-        if (args.peek().id() == CSSValueNone || args.peek().type() == StringToken)
-            return nullptr;
-        listStyleType = CSSPropertyParsing::consumeListStyleType(args, state);
-        if (!listStyleType)
+        counterStyle = consumeCounterStyle(args, state);
+        if (!counterStyle)
             return nullptr;
     }
+    if (!counterStyle)
+        counterStyle = CSSPrimitiveValue::create(CSSValueDecimal);
 
     if (!args.atEnd())
         return nullptr;
 
-    return CSSCounterValue::create(WTFMove(identifier), WTFMove(separator), WTFMove(listStyleType));
+    return CSSCounterValue::create(WTFMove(identifier), AtomString { nullAtom() }, counterStyle.releaseNonNull());
+}
+
+static RefPtr<CSSValue> consumeCountersContent(CSSParserTokenRange args, CSS::PropertyParserState& state)
+{
+    // counters() = counters( <counter-name>, <string>, <counter-style>? )
+    // https://www.w3.org/TR/css-lists-3/#funcdef-counters
+
+    AtomString identifier { consumeCustomIdentRaw(args) };
+    if (identifier.isNull())
+        return nullptr;
+
+    if (!consumeCommaIncludingWhitespace(args) || args.peek().type() != StringToken)
+        return nullptr;
+    auto separator = args.consumeIncludingWhitespace().value().toAtomString();
+
+    RefPtr<CSSValue> counterStyle;
+    if (consumeCommaIncludingWhitespace(args)) {
+        counterStyle = consumeCounterStyle(args, state);
+        if (!counterStyle)
+            return nullptr;
+    }
+    if (!counterStyle)
+        counterStyle = CSSPrimitiveValue::create(CSSValueDecimal);
+
+    if (!args.atEnd())
+        return nullptr;
+
+    return CSSCounterValue::create(WTFMove(identifier), WTFMove(separator), counterStyle.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -123,9 +148,9 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, CSS::PropertyParserS
                 // FIXME: Alt-text should support counters.
                 else if (type == ContentListType::VisibleContent) {
                     if (range.peek().functionId() == CSSValueCounter)
-                        parsedValue = consumeCounterContent(consumeFunction(range), state, false);
+                        parsedValue = consumeCounterContent(consumeFunction(range), state);
                     else if (range.peek().functionId() == CSSValueCounters)
-                        parsedValue = consumeCounterContent(consumeFunction(range), state, true);
+                        parsedValue = consumeCountersContent(consumeFunction(range), state);
                 }
                 if (!parsedValue)
                     return false;

@@ -139,8 +139,9 @@ class WebViewImpl;
 class ViewGestureController;
 #endif
 enum class HideScrollPocketReason : uint8_t {
-    FullScreen      = 1 << 0,
-    ScrolledToTop   = 1 << 1,
+    FullScreen          = 1 << 0,
+    ScrolledToTop       = 1 << 1,
+    SiteSpecificQuirk   = 1 << 2,
 };
 }
 
@@ -193,12 +194,6 @@ struct OverriddenLayoutParameters {
     CGSize maximumUnobscuredSize { CGSizeZero };
 };
 
-struct OverriddenZoomScaleParameters {
-    CGFloat minimumZoomScale { 1 };
-    CGFloat maximumZoomScale { 1 };
-    BOOL allowUserScaling { YES };
-};
-
 // This holds state that should be reset when the web process exits.
 struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
@@ -236,6 +231,7 @@ struct PerWebProcessState {
 
     BOOL viewportMetaTagWidthWasExplicit { NO };
     BOOL viewportMetaTagCameFromImageDocument { NO };
+    BOOL lastTransactionWasInStableState { NO };
 
     std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
     std::optional<WebCore::IntDegrees> lastSentDeviceOrientation;
@@ -254,6 +250,8 @@ struct PerWebProcessState {
     Markable<WebCore::PlatformLayerIdentifier> committedFindLayerID;
 
     std::optional<LiveResizeParameters> liveResizeParameters;
+
+    std::optional<WebKit::TransactionID> firstTransactionIDAfterObscuredInsetChange;
 };
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -284,6 +282,7 @@ struct PerWebProcessState {
     BOOL _shouldSuppressTopColorExtensionView;
 #if PLATFORM(MAC)
     BOOL _alwaysPrefersSolidColorHardPocket;
+    BOOL _isGettingAdjustedColorForTopContentInsetColorFromDelegate;
     RetainPtr<NSColor> _overrideTopScrollEdgeEffectColor;
 #endif
 
@@ -348,7 +347,10 @@ struct PerWebProcessState {
     PerWebProcessState _perProcessState;
 
     std::optional<OverriddenLayoutParameters> _overriddenLayoutParameters;
-    std::optional<OverriddenZoomScaleParameters> _overriddenZoomScaleParameters;
+#if PLATFORM(IOS_FAMILY)
+    BOOL _forcesInitialScaleFactor;
+    BOOL _automaticallyAdjustsViewLayoutSizesWithObscuredInset;
+#endif
     CGRect _inputViewBoundsInWindow;
 
     BOOL _fastClickingIsDisabled;
@@ -469,6 +471,7 @@ struct PerWebProcessState {
     WebCore::RectEdges<RetainPtr<WKColorExtensionView>> _fixedColorExtensionViews;
     OptionSet<WebKit::HideScrollPocketReason> _reasonsToHideTopScrollPocket;
     BOOL _needsTopScrollPocketDueToVisibleContentInset;
+    BOOL _shouldUpdateNeedsTopScrollPocketDueToVisibleContentInset;
 #endif
 }
 
@@ -545,6 +548,13 @@ struct PerWebProcessState {
 - (void)_addReasonToHideTopScrollPocket:(WebKit::HideScrollPocketReason)reason;
 - (void)_removeReasonToHideTopScrollPocket:(WebKit::HideScrollPocketReason)reason;
 - (void)_updateTopScrollPocketCaptureColor;
+- (void)_updateHiddenScrollPocketEdges;
+- (void)_doAfterAdjustingColorForTopContentInsetFromUIDelegate:(Function<void()>&&)callback;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+- (NSColor *)_adjustedColorForTopContentInsetColorFromUIDelegate:(NSColor *)proposedColor;
+@property (nonatomic, setter=_setAlwaysPrefersSolidColorHardPocket:) BOOL _alwaysPrefersSolidColorHardPocket;
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -582,14 +592,6 @@ struct PerWebProcessState {
 - (void)_updatePDFPageNumberIndicatorIfNeeded;
 - (void)_removeAnyPDFPageNumberIndicator;
 
-#endif
-
-#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-- (void)_updateHiddenScrollPocketEdges;
-#endif
-
-#if PLATFORM(MAC) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-@property (nonatomic, setter=_setAlwaysPrefersSolidColorHardPocket:) BOOL _alwaysPrefersSolidColorHardPocket;
 #endif
 
 @property (nonatomic, setter=_setHasActiveNowPlayingSession:) BOOL _hasActiveNowPlayingSession;

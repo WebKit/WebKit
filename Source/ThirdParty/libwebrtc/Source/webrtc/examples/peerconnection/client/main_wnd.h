@@ -104,7 +104,7 @@ class MainWnd : public MainWindow {
 
   HWND handle() const { return wnd_; }
 
-  class VideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+  class VideoRenderer : public webrtc::VideoSinkInterface<webrtc::VideoFrame> {
    public:
     VideoRenderer(HWND wnd,
                   int width,
@@ -134,7 +134,7 @@ class MainWnd : public MainWindow {
     BITMAPINFO bmi_;
     std::unique_ptr<uint8_t[]> image_;
     CRITICAL_SECTION buffer_lock_;
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> rendered_track_;
+    webrtc::scoped_refptr<webrtc::VideoTrackInterface> rendered_track_;
   };
 
   // A little helper class to make sure we always to proper locking and

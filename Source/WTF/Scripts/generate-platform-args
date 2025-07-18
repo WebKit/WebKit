@@ -8,6 +8,14 @@ import re
 # Preprocesses wtf/Platform.h with clang, extracts macro definitions, and saves
 # the platform flags to a Swift-style response file containing -D arguments.
 
+# For build settings which may be undefined, behave like a shell and implicitly
+# fall back to the empty string.
+os.environ.setdefault('FRAMEWORK_SEARCH_PATHS', '')
+os.environ.setdefault('HEADER_SEARCH_PATHS', '')
+os.environ.setdefault('SYSTEM_FRAMEWORK_SEARCH_PATHS', '')
+os.environ.setdefault('SYSTEM_HEADER_SEARCH_PATHS', '')
+os.environ.setdefault('GCC_PREPROCESSOR_DEFINITIONS', '')
+
 framework_search_paths = shlex.split(
     '{BUILT_PRODUCTS_DIR} {FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
 header_search_paths = shlex.split(

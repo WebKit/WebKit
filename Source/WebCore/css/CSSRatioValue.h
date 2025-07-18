@@ -32,6 +32,7 @@ namespace WebCore {
 class CSSRatioValue final : public CSSValue {
 public:
     static Ref<CSSRatioValue> create(CSS::Ratio&&);
+    static Ref<CSSRatioValue> create(const CSS::Ratio&);
 
     const CSS::Ratio& ratio() const { return m_ratio; }
 
@@ -42,6 +43,7 @@ public:
 
 private:
     CSSRatioValue(CSS::Ratio&&);
+    CSSRatioValue(const CSS::Ratio&);
 
     CSS::Ratio m_ratio;
 };

@@ -59,23 +59,23 @@ static inline RTCSctpTransportState toRTCSctpTransportState(webrtc::SctpTranspor
 
 class LibWebRTCSctpTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCSctpTransportBackendObserver>, public webrtc::SctpTransportObserverInterface {
 public:
-    static Ref<LibWebRTCSctpTransportBackendObserver> create(RTCSctpTransportBackendClient& client, rtc::scoped_refptr<webrtc::SctpTransportInterface>& backend) { return adoptRef(*new LibWebRTCSctpTransportBackendObserver(client, backend)); }
+    static Ref<LibWebRTCSctpTransportBackendObserver> create(RTCSctpTransportBackendClient& client, webrtc::scoped_refptr<webrtc::SctpTransportInterface>& backend) { return adoptRef(*new LibWebRTCSctpTransportBackendObserver(client, backend)); }
 
     void start();
     void stop();
 
 private:
-    LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackendClient&, rtc::scoped_refptr<webrtc::SctpTransportInterface>&);
+    LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackendClient&, webrtc::scoped_refptr<webrtc::SctpTransportInterface>&);
 
     void OnStateChange(webrtc::SctpTransportInformation) final;
 
     void updateState(webrtc::SctpTransportInformation&&);
 
-    rtc::scoped_refptr<webrtc::SctpTransportInterface> m_backend;
+    webrtc::scoped_refptr<webrtc::SctpTransportInterface> m_backend;
     WeakPtr<RTCSctpTransportBackendClient> m_client;
 };
 
-LibWebRTCSctpTransportBackendObserver::LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackendClient& client, rtc::scoped_refptr<webrtc::SctpTransportInterface>& backend)
+LibWebRTCSctpTransportBackendObserver::LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackendClient& client, webrtc::scoped_refptr<webrtc::SctpTransportInterface>& backend)
     : m_backend(backend)
     , m_client(client)
 {
@@ -123,7 +123,7 @@ void LibWebRTCSctpTransportBackendObserver::OnStateChange(webrtc::SctpTransportI
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSctpTransportBackend);
 
-LibWebRTCSctpTransportBackend::LibWebRTCSctpTransportBackend(rtc::scoped_refptr<webrtc::SctpTransportInterface>&& backend, rtc::scoped_refptr<webrtc::DtlsTransportInterface>&& dtlsBackend)
+LibWebRTCSctpTransportBackend::LibWebRTCSctpTransportBackend(webrtc::scoped_refptr<webrtc::SctpTransportInterface>&& backend, webrtc::scoped_refptr<webrtc::DtlsTransportInterface>&& dtlsBackend)
     : m_backend(WTFMove(backend))
     , m_dtlsBackend(WTFMove(dtlsBackend))
 {
@@ -138,7 +138,7 @@ LibWebRTCSctpTransportBackend::~LibWebRTCSctpTransportBackend()
 
 UniqueRef<RTCDtlsTransportBackend> LibWebRTCSctpTransportBackend::dtlsTransportBackend()
 {
-    return makeUniqueRef<LibWebRTCDtlsTransportBackend>(rtc::scoped_refptr<webrtc::DtlsTransportInterface> { m_dtlsBackend.get() });
+    return makeUniqueRef<LibWebRTCDtlsTransportBackend>(webrtc::scoped_refptr<webrtc::DtlsTransportInterface> { m_dtlsBackend.get() });
 }
 
 void LibWebRTCSctpTransportBackend::registerClient(RTCSctpTransportBackendClient& client)

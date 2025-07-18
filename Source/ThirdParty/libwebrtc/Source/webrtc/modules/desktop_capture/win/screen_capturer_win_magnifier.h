@@ -104,7 +104,7 @@ class ScreenCapturerWinMagnifier : public DesktopCapturer {
   Callback* callback_ = nullptr;
   std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
   ScreenId current_screen_id_ = kFullDesktopScreenId;
-  std::wstring current_device_key_;
+  std::optional<std::wstring> current_device_key_;
   HWND excluded_window_ = NULL;
 
   // Queue of the frames buffers.

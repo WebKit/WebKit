@@ -63,8 +63,6 @@ private:
     void snapshot(WebCore::ClientOrigin&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
     void clientIsGoingAway(WebCore::ClientOrigin&&, WebCore::ScriptExecutionContextIdentifier);
 
-    Ref<WebProcessProxy> protectedProcess() const { return m_process.get(); }
-
     const CheckedRef<WebProcessProxy> m_process;
     bool m_hasEverRequestedLocks { false };
 };

@@ -168,7 +168,7 @@ void RemoteDisplayListRecorderProxy::setLineCap(LineCap lineCap)
 
 void RemoteDisplayListRecorderProxy::setLineDash(const DashArray& array, float dashOffset)
 {
-    send(Messages::RemoteDisplayListRecorder::SetLineDash(array, dashOffset));
+    send(Messages::RemoteDisplayListRecorder::SetLineDash(FixedVector<double>(array.span()), dashOffset));
 }
 
 void RemoteDisplayListRecorderProxy::setLineJoin(LineJoin lineJoin)
@@ -271,7 +271,7 @@ void RemoteDisplayListRecorderProxy::drawGlyphsImmediate(const Font& font, std::
     ASSERT(glyphs.size() == advances.size());
     appendStateChangeItemIfNecessary();
     recordResourceUse(const_cast<Font&>(font));
-    send(Messages::RemoteDisplayListRecorder::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), advances.data(), glyphs.size() }, localAnchor, smoothingMode));
+    send(Messages::RemoteDisplayListRecorder::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), Vector<FloatSize>(advances).span().data(), glyphs.size() }, localAnchor, smoothingMode));
 }
 
 void RemoteDisplayListRecorderProxy::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)

@@ -14,7 +14,6 @@
 #include <stdint.h>
 
 #include <optional>
-#include <vector>
 
 #include "absl/container/inlined_vector.h"
 #include "api/array_view.h"
@@ -33,7 +32,7 @@ class FrameDependenciesCalculator {
   // Calculates frame dependencies based on previous encoder buffer usage.
   absl::InlinedVector<int64_t, 5> FromBuffersUsage(
       int64_t frame_id,
-      rtc::ArrayView<const CodecBufferUsage> buffers_usage);
+      ArrayView<const CodecBufferUsage> buffers_usage);
 
  private:
   struct BufferUsage {

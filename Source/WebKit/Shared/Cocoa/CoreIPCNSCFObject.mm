@@ -129,7 +129,7 @@ RetainPtr<id> CoreIPCNSCFObject::toID() const
 {
     RetainPtr<id> result;
 
-    WTF::switchOn(*m_value, [&](auto& object) {
+    WTF::switchOn(m_value.get(), [&](auto& object) {
         result = object.toID();
     }, [](std::nullptr_t) {
         // result should be nil, which is the default value initialized above.
@@ -166,7 +166,7 @@ namespace IPC {
 
 void ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::encode(Encoder& encoder, const UniqueRef<WebKit::ObjectValue>& object)
 {
-    encoder << *object;
+    encoder << object.get();
 }
 
 std::optional<UniqueRef<WebKit::ObjectValue>> ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::decode(Decoder& decoder)

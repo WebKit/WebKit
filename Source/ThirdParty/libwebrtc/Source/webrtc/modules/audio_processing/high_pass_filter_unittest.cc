@@ -121,12 +121,40 @@ void RunBitexactnessTest(int num_channels,
 
 // Method for forming a vector out of an array.
 // TODO(peah): Remove once braced initialization is allowed.
-std::vector<float> CreateVector(const rtc::ArrayView<const float>& array_view) {
+std::vector<float> CreateVector(const ArrayView<const float>& array_view) {
   std::vector<float> v;
   for (auto value : array_view) {
     v.push_back(value);
   }
   return v;
+}
+
+float DcSignalAtenuation(float sampleRate) {
+  constexpr int kNumChannels = 1;
+  HighPassFilter high_pass_filter(sampleRate, kNumChannels);
+  std::vector<std::vector<float>> audio_data(
+      1, std::vector<float>(sampleRate / 100));
+
+  constexpr float kMaxDcLevel = 32767.0f;
+  float energy_before_filtering;
+  float energy_after_filtering;
+  for (int run = 0; run < 2; ++run) {
+    // Set input.
+    energy_before_filtering = 0.0f;
+    for (unsigned int sample = 0; sample < audio_data[0].size(); ++sample) {
+      audio_data[0][sample] = kMaxDcLevel;
+      energy_before_filtering += audio_data[0][sample] * audio_data[0][sample];
+    }
+
+    high_pass_filter.Process(&audio_data);
+    energy_after_filtering = 0.0f;
+    for (unsigned int sample = 0; sample < audio_data[0].size(); ++sample) {
+      energy_after_filtering += audio_data[0][sample] * audio_data[0][sample];
+    }
+  }
+  const float attenuation_db =
+      10.0f * std::log10(energy_before_filtering / energy_after_filtering);
+  return attenuation_db;
 }
 }  // namespace
 
@@ -191,15 +219,14 @@ TEST(HighPassFilterAccuracyTest, MonoInitial) {
       -0.232329f, -0.273644f, -0.323162f, -0.149105f, -0.559646f, 0.269458f,
       0.145333f,  -0.005597f, -0.009717f, -0.223051f, 0.284676f,  -0.037228f,
       -0.199679f, 0.377651f,  -0.062813f, -0.164607f};
-  const float kReference[] = {0.146139f, 0.490336f,  -0.649520f, 0.233881f,
-                              0.073214f, -0.373256f, -0.115394f, 0.102109f,
-                              0.976217f, 0.702270f,  -0.457697f, 0.757116f};
+  const float kReference[] = {0.146139f, 0.490339f,  -0.649516f, 0.233889f,
+                              0.073224f, -0.373246f, -0.115382f, 0.102119f,
+                              0.976229f, 0.702288f,  -0.457669f, 0.757161f};
 
   for (bool use_audio_buffer_interface : {true, false}) {
-    RunBitexactnessTest(
-        1, use_audio_buffer_interface,
-        CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
-        CreateVector(rtc::ArrayView<const float>(kReference)));
+    RunBitexactnessTest(1, use_audio_buffer_interface,
+                        CreateVector(ArrayView<const float>(kReferenceInput)),
+                        CreateVector(ArrayView<const float>(kReference)));
   }
 }
 
@@ -286,16 +313,26 @@ TEST(HighPassFilterAccuracyTest, MonoConverged) {
       0.263284f,  0.083972f,  -0.104256f, 0.227892f,  0.223253f,  0.033592f,
       0.159638f,  0.115358f,  -0.275811f, 0.212265f,  -0.183658f, -0.168768f};
 
-  const float kReference[] = {-0.248836f, -0.086982f, 0.083715f,  -0.036787f,
-                              0.127212f,  0.147464f,  -0.221733f, -0.004484f,
-                              -0.535107f, 0.385999f,  -0.116346f, -0.265302f};
+  const float kReference[] = {-0.248978f, -0.087127f, 0.083567f,  -0.036940f,
+                              0.127056f,  0.147304f,  -0.221897f, -0.004650f,
+                              -0.535279f, 0.385823f,  -0.116531f, -0.265494f};
 
   for (bool use_audio_buffer_interface : {true, false}) {
-    RunBitexactnessTest(
-        1, use_audio_buffer_interface,
-        CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
-        CreateVector(rtc::ArrayView<const float>(kReference)));
+    RunBitexactnessTest(1, use_audio_buffer_interface,
+                        CreateVector(ArrayView<const float>(kReferenceInput)),
+                        CreateVector(ArrayView<const float>(kReference)));
   }
 }
 
+TEST(HighPassFilterAccuracyTest, DcSignalAtenuation16) {
+  EXPECT_GE(DcSignalAtenuation(16000), 47.3f);
+}
+
+TEST(HighPassFilterAccuracyTest, DcSignalAtenuation32) {
+  EXPECT_GE(DcSignalAtenuation(32000), 47.3f);
+}
+
+TEST(HighPassFilterAccuracyTest, DcSignalAtenuation48) {
+  EXPECT_GE(DcSignalAtenuation(48000), 47.3f);
+}
 }  // namespace webrtc

@@ -42,7 +42,7 @@ std::optional<WebCore::SharedMemoryHandle> WebCompiledContentRuleListData::creat
     return Ref { *data }->createHandle(protection);
 }
 
-WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& dataHandle, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize)
     : identifier(WTFMove(identifier))
     , data(dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr)
     , actionsOffset(actionsOffset)

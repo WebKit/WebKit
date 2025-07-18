@@ -451,4 +451,15 @@ void UIScriptControllerCocoa::cancelFixedColorExtensionFadeAnimations() const
     [webView() _cancelFixedColorExtensionFadeAnimationsForTesting];
 }
 
+void UIScriptControllerCocoa::setObscuredInsets(double top, double right, double bottom, double left)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto insets = UIEdgeInsetsMake(top, left, bottom, right);
+    [webView() scrollView].contentInset = insets;
+#else
+    auto insets = NSEdgeInsetsMake(top, left, bottom, right);
+#endif
+    [webView() setObscuredContentInsets:insets];
+}
+
 } // namespace WTR

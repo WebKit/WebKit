@@ -791,19 +791,16 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 {
     ASSERT(!m_shadowRoot);
 
-    if (!resolverIfExists())
-        return { };
-
     ResolverScopes resolverScopes;
 
-    resolverScopes.add(*resolverIfExists(), Vector<WeakPtr<Scope>> { this });
+    if (auto* resolver = resolverIfExists())
+        resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { this });
 
     for (auto& shadowRoot : m_document->inDocumentShadowRoots()) {
         auto& scope = const_cast<ShadowRoot&>(shadowRoot).styleScope();
-        auto* resolver = scope.resolverIfExists();
-        if (!resolver)
-            continue;
-        resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
+
+        if (auto* resolver = scope.resolverIfExists())
+            resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
     }
     return resolverScopes;
 }
@@ -853,13 +850,12 @@ void Scope::didChangeStyleSheetEnvironment()
     if (!m_shadowRoot) {
         m_sharedShadowTreeResolvers.clear();
 
-        for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
-            // Stylesheets is author shadow roots are potentially affected.
-            if (descendantShadowRoot.mode() != ShadowRootMode::UserAgent)
-                const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
-        }
+        for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
+
         m_document->invalidateCachedCSSParserContext();
     }
+
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
 }
 

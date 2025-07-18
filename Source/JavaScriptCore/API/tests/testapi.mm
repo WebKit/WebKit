@@ -1880,7 +1880,7 @@ static void checkModuleCodeRan(JSContext *context, JSValue *promise, JSValue *ex
     __block BOOL promiseWasResolved = false;
     [promise invokeMethod:@"then" withArguments:@[^(JSValue *exportValue) {
         promiseWasResolved = true;
-        checkResult(@"module exported value 'exp' is null", [exportValue[@"exp"] isEqualToObject:expected]);
+        checkResult(@"module exported value 'exp' is the expected value", [exportValue[@"exp"] isEqualToObject:expected]);
         checkResult(@"ran is %@", [context[@"ran"] isEqualToObject:expected]);
     }, ^(JSValue *error) {
         NSLog(@"%@", [error toString]);
@@ -2072,6 +2072,25 @@ static void testImportModuleTwice()
         JSValue *one = [JSValue valueWithInt32:1 inContext:context];
         checkModuleCodeRan(context, promise, one);
         checkModuleCodeRan(context, promise2, one);
+    }
+}
+
+static void testImportMetaURL()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext * context, JSValue *, JSValue *resolve, JSValue *) {
+            [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule
+                withSource:@"if (!import.meta.url.match(\"baz.js\")) throw new Error(\"import.meta.url doesn't seem right: \" + import.meta.url); ran++; export let exp = 1;"
+                andSourceURL:[NSURL fileURLWithPath:@"/baz.js"]
+                andBytecodeCache:nil
+                inVirtualMachine:[context virtualMachine]
+                error:nil]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        context[@"ran"] = @(0);
+        JSValue *promise = [context evaluateScript:@"import('/baz.js');"];
+        JSValue *one = [JSValue valueWithInt32:1 inContext:context];
+        checkModuleCodeRan(context, promise, one);
     }
 }
 
@@ -2629,6 +2648,7 @@ static void testJSScriptURL()
         context.moduleLoaderDelegate = context;
         NSURL *basic = [NSURL URLWithString:@"./basic.js" relativeToURL:resolvePathToScripts()];
         JSScript *script1 = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:basic withSourceURL:basic andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script1);
 
         JSValue *result1 = [context evaluateJSScript:script1];
         JSValue *null = [JSValue valueWithNullInContext:context];
@@ -2958,6 +2978,7 @@ void testObjectiveCAPI(const char* filter)
     RUN(testFetchWithTwoCycle());
     RUN(testFetchWithThreeCycle());
     RUN(testImportModuleTwice());
+    RUN(testImportMetaURL());
     RUN(testModuleBytecodeCache());
     RUN(testProgramBytecodeCache());
     RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeProgram));

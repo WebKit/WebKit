@@ -26,10 +26,12 @@
 #include "config.h"
 #include "GradientRendererCG.h"
 
+#include "ColorHash.h"
 #include "ColorInterpolation.h"
 #include "ColorSpaceCG.h"
 #include "GradientColorStops.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -76,6 +78,38 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
 
 // MARK: - Gradient strategy.
 
+static ColorComponents<float, 4> getResolvedColorComponentsInColorSpace(const Color& color, const DestinationColorSpace& destinationColorSpace)
+{
+    static LazyNeverDestroyed<HashMap<Color, ColorComponents<float, 4>>> colorCache;
+    static LazyNeverDestroyed<DestinationColorSpace> cacheColorSpace;
+    static Lock colorCacheLock;
+
+    auto locker = Locker(colorCacheLock);
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        colorCache.construct();
+        cacheColorSpace.construct(destinationColorSpace);
+    });
+
+    if (cacheColorSpace != destinationColorSpace) {
+        colorCache->clear();
+        cacheColorSpace.get() = destinationColorSpace;
+    }
+
+    auto result = colorCache->ensure(color, [&] {
+        return color.toResolvedColorComponentsInColorSpace(destinationColorSpace);
+    }).iterator->value;
+
+    const size_t maxCacheCount = 32;
+    if (colorCache->size() > maxCacheCount) {
+        auto iteratorToRemove = colorCache->random();
+        colorCache->remove(iteratorToRemove);
+    }
+
+    return result;
+}
+
 GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops, std::optional<DestinationColorSpace> destinationColorSpace) const
 {
     ASSERT_UNUSED(colorInterpolationMethod, std::holds_alternative<ColorInterpolationMethod::SRGB>(colorInterpolationMethod.colorSpace));
@@ -121,7 +155,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         if (hasOnlyBoundedSRGBColorStops(stops)) {
             for (const auto& stop : stops) {
                 if (destinationColorSpace) {
-                    auto [r, g, b, a] = stop.color.toResolvedColorComponentsInColorSpace(*destinationColorSpace);
+                    auto [r, g, b, a ] = getResolvedColorComponentsInColorSpace(stop.color, *destinationColorSpace);
                     colorComponents.appendList({ r, g, b, a });
                 } else {
                     auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();

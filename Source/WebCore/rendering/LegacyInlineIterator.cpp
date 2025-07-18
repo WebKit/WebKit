@@ -31,11 +31,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-UCharDirection LegacyInlineIterator::surrogateTextDirection(UChar currentCodeUnit) const
+UCharDirection LegacyInlineIterator::surrogateTextDirection(char16_t currentCodeUnit) const
 {
     RenderText& text = downcast<RenderText>(*m_renderer);
-    UChar lead;
-    UChar trail;
+    char16_t lead;
+    char16_t trail;
     if (U16_IS_LEAD(currentCodeUnit)) {
         lead = currentCodeUnit;
         trail = text.characterAt(m_pos + 1);

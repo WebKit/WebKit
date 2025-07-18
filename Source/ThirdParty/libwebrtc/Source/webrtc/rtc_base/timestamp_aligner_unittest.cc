@@ -19,7 +19,7 @@
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 // Computes the difference x_k - mean(x), when x_k is the linear sequence x_k =
@@ -59,8 +59,8 @@ void TestTimestampFilter(double rel_freq_error) {
   const int kNumFrames = 3 * kWindowSize;
 
   int64_t interval_error_us = kIntervalUs * rel_freq_error;
-  int64_t system_start_us = rtc::TimeMicros();
-  webrtc::Random random(17);
+  int64_t system_start_us = TimeMicros();
+  Random random(17);
 
   int64_t prev_translated_time_us = system_start_us;
 
@@ -84,7 +84,7 @@ void TestTimestampFilter(double rel_freq_error) {
 
     EXPECT_LE(translated_time_us, system_measured_us);
     EXPECT_GE(translated_time_us,
-              prev_translated_time_us + rtc::kNumMicrosecsPerMillisec);
+              prev_translated_time_us + kNumMicrosecsPerMillisec);
 
     // The relative frequency error contributes to the expected error
     // by a factor which is the difference between the current time
@@ -176,7 +176,7 @@ TEST(TimestampAlignerTest, ClipToMonotonous) {
     if (translated_timestamp_us <= prev_timestamp_us) {
       did_clip = true;
       EXPECT_EQ(clip_timestamp_us,
-                prev_timestamp_us + rtc::kNumMicrosecsPerMillisec);
+                prev_timestamp_us + kNumMicrosecsPerMillisec);
     } else {
       // No change from clipping.
       EXPECT_EQ(clip_timestamp_us, translated_timestamp_us);
@@ -204,4 +204,4 @@ TEST(TimestampAlignerTest, TranslateTimestampWithoutStateUpdate) {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

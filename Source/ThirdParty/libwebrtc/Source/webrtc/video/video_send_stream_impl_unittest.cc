@@ -22,7 +22,6 @@
 
 #include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
-#include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_parameters.h"
@@ -56,7 +55,6 @@
 #include "video/send_delay_stats.h"
 #include "video/send_statistics_proxy.h"
 #include "video/test/mock_video_stream_encoder.h"
-#include "video/video_stream_encoder.h"
 #include "video/video_stream_encoder_interface.h"
 
 namespace webrtc {
@@ -128,7 +126,7 @@ class MockRtpVideoSender : public RtpVideoSenderInterface {
   MOCK_METHOD(void, SetEncodingData, (size_t, size_t, size_t), (override));
   MOCK_METHOD(std::vector<RtpSequenceNumberMap::Info>,
               GetSentRtpPacketInfos,
-              (uint32_t ssrc, rtc::ArrayView<const uint16_t> sequence_numbers),
+              (uint32_t ssrc, ArrayView<const uint16_t> sequence_numbers),
               (const, override));
 
   MOCK_METHOD(void, SetFecAllowed, (bool fec_allowed), (override));
@@ -218,7 +216,7 @@ class VideoSendStreamImplTest : public ::testing::Test {
 
  protected:
   GlobalSimulatedTimeController time_controller_;
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
   NiceMock<MockTransport> transport_;
   NiceMock<MockRtpTransportControllerSend> transport_controller_;
   NiceMock<MockBitrateAllocator> bitrate_allocator_;

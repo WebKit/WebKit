@@ -10,10 +10,13 @@
 
 #include "modules/rtp_rtcp/source/packet_sequencer.h"
 
+#include <cstdint>
+
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "system_wrappers/include/clock.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

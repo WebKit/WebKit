@@ -20,12 +20,14 @@
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/enable_media.h"
+#include "api/environment/environment_factory.h"
 #include "api/field_trials_view.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #if defined(WEBRTC_WEBKIT_BUILD)
 #include "api/task_queue/default_task_queue_factory.h"
 #endif
+#include "api/transport/field_trial_based_config.h"
 #include "api/scoped_refptr.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
@@ -33,17 +35,17 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    rtc::scoped_refptr<AudioDeviceModule> default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
+scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+    Thread* network_thread,
+    Thread* worker_thread,
+    Thread* signaling_thread,
+    scoped_refptr<AudioDeviceModule> default_adm,
+    scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+    scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
     std::unique_ptr<VideoEncoderFactory> video_encoder_factory,
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing,
+    scoped_refptr<AudioMixer> audio_mixer,
+    scoped_refptr<AudioProcessing> audio_processing,
     std::unique_ptr<AudioFrameProcessor> audio_frame_processor,
     std::unique_ptr<FieldTrialsView> field_trials
 #if defined(WEBRTC_WEBKIT_BUILD)
@@ -65,10 +67,10 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
       CreateDefaultTaskQueueFactory(field_trials.get());
 #endif
   dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>();
-  dependencies.trials = std::move(field_trials);
+  dependencies.env = CreateEnvironment(std::move(field_trials));
 
   if (network_thread) {
-    // TODO(bugs.webrtc.org/13145): Add an rtc::SocketFactory* argument.
+    // TODO(bugs.webrtc.org/13145): Add an webrtc::SocketFactory* argument.
     dependencies.socket_factory = network_thread->socketserver();
   }
   dependencies.adm = std::move(default_adm);

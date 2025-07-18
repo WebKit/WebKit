@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This will decrypt the entire frame using the user provided decryption
  * mechanism regardless of whether SRTP is enabled or not.
  */
-- (void)setFrameDecryptor:(rtc::scoped_refptr<webrtc::FrameDecryptorInterface>)frameDecryptor;
+- (void)setFrameDecryptor:(webrtc::scoped_refptr<webrtc::FrameDecryptorInterface>)frameDecryptor;
 
 @end
 

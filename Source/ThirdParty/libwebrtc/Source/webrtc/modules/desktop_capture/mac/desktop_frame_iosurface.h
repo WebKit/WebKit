@@ -24,9 +24,10 @@ namespace webrtc {
 class DesktopFrameIOSurface final : public DesktopFrame {
  public:
   // Lock an IOSurfaceRef containing a snapshot of a display. Return NULL if
-  // failed to lock.
+  // failed to lock. `rect` specifies the portion of the surface that the
+  // DesktopFrame should be cropped to.
   static std::unique_ptr<DesktopFrameIOSurface> Wrap(
-      rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface);
+      webrtc::ScopedCFTypeRef<IOSurfaceRef> io_surface, CGRect rect = {});
 
   ~DesktopFrameIOSurface() override;
 
@@ -34,10 +35,18 @@ class DesktopFrameIOSurface final : public DesktopFrame {
   DesktopFrameIOSurface& operator=(const DesktopFrameIOSurface&) = delete;
 
  private:
-  // This constructor expects `io_surface` to hold a non-null IOSurfaceRef.
-  explicit DesktopFrameIOSurface(rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface);
+  // `io_surface` must hold a non-null IOSurfaceRef that is already locked.
+  // `data` is the address of the first byte of data in `io_surface`'s locked
+  // buffer.
+  // `width` and `height` make up the dimensions of `io_surface` in pixels.
+  // `stride` is the number of bytes of a single row of pixels in `data`.
+  DesktopFrameIOSurface(webrtc::ScopedCFTypeRef<IOSurfaceRef> io_surface,
+                        uint8_t* data,
+                        int32_t width,
+                        int32_t height,
+                        int32_t stride);
 
-  const rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface_;
+  const webrtc::ScopedCFTypeRef<IOSurfaceRef> io_surface_;
 };
 
 }  // namespace webrtc

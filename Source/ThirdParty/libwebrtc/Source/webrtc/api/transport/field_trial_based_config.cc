@@ -16,6 +16,6 @@
 
 namespace webrtc {
 std::string FieldTrialBasedConfig::GetValue(absl::string_view key) const {
-  return webrtc::field_trial::FindFullName(std::string(key));
+  return field_trial::FindFullName(std::string(key));
 }
 }  // namespace webrtc

@@ -686,7 +686,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);
 
     ASSERT(!isMainThread());
-    RunLoop::protectedMain()->dispatch([protector = WTF::ensureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber] {
+    RunLoop::mainSingleton().dispatch([protector = WTF::ensureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber] {
         WebKitWebSrcPrivate* priv = protector->priv;
         DataMutexLocker members { priv->dataMutex };
         // Ignore this task (not making any HTTP request) if by now WebKitWebSrc streaming thread is already waiting
@@ -746,8 +746,6 @@ static gboolean webKitWebSrcDoSeek(GstBaseSrc* baseSrc, GstSegment* segment)
     // continuing seamless looping, or between flushes. In any case, basesrc holds the STREAM_LOCK, so we know create() is not running.
     // Also, both webKitWebSrcUnLock() and webKitWebSrcUnLockStop() are guaranteed to be called *before* this function.
     // [See gst_base_src_perform_seek()].
-    ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || GST_ELEMENT(baseSrc)->current_state == GST_STATE_PLAYING || GST_PAD_IS_FLUSHING(baseSrc->srcpad));
-
     // Except for the initial seek, this function is only called if isSeekable() returns true.
     ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || webKitWebSrcIsSeekable(baseSrc));
 
@@ -836,7 +834,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
     // If we have a network resource request open, we ask the main thread to close it.
     if (members->resource) {
         GST_DEBUG_OBJECT(src, "Resource request R%u will be stopped", members->requestNumber);
-        RunLoop::protectedMain()->dispatch([resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
+        RunLoop::mainSingleton().dispatch([resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->shutdown();
         });

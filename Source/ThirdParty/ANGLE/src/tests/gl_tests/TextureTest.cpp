@@ -10041,6 +10041,205 @@ TEST_P(TextureBorderClampTestES3, TextureBorderTypeMismatch)
     EXPECT_PIXEL_ALPHA_EQ(0, 0, 255);
 }
 
+class TextureBorderClampTestES31 : public TextureBorderClampTest
+{
+  protected:
+    TextureBorderClampTestES31() : TextureBorderClampTest() {}
+
+    void callTexParameterIuivAPI(const APIExtensionVersion usedExtension,
+                                 GLenum target,
+                                 GLenum pname,
+                                 const GLuint *params);
+    void testCustomBorderColorWithStencil(const APIExtensionVersion usedExtension);
+};
+
+void TextureBorderClampTestES31::callTexParameterIuivAPI(const APIExtensionVersion usedExtension,
+                                                         GLenum target,
+                                                         GLenum pname,
+                                                         const GLuint *params)
+{
+    ASSERT(usedExtension == APIExtensionVersion::OES || usedExtension == APIExtensionVersion::EXT ||
+           usedExtension == APIExtensionVersion::Core);
+    if (usedExtension == APIExtensionVersion::OES)
+    {
+        glTexParameterIuivOES(target, pname, params);
+    }
+    else if (usedExtension == APIExtensionVersion::EXT)
+    {
+        glTexParameterIuivEXT(target, pname, params);
+    }
+    else
+    {
+        glTexParameterIuiv(target, pname, params);
+    }
+}
+
+// Based on dEQP test:
+// dEQP-GLES31.functional.texture.border_clamp.unused_channels.depth24_stencil8_sample_stencil
+void TextureBorderClampTestES31::testCustomBorderColorWithStencil(
+    const APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::OES || usedExtension == APIExtensionVersion::EXT ||
+           usedExtension == APIExtensionVersion::Core);
+
+    int width  = getWindowWidth();
+    int height = getWindowHeight();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
+    glClearDepthf(0.0);
+    glClearStencil(0xFF);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Shaders
+    std::string vs;
+    std::string fs;
+
+    constexpr char kGLSLVersion31[] = R"(#version 310 es
+)";
+    constexpr char kGLSLVersion32[] = R"(#version 320 es
+)";
+    if (usedExtension == APIExtensionVersion::Core)
+    {
+        vs.append(kGLSLVersion32);
+        fs.append(kGLSLVersion32);
+    }
+    else
+    {
+        vs.append(kGLSLVersion31);
+        fs.append(kGLSLVersion31);
+    }
+
+    constexpr char kVSBody[] = R"(
+in highp vec2 a_position;
+in highp vec2 a_texCoord;
+out highp vec2 v_texCoord;
+
+void main (void)
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+})";
+    vs.append(kVSBody);
+
+    constexpr char kFSBody[] = R"(
+layout(location = 0) out mediump vec4 outColor;
+in highp vec2 v_texCoord;
+uniform highp usampler2D stencilSampler;
+
+void main (void)
+{
+    outColor = vec4(texture(stencilSampler, v_texCoord)) * vec4(1.0 / 255.0, 1.0, 1.0, 1.0);
+})";
+    fs.append(kFSBody);
+
+    ANGLE_GL_PROGRAM(program, vs.c_str(), fs.c_str());
+    EXPECT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    // In case of using stencil for border clamp, the first component of the border color is used.
+    // If the texcoords are within the bounds, the texture's stencil value is used.
+    constexpr uint32_t kQuadStencil = 0xFF;
+    static_assert(kQuadStencil <= 0xFF);
+    std::vector<uint32_t> textureData(16 * 16, 0xFFFFFF00 | kQuadStencil);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 16, 16, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, textureData.data());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    constexpr GLuint kUsedComponentForBorder = 145;
+    constexpr GLuint kBorderData[4]          = {kUsedComponentForBorder, 100, 37, 111};
+    callTexParameterIuivAPI(usedExtension, GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, kBorderData);
+    EXPECT_GL_NO_ERROR();
+
+    // The vertex and index data are set to draw a quad at the center of the screen, with the color
+    // sampled from the texture's stencil value, surrounded by the border color.
+    constexpr float kVertexData[] = {
+        // Position
+        -1.0f,
+        -1.0f,
+        -1.0f,
+        1.0f,
+        1.0f,
+        -1.0f,
+        1.0f,
+        1.0f,
+        // TexCoord
+        -0.5,
+        -0.5,
+        -0.5,
+        1.5,
+        1.5,
+        -0.5,
+        1.5,
+        1.5,
+    };
+    constexpr uint16_t kIndices[] = {0, 1, 2, 2, 1, 3};
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 64, kVertexData, GL_STATIC_DRAW);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12, kIndices, GL_STATIC_DRAW);
+
+    GLint posLoc = glGetAttribLocation(program, "a_position");
+    glEnableVertexAttribArray(posLoc);
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(0));
+    GLint texLoc = glGetAttribLocation(program, "a_texCoord");
+    glEnableVertexAttribArray(texLoc);
+    glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(32));
+
+    // Draw
+    glUniform1i(glGetUniformLocation(program, "stencilSampler"), 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+
+    constexpr GLColor kExpectedBorderColor = GLColor(kUsedComponentForBorder, 0, 0, 255);
+    constexpr GLColor kExpectedQuadColor   = GLColor(kQuadStencil, 0, 0, 255);
+    EXPECT_PIXEL_RECT_EQ(0, 0, width / 4, height, kExpectedBorderColor);
+    EXPECT_PIXEL_RECT_EQ(3 * width / 4, 0, width / 4, height, kExpectedBorderColor);
+    EXPECT_PIXEL_RECT_EQ(0, 0, width, height / 4, kExpectedBorderColor);
+    EXPECT_PIXEL_RECT_EQ(0, 3 * height / 4, width, height / 4, kExpectedBorderColor);
+    EXPECT_PIXEL_RECT_EQ(width / 4, height / 4, width / 2, height / 2, kExpectedQuadColor);
+}
+
+// Tests texture border clamp in case of sampling from a texture with a stencil component.
+TEST_P(TextureBorderClampTestES31, CustomBorderColorWithStencilOES)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    testCustomBorderColorWithStencil(APIExtensionVersion::OES);
+}
+
+// Tests texture border clamp in case of sampling from a texture with a stencil component.
+TEST_P(TextureBorderClampTestES31, CustomBorderColorWithStencilEXT)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_border_clamp"));
+    testCustomBorderColorWithStencil(APIExtensionVersion::EXT);
+}
+
+class TextureBorderClampTestES32 : public TextureBorderClampTestES31
+{
+  protected:
+    TextureBorderClampTestES32() : TextureBorderClampTestES31() {}
+};
+
+// Tests texture border clamp in case of sampling from a texture with a stencil component.
+TEST_P(TextureBorderClampTestES32, CustomBorderColorWithStencil)
+{
+    testCustomBorderColorWithStencil(APIExtensionVersion::Core);
+}
+
 class TextureBorderClampIntegerTestES3 : public Texture2DTest
 {
   protected:
@@ -17709,6 +17908,11 @@ ANGLE_INSTANTIATE_TEST_ES2(TextureBorderClampTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBorderClampTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(TextureBorderClampTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBorderClampTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(TextureBorderClampTestES31);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBorderClampTestES32);
+ANGLE_INSTANTIATE_TEST_ES32(TextureBorderClampTestES32);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBorderClampIntegerTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(TextureBorderClampIntegerTestES3);

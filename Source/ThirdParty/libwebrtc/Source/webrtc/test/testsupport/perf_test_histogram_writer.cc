@@ -66,7 +66,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   }
   void LogResultList(absl::string_view graph_name,
                      absl::string_view trace_name,
-                     const rtc::ArrayView<const double> values,
+                     const ArrayView<const double> values,
                      absl::string_view units,
                      const bool important,
                      ImproveDirection improve_direction) override {
@@ -110,7 +110,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     // Lookup on graph name + trace name (or measurement + story in catapult
     // parlance). There should be several histograms with the same measurement
     // if they're for different stories.
-    rtc::StringBuilder measurement_and_story;
+    StringBuilder measurement_and_story;
     measurement_and_story << graph_name << trace_name;
     MutexLock lock(&mutex_);
     if (histograms_.count(measurement_and_story.str()) == 0) {

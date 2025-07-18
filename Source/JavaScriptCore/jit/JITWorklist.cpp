@@ -178,7 +178,7 @@ CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
     m_totalLoad += planLoad(plan);
     m_queues[tier].append(WTFMove(plan));
     wakeThreads(locker, tier);
-    return CompilationDeferred;
+    return CompilationResult::CompilationDeferred;
 }
 
 size_t JITWorklist::queueLength() const

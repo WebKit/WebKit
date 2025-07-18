@@ -277,7 +277,11 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
         [receiver setDraggingSource:draggingSource];
         [allFilePromiseReceivers() addObject:receiver.get()];
 
-        auto item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#if HAVE(DRAGGING_ITEM_INIT_WITH_PASTEBOARD_ITEM)
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithPasteboardItem:receiver.get() localItem:nil]);
+#else
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#endif
         block(item.get(), 0, &stop);
         if (stop)
             return;

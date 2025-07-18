@@ -1,0 +1,15 @@
+
+Click me
+This test verifies platform selection UI is not incorrectly suppressed when the editable element is visible. To manually run the test, tap the button to focus the search field, and confirm that the caret view appears in the field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretRect.top is 6
+PASS caretRect.left is 38
+PASS caretRect.width is 3
+PASS caretRect.height is 25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

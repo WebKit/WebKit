@@ -105,7 +105,7 @@ namespace WebKit {
 using namespace WebCore;
 
 struct NetworkResourceLoader::SynchronousLoadData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NetworkResourceLoader);
 
     SynchronousLoadData(CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
         : delayedReply(WTFMove(reply))
@@ -289,12 +289,13 @@ bool NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
     if (!isMainResource())
         return true;
     m_contentFilter = ContentFilter::create(*this);
+    CheckedPtr contentFilter = m_contentFilter.get();
 #if HAVE(AUDIT_TOKEN)
-    m_contentFilter->setHostProcessAuditToken(protectedConnectionToWebProcess()->networkProcess().sourceApplicationAuditToken());
+    contentFilter->setHostProcessAuditToken(protectedConnectionToWebProcess()->networkProcess().sourceApplicationAuditToken());
 #endif
-    m_contentFilter->startFilteringMainResource(request.url());
-    if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse())) {
-        m_contentFilter->stopFilteringMainResource();
+    contentFilter->startFilteringMainResource(request.url());
+    if (!contentFilter->continueAfterWillSendRequest(request, ResourceResponse())) {
+        contentFilter->stopFilteringMainResource();
         return false;
     }
     return true;
@@ -594,12 +595,12 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
     LOADER_RELEASE_LOG("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, hasResponseCompletionHandler=%d)", downloadID.toUInt64(), !!m_networkLoad, !!m_responseCompletionHandler);
 
     RefPtr task = m_serviceWorkerFetchTask;
-    if (task && task->convertToDownload(protectedConnectionToWebProcess()->networkProcess().downloadManager(), downloadID, request, response))
+    if (task && task->convertToDownload(protectedConnectionToWebProcess()->networkProcess().checkedDownloadManager(), downloadID, request, response))
         return;
 
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
-        protectedConnectionToWebProcess()->networkProcess().downloadManager().startDownload(sessionID(), downloadID, request, m_parameters.topOrigin ? std::optional { m_parameters.topOrigin->data() } : std::nullopt, m_parameters.isNavigatingToAppBoundDomain);
+        protectedConnectionToWebProcess()->networkProcess().checkedDownloadManager()->startDownload(sessionID(), downloadID, request, m_parameters.topOrigin ? std::optional { m_parameters.topOrigin->data() } : std::nullopt, m_parameters.isNavigatingToAppBoundDomain);
         abort();
         return;
     }
@@ -607,7 +608,7 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
     auto networkLoad = std::exchange(m_networkLoad, nullptr);
 
     if (m_responseCompletionHandler)
-        protectedConnectionToWebProcess()->networkProcess().downloadManager().convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
+        protectedConnectionToWebProcess()->networkProcess().checkedDownloadManager()->convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
 }
 
 void NetworkResourceLoader::abort()
@@ -816,7 +817,7 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
         m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_parameters.documentURL, WTFMove(sourceOrigin), m_parameters.sourceCrossOriginOpenerPolicy, m_parameters.navigationRequester, m_parameters.openerURL);
     }
 
-    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*this, response, m_parameters.navigationRequester, contentSecurityPolicy.get(), m_parameters.effectiveSandboxFlags, originalRequest().httpReferrer(), m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult);
+    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*this, response, m_parameters.navigationRequester, CheckedPtr { contentSecurityPolicy.get() }.get(), m_parameters.effectiveSandboxFlags, originalRequest().httpReferrer(), m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult);
     if (!m_currentCoopEnforcementResult)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Navigation was blocked by Cross-Origin-Opener-Policy"_s, ResourceError::Type::AccessControl };
     return std::nullopt;
@@ -896,7 +897,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(receivedResponse))
+    if (m_contentFilter && !checkedContentFilter()->continueAfterResponseReceived(receivedResponse))
         return completionHandler(PolicyAction::Ignore);
 #endif
 
@@ -976,7 +977,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         auto error = networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
         if (!error.isNull()) {
             LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
-            RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, error = WTFMove(error)] {
+            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTFMove(error)] {
                 if (protectedThis->m_networkLoad)
                     protectedThis->didFailLoading(error);
             });
@@ -998,7 +999,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     // https://html.spec.whatwg.org/multipage/origin.html#check-a-global-object's-embedder-policy
     if (shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting worker load due to Cross-Origin-Opener-Policy");
-        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
             if (protectedThis->m_networkLoad)
                 protectedThis->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, url, "Worker load was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
         });
@@ -1007,7 +1008,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting load due to Cross-Origin-Opener-Policy");
-        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, error = WTFMove(*error)] {
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTFMove(*error)] {
             if (protectedThis->m_networkLoad)
                 protectedThis->didFailLoading(error);
         });
@@ -1153,10 +1154,10 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
             sendBuffer(*m_bufferedData.get());
         }
 #if ENABLE(CONTENT_FILTERING)
-        if (m_contentFilter) {
-            if (!m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
+        if (CheckedPtr contentFilter = m_contentFilter.get()) {
+            if (!contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
                 return;
-            m_contentFilter->stopFilteringMainResource();
+            contentFilter->stopFilteringMainResource();
         }
 #endif
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
@@ -1264,7 +1265,7 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
+    if (m_contentFilter && !checkedContentFilter()->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
         if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
             networkLoad->clearClient();
         return completionHandler({ });
@@ -1301,6 +1302,12 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
 #endif
         && protocolHostAndPortAreEqual(request.url(), redirectRequest.url())) {
         redirectRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
+    }
+
+    if (request.wasSchemeOptimisticallyUpgraded()) {
+        LOADER_RELEASE_LOG("willSendRedirectedRequest: Resetting request timeout to the default value after redirect");
+
+        redirectRequest.resetTimeoutInterval();
     }
 
     if (RefPtr networkLoadChecker = m_networkLoadChecker) {
@@ -1579,7 +1586,7 @@ void NetworkResourceLoader::bufferingTimerFired()
 
 #if ENABLE(CONTENT_FILTERING)
     auto sharedBuffer = m_bufferedData.takeAsContiguous();
-    bool shouldFilter = m_contentFilter && !m_contentFilter->continueAfterDataReceived(sharedBuffer);
+    bool shouldFilter = m_contentFilter && !checkedContentFilter()->continueAfterDataReceived(sharedBuffer);
     if (!shouldFilter)
         sendDidReceiveDataMessage(sharedBuffer);
 #else
@@ -1593,7 +1600,7 @@ void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer)
     ASSERT(!isSynchronous());
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer.makeContiguous()))
+    if (m_contentFilter && !checkedContentFilter()->continueAfterDataReceived(buffer.makeContiguous()))
         return;
 #endif
 
@@ -1649,7 +1656,8 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     auto response = entry->response();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->responseReceived() && !m_contentFilter->continueAfterResponseReceived(response))
+    CheckedPtr contentFilter = m_contentFilter.get();
+    if (contentFilter && !contentFilter->responseReceived() && !contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
 
@@ -1719,12 +1727,17 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     };
 
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
+
+#if ENABLE(CONTENT_FILTERING)
+    CheckedPtr contentFilter = m_contentFilter.get();
+#endif
+
 #if ENABLE(SHAREABLE_RESOURCE)
     if (auto handle = entry->shareableResourceHandle()) {
 #if ENABLE(CONTENT_FILTERING)
-        if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(entry->protectedBuffer()->makeContiguous())) {
-            m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
-            m_contentFilter->stopFilteringMainResource();
+        if (contentFilter && !contentFilter->continueAfterDataReceived(entry->protectedBuffer()->makeContiguous())) {
+            contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+            contentFilter->stopFilteringMainResource();
             dispatchDidFinishResourceLoad();
             return;
         }
@@ -1742,9 +1755,9 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     RefPtr buffer = entry->buffer();
     sendBuffer(*buffer);
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter) {
-        m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
-        m_contentFilter->stopFilteringMainResource();
+    if (contentFilter) {
+        contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+        contentFilter->stopFilteringMainResource();
     }
 #endif
     dispatchDidFinishResourceLoad();
@@ -2130,22 +2143,23 @@ bool NetworkResourceLoader::continueAfterServiceWorkerReceivedData(const WebCore
 {
     if (!m_contentFilter)
         return true;
-    return m_contentFilter->continueAfterDataReceived(buffer);
+    return checkedContentFilter()->continueAfterDataReceived(buffer);
 }
 
 bool NetworkResourceLoader::continueAfterServiceWorkerReceivedResponse(const ResourceResponse& response)
 {
     if (!m_contentFilter)
         return true;
-    return m_contentFilter->continueAfterResponseReceived(response);
+    return checkedContentFilter()->continueAfterResponseReceived(response);
 }
 
 void NetworkResourceLoader::serviceWorkerDidFinish()
 {
-    if (!m_contentFilter)
+    CheckedPtr contentFilter = m_contentFilter.get();
+    if (!contentFilter)
         return;
-    m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
-    m_contentFilter->stopFilteringMainResource();
+    contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+    contentFilter->stopFilteringMainResource();
 }
 
 void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer)
@@ -2156,15 +2170,16 @@ void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer&
 WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
 {
     auto error = WebKit::blockedByContentFilterError(m_parameters.request);
+    CheckedPtr contentFilter = m_contentFilter.get();
 
     m_unblockHandler = unblockHandler;
     m_unblockRequestDeniedScript = unblockRequestDeniedScript;
     
     if (unblockHandler.needsUIProcess()) {
-        m_contentFilter->setBlockedError(error);
-        m_contentFilter->handleProvisionalLoadFailure(error);
+        contentFilter->setBlockedError(error);
+        contentFilter->handleProvisionalLoadFailure(error);
     } else {
-        unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }](bool unblocked) mutable {
+        unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }, contentFilter](bool unblocked) mutable {
             m_unblockHandler.setUnblockedAfterRequest(unblocked);
 
             ResourceRequest request;
@@ -2173,8 +2188,8 @@ WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::Con
             else
                 request = ResourceRequest(URL { aboutBlankURL() });
             auto error = WebKit::blockedByContentFilterError(request);
-            m_contentFilter->setBlockedError(error);
-            m_contentFilter->handleProvisionalLoadFailure(error);
+            contentFilter->setBlockedError(error);
+            contentFilter->handleProvisionalLoadFailure(error);
         });
     }
     return error;
@@ -2189,6 +2204,11 @@ void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const 
 {
     protectedConnectionToWebProcess()->networkProcess().addAllowedFirstPartyForCookies(m_connection->webProcessIdentifier(), RegistrableDomain { WebCore::ContentFilter::blockedPageURL() }, LoadedWebArchive::No, [] { });
     send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(m_unblockHandler, m_unblockRequestDeniedScript, m_contentFilter->blockedError(), blockedPageURL, substituteData));
+}
+
+CheckedPtr<WebCore::ContentFilter> NetworkResourceLoader::checkedContentFilter()
+{
+    return m_contentFilter.get();
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)

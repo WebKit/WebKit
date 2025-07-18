@@ -167,6 +167,7 @@ protected:
 #endif
     void useSystemAppearanceChanged();
     void fontFallbackPrefersPictographsChanged();
+    void updateDisplayEDRHeadroom();
     RefPtr<Page> protectedPage() const;
 
     WeakPtr<Page> m_page;

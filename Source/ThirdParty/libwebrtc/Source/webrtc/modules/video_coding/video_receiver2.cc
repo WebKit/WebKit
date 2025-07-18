@@ -13,11 +13,12 @@
 #include <stddef.h>
 
 #include <cstdint>
+#include <memory>
 #include <utility>
-#include <vector>
 
-#include "absl/algorithm/container.h"
-#include "api/video_codecs/video_codec.h"
+#include "api/field_trials_view.h"
+#include "api/sequence_checker.h"
+#include "api/video/encoded_frame.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "modules/video_coding/decoder_database.h"

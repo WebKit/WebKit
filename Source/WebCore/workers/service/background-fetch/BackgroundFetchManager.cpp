@@ -108,7 +108,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
     }
 
     auto requests = map(generatedRequests.releaseReturnValue(), [&](auto&& fetchRequest) -> BackgroundFetchRequest {
-        Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> responseHeaders;
+        Markable<ContentSecurityPolicyResponseHeaders> responseHeaders;
         if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
             if (CheckedPtr policy = context.contentSecurityPolicy())
                 responseHeaders = policy->responseHeaders();

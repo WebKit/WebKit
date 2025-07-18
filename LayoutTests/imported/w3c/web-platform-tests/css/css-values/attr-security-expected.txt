@@ -1,46 +1,61 @@
 Blocked access to external URL https://does-not-exist.test/404.png
 Blocked access to external URL https://does-not-exist.test/404.png
 
-FAIL CSS Values and Units Test: attr() security limitations assert_equals: '--x: image-set(attr(data-foo))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
-PASS CSS Values and Units Test: attr() security limitations 1
-PASS CSS Values and Units Test: attr() security limitations 2
-FAIL CSS Values and Units Test: attr() security limitations 3 assert_equals: '--x: src(attr(data-foo))' with data-foo='https://does-not-exist.test/404.png' expected "src(\"https://does-not-exist.test/404.png\")" but got "src(attr(data-foo))"
-PASS CSS Values and Units Test: attr() security limitations 4
-FAIL CSS Values and Units Test: attr() security limitations 5 assert_equals: 'background-image: src("https://does-not-exist.test/404.png")' with data-foo='https://does-not-exist.test/404.png' expected "src(url(\"https://does-not-exist.test/404.png\"))" but got "none"
-FAIL CSS Values and Units Test: attr() security limitations 6 assert_equals: '--x: src(string("https://does-not-exist.test" attr(data-foo)))' with data-foo='/404.png' expected "src(string(\"https://does-not-exist.test\" \"/404.png\"))" but got "src(string(\"https://does-not-exist.test\" attr(data-foo)))"
-PASS CSS Values and Units Test: attr() security limitations 7
-FAIL CSS Values and Units Test: attr() security limitations 8 assert_equals: 'background-image: src(string("https://does-not-exist.test/""404.png"))' with data-foo='/404.png' expected "src(url(\"https://does-not-exist.test/404.png\"))" but got "none"
-FAIL CSS Values and Units Test: attr() security limitations 9 assert_equals: '--x: attr(data-foo type(<url>))' with data-foo='url(https://does-not-exist.test/404.png)' expected "url(\"https://does-not-exist.test/404.png\")" but got "attr(data-foo type(<url>))"
-PASS CSS Values and Units Test: attr() security limitations 10
-PASS CSS Values and Units Test: attr() security limitations 11
-FAIL CSS Values and Units Test: attr() security limitations 12 assert_equals: '--x: image(attr(data-foo))' with data-foo='https://does-not-exist.test/404.png' expected "image(\"https://does-not-exist.test/404.png\")" but got "image(attr(data-foo))"
-PASS CSS Values and Units Test: attr() security limitations 13
-FAIL CSS Values and Units Test: attr() security limitations 14 assert_equals: 'background-image: image("https://does-not-exist.test/404.png")' with data-foo='https://does-not-exist.test/404.png' expected "image(url(\"https://does-not-exist.test/404.png\"))" but got "none"
-FAIL CSS Values and Units Test: attr() security limitations 15 assert_equals: 'background-image: url(https://does-not-exist.test/404.png), attr(data-foo type(<image>))' with data-foo='linear-gradient(#000000, #ffffff)' expected "url(\"https://does-not-exist.test/404.png\"), linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255))" but got "none"
-FAIL CSS Values and Units Test: attr() security limitations 16 assert_equals: '--x: image-set(var(--y, attr(data-foo)))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
-PASS CSS Values and Units Test: attr() security limitations 17
-FAIL CSS Values and Units Test: attr() security limitations 18 assert_equals: '--x: image-set(var(--some-string))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(\"empty\")"
-FAIL CSS Values and Units Test: attr() security limitations 19 assert_equals: 'background-image: image-set(var(--some-string))' with data-foo='https://does-not-exist.test/404.png' expected "none" but got "image-set(url(\"http://localhost:8800/css/css-values/empty\") 1dppx)"
-FAIL CSS Values and Units Test: attr() security limitations 20 assert_equals: '--x: image-set(var(--some-string-list))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist2.test/404.png\" \"https://does-not-exist.test/404.png\")" but got "image-set(\"empty\")"
-FAIL CSS Values and Units Test: attr() security limitations 21 assert_equals: 'background-image: image-set(var(--some-string-list))' with data-foo='https://does-not-exist.test/404.png' expected "none" but got "image-set(url(\"http://localhost:8800/css/css-values/empty\") 1dppx)"
-PASS CSS Values and Units Test: attr() security limitations 22
-FAIL CSS Values and Units Test: attr() security limitations 23 assert_equals: '--registered-color: attr(data-foo type(<color>))' with data-foo='blue' expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
-FAIL CSS Values and Units Test: attr() security limitations 24 assert_equals: '--x: image-set(var(--some-other-url))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
-PASS CSS Values and Units Test: attr() security limitations 25
-PASS CSS Values and Units Test: attr() security limitations 26
-PASS CSS Values and Units Test: attr() security limitations 27
-PASS CSS Values and Units Test: attr() security limitations 28
-FAIL CSS Values and Units Test: attr() security limitations 29 assert_equals: '--x: image-set(if(style(--true): attr(data-foo);))' with data-foo='https://does-not-exist.test/404.png' expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(if(style(--true): attr(data-foo);))"
-PASS CSS Values and Units Test: attr() security limitations 30
-FAIL CSS Values and Units Test: attr() security limitations 31 assert_equals: 'background-image: image-set(
+FAIL '--x: image-set(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
+PASS 'background-image: image-set(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png"
+PASS 'background-image: image-set("https://does-not-exist.test/404.png")' with data-foo="https://does-not-exist.test/404.png"
+FAIL '--x: src(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "src(\"https://does-not-exist.test/404.png\")" but got "src(attr(data-foo))"
+PASS 'background-image: src(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png"
+FAIL 'background-image: src("https://does-not-exist.test/404.png")' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "src(url(\"https://does-not-exist.test/404.png\"))" but got "none"
+FAIL '--x: src(string("https://does-not-exist.test" attr(data-foo)))' with data-foo="/404.png" assert_equals: expected "src(string(\"https://does-not-exist.test\" \"/404.png\"))" but got "src(string(\"https://does-not-exist.test\" attr(data-foo)))"
+PASS 'background-image: src(string("https://does-not-exist.test" attr(data-foo)))' with data-foo="/404.png"
+FAIL 'background-image: src(string("https://does-not-exist.test/""404.png"))' with data-foo="/404.png" assert_equals: expected "src(url(\"https://does-not-exist.test/404.png\"))" but got "none"
+FAIL '--x: attr(data-foo type(<url>))' with data-foo="url(https://does-not-exist.test/404.png)" assert_equals: expected "url(\"https://does-not-exist.test/404.png\")" but got "attr(data-foo type(<url>))"
+PASS 'background-image: attr(data-foo type(<url>))' with data-foo="url(https://does-not-exist.test/404.png)"
+PASS 'background-image: url("https://does-not-exist.test/404.png")' with data-foo="url(https://does-not-exist.test/404.png)"
+FAIL '--x: image(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image(\"https://does-not-exist.test/404.png\")" but got "image(attr(data-foo))"
+PASS 'background-image: image(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png"
+FAIL 'background-image: image("https://does-not-exist.test/404.png")' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image(url(\"https://does-not-exist.test/404.png\"))" but got "none"
+FAIL 'background-image: url(https://does-not-exist.test/404.png), attr(data-foo type(<image>))' with data-foo="linear-gradient(#000000, #ffffff)" assert_equals: expected "url(\"https://does-not-exist.test/404.png\"), linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255))" but got "none"
+FAIL '--x: image-set(var(--y, attr(data-foo)))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
+PASS 'background-image: image-set(var(--y, attr(data-foo)))' with data-foo="https://does-not-exist.test/404.png"
+FAIL '--x: image-set(var(--some-string))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(\"empty\")"
+FAIL 'background-image: image-set(var(--some-string))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "none" but got "image-set(url(\"http://localhost:8800/css/css-values/empty\") 1dppx)"
+FAIL '--x: image-set(var(--some-string-list))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist2.test/404.png\" \"https://does-not-exist.test/404.png\")" but got "image-set(\"empty\")"
+FAIL 'background-image: image-set(var(--some-string-list))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "none" but got "image-set(url(\"http://localhost:8800/css/css-values/empty\") 1dppx)"
+PASS '--registered-url: attr(data-foo type(<url>))' with data-foo="https://does-not-exist.test/404.png"
+FAIL '--registered-color: attr(data-foo type(<color>))' with data-foo="blue" assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL '--x: image-set(var(--some-other-url))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(attr(data-foo))"
+PASS 'background-image: image-set(var(--some-other-url))' with data-foo="https://does-not-exist.test/404.png"
+PASS 'background-image: attr(data-foo type(*))' with data-foo="url(https://does-not-exist.test/404.png), linear-gradient(black, white)"
+PASS 'background-image: image-set(var(--image-set-valid))' with data-foo="image/jpeg"
+PASS 'background-image: image-set(var(--image-set-invalid))' with data-foo="https://does-not-exist.test/404.png"
+FAIL '--x: image-set(if(style(--true): attr(data-foo);))' with data-foo="https://does-not-exist.test/404.png" assert_equals: expected "image-set(\"https://does-not-exist.test/404.png\")" but got "image-set(if(style(--true): attr(data-foo);))"
+PASS 'background-image: image-set(if(style(--true): attr(data-foo);))' with data-foo="https://does-not-exist.test/404.png"
+FAIL 'background-image: image-set(
                 if(style(--true): url(https://does-not-exist-2.test/404.png);
-                   else: attr(data-foo);))' with data-foo='https://does-not-exist-2.test/404.png' expected "image-set(url(\"https://does-not-exist-2.test/404.png\") 1dppx)" but got "none"
-PASS CSS Values and Units Test: attr() security limitations 32
-PASS CSS Values and Units Test: attr() security limitations 33
-PASS CSS Values and Units Test: attr() security limitations 34
-FAIL CSS Values and Units Test: attr() security limitations 35 assert_equals: 'background-image: image-set(if(style(--true): url(https://does-not-exist.test/404.png);
+                   else: attr(data-foo);))' with data-foo="https://does-not-exist-2.test/404.png" assert_equals: expected "image-set(url(\"https://does-not-exist-2.test/404.png\") 1dppx)" but got "none"
+PASS 'background-image: image-set(
+                if(style(--some-string): url(https://does-not-exist.test/404.png);))' with data-foo="https://does-not-exist.test/404.png"
+PASS 'background-image: image-set(
+                if(style(--condition-val: attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3"
+PASS 'background-image: image-set(
+                if(style(--condition-val: attr(data-foo type(*))): url(https://does-not-exist.test/404.png);
+                   style(--true): url(https://does-not-exist.test/404.png);
+                   else: url(https://does-not-exist.test/404.png);))' with data-foo="1"
+FAIL 'background-image: image-set(if(style(--true): url(https://does-not-exist.test/404.png);
                             style(--condition-val): url(https://does-not-exist.test/404.png);
-                            else: url(https://does-not-exist.test/404.png);))' with data-foo='attr(data-foo type(*))' expected "image-set(url(\"https://does-not-exist.test/404.png\") 1dppx)" but got "none"
-PASS CSS Values and Units Test: attr() security limitations 36
-FAIL CSS Values and Units Test: attr() security limitations 37 assert_equals: '--x: image-set(if(style(--condition-val: if(style(--true): attr(data-foo type(*));)): url(https://does-not-exist.test/404.png);))' with data-foo='3' expected "image-set(url(https://does-not-exist.test/404.png))" but got "image-set(if(style(--condition-val: if(style(--true): attr(data-foo type(*));)): url(https\\:\\/\\/does-not-exist\\.test\\/404\\.png);))"
+                            else: url(https://does-not-exist.test/404.png);))' with data-foo="attr(data-foo type(*))" assert_equals: expected "image-set(url(\"https://does-not-exist.test/404.png\") 1dppx)" but got "none"
+PASS 'background-image: image-set(
+                if(style(--condition-val: if(style(--true): attr(data-foo type(*));)): url(https://does-not-exist.test/404.png);))' with data-foo="3"
+FAIL '--x: image-set(if(style(--condition-val: if(style(--true): attr(data-foo type(*));)): url(https://does-not-exist.test/404.png);))' with data-foo="3" assert_equals: expected "image-set(url(https://does-not-exist.test/404.png))" but got "image-set(if(style(--condition-val: if(style(--true): attr(data-foo type(*));)): url(https\\:\\/\\/does-not-exist\\.test\\/404\\.png);))"
+FAIL '--x: image-set(if(style(--condition-val >= attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3" assert_equals: expected "image-set(url(https://does-not-exist.test/404.png))" but got "image-set(if(style(--condition-val >= attr(data-foo type(*))): url(https\\:\\/\\/does-not-exist\\.test\\/404\\.png);))"
+PASS 'background-image: image-set(
+                if(style(--condition-val >= attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3"
+PASS 'background-image: image-set(
+                if(style(--condition-val < attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3"
+PASS 'background-image: image-set(
+                if(style(--str < attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3"
+PASS 'background-image: image-set(
+                if(style(--condition-val < attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="text"
 

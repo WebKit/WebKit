@@ -29,8 +29,8 @@ namespace webrtc {
 namespace {
 
 std::vector<FilteredSample> ConvertSampleValuesToFilteredSamples(
-    rtc::ArrayView<const double> values,
-    rtc::ArrayView<const FilteredSample> samples) {
+    ArrayView<const double> values,
+    ArrayView<const FilteredSample> samples) {
   RTC_CHECK_EQ(values.size(), samples.size())
       << "values and samples must have the same size";
   std::vector<FilteredSample> filtered_samples;
@@ -85,7 +85,7 @@ std::optional<double> GetCorruptionScore(const FrameInstrumentationData& data,
     return std::nullopt;
   }
 
-  CorruptionClassifier classifier(0.5);
+  CorruptionClassifier classifier(3);
 
   return classifier.CalculateCorruptionProbability(data_samples, samples,
                                                    data.luma_error_threshold,

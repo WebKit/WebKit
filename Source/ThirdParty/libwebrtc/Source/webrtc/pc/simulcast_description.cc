@@ -10,9 +10,13 @@
 
 #include "pc/simulcast_description.h"
 
+#include <cstddef>
+#include <vector>
+
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
-namespace cricket {
+namespace webrtc {
 
 SimulcastLayer::SimulcastLayer(absl::string_view rid, bool is_paused)
     : rid{rid}, is_paused{is_paused} {
@@ -54,4 +58,4 @@ std::vector<SimulcastLayer> SimulcastLayerList::GetAllLayers() const {
   return result;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

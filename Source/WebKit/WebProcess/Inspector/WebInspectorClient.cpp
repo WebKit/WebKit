@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebInspectorClient.h"
+#include "WebInspectorBackendClient.h"
 
 #include "DrawingArea.h"
 #include "WebInspectorInternal.h"
@@ -49,42 +49,42 @@ using namespace WebCore;
 class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RepaintIndicatorLayerClient);
 public:
-    RepaintIndicatorLayerClient(WebInspectorClient& inspectorClient)
-        : m_inspectorClient(inspectorClient)
+    RepaintIndicatorLayerClient(WebInspectorBackendClient& inspectorBackendClient)
+        : m_inspectorBackendClient(inspectorBackendClient)
     {
     }
     virtual ~RepaintIndicatorLayerClient() { }
 private:
     void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
     {
-        m_inspectorClient.animationEndedForLayer(layer);
+        m_inspectorBackendClient.animationEndedForLayer(layer);
     }
     
-    WebInspectorClient& m_inspectorClient;
+    WebInspectorBackendClient& m_inspectorBackendClient;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorBackendClient);
 
-WebInspectorClient::WebInspectorClient(WebPage* page)
+WebInspectorBackendClient::WebInspectorBackendClient(WebPage* page)
     : m_page(page)
 {
 }
 
-WebInspectorClient::~WebInspectorClient()
+WebInspectorBackendClient::~WebInspectorBackendClient()
 {
     for (auto& layer : m_paintRectLayers)
         layer->removeFromParent();
     
     m_paintRectLayers.clear();
 
-    if (m_paintRectOverlay) {
+    if (RefPtr paintRectOverlay = m_paintRectOverlay) {
         RefPtr page = m_page.get();
         if (page && page->corePage())
-            page->corePage()->pageOverlayController().uninstallPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::Fade);
+            page->corePage()->pageOverlayController().uninstallPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::Fade);
     }
 }
 
-void WebInspectorClient::inspectedPageDestroyed()
+void WebInspectorBackendClient::inspectedPageDestroyed()
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -94,34 +94,40 @@ void WebInspectorClient::inspectedPageDestroyed()
         inspector->close();
 }
 
-void WebInspectorClient::frontendCountChanged(unsigned count)
+void WebInspectorBackendClient::frontendCountChanged(unsigned count)
 {
     if (RefPtr page = m_page.get())
         page->inspectorFrontendCountChanged(count);
 }
 
-Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* controller)
+Inspector::FrontendChannel* WebInspectorBackendClient::openLocalFrontend(InspectorController* controller)
 {
     if (RefPtr page = m_page.get())
-        page->inspector()->openLocalInspectorFrontend();
+        page->protectedInspector()->openLocalInspectorFrontend();
     return nullptr;
 }
 
-void WebInspectorClient::bringFrontendToFront()
+void WebInspectorBackendClient::bringFrontendToFront()
 {
     RefPtr page = m_page.get();
-    if (page && page->inspector())
-        page->inspector()->bringToFront();
+    if (!page)
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(LocalFrame*)
+void WebInspectorBackendClient::didResizeMainFrame(LocalFrame*)
 {
     RefPtr page = m_page.get();
-    if (page && page->inspector())
-        page->inspector()->updateDockingAvailability();
+    if (!page)
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->updateDockingAvailability();
 }
 
-void WebInspectorClient::highlight()
+void WebInspectorBackendClient::highlight()
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -154,7 +160,7 @@ void WebInspectorClient::highlight()
 #endif
 }
 
-void WebInspectorClient::hideHighlight()
+void WebInspectorBackendClient::hideHighlight()
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -178,7 +184,7 @@ void WebInspectorClient::hideHighlight()
 #endif
 }
 
-void WebInspectorClient::showPaintRect(const FloatRect& rect)
+void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -187,15 +193,17 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     if (!page->corePage()->settings().acceleratedCompositingEnabled())
         return;
 
-    if (!m_paintRectOverlay) {
+    RefPtr paintRectOverlay = m_paintRectOverlay;
+    if (!paintRectOverlay) {
         m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        page->corePage()->pageOverlayController().installPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
+        paintRectOverlay = m_paintRectOverlay.copyRef();
+        page->corePage()->pageOverlayController().installPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
     }
 
     if (!m_paintIndicatorLayerClient)
         m_paintIndicatorLayerClient = makeUnique<RepaintIndicatorLayerClient>(*this);
 
-    Ref paintLayer = GraphicsLayer::create(page->drawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    Ref paintLayer = GraphicsLayer::create(page->protectedDrawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
     
     paintLayer->setName(MAKE_STATIC_STRING_IMPL("paint rect"));
     paintLayer->setAnchorPoint(FloatPoint3D());
@@ -216,11 +224,11 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     Ref rawLayer = paintLayer.get();
     m_paintRectLayers.add(WTFMove(paintLayer));
 
-    Ref overlayRootLayer = m_paintRectOverlay->layer();
+    Ref overlayRootLayer = paintRectOverlay->layer();
     overlayRootLayer->addChild(rawLayer.get());
 }
 
-void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
+void WebInspectorBackendClient::animationEndedForLayer(const GraphicsLayer* layer)
 {
     GraphicsLayer* nonConstLayer = const_cast<GraphicsLayer*>(layer);
     nonConstLayer->removeFromParent();
@@ -228,19 +236,19 @@ void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebInspectorClient::showInspectorIndication()
+void WebInspectorBackendClient::showInspectorIndication()
 {
     if (RefPtr page = m_page.get())
         page->showInspectorIndication();
 }
 
-void WebInspectorClient::hideInspectorIndication()
+void WebInspectorBackendClient::hideInspectorIndication()
 {
     if (RefPtr page = m_page.get())
         page->hideInspectorIndication();
 }
 
-void WebInspectorClient::didSetSearchingForNode(bool enabled)
+void WebInspectorBackendClient::didSetSearchingForNode(bool enabled)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -253,30 +261,39 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 }
 #endif
 
-void WebInspectorClient::elementSelectionChanged(bool active)
+void WebInspectorBackendClient::elementSelectionChanged(bool active)
 {
     RefPtr page = m_page.get();
-    if (page && page->inspector())
-        page->inspector()->elementSelectionChanged(active);
+    if (!page)
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->elementSelectionChanged(active);
 }
 
-void WebInspectorClient::timelineRecordingChanged(bool active)
+void WebInspectorBackendClient::timelineRecordingChanged(bool active)
 {
     RefPtr page = m_page.get();
-    if (page && page->inspector())
-        page->inspector()->timelineRecordingChanged(active);
+    if (!page)
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->timelineRecordingChanged(active);
 }
 
-void WebInspectorClient::setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
+void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     RefPtr page = m_page.get();
-    if (page && page->inspector())
-        page->inspector()->setDeveloperPreferenceOverride(developerPreference, overrideValue);
+    if (!page)
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->setDeveloperPreferenceOverride(developerPreference, overrideValue);
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-bool WebInspectorClient::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+bool WebInspectorBackendClient::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
 {
     RefPtr page = m_page.get();
     if (page && page->inspector()) {
@@ -289,7 +306,7 @@ bool WebInspectorClient::setEmulatedConditions(std::optional<int64_t>&& bytesPer
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)
+void WebInspectorBackendClient::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)
         return;
@@ -299,17 +316,17 @@ void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)
     m_highlightOverlay = nullptr;
 }
 
-void WebInspectorClient::didMoveToPage(PageOverlay&, Page*)
+void WebInspectorBackendClient::didMoveToPage(PageOverlay&, Page*)
 {
 }
 
-void WebInspectorClient::drawRect(PageOverlay&, WebCore::GraphicsContext& context, const WebCore::IntRect& /*dirtyRect*/)
+void WebInspectorBackendClient::drawRect(PageOverlay&, WebCore::GraphicsContext& context, const WebCore::IntRect& /*dirtyRect*/)
 {
     if (RefPtr page = m_page.get())
         page->corePage()->inspectorController().drawHighlight(context);
 }
 
-bool WebInspectorClient::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
+bool WebInspectorBackendClient::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
 {
     return false;
 }

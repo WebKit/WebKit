@@ -200,7 +200,7 @@ void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&&
     ASSERT(cookieStorage);
     [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
         // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     }).get()];
 }
 
@@ -228,7 +228,7 @@ void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     if (CheckedPtr session = networkSession(sessionID))
-        session->protectedStorageManager()->setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
+        session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
 #endif // PLATFORM(IOS_FAMILY)
 

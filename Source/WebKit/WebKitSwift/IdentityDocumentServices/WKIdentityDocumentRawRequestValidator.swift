@@ -55,8 +55,8 @@ import AppKit
         _unsafeValidator as! IdentityDocumentWebPresentmentRawRequestValidator
     }
 
-    @objc(validateISO18013Request:origin:)
-    func validate(_ iso18013Request: WKISO18013Request, origin: URL) -> WKIdentityDocumentPresentmentMobileDocumentRequest? {
+    @objc(validateISO18013Request:origin:error:)
+    func validate(_ iso18013Request: WKISO18013Request, origin: URL) throws -> WKIdentityDocumentPresentmentMobileDocumentRequest {
         do {
             let requestToEncode = [
                 "deviceRequest": iso18013Request.deviceRequest!,
@@ -68,9 +68,35 @@ import AppKit
             let validatedResponse = try validator.validateISO18013MobileDocumentRequest(encodedRequestData, origin: origin)
 
             return .init(validatedResponse)
+        } catch let error as IdentityDocumentPresentmentError {
+            let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+            Self.logger.debug(
+                """
+                WKIdentityDocumentRawRequestValidator encountered IdentityDocumentPresentmentError \
+                while validating request \(String(describing: iso18013Request)). \
+                Error: \(error)
+                """
+            )
+
+            switch error {
+            case .unknown:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            case .invalidRequest:
+                throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+            case .requestInProgress:
+                throw WKIdentityDocumentPresentmentError(.requestInProgress, userInfo: userInfo)
+            case .cancelled:
+                throw WKIdentityDocumentPresentmentError(.cancelled, userInfo: userInfo)
+            case .notEntitled:
+                throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+            default:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            }
         } catch {
             Self.logger.debug("WKIdentityDocumentRawRequestValidator encountered error while validating request \(String(describing: iso18013Request)). Error: \(error)")
-            return nil
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest)
         }
     }
 

@@ -37,7 +37,7 @@ void print_freezing_metrics(const std::vector<double>& psnr_per_frame,
 
 // Compute the metrics like freezing score based on PSNR and SSIM values for a
 // given video file.
-void compute_metrics(const rtc::scoped_refptr<webrtc::test::Video>& video,
+void compute_metrics(const webrtc::scoped_refptr<webrtc::test::Video>& video,
                      std::vector<double>* psnr_per_frame,
                      std::vector<double>* ssim_per_frame);
 

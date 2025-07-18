@@ -30,7 +30,7 @@ internal import WebKit_Internal
 ///
 /// Scheme names are case sensitive, must start with an ASCII letter, and may contain only ASCII letters,
 /// numbers, the “+” character, the “-” character, and the “.” character.
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 public struct URLScheme: Hashable, Sendable {
@@ -54,7 +54,7 @@ public struct URLScheme: Hashable, Sendable {
 }
 
 /// A value used as part of a sequence of results from a ``URLSchemeHandler``, which can either be a `Data` or a `URLResponse`.
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 public enum URLSchemeTaskResult: Sendable {
@@ -90,7 +90,7 @@ public enum URLSchemeTaskResult: Sendable {
 /// If WebKit determines that it no longer needs a resource that your handler is loading, it will cancel
 /// the Task responsible for the async sequence. Typically, this may happen when the user navigates to another
 /// page, but may happen for other reasons.
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 public protocol URLSchemeHandler {

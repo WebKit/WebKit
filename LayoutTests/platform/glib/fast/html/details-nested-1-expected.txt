@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DETAILS} at (0,0) size 784x136 [border: (8px solid #555599)]
-        RenderListItem {SUMMARY} at (8,8) size 768x102 [border: (8px solid #9999CC)]
-          RenderBlock (anonymous) at (8,8) size 752x18
-            RenderListMarker at (0,0) size 12x17: "\x{25BE}"
-            RenderText {#text} at (12,0) size 58x17
-              text run at (12,0) width 58: "summary"
-          RenderBlock {DETAILS} at (8,26) size 752x68 [border: (8px solid #995555)]
-            RenderListItem {SUMMARY} at (8,8) size 736x34 [border: (8px solid #CC9999)]
-              RenderListMarker at (8,8) size 12x17: "\x{25BE}"
-              RenderText {#text} at (20,8) size 278x17
-                text run at (20,8) width 278: "nested summary (summary-deails-summary)"
-            RenderBlock {SLOT} at (8,42) size 736x18
+      RenderBlock {DETAILS} at (0,0) size 784x138 [border: (8px solid #555599)]
+        RenderListItem {SUMMARY} at (8,8) size 768x104 [border: (8px solid #9999CC)]
+          RenderBlock (anonymous) at (8,8) size 752x19
+            RenderListMarker at (0,1) size 12x17: "\x{25BE}"
+            RenderText {#text} at (12,1) size 58x17
+              text run at (12,1) width 58: "summary"
+          RenderBlock {DETAILS} at (8,27) size 752x69 [border: (8px solid #995555)]
+            RenderListItem {SUMMARY} at (8,8) size 736x35 [border: (8px solid #CC9999)]
+              RenderListMarker at (8,9) size 12x17: "\x{25BE}"
+              RenderText {#text} at (20,9) size 278x17
+                text run at (20,9) width 278: "nested summary (summary-deails-summary)"
+            RenderBlock {SLOT} at (8,43) size 736x18
               RenderText {#text} at (0,0) size 197x17
                 text run at (0,0) width 197: "nested details (summary-deails)"
-        RenderBlock {SLOT} at (8,110) size 768x18
+        RenderBlock {SLOT} at (8,112) size 768x18
           RenderText {#text} at (0,0) size 40x17
             text run at (0,0) width 40: "details"

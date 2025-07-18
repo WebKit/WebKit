@@ -23,7 +23,6 @@
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 #include "OpenXRUtils.h"
-// EGL symbols required by openxr_platform.h
 #if USE(LIBEPOXY)
 #define __GBM__ 1
 #include <epoxy/egl.h>
@@ -35,14 +34,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
-
-struct OpenXRExtensions::OpenXRExtensionMethods {
-    WTF_MAKE_FAST_ALLOCATED(OpenXRExtensionMethods);
-public:
-#if defined(XR_USE_PLATFORM_EGL)
-    PFNEGLGETPROCADDRESSPROC getProcAddressFunc { nullptr };
-#endif
-};
 
 std::unique_ptr<OpenXRExtensions> OpenXRExtensions::create()
 {
@@ -73,11 +64,28 @@ OpenXRExtensions::OpenXRExtensions(Vector<XrExtensionProperties>&& extensions)
 {
 }
 
-void OpenXRExtensions::loadMethods(XrInstance instance)
+// Destructor must be explicitly defined here because at this point OpenXRExtensionMethods is already defined.
+// If we don't do this, the compiler will try to generate the default destructor for this class the first time
+// it finds it which might be too early, in the sense that the struct is not defined yet and thus it will fail.
+OpenXRExtensions::~OpenXRExtensions() = default;
+
+bool OpenXRExtensions::loadMethods(XrInstance instance)
 {
 #if defined(XR_USE_PLATFORM_EGL)
     m_methods->getProcAddressFunc = eglGetProcAddress;
+    if (!m_methods->getProcAddressFunc) {
+        LOG(XR, "Failed to load eglGetProcAddress");
+        return false;
+    }
 #endif
+#if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
+    xrGetInstanceProcAddr(instance, "xrGetOpenGLESGraphicsRequirementsKHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrGetOpenGLESGraphicsRequirementsKHR));
+    if (!m_methods->xrGetOpenGLESGraphicsRequirementsKHR) {
+        LOG(XR, "Failed to load xrGetOpenGLESGraphicsRequirementsKHR");
+        return false;
+    }
+#endif
+    return true;
 }
 
 bool OpenXRExtensions::isExtensionSupported(std::span<const char> name) const

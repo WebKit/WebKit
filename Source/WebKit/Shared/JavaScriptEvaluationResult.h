@@ -25,89 +25,100 @@
 
 #pragma once
 
+#include "NodeInfo.h"
+#include "Protected.h"
 #include "WKRetainPtr.h"
 #include <JavaScriptCore/APICast.h>
-#include <WebCore/SerializedScriptValue.h>
+#include <JavaScriptCore/Strong.h>
 #include <optional>
 #include <wtf/HashMap.h>
 #include <wtf/ObjectIdentifier.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-OBJC_CLASS JSValue;
 OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSMutableDictionary;
+#endif
+
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+typedef struct _GVariant GVariant;
+typedef struct _JSCValue JSCValue;
 #endif
 
 namespace API {
 class Array;
 class Dictionary;
 class Object;
-class SerializedScriptValue;
-}
-
-namespace WebCore {
-struct ExceptionDetails;
 }
 
 namespace WebKit {
-
-class CoreIPCNumber;
-class CoreIPCDate;
 
 struct JSObjectIDType;
 using JSObjectID = ObjectIdentifier<JSObjectIDType>;
 
 class JavaScriptEvaluationResult {
 public:
-#if PLATFORM(COCOA)
-    enum class NullType : bool { NullPointer, NSNull };
-    using Variant = Variant<NullType, bool, CoreIPCNumber, String, Seconds, Vector<JSObjectID>, HashMap<JSObjectID, JSObjectID>>;
+    enum class EmptyType : bool { Undefined, Null };
+    using Value = Variant<EmptyType, bool, double, String, Seconds, Vector<JSObjectID>, HashMap<JSObjectID, JSObjectID>, NodeInfo>;
 
-    JavaScriptEvaluationResult(JSObjectID, HashMap<JSObjectID, Variant>&&);
-    static std::optional<JavaScriptEvaluationResult> extract(id);
-#else
-    JavaScriptEvaluationResult(std::span<const uint8_t> wireBytes)
-        : m_wireBytes(wireBytes) { }
-#endif
-
+    JavaScriptEvaluationResult(JSObjectID, HashMap<JSObjectID, Value>&&);
     static std::optional<JavaScriptEvaluationResult> extract(JSGlobalContextRef, JSValueRef);
 
     JavaScriptEvaluationResult(JavaScriptEvaluationResult&&);
     JavaScriptEvaluationResult& operator=(JavaScriptEvaluationResult&&);
     ~JavaScriptEvaluationResult();
 
-#if PLATFORM(COCOA)
     JSObjectID root() const { return m_root; }
-    const HashMap<JSObjectID, Variant>& map() const { return m_map; }
+    const HashMap<JSObjectID, Value>& map() const { return m_map; }
 
+    String toString() const;
+
+#if PLATFORM(COCOA)
+    static std::optional<JavaScriptEvaluationResult> extract(id);
     RetainPtr<id> toID();
-#else
-    std::span<const uint8_t> wireBytes() const { return m_wireBytes; }
-    Ref<API::SerializedScriptValue> legacySerializedScriptValue() const;
+#endif
+
+#if USE(GLIB)
+    static std::optional<JavaScriptEvaluationResult> extract(GVariant*);
+    GRefPtr<JSCValue> toJSC();
 #endif
 
     WKRetainPtr<WKTypeRef> toWK();
+    RefPtr<API::Object> toAPI();
 
-    JSValueRef toJS(JSGlobalContextRef);
+    Protected<JSValueRef> toJS(JSGlobalContextRef);
 
 private:
     JavaScriptEvaluationResult(JSGlobalContextRef, JSValueRef);
 
+#if USE(GLIB)
+    explicit JavaScriptEvaluationResult(GVariant*);
+    Value toValue(GVariant*);
+    JSObjectID addObjectToMap(GVariant*);
+#endif
+
 #if PLATFORM(COCOA)
     JavaScriptEvaluationResult(id);
-
-    RetainPtr<id> toID(Variant&&);
-    RefPtr<API::Object> toAPI(Variant&&);
-
-    Variant toVariant(id);
+    RetainPtr<id> toID(Value&&);
+    Value toValue(id);
     JSObjectID addObjectToMap(id);
-    Variant jsValueToVariant(JSValue *);
+#endif
 
+    RefPtr<API::Object> toAPI(Value&&);
+    JSValueRef toJS(JSGlobalContextRef, Value&&);
+
+    Value toValue(JSGlobalContextRef, JSValueRef);
+    JSObjectID addObjectToMap(JSGlobalContextRef, JSValueRef);
+
+#if PLATFORM(COCOA)
     // Used for deserializing from IPC to ObjC
-    HashMap<JSObjectID, RetainPtr<id>> m_instantiatedNSObjects;
     Vector<std::pair<HashMap<JSObjectID, JSObjectID>, RetainPtr<NSMutableDictionary>>> m_nsDictionaries;
     Vector<std::pair<Vector<JSObjectID>, RetainPtr<NSMutableArray>>> m_nsArrays;
+
+    HashMap<JSObjectID, RetainPtr<id>> m_instantiatedNSObjects;
+    HashMap<RetainPtr<id>, JSObjectID> m_objectsInMap;
+#endif
 
     // Used for deserializing from IPC to WKTypeRef
     HashMap<JSObjectID, RefPtr<API::Object>> m_instantiatedObjects;
@@ -115,17 +126,17 @@ private:
     Vector<std::pair<Vector<JSObjectID>, Ref<API::Array>>> m_arrays;
 
     // Used for serializing to IPC
-    HashMap<RetainPtr<JSValue>, JSObjectID> m_jsObjectsInMap;
-    HashMap<RetainPtr<id>, JSObjectID> m_objectsInMap;
+    HashMap<Protected<JSValueRef>, JSObjectID> m_jsObjectsInMap;
     std::optional<JSObjectID> m_nullObjectID;
 
+    // Used for deserializing from IPC to JS
+    HashMap<JSObjectID, Protected<JSValueRef>> m_instantiatedJSObjects;
+    Vector<std::pair<HashMap<JSObjectID, JSObjectID>, Protected<JSObjectRef>>> m_jsDictionaries;
+    Vector<std::pair<Vector<JSObjectID>, Protected<JSValueRef>>> m_jsArrays;
+
     // IPC representation
-    HashMap<JSObjectID, Variant> m_map;
+    HashMap<JSObjectID, Value> m_map;
     JSObjectID m_root;
-#else
-    RefPtr<WebCore::SerializedScriptValue> m_valueFromJS;
-    std::span<const uint8_t> m_wireBytes;
-#endif
 };
 
 }

@@ -32,7 +32,7 @@
 namespace WTF {
 
 class StackShot {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackShot);
 public:
     StackShot() { }
     

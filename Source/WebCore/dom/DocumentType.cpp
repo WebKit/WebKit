@@ -45,7 +45,7 @@ String DocumentType::nodeName() const
     return name();
 }
 
-Ref<Node> DocumentType::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> DocumentType::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return create(document, m_name, m_publicId, m_systemId);
 }

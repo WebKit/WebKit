@@ -38,10 +38,10 @@
 namespace WTF {
 
 class TextStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextStream);
 public:
     struct FormatNumberRespectingIntegers {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FormatNumberRespectingIntegers);
         FormatNumberRespectingIntegers(double number)
             : value(number) { }
 
@@ -136,7 +136,7 @@ public:
     }
 
     struct Repeat {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Repeat);
         Repeat(unsigned inWidth, char inCharacter)
             : width(inWidth), character(inCharacter)
         { }

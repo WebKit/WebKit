@@ -110,6 +110,7 @@ public:
     double duration() const final;
     double currentTime() const final;
     double bufferedTime() const final;
+    OptionSet<PlaybackState> playbackState() const final;
     bool isPlaying() const final;
     bool isStalled() const final;
     bool isScrubbing() const final { return false; }

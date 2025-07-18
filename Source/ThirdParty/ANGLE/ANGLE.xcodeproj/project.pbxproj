@@ -750,7 +750,6 @@
 		7BF555302C81F198002B101E /* PackedEnums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D71C2282747700B5BA2C /* PackedEnums.cpp */; };
 		7BF555322C81F198002B101E /* ValidateBarrierFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FC227432C4D006A97A3 /* ValidateBarrierFunctionCall.cpp */; };
 		7BF555332C81F198002B101E /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89B16974DED006FAA5A /* Input.cpp */; };
-		7BF555342C81F198002B101E /* FindPreciseNodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63827446DC800AD6EDC /* FindPreciseNodes.cpp */; };
 		7BF555352C81F198002B101E /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */; };
 		7BF555362C81F198002B101E /* system_utils_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D71F2282747700B5BA2C /* system_utils_posix.cpp */; };
 		7BF555372C81F198002B101E /* RewriteCaseDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D802A7CEDA90016DC59 /* RewriteCaseDeclarations.cpp */; };
@@ -1367,11 +1366,9 @@
 		FF62F64427446DC800AD6EDC /* ReplaceClipCullDistanceVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63527446DC700AD6EDC /* ReplaceClipCullDistanceVariable.cpp */; };
 		FF62F64527446DC800AD6EDC /* RewriteSampleMaskVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63627446DC700AD6EDC /* RewriteSampleMaskVariable.cpp */; };
 		FF62F64627446DC800AD6EDC /* DriverUniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63727446DC700AD6EDC /* DriverUniform.cpp */; };
-		FF62F64727446DC800AD6EDC /* FindPreciseNodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63827446DC800AD6EDC /* FindPreciseNodes.cpp */; };
 		FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63A27446DC800AD6EDC /* SpecializationConstant.h */; };
 		FF62F64A27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63B27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp */; };
 		FF62F64B27446DC800AD6EDC /* RunAtTheBeginningOfShader.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63C27446DC800AD6EDC /* RunAtTheBeginningOfShader.h */; };
-		FF62F64C27446DC800AD6EDC /* FindPreciseNodes.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63D27446DC800AD6EDC /* FindPreciseNodes.h */; };
 		FF62F64D27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63E27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h */; };
 		FF62F64E27446DC800AD6EDC /* DriverUniform.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63F27446DC800AD6EDC /* DriverUniform.h */; };
 		FF62F69727448D6A00AD6EDC /* Context_gles_3_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F68B27448D6900AD6EDC /* Context_gles_3_0_autogen.h */; };
@@ -2060,14 +2057,10 @@
 		7B359D652A7CED3C0016DC59 /* UseInterfaceBlockFields.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UseInterfaceBlockFields.cpp; sourceTree = "<group>"; };
 		7B359D662A7CED3C0016DC59 /* UseInterfaceBlockFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UseInterfaceBlockFields.h; sourceTree = "<group>"; };
 		7B359D672A7CED3C0016DC59 /* RewriteRepeatedAssignToSwizzled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteRepeatedAssignToSwizzled.h; sourceTree = "<group>"; };
-		7B359D712A7CED690016DC59 /* RewriteDoWhile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteDoWhile.cpp; sourceTree = "<group>"; };
 		7B359D722A7CED690016DC59 /* AddAndTrueToLoopCondition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddAndTrueToLoopCondition.cpp; sourceTree = "<group>"; };
-		7B359D732A7CED690016DC59 /* RewriteDoWhile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RewriteDoWhile.h; sourceTree = "<group>"; };
-		7B359D742A7CED690016DC59 /* RewriteUnaryMinusOperatorFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RewriteUnaryMinusOperatorFloat.h; sourceTree = "<group>"; };
 		7B359D752A7CED690016DC59 /* UnfoldShortCircuitAST.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuitAST.cpp; sourceTree = "<group>"; };
 		7B359D762A7CED690016DC59 /* RewriteRowMajorMatrices.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteRowMajorMatrices.cpp; sourceTree = "<group>"; };
 		7B359D772A7CED690016DC59 /* RewriteRowMajorMatrices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RewriteRowMajorMatrices.h; sourceTree = "<group>"; };
-		7B359D782A7CED690016DC59 /* RewriteUnaryMinusOperatorFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteUnaryMinusOperatorFloat.cpp; sourceTree = "<group>"; };
 		7B359D792A7CED690016DC59 /* UnfoldShortCircuitAST.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuitAST.h; sourceTree = "<group>"; };
 		7B359D7A2A7CED690016DC59 /* AddAndTrueToLoopCondition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddAndTrueToLoopCondition.h; sourceTree = "<group>"; };
 		7B359D7C2A7CEDA90016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvertUnsupportedConstructorsToFunctionCalls.h; sourceTree = "<group>"; };
@@ -2637,11 +2630,9 @@
 		FF62F63527446DC700AD6EDC /* ReplaceClipCullDistanceVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceClipCullDistanceVariable.cpp; sourceTree = "<group>"; };
 		FF62F63627446DC700AD6EDC /* RewriteSampleMaskVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteSampleMaskVariable.cpp; sourceTree = "<group>"; };
 		FF62F63727446DC700AD6EDC /* DriverUniform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverUniform.cpp; sourceTree = "<group>"; };
-		FF62F63827446DC800AD6EDC /* FindPreciseNodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindPreciseNodes.cpp; sourceTree = "<group>"; };
 		FF62F63A27446DC800AD6EDC /* SpecializationConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializationConstant.h; sourceTree = "<group>"; };
 		FF62F63B27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunAtTheBeginningOfShader.cpp; sourceTree = "<group>"; };
 		FF62F63C27446DC800AD6EDC /* RunAtTheBeginningOfShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunAtTheBeginningOfShader.h; sourceTree = "<group>"; };
-		FF62F63D27446DC800AD6EDC /* FindPreciseNodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindPreciseNodes.h; sourceTree = "<group>"; };
 		FF62F63E27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceClipCullDistanceVariable.h; sourceTree = "<group>"; };
 		FF62F63F27446DC800AD6EDC /* DriverUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverUniform.h; sourceTree = "<group>"; };
 		FF62F68B27448D6900AD6EDC /* Context_gles_3_0_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Context_gles_3_0_autogen.h; sourceTree = "<group>"; };
@@ -3292,8 +3283,6 @@
 				A30306FF2305F636002DA972 /* FindFunction.h */,
 				5C55D6ED22826CB200B5BA2C /* FindMain.cpp */,
 				5C55D6EF22826CB200B5BA2C /* FindMain.h */,
-				FF62F63827446DC800AD6EDC /* FindPreciseNodes.cpp */,
-				FF62F63D27446DC800AD6EDC /* FindPreciseNodes.h */,
 				5C55D6F322826CB200B5BA2C /* FindSymbolNode.cpp */,
 				5C55D6EB22826CB100B5BA2C /* FindSymbolNode.h */,
 				5C55D6F922826CB300B5BA2C /* IntermNode_util.cpp */,
@@ -3767,12 +3756,8 @@
 			children = (
 				7B359D722A7CED690016DC59 /* AddAndTrueToLoopCondition.cpp */,
 				7B359D7A2A7CED690016DC59 /* AddAndTrueToLoopCondition.h */,
-				7B359D712A7CED690016DC59 /* RewriteDoWhile.cpp */,
-				7B359D732A7CED690016DC59 /* RewriteDoWhile.h */,
 				7B359D762A7CED690016DC59 /* RewriteRowMajorMatrices.cpp */,
 				7B359D772A7CED690016DC59 /* RewriteRowMajorMatrices.h */,
-				7B359D782A7CED690016DC59 /* RewriteUnaryMinusOperatorFloat.cpp */,
-				7B359D742A7CED690016DC59 /* RewriteUnaryMinusOperatorFloat.h */,
 				7B359D752A7CED690016DC59 /* UnfoldShortCircuitAST.cpp */,
 				7B359D792A7CED690016DC59 /* UnfoldShortCircuitAST.h */,
 			);
@@ -4654,7 +4639,6 @@
 				31CD003C249184F400486F27 /* FenceNVImpl.h in Headers */,
 				31CDFFB2249184A100486F27 /* FindFunction.h in Headers */,
 				31CDFFAF249184A100486F27 /* FindMain.h in Headers */,
-				FF62F64C27446DC800AD6EDC /* FindPreciseNodes.h in Headers */,
 				31CDFFB6249184A100486F27 /* FindSymbolNode.h in Headers */,
 				31CDFF682491848C00486F27 /* FixedVector.h in Headers */,
 				7B359DAF2A7CEDAA0016DC59 /* FixTypeConstructors.h in Headers */,
@@ -5450,7 +5434,6 @@
 				DF83E31A2639FE17000825EF /* Fence.cpp in Sources */,
 				DF83E29F2639FD83000825EF /* FindFunction.cpp in Sources */,
 				DF83E2912639FD83000825EF /* FindMain.cpp in Sources */,
-				FF62F64727446DC800AD6EDC /* FindPreciseNodes.cpp in Sources */,
 				DF83E2C72639FD84000825EF /* FindSymbolNode.cpp in Sources */,
 				7B359D9E2A7CEDAA0016DC59 /* FixTypeConstructors.cpp in Sources */,
 				DF83E2CE2639FD84000825EF /* FlagStd140Structs.cpp in Sources */,
@@ -6127,7 +6110,6 @@
 				7BFAF9172DE6F85B00327F7F /* ExtensionGLSL.cpp in Sources */,
 				7BF555602C81F198002B101E /* FindFunction.cpp in Sources */,
 				7BF5554C2C81F198002B101E /* FindMain.cpp in Sources */,
-				7BF555342C81F198002B101E /* FindPreciseNodes.cpp in Sources */,
 				7BF555072C81F198002B101E /* FindSymbolNode.cpp in Sources */,
 				7BF555172C81F198002B101E /* FixTypeConstructors.cpp in Sources */,
 				7BF555532C81F198002B101E /* FlagStd140Structs.cpp in Sources */,

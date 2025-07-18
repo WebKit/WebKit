@@ -36,7 +36,8 @@ class ShutdownChunk : public Chunk, public TLVTrait<ShutdownChunkConfig> {
   explicit ShutdownChunk(TSN cumulative_tsn_ack)
       : cumulative_tsn_ack_(cumulative_tsn_ack) {}
 
-  static std::optional<ShutdownChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<ShutdownChunk> Parse(
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

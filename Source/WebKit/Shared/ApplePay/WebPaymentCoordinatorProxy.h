@@ -89,7 +89,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(MessageReceiver);
 
     struct Client : public CanMakeWeakPtr<Client>, public CanMakeCheckedPtr<Client> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Client);
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
 
         virtual ~Client() = default;

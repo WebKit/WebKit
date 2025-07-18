@@ -42,7 +42,7 @@ void StationarityEstimator::Reset() {
 
 // Update just the noise estimator. Usefull until the delay is known
 void StationarityEstimator::UpdateNoiseEstimator(
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum) {
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum) {
   noise_.Update(spectrum);
   data_dumper_->DumpRaw("aec3_stationarity_noise_spectrum", noise_.Spectrum());
   data_dumper_->DumpRaw("aec3_stationarity_is_block_stationary",
@@ -51,7 +51,7 @@ void StationarityEstimator::UpdateNoiseEstimator(
 
 void StationarityEstimator::UpdateStationarityFlags(
     const SpectrumBuffer& spectrum_buffer,
-    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
+    ArrayView<const float> render_reverb_contribution_spectrum,
     int idx_current,
     int num_lookahead) {
   std::array<int, kWindowLength> indexes;
@@ -96,7 +96,7 @@ bool StationarityEstimator::IsBlockStationary() const {
 
 bool StationarityEstimator::EstimateBandStationarity(
     const SpectrumBuffer& spectrum_buffer,
-    rtc::ArrayView<const float> average_reverb,
+    ArrayView<const float> average_reverb,
     const std::array<int, kWindowLength>& indexes,
     size_t band) const {
   constexpr float kThrStationarity = 10.f;
@@ -165,12 +165,12 @@ void StationarityEstimator::NoiseSpectrum::Reset() {
 }
 
 void StationarityEstimator::NoiseSpectrum::Update(
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum) {
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum) {
   RTC_DCHECK_LE(1, spectrum[0].size());
   const int num_render_channels = static_cast<int>(spectrum.size());
 
   std::array<float, kFftLengthBy2Plus1> avg_spectrum_data;
-  rtc::ArrayView<const float> avg_spectrum;
+  ArrayView<const float> avg_spectrum;
   if (num_render_channels == 1) {
     avg_spectrum = spectrum[0];
   } else {

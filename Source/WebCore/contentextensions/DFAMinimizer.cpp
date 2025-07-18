@@ -257,8 +257,7 @@ public:
         }
 
         // Count the number of incoming transitions per node.
-        m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
-        m_flattenedTransitionsStartOffsetPerNode.fill(0);
+        m_flattenedTransitionsStartOffsetPerNode.fill(0, dfa.nodes.size());
 
         auto singularTransitionsFirsts = WTF::map<0, ContentExtensionsOverflowHandler>(singularTransitions, [&](auto& transition) {
             return transition.first;
@@ -400,7 +399,7 @@ struct ActionKey {
         , state(Valid)
     {
         SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
+        hasher.addCharactersAssumingAligned(reinterpret_cast<const char16_t*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(char16_t));
         hash = hasher.hash();
     }
 

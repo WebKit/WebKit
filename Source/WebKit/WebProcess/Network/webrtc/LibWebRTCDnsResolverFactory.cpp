@@ -36,7 +36,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDnsResolverFactory);
 
-std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const rtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
+std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const webrtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
 {
     auto resolver = WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncDnsResolver();
     resolver->start(address, [callback = absl::move(callback)] () mutable {
@@ -45,7 +45,7 @@ std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::
     return resolver;
 }
 
-std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const rtc::SocketAddress& address, int /* family */, absl::AnyInvocable<void()> callback)
+std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const webrtc::SocketAddress& address, int /* family */, absl::AnyInvocable<void()> callback)
 {
     auto resolver = WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncDnsResolver();
     // FIXME: Make use of family.
@@ -60,14 +60,14 @@ std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::
     return WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncDnsResolver();
 }
 
-void LibWebRTCDnsResolverFactory::Resolver::Start(const rtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
+void LibWebRTCDnsResolverFactory::Resolver::Start(const webrtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
 {
     start(address, [callback = absl::move(callback)] () mutable {
         callback();
     });
 }
 
-void LibWebRTCDnsResolverFactory::Resolver::Start(const rtc::SocketAddress& address, int /* family */, absl::AnyInvocable<void()> callback)
+void LibWebRTCDnsResolverFactory::Resolver::Start(const webrtc::SocketAddress& address, int /* family */, absl::AnyInvocable<void()> callback)
 {
     // FIXME: Make use of family.
     start(address, [callback = absl::move(callback)] () mutable {

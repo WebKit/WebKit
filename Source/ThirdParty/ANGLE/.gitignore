@@ -92,6 +92,7 @@
 /third_party/r8/d8/cipd
 /third_party/r8/lib
 /third_party/rapidjson/src
+/third_party/re2/src
 /third_party/requests/src
 /third_party/rust
 /third_party/rust-toolchain

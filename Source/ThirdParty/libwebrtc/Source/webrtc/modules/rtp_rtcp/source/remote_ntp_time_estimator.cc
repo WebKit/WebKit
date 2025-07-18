@@ -11,9 +11,13 @@
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
 
 #include <cstdint>
+#include <optional>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/rtp_to_ntp_estimator.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 
@@ -21,9 +25,9 @@ namespace webrtc {
 
 namespace {
 
-constexpr int kMinimumNumberOfSamples = 2;
+constexpr int kMinimumNumberOfSamples = 3;
 constexpr TimeDelta kTimingLogInterval = TimeDelta::Seconds(10);
-constexpr int kClocksOffsetSmoothingWindow = 100;
+constexpr int kClocksOffsetSmoothingWindow = 7;
 
 // Subtracts two NtpTime values keeping maximum precision.
 int64_t Subtract(NtpTime minuend, NtpTime subtrahend) {

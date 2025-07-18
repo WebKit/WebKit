@@ -1786,9 +1786,9 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
 
     if (!arrayIndexSwizzle.empty())
     {
-        mSink << ", ";
+        mSink << ", i32(";
         traversePArg();
-        mSink << arrayIndexSwizzle;
+        mSink << arrayIndexSwizzle << ")";
     }
 
     if (!depthRefSwizzle.empty())

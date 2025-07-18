@@ -62,15 +62,18 @@ public:
     Wasm::JSEntrypointCallee* jsToWasmCallee() const { return m_boxedJSToWasmCallee.ptr(); }
     CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
-        ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
+        ASSERT_UNUSED(arity, arity == ArityCheckMode::ArityCheckNotRequired || arity == ArityCheckMode::MustCheckArity);
         return m_boxedJSToWasmCallee->entrypoint();
     }
 
     CodePtr<JSEntryPtrTag> jsCallICEntrypoint()
     {
 #if ENABLE(JIT)
+        if (m_taintedness >= SourceTaintedOrigin::IndirectlyTainted)
+            return nullptr;
+
         // Prep the entrypoint for the slow path.
-        executable()->entrypointFor(CodeForCall, MustCheckArity);
+        executable()->entrypointFor(CodeSpecializationKind::CodeForCall, ArityCheckMode::MustCheckArity);
         if (!m_jsToWasmICJITCode)
             m_jsToWasmICJITCode = signature().jsToWasmICEntrypoint();
         return m_jsToWasmICJITCode;
@@ -78,6 +81,8 @@ public:
         return nullptr;
 #endif
     }
+
+    SourceTaintedOrigin taintedness() const { return m_taintedness; }
 
     static constexpr ptrdiff_t offsetOfBoxedWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_boxedWasmCallee); }
     static constexpr ptrdiff_t offsetOfBoxedJSToWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_boxedJSToWasmCallee); }
@@ -95,6 +100,8 @@ private:
     // This let's the JS->Wasm interpreter find its metadata
     Ref<Wasm::JSEntrypointCallee, BoxedNativeCalleePtrTraits<Wasm::JSEntrypointCallee>> m_boxedJSToWasmCallee;
     uint32_t m_frameSize;
+    SourceTaintedOrigin m_taintedness;
+
 #if ENABLE(JIT)
     CodePtr<JSEntryPtrTag> m_jsToWasmICJITCode;
 #endif

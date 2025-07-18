@@ -13,9 +13,12 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+
+#include "api/array_view.h"
 #include "rtc_base/stream.h"
 
-namespace rtc {
+namespace webrtc {
 
 // MemoryStream dynamically resizes to accomodate written data.
 
@@ -25,10 +28,10 @@ class MemoryStream final : public StreamInterface {
   ~MemoryStream() override;
 
   StreamState GetState() const override;
-  StreamResult Read(rtc::ArrayView<uint8_t> buffer,
+  StreamResult Read(ArrayView<uint8_t> buffer,
                     size_t& bytes_read,
                     int& error) override;
-  StreamResult Write(rtc::ArrayView<const uint8_t> buffer,
+  StreamResult Write(ArrayView<const uint8_t> buffer,
                      size_t& bytes_written,
                      int& error) override;
   void Close() override;
@@ -54,6 +57,14 @@ class MemoryStream final : public StreamInterface {
   size_t seek_position_ = 0;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::MemoryStream;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_MEMORY_STREAM_H_

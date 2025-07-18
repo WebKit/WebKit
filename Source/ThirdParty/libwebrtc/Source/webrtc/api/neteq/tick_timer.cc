@@ -10,6 +10,8 @@
 
 #include "api/neteq/tick_timer.h"
 
+#include <cstdint>
+
 namespace webrtc {
 
 TickTimer::Stopwatch::Stopwatch(const TickTimer& ticktimer)

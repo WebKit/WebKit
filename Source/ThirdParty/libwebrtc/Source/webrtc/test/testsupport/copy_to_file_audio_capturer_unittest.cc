@@ -23,8 +23,8 @@ namespace test {
 class CopyToFileAudioCapturerTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(
-        webrtc::test::OutputPath(), "copy_to_file_audio_capturer_unittest");
+    temp_filename_ = test::TempFilename(test::OutputPath(),
+                                        "copy_to_file_audio_capturer_unittest");
     std::unique_ptr<TestAudioDeviceModule::Capturer> delegate =
         TestAudioDeviceModule::CreatePulsedNoiseCapturer(32000, 48000);
     capturer_ = std::make_unique<CopyToFileAudioCapturer>(std::move(delegate),
@@ -38,7 +38,7 @@ class CopyToFileAudioCapturerTest : public ::testing::Test {
 };
 
 TEST_F(CopyToFileAudioCapturerTest, Capture) {
-  rtc::BufferT<int16_t> expected_buffer;
+  BufferT<int16_t> expected_buffer;
   ASSERT_TRUE(capturer_->Capture(&expected_buffer));
   ASSERT_TRUE(!expected_buffer.empty());
   // Destruct capturer to close wav file.
@@ -48,7 +48,7 @@ TEST_F(CopyToFileAudioCapturerTest, Capture) {
   // what was captured.
   std::unique_ptr<TestAudioDeviceModule::Capturer> wav_file_capturer =
       TestAudioDeviceModule::CreateWavFileReader(temp_filename_, 48000);
-  rtc::BufferT<int16_t> actual_buffer;
+  BufferT<int16_t> actual_buffer;
   wav_file_capturer->Capture(&actual_buffer);
   ASSERT_EQ(actual_buffer, expected_buffer);
 }

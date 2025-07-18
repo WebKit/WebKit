@@ -51,7 +51,7 @@ class AnyDataChunk : public Chunk {
   MID mid() const { return data_.mid; }
   FSN fsn() const { return data_.fsn; }
   PPID ppid() const { return data_.ppid; }
-  rtc::ArrayView<const uint8_t> payload() const { return data_.payload; }
+  webrtc::ArrayView<const uint8_t> payload() const { return data_.payload; }
 
   // Extracts the Data from the chunk, as a destructive action.
   Data extract() && { return std::move(data_); }

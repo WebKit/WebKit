@@ -11,12 +11,13 @@
 #include "audio/remix_resample.h"
 
 #include <array>
+#include <cstdint>
 
 #include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "common_audio/resampler/include/push_resampler.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace voe {
@@ -70,12 +71,9 @@ void RemixAndResample(InterleavedView<const int16_t> src_data,
   // `dst_frame` as a target buffer with the same number of channels as the
   // source.
   auto original_dst_number_of_channels = dst_frame->num_channels_;
-  int out_length = resampler->Resample(
-      src_data, dst_frame->mutable_data(dst_frame->samples_per_channel_,
-                                        src_data.num_channels()));
-  RTC_CHECK_NE(out_length, -1) << "src_data.size=" << src_data.size();
-  RTC_DCHECK_EQ(dst_frame->samples_per_channel(),
-                out_length / src_data.num_channels());
+  resampler->Resample(src_data,
+                      dst_frame->mutable_data(dst_frame->samples_per_channel_,
+                                              src_data.num_channels()));
 
   // Upmix after resampling.
   if (src_data.num_channels() == 1 && original_dst_number_of_channels == 2) {

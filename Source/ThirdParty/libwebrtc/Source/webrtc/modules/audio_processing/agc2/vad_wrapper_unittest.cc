@@ -42,7 +42,7 @@ class MockVad : public VoiceActivityDetectorWrapper::MonoVad {
  public:
   MOCK_METHOD(int, SampleRateHz, (), (const, override));
   MOCK_METHOD(void, Reset, (), (override));
-  MOCK_METHOD(float, Analyze, (rtc::ArrayView<const float> frame), (override));
+  MOCK_METHOD(float, Analyze, (ArrayView<const float> frame), (override));
 };
 
 // Checks that the ctor and `Initialize()` read the sample rate of the wrapped
@@ -83,8 +83,7 @@ std::unique_ptr<VoiceActivityDetectorWrapper> CreateMockVadWrapper(
 struct FrameWithView {
   // Ctor. Initializes the frame samples with `value`.
   explicit FrameWithView(int sample_rate_hz)
-      : samples(rtc::CheckedDivExact(sample_rate_hz, kNumFramesPerSecond),
-                0.0f),
+      : samples(CheckedDivExact(sample_rate_hz, kNumFramesPerSecond), 0.0f),
         view(samples.data(), samples.size(), /*num_channels=*/1) {}
   std::vector<float> samples;
   const DeinterleavedView<const float> view;
@@ -99,7 +98,7 @@ TEST(GainController2VoiceActivityDetectorWrapper, CheckSpeechProbabilities) {
                                           speech_probabilities,
                                           /*expected_vad_reset_calls=*/1);
   FrameWithView frame(kSampleRate8kHz);
-  for (int i = 0; rtc::SafeLt(i, speech_probabilities.size()); ++i) {
+  for (int i = 0; SafeLt(i, speech_probabilities.size()); ++i) {
     SCOPED_TRACE(i);
     EXPECT_EQ(speech_probabilities[i], vad_wrapper->Analyze(frame.view));
   }
@@ -159,9 +158,9 @@ TEST_P(VadResamplingParametrization, CheckResampledFrameSize) {
       .Times(AnyNumber())
       .WillRepeatedly(Return(vad_sample_rate_hz()));
   EXPECT_CALL(*vad, Reset).Times(1);
-  EXPECT_CALL(*vad, Analyze(Truly([this](rtc::ArrayView<const float> frame) {
-    return rtc::SafeEq(frame.size(), rtc::CheckedDivExact(vad_sample_rate_hz(),
-                                                          kNumFramesPerSecond));
+  EXPECT_CALL(*vad, Analyze(Truly([this](ArrayView<const float> frame) {
+    return SafeEq(frame.size(),
+                  CheckedDivExact(vad_sample_rate_hz(), kNumFramesPerSecond));
   }))).Times(1);
   auto vad_wrapper = std::make_unique<VoiceActivityDetectorWrapper>(
       kNoVadPeriodicReset, std::move(vad), input_sample_rate_hz());

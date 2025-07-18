@@ -8,26 +8,35 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
 #include <optional>
+#include <string>
+#include <vector>
 
 #include "api/environment/environment.h"
+#include "api/rtp_parameters.h"
+#include "api/test/video/function_video_decoder_factory.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/video/color_space.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_rotation.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "common_video/test/utilities.h"
-#include "media/base/codec.h"
 #include "media/base/media_constants.h"
-#include "media/engine/internal_decoder_factory.h"
-#include "media/engine/internal_encoder_factory.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "test/call_test.h"
-#include "test/encoder_settings.h"
 #include "test/field_trial.h"
+#include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -48,7 +57,7 @@ class CodecEndToEndTest : public test::CallTest {
 };
 
 class CodecObserver : public test::EndToEndTest,
-                      public rtc::VideoSinkInterface<VideoFrame> {
+                      public VideoSinkInterface<VideoFrame> {
  public:
   CodecObserver(int no_frames_to_wait_for,
                 VideoRotation rotation_to_test,
@@ -247,8 +256,8 @@ TEST_P(EndToEndTestH264, SendsAndReceivesH264VideoRotation90) {
 }
 
 TEST_P(EndToEndTestH264, SendsAndReceivesH264PacketizationMode0) {
-  SdpVideoFormat codec(cricket::kH264CodecName);
-  codec.parameters[cricket::kH264FmtpPacketizationMode] = "0";
+  SdpVideoFormat codec(webrtc::kH264CodecName);
+  codec.parameters[webrtc::kH264FmtpPacketizationMode] = "0";
   test::FunctionVideoEncoderFactory encoder_factory(
       [codec](const Environment& env, const SdpVideoFormat& format) {
         return CreateH264Encoder(env, H264EncoderSettings::Parse(codec));
@@ -261,8 +270,8 @@ TEST_P(EndToEndTestH264, SendsAndReceivesH264PacketizationMode0) {
 }
 
 TEST_P(EndToEndTestH264, SendsAndReceivesH264PacketizationMode1) {
-  SdpVideoFormat codec(cricket::kH264CodecName);
-  codec.parameters[cricket::kH264FmtpPacketizationMode] = "1";
+  SdpVideoFormat codec(webrtc::kH264CodecName);
+  codec.parameters[webrtc::kH264FmtpPacketizationMode] = "1";
   test::FunctionVideoEncoderFactory encoder_factory(
       [codec](const Environment& env, const SdpVideoFormat& format) {
         return CreateH264Encoder(env, H264EncoderSettings::Parse(codec));

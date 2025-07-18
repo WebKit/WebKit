@@ -33,29 +33,26 @@ CloneSessionDescriptionAsType(const SessionDescriptionInterface* sdesc,
 
 // Function that takes a single session description content with its
 // corresponding transport and produces a boolean.
-typedef std::function<bool(const cricket::ContentInfo*,
-                           const cricket::TransportInfo*)>
+typedef std::function<bool(const webrtc::ContentInfo*,
+                           const webrtc::TransportInfo*)>
     SdpContentPredicate;
 
 // Returns true if the predicate returns true for all contents in the given
 // session description.
-bool SdpContentsAll(SdpContentPredicate pred,
-                    const cricket::SessionDescription* desc);
+bool SdpContentsAll(SdpContentPredicate pred, const SessionDescription* desc);
 
 // Returns true if the predicate returns true for none of the contents in the
 // given session description.
-bool SdpContentsNone(SdpContentPredicate pred,
-                     const cricket::SessionDescription* desc);
+bool SdpContentsNone(SdpContentPredicate pred, const SessionDescription* desc);
 
 // Function that takes a single session description content with its
 // corresponding transport and can mutate the content and/or the transport.
-typedef std::function<void(cricket::ContentInfo*, cricket::TransportInfo*)>
+typedef std::function<void(webrtc::ContentInfo*, webrtc::TransportInfo*)>
     SdpContentMutator;
 
 // Applies the mutator function over all contents in the given session
 // description.
-void SdpContentsForEach(SdpContentMutator fn,
-                        cricket::SessionDescription* desc);
+void SdpContentsForEach(SdpContentMutator fn, SessionDescription* desc);
 
 }  // namespace webrtc
 

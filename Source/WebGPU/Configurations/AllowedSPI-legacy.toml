@@ -1,0 +1,8 @@
+# Longstanding SPI used by WebGPU before we started auditing SPI use.
+# NEVER add to this list, only remove!
+
+[graphics.legacy]
+selectors = [
+    "newSharedEventWithMachPort:",
+    "setSampleMask:",
+]

@@ -10,10 +10,11 @@
 
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 
-#include <memory>
+#include <cstddef>
 
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8_test_helper.h"
-#include "test/gmock.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "test/gtest.h"
 
 namespace webrtc {

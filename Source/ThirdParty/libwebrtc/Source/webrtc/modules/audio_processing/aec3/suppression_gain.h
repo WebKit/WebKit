@@ -41,14 +41,13 @@ class SuppressionGain {
   SuppressionGain& operator=(const SuppressionGain&) = delete;
 
   void GetGain(
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-          nearend_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           residual_echo_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           residual_echo_spectrum_unbounded,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           comfort_noise_spectrum,
       const RenderSignalAnalyzer& render_signal_analyzer,
       const AecState& aec_state,
@@ -67,8 +66,8 @@ class SuppressionGain {
  private:
   // Computes the gain to apply for the bands beyond the first band.
   float UpperBandsGain(
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           comfort_noise_spectrum,
       const std::optional<int>& narrow_peak_band,
       bool saturated_echo,
@@ -83,21 +82,20 @@ class SuppressionGain {
   void LowerBandGain(
       bool stationary_with_low_power,
       const AecState& aec_state,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-          suppressor_input,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> suppressor_input,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
       bool clock_drift,
       std::array<float, kFftLengthBy2Plus1>* gain);
 
-  void GetMinGain(rtc::ArrayView<const float> weighted_residual_echo,
-                  rtc::ArrayView<const float> last_nearend,
-                  rtc::ArrayView<const float> last_echo,
+  void GetMinGain(ArrayView<const float> weighted_residual_echo,
+                  ArrayView<const float> last_nearend,
+                  ArrayView<const float> last_echo,
                   bool low_noise_render,
                   bool saturated_echo,
-                  rtc::ArrayView<float> min_gain) const;
+                  ArrayView<float> min_gain) const;
 
-  void GetMaxGain(rtc::ArrayView<float> max_gain) const;
+  void GetMaxGain(ArrayView<float> max_gain) const;
 
   class LowNoiseRenderDetector {
    public:

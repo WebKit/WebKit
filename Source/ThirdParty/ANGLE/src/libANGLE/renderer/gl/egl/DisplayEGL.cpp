@@ -1048,7 +1048,7 @@ DeviceImpl *DisplayEGL::createDevice()
     return new DeviceEGL(this);
 }
 
-bool DisplayEGL::supportsDmaBufFormat(EGLint format) const
+bool DisplayEGL::supportsDmaBufFormat(EGLint format)
 {
     return std::find(std::begin(mDrmFormats), std::end(mDrmFormats), format) !=
            std::end(mDrmFormats);

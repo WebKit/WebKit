@@ -59,7 +59,7 @@ static std::span<const CGSize> CTRunGetAdvancesSpan(CTRunRef ctRun)
     return unsafeMakeSpan(baseAdvances, CTRunGetGlyphCount(ctRun));
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
     , m_font(font)
     , m_characters(characters)
@@ -136,7 +136,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
 }
 
 struct ProviderInfo {
-    std::span<const UChar> characters;
+    std::span<const char16_t> characters;
     RetainPtr<CFDictionaryRef> attributes;
 };
 
@@ -173,7 +173,7 @@ static CFDictionaryRef typesetterOptions()
     return options.get().get();
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const UChar> characters, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.

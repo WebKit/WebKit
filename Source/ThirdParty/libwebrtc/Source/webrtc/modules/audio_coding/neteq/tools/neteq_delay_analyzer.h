@@ -11,13 +11,17 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <set>
-#include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_frame.h"
+#include "api/neteq/neteq.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 

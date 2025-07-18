@@ -578,6 +578,14 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
+                self.executable, 'commit', '-a', '-m', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(message=args[4], env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
+                self.executable, 'apply', '--index', re.compile(r'.+'), '-3',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.apply(),
+            ), mocks.Subprocess.Route(
                 self.executable, 'revert', '--no-commit', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.revert(commit_hashes=[args[3]], no_commit=True),
@@ -667,6 +675,10 @@ nothing to commit, working tree clean
                 )
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', 'HEAD',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
+            ), mocks.Subprocess.Route(
+                self.executable, 'reset', '--hard',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
             ), mocks.Subprocess.Route(
@@ -1055,7 +1067,11 @@ nothing to commit, working tree clean
 
         return mocks.ProcessCompletion(returncode=0)
 
-    def commit(self, amend=False, env=None):
+    def apply(self, patch=None):
+        self.staged['patch.txt'] = 'added'
+        return mocks.ProcessCompletion(returncode=0)
+
+    def commit(self, amend=False, message=None, env=None):
         env = env or dict()
         if not self.head:
             return mocks.ProcessCompletion(returncode=1, stdout='Allowed in git, but disallowed by reasonable workflows')
@@ -1075,12 +1091,15 @@ nothing to commit, working tree clean
             self.commits[self.branch].append(self.head)
 
         self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
-        self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
-            env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
-            ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
-            '\n * '.join(self.staged.keys()),
-            env.get('COMMIT_MESSAGE_CONTENT', '')
-        )
+        if message:
+            self.head.message = message
+        else:
+            self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
+                env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
+                ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
+                '\n * '.join(self.staged.keys()),
+                env.get('COMMIT_MESSAGE_CONTENT', '')
+            )
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
         self.staged = {}
         return mocks.ProcessCompletion(returncode=0)

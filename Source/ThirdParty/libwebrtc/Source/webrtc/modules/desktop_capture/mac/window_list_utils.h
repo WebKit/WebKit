@@ -31,7 +31,7 @@ namespace webrtc {
 // `ignore_minimized` is true) and any windows which do not have a valid window
 // id or title will be ignored.
 bool RTC_EXPORT
-GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
+GetWindowList(webrtc::FunctionView<bool(CFDictionaryRef)> on_window,
               bool ignore_minimized,
               bool only_zero_layer);
 

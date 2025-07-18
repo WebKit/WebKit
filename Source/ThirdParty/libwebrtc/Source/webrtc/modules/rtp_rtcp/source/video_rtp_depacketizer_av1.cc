@@ -13,13 +13,24 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
+#include <cstring>
+#include <iterator>
 #include <optional>
 #include <utility>
 
+#include "absl/container/inlined_vector.h"
+#include "api/array_view.h"
+#include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/leb128.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -83,7 +94,7 @@ class ArrayOfArrayViews {
   }
 
  private:
-  using Storage = absl::InlinedVector<rtc::ArrayView<const uint8_t>, 2>;
+  using Storage = absl::InlinedVector<ArrayView<const uint8_t>, 2>;
 
   size_t size_ = 0;
   Storage data_;
@@ -185,11 +196,11 @@ int RtpStartsNewCodedVideoSequence(uint8_t aggregation_header) {
 // fills ObuInfo::data field.
 // Returns empty vector on error.
 VectorObuInfo ParseObus(
-    rtc::ArrayView<const rtc::ArrayView<const uint8_t>> rtp_payloads) {
+    ArrayView<const ArrayView<const uint8_t>> rtp_payloads) {
   VectorObuInfo obu_infos;
   bool expect_continues_obu = false;
-  for (rtc::ArrayView<const uint8_t> rtp_payload : rtp_payloads) {
-    rtc::ByteBufferReader payload(rtp_payload);
+  for (ArrayView<const uint8_t> rtp_payload : rtp_payloads) {
+    ByteBufferReader payload(rtp_payload);
     uint8_t aggregation_header;
     if (!payload.ReadUInt8(&aggregation_header)) {
       RTC_DLOG(LS_WARNING)
@@ -319,15 +330,15 @@ bool CalculateObuSizes(ObuInfo* obu_info) {
   }
   obu_info->payload_offset = it;
   obu_info->prefix_size +=
-      WriteLeb128(rtc::dchecked_cast<uint64_t>(obu_info->payload_size),
+      WriteLeb128(dchecked_cast<uint64_t>(obu_info->payload_size),
                   obu_info->prefix.data() + obu_info->prefix_size);
   return true;
 }
 
 }  // namespace
 
-rtc::scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
-    rtc::ArrayView<const rtc::ArrayView<const uint8_t>> rtp_payloads) {
+scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
+    ArrayView<const ArrayView<const uint8_t>> rtp_payloads) {
   VectorObuInfo obu_infos = ParseObus(rtp_payloads);
   if (obu_infos.empty()) {
     return nullptr;
@@ -341,7 +352,7 @@ rtc::scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
     frame_size += (obu_info.prefix_size + obu_info.payload_size);
   }
 
-  rtc::scoped_refptr<EncodedImageBuffer> bitstream =
+  scoped_refptr<EncodedImageBuffer> bitstream =
       EncodedImageBuffer::Create(frame_size);
   uint8_t* write_at = bitstream->data();
   for (const ObuInfo& obu_info : obu_infos) {
@@ -357,7 +368,7 @@ rtc::scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
 }
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
-VideoRtpDepacketizerAv1::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
+VideoRtpDepacketizerAv1::Parse(CopyOnWriteBuffer rtp_payload) {
   if (rtp_payload.size() == 0) {
     RTC_DLOG(LS_ERROR) << "Empty rtp payload.";
     return std::nullopt;

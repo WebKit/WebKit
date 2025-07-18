@@ -20,11 +20,11 @@
 namespace webrtc {
 
 // Randomizes the elements in a vector with values -32767.f:32767.f.
-void RandomizeSampleVector(Random* random_generator, rtc::ArrayView<float> v);
+void RandomizeSampleVector(Random* random_generator, ArrayView<float> v);
 
 // Randomizes the elements in a vector with values -amplitude:amplitude.
 void RandomizeSampleVector(Random* random_generator,
-                           rtc::ArrayView<float> v,
+                           ArrayView<float> v,
                            float amplitude);
 
 // Class for delaying a signal a fixed number of samples.
@@ -35,7 +35,7 @@ class DelayBuffer {
   ~DelayBuffer() = default;
 
   // Produces a delayed signal copy of x.
-  void Delay(rtc::ArrayView<const T> x, rtc::ArrayView<T> x_delayed);
+  void Delay(ArrayView<const T> x, ArrayView<T> x_delayed);
 
  private:
   std::vector<T> buffer_;

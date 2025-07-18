@@ -1145,7 +1145,7 @@ private:
                 worklist.append(data.subGroup1);
                 worklist.append(data.subGroup0);
             } else if (func(tmp) == IterationStatus::Done) {
-                worklist.resize(0);
+                worklist.shrink(0);
                 return IterationStatus::Done;
             }
         }

@@ -11,11 +11,18 @@
 #ifndef PC_PEER_CONNECTION_FACTORY_PROXY_H_
 #define PC_PEER_CONNECTION_FACTORY_PROXY_H_
 
-#include <memory>
+#include <cstdint>
+#include <cstdio>
 #include <string>
-#include <utility>
 
+#include "absl/strings/string_view.h"
+#include "api/audio_options.h"
+#include "api/media_stream_interface.h"
+#include "api/media_types.h"
 #include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
 #include "pc/proxy.h"
 
 namespace webrtc {
@@ -25,27 +32,25 @@ namespace webrtc {
 BEGIN_PROXY_MAP(PeerConnectionFactory)
 PROXY_PRIMARY_THREAD_DESTRUCTOR()
 PROXY_METHOD1(void, SetOptions, const Options&)
-PROXY_METHOD2(RTCErrorOr<rtc::scoped_refptr<PeerConnectionInterface>>,
+PROXY_METHOD2(RTCErrorOr<webrtc::scoped_refptr<PeerConnectionInterface>>,
               CreatePeerConnectionOrError,
               const PeerConnectionInterface::RTCConfiguration&,
               PeerConnectionDependencies)
-PROXY_CONSTMETHOD1(RtpCapabilities,
-                   GetRtpSenderCapabilities,
-                   cricket::MediaType)
+PROXY_CONSTMETHOD1(RtpCapabilities, GetRtpSenderCapabilities, webrtc::MediaType)
 PROXY_CONSTMETHOD1(RtpCapabilities,
                    GetRtpReceiverCapabilities,
-                   cricket::MediaType)
-PROXY_METHOD1(rtc::scoped_refptr<MediaStreamInterface>,
+                   webrtc::MediaType)
+PROXY_METHOD1(scoped_refptr<MediaStreamInterface>,
               CreateLocalMediaStream,
               const std::string&)
-PROXY_METHOD1(rtc::scoped_refptr<AudioSourceInterface>,
+PROXY_METHOD1(scoped_refptr<AudioSourceInterface>,
               CreateAudioSource,
-              const cricket::AudioOptions&)
-PROXY_METHOD2(rtc::scoped_refptr<VideoTrackInterface>,
+              const AudioOptions&)
+PROXY_METHOD2(scoped_refptr<VideoTrackInterface>,
               CreateVideoTrack,
-              rtc::scoped_refptr<VideoTrackSourceInterface>,
+              scoped_refptr<VideoTrackSourceInterface>,
               absl::string_view)
-PROXY_METHOD2(rtc::scoped_refptr<AudioTrackInterface>,
+PROXY_METHOD2(scoped_refptr<AudioTrackInterface>,
               CreateAudioTrack,
               const std::string&,
               AudioSourceInterface*)

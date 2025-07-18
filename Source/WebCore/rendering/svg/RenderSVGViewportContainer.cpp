@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderSVGViewportContainer.h"
 
+#include "ContainerNodeInlines.h"
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"

@@ -255,7 +255,7 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
         return { { SymbolType::Public, "minus.magnifyingglass"_s } };
     case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
     case WebCore::ContextMenuItemTagAddHighlightToNewQuickNote:
-        return { { SymbolType::Public, "quicknote"_s } };
+        return { { SymbolType::Private, "quicknote"_s } };
     case WebCore::ContextMenuItemTagBold:
         return { { SymbolType::Public, "bold"_s } };
     case WebCore::ContextMenuItemTagCapitalize:
@@ -288,7 +288,7 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
     case WebCore::ContextMenuItemTagIgnoreSpelling:
         return { { SymbolType::Public, "checkmark.circle"_s } };
     case WebCore::ContextMenuItemTagInspectElement:
-        return { { SymbolType::Public, "gear"_s } };
+        return { { SymbolType::Public, "wrench.and.screwdriver"_s } };
     case WebCore::ContextMenuItemTagItalic:
         return { { SymbolType::Public, "italic"_s } };
     case WebCore::ContextMenuItemTagLearnSpelling:

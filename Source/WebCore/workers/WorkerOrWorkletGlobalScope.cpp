@@ -44,9 +44,9 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
     , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
-    , m_moduleLoader(makeUnique<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
+    , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
-    , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
+    , m_inspectorController(makeUniqueRef<WorkerInspectorController>(*this))
     , m_sessionID(sessionID)
     , m_referrerPolicy(referrerPolicy)
     , m_noiseInjectionHashSalt(noiseInjectionHashSalt)
@@ -117,8 +117,8 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 {
     ASSERT(isContextThread());
     if (!m_defaultTaskGroup) [[unlikely]] {
-        m_eventLoop = WorkerEventLoop::create(*this);
-        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        lazyInitialize(m_eventLoop, WorkerEventLoop::create(*this));
+        lazyInitialize(m_defaultTaskGroup, makeUnique<EventLoopTaskGroup>(*m_eventLoop));
         if (activeDOMObjectsAreStopped())
             m_defaultTaskGroup->stopAndDiscardAllTasks();
     }

@@ -1,0 +1,19 @@
+
+PASS e.style['view-transition-name'] = "ident()" should not set the property value
+PASS e.style['view-transition-name'] = "ident( )" should not set the property value
+PASS e.style['view-transition-name'] = "ident(rgb(1, 2, 3))" should not set the property value
+PASS e.style['view-transition-name'] = "ident(5px)" should not set the property value
+FAIL e.style['view-transition-name'] = "ident(myident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident( myident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(myident )" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(\"myident\")" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(\"myident\" 3)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(3 \"myident\")" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(\"my\" \"ident\")" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(my \"ident\")" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(\"my\" ident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(my ident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(-- myident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(my 3 3 3 3 ident)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-name'] = "ident(\"myident\" 42)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

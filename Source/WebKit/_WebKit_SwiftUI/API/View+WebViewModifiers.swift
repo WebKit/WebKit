@@ -26,7 +26,7 @@ public import SwiftUI
 
 extension View {
     /// Determines whether horizontal swipe gestures trigger backward and forward page navigation.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewBackForwardNavigationGestures(_ value: WebView.BackForwardNavigationGesturesBehavior) -> some View {
@@ -34,7 +34,7 @@ extension View {
     }
 
     /// Determines whether magnify gestures change the view’s magnification.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewMagnificationGestures(_ value: WebView.MagnificationGesturesBehavior) -> some View {
@@ -42,7 +42,7 @@ extension View {
     }
 
     /// Determines whether pressing a link displays a preview of the destination for the link.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewLinkPreviews(_ value: WebView.LinkPreviewBehavior) -> some View {
@@ -50,7 +50,7 @@ extension View {
     }
 
     /// Determines whether to allow people to select or otherwise interact with text.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewTextSelection<S>(_ selectability: S) -> some View where S: TextSelectability {
@@ -58,7 +58,7 @@ extension View {
     }
 
     /// Determines whether a web view can display content full screen.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewElementFullscreenBehavior(_ value: WebView.ElementFullscreenBehavior) -> some View {
@@ -96,7 +96,7 @@ extension View {
     ///
     /// - Parameter visibility: The visibility to use for the background.
     /// - Returns: A view with the specified content background visibility.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewContentBackground(_ visibility: Visibility) -> some View {
@@ -112,7 +112,7 @@ extension View {
     /// - Returns: A view that invokes the action when the relevant part of a web view's scroll geometry changes.
     ///
     /// - Note: The content size of web content may exceed the current size of the view's frame, however it will never be smaller than it.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewOnScrollGeometryChange<T>(
@@ -135,7 +135,7 @@ extension View {
     /// Associates a binding to a scroll position with the web view.
     ///
     /// - Note: ``WebView`` does not support scrolling to a view with an identity. It only supports scrolling to a concrete offset, or to an edge.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewScrollPosition(_ position: Binding<ScrollPosition>) -> some View {
@@ -148,7 +148,7 @@ extension View {
     ///   - behavior: Whether scrolling should be enabled or disabled for this input.
     ///   - input: The input for which to enable or disable scrolling.
     /// - Returns: A view with the configured scroll input behavior for web views.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public nonisolated func webViewScrollInputBehavior(_ behavior: ScrollInputBehavior, for input: ScrollInputKind) -> some View {

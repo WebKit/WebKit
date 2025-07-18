@@ -25,6 +25,7 @@
 #include "RenderSVGTSpan.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

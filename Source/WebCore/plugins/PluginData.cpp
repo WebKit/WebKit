@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PluginInfoProvider.h"

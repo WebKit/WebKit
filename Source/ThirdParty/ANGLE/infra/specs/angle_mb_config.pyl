@@ -60,7 +60,7 @@
   # bots all using the 'release_bot' config).
   'configs': {
     'angle_asan_bot': ['angle', 'opencl', 'remoteexec', 'asan', 'release'],
-    'angle_asan_lsan_ubsan_bot': ['angle', 'opencl', 'openclcts', 'remoteexec', 'asan', 'lsan', 'ubsan', 'release'],
+    'angle_asan_lsan_ubsan_bot': ['angle', 'opencl', 'openclcts', 'remoteexec', 'asan', 'lsan', 'ubsan', 'release', 'smoke_traces'],
     'angle_non_clang_debug_bot': ['angle', 'non_clang', 'debug'],
     'angle_non_clang_release_bot': ['angle', 'non_clang', 'release'],
     'angle_non_clang_x86_debug_bot': ['angle', 'non_clang', 'x86', 'debug', 'cxx17'],
@@ -134,6 +134,10 @@
     },
     'remoteexec': {
       'gn_args': 'use_remoteexec=true use_reclient=false use_siso=true',
+    },
+    'smoke_traces': {
+      # Reason for inclusion: antutu_refinery:benchmark asphalt_9_2024:custom aztec_ruins_high:benchmark balatro:custom basemark_gpu:benchmark batman_telltale:custom dead_cells:custom diablo_immortal:custom dota_underlords:custon genshin_impact:unity grand_mountain_adventure:custom honkai_star_rail:unity manhattan_31:benchmark minecraft_bedrock:custom, ni_no_kuni:unreal slingshot_test1:benchmark sonic_the_hedgehog:gles1 tessellation:benchmark tower_of_fantasy:unreal warcraft_rumble:unity
+      'gn_args': 'angle_restricted_traces=["antutu_refinery", "asphalt_9_2024", "aztec_ruins_high", "balatro", "basemark_gpu", "batman_telltale", "dead_cells", "diablo_immortal", "dota_underlords", "genshin_impact", "grand_mountain_adventure", "honkai_star_rail", "manhattan_31", "minecraft_bedrock", "ni_no_kuni", "slingshot_test1", "sonic_the_hedgehog", "tessellation", "tower_of_fantasy", "warcraft_rumble"]'
     },
     'tsan': {
       'gn_args': 'is_tsan=true',

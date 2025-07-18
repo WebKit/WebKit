@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/CharacterRange.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -54,8 +55,16 @@ struct EditingRange {
     {
     }
 
+    EditingRange(const WebCore::CharacterRange& range)
+        : location(range.location)
+        , length(range.length)
+    {
+    }
+
     // (notFound, 0) is notably valid.
     bool isValid() const { return location + length >= location; }
+
+    WebCore::CharacterRange toCharacterRange() const { return WebCore::CharacterRange { location, length }; }
 
     static std::optional<WebCore::SimpleRange> toRange(WebCore::LocalFrame&, const EditingRange&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
     static EditingRange fromRange(WebCore::LocalFrame&, const std::optional<WebCore::SimpleRange>&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 376
+#define ANGLE_SH_VERSION 378
 
 enum ShShaderSpec
 {
@@ -241,10 +241,6 @@ struct ShCompileOptions
     // drivers that do not handle struct scopes correctly, including all Mac drivers and Linux AMD.
     uint64_t regenerateStructNames : 1;
 
-    // This flag works around bugs in Mac drivers related to do-while by transforming them into an
-    // other construct.
-    uint64_t rewriteDoWhileLoops : 1;
-
     // This flag works around a bug in the HLSL compiler optimizer that folds certain constant pow
     // expressions incorrectly. Only applies to the HLSL back-end. It works by expanding the integer
     // pow expressions into a series of multiplies.
@@ -282,10 +278,6 @@ struct ShCompileOptions
     // of a named uniform block declared with a shared or std140 layout qualifier to be considered
     // active. The uniform block itself is also considered active.
     uint64_t useUnusedStandardSharedBlocks : 1;
-
-    // This flag works around a bug in unary minus operator on float numbers on Intel Mac OSX 10.11
-    // drivers. It works by translating -float into 0.0 - float.
-    uint64_t rewriteFloatUnaryMinusOperator : 1;
 
     // This flag works around a bug in evaluating atan(y, x) on some NVIDIA OpenGL drivers.  It
     // works by using an expression to emulate this function.
@@ -410,9 +402,6 @@ struct ShCompileOptions
 
     // Always write explicit location layout qualifiers for fragment outputs.
     uint64_t explicitFragmentLocations : 1;
-
-    // Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver
-    uint64_t addExplicitBoolCasts : 1;
 
     // Add round() after applying dither.  This works around a Qualcomm quirk where values can get
     // ceil()ed instead.

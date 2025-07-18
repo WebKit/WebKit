@@ -46,7 +46,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SmallSet);
 // Use it whenever you need to store an unbounded but probably small number of unsigned integers or pointers.
 template<typename T, typename Hash = PtrHashBase<T, false /* isSmartPtr */>, unsigned SmallArraySize = 8>
 class SmallSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SmallSet);
     WTF_MAKE_NONCOPYABLE(SmallSet);
     static_assert(std::is_trivially_destructible<T>::value, "We currently don't support non-trivially destructible types.");
     static_assert(!(SmallArraySize & (SmallArraySize - 1)), "Inline size must be a power of two.");
@@ -89,7 +89,7 @@ public:
     }
 
     class iterator {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         iterator()
         { }

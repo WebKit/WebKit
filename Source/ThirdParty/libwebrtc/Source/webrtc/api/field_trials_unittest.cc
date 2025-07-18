@@ -10,25 +10,23 @@
 
 #include "api/field_trials.h"
 
-#include <memory>
-
-#include "api/transport/field_trial_based_config.h"
+#include "absl/strings/str_cat.h"
 #include "rtc_base/containers/flat_set.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-#include "test/testsupport/rtc_expect_death.h"
-#endif  // GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-
 namespace webrtc {
 namespace {
 
+using field_trial::FieldTrialsAllowedInScopeForTesting;
+using test::ScopedFieldTrials;
+using ::testing::AllOf;
+using ::testing::HasSubstr;
+using ::testing::IsNull;
+using ::testing::Not;
 using ::testing::NotNull;
-using ::webrtc::field_trial::FieldTrialsAllowedInScopeForTesting;
-using ::webrtc::test::ScopedFieldTrials;
 
 TEST(FieldTrialsTest, EmptyStringHasNoEffect) {
   FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial"});
@@ -61,89 +59,138 @@ TEST(FieldTrialsTest, FieldTrialsDoesNotReadGlobalString) {
   EXPECT_FALSE(f.IsDisabled("MyUncoolTrial"));
 }
 
-TEST(FieldTrialsTest, FieldTrialsWritesGlobalString) {
-  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial", "MyUncoolTrial"});
-  FieldTrials f("MyCoolTrial/Enabled/MyUncoolTrial/Disabled/");
-  EXPECT_TRUE(webrtc::field_trial::IsEnabled("MyCoolTrial"));
-  EXPECT_TRUE(webrtc::field_trial::IsDisabled("MyUncoolTrial"));
-}
-
-TEST(FieldTrialsTest, FieldTrialsRestoresGlobalStringAfterDestruction) {
-  static constexpr char s[] = "SomeString/Enabled/";
-  ScopedFieldTrials g(s);
-  {
-    FieldTrials f("SomeOtherString/Enabled/");
-    EXPECT_STREQ(webrtc::field_trial::GetFieldTrialString(),
-                 "SomeOtherString/Enabled/");
-  }
-  EXPECT_STREQ(webrtc::field_trial::GetFieldTrialString(), s);
-}
-
-#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(FieldTrialsTest, FieldTrialsDoesNotSupportSimultaneousInstances) {
-  FieldTrials f("SomeString/Enabled/");
-  RTC_EXPECT_DEATH(FieldTrials("SomeOtherString/Enabled/").Lookup("Whatever"),
-                   "Only one instance");
-}
-#endif  // GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-
-TEST(FieldTrialsTest, FieldTrialsSupportsSeparateInstances) {
-  { FieldTrials f("SomeString/Enabled/"); }
-  { FieldTrials f("SomeOtherString/Enabled/"); }
-}
-
-TEST(FieldTrialsTest, NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString) {
+TEST(FieldTrialsTest, FieldTrialsInstanceDoesNotModifyGlobalString) {
   FieldTrialsAllowedInScopeForTesting k({"SomeString"});
-  std::unique_ptr<FieldTrials> f =
-      FieldTrials::CreateNoGlobal("SomeString/Enabled/");
-  ASSERT_THAT(f, NotNull());
-  f->RegisterKeysForTesting({"SomeString"});
+  FieldTrials f("SomeString/Enabled/");
+  f.RegisterKeysForTesting({"SomeString"});
 
-  EXPECT_TRUE(f->IsEnabled("SomeString"));
-  EXPECT_FALSE(webrtc::field_trial::IsEnabled("SomeString"));
+  EXPECT_TRUE(f.IsEnabled("SomeString"));
+  EXPECT_FALSE(field_trial::IsEnabled("SomeString"));
 }
 
-TEST(FieldTrialsTest, NonGlobalFieldTrialsSupportSimultaneousInstances) {
-  std::unique_ptr<FieldTrials> f1 =
-      FieldTrials::CreateNoGlobal("SomeString/Enabled/");
-  std::unique_ptr<FieldTrials> f2 =
-      FieldTrials::CreateNoGlobal("SomeOtherString/Enabled/");
-  ASSERT_THAT(f1, NotNull());
-  ASSERT_THAT(f2, NotNull());
-  f1->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
-  f2->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
-
-  EXPECT_TRUE(f1->IsEnabled("SomeString"));
-  EXPECT_FALSE(f1->IsEnabled("SomeOtherString"));
-
-  EXPECT_FALSE(f2->IsEnabled("SomeString"));
-  EXPECT_TRUE(f2->IsEnabled("SomeOtherString"));
-}
-
-TEST(FieldTrialsTest, GlobalAndNonGlobalFieldTrialsAreDisjoint) {
-  FieldTrialsAllowedInScopeForTesting k({"SomeString", "SomeOtherString"});
+TEST(FieldTrialsTest, FieldTrialsSupportSimultaneousInstances) {
   FieldTrials f1("SomeString/Enabled/");
-  std::unique_ptr<FieldTrials> f2 =
-      FieldTrials::CreateNoGlobal("SomeOtherString/Enabled/");
-  ASSERT_THAT(f2, NotNull());
+  FieldTrials f2("SomeOtherString/Enabled/");
   f1.RegisterKeysForTesting({"SomeString", "SomeOtherString"});
-  f2->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
+  f2.RegisterKeysForTesting({"SomeString", "SomeOtherString"});
 
   EXPECT_TRUE(f1.IsEnabled("SomeString"));
   EXPECT_FALSE(f1.IsEnabled("SomeOtherString"));
 
-  EXPECT_FALSE(f2->IsEnabled("SomeString"));
-  EXPECT_TRUE(f2->IsEnabled("SomeOtherString"));
+  EXPECT_FALSE(f2.IsEnabled("SomeString"));
+  EXPECT_TRUE(f2.IsEnabled("SomeOtherString"));
 }
 
-TEST(FieldTrialsTest, FieldTrialBasedConfigReadsGlobalString) {
-  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial", "MyUncoolTrial"});
-  ScopedFieldTrials g("MyCoolTrial/Enabled/MyUncoolTrial/Disabled/");
-  FieldTrialBasedConfig f;
-  f.RegisterKeysForTesting({"MyCoolTrial", "MyUncoolTrial"});
+TEST(FieldTrialsTest, GlobalAndNonGlobalFieldTrialsAreDisjoint) {
+  FieldTrialsAllowedInScopeForTesting k({"SomeString", "SomeOtherString"});
+  ScopedFieldTrials g("SomeString/Enabled/");
+  FieldTrials f("SomeOtherString/Enabled/");
 
-  EXPECT_TRUE(f.IsEnabled("MyCoolTrial"));
-  EXPECT_TRUE(f.IsDisabled("MyUncoolTrial"));
+  f.RegisterKeysForTesting({"SomeString", "SomeOtherString"});
+
+  EXPECT_TRUE(field_trial::IsEnabled("SomeString"));
+  EXPECT_FALSE(field_trial::IsEnabled("SomeOtherString"));
+
+  EXPECT_FALSE(f.IsEnabled("SomeString"));
+  EXPECT_TRUE(f.IsEnabled("SomeOtherString"));
+}
+
+TEST(FieldTrialsTest, CreateAcceptsValidInputs) {
+  EXPECT_THAT(FieldTrials::Create(""), NotNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/"), NotNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Video/Disabled/"), NotNull());
+
+  // Duplicate trials with the same value is fine
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Audio/Enabled/"), NotNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/B/C/Audio/Enabled/"),
+              NotNull());
+}
+
+TEST(FieldTrialsTest, CreateRejectsBadInputs) {
+  // Bad delimiters
+  EXPECT_THAT(FieldTrials::Create("Audio/EnabledVideo/Disabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled//Video/Disabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("/Audio/Enabled/Video/Disabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Video/Disabled"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Video/Disabled/garbage"),
+              IsNull());
+
+  // Empty trial or group
+  EXPECT_THAT(FieldTrials::Create("Audio//"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("/Enabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("//"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("//Enabled"), IsNull());
+
+  // Duplicate trials with different values is not fine
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Audio/Disabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/B/C/Audio/Disabled/"),
+              IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Audio/Disabled/"), IsNull());
+  EXPECT_THAT(FieldTrials::Create("Audio/Enabled/B/C/Audio/Disabled/"),
+              IsNull());
+}
+
+TEST(FieldTrialsTest, StringfiyMentionsKeysAndValues) {
+  // Exact format of the stringification is undefined.
+  EXPECT_THAT(absl::StrCat(FieldTrials("Audio/Enabled/Video/Value/")),
+              AllOf(HasSubstr("Audio"), HasSubstr("Enabled"),
+                    HasSubstr("Video"), HasSubstr("Value")));
+}
+
+TEST(FieldTrialsTest, MergeCombinesFieldTrials) {
+  FieldTrials f("Video/Value1/");
+  FieldTrials other("Audio/Value2/");
+
+  f.Merge(other);
+
+  f.RegisterKeysForTesting({"Audio", "Video"});
+  EXPECT_EQ(f.Lookup("Video"), "Value1");
+  EXPECT_EQ(f.Lookup("Audio"), "Value2");
+}
+
+TEST(FieldTrialsTest, MergeGivesPrecedenceToOther) {
+  FieldTrials f("Audio/Disabled/Video/Enabled/");
+  FieldTrials other("Audio/Enabled/");
+
+  f.Merge(other);
+
+  f.RegisterKeysForTesting({"Audio"});
+  EXPECT_EQ(f.Lookup("Audio"), "Enabled");
+}
+
+TEST(FieldTrialsTest, MergeDoesntChangeTrialAbsentInOther) {
+  FieldTrials f("Audio/Enabled/Video/Enabled/");
+  FieldTrials other("Audio/Enabled/");
+
+  f.Merge(other);
+
+  f.RegisterKeysForTesting({"Video"});
+  EXPECT_EQ(f.Lookup("Video"), "Enabled");
+}
+
+TEST(FieldTrialsTest, SetUpdatesTrial) {
+  FieldTrials f("Audio/Enabled/Video/Enabled/");
+
+  f.Set("Audio", "Disabled");
+
+  f.RegisterKeysForTesting({"Audio"});
+  EXPECT_EQ(f.Lookup("Audio"), "Disabled");
+}
+
+TEST(FieldTrialsTest, SettingEmptyValueRemovesFieldTrial) {
+  FieldTrials f("Audio/Enabled/Video/Enabled/");
+
+  f.Set("Audio", "");
+
+  f.RegisterKeysForTesting({"Audio"});
+  EXPECT_EQ(f.Lookup("Audio"), "");
+  EXPECT_THAT(absl::StrCat(f), Not(HasSubstr("Audio")));
+
+  // Absent field trials shouldn't override previous value during merge.
+  FieldTrials f2("Audio/Disabled/");
+  f2.Merge(f);
+  f2.RegisterKeysForTesting({"Audio"});
+  EXPECT_EQ(f2.Lookup("Audio"), "Disabled");
 }
 
 }  // namespace

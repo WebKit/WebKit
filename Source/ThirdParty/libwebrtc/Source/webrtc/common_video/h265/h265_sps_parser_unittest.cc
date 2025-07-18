@@ -10,8 +10,13 @@
 
 #include "common_video/h265/h265_sps_parser.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <vector>
+
+#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
 #include "test/gtest.h"
@@ -34,9 +39,9 @@ void WriteSps(uint16_t width,
               uint32_t max_num_sublayer_minus1,
               bool sub_layer_ordering_info_present_flag,
               bool long_term_ref_pics_present_flag,
-              rtc::Buffer* out_buffer) {
+              Buffer* out_buffer) {
   uint8_t rbsp[kSpsBufferMaxSize] = {0};
-  rtc::BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
+  BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
   // sps_video_parameter_set_id
   writer.WriteBits(0, 4);
   // sps_max_sub_layers_minus1
@@ -365,7 +370,7 @@ void WriteSps(uint16_t width,
   }
 
   out_buffer->Clear();
-  H265::WriteRbsp(rtc::MakeArrayView(rbsp, byte_count), out_buffer);
+  H265::WriteRbsp(MakeArrayView(rbsp, byte_count), out_buffer);
 }
 
 class H265SpsParserTest : public ::testing::Test {
@@ -451,7 +456,7 @@ TEST_F(H265SpsParserTest, TestSampleSPSHorizontalAndVerticalCrop) {
 }
 
 TEST_F(H265SpsParserTest, TestSyntheticSPSQvgaLandscape) {
-  rtc::Buffer buffer;
+  Buffer buffer;
   WriteSps(320u, 180u, 1, 0, 1, 0, &buffer);
   std::optional<H265SpsParser::SpsState> sps = H265SpsParser::ParseSps(buffer);
   ASSERT_TRUE(sps.has_value());
@@ -461,7 +466,7 @@ TEST_F(H265SpsParserTest, TestSyntheticSPSQvgaLandscape) {
 }
 
 TEST_F(H265SpsParserTest, TestSyntheticSPSWeirdResolution) {
-  rtc::Buffer buffer;
+  Buffer buffer;
   WriteSps(156u, 122u, 2, 0, 1, 0, &buffer);
   std::optional<H265SpsParser::SpsState> sps = H265SpsParser::ParseSps(buffer);
   ASSERT_TRUE(sps.has_value());
@@ -471,7 +476,7 @@ TEST_F(H265SpsParserTest, TestSyntheticSPSWeirdResolution) {
 }
 
 TEST_F(H265SpsParserTest, TestLog2MaxSubLayersMinus1) {
-  rtc::Buffer buffer;
+  Buffer buffer;
   WriteSps(320u, 180u, 1, 0, 1, 0, &buffer);
   std::optional<H265SpsParser::SpsState> sps = H265SpsParser::ParseSps(buffer);
   ASSERT_TRUE(sps.has_value());
@@ -495,7 +500,7 @@ TEST_F(H265SpsParserTest, TestLog2MaxSubLayersMinus1) {
 }
 
 TEST_F(H265SpsParserTest, TestSubLayerOrderingInfoPresentFlag) {
-  rtc::Buffer buffer;
+  Buffer buffer;
   WriteSps(320u, 180u, 1, 6, 1, 0, &buffer);
   std::optional<H265SpsParser::SpsState> sps = H265SpsParser::ParseSps(buffer);
   ASSERT_TRUE(sps.has_value());
@@ -514,7 +519,7 @@ TEST_F(H265SpsParserTest, TestSubLayerOrderingInfoPresentFlag) {
 }
 
 TEST_F(H265SpsParserTest, TestLongTermRefPicsPresentFlag) {
-  rtc::Buffer buffer;
+  Buffer buffer;
   WriteSps(320u, 180u, 1, 0, 1, 0, &buffer);
   std::optional<H265SpsParser::SpsState> sps = H265SpsParser::ParseSps(buffer);
   ASSERT_TRUE(sps.has_value());

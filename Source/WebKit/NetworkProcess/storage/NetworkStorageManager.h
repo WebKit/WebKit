@@ -274,19 +274,18 @@ private:
     };
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
-    Ref<SuspendableWorkQueue> protectedWorkQueue() const WTF_RETURNS_CAPABILITY(m_queue.get());
+    SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
     WebCore::IDBServer::UniqueIDBDatabaseTransaction* idbTransaction(const WebCore::IDBRequestData&);
     void setStorageSiteValidationEnabledInternal(bool);
     void addAllowedSitesForConnectionInternal(IPC::Connection::UniqueID, const Vector<WebCore::RegistrableDomain>&);
     bool isSiteAllowedForConnection(IPC::Connection::UniqueID, const WebCore::RegistrableDomain&) const;
-    RefPtr<CacheStorageRegistry> protectedCacheStorageRegistry();
 
     RefPtr<FileSystemStorageHandleRegistry> protectedFileSystemStorageHandleRegistry();
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
-    Ref<SuspendableWorkQueue> m_queue;
+    const Ref<SuspendableWorkQueue> m_queue;
     String m_path;
     String m_pathNormalizedMainThread;
     FileSystem::Salt m_salt;
@@ -294,9 +293,9 @@ private:
     HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers WTF_GUARDED_BY_CAPABILITY(workQueue());
     ThreadSafeWeakHashSet<IPC::Connection> m_connections;
     RefPtr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
-    std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
-    std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;
-    RefPtr<CacheStorageRegistry> m_cacheStorageRegistry;
+    const std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
+    const std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;
+    const RefPtr<CacheStorageRegistry> m_cacheStorageRegistry;
     String m_customLocalStoragePath;
     String m_customIDBStoragePath;
     String m_customIDBStoragePathNormalizedMainThread;

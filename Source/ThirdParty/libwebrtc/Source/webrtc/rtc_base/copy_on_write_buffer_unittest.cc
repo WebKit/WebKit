@@ -14,7 +14,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -370,8 +370,8 @@ TEST(CopyOnWriteBufferTest, SlicesAreIndependent) {
 TEST(CopyOnWriteBufferTest, AcceptsVectorLikeTypes) {
   std::vector<uint8_t> a = {1, 2};
   std::vector<int8_t> b = {3, 4};
-  rtc::ArrayView<uint8_t> c(a);
-  rtc::ArrayView<const int8_t> d(b);
+  ArrayView<uint8_t> c(a);
+  ArrayView<const int8_t> d(b);
 
   CopyOnWriteBuffer a_buf(a);
   CopyOnWriteBuffer b_buf(b);
@@ -387,4 +387,4 @@ TEST(CopyOnWriteBufferTest, AcceptsVectorLikeTypes) {
   EXPECT_EQ(all.size(), 8U);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

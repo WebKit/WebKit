@@ -19,8 +19,7 @@
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
-namespace rtc {
-using ::webrtc::TimeDelta;
+namespace webrtc {
 
 TEST(TimeTest, TimeInMs) {
   int64_t ts_earlier = TimeMillis();
@@ -57,28 +56,28 @@ TEST(TimeTest, Intervals) {
 
 TEST(TimeTest, TestTimeDiff64) {
   int64_t ts_diff = 100;
-  int64_t ts_earlier = rtc::TimeMillis();
+  int64_t ts_earlier = TimeMillis();
   int64_t ts_later = ts_earlier + ts_diff;
-  EXPECT_EQ(ts_diff, rtc::TimeDiff(ts_later, ts_earlier));
-  EXPECT_EQ(-ts_diff, rtc::TimeDiff(ts_earlier, ts_later));
+  EXPECT_EQ(ts_diff, TimeDiff(ts_later, ts_earlier));
+  EXPECT_EQ(-ts_diff, TimeDiff(ts_earlier, ts_later));
 }
 
-class TmToSeconds : public ::testing::Test {
+class TmToSecondsTest : public ::testing::Test {
  public:
-  TmToSeconds() {
+  TmToSecondsTest() {
     // Set use of the test RNG to get deterministic expiration timestamp.
-    rtc::SetRandomTestMode(true);
+    SetRandomTestMode(true);
   }
-  ~TmToSeconds() override {
+  ~TmToSecondsTest() override {
     // Put it back for the next test.
-    rtc::SetRandomTestMode(false);
+    SetRandomTestMode(false);
   }
 
   void TestTmToSeconds(int times) {
     static char mdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     for (int i = 0; i < times; i++) {
       // First generate something correct and check that TmToSeconds is happy.
-      int year = rtc::CreateRandomId() % 400 + 1970;
+      int year = CreateRandomId() % 400 + 1970;
 
       bool leap_year = false;
       if (year % 4 == 0)
@@ -90,16 +89,16 @@ class TmToSeconds : public ::testing::Test {
 
       std::tm tm;
       tm.tm_year = year - 1900;  // std::tm is year 1900 based.
-      tm.tm_mon = rtc::CreateRandomId() % 12;
-      tm.tm_mday = rtc::CreateRandomId() % mdays[tm.tm_mon] + 1;
-      tm.tm_hour = rtc::CreateRandomId() % 24;
-      tm.tm_min = rtc::CreateRandomId() % 60;
-      tm.tm_sec = rtc::CreateRandomId() % 60;
-      int64_t t = rtc::TmToSeconds(tm);
+      tm.tm_mon = CreateRandomId() % 12;
+      tm.tm_mday = CreateRandomId() % mdays[tm.tm_mon] + 1;
+      tm.tm_hour = CreateRandomId() % 24;
+      tm.tm_min = CreateRandomId() % 60;
+      tm.tm_sec = CreateRandomId() % 60;
+      int64_t t = TmToSeconds(tm);
       EXPECT_TRUE(t >= 0);
 
       // Now damage a random field and check that TmToSeconds is unhappy.
-      switch (rtc::CreateRandomId() % 11) {
+      switch (CreateRandomId() % 11) {
         case 0:
           tm.tm_year = 1969 - 1900;
           break;
@@ -134,26 +133,26 @@ class TmToSeconds : public ::testing::Test {
           tm.tm_sec = 60;
           break;
       }
-      EXPECT_EQ(rtc::TmToSeconds(tm), -1);
+      EXPECT_EQ(TmToSeconds(tm), -1);
     }
     // Check consistency with the system gmtime_r.  With time_t, we can only
     // portably test dates until 2038, which is achieved by the % 0x80000000.
     for (int i = 0; i < times; i++) {
-      time_t t = rtc::CreateRandomId() % 0x80000000;
+      time_t t = CreateRandomId() % 0x80000000;
 #if defined(WEBRTC_WIN)
       std::tm* tm = std::gmtime(&t);
       EXPECT_TRUE(tm);
-      EXPECT_TRUE(rtc::TmToSeconds(*tm) == t);
+      EXPECT_TRUE(TmToSeconds(*tm) == t);
 #else
       std::tm tm;
       EXPECT_TRUE(gmtime_r(&t, &tm));
-      EXPECT_TRUE(rtc::TmToSeconds(tm) == t);
+      EXPECT_TRUE(TmToSeconds(tm) == t);
 #endif
     }
   }
 };
 
-TEST_F(TmToSeconds, TestTmToSeconds) {
+TEST_F(TmToSecondsTest, TestTmToSeconds) {
   TestTmToSeconds(100000);
 }
 
@@ -163,7 +162,7 @@ TEST(FakeClock, TimeFunctionsUseFakeClock) {
   FakeClock clock;
   SetClockForTesting(&clock);
 
-  clock.SetTime(webrtc::Timestamp::Micros(987654));
+  clock.SetTime(Timestamp::Micros(987654));
   EXPECT_EQ(987u, Time32());
   EXPECT_EQ(987, TimeMillis());
   EXPECT_EQ(987654, TimeMicros());
@@ -182,21 +181,21 @@ TEST(FakeClock, InitialTime) {
 
 TEST(FakeClock, SetTime) {
   FakeClock clock;
-  clock.SetTime(webrtc::Timestamp::Micros(123));
+  clock.SetTime(Timestamp::Micros(123));
   EXPECT_EQ(123000, clock.TimeNanos());
-  clock.SetTime(webrtc::Timestamp::Micros(456));
+  clock.SetTime(Timestamp::Micros(456));
   EXPECT_EQ(456000, clock.TimeNanos());
 }
 
 TEST(FakeClock, AdvanceTime) {
   FakeClock clock;
-  clock.AdvanceTime(webrtc::TimeDelta::Micros(1u));
+  clock.AdvanceTime(TimeDelta::Micros(1u));
   EXPECT_EQ(1000, clock.TimeNanos());
-  clock.AdvanceTime(webrtc::TimeDelta::Micros(2222u));
+  clock.AdvanceTime(TimeDelta::Micros(2222u));
   EXPECT_EQ(2223000, clock.TimeNanos());
-  clock.AdvanceTime(webrtc::TimeDelta::Millis(3333u));
+  clock.AdvanceTime(TimeDelta::Millis(3333u));
   EXPECT_EQ(3335223000, clock.TimeNanos());
-  clock.AdvanceTime(webrtc::TimeDelta::Seconds(4444u));
+  clock.AdvanceTime(TimeDelta::Seconds(4444u));
   EXPECT_EQ(4447335223000, clock.TimeNanos());
 }
 
@@ -226,8 +225,8 @@ TEST(FakeClock, SettingTimeWakesThreads) {
 
   // Advance the fake clock, expecting the worker thread to wake up
   // and dispatch the message instantly.
-  clock.AdvanceTime(webrtc::TimeDelta::Seconds(60u));
-  EXPECT_TRUE(message_handler_dispatched.Wait(webrtc::TimeDelta::Zero()));
+  clock.AdvanceTime(TimeDelta::Seconds(60u));
+  EXPECT_TRUE(message_handler_dispatched.Wait(TimeDelta::Zero()));
   worker->Stop();
 
   SetClockForTesting(nullptr);
@@ -238,4 +237,4 @@ TEST(FakeClock, SettingTimeWakesThreads) {
   EXPECT_LT(real_end_time_ms - real_start_time_ms, 10000);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

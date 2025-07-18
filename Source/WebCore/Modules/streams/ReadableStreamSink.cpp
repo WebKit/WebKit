@@ -28,6 +28,7 @@
 #include "ReadableStreamSink.h"
 
 #include "DOMException.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "ReadableStream.h"
 #include "SharedBuffer.h"

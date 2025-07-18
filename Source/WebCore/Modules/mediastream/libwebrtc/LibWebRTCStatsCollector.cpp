@@ -32,6 +32,7 @@
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCUtils.h"
 #include "Performance.h"
+#include <webrtc/api/stats/rtcstats_objects.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 
@@ -704,14 +705,14 @@ static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, con
     }
 }
 
-void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
+void LibWebRTCStatsCollector::OnStatsDelivered(const webrtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
-    callOnMainThread([this, protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport]() {
+    callOnMainThread([this, protectedThis = webrtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport]() {
         m_callback(rtcReport);
     });
 }
 
-Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
+Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(const webrtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
     return RTCStatsReport::create([rtcReport](auto& mapAdapter) {
         if (rtcReport)

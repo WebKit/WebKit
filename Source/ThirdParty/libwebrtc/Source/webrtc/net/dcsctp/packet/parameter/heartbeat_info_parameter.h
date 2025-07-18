@@ -34,16 +34,16 @@ class HeartbeatInfoParameter : public Parameter,
  public:
   static constexpr int kType = HeartbeatInfoParameterConfig::kType;
 
-  explicit HeartbeatInfoParameter(rtc::ArrayView<const uint8_t> info)
+  explicit HeartbeatInfoParameter(webrtc::ArrayView<const uint8_t> info)
       : info_(info.begin(), info.end()) {}
 
   static std::optional<HeartbeatInfoParameter> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  rtc::ArrayView<const uint8_t> info() const { return info_; }
+  webrtc::ArrayView<const uint8_t> info() const { return info_; }
 
  private:
   std::vector<uint8_t> info_;

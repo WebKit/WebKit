@@ -12,13 +12,19 @@
 
 #include <stddef.h>
 
+#include <algorithm>
 #include <memory>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/memory/fifo_buffer.h"
+#include "rtc_base/net_helpers.h"
+#include "rtc_base/server_socket_adapters.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
 
-namespace rtc {
+namespace webrtc {
 
 // ProxyServer
 ProxyServer::ProxyServer(SocketFactory* int_factory,
@@ -149,4 +155,4 @@ void ProxyBinding::Destroy() {
   SignalDestroyed(this);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

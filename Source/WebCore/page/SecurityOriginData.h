@@ -191,10 +191,6 @@ struct SecurityOriginDataHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-struct SecurityOriginDataMarkableTraits {
-    static bool isEmptyValue(const SecurityOriginData& value) { return value.isNull(); }
-    static SecurityOriginData emptyValue() { return { }; }
-};
 } // namespace WebCore
 
 namespace WTF {
@@ -202,5 +198,11 @@ namespace WTF {
 template<> struct HashTraits<WebCore::SecurityOriginData> : WebCore::SecurityOriginDataHashTraits { };
 template<> struct DefaultHash<WebCore::SecurityOriginData> : WebCore::SecurityOriginDataHash { };
 template<> struct DefaultHash<std::optional<WebCore::SecurityOriginData>> : WebCore::SecurityOriginDataHash { };
+
+template<>
+struct MarkableTraits<WebCore::SecurityOriginData> {
+    static bool isEmptyValue(const WebCore::SecurityOriginData& value) { return value.isNull(); }
+    static WebCore::SecurityOriginData emptyValue() { return { }; }
+};
 
 } // namespace WTF

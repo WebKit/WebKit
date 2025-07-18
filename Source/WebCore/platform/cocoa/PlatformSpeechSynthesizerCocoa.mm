@@ -74,7 +74,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     // Hold a Ref to the utterance so that it won't disappear until the synth is done with it.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> m_utterance;
 
-    RetainPtr<AVSpeechSynthesizer> m_synthesizer;
+    const RetainPtr<AVSpeechSynthesizer> m_synthesizer;
 }
 
 - (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer*)synthesizer;
@@ -127,7 +127,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_synthesizer) {
-        m_synthesizer = adoptNS([PAL::allocAVSpeechSynthesizerInstance() init]);
+        lazyInitialize(m_synthesizer, adoptNS([PAL::allocAVSpeechSynthesizerInstance() init]));
         [m_synthesizer setDelegate:self];
     }
     

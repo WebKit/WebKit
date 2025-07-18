@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct WEBCORE_EXPORT PrewarmInformation {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WEBCORE_EXPORT);
     FontCache::PrewarmInformation fontCache;
 };
 

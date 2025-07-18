@@ -118,7 +118,7 @@ UIViewController *VideoPresentationInterfaceIOS::presentingViewController()
 }
 
 VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS& playbackSessionInterface)
-    : m_watchdogTimer(RunLoop::main(), this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::mainSingleton(), this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
     , m_playbackSessionInterface(playbackSessionInterface)
 {
     m_playbackSessionInterface->setVideoPresentationInterface(this);
@@ -576,7 +576,7 @@ void VideoPresentationInterfaceIOS::doExitFullscreen()
 
     m_standby = false;
 
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
         if (auto model = videoPresentationModel())
             model->didExitFullscreen();
         m_changingStandbyOnly = false;
@@ -937,7 +937,7 @@ void VideoPresentationInterfaceIOS::preparedToReturnToStandby()
 
 void VideoPresentationInterfaceIOS::finalizeSetup()
 {
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
         if (auto model = videoPresentationModel()) {
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;

@@ -20,7 +20,7 @@ namespace webrtc {
 namespace {
 
 float ClampLevelEstimateDbfs(float level_estimate_dbfs) {
-  return rtc::SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
+  return SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
 }
 
 // Returns the initial speech level estimate needed to apply the initial gain.

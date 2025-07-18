@@ -32,7 +32,7 @@ extension WebPage {
     /// Create a `NavigationPreferences` value when you want to change the default rendering behavior of
     /// your web page. Typically, iOS devices render web content for a mobile experience, and Mac devices
     /// render content for a desktop experience.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct NavigationPreferences: Sendable {

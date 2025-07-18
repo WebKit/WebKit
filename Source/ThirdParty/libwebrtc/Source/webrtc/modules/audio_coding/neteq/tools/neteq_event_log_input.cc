@@ -10,11 +10,18 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_event_log_input.h"
 
-#include <limits>
+#include <algorithm>
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <vector>
 
-#include "absl/strings/string_view.h"
-#include "rtc_base/checks.h"
+#include "api/rtp_headers.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
+#include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 
 namespace webrtc {
 namespace test {

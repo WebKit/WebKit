@@ -47,7 +47,7 @@ struct Context;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Animation);
 class WrapperBase {
     WTF_MAKE_NONCOPYABLE(WrapperBase);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation, WrapperBase);
 public:
     explicit WrapperBase(CSSPropertyID property)
         : m_property(property)

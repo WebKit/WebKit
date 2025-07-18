@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include <memory>
-#include <optional>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -25,11 +25,12 @@
 #include "api/peer_connection_interface.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/base/port_interface.h"
-#include "p2p/base/stun_server.h"
-#include "p2p/base/test_stun_server.h"
+#include "p2p/test/stun_server.h"
+#include "p2p/test/test_stun_server.h"
 #include "pc/test/integration_test_helpers.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/fake_clock.h"
@@ -38,10 +39,10 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/ssl_certificate.h"
 #include "rtc_base/test_certificate_verifier.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 
@@ -61,7 +62,7 @@ class PeerConnectionIntegrationTest
 // where order of construction is finely controlled.
 // This also ensures peerconnection is closed before switching back to non-fake
 // clock, avoiding other races and DCHECK failures such as in rtp_sender.cc.
-class FakeClockForTest : public rtc::ScopedFakeClock {
+class FakeClockForTest : public ScopedFakeClock {
  protected:
   FakeClockForTest() {
     // Some things use a time of "0" as a special value, so we need to start out
@@ -104,23 +105,33 @@ TEST_P(PeerConnectionIntegrationTest,
   callee()->AddAudioVideoTracks();
   // Start offer/answer exchange and wait for it to complete.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
   // Should be one receiver each for audio/video.
   EXPECT_EQ(2U, caller()->rtp_receiver_observers().size());
   EXPECT_EQ(2U, callee()->rtp_receiver_observers().size());
   // Wait for all "first packet received" callbacks to be fired.
-  EXPECT_TRUE_WAIT(
-      absl::c_all_of(caller()->rtp_receiver_observers(),
-                     [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
-                       return o->first_packet_received();
-                     }),
-      kMaxWaitForFramesMs);
-  EXPECT_TRUE_WAIT(
-      absl::c_all_of(callee()->rtp_receiver_observers(),
-                     [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
-                       return o->first_packet_received();
-                     }),
-      kMaxWaitForFramesMs);
+  EXPECT_THAT(WaitUntil(
+                  [&] {
+                    return absl::c_all_of(
+                        caller()->rtp_receiver_observers(),
+                        [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
+                          return o->first_packet_received();
+                        });
+                  },
+                  ::testing::IsTrue(), {.timeout = kMaxWaitForFrames}),
+              IsRtcOk());
+  EXPECT_THAT(WaitUntil(
+                  [&] {
+                    return absl::c_all_of(
+                        callee()->rtp_receiver_observers(),
+                        [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
+                          return o->first_packet_received();
+                        });
+                  },
+                  ::testing::IsTrue(), {.timeout = kMaxWaitForFrames}),
+              IsRtcOk());
   // If new observers are set after the first packet was already received, the
   // callback should still be invoked.
   caller()->ResetRtpReceiverObservers();
@@ -161,14 +172,13 @@ class DummyDtmfObserver : public DtmfSenderObserverInterface {
 
 TEST_P(PeerConnectionIntegrationTest,
        SSLCertificateVerifierFailureUsedForTurnConnectionsFailsConnection) {
-  static const rtc::SocketAddress turn_server_internal_address{"88.88.88.0",
-                                                               3478};
-  static const rtc::SocketAddress turn_server_external_address{"88.88.88.1", 0};
+  static const SocketAddress turn_server_internal_address{"88.88.88.0", 3478};
+  static const SocketAddress turn_server_external_address{"88.88.88.1", 0};
 
   // Enable TCP-TLS for the fake turn server. We need to pass in 88.88.88.0 so
   // that host name verification passes on the fake certificate.
   CreateTurnServer(turn_server_internal_address, turn_server_external_address,
-                   cricket::PROTO_TLS, "88.88.88.0");
+                   PROTO_TLS, "88.88.88.0");
 
   PeerConnectionInterface::IceServer ice_server;
   ice_server.urls.push_back("turns:88.88.88.0:3478?transport=tcp");
@@ -186,20 +196,20 @@ TEST_P(PeerConnectionIntegrationTest,
   client_2_config.type = PeerConnectionInterface::kRelay;
 
   // Get a copy to the pointer so we can verify calls later.
-  rtc::TestCertificateVerifier* client_1_cert_verifier =
-      new rtc::TestCertificateVerifier();
+  TestCertificateVerifier* client_1_cert_verifier =
+      new TestCertificateVerifier();
   client_1_cert_verifier->verify_certificate_ = false;
-  rtc::TestCertificateVerifier* client_2_cert_verifier =
-      new rtc::TestCertificateVerifier();
+  TestCertificateVerifier* client_2_cert_verifier =
+      new TestCertificateVerifier();
   client_2_cert_verifier->verify_certificate_ = false;
 
   // Create the dependencies with the test certificate verifier.
   PeerConnectionDependencies client_1_deps(nullptr);
   client_1_deps.tls_cert_verifier =
-      std::unique_ptr<rtc::TestCertificateVerifier>(client_1_cert_verifier);
+      std::unique_ptr<TestCertificateVerifier>(client_1_cert_verifier);
   PeerConnectionDependencies client_2_deps(nullptr);
   client_2_deps.tls_cert_verifier =
-      std::unique_ptr<rtc::TestCertificateVerifier>(client_2_cert_verifier);
+      std::unique_ptr<TestCertificateVerifier>(client_2_cert_verifier);
 
   ASSERT_TRUE(CreatePeerConnectionWrappersWithConfigAndDeps(
       client_1_config, std::move(client_1_deps), client_2_config,
@@ -217,7 +227,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // TODO(bugs.webrtc.org/9219): When IceConnectionState is implemented
   // properly, should be able to just wait for a state of "failed" instead of
   // waiting a fixed 10 seconds.
-  WAIT_(DtlsConnected(), kDefaultTimeout, wait_res);
+  WAIT_(DtlsConnected(), kDefaultTimeout.ms(), wait_res);
   ASSERT_FALSE(wait_res);
 
   EXPECT_GT(client_1_cert_verifier->call_count_, 0u);
@@ -234,7 +244,9 @@ TEST_P(PeerConnectionIntegrationTest, GetCaptureStartNtpTimeWithOldStatsApi) {
 
   // Do offer/answer, wait for the callee to receive some frames.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
 
   // Get the remote audio track created on the receiver, so they can be used as
   // GetStats filters.
@@ -244,9 +256,15 @@ TEST_P(PeerConnectionIntegrationTest, GetCaptureStartNtpTimeWithOldStatsApi) {
 
   // Get the audio output level stats. Note that the level is not available
   // until an RTCP packet has been received.
-  EXPECT_TRUE_WAIT(callee()->OldGetStatsForTrack(remote_audio_track.get())
-                           ->CaptureStartNtpTime() > 0,
-                   2 * kMaxWaitForFramesMs);
+  EXPECT_THAT(
+      WaitUntil(
+          [&] {
+            return callee()
+                ->OldGetStatsForTrack(remote_audio_track.get())
+                ->CaptureStartNtpTime();
+          },
+          ::testing::Gt(0), {.timeout = 2 * kMaxWaitForFrames}),
+      IsRtcOk());
 }
 
 // Test that firewalling the ICE connection causes the clients to identify the
@@ -262,17 +280,12 @@ class PeerConnectionIntegrationIceStatesTest
   }
 
   void StartStunServer(const SocketAddress& server_address) {
-    stun_server_ = cricket::TestStunServer::Create(firewall(), server_address,
-                                                   *network_thread());
+    stun_server_ =
+        TestStunServer::Create(firewall(), server_address, *network_thread());
   }
 
   bool TestIPv6() {
-    return (port_allocator_flags_ & cricket::PORTALLOCATOR_ENABLE_IPV6);
-  }
-
-  void SetPortAllocatorFlags() {
-    PeerConnectionIntegrationBaseTest::SetPortAllocatorFlags(
-        port_allocator_flags_, port_allocator_flags_);
+    return (port_allocator_flags_ & PORTALLOCATOR_ENABLE_IPV6);
   }
 
   std::vector<SocketAddress> CallerAddresses() {
@@ -307,9 +320,11 @@ class PeerConnectionIntegrationIceStatesTest
     }
   }
 
+  uint32_t port_allocator_flags() const { return port_allocator_flags_; }
+
  private:
   uint32_t port_allocator_flags_;
-  cricket::TestStunServer::StunServerPtr stun_server_;
+  TestStunServer::StunServerPtr stun_server_;
 };
 
 // Ensure FakeClockForTest is constructed first (see class for rationale).
@@ -326,7 +341,7 @@ class PeerConnectionIntegrationIceStatesTestWithFakeClock
 // to time out.
 TEST_P(PeerConnectionIntegrationIceStatesTestWithFakeClock, VerifyIceStates) {
   const SocketAddress kStunServerAddress =
-      SocketAddress("99.99.99.1", cricket::STUN_SERVER_PORT);
+      SocketAddress("99.99.99.1", STUN_SERVER_PORT);
   StartStunServer(kStunServerAddress);
 
   PeerConnectionInterface::RTCConfiguration config;
@@ -335,10 +350,10 @@ TEST_P(PeerConnectionIntegrationIceStatesTestWithFakeClock, VerifyIceStates) {
       "stun:" + kStunServerAddress.HostAsURIString() + ":" +
       kStunServerAddress.PortAsString());
   config.servers.push_back(ice_stun_server);
+  config.port_allocator_config.flags = port_allocator_flags();
 
   ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(config, config));
   ConnectFakeSignaling();
-  SetPortAllocatorFlags();
   SetUpNetworkInterfaces();
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
@@ -357,12 +372,16 @@ TEST_P(PeerConnectionIntegrationIceStatesTestWithFakeClock, VerifyIceStates) {
   // background.
   caller()->CreateAndSetAndSignalOffer();
 
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionCompleted,
-                           caller()->ice_connection_state(), kDefaultTimeout,
-                           FakeClock());
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionCompleted,
-                           caller()->standardized_ice_connection_state(),
-                           kDefaultTimeout, FakeClock());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionCompleted),
+                {.clock = &FakeClock()}),
+      IsRtcOk());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->standardized_ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionCompleted),
+                {.clock = &FakeClock()}),
+      IsRtcOk());
 
   // Verify that the observer was notified of the intermediate transitions.
   EXPECT_THAT(caller()->ice_connection_state_history(),
@@ -384,40 +403,55 @@ TEST_P(PeerConnectionIntegrationIceStatesTestWithFakeClock, VerifyIceStates) {
   // Block connections to/from the caller and wait for ICE to become
   // disconnected.
   for (const auto& caller_address : CallerAddresses()) {
-    firewall()->AddRule(false, rtc::FP_ANY, rtc::FD_ANY, caller_address);
+    firewall()->AddRule(false, FP_ANY, FD_ANY, caller_address);
   }
   RTC_LOG(LS_INFO) << "Firewall rules applied";
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionDisconnected,
-                           caller()->ice_connection_state(), kDefaultTimeout,
-                           FakeClock());
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionDisconnected,
-                           caller()->standardized_ice_connection_state(),
-                           kDefaultTimeout, FakeClock());
+  ScopedFakeClock& fake_clock = FakeClock();
+  ASSERT_THAT(
+      WaitUntil(
+          [&] { return caller()->ice_connection_state(); },
+          ::testing::Eq(PeerConnectionInterface::kIceConnectionDisconnected),
+          {.timeout = TimeDelta::Seconds(10), .clock = &fake_clock}),
+      IsRtcOk());
+  ASSERT_THAT(
+      WaitUntil(
+          [&] { return caller()->standardized_ice_connection_state(); },
+          ::testing::Eq(PeerConnectionInterface::kIceConnectionDisconnected),
+          {.timeout = TimeDelta::Seconds(10), .clock = &fake_clock}),
+      IsRtcOk());
 
   // Let ICE re-establish by removing the firewall rules.
   firewall()->ClearRules();
   RTC_LOG(LS_INFO) << "Firewall rules cleared";
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionCompleted,
-                           caller()->ice_connection_state(), kDefaultTimeout,
-                           FakeClock());
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionCompleted,
-                           caller()->standardized_ice_connection_state(),
-                           kDefaultTimeout, FakeClock());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionCompleted),
+                {.clock = &fake_clock}),
+      IsRtcOk());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->standardized_ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionCompleted),
+                {.clock = &fake_clock}),
+      IsRtcOk());
 
   // According to RFC7675, if there is no response within 30 seconds then the
   // peer should consider the other side to have rejected the connection. This
   // is signaled by the state transitioning to "failed".
-  constexpr int kConsentTimeout = 30000;
+  constexpr TimeDelta kConsentTimeout = TimeDelta::Millis(30000);
   for (const auto& caller_address : CallerAddresses()) {
-    firewall()->AddRule(false, rtc::FP_ANY, rtc::FD_ANY, caller_address);
+    firewall()->AddRule(false, FP_ANY, FD_ANY, caller_address);
   }
   RTC_LOG(LS_INFO) << "Firewall rules applied again";
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionFailed,
-                           caller()->ice_connection_state(), kConsentTimeout,
-                           FakeClock());
-  ASSERT_EQ_SIMULATED_WAIT(PeerConnectionInterface::kIceConnectionFailed,
-                           caller()->standardized_ice_connection_state(),
-                           kConsentTimeout, FakeClock());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionFailed),
+                {.timeout = kConsentTimeout, .clock = &fake_clock}),
+      IsRtcOk());
+  ASSERT_THAT(
+      WaitUntil([&] { return caller()->standardized_ice_connection_state(); },
+                ::testing::Eq(PeerConnectionInterface::kIceConnectionFailed),
+                {.timeout = kConsentTimeout, .clock = &fake_clock}),
+      IsRtcOk());
 }
 #endif
 
@@ -429,13 +463,15 @@ TEST_P(PeerConnectionIntegrationTest, CallTransferredForCallee) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
 
   // Keep the original peer around which will still send packets to the
   // receiving client. These SRTP packets will be dropped.
   std::unique_ptr<PeerConnectionIntegrationWrapper> original_peer(
       SetCallerPcWrapperAndReturnCurrent(
-          CreatePeerConnectionWrapperWithAlternateKey().release()));
+          CreatePeerConnectionWrapperWithAlternateKey()));
   // TODO(deadbeef): Why do we call Close here? That goes against the comment
   // directly above.
   original_peer->pc()->Close();
@@ -443,7 +479,9 @@ TEST_P(PeerConnectionIntegrationTest, CallTransferredForCallee) {
   ConnectFakeSignaling();
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
   // Wait for some additional frames to be transmitted end-to-end.
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -458,13 +496,15 @@ TEST_P(PeerConnectionIntegrationTest, CallTransferredForCaller) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
 
   // Keep the original peer around which will still send packets to the
   // receiving client. These SRTP packets will be dropped.
   std::unique_ptr<PeerConnectionIntegrationWrapper> original_peer(
       SetCalleePcWrapperAndReturnCurrent(
-          CreatePeerConnectionWrapperWithAlternateKey().release()));
+          CreatePeerConnectionWrapperWithAlternateKey()));
   // TODO(deadbeef): Why do we call Close here? That goes against the comment
   // directly above.
   original_peer->pc()->Close();
@@ -473,7 +513,9 @@ TEST_P(PeerConnectionIntegrationTest, CallTransferredForCaller) {
   callee()->AddAudioVideoTracks();
   caller()->SetOfferAnswerOptions(IceRestartOfferAnswerOptions());
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ASSERT_THAT(
+      WaitUntil([&] { return SignalingStateStable(); }, ::testing::IsTrue()),
+      IsRtcOk());
   // Wait for some additional frames to be transmitted end-to-end.
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -485,14 +527,14 @@ INSTANTIATE_TEST_SUITE_P(PeerConnectionIntegrationTest,
                          Values(SdpSemantics::kPlanB_DEPRECATED,
                                 SdpSemantics::kUnifiedPlan));
 
-constexpr uint32_t kFlagsIPv4NoStun = cricket::PORTALLOCATOR_DISABLE_TCP |
-                                      cricket::PORTALLOCATOR_DISABLE_STUN |
-                                      cricket::PORTALLOCATOR_DISABLE_RELAY;
+constexpr uint32_t kFlagsIPv4NoStun = PORTALLOCATOR_DISABLE_TCP |
+                                      PORTALLOCATOR_DISABLE_STUN |
+                                      PORTALLOCATOR_DISABLE_RELAY;
 constexpr uint32_t kFlagsIPv6NoStun =
-    cricket::PORTALLOCATOR_DISABLE_TCP | cricket::PORTALLOCATOR_DISABLE_STUN |
-    cricket::PORTALLOCATOR_ENABLE_IPV6 | cricket::PORTALLOCATOR_DISABLE_RELAY;
+    PORTALLOCATOR_DISABLE_TCP | PORTALLOCATOR_DISABLE_STUN |
+    PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_DISABLE_RELAY;
 constexpr uint32_t kFlagsIPv4Stun =
-    cricket::PORTALLOCATOR_DISABLE_TCP | cricket::PORTALLOCATOR_DISABLE_RELAY;
+    PORTALLOCATOR_DISABLE_TCP | PORTALLOCATOR_DISABLE_RELAY;
 
 INSTANTIATE_TEST_SUITE_P(
     PeerConnectionIntegrationTest,

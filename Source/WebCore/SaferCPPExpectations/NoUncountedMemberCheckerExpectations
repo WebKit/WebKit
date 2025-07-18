@@ -1,6 +1,4 @@
 Modules/WebGPU/GPUPresentationContextDescriptor.h
-Modules/encryptedmedia/MediaKeyStatusMap.h
-Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/mediastream/RTCPeerConnection.h
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
 Modules/notifications/NotificationResourcesLoader.h
@@ -12,7 +10,6 @@ Modules/webdatabase/SQLTransactionBackend.h
 accessibility/AXSearchManager.h
 bindings/js/JSEventTargetCustom.h
 bindings/js/JSLazyEventListener.cpp
-css/CSSFontSelector.h
 css/CSSPrimitiveValue.h
 css/CSSRule.h
 css/CSSRuleList.h
@@ -64,6 +61,10 @@ platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/TileController.h
 platform/graphics/controls/PlatformControl.h
 platform/graphics/coretext/DrawGlyphsRecorder.h
+platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
+platform/graphics/filters/software/FELightingSoftwareApplier.h
+platform/graphics/filters/software/FEMorphologySoftwareApplier.h
+platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
 platform/mac/VideoPresentationInterfaceMac.mm
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediastream/AudioMediaStreamTrackRenderer.h
@@ -85,14 +86,8 @@ style/StyleScope.h
 style/StyleScopeRuleSets.h
 style/Styleable.h
 svg/properties/SVGPropertyOwnerRegistry.h
-workers/WorkerAnimationController.h
-workers/WorkerConsoleClient.h
 workers/WorkerMessagingProxy.h
-workers/WorkerNotificationClient.h
 workers/WorkerOrWorkletGlobalScope.h
-workers/service/ServiceWorkerContainer.h
 workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.h
-xml/XMLHttpRequestProgressEventThrottle.h
-xml/XMLHttpRequestUpload.h
 xml/XPathGrammar.cpp
 xml/XPathGrammar.h

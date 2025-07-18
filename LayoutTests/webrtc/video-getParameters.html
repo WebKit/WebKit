@@ -58,8 +58,6 @@ promise_test((test) => {
         assert_array_equals(receiverParameters.headerExtensions, [], "receiver header extensions");
 
         senderParameters.encodings[0].ssrc = 1;
-        senderParameters.encodings[0].fec.ssrc = 1;
-        senderParameters.encodings[0].rtx.ssrc = 1;
 
         assert_true(!!senderParameters.transactionId, "sender transaction");
         assert_array_equals(senderParameters.codecs, [], "sender codecs");

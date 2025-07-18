@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-inline bool isTokenizerWhitespace(UChar character)
+inline bool isTokenizerWhitespace(char16_t character)
 {
     return character == ' ' || character == '\x0A' || character == '\x09' || character == '\x0C';
 }

@@ -11,24 +11,22 @@
 #include <stddef.h>
 
 #include <memory>
-#include <optional>
 #include <ostream>
 #include <string>
 #include <tuple>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "api/audio/audio_device.h"
-#include "api/audio/audio_mixer.h"
-#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
-#include "api/crypto/crypto_options.h"
+#include "api/environment/environment_factory.h"
 #include "api/jsep.h"
+#include "api/make_ref_counted.h"
 #include "api/peer_connection_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/test/rtc_error_matchers.h"
+#include "api/units/time_delta.h"
 #include "api/video_codecs/video_decoder_factory_template.h"
 #include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
@@ -39,10 +37,9 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
-#include "p2p/base/fake_port_allocator.h"
-#include "p2p/base/port_allocator.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
+#include "p2p/test/fake_port_allocator.h"
 #include "pc/media_protocol_names.h"
 #include "pc/media_session.h"
 #include "pc/peer_connection_wrapper.h"
@@ -56,13 +53,12 @@
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
+#include "test/wait_until.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/fake_rtc_certificate_generator.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/virtual_socket_server.h"
 
 namespace webrtc {
@@ -80,14 +76,14 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
   typedef std::unique_ptr<PeerConnectionWrapper> WrapperPtr;
 
   explicit PeerConnectionCryptoBaseTest(SdpSemantics sdp_semantics)
-      : vss_(new rtc::VirtualSocketServer()),
+      : vss_(new VirtualSocketServer()),
         main_(vss_.get()),
         sdp_semantics_(sdp_semantics) {
 #ifdef WEBRTC_ANDROID
     InitializeAndroidObjects();
 #endif
     pc_factory_ = CreatePeerConnectionFactory(
-        rtc::Thread::Current(), rtc::Thread::Current(), rtc::Thread::Current(),
+        Thread::Current(), Thread::Current(), Thread::Current(),
         FakeAudioCaptureModule::Create(), CreateBuiltinAudioEncoderFactory(),
         CreateBuiltinAudioDecoderFactory(),
         std::make_unique<VideoEncoderFactoryTemplate<
@@ -109,11 +105,9 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
 
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
-      std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_gen) {
-    auto fake_port_allocator = std::make_unique<cricket::FakePortAllocator>(
-        rtc::Thread::Current(),
-        std::make_unique<rtc::BasicPacketSocketFactory>(vss_.get()),
-        &field_trials_);
+      std::unique_ptr<RTCCertificateGeneratorInterface> cert_gen) {
+    auto fake_port_allocator =
+        std::make_unique<FakePortAllocator>(CreateEnvironment(), vss_.get());
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
@@ -144,44 +138,39 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
     return wrapper;
   }
 
-  cricket::ConnectionRole& AudioConnectionRole(
-      cricket::SessionDescription* desc) {
-    return ConnectionRoleFromContent(desc, cricket::GetFirstAudioContent(desc));
+  ConnectionRole& AudioConnectionRole(SessionDescription* desc) {
+    return ConnectionRoleFromContent(desc, GetFirstAudioContent(desc));
   }
 
-  cricket::ConnectionRole& VideoConnectionRole(
-      cricket::SessionDescription* desc) {
-    return ConnectionRoleFromContent(desc, cricket::GetFirstVideoContent(desc));
+  ConnectionRole& VideoConnectionRole(SessionDescription* desc) {
+    return ConnectionRoleFromContent(desc, GetFirstVideoContent(desc));
   }
 
-  cricket::ConnectionRole& ConnectionRoleFromContent(
-      cricket::SessionDescription* desc,
-      cricket::ContentInfo* content) {
+  ConnectionRole& ConnectionRoleFromContent(SessionDescription* desc,
+                                            ContentInfo* content) {
     RTC_DCHECK(content);
-    auto* transport_info = desc->GetTransportInfoByName(content->name);
+    auto* transport_info = desc->GetTransportInfoByName(content->mid());
     RTC_DCHECK(transport_info);
     return transport_info->description.connection_role;
   }
 
-  test::ScopedKeyValueConfig field_trials_;
-  std::unique_ptr<rtc::VirtualSocketServer> vss_;
-  rtc::AutoSocketServerThread main_;
-  rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
+  std::unique_ptr<VirtualSocketServer> vss_;
+  AutoSocketServerThread main_;
+  scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
   const SdpSemantics sdp_semantics_;
 };
 
 SdpContentPredicate HaveDtlsFingerprint() {
-  return [](const cricket::ContentInfo* content,
-            const cricket::TransportInfo* transport) {
+  return [](const ContentInfo* content, const TransportInfo* transport) {
     return transport->description.identity_fingerprint != nullptr;
   };
 }
 
 SdpContentPredicate HaveProtocol(const std::string& protocol) {
-  return [protocol](const cricket::ContentInfo* content,
-                    const cricket::TransportInfo* transport) {
-    return content->media_description()->protocol() == protocol;
-  };
+  return
+      [protocol](const ContentInfo* content, const TransportInfo* transport) {
+        return content->media_description()->protocol() == protocol;
+      };
 }
 
 class PeerConnectionCryptoTest
@@ -192,7 +181,7 @@ class PeerConnectionCryptoTest
 };
 
 SdpContentMutator RemoveDtlsFingerprint() {
-  return [](cricket::ContentInfo* content, cricket::TransportInfo* transport) {
+  return [](ContentInfo* content, TransportInfo* transport) {
     transport->description.identity_fingerprint.reset();
   };
 }
@@ -207,7 +196,7 @@ TEST_P(PeerConnectionCryptoTest, CorrectCryptoInOfferWhenDtlsEnabled) {
 
   ASSERT_FALSE(offer->description()->contents().empty());
   EXPECT_TRUE(SdpContentsAll(HaveDtlsFingerprint(), offer->description()));
-  EXPECT_TRUE(SdpContentsAll(HaveProtocol(cricket::kMediaProtocolDtlsSavpf),
+  EXPECT_TRUE(SdpContentsAll(HaveProtocol(kMediaProtocolDtlsSavpf),
                              offer->description()));
 }
 TEST_P(PeerConnectionCryptoTest, CorrectCryptoInAnswerWhenDtlsEnabled) {
@@ -221,7 +210,7 @@ TEST_P(PeerConnectionCryptoTest, CorrectCryptoInAnswerWhenDtlsEnabled) {
 
   ASSERT_FALSE(answer->description()->contents().empty());
   EXPECT_TRUE(SdpContentsAll(HaveDtlsFingerprint(), answer->description()));
-  EXPECT_TRUE(SdpContentsAll(HaveProtocol(cricket::kMediaProtocolDtlsSavpf),
+  EXPECT_TRUE(SdpContentsAll(HaveProtocol(kMediaProtocolDtlsSavpf),
                              answer->description()));
 }
 
@@ -383,19 +372,23 @@ TEST_P(PeerConnectionCryptoDtlsCertGenTest, TestCertificateGeneration) {
     pc->SetRemoteDescription(caller->CreateOfferAndSetAsLocal());
   }
   if (cert_gen_time_ == CertGenTime::kBefore) {
-    ASSERT_TRUE_WAIT(fake_certificate_generator->generated_certificates() +
-                             fake_certificate_generator->generated_failures() >
-                         0,
-                     kGenerateCertTimeout);
+    ASSERT_THAT(
+        WaitUntil(
+            [&] {
+              return fake_certificate_generator->generated_certificates() +
+                     fake_certificate_generator->generated_failures();
+            },
+            ::testing::Gt(0),
+            {.timeout = TimeDelta::Millis(kGenerateCertTimeout)}),
+        IsRtcOk());
   } else {
     ASSERT_EQ(fake_certificate_generator->generated_certificates(), 0);
     fake_certificate_generator->set_should_wait(false);
   }
-  std::vector<rtc::scoped_refptr<MockCreateSessionDescriptionObserver>>
-      observers;
+  std::vector<scoped_refptr<MockCreateSessionDescriptionObserver>> observers;
   for (size_t i = 0; i < concurrent_calls_; i++) {
-    rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer =
-        rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+    scoped_refptr<MockCreateSessionDescriptionObserver> observer =
+        make_ref_counted<MockCreateSessionDescriptionObserver>();
     observers.push_back(observer);
     if (sdp_type_ == SdpType::kOffer) {
       pc->pc()->CreateOffer(observer.get(),
@@ -406,7 +399,9 @@ TEST_P(PeerConnectionCryptoDtlsCertGenTest, TestCertificateGeneration) {
     }
   }
   for (auto& observer : observers) {
-    EXPECT_TRUE_WAIT(observer->called(), 1000);
+    EXPECT_THAT(
+        WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
+        IsRtcOk());
     if (cert_gen_result_ == CertGenResult::kSucceed) {
       EXPECT_TRUE(observer->result());
     } else {
@@ -438,8 +433,8 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
   auto answer = callee->CreateAnswer(options_no_bundle);
 
-  AudioConnectionRole(answer->description()) = cricket::CONNECTIONROLE_ACTIVE;
-  VideoConnectionRole(answer->description()) = cricket::CONNECTIONROLE_PASSIVE;
+  AudioConnectionRole(answer->description()) = CONNECTIONROLE_ACTIVE;
+  VideoConnectionRole(answer->description()) = CONNECTIONROLE_PASSIVE;
 
   ASSERT_TRUE(
       callee->SetLocalDescription(CloneSessionDescription(answer.get())));
@@ -450,10 +445,8 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   ASSERT_TRUE(caller->SetRemoteDescription(callee->CreateOfferAndSetAsLocal()));
   answer = caller->CreateAnswer(options_no_bundle);
 
-  EXPECT_EQ(cricket::CONNECTIONROLE_PASSIVE,
-            AudioConnectionRole(answer->description()));
-  EXPECT_EQ(cricket::CONNECTIONROLE_ACTIVE,
-            VideoConnectionRole(answer->description()));
+  EXPECT_EQ(CONNECTIONROLE_PASSIVE, AudioConnectionRole(answer->description()));
+  EXPECT_EQ(CONNECTIONROLE_ACTIVE, VideoConnectionRole(answer->description()));
 
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(answer.get())));
@@ -468,10 +461,8 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   ASSERT_TRUE(caller->SetRemoteDescription(callee->CreateOfferAndSetAsLocal()));
   answer = caller->CreateAnswer(options_bundle);
 
-  EXPECT_EQ(cricket::CONNECTIONROLE_PASSIVE,
-            AudioConnectionRole(answer->description()));
-  EXPECT_EQ(cricket::CONNECTIONROLE_PASSIVE,
-            VideoConnectionRole(answer->description()));
+  EXPECT_EQ(CONNECTIONROLE_PASSIVE, AudioConnectionRole(answer->description()));
+  EXPECT_EQ(CONNECTIONROLE_PASSIVE, VideoConnectionRole(answer->description()));
 
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(answer.get())));
@@ -483,8 +474,8 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
 // error.
 // This is a regression test for crbug.com/800775
 TEST_P(PeerConnectionCryptoTest, SessionErrorIfFingerprintInvalid) {
-  auto callee_certificate = rtc::RTCCertificate::FromPEM(kRsaPems[0]);
-  auto other_certificate = rtc::RTCCertificate::FromPEM(kRsaPems[1]);
+  auto callee_certificate = RTCCertificate::FromPEM(kRsaPems[0]);
+  auto other_certificate = RTCCertificate::FromPEM(kRsaPems[1]);
 
   auto caller = CreatePeerConnectionWithAudioVideo();
   RTCConfiguration callee_config;
@@ -496,15 +487,14 @@ TEST_P(PeerConnectionCryptoTest, SessionErrorIfFingerprintInvalid) {
   // Create an invalid answer with the other certificate's fingerprint.
   auto valid_answer = callee->CreateAnswer();
   auto invalid_answer = CloneSessionDescription(valid_answer.get());
-  auto* audio_content =
-      cricket::GetFirstAudioContent(invalid_answer->description());
+  auto* audio_content = GetFirstAudioContent(invalid_answer->description());
   ASSERT_TRUE(audio_content);
   auto* audio_transport_info =
       invalid_answer->description()->GetTransportInfoByName(
-          audio_content->name);
+          audio_content->mid());
   ASSERT_TRUE(audio_transport_info);
   audio_transport_info->description.identity_fingerprint =
-      rtc::SSLFingerprint::CreateFromCertificate(*other_certificate);
+      SSLFingerprint::CreateFromCertificate(*other_certificate);
 
   // Set the invalid answer and expect a fingerprint error.
   std::string error;

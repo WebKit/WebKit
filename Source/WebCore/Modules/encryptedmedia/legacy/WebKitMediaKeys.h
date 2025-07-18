@@ -29,6 +29,7 @@
 
 #include "LegacyCDM.h"
 #include <JavaScriptCore/Forward.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,11 +42,14 @@ class WebKitMediaKeySession;
 template<typename> class ExceptionOr;
 
 class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private LegacyCDMClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebKitMediaKeys);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebKitMediaKeys);
 public:
     static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
     virtual ~WebKitMediaKeys();
+
+    void decrementCheckedPtrCount() const { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void incrementCheckedPtrCount() const { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
 
     ExceptionOr<Ref<WebKitMediaKeySession>> createSession(Document&, const String& mimeType, Ref<Uint8Array>&& initData);
     static bool isTypeSupported(const String& keySystem, const String& mimeType);

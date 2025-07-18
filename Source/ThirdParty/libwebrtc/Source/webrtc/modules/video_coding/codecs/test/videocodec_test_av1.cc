@@ -9,15 +9,13 @@
  */
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "api/test/create_videocodec_test_fixture.h"
-#include "api/test/video/function_video_encoder_factory.h"
-#include "api/video_codecs/sdp_video_format.h"
+#include "api/test/videocodec_test_fixture.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "media/base/media_constants.h"
-#include "media/engine/internal_decoder_factory.h"
-#include "media/engine/internal_encoder_factory.h"
-#include "media/engine/simulcast_encoder_adapter.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -40,8 +38,8 @@ VideoCodecTestFixture::Config CreateConfig(std::string filename) {
 
 TEST(VideoCodecTestAv1, HighBitrate) {
   auto config = CreateConfig("foreman_cif");
-  config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
-                          kCifWidth, kCifHeight);
+  config.SetCodecSettings(kAv1CodecName, 1, 1, 1, false, true, true, kCifWidth,
+                          kCifHeight);
   config.codec_settings.SetScalabilityMode(ScalabilityMode::kL1T1);
   config.num_frames = kNumFramesLong;
   auto fixture = CreateVideoCodecTestFixture(config);
@@ -58,8 +56,8 @@ TEST(VideoCodecTestAv1, HighBitrate) {
 
 TEST(VideoCodecTestAv1, VeryLowBitrate) {
   auto config = CreateConfig("foreman_cif");
-  config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
-                          kCifWidth, kCifHeight);
+  config.SetCodecSettings(kAv1CodecName, 1, 1, 1, false, true, true, kCifWidth,
+                          kCifHeight);
   config.codec_settings.SetScalabilityMode(ScalabilityMode::kL1T1);
   auto fixture = CreateVideoCodecTestFixture(config);
 
@@ -78,8 +76,8 @@ constexpr int kHdWidth = 1280;
 constexpr int kHdHeight = 720;
 TEST(VideoCodecTestAv1, Hd) {
   auto config = CreateConfig("ConferenceMotion_1280_720_50");
-  config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
-                          kHdWidth, kHdHeight);
+  config.SetCodecSettings(kAv1CodecName, 1, 1, 1, false, true, true, kHdWidth,
+                          kHdHeight);
   config.codec_settings.SetScalabilityMode(ScalabilityMode::kL1T1);
   config.num_frames = kNumFramesLong;
   auto fixture = CreateVideoCodecTestFixture(config);

@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 
+#include <cstddef>
 #include <vector>
 
 #include "api/array_view.h"
@@ -35,14 +36,14 @@ class RtpPacketizerGeneric : public RtpPacketizer {
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded generic frame.
   // Packets returned by `NextPacket` will contain the generic payload header.
-  RtpPacketizerGeneric(rtc::ArrayView<const uint8_t> payload,
+  RtpPacketizerGeneric(ArrayView<const uint8_t> payload,
                        PayloadSizeLimits limits,
                        const RTPVideoHeader& rtp_video_header);
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded generic frame.
   // Packets returned by `NextPacket` will contain raw payload without the
   // generic payload header.
-  RtpPacketizerGeneric(rtc::ArrayView<const uint8_t> payload,
+  RtpPacketizerGeneric(ArrayView<const uint8_t> payload,
                        PayloadSizeLimits limits);
 
   ~RtpPacketizerGeneric() override;
@@ -63,7 +64,7 @@ class RtpPacketizerGeneric : public RtpPacketizer {
 
   uint8_t header_[3];
   size_t header_size_;
-  rtc::ArrayView<const uint8_t> remaining_payload_;
+  ArrayView<const uint8_t> remaining_payload_;
   std::vector<int> payload_sizes_;
   std::vector<int>::const_iterator current_packet_;
 };

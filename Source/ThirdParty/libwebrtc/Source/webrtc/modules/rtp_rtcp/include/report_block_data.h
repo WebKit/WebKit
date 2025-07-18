@@ -11,6 +11,9 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_REPORT_BLOCK_DATA_H_
 #define MODULES_RTP_RTCP_INCLUDE_REPORT_BLOCK_DATA_H_
 
+#include <cstddef>
+#include <cstdint>
+
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"

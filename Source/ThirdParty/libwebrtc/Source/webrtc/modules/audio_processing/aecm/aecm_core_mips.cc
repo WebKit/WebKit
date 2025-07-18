@@ -1079,7 +1079,7 @@ int WebRtcAecm_ProcessBlock(AecmCore* aecm,
     // How much can we shift right to preserve resolution
     tmp32no1 = echoEst32[i] - aecm->echoFilt[i];
     aecm->echoFilt[i] +=
-        rtc::dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
+        webrtc::dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
 
     zeros32 = WebRtcSpl_NormW32(aecm->echoFilt[i]) + 1;
     zeros16 = WebRtcSpl_NormW16(supGain) + 1;

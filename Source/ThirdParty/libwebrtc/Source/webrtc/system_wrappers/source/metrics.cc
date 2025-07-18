@@ -10,8 +10,15 @@
 #include "system_wrappers/include/metrics.h"
 
 #include <algorithm>
+#include <atomic>
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/string_utils.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -138,9 +145,9 @@ class RtcHistogramMap {
     return reinterpret_cast<Histogram*>(hist);
   }
 
-  void GetAndReset(std::map<std::string,
-                            std::unique_ptr<SampleInfo>,
-                            rtc::AbslStringViewCmp>* histograms) {
+  void GetAndReset(
+      std::map<std::string, std::unique_ptr<SampleInfo>, AbslStringViewCmp>*
+          histograms) {
     MutexLock lock(&mutex_);
     for (const auto& kv : map_) {
       std::unique_ptr<SampleInfo> info = kv.second->GetAndReset();
@@ -182,8 +189,8 @@ class RtcHistogramMap {
 
  private:
   mutable Mutex mutex_;
-  std::map<std::string, std::unique_ptr<RtcHistogram>, rtc::AbslStringViewCmp>
-      map_ RTC_GUARDED_BY(mutex_);
+  std::map<std::string, std::unique_ptr<RtcHistogram>, AbslStringViewCmp> map_
+      RTC_GUARDED_BY(mutex_);
 };
 
 // RtcHistogramMap is allocated upon call to Enable().
@@ -293,7 +300,7 @@ void Enable() {
 }
 
 void GetAndReset(
-    std::map<std::string, std::unique_ptr<SampleInfo>, rtc::AbslStringViewCmp>*
+    std::map<std::string, std::unique_ptr<SampleInfo>, AbslStringViewCmp>*
         histograms) {
   histograms->clear();
   RtcHistogramMap* map = GetMap();

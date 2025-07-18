@@ -12,19 +12,31 @@
 #define VIDEO_SEND_STATISTICS_PROXY_H_
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "api/field_trials_view.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_adaptation_counters.h"
+#include "api/video/video_adaptation_reason.h"
+#include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_constants.h"
+#include "api/video_codecs/video_codec.h"
+#include "call/rtp_config.h"
 #include "call/video_send_stream.h"
+#include "common_video/frame_counts.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/rate_tracker.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -57,6 +69,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   ~SendStatisticsProxy() override;
 
   virtual VideoSendStream::Stats GetStats();
+  void SetStats(const VideoSendStream::Stats& stats);
 
   void OnSendEncodedImage(const EncodedImage& encoded_image,
                           const CodecSpecificInfo* codec_info) override;
@@ -116,6 +129,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
       uint32_t ssrc,
       const RtcpPacketTypeCounter& packet_counter) override;
   // From StreamDataCountersCallback.
+  StreamDataCounters GetDataCounters(uint32_t ssrc) const override;
   void DataCountersUpdated(const StreamDataCounters& counters,
                            uint32_t ssrc) override;
 
@@ -259,7 +273,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
     void AddSendDelay(Timestamp now, TimeDelta send_delay);
 
     Timestamp resolution_update = Timestamp::MinusInfinity();
-    rtc::RateTracker encoded_frame_rate;
+    RateTracker encoded_frame_rate;
 
     std::deque<SendDelayEntry> send_delays;
 
@@ -297,11 +311,11 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   VideoEncoderConfig::ContentType content_type_ RTC_GUARDED_BY(mutex_);
   const int64_t start_ms_;
   VideoSendStream::Stats stats_ RTC_GUARDED_BY(mutex_);
-  rtc::ExpFilter encode_time_ RTC_GUARDED_BY(mutex_);
+  ExpFilter encode_time_ RTC_GUARDED_BY(mutex_);
   QualityLimitationReasonTracker quality_limitation_reason_tracker_
       RTC_GUARDED_BY(mutex_);
-  rtc::RateTracker media_byte_rate_tracker_ RTC_GUARDED_BY(mutex_);
-  rtc::RateTracker encoded_frame_rate_tracker_ RTC_GUARDED_BY(mutex_);
+  RateTracker media_byte_rate_tracker_ RTC_GUARDED_BY(mutex_);
+  RateTracker encoded_frame_rate_tracker_ RTC_GUARDED_BY(mutex_);
   // Trackers mapped by ssrc.
   std::map<uint32_t, Trackers> trackers_ RTC_GUARDED_BY(mutex_);
 
@@ -359,7 +373,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
     SampleCounter bw_resolutions_disabled_counter_;
     SampleCounter delay_counter_;
     SampleCounter max_delay_counter_;
-    rtc::RateTracker input_frame_rate_tracker_;
+    RateTracker input_frame_rate_tracker_;
     RateCounter input_fps_counter_;
     RateCounter sent_fps_counter_;
     RateAccCounter total_byte_counter_;

@@ -569,12 +569,7 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
 
 void PlaybackSessionModelMediaElement::updateRate()
 {
-    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
-    if (isPlaying())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
-    if (isStalled())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
-
+    auto playbackState = this->playbackState();
     double playbackRate =  this->playbackRate();
     double defaultPlaybackRate = this->defaultPlaybackRate();
     for (auto& client : m_clients)
@@ -647,6 +642,16 @@ double PlaybackSessionModelMediaElement::bufferedTime() const
     if (RefPtr mediaElement = m_mediaElement)
         return mediaElement->maxBufferedTime();
     return 0;
+}
+
+auto PlaybackSessionModelMediaElement::playbackState() const -> OptionSet<PlaybackState>
+{
+    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
+    if (isPlaying())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
+    if (isStalled())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
+    return playbackState;
 }
 
 bool PlaybackSessionModelMediaElement::isPlaying() const

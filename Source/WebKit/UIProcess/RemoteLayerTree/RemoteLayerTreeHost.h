@@ -35,7 +35,7 @@
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-#include <WebCore/ElementIdentifier.h>
+#include <WebCore/NodeIdentifier.h>
 #endif
 
 OBJC_CLASS CAAnimation;
@@ -67,7 +67,7 @@ public:
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
-    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, ImageBufferBackendHandle&&, const WebCore::RenderingResourceIdentifier&);
+    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
 
     void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
@@ -88,10 +88,6 @@ public:
 
     // Detach the root layer; it will be reattached upon the next incoming commit.
     void detachRootLayer();
-
-    // Turn all CAMachPort objects in layer contents into actual IOSurfaces.
-    // This avoids keeping an outstanding InUse reference when suspended.
-    void mapAllIOSurfaceBackingStore();
 
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
@@ -116,8 +112,6 @@ private:
     bool updateBannerLayers(const RemoteLayerTreeTransaction&);
 
     void layerWillBeRemoved(WebCore::ProcessIdentifier, WebCore::PlatformLayerIdentifier);
-
-    LayerContentsType layerContentsType() const;
 
     WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     WeakPtr<RemoteLayerTreeNode> m_rootNode;

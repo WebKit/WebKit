@@ -33,7 +33,7 @@ enum class TableIntrinsics : uint8_t;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TableLayout);
 class TableLayout {
     WTF_MAKE_NONCOPYABLE(TableLayout);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TableLayout);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TableLayout, TableLayout);
 public:
     explicit TableLayout(RenderTable* table)
         : m_table(table)

@@ -36,7 +36,7 @@ class SuperFastHash;
 class WYHash;
 
 class StringHasher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringHasher);
 public:
     static constexpr unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
     static constexpr unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;

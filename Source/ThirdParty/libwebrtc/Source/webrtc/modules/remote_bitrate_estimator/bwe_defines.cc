@@ -10,6 +10,11 @@
 
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 
+#include <optional>
+
+#include "api/transport/bandwidth_usage.h"
+#include "api/units/data_rate.h"
+
 namespace webrtc {
 
 const char kBweTypeHistogram[] = "WebRTC.BWE.Types";

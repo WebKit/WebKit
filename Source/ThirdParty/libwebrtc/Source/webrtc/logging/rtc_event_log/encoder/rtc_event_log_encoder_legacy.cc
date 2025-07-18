@@ -715,10 +715,9 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoSendStreamConfig(
   return Serialize(&rtclog_event);
 }
 
-std::string RtcEventLogEncoderLegacy::EncodeRtcpPacket(
-    int64_t timestamp_us,
-    const rtc::Buffer& packet,
-    bool is_incoming) {
+std::string RtcEventLogEncoderLegacy::EncodeRtcpPacket(int64_t timestamp_us,
+                                                       const Buffer& packet,
+                                                       bool is_incoming) {
   rtclog::Event rtclog_event;
   rtclog_event.set_timestamp_us(timestamp_us);
   rtclog_event.set_type(rtclog::Event::RTCP_EVENT);
@@ -765,7 +764,7 @@ std::string RtcEventLogEncoderLegacy::EncodeRtcpPacket(
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacket(
     int64_t timestamp_us,
-    rtc::ArrayView<const uint8_t> header,
+    ArrayView<const uint8_t> header,
     size_t packet_length,
     int probe_cluster_id,
     bool is_incoming) {

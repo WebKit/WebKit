@@ -11,15 +11,17 @@
 #ifndef VIDEO_CALL_STATS2_H_
 #define VIDEO_CALL_STATS2_H_
 
+#include <cstdint>
 #include <list>
-#include <memory>
 
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/units/timestamp.h"
+#include "api/units/time_delta.h"
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/task_utils/repeating_task.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

@@ -744,7 +744,7 @@ enum class RTTKind : uint8_t {
 };
 
 class RTT_ALIGNMENT RTT final : public ThreadSafeRefCounted<RTT>, private TrailingArray<RTT, const RTT*> {
-    WTF_MAKE_FAST_COMPACT_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(RTT);
     WTF_MAKE_NONMOVABLE(RTT);
     using TrailingArrayType = TrailingArray<RTT, const RTT*>;
     friend TrailingArrayType;

@@ -73,6 +73,7 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
     int scaled_height,
     double std_dev_gaussian_blur);
 
+// Returns the blurred value. The minimum half-kernel size is 3 pixels.
 double GetFilteredElement(int width,
                           int height,
                           int stride,

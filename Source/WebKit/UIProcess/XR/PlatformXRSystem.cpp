@@ -110,7 +110,7 @@ void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector
     }
 
     xrCoordinator->getPrimaryDeviceInfo(*page, [completionHandler = WTFMove(completionHandler)](std::optional<XRDeviceInfo> deviceInfo) mutable {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), deviceInfo = WTFMove(deviceInfo)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), deviceInfo = WTFMove(deviceInfo)]() mutable {
             if (!deviceInfo) {
                 completionHandler({ });
                 return;
@@ -153,7 +153,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& conne
     }
 
     if (PlatformXR::isImmersive(mode)) {
-        MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle, connection, completionHandler({ }));
+        MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromWebContent, connection, completionHandler({ }));
         setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions, [](bool) mutable { });
         m_immersiveSessionGrantedFeatures = std::nullopt;
     }
@@ -316,11 +316,8 @@ void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state, Com
     case ImmersiveSessionState::SessionEndingFromSystem:
         break;
     }
-
-    completion(true);
-#else
-    completion(true);
 #endif
+    completion(true);
 }
 
 void PlatformXRSystem::invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState)

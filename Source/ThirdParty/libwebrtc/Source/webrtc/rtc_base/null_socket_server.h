@@ -16,14 +16,14 @@
 #include "rtc_base/socket_server.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 class RTC_EXPORT NullSocketServer : public SocketServer {
  public:
   NullSocketServer();
   ~NullSocketServer() override;
 
-  bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
+  bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
 
   Socket* CreateSocket(int family, int type) override;
@@ -32,6 +32,14 @@ class RTC_EXPORT NullSocketServer : public SocketServer {
   Event event_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::NullSocketServer;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NULL_SOCKET_SERVER_H_

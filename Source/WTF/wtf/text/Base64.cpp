@@ -97,7 +97,7 @@ static constexpr std::array<char, decodeMapSize> base64URLDecMap {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-static inline simdutf::base64_options toSIMDUTFOptions(OptionSet<Base64EncodeOption> options)
+static inline simdutf::base64_options toSIMDUTFEncodeOptions(OptionSet<Base64EncodeOption> options)
 {
     if (options.contains(Base64EncodeOption::URL)) {
         if (options.contains(Base64EncodeOption::OmitPadding))
@@ -115,7 +115,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
     ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
     if constexpr (sizeof(CharacterType) == 1) {
-        size_t bytesWritten = simdutf::binary_to_base64(std::bit_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), std::bit_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
+        size_t bytesWritten = simdutf::binary_to_base64(std::bit_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), std::bit_cast<char*>(destinationDataBuffer.data()), toSIMDUTFEncodeOptions(options));
         ASSERT_UNUSED(bytesWritten, bytesWritten == destinationDataBuffer.size());
         return;
     }
@@ -202,7 +202,7 @@ unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64Encode
     if (inputLength > maximumBase64EncoderInputBufferSize)
         return 0;
 
-    return simdutf::base64_length_from_binary(inputLength, toSIMDUTFOptions(options));
+    return simdutf::base64_length_from_binary(inputLength, toSIMDUTFEncodeOptions(options));
 }
 
 template<typename T, typename Malloc = VectorBufferMalloc>
@@ -313,162 +313,73 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
     return toString(base64DecodeInternal<char16_t, StringImplMalloc>(input.span16(), options));
 }
 
-template<typename CharacterType>
-static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+static inline simdutf::base64_options toSIMDUTFDecodeOptions(Alphabet alphabet)
 {
-    size_t read = 0;
-    size_t write = 0;
-    size_t length = span.size();
-
-    if (!output.size())
-        return { FromBase64ShouldThrowError::No, 0, 0 };
-
-    std::array<char16_t, 4> chunk { 0, 0, 0, 0 };
-    size_t chunkLength = 0;
-
-    for (size_t i = 0; i < length;) {
-        char16_t c = span[i++];
-
-        if (isASCIIWhitespace(c))
-            continue;
-
-        if (c == '=') {
-            if (chunkLength < 2)
-                return { FromBase64ShouldThrowError::Yes, read, write };
-
-            while (i < length && isASCIIWhitespace(span[i]))
-                ++i;
-
-            if (chunkLength == 2) {
-                if (i == length) {
-                    if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
-                        return { FromBase64ShouldThrowError::No, read, write };
-
-                    return { FromBase64ShouldThrowError::Yes, read, write };
-                }
-
-                if (span[i] == '=') {
-                    do {
-                        ++i;
-                    } while (i < length && isASCIIWhitespace(span[i]));
-                }
-            }
-
-            if (i < length)
-                return { FromBase64ShouldThrowError::Yes, read, write };
-
-            for (size_t j = chunkLength; j < 4; ++j)
-                chunk[j] = 'A';
-
-            auto decodedVector = base64Decode(StringView(std::span { chunk }));
-            if (!decodedVector)
-                return { FromBase64ShouldThrowError::Yes, read, write };
-            auto decoded = decodedVector->span();
-
-            ASSERT(chunkLength >= 2);
-            ASSERT(chunkLength <= 4);
-            if (chunkLength == 2 || chunkLength == 3) {
-                if (lastChunkHandling == LastChunkHandling::Strict && decoded[chunkLength - 1])
-                    return { FromBase64ShouldThrowError::Yes, read, write };
-
-                decoded = decoded.first(chunkLength - 1);
-            }
-
-            memcpySpan(output.subspan(write), decoded);
-            write += decoded.size();
-            return { FromBase64ShouldThrowError::No, length, write };
-        }
-
-        if (alphabet == Alphabet::Base64URL) {
-            if (c == '+' || c == '/')
-                return { FromBase64ShouldThrowError::Yes, read, write };
-
-            if (c == '-')
-                c = '+';
-            else if (c == '_')
-                c = '/';
-        }
-
-        if (!StringView("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"_s).contains(c))
-            return { FromBase64ShouldThrowError::Yes, read, write };
-
-        auto remaining = output.size() - write;
-        if ((remaining == 1 && chunkLength == 2) || (remaining == 2 && chunkLength == 3))
-            return { FromBase64ShouldThrowError::No, read, write };
-
-        chunk[chunkLength++] = c;
-        if (chunkLength != 4)
-            continue;
-
-        auto decodedVector = base64Decode(StringView(std::span { chunk }));
-        ASSERT(decodedVector);
-        if (!decodedVector)
-            return { FromBase64ShouldThrowError::Yes, read, write };
-        auto decoded = decodedVector->span();
-
-        read = i;
-        memcpySpan(output.subspan(write), decoded);
-        write += decoded.size();
-        if (write == output.size())
-            return { FromBase64ShouldThrowError::No, read, write };
-
-        for (size_t j = 0; j < 4; ++j)
-            chunk[j] = 0;
-        chunkLength = 0;
+    switch (alphabet) {
+    case Alphabet::Base64:
+        return simdutf::base64_default;
+    case Alphabet::Base64URL:
+        return simdutf::base64_url;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    if (chunkLength) {
-        if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
-            return { FromBase64ShouldThrowError::No, read, write };
-
-        if (lastChunkHandling == LastChunkHandling::Strict || chunkLength == 1)
-            return { FromBase64ShouldThrowError::Yes, read, write };
-
-        for (size_t j = chunkLength; j < 4; ++j)
-            chunk[j] = 'A';
-
-        auto decodedVector = base64Decode(StringView(std::span { chunk }.first(chunkLength)));
-        ASSERT(decodedVector);
-        if (!decodedVector)
-            return { FromBase64ShouldThrowError::Yes, read, write };
-        auto decoded = decodedVector->span();
-
-        if (chunkLength == 2 || chunkLength == 3)
-            decoded = decoded.first(chunkLength - 1);
-
-        memcpySpan(output.subspan(write), decoded);
-        write += decoded.size();
+static inline simdutf::last_chunk_handling_options toSIMDUTFLastChunkHandling(LastChunkHandling lastChunkHandling)
+{
+    switch (lastChunkHandling) {
+    case LastChunkHandling::Loose:
+        return simdutf::last_chunk_handling_options::loose;
+    case LastChunkHandling::Strict:
+        return simdutf::last_chunk_handling_options::strict;
+    case LastChunkHandling::StopBeforePartial:
+        return simdutf::last_chunk_handling_options::stop_before_partial;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    return { FromBase64ShouldThrowError::No, length, write };
+template<typename CharacterType>
+static inline size_t fixSIMDUTFStopBeforePartialReadLength(std::span<const CharacterType> span, size_t readLengthFromSIMDUTF)
+{
+    // Work around simdutf bug for stop-before-partial read length.
+    // FIXME: Remove once fixed in simdutf.
+
+    // First go backwards to find the last non-whitespace character read.
+    size_t idx = readLengthFromSIMDUTF;
+    while (idx && isASCIIWhitespace(span[idx - 1]))
+        idx--;
+
+    // This is the correct read length if the input doesn't end in trailing whitespace.
+    size_t fixedReadLength = idx;
+
+    // If the input ends in trailing whitespace, the correct read length is the input size.
+    while (idx < span.size() && isASCIIWhitespace(span[idx]))
+        idx++;
+    if (idx == span.size())
+        fixedReadLength = span.size();
+
+    return fixedReadLength;
 }
 
 template<typename CharacterType>
 static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
 {
-    if (lastChunkHandling != LastChunkHandling::Loose)
-        return fromBase64SlowImpl(span, output, alphabet, lastChunkHandling);
-
     using UTFType = std::conditional_t<sizeof(CharacterType) == 1, char, char16_t>;
-    auto options = alphabet == Alphabet::Base64URL ? simdutf::base64_url : simdutf::base64_default;
-    if (!output.size())
-        return { FromBase64ShouldThrowError::No, 0, 0 };
 
     size_t outputLength = output.size();
     constexpr bool decodeUpToBadChar = true;
-    auto result = simdutf::base64_to_binary_safe(std::bit_cast<const UTFType*>(span.data()), span.size(), std::bit_cast<char*>(output.data()), outputLength, options, simdutf::last_chunk_handling_options::loose, decodeUpToBadChar);
+    auto result = simdutf::base64_to_binary_safe(std::bit_cast<const UTFType*>(span.data()), span.size(), std::bit_cast<char*>(output.data()), outputLength, toSIMDUTFDecodeOptions(alphabet), toSIMDUTFLastChunkHandling(lastChunkHandling), decodeUpToBadChar);
     switch (result.error) {
-    case simdutf::error_code::INVALID_BASE64_CHARACTER:
-        return { FromBase64ShouldThrowError::Yes, result.count, outputLength };
-
-    case simdutf::error_code::BASE64_INPUT_REMAINDER:
-        return { FromBase64ShouldThrowError::No, result.count, outputLength };
-
     case simdutf::error_code::OUTPUT_BUFFER_TOO_SMALL:
         return { FromBase64ShouldThrowError::No, result.count, outputLength };
 
-    case simdutf::error_code::SUCCESS:
-        return { FromBase64ShouldThrowError::No, span.size(), outputLength };
+    case simdutf::error_code::SUCCESS: {
+        size_t read;
+        if (lastChunkHandling == LastChunkHandling::StopBeforePartial) [[unlikely]]
+            read = fixSIMDUTFStopBeforePartialReadLength(span, result.count);
+        else
+            read = span.size();
+        return { FromBase64ShouldThrowError::No, read, outputLength };
+    }
 
     default:
         return { FromBase64ShouldThrowError::Yes, result.count, outputLength };

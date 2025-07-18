@@ -129,7 +129,7 @@ class EGLSurfaceTest : public ANGLETest<>
         displayAttributes.push_back(deviceType);
         displayAttributes.push_back(EGL_NONE);
 
-        mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttributes.data());
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
@@ -417,7 +417,7 @@ class EGLSingleBufferTest : public ANGLETest<>
     void testSetUp() override
     {
         EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
@@ -2485,7 +2485,7 @@ TEST_P(EGLSingleBufferTest, AcquireImageFromSwapImpl)
         drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
         glFlush();
 
-        // Prepare auxilary framebuffer.
+        // Prepare auxiliary framebuffer.
         GLRenderbuffer renderBuffer;
         GLFramebuffer framebuffer;
         glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
@@ -2495,7 +2495,7 @@ TEST_P(EGLSingleBufferTest, AcquireImageFromSwapImpl)
                                   renderBuffer);
         EXPECT_GL_NO_ERROR();
 
-        // Draw into the auxilary framebuffer just to generate commands into the command buffers.
+        // Draw into the auxiliary framebuffer just to generate commands into the command buffers.
         // Otherwise below flush will be ignored.
         drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
 
@@ -3719,6 +3719,74 @@ TEST_P(EGLSurfaceTest, MSAAResolveWithEGLConfig8880)
     // Tests renderpass resolve during swap.
     eglSwapBuffers(mDisplay, mWindowSurface);
     ASSERT_EGL_SUCCESS();
+}
+
+// Regression test for a bug in the Vulkan backend where a staged clear was not applied if
+// glGetMultisamplefv is called.
+TEST_P(EGLSurfaceTest, GetMultisamplefvAfterClear)
+{
+    initializeDisplay();
+
+    // Initialize an RGBA8 window surface with 4x MSAA
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,
+                                             8,
+                                             EGL_GREEN_SIZE,
+                                             8,
+                                             EGL_BLUE_SIZE,
+                                             8,
+                                             EGL_ALPHA_SIZE,
+                                             8,
+                                             EGL_SAMPLE_BUFFERS,
+                                             1,
+                                             EGL_SAMPLES,
+                                             4,
+                                             EGL_SURFACE_TYPE,
+                                             EGL_WINDOW_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ANGLE_SKIP_TEST_IF(
+        !eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ANGLE_SKIP_TEST_IF(configCount == 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+    initializeMainContext();
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_texture_multisample"));
+
+    // Clear operation will be staged (Vulkan backend).
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Calling this API will perform draw framebuffer sync which will flush staged clear.
+    // If there is no bug, clear will not be deferred during the flush.
+    GLfloat samplePosition[2];
+    glGetMultisamplefvANGLE(GL_SAMPLE_POSITION, 0, samplePosition);
+    ASSERT_GL_NO_ERROR();
+
+    // Prepare auxiliary framebuffer.
+    GLFramebuffer framebuffer;
+    GLRenderbuffer renderBuffer;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 50, 50);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              renderBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Check default framebuffer contains expected value.
+    // In case of a bug, previously deferred clear will not be applied.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 int EGLSurfaceTest::drawSizeCheckRect(EGLSurface surface,

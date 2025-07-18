@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include <numeric>
 
 #include "test/gtest.h"
@@ -21,7 +22,7 @@
 namespace webrtc {
 namespace {
 
-constexpr float kPi = 3.141592f;
+constexpr float kPi = std::numbers::pi_v<float>;
 
 void ProduceSinusoid(int sample_rate_hz,
                      float sinusoidal_frequency_hz,

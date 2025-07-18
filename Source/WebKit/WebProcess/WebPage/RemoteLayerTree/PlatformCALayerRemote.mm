@@ -242,7 +242,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         // Once that setting is made unnecessary, remove this entire conditional as well.
         if (type() == PlatformCALayer::Type::RemoteCustom
             && !downcast<PlatformCALayerRemoteCustom>(*this).hasVideo()) {
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, LayerContentsType::CAMachPort);
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties);
             didCommit();
             return;
         }
@@ -585,7 +585,6 @@ bool PlatformCALayerRemote::isOpaque() const
 void PlatformCALayerRemote::setOpaque(bool value)
 {
     m_properties.opaque = value;
-    m_properties.notePropertiesChanged(LayerChange::OpaqueChanged);
 
     updateBackingStore();
 }
@@ -803,7 +802,7 @@ void PlatformCALayerRemote::setContentsFormat(ContentsFormat contentsFormat)
         return;
 
     m_properties.contentsFormat = contentsFormat;
-    m_properties.notePropertiesChanged(LayerChange::ContentsFormatChanged);
+    updateBackingStore();
 }
 
 bool PlatformCALayerRemote::hasContents() const
@@ -1085,6 +1084,20 @@ bool PlatformCALayerRemote::setNeedsDisplayIfEDRHeadroomExceeds(float headroom)
     if (m_properties.backingStoreOrProperties.store)
         return m_properties.backingStoreOrProperties.store->setNeedsDisplayIfEDRHeadroomExceeds(headroom);
     return false;
+}
+
+void PlatformCALayerRemote::setTonemappingEnabled(bool value)
+{
+    if (m_properties.tonemappingEnabled == value)
+        return;
+
+    m_properties.tonemappingEnabled = value;
+    m_properties.notePropertiesChanged(LayerChange::TonemappingEnabledChanged);
+}
+
+bool PlatformCALayerRemote::tonemappingEnabled() const
+{
+    return m_properties.tonemappingEnabled;
 }
 #endif
 

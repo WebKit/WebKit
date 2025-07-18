@@ -18,16 +18,16 @@ of an SctpTransport changes; this callback is called on the network thread (as
 set during PeerConnectionFactory initialization).
 
 The implementation of this object lives in pc/sctp_transport.{h,cc}, and is
-basically a wrapper around a `cricket::SctpTransportInternal`, hiding its
+basically a wrapper around a `webrtc::SctpTransportInternal`, hiding its
 implementation details and APIs that shouldn't be accessed from the user.
 
 The `webrtc::SctpTransport` is a ref counted object; it should be regarded
 as owned by the PeerConnection, and will be closed when the PeerConnection
 closes, but the object itself may survive longer than the PeerConnection.
 
-## cricket::SctpTransportInternal
+## webrtc::SctpTransportInternal
 
-[`cricket::SctpTransportInternal`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/sctp/sctp_transport_internal.h?q=cricket::SctpTransportInternal) owns two objects: The SCTP association object
+[`webrtc::SctpTransportInternal`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/sctp/sctp_transport_internal.h?q=webrtc::SctpTransportInternal) owns two objects: The SCTP association object
 and the DTLS transport, which is the object used to send and receive messages
 as emitted from or consumed by the sctp library.
 

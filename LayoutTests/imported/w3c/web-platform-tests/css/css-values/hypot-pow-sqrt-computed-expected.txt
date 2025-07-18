@@ -22,6 +22,9 @@ PASS hypot(0% + 3px, 0% + 4px) should be used-value-equivalent to 5px
 PASS hypot(0% + 772.333px) should be used-value-equivalent to calc(0% + 772.333px)
 PASS hypot(0% + 772.35px) should be used-value-equivalent to calc(0% + 772.35px)
 PASS hypot(0% + 600px, 0% + 800px) should be used-value-equivalent to 1000px
+PASS sqrt(sibling-index()) should be used-value-equivalent to 2
+PASS calc(1px * sqrt(sibling-index())) should be used-value-equivalent to 2px
+PASS sqrt(pow(sibling-index(), 2)) should be used-value-equivalent to 4
 PASS hypot(1px) should be used-value-equivalent to 1px
 PASS hypot(1cm) should be used-value-equivalent to 1cm
 PASS hypot(1mm) should be used-value-equivalent to 1mm

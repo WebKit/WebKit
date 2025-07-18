@@ -43,7 +43,7 @@ class HeartbeatRequestChunk : public Chunk,
   HeartbeatRequestChunk& operator=(HeartbeatRequestChunk&& other) = default;
 
   static std::optional<HeartbeatRequestChunk> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

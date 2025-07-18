@@ -737,7 +737,7 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
 void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
                                   const gl::ProgramExecutable &programExecutable,
                                   const std::vector<gl::InterfaceBlock> &blocks,
-
+                                  const DescriptorSetIndex descriptorSetIndex,
                                   SpvProgramInterfaceInfo *programInterfaceInfo,
                                   ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
@@ -760,7 +760,7 @@ void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
         }
 
         variableInfoMapOut->addResource(activeShaders, block.getIds(),
-                                        ToUnderlying(DescriptorSetIndex::ShaderResource),
+                                        ToUnderlying(descriptorSetIndex),
                                         programInterfaceInfo->currentShaderResourceBindingIndex++);
     }
 }
@@ -833,12 +833,14 @@ void AssignNonTextureBindings(const SpvSourceOptions &options,
                                   variableInfoMapOut);
 
     const std::vector<gl::InterfaceBlock> &uniformBlocks = programExecutable.getUniformBlocks();
-    AssignInterfaceBlockBindings(options, programExecutable, uniformBlocks, programInterfaceInfo,
+    AssignInterfaceBlockBindings(options, programExecutable, uniformBlocks,
+                                 DescriptorSetIndex::UniformBuffers, programInterfaceInfo,
                                  variableInfoMapOut);
 
     const std::vector<gl::InterfaceBlock> &storageBlocks =
         programExecutable.getShaderStorageBlocks();
-    AssignInterfaceBlockBindings(options, programExecutable, storageBlocks, programInterfaceInfo,
+    AssignInterfaceBlockBindings(options, programExecutable, storageBlocks,
+                                 DescriptorSetIndex::ShaderResource, programInterfaceInfo,
                                  variableInfoMapOut);
 
     AssignAtomicCounterBufferBindings(options, programExecutable, programInterfaceInfo,

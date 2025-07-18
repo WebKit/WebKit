@@ -14,14 +14,30 @@
 #include <math.h>
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <memory>
 #include <numeric>
+#include <optional>
 #include <string>
+#include <tuple>
+#include <vector>
 
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/delay_estimate.h"
+#include "modules/audio_processing/aec3/echo_path_variability.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/subtractor_output.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/arch.h"
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
 
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/adaptive_fir_filter_erl.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
@@ -31,7 +47,6 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
@@ -43,7 +58,7 @@ namespace aec3 {
 namespace {
 
 std::string ProduceDebugText(size_t num_render_channels, size_t delay) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "delay: " << delay << ", ";
   ss << "num_render_channels:" << num_render_channels;
   return ss.Release();
@@ -482,7 +497,8 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   Block x(kNumBands, num_render_channels);
   std::vector<float> n(kBlockSize, 0.f);
   std::vector<float> y(kBlockSize, 0.f);
-  AecState aec_state(EchoCanceller3Config{}, num_capture_channels);
+  AecState aec_state(CreateEnvironment(), EchoCanceller3Config{},
+                     num_capture_channels);
   RenderSignalAnalyzer render_signal_analyzer(config);
   std::optional<DelayEstimate> delay_estimate;
   std::vector<float> e(kBlockSize, 0.f);
@@ -496,9 +512,10 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
       num_capture_channels);
   std::array<float, kFftLengthBy2Plus1> E2_coarse;
   // [B,A] = butter(2,100/8000,'high')
-  constexpr CascadedBiQuadFilter::BiQuadCoefficients
-      kHighPassFilterCoefficients = {{0.97261f, -1.94523f, 0.97261f},
-                                     {-1.94448f, 0.94598f}};
+  constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
+      kHighPassFilterCoefficients = {{
+          {{0.97261f, -1.94523f, 0.97261f}, {-1.94448f, 0.94598f}},
+      }};
   for (auto& Y2_ch : Y2) {
     Y2_ch.fill(0.f);
   }
@@ -519,9 +536,12 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
         num_render_channels);
     for (size_t ch = 0; ch < num_render_channels; ++ch) {
       x_hp_filter[ch] = std::make_unique<CascadedBiQuadFilter>(
-          kHighPassFilterCoefficients, 1);
+          ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+              kHighPassFilterCoefficients));
     }
-    CascadedBiQuadFilter y_hp_filter(kHighPassFilterCoefficients, 1);
+    CascadedBiQuadFilter y_hp_filter(
+        (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+            kHighPassFilterCoefficients)));
 
     SCOPED_TRACE(ProduceDebugText(num_render_channels, delay_samples));
     const size_t num_blocks_to_process =
@@ -564,7 +584,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
                      e.begin(),
                      [&](float a, float b) { return a - b * kScale; });
       std::for_each(e.begin(), e.end(),
-                    [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+                    [](float& a) { a = SafeClamp(a, -32768.f, 32767.f); });
       fft.ZeroPaddedFft(e, Aec3Fft::Window::kRectangular, &E);
       for (auto& o : output) {
         for (size_t k = 0; k < kBlockSize; ++k) {

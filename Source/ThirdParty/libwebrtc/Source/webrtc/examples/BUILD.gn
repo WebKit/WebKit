@@ -42,10 +42,6 @@ group("examples") {
     }
   }
 
-  if (!build_with_chromium) {
-    deps += [ ":stun_prober" ]
-  }
-
   if (is_ios || (is_mac && target_cpu != "x86")) {
     deps += [ ":AppRTCMobile" ]
   }
@@ -155,6 +151,7 @@ if (is_android) {
       "../sdk/android:video_api_java",
       "../sdk/android:video_java",
       "androidapp/third_party/autobanh:autobanh_java",
+      "//build/android:build_java",
       "//third_party/androidx:androidx_annotation_annotation_java",
     ]
   }
@@ -687,8 +684,8 @@ if (is_linux || is_chromeos || is_win) {
       "../api:async_dns_resolver",
       "../api:audio_options_api",
       "../api:create_frame_generator",
-      "../api:create_peerconnection_factory",
       "../api:enable_media",
+      "../api:field_trials",
       "../api:libjingle_peerconnection_api",
       "../api:make_ref_counted",
       "../api:media_stream_interface",
@@ -699,8 +696,9 @@ if (is_linux || is_chromeos || is_win) {
       "../api/audio:audio_mixer_api",
       "../api/audio:audio_processing",
       "../api/audio_codecs:audio_codecs_api",
+      "../api/environment",
+      "../api/environment:environment_factory",
       "../api/task_queue",
-      "../api/task_queue:default_task_queue_factory",
       "../api/task_queue:pending_task_safety_flag",
       "../api/units:time_delta",
       "../api/video:video_frame",
@@ -710,13 +708,11 @@ if (is_linux || is_chromeos || is_win) {
       "../media:video_common",
       "../p2p:connection",
       "../p2p:port_allocator",
-      "../p2p:rtc_p2p",
       "../pc:video_track_source",
       "../rtc_base:async_dns_resolver",
       "../rtc_base:buffer",
       "../rtc_base:checks",
       "../rtc_base:logging",
-      "../rtc_base:macromagic",
       "../rtc_base:net_helpers",
       "../rtc_base:refcount",
       "../rtc_base:rtc_certificate_generator",
@@ -725,12 +721,11 @@ if (is_linux || is_chromeos || is_win) {
       "../rtc_base:threading",
       "../rtc_base/third_party/sigslot",
       "../system_wrappers",
-      "../system_wrappers:field_trial",
-      "../test:field_trial",
       "../test:frame_generator_capturer",
       "../test:platform_video_capturer",
       "../test:rtp_test_utils",
       "../test:test_video_capturer",
+      "//third_party/abseil-cpp/absl/base:nullability",
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/jsoncpp",
     ]
@@ -800,19 +795,17 @@ if (is_linux || is_chromeos || is_win) {
       "peerconnection/server/main.cc",
       "peerconnection/server/peer_channel.cc",
       "peerconnection/server/peer_channel.h",
-      "peerconnection/server/utils.cc",
-      "peerconnection/server/utils.h",
     ]
     deps = [
       "../rtc_base:checks",
       "../rtc_base:ip_address",
       "../rtc_base:net_helpers",
       "../rtc_base:stringutils",
-      "../system_wrappers:field_trial",
-      "../test:field_trial",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
       "//third_party/abseil-cpp/absl/flags:usage",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
   rtc_executable("turnserver") {
@@ -823,7 +816,6 @@ if (is_linux || is_chromeos || is_win) {
       "../p2p:basic_packet_socket_factory",
       "../p2p:p2p_server_utils",
       "../p2p:port_interface",
-      "../p2p:rtc_p2p",
       "../pc:rtc_pc",
       "../rtc_base:async_udp_socket",
       "../rtc_base:ip_address",
@@ -838,7 +830,6 @@ if (is_linux || is_chromeos || is_win) {
     sources = [ "stunserver/stunserver_main.cc" ]
     deps = [
       "../p2p:p2p_server_utils",
-      "../p2p:rtc_p2p",
       "../pc:rtc_pc",
       "../rtc_base:async_udp_socket",
       "../rtc_base:socket_address",
@@ -861,35 +852,6 @@ if (is_android) {
       "../sdk/android:peerconnection_java",
       "//third_party/androidx:androidx_test_core_java",
       "//third_party/google-truth:google_truth_java",
-    ]
-
-    additional_jar_files = [ [
-          "../sdk/android/tests/resources/robolectric.properties",
-          "robolectric.properties",
-        ] ]
-  }
-}
-
-if (!build_with_chromium) {
-  # Doesn't build within Chrome on Win.
-  rtc_executable("stun_prober") {
-    testonly = true
-    sources = [ "stunprober/main.cc" ]
-    deps = [
-      "../p2p:basic_packet_socket_factory",
-      "../p2p:libstunprober",
-      "../p2p:rtc_p2p",
-      "../rtc_base:checks",
-      "../rtc_base:crypto_random",
-      "../rtc_base:logging",
-      "../rtc_base:network",
-      "../rtc_base:socket_address",
-      "../rtc_base:ssl_adapter",
-      "../rtc_base:threading",
-      "../rtc_base:timeutils",
-      "../test:scoped_key_value_config",
-      "//third_party/abseil-cpp/absl/flags:flag",
-      "//third_party/abseil-cpp/absl/flags:parse",
     ]
   }
 }

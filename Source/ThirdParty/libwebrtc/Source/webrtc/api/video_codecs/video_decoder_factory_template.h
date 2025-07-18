@@ -52,9 +52,8 @@ class VideoDecoderFactoryTemplate : public VideoDecoderFactory {
   }
 
  private:
-  bool IsFormatInList(
-      const SdpVideoFormat& format,
-      rtc::ArrayView<const SdpVideoFormat> supported_formats) const {
+  bool IsFormatInList(const SdpVideoFormat& format,
+                      ArrayView<const SdpVideoFormat> supported_formats) const {
     return absl::c_any_of(
         supported_formats, [&](const SdpVideoFormat& supported_format) {
           return supported_format.name == format.name &&

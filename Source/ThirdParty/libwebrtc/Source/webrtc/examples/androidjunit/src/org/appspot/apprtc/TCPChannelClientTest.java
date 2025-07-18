@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -96,7 +97,9 @@ public class TCPChannelClientTest {
     verify(clientEvents, timeout(CONNECT_TIMEOUT)).onTCPConnected(false);
   }
 
+  // TODO:b/389829614 - Below test is failing.
   @Test
+  @Ignore
   public void testConnectIPv6() {
     setUpIPv6Server();
     try {

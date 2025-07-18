@@ -38,6 +38,7 @@
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "ColorTypes.h"
+#include "ContainerNodeInlines.h"
 #include "ElementRareData.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
@@ -141,7 +142,7 @@ bool ColorInputType::isMouseFocusable() const
     return protectedElement()->isTextFormControlFocusable();
 }
 
-bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
+bool ColorInputType::isKeyboardFocusable(const FocusEventData&) const
 {
     ASSERT(element());
 #if PLATFORM(IOS_FAMILY)

@@ -35,7 +35,7 @@ struct CSSParserContext;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
 class MutableStyleProperties final : public StyleProperties {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MutableStyleProperties, MutableStyleProperties);
 public:
     inline void deref() const;
 

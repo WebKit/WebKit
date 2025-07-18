@@ -49,7 +49,7 @@ UIGamepadProvider& UIGamepadProvider::singleton()
 }
 
 UIGamepadProvider::UIGamepadProvider()
-    : m_gamepadSyncTimer(RunLoop::main(), this, &UIGamepadProvider::gamepadSyncTimerFired)
+    : m_gamepadSyncTimer(RunLoop::mainSingleton(), this, &UIGamepadProvider::gamepadSyncTimerFired)
 {
     platformSetDefaultGamepadProvider();
 }
@@ -104,7 +104,8 @@ void UIGamepadProvider::scheduleGamepadStateSync()
 
 void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, EventMakesGamepadsVisible eventVisibility)
 {
-    LOG(Gamepad, "UIGamepadProvider::platformGamepadConnected - Index %i attached (visibility: %i)\n", gamepad.index(), (int)eventVisibility);
+    RELEASE_ASSERT(isMainRunLoop());
+    RELEASE_LOG(Gamepad, "UIGamepadProvider::platformGamepadConnected - Gamepad index %i attached (visibility: %i, currently m_gamepads.size: %i)\n", gamepad.index(), (int)eventVisibility, (int)m_gamepads.size());
 
     if (m_gamepads.size() <= gamepad.index())
         m_gamepads.grow(gamepad.index() + 1);
@@ -120,8 +121,20 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Event
 
 void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 {
+    RELEASE_ASSERT(isMainRunLoop());
+    RELEASE_LOG(Gamepad, "UIGamepadProvider::platformGamepadConnected - Detaching gamepad index %i (Current m_gamepads size: %i)\n", gamepad.index(), (int)m_gamepads.size());
+
     ASSERT(gamepad.index() < m_gamepads.size());
     ASSERT(m_gamepads[gamepad.index()]);
+
+    if (gamepad.index() >= m_gamepads.size()) {
+        std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
+        auto valuesAsBytes  = asMutableByteSpan(std::span { values });
+        memcpySpan(valuesAsBytes, std::span { "gamepad-unknown-disconnect" });
+        values[4] = gamepad.index();
+        values[5] = m_gamepads.size();
+        CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
+    }
 
     std::unique_ptr<UIGamepad> disconnectedGamepad = WTFMove(m_gamepads[gamepad.index()]);
 
@@ -151,6 +164,7 @@ void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible e
 
 void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 {
+    RELEASE_ASSERT(isMainRunLoop());
     ASSERT(!m_processPoolsUsingGamepads.contains(pool));
     m_processPoolsUsingGamepads.add(pool);
 
@@ -160,6 +174,7 @@ void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 {
+    RELEASE_ASSERT(isMainRunLoop());
     ASSERT(m_processPoolsUsingGamepads.contains(pool));
     m_processPoolsUsingGamepads.remove(pool);
 
@@ -196,8 +211,12 @@ void UIGamepadProvider::viewBecameInactive(WebPageProxy& page)
 
 void UIGamepadProvider::startMonitoringGamepads()
 {
+    RELEASE_ASSERT(isMainRunLoop());
+
     if (m_isMonitoringGamepads)
         return;
+
+    RELEASE_LOG(Gamepad, "UIGamepadProvider::startMonitoringGamepads - Starting gamepad monitoring");
 
     m_isMonitoringGamepads = true;
     ASSERT(!m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences());
@@ -206,8 +225,12 @@ void UIGamepadProvider::startMonitoringGamepads()
 
 void UIGamepadProvider::stopMonitoringGamepads()
 {
+    RELEASE_ASSERT(isMainRunLoop());
+
     if (!m_isMonitoringGamepads)
         return;
+
+    RELEASE_LOG(Gamepad, "UIGamepadProvider::stopMonitoringGamepads - Clearing m_gamepads vector of size %i", (int)m_gamepads.size());
 
     m_isMonitoringGamepads = false;
 

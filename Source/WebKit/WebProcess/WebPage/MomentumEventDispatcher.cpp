@@ -77,7 +77,7 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
     m_lastRubberBandableEdges = rubberBandableEdges;
     m_lastIncomingEvent = event;
 
-    bool isMomentumEvent = event.momentumPhase() != WebWheelEvent::PhaseNone;
+    bool isMomentumEvent = event.isMomentumEvent();
 
     if (m_currentGesture.active) {
         bool pageIdentifierChanged = pageIdentifier != m_currentGesture.pageIdentifier;

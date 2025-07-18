@@ -29,11 +29,11 @@ class FrameGeneratorInterface {
     size_t height;
   };
   struct VideoFrameData {
-    VideoFrameData(rtc::scoped_refptr<VideoFrameBuffer> buffer,
+    VideoFrameData(scoped_refptr<VideoFrameBuffer> buffer,
                    std::optional<VideoFrame::UpdateRect> update_rect)
         : buffer(std::move(buffer)), update_rect(update_rect) {}
 
-    rtc::scoped_refptr<VideoFrameBuffer> buffer;
+    scoped_refptr<VideoFrameBuffer> buffer;
     std::optional<VideoFrame::UpdateRect> update_rect;
   };
 

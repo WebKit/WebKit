@@ -55,6 +55,9 @@ public:
     void setAllowAutofill() { m_allowAutofill = true; }
     bool allowAutofill() const { return m_allowAutofill; }
 
+    void setNodeInfoEnabled() { m_nodeInfoEnabled = true; }
+    bool nodeInfoEnabled() const { return m_nodeInfoEnabled; }
+
     void setAllowElementUserInfo() { m_allowElementUserInfo = true; }
     bool allowElementUserInfo() const { return m_allowElementUserInfo; }
 
@@ -95,6 +98,7 @@ private:
     bool m_shadowRootIsAlwaysOpen { false };
     bool m_closedShadowRootIsExposedForExtensions { false };
     bool m_shouldDisableLegacyOverrideBuiltInsBehavior { false };
+    bool m_nodeInfoEnabled { false };
 };
 
 DOMWrapperWorld& normalWorld(JSC::VM&);

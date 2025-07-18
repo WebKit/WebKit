@@ -37,7 +37,6 @@ enum class TaskSource : uint8_t {
     IdleTask,
     ImageCapture,
     IndexedDB,
-    IntersectionObserver,
     MediaElement,
     Microtask,
     ModelElement,

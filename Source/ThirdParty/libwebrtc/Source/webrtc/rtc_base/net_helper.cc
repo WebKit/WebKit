@@ -12,7 +12,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 const char UDP_PROTOCOL_NAME[] = "udp";
 const char TCP_PROTOCOL_NAME[] = "tcp";
@@ -30,4 +30,4 @@ int GetProtocolOverhead(absl::string_view protocol) {
   }
 }
 
-}  // namespace cricket
+}  // namespace webrtc

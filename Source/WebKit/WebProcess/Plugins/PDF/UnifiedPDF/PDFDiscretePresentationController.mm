@@ -1424,7 +1424,7 @@ bool PDFDiscretePresentationController::layerAllowsDynamicContentScaling(const G
 void PDFDiscretePresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {
     if (usingTiledBacking)
-        layer->tiledBacking()->setIsInWindow(m_plugin->isInWindow());
+        layer->checkedTiledBacking()->setIsInWindow(m_plugin->isInWindow());
 }
 
 void PDFDiscretePresentationController::paintBackgroundLayerForRow(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, unsigned rowIndex)

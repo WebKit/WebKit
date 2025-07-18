@@ -185,7 +185,8 @@ void WebFullScreenManagerProxy::attachToNewClient(WebFullScreenManagerProxyClien
 
 bool WebFullScreenManagerProxy::isFullScreen()
 {
-    return m_client && m_client->isFullScreen();
+    CheckedPtr client = m_client;
+    return client && client->isFullScreen();
 }
 
 bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() const
@@ -308,7 +309,7 @@ void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(
         ASSERT_UNUSED(byteCount, byteCount == buffer->size());
         fileHandle = { };
 
-        RunLoop::protectedMain()->dispatch([filePath, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([filePath, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(URL::fileURLWithFileSystemPath(filePath));
         });
     });

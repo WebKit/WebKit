@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ExceptionOr.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

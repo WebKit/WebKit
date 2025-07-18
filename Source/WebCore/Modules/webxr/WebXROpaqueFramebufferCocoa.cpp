@@ -446,7 +446,7 @@ const std::array<WebXRExternalAttachments, 2>* WebXROpaqueFramebuffer::reusableD
 
     auto reusableTextureIndex = textureData.reusableTextureIndex;
     if (reusableTextureIndex >= m_displayAttachmentsSets.size() || !m_displayAttachmentsSets[reusableTextureIndex][0]) {
-        RELEASE_LOG_FAULT(XR, "Unable to find reusable texture at index: %zu", reusableTextureIndex);
+        RELEASE_LOG_FAULT(XR, "Unable to find reusable texture at index: %llu", reusableTextureIndex);
         ASSERT_NOT_REACHED();
         return nullptr;
     }

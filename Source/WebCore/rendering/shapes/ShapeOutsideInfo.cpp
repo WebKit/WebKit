@@ -169,9 +169,11 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             if (!isHorizontalWritingMode) {
                 shapeRect = shapeRect.transposedRect();
                 auto radiiForBlockDirection = shapeRect.radii();
-                if (writingMode.isBlockLeftToRight())
+                if (writingMode.isLineOverLeft()) // sideways-lr
+                    shapeRect.setRadii({ radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topRight() });
+                else if (writingMode.isBlockLeftToRight()) // vertical-lr
                     shapeRect.setRadii({ radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight() });
-                else
+                else // vertical-rl, sideways-rl
                     shapeRect.setRadii({ radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft() });
             }
             if (writingMode.isBidiRTL()) {

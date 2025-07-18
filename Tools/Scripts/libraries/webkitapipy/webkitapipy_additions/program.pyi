@@ -25,9 +25,10 @@
 
 import argparse
 
-from webkitapipy.program import TSVReporter
+from webkitapipy.program import Options
+from webkitapipy.reporter import Reporter
 from webkitapipy.sdkdb import SDKDB as SDKDB
 
 def get_parser() -> argparse.ArgumentParser: ...
-def configure_reporter(args: argparse.Namespace, db: SDKDB) -> TSVReporter: ...
+def configure_reporter(args: Options, db: SDKDB) -> Reporter: ...
 

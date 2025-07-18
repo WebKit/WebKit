@@ -16,6 +16,7 @@
 #include <optional>
 
 #include "api/audio/echo_canceller3_config.h"
+#include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
@@ -27,7 +28,8 @@ namespace webrtc {
 
 class ResidualEchoEstimator {
  public:
-  ResidualEchoEstimator(const EchoCanceller3Config& config,
+  ResidualEchoEstimator(const Environment& env,
+                        const EchoCanceller3Config& config,
                         size_t num_render_channels);
   ~ResidualEchoEstimator();
 
@@ -37,11 +39,11 @@ class ResidualEchoEstimator {
   void Estimate(
       const AecState& aec_state,
       const RenderBuffer& render_buffer,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
       bool dominant_nearend,
-      rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2,
-      rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2_unbounded);
+      ArrayView<std::array<float, kFftLengthBy2Plus1>> R2,
+      ArrayView<std::array<float, kFftLengthBy2Plus1>> R2_unbounded);
 
  private:
   enum class ReverbType { kLinear, kNonLinear };
@@ -61,8 +63,7 @@ class ResidualEchoEstimator {
 
   // Adds the estimated unmodelled echo power to the residual echo power
   // estimate.
-  void AddReverb(
-      rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) const;
+  void AddReverb(ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) const;
 
   // Gets the echo path gain to apply.
   float GetEchoPathGain(const AecState& aec_state,

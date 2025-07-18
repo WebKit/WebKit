@@ -10,6 +10,8 @@
 
 #include "modules/audio_coding/acm2/call_statistics.h"
 
+#include "api/audio/audio_frame.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "test/gtest.h"
 
 namespace webrtc {

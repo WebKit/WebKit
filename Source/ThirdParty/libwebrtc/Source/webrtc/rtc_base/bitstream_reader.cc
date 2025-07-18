@@ -141,7 +141,7 @@ uint32_t BitstreamReader::ReadExponentialGolomb() {
   // The bit count of the value is the number of zeros + 1.
   // However the first '1' was already read above.
   return (uint32_t{1} << zero_bit_count) +
-         rtc::dchecked_cast<uint32_t>(ReadBits(zero_bit_count)) - 1;
+         dchecked_cast<uint32_t>(ReadBits(zero_bit_count)) - 1;
 }
 
 int BitstreamReader::ReadSignedExponentialGolomb() {

@@ -168,7 +168,7 @@ class RegKey {
 
 #endif  // !defined(WINUWP)
 
-namespace rtc {
+namespace webrtc {
 namespace rtc_win {
 namespace {
 
@@ -221,10 +221,17 @@ Version MajorMinorBuildToVersion(int major, int minor, int build) {
       return VERSION_WIN10_21H2;
     } else if (build < 22000) {
       return VERSION_SERVER_2022;
-    } else {
+    } else if (build < 22621) {
       return VERSION_WIN11;
+    } else if (build < 22631) {
+      return VERSION_WIN11_22H2;
+    } else if (build < 26100) {
+      return VERSION_WIN11_23H2;
+    } else {
+      return VERSION_WIN11_24H2;
     }
   } else if (major == 11) {
+    RTC_DCHECK_NOTREACHED();
     return VERSION_WIN11;
   } else if (major > 6) {
     RTC_DCHECK_NOTREACHED();
@@ -301,7 +308,7 @@ OSInfo::OSInfo()
       version_number_.major, version_number_.minor, version_number_.build);
   service_pack_.major = version_info.wServicePackMajor;
   service_pack_.minor = version_info.wServicePackMinor;
-  service_pack_str_ = rtc::ToUtf8(version_info.szCSDVersion);
+  service_pack_str_ = webrtc::ToUtf8(version_info.szCSDVersion);
 
   SYSTEM_INFO system_info = {};
   ::GetNativeSystemInfo(&system_info);
@@ -413,7 +420,7 @@ std::string OSInfo::processor_model_name() {
     RegKey key(HKEY_LOCAL_MACHINE, kProcessorNameString, KEY_READ);
     std::wstring value;
     key.ReadValue(L"ProcessorNameString", &value);
-    processor_model_name_ = rtc::ToUtf8(value);
+    processor_model_name_ = webrtc::ToUtf8(value);
   }
   return processor_model_name_;
 #endif  // defined(WINUWP)
@@ -442,4 +449,4 @@ Version GetVersion() {
 }
 
 }  // namespace rtc_win
-}  // namespace rtc
+}  // namespace webrtc

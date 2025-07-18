@@ -71,7 +71,7 @@ bool isSupported()
     return phoneNumbersScanner() != nullptr;
 }
 
-bool find(std::span<const UChar> buffer, int* startPos, int* endPos)
+bool find(std::span<const char16_t> buffer, int* startPos, int* endPos)
 {
     ASSERT(isSupported());
     return DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner(), reinterpret_cast<const UniChar*>(buffer.data()), buffer.size(), startPos, endPos);

@@ -357,18 +357,6 @@ template<typename T> Color::ColorKind Color::makeIndirectColor(T&& color)
     return { makeUniqueRef<T>(WTFMove(color)) };
 }
 
-// MARK: - Markable Traits
-
-bool Color::MarkableTraits::isEmptyValue(const Color& value)
-{
-    return std::holds_alternative<EmptyToken>(value.value);
-}
-
-Color Color::MarkableTraits::emptyValue()
-{
-    return Color(EmptyToken());
-}
-
 WebCore::Color createColor(const Color& value, PlatformColorResolutionState& state)
 {
     return WTF::switchOn(value, [&](const auto& color) { return WebCore::CSS::createColor(color, state); });

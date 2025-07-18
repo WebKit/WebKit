@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/units/data_rate.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video_codecs/video_codec.h"

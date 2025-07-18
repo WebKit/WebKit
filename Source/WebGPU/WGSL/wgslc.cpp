@@ -144,10 +144,7 @@ static int runWGSL(const CommandLine& options)
 
     auto source = emptyString();
     if (readResult.has_value())
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
         source = String::fromUTF8WithLatin1Fallback(readResult->span());
-#pragma clang diagnostic pop
 
     auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
     if (auto* failedCheck = std::get_if<WGSL::FailedCheck>(&checkResult)) {
@@ -182,20 +179,22 @@ static int runWGSL(const CommandLine& options)
     }
 
     HashMap<String, WGSL::ConstantValue> constantValues;
-    const auto& entryPointInformation = result.entryPoints.get(entrypointName);
-    for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
-        if (!constant.defaultValue) {
-            dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
-            return EXIT_FAILURE;
-        }
+    for (const auto& [entrypointName, _] : pipelineLayouts) {
+        const auto& entryPointInformation = result.entryPoints.get(entrypointName);
+        for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
+            if (!constant.defaultValue) {
+                dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
+                return EXIT_FAILURE;
+            }
 
-        auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
-        if (!defaultValue) {
-            dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
-            return EXIT_FAILURE;
-        }
+            auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
+            if (!defaultValue) {
+                dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
+                return EXIT_FAILURE;
+            }
 
-        constantValues.add(constant.mangledName, *defaultValue);
+            constantValues.add(constant.mangledName, *defaultValue);
+        }
     }
     auto generationResult = WGSL::generate(shaderModule, result, constantValues, WGSL::DeviceState {
         .appleGPUFamily = options.appleGPUFamily(),

@@ -389,10 +389,10 @@ bool TextUtil::mayBreakInBetween(String previousContent, const RenderStyle& prev
     auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, nextContentStyle.computedLocale(), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
-    UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
+    char16_t lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
     if (lastCharacter == softHyphen && previousContentStyle.hyphens() == Hyphens::None)
         return false;
-    UChar secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
+    char16_t secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
     lineBreakIteratorFactory.priorContext().set({ secondToLastCharacter, lastCharacter });
     // Now check if we can break right at the inline item boundary.
     // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
@@ -732,7 +732,7 @@ bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 {
     if (textContent.is8Bit())
         return charactersContain<LChar, tabCharacter>(textContent.span8());
-    return charactersContain<UChar, tabCharacter>(textContent.span16());
+    return charactersContain<char16_t, tabCharacter>(textContent.span16());
 }
 
 char32_t TextUtil::lastBaseCharacterFromText(StringView string)

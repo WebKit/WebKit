@@ -40,7 +40,6 @@
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "HTMLBodyElement.h"
-#include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -76,6 +75,7 @@
 #include "TouchAction.h"
 #include "TypedElementDescendantIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentParts.h"
 #include "VisibilityAdjustment.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
@@ -651,7 +651,10 @@ void Adjuster::adjust(RenderStyle& style) const
         if (m_element->invokedPopover())
             style.setIsPopoverInvoker();
 
-        if (m_document->settings().detailsAutoExpandEnabled() && is<HTMLDetailsElement>(element))
+        if (m_document->settings().detailsAutoExpandEnabled() && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::detailsContent())
+            style.setAutoRevealsWhenFound();
+
+        if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element); htmlElement && htmlElement->isHiddenUntilFound())
             style.setAutoRevealsWhenFound();
     }
 
@@ -956,13 +959,13 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle& parentSty
     RenderTheme::singleton().adjustStyle(style, parentStyle, m_element.get());
 
     if (style.containsSize()) {
-        if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
+        if (!style.containIntrinsicWidth().isNone()) {
             if (isOldWidthAuto)
                 style.setWidth(CSS::Keyword::Auto { });
             if (isOldMinWidthAuto)
                 style.setMinWidth(CSS::Keyword::Auto { });
         }
-        if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
+        if (!style.containIntrinsicHeight().isNone()) {
             if (isOldHeightAuto)
                 style.setHeight(CSS::Keyword::Auto { });
             if (isOldMinHeightAuto)
@@ -1074,6 +1077,12 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         auto& animations = style.ensureAnimations();
         animations.append(WTFMove(menuGrowLeftAnimation));
         animations.append(WTFMove(menuFadeInAnimation));
+    }
+
+    if (m_document->quirks().needsFacebookRemoveNotSupportedQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("xnw9j1v"_s);
+        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
+            style.setEffectiveDisplay(DisplayType::None);
     }
 }
 

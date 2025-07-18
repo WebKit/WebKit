@@ -11,7 +11,6 @@
 #ifndef API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 #define API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 
-
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"

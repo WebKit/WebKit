@@ -85,7 +85,7 @@ protected:
     virtual void didSetValueByUserEdit();
 
 private:
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool isEmptyValue() const final;
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) final;

@@ -63,7 +63,10 @@
 #include "PictureInPictureObserver.h"
 #endif
 
-#define HTMLVIDEOELEMENT_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Media, fmt, identifier().toUInt64(), ##__VA_ARGS__)
+#define HTMLVIDEOELEMENT_RELEASE_LOG(formatString, ...) \
+if (willLog(WTFLogLevel::Always)) { \
+    RELEASE_LOG_FORWARDABLE(Media, HTMLVIDEOELEMENT_##formatString, identifier().toUInt64(), ##__VA_ARGS__); \
+} \
 
 namespace WebCore {
 
@@ -132,7 +135,7 @@ bool HTMLVideoElement::supportsAcceleratedRendering() const
 
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
 {
-    HTMLVIDEOELEMENT_RELEASE_LOG(HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED);
+    HTMLVIDEOELEMENT_RELEASE_LOG(MEDIAPLAYERRENDERINGMODECHANGED);
 
     // Kick off a fake recalcStyle that will update the compositing tree.
     computeAcceleratedRenderingStateAndUpdateMediaPlayer();
@@ -279,7 +282,7 @@ unsigned HTMLVideoElement::videoHeight() const
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)
 {
     m_lastReportedNaturalSize = naturalSize;
-    ALWAYS_LOG(LOGIDENTIFIER, naturalSize);
+    HTMLVIDEOELEMENT_RELEASE_LOG(SCHEDULERESIZEEVENT, naturalSize.width(), naturalSize.height());
     scheduleEvent(eventNames().resizeEvent);
 }
 
@@ -297,7 +300,7 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 const AtomString& HTMLVideoElement::imageSourceURL() const
 {
     const auto& url = attributeWithoutSynchronization(posterAttr);
-    if (!StringView(url).containsOnly<isASCIIWhitespace<UChar>>())
+    if (!StringView(url).containsOnly<isASCIIWhitespace<char16_t>>())
         return url;
     return m_defaultPosterURL;
 }
@@ -319,7 +322,7 @@ bool HTMLVideoElement::shouldDisplayPosterImage() const
 
 void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "m_showPoster = ", showPosterFlag());
+    HTMLVIDEOELEMENT_RELEASE_LOG(MEDIAPLAYERFIRSTVIDEOFRAMEAVAILABLE, showPosterFlag());
 
     if (showPosterFlag())
         return;

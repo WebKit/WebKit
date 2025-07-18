@@ -19,7 +19,7 @@
 #include <sanitizer/msan_interface.h>
 #endif
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 // Test sanitizer_impl::IsTriviallyCopyable (at compile time).
@@ -149,4 +149,4 @@ TEST(SanitizerTest, MsanUninitialized) {
   RTC_LOG(LS_INFO) << "read with no init passed";
 }
 
-}  // namespace rtc
+}  // namespace webrtc

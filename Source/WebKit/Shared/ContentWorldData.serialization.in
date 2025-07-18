@@ -27,6 +27,7 @@ header: "ContentWorldData.h"
     AllowAutofill,
     AllowElementUserInfo,
     DisableLegacyBuiltinOverrides,
+    AllowNodeInfo,
 };
 
 struct WebKit::ContentWorldData {

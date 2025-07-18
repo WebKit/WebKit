@@ -90,7 +90,7 @@ TextFieldInputType::~TextFieldInputType()
         suggestionPicker->detach();
 }
 
-bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
+bool TextFieldInputType::isKeyboardFocusable(const FocusEventData&) const
 {
     ASSERT(element());
 #if PLATFORM(IOS_FAMILY)

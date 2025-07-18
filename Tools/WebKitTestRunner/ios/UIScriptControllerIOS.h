@@ -179,7 +179,6 @@ private:
 
     void beginInteractiveObscuredInsetsChange() final;
     void endInteractiveObscuredInsetsChange() final;
-    void setObscuredInsets(double top, double right, double bottom, double left) final;
 
     bool suppressSoftwareKeyboard() const final;
     void setSuppressSoftwareKeyboard(bool) final;

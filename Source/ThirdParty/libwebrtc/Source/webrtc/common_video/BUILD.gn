@@ -14,17 +14,9 @@ rtc_library("corruption_detection_converters") {
     "corruption_detection_converters.h",
   ]
   deps = [
-    ":corruption_detection_message",
     ":frame_instrumentation_data",
+    "../api/transport/rtp:corruption_detection_message",
     "../rtc_base:checks",
-  ]
-}
-
-rtc_library("corruption_detection_message") {
-  sources = [ "corruption_detection_message.h" ]
-  deps = [
-    "../api:array_view",
-    "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
 }
 
@@ -150,17 +142,9 @@ if (rtc_include_tests && !build_with_chromium) {
     sources = [ "corruption_detection_converters_unittest.cc" ]
     deps = [
       ":corruption_detection_converters",
-      ":corruption_detection_message",
       ":frame_instrumentation_data",
-      "../test:test_support",
-    ]
-  }
-
-  rtc_library("corruption_detection_message_unittest") {
-    testonly = true
-    sources = [ "corruption_detection_message_unittest.cc" ]
-    deps = [
-      ":corruption_detection_message",
+      "../api/transport/rtp:corruption_detection_message",
+      "../rtc_base:checks",
       "../test:test_support",
     ]
   }
@@ -193,9 +177,10 @@ if (rtc_include_tests && !build_with_chromium) {
     deps = [
       ":common_video",
       ":corruption_detection_converters_unittest",
-      ":corruption_detection_message_unittest",
+      "../api:array_view",
       "../api:scoped_refptr",
       "../api/units:time_delta",
+      "../api/units:timestamp",
       "../api/video:video_frame",
       "../api/video:video_frame_i010",
       "../api/video:video_rtp_headers",
@@ -219,7 +204,6 @@ if (rtc_include_tests && !build_with_chromium) {
 
     data = common_video_resources
     if (is_android) {
-      deps += [ "//testing/android/native_test:native_test_support" ]
       shard_timeout = 900
     }
 

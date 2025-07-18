@@ -51,7 +51,7 @@ enum class ScheduleLocationChangeResult : uint8_t { Stopped, Completed, Started 
 enum class ScheduleHistoryNavigationResult : bool { Completed, Aborted };
 
 class NavigationScheduler final {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NavigationScheduler, Loader);
 public:
     explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();

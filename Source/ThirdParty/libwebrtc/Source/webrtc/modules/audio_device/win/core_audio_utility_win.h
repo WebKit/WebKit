@@ -84,7 +84,8 @@ class ScopedMMCSSRegistration {
   }
 
   explicit ScopedMMCSSRegistration(const wchar_t* task_name) {
-    RTC_DLOG(LS_INFO) << "ScopedMMCSSRegistration: " << rtc::ToUtf8(task_name);
+    RTC_DLOG(LS_INFO) << "ScopedMMCSSRegistration: "
+                      << webrtc::ToUtf8(task_name);
     // Register the calling thread with MMCSS for the supplied `task_name`.
     DWORD mmcss_task_index = 0;
     mmcss_handle_ = AvSetMmThreadCharacteristicsW(task_name, &mmcss_task_index);

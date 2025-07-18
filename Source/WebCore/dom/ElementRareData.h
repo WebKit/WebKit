@@ -50,18 +50,6 @@
 
 namespace WebCore {
 
-struct LayoutUnitMarkableTraits {
-    static bool isEmptyValue(LayoutUnit value)
-    {
-        return value == LayoutUnit(-1);
-    }
-
-    static LayoutUnit emptyValue()
-    {
-        return LayoutUnit(-1);
-    }
-};
-
 class ElementRareData : public NodeRareData {
 public:
     explicit ElementRareData();
@@ -261,8 +249,8 @@ private:
 
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
 
-    Markable<LayoutUnit, LayoutUnitMarkableTraits> m_lastRememberedLogicalWidth;
-    Markable<LayoutUnit, LayoutUnitMarkableTraits> m_lastRememberedLogicalHeight;
+    Markable<LayoutUnit> m_lastRememberedLogicalWidth;
+    Markable<LayoutUnit> m_lastRememberedLogicalHeight;
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 

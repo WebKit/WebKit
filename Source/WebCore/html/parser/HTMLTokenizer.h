@@ -157,8 +157,8 @@ private:
 
     void parseError();
 
-    void bufferASCIICharacter(UChar);
-    void bufferCharacter(UChar);
+    void bufferASCIICharacter(char16_t);
+    void bufferCharacter(char16_t);
     template<typename CharacterType> void bufferCharacters(std::span<const CharacterType>);
     void bufferCharacters(ASCIILiteral literal) { bufferCharacters(literal.span8()); }
 
@@ -168,16 +168,16 @@ private:
 
     // Return true if we wil emit a character token before dealing with the buffered end tag.
     void flushBufferedEndTag();
-    bool commitToPartialEndTag(SegmentedString&, UChar, State);
+    bool commitToPartialEndTag(SegmentedString&, char16_t, State);
     bool commitToCompleteEndTag(SegmentedString&);
 
-    void appendToTemporaryBuffer(UChar);
+    void appendToTemporaryBuffer(char16_t);
     bool temporaryBufferIs(ASCIILiteral);
 
     // Sometimes we speculatively consume input characters and we don't know whether they represent
     // end tags or RCDATA, etc. These functions help manage these state.
     bool inEndTagBufferingState() const;
-    void appendToPossibleEndTag(UChar);
+    void appendToPossibleEndTag(char16_t);
     void saveEndTagNameIfNeeded();
     bool isAppropriateEndTag() const;
 
@@ -192,12 +192,12 @@ private:
     mutable HTMLToken m_token;
 
     // https://html.spec.whatwg.org/#additional-allowed-character
-    UChar m_additionalAllowedCharacter { 0 };
+    char16_t m_additionalAllowedCharacter { 0 };
 
     // https://html.spec.whatwg.org/#preprocessing-the-input-stream
     InputStreamPreprocessor<HTMLTokenizer> m_preprocessor;
 
-    Vector<UChar, 32> m_appropriateEndTagName;
+    Vector<char16_t, 32> m_appropriateEndTagName;
 
     // https://html.spec.whatwg.org/#temporary-buffer
     Vector<LChar, 32> m_temporaryBuffer;

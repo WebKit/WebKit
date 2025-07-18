@@ -10,8 +10,12 @@
 
 #include "common_video/h264/pps_parser.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
+#include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
@@ -36,9 +40,9 @@ void WritePps(const PpsParser::PpsState& pps,
               int slice_group_map_type,
               int num_slice_groups,
               int pic_size_in_map_units,
-              rtc::Buffer* out_buffer) {
+              Buffer* out_buffer) {
   uint8_t data[kPpsBufferMaxSize] = {0};
-  rtc::BitBufferWriter bit_buffer(data, kPpsBufferMaxSize);
+  BitBufferWriter bit_buffer(data, kPpsBufferMaxSize);
 
   // pic_parameter_set_id: ue(v)
   bit_buffer.WriteExponentialGolomb(pps.id);
@@ -134,7 +138,7 @@ void WritePps(const PpsParser::PpsState& pps,
     bit_buffer.GetCurrentOffset(&byte_offset, &bit_offset);
   }
 
-  H264::WriteRbsp(rtc::MakeArrayView(data, byte_offset), out_buffer);
+  H264::WriteRbsp(MakeArrayView(data, byte_offset), out_buffer);
 }
 
 class PpsParserTest : public ::testing::Test {
@@ -195,7 +199,7 @@ class PpsParserTest : public ::testing::Test {
   }
 
   PpsParser::PpsState generated_pps_;
-  rtc::Buffer buffer_;
+  Buffer buffer_;
   std::optional<PpsParser::PpsState> parsed_pps_;
 };
 
@@ -219,7 +223,7 @@ TEST_F(PpsParserTest, MaxPps) {
 }
 
 TEST_F(PpsParserTest, ParseSliceHeader) {
-  rtc::ArrayView<const uint8_t> chunk(kH264BitstreamChunk);
+  ArrayView<const uint8_t> chunk(kH264BitstreamChunk);
   std::vector<H264::NaluIndex> nalu_indices = H264::FindNaluIndices(chunk);
   EXPECT_EQ(nalu_indices.size(), 3ull);
   for (const auto& index : nalu_indices) {

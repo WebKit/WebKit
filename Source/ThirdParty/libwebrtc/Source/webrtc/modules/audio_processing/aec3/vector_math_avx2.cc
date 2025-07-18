@@ -19,7 +19,7 @@ namespace webrtc {
 namespace aec3 {
 
 // Elementwise square root.
-void VectorMath::SqrtAVX2(rtc::ArrayView<float> x) {
+void VectorMath::SqrtAVX2(ArrayView<float> x) {
   const int x_size = static_cast<int>(x.size());
   const int vector_limit = x_size >> 3;
 
@@ -36,9 +36,9 @@ void VectorMath::SqrtAVX2(rtc::ArrayView<float> x) {
 }
 
 // Elementwise vector multiplication z = x * y.
-void VectorMath::MultiplyAVX2(rtc::ArrayView<const float> x,
-                              rtc::ArrayView<const float> y,
-                              rtc::ArrayView<float> z) {
+void VectorMath::MultiplyAVX2(ArrayView<const float> x,
+                              ArrayView<const float> y,
+                              ArrayView<float> z) {
   RTC_DCHECK_EQ(z.size(), x.size());
   RTC_DCHECK_EQ(z.size(), y.size());
   const int x_size = static_cast<int>(x.size());
@@ -58,8 +58,7 @@ void VectorMath::MultiplyAVX2(rtc::ArrayView<const float> x,
 }
 
 // Elementwise vector accumulation z += x.
-void VectorMath::AccumulateAVX2(rtc::ArrayView<const float> x,
-                                rtc::ArrayView<float> z) {
+void VectorMath::AccumulateAVX2(ArrayView<const float> x, ArrayView<float> z) {
   RTC_DCHECK_EQ(z.size(), x.size());
   const int x_size = static_cast<int>(x.size());
   const int vector_limit = x_size >> 3;

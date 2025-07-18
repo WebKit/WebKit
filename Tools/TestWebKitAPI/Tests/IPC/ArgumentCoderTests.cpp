@@ -103,7 +103,7 @@ public:
 
 private:
     struct Impl {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Impl);
 
         Impl()
             : buffer(1024, static_cast<uint8_t>(0))
@@ -118,7 +118,7 @@ private:
 
 
 struct EncodingCounter {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(EncodingCounter);
 
     struct CounterValues {
         CounterValues() = default;
@@ -334,7 +334,7 @@ TYPED_TEST_SUITE_P(ArgumentCoderDecodingMoveCounterTest);
 // move assignment operator increase the moved-in object's move counter.
 
 struct DecodingMoveCounter {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DecodingMoveCounter);
 
     DecodingMoveCounter() = default;
 

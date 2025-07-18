@@ -12,26 +12,26 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 TEST(ScopedFakeClockTest, OverridesGlobalClock) {
   const int64_t kFixedTimeUs = 100000;
-  int64_t real_time_us = rtc::TimeMicros();
+  int64_t real_time_us = TimeMicros();
   EXPECT_NE(real_time_us, 0);
   {
     ScopedFakeClock scoped;
-    EXPECT_EQ(rtc::TimeMicros(), 0);
+    EXPECT_EQ(TimeMicros(), 0);
 
-    scoped.AdvanceTime(webrtc::TimeDelta::Millis(1));
-    EXPECT_EQ(rtc::TimeMicros(), 1000);
+    scoped.AdvanceTime(TimeDelta::Millis(1));
+    EXPECT_EQ(TimeMicros(), 1000);
 
-    scoped.SetTime(webrtc::Timestamp::Micros(kFixedTimeUs));
-    EXPECT_EQ(rtc::TimeMicros(), kFixedTimeUs);
+    scoped.SetTime(Timestamp::Micros(kFixedTimeUs));
+    EXPECT_EQ(TimeMicros(), kFixedTimeUs);
 
-    scoped.AdvanceTime(webrtc::TimeDelta::Millis(1));
-    EXPECT_EQ(rtc::TimeMicros(), kFixedTimeUs + 1000);
+    scoped.AdvanceTime(TimeDelta::Millis(1));
+    EXPECT_EQ(TimeMicros(), kFixedTimeUs + 1000);
   }
 
-  EXPECT_NE(rtc::TimeMicros(), kFixedTimeUs + 1000);
-  EXPECT_GE(rtc::TimeMicros(), real_time_us);
+  EXPECT_NE(TimeMicros(), kFixedTimeUs + 1000);
+  EXPECT_GE(TimeMicros(), real_time_us);
 }
-}  // namespace rtc
+}  // namespace webrtc

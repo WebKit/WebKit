@@ -20,8 +20,8 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/random.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 
 #if defined(WEBRTC_POSIX)
@@ -33,7 +33,7 @@ namespace webrtc {
 namespace {
 
 void TestScreenDrawerLock(
-    rtc::FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor) {
+    FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor) {
   constexpr int kLockDurationMs = 100;
 
   std::atomic<bool> created(false);
@@ -43,7 +43,7 @@ void TestScreenDrawerLock(
    public:
     Task(std::atomic<bool>* created,
          const std::atomic<bool>& ready,
-         rtc::FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor)
+         FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor)
         : created_(created), ready_(ready), ctor_(ctor) {}
 
     ~Task() = default;
@@ -54,46 +54,46 @@ void TestScreenDrawerLock(
       created_->store(true);
       // Wait for the main thread to get the signal of created_.
       while (!ready_.load()) {
-        SleepMs(1);
+        Thread::SleepMs(1);
       }
       // At this point, main thread should begin to create a second lock. Though
       // it's still possible the second lock won't be created before the
       // following sleep has been finished, the possibility will be
       // significantly reduced.
-      const int64_t current_ms = rtc::TimeMillis();
+      const int64_t current_ms = TimeMillis();
       // SleepMs() may return early. See
       // https://cs.chromium.org/chromium/src/third_party/webrtc/system_wrappers/include/sleep.h?rcl=4a604c80cecce18aff6fc5e16296d04675312d83&l=20
       // But we need to ensure at least 100 ms has been passed before unlocking
       // `lock`.
-      while (rtc::TimeMillis() - current_ms < kLockDurationMs) {
-        SleepMs(kLockDurationMs - (rtc::TimeMillis() - current_ms));
+      while (TimeMillis() - current_ms < kLockDurationMs) {
+        Thread::SleepMs(kLockDurationMs - (TimeMillis() - current_ms));
       }
     }
 
    private:
     std::atomic<bool>* const created_;
     const std::atomic<bool>& ready_;
-    const rtc::FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor_;
+    const FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor_;
   } task(&created, ready, ctor);
 
-  auto lock_thread = rtc::PlatformThread::SpawnJoinable(
-      [&task] { task.RunTask(); }, "lock_thread");
+  auto lock_thread =
+      PlatformThread::SpawnJoinable([&task] { task.RunTask(); }, "lock_thread");
 
   // Wait for the first lock in Task::RunTask() to be created.
   // TODO(zijiehe): Find a better solution to wait for the creation of the first
   // lock. See
   // https://chromium-review.googlesource.com/c/607688/13/webrtc/modules/desktop_capture/screen_drawer_unittest.cc
   while (!created.load()) {
-    SleepMs(1);
+    Thread::SleepMs(1);
   }
 
-  const int64_t start_ms = rtc::TimeMillis();
+  const int64_t start_ms = TimeMillis();
   ready.store(true);
   // This is unlikely to fail, but just in case current thread is too laggy and
   // cause the SleepMs() in RunTask() to finish before we creating another lock.
-  ASSERT_GT(kLockDurationMs, rtc::TimeMillis() - start_ms);
+  ASSERT_GT(kLockDurationMs, TimeMillis() - start_ms);
   ctor();
-  ASSERT_LE(kLockDurationMs, rtc::TimeMillis() - start_ms);
+  ASSERT_LE(kLockDurationMs, TimeMillis() - start_ms);
 }
 
 }  // namespace
@@ -118,7 +118,7 @@ TEST(ScreenDrawerTest, DISABLED_DrawRectangles) {
   }
 
   DesktopRect rect = drawer->DrawableRegion();
-  Random random(rtc::TimeMicros());
+  Random random(TimeMicros());
   for (int i = 0; i < 100; i++) {
     // Make sure we at least draw one pixel.
     int left = random.Rand(rect.left(), rect.right() - 2);
@@ -130,11 +130,11 @@ TEST(ScreenDrawerTest, DISABLED_DrawRectangles) {
                   random.Rand<uint8_t>(), random.Rand<uint8_t>()));
 
     if (i == 50) {
-      SleepMs(10000);
+      Thread::SleepMs(10000);
     }
   }
 
-  SleepMs(10000);
+  Thread::SleepMs(10000);
 }
 
 #if defined(THREAD_SANITIZER)  // bugs.webrtc.org/10019

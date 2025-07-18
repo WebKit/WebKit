@@ -132,7 +132,7 @@ static hb_font_funcs_t* harfBuzzFontFunctions()
     return fontFunctions;
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(0, 0)
     , m_font(font)
     , m_characters(characters)
@@ -241,7 +241,7 @@ struct HBRun {
     UScriptCode script;
 };
 
-static std::optional<HBRun> findNextRun(std::span<const UChar> characters, unsigned offset)
+static std::optional<HBRun> findNextRun(std::span<const char16_t> characters, unsigned offset)
 {
     SurrogatePairAwareTextIterator textIterator(characters.subspan(offset), offset, characters.size());
     char32_t character;
@@ -308,7 +308,7 @@ static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
     return HB_SCRIPT_INVALID;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const UChar> characters, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.

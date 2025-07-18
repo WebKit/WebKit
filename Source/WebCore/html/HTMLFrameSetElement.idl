@@ -24,6 +24,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
     [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 
+    // https://html.spec.whatwg.org/multipage/webappapis.html#window-reflecting-body-element-event-handler-set
     [WindowEventHandler] attribute EventHandler onblur;
     [WindowEventHandler] attribute OnErrorEventHandler onerror;
     [WindowEventHandler] attribute EventHandler onfocus;

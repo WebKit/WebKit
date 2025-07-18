@@ -211,15 +211,49 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIMockNodeWithgetRecent)
 TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreateParse)
 {
     auto *script = @[
-        @"let createdNode = await browser.bookmarks.create({title: 'My Test Bookmark', url: 'https://example.com/test1'})",
-        @"  browser.test.assertEq('My Test Bookmark', createdNode.title, 'Title should match');",
-        @"  browser.test.assertEq('https://example.com/test1', createdNode.url, 'URL should match');",
-        @"  browser.test.assertEq('bookmark', createdNode.type, 'Type should be bookmark');",
-        @"let createdNode2 = await browser.bookmarks.create({title: 'My Test Folder', parentId: '534'})",
-        @"  browser.test.assertEq('My Test Folder', createdNode2.title, 'Title should match');",
-        @"  browser.test.assertEq('folder', createdNode2.type, 'type should be folder because url is not specified');",
-        @"  browser.test.assertEq('534', createdNode2.parentId, 'parentId should match');",
-        @"  browser.test.notifyPass()",
+        @"let createdNode = await browser.bookmarks.create({id: 'test1', title: 'My Test Bookmark', url: 'https://example.com/test1'})",
+        @"browser.test.assertEq('My Test Bookmark', createdNode.title, 'Title should match');",
+        @"browser.test.assertEq('https://example.com/test1', createdNode.url, 'URL should match');",
+        @"browser.test.assertEq('bookmark', createdNode.type, 'Type should be bookmark');",
+        @"let createdNode2 = await browser.bookmarks.create({id: 'test2', title: 'My Test Folder', parentId: 'testFavorites'})",
+        @"browser.test.assertEq('My Test Folder', createdNode2.title, 'Title should match');",
+        @"browser.test.assertEq('folder', createdNode2.type, 'type should be folder because url is not specified');",
+        @"browser.test.assertEq('testfav', createdNode2.parentId, 'parentId should match');",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetTree)
+{
+    auto *script = @[
+        @"let bookmark1 = await browser.bookmarks.create({type: 'bookmark', id: 'bookmark1', title: 'Top Bookmark 1', url: 'http://example.com/bm1'});",
+        @"let folder1 = await browser.bookmarks.create({id: 'folder1', type: 'folder', title: 'Top Folder 1'});",
+        @"let bookmark2 = await browser.bookmarks.create({id: 'bookmark2', title: 'Child Bookmark 2', url: 'http://example.com/bm2', parentId: folder1.id});",
+        @"let bookmark3 = await browser.bookmarks.create({id: 'bookmark3', title: 'Top Bookmark 3', url: 'http://example.com/bm3'});",
+        @"let tree = await browser.bookmarks.getTree();",
+        @"browser.test.assertEq(1, tree.length, 'Tree should have one root node');",
+        @"let root = tree[0];",
+        @"browser.test.assertEq('testBookmarksRoot', root.id, 'Root node ID should be root');",
+        @"browser.test.assertEq('folder', root.type, 'Root node type should be folder');",
+        @"browser.test.assertTrue(root.children.length >= 1, 'Root should have at least one child (default folder)');",
+        @"let foundBookmark1 = root.children.find(n => n.id === bookmark1.id);",
+        @"browser.test.assertEq('Top Bookmark 1', foundBookmark1.title, 'Bm1 title matches');",
+        @"browser.test.assertEq('http://example.com/bm1', foundBookmark1.url, 'Bm1 URL matches');",
+        @"browser.test.assertEq('bookmark', foundBookmark1.type, 'Bm1 type is bookmark');",
+        @"browser.test.assertEq(root.id, foundBookmark1.parentId, 'Bm1 parentId matches default folder');",
+        @"let foundFolder1 = root.children.find(n => n.id === folder1.id);",
+        @"browser.test.assertEq('Top Folder 1', foundFolder1.title, 'Folder1 title matches');",
+        @"browser.test.assertEq('folder', foundFolder1.type, 'Folder1 type is folder');",
+        @"browser.test.assertEq(root.id, foundFolder1.parentId, 'Folder1 parentId matches default folder');",
+        @"browser.test.assertEq(bookmark2.id, foundFolder1.children[0].id, 'Folder1 should have children array');",
+        @"let foundBookmark2 = foundFolder1.children.find(n => n.id === bookmark2.id);",
+        @"browser.test.assertEq('Child Bookmark 2', foundBookmark2.title, 'Bm2 title matches');",
+        @"browser.test.assertEq('http://example.com/bm2', foundBookmark2.url, 'Bm2 URL matches');",
+        @"browser.test.assertEq('bookmark', foundBookmark2.type, 'Bm2 type is bookmark');",
+        @"browser.test.assertEq(folder1.id, foundBookmark2.parentId, 'Bm2 parentId matches Folder1');",
+        @"browser.test.notifyPass()",
     ];
 
     Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);

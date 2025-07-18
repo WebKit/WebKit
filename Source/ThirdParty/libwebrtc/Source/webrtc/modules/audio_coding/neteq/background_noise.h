@@ -13,6 +13,7 @@
 
 #include <string.h>  // size_t
 
+#include <cstdint>
 #include <memory>
 
 #include "api/array_view.h"
@@ -45,7 +46,7 @@ class BackgroundNoise {
 
   // Generates background noise given a random vector and writes the output to
   // `buffer`.
-  void GenerateBackgroundNoise(rtc::ArrayView<const int16_t> random_vector,
+  void GenerateBackgroundNoise(ArrayView<const int16_t> random_vector,
                                size_t channel,
                                int mute_slope,
                                bool too_many_expands,
@@ -69,7 +70,7 @@ class BackgroundNoise {
 
   // Copies `input` to the filter state. Will not copy more than `kMaxLpcOrder`
   // elements.
-  void SetFilterState(size_t channel, rtc::ArrayView<const int16_t> input);
+  void SetFilterState(size_t channel, ArrayView<const int16_t> input);
 
   // Returns `scale_` for `channel`.
   int16_t Scale(size_t channel) const;

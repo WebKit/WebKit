@@ -10,6 +10,21 @@
 
 #include "test/testsupport/file_utils.h"
 
+#include <cstdio>
+#include <cstdlib>
+#include <optional>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "absl/base/attributes.h"
+#include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/crypto_random.h"
+#include "rtc_base/string_utils.h"
+#include "rtc_base/strings/string_builder.h"
+#include "test/testsupport/file_utils_override.h"
+
 #if defined(WEBRTC_POSIX)
 #include <unistd.h>
 #endif
@@ -38,25 +53,11 @@
 #define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <memory>
-#include <type_traits>
-#include <utility>
-
 #if defined(WEBRTC_IOS)
 #include "test/testsupport/ios_file_utils.h"
 #elif defined(WEBRTC_MAC)
 #include "test/testsupport/mac_file_utils.h"
 #endif
-
-#include "absl/strings/string_view.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/crypto_random.h"
-#include "rtc_base/string_utils.h"
-#include "rtc_base/strings/string_builder.h"
-#include "test/testsupport/file_utils_override.h"
 
 namespace webrtc {
 namespace test {
@@ -79,6 +80,13 @@ std::string DirName(absl::string_view path) {
   return std::string(path.substr(0, path.find_last_of(kPathDelimiter)));
 }
 
+absl::string_view FileName(absl::string_view path) {
+  if (path.find_last_of(kPathDelimiter) == absl::string_view::npos) {
+    return path;
+  }
+  return path.substr(path.find_last_of(kPathDelimiter) + 1);
+}
+
 bool FileExists(absl::string_view file_name) {
   struct stat file_info = {0};
   return stat(std::string(file_name).c_str(), &file_info) == 0;
@@ -91,18 +99,18 @@ bool DirExists(absl::string_view directory_name) {
 }
 
 std::string OutputPath() {
-  return webrtc::test::internal::OutputPath();
+  return test::internal::OutputPath();
 }
 
 std::string OutputPathWithRandomDirectory() {
-  std::string path = webrtc::test::internal::OutputPath();
-  std::string rand_dir = path + rtc::CreateRandomUuid();
-
-  return CreateDir(rand_dir) ? rand_dir + std::string(kPathDelimiter) : path;
+  std::string path = test::internal::OutputPath();
+  std::string rand_dir = path + CreateRandomUuid();
+  RTC_CHECK(CreateDir(rand_dir)) << "Failed to create dir: " << rand_dir;
+  return rand_dir + std::string(kPathDelimiter);
 }
 
 std::string WorkingDir() {
-  return webrtc::test::internal::WorkingDir();
+  return test::internal::WorkingDir();
 }
 
 // Generate a temporary filename in a safe way.
@@ -110,13 +118,13 @@ std::string WorkingDir() {
 std::string TempFilename(absl::string_view dir, absl::string_view prefix) {
 #ifdef WIN32
   wchar_t filename[MAX_PATH];
-  if (::GetTempFileNameW(rtc::ToUtf16(dir).c_str(),
-                         rtc::ToUtf16(prefix).c_str(), 0, filename) != 0)
-    return rtc::ToUtf8(filename);
+  if (::GetTempFileNameW(webrtc::ToUtf16(dir).c_str(),
+                         webrtc::ToUtf16(prefix).c_str(), 0, filename) != 0)
+    return webrtc::ToUtf8(filename);
   RTC_DCHECK_NOTREACHED();
   return "";
 #else
-  rtc::StringBuilder os;
+  StringBuilder os;
   os << dir << "/" << prefix << "XXXXXX";
   std::string tempname = os.Release();
 
@@ -151,14 +159,15 @@ std::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
 
   // Init.
   WIN32_FIND_DATAW data;
-  HANDLE handle = ::FindFirstFileW(rtc::ToUtf16(path_str + '*').c_str(), &data);
+  HANDLE handle =
+      ::FindFirstFileW(webrtc::ToUtf16(path_str + '*').c_str(), &data);
   if (handle == INVALID_HANDLE_VALUE)
     return std::optional<std::vector<std::string>>();
 
   // Populate output.
   std::vector<std::string> found_entries;
   do {
-    const std::string name = rtc::ToUtf8(data.cFileName);
+    const std::string name = webrtc::ToUtf8(data.cFileName);
     if (name != "." && name != "..")
       found_entries.emplace_back(path_str + name);
   } while (::FindNextFileW(handle, &data) == TRUE);
@@ -221,6 +230,26 @@ bool RemoveDir(absl::string_view directory_name) {
 #endif
 }
 
+bool RemoveNonEmptyDir(absl::string_view directory_name) {
+  std::optional<std::vector<std::string>> dir_content =
+      ReadDirectory(directory_name);
+  if (dir_content.has_value()) {
+    for (const std::string& entry : *dir_content) {
+      if (DirExists(entry)) {
+        if (!RemoveNonEmptyDir(entry)) {
+          return false;
+        }
+      } else if (FileExists(entry)) {
+        if (!RemoveFile(entry)) {
+          return false;
+        }
+      }
+    }
+  }
+  // Directory should be emptied.
+  return RemoveDir(directory_name);
+}
+
 bool RemoveFile(absl::string_view file_name) {
 #ifdef WIN32
   return DeleteFileA(std::string(file_name).c_str()) != FALSE;
@@ -230,12 +259,12 @@ bool RemoveFile(absl::string_view file_name) {
 }
 
 std::string ResourcePath(absl::string_view name, absl::string_view extension) {
-  return webrtc::test::internal::ResourcePath(name, extension);
+  return test::internal::ResourcePath(name, extension);
 }
 
 std::string JoinFilename(absl::string_view dir, absl::string_view name) {
   RTC_CHECK(!dir.empty()) << "Special cases not implemented.";
-  rtc::StringBuilder os;
+  StringBuilder os;
   os << dir;
   // If the directory path already ends with a path delimiter don't append it
   if (dir.back() != kPathDelimiter.back()) {
@@ -248,7 +277,7 @@ std::string JoinFilename(absl::string_view dir, absl::string_view name) {
 size_t GetFileSize(absl::string_view filename) {
   FILE* f = fopen(std::string(filename).c_str(), "rb");
   size_t size = 0;
-  if (f != NULL) {
+  if (f != nullptr) {
     if (fseek(f, 0, SEEK_END) == 0) {
       size = ftell(f);
     }

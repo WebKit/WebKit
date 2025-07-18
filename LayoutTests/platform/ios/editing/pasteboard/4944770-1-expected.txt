@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x21
         RenderText {#text} at (0,0) size 22x19
           text run at (0,0) width 22: "foo"
-        RenderMenuList {SELECT} at (21,1) size 32x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (21,1) size 32x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 19x14
             RenderText at (0,0) size 6x14
               text run at (0,0) width 6: "1"
       RenderBlock {DIV} at (0,77) size 784x21
         RenderText {#text} at (0,0) size 22x19
           text run at (0,0) width 22: "foo"
-        RenderMenuList {SELECT} at (21,1) size 32x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (21,1) size 32x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 19x14
             RenderText at (0,0) size 6x14
               text run at (0,0) width 6: "1"

@@ -45,7 +45,7 @@ template<typename> class Observer;
 template <typename Out, typename... In>
 class Observer<Out(In...)> : public CanMakeWeakPtr<Observer<Out(In...)>> {
     WTF_MAKE_NONCOPYABLE(Observer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Observer);
 public:
     Observer(Function<Out(In...)>&& callback)
         : m_callback(WTFMove(callback))

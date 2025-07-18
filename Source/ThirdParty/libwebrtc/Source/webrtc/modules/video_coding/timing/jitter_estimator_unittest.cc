@@ -17,13 +17,11 @@
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/field_trials.h"
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/numerics/histogram_percentile_counter.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
@@ -113,7 +111,7 @@ TEST_F(JitterEstimatorTest, LowFramerateDisablesJitterEstimator) {
 }
 
 TEST_F(JitterEstimatorTest, RttMultAddCap) {
-  std::vector<std::pair<TimeDelta, rtc::HistogramPercentileCounter>>
+  std::vector<std::pair<TimeDelta, HistogramPercentileCounter>>
       jitter_by_rtt_mult_cap;
   jitter_by_rtt_mult_cap.emplace_back(
       /*rtt_mult_add_cap=*/TimeDelta::Millis(10), /*long_tail_boundary=*/1000);

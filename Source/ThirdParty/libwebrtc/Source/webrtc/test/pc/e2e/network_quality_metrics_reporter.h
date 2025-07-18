@@ -43,7 +43,7 @@ class NetworkQualityMetricsReporter
              const TrackIdStreamInfoMap* reporter_helper) override;
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
   void StopAndReportResults() override;
 
  private:

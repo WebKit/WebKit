@@ -12,6 +12,8 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -93,6 +93,11 @@ Window {
             }
         }
 
+        ProgressBar {
+            id: progress_bar
+            Layout.fillWidth: true
+        }
+
         RowLayout {
             id: web_layout
 
@@ -112,6 +117,16 @@ Window {
 
                     if (loadRequest.errorString)
                         console.log('WPEView error: ' + loadRequest.errorString);
+                }
+
+                onUrlChanged: function() {
+                    url_bar.text = web_view.url;
+                }
+
+                onLoadProgressChanged: function() {
+                    var value = web_view.loadProgress / 100;
+                    progress_bar.value = value;
+                    progress_bar.visible = value == 1 ? false : true;
                 }
             }
         }

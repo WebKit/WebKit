@@ -26,7 +26,7 @@ namespace test {
 
 ConfigurableFrameSizeEncoder::ConfigurableFrameSizeEncoder(
     size_t max_frame_size)
-    : callback_(NULL),
+    : callback_(nullptr),
       current_frame_size_(max_frame_size),
       codec_type_(kVideoCodecGeneric) {}
 

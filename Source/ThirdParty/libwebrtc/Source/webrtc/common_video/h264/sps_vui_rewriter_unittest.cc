@@ -10,11 +10,15 @@
 
 #include "common_video/h264/sps_vui_rewriter.h"
 
+#include <cstddef>
 #include <cstdint>
-#include <vector>
+#include <optional>
+#include <tuple>
 
+#include "api/array_view.h"
 #include "api/video/color_space.h"
 #include "common_video/h264/h264_common.h"
+#include "common_video/h264/sps_parser.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/logging.h"
@@ -150,37 +154,37 @@ static const VuiHeader kVuiLimitedRangeBt709Color = {
     /* transfer_characteristics= */ 1,
     /* matrix_coefficients= */ 1};
 
-static const webrtc::ColorSpace kColorSpaceH264Default(
+static const ColorSpace kColorSpaceH264Default(
     ColorSpace::PrimaryID::kUnspecified,
     ColorSpace::TransferID::kUnspecified,
     ColorSpace::MatrixID::kUnspecified,
     ColorSpace::RangeID::kLimited);
 
-static const webrtc::ColorSpace kColorSpacePrimariesBt709(
+static const ColorSpace kColorSpacePrimariesBt709(
     ColorSpace::PrimaryID::kBT709,
     ColorSpace::TransferID::kUnspecified,
     ColorSpace::MatrixID::kUnspecified,
     ColorSpace::RangeID::kLimited);
 
-static const webrtc::ColorSpace kColorSpaceTransferBt709(
+static const ColorSpace kColorSpaceTransferBt709(
     ColorSpace::PrimaryID::kUnspecified,
     ColorSpace::TransferID::kBT709,
     ColorSpace::MatrixID::kUnspecified,
     ColorSpace::RangeID::kLimited);
 
-static const webrtc::ColorSpace kColorSpaceMatrixBt709(
+static const ColorSpace kColorSpaceMatrixBt709(
     ColorSpace::PrimaryID::kUnspecified,
     ColorSpace::TransferID::kUnspecified,
     ColorSpace::MatrixID::kBT709,
     ColorSpace::RangeID::kLimited);
 
-static const webrtc::ColorSpace kColorSpaceFullRange(
+static const ColorSpace kColorSpaceFullRange(
     ColorSpace::PrimaryID::kBT709,
     ColorSpace::TransferID::kUnspecified,
     ColorSpace::MatrixID::kUnspecified,
     ColorSpace::RangeID::kFull);
 
-static const webrtc::ColorSpace kColorSpaceBt709LimitedRange(
+static const ColorSpace kColorSpaceBt709LimitedRange(
     ColorSpace::PrimaryID::kBT709,
     ColorSpace::TransferID::kBT709,
     ColorSpace::MatrixID::kBT709,
@@ -193,9 +197,9 @@ static const webrtc::ColorSpace kColorSpaceBt709LimitedRange(
 // The fake SPS that this generates also always has at least one emulation byte
 // at offset 2, since the first two bytes are always 0, and has a 0x3 as the
 // level_idc, to make sure the parser doesn't eat all 0x3 bytes.
-void GenerateFakeSps(const VuiHeader& vui, rtc::Buffer* out_buffer) {
+void GenerateFakeSps(const VuiHeader& vui, Buffer* out_buffer) {
   uint8_t rbsp[kSpsBufferMaxSize] = {0};
-  rtc::BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
+  BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
   // Profile byte.
   writer.WriteUInt8(0);
   // Constraint sets and reserved zero bits.
@@ -297,18 +301,18 @@ void GenerateFakeSps(const VuiHeader& vui, rtc::Buffer* out_buffer) {
     byte_count++;
   }
 
-  H264::WriteRbsp(rtc::MakeArrayView(rbsp, byte_count), out_buffer);
+  H264::WriteRbsp(MakeArrayView(rbsp, byte_count), out_buffer);
 }
 
 void TestSps(const VuiHeader& vui,
              const ColorSpace* color_space,
              SpsVuiRewriter::ParseResult expected_parse_result) {
-  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
-  rtc::Buffer original_sps;
+  LogMessage::LogToDebug(LS_VERBOSE);
+  Buffer original_sps;
   GenerateFakeSps(vui, &original_sps);
 
   std::optional<SpsParser::SpsState> sps;
-  rtc::Buffer rewritten_sps;
+  Buffer rewritten_sps;
   SpsVuiRewriter::ParseResult result = SpsVuiRewriter::ParseAndRewriteSps(
       original_sps, &sps, color_space, &rewritten_sps,
       SpsVuiRewriter::Direction::kIncoming);
@@ -322,7 +326,7 @@ void TestSps(const VuiHeader& vui,
 
   if (result == SpsVuiRewriter::ParseResult::kVuiRewritten) {
     // Ensure that added/rewritten SPS is parsable.
-    rtc::Buffer tmp;
+    Buffer tmp;
     result = SpsVuiRewriter::ParseAndRewriteSps(
         rewritten_sps, &sps, nullptr, &tmp,
         SpsVuiRewriter::Direction::kIncoming);
@@ -391,12 +395,12 @@ INSTANTIATE_TEST_SUITE_P(
                         SpsVuiRewriter::ParseResult::kVuiRewritten)));
 
 TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamOptimalVui) {
-  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+  LogMessage::LogToDebug(LS_VERBOSE);
 
-  rtc::Buffer optimal_sps;
+  Buffer optimal_sps;
   GenerateFakeSps(kVuiNoFrameBuffering, &optimal_sps);
 
-  rtc::Buffer buffer;
+  Buffer buffer;
   buffer.AppendData(kStartSequence);
   buffer.AppendData(optimal_sps);
   buffer.AppendData(kStartSequence);
@@ -407,12 +411,12 @@ TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamOptimalVui) {
 }
 
 TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamNoVui) {
-  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+  LogMessage::LogToDebug(LS_VERBOSE);
 
-  rtc::Buffer sps;
+  Buffer sps;
   GenerateFakeSps(kVuiNotPresent, &sps);
 
-  rtc::Buffer buffer;
+  Buffer buffer;
   buffer.AppendData(kStartSequence);
   buffer.AppendData(kIdr1);
   buffer.AppendData(kStartSequence);
@@ -421,10 +425,10 @@ TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamNoVui) {
   buffer.AppendData(kStartSequence);
   buffer.AppendData(kIdr2);
 
-  rtc::Buffer optimal_sps;
+  Buffer optimal_sps;
   GenerateFakeSps(kVuiNoFrameBuffering, &optimal_sps);
 
-  rtc::Buffer expected_buffer;
+  Buffer expected_buffer;
   expected_buffer.AppendData(kStartSequence);
   expected_buffer.AppendData(kIdr1);
   expected_buffer.AppendData(kStartSequence);
@@ -438,12 +442,12 @@ TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamNoVui) {
 }
 
 TEST(SpsVuiRewriterOutgoingAudTest, ParseOutgoingBitstreamWithAud) {
-  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+  LogMessage::LogToDebug(LS_VERBOSE);
 
-  rtc::Buffer optimal_sps;
+  Buffer optimal_sps;
   GenerateFakeSps(kVuiNoFrameBuffering, &optimal_sps);
 
-  rtc::Buffer buffer;
+  Buffer buffer;
   buffer.AppendData(kStartSequence);
   buffer.AppendData(kAud);
   buffer.AppendData(kStartSequence);
@@ -451,7 +455,7 @@ TEST(SpsVuiRewriterOutgoingAudTest, ParseOutgoingBitstreamWithAud) {
   buffer.AppendData(kStartSequence);
   buffer.AppendData(kIdr1);
 
-  rtc::Buffer expected_buffer;
+  Buffer expected_buffer;
   expected_buffer.AppendData(kStartSequence);
   expected_buffer.AppendData(optimal_sps);
   expected_buffer.AppendData(kStartSequence);

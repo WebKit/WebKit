@@ -81,7 +81,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
       bool report_infra_metrics);
 
   void Start(std::string test_case_name,
-             rtc::ArrayView<const std::string> peer_names,
+             ArrayView<const std::string> peer_names,
              int max_threads_count = 1);
 
   // Registers new call participant to the underlying video quality analyzer.
@@ -96,7 +96,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   // `analyzer_`.
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
 
   // Stops VideoQualityAnalyzerInterface to populate final data and metrics.
   // Should be invoked after analyzed video tracks are disposed.

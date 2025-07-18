@@ -67,8 +67,8 @@
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
@@ -231,7 +231,7 @@ RTCPReceiver::RTCPReceiver(const Environment& env,
 
 RTCPReceiver::~RTCPReceiver() {}
 
-void RTCPReceiver::IncomingPacket(rtc::ArrayView<const uint8_t> packet) {
+void RTCPReceiver::IncomingPacket(ArrayView<const uint8_t> packet) {
   if (packet.empty()) {
     RTC_LOG(LS_WARNING) << "Incoming empty RTCP packet";
     return;
@@ -394,7 +394,7 @@ std::vector<ReportBlockData> RTCPReceiver::GetLatestReportBlockData() const {
   return result;
 }
 
-bool RTCPReceiver::ParseCompoundPacket(rtc::ArrayView<const uint8_t> packet,
+bool RTCPReceiver::ParseCompoundPacket(ArrayView<const uint8_t> packet,
                                        PacketInformation* packet_information) {
   MutexLock lock(&rtcp_receiver_lock_);
 
@@ -1085,10 +1085,15 @@ bool RTCPReceiver::HandleCongestionControlFeedback(
     const CommonHeader& rtcp_block,
     PacketInformation* packet_information) {
   rtcp::CongestionControlFeedback feedback;
-  if (!feedback.Parse(rtcp_block)) {
+  if (!feedback.Parse(rtcp_block) || feedback.packets().empty()) {
     return false;
   }
-  packet_information->congestion_control_feedback.emplace(std::move(feedback));
+  uint32_t first_media_source_ssrc = feedback.packets()[0].ssrc;
+  if (first_media_source_ssrc == local_media_ssrc() ||
+      registered_ssrcs_.contains(first_media_source_ssrc)) {
+    packet_information->congestion_control_feedback.emplace(
+        std::move(feedback));
+  }
   return true;
 }
 

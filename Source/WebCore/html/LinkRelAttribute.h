@@ -41,7 +41,7 @@ class Document;
 enum class LinkIconType : uint8_t;
 
 struct LinkRelAttribute {
-    Markable<LinkIconType, EnumMarkableTraits<LinkIconType>> iconType;
+    Markable<LinkIconType> iconType;
     bool isStyleSheet : 1 { false };
     bool isAlternate : 1 { false };
     bool isDNSPrefetch : 1 { false };

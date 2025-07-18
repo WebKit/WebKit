@@ -64,10 +64,10 @@ static inline float advanceWidthForGlyph(const GlyphData& data)
 // FIXME: This hardcoded data can be removed when OpenType MATH font are widely available (http://wkbug/156837).
 struct StretchyCharacter {
     char32_t character;
-    UChar topChar;
-    UChar extensionChar;
-    UChar bottomChar;
-    UChar middleChar;
+    char16_t topChar;
+    char16_t extensionChar;
+    char16_t bottomChar;
+    char16_t middleChar;
 };
 
 static constexpr std::array stretchyCharacters {

@@ -37,7 +37,7 @@ LocalCurrentContextSaver::LocalCurrentContextSaver(CGContextRef cgContext, bool 
     if (cgContext == [[NSGraphicsContext currentContext] CGContext])
         return;
 
-    m_savedNSGraphicsContext = [NSGraphicsContext currentContext];
+    lazyInitialize(m_savedNSGraphicsContext, RetainPtr { [NSGraphicsContext currentContext] });
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:isFlipped];
     [NSGraphicsContext setCurrentContext:newContext];
     m_didSetGraphicsContext = true;

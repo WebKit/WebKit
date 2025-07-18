@@ -43,6 +43,8 @@
 #import <WebCore/PlatformImage.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -64,7 +66,7 @@ static CGRect squareCropRectForSize(CGSize size)
     return cropRect;
 }
 
-static PlatformImagePtr squareImage(CGImageRef image)
+static WebCore::PlatformImagePtr squareImage(CGImageRef image)
 {
     if (!image)
         return nil;

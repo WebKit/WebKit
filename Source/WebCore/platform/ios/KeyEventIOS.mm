@@ -271,7 +271,7 @@ int windowsKeyCodeForCharCode(unichar charCode)
     return 0;
 }
 
-static bool isFunctionKey(UChar charCode)
+static bool isFunctionKey(char16_t charCode)
 {
     switch (charCode) {
     // WebKit uses Unicode PUA codes in the OpenStep reserve range for some special keys.

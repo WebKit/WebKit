@@ -12,9 +12,12 @@
 
 #include <stddef.h>
 
+#include <cstdint>
 #include <limits>
+#include <vector>
 
 #include "absl/algorithm/container.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -87,13 +90,13 @@ std::vector<rtcp::TmmbItem> TMMBRHelp::FindBoundingSet(
   bounding_set.push_back(*min_bitrate_it);
   intersection[0] = 0;
   // Calculate its maximum packet rate (where its line crosses x-axis).
-  uint16_t packet_overhead = bounding_set.back().packet_overhead();
-  if (packet_overhead == 0) {
+  if (bounding_set.back().packet_overhead() == 0) {
     // Avoid division by zero.
     max_packet_rate[0] = std::numeric_limits<float>::max();
   } else {
     max_packet_rate[0] =
-        bounding_set.back().bitrate_bps() / static_cast<float>(packet_overhead);
+        bounding_set.back().bitrate_bps() /
+        static_cast<float>(bounding_set.back().packet_overhead());
   }
   // Remove from candidate list.
   min_bitrate_it->set_bitrate_bps(0);

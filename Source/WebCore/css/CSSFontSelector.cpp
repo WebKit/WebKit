@@ -100,7 +100,7 @@ CSSFontSelector::~CSSFontSelector()
 
     clearFonts();
 
-    if (auto fontCache = FontCache::forCurrentThreadIfNotDestroyed())
+    if (CheckedPtr fontCache = FontCache::forCurrentThreadIfNotDestroyed())
         fontCache->removeClient(*this);
 }
 
@@ -113,7 +113,7 @@ FontFaceSet& CSSFontSelector::fontFaceSet()
 {
     if (!m_fontFaceSet) {
         ASSERT(m_context);
-        m_fontFaceSet = FontFaceSet::create(*m_context, m_cssFontFaceSet.get());
+        m_fontFaceSet = FontFaceSet::create(protectedScriptExecutionContext(), m_cssFontFaceSet.get());
     }
 
     return *m_fontFaceSet;
@@ -139,9 +139,9 @@ void CSSFontSelector::buildStarted()
     ASSERT(m_cssConnectionsEncounteredDuringBuild.isEmpty());
     ASSERT(m_stagingArea.isEmpty());
     for (size_t i = 0; i < m_cssFontFaceSet->faceCount(); ++i) {
-        CSSFontFace& face = m_cssFontFaceSet.get()[i];
-        if (face.cssConnection())
-            m_cssConnectionsPossiblyToRemove.add(&face);
+        Ref face = m_cssFontFaceSet.get()[i];
+        if (face->cssConnection())
+            m_cssConnectionsPossiblyToRemove.add(face.get());
     }
 
     m_paletteMap.clear();
@@ -156,7 +156,7 @@ void CSSFontSelector::buildCompleted()
 
     // Some font faces weren't re-added during the build process.
     for (auto& face : m_cssConnectionsPossiblyToRemove) {
-        auto* connection = face->cssConnection();
+        RefPtr connection = face->cssConnection();
         ASSERT(connection);
         if (!m_cssConnectionsEncounteredDuringBuild.contains(connection))
             m_cssFontFaceSet->remove(*face);
@@ -177,17 +177,17 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         return;
     }
 
-    auto& style = fontFaceRule.properties();
-    RefPtr fontFamily = style.getPropertyCSSValue(CSSPropertyFontFamily);
-    RefPtr fontStyle = style.getPropertyCSSValue(CSSPropertyFontStyle);
-    RefPtr fontWeight = style.getPropertyCSSValue(CSSPropertyFontWeight);
-    RefPtr fontWidth = style.getPropertyCSSValue(CSSPropertyFontWidth);
-    RefPtr srcList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertySrc));
-    RefPtr unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
+    Ref style = fontFaceRule.properties();
+    RefPtr fontFamily = style->getPropertyCSSValue(CSSPropertyFontFamily);
+    RefPtr fontStyle = style->getPropertyCSSValue(CSSPropertyFontStyle);
+    RefPtr fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight);
+    RefPtr fontWidth = style->getPropertyCSSValue(CSSPropertyFontWidth);
+    RefPtr srcList = dynamicDowncast<CSSValueList>(style->getPropertyCSSValue(CSSPropertySrc));
+    RefPtr unicodeRange = style->getPropertyCSSValue(CSSPropertyUnicodeRange);
     RefPtr rangeList = downcast<CSSValueList>(unicodeRange.get());
-    RefPtr featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
-    RefPtr display = style.getPropertyCSSValue(CSSPropertyFontDisplay);
-    RefPtr sizeAdjust = style.getPropertyCSSValue(CSSPropertySizeAdjust);
+    RefPtr featureSettings = style->getPropertyCSSValue(CSSPropertyFontFeatureSettings);
+    RefPtr display = style->getPropertyCSSValue(CSSPropertyFontDisplay);
+    RefPtr sizeAdjust = style->getPropertyCSSValue(CSSPropertySizeAdjust);
     if (!fontFamily || !srcList || (unicodeRange && !rangeList))
         return;
 
@@ -213,7 +213,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (sizeAdjust)
         fontFace->setSizeAdjust(*sizeAdjust);
 
-    CSSFontFace::appendSources(fontFace, *srcList, m_context.get(), isInitiatingElementInUserAgentShadowTree);
+    CSSFontFace::appendSources(fontFace, *srcList, protectedScriptExecutionContext().ptr(), isInitiatingElementInUserAgentShadowTree);
 
     if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookUpByCSSConnection(fontFaceRule)) {
         // This adoption is fairly subtle. Script can trigger a purge of m_cssFontFaceSet at any time,
@@ -227,7 +227,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         // to enter the correct state() during the next pump(). This approach of making a new CSSFontFace is
         // simpler than computing and applying a diff of the StyleProperties.
         m_cssFontFaceSet->remove(*existingFace);
-        if (auto* existingWrapper = existingFace->existingWrapper())
+        if (RefPtr existingWrapper = existingFace->existingWrapper())
             existingWrapper->adopt(fontFace.get());
     }
 
@@ -258,8 +258,7 @@ void CSSFontSelector::addFontFeatureValuesRule(const StyleRuleFontFeatureValues&
     for (const auto& fontFamily : fontFeatureValuesRule.fontFamilies()) {
         // https://www.w3.org/TR/css-fonts-3/#font-family-casing
         auto lowercased = fontFamily.string().convertToLowercaseWithoutLocale();
-        auto exist = m_featureValues.get(lowercased);
-        if (exist)
+        if (RefPtr exist = m_featureValues.get(lowercased))
             exist->updateOrInsert(fontFeatureValues.get());
         else
             m_featureValues.set(lowercased, fontFeatureValues);
@@ -333,7 +332,7 @@ std::optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescri
     if (!m_context)
         return std::nullopt;
 
-    const auto& settings = m_context->settingsValues();
+    const auto& settings = protectedScriptExecutionContext()->settingsValues();
 
     UScriptCode script = fontDescription.script();
     auto familyNameIndex = m_fontFamilyNames.find(familyName);
@@ -394,9 +393,8 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto* document = dynamicDowncast<Document>(m_context.get());
-    auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
-    if (face) {
+    RefPtr document = dynamicDowncast<Document>(m_context.get());
+    if (RefPtr face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup)) {
         if (document && document->settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
         return { face->fontRanges(*fontDescriptionForLookup, fontPaletteValues, fontFeatureValues), isGenericFontFamily };
@@ -423,7 +421,7 @@ size_t CSSFontSelector::fallbackFontCount()
     if (m_isStopped)
         return 0;
 
-    return m_context->settingsValues().fontFallbackPrefersPictographs ? 1 : 0;
+    return protectedScriptExecutionContext()->settingsValues().fontFallbackPrefersPictographs ? 1 : 0;
 }
 
 RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescription, size_t index)
@@ -433,11 +431,12 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (m_isStopped)
         return nullptr;
 
-    if (!m_context->settingsValues().fontFallbackPrefersPictographs)
+    RefPtr context = m_context.get();
+    if (!context->settingsValues().fontFallbackPrefersPictographs)
         return nullptr;
-    auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
-    auto font = FontCache::forCurrentThread()->fontForFamily(fontDescription, pictographFontFamily);
-    if (auto* document = dynamicDowncast<Document>(m_context.get()); document && document->settingsValues().webAPIStatisticsEnabled)
+    auto& pictographFontFamily = context->settingsValues().fontGenericFamilies.pictographFontFamily();
+    RefPtr font = FontCache::forCurrentThread()->fontForFamily(fontDescription, pictographFontFamily);
+    if (RefPtr document = dynamicDowncast<Document>(context.get()); document && document->settingsValues().webAPIStatisticsEnabled)
         ResourceLoadObserver::shared().logFontLoad(*document, pictographFontFamily, !!font);
 
     return font;
@@ -450,7 +449,7 @@ bool CSSFontSelector::isSimpleFontSelectorForDescription() const
         return false;
 
     // FIXME: remove this when we fix counter style rules mutation.
-    if (auto* document = dynamicDowncast<Document>(m_context.get())) {
+    if (RefPtr document = dynamicDowncast<Document>(m_context.get())) {
         if (document->counterStyleRegistry().hasAuthorCounterStyles())
             return false;
     }

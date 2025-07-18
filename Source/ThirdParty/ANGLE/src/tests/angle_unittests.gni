@@ -159,10 +159,8 @@ angle_unittests_compiler_tests_sources = [
   "test_utils/ShaderCompileTreeTest.h",
 ]
 
-angle_unittests_glsl_mac_sources = [
-  "compiler_tests/RewriteDoWhile_test.cpp",
-  "compiler_tests/UnfoldShortCircuitAST_test.cpp",
-]
+angle_unittests_glsl_mac_sources =
+    [ "compiler_tests/UnfoldShortCircuitAST_test.cpp" ]
 
 # TODO(jmadill): should probably call this windows sources
 angle_unittests_hlsl_sources = [

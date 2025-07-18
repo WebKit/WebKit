@@ -37,7 +37,7 @@ namespace WTF {
 
 class ReadWriteLock {
     WTF_MAKE_NONCOPYABLE(ReadWriteLock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ReadWriteLock);
 public:
     ReadWriteLock() = default;
 

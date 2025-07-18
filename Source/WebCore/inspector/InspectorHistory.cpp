@@ -32,6 +32,7 @@
 #include "config.h"
 #include "InspectorHistory.h"
 
+#include "ExceptionOr.h"
 #include "Node.h"
 #include <wtf/TZoneMallocInlines.h>
 

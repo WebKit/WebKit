@@ -155,8 +155,8 @@ class AudioDeviceLinuxALSA : public AudioDeviceGeneric {
 
   Mutex mutex_;
 
-  rtc::PlatformThread _ptrThreadRec;
-  rtc::PlatformThread _ptrThreadPlay;
+  webrtc::PlatformThread _ptrThreadRec;
+  webrtc::PlatformThread _ptrThreadPlay;
 
   AudioMixerManagerLinuxALSA _mixerManager;
 

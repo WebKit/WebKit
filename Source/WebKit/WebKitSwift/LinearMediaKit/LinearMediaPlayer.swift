@@ -526,11 +526,11 @@ extension WKSLinearMediaPlayer {
     public var isMutedPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isMuted).eraseToAnyPublisher()
     }
-
+#if !canImport(AVKit, _version: 1270)
     public var sessionDisplayTitlePublisher: AnyPublisher<String?, Never> {
         publisher(for: \.sessionDisplayTitle).eraseToAnyPublisher()
     }
-
+#endif
     public var sessionThumbnailPublisher: AnyPublisher<UIImage?, Never> {
         publisher(for: \.sessionThumbnail).eraseToAnyPublisher()
     }

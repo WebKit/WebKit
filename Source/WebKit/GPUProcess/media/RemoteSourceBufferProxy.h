@@ -114,7 +114,7 @@ private:
     void setTimestampOffset(const MediaTime&);
     void setAppendWindowStart(const MediaTime&);
     void setAppendWindowEnd(const MediaTime&);
-    void setMaximumBufferSize(size_t, CompletionHandler<void()>&&);
+    void setMaximumBufferSize(uint64_t, CompletionHandler<void()>&&);
     void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::SourceBufferPrivate::ComputeSeekPromise::Result&&)>&&);
     void seekToTime(const MediaTime&);
     void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&);

@@ -53,7 +53,7 @@ private:
     bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == AtomString { sourceAttributeValue() }; }
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool supportsFocus() const final { return false; }
 

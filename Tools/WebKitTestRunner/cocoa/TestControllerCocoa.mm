@@ -118,7 +118,7 @@ static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
 
 VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
 {
-    RunLoop::protectedMain()->dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
+    RunLoop::mainSingleton().dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
         if (WTR::TestController::singleton().shouldUseFakeMachineReadableCodeResultsForImageAnalysis()) {
             auto result = adoptNS([FakeMachineReadableCodeImageAnalysis new]);

@@ -78,7 +78,7 @@ bool FrameInFlight::HaveAllPeersReceived() const {
 }
 
 void FrameInFlight::OnFrameEncoded(
-    webrtc::Timestamp time,
+    Timestamp time,
     std::optional<TimeDelta> time_between_encoded_frames,
     VideoFrameType frame_type,
     DataSize encoded_image_size,
@@ -113,8 +113,8 @@ void FrameInFlight::OnFrameEncoded(
 }
 
 void FrameInFlight::OnFramePreDecode(size_t peer,
-                                     webrtc::Timestamp received_time,
-                                     webrtc::Timestamp decode_start_time,
+                                     Timestamp received_time,
+                                     Timestamp decode_start_time,
                                      VideoFrameType frame_type,
                                      DataSize encoded_image_size) {
   receiver_stats_[peer].received_time = received_time;
@@ -132,7 +132,7 @@ bool FrameInFlight::HasReceivedTime(size_t peer) const {
 }
 
 void FrameInFlight::OnFrameDecoded(size_t peer,
-                                   webrtc::Timestamp time,
+                                   Timestamp time,
                                    int width,
                                    int height,
                                    const StreamCodecInfo& used_decoder,
@@ -158,7 +158,7 @@ bool FrameInFlight::HasDecodeEndTime(size_t peer) const {
   return it->second.decode_end_time.IsFinite();
 }
 
-void FrameInFlight::OnFrameRendered(size_t peer, webrtc::Timestamp time) {
+void FrameInFlight::OnFrameRendered(size_t peer, Timestamp time) {
   receiver_stats_[peer].rendered_time = time;
 }
 

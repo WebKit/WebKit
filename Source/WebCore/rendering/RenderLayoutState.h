@@ -209,7 +209,8 @@ class ContentVisibilityOverrideScope {
 public:
     enum class OverrideType {
         Hidden = 1 << 0,
-        Auto  = 1 << 1
+        Auto  = 1 << 1,
+        RevealedWhenFound = 1 << 2
     };
     ContentVisibilityOverrideScope(LocalFrameViewLayoutContext&, OptionSet<OverrideType>);
     ~ContentVisibilityOverrideScope();

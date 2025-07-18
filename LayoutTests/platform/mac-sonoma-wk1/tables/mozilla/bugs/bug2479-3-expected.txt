@@ -1,0 +1,128 @@
+layer at (0,0) size 785x765
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x765
+  RenderBlock {HTML} at (0,0) size 785x765
+    RenderBody {BODY} at (8,21) size 769x728
+      RenderBlock {H1} at (0,0) size 769x32
+        RenderText {#text} at (0,0) size 757x32
+          text run at (0,0) width 757: "Generic Table Tests - 1"
+      RenderBlock {P} at (0,53) size 769x33
+        RenderText {#text} at (0,0) size 752x32
+          text run at (0,0) width 752: "If you have any comments to make regarding this"
+          text run at (0,16) width 208: "test, e-mail "
+        RenderInline {A} at (208,16) size 432x16 [color=#0000EE]
+          RenderText {#text} at (208,16) size 432x16
+            text run at (208,16) width 432: "py8ieh=eviltests@bath.ac.uk"
+        RenderText {#text} at (640,16) size 16x16
+          text run at (640,16) width 16: "."
+      RenderBlock {DL} at (0,101) size 769x65
+        RenderBlock {DT} at (0,0) size 769x16
+          RenderText {#text} at (0,0) size 208x16
+            text run at (0,0) width 208: "Prerequisites"
+        RenderBlock {DD} at (40,16) size 729x48
+          RenderText {#text} at (0,0) size 720x48
+            text run at (0,0) width 640: "Browsers that are subjected to this test"
+            text run at (0,16) width 720: "should support CSS1 and the CSS2 table model,"
+            text run at (0,32) width 336: "and multiple classes."
+      RenderBlock {P} at (0,181) size 769x126 [border: (5px double #FF0000)]
+        RenderBlock (anonymous) at (13,13) size 743x16
+          RenderText {#text} at (0,0) size 624x16
+            text run at (0,0) width 624: "If this paragraph breaks the line here:"
+        RenderTable {SPAN} at (13,29) size 144x16
+          RenderTableSection (anonymous) at (0,0) size 144x16
+            RenderTableRow (anonymous) at (0,0) size 144x16
+              RenderTableCell (anonymous) at (0,0) size 144x16 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 144x16
+                  text run at (0,0) width 144: "and here:"
+        RenderBlock (anonymous) at (13,45) size 743x67
+          RenderText {#text} at (0,0) size 288x16
+            text run at (0,0) width 288: "then your browser "
+          RenderInline {EM} at (288,0) size 192x16
+            RenderText {#text} at (288,0) size 192x16
+              text run at (288,0) width 192: "does support"
+          RenderText {#text} at (0,0) size 736x34
+            text run at (480,0) width 256: " table values on"
+            text run at (0,18) width 164: "'display'. "
+          RenderInline {STRONG} at (0,18) size 708x49
+            RenderText {#text} at (0,18) size 708x49
+              text run at (163,18) width 527: "If this paragraphs flows without"
+              text run at (0,35) width 708: "any undue breaks, then you should mark your"
+              text run at (0,51) width 642: "browser as not supporting table values!"
+      RenderBlock {H2} at (0,326) size 769x25
+        RenderText {#text} at (0,0) size 543x24
+          text run at (0,0) width 543: "1. Table -> Table Cell"
+      RenderBlock {P} at (0,370) size 769x65
+        RenderText {#text} at (0,0) size 736x64
+          text run at (0,0) width 736: "Below there should be a gray bar, spanning the"
+          text run at (0,16) width 736: "width of the BODY, with the text \"Left\" to the"
+          text run at (0,32) width 704: "left and the text \"Right\", on the same line,"
+          text run at (0,48) width 304: "flush to the right."
+      RenderTable {DIV} at (0,450) size 769x17 [bgcolor=#C0C0C0]
+        RenderTableSection (anonymous) at (0,0) size 769x16
+          RenderTableRow (anonymous) at (0,0) size 769x16
+            RenderTableCell {DIV} at (0,0) size 342x16 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 64x16
+                text run at (0,0) width 64: "Left"
+            RenderTableCell {DIV} at (341,0) size 429x16 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (347,0) size 81x16
+                text run at (347,0) width 81: "Right"
+      RenderBlock {H2} at (0,486) size 769x25
+        RenderText {#text} at (0,0) size 346x24
+          text run at (0,0) width 346: "Submit Results"
+      RenderBlock {FORM} at (0,530) size 769x36
+        RenderBlock {P} at (0,0) size 769x35
+          RenderText {#text} at (0,0) size 640x16
+            text run at (0,0) width 640: "How does your browser fare on this test?"
+          RenderMenuList {SELECT} at (0,17) size 241x18 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (0,0) size 241x18
+              RenderText at (8,2) size 139x13
+                text run at (8,2) width 139: "The test renders correctly."
+          RenderText {#text} at (241,17) size 16x16
+            text run at (241,17) width 16: " "
+          RenderInline {LABEL} at (257,17) size 292x16
+            RenderText {#text} at (257,17) size 144x16
+              text run at (257,17) width 144: "Comment: "
+            RenderTextControl {INPUT} at (401,16) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+          RenderText {#text} at (548,17) size 17x16
+            text run at (548,17) width 17: " "
+          RenderButton {INPUT} at (564,17) size 54x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,2) size 37x13
+              RenderText at (0,0) size 37x13
+                text run at (0,0) width 37: "Submit"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,599) size 769x17
+        RenderText {#text} at (0,0) size 160x16
+          text run at (0,0) width 160: "Up to the "
+        RenderInline {A} at (160,0) size 176x16 [color=#0000EE]
+          RenderText {#text} at (160,0) size 176x16
+            text run at (160,0) width 176: "Table Tests"
+        RenderText {#text} at (336,0) size 16x16
+          text run at (336,0) width 16: "."
+      RenderBlock {P} at (0,631) size 769x17
+        RenderText {#text} at (0,0) size 160x16
+          text run at (0,0) width 160: "Up to the "
+        RenderInline {A} at (160,0) size 240x16 [color=#0000EE]
+          RenderText {#text} at (160,0) size 240x16
+            text run at (160,0) width 240: "Evil Tests Page"
+        RenderText {#text} at (400,0) size 16x16
+          text run at (400,0) width 16: "."
+      RenderBlock {P} at (0,663) size 769x33
+        RenderText {#text} at (0,0) size 432x16
+          text run at (0,0) width 432: "This page is maintained by "
+        RenderInline {A} at (432,0) size 176x16 [color=#0000EE]
+          RenderText {#text} at (432,0) size 176x16
+            text run at (432,0) width 176: "Ian Hickson"
+        RenderText {#text} at (0,16) size 16x16
+          text run at (0,16) width 16: "("
+        RenderInline {A} at (16,16) size 272x16 [color=#0000EE]
+          RenderText {#text} at (16,16) size 272x16
+            text run at (16,16) width 272: "py8ieh@bath.ac.uk"
+        RenderText {#text} at (288,16) size 32x16
+          text run at (288,16) width 32: ")."
+      RenderBlock {P} at (0,711) size 769x17
+        RenderText {#text} at (0,0) size 432x16
+          text run at (0,0) width 432: "Last updated in March 1999."
+layer at (412,571) size 142x13
+  RenderBlock {DIV} at (3,3) size 142x13
+layer at (8,603) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,581) size 769x3 [color=#808080] [border: (1px inset #808080)]

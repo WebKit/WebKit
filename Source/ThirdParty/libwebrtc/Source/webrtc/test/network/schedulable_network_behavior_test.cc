@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "api/test/create_network_emulation_manager.h"
+#include "api/test/network_emulation/network_config_schedule.pb.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
 #include "api/units/time_delta.h"

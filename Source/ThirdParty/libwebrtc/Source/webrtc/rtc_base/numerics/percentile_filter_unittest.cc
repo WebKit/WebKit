@@ -15,6 +15,7 @@
 #include <array>
 #include <climits>
 #include <cstdint>
+#include <numbers>
 #include <random>
 
 #include "absl/algorithm/container.h"
@@ -58,10 +59,10 @@ TEST(PercentileFilterTest, MaxFilter) {
 
 TEST(PercentileFilterTest, MedianFilterDouble) {
   PercentileFilter<double> filter(0.5f);
-  filter.Insert(2.71828);
-  filter.Insert(3.14159);
-  filter.Insert(1.41421);
-  EXPECT_EQ(2.71828, filter.GetPercentileValue());
+  filter.Insert(std::numbers::e);
+  filter.Insert(std::numbers::pi);
+  filter.Insert(std::numbers::sqrt2);
+  EXPECT_FLOAT_EQ(std::numbers::e, filter.GetPercentileValue());
 }
 
 TEST(PercentileFilterTest, MedianFilterInt) {

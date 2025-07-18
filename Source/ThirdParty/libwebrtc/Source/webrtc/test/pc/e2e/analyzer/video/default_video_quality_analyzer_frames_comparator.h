@@ -88,8 +88,7 @@ class DefaultVideoQualityAnalyzerFramesComparator {
   //     has to be created.
   // `start_time` - call start time.
   void RegisterParticipantInCall(
-      rtc::ArrayView<std::pair<InternalStatsKey, Timestamp>>
-          stream_started_time,
+      ArrayView<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
       Timestamp start_time);
 
   // `captured` - video frame captured by sender to use for PSNR/SSIM
@@ -148,8 +147,8 @@ class DefaultVideoQualityAnalyzerFramesComparator {
   std::deque<FrameComparison> comparisons_ RTC_GUARDED_BY(mutex_);
   FramesComparatorStats frames_comparator_stats_ RTC_GUARDED_BY(mutex_);
 
-  std::vector<rtc::PlatformThread> thread_pool_;
-  rtc::Event comparison_available_event_;
+  std::vector<PlatformThread> thread_pool_;
+  Event comparison_available_event_;
 };
 
 }  // namespace webrtc

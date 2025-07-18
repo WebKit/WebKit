@@ -863,12 +863,6 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
 
     [convertedRules addObject:[self _webKitRuleWithWebKitActionType:webKitActionType chromeActionType:chromeActionType condition:condition]];
 
-    if ([condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"main_frame"] && [condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"sub_frame"]) {
-        NSMutableDictionary *modifiedCondition = [condition mutableCopy];
-        modifiedCondition[declarativeNetRequestRuleConditionResourceTypeKey] = @[ @"sub_frame" ];
-        [convertedRules addObject:[self _webKitRuleWithWebKitActionType:webKitActionType chromeActionType:chromeActionType condition:modifiedCondition]];
-    }
-
     if ([webKitActionType isEqualToString:@"make-https"])
         [convertedRules addObject:[self _webKitRuleWithWebKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType condition:condition]];
 
@@ -890,8 +884,11 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
 
         if ([condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"main_frame"])
             triggerDictionary[@"if-top-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
-        else
-            triggerDictionary[@"if-ancestor-subframe-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+        else {
+            // FIXME: rdar://154124673 (dNR: fix sub_frame resourceType allowAllRequests rules)
+            triggerDictionary[@"if-frame-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+            triggerDictionary[@"load-context"] = @[ @"child-frame" ];
+        }
 
         return [convertedRule copy];
     }

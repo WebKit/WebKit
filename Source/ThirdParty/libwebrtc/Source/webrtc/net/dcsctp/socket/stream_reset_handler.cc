@@ -262,9 +262,8 @@ void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
             << log_prefix_ << "Reset stream success, req_seq_nbr="
             << *current_request_->req_seq_nbr() << ", streams="
             << webrtc::StrJoin(current_request_->streams(), ",",
-                               [](rtc::StringBuilder& sb, StreamID stream_id) {
-                                 sb << *stream_id;
-                               });
+                               [](webrtc::StringBuilder& sb,
+                                  StreamID stream_id) { sb << *stream_id; });
         ctx_->callbacks().OnStreamsResetPerformed(current_request_->streams());
         current_request_ = std::nullopt;
         retransmission_queue_->CommitResetStreams();
@@ -274,9 +273,8 @@ void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
             << log_prefix_ << "Reset stream still pending, req_seq_nbr="
             << *current_request_->req_seq_nbr() << ", streams="
             << webrtc::StrJoin(current_request_->streams(), ",",
-                               [](rtc::StringBuilder& sb, StreamID stream_id) {
-                                 sb << *stream_id;
-                               });
+                               [](webrtc::StringBuilder& sb,
+                                  StreamID stream_id) { sb << *stream_id; });
         // Force this request to be sent again, but with new req_seq_nbr.
         current_request_->PrepareRetransmission();
         reconfig_timer_->set_duration(ctx_->current_rto());
@@ -291,9 +289,8 @@ void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
             << ", req_seq_nbr=" << *current_request_->req_seq_nbr()
             << ", streams="
             << webrtc::StrJoin(current_request_->streams(), ",",
-                               [](rtc::StringBuilder& sb, StreamID stream_id) {
-                                 sb << *stream_id;
-                               });
+                               [](webrtc::StringBuilder& sb,
+                                  StreamID stream_id) { sb << *stream_id; });
         ctx_->callbacks().OnStreamsResetFailed(current_request_->streams(),
                                                ToString(resp->result()));
         current_request_ = std::nullopt;
@@ -343,7 +340,7 @@ ReConfigChunk StreamResetHandler::MakeReconfigChunk() {
 }
 
 void StreamResetHandler::ResetStreams(
-    rtc::ArrayView<const StreamID> outgoing_streams) {
+    webrtc::ArrayView<const StreamID> outgoing_streams) {
   for (StreamID stream_id : outgoing_streams) {
     retransmission_queue_->PrepareResetStream(stream_id);
   }

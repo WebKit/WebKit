@@ -26,6 +26,7 @@
 #include "ContainerQueryFeatures.h"
 
 #include "BoxSides.h"
+#include "CSSCustomPropertyValue.h"
 #include "CalculationCategory.h"
 #include "ComputedStyleDependencies.h"
 #include "ContainerQueryEvaluator.h"

@@ -82,10 +82,9 @@ class RepeatingTaskHandle {
   bool Running() const;
 
  private:
-  explicit RepeatingTaskHandle(
-      rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag)
+  explicit RepeatingTaskHandle(scoped_refptr<PendingTaskSafetyFlag> alive_flag)
       : repeating_task_(std::move(alive_flag)) {}
-  rtc::scoped_refptr<PendingTaskSafetyFlag> repeating_task_;
+  scoped_refptr<PendingTaskSafetyFlag> repeating_task_;
 };
 
 }  // namespace webrtc

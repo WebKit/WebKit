@@ -44,7 +44,7 @@ struct BackgroundFetchRequest {
     FetchHeadersGuard guard;
     HTTPHeaderMap httpHeaders;
     String referrer;
-    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 } // namespace WebCore

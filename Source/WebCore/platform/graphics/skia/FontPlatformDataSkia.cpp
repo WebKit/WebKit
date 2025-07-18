@@ -57,7 +57,7 @@ FontPlatformData::FontPlatformData(float size, FontOrientation&& orientation, Fo
     platformDataInit();
 }
 
-static bool skiaTypefaceHasAnySupportedColorTable(const SkTypeface& typeface)
+bool FontPlatformData::skiaTypefaceHasAnySupportedColorTable(const SkTypeface& typeface)
 {
     const int tablesCount = typeface.countTables();
     if (!tablesCount)

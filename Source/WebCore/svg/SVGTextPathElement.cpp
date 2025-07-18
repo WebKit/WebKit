@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGTextPathElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGTextPath.h"

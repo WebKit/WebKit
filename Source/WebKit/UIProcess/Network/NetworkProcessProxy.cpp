@@ -33,6 +33,7 @@
 #include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
 #include "APIPageConfiguration.h"
+#include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
 #include "BackgroundFetchState.h"
@@ -230,6 +231,8 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
 #endif
+
+    parameters.defaultRequestTimeoutInterval = API::URLRequest::defaultTimeoutInterval();
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] {
@@ -1886,7 +1889,7 @@ void NetworkProcessProxy::openWindowFromServiceWorker(PAL::SessionID sessionID, 
     callback(std::nullopt);
 }
 
-void NetworkProcessProxy::reportConsoleMessage(PAL::SessionID sessionID, const URL& scriptURL, const WebCore::SecurityOriginData& clientOrigin, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void NetworkProcessProxy::reportConsoleMessage(PAL::SessionID sessionID, const URL& scriptURL, const WebCore::SecurityOriginData& clientOrigin, MessageSource source, MessageLevel level, const String& message, uint64_t requestIdentifier)
 {
     if (RefPtr store = websiteDataStoreFromSessionID(sessionID))
         store->reportServiceWorkerConsoleMessage(scriptURL, clientOrigin, source, level, message, requestIdentifier);
@@ -2037,6 +2040,12 @@ void NetworkProcessProxy::resetResourceMonitorThrottlerForTesting(PAL::SessionID
     sendWithAsyncReply(Messages::NetworkProcess::ResetResourceMonitorThrottlerForTesting(sessionID), WTFMove(completionHandler));
 }
 #endif
+
+void NetworkProcessProxy::setDefaultRequestTimeoutInterval(double timeoutInterval)
+{
+    if (canSendMessage())
+        send(Messages::NetworkProcess::SetDefaultRequestTimeoutInterval(timeoutInterval), 0);
+}
 
 } // namespace WebKit
 

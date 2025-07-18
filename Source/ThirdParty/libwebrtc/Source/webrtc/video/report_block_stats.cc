@@ -10,7 +10,7 @@
 
 #include "video/report_block_stats.h"
 
-#include <algorithm>
+#include <cstdint>
 
 namespace webrtc {
 

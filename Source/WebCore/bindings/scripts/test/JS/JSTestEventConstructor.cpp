@@ -316,7 +316,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr3, (JSGlobalObject* lexicalG
 
 JSC::GCClient::IsoSubspace* JSTestEventConstructor::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestEventConstructor, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestEventConstructor, UseCustomHeapCellType::No>(vm, "JSTestEventConstructor"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEventConstructor.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventConstructor = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEventConstructor.get(); },

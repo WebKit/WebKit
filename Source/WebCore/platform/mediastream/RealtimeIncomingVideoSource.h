@@ -50,19 +50,19 @@ class FrameRateMonitor;
 
 class RealtimeIncomingVideoSource
     : public RealtimeMediaSource
-    , private rtc::VideoSinkInterface<webrtc::VideoFrame>
+    , private webrtc::VideoSinkInterface<webrtc::VideoFrame>
     , private webrtc::ObserverInterface
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingVideoSource, WTF::DestructionThread::MainRunLoop>
 {
 public:
-    static Ref<RealtimeIncomingVideoSource> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingVideoSource> create(webrtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
     ~RealtimeIncomingVideoSource();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     void enableFrameRatedMonitoring();
 
 protected:
-    RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    RealtimeIncomingVideoSource(webrtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "RealtimeIncomingVideoSource"_s; }
@@ -87,7 +87,7 @@ private:
     void OnChanged() final;
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
+    webrtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 
     double m_currentFrameRate { -1 };
     std::unique_ptr<FrameRateMonitor> m_frameRateMonitor;

@@ -36,9 +36,11 @@
 #include "CSSTransition.h"
 #include "CSSValue.h"
 #include "CSSValuePool.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
@@ -248,7 +250,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
 
 InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
     : InspectorAgentBase("Animation"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
@@ -259,7 +261,7 @@ InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
 
 InspectorAnimationAgent::~InspectorAnimationAgent() = default;
 
-void InspectorAnimationAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorAnimationAgent::didCreateFrontendAndBackend()
 {
     ASSERT(m_instrumentingAgents.persistentAnimationAgent() != this);
     m_instrumentingAgents.setPersistentAnimationAgent(this);

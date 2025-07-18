@@ -109,7 +109,7 @@ enum class ClickHandlerFilter : bool {
     IncludeBody,
 };
 
-enum class PreSortedObjectType : bool { LiveRegion, WebArea };
+enum class PreSortedObjectType : uint8_t { LiveRegion, WebArea };
 
 enum class DateComponentsType : uint8_t;
 
@@ -1032,7 +1032,7 @@ public:
 
     virtual WallTime dateTimeValue() const = 0;
     virtual DateComponentsType dateTimeComponentsType() const = 0;
-    virtual bool supportsDatetimeAttribute() const = 0;
+    bool supportsDatetimeAttribute() const;
     virtual String datetimeAttributeValue() const = 0;
 
     virtual bool canSetFocusAttribute() const = 0;

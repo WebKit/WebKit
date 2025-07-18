@@ -72,7 +72,8 @@ class TaskQueueTimeoutFactory {
     // expiration time _further away_ than what is now the expected expiration
     // time. In this scenario, a new delayed task has to be posted with a
     // shorter duration and the old task has to be forgotten.
-    rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> pending_task_safety_flag_;
+    webrtc::scoped_refptr<webrtc::PendingTaskSafetyFlag>
+        pending_task_safety_flag_;
     // The time when the posted delayed task is set to expire. Will be set to
     // the infinite future if there is no such task running.
     webrtc::Timestamp posted_task_expiration_ =

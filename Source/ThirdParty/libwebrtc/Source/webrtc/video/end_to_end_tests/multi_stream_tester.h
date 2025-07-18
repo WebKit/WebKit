@@ -11,13 +11,19 @@
 #ifndef VIDEO_END_TO_END_TESTS_MULTI_STREAM_TESTER_H_
 #define VIDEO_END_TO_END_TESTS_MULTI_STREAM_TESTER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 
+#include "api/media_types.h"
 #include "api/task_queue/task_queue_base.h"
 #include "call/call.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "test/direct_transport.h"
 #include "test/frame_generator_capturer.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 // Test sets up a Call multiple senders with different resolutions and SSRCs.

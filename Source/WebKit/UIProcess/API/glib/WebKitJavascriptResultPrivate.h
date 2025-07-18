@@ -19,9 +19,11 @@
 
 #pragma once
 
-#include <WebCore/SerializedScriptValue.h>
 #include "WebKitJavascriptResult.h"
 
 #if !ENABLE(2022_GLIB_API)
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebCore::SerializedScriptValue&);
+namespace WebKit {
+class JavaScriptEvaluationResult;
+}
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebKit::JavaScriptEvaluationResult&&);
 #endif

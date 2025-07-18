@@ -38,6 +38,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
+#include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -45,8 +46,6 @@
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
-
-class RTCPReceiver;
 
 class RTCPSender final {
  public:

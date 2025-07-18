@@ -41,7 +41,7 @@ bool VcmCapturer::Init(size_t width,
     return false;
   }
 
-  vcm_ = webrtc::VideoCaptureFactory::Create(unique_name);
+  vcm_ = VideoCaptureFactory::Create(unique_name);
   if (!vcm_) {
     return false;
   }

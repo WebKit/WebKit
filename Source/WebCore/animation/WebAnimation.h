@@ -246,7 +246,7 @@ private:
     std::optional<WebAnimationTime> m_startTime;
     std::optional<WebAnimationTime> m_pendingStartTime;
     std::optional<WebAnimationTime> m_holdTime;
-    MarkableDouble m_pendingPlaybackRate;
+    Markable<double> m_pendingPlaybackRate;
     double m_playbackRate { 1 };
     Variant<FramesPerSecond, AnimationFrameRatePreset> m_bindingsFrameRate { AnimationFrameRatePreset::Auto };
     std::optional<FramesPerSecond> m_effectiveFrameRate;

@@ -12,9 +12,12 @@
 
 #include "modules/audio_coding/neteq/merge.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
+#include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/expand.h"
 #include "modules/audio_coding/neteq/random_vector.h"

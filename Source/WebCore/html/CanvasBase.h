@@ -100,7 +100,6 @@ public:
     bool originClean() const { return m_originClean; }
 
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
-    RefPtr<SecurityOrigin> protectedSecurityOrigin() const;
     ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
 
     virtual CanvasRenderingContext* renderingContext() const = 0;

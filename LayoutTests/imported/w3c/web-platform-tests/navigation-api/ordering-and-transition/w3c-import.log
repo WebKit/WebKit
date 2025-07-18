@@ -32,11 +32,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-204-205-download-then-same-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-canceled.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-commit-after-transition-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-cross-document-double.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-cross-document-event-order.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-double-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-in-transition-finished.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler-reject.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-stop.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-same-document-intercept-reentrant.html
@@ -45,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/reload-canceled.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/reload-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/reload-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/reload-no-popstate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-finished-mark-as-handled.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-realms-and-identity.html

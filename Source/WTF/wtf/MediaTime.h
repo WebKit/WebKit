@@ -43,7 +43,7 @@ namespace WTF {
 class PrintStream;
 
 class WTF_EXPORT_PRIVATE MediaTime final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaTime);
 public:
     enum {
         Valid = 1 << 0,
@@ -172,7 +172,7 @@ inline MediaTime operator*(int32_t lhs, const MediaTime& rhs) { return rhs.opera
 WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
 
 struct WTF_EXPORT_PRIVATE MediaTimeRange {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaTimeRange);
 
     String toJSONString() const;
 

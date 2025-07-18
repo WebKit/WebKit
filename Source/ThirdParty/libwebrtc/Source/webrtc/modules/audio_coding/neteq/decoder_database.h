@@ -11,17 +11,23 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
 #define MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
 
+#include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "modules/audio_coding/codecs/cng/webrtc_cng.h"
 #include "modules/audio_coding/neteq/packet.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

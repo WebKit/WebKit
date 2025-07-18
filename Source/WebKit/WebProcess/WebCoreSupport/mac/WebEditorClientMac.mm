@@ -47,7 +47,7 @@
 
 namespace WebKit {
 using namespace WebCore;
-    
+
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -60,6 +60,11 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
+void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
+{
+    m_page->handleEditingKeyboardEvent(event);
+}
+
 void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.
@@ -68,7 +73,7 @@ void WebEditorClient::setInsertionPasteboard(const String&)
 
 static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
 {
-    RefPtr frame = page->corePage()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = page->corePage()->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     if (!frame->editor().canEdit())

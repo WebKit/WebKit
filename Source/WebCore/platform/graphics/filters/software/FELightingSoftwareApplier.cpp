@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingSoftwareApplier);
 void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector, float alpha)
 {
     float z = alpha * data.surfaceScale;
-    LightSource::ComputedLightingData lightingData = Ref { *data.lightSource }->computePixelLightingData(paintingData, x, y, z);
+    LightSource::ComputedLightingData lightingData = data.lightSource->computePixelLightingData(paintingData, x, y, z);
 
     float lightStrength;
     if (normal2DVector.isZero()) {
@@ -94,12 +94,12 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.z() * 255.0f)
     };
     
-    Ref { *data.pixels }->setRange({ pixelValue }, offset);
+    data.pixels->setRange({ pixelValue }, offset);
 }
 
 void FELightingSoftwareApplier::setPixel(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector)
 {
-    setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, Ref { *data.pixels }->item(offset + cAlphaChannelOffset));
+    setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, data.pixels->item(offset + cAlphaChannelOffset));
 }
 
 void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
@@ -157,31 +157,30 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
     }
 
     int lastPixel = data.widthMultipliedByPixelSize * data.height;
-    RefPtr pixels = data.pixels;
     if (data.filterType == FilterEffect::Type::FEDiffuseLighting) {
         for (int i = cAlphaChannelOffset; i < lastPixel; i += cPixelSize)
-            pixels->set(i, cOpaqueAlpha);
+            data.pixels->set(i, cOpaqueAlpha);
     } else {
         for (int i = 0; i < lastPixel; i += cPixelSize) {
-            uint8_t a1 = pixels->item(i);
-            uint8_t a2 = pixels->item(i + 1);
-            uint8_t a3 = pixels->item(i + 2);
+            uint8_t a1 = data.pixels->item(i);
+            uint8_t a2 = data.pixels->item(i + 1);
+            uint8_t a3 = data.pixels->item(i + 2);
             // alpha set to set to max(a1, a2, a3)
-            pixels->set(i + 3, a1 >= a2 ? (a1 >= a3 ? a1 : a3) : (a2 >= a3 ? a2 : a3));
+            data.pixels->set(i + 3, a1 >= a2 ? (a1 >= a3 ? a1 : a3) : (a2 >= a3 ? a2 : a3));
         }
     }
 }
 
 bool FELightingSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+    input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
@@ -196,18 +195,18 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, std::span<const Ref<
         return true;
 
     LightingData data;
-    data.filter = filter;
-    data.result = result;
+    data.filter = &filter;
+    data.result = &result;
     data.filterType = m_effect->filterType();
     data.lightingColor = m_effect->lightingColor();
     data.surfaceScale = m_effect->surfaceScale() / 255.0f;
     data.diffuseConstant = m_effect->diffuseConstant();
     data.specularConstant = m_effect->specularConstant();
     data.specularExponent = m_effect->specularExponent();
-    data.lightSource = m_effect->lightSource();
+    data.lightSource = &m_effect->lightSource();
     data.operatingColorSpace = &m_effect->operatingColorSpace();
 
-    data.pixels = destinationPixelBuffer.releaseNonNull();
+    data.pixels = destinationPixelBuffer;
     data.widthMultipliedByPixelSize = size.width() * cPixelSize;
     data.width = size.width();
     data.height = size.height();

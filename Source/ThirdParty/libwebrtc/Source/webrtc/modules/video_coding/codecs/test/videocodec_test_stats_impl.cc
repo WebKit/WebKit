@@ -12,14 +12,19 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <iterator>
 #include <limits>
-#include <numeric>
+#include <optional>
+#include <vector>
 
+#include "api/test/videocodec_test_stats.h"
+#include "api/units/data_rate.h"
+#include "api/units/frequency.h"
+#include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/running_statistics.h"
-#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 namespace test {

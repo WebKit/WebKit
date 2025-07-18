@@ -11,6 +11,7 @@
 #ifndef VIDEO_ADAPTATION_BITRATE_CONSTRAINT_H_
 #define VIDEO_ADAPTATION_BITRATE_CONSTRAINT_H_
 
+#include <cstdint>
 #include <optional>
 #include <string>
 
@@ -20,6 +21,7 @@
 #include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_input_state.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

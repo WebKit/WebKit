@@ -44,7 +44,6 @@ private:
     float getAverageCharWidth() override;
     LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
-    LayoutUnit baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
     void layoutExcludedChildren(RelayoutChildren) override;
 };

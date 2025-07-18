@@ -72,7 +72,7 @@ public:
 private:
     MediaKeyStatusMap(const MediaKeySession&);
 
-    const MediaKeySession* m_session;
+    WeakPtr<const MediaKeySession> m_session;
 };
 
 } // namespace WebCore

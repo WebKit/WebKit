@@ -13,21 +13,27 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "rtc_base/base64.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/third_party/base64/base64.h"
+
+namespace webrtc {
 
 namespace {
 
 bool DecodeAndConvert(const std::string& base64, std::vector<uint8_t>* binary) {
-  return rtc::Base64::DecodeFromArray(base64.data(), base64.size(),
-                                      rtc::Base64::DO_STRICT, binary, nullptr);
+  std::optional<std::string> decoded = Base64Decode(base64);
+  if (!decoded.has_value()) {
+    return false;
+  }
+  binary->assign(decoded->begin(), decoded->end());
+  return true;
 }
-}  // namespace
 
-namespace webrtc {
+}  // namespace
 
 bool H264SpropParameterSets::DecodeSprop(const std::string& sprop) {
   size_t separator_pos = sprop.find(',');

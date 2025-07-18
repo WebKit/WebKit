@@ -9,7 +9,7 @@
  */
 #include "pc/transport_stats.h"
 
-namespace cricket {
+namespace webrtc {
 
 TransportChannelStats::TransportChannelStats() = default;
 
@@ -18,4 +18,4 @@ TransportChannelStats::TransportChannelStats(const TransportChannelStats&) =
 
 TransportChannelStats::~TransportChannelStats() = default;
 
-}  // namespace cricket
+}  // namespace webrtc

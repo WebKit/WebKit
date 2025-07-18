@@ -43,7 +43,7 @@ public:
     using Init = SecurityPolicyViolationEventInit;
 
     WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
-    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber);
 
     const String& type() const final;
     const String& documentURL() const { return m_documentURL; }
@@ -55,14 +55,14 @@ public:
     const String& sample() const { return m_sample; }
     SecurityPolicyViolationEventDisposition disposition() const { return m_disposition; }
     unsigned short statusCode() const { return m_statusCode; }
-    unsigned long lineNumber() const { return m_lineNumber; }
-    unsigned long columnNumber() const { return m_columnNumber; }
+    uint64_t lineNumber() const { return m_lineNumber; }
+    uint64_t columnNumber() const { return m_columnNumber; }
     
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation(bool usesReportTo, bool isReportOnly) const;
 
 private:
     CSPViolationReportBody(Init&&);
-    CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber);
+    CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::ContentSecurityPolicy; }
 
@@ -75,8 +75,8 @@ private:
     const String m_sample;
     const SecurityPolicyViolationEventDisposition m_disposition;
     const unsigned short m_statusCode;
-    const unsigned long m_lineNumber;
-    const unsigned long m_columnNumber;
+    const uint64_t m_lineNumber;
+    const uint64_t m_columnNumber;
 };
 
 } // namespace WebCore

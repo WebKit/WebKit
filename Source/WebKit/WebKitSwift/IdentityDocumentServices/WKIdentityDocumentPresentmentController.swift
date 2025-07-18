@@ -80,16 +80,23 @@ extension WKIdentityDocumentPresentmentController {
                 }
 
                 return .init(protocolString: Self.isoMdocProtocol, responseData: response.responseData)
-            } catch IdentityDocumentWebPresentmentError.unknown {
-                throw WKIdentityDocumentPresentmentError(.unknown)
-            } catch IdentityDocumentWebPresentmentError.invalidRequest {
-                throw WKIdentityDocumentPresentmentError(.invalidRequest)
-            } catch IdentityDocumentWebPresentmentError.requestInProgress {
-                throw WKIdentityDocumentPresentmentError(.requestInProgress)
-            } catch IdentityDocumentWebPresentmentError.cancelled {
-                throw WKIdentityDocumentPresentmentError(.cancelled)
-            } catch IdentityDocumentWebPresentmentError.notEntitled {
-                throw WKIdentityDocumentPresentmentError(.notEntitled)
+            } catch let error as IdentityDocumentPresentmentError {
+                let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+                switch error {
+                case .unknown:
+                    throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+                case .invalidRequest:
+                    throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+                case .requestInProgress:
+                    throw WKIdentityDocumentPresentmentError(.requestInProgress, userInfo: userInfo)
+                case .cancelled:
+                    throw WKIdentityDocumentPresentmentError(.cancelled, userInfo: userInfo)
+                case .notEntitled:
+                    throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+                default:
+                    throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+                }
             } catch {
                 throw WKIdentityDocumentPresentmentError(.unknown)
             }

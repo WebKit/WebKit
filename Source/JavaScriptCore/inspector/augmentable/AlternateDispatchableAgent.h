@@ -36,7 +36,7 @@ namespace Inspector {
 
 template<typename TBackendDispatcher, typename TAlternateDispatcher>
 class AlternateDispatchableAgent final : public InspectorAgentBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AlternateDispatchableAgent);
 public:
     AlternateDispatchableAgent(const String& domainName, AugmentableInspectorController& controller, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
         : InspectorAgentBase(domainName)
@@ -44,7 +44,7 @@ public:
         , m_backendDispatcher(TBackendDispatcher::create(controller.backendDispatcher(), nullptr))
     {
         m_backendDispatcher->setAlternateDispatcher(m_alternateDispatcher.get());
-        m_alternateDispatcher->setBackendDispatcher(&controller.backendDispatcher());
+        m_alternateDispatcher->setBackendDispatcher(controller.backendDispatcher());
     }
 
     virtual ~AlternateDispatchableAgent()
@@ -52,7 +52,7 @@ public:
         m_alternateDispatcher->setBackendDispatcher(nullptr);
     }
 
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final
+    void didCreateFrontendAndBackend() final
     {
     }
 
@@ -62,7 +62,7 @@ public:
 
 private:
     std::unique_ptr<TAlternateDispatcher> m_alternateDispatcher;
-    RefPtr<TBackendDispatcher> m_backendDispatcher;
+    const Ref<TBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace Inspector

@@ -18,18 +18,36 @@
  *  transport. No TURN server is configured, so both peers need to be reachable
  *  using STUN only.
  */
-#include <inttypes.h>
 
+#include <algorithm>
 #include <charconv>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "absl/cleanup/cleanup.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/strings/string_view.h"
+#include "api/data_channel_interface.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/event.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/ssl_adapter.h"
+#include "rtc_base/string_encode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 #include "rtc_tools/data_channel_benchmark/grpc_signaling.h"
 #include "rtc_tools/data_channel_benchmark/peer_connection_client.h"
+#include "rtc_tools/data_channel_benchmark/signaling_interface.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
 
 ABSL_FLAG(int, verbose, 0, "verbosity level (0-5)");
@@ -52,7 +70,7 @@ struct SetupMessage {
 
   std::string ToString() {
     char buffer[64];
-    rtc::SimpleStringBuilder sb(buffer);
+    webrtc::SimpleStringBuilder sb(buffer);
     sb << packet_size << "," << transfer_size;
 
     return sb.str();
@@ -60,7 +78,7 @@ struct SetupMessage {
 
   static SetupMessage FromString(absl::string_view sv) {
     SetupMessage result;
-    auto parameters = rtc::split(sv, ',');
+    auto parameters = webrtc::split(sv, ',');
     std::from_chars(parameters[0].data(),
                     parameters[0].data() + parameters[0].size(),
                     result.packet_size, 10);
@@ -74,7 +92,7 @@ struct SetupMessage {
 class DataChannelServerObserverImpl : public webrtc::DataChannelObserver {
  public:
   explicit DataChannelServerObserverImpl(webrtc::DataChannelInterface* dc,
-                                         rtc::Thread* signaling_thread)
+                                         webrtc::Thread* signaling_thread)
       : dc_(dc), signaling_thread_(signaling_thread) {}
 
   void OnStateChange() override {
@@ -113,17 +131,19 @@ class DataChannelServerObserverImpl : public webrtc::DataChannelObserver {
 
   bool IsOkToCallOnTheNetworkThread() override { return true; }
 
-  bool WaitForClosedState() { return closed_event_.Wait(rtc::Event::kForever); }
+  bool WaitForClosedState() {
+    return closed_event_.Wait(webrtc::Event::kForever);
+  }
 
   bool WaitForSetupMessage() {
-    return setup_message_event_.Wait(rtc::Event::kForever);
+    return setup_message_event_.Wait(webrtc::Event::kForever);
   }
 
   void StartSending() {
     RTC_CHECK(remaining_data_) << "Error: no data to send";
     std::string data(std::min(setup_.packet_size, remaining_data_), '0');
     webrtc::DataBuffer* data_buffer =
-        new webrtc::DataBuffer(rtc::CopyOnWriteBuffer(data), true);
+        new webrtc::DataBuffer(webrtc::CopyOnWriteBuffer(data), true);
     total_queued_up_ = data_buffer->size();
     dc_->SendAsync(*data_buffer,
                    [this, data_buffer = data_buffer](webrtc::RTCError err) {
@@ -168,9 +188,9 @@ class DataChannelServerObserverImpl : public webrtc::DataChannelObserver {
   }
 
   webrtc::DataChannelInterface* const dc_;
-  rtc::Thread* const signaling_thread_;
-  rtc::Event closed_event_;
-  rtc::Event setup_message_event_;
+  webrtc::Thread* const signaling_thread_;
+  webrtc::Event closed_event_;
+  webrtc::Event setup_message_event_;
   size_t remaining_data_ = 0u;
   size_t total_queued_up_ = 0u;
   struct SetupMessage setup_;
@@ -206,17 +226,17 @@ class DataChannelClientObserverImpl : public webrtc::DataChannelObserver {
   void OnBufferedAmountChange(uint64_t sent_data_size) override {}
   bool IsOkToCallOnTheNetworkThread() override { return true; }
 
-  bool WaitForOpenState() { return open_event_.Wait(rtc::Event::kForever); }
+  bool WaitForOpenState() { return open_event_.Wait(webrtc::Event::kForever); }
 
   // Wait until the received byte count reaches the desired value.
   bool WaitForBytesReceivedThreshold() {
-    return bytes_received_event_.Wait(rtc::Event::kForever);
+    return bytes_received_event_.Wait(webrtc::Event::kForever);
   }
 
  private:
   webrtc::DataChannelInterface* const dc_;
-  rtc::Event open_event_;
-  rtc::Event bytes_received_event_;
+  webrtc::Event open_event_;
+  webrtc::Event bytes_received_event_;
   const uint64_t bytes_received_threshold_;
   uint64_t bytes_received_ = 0u;
 };
@@ -225,15 +245,16 @@ int RunServer() {
   bool oneshot = absl::GetFlag(FLAGS_oneshot);
   uint16_t port = absl::GetFlag(FLAGS_port);
 
-  auto signaling_thread = rtc::Thread::Create();
+  auto signaling_thread = webrtc::Thread::Create();
   signaling_thread->Start();
   {
     auto factory = webrtc::PeerConnectionClient::CreateDefaultFactory(
         signaling_thread.get());
 
     auto grpc_server = webrtc::GrpcSignalingServerInterface::Create(
-        [factory = rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>(
-             factory),
+        [factory =
+             webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>(
+                 factory),
          signaling_thread =
              signaling_thread.get()](webrtc::SignalingInterface* signaling) {
           webrtc::PeerConnectionClient client(factory.get(), signaling);
@@ -295,7 +316,7 @@ int RunClient() {
   size_t transfer_size = absl::GetFlag(FLAGS_transfer_size) * 1024 * 1024;
   size_t packet_size = absl::GetFlag(FLAGS_packet_size);
 
-  auto signaling_thread = rtc::Thread::Create();
+  auto signaling_thread = webrtc::Thread::Create();
   signaling_thread->Start();
   {
     auto factory = webrtc::PeerConnectionClient::CreateDefaultFactory(
@@ -308,10 +329,10 @@ int RunClient() {
     std::unique_ptr<DataChannelClientObserverImpl> observer;
 
     // Set up the callback to receive the data channel from the sender.
-    rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel;
-    rtc::Event got_data_channel;
+    webrtc::scoped_refptr<webrtc::DataChannelInterface> data_channel;
+    webrtc::Event got_data_channel;
     client.SetOnDataChannel(
-        [&](rtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
+        [&](webrtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
           data_channel = std::move(channel);
           // DataChannel needs an observer to drain the read queue.
           observer = std::make_unique<DataChannelClientObserverImpl>(
@@ -327,7 +348,7 @@ int RunClient() {
     }
 
     // Wait for the data channel to be received
-    got_data_channel.Wait(rtc::Event::kForever);
+    got_data_channel.Wait(webrtc::Event::kForever);
 
     absl::Cleanup unregister_observer(
         [data_channel] { data_channel->UnregisterObserver(); });
@@ -358,15 +379,15 @@ int RunClient() {
 }
 
 int main(int argc, char** argv) {
-  rtc::InitializeSSL();
+  webrtc::InitializeSSL();
   absl::ParseCommandLine(argc, argv);
 
   // Make sure that higher severity number means more logs by reversing the
-  // rtc::LoggingSeverity values.
+  // webrtc::LoggingSeverity values.
   auto logging_severity =
-      std::max(0, rtc::LS_NONE - absl::GetFlag(FLAGS_verbose));
-  rtc::LogMessage::LogToDebug(
-      static_cast<rtc::LoggingSeverity>(logging_severity));
+      std::max(0, webrtc::LS_NONE - absl::GetFlag(FLAGS_verbose));
+  webrtc::LogMessage::LogToDebug(
+      static_cast<webrtc::LoggingSeverity>(logging_severity));
 
   bool is_server = absl::GetFlag(FLAGS_server);
   std::string field_trials = absl::GetFlag(FLAGS_force_fieldtrials);

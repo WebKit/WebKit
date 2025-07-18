@@ -76,21 +76,25 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
     if (RefPtr page = document.page()) {
         if (!page->allowsLoadFromURL(requestedURL, MainFrameMainResource::No))
             return { };
+
 #if ENABLE(CONTENT_EXTENSIONS)
         if (RefPtr documentLoader = document.loader()) {
             auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
-            if (results.summary.blockedLoad)
+            if (results.shouldBlock())
                 return { };
+
             if (results.summary.madeHTTPS) {
                 ASSERT(validatedURL.url.protocolIs("ws"_s));
                 validatedURL.url.setProtocol("wss"_s);
             }
+
             validatedURL.areCookiesAllowed = !results.summary.blockedCookies;
         }
 #else
         UNUSED_PARAM(document);
 #endif
     }
+
     return validatedURL;
 }
 

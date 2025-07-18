@@ -945,7 +945,7 @@ sub printTagNameHeaderFile
     print F "inline LazyNeverDestroyed<EnumeratedArray<TagName, AtomString, lastTagNameEnumValue>> tagNameStrings;\n";
     print F "\n";
     print F "WEBCORE_EXPORT void initializeTagNameStrings();\n";
-    print F "TagName findTagName(std::span<const UChar>);\n";
+    print F "TagName findTagName(std::span<const char16_t>);\n";
     print F "#if ASSERT_ENABLED\n";
     print F "TagName findTagName(const String&);\n";
     print F "#endif\n";
@@ -1036,7 +1036,7 @@ sub printTagNameCppFile
     generateFindBody(\%allElements, \&byElementNameOrder, "parsedTagName", "TagName", "parsedTagEnumValue");
     print F "}\n";
     print F "\n";
-    print F "TagName findTagName(std::span<const UChar> buffer)\n";
+    print F "TagName findTagName(std::span<const char16_t> buffer)\n";
     print F "{\n";
     print F "    return findTagFromBuffer(buffer);\n";
     print F "}\n";
@@ -1123,7 +1123,7 @@ sub printNodeNameHeaderFile
     print F "\n";
     print F "NodeName findNodeName(Namespace, const String&);\n";
     print F "ElementName findHTMLElementName(std::span<const LChar>);\n";
-    print F "ElementName findHTMLElementName(std::span<const UChar>);\n";
+    print F "ElementName findHTMLElementName(std::span<const char16_t>);\n";
     print F "ElementName findHTMLElementName(const String&);\n";
     print F "ElementName findSVGElementName(const String&);\n";
     print F "ElementName findMathMLElementName(const String&);\n";
@@ -1267,7 +1267,7 @@ sub printNodeNameCppFile
     print F "    return findHTMLNodeName(buffer);\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findHTMLElementName(std::span<const UChar> buffer)\n";
+    print F "ElementName findHTMLElementName(std::span<const char16_t> buffer)\n";
     print F "{\n";
     print F "    return findHTMLNodeName(buffer);\n";
     print F "}\n";

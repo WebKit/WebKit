@@ -217,9 +217,9 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
     HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
-bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLPlugInElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    if (HTMLFrameOwnerElement::isKeyboardFocusable(event))
+    if (HTMLFrameOwnerElement::isKeyboardFocusable(focusEventData))
         return true;
     return false;
 }

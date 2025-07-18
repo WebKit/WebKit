@@ -86,7 +86,7 @@ Thread::~Thread() = default;
 #if !OS(DARWIN)
 class Semaphore final {
     WTF_MAKE_NONCOPYABLE(Semaphore);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Semaphore);
 public:
     explicit Semaphore(unsigned initialValue)
     {
@@ -509,7 +509,7 @@ void Thread::resume(const ThreadSuspendLocker&)
 
 #if OS(DARWIN)
 struct ThreadStateMetadata {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ThreadStateMetadata);
     unsigned userCount;
     thread_state_flavor_t flavor;
 };

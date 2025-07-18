@@ -51,7 +51,7 @@ AudioBuffer::AudioBuffer(size_t input_rate,
       output_num_channels_(0),
       num_channels_(buffer_num_channels),
       num_bands_(NumBandsFromFramesPerChannel(buffer_num_frames_)),
-      num_split_frames_(rtc::CheckedDivExact(buffer_num_frames_, num_bands_)),
+      num_split_frames_(CheckedDivExact(buffer_num_frames_, num_bands_)),
       data_(
           new ChannelBuffer<float>(buffer_num_frames_, buffer_num_channels_)) {
   RTC_DCHECK_GT(input_num_frames_, 0);

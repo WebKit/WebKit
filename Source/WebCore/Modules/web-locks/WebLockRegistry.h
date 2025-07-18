@@ -43,7 +43,7 @@ struct WebLockManagerSnapshot;
 
 class WebLockRegistry : public RefCounted<WebLockRegistry> {
 public:
-    static WebLockRegistry& shared();
+    static WebLockRegistry& singleton();
     WEBCORE_EXPORT static void setSharedRegistry(Ref<WebLockRegistry>&&);
 
     virtual ~WebLockRegistry() { }

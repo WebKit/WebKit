@@ -33,7 +33,7 @@ struct WebKit::WebExtensionWindowParameters {
     std::optional<Vector<WebKit::WebExtensionTabParameters>> tabs;
 
 #if PLATFORM(COCOA)
-    std::optional<CGRect> frame;
+    std::optional<WebKit::DoubleRect> frame;
 #endif
 
     std::optional<bool> focused;

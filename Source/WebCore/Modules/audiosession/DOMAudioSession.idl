@@ -42,6 +42,7 @@ enum DOMAudioSessionType {
     ActiveDOMObject,
     Conditional=DOM_AUDIO_SESSION,
     EnabledBySetting=DOMAudioSessionEnabled,
+    DisabledByQuirk=shouldDisableDOMAudioSession,
     Exposed=Window,
     InterfaceName=AudioSession,
 ] interface DOMAudioSession : EventTarget {

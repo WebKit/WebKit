@@ -39,8 +39,7 @@ const int kNumberOfFramesLookAhead = 60;
 // Helper class that takes a video and generates an infinite looping video.
 class LoopingVideo : public Video {
  public:
-  explicit LoopingVideo(const rtc::scoped_refptr<Video>& video)
-      : video_(video) {}
+  explicit LoopingVideo(const scoped_refptr<Video>& video) : video_(video) {}
 
   int width() const override { return video_->width(); }
   int height() const override { return video_->height(); }
@@ -48,20 +47,19 @@ class LoopingVideo : public Video {
     return std::numeric_limits<size_t>::max();
   }
 
-  rtc::scoped_refptr<I420BufferInterface> GetFrame(
-      size_t index) const override {
+  scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
     return video_->GetFrame(index % video_->number_of_frames());
   }
 
  private:
-  const rtc::scoped_refptr<Video> video_;
+  const scoped_refptr<Video> video_;
 };
 
 // Helper class that take a vector of frame indices and a video and produces a
 // new video where the frames have been reshuffled.
 class ReorderedVideo : public Video {
  public:
-  ReorderedVideo(const rtc::scoped_refptr<Video>& video,
+  ReorderedVideo(const scoped_refptr<Video>& video,
                  const std::vector<size_t>& indices)
       : video_(video), indices_(indices) {}
 
@@ -69,20 +67,19 @@ class ReorderedVideo : public Video {
   int height() const override { return video_->height(); }
   size_t number_of_frames() const override { return indices_.size(); }
 
-  rtc::scoped_refptr<I420BufferInterface> GetFrame(
-      size_t index) const override {
+  scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
     return video_->GetFrame(indices_.at(index));
   }
 
  private:
-  const rtc::scoped_refptr<Video> video_;
+  const scoped_refptr<Video> video_;
   const std::vector<size_t> indices_;
 };
 
 // Helper class that takes a video and produces a downscaled video.
 class DownscaledVideo : public Video {
  public:
-  DownscaledVideo(float scale_factor, const rtc::scoped_refptr<Video>& video)
+  DownscaledVideo(float scale_factor, const scoped_refptr<Video>& video)
       : downscaled_width_(
             static_cast<int>(std::round(scale_factor * video->width()))),
         downscaled_height_(
@@ -95,11 +92,9 @@ class DownscaledVideo : public Video {
     return video_->number_of_frames();
   }
 
-  rtc::scoped_refptr<I420BufferInterface> GetFrame(
-      size_t index) const override {
-    const rtc::scoped_refptr<I420BufferInterface> frame =
-        video_->GetFrame(index);
-    rtc::scoped_refptr<I420Buffer> downscaled_frame =
+  scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
+    const scoped_refptr<I420BufferInterface> frame = video_->GetFrame(index);
+    scoped_refptr<I420Buffer> downscaled_frame =
         I420Buffer::Create(downscaled_width_, downscaled_height_);
     downscaled_frame->ScaleFrom(*frame);
     return downscaled_frame;
@@ -108,14 +103,14 @@ class DownscaledVideo : public Video {
  private:
   const int downscaled_width_;
   const int downscaled_height_;
-  const rtc::scoped_refptr<Video> video_;
+  const scoped_refptr<Video> video_;
 };
 
 // Helper class that takes a video and caches the latest frame access. This
 // improves performance a lot since the original source is often from a file.
 class CachedVideo : public Video {
  public:
-  CachedVideo(int max_cache_size, const rtc::scoped_refptr<Video>& video)
+  CachedVideo(int max_cache_size, const scoped_refptr<Video>& video)
       : max_cache_size_(max_cache_size), video_(video) {}
 
   int width() const override { return video_->width(); }
@@ -124,14 +119,13 @@ class CachedVideo : public Video {
     return video_->number_of_frames();
   }
 
-  rtc::scoped_refptr<I420BufferInterface> GetFrame(
-      size_t index) const override {
+  scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
     for (const CachedFrame& cached_frame : cache_) {
       if (cached_frame.index == index)
         return cached_frame.frame;
     }
 
-    rtc::scoped_refptr<I420BufferInterface> frame = video_->GetFrame(index);
+    scoped_refptr<I420BufferInterface> frame = video_->GetFrame(index);
     cache_.push_front({index, frame});
     if (cache_.size() > max_cache_size_)
       cache_.pop_back();
@@ -142,17 +136,17 @@ class CachedVideo : public Video {
  private:
   struct CachedFrame {
     size_t index;
-    rtc::scoped_refptr<I420BufferInterface> frame;
+    scoped_refptr<I420BufferInterface> frame;
   };
 
   const size_t max_cache_size_;
-  const rtc::scoped_refptr<Video> video_;
+  const scoped_refptr<Video> video_;
   mutable std::deque<CachedFrame> cache_;
 };
 
 // Try matching the test frame against all frames in the reference video and
 // return the index of the best matching frame.
-size_t FindBestMatch(const rtc::scoped_refptr<I420BufferInterface>& test_frame,
+size_t FindBestMatch(const scoped_refptr<I420BufferInterface>& test_frame,
                      const Video& reference_video) {
   std::vector<double> ssim;
   for (const auto& ref_frame : reference_video)
@@ -164,7 +158,7 @@ size_t FindBestMatch(const rtc::scoped_refptr<I420BufferInterface>& test_frame,
 // Find and return the index of the frame matching the test frame. The search
 // starts at the starting index and continues until there is no better match
 // within the next kNumberOfFramesLookAhead frames.
-size_t FindNextMatch(const rtc::scoped_refptr<I420BufferInterface>& test_frame,
+size_t FindNextMatch(const scoped_refptr<I420BufferInterface>& test_frame,
                      const Video& reference_video,
                      size_t start_index) {
   const double start_ssim =
@@ -182,25 +176,25 @@ size_t FindNextMatch(const rtc::scoped_refptr<I420BufferInterface>& test_frame,
 }  // namespace
 
 std::vector<size_t> FindMatchingFrameIndices(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video) {
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video) {
   // This is done to get a 10x speedup. We don't need the full resolution in
   // order to match frames, and we should limit file access and not read the
   // same memory tens of times.
   const float kScaleFactor = 0.25f;
-  const rtc::scoped_refptr<Video> cached_downscaled_reference_video =
-      rtc::make_ref_counted<CachedVideo>(kNumberOfFramesLookAhead,
-                                         rtc::make_ref_counted<DownscaledVideo>(
-                                             kScaleFactor, reference_video));
-  const rtc::scoped_refptr<Video> downscaled_test_video =
-      rtc::make_ref_counted<DownscaledVideo>(kScaleFactor, test_video);
+  const scoped_refptr<Video> cached_downscaled_reference_video =
+      make_ref_counted<CachedVideo>(
+          kNumberOfFramesLookAhead,
+          make_ref_counted<DownscaledVideo>(kScaleFactor, reference_video));
+  const scoped_refptr<Video> downscaled_test_video =
+      make_ref_counted<DownscaledVideo>(kScaleFactor, test_video);
 
   // Assume the video is looping around.
-  const rtc::scoped_refptr<Video> looping_reference_video =
-      rtc::make_ref_counted<LoopingVideo>(cached_downscaled_reference_video);
+  const scoped_refptr<Video> looping_reference_video =
+      make_ref_counted<LoopingVideo>(cached_downscaled_reference_video);
 
   std::vector<size_t> match_indices;
-  for (const rtc::scoped_refptr<I420BufferInterface>& test_frame :
+  for (const scoped_refptr<I420BufferInterface>& test_frame :
        *downscaled_test_video) {
     if (match_indices.empty()) {
       // First frame.
@@ -215,21 +209,21 @@ std::vector<size_t> FindMatchingFrameIndices(
   return match_indices;
 }
 
-rtc::scoped_refptr<Video> ReorderVideo(const rtc::scoped_refptr<Video>& video,
-                                       const std::vector<size_t>& indices) {
-  return rtc::make_ref_counted<ReorderedVideo>(
-      rtc::make_ref_counted<LoopingVideo>(video), indices);
+scoped_refptr<Video> ReorderVideo(const scoped_refptr<Video>& video,
+                                  const std::vector<size_t>& indices) {
+  return make_ref_counted<ReorderedVideo>(make_ref_counted<LoopingVideo>(video),
+                                          indices);
 }
 
-rtc::scoped_refptr<Video> GenerateAlignedReferenceVideo(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video) {
+scoped_refptr<Video> GenerateAlignedReferenceVideo(
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video) {
   return GenerateAlignedReferenceVideo(
       reference_video, FindMatchingFrameIndices(reference_video, test_video));
 }
 
-rtc::scoped_refptr<Video> GenerateAlignedReferenceVideo(
-    const rtc::scoped_refptr<Video>& reference_video,
+scoped_refptr<Video> GenerateAlignedReferenceVideo(
+    const scoped_refptr<Video>& reference_video,
     const std::vector<size_t>& indices) {
   return ReorderVideo(reference_video, indices);
 }

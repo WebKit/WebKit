@@ -120,4 +120,12 @@ void RenderHTMLCanvas::canvasSizeChanged()
     setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 }
 
+void RenderHTMLCanvas::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderReplaced::styleDidChange(difference, oldStyle);
+
+    if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
+        canvasElement().dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+}
+
 } // namespace WebCore

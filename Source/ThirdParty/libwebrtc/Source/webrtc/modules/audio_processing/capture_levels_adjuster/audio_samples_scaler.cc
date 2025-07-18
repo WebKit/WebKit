@@ -39,8 +39,8 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
   if (previous_gain_ == target_gain_) {
     // Apply a non-changing gain.
     for (size_t channel = 0; channel < audio_buffer.num_channels(); ++channel) {
-      rtc::ArrayView<float> channel_view(audio_buffer.channels()[channel],
-                                         samples_per_channel_);
+      ArrayView<float> channel_view(audio_buffer.channels()[channel],
+                                    samples_per_channel_);
       for (float& sample : channel_view) {
         sample *= gain;
       }
@@ -54,8 +54,8 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
       for (size_t channel = 0; channel < audio_buffer.num_channels();
            ++channel) {
         gain = previous_gain_;
-        rtc::ArrayView<float> channel_view(audio_buffer.channels()[channel],
-                                           samples_per_channel_);
+        ArrayView<float> channel_view(audio_buffer.channels()[channel],
+                                      samples_per_channel_);
         for (float& sample : channel_view) {
           gain = std::min(gain + increment, target_gain_);
           sample *= gain;
@@ -66,8 +66,8 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
       for (size_t channel = 0; channel < audio_buffer.num_channels();
            ++channel) {
         gain = previous_gain_;
-        rtc::ArrayView<float> channel_view(audio_buffer.channels()[channel],
-                                           samples_per_channel_);
+        ArrayView<float> channel_view(audio_buffer.channels()[channel],
+                                      samples_per_channel_);
         for (float& sample : channel_view) {
           gain = std::max(gain + increment, target_gain_);
           sample *= gain;
@@ -79,12 +79,12 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
 
   // Saturate the samples to be in the S16 range.
   for (size_t channel = 0; channel < audio_buffer.num_channels(); ++channel) {
-    rtc::ArrayView<float> channel_view(audio_buffer.channels()[channel],
-                                       samples_per_channel_);
+    ArrayView<float> channel_view(audio_buffer.channels()[channel],
+                                  samples_per_channel_);
     for (float& sample : channel_view) {
       constexpr float kMinFloatS16Value = -32768.f;
       constexpr float kMaxFloatS16Value = 32767.f;
-      sample = rtc::SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
+      sample = SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
     }
   }
 }

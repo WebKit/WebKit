@@ -3,8 +3,4 @@ PASS Initially 6th sibling
 PASS 5th sibling after removal
 PASS Initially 6 siblings
 PASS 5 siblings after removal
-PASS Initially 6th slotted sibling
-FAIL 5th sibling after slot change assert_equals: expected 50 but got 60
-PASS Initially 6 slotted siblings
-FAIL 5 siblings after slot change assert_equals: expected 50 but got 60
 

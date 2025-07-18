@@ -815,11 +815,11 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
 
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
-        resultInViewCenterPoint = roundedIntPoint(elementInViewCenterPoint);
+        resultInViewCenterPoint = flooredIntPoint(elementInViewCenterPoint);
         break;
     case CoordinateSystem::LayoutViewport: {
         auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView.get(), elementInViewCenterPoint);
-        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToLayoutViewportPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
+        resultInViewCenterPoint = flooredIntPoint(mainView->absoluteToLayoutViewportPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
         break;
     }
     }
@@ -952,7 +952,7 @@ static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore:
             return { };
 
         WebCore::LayoutRect topLevelRect;
-        WebCore::IntRect elementRect = WebCore::snappedIntRect(element->renderer()->paintingRootRect(topLevelRect));
+        WebCore::IntRect elementRect = WebCore::snappedIntRect(element->checkedRenderer()->paintingRootRect(topLevelRect));
         if (clipToViewport)
             elementRect.intersect(frameView->visibleContentRect());
 

@@ -33,7 +33,7 @@
 namespace WebKit {
 
 struct VirtualCredential {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VirtualCredential);
     Vector<uint8_t> credentialId;
     String rpId;
     String privateKey;

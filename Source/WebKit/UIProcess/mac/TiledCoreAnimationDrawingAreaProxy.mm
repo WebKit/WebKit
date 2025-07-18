@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(TILED_CA_DRAWING_AREA)
 
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
@@ -52,7 +52,7 @@ Ref<TiledCoreAnimationDrawingAreaProxy> TiledCoreAnimationDrawingAreaProxy::crea
 }
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
-    : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy, webProcessProxy)
+    : DrawingAreaProxy(webPageProxy, webProcessProxy)
 {
 }
 
@@ -248,4 +248,4 @@ std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::disp
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(TILED_CA_DRAWING_AREA)

@@ -41,7 +41,7 @@
 #include "RenderMathMLOperator.h"
 #include <wtf/TZoneMallocInlines.h>
 
-static const UChar gRadicalCharacter = 0x221A;
+static const char16_t gRadicalCharacter = 0x221A;
 
 namespace WebCore {
 

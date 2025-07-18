@@ -11,6 +11,7 @@
 #ifndef VIDEO_QUALITY_LIMITATION_REASON_TRACKER_H_
 #define VIDEO_QUALITY_LIMITATION_REASON_TRACKER_H_
 
+#include <cstdint>
 #include <map>
 
 #include "common_video/include/quality_limitation_reason.h"

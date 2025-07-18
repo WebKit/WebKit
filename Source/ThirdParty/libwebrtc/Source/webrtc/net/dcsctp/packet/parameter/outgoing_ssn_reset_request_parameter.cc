@@ -49,7 +49,7 @@ namespace dcsctp {
 constexpr int OutgoingSSNResetRequestParameter::kType;
 
 std::optional<OutgoingSSNResetRequestParameter>
-OutgoingSSNResetRequestParameter::Parse(rtc::ArrayView<const uint8_t> data) {
+OutgoingSSNResetRequestParameter::Parse(webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -91,7 +91,7 @@ void OutgoingSSNResetRequestParameter::SerializeTo(
 }
 
 std::string OutgoingSSNResetRequestParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Outgoing SSN Reset Request, req_seq_nbr=" << *request_sequence_number()
      << ", resp_seq_nbr=" << *response_sequence_number()
      << ", sender_last_asg_tsn=" << *sender_last_assigned_tsn();

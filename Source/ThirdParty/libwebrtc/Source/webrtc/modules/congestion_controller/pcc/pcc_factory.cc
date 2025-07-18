@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include "api/transport/network_control.h"
+#include "api/units/time_delta.h"
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
 namespace webrtc {

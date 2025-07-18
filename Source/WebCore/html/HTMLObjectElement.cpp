@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"

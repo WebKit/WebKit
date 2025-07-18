@@ -24,22 +24,22 @@ TEST(PitchBasedVadTest, VoicingProbabilityTest) {
   std::string spectral_peak_file_name =
       test::ResourcePath("audio_processing/agc/agc_spectral_peak", "dat");
   FILE* spectral_peak_file = fopen(spectral_peak_file_name.c_str(), "rb");
-  ASSERT_TRUE(spectral_peak_file != NULL);
+  ASSERT_TRUE(spectral_peak_file != nullptr);
 
   std::string pitch_gain_file_name =
       test::ResourcePath("audio_processing/agc/agc_pitch_gain", "dat");
   FILE* pitch_gain_file = fopen(pitch_gain_file_name.c_str(), "rb");
-  ASSERT_TRUE(pitch_gain_file != NULL);
+  ASSERT_TRUE(pitch_gain_file != nullptr);
 
   std::string pitch_lag_file_name =
       test::ResourcePath("audio_processing/agc/agc_pitch_lag", "dat");
   FILE* pitch_lag_file = fopen(pitch_lag_file_name.c_str(), "rb");
-  ASSERT_TRUE(pitch_lag_file != NULL);
+  ASSERT_TRUE(pitch_lag_file != nullptr);
 
   std::string voicing_prob_file_name =
       test::ResourcePath("audio_processing/agc/agc_voicing_prob", "dat");
   FILE* voicing_prob_file = fopen(voicing_prob_file_name.c_str(), "rb");
-  ASSERT_TRUE(voicing_prob_file != NULL);
+  ASSERT_TRUE(voicing_prob_file != nullptr);
 
   PitchBasedVad vad_;
 

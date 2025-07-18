@@ -51,7 +51,7 @@ using namespace WebCore;
 static Lock webFixedPositionContentDataLock;
 
 struct ViewportConstrainedLayerData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ViewportConstrainedLayerData);
     ViewportConstrainedLayerData()
         : m_enclosingAcceleratedScrollLayer(nil)
     { }
@@ -62,7 +62,7 @@ struct ViewportConstrainedLayerData {
 typedef HashMap<RetainPtr<CALayer>, std::unique_ptr<ViewportConstrainedLayerData>> LayerInfoMap;
 
 struct WebFixedPositionContentData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WebFixedPositionContentData);
 public:
     WebFixedPositionContentData(WebView *);
     ~WebFixedPositionContentData();

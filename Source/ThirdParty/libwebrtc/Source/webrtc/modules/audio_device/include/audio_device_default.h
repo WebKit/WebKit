@@ -124,7 +124,7 @@ class AudioDeviceModuleDefault : public T {
   bool BuiltInAGCIsAvailable() const override { return false; }
   int32_t EnableBuiltInAGC(bool /* enable */) override { return -1; }
   bool BuiltInNSIsAvailable() const override { return false; }
-  int32_t EnableBuiltInNS(bool enable) override { return -1; }
+  int32_t EnableBuiltInNS(bool /* enable */) override { return -1; }
 
   int32_t GetPlayoutUnderrunCount() const override { return -1; }
 

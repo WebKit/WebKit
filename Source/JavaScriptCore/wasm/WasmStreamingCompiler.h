@@ -47,7 +47,7 @@ class StreamingPlan;
 
 class StreamingCompiler final : public StreamingParserClient, public ThreadSafeRefCounted<StreamingCompiler> {
 public:
-    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*);
+    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*, const SourceCode&);
 
     JS_EXPORT_PRIVATE ~StreamingCompiler();
 
@@ -59,7 +59,7 @@ public:
     void didCompileFunction(StreamingPlan&);
 
 private:
-    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*);
+    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*, const SourceCode&);
 
     bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
     void didFinishParsing() final;
@@ -77,6 +77,7 @@ private:
     const Ref<Wasm::ModuleInformation> m_info;
     StreamingParser m_parser;
     RefPtr<EntryPlan> m_plan;
+    SourceCode m_source;
 };
 
 

@@ -67,7 +67,7 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   // Receiver part.
 
   // Called when we receive an RTCP packet.
-  void IncomingRtcpPacket(rtc::ArrayView<const uint8_t> packet) override;
+  void IncomingRtcpPacket(ArrayView<const uint8_t> packet) override;
 
   void SetRemoteSSRC(uint32_t ssrc) override;
   void SetLocalSsrc(uint32_t ssrc) override;
@@ -103,7 +103,7 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   RtpState GetRtpState() const override;
   RtpState GetRtxState() const override;
 
-  void SetNonSenderRttMeasurement(bool enabled) override {}
+  void SetNonSenderRttMeasurement(bool /* enabled */) override {}
 
   uint32_t SSRC() const override { return rtcp_sender_.SSRC(); }
 
@@ -142,17 +142,17 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   bool TrySendPacket(std::unique_ptr<RtpPacketToSend> packet,
                      const PacedPacketInfo& pacing_info) override;
 
-  bool CanSendPacket(const RtpPacketToSend& packet) const override {
+  bool CanSendPacket(const RtpPacketToSend& /* packet */) const override {
     RTC_DCHECK_NOTREACHED() << "Not implemented";
     return false;
   }
 
-  void AssignSequenceNumber(RtpPacketToSend& packet) override {
+  void AssignSequenceNumber(RtpPacketToSend& /* packet */) override {
     RTC_DCHECK_NOTREACHED() << "Not implemented";
   }
 
-  void SendPacket(std::unique_ptr<RtpPacketToSend> packet,
-                  const PacedPacketInfo& pacing_info) override {
+  void SendPacket(std::unique_ptr<RtpPacketToSend> /* packet */,
+                  const PacedPacketInfo& /* pacing_info */) override {
     RTC_DCHECK_NOTREACHED() << "Not implemented";
   }
 
@@ -164,16 +164,16 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   std::vector<std::unique_ptr<RtpPacketToSend>> FetchFecPackets() override;
 
   void OnAbortedRetransmissions(
-      rtc::ArrayView<const uint16_t> sequence_numbers) override;
+      ArrayView<const uint16_t> sequence_numbers) override;
 
   void OnPacketsAcknowledged(
-      rtc::ArrayView<const uint16_t> sequence_numbers) override;
+      ArrayView<const uint16_t> sequence_numbers) override;
 
   std::vector<std::unique_ptr<RtpPacketToSend>> GeneratePadding(
       size_t target_size_bytes) override;
 
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
-      rtc::ArrayView<const uint16_t> sequence_numbers) const override;
+      ArrayView<const uint16_t> sequence_numbers) const override;
 
   size_t ExpectedPerPacketOverhead() const override;
 
@@ -249,7 +249,7 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   void OnReceivedNack(
       const std::vector<uint16_t>& nack_sequence_numbers) override;
   void OnReceivedRtcpReportBlocks(
-      rtc::ArrayView<const ReportBlockData> report_blocks) override;
+      ArrayView<const ReportBlockData> report_blocks) override;
   void OnRequestSendReport() override;
 
   void SetVideoBitrateAllocation(

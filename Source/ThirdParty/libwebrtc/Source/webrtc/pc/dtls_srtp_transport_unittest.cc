@@ -14,28 +14,32 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "call/rtp_demuxer.h"
 #include "media/base/fake_rtp.h"
-#include "p2p/base/dtls_transport_internal.h"
-#include "p2p/base/fake_dtls_transport.h"
-#include "p2p/base/fake_ice_transport.h"
 #include "p2p/base/p2p_constants.h"
+#include "p2p/dtls/dtls_transport_internal.h"
+#include "p2p/dtls/fake_dtls_transport.h"
+#include "p2p/test/fake_ice_transport.h"
 #include "pc/rtp_transport.h"
+#include "pc/srtp_transport.h"
 #include "pc/test/rtp_transport_test_util.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/containers/flat_set.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 
-using cricket::FakeDtlsTransport;
-using cricket::FakeIceTransport;
 using webrtc::DtlsSrtpTransport;
+using ::webrtc::FakeDtlsTransport;
+using ::webrtc::FakeIceTransport;
 using webrtc::RtpTransport;
 using webrtc::SrtpTransport;
 
@@ -79,7 +83,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     dtls_srtp_transport1_->SubscribeRtcpPacketReceived(
         &transport_observer1_,
-        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+        [this](webrtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
           transport_observer1_.OnRtcpPacketReceived(buffer, packet_time_ms);
         });
     dtls_srtp_transport1_->SubscribeReadyToSend(
@@ -88,7 +92,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     dtls_srtp_transport2_->SubscribeRtcpPacketReceived(
         &transport_observer2_,
-        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+        [this](webrtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
           transport_observer2_.OnRtcpPacketReceived(buffer, packet_time_ms);
         });
     dtls_srtp_transport2_->SubscribeReadyToSend(
@@ -105,11 +109,11 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
   void CompleteDtlsHandshake(FakeDtlsTransport* fake_dtls1,
                              FakeDtlsTransport* fake_dtls2) {
-    auto cert1 = rtc::RTCCertificate::Create(
-        rtc::SSLIdentity::Create("session1", rtc::KT_DEFAULT));
+    auto cert1 = webrtc::RTCCertificate::Create(
+        webrtc::SSLIdentity::Create("session1", webrtc::KT_DEFAULT));
     fake_dtls1->SetLocalCertificate(cert1);
-    auto cert2 = rtc::RTCCertificate::Create(
-        rtc::SSLIdentity::Create("session1", rtc::KT_DEFAULT));
+    auto cert2 = webrtc::RTCCertificate::Create(
+        webrtc::SSLIdentity::Create("session1", webrtc::KT_DEFAULT));
     fake_dtls2->SetLocalCertificate(cert2);
     fake_dtls1->SetDestination(fake_dtls2);
   }
@@ -122,24 +126,24 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     size_t rtp_len = sizeof(kPcmuFrame);
     size_t packet_size = rtp_len + kRtpAuthTagLen;
-    rtc::Buffer rtp_packet_buffer(packet_size);
+    webrtc::Buffer rtp_packet_buffer(packet_size);
     char* rtp_packet_data = rtp_packet_buffer.data<char>();
     memcpy(rtp_packet_data, kPcmuFrame, rtp_len);
     // In order to be able to run this test function multiple times we can not
     // use the same sequence number twice. Increase the sequence number by one.
-    rtc::SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
-                 ++sequence_number_);
-    rtc::CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len,
-                                          packet_size);
-    rtc::CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len,
-                                          packet_size);
+    webrtc::SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
+                    ++sequence_number_);
+    webrtc::CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len,
+                                             packet_size);
+    webrtc::CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len,
+                                             packet_size);
 
-    rtc::PacketOptions options;
+    webrtc::AsyncSocketPacketOptions options;
     // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     int prev_received_packets = transport_observer2_.rtp_count();
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtpPacket(&rtp_packet1to2, options,
-                                                     cricket::PF_SRTP_BYPASS));
+                                                     webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer2_.last_recv_rtp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer2_.last_recv_rtp_packet().data(),
                         kPcmuFrame, rtp_len));
@@ -147,7 +151,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     prev_received_packets = transport_observer1_.rtp_count();
     ASSERT_TRUE(dtls_srtp_transport2_->SendRtpPacket(&rtp_packet2to1, options,
-                                                     cricket::PF_SRTP_BYPASS));
+                                                     webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer1_.last_recv_rtp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer1_.last_recv_rtp_packet().data(),
                         kPcmuFrame, rtp_len));
@@ -157,19 +161,21 @@ class DtlsSrtpTransportTest : public ::testing::Test,
   void SendRecvRtcpPackets() {
     size_t rtcp_len = sizeof(kRtcpReport);
     size_t packet_size = rtcp_len + 4 + kRtpAuthTagLen;
-    rtc::Buffer rtcp_packet_buffer(packet_size);
+    webrtc::Buffer rtcp_packet_buffer(packet_size);
 
     // TODO(zhihuang): Remove the extra copy when the SendRtpPacket method
     // doesn't take the CopyOnWriteBuffer by pointer.
-    rtc::CopyOnWriteBuffer rtcp_packet1to2(kRtcpReport, rtcp_len, packet_size);
-    rtc::CopyOnWriteBuffer rtcp_packet2to1(kRtcpReport, rtcp_len, packet_size);
+    webrtc::CopyOnWriteBuffer rtcp_packet1to2(kRtcpReport, rtcp_len,
+                                              packet_size);
+    webrtc::CopyOnWriteBuffer rtcp_packet2to1(kRtcpReport, rtcp_len,
+                                              packet_size);
 
-    rtc::PacketOptions options;
+    webrtc::AsyncSocketPacketOptions options;
     // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     int prev_received_packets = transport_observer2_.rtcp_count();
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtcpPacket(&rtcp_packet1to2, options,
-                                                      cricket::PF_SRTP_BYPASS));
+                                                      webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer2_.last_recv_rtcp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer2_.last_recv_rtcp_packet().data(),
                         kRtcpReport, rtcp_len));
@@ -178,7 +184,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
     // Do the same thing in the opposite direction;
     prev_received_packets = transport_observer1_.rtcp_count();
     ASSERT_TRUE(dtls_srtp_transport2_->SendRtcpPacket(&rtcp_packet2to1, options,
-                                                      cricket::PF_SRTP_BYPASS));
+                                                      webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer1_.last_recv_rtcp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer1_.last_recv_rtcp_packet().data(),
                         kRtcpReport, rtcp_len));
@@ -194,26 +200,26 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     size_t rtp_len = sizeof(kPcmuFrameWithExtensions);
     size_t packet_size = rtp_len + kRtpAuthTagLen;
-    rtc::Buffer rtp_packet_buffer(packet_size);
+    webrtc::Buffer rtp_packet_buffer(packet_size);
     char* rtp_packet_data = rtp_packet_buffer.data<char>();
     memcpy(rtp_packet_data, kPcmuFrameWithExtensions, rtp_len);
     // In order to be able to run this test function multiple times we can not
     // use the same sequence number twice. Increase the sequence number by one.
-    rtc::SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
-                 ++sequence_number_);
-    rtc::CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len,
-                                          packet_size);
-    rtc::CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len,
-                                          packet_size);
+    webrtc::SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
+                    ++sequence_number_);
+    webrtc::CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len,
+                                             packet_size);
+    webrtc::CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len,
+                                             packet_size);
 
     char original_rtp_data[sizeof(kPcmuFrameWithExtensions)];
     memcpy(original_rtp_data, rtp_packet_data, rtp_len);
 
-    rtc::PacketOptions options;
+    webrtc::AsyncSocketPacketOptions options;
     // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtpPacket(&rtp_packet1to2, options,
-                                                     cricket::PF_SRTP_BYPASS));
+                                                     webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer2_.last_recv_rtp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer2_.last_recv_rtp_packet().data(),
                         original_rtp_data, rtp_len));
@@ -233,7 +239,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 
     // Do the same thing in the opposite direction.
     ASSERT_TRUE(dtls_srtp_transport2_->SendRtpPacket(&rtp_packet2to1, options,
-                                                     cricket::PF_SRTP_BYPASS));
+                                                     webrtc::PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer1_.last_recv_rtp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer1_.last_recv_rtp_packet().data(),
                         original_rtp_data, rtp_len));
@@ -257,7 +263,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
     SendRecvRtcpPackets();
   }
 
-  rtc::AutoThread main_thread_;
+  webrtc::AutoThread main_thread_;
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport1_;
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport2_;
   webrtc::TransportObserver transport_observer1_;
@@ -271,17 +277,17 @@ class DtlsSrtpTransportTest : public ::testing::Test,
 // transport finished the handshake, SRTP is set up.
 TEST_F(DtlsSrtpTransportTest, SetTransportsAfterHandshakeCompleteWithRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), nullptr, rtp_dtls2.get(), nullptr,
                          /*rtcp_mux_enabled=*/true);
 
   auto rtp_dtls3 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls4 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   CompleteDtlsHandshake(rtp_dtls3.get(), rtp_dtls4.get());
 
@@ -296,25 +302,25 @@ TEST_F(DtlsSrtpTransportTest, SetTransportsAfterHandshakeCompleteWithRtcpMux) {
 TEST_F(DtlsSrtpTransportTest,
        SetTransportsAfterHandshakeCompleteWithoutRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "video", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "video", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/false);
 
   auto rtp_dtls3 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls3 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls4 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls4 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   CompleteDtlsHandshake(rtp_dtls3.get(), rtp_dtls4.get());
   CompleteDtlsHandshake(rtcp_dtls3.get(), rtcp_dtls4.get());
 
@@ -328,13 +334,13 @@ TEST_F(DtlsSrtpTransportTest,
 // handshake is finished.
 TEST_F(DtlsSrtpTransportTest, SetTransportsBeforeHandshakeCompleteWithRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(),
@@ -351,13 +357,13 @@ TEST_F(DtlsSrtpTransportTest, SetTransportsBeforeHandshakeCompleteWithRtcpMux) {
 TEST_F(DtlsSrtpTransportTest,
        SetTransportsBeforeHandshakeCompleteWithoutRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/false);
@@ -374,9 +380,9 @@ TEST_F(DtlsSrtpTransportTest,
 // complete.
 TEST_F(DtlsSrtpTransportTest, DtlsSrtpResetAfterDtlsTransportChange) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), nullptr, rtp_dtls2.get(), nullptr,
                          /*rtcp_mux_enabled=*/true);
@@ -386,9 +392,9 @@ TEST_F(DtlsSrtpTransportTest, DtlsSrtpResetAfterDtlsTransportChange) {
   EXPECT_TRUE(dtls_srtp_transport2_->IsSrtpActive());
 
   auto rtp_dtls3 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls4 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   // The previous context is reset.
   dtls_srtp_transport1_->SetDtlsTransports(rtp_dtls3.get(), nullptr);
@@ -406,13 +412,13 @@ TEST_F(DtlsSrtpTransportTest, DtlsSrtpResetAfterDtlsTransportChange) {
 TEST_F(DtlsSrtpTransportTest,
        RtcpMuxEnabledAfterRtpTransportHandshakeComplete) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/false);
@@ -433,9 +439,9 @@ TEST_F(DtlsSrtpTransportTest,
 // sessions are updated with new encryped header extension IDs immediately.
 TEST_F(DtlsSrtpTransportTest, EncryptedHeaderExtensionIdUpdated) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), nullptr, rtp_dtls2.get(), nullptr,
                          /*rtcp_mux_enabled=*/true);
@@ -459,9 +465,9 @@ TEST_F(DtlsSrtpTransportTest, EncryptedHeaderExtensionIdUpdated) {
 // RTP DtlsTransport is ready.
 TEST_F(DtlsSrtpTransportTest, SignalReadyToSendFiredWithRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), nullptr, rtp_dtls2.get(), nullptr,
                          /*rtcp_mux_enabled=*/true);
@@ -475,13 +481,13 @@ TEST_F(DtlsSrtpTransportTest, SignalReadyToSendFiredWithRtcpMux) {
 // both the RTP and RTCP DtlsTransport are ready.
 TEST_F(DtlsSrtpTransportTest, SignalReadyToSendFiredWithoutRtcpMux) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/false);
@@ -502,13 +508,13 @@ TEST_F(DtlsSrtpTransportTest, SignalReadyToSendFiredWithoutRtcpMux) {
 // Regression test for bugs.webrtc.org/8996
 TEST_F(DtlsSrtpTransportTest, SrtpSessionNotResetWhenRtcpTransportRemoved) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/true);
@@ -531,13 +537,13 @@ TEST_F(DtlsSrtpTransportTest, SrtpSessionNotResetWhenRtcpTransportRemoved) {
 // the SRTP parameters with the `active_reset_srtp_params_` flag.
 TEST_F(DtlsSrtpTransportTest, ActivelyResetSrtpParams) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls1 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
   auto rtp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTP);
   auto rtcp_dtls2 = std::make_unique<FakeDtlsTransport>(
-      "audio", cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+      "audio", webrtc::ICE_CANDIDATE_COMPONENT_RTCP);
 
   MakeDtlsSrtpTransports(rtp_dtls1.get(), rtcp_dtls1.get(), rtp_dtls2.get(),
                          rtcp_dtls2.get(), /*rtcp_mux_enabled=*/true);
@@ -556,11 +562,12 @@ TEST_F(DtlsSrtpTransportTest, ActivelyResetSrtpParams) {
   // Sending some RTCP packets.
   size_t rtcp_len = sizeof(kRtcpReport);
   size_t packet_size = rtcp_len + 4 + kRtpAuthTagLen;
-  rtc::Buffer rtcp_packet_buffer(packet_size);
-  rtc::CopyOnWriteBuffer rtcp_packet(kRtcpReport, rtcp_len, packet_size);
+  webrtc::Buffer rtcp_packet_buffer(packet_size);
+  webrtc::CopyOnWriteBuffer rtcp_packet(kRtcpReport, rtcp_len, packet_size);
   int prev_received_packets = transport_observer2_.rtcp_count();
   ASSERT_TRUE(dtls_srtp_transport1_->SendRtcpPacket(
-      &rtcp_packet, rtc::PacketOptions(), cricket::PF_SRTP_BYPASS));
+      &rtcp_packet, webrtc::AsyncSocketPacketOptions(),
+      webrtc::PF_SRTP_BYPASS));
   // The RTCP packet is not exepected to be received because the SRTP parameters
   // are only reset on one side and the SRTCP index is out of sync.
   EXPECT_EQ(prev_received_packets, transport_observer2_.rtcp_count());

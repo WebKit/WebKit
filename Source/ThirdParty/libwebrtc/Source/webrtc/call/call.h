@@ -97,7 +97,7 @@ class Call {
   // When a resource is overused, the Call will try to reduce the load on the
   // sysem, for example by reducing the resolution or frame rate of encoded
   // streams.
-  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) = 0;
+  virtual void AddAdaptationResource(scoped_refptr<Resource> resource) = 0;
 
   // All received RTP and RTCP packets for the call should be inserted to this
   // PacketReceiver. The PacketReceiver pointer is valid as long as the
@@ -148,10 +148,14 @@ class Call {
   virtual void OnUpdateSyncGroup(AudioReceiveStreamInterface& stream,
                                  absl::string_view sync_group) = 0;
 
-  virtual void OnSentPacket(const rtc::SentPacket& sent_packet) = 0;
+  virtual void OnSentPacket(const SentPacketInfo& sent_packet) = 0;
 
   virtual void SetClientBitratePreferences(
       const BitrateSettings& preferences) = 0;
+
+  virtual void EnableSendCongestionControlFeedbackAccordingToRfc8888() = 0;
+  virtual int FeedbackAccordingToRfc8888Count() = 0;
+  virtual int FeedbackAccordingToTransportCcCount() = 0;
 
   virtual const FieldTrialsView& trials() const = 0;
 

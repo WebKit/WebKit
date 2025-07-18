@@ -11,11 +11,14 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_STATISTICS_CALCULATOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_STATISTICS_CALCULATOR_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/neteq/neteq.h"
+#include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/expand_uma_logger.h"
 
 namespace webrtc {

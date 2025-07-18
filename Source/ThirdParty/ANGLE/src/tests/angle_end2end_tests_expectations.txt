@@ -28,8 +28,6 @@
 42266349 VULKAN : MultithreadingTestES3.UnsynchronizedTextureReads/* = SKIP
 42266349 VULKAN : MultithreadingTestES3.UnsynchronizedTextureReads2/* = SKIP
 377614665 VULKAN : GLSLTest.StructSamplerVsComma/* = SKIP
-404418769 VULKAN : GLSLTest.MaxVaryingVec2Arrays/* = SKIP
-404418769 VULKAN : GLSLTest.MaxVaryingVec3ArrayAndOneFloatArray/* = SKIP
 410584007 VULKAN : ImageTestES31.UseSourceTextureAsStorageImage/* = SKIP
 // Incorrectly handled pretty much in all backends
 42266871 : CopyTexImageTestES3.RedefineSameLevel/* = SKIP
@@ -97,6 +95,7 @@
 // ANGLE is broken if a context is made current before a surface is created in the presence of multiple queue families
 42266900 VULKAN : EGLContextSharingTestNoFixture.*/*ForceDelayedDeviceCreationForTesting* = SKIP
 42266900 VULKAN : EGLSurfacelessContextTest.*/*ForceDelayedDeviceCreationForTesting* = SKIP
+424050949 VULKAN : GLSLTest_ES31.SeparableProgramWithMismatchingShaderInterface/* = SKIP
 
 // Windows
 42262429 WIN NVIDIA D3D11 : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = SKIP
@@ -190,6 +189,10 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 373818282 WIN INTEL OPENGL : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB/* = SKIP
 388144480 WIN INTEL VULKAN : OcclusionQueriesTest.WrongSkippedQuery/* = SKIP
 
+// Texture border clamp ES 3.2 test failures
+b/390710636 PIXEL4ORXL VULKAN : TextureBorderClampTestES32.CustomBorderColorWithStencil/* = SKIP
+b/390710636 LINUX NVIDIA VULKAN : TextureBorderClampTestES32.CustomBorderColorWithStencil/* = SKIP
+
 // Failures on NVIDIA GTX 1660 driver 31.0.15.4601
 42267037 WIN NVIDIA VULKAN : RobustResourceInitTest.MaskedStencilClear/ES2_Vulkan_AllocateNonZeroMemory = SKIP
 42267037 WIN NVIDIA VULKAN : RobustResourceInitTestES3.MaskedStencilClearBuffer/ES3_Vulkan_AllocateNonZeroMemory = SKIP
@@ -274,6 +277,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 // Nvidia does not ignore gl_Layer for non-layered framebuffers
 374790899 NVIDIA OPENGL : GeometryShaderTest.GLLayerIneffectiveWithoutLayeredFramebuffer/* = SKIP
 374790899 NVIDIA GLES : GeometryShaderTest.GLLayerIneffectiveWithoutLayeredFramebuffer/* = SKIP
+42265887 NVIDIA VULKAN : CopyCompressedTextureTestES31.CopyFromUncompressedToCompressed/* = SKIP
 
 // Nvidia Vulkan
 42265709 NVIDIA VULKAN : GLSLTest_ES31.TessellationControlShaderMatrixCopyBug/* = SKIP
@@ -739,6 +743,8 @@ b/346650202 PIXEL4ORXL : GeometryShaderTest.CreateAndAttachGeometryShaderOES/* =
 
 42267094 PIXEL4ORXL VULKAN : MultisampledRenderToTextureES3Test.RenderbufferDrawThenBlitDepthStencilOnly/* = SKIP
 
+42266019 PIXEL4ORXL VULKAN : VulkanPerformanceCounterTest.MultisampleDepthStencilResolveSeparately/* = SKIP
+
 374790905 PIXEL4ORXL VULKAN : GLSLTest_ES3.ReadFromDynamicIndexingOfSwizzledVector/* = SKIP
 
 378404997 PIXEL4ORXL VULKAN : FramebufferFetchES31.DrawFetchWithDifferentIndicesInSameRenderPass_*/* = SKIP
@@ -834,6 +840,7 @@ b/217922015 PIXEL6 VULKAN : GLSLTest_ES3.NestedPowFromUniform/* = SKIP
 42266242 PIXEL6 VULKAN : PixelLocalStorageTestES31.DrawStateReset/* = SKIP
 378404998 PIXEL6 VULKAN : VulkanPerformanceCounterTest_ES31.ColorMaskedFramebufferFetchDrawThenClear/* = SKIP
 b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachments/* = SKIP
+42266019 PIXEL6 VULKAN : VulkanPerformanceCounterTest.MultisampleDepthStencilResolveSeparately/* = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -1606,6 +1613,14 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 42266974 WGPU : Texture2DTest.*Superseding* = SKIP
 42266974 WGPU : Texture2DTest.*Copy* = SKIP
 42266974 WGPU : Texture2DTest.*Mutable* = SKIP
+// Can't generate mipmaps at the moment
+389145696 WGPU : MipmapTestES3.*Generate* = SKIP
+389145696 WGPU : MipmapTestES3.*TextureArray* = SKIP
+389145696 WGPU : MipmapTestES3.*Texture3D* = SKIP
+// Can't handle the resize of the texture
+389145696 WGPU : MipmapTestES3.ResizeBaseMipTo1x1ThenDelete/* = SKIP
+// Can't glReadPixels from a cube map face correctly.
+420782526 WGPU : CubeMapTextureTest.SampleCoordinateTransformGrad* = SKIP
 // 383356846 ubyte index formats are not fully supported yet.
 383356846 WGPU : LineLoopTest.*UByte* = SKIP
 383356846 WGPU : LineLoopTest.*UShort* = SKIP
@@ -1628,16 +1643,12 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 360083331 LINUX INTEL WGPU : Texture2DTest.SubImageValidationOverflow/* = SKIP
 360083331 LINUX INTEL WGPU : Texture2DTest.ZeroSizedUploads/* = SKIP
 // Mac Nvidia devices just draw black screens.
-389145696 WGPU MAC NVIDIA : BasicUniformUsageTest* = SKIP
-389145696 WGPU MAC NVIDIA : SimpleUniformUsageTest* = SKIP
-389145696 WGPU MAC NVIDIA : BasicSamplersTest* = SKIP
-389145696 WGPU MAC NVIDIA : SampleFromRenderedTextureTest* = SKIP
-389145696 WGPU MAC NVIDIA : Texture2DTest.*Multiple* = SKIP
-389145696 WGPU MAC NVIDIA : ImageTest* = SKIP
+389145696 WGPU MAC NVIDIA : * = SKIP
 // Unimplemented cube map and non-zero mipmap EGLImages
 418022112 WGPU : ImageTest.MipLevels/* = SKIP
 418022112 WGPU : ImageTest.RespecificationOfOtherLevel/* = SKIP
 418022112 WGPU : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
+423702346 WGPU : SimpleUniformUsageTestES3.PackUniformFP16Test/* = SKIP
 
 // SPIR-V compilation error
 384593678 VULKAN : SimpleUniformUsageTestES3.CopyOfUniformsWithArrays/* = SKIP

@@ -621,7 +621,7 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     }
   }
 
-  CMTime presentationTimeStamp = CMTimeMake(frame.timeStampNs / rtc::kNumNanosecsPerMillisec, 1000);
+  CMTime presentationTimeStamp = CMTimeMake(frame.timeStampNs / webrtc::kNumNanosecsPerMillisec, 1000);
   CFDictionaryRef frameProperties = nullptr;
   if (isKeyframeRequired) {
     CFTypeRef keys[] = {kVTEncodeFrameOptionKey_ForceKeyFrame};
@@ -634,7 +634,7 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
                                               codecSpecificInfo,
                                               _width,
                                               _height,
-                                              frame.timeStampNs / rtc::kNumNanosecsPerMillisec,
+                                              frame.timeStampNs / webrtc::kNumNanosecsPerMillisec,
                                               frame.timeStamp,
                                               frame.duration,
                                               frame.rotation,
@@ -913,7 +913,7 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
 
 - (void)updateBitRateAccordingActualFrameRate {
   _frameCount++;
-  auto currentTime = rtc::TimeMillis();
+  auto currentTime = webrtc::TimeMillis();
   if (!_lastFrameRateEstimationTime) {
     _lastFrameRateEstimationTime = currentTime;
     return;
@@ -986,7 +986,7 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     RTC_LOG(LS_INFO) << "Generated keyframe";
   }
 
-  __block std::unique_ptr<rtc::Buffer> buffer = std::make_unique<rtc::Buffer>();
+  __block std::unique_ptr<webrtc::Buffer> buffer = std::make_unique<webrtc::Buffer>();
   if (_useAnnexB) {
     if (!webrtc::H264CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
       RTC_LOG(LS_WARNING) << "Unable to parse H264 encoded buffer";

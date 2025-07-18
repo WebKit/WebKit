@@ -125,7 +125,7 @@ static StringView functionCallBase(StringView sourceText)
     // Note that we're scanning text right to left instead of the more common left to right, 
     // so syntax detection is backwards.
     while (parenStack && idx) {
-        UChar curChar = sourceText[idx];
+        char16_t curChar = sourceText[idx];
         if (isInMultiLineComment) {
             if (curChar == '*' && sourceText[idx - 1] == '/') {
                 isInMultiLineComment = false;

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>This tests that the appearance of submit buttons matches normal buttons when the window is inactive.</p>
+    <input type="submit">
+    <input type="submit" disabled>
+</body>
+<script>
+if (window.testRunner)
+    window.testRunner.setWindowIsKey(false);
+</script>
+</html>

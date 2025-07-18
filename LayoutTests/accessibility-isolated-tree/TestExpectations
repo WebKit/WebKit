@@ -38,7 +38,7 @@ accessibility/mac/style-range.html [ Pass ]
 # Flaky: https://bugs.webkit.org/show_bug.cgi?id=290946
 accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Failure ]
 
-# Failures in ITM since introduced.
+# Fails in ITM since introduced.
 accessibility/text-marker/text-marker-bidi-element-arabic.html [ Failure ]
 accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
 
@@ -61,7 +61,6 @@ accessibility/mac/text-markers-for-input-with-placeholder.html [ Failure ]
 accessibility/mac/textmarker-range-for-range.html [ Failure ]
 accessibility/native-text-control-attributed-string.html [ Failure ]
 accessibility/search-misspellings.html [ Failure ]
-accessibility/text-marker/text-marker-bidi-inline-cite.html [ Failure ]
 accessibility/text-marker/text-marker-previous-next.html [ Failure ]
 accessibility/mac/text-marker-for-index-2.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Failure ]

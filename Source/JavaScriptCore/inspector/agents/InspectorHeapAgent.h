@@ -51,7 +51,7 @@ public:
     ~InspectorHeapAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void didCreateFrontendAndBackend() override;
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // HeapBackendDispatcherHandler
@@ -80,8 +80,8 @@ private:
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(Protocol::ErrorString&, unsigned heapObjectIdentifier);
 
     InjectedScriptManager& m_injectedScriptManager;
-    std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<HeapBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<HeapFrontendDispatcher> m_frontendDispatcher;
+    const Ref<HeapBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
 
     bool m_enabled { false };

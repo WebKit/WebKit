@@ -217,7 +217,7 @@ static bool canDescendIntoElement(Element& element)
 
 CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Element& element)
 {
-    if (elementForScrollableArea(m_owningScrollableArea) && elementForScrollableArea(m_owningScrollableArea)->identifier() == element.identifier())
+    if (elementForScrollableArea(m_owningScrollableArea) && elementForScrollableArea(m_owningScrollableArea)->nodeIdentifier() == element.nodeIdentifier())
         return CandidateExaminationResult::Skip;
 
     auto containingRect = boundingRectForScrollableArea(m_owningScrollableArea);

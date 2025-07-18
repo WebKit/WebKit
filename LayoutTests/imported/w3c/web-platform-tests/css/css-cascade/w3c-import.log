@@ -9,12 +9,12 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-mask-position-y
-user-select
-text-size-adjust
-initial-letter
-mask-position-x
 box-decoration-break
+user-select
+mask-position-y
+text-size-adjust
+mask-position-x
+initial-letter
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -69,6 +69,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/inline-style-background.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-cssom-order-reverse-at-property.html
@@ -150,6 +151,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-002-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-003-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-003-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-004-print.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-005-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-006-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-crash-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-external.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit.html

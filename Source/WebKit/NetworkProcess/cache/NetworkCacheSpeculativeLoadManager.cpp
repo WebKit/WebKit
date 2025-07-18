@@ -32,6 +32,7 @@
 #include "NetworkCacheSubresourcesEntry.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "PreconnectTask.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <pal/HysteresisActivity.h>
@@ -340,7 +341,7 @@ bool SpeculativeLoadManager::canRetrieve(const Key& storageKey, const WebCore::R
 void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionHandler&& completionHandler)
 {
     if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), cacheEntry = preloadedEntry->takeCacheEntry()] () mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), cacheEntry = preloadedEntry->takeCacheEntry()] () mutable {
             completionHandler(WTFMove(cacheEntry));
         });
         return;

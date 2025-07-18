@@ -107,7 +107,7 @@ class AudioTransportImpl : public AudioTransport {
 
   // Render side.
 
-  rtc::scoped_refptr<AudioMixer> mixer_;
+  scoped_refptr<AudioMixer> mixer_;
   AudioFrame mixed_frame_;
   // Converts mixed audio to the audio device output rate.
   PushResampler<int16_t> render_resampler_;

@@ -444,15 +444,20 @@ public:
         return result;
     }
 
-    ExpressionNode* createAsyncFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, SourceParseMode parseMode)
+    ExpressionNode* createAsyncFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, SourceParseMode parseMode, const Identifier& name)
     {
         if (parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {
             SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
             FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *functionInfo.name, functionInfo.body, source);
+            if (!name.isNull())
+                result->metadata()->setEcmaName(name);
             functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
             return result;
         }
-        return createFunctionExpr(location, functionInfo);
+        FuncExprNode* result =  static_cast<FuncExprNode*>(createFunctionExpr(location, functionInfo));
+        if (!name.isNull())
+            result->metadata()->setEcmaName(name);
+        return result;
     }
 
     ExpressionNode* createMethodDefinition(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)

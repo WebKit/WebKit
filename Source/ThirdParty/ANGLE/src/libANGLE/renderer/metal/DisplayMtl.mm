@@ -756,15 +756,7 @@ void DisplayMtl::ensureCapsInitialized() const
     // Metal-Feature-Set-Tables.pdf says that max supported point size is 511. We limit it to 64
     // for now. http://anglebug.com/42263403
 
-    // NOTE(kpiddington): This seems to be fixed in macOS Monterey
-    if (@available(macOS 12.0, *))
-    {
-        mNativeCaps.maxAliasedPointSize = 511;
-    }
-    else
-    {
-        mNativeCaps.maxAliasedPointSize = 64;
-    }
+    mNativeCaps.maxAliasedPointSize = 511;
     mNativeCaps.minAliasedLineWidth = 1.0f;
     mNativeCaps.maxAliasedLineWidth = 1.0f;
 
@@ -1266,11 +1258,6 @@ void DisplayMtl::initializeFeatures()
                             supportsAppleGPUFamily(1) && !isSimulator);
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback, true);
 
-    ANGLE_FEATURE_CONDITION((&mFeatures), intelExplicitBoolCastWorkaround,
-                            isIntel() && GetMacOSVersion() < OSVersion(11, 0, 0));
-    ANGLE_FEATURE_CONDITION((&mFeatures), intelDisableFastMath,
-                            isIntel() && GetMacOSVersion() < OSVersion(12, 0, 0));
-
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateAlphaToCoverage,
                             isSimulator || !supportsAppleGPUFamily(1));
 
@@ -1342,10 +1329,9 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, false);
 
     // Once not used, injectAsmStatementIntoLoopBodies should be removed and
-    // ensureLoopForwardProgress should default to true. Disabled on Mac11 due to test failures.
+    // ensureLoopForwardProgress should default to true.
     // http://crbug.com/1522730
-    bool shouldUseInjectAsmIntoLoopBodies = !mFeatures.ensureLoopForwardProgress.enabled &&
-                                            (!isOSX || GetMacOSVersion() >= OSVersion(12, 0, 0));
+    bool shouldUseInjectAsmIntoLoopBodies = !mFeatures.ensureLoopForwardProgress.enabled;
     ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies,
                             shouldUseInjectAsmIntoLoopBodies);
 }

@@ -24,14 +24,17 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
 
   if (options.allow_sck_capturer()) {
     // This will return nullptr on systems that don't support ScreenCaptureKit.
-    std::unique_ptr<DesktopCapturer> sck_capturer = CreateScreenCapturerSck(options);
+    std::unique_ptr<DesktopCapturer> sck_capturer =
+        CreateScreenCapturerSck(options);
     if (sck_capturer) {
       return sck_capturer;
     }
   }
 
-  auto capturer = std::make_unique<ScreenCapturerMac>(
-      options.configuration_monitor(), options.detect_updated_region(), options.allow_iosurface());
+  auto capturer =
+      std::make_unique<ScreenCapturerMac>(options.configuration_monitor(),
+                                          options.detect_updated_region(),
+                                          options.allow_iosurface());
   if (!capturer->Init()) {
     return nullptr;
   }

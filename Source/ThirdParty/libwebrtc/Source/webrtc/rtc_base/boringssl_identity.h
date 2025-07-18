@@ -23,7 +23,7 @@
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Holds a keypair and certificate together, and a method to generate them
 // consistently. Uses CRYPTO_BUFFER instead of X509, which offers binary size
@@ -72,6 +72,14 @@ class BoringSSLIdentity final : public SSLIdentity {
   std::unique_ptr<SSLCertChain> cert_chain_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::BoringSSLIdentity;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_BORINGSSL_IDENTITY_H_

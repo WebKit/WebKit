@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderButton {BUTTON} at (0,1) size 85x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderButton {BUTTON} at (0,1) size 85x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (12,3) size 61x14
           RenderText {#text} at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (172,0) size 5x19
         text run at (172,0) width 5: " "
-      RenderButton {BUTTON} at (176,3) size 75x16 [color=#007AFF] [bgcolor=#008000] [border: (1px solid #FFFFFF)]
+      RenderButton {BUTTON} at (176,3) size 75x16 [color=#0088FF] [bgcolor=#008000] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (7,1) size 61x14
           RenderText {#text} at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (328,0) size 5x19
         text run at (328,0) width 5: " "
-      RenderButton {INPUT} at (332,1) size 85x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderButton {INPUT} at (332,1) size 85x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (12,3) size 61x14
           RenderText at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (505,0) size 5x19
         text run at (505,0) width 5: " "
-      RenderButton {INPUT} at (509,3) size 75x16 [color=#007AFF] [bgcolor=#008000] [border: (1px solid #FFFFFF)]
+      RenderButton {INPUT} at (509,3) size 75x16 [color=#0088FF] [bgcolor=#008000] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (7,1) size 61x14
           RenderText at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"

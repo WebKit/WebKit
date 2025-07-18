@@ -77,6 +77,11 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
         _forwardTransitionController = adoptNS([_UINavigationInteractiveTransitionBase alloc]);
         _forwardTransitionController = [_forwardTransitionController initWithGestureRecognizerView:gestureRecognizerView animator:nil delegate:self];
         [_forwardTransitionController setShouldReverseTranslation:YES];
+
+#if HAVE(CONTENT_SWIPE_GESTURE_RECOGNIZER)
+        [[_backTransitionController contentSwipeGestureRecognizer] setEnabled:NO];
+        [[_forwardTransitionController contentSwipeGestureRecognizer] setEnabled:NO];
+#endif
     }
     return self;
 }
@@ -198,7 +203,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : page.get();
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
-    RefPtr targetItem = direction == SwipeDirection::Back ? backForwardList.goBackItemSkippingItemsWithoutUserGesture() : backForwardList.goForwardItemSkippingItemsWithoutUserGesture();
+    RefPtr targetItem = itemForSwipeDirection(direction);
     if (!targetItem) {
         RELEASE_LOG_ERROR(ViewGestures, "Failed to find %s item when beginning swipe.", direction == SwipeDirection::Back ? "back" : "forward");
         didEndGesture();

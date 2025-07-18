@@ -63,16 +63,26 @@ namespace JSC {
     case op_switch_imm: { \
         auto bytecode = instruction->as<OpSwitchImm>(); \
         auto& table = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex); \
-        for (unsigned i = table.m_branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.m_branchOffsets[i]); \
+        if (table.isList()) { \
+            for (unsigned i = 0; i < table.m_branchOffsets.size(); i += 2) \
+                SWITCH_CASE(table.m_branchOffsets[i + 1]); \
+        } else { \
+            for (unsigned i = table.m_branchOffsets.size(); i--;) \
+                SWITCH_CASE(table.m_branchOffsets[i]); \
+        } \
         SWITCH_CASE(table.m_defaultOffset); \
         break; \
     } \
     case op_switch_char: { \
         auto bytecode = instruction->as<OpSwitchChar>(); \
         auto& table = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex); \
-        for (unsigned i = table.m_branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.m_branchOffsets[i]); \
+        if (table.isList()) { \
+            for (unsigned i = 0; i < table.m_branchOffsets.size(); i += 2) \
+                SWITCH_CASE(table.m_branchOffsets[i + 1]); \
+        } else { \
+            for (unsigned i = table.m_branchOffsets.size(); i--;) \
+                SWITCH_CASE(table.m_branchOffsets[i]); \
+        } \
         SWITCH_CASE(table.m_defaultOffset); \
         break; \
     } \

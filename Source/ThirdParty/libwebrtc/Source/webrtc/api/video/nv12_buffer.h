@@ -27,15 +27,14 @@ namespace webrtc {
 // http://msdn.microsoft.com/library/windows/desktop/dd206750.aspx#nv12.
 class RTC_EXPORT NV12Buffer : public NV12BufferInterface {
  public:
-  static rtc::scoped_refptr<NV12Buffer> Create(int width, int height);
-  static rtc::scoped_refptr<NV12Buffer> Create(int width,
-                                               int height,
-                                               int stride_y,
-                                               int stride_uv);
-  static rtc::scoped_refptr<NV12Buffer> Copy(
-      const I420BufferInterface& i420_buffer);
+  static scoped_refptr<NV12Buffer> Create(int width, int height);
+  static scoped_refptr<NV12Buffer> Create(int width,
+                                          int height,
+                                          int stride_y,
+                                          int stride_uv);
+  static scoped_refptr<NV12Buffer> Copy(const I420BufferInterface& i420_buffer);
 
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
+  scoped_refptr<I420BufferInterface> ToI420() override;
 
   int width() const override;
   int height() const override;

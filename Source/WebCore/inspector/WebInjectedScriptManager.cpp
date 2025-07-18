@@ -27,6 +27,7 @@
 #include "WebInjectedScriptManager.h"
 
 #include "CommandLineAPIModule.h"
+#include "Document.h"
 #include "JSExecState.h"
 #include "LocalDOMWindow.h"
 #include <wtf/TZoneMallocInlines.h>

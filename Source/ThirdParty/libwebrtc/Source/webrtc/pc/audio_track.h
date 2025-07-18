@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/media_stream_interface.h"
 #include "api/media_stream_track.h"
 #include "api/scoped_refptr.h"
@@ -30,7 +31,7 @@ class AudioTrack : public MediaStreamTrack<AudioTrackInterface>,
  protected:
   // Protected ctor to force use of factory method.
   AudioTrack(absl::string_view label,
-             const rtc::scoped_refptr<AudioSourceInterface>& source);
+             const scoped_refptr<AudioSourceInterface>& source);
 
   AudioTrack() = delete;
   AudioTrack(const AudioTrack&) = delete;
@@ -39,9 +40,9 @@ class AudioTrack : public MediaStreamTrack<AudioTrackInterface>,
   ~AudioTrack() override;
 
  public:
-  static rtc::scoped_refptr<AudioTrack> Create(
+  static scoped_refptr<AudioTrack> Create(
       absl::string_view id,
-      const rtc::scoped_refptr<AudioSourceInterface>& source);
+      const scoped_refptr<AudioSourceInterface>& source);
 
   // MediaStreamTrack implementation.
   std::string kind() const override;
@@ -57,7 +58,7 @@ class AudioTrack : public MediaStreamTrack<AudioTrackInterface>,
   void OnChanged() override;
 
  private:
-  const rtc::scoped_refptr<AudioSourceInterface> audio_source_;
+  const scoped_refptr<AudioSourceInterface> audio_source_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker signaling_thread_checker_;
 };
 

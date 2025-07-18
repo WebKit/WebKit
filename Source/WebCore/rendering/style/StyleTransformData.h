@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "LengthPoint.h"
 #include "RenderStyleConstants.h"
+#include "StyleTransformOrigin.h"
 #include "TransformOperations.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +34,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 class StyleTransformData : public RefCounted<StyleTransformData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleTransformData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleTransformData, StyleTransformData);
 public:
     static Ref<StyleTransformData> create() { return adoptRef(*new StyleTransformData); }
     Ref<StyleTransformData> copy() const;
@@ -47,12 +47,8 @@ public:
 
     bool hasTransform() const { return operations.size(); }
 
-    LengthPoint originXY() const { return { x, y }; }
-
     TransformOperations operations;
-    Length x;
-    Length y;
-    float z;
+    Style::TransformOrigin origin;
     TransformBox transformBox;
 
 private:

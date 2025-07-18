@@ -40,6 +40,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "Quirks.h"
 #include "SecurityOrigin.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)

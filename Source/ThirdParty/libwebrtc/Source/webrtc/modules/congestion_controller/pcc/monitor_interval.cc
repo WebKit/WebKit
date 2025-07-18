@@ -13,7 +13,13 @@
 #include <stddef.h>
 
 #include <cmath>
+#include <vector>
 
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

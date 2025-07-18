@@ -33,13 +33,16 @@
 
 #include "ColorBlending.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FloatRect.h"
+#include "FrameInlines.h"
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderAncestorIterator.h"
@@ -111,6 +114,8 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
         paintBehavior.add(PaintBehavior::ExcludeText);
     if (options.flags.contains(SnapshotFlags::FixedAndStickyLayersOnly))
         paintBehavior.add(PaintBehavior::FixedAndStickyLayersOnly);
+    if (options.flags.contains(SnapshotFlags::DraggableElement))
+        paintBehavior.add(PaintBehavior::DraggableSnapshot);
 
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);

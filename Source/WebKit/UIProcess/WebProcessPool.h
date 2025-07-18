@@ -630,9 +630,6 @@ public:
     void registerAssetFonts(WebProcessProxy&);
 #endif
 
-    void markHasReceivedAXRequestInUIProcess() { m_hasReceivedAXRequestInUIProcess = true; }
-    bool hasReceivedAXRequestInUIProcess() const { return m_hasReceivedAXRequestInUIProcess; }
-
 #if PLATFORM(MAC)
     void registerAdditionalFonts(NSArray *fontNames);
 #endif
@@ -641,6 +638,10 @@ public:
     void didRefreshDisplay();
 #endif
     void suppressEDR(bool);
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    void initializeAccessibilityIfNecessary();
+#endif
 
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };

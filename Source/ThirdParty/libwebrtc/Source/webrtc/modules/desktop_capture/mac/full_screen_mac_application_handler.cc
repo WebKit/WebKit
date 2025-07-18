@@ -68,7 +68,7 @@ class FullScreenMacApplicationHandler : public FullScreenApplicationHandler {
 
  protected:
   using CachePredicate =
-      rtc::FunctionView<bool(const DesktopCapturer::Source&)>;
+      webrtc::FunctionView<bool(const DesktopCapturer::Source&)>;
 
   void InvalidateCacheIfNeeded(const DesktopCapturer::SourceList& source_list,
                                int64_t timestamp,

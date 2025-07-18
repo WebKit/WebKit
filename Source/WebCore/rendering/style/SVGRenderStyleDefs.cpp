@@ -201,6 +201,7 @@ void StyleMiscData::dumpDifferences(TextStream& ts, const StyleMiscData& other) 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleShadowSVGData);
 
 StyleShadowSVGData::StyleShadowSVGData()
+    : shadow { RenderStyle::initialBoxShadow() }
 {
 }
 

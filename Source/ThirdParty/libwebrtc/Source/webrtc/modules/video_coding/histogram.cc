@@ -11,6 +11,7 @@
 #include "modules/video_coding/histogram.h"
 
 #include <algorithm>
+#include <cstddef>
 
 #include "rtc_base/checks.h"
 

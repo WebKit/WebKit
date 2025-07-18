@@ -32,6 +32,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLTimerQueryEXT.h"
 #include <wtf/Lock.h>
@@ -140,8 +141,7 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     if (isContextLost())
         return;
     Ref context = this->context();
-    RefPtr scriptExecutionContext = context->scriptExecutionContext();
-    if (!scriptExecutionContext)
+    if (!context->scriptExecutionContext())
         return;
 
     Locker locker { context->objectGraphLock() };
@@ -159,7 +159,7 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     context->protectedGraphicsContextGL()->endQueryEXT(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    scriptExecutionContext->checkedEventLoop()->queueMicrotask([query = WTFMove(context->m_activeQuery)] {
+    context->scriptExecutionContext()->eventLoop().queueMicrotask([query = WTFMove(context->m_activeQuery)] {
         query->makeResultAvailable();
     });
 }
@@ -169,8 +169,7 @@ void EXTDisjointTimerQuery::queryCounterEXT(WebGLTimerQueryEXT& query, GCGLenum 
     if (isContextLost())
         return;
     Ref context = this->context();
-    RefPtr scriptExecutionContext = context->scriptExecutionContext();
-    if (!scriptExecutionContext)
+    if (!context->scriptExecutionContext())
         return;
 
     if (!context->validateWebGLObject("queryCounterEXT"_s, query))
@@ -191,7 +190,7 @@ void EXTDisjointTimerQuery::queryCounterEXT(WebGLTimerQueryEXT& query, GCGLenum 
     context->protectedGraphicsContextGL()->queryCounterEXT(query.object(), target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    scriptExecutionContext->checkedEventLoop()->queueMicrotask([&] {
+    context->scriptExecutionContext()->eventLoop().queueMicrotask([&] {
         query.makeResultAvailable();
     });
 }

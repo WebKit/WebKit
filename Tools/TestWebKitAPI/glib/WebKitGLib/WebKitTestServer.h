@@ -27,7 +27,7 @@
 #include <wtf/text/CString.h>
 
 class WebKitTestServer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebKitTestServer);
 public:
 
     enum ServerOptions {

@@ -28,11 +28,12 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
   pkg_config("gbm") {
     packages = [ "gbm" ]
   }
+  pkg_config("gl") {
+    packages = [ "gl" ]
+    ignore_libs = true
+  }
   pkg_config("egl") {
     packages = [ "egl" ]
-  }
-  pkg_config("epoxy") {
-    packages = [ "epoxy" ]
     ignore_libs = true
   }
   pkg_config("libdrm") {
@@ -72,8 +73,8 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
     configs = [
       ":pipewire_base",
       ":gbm",
+      ":gl",
       ":egl",
-      ":epoxy",
       ":libdrm",
     ]
   }
@@ -111,8 +112,9 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:sanitizer",
+      "../../rtc_base:stringutils",
       "../../rtc_base/system:rtc_export",
-      "//third_party/abseil-cpp/absl/strings:string_view",
+      "//third_party/abseil-cpp/absl/strings",
     ]
 
     if (!rtc_link_pipewire) {

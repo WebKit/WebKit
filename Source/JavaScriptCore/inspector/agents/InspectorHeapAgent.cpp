@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHeapAgent);
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_frontendDispatcher(makeUnique<HeapFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<HeapFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(HeapBackendDispatcher::create(context.backendDispatcher, this))
     , m_environment(context.environment)
 {
@@ -53,7 +53,7 @@ InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
 
 InspectorHeapAgent::~InspectorHeapAgent() = default;
 
-void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorHeapAgent::didCreateFrontendAndBackend()
 {
 }
 

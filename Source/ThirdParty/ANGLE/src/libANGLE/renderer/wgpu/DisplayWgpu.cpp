@@ -399,7 +399,13 @@ void DisplayWgpu::initializeFeatures()
 egl::Error DisplayWgpu::createWgpuDevice()
 {
     WGPUInstanceDescriptor instanceDescriptor          = WGPU_INSTANCE_DESCRIPTOR_INIT;
+#ifdef WGPU_BREAKING_CHANGE_INSTANCE_FEATURES_LIMITS
+    static constexpr auto kTimedWaitAny     = WGPUInstanceFeatureName_TimedWaitAny;
+    instanceDescriptor.requiredFeatureCount = 1;
+    instanceDescriptor.requiredFeatures     = &kTimedWaitAny;
+#else
     instanceDescriptor.capabilities.timedWaitAnyEnable = true;
+#endif
     mInstance = webgpu::InstanceHandle::Acquire(&mProcTable,
                                                 mProcTable.createInstance(&instanceDescriptor));
 

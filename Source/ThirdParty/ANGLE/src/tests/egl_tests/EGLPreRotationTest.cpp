@@ -98,7 +98,7 @@ class EGLPreRotationSurfaceTest : public ANGLETest<>
         displayAttributes.push_back(deviceType);
         displayAttributes.push_back(EGL_NONE);
 
-        mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttributes.data());
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);

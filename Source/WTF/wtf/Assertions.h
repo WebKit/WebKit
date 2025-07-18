@@ -47,6 +47,10 @@
 #include <stdlib.h>
 #include <wtf/ExportMacros.h>
 
+#if OS(ANDROID)
+#include <android/log.h>
+#endif
+
 #if OS(DARWIN)
 #include <wtf/spi/darwin/ReasonSPI.h>
 #endif
@@ -98,7 +102,7 @@
 #if ENABLE(RELEASE_LOG)
 #define RELEASE_LOG_DISABLED 0
 #else
-#define RELEASE_LOG_DISABLED !(USE(OS_LOG) || ENABLE(JOURNALD_LOG))
+#define RELEASE_LOG_DISABLED !(USE(OS_LOG) || ENABLE(JOURNALD_LOG) || OS(ANDROID))
 #endif
 
 #ifndef VERBOSE_RELEASE_LOG
@@ -163,11 +167,9 @@ typedef struct {
     WTFLogChannelState state;
     const char* name;
     WTFLogLevel level;
-#if !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED && USE(OS_LOG)
     const char* subsystem;
-#if USE(OS_LOG)
     __unsafe_unretained os_log_t osLogChannel;
-#endif
 #endif
 } WTFLogChannel;
 
@@ -190,15 +192,12 @@ typedef struct {
     extern WTFLogChannel LOG_CHANNEL(name);
 
 #if !defined(DEFINE_LOG_CHANNEL)
-#if RELEASE_LOG_DISABLED
-#define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level };
-#elif USE(OS_LOG)
+#if USE(OS_LOG)
 #define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
     WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level, subsystem, OS_LOG_DEFAULT };
 #else
 #define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level, subsystem };
+    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level };
 #endif
 #endif
 
@@ -709,6 +708,34 @@ static constexpr bool unreachableForValue = false;
         SUPPRESS_UNCOUNTED_LOCAL os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
 } while (0)
 
+#elif OS(ANDROID)
+
+#define PUBLIC_LOG_STRING "s"
+#define PRIVATE_LOG_STRING "s"
+#define SENSITIVE_LOG_STRING "s"
+
+#define LOG_ANDROID_SEND(channel, priority, fmt, ...) do { \
+    auto& logChannel = LOG_CHANNEL(channel); \
+    if (logChannel.state != WTFLogChannelState::Off) \
+        __android_log_print(ANDROID_LOG_ ## priority, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] " fmt, logChannel.name, ##__VA_ARGS__); \
+} while (0)
+
+#define RELEASE_LOG(channel, ...) LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__)
+#define RELEASE_LOG_ERROR(channel, ...) LOG_ANDROID_SEND(channel, ERROR, __VA_ARGS__)
+#define RELEASE_LOG_FAULT(channel, ...) LOG_ANDROID_SEND(channel, FATAL, __VA_ARGS__)
+#define RELEASE_LOG_INFO(channel, ...) LOG_ANDROID_SEND(channel, INFO, __VA_ARGS__)
+#define RELEASE_LOG_DEBUG(channel, ...) LOG_ANDROID_SEND(channel, DEBUG, __VA_ARGS__)
+
+#define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
+    if (LOG_CHANNEL(channel).level >= (logLevel)) \
+        LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__); \
+} while (0)
+
+#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, ...) do { \
+    if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
+        LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__); \
+} while (0)
+
 #elif ENABLE(JOURNALD_LOG)
 
 #define PUBLIC_LOG_STRING "s"
@@ -716,7 +743,7 @@ static constexpr bool unreachableForValue = false;
 #define SENSITIVE_LOG_STRING "s"
 #define SD_JOURNAL_SEND(channel, priority, file, line, function, ...) do { \
     if (LOG_CHANNEL(channel).state != WTFLogChannelState::Off) \
-        sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
+        sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
 } while (0)
 
 #define RELEASE_LOG(channel, ...) SD_JOURNAL_SEND(channel, LOG_NOTICE, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
@@ -743,7 +770,7 @@ static constexpr bool unreachableForValue = false;
 #define LOGF(channel, priority, fmt, ...) do { \
     auto& logChannel = LOG_CHANNEL(channel); \
     if (logChannel.state != WTFLogChannelState::Off) \
-        fprintf(stderr, "[%s:%s:%i] " fmt "\n", logChannel.subsystem, logChannel.name, priority, ##__VA_ARGS__); \
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%i] " fmt "\n", logChannel.name, priority, ##__VA_ARGS__); \
 } while (0)
 
 #define RELEASE_LOG(channel, ...) LOGF(channel, 4, __VA_ARGS__)
@@ -957,7 +984,7 @@ void isIntegralOrPointerType(T, Types... types)
     isIntegralOrPointerType(types...);
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(ANDROID)
 WTF_EXPORT_PRIVATE void disableForwardingVPrintfStdErrToOSLog();
 #endif
 

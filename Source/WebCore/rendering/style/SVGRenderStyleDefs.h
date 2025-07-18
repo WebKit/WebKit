@@ -136,7 +136,7 @@ enum class MaskType : uint8_t {
 // Inherited/Non-Inherited Style Datastructures
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
 class StyleFillData : public RefCounted<StyleFillData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFillData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFillData, StyleFillData);
 public:
     static Ref<StyleFillData> create() { return adoptRef(*new StyleFillData); }
     Ref<StyleFillData> copy() const;
@@ -158,7 +158,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStrokeData);
 class StyleStrokeData : public RefCounted<StyleStrokeData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleStrokeData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleStrokeData, StyleStrokeData);
 public:
     static Ref<StyleStrokeData> create() { return adoptRef(*new StyleStrokeData); }
     Ref<StyleStrokeData> copy() const;
@@ -182,7 +182,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStopData);
 class StyleStopData : public RefCounted<StyleStopData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleStopData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleStopData, StyleStopData);
 public:
     static Ref<StyleStopData> create() { return adoptRef(*new StyleStopData); }
     Ref<StyleStopData> copy() const;
@@ -204,7 +204,7 @@ private:
 // Note: the rule for this class is, *no inheritance* of these props
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscData);
 class StyleMiscData : public RefCounted<StyleMiscData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMiscData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMiscData, StyleMiscData);
 public:
     static Ref<StyleMiscData> create() { return adoptRef(*new StyleMiscData); }
     Ref<StyleMiscData> copy() const;
@@ -228,7 +228,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleShadowSVGData);
 class StyleShadowSVGData : public RefCounted<StyleShadowSVGData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleShadowSVGData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleShadowSVGData, StyleShadowSVGData);
 public:
     static Ref<StyleShadowSVGData> create() { return adoptRef(*new StyleShadowSVGData); }
     Ref<StyleShadowSVGData> copy() const;
@@ -239,7 +239,7 @@ public:
     void dumpDifferences(TextStream&, const StyleShadowSVGData&) const;
 #endif
 
-    FixedVector<Style::BoxShadow> shadow;
+    Style::BoxShadows shadow;
 
 private:
     StyleShadowSVGData();
@@ -249,7 +249,7 @@ private:
 // Inherited resources
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedResourceData);
 class StyleInheritedResourceData : public RefCounted<StyleInheritedResourceData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleInheritedResourceData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleInheritedResourceData, StyleInheritedResourceData);
 public:
     static Ref<StyleInheritedResourceData> create() { return adoptRef(*new StyleInheritedResourceData); }
     Ref<StyleInheritedResourceData> copy() const;
@@ -272,7 +272,7 @@ private:
 // Positioning and sizing properties.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleLayoutData);
 class StyleLayoutData : public RefCounted<StyleLayoutData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleLayoutData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleLayoutData, StyleLayoutData);
 public:
     static Ref<StyleLayoutData> create() { return adoptRef(*new StyleLayoutData); }
     Ref<StyleLayoutData> copy() const;

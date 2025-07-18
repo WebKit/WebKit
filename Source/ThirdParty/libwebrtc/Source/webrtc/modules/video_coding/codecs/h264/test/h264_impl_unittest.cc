@@ -42,7 +42,7 @@ class TestH264Impl : public VideoCodecUnitTest {
   }
 
   void ModifyCodecSettings(VideoCodec* codec_settings) override {
-    webrtc::test::CodecSettings(kVideoCodecH264, codec_settings);
+    test::CodecSettings(kVideoCodecH264, codec_settings);
   }
 };
 

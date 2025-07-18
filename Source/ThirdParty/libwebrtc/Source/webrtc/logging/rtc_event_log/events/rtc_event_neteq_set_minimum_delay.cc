@@ -12,8 +12,6 @@
 
 #include <stdint.h>
 
-
-
 namespace webrtc {
 
 RtcEventNetEqSetMinimumDelay::RtcEventNetEqSetMinimumDelay(uint32_t remote_ssrc,

@@ -35,7 +35,7 @@ namespace dcsctp {
 constexpr int NoUserDataCause::kType;
 
 std::optional<NoUserDataCause> NoUserDataCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -50,7 +50,7 @@ void NoUserDataCause::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string NoUserDataCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "No User Data, tsn=" << *tsn_;
   return sb.Release();
 }

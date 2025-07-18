@@ -32,6 +32,7 @@
 #include "BackgroundFetchRequest.h"
 #include "CacheQueryOptions.h"
 #include "CookieChangeSubscription.h"
+#include "ExceptionOr.h"
 #include "NotificationData.h"
 #include "RetrieveRecordsOptions.h"
 #include "SecurityOrigin.h"

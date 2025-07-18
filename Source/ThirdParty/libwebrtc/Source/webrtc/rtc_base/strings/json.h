@@ -11,13 +11,16 @@
 #ifndef RTC_BASE_STRINGS_JSON_H_
 #define RTC_BASE_STRINGS_JSON_H_
 
+#include <cstddef>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "json/json.h"
+#include "json/json.h"    // IWYU pragma: export
+#include "json/reader.h"  // IWYU pragma: export
+#include "json/value.h"   // IWYU pragma: export
 
-namespace rtc {
+namespace webrtc {
 
 ///////////////////////////////////////////////////////////////////////////////
 // JSON Helpers
@@ -78,6 +81,43 @@ bool GetDoubleFromJsonObject(const Json::Value& in,
 // Writes out a Json value as a string.
 std::string JsonValueToString(const Json::Value& json);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::BoolVectorToJsonArray;
+using ::webrtc::DoubleVectorToJsonArray;
+using ::webrtc::GetBoolFromJson;
+using ::webrtc::GetBoolFromJsonArray;
+using ::webrtc::GetBoolFromJsonObject;
+using ::webrtc::GetDoubleFromJson;
+using ::webrtc::GetDoubleFromJsonArray;
+using ::webrtc::GetDoubleFromJsonObject;
+using ::webrtc::GetIntFromJson;
+using ::webrtc::GetIntFromJsonArray;
+using ::webrtc::GetIntFromJsonObject;
+using ::webrtc::GetStringFromJson;
+using ::webrtc::GetStringFromJsonArray;
+using ::webrtc::GetStringFromJsonObject;
+using ::webrtc::GetUIntFromJson;
+using ::webrtc::GetUIntFromJsonArray;
+using ::webrtc::GetUIntFromJsonObject;
+using ::webrtc::GetValueFromJsonArray;
+using ::webrtc::GetValueFromJsonObject;
+using ::webrtc::IntVectorToJsonArray;
+using ::webrtc::JsonArrayToBoolVector;
+using ::webrtc::JsonArrayToDoubleVector;
+using ::webrtc::JsonArrayToIntVector;
+using ::webrtc::JsonArrayToStringVector;
+using ::webrtc::JsonArrayToUIntVector;
+using ::webrtc::JsonArrayToValueVector;
+using ::webrtc::JsonValueToString;
+using ::webrtc::StringVectorToJsonArray;
+using ::webrtc::UIntVectorToJsonArray;
+using ::webrtc::ValueVectorToJsonArray;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_STRINGS_JSON_H_

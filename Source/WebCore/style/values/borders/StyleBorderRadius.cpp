@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleBorderRadius.h"
 
+#include "CSSPrimitiveNumericUnits.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"

@@ -804,6 +804,12 @@ EXPORTS
 
     ; GL_EXT_float_blend
 
+    ; GL_EXT_fragment_shading_rate
+    glFramebufferShadingRateEXT
+    glGetFragmentShadingRatesEXT
+    glShadingRateCombinerOpsEXT
+    glShadingRateEXT
+
     ; GL_EXT_geometry_shader
     glFramebufferTextureEXT
 

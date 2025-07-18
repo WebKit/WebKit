@@ -246,4 +246,8 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     RegisterAdditionalFonts(struct WebKit::AdditionalFonts fonts)
     RegisterFontMap(HashMap<String, URL> fonts, HashMap<String, Vector<String>> fontFamilyMap, Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
 #endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    InitializeAccessibility(Vector<WebKit::SandboxExtensionHandle> handles);
+#endif
 }

@@ -20,7 +20,7 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Interface for RNG implementations.
 class RandomGenerator {
@@ -83,6 +83,25 @@ uint32_t CreateRandomNonZeroId();
 // Generates a random double between 0.0 (inclusive) and 1.0 (exclusive).
 double CreateRandomDouble();
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::CreateRandomData;
+using ::webrtc::CreateRandomDouble;
+using ::webrtc::CreateRandomId;
+using ::webrtc::CreateRandomId64;
+using ::webrtc::CreateRandomNonZeroId;
+using ::webrtc::CreateRandomString;
+using ::webrtc::CreateRandomUuid;
+using ::webrtc::InitRandom;
+using ::webrtc::RandomGenerator;
+using ::webrtc::SetDefaultRandomGenerator;
+using ::webrtc::SetRandomGenerator;
+using ::webrtc::SetRandomTestMode;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_CRYPTO_RANDOM_H_

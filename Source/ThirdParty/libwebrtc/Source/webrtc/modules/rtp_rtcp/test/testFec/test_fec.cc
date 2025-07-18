@@ -16,11 +16,20 @@
 #include <string.h>
 #include <time.h>
 
+#include <cstdint>
+#include <cstdio>
 #include <list>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -124,7 +133,7 @@ void RunTest(bool use_flexfec) {
   // reproduce past results.
   const unsigned int random_seed = static_cast<unsigned int>(time(nullptr));
   Random random(random_seed);
-  std::string filename = webrtc::test::OutputPath() + "randomSeedLog.txt";
+  std::string filename = test::OutputPath() + "randomSeedLog.txt";
   FILE* random_seed_file = fopen(filename.c_str(), "a");
   fprintf(random_seed_file, "%u\n", random_seed);
   fclose(random_seed_file);

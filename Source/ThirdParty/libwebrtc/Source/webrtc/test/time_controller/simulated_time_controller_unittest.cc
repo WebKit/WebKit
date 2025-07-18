@@ -134,7 +134,7 @@ TEST(SimulatedTimeControllerTest, ThreadYeildsOnSynchronousCall) {
   // called.
   main_thread->PostTask([&] { task_has_run = true; });
   SendTask(t2.get(), [] {
-    rtc::Event yield_event;
+    Event yield_event;
     // Wait() triggers YieldExecution() which will runs message processing on
     // all threads that are not in the yielded set.
 

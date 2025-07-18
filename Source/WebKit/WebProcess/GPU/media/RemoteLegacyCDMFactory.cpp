@@ -124,7 +124,7 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     if (!identifier)
         return nullptr;
     auto remoteCDM = makeUniqueRefWithoutRefCountedCheck<RemoteLegacyCDM>(*this, *identifier);
-    m_cdms.set(*identifier, Ref { *remoteCDM }.get());
+    m_cdms.set(*identifier, Ref { remoteCDM.get() }.get());
     return remoteCDM.moveToUniquePtr();
 }
 

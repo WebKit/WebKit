@@ -11,11 +11,14 @@
 #ifndef P2P_BASE_ICE_AGENT_INTERFACE_H_
 #define P2P_BASE_ICE_AGENT_INTERFACE_H_
 
+#include <cstdint>
+
 #include "api/array_view.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_switch_reason.h"
+#include "p2p/base/transport_description.h"
 
-namespace cricket {
+namespace webrtc {
 
 // IceAgentInterface provides methods that allow an ICE controller to manipulate
 // the connections available to a transport, and used by the transport to
@@ -60,7 +63,7 @@ class IceAgentInterface {
   //
   // SignalStateChange will not be triggered.
   virtual void ForgetLearnedStateForConnections(
-      rtc::ArrayView<const Connection* const> connections) = 0;
+      ArrayView<const Connection* const> connections) = 0;
 
   // Send a STUN ping request for the given connection.
   virtual void SendPingRequest(const Connection* connection) = 0;
@@ -72,9 +75,17 @@ class IceAgentInterface {
   // Prune away the given connections. Returns true if pruning is permitted and
   // successfully performed.
   virtual bool PruneConnections(
-      rtc::ArrayView<const Connection* const> connections) = 0;
+      ArrayView<const Connection* const> connections) = 0;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::IceAgentInterface;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_ICE_AGENT_INTERFACE_H_

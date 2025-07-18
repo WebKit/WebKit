@@ -23,6 +23,8 @@
 #include "SVGLengthValue.h"
 
 #include "AnimationUtilities.h"
+#include "CSSPrimitiveValue.h"
+#include "ExceptionOr.h"
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
 #include "SVGParserUtilities.h"

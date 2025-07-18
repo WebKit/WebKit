@@ -30,7 +30,7 @@
 ]
 messages -> RemoteXRProjectionLayer Stream {
 #if PLATFORM(COCOA)
-    void StartFrame(size_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, size_t textureIndex) NotStreamEncodable
+    void StartFrame(uint64_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, uint64_t textureIndex) NotStreamEncodable
 #endif
     void EndFrame()
     void Destruct()

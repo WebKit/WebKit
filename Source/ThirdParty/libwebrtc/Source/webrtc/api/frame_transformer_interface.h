@@ -19,6 +19,7 @@
 #include "api/array_view.h"
 #include "api/ref_count.h"
 #include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame_metadata.h"
 #include "rtc_base/system/rtc_export.h"
@@ -44,19 +45,23 @@ class TransformableFrameInterface {
 
   // Returns the frame payload data. The data is valid until the next non-const
   // method call.
-  virtual rtc::ArrayView<const uint8_t> GetData() const = 0;
+  virtual ArrayView<const uint8_t> GetData() const = 0;
 
   // Copies `data` into the owned frame payload data.
-  virtual void SetData(rtc::ArrayView<const uint8_t> data) = 0;
+  virtual void SetData(ArrayView<const uint8_t> data) = 0;
 
   virtual uint8_t GetPayloadType() const = 0;
+  virtual bool CanSetPayloadType() const { return false; }
+  virtual void SetPayloadType(uint8_t payload_type) { RTC_DCHECK_NOTREACHED(); }
   virtual uint32_t GetSsrc() const = 0;
   virtual uint32_t GetTimestamp() const = 0;
   virtual void SetRTPTimestamp(uint32_t timestamp) = 0;
 
   // TODO(https://bugs.webrtc.org/373365537): Remove this once its usage is
   // removed from blink.
-  virtual std::optional<Timestamp> GetCaptureTimeIdentifier() const {
+  [[deprecated(
+      "Use GetPresentationTimestamp instead")]] virtual std::optional<Timestamp>
+  GetCaptureTimeIdentifier() const {
     return std::nullopt;
   }
 
@@ -76,6 +81,31 @@ class TransformableFrameInterface {
   // other PeerConnectionss.
   virtual Direction GetDirection() const { return Direction::kUnknown; }
   virtual std::string GetMimeType() const = 0;
+
+  // Timestamp at which the packet has been first seen on the network interface.
+  // Only defined for received frames.
+  virtual std::optional<Timestamp> ReceiveTime() const = 0;
+
+  // Timestamp at which the frame was captured in the capturer system.
+  // For receiver frames, the timestamp is expressed in the capturer system's
+  // clock relative to the NTP epoch (January 1st 1970 00:00 UTC) and is
+  // available only if the absolute capture timestamp header extension is
+  // enabled.
+  // For sender frames, the timestamp is expressed relative to the local
+  // system clock's default epoch.
+  virtual std::optional<Timestamp> CaptureTime() const = 0;
+  virtual bool CanSetCaptureTime() const { return false; }
+  virtual void SetCaptureTime(std::optional<Timestamp> capture_time) {
+    RTC_DCHECK_NOTREACHED();
+  }
+
+  // Offset between the sender system's clock and the capturer system's clock.
+  // Can be used to express the capture time in the local system's clock as
+  // long as the local system can determine the offset between its local clock
+  // and the sender system's clock.
+  // Accessible only if the absolute capture timestamp header extension is
+  // enabled.
+  virtual std::optional<TimeDelta> SenderCaptureTimeOffset() const = 0;
 };
 
 class TransformableVideoFrameInterface : public TransformableFrameInterface {
@@ -95,10 +125,11 @@ class TransformableAudioFrameInterface : public TransformableFrameInterface {
   RTC_EXPORT explicit TransformableAudioFrameInterface(Passkey passkey);
   virtual ~TransformableAudioFrameInterface() = default;
 
-  virtual rtc::ArrayView<const uint32_t> GetContributingSources() const = 0;
+  virtual ArrayView<const uint32_t> GetContributingSources() const = 0;
 
   virtual const std::optional<uint16_t> SequenceNumber() const = 0;
 
+  // TODO(crbug.com/391114797): Delete this function.
   virtual std::optional<uint64_t> AbsoluteCaptureTimestamp() const = 0;
 
   enum class FrameType { kEmptyFrame, kAudioFrameSpeech, kAudioFrameCN };
@@ -111,10 +142,10 @@ class TransformableAudioFrameInterface : public TransformableFrameInterface {
   // dBov. 127 represents digital silence. Only present on remote frames if
   // the audio level header extension was included.
   virtual std::optional<uint8_t> AudioLevel() const = 0;
-
-  // Timestamp at which the packet has been first seen on the network interface.
-  // Only defined for received audio packet.
-  virtual std::optional<Timestamp> ReceiveTime() const = 0;
+  virtual bool CanSetAudioLevel() const { return false; }
+  virtual void SetAudioLevel(std::optional<uint8_t> audio_level_dbov) {
+    RTC_DCHECK_NOTREACHED();
+  }
 };
 
 // Objects implement this interface to be notified with the transformed frame.
@@ -142,9 +173,9 @@ class FrameTransformerInterface : public RefCountInterface {
       std::unique_ptr<TransformableFrameInterface> transformable_frame) = 0;
 
   virtual void RegisterTransformedFrameCallback(
-      rtc::scoped_refptr<TransformedFrameCallback>) {}
+      scoped_refptr<TransformedFrameCallback>) {}
   virtual void RegisterTransformedFrameSinkCallback(
-      rtc::scoped_refptr<TransformedFrameCallback>,
+      scoped_refptr<TransformedFrameCallback>,
       uint32_t /* ssrc */) {}
   virtual void UnregisterTransformedFrameCallback() {}
   virtual void UnregisterTransformedFrameSinkCallback(uint32_t /* ssrc */) {}
@@ -159,7 +190,7 @@ class FrameTransformerHost {
  public:
   virtual ~FrameTransformerHost() {}
   virtual void SetFrameTransformer(
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
+      scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
   // TODO: bugs.webrtc.org/15929 - To be added:
   // virtual AddIncomingMediaType(RtpCodec codec) = 0;
   // virtual AddOutgoingMediaType(RtpCodec codec) = 0;

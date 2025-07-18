@@ -36,7 +36,6 @@
 #import "DataTransfer.h"
 #import "DocumentInlines.h"
 #import "DragState.h"
-#import "ElementIdentifier.h"
 #import "EventNames.h"
 #import "FocusController.h"
 #import "FrameLoader.h"
@@ -46,6 +45,7 @@
 #import "LocalFrameView.h"
 #import "MouseEventTypes.h"
 #import "MouseEventWithHitTestResults.h"
+#import "NodeIdentifier.h"
 #import "Page.h"
 #import "Pasteboard.h"
 #import "PlatformEventFactoryIOS.h"
@@ -98,9 +98,9 @@ public:
     ~CurrentEventScope();
 
 private:
-    RetainPtr<WebEvent> m_savedCurrentEvent;
+    const RetainPtr<WebEvent> m_savedCurrentEvent;
 #if ASSERT_ENABLED
-    RetainPtr<WebEvent> m_event;
+    const RetainPtr<WebEvent> m_event;
 #endif
 };
 
@@ -191,7 +191,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
+    page->focusController().setFocusedFrame(protectedFrame().ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -710,7 +710,7 @@ bool EventHandler::shouldUpdateAutoscroll()
 }
 
 #if ENABLE(MODEL_PROCESS)
-std::optional<ElementIdentifier> EventHandler::requestInteractiveModelElementAtPoint(const IntPoint& clientPosition)
+std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoint(const IntPoint& clientPosition)
 {
     Ref frame = m_frame.get();
 
@@ -734,8 +734,8 @@ std::optional<ElementIdentifier> EventHandler::requestInteractiveModelElementAtP
     auto hitTestedMouseEvent = document->prepareMouseEvent(hitType, documentPoint, syntheticMousePressEvent);
 
     if (RefPtr subframe = dynamicDowncast<LocalFrame>(subframeForHitTestResult(hitTestedMouseEvent))) {
-        if (std::optional<ElementIdentifier> elementID = subframe->eventHandler().requestInteractiveModelElementAtPoint(adjustedClientPosition))
-            return elementID;
+        if (std::optional<NodeIdentifier> nodeID = subframe->eventHandler().requestInteractiveModelElementAtPoint(adjustedClientPosition))
+            return nodeID;
     }
 
     RefPtr targetElement = hitTestedMouseEvent.hitTestResult().targetElement();
@@ -745,23 +745,23 @@ std::optional<ElementIdentifier> EventHandler::requestInteractiveModelElementAtP
             transform.translate(clientPosition.x(), clientPosition.y());
 
             modelElement->beginStageModeTransform(transform);
-            return modelElement->identifier();
+            return modelElement->nodeIdentifier();
         }
     }
 
     return std::nullopt;
 }
 
-void EventHandler::stageModeSessionDidUpdate(std::optional<ElementIdentifier> elementID, const TransformationMatrix& transform)
+void EventHandler::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
 {
-    if (!elementID)
+    if (!nodeID)
         return;
 
-    RefPtr element = Element::fromIdentifier(*elementID);
-    if (!element)
+    RefPtr node = Node::fromIdentifier(*nodeID);
+    if (!node)
         return;
 
-    RefPtr modelElement = dynamicDowncast<HTMLModelElement>(element);
+    RefPtr modelElement = dynamicDowncast<HTMLModelElement>(node);
     if (!modelElement)
         return;
 
@@ -772,16 +772,16 @@ void EventHandler::stageModeSessionDidUpdate(std::optional<ElementIdentifier> el
     modelElement->updateStageModeTransform(transform);
 }
 
-void EventHandler::stageModeSessionDidEnd(std::optional<ElementIdentifier> elementID)
+void EventHandler::stageModeSessionDidEnd(std::optional<NodeIdentifier> nodeID)
 {
-    if (!elementID)
+    if (!nodeID)
         return;
 
-    RefPtr element = Element::fromIdentifier(*elementID);
-    if (!element)
+    RefPtr node = Node::fromIdentifier(*nodeID);
+    if (!node)
         return;
 
-    RefPtr modelElement = dynamicDowncast<HTMLModelElement>(element);
+    RefPtr modelElement = dynamicDowncast<HTMLModelElement>(node);
     if (!modelElement)
         return;
 

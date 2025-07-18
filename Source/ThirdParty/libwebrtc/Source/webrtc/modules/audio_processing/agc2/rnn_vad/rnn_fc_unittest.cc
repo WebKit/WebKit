@@ -69,7 +69,7 @@ TEST_P(RnnFcParametrization, DISABLED_BenchmarkFullyConnectedLayer) {
                          /*layer_name=*/"FC");
 
   constexpr int kNumTests = 10000;
-  ::webrtc::test::PerformanceTimer perf_timer(kNumTests);
+  test::PerformanceTimer perf_timer(kNumTests);
   for (int k = 0; k < kNumTests; ++k) {
     perf_timer.StartTimer();
     fc.ComputeOutput(kFullyConnectedInputVector);

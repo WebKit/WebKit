@@ -1,0 +1,1870 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "6", "name": "CBATTErrorSuccess"},
+      {"access": "public", "name": "CBATTErrorInvalidHandle"},
+      {"access": "public", "name": "CBATTErrorReadNotPermitted"},
+      {"access": "public", "name": "CBATTErrorWriteNotPermitted"},
+      {"access": "public", "name": "CBATTErrorInvalidPdu"},
+      {"access": "public", "name": "CBATTErrorInsufficientAuthentication"},
+      {"access": "public", "name": "CBATTErrorRequestNotSupported"},
+      {"access": "public", "name": "CBATTErrorInvalidOffset"},
+      {"access": "public", "name": "CBATTErrorInsufficientAuthorization"},
+      {"access": "public", "name": "CBATTErrorPrepareQueueFull"},
+      {"access": "public", "name": "CBATTErrorAttributeNotFound"},
+      {"access": "public", "name": "CBATTErrorAttributeNotLong"},
+      {"access": "public", "name": "CBATTErrorInsufficientEncryptionKeySize"},
+      {"access": "public", "name": "CBATTErrorInvalidAttributeValueLength"},
+      {"access": "public", "name": "CBATTErrorUnlikelyError"},
+      {"access": "public", "name": "CBATTErrorInsufficientEncryption"},
+      {"access": "public", "name": "CBATTErrorUnsupportedGroupType"},
+      {"access": "public", "name": "CBATTErrorInsufficientResources"}
+     ],
+     "name": "CBATTError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBAttributePermissionsReadable"},
+      {"access": "public", "name": "CBAttributePermissionsWriteable"},
+      {"access": "public", "name": "CBAttributePermissionsReadEncryptionRequired"},
+      {"access": "public", "name": "CBAttributePermissionsWriteEncryptionRequired"}
+     ],
+     "introduced": "6",
+     "name": "CBAttributePermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "13", "name": "CBCentralManagerFeatureExtendedScanAndConnect"}
+     ],
+     "name": "CBCentralManagerFeature"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCentralManagerStateUnknown"},
+      {"access": "public", "name": "CBCentralManagerStateResetting"},
+      {"access": "public", "name": "CBCentralManagerStateUnsupported"},
+      {"access": "public", "name": "CBCentralManagerStateUnauthorized"},
+      {"access": "public", "name": "CBCentralManagerStatePoweredOff"},
+      {"access": "public", "name": "CBCentralManagerStatePoweredOn"}
+     ],
+     "introduced": "5",
+     "name": "CBCentralManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCharacteristicPropertyBroadcast"},
+      {"access": "public", "name": "CBCharacteristicPropertyRead"},
+      {"access": "public", "name": "CBCharacteristicPropertyWriteWithoutResponse"},
+      {"access": "public", "name": "CBCharacteristicPropertyWrite"},
+      {"access": "public", "name": "CBCharacteristicPropertyNotify"},
+      {"access": "public", "name": "CBCharacteristicPropertyIndicate"},
+      {"access": "public", "name": "CBCharacteristicPropertyAuthenticatedSignedWrites"},
+      {"access": "public", "name": "CBCharacteristicPropertyExtendedProperties"},
+      {"access": "public", "introduced": "6", "name": "CBCharacteristicPropertyNotifyEncryptionRequired"},
+      {"access": "public", "introduced": "6", "name": "CBCharacteristicPropertyIndicateEncryptionRequired"}
+     ],
+     "name": "CBCharacteristicProperties"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCharacteristicWriteWithResponse"},
+      {"access": "public", "name": "CBCharacteristicWriteWithoutResponse"}
+     ],
+     "name": "CBCharacteristicWriteType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBConnectionEventPeerDisconnected"},
+      {"access": "public", "name": "CBConnectionEventPeerConnected"}
+     ],
+     "name": "CBConnectionEvent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBErrorUnknown"},
+      {"access": "public", "introduced": "6", "name": "CBErrorInvalidParameters"},
+      {"access": "public", "introduced": "6", "name": "CBErrorInvalidHandle"},
+      {"access": "public", "introduced": "6", "name": "CBErrorNotConnected"},
+      {"access": "public", "introduced": "6", "name": "CBErrorOutOfSpace"},
+      {"access": "public", "introduced": "6", "name": "CBErrorOperationCancelled"},
+      {"access": "public", "introduced": "6", "name": "CBErrorConnectionTimeout"},
+      {"access": "public", "introduced": "6", "name": "CBErrorPeripheralDisconnected"},
+      {"access": "public", "introduced": "6", "name": "CBErrorUUIDNotAllowed"},
+      {"access": "public", "introduced": "6", "name": "CBErrorAlreadyAdvertising"},
+      {"access": "public", "introduced": "7.1", "name": "CBErrorConnectionFailed"},
+      {"access": "public", "introduced": "9", "name": "CBErrorConnectionLimitReached"},
+      {"access": "public", "introduced": "9", "name": "CBErrorUnkownDevice"},
+      {"access": "public", "introduced": "12", "name": "CBErrorUnknownDevice"},
+      {"access": "public", "introduced": "12", "name": "CBErrorOperationNotSupported"},
+      {"access": "public", "introduced": "13.4", "name": "CBErrorPeerRemovedPairingInformation"},
+      {"access": "public", "introduced": "13.4", "name": "CBErrorEncryptionTimedOut"},
+      {"access": "public", "introduced": "14", "name": "CBErrorTooManyLEPairedDevices"},
+      {"access": "public", "name": "CBErrorLeGattExceededBackgroundNotificationLimit", "unavailable": true},
+      {"access": "public", "name": "CBErrorLeGattNearBackgroundNotificationLimit", "unavailable": true}
+     ],
+     "name": "CBError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBManagerAuthorizationNotDetermined"},
+      {"access": "public", "name": "CBManagerAuthorizationRestricted"},
+      {"access": "public", "name": "CBManagerAuthorizationDenied"},
+      {"access": "public", "name": "CBManagerAuthorizationAllowedAlways"}
+     ],
+     "introduced": "13",
+     "name": "CBManagerAuthorization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBManagerStateUnknown"},
+      {"access": "public", "name": "CBManagerStateResetting"},
+      {"access": "public", "name": "CBManagerStateUnsupported"},
+      {"access": "public", "name": "CBManagerStateUnauthorized"},
+      {"access": "public", "name": "CBManagerStatePoweredOff"},
+      {"access": "public", "name": "CBManagerStatePoweredOn"}
+     ],
+     "introduced": "10",
+     "name": "CBManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusRestricted"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusDenied"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "7",
+     "name": "CBPeripheralManagerAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyLow"},
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyMedium"},
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyHigh"}
+     ],
+     "introduced": "6",
+     "name": "CBPeripheralManagerConnectionLatency"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerStateUnknown"},
+      {"access": "public", "name": "CBPeripheralManagerStateResetting"},
+      {"access": "public", "name": "CBPeripheralManagerStateUnsupported"},
+      {"access": "public", "name": "CBPeripheralManagerStateUnauthorized"},
+      {"access": "public", "name": "CBPeripheralManagerStatePoweredOff"},
+      {"access": "public", "name": "CBPeripheralManagerStatePoweredOn"}
+     ],
+     "introduced": "6",
+     "name": "CBPeripheralManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralStateDisconnected"},
+      {"access": "public", "name": "CBPeripheralStateConnecting"},
+      {"access": "public", "name": "CBPeripheralStateConnected"},
+      {"access": "public", "introduced": "9", "name": "CBPeripheralStateDisconnecting"}
+     ],
+     "introduced": "7",
+     "name": "CBPeripheralState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBATTErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataIsConnectable"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataLocalNameKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataManufacturerDataKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataOverflowServiceUUIDsKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataServiceDataKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataServiceUUIDsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataSolicitedServiceUUIDsKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataTxPowerLevelKey"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionDeviceAccessForMedia"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionRestoreIdentifierKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionShowPowerAlertKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStatePeripheralsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStateScanOptionsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStateScanServicesKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerScanOptionAllowDuplicatesKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerScanOptionSolicitedServiceUUIDsKey"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionEnableAutoReconnect"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionEnableTransportBridgingKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnConnectionKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnDisconnectionKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnNotificationKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionRequiresANCS"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionStartDelayKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectionEventMatchingOptionPeripheralUUIDs"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectionEventMatchingOptionServiceUUIDs"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerOptionRestoreIdentifierKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerOptionShowPowerAlertKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerRestoredStateAdvertisementDataKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerRestoredStateServicesKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicAggregateFormatString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicExtendedPropertiesString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicFormatString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicObservationScheduleString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicUserDescriptionString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicValidRangeString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDClientCharacteristicConfigurationString"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_CBUUIDL2CAPPSMCharacteristicString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDServerCharacteristicConfigurationString"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBATTRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "central", "name": "central"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristic", "name": "characteristic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "offset", "name": "offset"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CBAttribute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "UUID", "name": "UUID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBCentral",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumUpdateValueLength", "name": "maximumUpdateValueLength"}
+     ],
+     "super": "CBPeer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "supportsFeatures:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "initWithDelegate:queue:options:"},
+      {"access": "public", "introduced": "7", "name": "retrievePeripheralsWithIdentifiers:"},
+      {"access": "public", "introduced": "7", "name": "retrieveConnectedPeripheralsWithServices:"},
+      {"access": "public", "name": "scanForPeripheralsWithServices:options:"},
+      {"access": "public", "name": "stopScan"},
+      {"access": "public", "name": "connectPeripheral:options:"},
+      {"access": "public", "name": "cancelPeripheralConnection:"},
+      {"access": "public", "introduced": "13", "name": "registerForConnectionEventsWithOptions:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBCentralManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isScanning", "introduced": "9", "name": "isScanning"}
+     ],
+     "super": "CBManager"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBCharacteristic",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "service", "name": "service"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptors", "name": "descriptors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBroadcasted", "introduced": "5", "name": "isBroadcasted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isNotifying", "name": "isNotifying"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristic", "name": "characteristic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "CBL2CAPChannel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peer", "name": "peer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputStream", "name": "inputStream"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputStream", "name": "outputStream"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "PSM", "name": "PSM"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CBManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorization", "introduced": "13", "name": "authorization"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorization", "introduced": "13.1", "name": "authorization"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:properties:value:permissions:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableCharacteristic",
+     "properties": [
+      {"access": "public", "getter": "permissions", "name": "permissions", "setter": "setPermissions:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscribedCentrals", "introduced": "7", "name": "subscribedCentrals"},
+      {"access": "public", "getter": "properties", "name": "properties", "setter": "setProperties:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "descriptors", "name": "descriptors", "setter": "setDescriptors:"}
+     ],
+     "super": "CBCharacteristic"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:value:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableDescriptor",
+     "super": "CBDescriptor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:primary:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableService",
+     "properties": [
+      {"access": "public", "getter": "includedServices", "name": "includedServices", "setter": "setIncludedServices:"},
+      {"access": "public", "getter": "characteristics", "name": "characteristics", "setter": "setCharacteristics:"}
+     ],
+     "super": "CBService"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CBPeer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "introduced": "7", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "readRSSI"},
+      {"access": "public", "name": "discoverServices:"},
+      {"access": "public", "name": "discoverIncludedServices:forService:"},
+      {"access": "public", "name": "discoverCharacteristics:forService:"},
+      {"access": "public", "name": "readValueForCharacteristic:"},
+      {"access": "public", "introduced": "9", "name": "maximumWriteValueLengthForType:"},
+      {"access": "public", "name": "writeValue:forCharacteristic:type:"},
+      {"access": "public", "name": "setNotifyValue:forCharacteristic:"},
+      {"access": "public", "name": "discoverDescriptorsForCharacteristic:"},
+      {"access": "public", "name": "readValueForDescriptor:"},
+      {"access": "public", "name": "writeValue:forDescriptor:"},
+      {"access": "public", "introduced": "11", "name": "openL2CAPChannel:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBPeripheral",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "RSSI", "introduced": "5", "name": "RSSI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "services", "name": "services"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canSendWriteWithoutResponse", "introduced": "11", "name": "canSendWriteWithoutResponse"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ancsAuthorized", "introduced": "13", "name": "ancsAuthorized"}
+     ],
+     "super": "CBPeer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "6", "name": "initWithDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "initWithDelegate:queue:options:"},
+      {"access": "public", "name": "startAdvertising:"},
+      {"access": "public", "name": "stopAdvertising"},
+      {"access": "public", "name": "setDesiredConnectionLatency:forCentral:"},
+      {"access": "public", "name": "addService:"},
+      {"access": "public", "name": "removeService:"},
+      {"access": "public", "name": "removeAllServices"},
+      {"access": "public", "name": "respondToRequest:withResult:"},
+      {"access": "public", "name": "updateValue:forCharacteristic:onSubscribedCentrals:"},
+      {"access": "public", "introduced": "11", "name": "publishL2CAPChannelWithEncryption:"},
+      {"access": "public", "introduced": "11", "name": "unpublishL2CAPChannel:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBPeripheralManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAdvertising", "name": "isAdvertising"}
+     ],
+     "super": "CBManager"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBService",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peripheral", "name": "peripheral"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPrimary", "name": "isPrimary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedServices", "name": "includedServices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristics", "name": "characteristics"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "UUIDWithString:"},
+      {"access": "public", "name": "UUIDWithData:"},
+      {"access": "public", "introduced": "5", "name": "UUIDWithCFUUID:"},
+      {"access": "public", "introduced": "7", "name": "UUIDWithNSUUID:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBUUID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "UUIDString", "introduced": "7.1", "name": "UUIDString"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "centralManagerDidUpdateState:"},
+      {"access": "public", "name": "centralManager:willRestoreState:", "optional": true},
+      {"access": "public", "name": "centralManager:didDiscoverPeripheral:advertisementData:RSSI:", "optional": true},
+      {"access": "public", "name": "centralManager:didConnectPeripheral:", "optional": true},
+      {"access": "public", "name": "centralManager:didFailToConnectPeripheral:error:", "optional": true},
+      {"access": "public", "name": "centralManager:didDisconnectPeripheral:error:", "optional": true},
+      {"access": "public", "name": "centralManager:didDisconnectPeripheral:timestamp:isReconnecting:error:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "centralManager:connectionEventDidOccur:forPeripheral:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "centralManager:didUpdateANCSAuthorizationForPeripheral:", "optional": true}
+     ],
+     "name": "CBCentralManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "peripheralDidUpdateName:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "peripheral:didModifyServices:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "peripheralDidUpdateRSSI:error:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "peripheral:didReadRSSI:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverServices:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverIncludedServicesForService:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverCharacteristicsForService:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateValueForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didWriteValueForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateNotificationStateForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverDescriptorsForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateValueForDescriptor:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didWriteValueForDescriptor:error:", "optional": true},
+      {"access": "public", "name": "peripheralIsReadyToSendWriteWithoutResponse:", "optional": true},
+      {"access": "public", "name": "peripheral:didOpenL2CAPChannel:error:", "optional": true}
+     ],
+     "name": "CBPeripheralDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "peripheralManagerDidUpdateState:"},
+      {"access": "public", "name": "peripheralManager:willRestoreState:", "optional": true},
+      {"access": "public", "name": "peripheralManagerDidStartAdvertising:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didAddService:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:central:didSubscribeToCharacteristic:", "optional": true},
+      {"access": "public", "name": "peripheralManager:central:didUnsubscribeFromCharacteristic:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didReceiveReadRequest:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didReceiveWriteRequests:", "optional": true},
+      {"access": "public", "name": "peripheralManagerIsReadyToUpdateSubscribers:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didPublishL2CAPChannel:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didUnpublishL2CAPChannel:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didOpenL2CAPChannel:error:", "optional": true}
+     ],
+     "name": "CBPeripheralManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "CBATTError"},
+    {"access": "public", "name": "CBAttributePermissions"},
+    {"access": "public", "name": "CBCentralManagerFeature"},
+    {"access": "public", "name": "CBCentralManagerState"},
+    {"access": "public", "name": "CBCharacteristicProperties"},
+    {"access": "public", "name": "CBCharacteristicWriteType"},
+    {"access": "public", "name": "CBConnectionEvent"},
+    {"access": "public", "name": "CBConnectionEventMatchingOption"},
+    {"access": "public", "name": "CBError"},
+    {"access": "public", "name": "CBL2CAPPSM"},
+    {"access": "public", "name": "CBManagerAuthorization"},
+    {"access": "public", "name": "CBManagerState"},
+    {"access": "public", "name": "CBPeripheralManagerAuthorizationStatus"},
+    {"access": "public", "name": "CBPeripheralManagerConnectionLatency"},
+    {"access": "public", "name": "CBPeripheralManagerState"},
+    {"access": "public", "name": "CBPeripheralState"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "6", "name": "CBATTErrorSuccess"},
+      {"access": "public", "name": "CBATTErrorInvalidHandle"},
+      {"access": "public", "name": "CBATTErrorReadNotPermitted"},
+      {"access": "public", "name": "CBATTErrorWriteNotPermitted"},
+      {"access": "public", "name": "CBATTErrorInvalidPdu"},
+      {"access": "public", "name": "CBATTErrorInsufficientAuthentication"},
+      {"access": "public", "name": "CBATTErrorRequestNotSupported"},
+      {"access": "public", "name": "CBATTErrorInvalidOffset"},
+      {"access": "public", "name": "CBATTErrorInsufficientAuthorization"},
+      {"access": "public", "name": "CBATTErrorPrepareQueueFull"},
+      {"access": "public", "name": "CBATTErrorAttributeNotFound"},
+      {"access": "public", "name": "CBATTErrorAttributeNotLong"},
+      {"access": "public", "name": "CBATTErrorInsufficientEncryptionKeySize"},
+      {"access": "public", "name": "CBATTErrorInvalidAttributeValueLength"},
+      {"access": "public", "name": "CBATTErrorUnlikelyError"},
+      {"access": "public", "name": "CBATTErrorInsufficientEncryption"},
+      {"access": "public", "name": "CBATTErrorUnsupportedGroupType"},
+      {"access": "public", "name": "CBATTErrorInsufficientResources"}
+     ],
+     "name": "CBATTError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBAttributePermissionsReadable"},
+      {"access": "public", "name": "CBAttributePermissionsWriteable"},
+      {"access": "public", "name": "CBAttributePermissionsReadEncryptionRequired"},
+      {"access": "public", "name": "CBAttributePermissionsWriteEncryptionRequired"}
+     ],
+     "introduced": "6",
+     "name": "CBAttributePermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "13", "name": "CBCentralManagerFeatureExtendedScanAndConnect"}
+     ],
+     "name": "CBCentralManagerFeature"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCentralManagerStateUnknown"},
+      {"access": "public", "name": "CBCentralManagerStateResetting"},
+      {"access": "public", "name": "CBCentralManagerStateUnsupported"},
+      {"access": "public", "name": "CBCentralManagerStateUnauthorized"},
+      {"access": "public", "name": "CBCentralManagerStatePoweredOff"},
+      {"access": "public", "name": "CBCentralManagerStatePoweredOn"}
+     ],
+     "introduced": "5",
+     "name": "CBCentralManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCharacteristicPropertyBroadcast"},
+      {"access": "public", "name": "CBCharacteristicPropertyRead"},
+      {"access": "public", "name": "CBCharacteristicPropertyWriteWithoutResponse"},
+      {"access": "public", "name": "CBCharacteristicPropertyWrite"},
+      {"access": "public", "name": "CBCharacteristicPropertyNotify"},
+      {"access": "public", "name": "CBCharacteristicPropertyIndicate"},
+      {"access": "public", "name": "CBCharacteristicPropertyAuthenticatedSignedWrites"},
+      {"access": "public", "name": "CBCharacteristicPropertyExtendedProperties"},
+      {"access": "public", "introduced": "6", "name": "CBCharacteristicPropertyNotifyEncryptionRequired"},
+      {"access": "public", "introduced": "6", "name": "CBCharacteristicPropertyIndicateEncryptionRequired"}
+     ],
+     "name": "CBCharacteristicProperties"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBCharacteristicWriteWithResponse"},
+      {"access": "public", "name": "CBCharacteristicWriteWithoutResponse"}
+     ],
+     "name": "CBCharacteristicWriteType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBConnectionEventPeerDisconnected"},
+      {"access": "public", "name": "CBConnectionEventPeerConnected"}
+     ],
+     "name": "CBConnectionEvent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBErrorUnknown"},
+      {"access": "public", "introduced": "6", "name": "CBErrorInvalidParameters"},
+      {"access": "public", "introduced": "6", "name": "CBErrorInvalidHandle"},
+      {"access": "public", "introduced": "6", "name": "CBErrorNotConnected"},
+      {"access": "public", "introduced": "6", "name": "CBErrorOutOfSpace"},
+      {"access": "public", "introduced": "6", "name": "CBErrorOperationCancelled"},
+      {"access": "public", "introduced": "6", "name": "CBErrorConnectionTimeout"},
+      {"access": "public", "introduced": "6", "name": "CBErrorPeripheralDisconnected"},
+      {"access": "public", "introduced": "6", "name": "CBErrorUUIDNotAllowed"},
+      {"access": "public", "introduced": "6", "name": "CBErrorAlreadyAdvertising"},
+      {"access": "public", "introduced": "7.1", "name": "CBErrorConnectionFailed"},
+      {"access": "public", "introduced": "9", "name": "CBErrorConnectionLimitReached"},
+      {"access": "public", "introduced": "9", "name": "CBErrorUnkownDevice"},
+      {"access": "public", "introduced": "12", "name": "CBErrorUnknownDevice"},
+      {"access": "public", "introduced": "12", "name": "CBErrorOperationNotSupported"},
+      {"access": "public", "introduced": "13.4", "name": "CBErrorPeerRemovedPairingInformation"},
+      {"access": "public", "introduced": "13.4", "name": "CBErrorEncryptionTimedOut"},
+      {"access": "public", "introduced": "14", "name": "CBErrorTooManyLEPairedDevices"},
+      {"access": "public", "name": "CBErrorLeGattExceededBackgroundNotificationLimit", "unavailable": true},
+      {"access": "public", "name": "CBErrorLeGattNearBackgroundNotificationLimit", "unavailable": true}
+     ],
+     "name": "CBError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBManagerAuthorizationNotDetermined"},
+      {"access": "public", "name": "CBManagerAuthorizationRestricted"},
+      {"access": "public", "name": "CBManagerAuthorizationDenied"},
+      {"access": "public", "name": "CBManagerAuthorizationAllowedAlways"}
+     ],
+     "introduced": "13",
+     "name": "CBManagerAuthorization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBManagerStateUnknown"},
+      {"access": "public", "name": "CBManagerStateResetting"},
+      {"access": "public", "name": "CBManagerStateUnsupported"},
+      {"access": "public", "name": "CBManagerStateUnauthorized"},
+      {"access": "public", "name": "CBManagerStatePoweredOff"},
+      {"access": "public", "name": "CBManagerStatePoweredOn"}
+     ],
+     "introduced": "10",
+     "name": "CBManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusRestricted"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusDenied"},
+      {"access": "public", "name": "CBPeripheralManagerAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "7",
+     "name": "CBPeripheralManagerAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyLow"},
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyMedium"},
+      {"access": "public", "name": "CBPeripheralManagerConnectionLatencyHigh"}
+     ],
+     "introduced": "6",
+     "name": "CBPeripheralManagerConnectionLatency"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralManagerStateUnknown"},
+      {"access": "public", "name": "CBPeripheralManagerStateResetting"},
+      {"access": "public", "name": "CBPeripheralManagerStateUnsupported"},
+      {"access": "public", "name": "CBPeripheralManagerStateUnauthorized"},
+      {"access": "public", "name": "CBPeripheralManagerStatePoweredOff"},
+      {"access": "public", "name": "CBPeripheralManagerStatePoweredOn"}
+     ],
+     "introduced": "6",
+     "name": "CBPeripheralManagerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CBPeripheralStateDisconnected"},
+      {"access": "public", "name": "CBPeripheralStateConnecting"},
+      {"access": "public", "name": "CBPeripheralStateConnected"},
+      {"access": "public", "introduced": "9", "name": "CBPeripheralStateDisconnecting"}
+     ],
+     "introduced": "7",
+     "name": "CBPeripheralState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBATTErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataIsConnectable"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataLocalNameKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataManufacturerDataKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataOverflowServiceUUIDsKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataServiceDataKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataServiceUUIDsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataSolicitedServiceUUIDsKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBAdvertisementDataTxPowerLevelKey"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionDeviceAccessForMedia"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionRestoreIdentifierKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerOptionShowPowerAlertKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStatePeripheralsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStateScanOptionsKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerRestoredStateScanServicesKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerScanOptionAllowDuplicatesKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBCentralManagerScanOptionSolicitedServiceUUIDsKey"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionEnableAutoReconnect"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionEnableTransportBridgingKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnConnectionKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnDisconnectionKey"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionNotifyOnNotificationKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionRequiresANCS"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CBConnectPeripheralOptionStartDelayKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectionEventMatchingOptionPeripheralUUIDs"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_CBConnectionEventMatchingOptionServiceUUIDs"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerOptionRestoreIdentifierKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerOptionShowPowerAlertKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerRestoredStateAdvertisementDataKey"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CBPeripheralManagerRestoredStateServicesKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicAggregateFormatString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicExtendedPropertiesString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicFormatString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicObservationScheduleString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicUserDescriptionString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDCharacteristicValidRangeString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDClientCharacteristicConfigurationString"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_CBUUIDL2CAPPSMCharacteristicString"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CBUUIDServerCharacteristicConfigurationString"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBATTRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "central", "name": "central"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristic", "name": "characteristic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "offset", "name": "offset"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CBAttribute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "UUID", "name": "UUID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBCentral",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumUpdateValueLength", "name": "maximumUpdateValueLength"}
+     ],
+     "super": "CBPeer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "supportsFeatures:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "initWithDelegate:queue:options:"},
+      {"access": "public", "introduced": "7", "name": "retrievePeripheralsWithIdentifiers:"},
+      {"access": "public", "introduced": "7", "name": "retrieveConnectedPeripheralsWithServices:"},
+      {"access": "public", "name": "scanForPeripheralsWithServices:options:"},
+      {"access": "public", "name": "stopScan"},
+      {"access": "public", "name": "connectPeripheral:options:"},
+      {"access": "public", "name": "cancelPeripheralConnection:"},
+      {"access": "public", "introduced": "13", "name": "registerForConnectionEventsWithOptions:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBCentralManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isScanning", "introduced": "9", "name": "isScanning"}
+     ],
+     "super": "CBManager"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBCharacteristic",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "service", "name": "service"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptors", "name": "descriptors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBroadcasted", "introduced": "5", "name": "isBroadcasted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isNotifying", "name": "isNotifying"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristic", "name": "characteristic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "CBL2CAPChannel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peer", "name": "peer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputStream", "name": "inputStream"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputStream", "name": "outputStream"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "PSM", "name": "PSM"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CBManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorization", "introduced": "13", "name": "authorization"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorization", "introduced": "13.1", "name": "authorization"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:properties:value:permissions:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableCharacteristic",
+     "properties": [
+      {"access": "public", "getter": "permissions", "name": "permissions", "setter": "setPermissions:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscribedCentrals", "introduced": "7", "name": "subscribedCentrals"},
+      {"access": "public", "getter": "properties", "name": "properties", "setter": "setProperties:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "descriptors", "name": "descriptors", "setter": "setDescriptors:"}
+     ],
+     "super": "CBCharacteristic"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:value:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableDescriptor",
+     "super": "CBDescriptor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "initWithType:primary:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBMutableService",
+     "properties": [
+      {"access": "public", "getter": "includedServices", "name": "includedServices", "setter": "setIncludedServices:"},
+      {"access": "public", "getter": "characteristics", "name": "characteristics", "setter": "setCharacteristics:"}
+     ],
+     "super": "CBService"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CBPeer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "introduced": "7", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "readRSSI"},
+      {"access": "public", "name": "discoverServices:"},
+      {"access": "public", "name": "discoverIncludedServices:forService:"},
+      {"access": "public", "name": "discoverCharacteristics:forService:"},
+      {"access": "public", "name": "readValueForCharacteristic:"},
+      {"access": "public", "introduced": "9", "name": "maximumWriteValueLengthForType:"},
+      {"access": "public", "name": "writeValue:forCharacteristic:type:"},
+      {"access": "public", "name": "setNotifyValue:forCharacteristic:"},
+      {"access": "public", "name": "discoverDescriptorsForCharacteristic:"},
+      {"access": "public", "name": "readValueForDescriptor:"},
+      {"access": "public", "name": "writeValue:forDescriptor:"},
+      {"access": "public", "introduced": "11", "name": "openL2CAPChannel:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBPeripheral",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "RSSI", "introduced": "5", "name": "RSSI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "services", "name": "services"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canSendWriteWithoutResponse", "introduced": "11", "name": "canSendWriteWithoutResponse"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ancsAuthorized", "introduced": "13", "name": "ancsAuthorized"}
+     ],
+     "super": "CBPeer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "6", "name": "initWithDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "initWithDelegate:queue:options:"},
+      {"access": "public", "name": "startAdvertising:"},
+      {"access": "public", "name": "stopAdvertising"},
+      {"access": "public", "name": "setDesiredConnectionLatency:forCentral:"},
+      {"access": "public", "name": "addService:"},
+      {"access": "public", "name": "removeService:"},
+      {"access": "public", "name": "removeAllServices"},
+      {"access": "public", "name": "respondToRequest:withResult:"},
+      {"access": "public", "name": "updateValue:forCharacteristic:onSubscribedCentrals:"},
+      {"access": "public", "introduced": "11", "name": "publishL2CAPChannelWithEncryption:"},
+      {"access": "public", "introduced": "11", "name": "unpublishL2CAPChannel:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CBPeripheralManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAdvertising", "name": "isAdvertising"}
+     ],
+     "super": "CBManager"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBService",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peripheral", "name": "peripheral"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPrimary", "name": "isPrimary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedServices", "name": "includedServices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "characteristics", "name": "characteristics"}
+     ],
+     "super": "CBAttribute"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "UUIDWithString:"},
+      {"access": "public", "name": "UUIDWithData:"},
+      {"access": "public", "introduced": "5", "name": "UUIDWithCFUUID:"},
+      {"access": "public", "introduced": "7", "name": "UUIDWithNSUUID:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CBUUID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "UUIDString", "introduced": "7.1", "name": "UUIDString"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "centralManagerDidUpdateState:"},
+      {"access": "public", "name": "centralManager:willRestoreState:", "optional": true},
+      {"access": "public", "name": "centralManager:didDiscoverPeripheral:advertisementData:RSSI:", "optional": true},
+      {"access": "public", "name": "centralManager:didConnectPeripheral:", "optional": true},
+      {"access": "public", "name": "centralManager:didFailToConnectPeripheral:error:", "optional": true},
+      {"access": "public", "name": "centralManager:didDisconnectPeripheral:error:", "optional": true},
+      {"access": "public", "name": "centralManager:didDisconnectPeripheral:timestamp:isReconnecting:error:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "centralManager:connectionEventDidOccur:forPeripheral:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "centralManager:didUpdateANCSAuthorizationForPeripheral:", "optional": true}
+     ],
+     "name": "CBCentralManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "peripheralDidUpdateName:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "peripheral:didModifyServices:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "peripheralDidUpdateRSSI:error:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "peripheral:didReadRSSI:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverServices:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverIncludedServicesForService:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverCharacteristicsForService:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateValueForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didWriteValueForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateNotificationStateForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didDiscoverDescriptorsForCharacteristic:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didUpdateValueForDescriptor:error:", "optional": true},
+      {"access": "public", "name": "peripheral:didWriteValueForDescriptor:error:", "optional": true},
+      {"access": "public", "name": "peripheralIsReadyToSendWriteWithoutResponse:", "optional": true},
+      {"access": "public", "name": "peripheral:didOpenL2CAPChannel:error:", "optional": true}
+     ],
+     "name": "CBPeripheralDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "peripheralManagerDidUpdateState:"},
+      {"access": "public", "name": "peripheralManager:willRestoreState:", "optional": true},
+      {"access": "public", "name": "peripheralManagerDidStartAdvertising:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didAddService:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:central:didSubscribeToCharacteristic:", "optional": true},
+      {"access": "public", "name": "peripheralManager:central:didUnsubscribeFromCharacteristic:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didReceiveReadRequest:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didReceiveWriteRequests:", "optional": true},
+      {"access": "public", "name": "peripheralManagerIsReadyToUpdateSubscribers:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didPublishL2CAPChannel:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didUnpublishL2CAPChannel:error:", "optional": true},
+      {"access": "public", "name": "peripheralManager:didOpenL2CAPChannel:error:", "optional": true}
+     ],
+     "name": "CBPeripheralManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "CBATTError"},
+    {"access": "public", "name": "CBAttributePermissions"},
+    {"access": "public", "name": "CBCentralManagerFeature"},
+    {"access": "public", "name": "CBCentralManagerState"},
+    {"access": "public", "name": "CBCharacteristicProperties"},
+    {"access": "public", "name": "CBCharacteristicWriteType"},
+    {"access": "public", "name": "CBConnectionEvent"},
+    {"access": "public", "name": "CBConnectionEventMatchingOption"},
+    {"access": "public", "name": "CBError"},
+    {"access": "public", "name": "CBL2CAPPSM"},
+    {"access": "public", "name": "CBManagerAuthorization"},
+    {"access": "public", "name": "CBManagerState"},
+    {"access": "public", "name": "CBPeripheralManagerAuthorizationStatus"},
+    {"access": "public", "name": "CBPeripheralManagerConnectionLatency"},
+    {"access": "public", "name": "CBPeripheralManagerState"},
+    {"access": "public", "name": "CBPeripheralState"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENActivityFlagsReserved1"},
+      {"access": "public", "name": "ENActivityFlagsReserved2"},
+      {"access": "public", "name": "ENActivityFlagsPeriodicRun"},
+      {"access": "public", "name": "ENActivityFlagsPreAuthorizedKeyReleaseNotificationTapped"}
+     ],
+     "introduced": "12.5",
+     "name": "ENActivityFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENAuthorizationStatusUnknown"},
+      {"access": "public", "name": "ENAuthorizationStatusRestricted"},
+      {"access": "public", "name": "ENAuthorizationStatusNotAuthorized"},
+      {"access": "public", "name": "ENAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "12.5",
+     "name": "ENAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENCalibrationConfidenceLowest"},
+      {"access": "public", "name": "ENCalibrationConfidenceLow"},
+      {"access": "public", "name": "ENCalibrationConfidenceMedium"},
+      {"access": "public", "name": "ENCalibrationConfidenceHigh"}
+     ],
+     "introduced": "12.5",
+     "name": "ENCalibrationConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENDiagnosisReportTypeUnknown"},
+      {"access": "public", "name": "ENDiagnosisReportTypeConfirmedTest"},
+      {"access": "public", "name": "ENDiagnosisReportTypeConfirmedClinicalDiagnosis"},
+      {"access": "public", "name": "ENDiagnosisReportTypeSelfReported"},
+      {"access": "public", "name": "ENDiagnosisReportTypeRecursive"},
+      {"access": "public", "name": "ENDiagnosisReportTypeRevoked"}
+     ],
+     "introduced": "12.5",
+     "name": "ENDiagnosisReportType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENErrorCodeUnknown"},
+      {"access": "public", "name": "ENErrorCodeBadParameter"},
+      {"access": "public", "name": "ENErrorCodeNotEntitled"},
+      {"access": "public", "name": "ENErrorCodeNotAuthorized"},
+      {"access": "public", "name": "ENErrorCodeUnsupported"},
+      {"access": "public", "name": "ENErrorCodeInvalidated"},
+      {"access": "public", "name": "ENErrorCodeBluetoothOff"},
+      {"access": "public", "name": "ENErrorCodeInsufficientStorage"},
+      {"access": "public", "name": "ENErrorCodeNotEnabled"},
+      {"access": "public", "name": "ENErrorCodeAPIMisuse"},
+      {"access": "public", "name": "ENErrorCodeInternal"},
+      {"access": "public", "name": "ENErrorCodeInsufficientMemory"},
+      {"access": "public", "name": "ENErrorCodeRateLimited"},
+      {"access": "public", "name": "ENErrorCodeRestricted"},
+      {"access": "public", "name": "ENErrorCodeBadFormat"},
+      {"access": "public", "name": "ENErrorCodeDataInaccessible"},
+      {"access": "public", "name": "ENErrorCodeTravelStatusNotAvailable"}
+     ],
+     "introduced": "12.5",
+     "name": "ENErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENInfectiousnessNone"},
+      {"access": "public", "name": "ENInfectiousnessStandard"},
+      {"access": "public", "name": "ENInfectiousnessHigh"}
+     ],
+     "introduced": "12.5",
+     "name": "ENInfectiousness"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENStatusUnknown"},
+      {"access": "public", "name": "ENStatusActive"},
+      {"access": "public", "name": "ENStatusDisabled"},
+      {"access": "public", "name": "ENStatusBluetoothOff"},
+      {"access": "public", "name": "ENStatusRestricted"},
+      {"access": "public", "name": "ENStatusPaused"},
+      {"access": "public", "name": "ENStatusUnauthorized"}
+     ],
+     "introduced": "12.5",
+     "name": "ENStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENVariantOfConcernTypeUnknown"},
+      {"access": "public", "name": "ENVariantOfConcernType1"},
+      {"access": "public", "name": "ENVariantOfConcernType2"},
+      {"access": "public", "name": "ENVariantOfConcernType3"},
+      {"access": "public", "name": "ENVariantOfConcernType4"}
+     ],
+     "introduced": "15.2",
+     "name": "ENVariantOfConcernType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENAttenuationMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENAttenuationMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:1041)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValueMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValueMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2281)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskScoreMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskScoreMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2381)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightDefault"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightDefaultV2"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMax"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMaxV2"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2471)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "12.5", "kind": "variable", "linkage": "exported", "name": "_ENErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureConfiguration",
+     "properties": [
+      {"access": "public", "getter": "immediateDurationWeight", "introduced": "12.5", "name": "immediateDurationWeight", "setter": "setImmediateDurationWeight:"},
+      {"access": "public", "getter": "nearDurationWeight", "introduced": "12.5", "name": "nearDurationWeight", "setter": "setNearDurationWeight:"},
+      {"access": "public", "getter": "mediumDurationWeight", "introduced": "12.5", "name": "mediumDurationWeight", "setter": "setMediumDurationWeight:"},
+      {"access": "public", "getter": "otherDurationWeight", "introduced": "12.5", "name": "otherDurationWeight", "setter": "setOtherDurationWeight:"},
+      {"access": "public", "getter": "infectiousnessForDaysSinceOnsetOfSymptoms", "introduced": "12.5", "name": "infectiousnessForDaysSinceOnsetOfSymptoms", "setter": "setInfectiousnessForDaysSinceOnsetOfSymptoms:"},
+      {"access": "public", "getter": "infectiousnessStandardWeight", "introduced": "12.5", "name": "infectiousnessStandardWeight", "setter": "setInfectiousnessStandardWeight:"},
+      {"access": "public", "getter": "infectiousnessHighWeight", "introduced": "12.5", "name": "infectiousnessHighWeight", "setter": "setInfectiousnessHighWeight:"},
+      {"access": "public", "getter": "reportTypeConfirmedTestWeight", "introduced": "12.5", "name": "reportTypeConfirmedTestWeight", "setter": "setReportTypeConfirmedTestWeight:"},
+      {"access": "public", "getter": "reportTypeConfirmedClinicalDiagnosisWeight", "introduced": "12.5", "name": "reportTypeConfirmedClinicalDiagnosisWeight", "setter": "setReportTypeConfirmedClinicalDiagnosisWeight:"},
+      {"access": "public", "getter": "reportTypeSelfReportedWeight", "introduced": "12.5", "name": "reportTypeSelfReportedWeight", "setter": "setReportTypeSelfReportedWeight:"},
+      {"access": "public", "getter": "reportTypeRecursiveWeight", "introduced": "12.5", "name": "reportTypeRecursiveWeight", "setter": "setReportTypeRecursiveWeight:"},
+      {"access": "public", "getter": "reportTypeNoneMap", "introduced": "12.5", "name": "reportTypeNoneMap", "setter": "setReportTypeNoneMap:"},
+      {"access": "public", "getter": "attenuationDurationThresholds", "name": "attenuationDurationThresholds", "setter": "setAttenuationDurationThresholds:"},
+      {"access": "public", "getter": "daysSinceLastExposureThreshold", "introduced": "12.5", "name": "daysSinceLastExposureThreshold", "setter": "setDaysSinceLastExposureThreshold:"},
+      {"access": "public", "getter": "minimumRiskScoreFullRange", "name": "minimumRiskScoreFullRange", "setter": "setMinimumRiskScoreFullRange:"},
+      {"access": "public", "getter": "attenuationLevelValues", "name": "attenuationLevelValues", "setter": "setAttenuationLevelValues:"},
+      {"access": "public", "getter": "attenuationWeight", "name": "attenuationWeight", "setter": "setAttenuationWeight:"},
+      {"access": "public", "getter": "daysSinceLastExposureLevelValues", "name": "daysSinceLastExposureLevelValues", "setter": "setDaysSinceLastExposureLevelValues:"},
+      {"access": "public", "getter": "daysSinceLastExposureWeight", "name": "daysSinceLastExposureWeight", "setter": "setDaysSinceLastExposureWeight:"},
+      {"access": "public", "getter": "durationLevelValues", "name": "durationLevelValues", "setter": "setDurationLevelValues:"},
+      {"access": "public", "getter": "durationWeight", "name": "durationWeight", "setter": "setDurationWeight:"},
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"},
+      {"access": "public", "getter": "minimumRiskScore", "name": "minimumRiskScore", "setter": "setMinimumRiskScore:"},
+      {"access": "public", "getter": "transmissionRiskLevelValues", "name": "transmissionRiskLevelValues", "setter": "setTransmissionRiskLevelValues:"},
+      {"access": "public", "getter": "transmissionRiskWeight", "name": "transmissionRiskWeight", "setter": "setTransmissionRiskWeight:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureDaySummary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confirmedTestSummary", "name": "confirmedTestSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confirmedClinicalDiagnosisSummary", "name": "confirmedClinicalDiagnosisSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recursiveSummary", "name": "recursiveSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selfReportedSummary", "name": "selfReportedSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daySummary", "name": "daySummary"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureDetectionSummary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationDurations", "name": "attenuationDurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daysSinceLastExposure", "name": "daysSinceLastExposure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchedKeyCount", "name": "matchedKeyCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumRiskScore", "name": "maximumRiskScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumRiskScoreFullRange", "name": "maximumRiskScoreFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "riskScoreSumFullRange", "name": "riskScoreSumFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daySummaries", "introduced": "12.5", "name": "daySummaries"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationDurations", "name": "attenuationDurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationValue", "name": "attenuationValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daysSinceOnsetOfSymptoms", "introduced": "12.5", "name": "daysSinceOnsetOfSymptoms"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "diagnosisReportType", "introduced": "12.5", "name": "diagnosisReportType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalRiskScore", "name": "totalRiskScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalRiskScoreFullRange", "name": "totalRiskScoreFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transmissionRiskLevel", "name": "transmissionRiskLevel"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureSummaryItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumScore", "name": "maximumScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scoreSum", "name": "scoreSum"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightedDurationSum", "name": "weightedDurationSum"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureWindow",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "calibrationConfidence", "name": "calibrationConfidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "diagnosisReportType", "name": "diagnosisReportType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "infectiousness", "name": "infectiousness"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scanInstances", "name": "scanInstances"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variantOfConcernType", "introduced": "15.2", "name": "variantOfConcernType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "activateWithCompletionHandler:"},
+      {"access": "public", "name": "invalidate"},
+      {"access": "public", "introduced": "12.5", "name": "getUserTraveledWithCompletionHandler:"},
+      {"access": "public", "name": "setExposureNotificationEnabled:completionHandler:"},
+      {"access": "public", "introduced": "12.5", "name": "detectExposuresWithConfiguration:completionHandler:"},
+      {"access": "public", "name": "detectExposuresWithConfiguration:diagnosisKeyURLs:completionHandler:"},
+      {"access": "public", "introduced": "13.5", "name": "getExposureInfoFromSummary:userExplanation:completionHandler:"},
+      {"access": "public", "introduced": "12.5", "name": "getExposureWindowsFromSummary:completionHandler:"},
+      {"access": "public", "name": "getDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "name": "getTestDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "introduced": "14.4", "name": "preAuthorizeDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "introduced": "14.4", "name": "requestPreAuthorizedDiagnosisKeysWithCompletionHandler:"}
+     ],
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENManager",
+     "properties": [
+      {"access": "public", "getter": "activityHandler", "introduced": "12.5", "name": "activityHandler", "setter": "setActivityHandler:"},
+      {"access": "public", "getter": "dispatchQueue", "name": "dispatchQueue", "setter": "setDispatchQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureNotificationStatus", "name": "exposureNotificationStatus"},
+      {"access": "public", "getter": "invalidationHandler", "name": "invalidationHandler", "setter": "setInvalidationHandler:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureNotificationEnabled", "name": "exposureNotificationEnabled"},
+      {"access": "public", "getter": "diagnosisKeysAvailableHandler", "introduced": "14.4", "name": "diagnosisKeysAvailableHandler", "setter": "setDiagnosisKeysAvailableHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENScanInstance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumAttenuation", "name": "minimumAttenuation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "typicalAttenuation", "name": "typicalAttenuation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "secondsSinceLastScan", "name": "secondsSinceLastScan"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENTemporaryExposureKey",
+     "properties": [
+      {"access": "public", "getter": "keyData", "name": "keyData", "setter": "setKeyData:"},
+      {"access": "public", "getter": "rollingPeriod", "name": "rollingPeriod", "setter": "setRollingPeriod:"},
+      {"access": "public", "getter": "rollingStartNumber", "name": "rollingStartNumber", "setter": "setRollingStartNumber:"},
+      {"access": "public", "getter": "transmissionRiskLevel", "name": "transmissionRiskLevel", "setter": "setTransmissionRiskLevel:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "ENActivityFlags"},
+    {"access": "public", "introduced": "12.5", "name": "ENActivityHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENAttenuation"},
+    {"access": "public", "name": "ENAuthorizationStatus"},
+    {"access": "public", "name": "ENCalibrationConfidence"},
+    {"access": "public", "introduced": "12.5", "name": "ENDetectExposuresHandler"},
+    {"access": "public", "introduced": "14.4", "name": "ENDiagnosisKeysAvailableHandler"},
+    {"access": "public", "name": "ENDiagnosisReportType"},
+    {"access": "public", "name": "ENErrorCode"},
+    {"access": "public", "introduced": "12.5", "name": "ENErrorHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENErrorOutType"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetDiagnosisKeysHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetExposureInfoHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetExposureWindowsHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetUserTraveledHandler"},
+    {"access": "public", "name": "ENInfectiousness"},
+    {"access": "public", "introduced": "12.5", "name": "ENIntervalNumber"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskLevel"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValue"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskScore"},
+    {"access": "public", "name": "ENStatus"},
+    {"access": "public", "name": "ENVariantOfConcernType"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENActivityFlagsReserved1"},
+      {"access": "public", "name": "ENActivityFlagsReserved2"},
+      {"access": "public", "name": "ENActivityFlagsPeriodicRun"},
+      {"access": "public", "name": "ENActivityFlagsPreAuthorizedKeyReleaseNotificationTapped"}
+     ],
+     "introduced": "12.5",
+     "name": "ENActivityFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENAuthorizationStatusUnknown"},
+      {"access": "public", "name": "ENAuthorizationStatusRestricted"},
+      {"access": "public", "name": "ENAuthorizationStatusNotAuthorized"},
+      {"access": "public", "name": "ENAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "12.5",
+     "name": "ENAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENCalibrationConfidenceLowest"},
+      {"access": "public", "name": "ENCalibrationConfidenceLow"},
+      {"access": "public", "name": "ENCalibrationConfidenceMedium"},
+      {"access": "public", "name": "ENCalibrationConfidenceHigh"}
+     ],
+     "introduced": "12.5",
+     "name": "ENCalibrationConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENDiagnosisReportTypeUnknown"},
+      {"access": "public", "name": "ENDiagnosisReportTypeConfirmedTest"},
+      {"access": "public", "name": "ENDiagnosisReportTypeConfirmedClinicalDiagnosis"},
+      {"access": "public", "name": "ENDiagnosisReportTypeSelfReported"},
+      {"access": "public", "name": "ENDiagnosisReportTypeRecursive"},
+      {"access": "public", "name": "ENDiagnosisReportTypeRevoked"}
+     ],
+     "introduced": "12.5",
+     "name": "ENDiagnosisReportType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENErrorCodeUnknown"},
+      {"access": "public", "name": "ENErrorCodeBadParameter"},
+      {"access": "public", "name": "ENErrorCodeNotEntitled"},
+      {"access": "public", "name": "ENErrorCodeNotAuthorized"},
+      {"access": "public", "name": "ENErrorCodeUnsupported"},
+      {"access": "public", "name": "ENErrorCodeInvalidated"},
+      {"access": "public", "name": "ENErrorCodeBluetoothOff"},
+      {"access": "public", "name": "ENErrorCodeInsufficientStorage"},
+      {"access": "public", "name": "ENErrorCodeNotEnabled"},
+      {"access": "public", "name": "ENErrorCodeAPIMisuse"},
+      {"access": "public", "name": "ENErrorCodeInternal"},
+      {"access": "public", "name": "ENErrorCodeInsufficientMemory"},
+      {"access": "public", "name": "ENErrorCodeRateLimited"},
+      {"access": "public", "name": "ENErrorCodeRestricted"},
+      {"access": "public", "name": "ENErrorCodeBadFormat"},
+      {"access": "public", "name": "ENErrorCodeDataInaccessible"},
+      {"access": "public", "name": "ENErrorCodeTravelStatusNotAvailable"}
+     ],
+     "introduced": "12.5",
+     "name": "ENErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENInfectiousnessNone"},
+      {"access": "public", "name": "ENInfectiousnessStandard"},
+      {"access": "public", "name": "ENInfectiousnessHigh"}
+     ],
+     "introduced": "12.5",
+     "name": "ENInfectiousness"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENStatusUnknown"},
+      {"access": "public", "name": "ENStatusActive"},
+      {"access": "public", "name": "ENStatusDisabled"},
+      {"access": "public", "name": "ENStatusBluetoothOff"},
+      {"access": "public", "name": "ENStatusRestricted"},
+      {"access": "public", "name": "ENStatusPaused"},
+      {"access": "public", "name": "ENStatusUnauthorized"}
+     ],
+     "introduced": "12.5",
+     "name": "ENStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ENVariantOfConcernTypeUnknown"},
+      {"access": "public", "name": "ENVariantOfConcernType1"},
+      {"access": "public", "name": "ENVariantOfConcernType2"},
+      {"access": "public", "name": "ENVariantOfConcernType3"},
+      {"access": "public", "name": "ENVariantOfConcernType4"}
+     ],
+     "introduced": "15.2",
+     "name": "ENVariantOfConcernType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENAttenuationMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENAttenuationMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:1041)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValueMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValueMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2281)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskScoreMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskScoreMax"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2381)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightDefault"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightDefaultV2"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMin"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMax"},
+      {"access": "public", "introduced": "12.5", "name": "ENRiskWeightMaxV2"}
+     ],
+     "name": "enum (unnamed at ENCommon.h:2471)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "12.5", "kind": "variable", "linkage": "exported", "name": "_ENErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureConfiguration",
+     "properties": [
+      {"access": "public", "getter": "immediateDurationWeight", "introduced": "12.5", "name": "immediateDurationWeight", "setter": "setImmediateDurationWeight:"},
+      {"access": "public", "getter": "nearDurationWeight", "introduced": "12.5", "name": "nearDurationWeight", "setter": "setNearDurationWeight:"},
+      {"access": "public", "getter": "mediumDurationWeight", "introduced": "12.5", "name": "mediumDurationWeight", "setter": "setMediumDurationWeight:"},
+      {"access": "public", "getter": "otherDurationWeight", "introduced": "12.5", "name": "otherDurationWeight", "setter": "setOtherDurationWeight:"},
+      {"access": "public", "getter": "infectiousnessForDaysSinceOnsetOfSymptoms", "introduced": "12.5", "name": "infectiousnessForDaysSinceOnsetOfSymptoms", "setter": "setInfectiousnessForDaysSinceOnsetOfSymptoms:"},
+      {"access": "public", "getter": "infectiousnessStandardWeight", "introduced": "12.5", "name": "infectiousnessStandardWeight", "setter": "setInfectiousnessStandardWeight:"},
+      {"access": "public", "getter": "infectiousnessHighWeight", "introduced": "12.5", "name": "infectiousnessHighWeight", "setter": "setInfectiousnessHighWeight:"},
+      {"access": "public", "getter": "reportTypeConfirmedTestWeight", "introduced": "12.5", "name": "reportTypeConfirmedTestWeight", "setter": "setReportTypeConfirmedTestWeight:"},
+      {"access": "public", "getter": "reportTypeConfirmedClinicalDiagnosisWeight", "introduced": "12.5", "name": "reportTypeConfirmedClinicalDiagnosisWeight", "setter": "setReportTypeConfirmedClinicalDiagnosisWeight:"},
+      {"access": "public", "getter": "reportTypeSelfReportedWeight", "introduced": "12.5", "name": "reportTypeSelfReportedWeight", "setter": "setReportTypeSelfReportedWeight:"},
+      {"access": "public", "getter": "reportTypeRecursiveWeight", "introduced": "12.5", "name": "reportTypeRecursiveWeight", "setter": "setReportTypeRecursiveWeight:"},
+      {"access": "public", "getter": "reportTypeNoneMap", "introduced": "12.5", "name": "reportTypeNoneMap", "setter": "setReportTypeNoneMap:"},
+      {"access": "public", "getter": "attenuationDurationThresholds", "name": "attenuationDurationThresholds", "setter": "setAttenuationDurationThresholds:"},
+      {"access": "public", "getter": "daysSinceLastExposureThreshold", "introduced": "12.5", "name": "daysSinceLastExposureThreshold", "setter": "setDaysSinceLastExposureThreshold:"},
+      {"access": "public", "getter": "minimumRiskScoreFullRange", "name": "minimumRiskScoreFullRange", "setter": "setMinimumRiskScoreFullRange:"},
+      {"access": "public", "getter": "attenuationLevelValues", "name": "attenuationLevelValues", "setter": "setAttenuationLevelValues:"},
+      {"access": "public", "getter": "attenuationWeight", "name": "attenuationWeight", "setter": "setAttenuationWeight:"},
+      {"access": "public", "getter": "daysSinceLastExposureLevelValues", "name": "daysSinceLastExposureLevelValues", "setter": "setDaysSinceLastExposureLevelValues:"},
+      {"access": "public", "getter": "daysSinceLastExposureWeight", "name": "daysSinceLastExposureWeight", "setter": "setDaysSinceLastExposureWeight:"},
+      {"access": "public", "getter": "durationLevelValues", "name": "durationLevelValues", "setter": "setDurationLevelValues:"},
+      {"access": "public", "getter": "durationWeight", "name": "durationWeight", "setter": "setDurationWeight:"},
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"},
+      {"access": "public", "getter": "minimumRiskScore", "name": "minimumRiskScore", "setter": "setMinimumRiskScore:"},
+      {"access": "public", "getter": "transmissionRiskLevelValues", "name": "transmissionRiskLevelValues", "setter": "setTransmissionRiskLevelValues:"},
+      {"access": "public", "getter": "transmissionRiskWeight", "name": "transmissionRiskWeight", "setter": "setTransmissionRiskWeight:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureDaySummary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confirmedTestSummary", "name": "confirmedTestSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confirmedClinicalDiagnosisSummary", "name": "confirmedClinicalDiagnosisSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recursiveSummary", "name": "recursiveSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selfReportedSummary", "name": "selfReportedSummary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daySummary", "name": "daySummary"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureDetectionSummary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationDurations", "name": "attenuationDurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daysSinceLastExposure", "name": "daysSinceLastExposure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchedKeyCount", "name": "matchedKeyCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumRiskScore", "name": "maximumRiskScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumRiskScoreFullRange", "name": "maximumRiskScoreFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "riskScoreSumFullRange", "name": "riskScoreSumFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daySummaries", "introduced": "12.5", "name": "daySummaries"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationDurations", "name": "attenuationDurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attenuationValue", "name": "attenuationValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "daysSinceOnsetOfSymptoms", "introduced": "12.5", "name": "daysSinceOnsetOfSymptoms"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "diagnosisReportType", "introduced": "12.5", "name": "diagnosisReportType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalRiskScore", "name": "totalRiskScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalRiskScoreFullRange", "name": "totalRiskScoreFullRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transmissionRiskLevel", "name": "transmissionRiskLevel"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureSummaryItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumScore", "name": "maximumScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scoreSum", "name": "scoreSum"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightedDurationSum", "name": "weightedDurationSum"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENExposureWindow",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "calibrationConfidence", "name": "calibrationConfidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "diagnosisReportType", "name": "diagnosisReportType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "infectiousness", "name": "infectiousness"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scanInstances", "name": "scanInstances"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variantOfConcernType", "introduced": "15.2", "name": "variantOfConcernType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "activateWithCompletionHandler:"},
+      {"access": "public", "name": "invalidate"},
+      {"access": "public", "introduced": "12.5", "name": "getUserTraveledWithCompletionHandler:"},
+      {"access": "public", "name": "setExposureNotificationEnabled:completionHandler:"},
+      {"access": "public", "introduced": "12.5", "name": "detectExposuresWithConfiguration:completionHandler:"},
+      {"access": "public", "name": "detectExposuresWithConfiguration:diagnosisKeyURLs:completionHandler:"},
+      {"access": "public", "introduced": "13.5", "name": "getExposureInfoFromSummary:userExplanation:completionHandler:"},
+      {"access": "public", "introduced": "12.5", "name": "getExposureWindowsFromSummary:completionHandler:"},
+      {"access": "public", "name": "getDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "name": "getTestDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "introduced": "14.4", "name": "preAuthorizeDiagnosisKeysWithCompletionHandler:"},
+      {"access": "public", "introduced": "14.4", "name": "requestPreAuthorizedDiagnosisKeysWithCompletionHandler:"}
+     ],
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENManager",
+     "properties": [
+      {"access": "public", "getter": "activityHandler", "introduced": "12.5", "name": "activityHandler", "setter": "setActivityHandler:"},
+      {"access": "public", "getter": "dispatchQueue", "name": "dispatchQueue", "setter": "setDispatchQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureNotificationStatus", "name": "exposureNotificationStatus"},
+      {"access": "public", "getter": "invalidationHandler", "name": "invalidationHandler", "setter": "setInvalidationHandler:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureNotificationEnabled", "name": "exposureNotificationEnabled"},
+      {"access": "public", "getter": "diagnosisKeysAvailableHandler", "introduced": "14.4", "name": "diagnosisKeysAvailableHandler", "setter": "setDiagnosisKeysAvailableHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENScanInstance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumAttenuation", "name": "minimumAttenuation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "typicalAttenuation", "name": "typicalAttenuation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "secondsSinceLastScan", "name": "secondsSinceLastScan"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12.5",
+     "linkage": "exported",
+     "name": "ENTemporaryExposureKey",
+     "properties": [
+      {"access": "public", "getter": "keyData", "name": "keyData", "setter": "setKeyData:"},
+      {"access": "public", "getter": "rollingPeriod", "name": "rollingPeriod", "setter": "setRollingPeriod:"},
+      {"access": "public", "getter": "rollingStartNumber", "name": "rollingStartNumber", "setter": "setRollingStartNumber:"},
+      {"access": "public", "getter": "transmissionRiskLevel", "name": "transmissionRiskLevel", "setter": "setTransmissionRiskLevel:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "ENActivityFlags"},
+    {"access": "public", "introduced": "12.5", "name": "ENActivityHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENAttenuation"},
+    {"access": "public", "name": "ENAuthorizationStatus"},
+    {"access": "public", "name": "ENCalibrationConfidence"},
+    {"access": "public", "introduced": "12.5", "name": "ENDetectExposuresHandler"},
+    {"access": "public", "introduced": "14.4", "name": "ENDiagnosisKeysAvailableHandler"},
+    {"access": "public", "name": "ENDiagnosisReportType"},
+    {"access": "public", "name": "ENErrorCode"},
+    {"access": "public", "introduced": "12.5", "name": "ENErrorHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENErrorOutType"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetDiagnosisKeysHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetExposureInfoHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetExposureWindowsHandler"},
+    {"access": "public", "introduced": "12.5", "name": "ENGetUserTraveledHandler"},
+    {"access": "public", "name": "ENInfectiousness"},
+    {"access": "public", "introduced": "12.5", "name": "ENIntervalNumber"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskLevel"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskLevelValue"},
+    {"access": "public", "introduced": "12.5", "name": "ENRiskScore"},
+    {"access": "public", "name": "ENStatus"},
+    {"access": "public", "name": "ENVariantOfConcernType"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

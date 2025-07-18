@@ -14,7 +14,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
-#include <memory>
 #include <vector>
 
 #include "api/array_view.h"
@@ -30,7 +29,7 @@ class H264SpsPpsTracker {
   enum PacketAction { kInsert, kDrop, kRequestKeyframe };
   struct FixedBitstream {
     PacketAction action;
-    rtc::CopyOnWriteBuffer bitstream;
+    CopyOnWriteBuffer bitstream;
   };
 
   H264SpsPpsTracker() = default;
@@ -39,7 +38,7 @@ class H264SpsPpsTracker {
   ~H264SpsPpsTracker() = default;
 
   // Returns fixed bitstream and modifies `video_header`.
-  FixedBitstream CopyAndFixBitstream(rtc::ArrayView<const uint8_t> bitstream,
+  FixedBitstream CopyAndFixBitstream(ArrayView<const uint8_t> bitstream,
                                      RTPVideoHeader* video_header);
 
   void InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
@@ -48,13 +47,13 @@ class H264SpsPpsTracker {
  private:
   struct PpsInfo {
     int sps_id = -1;
-    rtc::Buffer data;
+    Buffer data;
   };
 
   struct SpsInfo {
     int width = -1;
     int height = -1;
-    rtc::Buffer data;
+    Buffer data;
   };
 
   std::map<int, PpsInfo> pps_data_;

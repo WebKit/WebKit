@@ -54,18 +54,13 @@ LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle
     : LegacyRenderSVGModelObject(Type::LegacySVGImage, element, WTFMove(style), SVGModelObjectFlag::UsesBoundaryCaching)
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
-    , m_imageResource(makeUnique<RenderImageResource>())
+    , m_imageResource(makeUniqueRef<RenderImageResource>())
 {
     imageResource().initialize(*this);
     ASSERT(isLegacyRenderSVGImage());
 }
 
 LegacyRenderSVGImage::~LegacyRenderSVGImage() = default;
-
-CheckedRef<RenderImageResource> LegacyRenderSVGImage::checkedImageResource() const
-{
-    return *m_imageResource;
-}
 
 void LegacyRenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {

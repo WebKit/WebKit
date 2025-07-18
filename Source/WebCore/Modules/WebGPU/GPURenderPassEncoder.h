@@ -109,6 +109,8 @@ public:
 private:
     GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device&);
 
+    Ref<WebGPU::RenderPassEncoder> protectedBacking() { return m_backing; }
+
     Ref<WebGPU::RenderPassEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
 };

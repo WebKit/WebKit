@@ -13,8 +13,10 @@
 // // TODO: bugs.webrtc.org/42225697 - delete this file.
 #include "api/transport/ecn_marking.h"
 
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 namespace rtc {
 using ::webrtc::EcnMarking;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NETWORK_ECN_MARKING_H_

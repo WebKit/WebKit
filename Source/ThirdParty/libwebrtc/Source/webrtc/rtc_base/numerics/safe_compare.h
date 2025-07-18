@@ -10,12 +10,12 @@
 
 // This file defines six constexpr functions:
 //
-//   rtc::SafeEq  // ==
-//   rtc::SafeNe  // !=
-//   rtc::SafeLt  // <
-//   rtc::SafeLe  // <=
-//   rtc::SafeGt  // >
-//   rtc::SafeGe  // >=
+//   webrtc::SafeEq  // ==
+//   webrtc::SafeNe  // !=
+//   webrtc::SafeLt  // <
+//   webrtc::SafeLe  // <=
+//   webrtc::SafeGt  // >
+//   webrtc::SafeGe  // >=
 //
 // They each accept two arguments of arbitrary types, and in almost all cases,
 // they simply call the appropriate comparison operator. However, if both
@@ -38,7 +38,7 @@
 
 #include "rtc_base/type_traits.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace safe_cmp_impl {
 
@@ -170,6 +170,19 @@ RTC_SAFECMP_MAKE_FUN(Gt)
 RTC_SAFECMP_MAKE_FUN(Ge)
 #undef RTC_SAFECMP_MAKE_FUN
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SafeEq;
+using ::webrtc::SafeGe;
+using ::webrtc::SafeGt;
+using ::webrtc::SafeLe;
+using ::webrtc::SafeLt;
+using ::webrtc::SafeNe;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NUMERICS_SAFE_COMPARE_H_

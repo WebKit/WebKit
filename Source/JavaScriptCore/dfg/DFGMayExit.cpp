@@ -125,6 +125,20 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CompareEqPtr:
         break;
 
+    case Switch: {
+        auto* data = node->switchData();
+        switch (data->kind) {
+        case SwitchImm:
+        case SwitchCell:
+            break;
+        case SwitchChar:
+        case SwitchString:
+            result = ExitsForExceptions;
+            break;
+        }
+        break;
+    }
+
     case Int52Rep:
         switch (node->child1().useKind()) {
         case AnyIntUse:

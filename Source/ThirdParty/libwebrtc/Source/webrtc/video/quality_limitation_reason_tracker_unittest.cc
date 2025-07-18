@@ -10,6 +10,8 @@
 
 #include "video/quality_limitation_reason_tracker.h"
 
+#include <cstdint>
+
 #include "common_video/include/quality_limitation_reason.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"

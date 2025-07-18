@@ -40,7 +40,7 @@ namespace Style {
 struct ColorResolutionState;
 
 struct ColorLayers {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorLayers);
 
     BlendMode blendMode;
     CommaSeparatedVector<Color> colors;

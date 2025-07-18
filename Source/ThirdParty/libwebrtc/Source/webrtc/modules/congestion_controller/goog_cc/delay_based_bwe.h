@@ -104,7 +104,7 @@ class DelayBasedBwe {
                       std::optional<DataRate> acked_bitrate,
                       DataRate* target_rate);
 
-  rtc::RaceChecker network_race_;
+  RaceChecker network_race_;
   RtcEventLog* const event_log_;
   const FieldTrialsView* const key_value_config_;
 

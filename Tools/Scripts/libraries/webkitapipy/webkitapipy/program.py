@@ -29,15 +29,15 @@ import pkgutil
 import shlex
 import sys
 import time
-from fnmatch import fnmatch
 from pathlib import Path
 from typing import Optional
 from types import ModuleType
 
 import webkitapipy
-from webkitapipy.sdkdb import SDKDB
+from webkitapipy.sdkdb import Diagnostic, MissingName, UnnecessaryAllowedName, UnusedAllowedName
+from webkitapipy.sdkdb import SDKDB, SYMBOL, OBJC_CLS, OBJC_SEL
 from webkitapipy.macho import APIReport
-
+from webkitapipy.reporter import configure_reporter
 
 # Some symbols, namely ones that are low-level parts of system libraries and
 # runtimes, are implicitly available.
@@ -86,6 +86,8 @@ SDK_ALLOWLIST = {
                                 '/usr/lib/system/libcompiler_rt*',
                                 '/usr/lib/system/libunwind*'),
     'usr/lib/libicucore.A.tbd': (),
+    # rdar://149428625
+    'usr/lib/libxslt.1.tbd': (),
 }
 
 # In addition to the main directory of partial SDKDBs passed via `--sdkdb-dir`,
@@ -93,70 +95,23 @@ SDK_ALLOWLIST = {
 # that correspond to frameworks added via `-framework`.
 FRAMEWORK_SDKDB_DIR = 'SDKDB'
 
-
-class TSVReporter:
-    def __init__(self, args: Options):
-        self.n_issues = 0
-        self.print_details = args.details
-        self.print_names = args.details and len(args.input_files) > 1
-
-    def process_report(self, report: APIReport, db: SDKDB):
-        name_prefix = f'{report.file}({report.arch}):'
-        for selref in sorted(report.selrefs):
-            if not db.objc_selector(selref) and selref not in report.methods:
-                if self.print_names:
-                    print(name_prefix, end='\t')
-                self.missing_selector(selref)
-
-        for symbol in sorted(report.imports):
-            ignored = symbol in ALLOWED_SYMBOLS
-            if not ignored:
-                ignored = any(fnmatch(symbol, pattern)
-                              for pattern in ALLOWED_SYMBOL_GLOBS)
-            if symbol.startswith('_OBJC_CLASS_$_'):
-                class_name = symbol.removeprefix('_OBJC_CLASS_$_')
-                if not db.objc_class(class_name):
-                    if self.print_names and not ignored:
-                        print(name_prefix, end='\t')
-                    self.missing_class(class_name, ignored=ignored)
-            elif not db.symbol(symbol):
-                if self.print_names and not ignored:
-                    print(name_prefix, end='\t')
-                self.missing_symbol(symbol, ignored=ignored)
-
-    def missing_selector(self, name: str, *, ignored=False):
-        if not ignored:
-            if self.print_details:
-                print('selector:', name, sep='\t')
-            self.n_issues += 1
-
-    def missing_class(self, name: str, *, ignored=False):
-        if not ignored:
-            if self.print_details:
-                print('class:', name, sep='\t')
-            self.n_issues += 1
-
-    def missing_symbol(self, name: str, *, ignored=False):
-        if not ignored:
-            if self.print_details:
-                print('symbol:', name, sep='\t')
-            self.n_issues += 1
-
-    def finished(self):
-        print(f'{self.n_issues} potential use{"s"[:self.n_issues^1]} of SPI.')
-        if self.n_issues and not self.print_details:
-            print('Rerun with --details to see each validation issue.')
-
-
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='''\
     Using API availability information from a directory of SDKDB records,
     scans Mach-O binaries for use of unknown symbols or Objective-C selectors.
+    ''', fromfile_prefix_chars='@', epilog='''\
+    Additional arguments can be loaded from a file by prefixing it with the @
+    sign.
     ''')
     parser.add_argument('input_files', nargs='+', type=Path,
                         help='files to analyze')
     parser.add_argument('-a', '--arch-name', required=True,
                         help='which architecture to analyze binary with')
+    parser.add_argument('--allowlists', '--allowlist', nargs='*', type=Path,
+                        help='config files listing additional allowed SPI')
+    parser.add_argument('-D', action='append', dest='defines',
+                        help='use this compiler flag for purposes of '
+                        'evaluating `requires` blocks in allowlists')
 
     binaries = parser.add_argument_group('framework and library dependencies',
                                          description='''ld-style arguments to
@@ -185,8 +140,15 @@ def get_parser() -> argparse.ArgumentParser:
                         help='Xcode SDK the binary is built against')
     parser.add_argument('--depfile', type=Path,
                         help='write inputs used for incremental rebuilds')
-    parser.add_argument('--details', action='store_true',
-                        help='print a line for each unknown symbol')
+
+    output = parser.add_argument_group('output formatting')
+    output.add_argument('--format', choices=('tsv', 'build-tool'), default='build-tool',
+                        help='how to style output messages (default: build-tool)')
+    output.add_argument('--details', action='store_true',
+                        help=argparse.SUPPRESS)
+    output.add_argument('--errors',
+                        action=argparse.BooleanOptionalAction, default=True,
+                        help='whether to report SPI use as an error')
     return parser
 
 
@@ -194,6 +156,7 @@ class Options(argparse.Namespace):
     input_files: list[Path]
     arch_name: str
     allowlists: Optional[list[Path]]
+    defines: Optional[list[str]]
 
     frameworks: list[str]
     libraries: list[str]
@@ -204,6 +167,8 @@ class Options(argparse.Namespace):
     sdkdb_cache: Path
     sdk_dir: Path
     depfile: Optional[Path]
+
+    format: str
     details: bool
     errors: bool
 
@@ -226,6 +191,13 @@ def main(argv: Optional[list[str]] = None):
         args = parser.parse_args(argv, namespace=Options)
 
     inputs = []
+
+    # Response files loaded via ArgumentParser are transparently available in
+    # options, but should be tracked as input dependencies.
+    for arg in (argv if argv is not None else sys.argv):
+        if arg.startswith('@'):
+            inputs.append(arg.removeprefix('@'))
+
     # For the depfile, start with the paths of all the modules in webkitapipy
     # since this library is part of WebKit source code.
     for package in (webkitapipy, webkitapipy_additions):
@@ -315,15 +287,23 @@ def main(argv: Optional[list[str]] = None):
             else:
                 sys.exit(f'Could not find "lib{name}.dylib" in search paths')
 
+    for path in args.allowlists or ():
+        with db:
+            db.add_allowlist(use_input(path))
+    if args.defines:
+        db.add_defines(args.defines)
+
     if program_additions:
         reporter = program_additions.configure_reporter(args, db)
     else:
-        reporter = TSVReporter(args)
+        reporter = configure_reporter(args, db)
 
     for binary_path in args.input_files:
         add_corresponding_sdkdb(binary_path)
         report = APIReport.from_binary(binary_path, arch=args.arch_name)
-        reporter.process_report(report, db)
+        db.add_for_auditing(report)
+    for diagnostic in db.audit():
+        reporter.emit_diagnostic(diagnostic)
 
     reporter.finished()
 
@@ -333,3 +313,6 @@ def main(argv: Optional[list[str]] = None):
             fd.write(' \\\n  '.join(shlex.quote(os.path.abspath(path))
                                     for path in inputs))
             fd.write('\n')
+
+    if args.errors and reporter.issues:
+        sys.exit(1)

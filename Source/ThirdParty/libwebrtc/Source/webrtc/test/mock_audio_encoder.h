@@ -66,13 +66,13 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_METHOD(EncodedInfo,
               EncodeImpl,
               (uint32_t timestamp,
-               rtc::ArrayView<const int16_t> audio,
-               rtc::Buffer*),
+               webrtc::ArrayView<const int16_t> audio,
+               webrtc::Buffer*),
               (override));
 
   class FakeEncoding {
    public:
-    // Creates a functor that will return `info` and adjust the rtc::Buffer
+    // Creates a functor that will return `info` and adjust the webrtc::Buffer
     // given as input to it, so it is info.encoded_bytes larger.
     explicit FakeEncoding(const AudioEncoder::EncodedInfo& info);
 
@@ -81,8 +81,8 @@ class MockAudioEncoder : public AudioEncoder {
     explicit FakeEncoding(size_t encoded_bytes);
 
     AudioEncoder::EncodedInfo operator()(uint32_t timestamp,
-                                         rtc::ArrayView<const int16_t> audio,
-                                         rtc::Buffer* encoded);
+                                         ArrayView<const int16_t> audio,
+                                         Buffer* encoded);
 
    private:
     AudioEncoder::EncodedInfo info_;
@@ -98,20 +98,20 @@ class MockAudioEncoder : public AudioEncoder {
     // ArrayView, it _does not_ copy the payload. Make sure it doesn't fall out
     // of scope!
     CopyEncoding(AudioEncoder::EncodedInfo info,
-                 rtc::ArrayView<const uint8_t> payload);
+                 ArrayView<const uint8_t> payload);
 
     // Shorthand version of the constructor above, for when you wish to append
     // the whole payload and do not care about any EncodedInfo attribute other
     // than encoded_bytes.
-    explicit CopyEncoding(rtc::ArrayView<const uint8_t> payload);
+    explicit CopyEncoding(ArrayView<const uint8_t> payload);
 
     AudioEncoder::EncodedInfo operator()(uint32_t timestamp,
-                                         rtc::ArrayView<const int16_t> audio,
-                                         rtc::Buffer* encoded);
+                                         ArrayView<const int16_t> audio,
+                                         Buffer* encoded);
 
    private:
     AudioEncoder::EncodedInfo info_;
-    rtc::ArrayView<const uint8_t> payload_;
+    ArrayView<const uint8_t> payload_;
   };
 };
 

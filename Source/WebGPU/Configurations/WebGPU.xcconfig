@@ -93,7 +93,10 @@ SWIFT_INSTALL_OBJC_HEADER = NO;
 SWIFT_OBJC_INTEROP_MODE = $(WK_SWIFT_OBJC_INTEROP_MODE_$(ENABLE_WEBGPU_SWIFT))
 WK_SWIFT_OBJC_INTEROP_MODE_ENABLE_WEBGPU_SWIFT = objcxx;
 
-OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS_$(WK_PLATFORM_NAME));
+// FIXME: reenable this once rdar://154887575 lands
+// SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES
+
+OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS_$(WK_PLATFORM_NAME)) -strict-memory-safety -enable-experimental-feature Lifetimes -enable-experimental-feature LifetimeDependence -enable-experimental-feature SafeInteropWrappers;
 OTHER_SWIFT_FLAGS_macosx = $(OTHER_SWIFT_FLAGS$(WK_MACOS_1400));
 OTHER_SWIFT_FLAGS_maccatalyst = $(OTHER_SWIFT_FLAGS$(WK_MACCATALYST_14));
 OTHER_SWIFT_FLAGS_iphoneos = $(OTHER_SWIFT_FLAGS$(WK_IOS_17));

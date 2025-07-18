@@ -82,7 +82,7 @@ public:
     enum StreamType { Audio, Video, Text, Unknown, Invalid };
 
     struct RegisteredTrack {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED(RegisteredTrack);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RegisteredTrack);
     public:
 
         RegisteredTrack()

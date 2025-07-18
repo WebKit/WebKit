@@ -1,6 +1,8 @@
 include_rules = [
   "+third_party/libjpeg",
   "+third_party/libjpeg_turbo",
+  "+third_party/jni_zero",
+  "+absl/strings/str_split.h",
   "+call",
   "+common_audio",
   "+common_video",
@@ -64,13 +66,10 @@ specific_include_rules = {
     "+pc",
     "+p2p",
   ],
-  ".*peer_connection_quality_test_params\.h": [
-    "+p2p/base/port_allocator.h",
-  ],
   ".*network_emulation_pc_unittest\.cc": [
+    "+p2p/base/port_allocator.h",
     "+pc/peer_connection_wrapper.h",
     "+pc/test/mock_peer_connection_observers.h",
-    "+p2p/client/basic_port_allocator.h",
   ],
   ".*peer_connection_quality_test\.(h|cc)": [
     "+pc",
@@ -85,7 +84,11 @@ specific_include_rules = {
   "benchmark_main\.cc": [
     "+benchmark",
   ],
-  "emulated_turn_server\.h": [
-     "+p2p/base/turn_server.h",
-  ]
+  "emulated_turn_server\.(h|cc)": [
+     "+p2p/test/turn_server.h",
+     "+p2p/base/port_interface.h",
+  ],
+  "wait_until\.cc": [
+    "+absl/functional/overload.h",
+  ],
 }

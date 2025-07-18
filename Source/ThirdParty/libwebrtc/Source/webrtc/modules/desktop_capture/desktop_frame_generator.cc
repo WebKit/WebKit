@@ -35,7 +35,7 @@ void SetUpdatedRegion(DesktopFrame* frame,
                       int enlarge_range,
                       bool add_random_updated_region) {
   const DesktopRect screen_rect = DesktopRect::MakeSize(frame->size());
-  Random random(rtc::TimeMicros());
+  Random random(TimeMicros());
   frame->mutable_updated_region()->Clear();
   for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
        it.Advance()) {

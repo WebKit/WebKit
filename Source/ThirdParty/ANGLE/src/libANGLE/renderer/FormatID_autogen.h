@@ -121,6 +121,7 @@ enum class FormatID : uint8_t
     ETC2_R8G8B8A8_UNORM_BLOCK,
     ETC2_R8G8B8_SRGB_BLOCK,
     ETC2_R8G8B8_UNORM_BLOCK,
+    G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
     G8_B8R8_2PLANE_420_UNORM,
     G8_B8_R8_3PLANE_420_UNORM,
     L16A16_FLOAT,
@@ -269,7 +270,7 @@ enum class FormatID : uint8_t
     EXTERNAL7
 };
 
-constexpr uint32_t kNumANGLEFormats = 250;
+constexpr uint32_t kNumANGLEFormats = 251;
 
 }  // namespace angle
 

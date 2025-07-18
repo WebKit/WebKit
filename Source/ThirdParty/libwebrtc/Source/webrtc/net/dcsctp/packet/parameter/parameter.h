@@ -43,10 +43,10 @@ class Parameter {
 };
 
 struct ParameterDescriptor {
-  ParameterDescriptor(uint16_t type, rtc::ArrayView<const uint8_t> data)
+  ParameterDescriptor(uint16_t type, webrtc::ArrayView<const uint8_t> data)
       : type(type), data(data) {}
   uint16_t type;
-  rtc::ArrayView<const uint8_t> data;
+  webrtc::ArrayView<const uint8_t> data;
 };
 
 class Parameters {
@@ -61,13 +61,13 @@ class Parameters {
     std::vector<uint8_t> data_;
   };
 
-  static std::optional<Parameters> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<Parameters> Parse(webrtc::ArrayView<const uint8_t> data);
 
   Parameters() {}
   Parameters(Parameters&& other) = default;
   Parameters& operator=(Parameters&& other) = default;
 
-  rtc::ArrayView<const uint8_t> data() const { return data_; }
+  webrtc::ArrayView<const uint8_t> data() const { return data_; }
   std::vector<ParameterDescriptor> descriptors() const;
 
   template <typename P>

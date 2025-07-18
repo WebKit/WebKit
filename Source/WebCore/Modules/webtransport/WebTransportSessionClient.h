@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {

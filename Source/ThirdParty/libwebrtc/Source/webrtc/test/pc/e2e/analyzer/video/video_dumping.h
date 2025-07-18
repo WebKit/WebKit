@@ -25,7 +25,7 @@ namespace webrtc_pc_e2e {
 
 // `VideoSinkInterface` to dump incoming video frames into specified video
 // writer.
-class VideoWriter final : public rtc::VideoSinkInterface<VideoFrame> {
+class VideoWriter final : public VideoSinkInterface<VideoFrame> {
  public:
   // Creates video writer. Caller keeps ownership of `video_writer` and is
   // responsible for closing it after VideoWriter will be destroyed.

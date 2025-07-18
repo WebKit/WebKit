@@ -87,7 +87,7 @@ class FileWrapper final {
   // Seek to given position.
   bool SeekTo(int64_t position);
 
-  // Returns the file size or -1 if a size could not be determined.
+  // Returns the file size or std::nullopt if the size could not be determined.
   // (A file size might not exists for non-seekable files or file-like
   // objects, for example /dev/tty on unix.)
   std::optional<size_t> FileSize();

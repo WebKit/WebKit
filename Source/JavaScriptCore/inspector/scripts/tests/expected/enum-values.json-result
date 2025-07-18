@@ -392,7 +392,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class EventDomainFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventDomainFrontendDispatcher);
 public:
     EventDomainFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
         // Named after parameter 'parameterRequired' while generating command/event event.
@@ -696,7 +696,7 @@ namespace Inspector {
 
 
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorCommandDomainBackendDispatcher);
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
     void command(long protocol_requestId, const String& enumRequired, const String& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional) final;

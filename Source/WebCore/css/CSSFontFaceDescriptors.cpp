@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "CSSFontFaceDescriptors.h"
+#include "ExceptionOr.h"
 
 #include "CSSFontFaceRule.h"
 #include <wtf/TZoneMallocInlines.h>

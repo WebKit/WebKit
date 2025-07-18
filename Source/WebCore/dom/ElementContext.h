@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
 #include "FloatRect.h"
+#include "NodeIdentifier.h"
 #include "PageIdentifier.h"
 #include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -39,13 +39,13 @@ struct ElementContext {
 
     Markable<PageIdentifier> webPageIdentifier;
     Markable<ScriptExecutionContextIdentifier> documentIdentifier;
-    Markable<ElementIdentifier> elementIdentifier;
+    Markable<NodeIdentifier> nodeIdentifier;
 
     ~ElementContext() = default;
 
     bool isSameElement(const ElementContext& other) const
     {
-        return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && elementIdentifier == other.elementIdentifier;
+        return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && nodeIdentifier == other.nodeIdentifier;
     }
 };
 

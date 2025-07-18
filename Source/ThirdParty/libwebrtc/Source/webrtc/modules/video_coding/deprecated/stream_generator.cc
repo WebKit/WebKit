@@ -12,8 +12,10 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <list>
 
+#include "api/video/video_frame_type.h"
 #include "modules/video_coding/deprecated/packet.h"
 #include "rtc_base/checks.h"
 
@@ -95,7 +97,7 @@ bool StreamGenerator::GetPacket(VCMPacket* packet, int index) {
 bool StreamGenerator::NextPacket(VCMPacket* packet) {
   if (packets_.empty())
     return false;
-  if (packet != NULL)
+  if (packet != nullptr)
     *packet = packets_.front();
   packets_.pop_front();
   return true;

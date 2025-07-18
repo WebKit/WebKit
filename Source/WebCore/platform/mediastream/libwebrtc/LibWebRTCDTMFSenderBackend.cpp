@@ -40,7 +40,7 @@ static inline String toWTFString(const std::string& value)
     return String::fromUTF8(value);
 }
 
-LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&& sender)
+LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend(webrtc::scoped_refptr<webrtc::DtmfSenderInterface>&& sender)
     : m_sender(WTFMove(sender))
 {
     m_sender->RegisterObserver(this);

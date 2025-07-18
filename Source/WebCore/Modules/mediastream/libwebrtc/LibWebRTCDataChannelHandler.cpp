@@ -63,7 +63,7 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
     return init;
 }
 
-LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel)
+LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler(webrtc::scoped_refptr<webrtc::DataChannelInterface>&& channel)
     : m_channel(WTFMove(channel))
 {
     ASSERT(m_channel);
@@ -127,12 +127,12 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
 
 bool LibWebRTCDataChannelHandler::sendStringData(const CString& utf8Text)
 {
-    return m_channel->Send({ rtc::CopyOnWriteBuffer(utf8Text.data(), utf8Text.length()), false });
+    return m_channel->Send({ webrtc::CopyOnWriteBuffer(utf8Text.data(), utf8Text.length()), false });
 }
 
 bool LibWebRTCDataChannelHandler::sendRawData(std::span<const uint8_t> data)
 {
-    return m_channel->Send({ rtc::CopyOnWriteBuffer(data.data(), data.size()), true });
+    return m_channel->Send({ webrtc::CopyOnWriteBuffer(data.data(), data.size()), true });
 }
 
 void LibWebRTCDataChannelHandler::close()
@@ -222,7 +222,7 @@ void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t amount)
 
     postTask([client = m_client, amount] {
         if (client)
-            client->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
+            client->bufferedAmountIsDecreasing(static_cast<uint64_t>(amount));
     });
 }
 

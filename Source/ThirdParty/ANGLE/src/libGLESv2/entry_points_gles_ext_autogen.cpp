@@ -1571,9 +1571,15 @@ void GL_APIENTRY GL_LogicOpANGLE(GLenum opcode)
         {
             if (ANGLE_LIKELY(context->getExtensions().logicOpANGLE))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateLogicOpANGLE(context->getPrivateState(),
                                                    context->getMutableErrorSetForValidation(),
                                                    angle::EntryPoint::GLLogicOpANGLE, opcodePacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -2169,9 +2175,15 @@ void GL_APIENTRY GL_PolygonModeANGLE(GLenum face, GLenum mode)
         {
             if (ANGLE_LIKELY(context->getExtensions().polygonModeANGLE))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePolygonModeANGLE(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPolygonModeANGLE, face, modePacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -2215,9 +2227,15 @@ void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum provokeMode)
         {
             if (ANGLE_LIKELY(context->getExtensions().provokingVertexANGLE))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateProvokingVertexANGLE(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLProvokingVertexANGLE, provokeModePacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -3828,7 +3846,7 @@ void GL_APIENTRY GL_GetQueryObjectuivRobustANGLE(GLuint id,
                                                  GLuint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-    Context *context = GetValidGlobalContext();
+    Context *context = GetGlobalContext();
     EVENT(context, GLGetQueryObjectuivRobustANGLE,
           "context = %d, id = %u, pname = %s, bufSize = %d, length = 0x%016" PRIxPTR
           ", params = 0x%016" PRIxPTR "",
@@ -3868,8 +3886,6 @@ void GL_APIENTRY GL_GetQueryObjectuivRobustANGLE(GLuint id,
     }
     else
     {
-        GenerateContextLostErrorOnCurrentGlobalContext(
-            angle::EntryPoint::GLGetQueryObjectuivRobustANGLE);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
@@ -5747,7 +5763,7 @@ void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
                                                    GLuint64 *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-    Context *context = GetValidGlobalContext();
+    Context *context = GetGlobalContext();
     EVENT(context, GLGetQueryObjectui64vRobustANGLE,
           "context = %d, id = %u, pname = %s, bufSize = %d, length = 0x%016" PRIxPTR
           ", params = 0x%016" PRIxPTR "",
@@ -5788,8 +5804,6 @@ void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
     }
     else
     {
-        GenerateContextLostErrorOnCurrentGlobalContext(
-            angle::EntryPoint::GLGetQueryObjectui64vRobustANGLE);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
@@ -6749,9 +6763,15 @@ void GL_APIENTRY GL_SampleMaskiANGLE(GLuint maskNumber, GLbitfield mask)
         {
             if (ANGLE_LIKELY(context->getExtensions().textureMultisampleANGLE))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateSampleMaskiANGLE(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLSampleMaskiANGLE, maskNumber, mask);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -7235,9 +7255,15 @@ void GL_APIENTRY GL_CoverageModulationCHROMIUM(GLenum components)
         {
             if (ANGLE_LIKELY(context->getExtensions().framebufferMixedSamplesCHROMIUM))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateCoverageModulationCHROMIUM(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLCoverageModulationCHROMIUM, components);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -7928,9 +7954,15 @@ void GL_APIENTRY GL_ClipControlEXT(GLenum origin, GLenum depth)
         {
             if (ANGLE_LIKELY(context->getExtensions().clipControlEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateClipControlEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLClipControlEXT, originPacked, depthPacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -8617,7 +8649,7 @@ void GL_APIENTRY GL_GetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)
 void GL_APIENTRY GL_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-    Context *context = GetValidGlobalContext();
+    Context *context = GetGlobalContext();
     EVENT(context, GLGetQueryObjectui64vEXT,
           "context = %d, id = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), id,
           GLenumToString(GLESEnum::QueryObjectParameterName, pname), (uintptr_t)params);
@@ -8653,7 +8685,6 @@ void GL_APIENTRY GL_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *pa
     }
     else
     {
-        GenerateContextLostErrorOnCurrentGlobalContext(angle::EntryPoint::GLGetQueryObjectui64vEXT);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
@@ -8661,7 +8692,7 @@ void GL_APIENTRY GL_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *pa
 void GL_APIENTRY GL_GetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-    Context *context = GetValidGlobalContext();
+    Context *context = GetGlobalContext();
     EVENT(context, GLGetQueryObjectuivEXT,
           "context = %d, id = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), id,
           GLenumToString(GLESEnum::QueryObjectParameterName, pname), (uintptr_t)params);
@@ -8698,7 +8729,6 @@ void GL_APIENTRY GL_GetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params
     }
     else
     {
-        GenerateContextLostErrorOnCurrentGlobalContext(angle::EntryPoint::GLGetQueryObjectuivEXT);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
@@ -8903,9 +8933,15 @@ void GL_APIENTRY GL_BlendEquationSeparateiEXT(GLuint buf, GLenum modeRGB, GLenum
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationSeparateiEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendEquationSeparateiEXT, buf, modeRGB, modeAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -8942,9 +8978,15 @@ void GL_APIENTRY GL_BlendEquationiEXT(GLuint buf, GLenum mode)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationiEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendEquationiEXT, buf, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -8984,10 +9026,16 @@ GL_BlendFuncSeparateiEXT(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlp
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFuncSeparateiEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendFuncSeparateiEXT, buf, srcRGB, dstRGB, srcAlpha,
                     dstAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9025,9 +9073,15 @@ void GL_APIENTRY GL_BlendFunciEXT(GLuint buf, GLenum src, GLenum dst)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFunciEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendFunciEXT, buf, src, dst);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9063,9 +9117,15 @@ void GL_APIENTRY GL_ColorMaskiEXT(GLuint index, GLboolean r, GLboolean g, GLbool
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateColorMaskiEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLColorMaskiEXT, index, r, g, b, a);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9100,9 +9160,15 @@ void GL_APIENTRY GL_DisableiEXT(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDisableiEXT(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLDisableiEXT, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9137,9 +9203,15 @@ void GL_APIENTRY GL_EnableiEXT(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateEnableiEXT(context->getPrivateState(),
                                                  context->getMutableErrorSetForValidation(),
                                                  angle::EntryPoint::GLEnableiEXT, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9175,9 +9247,15 @@ GLboolean GL_APIENTRY GL_IsEnablediEXT(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateIsEnablediEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLIsEnablediEXT, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -9597,6 +9675,202 @@ void GL_APIENTRY GL_BufferStorageExternalEXT(GLenum target,
 }
 
 // GL_EXT_float_blend
+
+// GL_EXT_fragment_shading_rate
+void GL_APIENTRY GL_FramebufferShadingRateEXT(GLenum target,
+                                              GLenum attachment,
+                                              GLuint texture,
+                                              GLint baseLayer,
+                                              GLsizei numLayers,
+                                              GLsizei texelWidth,
+                                              GLsizei texelHeight)
+{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferShadingRateEXT,
+          "context = %d, target = %s, attachment = %s, texture = %u, baseLayer = %d, numLayers = "
+          "%d, texelWidth = %d, texelHeight = %d",
+          CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
+          GLenumToString(GLESEnum::FramebufferAttachment, attachment), texture, baseLayer,
+          numLayers, texelWidth, texelHeight);
+
+    if (ANGLE_LIKELY(context != nullptr))
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = context->skipValidation();
+        if (!isCallValid)
+        {
+            if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
+            {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
+                isCallValid = ValidateFramebufferShadingRateEXT(
+                    context, angle::EntryPoint::GLFramebufferShadingRateEXT, target, attachment,
+                    texture, baseLayer, numLayers, texelWidth, texelHeight);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
+#endif
+            }
+            else
+            {
+                RecordVersionErrorESEXT(context, angle::EntryPoint::GLFramebufferShadingRateEXT);
+            }
+        }
+        if (ANGLE_LIKELY(isCallValid))
+        {
+            context->framebufferShadingRate(target, attachment, texture, baseLayer, numLayers,
+                                            texelWidth, texelHeight);
+        }
+        ANGLE_CAPTURE_GL(FramebufferShadingRateEXT, isCallValid, context, target, attachment,
+                         texture, baseLayer, numLayers, texelWidth, texelHeight);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext(
+            angle::EntryPoint::GLFramebufferShadingRateEXT);
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_GetFragmentShadingRatesEXT(GLsizei samples,
+                                               GLsizei maxCount,
+                                               GLsizei *count,
+                                               GLenum *shadingRates)
+{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetFragmentShadingRatesEXT,
+          "context = %d, samples = %d, maxCount = %d, count = 0x%016" PRIxPTR
+          ", shadingRates = 0x%016" PRIxPTR "",
+          CID(context), samples, maxCount, (uintptr_t)count, (uintptr_t)shadingRates);
+
+    if (ANGLE_LIKELY(context != nullptr))
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = context->skipValidation();
+        if (!isCallValid)
+        {
+            if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
+            {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
+                isCallValid = ValidateGetFragmentShadingRatesEXT(
+                    context, angle::EntryPoint::GLGetFragmentShadingRatesEXT, samples, maxCount,
+                    count, shadingRates);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
+#endif
+            }
+            else
+            {
+                RecordVersionErrorESEXT(context, angle::EntryPoint::GLGetFragmentShadingRatesEXT);
+            }
+        }
+        if (ANGLE_LIKELY(isCallValid))
+        {
+            context->getFragmentShadingRates(samples, maxCount, count, shadingRates);
+        }
+        ANGLE_CAPTURE_GL(GetFragmentShadingRatesEXT, isCallValid, context, samples, maxCount, count,
+                         shadingRates);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext(
+            angle::EntryPoint::GLGetFragmentShadingRatesEXT);
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_ShadingRateEXT(GLenum rate)
+{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLShadingRateEXT, "context = %d, rate = %s", CID(context),
+          GLenumToString(GLESEnum::ShadingRate, rate));
+
+    if (ANGLE_LIKELY(context != nullptr))
+    {
+        bool isCallValid = context->skipValidation();
+        if (!isCallValid)
+        {
+            if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
+            {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
+                isCallValid = ValidateShadingRateEXT(context->getPrivateState(),
+                                                     context->getMutableErrorSetForValidation(),
+                                                     angle::EntryPoint::GLShadingRateEXT, rate);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
+            }
+            else
+            {
+                RecordVersionErrorESEXT(context, angle::EntryPoint::GLShadingRateEXT);
+            }
+        }
+        if (ANGLE_LIKELY(isCallValid))
+        {
+            ContextPrivateShadingRate(context->getMutablePrivateState(),
+                                      context->getMutablePrivateStateCache(), rate);
+        }
+        ANGLE_CAPTURE_GL(ShadingRateEXT, isCallValid, context, rate);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext(angle::EntryPoint::GLShadingRateEXT);
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_ShadingRateCombinerOpsEXT(GLenum combinerOp0, GLenum combinerOp1)
+{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLShadingRateCombinerOpsEXT, "context = %d, combinerOp0 = %s, combinerOp1 = %s",
+          CID(context), GLenumToString(GLESEnum::ShadingRateCombinerOp, combinerOp0),
+          GLenumToString(GLESEnum::ShadingRateCombinerOp, combinerOp1));
+
+    if (ANGLE_LIKELY(context != nullptr))
+    {
+        bool isCallValid = context->skipValidation();
+        if (!isCallValid)
+        {
+            if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
+            {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
+                isCallValid = ValidateShadingRateCombinerOpsEXT(
+                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
+                    angle::EntryPoint::GLShadingRateCombinerOpsEXT, combinerOp0, combinerOp1);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
+            }
+            else
+            {
+                RecordVersionErrorESEXT(context, angle::EntryPoint::GLShadingRateCombinerOpsEXT);
+            }
+        }
+        if (ANGLE_LIKELY(isCallValid))
+        {
+            ContextPrivateShadingRateCombinerOps(context->getMutablePrivateState(),
+                                                 context->getMutablePrivateStateCache(),
+                                                 combinerOp0, combinerOp1);
+        }
+        ANGLE_CAPTURE_GL(ShadingRateCombinerOpsEXT, isCallValid, context, combinerOp0, combinerOp1);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext(
+            angle::EntryPoint::GLShadingRateCombinerOpsEXT);
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
 
 // GL_EXT_geometry_shader
 void GL_APIENTRY GL_FramebufferTextureEXT(GLenum target,
@@ -10835,9 +11109,15 @@ void GL_APIENTRY GL_PolygonOffsetClampEXT(GLfloat factor, GLfloat units, GLfloat
         {
             if (ANGLE_LIKELY(context->getExtensions().polygonOffsetClampEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePolygonOffsetClampEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPolygonOffsetClampEXT, factor, units, clamp);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -10883,10 +11163,16 @@ void GL_APIENTRY GL_PrimitiveBoundingBoxEXT(GLfloat minX,
         {
             if (ANGLE_LIKELY(context->getExtensions().primitiveBoundingBoxEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePrimitiveBoundingBoxEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPrimitiveBoundingBoxEXT, minX, minY, minZ, minW, maxX,
                     maxY, maxZ, maxW);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -13767,9 +14053,15 @@ void GL_APIENTRY GL_PatchParameteriEXT(GLenum pname, GLint value)
         {
             if (ANGLE_LIKELY(context->getExtensions().tessellationShaderEXT))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePatchParameteriEXT(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPatchParameteriEXT, pname, value);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -15895,9 +16187,15 @@ void GL_APIENTRY GL_PolygonModeNV(GLenum face, GLenum mode)
         {
             if (ANGLE_LIKELY(context->getExtensions().polygonModeNV))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePolygonModeNV(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPolygonModeNV, face, modePacked);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16046,9 +16344,15 @@ void GL_APIENTRY GL_BlendEquationOES(GLenum mode)
         {
             if (ANGLE_LIKELY(context->getExtensions().blendSubtractOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationOES(context->getPrivateState(),
                                                        context->getMutableErrorSetForValidation(),
                                                        angle::EntryPoint::GLBlendEquationOES, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16165,9 +16469,15 @@ void GL_APIENTRY GL_BlendEquationSeparateiOES(GLuint buf, GLenum modeRGB, GLenum
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationSeparateiOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendEquationSeparateiOES, buf, modeRGB, modeAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16204,9 +16514,15 @@ void GL_APIENTRY GL_BlendEquationiOES(GLuint buf, GLenum mode)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendEquationiOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendEquationiOES, buf, mode);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16246,10 +16562,16 @@ GL_BlendFuncSeparateiOES(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlp
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFuncSeparateiOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendFuncSeparateiOES, buf, srcRGB, dstRGB, srcAlpha,
                     dstAlpha);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16287,9 +16609,15 @@ void GL_APIENTRY GL_BlendFunciOES(GLuint buf, GLenum src, GLenum dst)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateBlendFunciOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLBlendFunciOES, buf, src, dst);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16325,9 +16653,15 @@ void GL_APIENTRY GL_ColorMaskiOES(GLuint index, GLboolean r, GLboolean g, GLbool
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateColorMaskiOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLColorMaskiOES, index, r, g, b, a);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16362,9 +16696,15 @@ void GL_APIENTRY GL_DisableiOES(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateDisableiOES(context->getPrivateState(),
                                                   context->getMutableErrorSetForValidation(),
                                                   angle::EntryPoint::GLDisableiOES, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16399,9 +16739,15 @@ void GL_APIENTRY GL_EnableiOES(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateEnableiOES(context->getPrivateState(),
                                                  context->getMutableErrorSetForValidation(),
                                                  angle::EntryPoint::GLEnableiOES, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -16437,9 +16783,15 @@ GLboolean GL_APIENTRY GL_IsEnablediOES(GLenum target, GLuint index)
         {
             if (ANGLE_LIKELY(context->getExtensions().drawBuffersIndexedOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateIsEnablediOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLIsEnablediOES, target, index);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -18258,10 +18610,16 @@ void GL_APIENTRY GL_PrimitiveBoundingBoxOES(GLfloat minX,
         {
             if (ANGLE_LIKELY(context->getExtensions().primitiveBoundingBoxOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePrimitiveBoundingBoxOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPrimitiveBoundingBoxOES, minX, minY, minZ, minW, maxX,
                     maxY, maxZ, maxW);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -18354,9 +18712,15 @@ void GL_APIENTRY GL_MinSampleShadingOES(GLfloat value)
         {
             if (ANGLE_LIKELY(context->getExtensions().sampleShadingOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateMinSampleShadingOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLMinSampleShadingOES, value);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -18404,9 +18768,15 @@ void GL_APIENTRY GL_PatchParameteriOES(GLenum pname, GLint value)
         {
             if (ANGLE_LIKELY(context->getExtensions().tessellationShaderOES))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidatePatchParameteriOES(
                     context->getPrivateState(), context->getMutableErrorSetForValidation(),
                     angle::EntryPoint::GLPatchParameteriOES, pname, value);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {
@@ -20106,9 +20476,15 @@ void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate)
         {
             if (ANGLE_LIKELY(context->getExtensions().shadingRateQCOM))
             {
+#if defined(ANGLE_ENABLE_ASSERTS)
+                const uint32_t errorCount = context->getPushedErrorCount();
+#endif
                 isCallValid = ValidateShadingRateQCOM(context->getPrivateState(),
                                                       context->getMutableErrorSetForValidation(),
                                                       angle::EntryPoint::GLShadingRateQCOM, rate);
+#if defined(ANGLE_ENABLE_ASSERTS)
+                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
+#endif
             }
             else
             {

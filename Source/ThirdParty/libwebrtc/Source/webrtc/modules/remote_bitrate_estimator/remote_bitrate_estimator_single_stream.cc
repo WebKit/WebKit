@@ -10,14 +10,20 @@
 
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <optional>
-#include <utility>
+#include <vector>
 
 #include "absl/base/nullability.h"
 #include "api/environment/environment.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
@@ -42,7 +48,7 @@ RemoteBitrateEstimatorSingleStream::Detector::Detector()
 
 RemoteBitrateEstimatorSingleStream::RemoteBitrateEstimatorSingleStream(
     const Environment& env,
-    absl::Nonnull<RemoteBitrateObserver*> observer)
+    RemoteBitrateObserver* absl_nonnull observer)
     : env_(env),
       observer_(observer),
       incoming_bitrate_(kBitrateWindow),
@@ -103,7 +109,7 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
                               estimator.estimator.num_of_deltas(), now_ms);
   }
   if (estimator.detector.State() == BandwidthUsage::kBwOverusing) {
-    std::optional<DataRate> incoming_bitrate = incoming_bitrate_.Rate(now);
+    incoming_bitrate = incoming_bitrate_.Rate(now);
     if (incoming_bitrate.has_value() &&
         (prior_state != BandwidthUsage::kBwOverusing ||
          remote_rate_.TimeToReduceFurther(now, *incoming_bitrate))) {
@@ -164,7 +170,7 @@ void RemoteBitrateEstimatorSingleStream::UpdateEstimate(Timestamp now) {
 }
 
 void RemoteBitrateEstimatorSingleStream::OnRttUpdate(int64_t avg_rtt_ms,
-                                                     int64_t max_rtt_ms) {
+                                                     int64_t /* max_rtt_ms */) {
   remote_rate_.SetRtt(TimeDelta::Millis(avg_rtt_ms));
 }
 

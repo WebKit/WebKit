@@ -77,17 +77,18 @@
 @end
 
 @interface TestWPFingerprintingScript : NSObject
-- (instancetype)initWithHost:(NSString *)host isFirstParty:(BOOL)firstParty isTopDomain:(BOOL)topDomain;
+- (instancetype)initWithHost:(NSString *)host isFirstParty:(BOOL)firstParty isTopDomain:(BOOL)topDomain allowedCategories:(WPScriptAccessCategories)allowedCategories;
 @property (nonatomic, readonly) NSString *host;
 @property (nonatomic, readonly, getter=isFirstParty) BOOL firstParty;
 @property (nonatomic, readonly, getter=isTopDomain) BOOL topDomain;
+@property (nonatomic, readonly) WPScriptAccessCategories allowedCategories;
 @end
 
 @implementation TestWPFingerprintingScript {
     RetainPtr<NSString> _host;
 }
 
-- (instancetype)initWithHost:(NSString *)host isFirstParty:(BOOL)firstParty isTopDomain:(BOOL)topDomain
+- (instancetype)initWithHost:(NSString *)host isFirstParty:(BOOL)firstParty isTopDomain:(BOOL)topDomain allowedCategories:(WPScriptAccessCategories)allowedCategories
 {
     if (!(self = [super init]))
         return nil;
@@ -95,6 +96,7 @@
     _host = adoptNS([host copy]);
     _firstParty = firstParty;
     _topDomain = topDomain;
+    _allowedCategories = allowedCategories;
     return self;
 }
 
@@ -107,14 +109,20 @@
 
 namespace TestWebKitAPI {
 
-static IMP makeFingerprintingScriptsRequestHandler(NSArray<NSString *> *hostNames)
+static IMP makeFingerprintingScriptsRequestHandler(NSArray<NSString *> *hostNames, Vector<WPScriptAccessCategories>&& allowedCategories)
 {
-    return imp_implementationWithBlock([hostNames = RetainPtr { hostNames }](WPResources *, WPResourceRequestOptions *, void(^completion)(NSArray<WPFingerprintingScript *> *, NSError *)) mutable {
-        RunLoop::main().dispatch([hostNames = WTFMove(hostNames), completion = makeBlockPtr(completion)] mutable {
+    return imp_implementationWithBlock([hostNames = RetainPtr { hostNames }, allowedCategories = WTFMove(allowedCategories)](WPResources *, WPResourceRequestOptions *, void(^completion)(NSArray<WPFingerprintingScript *> *, NSError *)) mutable {
+        RunLoop::mainSingleton().dispatch([hostNames = WTFMove(hostNames), allowedCategories = WTFMove(allowedCategories), completion = makeBlockPtr(completion)] mutable {
             RetainPtr scripts = [NSMutableArray arrayWithCapacity:[hostNames count]];
+            size_t index = 0;
             for (NSString *host in hostNames.get()) {
-                RetainPtr script = adoptNS([[TestWPFingerprintingScript alloc] initWithHost:host isFirstParty:NO isTopDomain:NO]);
+                RetainPtr script = adoptNS([[TestWPFingerprintingScript alloc]
+                    initWithHost:host
+                    isFirstParty:NO
+                    isTopDomain:NO
+                    allowedCategories:allowedCategories.isEmpty() ? WPScriptAccessCategoryNone : allowedCategories[index]]);
                 [scripts addObject:(WPFingerprintingScript *)script.get()];
+                index++;
             }
             completion(scripts.get(), nil);
         });
@@ -123,14 +131,14 @@ static IMP makeFingerprintingScriptsRequestHandler(NSArray<NSString *> *hostName
 
 class FingerprintingScriptsRequestSwizzler {
     WTF_MAKE_NONCOPYABLE(FingerprintingScriptsRequestSwizzler);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FingerprintingScriptsRequestSwizzler);
 public:
-    FingerprintingScriptsRequestSwizzler(NSArray<NSString *> *hosts)
+    FingerprintingScriptsRequestSwizzler(NSArray<NSString *> *hosts, Vector<WPScriptAccessCategories>&& allowedCategories = { })
     {
         m_swizzler = makeUnique<InstanceMethodSwizzler>(
             PAL::getWPResourcesClass(),
             @selector(requestFingerprintingScripts:completionHandler:),
-            makeFingerprintingScriptsRequestHandler(hosts)
+            makeFingerprintingScriptsRequestHandler(hosts, WTFMove(allowedCategories))
         );
     }
 
@@ -625,6 +633,43 @@ TEST(ScriptTrackingPrivacyTests, DirectFormFieldAccess)
     EXPECT_WK_STREQ(taintedTextAreaGetElementById, emptyString());
     auto taintedSelectGetElementById = [webView stringByEvaluatingJavaScript:@"taintedSelectGetElementByIdValue"];
     EXPECT_WK_STREQ(taintedSelectGetElementById, emptyString());
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler {
+        @[ @"tainted.net" ],
+        { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
+    };
+
+    auto makeTestScript = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(function() {"
+            "  window.%@NumberOfVoices = speechSynthesis.getVoices().length;"
+            "  window.%@TextFieldValue = document.getElementById('textField').value;"
+            "})()", pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : formFieldIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
+        @"test://pure.com/script.js" : makeTestScript(@"pure"),
+        @"test://tainted.net/script.js" : makeTestScript(@"tainted"),
+    });
+
+    RetainPtr pureTextFieldValue = [webView stringByEvaluatingJavaScript:@"window.pureTextFieldValue"];
+    EXPECT_WK_STREQ(pureTextFieldValue.get(), @"textFieldValue");
+
+    RetainPtr taintedTextFieldValue = [webView stringByEvaluatingJavaScript:@"window.taintedTextFieldValue"];
+    EXPECT_WK_STREQ(taintedTextFieldValue.get(), @"textFieldValue");
+
+    auto pureNumberOfVoices = [[webView objectByEvaluatingJavaScript:@"window.pureNumberOfVoices"] intValue];
+    EXPECT_EQ(pureNumberOfVoices, 3);
+
+    auto taintedNumberOfVoices = [[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] intValue];
+    EXPECT_EQ(taintedNumberOfVoices, 0);
 }
 
 } // namespace TestWebKitAPI

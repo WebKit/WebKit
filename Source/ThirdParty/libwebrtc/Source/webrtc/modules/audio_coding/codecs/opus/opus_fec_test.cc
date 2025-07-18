@@ -8,7 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <memory>
+#include <string>
+#include <tuple>
 
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "test/gtest.h"
@@ -74,7 +81,7 @@ void OpusFecTest::SetUp() {
   in_filename_ = test::ResourcePath(get<2>(GetParam()), get<3>(GetParam()));
 
   FILE* fp = fopen(in_filename_.c_str(), "rb");
-  ASSERT_FALSE(fp == NULL);
+  ASSERT_FALSE(fp == nullptr);
 
   // Obtain file size.
   fseek(fp, 0, SEEK_END);
@@ -128,8 +135,8 @@ OpusFecTest::OpusFecTest()
       data_pointer_(0),
       max_bytes_(0),
       encoded_bytes_(0),
-      opus_encoder_(NULL),
-      opus_decoder_(NULL) {}
+      opus_encoder_(nullptr),
+      opus_decoder_(nullptr) {}
 
 void OpusFecTest::EncodeABlock() {
   int value =
@@ -154,8 +161,8 @@ void OpusFecTest::DecodeABlock(bool lost_previous, bool lost_current) {
     } else {
       // Call decoder PLC.
       while (value_1 < static_cast<int>(block_length_sample_)) {
-        int ret = WebRtcOpus_Decode(opus_decoder_, NULL, 0, &out_data_[value_1],
-                                    &audio_type);
+        int ret = WebRtcOpus_Decode(opus_decoder_, nullptr, 0,
+                                    &out_data_[value_1], &audio_type);
         EXPECT_EQ(ret, sampling_khz_ * 10);  // Should return 10 ms of samples.
         value_1 += ret;
       }

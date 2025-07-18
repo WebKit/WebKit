@@ -35,7 +35,7 @@ namespace WTF {
 class StringBuilder {
     // Disallow copying since we don't want to share m_buffer between two builders.
     WTF_MAKE_NONCOPYABLE(StringBuilder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringBuilder);
 
 public:
     StringBuilder() = default;

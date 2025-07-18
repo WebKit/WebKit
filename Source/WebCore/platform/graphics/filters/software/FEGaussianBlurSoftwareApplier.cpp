@@ -432,14 +432,14 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
 
 bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+    input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
     if (!m_effect->stdDeviationX() && !m_effect->stdDeviationY())
         return true;
 

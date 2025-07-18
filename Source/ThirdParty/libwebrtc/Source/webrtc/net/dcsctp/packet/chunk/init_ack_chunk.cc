@@ -47,7 +47,7 @@ namespace dcsctp {
 constexpr int InitAckChunk::kType;
 
 std::optional<InitAckChunk> InitAckChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -68,7 +68,7 @@ std::optional<InitAckChunk> InitAckChunk::Parse(
 }
 
 void InitAckChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> parameters = parameters_.data();
+  webrtc::ArrayView<const uint8_t> parameters = parameters_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, parameters.size());
 
   writer.Store32<4>(*initiate_tag_);
@@ -80,7 +80,7 @@ void InitAckChunk::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string InitAckChunk::ToString() const {
-  return rtc::StringFormat("INIT_ACK, initiate_tag=0x%0x, initial_tsn=%u",
-                           *initiate_tag(), *initial_tsn());
+  return webrtc::StringFormat("INIT_ACK, initiate_tag=0x%0x, initial_tsn=%u",
+                              *initiate_tag(), *initial_tsn());
 }
 }  // namespace dcsctp

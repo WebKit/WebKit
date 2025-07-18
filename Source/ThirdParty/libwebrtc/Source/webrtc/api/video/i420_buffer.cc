@@ -21,6 +21,7 @@
 #include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/memory/aligned_malloc.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 #include "third_party/libyuv/include/libyuv/rotate.h"
@@ -33,8 +34,16 @@ namespace webrtc {
 
 namespace {
 
-int I420DataSize(int height, int stride_y, int stride_u, int stride_v) {
-  return stride_y * height + (stride_u + stride_v) * ((height + 1) / 2);
+int I420DataSize(int width,
+                 int height,
+                 int stride_y,
+                 int stride_u,
+                 int stride_v) {
+  CheckValidDimensions(width, height, stride_y, stride_u, stride_v);
+  // Do the size calculation using 64bit integers and use checked_cast to catch
+  // overflow.
+  int64_t h = height, y = stride_y, u = stride_u, v = stride_v;
+  return checked_cast<int>(y * h + (u + v) * ((h + 1) / 2));
 }
 
 }  // namespace
@@ -52,12 +61,9 @@ I420Buffer::I420Buffer(int width,
       stride_y_(stride_y),
       stride_u_(stride_u),
       stride_v_(stride_v),
-      data_(static_cast<uint8_t*>(
-          AlignedMalloc(I420DataSize(height, stride_y, stride_u, stride_v),
-                        kBufferAlignment))) {
-  RTC_DCHECK_GT(width, 0);
-  RTC_DCHECK_GT(height, 0);
-  RTC_DCHECK_GE(stride_y, width);
+      data_(static_cast<uint8_t*>(AlignedMalloc(
+          I420DataSize(width, height, stride_y, stride_u, stride_v),
+          kBufferAlignment))) {
   RTC_DCHECK_GE(stride_u, (width + 1) / 2);
   RTC_DCHECK_GE(stride_v, (width + 1) / 2);
 }
@@ -65,39 +71,38 @@ I420Buffer::I420Buffer(int width,
 I420Buffer::~I420Buffer() {}
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width, int height) {
-  return rtc::make_ref_counted<I420Buffer>(width, height);
+scoped_refptr<I420Buffer> I420Buffer::Create(int width, int height) {
+  return make_ref_counted<I420Buffer>(width, height);
 }
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width,
-                                                  int height,
-                                                  int stride_y,
-                                                  int stride_u,
-                                                  int stride_v) {
-  return rtc::make_ref_counted<I420Buffer>(width, height, stride_y, stride_u,
-                                           stride_v);
+scoped_refptr<I420Buffer> I420Buffer::Create(int width,
+                                             int height,
+                                             int stride_y,
+                                             int stride_u,
+                                             int stride_v) {
+  return make_ref_counted<I420Buffer>(width, height, stride_y, stride_u,
+                                      stride_v);
 }
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(
-    const I420BufferInterface& source) {
+scoped_refptr<I420Buffer> I420Buffer::Copy(const I420BufferInterface& source) {
   return Copy(source.width(), source.height(), source.DataY(), source.StrideY(),
               source.DataU(), source.StrideU(), source.DataV(),
               source.StrideV());
 }
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(int width,
-                                                int height,
-                                                const uint8_t* data_y,
-                                                int stride_y,
-                                                const uint8_t* data_u,
-                                                int stride_u,
-                                                const uint8_t* data_v,
-                                                int stride_v) {
+scoped_refptr<I420Buffer> I420Buffer::Copy(int width,
+                                           int height,
+                                           const uint8_t* data_y,
+                                           int stride_y,
+                                           const uint8_t* data_u,
+                                           int stride_u,
+                                           const uint8_t* data_v,
+                                           int stride_v) {
   // Note: May use different strides than the input data.
-  rtc::scoped_refptr<I420Buffer> buffer = Create(width, height);
+  scoped_refptr<I420Buffer> buffer = Create(width, height);
   RTC_CHECK_EQ(0, libyuv::I420Copy(data_y, stride_y, data_u, stride_u, data_v,
                                    stride_v, buffer->MutableDataY(),
                                    buffer->StrideY(), buffer->MutableDataU(),
@@ -107,21 +112,19 @@ rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(int width,
 }
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Rotate(
-    const I420BufferInterface& src,
-    VideoRotation rotation) {
+scoped_refptr<I420Buffer> I420Buffer::Rotate(const I420BufferInterface& src,
+                                             VideoRotation rotation) {
   RTC_CHECK(src.DataY());
   RTC_CHECK(src.DataU());
   RTC_CHECK(src.DataV());
 
   int rotated_width = src.width();
   int rotated_height = src.height();
-  if (rotation == webrtc::kVideoRotation_90 ||
-      rotation == webrtc::kVideoRotation_270) {
+  if (rotation == kVideoRotation_90 || rotation == kVideoRotation_270) {
     std::swap(rotated_width, rotated_height);
   }
 
-  rtc::scoped_refptr<webrtc::I420Buffer> buffer =
+  scoped_refptr<I420Buffer> buffer =
       I420Buffer::Create(rotated_width, rotated_height);
 
   RTC_CHECK_EQ(0,
@@ -137,7 +140,7 @@ rtc::scoped_refptr<I420Buffer> I420Buffer::Rotate(
 
 void I420Buffer::InitializeData() {
   memset(data_.get(), 0,
-         I420DataSize(height_, stride_y_, stride_u_, stride_v_));
+         I420DataSize(width_, height_, stride_y_, stride_u_, stride_v_));
 }
 
 int I420Buffer::width() const {

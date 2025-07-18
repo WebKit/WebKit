@@ -15,7 +15,8 @@ static NSString *const kVideoCodecKey = @"rtc_video_codec_info_key";
 static NSString *const kBitrateKey = @"rtc_max_bitrate_key";
 static NSString *const kAudioOnlyKey = @"rtc_audio_only_key";
 static NSString *const kCreateAecDumpKey = @"rtc_create_aec_dump_key";
-static NSString *const kUseManualAudioConfigKey = @"rtc_use_manual_audio_config_key";
+static NSString *const kUseManualAudioConfigKey =
+    @"rtc_use_manual_audio_config_key";
 
 NS_ASSUME_NONNULL_BEGIN
 @interface ARDSettingsStore () {

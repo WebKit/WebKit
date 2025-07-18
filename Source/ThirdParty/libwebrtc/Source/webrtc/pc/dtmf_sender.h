@@ -21,7 +21,6 @@
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "pc/proxy.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/thread_annotations.h"
 
 // DtmfSender is the native implementation of the RTCDTMFSender defined by
@@ -48,8 +47,8 @@ class DtmfProviderInterface {
 
 class DtmfSender : public DtmfSenderInterface {
  public:
-  static rtc::scoped_refptr<DtmfSender> Create(TaskQueueBase* signaling_thread,
-                                               DtmfProviderInterface* provider);
+  static scoped_refptr<DtmfSender> Create(TaskQueueBase* signaling_thread,
+                                          DtmfProviderInterface* provider);
 
   void OnDtmfProviderDestroyed();
 
@@ -92,7 +91,7 @@ class DtmfSender : public DtmfSenderInterface {
   int comma_delay_ RTC_GUARDED_BY(signaling_thread_);
 
   // For cancelling the tasks which feed the DTMF provider one tone at a time.
-  rtc::scoped_refptr<PendingTaskSafetyFlag> safety_flag_ RTC_GUARDED_BY(
+  scoped_refptr<PendingTaskSafetyFlag> safety_flag_ RTC_GUARDED_BY(
       signaling_thread_) RTC_PT_GUARDED_BY(signaling_thread_) = nullptr;
 };
 

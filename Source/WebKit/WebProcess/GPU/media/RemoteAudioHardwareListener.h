@@ -68,7 +68,7 @@ private:
     // Messages
     void audioHardwareDidBecomeActive();
     void audioHardwareDidBecomeInactive();
-    void audioOutputDeviceChanged(size_t bufferSizeMinimum, size_t bufferSizeMaximum);
+    void audioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum);
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };

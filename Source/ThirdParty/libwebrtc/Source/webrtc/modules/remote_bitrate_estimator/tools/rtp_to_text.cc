@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+#include <cstdint>
+#include <cstring>
 #include <memory>
 
 #include "modules/remote_bitrate_estimator/tools/bwe_rtp.h"
@@ -47,7 +49,7 @@ int main(int argc, char* argv[]) {
         toffset != 0)
       ++non_zero_ts_offsets;
     if (arrival_time_only) {
-      rtc::StringBuilder ss;
+      webrtc::StringBuilder ss;
       ss << static_cast<int64_t>(packet.time_ms) * 1000000;
       fprintf(stdout, "%s\n", ss.str().c_str());
     } else {

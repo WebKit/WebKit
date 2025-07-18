@@ -64,7 +64,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     , m_request(request)
     , m_handshakeMessage(msg)
     , m_cancellable(adoptGRef(g_cancellable_new()))
-    , m_delayFailTimer(RunLoop::main(), this, &WebSocketTask::delayFailTimerFired)
+    , m_delayFailTimer(RunLoop::mainSingleton(), this, &WebSocketTask::delayFailTimerFired)
 {
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     auto protocolList = protocol.split(',');
@@ -73,7 +73,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
         protocols.reset(static_cast<char**>(g_new0(char*, protocolList.size() + 1)));
         unsigned i = 0;
         for (auto& subprotocol : protocolList)
-            protocols.get()[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<UChar>).utf8().data());
+            protocols.get()[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>).utf8().data());
     }
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

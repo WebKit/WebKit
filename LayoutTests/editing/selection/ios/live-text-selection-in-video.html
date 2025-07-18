@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+video {
+    width: 100%;
+}
+</style>
+</head>
+<body>
+    <video></video>
+    <p>Select text in the video above. This test requires WebKitTestRunner.</p>
+    <div id="description"></div>
+    <div id="console"></div>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("Verifies that the highlight and handles show up in the correct place when selecting Live Text inside a video");
+
+        const video = document.querySelector("video");
+        video.controls = false;
+        video.addEventListener("canplaythrough", completeTest);
+        video.src = "../../../media/content/audio-describes-video.mp4";
+
+        async function completeTest() {
+            // Rect centered in the video, rotated by 5 degrees clockwise.
+            const liveTextQuad = {
+                topLeft : new DOMPointReadOnly(0.1837, 0.3269),
+                topRight : new DOMPointReadOnly(0.7814, 0.2746),
+                bottomRight : new DOMPointReadOnly(0.8163, 0.6731),
+                bottomLeft : new DOMPointReadOnly(0.2186, 0.7254),
+            };
+
+            window.internals?.installImageOverlay(video, [
+                {
+                    topLeft : liveTextQuad.topLeft,
+                    topRight : liveTextQuad.topRight,
+                    bottomRight : liveTextQuad.bottomRight,
+                    bottomLeft : liveTextQuad.bottomLeft,
+                    children: [
+                        {
+                            text : "Bip",
+                            topLeft : liveTextQuad.topLeft,
+                            topRight : liveTextQuad.topRight,
+                            bottomRight : liveTextQuad.bottomRight,
+                            bottomLeft : liveTextQuad.bottomLeft
+                        }
+                    ]
+                }
+            ]);
+
+            const {x, y} = UIHelper.midPointOfRect(video.getBoundingClientRect());
+            viewBeforeSelecting = await UIHelper.frontmostViewAtPoint(x, y);
+
+            await UIHelper.longPressElement(video);
+            await UIHelper.waitForSelectionToAppear();
+
+            viewAfterSelecting = await UIHelper.frontmostViewAtPoint(x, y);
+
+            getSelection().removeAllRanges();
+            await UIHelper.waitForSelectionToDisappear();
+
+            viewAfterClearingSelection = await UIHelper.frontmostViewAtPoint(x, y);
+
+            shouldNotBe("viewBeforeSelecting", "viewAfterSelecting");
+            shouldNotBe("viewAfterSelecting", "viewAfterClearingSelection");
+
+            finishJSTest();
+        };
+    });
+    </script>
+</body>
+</html>

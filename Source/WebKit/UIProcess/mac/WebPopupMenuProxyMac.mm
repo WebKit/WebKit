@@ -87,6 +87,8 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
                 RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
+            if (!items[i].m_language.isEmpty())
+                [attributes setObject:items[i].m_language.createNSString().get() forKey:NSLanguageIdentifierAttributeName];
             RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:items[i].m_text.createNSString().get() attributes:attributes.get()]);
 
             [menuItem setAttributedTitle:string.get()];

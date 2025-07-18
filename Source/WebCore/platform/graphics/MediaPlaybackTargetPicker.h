@@ -39,7 +39,7 @@ class FloatRect;
 class MediaPlaybackTarget;
 
 class MediaPlaybackTargetPicker : public CanMakeCheckedPtr<MediaPlaybackTargetPicker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaPlaybackTargetPicker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlaybackTargetPicker);
 public:
     class Client {

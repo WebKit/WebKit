@@ -64,8 +64,6 @@ private:
     // IPC Message handlers.
     void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
 
-    Ref<WebProcessProxy> protectedProcess() const;
-
     const CheckedRef<WebProcessProxy> m_process;
 };
 

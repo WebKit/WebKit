@@ -468,28 +468,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
 
     appendNumberFormatDigitOptionsToSkeleton(this, skeletonBuilder);
-
-    // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#notation
-    switch (m_notation) {
-    case IntlNotation::Standard:
-        break;
-    case IntlNotation::Scientific:
-        skeletonBuilder.append(" scientific"_s);
-        break;
-    case IntlNotation::Engineering:
-        skeletonBuilder.append(" engineering"_s);
-        break;
-    case IntlNotation::Compact:
-        switch (m_compactDisplay) {
-        case CompactDisplay::Short:
-            skeletonBuilder.append(" compact-short"_s);
-            break;
-        case CompactDisplay::Long:
-            skeletonBuilder.append(" compact-long"_s);
-            break;
-        }
-        break;
-    }
+    appendNumberFormatNotationOptionsToSkeleton(this, skeletonBuilder);
 
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#sign-display
     // CurrencySign's accounting is a part of SignDisplay in ICU.
@@ -568,7 +547,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
 
     value = purifyNaN(value);
 
-    Vector<UChar, 32> buffer;
+    Vector<char16_t, 32> buffer;
     ASSERT(m_numberFormatter);
     UErrorCode status = U_ZERO_ERROR;
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
@@ -592,7 +571,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, IntlMathematicalV
     value.ensureNonDouble();
     const auto& string = value.getString();
 
-    Vector<UChar, 32> buffer;
+    Vector<char16_t, 32> buffer;
     ASSERT(m_numberFormatter);
     UErrorCode status = U_ZERO_ERROR;
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
@@ -631,7 +610,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, double start
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
     int32_t length = 0;
-    const UChar* string = ufmtval_getString(formattedValue, &length, &status);
+    const char16_t* string = ufmtval_getString(formattedValue, &length, &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
@@ -668,7 +647,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathemat
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
     int32_t length = 0;
-    const UChar* string = ufmtval_getString(formattedValue, &length, &status);
+    const char16_t* string = ufmtval_getString(formattedValue, &length, &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
@@ -812,7 +791,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
     UErrorCode status = U_ZERO_ERROR;
 
     int32_t formattedStringLength = 0;
-    const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "Failed to format number range"_s);
         return;
@@ -1323,7 +1302,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result;
+    Vector<char16_t, 32> result;
     ASSERT(m_numberFormatter);
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
     if (U_FAILURE(status))
@@ -1364,7 +1343,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result;
+    Vector<char16_t, 32> result;
     ASSERT(m_numberFormatter);
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
     if (U_FAILURE(status))

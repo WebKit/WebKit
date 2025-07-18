@@ -9,9 +9,12 @@
  */
 #include "pc/session_description.h"
 
+#include <memory>
+#include <utility>
+
 #include "test/gtest.h"
 
-namespace cricket {
+namespace webrtc {
 
 TEST(MediaContentDescriptionTest, ExtmapAllowMixedDefaultValue) {
   VideoContentDescription video_desc;
@@ -130,4 +133,4 @@ TEST(SessionDescriptionTest, AddContentTransfersExtmapAllowMixedSetting) {
                 ->extmap_allow_mixed_enum());
 }
 
-}  // namespace cricket
+}  // namespace webrtc

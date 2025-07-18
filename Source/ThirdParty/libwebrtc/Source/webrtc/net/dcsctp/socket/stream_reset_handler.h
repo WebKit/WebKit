@@ -100,7 +100,7 @@ class StreamResetHandler {
   // time and also multiple times. It will enqueue requests that can't be
   // directly fulfilled, and will asynchronously process them when any ongoing
   // request has completed.
-  void ResetStreams(rtc::ArrayView<const StreamID> outgoing_streams);
+  void ResetStreams(webrtc::ArrayView<const StreamID> outgoing_streams);
 
   // Creates a Reset Streams request that must be sent if returned. Will start
   // the reconfig timer. Will return std::nullopt if there is no need to

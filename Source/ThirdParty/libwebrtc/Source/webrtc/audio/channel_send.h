@@ -11,19 +11,27 @@
 #ifndef AUDIO_CHANNEL_SEND_H_
 #define AUDIO_CHANNEL_SEND_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <optional>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/crypto/crypto_options.h"
 #include "api/environment/environment.h"
 #include "api/frame_transformer_interface.h"
 #include "api/function_view.h"
+#include "api/scoped_refptr.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "modules/rtp_rtcp/source/rtp_sender_audio.h"
 
 namespace webrtc {
 
@@ -63,8 +71,8 @@ class ChannelSendInterface {
                           const SdpAudioFormat& encoder_format,
                           std::unique_ptr<AudioEncoder> encoder) = 0;
   virtual void ModifyEncoder(
-      rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
-  virtual void CallEncoder(rtc::FunctionView<void(AudioEncoder*)> modifier) = 0;
+      FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
+  virtual void CallEncoder(FunctionView<void(AudioEncoder*)> modifier) = 0;
 
   // Use 0 to indicate that the extension should not be registered.
   virtual void SetRTCP_CNAME(absl::string_view c_name) = 0;
@@ -87,29 +95,17 @@ class ChannelSendInterface {
       std::unique_ptr<AudioFrame> audio_frame) = 0;
   virtual RtpRtcpInterface* GetRtpRtcp() const = 0;
 
-  // In RTP we currently rely on RTCP packets (`ReceivedRTCPPacket`) to inform
-  // about RTT.
-  // In media transport we rely on the TargetTransferRateObserver instead.
-  // In other words, if you are using RTP, you should expect
-  // `ReceivedRTCPPacket` to be called, if you are using media transport,
-  // `OnTargetTransferRate` will be called.
-  //
-  // In future, RTP media will move to the media transport implementation and
-  // these conditions will be removed.
-  // Returns the RTT in milliseconds.
-  virtual int64_t GetRTT() const = 0;
   virtual void StartSend() = 0;
   virtual void StopSend() = 0;
 
   // E2EE Custom Audio Frame Encryption (Optional)
   virtual void SetFrameEncryptor(
-      rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor) = 0;
+      scoped_refptr<FrameEncryptorInterface> frame_encryptor) = 0;
 
   // Sets a frame transformer between encoder and packetizer, to transform
   // encoded frames before sending them out the network.
   virtual void SetEncoderToPacketizerFrameTransformer(
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface>
-          frame_transformer) = 0;
+      scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) = 0;
 
   // Returns payload bitrate actually used.
   virtual std::optional<DataRate> GetUsedRate() const = 0;
@@ -127,7 +123,7 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     bool extmap_allow_mixed,
     int rtcp_report_interval_ms,
     uint32_t ssrc,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
+    scoped_refptr<FrameTransformerInterface> frame_transformer,
     RtpTransportControllerSendInterface* transport_controller);
 
 }  // namespace voe

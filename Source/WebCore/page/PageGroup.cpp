@@ -38,7 +38,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
-#if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include "CaptionUserPreferencesMediaAF.h"
 #else
 #include "CaptionUserPreferences.h"
@@ -115,7 +115,7 @@ void PageGroup::captionPreferencesChanged()
 CaptionUserPreferences& PageGroup::ensureCaptionPreferences()
 {
     if (!m_captionPreferences) {
-#if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
         m_captionPreferences = CaptionUserPreferencesMediaAF::create(*this);
 #else
         m_captionPreferences = CaptionUserPreferences::create(*this);

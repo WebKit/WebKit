@@ -437,7 +437,7 @@ bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
     return false;
 }
 
-float InputType::decorationWidth() const
+float InputType::decorationWidth(float) const
 {
     return 0;
 }
@@ -672,11 +672,11 @@ bool InputType::hasCustomFocusLogic() const
     return true;
 }
 
-bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
+bool InputType::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     ASSERT(element());
     Ref element = *this->element();
-    return !element->isReadOnly() && element->isTextFormControlKeyboardFocusable(event);
+    return !element->isReadOnly() && element->isTextFormControlKeyboardFocusable(focusEventData);
 }
 
 bool InputType::isMouseFocusable() const

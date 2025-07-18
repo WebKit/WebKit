@@ -30,7 +30,7 @@ EchoAudibility::EchoAudibility(bool use_render_stationarity_at_init)
 EchoAudibility::~EchoAudibility() = default;
 
 void EchoAudibility::Update(const RenderBuffer& render_buffer,
-                            rtc::ArrayView<const float> average_reverb,
+                            ArrayView<const float> average_reverb,
                             int delay_blocks,
                             bool external_delay_seen) {
   UpdateRenderNoiseEstimator(render_buffer.GetSpectrumBuffer(),
@@ -50,7 +50,7 @@ void EchoAudibility::Reset() {
 
 void EchoAudibility::UpdateRenderStationarityFlags(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const float> average_reverb,
+    ArrayView<const float> average_reverb,
     int min_channel_delay_blocks) {
   const SpectrumBuffer& spectrum_buffer = render_buffer.GetSpectrumBuffer();
   int idx_at_delay = spectrum_buffer.OffsetIndex(spectrum_buffer.read,
@@ -98,7 +98,7 @@ bool EchoAudibility::IsRenderTooLow(const BlockBuffer& block_buffer) {
          idx = block_buffer.IncIndex(idx)) {
       float max_abs_over_channels = 0.f;
       for (int ch = 0; ch < num_render_channels; ++ch) {
-        rtc::ArrayView<const float, kBlockSize> block =
+        ArrayView<const float, kBlockSize> block =
             block_buffer.buffer[idx].View(/*band=*/0, /*channel=*/ch);
         auto r = std::minmax_element(block.cbegin(), block.cend());
         float max_abs_channel =

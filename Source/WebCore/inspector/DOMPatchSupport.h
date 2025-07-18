@@ -32,6 +32,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 

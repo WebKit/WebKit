@@ -590,7 +590,7 @@ private:
     static constexpr unsigned DontEnum = 0 | PropertyAttribute::DontEnum;
 
     class PropertyFilter : public SideDataRepository::SideData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PropertyFilter);
     public:
         void add(UniquedStringImpl* uid)
         {
@@ -1007,7 +1007,7 @@ JSC_DEFINE_CUSTOM_SETTER(testCustomValueSetter, (JSGlobalObject* lexicalGlobalOb
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter"_s);
 }
 
-static UChar pathSeparator()
+static char16_t pathSeparator()
 {
 #if OS(WINDOWS)
     return '\\';
@@ -1525,6 +1525,9 @@ JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* g
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"_s), key);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"_s), key);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
@@ -3606,9 +3609,11 @@ int main(int argc, char** argv)
     // yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
     WTF::initialize();
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(ANDROID)
     WTF::disableForwardingVPrintfStdErrToOSLog();
+#endif
 
+#if PLATFORM(COCOA)
     if (getenv("JSCTEST_CrashReportArgV")) {
         StringPrintStream out;
         CommaPrinter space(" "_s);

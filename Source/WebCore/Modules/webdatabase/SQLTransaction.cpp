@@ -212,7 +212,7 @@ void SQLTransaction::checkAndHandleClosedDatabase()
     }
 
     if (m_lockAcquired)
-        m_database->transactionCoordinator()->releaseLock(*this);
+        m_database->transactionCoordinator().releaseLock(*this);
 }
 
 void SQLTransaction::scheduleCallback(void (SQLTransaction::*step)())
@@ -225,7 +225,7 @@ void SQLTransaction::scheduleCallback(void (SQLTransaction::*step)())
 
 void SQLTransaction::acquireLock()
 {
-    m_database->transactionCoordinator()->acquireLock(*this);
+    m_database->transactionCoordinator().acquireLock(*this);
 }
 
 void SQLTransaction::openTransactionAndPreflight()

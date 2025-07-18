@@ -10,5 +10,5 @@
   "src/common/spirv/spirv_instruction_parser_autogen.h":
     "9b75df2b61cac8235b62e0b4deb60373",
   "third_party/spirv-headers/src/include/spirv/unified1/spirv.core.grammar.json":
-    "500951d69535d4cd45290b0a65f1f065"
+    "d7c258e533aa46218894968e45ebdb68"
 }

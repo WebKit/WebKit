@@ -17,10 +17,8 @@
 #include <deque>
 #include <memory>
 #include <string>
-#include <utility>
 
 #include "api/data_channel_interface.h"
-#include "media/base/media_engine.h"
 
 namespace webrtc {
 

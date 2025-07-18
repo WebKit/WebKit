@@ -332,7 +332,7 @@ static ASCIILiteral atomCanonicalTextEncodingName(std::span<const LChar> name)
     return textEncodingNameMap.get<HashTranslatorTextEncodingName>(name);
 }
 
-static ASCIILiteral atomCanonicalTextEncodingName(std::span<const UChar> characters)
+static ASCIILiteral atomCanonicalTextEncodingName(std::span<const char16_t> characters)
 {
     if (characters.size() > maxEncodingNameLength)
         return { };

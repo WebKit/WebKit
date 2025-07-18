@@ -20,7 +20,7 @@ namespace test {
 // back into a valid object. This will not initialize the decoders or the
 // renderer.
 VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
-    webrtc::Transport* transport,
+    Transport* transport,
     const Json::Value& json) {
   auto receive_config = VideoReceiveStreamInterface::Config(transport);
   for (const auto& decoder_json : json["decoders"]) {

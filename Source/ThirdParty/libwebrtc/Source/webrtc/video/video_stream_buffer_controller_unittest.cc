@@ -12,22 +12,26 @@
 
 #include <stdint.h>
 
+#include <cstddef>
 #include <limits>
 #include <memory>
 #include <optional>
 #include <string>
 #include <tuple>
 #include <utility>
+#include <variant>
 #include <vector>
 
-#include "absl/types/variant.h"
 #include "api/metronome/test/fake_metronome.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/encoded_frame.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_timing.h"
+#include "modules/video_coding/timing/timing.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
 #include "test/fake_encoded_frame.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -181,7 +185,7 @@ class VideoStreamBufferControllerFixture
   }
 
   using WaitResult =
-      absl::variant<std::unique_ptr<EncodedFrame>, TimeDelta /*wait_time*/>;
+      std::variant<std::unique_ptr<EncodedFrame>, TimeDelta /*wait_time*/>;
 
   std::optional<WaitResult> WaitForFrameOrTimeout(TimeDelta wait) {
     if (wait_result_) {
@@ -193,7 +197,7 @@ class VideoStreamBufferControllerFixture
     }
 
     Timestamp now = clock_->CurrentTime();
-    // TODO(bugs.webrtc.org/13756): Remove this when rtc::Thread uses uses
+    // TODO(bugs.webrtc.org/13756): Remove this when webrtc::Thread uses uses
     // Timestamp instead of an integer milliseconds. This extra wait is needed
     // for some tests that use the metronome. This is due to rounding
     // milliseconds, affecting the precision of simulated time controller uses
@@ -238,8 +242,8 @@ class VideoStreamBufferControllerFixture
  private:
   void SetWaitResult(WaitResult result) {
     RTC_DCHECK(!wait_result_);
-    if (absl::holds_alternative<std::unique_ptr<EncodedFrame>>(result)) {
-      RTC_DCHECK(absl::get<std::unique_ptr<EncodedFrame>>(result));
+    if (std::holds_alternative<std::unique_ptr<EncodedFrame>>(result)) {
+      RTC_DCHECK(std::get<std::unique_ptr<EncodedFrame>>(result));
     }
     wait_result_.emplace(std::move(result));
   }
@@ -821,8 +825,7 @@ TEST_P(LowLatencyVideoStreamBufferControllerTest,
        FramesDecodedInstantlyWithLowLatencyRendering) {
   // Initial keyframe.
   StartNextDecodeForceKeyframe();
-  timing_.set_min_playout_delay(TimeDelta::Zero());
-  timing_.set_max_playout_delay(TimeDelta::Millis(10));
+  timing_.set_playout_delay({TimeDelta::Zero(), TimeDelta::Millis(10)});
   // Playout delay of 0 implies low-latency rendering.
   auto frame = test::FakeFrameBuilder()
                    .Id(0)
@@ -852,8 +855,7 @@ TEST_P(LowLatencyVideoStreamBufferControllerTest,
 TEST_P(LowLatencyVideoStreamBufferControllerTest, ZeroPlayoutDelayFullQueue) {
   // Initial keyframe.
   StartNextDecodeForceKeyframe();
-  timing_.set_min_playout_delay(TimeDelta::Zero());
-  timing_.set_max_playout_delay(TimeDelta::Millis(10));
+  timing_.set_playout_delay({TimeDelta::Zero(), TimeDelta::Millis(10)});
   auto frame = test::FakeFrameBuilder()
                    .Id(0)
                    .Time(0)
@@ -885,8 +887,7 @@ TEST_P(LowLatencyVideoStreamBufferControllerTest,
        MinMaxDelayZeroLowLatencyMode) {
   // Initial keyframe.
   StartNextDecodeForceKeyframe();
-  timing_.set_min_playout_delay(TimeDelta::Zero());
-  timing_.set_max_playout_delay(TimeDelta::Zero());
+  timing_.set_playout_delay({TimeDelta::Zero(), TimeDelta::Zero()});
   // Playout delay of 0 implies low-latency rendering.
   auto frame = test::FakeFrameBuilder()
                    .Id(0)

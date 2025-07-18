@@ -307,7 +307,7 @@ inline void unmapRtpBuffer(GstBuffer*, GstRTPBuffer* rtpBuffer)
 using GstMappedRtpBuffer = GstBufferMapper<GstRTPBuffer, mapRtpBuffer, unmapRtpBuffer>;
 
 class StatsTimestampConverter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StatsTimestampConverter);
     WTF_MAKE_NONCOPYABLE(StatsTimestampConverter);
     friend NeverDestroyed<StatsTimestampConverter>;
 

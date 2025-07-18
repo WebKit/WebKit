@@ -39,7 +39,7 @@ Ref<DNSCache> DNSCache::create()
 }
 
 DNSCache::DNSCache()
-    : m_expiredTimer(RunLoop::main(), this, &DNSCache::removeExpiredResponsesFired)
+    : m_expiredTimer(RunLoop::mainSingleton(), this, &DNSCache::removeExpiredResponsesFired)
 {
     m_expiredTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 }

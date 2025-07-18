@@ -27,15 +27,15 @@ namespace rnn_vad {
 
 constexpr float kFloatMin = std::numeric_limits<float>::min();
 
-// Fails for every pair from two equally sized rtc::ArrayView<float> views such
-// that the values in the pair do not match.
-void ExpectEqualFloatArray(rtc::ArrayView<const float> expected,
-                           rtc::ArrayView<const float> computed);
+// Fails for every pair from two equally sized webrtc::ArrayView<float> views
+// such that the values in the pair do not match.
+void ExpectEqualFloatArray(ArrayView<const float> expected,
+                           ArrayView<const float> computed);
 
-// Fails for every pair from two equally sized rtc::ArrayView<float> views such
-// that their absolute error is above a given threshold.
-void ExpectNearAbsolute(rtc::ArrayView<const float> expected,
-                        rtc::ArrayView<const float> computed,
+// Fails for every pair from two equally sized webrtc::ArrayView<float> views
+// such that their absolute error is above a given threshold.
+void ExpectNearAbsolute(ArrayView<const float> expected,
+                        ArrayView<const float> computed,
                         float tolerance);
 
 // File reader interface.
@@ -49,7 +49,7 @@ class FileReader {
   // values are correctly read. If the number of remaining bytes in the file is
   // not sufficient to read `dst.size()` float values, `dst` is partially
   // modified and false is returned.
-  virtual bool ReadChunk(rtc::ArrayView<float> dst) = 0;
+  virtual bool ReadChunk(ArrayView<float> dst) = 0;
   // Reads a single float value, advances the internal file position according
   // to the number of read bytes and returns true if the value is correctly
   // read. If the number of remaining bytes in the file is not sufficient to
@@ -90,14 +90,13 @@ class PitchTestData {
  public:
   PitchTestData();
   ~PitchTestData();
-  rtc::ArrayView<const float, kBufSize24kHz> PitchBuffer24kHzView() const {
+  ArrayView<const float, kBufSize24kHz> PitchBuffer24kHzView() const {
     return pitch_buffer_24k_;
   }
-  rtc::ArrayView<const float, kRefineNumLags24kHz> SquareEnergies24kHzView()
-      const {
+  ArrayView<const float, kRefineNumLags24kHz> SquareEnergies24kHzView() const {
     return square_energies_24k_;
   }
-  rtc::ArrayView<const float, kNumLags12kHz> AutoCorrelation12kHzView() const {
+  ArrayView<const float, kNumLags12kHz> AutoCorrelation12kHzView() const {
     return auto_correlation_12k_;
   }
 
@@ -115,7 +114,7 @@ class FileWriter {
   FileWriter(const FileWriter&) = delete;
   FileWriter& operator=(const FileWriter&) = delete;
   ~FileWriter() = default;
-  void WriteChunk(rtc::ArrayView<const float> value) {
+  void WriteChunk(ArrayView<const float> value) {
     const std::streamsize bytes_to_write = value.size() * sizeof(float);
     os_.write(reinterpret_cast<const char*>(value.data()), bytes_to_write);
   }

@@ -36,8 +36,8 @@ class FeaturesExtractor {
   // `feature_vector` is partially written and therefore must not be used to
   // feed the VAD RNN.
   bool CheckSilenceComputeFeatures(
-      rtc::ArrayView<const float, kFrameSize10ms24kHz> samples,
-      rtc::ArrayView<float, kFeatureVectorSize> feature_vector);
+      ArrayView<const float, kFrameSize10ms24kHz> samples,
+      ArrayView<float, kFeatureVectorSize> feature_vector);
 
  private:
   const bool use_high_pass_filter_;
@@ -46,11 +46,11 @@ class FeaturesExtractor {
   BiQuadFilter hpf_;
   SequenceBuffer<float, kBufSize24kHz, kFrameSize10ms24kHz, kFrameSize20ms24kHz>
       pitch_buf_24kHz_;
-  rtc::ArrayView<const float, kBufSize24kHz> pitch_buf_24kHz_view_;
+  ArrayView<const float, kBufSize24kHz> pitch_buf_24kHz_view_;
   std::vector<float> lp_residual_;
-  rtc::ArrayView<float, kBufSize24kHz> lp_residual_view_;
+  ArrayView<float, kBufSize24kHz> lp_residual_view_;
   PitchEstimator pitch_estimator_;
-  rtc::ArrayView<const float, kFrameSize20ms24kHz> reference_frame_view_;
+  ArrayView<const float, kFrameSize20ms24kHz> reference_frame_view_;
   SpectralFeaturesExtractor spectral_features_extractor_;
   int pitch_period_48kHz_;
 };

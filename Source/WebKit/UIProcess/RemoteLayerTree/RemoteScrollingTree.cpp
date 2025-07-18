@@ -95,7 +95,24 @@ void RemoteScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeSc
     if (!scrollingCoordinatorProxy)
         return;
 
-    scrollingCoordinatorProxy->scrollingTreeNodeDidStopAnimatedScroll(node.scrollingNodeID());
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), { }, { }, ScrollUpdateType::AnimatedScrollDidEnd };
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
+
+    scrollingCoordinatorProxy->scrollingThreadAddedPendingUpdate();
+}
+
+void RemoteScrollingTree::scrollingTreeNodeDidStopWheelEventScroll(WebCore::ScrollingTreeScrollingNode& node)
+{
+    ASSERT(isMainRunLoop());
+
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
+        return;
+
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), { }, { }, ScrollUpdateType::WheelEventScrollDidEnd };
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
+
+    scrollingCoordinatorProxy->scrollingThreadAddedPendingUpdate();
 }
 
 bool RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
@@ -150,6 +167,12 @@ void RemoteScrollingTree::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID 
 {
     if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         scrollingCoordinatorProxy->scrollingTreeNodeDidEndScrollSnapping(nodeID);
+}
+
+void RemoteScrollingTree::stickyScrollingTreeNodeBeganSticking(ScrollingNodeID nodeID)
+{
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->stickyScrollingTreeNodeBeganSticking(nodeID);
 }
 
 Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

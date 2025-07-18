@@ -54,8 +54,6 @@ public:
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
-    struct MarkableTraits;
-
 private:
     friend class GenericTimeMixin<ContinuousTime>;
     constexpr ContinuousTime(double rawValue)
@@ -65,7 +63,8 @@ private:
 };
 static_assert(sizeof(ContinuousTime) == sizeof(double));
 
-struct ContinuousTime::MarkableTraits {
+template<>
+struct MarkableTraits<ContinuousTime> {
     static bool isEmptyValue(ContinuousTime time)
     {
         return time.isNaN();

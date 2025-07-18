@@ -86,6 +86,12 @@ struct DcSctpOptions {
   // buffer is fully utilized.
   size_t max_receiver_window_buffer_size = 5 * 1024 * 1024;
 
+  // Enables receive pull mode - `DcSctpCallbacks::OnMessageReady` will be
+  // called when there are messages ready to be read instead of
+  // `DcSctpCallbacks::OnMessageReceived`.  It is up to the
+  // caller to call `DcSctpSocket::GetNextMessage()` to receive the messages.
+  bool enable_receive_pull_mode = false;
+
   // Send queue total size limit. It will not be possible to queue more data if
   // the queue size is larger than this number.
   size_t max_send_buffer_size = 2'000'000;
@@ -175,6 +181,16 @@ struct DcSctpOptions {
   // aim to fill the congestion window as much as it can, even if it results in
   // creating small fragmented packets.
   size_t avoid_fragmentation_cwnd_mtus = 6;
+
+  // When the congestion window is below this number of MTUs, sent data chunks
+  // will have the "I" (Immediate SACK - RFC7053) bit set. That will prevent the
+  // receiver from delaying the SACK, which result in shorter time until the
+  // sender can send the next packet as its driven by SACKs. This can reduce
+  // latency for low utilized and lossy connections.
+  //
+  // Default value set to be same as initial congestion window. Set to zero to
+  // disable.
+  size_t immediate_sack_under_cwnd_mtus = 10;
 
   // The number of packets that may be sent at once. This is limited to avoid
   // bursts that too quickly fill the send buffer. Typically in a a socket in

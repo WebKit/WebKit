@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLFrameSetElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"

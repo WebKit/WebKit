@@ -24,7 +24,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import WebKit
-@_spi(Private) import _WebKit_SwiftUI
+import _WebKit_SwiftUI
 
 private struct ToolbarBackForwardMenuView: View {
     struct LabelConfiguration {

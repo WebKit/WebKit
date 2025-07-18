@@ -106,7 +106,7 @@ void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
     case Mode::Monomorphic: {
         if (newCodeBlock && oldCodeBlock == m_codeBlock) {
             // Upgrading Monomorphic DataIC with newCodeBlock.
-            ArityCheckMode arityCheck = oldCodeBlock->jitCode()->addressForCall(ArityCheckNotRequired) == m_monomorphicCallDestination ? ArityCheckNotRequired : MustCheckArity;
+            ArityCheckMode arityCheck = oldCodeBlock->jitCode()->addressForCall(ArityCheckMode::ArityCheckNotRequired) == m_monomorphicCallDestination ? ArityCheckMode::ArityCheckNotRequired : ArityCheckMode::MustCheckArity;
             auto target = newCodeBlock->jitCode()->addressForCall(arityCheck);
             m_codeBlock = newCodeBlock;
             m_monomorphicCallDestination = target;
@@ -431,7 +431,7 @@ void DirectCallLinkInfo::unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeB
 
     if (!!m_target) {
         if (m_codeBlock && newCodeBlock && oldCodeBlock == m_codeBlock) {
-            ArityCheckMode arityCheck = oldCodeBlock->jitCode()->addressForCall(ArityCheckNotRequired) == m_target ? ArityCheckNotRequired : MustCheckArity;
+            ArityCheckMode arityCheck = oldCodeBlock->jitCode()->addressForCall(ArityCheckMode::ArityCheckNotRequired) == m_target ? ArityCheckMode::ArityCheckNotRequired : ArityCheckMode::MustCheckArity;
             auto target = newCodeBlock->jitCode()->addressForCall(arityCheck);
             setCallTarget(newCodeBlock, CodeLocationLabel { target });
             newCodeBlock->linkIncomingCall(nullptr, this); // This is just relinking. So owner and caller frame can be nullptr.
@@ -568,7 +568,7 @@ CodeBlock* DirectCallLinkInfo::retrieveCodeBlock(FunctionExecutable* functionExe
 CodePtr<JSEntryPtrTag> DirectCallLinkInfo::retrieveCodePtr(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
 {
     unsigned argumentStackSlots = maxArgumentCountIncludingThis();
-    ArityCheckMode arityCheckMode = (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters())) ? MustCheckArity : ArityCheckNotRequired;
+    ArityCheckMode arityCheckMode = (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters())) ? ArityCheckMode::MustCheckArity : ArityCheckMode::ArityCheckNotRequired;
     return codeBlock->addressForCallConcurrently(locker, arityCheckMode);
 }
 
@@ -577,7 +577,7 @@ void DirectCallLinkInfo::repatchSpeculatively()
     if (m_executable->isHostFunction()) {
         CodeSpecializationKind kind = specializationKind();
         CodePtr<JSEntryPtrTag> codePtr;
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             codePtr = m_executable->generatedJITCodeWithArityCheckForCall();
         else
             codePtr = m_executable->generatedJITCodeWithArityCheckForConstruct();

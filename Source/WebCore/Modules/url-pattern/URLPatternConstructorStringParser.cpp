@@ -26,6 +26,7 @@
 #include "config.h"
 #include "URLPatternConstructorStringParser.h"
 
+#include "ExceptionOr.h"
 #include "URLPatternCanonical.h"
 #include "URLPatternComponent.h"
 #include "URLPatternInit.h"

@@ -104,7 +104,7 @@ BOOL CALLBACK GetWindowListHandler(HWND hwnd, LPARAM param) {
     WCHAR window_title[kTitleLength] = L"";
     if (GetWindowTextLength(hwnd) != 0 &&
         GetWindowTextW(hwnd, window_title, kTitleLength) > 0) {
-      window.title = rtc::ToUtf8(window_title);
+      window.title = webrtc::ToUtf8(window_title);
     }
   }
 
@@ -179,7 +179,7 @@ bool GetCroppedWindowRect(HWND window,
   // As of Windows8, transparent resize borders are added by the OS at
   // left/bottom/right sides of a resizeable window. If the cropped window
   // doesn't remove these borders, the background will be exposed a bit.
-  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_WIN8 ||
+  if (webrtc::rtc_win::GetVersion() >= webrtc::rtc_win::Version::VERSION_WIN8 ||
       is_maximized) {
     // Only apply this cropping to windows with a resize border (otherwise,
     // it'd clip the edges of captured pop-up windows without this border).
@@ -319,7 +319,8 @@ WindowCaptureHelperWin::WindowCaptureHelperWin() {
             GetProcAddress(dwmapi_library_, "DwmGetWindowAttribute"));
   }
 
-  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_WIN10) {
+  if (webrtc::rtc_win::GetVersion() >=
+      webrtc::rtc_win::Version::VERSION_WIN10) {
     if (FAILED(::CoCreateInstance(__uuidof(VirtualDesktopManager), nullptr,
                                   CLSCTX_ALL,
                                   IID_PPV_ARGS(&virtual_desktop_manager_)))) {

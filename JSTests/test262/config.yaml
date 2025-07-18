@@ -56,6 +56,77 @@ skip:
     - test/built-ins/Function/prototype/restricted-property-arguments.js
     - test/built-ins/Function/prototype/restricted-property-caller.js
 
+    # test262 hasn't been updated to the new UCD
+    - test/built-ins/RegExp/property-escapes/generated/Alphabetic.js
+    - test/built-ins/RegExp/property-escapes/generated/Assigned.js
+    - test/built-ins/RegExp/property-escapes/generated/Case_Ignorable.js
+    - test/built-ins/RegExp/property-escapes/generated/Cased.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_Casefolded.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_Casemapped.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_Lowercased.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_NFKC_Casefolded.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_Titlecased.js
+    - test/built-ins/RegExp/property-escapes/generated/Changes_When_Uppercased.js
+    - test/built-ins/RegExp/property-escapes/generated/Diacritic.js
+    - test/built-ins/RegExp/property-escapes/generated/Emoji.js
+    - test/built-ins/RegExp/property-escapes/generated/Emoji_Presentation.js
+    - test/built-ins/RegExp/property-escapes/generated/Extended_Pictographic.js
+    - test/built-ins/RegExp/property-escapes/generated/Extender.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Cased_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Currency_Symbol.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Decimal_Number.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Letter_Number.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Lowercase_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Mark.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Math_Symbol.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Nonspacing_Mark.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Number.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Punctuation.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Symbol.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Punctuation.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Spacing_Mark.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Symbol.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js
+    - test/built-ins/RegExp/property-escapes/generated/General_Category_-_Uppercase_Letter.js
+    - test/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js
+    - test/built-ins/RegExp/property-escapes/generated/Grapheme_Extend.js
+    - test/built-ins/RegExp/property-escapes/generated/ID_Continue.js
+    - test/built-ins/RegExp/property-escapes/generated/ID_Start.js
+    - test/built-ins/RegExp/property-escapes/generated/Ideographic.js
+    - test/built-ins/RegExp/property-escapes/generated/Lowercase.js
+    - test/built-ins/RegExp/property-escapes/generated/Math.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Arabic.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Bengali.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Common.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Inherited.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Kannada.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Latin.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Oriya.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Sharada.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Tangut.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_-_Telugu.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Bengali.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Common.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Han.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Inherited.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kannada.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Latin.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Oriya.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Sharada.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Tangut.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Telugu.js
+    - test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Tifinagh.js
+    - test/built-ins/RegExp/property-escapes/generated/Unified_Ideograph.js
+    - test/built-ins/RegExp/property-escapes/generated/Uppercase.js
+    - test/built-ins/RegExp/property-escapes/generated/XID_Continue.js
+    - test/built-ins/RegExp/property-escapes/generated/XID_Start.js
+
     # New ICU (66~) raises a different failure
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
 

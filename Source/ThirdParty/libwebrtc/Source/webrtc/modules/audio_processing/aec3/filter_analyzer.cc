@@ -24,7 +24,7 @@
 namespace webrtc {
 namespace {
 
-size_t FindPeakIndex(rtc::ArrayView<const float> filter_time_domain,
+size_t FindPeakIndex(ArrayView<const float> filter_time_domain,
                      size_t peak_index_in,
                      size_t start_sample,
                      size_t end_sample) {
@@ -73,7 +73,7 @@ void FilterAnalyzer::Reset() {
 }
 
 void FilterAnalyzer::Update(
-    rtc::ArrayView<const std::vector<float>> filters_time_domain,
+    ArrayView<const std::vector<float>> filters_time_domain,
     const RenderBuffer& render_buffer,
     bool* any_filter_consistent,
     float* max_echo_path_gain) {
@@ -102,7 +102,7 @@ void FilterAnalyzer::Update(
 }
 
 void FilterAnalyzer::AnalyzeRegion(
-    rtc::ArrayView<const std::vector<float>> filters_time_domain,
+    ArrayView<const std::vector<float>> filters_time_domain,
     const RenderBuffer& render_buffer) {
   // Preprocess the filter to avoid issues with low-frequency components in the
   // filter.
@@ -134,9 +134,8 @@ void FilterAnalyzer::AnalyzeRegion(
   }
 }
 
-void FilterAnalyzer::UpdateFilterGain(
-    rtc::ArrayView<const float> filter_time_domain,
-    FilterAnalysisState* st) {
+void FilterAnalyzer::UpdateFilterGain(ArrayView<const float> filter_time_domain,
+                                      FilterAnalysisState* st) {
   bool sufficient_time_to_converge =
       blocks_since_reset_ > 5 * kNumBlocksPerSecond;
 
@@ -155,7 +154,7 @@ void FilterAnalyzer::UpdateFilterGain(
 }
 
 void FilterAnalyzer::PreProcessFilters(
-    rtc::ArrayView<const std::vector<float>> filters_time_domain) {
+    ArrayView<const std::vector<float>> filters_time_domain) {
   for (size_t ch = 0; ch < filters_time_domain.size(); ++ch) {
     RTC_DCHECK_LT(region_.start_sample_, filters_time_domain[ch].size());
     RTC_DCHECK_LT(region_.end_sample_, filters_time_domain[ch].size());
@@ -220,7 +219,7 @@ void FilterAnalyzer::ConsistentFilterDetector::Reset() {
 }
 
 bool FilterAnalyzer::ConsistentFilterDetector::Detect(
-    rtc::ArrayView<const float> filter_to_analyze,
+    ArrayView<const float> filter_to_analyze,
     const FilterRegion& region,
     const Block& x_block,
     size_t peak_index,
@@ -264,7 +263,7 @@ bool FilterAnalyzer::ConsistentFilterDetector::Detect(
   if (significant_peak_) {
     bool active_render_block = false;
     for (int ch = 0; ch < x_block.NumChannels(); ++ch) {
-      rtc::ArrayView<const float, kBlockSize> x_channel =
+      ArrayView<const float, kBlockSize> x_channel =
           x_block.View(/*band=*/0, ch);
       const float x_energy = std::inner_product(
           x_channel.begin(), x_channel.end(), x_channel.begin(), 0.f);

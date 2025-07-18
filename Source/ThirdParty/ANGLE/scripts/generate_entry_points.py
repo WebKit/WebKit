@@ -120,6 +120,7 @@ CONTEXT_PRIVATE_LIST = [
     'glSampleMaski',
     'glScissor',
     'glShadingRate',
+    'glShadingRateCombinerOps',
     'glStencilFunc',
     'glStencilFuncSeparate',
     'glStencilMask',
@@ -1694,17 +1695,28 @@ def get_validation_expression(api, cmd_name, entry_point_name, internal_params, 
     record_error = "else {{RecordVersionErrorES{}(context, {});}}".format(
         error_suffix, entry_point_name) if condition != "true" else ""
 
-    check_consistency = not is_context_private_state_command(api, cmd_name)
-
     pre_validation = """#if defined(ANGLE_ENABLE_ASSERTS)
     const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-""" if check_consistency else ""
+"""
 
+    # If a command holds a lock, assert that:
+    #  * passed validation generates no errors
+    #  * failed validation generates exactly one error
+    lock_assertion = "ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));"
+
+    # If a command does not hold a lock, assert that:
+    #  * failed validation updates the error counter
+    #
+    # Since the error counter is global, it may be incremented from
+    # other threads thus this assertion is weaker than the one above.
+    lockless_assertion = "ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);"
+
+    has_lock = not is_context_private_state_command(api, cmd_name)
     post_validation = """
 #if defined(ANGLE_ENABLE_ASSERTS)
-    ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
-#endif""" if check_consistency else ""
+    {}
+#endif""".format(lock_assertion if has_lock else lockless_assertion)
 
     return """bool isCallValid = context->skipValidation();
 if (!isCallValid)
@@ -1887,6 +1899,7 @@ def is_context_lost_acceptable_cmd(cmd_name):
         "glGetError",
         "glGetSync",
         "glGetQueryObjecti",
+        "glGetQueryObjectui",
         "glGetProgramiv",
         "glGetGraphicsResetStatus",
         "glGetShaderiv",

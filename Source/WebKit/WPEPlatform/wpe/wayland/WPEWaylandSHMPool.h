@@ -39,14 +39,14 @@ public:
     WaylandSHMPool(void*, size_t, WTF::UnixFileDescriptor&&, struct wl_shm*);
     ~WaylandSHMPool();
 
-    void* data() const { return m_data; }
-    size_t size() const { return m_size; }
-
     int allocate(size_t);
     struct wl_buffer* createBuffer(uint32_t offset, uint32_t width, uint32_t height, uint32_t stride);
+    void write(std::span<const uint8_t> data, int offset = 0);
+    void write(std::span<const uint32_t> data, int offset = 0);
 
 private:
     bool resize(size_t);
+    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return unsafeMakeSpan<uint8_t>(static_cast<uint8_t*>(m_data), m_size); }
 
     void* m_data { nullptr };
     size_t m_size { 0 };

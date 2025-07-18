@@ -38,9 +38,9 @@ std::vector<float> ComputeTriangularFiltersWeights() {
                                           kOpusScaleNumBins24kHz20ms.end(), 0);
   std::vector<float> weights(num_weights);
   int next_fft_coeff_index = 0;
-  for (int band = 0; rtc::SafeLt(band, v.size()); ++band) {
+  for (int band = 0; SafeLt(band, v.size()); ++band) {
     const int band_size = v[band];
-    for (int j = 0; rtc::SafeLt(j, band_size); ++j) {
+    for (int j = 0; SafeLt(j, band_size); ++j) {
       weights[next_fft_coeff_index + j] = static_cast<float>(j) / band_size;
     }
     next_fft_coeff_index += band_size;
@@ -56,7 +56,7 @@ TEST(RnnVadTest, TestOpusScaleBoundaries) {
       3200, 4000, 4800, 5600, 6800, 8000, 9600, 12000, 15600, 20000};
   constexpr auto kOpusScaleNumBins24kHz20ms = GetOpusScaleNumBins24kHz20ms();
   int prev = 0;
-  for (int i = 0; rtc::SafeLt(i, kOpusScaleNumBins24kHz20ms.size()); ++i) {
+  for (int i = 0; SafeLt(i, kOpusScaleNumBins24kHz20ms.size()); ++i) {
     int boundary =
         kBandFrequencyBoundariesHz[i] * kFrameSize20ms24kHz / kSampleRate24kHz;
     EXPECT_EQ(kOpusScaleNumBins24kHz20ms[i], boundary - prev);
@@ -73,7 +73,7 @@ TEST(RnnVadTest, DISABLED_TestOpusScaleWeights) {
   int i = 0;
   for (int band_size : GetOpusScaleNumBins24kHz20ms()) {
     SCOPED_TRACE(band_size);
-    rtc::ArrayView<float> band_weights(weights.data() + i, band_size);
+    ArrayView<float> band_weights(weights.data() + i, band_size);
     float prev = -1.f;
     for (float weight : band_weights) {
       EXPECT_LT(prev, weight);

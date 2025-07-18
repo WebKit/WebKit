@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Exception.h"
+#include "ExceptionOr.h"
 #include "SVGLengthContext.h"
 #include "SVGValueProperty.h"
 

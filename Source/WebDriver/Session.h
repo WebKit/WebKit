@@ -188,6 +188,7 @@ private:
     Session(Ref<SessionHost>&&, WeakPtr<WebSocketServer>&&);
 #endif
 
+    String uncheckedTopLevelBrowsingContext() const;
     void switchToTopLevelBrowsingContext(const String&);
     void switchToBrowsingContext(const String&, Function<void(CommandResult&&)>&&);
     void switchToBrowsingContext(const String& toplevelBrowsingContext, const String& browsingContext, Function<void(CommandResult&&)>&&);

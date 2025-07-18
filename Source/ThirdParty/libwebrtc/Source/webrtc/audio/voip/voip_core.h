@@ -53,10 +53,10 @@ class VoipCore : public VoipEngine,
                  public VoipVolumeControl {
  public:
   VoipCore(const Environment& env,
-           rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
-           rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
-           rtc::scoped_refptr<AudioDeviceModule> audio_device_module,
-           rtc::scoped_refptr<AudioProcessing> audio_processing);
+           scoped_refptr<AudioEncoderFactory> encoder_factory,
+           scoped_refptr<AudioDecoderFactory> decoder_factory,
+           scoped_refptr<AudioDeviceModule> audio_device_module,
+           scoped_refptr<AudioProcessing> audio_processing);
   ~VoipCore() override = default;
 
   // Implements VoipEngine interfaces.
@@ -77,12 +77,10 @@ class VoipCore : public VoipEngine,
   VoipResult StopPlayout(ChannelId channel_id) override;
 
   // Implements VoipNetwork interfaces.
-  VoipResult ReceivedRTPPacket(
-      ChannelId channel_id,
-      rtc::ArrayView<const uint8_t> rtp_packet) override;
-  VoipResult ReceivedRTCPPacket(
-      ChannelId channel_id,
-      rtc::ArrayView<const uint8_t> rtcp_packet) override;
+  VoipResult ReceivedRTPPacket(ChannelId channel_id,
+                               ArrayView<const uint8_t> rtp_packet) override;
+  VoipResult ReceivedRTCPPacket(ChannelId channel_id,
+                                ArrayView<const uint8_t> rtcp_packet) override;
 
   // Implements VoipCodec interfaces.
   VoipResult SetSendCodec(ChannelId channel_id,
@@ -126,7 +124,7 @@ class VoipCore : public VoipEngine,
 
   // Fetches the corresponding AudioChannel assigned with given `channel`.
   // Returns nullptr if not found.
-  rtc::scoped_refptr<AudioChannel> GetChannel(ChannelId channel_id);
+  scoped_refptr<AudioChannel> GetChannel(ChannelId channel_id);
 
   // Updates AudioTransportImpl with a new set of actively sending AudioSender
   // (AudioEgress). This needs to be invoked whenever StartSend/StopSend is
@@ -136,23 +134,23 @@ class VoipCore : public VoipEngine,
 
   // Synchronization for these are handled internally.
   const Environment env_;
-  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
-  rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
+  scoped_refptr<AudioEncoderFactory> encoder_factory_;
+  scoped_refptr<AudioDecoderFactory> decoder_factory_;
 
   // Synchronization is handled internally by AudioProcessing.
   // Must be placed before `audio_device_module_` for proper destruction.
-  rtc::scoped_refptr<AudioProcessing> audio_processing_;
+  scoped_refptr<AudioProcessing> audio_processing_;
 
   // Synchronization is handled internally by AudioMixer.
   // Must be placed before `audio_device_module_` for proper destruction.
-  rtc::scoped_refptr<AudioMixer> audio_mixer_;
+  scoped_refptr<AudioMixer> audio_mixer_;
 
   // Synchronization is handled internally by AudioTransportImpl.
   // Must be placed before `audio_device_module_` for proper destruction.
   std::unique_ptr<AudioTransportImpl> audio_transport_;
 
   // Synchronization is handled internally by AudioDeviceModule.
-  rtc::scoped_refptr<AudioDeviceModule> audio_device_module_;
+  scoped_refptr<AudioDeviceModule> audio_device_module_;
 
   Mutex lock_;
 
@@ -161,7 +159,7 @@ class VoipCore : public VoipEngine,
 
   // Container to track currently active AudioChannel objects mapped by
   // ChannelId.
-  std::unordered_map<ChannelId, rtc::scoped_refptr<AudioChannel>> channels_
+  std::unordered_map<ChannelId, scoped_refptr<AudioChannel>> channels_
       RTC_GUARDED_BY(lock_);
 
   // Boolean flag to ensure initialization only occurs once.

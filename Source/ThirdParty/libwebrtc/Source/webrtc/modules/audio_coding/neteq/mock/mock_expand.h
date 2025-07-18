@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_EXPAND_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_EXPAND_H_
 
+#include <cstddef>
+
 #include "modules/audio_coding/neteq/expand.h"
 #include "test/gmock.h"
 

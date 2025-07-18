@@ -1,0 +1,34 @@
+
+[accessibility."rdar://141698311"]
+classes = ["AXRemoteElement"]
+
+[materials.not-web-essential]
+classes = ["MTMaterialLayer"]
+symbols = [
+    "_MTCoreMaterialRecipeNone",
+    "_MTCoreMaterialRecipePlatformChromeDark",
+    "_MTCoreMaterialRecipePlatformChromeLight",
+    "_MTCoreMaterialRecipePlatformContentDark",
+    "_MTCoreMaterialRecipePlatformContentLight",
+    "_MTCoreMaterialRecipePlatformContentThickDark",
+    "_MTCoreMaterialRecipePlatformContentThickLight",
+    "_MTCoreMaterialRecipePlatformContentThinDark",
+    "_MTCoreMaterialRecipePlatformContentThinLight",
+    "_MTCoreMaterialRecipePlatformContentUltraThinDark",
+    "_MTCoreMaterialRecipePlatformContentUltraThinLight",
+    "_MTCoreMaterialVisualStyleCategoryFill",
+    "_MTCoreMaterialVisualStyleCategoryStroke",
+    "_MTCoreMaterialVisualStyleNone",
+    "_MTCoreMaterialVisualStylePrimary",
+    "_MTCoreMaterialVisualStyleQuaternary",
+    "_MTCoreMaterialVisualStyleSecondary",
+    "_MTCoreMaterialVisualStyleSeparator",
+    "_MTCoreMaterialVisualStyleTertiary",
+    "_MTVisualStylingCreateDictionaryRepresentation",
+]
+
+[network.not-web-essential]
+symbols = [
+    # Only used for benchmarking, see 293525@main.
+    "_nw_parameters_set_source_application_by_bundle_id",
+]

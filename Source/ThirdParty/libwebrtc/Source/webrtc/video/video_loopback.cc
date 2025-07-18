@@ -26,7 +26,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/run_test.h"
 #include "test/test_flags.h"
@@ -256,7 +255,7 @@ InterLayerPredMode InterLayerPred() {
   }
 }
 
-std::string Codec() {
+std::string CodecName() {
   return absl::GetFlag(FLAGS_codec);
 }
 
@@ -387,7 +386,7 @@ void Loopback() {
   params.video[0].max_bitrate_bps = MaxBitrateKbps() * 1000;
   params.video[0].suspend_below_min_bitrate =
       absl::GetFlag(FLAGS_suspend_below_min_bitrate);
-  params.video[0].codec = Codec();
+  params.video[0].codec = CodecName();
   params.video[0].num_temporal_layers = NumTemporalLayers();
   params.video[0].selected_tl = SelectedTL();
   params.video[0].min_transmit_bps = 0;
@@ -438,14 +437,14 @@ int RunLoopbackTest(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   absl::ParseCommandLine(argc, argv);
 
-  rtc::LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs));
+  LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs));
 
   // InitFieldTrialsFromString stores the char*, so the char array must outlive
   // the application.
   const std::string field_trials = absl::GetFlag(FLAGS_force_fieldtrials);
-  webrtc::field_trial::InitFieldTrialsFromString(field_trials.c_str());
+  field_trial::InitFieldTrialsFromString(field_trials.c_str());
 
-  webrtc::test::RunTest(webrtc::Loopback);
+  test::RunTest(Loopback);
   return 0;
 }
 }  // namespace webrtc

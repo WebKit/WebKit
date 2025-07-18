@@ -1879,6 +1879,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKNodeInfo {
+    header "_WKNodeInfo.h"
+    export *
+  }
+
   explicit module _WKPublicKeyCredentialCreationOptions {
     header "_WKPublicKeyCredentialCreationOptions.h"
     export *

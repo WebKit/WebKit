@@ -33,7 +33,7 @@ PASS `initial` as a value for an unregistered custom property
 PASS `inherit` as a value for an unregistered custom property
 PASS `unset` as a value for an unregistered custom property
 PASS `revert` as a value for an unregistered custom property
-FAIL `revert-layer` as a value for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgb(255, 99, 71)"
+PASS `revert-layer` as a value for an unregistered custom property
 PASS `initial` as a value for a non-inheriting registered custom property
 PASS `initial` as a value for an inheriting registered custom property
 PASS `inherit` as a value for a non-inheriting registered custom property
@@ -42,13 +42,13 @@ PASS `unset` as a value for a non-inheriting registered custom property
 PASS `unset` as a value for an inheriting registered custom property
 PASS `revert` as a value for a non-inheriting registered custom property
 PASS `revert` as a value for an inheriting registered custom property
-FAIL `revert-layer` as a value for a non-inheriting registered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgb(255, 165, 0)"
-FAIL `revert-layer` as a value for an inheriting registered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgb(255, 99, 71)"
-FAIL `initial` as a `var()` fallback for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgba(0, 0, 0, 0)"
-FAIL `inherit` as a `var()` fallback for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgba(0, 0, 0, 0)"
-FAIL `unset` as a `var()` fallback for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgba(0, 0, 0, 0)"
-FAIL `revert` as a `var()` fallback for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgba(0, 0, 0, 0)"
-FAIL `revert-layer` as a `var()` fallback for an unregistered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgba(0, 0, 0, 0)"
+PASS `revert-layer` as a value for a non-inheriting registered custom property
+PASS `revert-layer` as a value for an inheriting registered custom property
+PASS `initial` as a `var()` fallback for an unregistered custom property
+PASS `inherit` as a `var()` fallback for an unregistered custom property
+PASS `unset` as a `var()` fallback for an unregistered custom property
+PASS `revert` as a `var()` fallback for an unregistered custom property
+PASS `revert-layer` as a `var()` fallback for an unregistered custom property
 PASS `initial` as a `var()` fallback for a non-inheriting registered custom property
 PASS `initial` as a `var()` fallback for an inheriting registered custom property
 PASS `inherit` as a `var()` fallback for a non-inheriting registered custom property
@@ -57,6 +57,6 @@ PASS `unset` as a `var()` fallback for a non-inheriting registered custom proper
 PASS `unset` as a `var()` fallback for an inheriting registered custom property
 PASS `revert` as a `var()` fallback for a non-inheriting registered custom property
 PASS `revert` as a `var()` fallback for an inheriting registered custom property
-FAIL `revert-layer` as a `var()` fallback for a non-inheriting registered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgb(255, 165, 0)"
-FAIL `revert-layer` as a `var()` fallback for an inheriting registered custom property assert_equals: expected "rgb(144, 238, 144)" but got "rgb(255, 99, 71)"
+PASS `revert-layer` as a `var()` fallback for a non-inheriting registered custom property
+PASS `revert-layer` as a `var()` fallback for an inheriting registered custom property
 

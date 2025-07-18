@@ -25,7 +25,7 @@ class MockSendQueue : public SendQueue {
  public:
   MockSendQueue() {
     ON_CALL(*this, Produce)
-        .WillByDefault([](webrtc::Timestamp now, size_t max_size) {
+        .WillByDefault([](webrtc::Timestamp /* now */, size_t /* max_size */) {
           return std::nullopt;
         });
   }

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TestWGSLAPI.h"
 
-#include "WGSL.h"
 #include <wtf/Assertions.h>
 #include <wtf/StringPrintStream.h>
 

@@ -111,7 +111,7 @@ auto WorkerNotificationClient::checkPermission(ScriptExecutionContext*) -> Permi
 
 void WorkerNotificationClient::postToMainThread(Function<void(NotificationClient*, ScriptExecutionContext& context)>&& task)
 {
-    m_workerScope.thread().workerLoaderProxy()->postTaskToLoader([task = WTFMove(task)](auto& context) mutable {
+    Ref { m_workerScope.get() }->thread().workerLoaderProxy()->postTaskToLoader([task = WTFMove(task)](auto& context) mutable {
         task(context.notificationClient(), context);
     });
 }

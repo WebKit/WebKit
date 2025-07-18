@@ -59,7 +59,7 @@ class WindowCapturerX11 : public DesktopCapturer,
 
   Callback* callback_ = nullptr;
 
-  rtc::scoped_refptr<SharedXDisplay> x_display_;
+  scoped_refptr<SharedXDisplay> x_display_;
 
   bool has_composite_extension_ = false;
 

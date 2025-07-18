@@ -31,7 +31,8 @@ class PacketSenderTest : public testing::Test {
 
   DcSctpOptions options_;
   testing::NiceMock<MockDcSctpSocketCallbacks> callbacks_;
-  testing::MockFunction<void(rtc::ArrayView<const uint8_t>, SendPacketStatus)>
+  testing::MockFunction<void(webrtc::ArrayView<const uint8_t>,
+                             SendPacketStatus)>
       on_send_fn_;
   PacketSender sender_;
 };

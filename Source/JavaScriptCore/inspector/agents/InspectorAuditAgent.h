@@ -48,7 +48,7 @@ public:
     ~InspectorAuditAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // AuditBackendDispatcherHandler
@@ -71,7 +71,7 @@ protected:
     virtual void unmuteConsole() { };
 
 private:
-    RefPtr<AuditBackendDispatcher> m_backendDispatcher;
+    const Ref<AuditBackendDispatcher> m_backendDispatcher;
     InjectedScriptManager& m_injectedScriptManager;
     JSC::Debugger& m_debugger;
 

@@ -1,0 +1,1 @@
+PASSED: model's animation is running properly after it's suspended (before model is ready) and then resumed

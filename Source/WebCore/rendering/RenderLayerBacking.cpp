@@ -1017,9 +1017,11 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
 
 static bool hasNonZeroTransformOrigin(const RenderLayerModelObject& renderer)
 {
-    const RenderStyle& style = renderer.style();
-    return (style.transformOriginX().isFixed() && style.transformOriginX().value())
-        || (style.transformOriginY().isFixed() && style.transformOriginY().value());
+    auto& style = renderer.style();
+    auto fixedTransformOriginX = style.transformOriginX().tryFixed();
+    auto fixedTransformOriginY = style.transformOriginY().tryFixed();
+    return (fixedTransformOriginX && fixedTransformOriginX->value)
+        || (fixedTransformOriginY && fixedTransformOriginY->value);
 }
 
 bool RenderLayerBacking::updateCompositedBounds()
@@ -2059,7 +2061,9 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
     if (contentsInfo.paintsHDRContent() || contentsInfo.rendererHasHDRContent()) {
         LOG_WITH_STREAM(HDR, stream << "RenderLayerBacking " << *this << " updateDrawContent headroom " << m_owningLayer.page().displayEDRHeadroom());
         m_graphicsLayer->setNeedsDisplayIfEDRHeadroomExceeds(m_owningLayer.page().displayEDRHeadroom());
-    }
+        m_graphicsLayer->setTonemappingEnabled(m_owningLayer.page().hdrLayersRequireTonemapping());
+    } else
+        m_graphicsLayer->setTonemappingEnabled(false);
 #endif
 }
 

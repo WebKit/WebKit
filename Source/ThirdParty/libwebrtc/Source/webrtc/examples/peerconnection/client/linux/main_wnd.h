@@ -83,7 +83,7 @@ class GtkMainWnd : public MainWindow {
   void Draw(GtkWidget* widget, cairo_t* cr);
 
  protected:
-  class VideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+  class VideoRenderer : public webrtc::VideoSinkInterface<webrtc::VideoFrame> {
    public:
     VideoRenderer(GtkMainWnd* main_wnd,
                   webrtc::VideoTrackInterface* track_to_render);
@@ -92,7 +92,7 @@ class GtkMainWnd : public MainWindow {
     // VideoSinkInterface implementation
     void OnFrame(const webrtc::VideoFrame& frame) override;
 
-    rtc::ArrayView<const uint8_t> image() const { return image_; }
+    webrtc::ArrayView<const uint8_t> image() const { return image_; }
 
     int width() const { return width_; }
 
@@ -100,11 +100,11 @@ class GtkMainWnd : public MainWindow {
 
    protected:
     void SetSize(int width, int height);
-    rtc::Buffer image_;
+    webrtc::Buffer image_;
     int width_;
     int height_;
     GtkMainWnd* main_wnd_;
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> rendered_track_;
+    webrtc::scoped_refptr<webrtc::VideoTrackInterface> rendered_track_;
   };
 
  protected:
@@ -123,7 +123,7 @@ class GtkMainWnd : public MainWindow {
   std::unique_ptr<VideoRenderer> remote_renderer_;
   int width_ = 0;
   int height_ = 0;
-  rtc::Buffer draw_buffer_;
+  webrtc::Buffer draw_buffer_;
   int draw_buffer_size_;
 };
 

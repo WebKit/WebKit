@@ -11,17 +11,24 @@
 #include "pc/audio_rtp_receiver.h"
 
 #include <atomic>
+#include <cstdint>
+#include <string>
+#include <vector>
 
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/test/rtc_error_matchers.h"
+#include "api/units/time_delta.h"
 #include "pc/test/mock_voice_media_receive_channel_interface.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
+#include "test/wait_until.h"
 
 using ::testing::_;
+using ::testing::Eq;
 using ::testing::InvokeWithoutArgs;
-using ::testing::Mock;
 
 static const int kTimeOut = 100;
 static const double kDefaultVolume = 1;
@@ -33,12 +40,11 @@ namespace webrtc {
 class AudioRtpReceiverTest : public ::testing::Test {
  protected:
   AudioRtpReceiverTest()
-      : worker_(rtc::Thread::Current()),
-        receiver_(
-            rtc::make_ref_counted<AudioRtpReceiver>(worker_,
-                                                    std::string(),
-                                                    std::vector<std::string>(),
-                                                    false)) {
+      : worker_(Thread::Current()),
+        receiver_(make_ref_counted<AudioRtpReceiver>(worker_,
+                                                     std::string(),
+                                                     std::vector<std::string>(),
+                                                     false)) {
     EXPECT_CALL(receive_channel_, SetRawAudioSink(kSsrc, _));
     EXPECT_CALL(receive_channel_, SetBaseMinimumPlayoutDelayMs(kSsrc, _));
   }
@@ -48,10 +54,10 @@ class AudioRtpReceiverTest : public ::testing::Test {
     receiver_->SetMediaChannel(nullptr);
   }
 
-  rtc::AutoThread main_thread_;
-  rtc::Thread* worker_;
-  rtc::scoped_refptr<AudioRtpReceiver> receiver_;
-  cricket::MockVoiceMediaReceiveChannelInterface receive_channel_;
+  AutoThread main_thread_;
+  Thread* worker_;
+  scoped_refptr<AudioRtpReceiver> receiver_;
+  MockVoiceMediaReceiveChannelInterface receive_channel_;
 };
 
 TEST_F(AudioRtpReceiverTest, SetOutputVolumeIsCalled) {
@@ -76,7 +82,9 @@ TEST_F(AudioRtpReceiverTest, SetOutputVolumeIsCalled) {
       }));
 
   receiver_->OnSetVolume(kVolume);
-  EXPECT_TRUE_WAIT(set_volume_calls == 2, kTimeOut);
+  EXPECT_THAT(WaitUntil([&] { return set_volume_calls.load(); }, Eq(2),
+                        {.timeout = TimeDelta::Millis(kTimeOut)}),
+              IsRtcOk());
 }
 
 TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
@@ -99,11 +107,11 @@ TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
 // constructor.
 TEST(AudioRtpReceiver, OnChangedNotificationsAfterConstruction) {
   test::RunLoop loop;
-  auto* thread = rtc::Thread::Current();  // Points to loop's thread.
-  cricket::MockVoiceMediaReceiveChannelInterface receive_channel;
-  auto receiver = rtc::make_ref_counted<AudioRtpReceiver>(
-      thread, std::string(), std::vector<std::string>(), true,
-      &receive_channel);
+  auto* thread = Thread::Current();  // Points to loop's thread.
+  MockVoiceMediaReceiveChannelInterface receive_channel;
+  auto receiver = make_ref_counted<AudioRtpReceiver>(thread, std::string(),
+                                                     std::vector<std::string>(),
+                                                     true, &receive_channel);
 
   EXPECT_CALL(receive_channel, SetDefaultRawAudioSink(_)).Times(1);
   EXPECT_CALL(receive_channel, SetDefaultOutputVolume(kDefaultVolume)).Times(1);

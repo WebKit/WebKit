@@ -11,22 +11,26 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <initializer_list>
 #include <iostream>  // TODO(zijiehe): Remove once flaky has been resolved.
 #include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
-// TODO(zijiehe): Remove once flaky has been resolved.
+#include "api/array_view.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/screen_drawer.h"
+#include "rtc_base/base64.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/third_party/base64/base64.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -209,14 +213,13 @@ class ScreenCapturerIntegrationTest : public ::testing::Test {
                                drawer->MayDrawIncompleteShapes())) {
           capturers[j] = nullptr;
           succeeded_capturers++;
-        }
-        // The following else if statement is for debugging purpose only, which
-        // should be removed after flaky of ScreenCapturerIntegrationTest has
-        // been resolved.
-        else if (i == wait_capture_round - 1) {
-          std::string result;
-          rtc::Base64::EncodeFromArray(
-              frame->data(), frame->size().height() * frame->stride(), &result);
+        } else if (i == wait_capture_round - 1) {
+          // The else if statement is for debugging purpose only,
+          // which should be removed after flakiness of
+          // ScreenCapturerIntegrationTest has been resolved.
+          ArrayView<const uint8_t> frame_data(
+              frame->data(), frame->size().height() * frame->stride());
+          std::string result = Base64Encode(frame_data);
           std::cout << frame->size().width() << " x " << frame->size().height()
                     << std::endl;
           // Split the entire string (can be over 4M) into several lines to
@@ -326,7 +329,7 @@ TEST_F(ScreenCapturerIntegrationTest, DISABLED_TwoDirectxCapturers) {
 
 TEST_F(ScreenCapturerIntegrationTest,
        DISABLED_MaybeCaptureUpdatedRegionWithDirectxCapturer) {
-  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN8) {
+  if (rtc_win::GetVersion() < rtc_win::Version::VERSION_WIN8) {
     // ScreenCapturerWinGdi randomly returns blank screen, the root cause is
     // still unknown. Bug,
     // https://bugs.chromium.org/p/webrtc/issues/detail?id=6843.

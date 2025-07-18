@@ -43,7 +43,7 @@ TEST(FrameInstrumentationEvaluationTest,
      HaveNoCorruptionScoreWhenNoSampleValuesAreProvided) {
   FrameInstrumentationData data = {.sequence_index = 0,
                                    .communicate_upper_bits = false,
-                                   .std_dev = 0.0,
+                                   .std_dev = 1.0,
                                    .luma_error_threshold = 0,
                                    .chroma_error_threshold = 0,
                                    .sample_values = {}};
@@ -62,7 +62,7 @@ TEST(FrameInstrumentationEvaluationTest,
   FrameInstrumentationData data = {
       .sequence_index = 0,
       .communicate_upper_bits = false,
-      .std_dev = 0.0,
+      .std_dev = 1.0,
       .luma_error_threshold = 0,
       .chroma_error_threshold = 0,
       .sample_values = {12, 12, 12, 12, 12, 12, 12, 12}};
@@ -82,7 +82,7 @@ TEST(FrameInstrumentationEvaluationTest,
   FrameInstrumentationData data = {
       .sequence_index = 0,
       .communicate_upper_bits = false,
-      .std_dev = 0.0,
+      .std_dev = 1.0,
       .luma_error_threshold = 8,
       .chroma_error_threshold = 8,
       .sample_values = {12, 12, 12, 12, 12, 12, 12, 12}};

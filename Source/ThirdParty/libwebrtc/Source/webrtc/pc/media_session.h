@@ -17,21 +17,17 @@
 #include <string>
 #include <vector>
 
-#include "api/crypto/crypto_options.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
-#include "api/rtp_parameters.h"
-#include "api/rtp_transceiver_direction.h"
-#include "call/payload_type.h"
-#include "media/base/codec.h"
-#include "media/base/rid_description.h"
+#include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "p2p/base/ice_credentials_iterator.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_description_factory.h"
 #include "p2p/base/transport_info.h"
+#include "pc/codec_vendor.h"
+#include "pc/media_options.h"
 #include "pc/session_description.h"
-#include "pc/simulcast_description.h"
 #include "rtc_base/memory/always_valid_pointer.h"
 #include "rtc_base/unique_id_generator.h"
 
@@ -42,97 +38,7 @@ class ConnectionContext;
 
 }  // namespace webrtc
 
-namespace cricket {
-
-class MediaEngineInterface;
-
-// Default RTCP CNAME for unit tests.
-const char kDefaultRtcpCname[] = "DefaultRtcpCname";
-
-// Options for an RtpSender contained with an media description/"m=" section.
-// Note: Spec-compliant Simulcast and legacy simulcast are mutually exclusive.
-struct SenderOptions {
-  std::string track_id;
-  std::vector<std::string> stream_ids;
-  // Use RIDs and Simulcast Layers to indicate spec-compliant Simulcast.
-  std::vector<RidDescription> rids;
-  SimulcastLayerList simulcast_layers;
-  // Use `num_sim_layers` to indicate legacy simulcast.
-  int num_sim_layers;
-};
-
-// Options for an individual media description/"m=" section.
-struct MediaDescriptionOptions {
-  MediaDescriptionOptions(MediaType type,
-                          const std::string& mid,
-                          webrtc::RtpTransceiverDirection direction,
-                          bool stopped)
-      : type(type), mid(mid), direction(direction), stopped(stopped) {}
-
-  // TODO(deadbeef): When we don't support Plan B, there will only be one
-  // sender per media description and this can be simplified.
-  void AddAudioSender(const std::string& track_id,
-                      const std::vector<std::string>& stream_ids);
-  void AddVideoSender(const std::string& track_id,
-                      const std::vector<std::string>& stream_ids,
-                      const std::vector<RidDescription>& rids,
-                      const SimulcastLayerList& simulcast_layers,
-                      int num_sim_layers);
-
-  MediaType type;
-  std::string mid;
-  webrtc::RtpTransceiverDirection direction;
-  bool stopped;
-  TransportOptions transport_options;
-  // Note: There's no equivalent "RtpReceiverOptions" because only send
-  // stream information goes in the local descriptions.
-  std::vector<SenderOptions> sender_options;
-  std::vector<webrtc::RtpCodecCapability> codec_preferences;
-  std::vector<webrtc::RtpHeaderExtensionCapability> header_extensions;
-  // Codecs to include in a generated offer or answer.
-  // If this is used, session-level codec lists MUST be ignored.
-  std::vector<Codec> codecs_to_include;
-
- private:
-  // Doesn't DCHECK on `type`.
-  void AddSenderInternal(const std::string& track_id,
-                         const std::vector<std::string>& stream_ids,
-                         const std::vector<RidDescription>& rids,
-                         const SimulcastLayerList& simulcast_layers,
-                         int num_sim_layers);
-};
-
-// Provides a mechanism for describing how m= sections should be generated.
-// The m= section with index X will use media_description_options[X]. There
-// must be an option for each existing section if creating an answer, or a
-// subsequent offer.
-struct MediaSessionOptions {
-  MediaSessionOptions() {}
-
-  bool has_audio() const { return HasMediaDescription(MEDIA_TYPE_AUDIO); }
-  bool has_video() const { return HasMediaDescription(MEDIA_TYPE_VIDEO); }
-  bool has_data() const { return HasMediaDescription(MEDIA_TYPE_DATA); }
-
-  bool HasMediaDescription(MediaType type) const;
-
-  bool vad_enabled = true;  // When disabled, removes all CN codecs from SDP.
-  bool rtcp_mux_enabled = true;
-  bool bundle_enabled = false;
-  bool offer_extmap_allow_mixed = false;
-  bool raw_packetization_for_video = false;
-  std::string rtcp_cname = kDefaultRtcpCname;
-  webrtc::CryptoOptions crypto_options;
-  // List of media description options in the same order that the media
-  // descriptions will be generated.
-  std::vector<MediaDescriptionOptions> media_description_options;
-  std::vector<IceParameters> pooled_ice_credentials;
-
-  // Use the draft-ietf-mmusic-sctp-sdp-03 obsolete syntax for SCTP
-  // datachannels.
-  // Default is true for backwards compatibility with clients that use
-  // this internal interface.
-  bool use_obsolete_sctp_sdp = true;
-};
+namespace webrtc {
 
 // Creates media session descriptions according to the supplied codecs and
 // other fields, as well as the supplied per-call options.
@@ -145,20 +51,12 @@ class MediaSessionDescriptionFactory {
   // The TransportDescriptionFactory, the UniqueRandomIdGenerator, and the
   // PayloadTypeSuggester are not owned by MediaSessionDescriptionFactory, so
   // they must be kept alive by the user of this class.
-  MediaSessionDescriptionFactory(cricket::MediaEngineInterface* media_engine,
+  MediaSessionDescriptionFactory(MediaEngineInterface* media_engine,
                                  bool rtx_enabled,
-                                 rtc::UniqueRandomIdGenerator* ssrc_generator,
+                                 UniqueRandomIdGenerator* ssrc_generator,
                                  const TransportDescriptionFactory* factory,
-                                 webrtc::PayloadTypeSuggester* pt_suggester);
+                                 CodecLookupHelper* codec_lookup_helper);
 
-  const Codecs& audio_sendrecv_codecs() const;
-  const Codecs& audio_send_codecs() const;
-  const Codecs& audio_recv_codecs() const;
-  void set_audio_codecs(const Codecs& send_codecs, const Codecs& recv_codecs);
-  const Codecs& video_sendrecv_codecs() const;
-  const Codecs& video_send_codecs() const;
-  const Codecs& video_recv_codecs() const;
-  void set_video_codecs(const Codecs& send_codecs, const Codecs& recv_codecs);
   RtpHeaderExtensions filtered_rtp_header_extensions(
       RtpHeaderExtensions extensions) const;
 
@@ -170,10 +68,10 @@ class MediaSessionDescriptionFactory {
     is_unified_plan_ = is_unified_plan;
   }
 
-  webrtc::RTCErrorOr<std::unique_ptr<SessionDescription>> CreateOfferOrError(
+  RTCErrorOr<std::unique_ptr<SessionDescription>> CreateOfferOrError(
       const MediaSessionOptions& options,
       const SessionDescription* current_description) const;
-  webrtc::RTCErrorOr<std::unique_ptr<SessionDescription>> CreateAnswerOrError(
+  RTCErrorOr<std::unique_ptr<SessionDescription>> CreateAnswerOrError(
       const SessionDescription* offer,
       const MediaSessionOptions& options,
       const SessionDescription* current_description) const;
@@ -184,36 +82,16 @@ class MediaSessionDescriptionFactory {
     RtpHeaderExtensions video;
   };
 
-  const Codecs& GetAudioCodecsForOffer(
-      const webrtc::RtpTransceiverDirection& direction) const;
-  const Codecs& GetAudioCodecsForAnswer(
-      const webrtc::RtpTransceiverDirection& offer,
-      const webrtc::RtpTransceiverDirection& answer) const;
-  const Codecs& GetVideoCodecsForOffer(
-      const webrtc::RtpTransceiverDirection& direction) const;
-  const Codecs& GetVideoCodecsForAnswer(
-      const webrtc::RtpTransceiverDirection& offer,
-      const webrtc::RtpTransceiverDirection& answer) const;
-  void GetCodecsForOffer(
-      const std::vector<const ContentInfo*>& current_active_contents,
-      Codecs* audio_codecs,
-      Codecs* video_codecs) const;
-  void GetCodecsForAnswer(
-      const std::vector<const ContentInfo*>& current_active_contents,
-      const SessionDescription& remote_offer,
-      Codecs* audio_codecs,
-      Codecs* video_codecs) const;
   AudioVideoRtpHeaderExtensions GetOfferedRtpHeaderExtensionsWithIds(
       const std::vector<const ContentInfo*>& current_active_contents,
       bool extmap_allow_mixed,
       const std::vector<MediaDescriptionOptions>& media_description_options)
       const;
-  webrtc::RTCError AddTransportOffer(
-      const std::string& content_name,
-      const TransportOptions& transport_options,
-      const SessionDescription* current_desc,
-      SessionDescription* offer,
-      IceCredentialsIterator* ice_credentials) const;
+  RTCError AddTransportOffer(const std::string& content_name,
+                             const TransportOptions& transport_options,
+                             const SessionDescription* current_desc,
+                             SessionDescription* offer,
+                             IceCredentialsIterator* ice_credentials) const;
 
   std::unique_ptr<TransportDescription> CreateTransportAnswer(
       const std::string& content_name,
@@ -223,24 +101,22 @@ class MediaSessionDescriptionFactory {
       bool require_transport_attributes,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddTransportAnswer(
-      const std::string& content_name,
-      const TransportDescription& transport_desc,
-      SessionDescription* answer_desc) const;
+  RTCError AddTransportAnswer(const std::string& content_name,
+                              const TransportDescription& transport_desc,
+                              SessionDescription* answer_desc) const;
 
   // Helpers for adding media contents to the SessionDescription.
-  webrtc::RTCError AddRtpContentForOffer(
+  RTCError AddRtpContentForOffer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* current_content,
       const SessionDescription* current_description,
       const RtpHeaderExtensions& header_extensions,
-      const std::vector<Codec>& codecs,
       StreamParamsVec* current_streams,
       SessionDescription* desc,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddDataContentForOffer(
+  RTCError AddDataContentForOffer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* current_content,
@@ -249,7 +125,7 @@ class MediaSessionDescriptionFactory {
       SessionDescription* desc,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddUnsupportedContentForOffer(
+  RTCError AddUnsupportedContentForOffer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* current_content,
@@ -257,7 +133,7 @@ class MediaSessionDescriptionFactory {
       SessionDescription* desc,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddRtpContentForAnswer(
+  RTCError AddRtpContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* offer_content,
@@ -265,13 +141,12 @@ class MediaSessionDescriptionFactory {
       const ContentInfo* current_content,
       const SessionDescription* current_description,
       const TransportInfo* bundle_transport,
-      const std::vector<Codec>& codecs,
       const RtpHeaderExtensions& header_extensions,
       StreamParamsVec* current_streams,
       SessionDescription* answer,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddDataContentForAnswer(
+  RTCError AddDataContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* offer_content,
@@ -283,7 +158,7 @@ class MediaSessionDescriptionFactory {
       SessionDescription* answer,
       IceCredentialsIterator* ice_credentials) const;
 
-  webrtc::RTCError AddUnsupportedContentForAnswer(
+  RTCError AddUnsupportedContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
       const MediaSessionOptions& session_options,
       const ContentInfo* offer_content,
@@ -294,34 +169,16 @@ class MediaSessionDescriptionFactory {
       SessionDescription* answer,
       IceCredentialsIterator* ice_credentials) const;
 
-  void ComputeAudioCodecsIntersectionAndUnion();
-
-  void ComputeVideoCodecsIntersectionAndUnion();
-
-  rtc::UniqueRandomIdGenerator* ssrc_generator() const {
+  UniqueRandomIdGenerator* ssrc_generator() const {
     return ssrc_generator_.get();
   }
 
   bool is_unified_plan_ = false;
-  Codecs audio_send_codecs_;
-  Codecs audio_recv_codecs_;
-  // Intersection of send and recv.
-  Codecs audio_sendrecv_codecs_;
-  // Union of send and recv.
-  Codecs all_audio_codecs_;
-  Codecs video_send_codecs_;
-  Codecs video_recv_codecs_;
-  // Intersection of send and recv.
-  Codecs video_sendrecv_codecs_;
-  // Union of send and recv.
-  Codecs all_video_codecs_;
   // This object may or may not be owned by this class.
-  webrtc::AlwaysValidPointer<rtc::UniqueRandomIdGenerator> const
-      ssrc_generator_;
-  bool enable_encrypted_rtp_header_extensions_ = false;
+  AlwaysValidPointer<UniqueRandomIdGenerator> const ssrc_generator_;
+  bool enable_encrypted_rtp_header_extensions_ = true;
   const TransportDescriptionFactory* transport_desc_factory_;
-  // Payoad type tracker interface. Must live longer than this object.
-  webrtc::PayloadTypeSuggester* pt_suggester_;
+  CodecLookupHelper* codec_lookup_helper_;
   bool payload_types_in_transport_trial_enabled_;
 };
 
@@ -332,12 +189,12 @@ bool IsVideoContent(const ContentInfo* content);
 bool IsDataContent(const ContentInfo* content);
 bool IsUnsupportedContent(const ContentInfo* content);
 const ContentInfo* GetFirstMediaContent(const ContentInfos& contents,
-                                        MediaType media_type);
+                                        webrtc::MediaType media_type);
 const ContentInfo* GetFirstAudioContent(const ContentInfos& contents);
 const ContentInfo* GetFirstVideoContent(const ContentInfos& contents);
 const ContentInfo* GetFirstDataContent(const ContentInfos& contents);
 const ContentInfo* GetFirstMediaContent(const SessionDescription* sdesc,
-                                        MediaType media_type);
+                                        webrtc::MediaType media_type);
 const ContentInfo* GetFirstAudioContent(const SessionDescription* sdesc);
 const ContentInfo* GetFirstVideoContent(const SessionDescription* sdesc);
 const ContentInfo* GetFirstDataContent(const SessionDescription* sdesc);
@@ -349,12 +206,13 @@ const SctpDataContentDescription* GetFirstSctpDataContentDescription(
     const SessionDescription* sdesc);
 // Non-const versions of the above functions.
 // Useful when modifying an existing description.
-ContentInfo* GetFirstMediaContent(ContentInfos* contents, MediaType media_type);
+ContentInfo* GetFirstMediaContent(ContentInfos* contents,
+                                  webrtc::MediaType media_type);
 ContentInfo* GetFirstAudioContent(ContentInfos* contents);
 ContentInfo* GetFirstVideoContent(ContentInfos* contents);
 ContentInfo* GetFirstDataContent(ContentInfos* contents);
 ContentInfo* GetFirstMediaContent(SessionDescription* sdesc,
-                                  MediaType media_type);
+                                  webrtc::MediaType media_type);
 ContentInfo* GetFirstAudioContent(SessionDescription* sdesc);
 ContentInfo* GetFirstVideoContent(SessionDescription* sdesc);
 ContentInfo* GetFirstDataContent(SessionDescription* sdesc);
@@ -365,6 +223,26 @@ VideoContentDescription* GetFirstVideoContentDescription(
 SctpDataContentDescription* GetFirstSctpDataContentDescription(
     SessionDescription* sdesc);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::GetFirstAudioContent;
+using ::webrtc::GetFirstAudioContentDescription;
+using ::webrtc::GetFirstDataContent;
+using ::webrtc::GetFirstMediaContent;
+using ::webrtc::GetFirstSctpDataContentDescription;
+using ::webrtc::GetFirstVideoContent;
+using ::webrtc::GetFirstVideoContentDescription;
+using ::webrtc::IsAudioContent;
+using ::webrtc::IsDataContent;
+using ::webrtc::IsMediaContent;
+using ::webrtc::IsUnsupportedContent;
+using ::webrtc::IsVideoContent;
+using ::webrtc::MediaSessionDescriptionFactory;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // PC_MEDIA_SESSION_H_

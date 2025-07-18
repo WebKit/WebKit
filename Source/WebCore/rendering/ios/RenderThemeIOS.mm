@@ -142,18 +142,6 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) con
     style.setHeight(size);
 }
 
-LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
-{
-    // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
-    if (box.style().usedAppearance() == StyleAppearance::Checkbox || box.style().usedAppearance() == StyleAppearance::Radio) {
-        float width = std::min(paintRect.width(), paintRect.height());
-        float height = width;
-        return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
-    }
-
-    return paintRect;
-}
-
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
     auto baseline = RenderTheme::baselinePosition(box);

@@ -27,6 +27,7 @@
 #include "RenderTableCol.h"
 #include "RenderTableInlines.h"
 #include "RenderTableSection.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 /*

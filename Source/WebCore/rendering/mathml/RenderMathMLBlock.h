@@ -59,8 +59,6 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
-    LayoutUnit baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-
 protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

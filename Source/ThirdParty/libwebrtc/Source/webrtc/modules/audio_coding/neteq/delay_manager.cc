@@ -101,5 +101,4 @@ int DelayManager::TargetDelayMs() const {
   return target_level_ms_;
 }
 
-
 }  // namespace webrtc

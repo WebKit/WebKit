@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextControlInnerElements.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CommonAtomStrings.h"
@@ -42,6 +43,7 @@
 #include "RenderSearchField.h"
 #include "RenderStyleSetters.h"
 #include "RenderTextControl.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "ScriptController.h"

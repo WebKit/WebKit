@@ -62,7 +62,7 @@
 namespace WebCore {
 
 struct VideoFrameAdaptor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameAdaptor);
 
     VideoFrameAdaptor(IntSize size, double frameRate)
         : size(size)

@@ -1,0 +1,40 @@
+Input:
+<a href="https://webkit.org/">webkit.org</a>
+
+Output:
+NSParagraphStyle:
+Alignment Natural
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: WordWrapping
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: LeftToRight
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0 LineBreakStrategy 0 PresentationIntents (
+) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''
+[webkit.org]
+    NSColor: #0000ee (sRGB)
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSLink: https://webkit.org/
+    NSStrokeColor: #0000ee (sRGB)
+    NSStrokeWidth: 0
+    NSUnderline: true
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+

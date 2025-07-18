@@ -40,7 +40,7 @@ void BlockDelayBuffer::DelaySignal(AudioBuffer* frame) {
   for (size_t ch = 0; ch < num_channels; ++ch) {
     RTC_DCHECK_EQ(buf_[ch].size(), frame->num_bands());
     RTC_DCHECK_EQ(buf_[ch].size(), num_bands);
-    rtc::ArrayView<float* const> frame_ch(frame->split_bands(ch), num_bands);
+    ArrayView<float* const> frame_ch(frame->split_bands(ch), num_bands);
     const size_t delay = delay_;
 
     for (size_t band = 0; band < num_bands; ++band) {

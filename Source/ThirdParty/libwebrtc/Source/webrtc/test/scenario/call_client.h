@@ -96,9 +96,9 @@ class LoggingNetworkControllerFactory
 };
 
 struct CallClientFakeAudio {
-  rtc::scoped_refptr<AudioProcessing> apm;
-  rtc::scoped_refptr<AudioDeviceModule> fake_audio_device;
-  rtc::scoped_refptr<AudioState> audio_state;
+  scoped_refptr<AudioProcessing> apm;
+  scoped_refptr<AudioDeviceModule> fake_audio_device;
+  scoped_refptr<AudioState> audio_state;
 };
 // CallClient represents a participant in a call scenario. It is created by the
 // Scenario class and is used as sender and receiver when setting up a media
@@ -125,10 +125,8 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   void UpdateBitrateConstraints(const BitrateConstraints& constraints);
   void SetRemoteBitrate(DataRate bitrate);
 
-  void SetAudioReceiveRtpHeaderExtensions(
-      rtc::ArrayView<RtpExtension> extensions);
-  void SetVideoReceiveRtpHeaderExtensions(
-      rtc::ArrayView<RtpExtension> extensions);
+  void SetAudioReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
+  void SetVideoReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
 
   // Sets the network adapter id used next time the network route changes.
   void UpdateNetworkAdapterId(int adapter_id);

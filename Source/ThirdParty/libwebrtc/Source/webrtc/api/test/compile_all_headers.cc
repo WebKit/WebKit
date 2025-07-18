@@ -27,6 +27,7 @@
 // "api/test/videocodec_test_fixture.h"
 // "api/test/videocodec_test_stats.h"
 
+// IWYU pragma: begin_keep
 #include "api/test/fake_frame_decryptor.h"
 #include "api/test/fake_frame_encryptor.h"
 #include "api/test/mock_async_dns_resolver.h"
@@ -52,3 +53,4 @@
 #include "api/test/mock_video_encoder.h"
 #include "api/test/mock_video_encoder_factory.h"
 #include "api/test/mock_video_track.h"
+// IWYU pragma: end_keep

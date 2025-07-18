@@ -27,17 +27,17 @@
 
 namespace webrtc {
 
-class MockRtpReceiver : public rtc::RefCountedObject<RtpReceiverInterface> {
+class MockRtpReceiver : public RefCountedObject<RtpReceiverInterface> {
  public:
-  MOCK_METHOD(rtc::scoped_refptr<MediaStreamTrackInterface>,
+  MOCK_METHOD(scoped_refptr<MediaStreamTrackInterface>,
               track,
               (),
               (const, override));
-  MOCK_METHOD(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
+  MOCK_METHOD(std::vector<scoped_refptr<MediaStreamInterface>>,
               streams,
               (),
               (const, override));
-  MOCK_METHOD(cricket::MediaType, media_type, (), (const, override));
+  MOCK_METHOD(webrtc::MediaType, media_type, (), (const, override));
   MOCK_METHOD(std::string, id, (), (const, override));
   MOCK_METHOD(RtpParameters, GetParameters, (), (const, override));
   MOCK_METHOD(bool,
@@ -52,9 +52,9 @@ class MockRtpReceiver : public rtc::RefCountedObject<RtpReceiverInterface> {
   MOCK_METHOD(std::vector<RtpSource>, GetSources, (), (const, override));
   MOCK_METHOD(void,
               SetFrameDecryptor,
-              (rtc::scoped_refptr<webrtc::FrameDecryptorInterface>),
+              (webrtc::scoped_refptr<webrtc::FrameDecryptorInterface>),
               (override));
-  MOCK_METHOD(rtc::scoped_refptr<webrtc::FrameDecryptorInterface>,
+  MOCK_METHOD(scoped_refptr<webrtc::FrameDecryptorInterface>,
               GetFrameDecryptor,
               (),
               (const, override));

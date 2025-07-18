@@ -15,5 +15,11 @@ PASS cookieStore.set with __Host- prefix and a domain option
 PASS cookieStore.set with __Host- prefix a path option
 PASS cookieStore.set with __host- prefix and a domain option
 PASS cookieStore.set with __host- prefix a path option
+FAIL cookieStore.set with __HostHttp- prefix rejects assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.set with __hosthttp- prefix rejects assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.set with __Http- prefix rejects assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.set with __http- prefix rejects assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS cookieStore.set with malformed name.
+FAIL cookieStore.set a nameless cookie cannot have __Host- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have __Secure- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
 

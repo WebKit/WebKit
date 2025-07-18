@@ -243,7 +243,7 @@ static void InverseFFTAndWindow(AecmCore* aecm,
   memcpy(aecm->xBuf, aecm->xBuf + PART_LEN, sizeof(int16_t) * PART_LEN);
   memcpy(aecm->dBufNoisy, aecm->dBufNoisy + PART_LEN,
          sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL) {
+  if (nearendClean != nullptr) {
     memcpy(aecm->dBufClean, aecm->dBufClean + PART_LEN,
            sizeof(int16_t) * PART_LEN);
   }
@@ -390,7 +390,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   uint16_t dfaNoisy[PART_LEN1];
   uint16_t dfaClean[PART_LEN1];
   uint16_t* ptrDfaClean = dfaClean;
-  const uint16_t* far_spectrum_ptr = NULL;
+  const uint16_t* far_spectrum_ptr = nullptr;
 
   // 32 byte aligned buffers (with +8 or +16).
   // TODO(kma): define fft with ComplexInt16.
@@ -435,7 +435,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   // Buffer near and far end signals
   memcpy(aecm->xBuf + PART_LEN, farend, sizeof(int16_t) * PART_LEN);
   memcpy(aecm->dBufNoisy + PART_LEN, nearendNoisy, sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL) {
+  if (nearendClean != nullptr) {
     memcpy(aecm->dBufClean + PART_LEN, nearendClean,
            sizeof(int16_t) * PART_LEN);
   }
@@ -449,7 +449,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   aecm->dfaNoisyQDomainOld = aecm->dfaNoisyQDomain;
   aecm->dfaNoisyQDomain = (int16_t)zerosDBufNoisy;
 
-  if (nearendClean == NULL) {
+  if (nearendClean == nullptr) {
     ptrDfaClean = dfaNoisy;
     aecm->dfaCleanQDomainOld = aecm->dfaNoisyQDomainOld;
     aecm->dfaCleanQDomain = aecm->dfaNoisyQDomain;
@@ -487,7 +487,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   // Get aligned far end spectrum
   far_spectrum_ptr = WebRtcAecm_AlignedFarend(aecm, &far_q, delay);
   zerosXBuf = (int16_t)far_q;
-  if (far_spectrum_ptr == NULL) {
+  if (far_spectrum_ptr == nullptr) {
     return -1;
   }
 
@@ -513,8 +513,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
     // Far end signal through channel estimate in Q8
     // How much can we shift right to preserve resolution
     tmp32no1 = echoEst32[i] - aecm->echoFilt[i];
-    aecm->echoFilt[i] +=
-        rtc::dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
+    aecm->echoFilt[i] += dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
 
     zeros32 = WebRtcSpl_NormW32(aecm->echoFilt[i]) + 1;
     zeros16 = WebRtcSpl_NormW16(supGain) + 1;

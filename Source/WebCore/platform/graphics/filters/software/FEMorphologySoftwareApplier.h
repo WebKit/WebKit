@@ -50,8 +50,8 @@ private:
         MorphologyOperatorType type;
         int radiusX;
         int radiusY;
-        RefPtr<const PixelBuffer> srcPixelBuffer;
-        RefPtr<PixelBuffer> dstPixelBuffer;
+        const PixelBuffer* srcPixelBuffer;
+        PixelBuffer* dstPixelBuffer;
         int width;
         int height;
     };

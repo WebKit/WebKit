@@ -48,7 +48,7 @@ struct SourceBufferEvictionData {
     uint64_t contentSize { 0 };
     int64_t evictableSize { 0 };
     uint64_t maximumBufferSize { 0 };
-    size_t numMediaSamples { 0 };
+    uint64_t numMediaSamples { 0 };
 
     bool operator!=(const SourceBufferEvictionData& other)
     {

@@ -59,7 +59,7 @@ HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {
 #if HAVE(SECURITY_KEY_API)
-    m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
+    lazyInitialize(m_manager, adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone)));
     NSDictionary *matchingDictionary = @{
         @kIOHIDPrimaryUsagePageKey: @(kCtapHidUsagePage),
         @kIOHIDPrimaryUsageKey: @(kCtapHidUsage),

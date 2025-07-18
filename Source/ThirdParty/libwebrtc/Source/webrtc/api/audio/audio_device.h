@@ -11,11 +11,11 @@
 #ifndef API_AUDIO_AUDIO_DEVICE_H_
 #define API_AUDIO_AUDIO_DEVICE_H_
 
+#include <cstdint>
 #include <optional>
+
 #include "api/audio/audio_device_defines.h"
 #include "api/ref_count.h"
-#include "api/scoped_refptr.h"
-#include "api/task_queue/task_queue_factory.h"
 
 namespace webrtc {
 
@@ -59,16 +59,6 @@ class AudioDeviceModule : public webrtc::RefCountInterface {
   };
 
  public:
-  // Creates a default ADM for usage in production code.
-  static rtc::scoped_refptr<AudioDeviceModule> Create(
-      AudioLayer audio_layer,
-      TaskQueueFactory* task_queue_factory);
-  // Creates an ADM with support for extra test methods. Don't use this factory
-  // in production code.
-  static rtc::scoped_refptr<AudioDeviceModuleForTest> CreateForTest(
-      AudioLayer audio_layer,
-      TaskQueueFactory* task_queue_factory);
-
   // Retrieve the currently utilized audio layer
   virtual int32_t ActiveAudioLayer(AudioLayer* audioLayer) const = 0;
 

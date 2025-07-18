@@ -10,10 +10,12 @@
 
 #include "video/render/video_render_frames.h"
 
-#include <type_traits>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <utility>
 
-#include "rtc_base/checks.h"
+#include "api/video/video_frame.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
@@ -49,7 +51,7 @@ VideoRenderFrames::~VideoRenderFrames() {
 }
 
 int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
-  const int64_t time_now = rtc::TimeMillis();
+  const int64_t time_now = TimeMillis();
 
   // Drop old frames only when there are other frames in the queue, otherwise, a
   // really slow system never renders any frames.
@@ -106,7 +108,7 @@ uint32_t VideoRenderFrames::TimeToNextFrameRelease() {
     return kEventMaxWaitTimeMs;
   }
   const int64_t time_to_release = incoming_frames_.front().render_time_ms() -
-                                  render_delay_ms_ - rtc::TimeMillis();
+                                  render_delay_ms_ - TimeMillis();
   return time_to_release < 0 ? 0u : static_cast<uint32_t>(time_to_release);
 }
 

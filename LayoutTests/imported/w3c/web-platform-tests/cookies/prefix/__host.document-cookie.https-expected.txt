@@ -1,16 +1,16 @@
 
 PASS __Host: Secure origin: Does not set 'Path=/;'
-FAIL __HoSt: Secure origin: Does not set 'Path=/;' assert_equals: `__HoSt-prefixtestcookie=0.6775402624621644` in `document.cookie` expected false but got true
+FAIL __HoSt: Secure origin: Does not set 'Path=/;' assert_equals: `__HoSt-prefixtestcookie=foo2` in `document.cookie` expected false but got true
 PASS __Host: Secure origin: Does set 'Secure; Path=/;'
 PASS __HoSt: Secure origin: Does set 'Secure; Path=/;'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; '
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; ' assert_equals: `__HoSt-prefixtestcookie=0.6290646384668973` in `document.cookie` expected false but got true
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; ' assert_equals: `__HoSt-prefixtestcookie=foo6` in `document.cookie` expected false but got true
 PASS __Host: Secure origin: Does not set 'Path=/;MaxAge=10'
-FAIL __HoSt: Secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: `__HoSt-prefixtestcookie=0.6851707717121366` in `document.cookie` expected false but got true
+FAIL __HoSt: Secure origin: Does not set 'Path=/;MaxAge=10' assert_equals: `__HoSt-prefixtestcookie=foo8` in `document.cookie` expected false but got true
 PASS __Host: Secure origin: Does set 'Secure; Path=/;MaxAge=10'
 PASS __HoSt: Secure origin: Does set 'Secure; Path=/;MaxAge=10'
 PASS __Host: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10'
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10' assert_equals: `__HoSt-prefixtestcookie=0.8404971212210027` in `document.cookie` expected false but got true
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/; Domain=localhost; MaxAge=10' assert_equals: `__HoSt-prefixtestcookie=foo12` in `document.cookie` expected false but got true
 PASS __Host: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py'
-FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py' assert_equals: expected (undefined) undefined but got (string) "0.1072062478000616"
+FAIL __HoSt: Secure origin: Does not set 'Secure; Path=/cookies/resources/list.py' assert_equals: expected (undefined) undefined but got (string) "foo14"
 

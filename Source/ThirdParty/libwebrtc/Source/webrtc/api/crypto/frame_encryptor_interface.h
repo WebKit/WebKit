@@ -11,9 +11,12 @@
 #ifndef API_CRYPTO_FRAME_ENCRYPTOR_INTERFACE_H_
 #define API_CRYPTO_FRAME_ENCRYPTOR_INTERFACE_H_
 
+#include <cstddef>
+#include <cstdint>
+
 #include "api/array_view.h"
 #include "api/media_types.h"
-#include "rtc_base/ref_count.h"
+#include "api/ref_count.h"
 
 namespace webrtc {
 
@@ -35,17 +38,17 @@ class FrameEncryptorInterface : public RefCountInterface {
   // must set bytes_written to the number of bytes you wrote in the
   // encrypted_frame. 0 must be returned if successful all other numbers can be
   // selected by the implementer to represent error codes.
-  virtual int Encrypt(cricket::MediaType media_type,
+  virtual int Encrypt(webrtc::MediaType media_type,
                       uint32_t ssrc,
-                      rtc::ArrayView<const uint8_t> additional_data,
-                      rtc::ArrayView<const uint8_t> frame,
-                      rtc::ArrayView<uint8_t> encrypted_frame,
+                      ArrayView<const uint8_t> additional_data,
+                      ArrayView<const uint8_t> frame,
+                      ArrayView<uint8_t> encrypted_frame,
                       size_t* bytes_written) = 0;
 
   // Returns the total required length in bytes for the output of the
   // encryption. This can be larger than the actual number of bytes you need but
   // must never be smaller as it informs the size of the encrypted_frame buffer.
-  virtual size_t GetMaxCiphertextByteSize(cricket::MediaType media_type,
+  virtual size_t GetMaxCiphertextByteSize(webrtc::MediaType media_type,
                                           size_t frame_size) = 0;
 };
 

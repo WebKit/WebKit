@@ -188,7 +188,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute, (JSGlobalOb
 
 JSC::GCClient::IsoSubspace* JSTestGenerateIsReachable::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestGenerateIsReachable, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestGenerateIsReachable, UseCustomHeapCellType::No>(vm, "JSTestGenerateIsReachable"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGenerateIsReachable.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateIsReachable = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGenerateIsReachable.get(); },

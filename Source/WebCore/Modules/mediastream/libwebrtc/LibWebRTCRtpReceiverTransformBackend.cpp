@@ -33,10 +33,10 @@ namespace WebCore {
 
 static inline LibWebRTCRtpReceiverTransformBackend::MediaType mediaTypeFromReceiver(const webrtc::RtpReceiverInterface& receiver)
 {
-    return receiver.media_type() == cricket::MEDIA_TYPE_AUDIO ? RTCRtpTransformBackend::MediaType::Audio : RTCRtpTransformBackend::MediaType::Video;
+    return receiver.media_type() == webrtc::MediaType::AUDIO ? RTCRtpTransformBackend::MediaType::Audio : RTCRtpTransformBackend::MediaType::Video;
 }
 
-LibWebRTCRtpReceiverTransformBackend::LibWebRTCRtpReceiverTransformBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface> rtcReceiver)
+LibWebRTCRtpReceiverTransformBackend::LibWebRTCRtpReceiverTransformBackend(webrtc::scoped_refptr<webrtc::RtpReceiverInterface> rtcReceiver)
     : LibWebRTCRtpTransformBackend(mediaTypeFromReceiver(*rtcReceiver), Side::Receiver)
     , m_rtcReceiver(WTFMove(rtcReceiver))
 {
@@ -53,7 +53,7 @@ void LibWebRTCRtpReceiverTransformBackend::setTransformableFrameCallback(Callbac
         return;
 
     m_isRegistered = true;
-    m_rtcReceiver->SetDepacketizerToDecoderFrameTransformer(rtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
+    m_rtcReceiver->SetDepacketizerToDecoderFrameTransformer(webrtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
 }
 
 bool LibWebRTCRtpReceiverTransformBackend::requestKeyFrame(const String& rid)

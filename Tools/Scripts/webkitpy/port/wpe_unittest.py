@@ -64,6 +64,15 @@ class WPEPortTest(port_testcase.PortTestCase):
                           '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
                           '/mock-checkout/LayoutTests/platform/wpe/TestExpectations'])
 
+    def test_port_legacy_api_specific_expectations_files(self):
+        port = self.make_port(options=MockOptions(configuration='Release', wpe_legacy_api=True))
+        self.assertEqual(port.expectations_files(),
+                         ['/mock-checkout/LayoutTests/TestExpectations',
+                          '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
+                          '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
+                          '/mock-checkout/LayoutTests/platform/wpe/TestExpectations',
+                          '/mock-checkout/LayoutTests/platform/wpe-legacy-api/TestExpectations'])
+
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 15000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 30000)

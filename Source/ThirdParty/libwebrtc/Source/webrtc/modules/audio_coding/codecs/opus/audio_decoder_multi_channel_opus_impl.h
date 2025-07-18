@@ -13,7 +13,9 @@
 
 #include <stddef.h>
 
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/audio_codecs/audio_decoder.h"
@@ -36,7 +38,7 @@ class AudioDecoderMultiChannelOpusImpl final : public AudioDecoder {
   AudioDecoderMultiChannelOpusImpl& operator=(
       const AudioDecoderMultiChannelOpusImpl&) = delete;
 
-  std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
+  std::vector<ParseResult> ParsePayload(Buffer&& payload,
                                         uint32_t timestamp) override;
   void Reset() override;
   int PacketDuration(const uint8_t* encoded, size_t encoded_len) const override;

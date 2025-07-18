@@ -77,10 +77,10 @@ public:
 protected:
     explicit RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&&);
 
-    void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
+    void sendFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
     bool isSilenced() const { return m_muted || !m_enabled; }
 
-    virtual rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) = 0;
+    virtual webrtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) = 0;
 
     bool m_shouldApplyRotation { false };
     webrtc::VideoRotation m_currentRotation { webrtc::kVideoRotation_0 };
@@ -116,16 +116,16 @@ private:
     bool GetStats(Stats*) final { return false; };
     bool SupportsEncodedOutput() const final { return false; }
     void GenerateKeyFrame() final { }
-    void AddEncodedSink(rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
-    void RemoveEncodedSink(rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
+    void AddEncodedSink(webrtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
+    void RemoveEncodedSink(webrtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
 
     // MediaSourceInterface API
     SourceState state() const final { return SourceState(); }
     bool remote() const final { return true; }
 
-    // rtc::VideoSourceInterface<webrtc::VideoFrame> API
-    void AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>*, const rtc::VideoSinkWants&) final;
-    void RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>*) final;
+    // webrtc::VideoSourceInterface<webrtc::VideoFrame> API
+    void AddOrUpdateSink(webrtc::VideoSinkInterface<webrtc::VideoFrame>*, const webrtc::VideoSinkWants&) final;
+    void RemoveSink(webrtc::VideoSinkInterface<webrtc::VideoFrame>*) final;
 
     void sourceMutedChanged();
     void sourceEnabledChanged();
@@ -142,10 +142,10 @@ private:
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
     Timer m_blackFrameTimer;
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
+    webrtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
 
     mutable Lock m_sinksLock;
-    HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
+    HashSet<webrtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
     bool m_areSinksAskingToApplyRotation { false };
 
     bool m_enabled { true };

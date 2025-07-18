@@ -44,16 +44,16 @@ enum class VideoFrameRotation : uint16_t;
 
 class RealtimeIncomingVideoSourceCocoa final : public RealtimeIncomingVideoSource {
 public:
-    static Ref<RealtimeIncomingVideoSourceCocoa> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingVideoSourceCocoa> create(webrtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 
 private:
-    RealtimeIncomingVideoSourceCocoa(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    RealtimeIncomingVideoSourceCocoa(webrtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
     RetainPtr<CVPixelBufferRef> pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType);
     RefPtr<VideoFrame> toVideoFrame(const webrtc::VideoFrame&, VideoFrameRotation);
     Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(RetainPtr<CVPixelBufferRef>&&, VideoFrameRotation, int64_t);
 
-    // rtc::VideoSinkInterface
+    // webrtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;
 
     RetainPtr<CVPixelBufferRef> m_blackFrame;

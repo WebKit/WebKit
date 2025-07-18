@@ -26,6 +26,7 @@
 #include "CSSPositionTryDescriptors.h"
 
 #include "CSSPositionTryRule.h"
+#include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

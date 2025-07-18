@@ -28,6 +28,7 @@
 
 #include "BlobLoader.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {

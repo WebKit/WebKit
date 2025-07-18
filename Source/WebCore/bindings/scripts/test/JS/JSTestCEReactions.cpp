@@ -438,7 +438,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsPrototypeFunction_methodWithCEReaction
 
 JSC::GCClient::IsoSubspace* JSTestCEReactions::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestCEReactions, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestCEReactions, UseCustomHeapCellType::No>(vm, "JSTestCEReactions"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCEReactions.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactions = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCEReactions.get(); },

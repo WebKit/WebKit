@@ -38,7 +38,7 @@
 namespace dcsctp {
 
 template <class ErrorCause>
-bool ParseAndPrint(ParameterDescriptor descriptor, rtc::StringBuilder& sb) {
+bool ParseAndPrint(ParameterDescriptor descriptor, webrtc::StringBuilder& sb) {
   if (descriptor.type == ErrorCause::kType) {
     std::optional<ErrorCause> p = ErrorCause::Parse(descriptor.data);
     if (p.has_value()) {
@@ -52,7 +52,7 @@ bool ParseAndPrint(ParameterDescriptor descriptor, rtc::StringBuilder& sb) {
 }
 
 std::string ErrorCausesToString(const Parameters& parameters) {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
 
   std::vector<ParameterDescriptor> descriptors = parameters.descriptors();
   for (size_t i = 0; i < descriptors.size(); ++i) {

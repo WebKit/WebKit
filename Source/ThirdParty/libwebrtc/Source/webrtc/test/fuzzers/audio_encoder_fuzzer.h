@@ -18,7 +18,7 @@
 
 namespace webrtc {
 
-void FuzzAudioEncoder(rtc::ArrayView<const uint8_t> data_view,
+void FuzzAudioEncoder(ArrayView<const uint8_t> data_view,
                       std::unique_ptr<AudioEncoder> encoder);
 
 }  // namespace webrtc

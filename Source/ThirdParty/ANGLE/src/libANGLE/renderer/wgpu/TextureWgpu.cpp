@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/wgpu/TextureWgpu.h"
 
+#include "common/PackedGLEnums_autogen.h"
 #include "common/debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/angletypes.h"
@@ -450,6 +451,7 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
     uint32_t outputDepthPitch         = outputRowPitch * glExtents.height;
     uint32_t allocationSize           = outputDepthPitch * glExtents.depth;
 
+    // TODO(anglebug.com/389145696): ignores area.x|y|z
     ANGLE_TRY(mImage->stageTextureUpload(contextWgpu, webgpuFormat, type, glExtents, inputRowPitch,
                                          inputDepthPitch, outputRowPitch, outputDepthPitch,
                                          allocationSize, index, pixels));
@@ -470,16 +472,24 @@ angle::Result TextureWgpu::initializeImage(ContextWgpu *contextWgpu, ImageMipLev
     const gl::ImageDesc *firstLevelDesc     = &mState.getBaseLevelDesc();
     uint32_t levelCount                     = getMipLevelCount(mipLevels);
     gl::LevelIndex firstLevel               = gl::LevelIndex(mState.getEffectiveBaseLevel());
-    const gl::Extents &firstLevelExtents    = firstLevelDesc->size;
+    WGPUExtent3D wgpuExtents                = gl_wgpu::GetExtent3D(firstLevelDesc->size);
     WGPUTextureDimension textureDimension   = gl_wgpu::GetWgpuTextureDimension(mState.getType());
     WGPUTextureUsage textureUsage           = WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst |
                                     WGPUTextureUsage_RenderAttachment |
                                     WGPUTextureUsage_TextureBinding;
+
+    if (mState.getType() == gl::TextureType::CubeMap)
+    {
+        ASSERT(wgpuExtents.depthOrArrayLayers == 1);
+        ASSERT(wgpuExtents.width == wgpuExtents.height);
+        wgpuExtents.depthOrArrayLayers = 6;
+    }
+
     return mImage->initImage(
         wgpu, webgpuFormat.getIntendedFormatID(), webgpuFormat.getActualImageFormatID(),
         displayWgpu->getDevice(), firstLevel,
         mImage->createTextureDescriptor(
-            textureUsage, textureDimension, gl_wgpu::GetExtent3D(firstLevelExtents),
+            textureUsage, textureDimension, wgpuExtents,
             webgpu::GetWgpuTextureFormatFromFormatID(webgpuFormat.getActualImageFormatID()),
             levelCount, 1));
 }
@@ -494,9 +504,17 @@ angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
         // If there are any staged changes for this index, we can remove them since we're going to
         // override them with this call.
         gl::LevelIndex levelIndexGL(index.getLevelIndex());
-        // Multilayer images are not yet supported.
-        const uint32_t layerIndex = 0;
-        mImage->removeStagedUpdates(levelIndexGL);
+        const uint32_t layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+
+        if (index.hasLayer())
+        {
+            mImage->removeSingleSubresourceStagedUpdates(levelIndexGL, layerIndex,
+                                                         index.getLayerCount());
+        }
+        else
+        {
+            mImage->removeStagedUpdates(levelIndexGL);
+        }
 
         if (mImage->isInitialized())
         {
@@ -512,6 +530,8 @@ angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
                                      mImage->getLevelCount(), layerIndex, index,
                                      mImage->getFirstAllocatedLevel(), &mRedefinedLevels))
             {
+                // TODO(anglebug.com/425449020): release any views or references to this image,
+                // including RenderTargets.
                 mImage->resetImage();
             }
         }

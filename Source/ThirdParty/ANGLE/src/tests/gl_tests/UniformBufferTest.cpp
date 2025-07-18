@@ -1185,6 +1185,737 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that buffer updates between uniform buffer range change works.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeAfterSubData)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color;
+})";
+
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+    // Set first-half of buffer to Half red color
+    colors[0] = 0.55;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 0.35;
+
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Setup program for draw
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with uniform buffer range = [0, size / 2)
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Update last-half of the buffer with Greenish yellow
+    colors[alignment / 4 + 0] = 0.55;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 0.75;
+    glBufferSubData(GL_UNIFORM_BUFFER, alignment, alignment, &colors[alignment / 4]);
+
+    // Draw with uniform buffer range = [size / 2, size)
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, alignment, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+}
+
+// Test that buffer updates between uniform buffer range change with multiple UBOs works.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeWithMultipleUBO)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+layout (binding = 1) uniform block1 {
+    vec4 color;
+} uni1;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color + uni1.color;
+})";
+
+    // Setup UBOs
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to green color
+    colors[alignment / 4 + 0] = 0.0;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 1.0;
+
+    GLBuffer ubo0;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo0);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    std::vector<float> colorA(alignment / 4, 0);
+    // Set color to green color
+    colorA[0] = 0.0;
+    colorA[1] = 1.0;
+    colorA[2] = 0.0;
+    colorA[3] = 1.0;
+    GLBuffer uboA;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboA);
+    glBufferData(GL_UNIFORM_BUFFER, alignment, colorA.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    std::vector<float> colorB(alignment / 4, 0);
+    // Set color to blue color
+    colorB[0] = 0.0;
+    colorB[1] = 0.0;
+    colorB[2] = 1.0;
+    colorB[3] = 1.0;
+    GLBuffer uboB;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboB);
+    glBufferData(GL_UNIFORM_BUFFER, alignment, colorB.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Setup program for draw
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with ubo0 with buffer range = [0, size / 2) and uboA
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, 0, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboA, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with ubo0 with buffer range = [size / 2, size) and uboB
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, alignment, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboB, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
+// Test that buffer range changes to inactive UBOs works.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeToInactiveUBO)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+layout (binding = 1) uniform block1 {
+    vec4 color;
+} uni1;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color + uni1.color;
+})";
+
+    constexpr char kFSWithInactiveUBO[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+layout (binding = 1) uniform block1 {
+    vec4 color;
+} uni1;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color;
+})";
+
+    // Setup UBOs
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to green color
+    colors[alignment / 4 + 0] = 0.0;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 1.0;
+
+    GLBuffer ubo0;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo0);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Switch color order for the other UBO
+    // Set first-half of buffer to green color
+    colors[0] = 0.0;
+    colors[1] = 1.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to red color
+    colors[alignment / 4 + 0] = 1.0;
+    colors[alignment / 4 + 1] = 0.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 1.0;
+    GLBuffer ubo1;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo1);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Setup programs for draw
+    ANGLE_GL_PROGRAM(programA, essl31_shaders::vs::Simple(), kFS);
+    ANGLE_GL_PROGRAM(programB, essl31_shaders::vs::Simple(), kFSWithInactiveUBO);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with programA with ubo0 and ubo1 with buffer range = [0, size / 2)
+    glUseProgram(programA);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, 0, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, ubo1, 0, kVec4Size);
+    drawQuad(programA, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+    // Draw with programB with ubo0 with buffer range = [size / 2, size)
+    // ubo1 is an inactive UBO in programB
+    glUseProgram(programB);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, alignment, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, ubo1, alignment, kVec4Size);
+    drawQuad(programB, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Draw with programA again but with no changes to ubo0 and ubo1 buffer range
+    glUseProgram(programA);
+    drawQuad(programA, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+}
+
+// Test that buffer range changes to both SSBO and UBO buffers work.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeWithSSBO)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+layout(binding=0, std140) buffer Storage
+{
+    uint b;
+} ssbo;
+
+uniform uni { vec4 color; };
+out vec4 fragColor;
+void main()
+{
+    fragColor = color * float(ssbo.b);
+}
+)";
+
+    // Setup SSBO
+    constexpr GLsizei kBytesPerComponent = sizeof(unsigned int);
+    GLint ssboAlignment;
+    glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &ssboAlignment);
+    if (ssboAlignment < kBytesPerComponent)
+    {
+        ssboAlignment = kBytesPerComponent;
+    }
+    ASSERT_EQ(ssboAlignment % 4, 0);
+
+    std::vector<unsigned int> initialValue(ssboAlignment / 2, 0);
+    initialValue[0]                 = 1u;
+    initialValue[ssboAlignment / 4] = 2u;
+    GLBuffer ssbo;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, ssboAlignment * 2, initialValue.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+
+    // Setup UBO
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+    GLint uboAlignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uboAlignment);
+    if (uboAlignment < kVec4Size)
+    {
+        uboAlignment = kVec4Size;
+    }
+    ASSERT_EQ(uboAlignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(uboAlignment / 2, 0);
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to half green color
+    colors[uboAlignment / 4 + 0] = 0.0;
+    colors[uboAlignment / 4 + 1] = 0.5;
+    colors[uboAlignment / 4 + 2] = 0.0;
+    colors[uboAlignment / 4 + 3] = 0.5;
+
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, uboAlignment * 2, colors.data(), GL_STATIC_DRAW);
+
+    // Setup program for draw
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with ssbo and ubo range = [0, size / 2)
+    glUseProgram(program);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, ssbo, 0, kBytesPerComponent);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with ssbo and ubo range = [size / 2, size)
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, ssbo, ssboAlignment, kBytesPerComponent);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, uboAlignment, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+}
+
+// Test that buffer range changes to both ACB and UBO buffers work.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeWithACB)
+{
+    // Skip the test if atomic counters aren't supported
+    GLint maxCounters = -1;
+    glGetIntegerv(GL_MAX_FRAGMENT_ATOMIC_COUNTERS, &maxCounters);
+    ANGLE_SKIP_TEST_IF(maxCounters <= 0);
+
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout(binding = 0) uniform atomic_uint acb;
+uniform uni { vec4 color; };
+out vec4 fragColor;
+void main()
+{
+    fragColor = color * float(atomicCounter(acb));
+}
+)";
+
+    // Setup ACB
+    constexpr unsigned int kBytesPerComponent = sizeof(unsigned int);
+    constexpr unsigned int kInitialValue[2]   = {1u, 2u};
+    GLBuffer acb;
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acb);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, kBytesPerComponent * 2, &kInitialValue, GL_STATIC_DRAW);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, acb);
+
+    // Setup UBO
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to half green color
+    colors[alignment / 4 + 0] = 0.0;
+    colors[alignment / 4 + 1] = 0.5;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 0.5;
+
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+
+    // Setup program for draw
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with acb and ubo range = [0, size / 2)
+    glUseProgram(program);
+    glBindBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, acb, 0, kBytesPerComponent);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with acb and ubo range = [size / 2, size)
+    glBindBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, acb, kBytesPerComponent, kBytesPerComponent);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, alignment, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+}
+
+// Test that buffer range changes to both UBO and storage image works.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeWithStorageImage)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+layout(rgba8, binding = 0) uniform highp writeonly image2D img;
+uniform uni { vec4 color; };
+out vec4 colorOut;
+void main()
+{
+    colorOut = color;
+    imageStore(img, ivec2(gl_FragCoord.xy), color);
+})";
+
+    // Setup UBO
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to green color
+    colors[alignment / 4 + 0] = 0.0;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 1.0;
+
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+
+    // Setup storage images
+    static constexpr int kTextureSize = 1;
+    GLTexture imageA;
+    glBindTexture(GL_TEXTURE_2D, imageA);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kTextureSize, kTextureSize);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTextureSize, kTextureSize, GL_RGBA, GL_UNSIGNED_BYTE,
+                    GLColor::transparentBlack.data());
+
+    GLTexture imageB;
+    glBindTexture(GL_TEXTURE_2D, imageB);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kTextureSize, kTextureSize);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTextureSize, kTextureSize, GL_RGBA, GL_UNSIGNED_BYTE,
+                    GLColor::transparentBlack.data());
+
+    // Setup program for draw
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with imageA and ubo range = [0, size / 2)
+    glBindImageTexture(0, imageA, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with imageB and ubo range = [size / 2, size)
+    glBindImageTexture(0, imageB, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, alignment, kVec4Size);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    glFinish();
+
+    // Verify framebuffer content
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+    // Verify storage image content
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glBindTexture(GL_TEXTURE_2D, imageA);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, imageA, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glBindTexture(GL_TEXTURE_2D, imageB);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, imageB, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that uniform buffer binding change when using multiple programs works.
+TEST_P(UniformBufferTest31, UniformBufferBindingChangeWithMultiplePrograms)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+layout (binding = 1) uniform block1 {
+    vec4 color;
+} uni1;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color + uni1.color;
+})";
+
+    // Setup UBOs
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    // Set color0 to red
+    std::vector<float> color0 = {1.0, 0.0, 0.0, 1.0};
+
+    GLBuffer ubo0;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo0);
+    glBufferData(GL_UNIFORM_BUFFER, kVec4Size, color0.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Set colorA to green
+    std::vector<float> colorA = {0.0, 1.0, 0.0, 1.0};
+    GLBuffer uboA;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboA);
+    glBufferData(GL_UNIFORM_BUFFER, kVec4Size, colorA.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Set colorB to blue
+    std::vector<float> colorB = {0.0, 0.0, 1.0, 1.0};
+    GLBuffer uboB;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboB);
+    glBufferData(GL_UNIFORM_BUFFER, kVec4Size, colorB.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Setup programs for draw
+    ANGLE_GL_PROGRAM(program0, essl31_shaders::vs::Simple(), kFS);
+    ANGLE_GL_PROGRAM(program1, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
+
+    // Draw with program0
+    glUseProgram(program0);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with ubo0 and uboA
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, 0, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboA, 0, kVec4Size);
+    drawQuad(program0, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Change buffer binding of GL_UNIFORM_BUFFER index 1 to uboB
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboB, 0, kVec4Size);
+
+    // Draw with program1
+    glUseProgram(program1);
+    drawQuad(program1, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with program0, again
+    glUseProgram(program0);
+    drawQuad(program0, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Test that uniform buffer range change when using multiple programs works.
+TEST_P(UniformBufferTest31, UniformBufferBindingRangeChangeWithMultiplePrograms)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+layout (binding = 0) uniform block0 {
+    vec4 color;
+} uni0;
+
+layout (binding = 1) uniform block1 {
+    vec4 color;
+} uni1;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = uni0.color + uni1.color;
+})";
+
+    // Setup UBOs
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2, 0);
+    // Set first-half of buffer to red color
+    colors[0] = 1.0;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    // Set last-half of the buffer to green color
+    colors[alignment / 4 + 0] = 0.0;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 1.0;
+
+    GLBuffer ubo0;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo0);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    std::vector<float> colorA(alignment / 4, 0);
+    // Set color to green color
+    colorA[0] = 0.0;
+    colorA[1] = 1.0;
+    colorA[2] = 0.0;
+    colorA[3] = 1.0;
+    GLBuffer uboA;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboA);
+    glBufferData(GL_UNIFORM_BUFFER, alignment, colorA.data(), GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Setup programs for draw
+    ANGLE_GL_PROGRAM(program0, essl31_shaders::vs::Simple(), kFS);
+    ANGLE_GL_PROGRAM(program1, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
+
+    // Draw with program0
+    glUseProgram(program0);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with ubo0 with buffer range = [0, size / 2) and uboA
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, 0, kVec4Size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboA, 0, kVec4Size);
+    drawQuad(program0, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    // Update buffer range of ubo0
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo0, alignment, kVec4Size);
+
+    // Draw with program1
+    glUseProgram(program1);
+    drawQuad(program1, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with program0, again
+    glUseProgram(program0);
+    drawQuad(program0, essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Test with a block containing an array of structs.
 TEST_P(UniformBufferTest, BlockContainingArrayOfStructs)
 {

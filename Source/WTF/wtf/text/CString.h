@@ -40,7 +40,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
 // CStringBuffer is the ref-counted storage class for the characters in a CString.
 // The data is implicitly allocated 1 character longer than length(), as it is zero-terminated.
 class CStringBuffer final : public RefCounted<CStringBuffer> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CStringBuffer);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CStringBuffer, CStringBuffer);
 public:
     size_t length() const { return m_length; }
 
@@ -66,7 +66,7 @@ private:
 
 // Like const char*, CString does not know its encoding. The caller must apply the right encoding when extracting characters.
 class CString final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CString);
 public:
     CString() { }
     WTF_EXPORT_PRIVATE CString(ASCIILiteral);

@@ -1,0 +1,43 @@
+module-name = 'wtf'
+config-macros = ['UCHAR_TYPE']
+requirements = ['cplusplus11']
+
+# Swift's C++ import struggles with some of the templates found in
+# WTF. To avoid Swift trying to import everything, we divide WTF
+# into lots of submodules. This is why we can't use features such
+# as an umbrella directory.
+one-submodule-per-header = true
+
+# This header depends on surrounding preprocessor context.
+textual-headers = ['spi/mac/MetadataSPI.h']
+
+# Some WTF modules can be used in C contexts
+[module.Assertions]
+attributes = ['extern_c']
+requirements = []
+[module.AutodrainedPool]
+requirements = ['cplusplus11', '!objc']
+[module.Compiler]
+attributes = ['extern_c']
+requirements = []
+[module.ExportMacros]
+attributes = ['extern_c']
+requirements = []
+[module.IOSurfaceSPI]
+attributes = ['extern_c']
+requirements = []
+[module.HashMap]
+# These two headers depend on one another in a circular fashion
+# so we need to keep them together in the same submodule.
+headers = ['HashMap.h', 'RobinHoodHashTable.h']
+[module.Platform]
+requirements = []
+# These headers depend on one another in a circular fashion
+# so we need to keep them together in the same submodule.
+headers = ['Platform.h', 'PlatformCallingConventions.h', 'PlatformCPU.h',
+           'PlatformEnable.h', 'PlatformEnableCocoa.h', 'PlatformHave.h',
+           'PlatformLegacy.h', 'PlatformOS.h', 'PlatformUse.h']
+[module.SoftLinking]
+# These two headers depend on one another in a circular fashion
+# so we need to keep them together in the same submodule.
+headers = ['SoftLinking.h', 'cocoa/SoftLinking.h']

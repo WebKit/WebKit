@@ -66,11 +66,11 @@ TEST(StandaloneVadTest, ActivityDetection) {
   FILE* pcm_file =
       fopen(test::ResourcePath("audio_processing/agc/agc_audio", "pcm").c_str(),
             "rb");
-  ASSERT_TRUE(pcm_file != NULL);
+  ASSERT_TRUE(pcm_file != nullptr);
 
   FILE* reference_file = fopen(
       test::ResourcePath("audio_processing/agc/agc_vad", "dat").c_str(), "rb");
-  ASSERT_TRUE(reference_file != NULL);
+  ASSERT_TRUE(reference_file != nullptr);
 
   // Reference activities are prepared with 0 aggressiveness.
   ASSERT_EQ(0, vad->set_mode(0));

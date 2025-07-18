@@ -189,19 +189,18 @@ int32_t
 QualityAnalyzingVideoDecoder::DecoderCallback::IrrelevantSimulcastStreamDecoded(
     uint16_t frame_id,
     uint32_t timestamp_ms) {
-  webrtc::VideoFrame dummy_frame =
-      webrtc::VideoFrame::Builder()
-          .set_video_frame_buffer(GetDummyFrameBuffer())
-          .set_rtp_timestamp(timestamp_ms)
-          .set_id(frame_id)
-          .build();
+  VideoFrame dummy_frame = VideoFrame::Builder()
+                               .set_video_frame_buffer(GetDummyFrameBuffer())
+                               .set_rtp_timestamp(timestamp_ms)
+                               .set_id(frame_id)
+                               .build();
   MutexLock lock(&callback_mutex_);
   RTC_DCHECK(delegate_callback_);
   delegate_callback_->Decoded(dummy_frame, std::nullopt, std::nullopt);
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer>
+scoped_refptr<VideoFrameBuffer>
 QualityAnalyzingVideoDecoder::DecoderCallback::GetDummyFrameBuffer() {
   if (!dummy_frame_buffer_) {
     dummy_frame_buffer_ = CreateDummyFrameBuffer();

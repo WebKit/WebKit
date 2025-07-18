@@ -45,6 +45,7 @@ public:
     virtual ~ScrollingTreeStickyNode();
 
     FloatSize scrollDeltaSinceLastCommit() const;
+    WEBCORE_EXPORT bool isCurrentlySticking() const;
 
 protected:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
@@ -53,12 +54,14 @@ protected:
 
     FloatPoint computeClippingLayerPosition() const;
     std::optional<FloatRect> findConstrainingRect() const;
-    FloatPoint computeAnchorLayerPosition() const;
+    std::pair<std::optional<FloatRect>, FloatPoint> computeConstrainingRectAndAnchorLayerPosition() const;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     virtual FloatPoint layerTopLeft() const = 0;
     virtual bool hasViewportClippingLayer() const { return false; }
     const ViewportConstraints& constraints() const final { return m_constraints; }
+
+    bool isCurrentlySticking(const FloatRect& constrainingRect) const;
 
     StickyPositionViewportConstraints m_constraints;
 };

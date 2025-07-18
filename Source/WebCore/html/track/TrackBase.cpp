@@ -122,12 +122,12 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
     if (length < 2 || length > 100)
         return false;
 
-    UChar firstChar = languageTag[0];
+    char16_t firstChar = languageTag[0];
 
     if (!isASCIIAlpha(firstChar))
         return false;
 
-    UChar secondChar = languageTag[1];
+    char16_t secondChar = languageTag[1];
 
     if (length == 2)
         return isASCIIAlpha(secondChar);
@@ -155,7 +155,7 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
         nextCharIndexToCheck = 2;
 
     for (; nextCharIndexToCheck < length; ++nextCharIndexToCheck) {
-        UChar c = languageTag[nextCharIndexToCheck];
+        char16_t c = languageTag[nextCharIndexToCheck];
         if (isASCIIAlphanumeric(c) || c == '-')
             continue;
         return false;
@@ -178,7 +178,7 @@ void TrackBase::setLanguage(const AtomString& language)
         return;
 
     String message;
-    if (language.contains((UChar)'\0'))
+    if (language.contains((char16_t)'\0'))
         message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
     else
         message = makeString("The language '"_s, language, "' is not a valid BCP 47 language tag."_s);

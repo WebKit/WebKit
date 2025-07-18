@@ -17,11 +17,11 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/variant.h"
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_size.h"
@@ -152,10 +152,9 @@ void SimpleEncoderWrapper::SetEncodeFps(int fps) {
   fps_ = fps;
 }
 
-void SimpleEncoderWrapper::Encode(
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer,
-    bool force_keyframe,
-    EncodeResultCallback callback) {
+void SimpleEncoderWrapper::Encode(scoped_refptr<VideoFrameBuffer> frame_buffer,
+                                  bool force_keyframe,
+                                  EncodeResultCallback callback) {
   std::vector<ScalableVideoController::LayerFrameConfig> configs =
       svc_controller_->NextFrameConfig(force_keyframe);
   std::vector<FrameEncodeSettings> encode_settings;
@@ -191,14 +190,14 @@ void SimpleEncoderWrapper::Encode(
     }
 
     struct FrameOut : public VideoEncoderInterface::FrameOutput {
-      rtc::ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
+      ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
         bitstream.resize(size.bytes());
         return bitstream;
       }
 
       void EncodeComplete(
           const VideoEncoderInterface::EncodeResult& result) override {
-        auto* data = absl::get_if<VideoEncoderInterface::EncodedData>(&result);
+        auto* data = std::get_if<VideoEncoderInterface::EncodedData>(&result);
 
         SimpleEncoderWrapper::EncodeResult res;
         if (!data) {

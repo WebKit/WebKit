@@ -83,6 +83,7 @@
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 #import "_WKInspectorInternal.h"
+#import "_WKNodeInfoInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
@@ -518,6 +519,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::BundleScriptWorld:
         wrapper = [WKWebProcessPlugInScriptWorld alloc];
+        break;
+
+    case Type::NodeInfo:
+        wrapper = [_WKNodeInfo alloc];
         break;
 
     default:

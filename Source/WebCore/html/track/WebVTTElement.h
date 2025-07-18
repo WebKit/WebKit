@@ -51,7 +51,7 @@ public:
     static Ref<Element> create(const WebVTTNodeType, AtomString language, Document&);
     Ref<HTMLElement> createEquivalentHTMLElement(Document&);
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*);
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const;
 
     void setWebVTTNodeType(WebVTTNodeType type) { m_webVTTNodeType = type; }
     WebVTTNodeType webVTTNodeType() const { return m_webVTTNodeType; }

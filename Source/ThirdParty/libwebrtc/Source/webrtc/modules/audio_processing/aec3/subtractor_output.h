@@ -44,7 +44,7 @@ struct SubtractorOutput {
   void Reset();
 
   // Updates the powers of the signals.
-  void ComputeMetrics(rtc::ArrayView<const float> y);
+  void ComputeMetrics(ArrayView<const float> y);
 };
 
 }  // namespace webrtc

@@ -31,6 +31,6 @@ namespace WebCore {
 
 enum class PlaybackDirection : uint8_t { Normal, Reverse, Alternate, AlternateReverse };
 
-using OptionalPlaybackDirection = Markable<PlaybackDirection, EnumMarkableTraits<PlaybackDirection>>;
+using OptionalPlaybackDirection = Markable<PlaybackDirection>;
 
 } // namespace WebCore

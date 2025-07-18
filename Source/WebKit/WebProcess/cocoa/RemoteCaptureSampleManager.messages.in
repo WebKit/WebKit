@@ -28,7 +28,7 @@
     DispatchedTo=WebContent
 ]
 messages -> RemoteCaptureSampleManager {
-    AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, WebCore::CAAudioStreamDescription description, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
+    AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, WebCore::CAAudioStreamDescription description, IPC::Semaphore captureSemaphore, MediaTime mediaTime, uint64_t frameChunkSize);
     VideoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier id, struct WebKit::RemoteVideoFrameProxyProperties sample, struct WebCore::VideoFrameTimeMetadata metadata)
     VideoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier id, RetainPtr<CVPixelBufferRef> pixelBuffer, enum:uint16_t WebCore::VideoFrameRotation rotation, bool mirrored, MediaTime presentationTime, struct WebCore::VideoFrameTimeMetadata metadata)
 

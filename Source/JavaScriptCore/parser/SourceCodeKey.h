@@ -65,7 +65,7 @@ private:
 };
 
 class SourceCodeKey {
-    WTF_MAKE_FAST_ALLOCATED(SourceCodeKey);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceCodeKey);
     friend class CachedSourceCodeKey;
 
 public:

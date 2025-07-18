@@ -32,6 +32,7 @@
     }
   },
   'chromium-tester-service-account': {
+    'fail_if_unused': False,
     'swarming': {
       'service_account':
       'chromium-tester@chops-service-accounts.iam.gserviceaccount.com'
@@ -65,10 +66,10 @@
       'has_native_resultdb_integration': True
     }
   },
-  'ios-device-16.7': {
+  'ios-device-18': {
     'swarming': {
       'dimensions': {
-        'os': 'iOS-16.7.5',
+        'os': 'iOS-18',
         'pool': 'chrome.tests'
       }
     }
@@ -129,6 +130,7 @@
     }
   },
   'linux-jammy': {
+    'fail_if_unused': False,
     'swarming': {
       'dimensions': {
         'os': 'Ubuntu-22.04'
@@ -312,6 +314,7 @@
     }
   },
   'x86-64': {
+    'fail_if_unused': False,
     'swarming': {
       'dimensions': {
         'cpu': 'x86-64'

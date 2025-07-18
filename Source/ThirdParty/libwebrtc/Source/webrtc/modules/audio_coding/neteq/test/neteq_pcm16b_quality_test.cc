@@ -8,13 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "absl/flags/flag.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 ABSL_FLAG(int, frame_size_ms, 20, "Codec frame size (milliseconds).");
@@ -53,7 +60,7 @@ class NetEqPcm16bQualityTest : public NetEqQualityTest {
 
   int EncodeBlock(int16_t* in_data,
                   size_t /* block_size_samples */,
-                  rtc::Buffer* payload,
+                  Buffer* payload,
                   size_t /* max_bytes */) override {
     const size_t kFrameSizeSamples = 480;  // Samples per 10 ms.
     size_t encoded_samples = 0;
@@ -61,12 +68,12 @@ class NetEqPcm16bQualityTest : public NetEqQualityTest {
     AudioEncoder::EncodedInfo info;
     do {
       info = encoder_->Encode(dummy_timestamp,
-                              rtc::ArrayView<const int16_t>(
+                              ArrayView<const int16_t>(
                                   in_data + encoded_samples, kFrameSizeSamples),
                               payload);
       encoded_samples += kFrameSizeSamples;
     } while (info.encoded_bytes == 0);
-    return rtc::checked_cast<int>(info.encoded_bytes);
+    return checked_cast<int>(info.encoded_bytes);
   }
 
  private:

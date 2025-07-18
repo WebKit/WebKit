@@ -9,11 +9,16 @@
  */
 
 #include <memory>
+#include <utility>
 
+#include "api/environment/environment.h"
 #include "api/test/create_simulcast_test_fixture.h"
 #include "api/test/simulcast_test_fixture.h"
 #include "api/test/video/function_video_decoder_factory.h"
 #include "api/test/video/function_video_encoder_factory.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/gtest.h"
 
@@ -24,12 +29,12 @@ namespace {
 std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture() {
   std::unique_ptr<VideoEncoderFactory> encoder_factory =
       std::make_unique<FunctionVideoEncoderFactory>(
-          [](const Environment& env, const SdpVideoFormat& format) {
+          [](const Environment& env, const SdpVideoFormat& /* format */) {
             return CreateVp8Encoder(env);
           });
   std::unique_ptr<VideoDecoderFactory> decoder_factory =
       std::make_unique<FunctionVideoDecoderFactory>(
-          [](const Environment& env, const SdpVideoFormat& format) {
+          [](const Environment& env, const SdpVideoFormat& /* format */) {
             return CreateVp8Decoder(env);
           });
   return CreateSimulcastTestFixture(std::move(encoder_factory),

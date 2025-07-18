@@ -30,6 +30,7 @@
 #include "Blob.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "ContainerNodeInlines.h"
 #include "EventLoop.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"

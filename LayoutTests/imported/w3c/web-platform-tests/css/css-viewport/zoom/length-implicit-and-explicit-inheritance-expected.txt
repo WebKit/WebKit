@@ -1,0 +1,7 @@
+
+FAIL width: inherit from 100px assert_equals: expected "100px" but got "50px"
+FAIL height: inherit from 100px assert_equals: expected "100px" but got "50px"
+FAIL word-spacing: inherit from 100px assert_equals: expected "100px" but got "50px"
+FAIL word-spacing: unset from 100px assert_equals: expected "100px" but got "50px"
+FAIL word-spacing:  from 100px assert_equals: expected "100px" but got "50px"
+

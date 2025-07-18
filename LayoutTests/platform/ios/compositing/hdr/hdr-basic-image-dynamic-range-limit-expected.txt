@@ -7,32 +7,42 @@
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
-          (position 20.00 20.00)
-          (preserves3D 1)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 200.00 205.00)
+              (position 20.00 20.00)
+              (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 200.00 200.00)
-                  (drawsContent 1)
-                  (drawsHDRContent 1)
+                  (bounds 200.00 205.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 200.00 200.00)
+                      (drawsContent 1)
+                      (drawsHDRContent 1)
+                    )
+                  )
                 )
               )
             )
           )
         )
         (GraphicsLayer
-          (position 240.00 20.00)
-          (preserves3D 1)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 200.00 205.00)
+              (position 240.00 20.00)
+              (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 200.00 200.00)
-                  (drawsContent 1)
-                  (drawsHDRContent 1)
+                  (bounds 200.00 205.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 200.00 200.00)
+                      (drawsContent 1)
+                      (drawsHDRContent 1)
+                    )
+                  )
                 )
               )
             )

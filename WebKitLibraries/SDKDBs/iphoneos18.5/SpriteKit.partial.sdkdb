@@ -1,0 +1,3490 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "changeVolumeTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeVolumeBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "MixerControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "changeChargeTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeChargeBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeMassTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeMassBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyForce:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyForce:atPoint:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyTorque:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyImpulse:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyImpulse:atPoint:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyAngularImpulse:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "NodeWithPhysicsBody"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "play"},
+      {"access": "public", "introduced": "9", "name": "pause"},
+      {"access": "public", "introduced": "9", "name": "stop"},
+      {"access": "public", "introduced": "9", "name": "changePlaybackRateTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changePlaybackRateBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "PlaybackControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "moveBy:duration:"},
+      {"access": "public", "name": "moveByX:y:duration:"},
+      {"access": "public", "name": "moveTo:duration:"},
+      {"access": "public", "name": "moveToX:duration:"},
+      {"access": "public", "name": "moveToY:duration:"},
+      {"access": "public", "name": "rotateByAngle:duration:"},
+      {"access": "public", "name": "rotateToAngle:duration:"},
+      {"access": "public", "name": "rotateToAngle:duration:shortestUnitArc:"},
+      {"access": "public", "name": "resizeByWidth:height:duration:"},
+      {"access": "public", "name": "resizeToWidth:height:duration:"},
+      {"access": "public", "name": "resizeToWidth:duration:"},
+      {"access": "public", "name": "resizeToHeight:duration:"},
+      {"access": "public", "name": "scaleBy:duration:"},
+      {"access": "public", "name": "scaleXBy:y:duration:"},
+      {"access": "public", "name": "scaleTo:duration:"},
+      {"access": "public", "name": "scaleXTo:y:duration:"},
+      {"access": "public", "name": "scaleXTo:duration:"},
+      {"access": "public", "name": "scaleYTo:duration:"},
+      {"access": "public", "introduced": "10", "name": "scaleToSize:duration:"},
+      {"access": "public", "name": "sequence:"},
+      {"access": "public", "name": "group:"},
+      {"access": "public", "name": "repeatAction:count:"},
+      {"access": "public", "name": "repeatActionForever:"},
+      {"access": "public", "name": "fadeInWithDuration:"},
+      {"access": "public", "name": "fadeOutWithDuration:"},
+      {"access": "public", "name": "fadeAlphaBy:duration:"},
+      {"access": "public", "name": "fadeAlphaTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "hide"},
+      {"access": "public", "introduced": "8", "name": "unhide"},
+      {"access": "public", "introduced": "7.1", "name": "setTexture:"},
+      {"access": "public", "introduced": "9", "name": "setNormalTexture:"},
+      {"access": "public", "introduced": "7.1", "name": "setTexture:resize:"},
+      {"access": "public", "introduced": "9", "name": "setNormalTexture:resize:"},
+      {"access": "public", "name": "animateWithTextures:timePerFrame:"},
+      {"access": "public", "introduced": "9", "name": "animateWithNormalTextures:timePerFrame:"},
+      {"access": "public", "name": "animateWithTextures:timePerFrame:resize:restore:"},
+      {"access": "public", "introduced": "9", "name": "animateWithNormalTextures:timePerFrame:resize:restore:"},
+      {"access": "public", "name": "playSoundFileNamed:waitForCompletion:"},
+      {"access": "public", "name": "colorizeWithColor:colorBlendFactor:duration:"},
+      {"access": "public", "name": "colorizeWithColorBlendFactor:duration:"},
+      {"access": "public", "introduced": "8", "name": "falloffTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "falloffBy:duration:"},
+      {"access": "public", "name": "followPath:duration:"},
+      {"access": "public", "name": "followPath:asOffset:orientToPath:duration:"},
+      {"access": "public", "name": "followPath:speed:"},
+      {"access": "public", "name": "followPath:asOffset:orientToPath:speed:"},
+      {"access": "public", "name": "speedBy:duration:"},
+      {"access": "public", "name": "speedTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachTo:rootNode:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachTo:rootNode:velocity:"},
+      {"access": "public", "introduced": "8", "name": "reachToNode:rootNode:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachToNode:rootNode:velocity:"},
+      {"access": "public", "introduced": "8", "name": "strengthTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "strengthBy:duration:"},
+      {"access": "public", "name": "waitForDuration:"},
+      {"access": "public", "name": "waitForDuration:withRange:"},
+      {"access": "public", "name": "removeFromParent"},
+      {"access": "public", "name": "performSelector:onTarget:"},
+      {"access": "public", "name": "runBlock:"},
+      {"access": "public", "name": "runBlock:queue:"},
+      {"access": "public", "name": "runAction:onChildWithName:"},
+      {"access": "public", "name": "customActionWithDuration:actionBlock:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:duration:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:fromURL:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:fromURL:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKActions"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "stereoPanTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "stereoPanBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeReverbTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeReverbBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeObstructionTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeObstructionBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeOcclusionTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeOcclusionBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKAudioNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "locationInNode:"},
+      {"access": "public", "name": "previousLocationInNode:"}
+     ],
+     "interface": "UITouch",
+     "name": "SKNodeTouches"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "10", "name": "warpTo:duration:"},
+      {"access": "public", "introduced": "10", "name": "animateWithWarps:times:"},
+      {"access": "public", "introduced": "10", "name": "animateWithWarps:times:restore:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKWarpable"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKActionTimingLinear"},
+      {"access": "public", "name": "SKActionTimingEaseIn"},
+      {"access": "public", "name": "SKActionTimingEaseOut"},
+      {"access": "public", "name": "SKActionTimingEaseInEaseOut"}
+     ],
+     "introduced": "7",
+     "name": "SKActionTimingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKAttributeTypeNone"},
+      {"access": "public", "name": "SKAttributeTypeFloat"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat2"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat3"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat4"},
+      {"access": "public", "name": "SKAttributeTypeHalfFloat"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat2"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat3"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat4"}
+     ],
+     "introduced": "9",
+     "name": "SKAttributeType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKBlendModeAlpha"},
+      {"access": "public", "name": "SKBlendModeAdd"},
+      {"access": "public", "name": "SKBlendModeSubtract"},
+      {"access": "public", "name": "SKBlendModeMultiply"},
+      {"access": "public", "name": "SKBlendModeMultiplyX2"},
+      {"access": "public", "name": "SKBlendModeScreen"},
+      {"access": "public", "name": "SKBlendModeReplace"},
+      {"access": "public", "name": "SKBlendModeMultiplyAlpha"}
+     ],
+     "introduced": "7",
+     "name": "SKBlendMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKInterpolationModeLinear"},
+      {"access": "public", "name": "SKInterpolationModeSpline"},
+      {"access": "public", "name": "SKInterpolationModeStep"}
+     ],
+     "name": "SKInterpolationMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeCenter"},
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeLeft"},
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeRight"}
+     ],
+     "introduced": "7",
+     "name": "SKLabelHorizontalAlignmentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeBaseline"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeCenter"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeTop"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeBottom"}
+     ],
+     "introduced": "7",
+     "name": "SKLabelVerticalAlignmentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKNodeFocusBehaviorNone"},
+      {"access": "public", "name": "SKNodeFocusBehaviorOccluding"},
+      {"access": "public", "name": "SKNodeFocusBehaviorFocusable"}
+     ],
+     "introduced": "11",
+     "name": "SKNodeFocusBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKParticleRenderOrderOldestLast"},
+      {"access": "public", "name": "SKParticleRenderOrderOldestFirst"},
+      {"access": "public", "name": "SKParticleRenderOrderDontCare"}
+     ],
+     "introduced": "9",
+     "name": "SKParticleRenderOrder"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKRepeatModeClamp"},
+      {"access": "public", "name": "SKRepeatModeLoop"}
+     ],
+     "name": "SKRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKSceneScaleModeFill"},
+      {"access": "public", "name": "SKSceneScaleModeAspectFill"},
+      {"access": "public", "name": "SKSceneScaleModeAspectFit"},
+      {"access": "public", "name": "SKSceneScaleModeResizeFill"}
+     ],
+     "introduced": "7",
+     "name": "SKSceneScaleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTextureFilteringNearest"},
+      {"access": "public", "name": "SKTextureFilteringLinear"}
+     ],
+     "introduced": "7",
+     "name": "SKTextureFilteringMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileAdjacencyUp"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileAdjacencyRight"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileAdjacencyDown"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileAdjacencyLeft"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileAdjacencyAll"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUp"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyDown"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyAll"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyAdd"},
+      {"access": "public", "name": "SKTileAdjacencyUpEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyDownEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRightCorner"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRightCorner"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeftCorner"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeftCorner"}
+     ],
+     "introduced": "10",
+     "name": "SKTileAdjacencyMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileDefinitionRotation0"},
+      {"access": "public", "name": "SKTileDefinitionRotation90"},
+      {"access": "public", "name": "SKTileDefinitionRotation180"},
+      {"access": "public", "name": "SKTileDefinitionRotation270"}
+     ],
+     "introduced": "10",
+     "name": "SKTileDefinitionRotation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileSetTypeGrid"},
+      {"access": "public", "name": "SKTileSetTypeIsometric"},
+      {"access": "public", "name": "SKTileSetTypeHexagonalFlat"},
+      {"access": "public", "name": "SKTileSetTypeHexagonalPointy"}
+     ],
+     "introduced": "10",
+     "name": "SKTileSetType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTransitionDirectionUp"},
+      {"access": "public", "name": "SKTransitionDirectionDown"},
+      {"access": "public", "name": "SKTransitionDirectionRight"},
+      {"access": "public", "name": "SKTransitionDirectionLeft"}
+     ],
+     "introduced": "7",
+     "name": "SKTransitionDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKUniformTypeNone"},
+      {"access": "public", "name": "SKUniformTypeFloat"},
+      {"access": "public", "name": "SKUniformTypeFloatVector2"},
+      {"access": "public", "name": "SKUniformTypeFloatVector3"},
+      {"access": "public", "name": "SKUniformTypeFloatVector4"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix2"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix3"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix4"},
+      {"access": "public", "name": "SKUniformTypeTexture"}
+     ],
+     "introduced": "8",
+     "name": "SKUniformType"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "nodeWithViewportSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithViewportSize:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "hitTest:options:"},
+      {"access": "public", "name": "projectPoint:"},
+      {"access": "public", "name": "unprojectPoint:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SK3DNode",
+     "properties": [
+      {"access": "public", "getter": "viewportSize", "name": "viewportSize", "setter": "setViewportSize:"},
+      {"access": "public", "getter": "scnScene", "name": "scnScene", "setter": "setScnScene:"},
+      {"access": "public", "getter": "sceneTime", "name": "sceneTime", "setter": "setSceneTime:"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "getter": "loops", "name": "loops", "setter": "setLoops:"},
+      {"access": "public", "getter": "pointOfView", "name": "pointOfView", "setter": "setPointOfView:"},
+      {"access": "public", "getter": "autoenablesDefaultLighting", "name": "autoenablesDefaultLighting", "setter": "setAutoenablesDefaultLighting:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "SKActions",
+      "NodeWithPhysicsBody",
+      "PlaybackControl",
+      "MixerControl",
+      "SKWarpable",
+      "SKAudioNode"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "reversedAction"}
+     ],
+     "linkage": "exported",
+     "name": "SKAction",
+     "properties": [
+      {"access": "public", "getter": "duration", "name": "duration", "setter": "setDuration:"},
+      {"access": "public", "getter": "timingMode", "name": "timingMode", "setter": "setTimingMode:"},
+      {"access": "public", "getter": "timingFunction", "introduced": "8", "name": "timingFunction", "setter": "setTimingFunction:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "attributeWithName:type:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:type:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAttribute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "valueWithFloat:"},
+      {"access": "public", "name": "valueWithVectorFloat2:"},
+      {"access": "public", "name": "valueWithVectorFloat3:"},
+      {"access": "public", "name": "valueWithVectorFloat4:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAttributeValue",
+     "properties": [
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "vectorFloat2Value", "name": "vectorFloat2Value", "setter": "setVectorFloat2Value:"},
+      {"access": "public", "getter": "vectorFloat3Value", "name": "vectorFloat3Value", "setter": "setVectorFloat3Value:"},
+      {"access": "public", "getter": "vectorFloat4Value", "name": "vectorFloat4Value", "setter": "setVectorFloat4Value:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAVAudioNode:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithFileNamed:"},
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAudioNode",
+     "properties": [
+      {"access": "public", "getter": "avAudioNode", "name": "avAudioNode", "setter": "setAvAudioNode:"},
+      {"access": "public", "getter": "autoplayLooped", "name": "autoplayLooped", "setter": "setAutoplayLooped:"},
+      {"access": "public", "getter": "isPositional", "name": "positional", "setter": "setPositional:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "containsNode:"},
+      {"access": "public", "name": "containedNodeSet"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKCameraNode",
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "positionX:"},
+      {"access": "public", "name": "positionY:"},
+      {"access": "public", "name": "positionX:Y:"},
+      {"access": "public", "name": "distance:toNode:"},
+      {"access": "public", "name": "distance:toPoint:"},
+      {"access": "public", "name": "distance:toPoint:inNode:"},
+      {"access": "public", "name": "zRotation:"},
+      {"access": "public", "name": "orientToNode:offset:"},
+      {"access": "public", "name": "orientToPoint:offset:"},
+      {"access": "public", "name": "orientToPoint:inNode:offset:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKConstraint",
+     "properties": [
+      {"access": "public", "getter": "enabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "referenceNode", "name": "referenceNode", "setter": "setReferenceNode:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKCropNode",
+     "properties": [
+      {"access": "public", "getter": "maskNode", "name": "maskNode", "setter": "setMaskNode:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKEffectNode",
+     "properties": [
+      {"access": "public", "getter": "filter", "name": "filter", "setter": "setFilter:"},
+      {"access": "public", "getter": "shouldCenterFilter", "name": "shouldCenterFilter", "setter": "setShouldCenterFilter:"},
+      {"access": "public", "getter": "shouldEnableEffects", "name": "shouldEnableEffects", "setter": "setShouldEnableEffects:"},
+      {"access": "public", "getter": "shouldRasterize", "name": "shouldRasterize", "setter": "setShouldRasterize:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "SKWarpable"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advanceSimulationTime:"},
+      {"access": "public", "name": "resetSimulation"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKEmitterNode",
+     "properties": [
+      {"access": "public", "getter": "particleTexture", "name": "particleTexture", "setter": "setParticleTexture:"},
+      {"access": "public", "getter": "particleBlendMode", "name": "particleBlendMode", "setter": "setParticleBlendMode:"},
+      {"access": "public", "getter": "particleColor", "name": "particleColor", "setter": "setParticleColor:"},
+      {"access": "public", "getter": "particleColorRedRange", "name": "particleColorRedRange", "setter": "setParticleColorRedRange:"},
+      {"access": "public", "getter": "particleColorGreenRange", "name": "particleColorGreenRange", "setter": "setParticleColorGreenRange:"},
+      {"access": "public", "getter": "particleColorBlueRange", "name": "particleColorBlueRange", "setter": "setParticleColorBlueRange:"},
+      {"access": "public", "getter": "particleColorAlphaRange", "name": "particleColorAlphaRange", "setter": "setParticleColorAlphaRange:"},
+      {"access": "public", "getter": "particleColorRedSpeed", "name": "particleColorRedSpeed", "setter": "setParticleColorRedSpeed:"},
+      {"access": "public", "getter": "particleColorGreenSpeed", "name": "particleColorGreenSpeed", "setter": "setParticleColorGreenSpeed:"},
+      {"access": "public", "getter": "particleColorBlueSpeed", "name": "particleColorBlueSpeed", "setter": "setParticleColorBlueSpeed:"},
+      {"access": "public", "getter": "particleColorAlphaSpeed", "name": "particleColorAlphaSpeed", "setter": "setParticleColorAlphaSpeed:"},
+      {"access": "public", "getter": "particleColorSequence", "name": "particleColorSequence", "setter": "setParticleColorSequence:"},
+      {"access": "public", "getter": "particleColorBlendFactor", "name": "particleColorBlendFactor", "setter": "setParticleColorBlendFactor:"},
+      {"access": "public", "getter": "particleColorBlendFactorRange", "name": "particleColorBlendFactorRange", "setter": "setParticleColorBlendFactorRange:"},
+      {"access": "public", "getter": "particleColorBlendFactorSpeed", "name": "particleColorBlendFactorSpeed", "setter": "setParticleColorBlendFactorSpeed:"},
+      {"access": "public", "getter": "particleColorBlendFactorSequence", "name": "particleColorBlendFactorSequence", "setter": "setParticleColorBlendFactorSequence:"},
+      {"access": "public", "getter": "particlePosition", "name": "particlePosition", "setter": "setParticlePosition:"},
+      {"access": "public", "getter": "particlePositionRange", "name": "particlePositionRange", "setter": "setParticlePositionRange:"},
+      {"access": "public", "getter": "particleSpeed", "name": "particleSpeed", "setter": "setParticleSpeed:"},
+      {"access": "public", "getter": "particleSpeedRange", "name": "particleSpeedRange", "setter": "setParticleSpeedRange:"},
+      {"access": "public", "getter": "emissionAngle", "name": "emissionAngle", "setter": "setEmissionAngle:"},
+      {"access": "public", "getter": "emissionAngleRange", "name": "emissionAngleRange", "setter": "setEmissionAngleRange:"},
+      {"access": "public", "getter": "xAcceleration", "name": "xAcceleration", "setter": "setXAcceleration:"},
+      {"access": "public", "getter": "yAcceleration", "name": "yAcceleration", "setter": "setYAcceleration:"},
+      {"access": "public", "getter": "particleBirthRate", "name": "particleBirthRate", "setter": "setParticleBirthRate:"},
+      {"access": "public", "getter": "numParticlesToEmit", "name": "numParticlesToEmit", "setter": "setNumParticlesToEmit:"},
+      {"access": "public", "getter": "particleLifetime", "name": "particleLifetime", "setter": "setParticleLifetime:"},
+      {"access": "public", "getter": "particleLifetimeRange", "name": "particleLifetimeRange", "setter": "setParticleLifetimeRange:"},
+      {"access": "public", "getter": "particleRotation", "name": "particleRotation", "setter": "setParticleRotation:"},
+      {"access": "public", "getter": "particleRotationRange", "name": "particleRotationRange", "setter": "setParticleRotationRange:"},
+      {"access": "public", "getter": "particleRotationSpeed", "name": "particleRotationSpeed", "setter": "setParticleRotationSpeed:"},
+      {"access": "public", "getter": "particleSize", "name": "particleSize", "setter": "setParticleSize:"},
+      {"access": "public", "getter": "particleScale", "name": "particleScale", "setter": "setParticleScale:"},
+      {"access": "public", "getter": "particleScaleRange", "name": "particleScaleRange", "setter": "setParticleScaleRange:"},
+      {"access": "public", "getter": "particleScaleSpeed", "name": "particleScaleSpeed", "setter": "setParticleScaleSpeed:"},
+      {"access": "public", "getter": "particleScaleSequence", "name": "particleScaleSequence", "setter": "setParticleScaleSequence:"},
+      {"access": "public", "getter": "particleAlpha", "name": "particleAlpha", "setter": "setParticleAlpha:"},
+      {"access": "public", "getter": "particleAlphaRange", "name": "particleAlphaRange", "setter": "setParticleAlphaRange:"},
+      {"access": "public", "getter": "particleAlphaSpeed", "name": "particleAlphaSpeed", "setter": "setParticleAlphaSpeed:"},
+      {"access": "public", "getter": "particleAlphaSequence", "name": "particleAlphaSequence", "setter": "setParticleAlphaSequence:"},
+      {"access": "public", "getter": "particleAction", "name": "particleAction", "setter": "setParticleAction:"},
+      {"access": "public", "getter": "fieldBitMask", "name": "fieldBitMask", "setter": "setFieldBitMask:"},
+      {"access": "public", "getter": "targetNode", "name": "targetNode", "setter": "setTargetNode:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"},
+      {"access": "public", "getter": "particleZPosition", "name": "particleZPosition", "setter": "setParticleZPosition:"},
+      {"access": "public", "getter": "particleRenderOrder", "introduced": "9", "name": "particleRenderOrder", "setter": "setParticleRenderOrder:"},
+      {"access": "public", "getter": "particleZPositionRange", "introduced": "7", "name": "particleZPositionRange", "setter": "setParticleZPositionRange:"},
+      {"access": "public", "getter": "particleZPositionSpeed", "introduced": "7", "name": "particleZPositionSpeed", "setter": "setParticleZPositionSpeed:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "dragField"},
+      {"access": "public", "name": "vortexField"},
+      {"access": "public", "name": "radialGravityField"},
+      {"access": "public", "name": "linearGravityFieldWithVector:"},
+      {"access": "public", "name": "velocityFieldWithVector:"},
+      {"access": "public", "name": "velocityFieldWithTexture:"},
+      {"access": "public", "name": "noiseFieldWithSmoothness:animationSpeed:"},
+      {"access": "public", "name": "turbulenceFieldWithSmoothness:animationSpeed:"},
+      {"access": "public", "name": "springField"},
+      {"access": "public", "name": "electricField"},
+      {"access": "public", "name": "magneticField"},
+      {"access": "public", "name": "customFieldWithEvaluationBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKFieldNode",
+     "properties": [
+      {"access": "public", "getter": "region", "name": "region", "setter": "setRegion:"},
+      {"access": "public", "getter": "strength", "name": "strength", "setter": "setStrength:"},
+      {"access": "public", "getter": "falloff", "name": "falloff", "setter": "setFalloff:"},
+      {"access": "public", "getter": "minimumRadius", "name": "minimumRadius", "setter": "setMinimumRadius:"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "isExclusive", "name": "exclusive", "setter": "setExclusive:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"},
+      {"access": "public", "getter": "direction", "name": "direction", "setter": "setDirection:"},
+      {"access": "public", "getter": "smoothness", "name": "smoothness", "setter": "setSmoothness:"},
+      {"access": "public", "getter": "animationSpeed", "name": "animationSpeed", "setter": "setAnimationSpeed:"},
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithKeyframeValues:times:"},
+      {"access": "public", "name": "initWithCapacity:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "count"},
+      {"access": "public", "name": "addKeyframeValue:time:"},
+      {"access": "public", "name": "removeLastKeyframe"},
+      {"access": "public", "name": "removeKeyframeAtIndex:"},
+      {"access": "public", "name": "setKeyframeValue:forIndex:"},
+      {"access": "public", "name": "setKeyframeTime:forIndex:"},
+      {"access": "public", "name": "setKeyframeValue:time:forIndex:"},
+      {"access": "public", "name": "getKeyframeValueForIndex:"},
+      {"access": "public", "name": "getKeyframeTimeForIndex:"},
+      {"access": "public", "name": "sampleAtTime:"}
+     ],
+     "linkage": "exported",
+     "name": "SKKeyframeSequence",
+     "properties": [
+      {"access": "public", "getter": "interpolationMode", "name": "interpolationMode", "setter": "setInterpolationMode:"},
+      {"access": "public", "getter": "repeatMode", "name": "repeatMode", "setter": "setRepeatMode:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "labelNodeWithText:"},
+      {"access": "public", "introduced": "11", "name": "labelNodeWithAttributedText:"},
+      {"access": "public", "name": "labelNodeWithFontNamed:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFontNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKLabelNode",
+     "properties": [
+      {"access": "public", "getter": "verticalAlignmentMode", "name": "verticalAlignmentMode", "setter": "setVerticalAlignmentMode:"},
+      {"access": "public", "getter": "horizontalAlignmentMode", "name": "horizontalAlignmentMode", "setter": "setHorizontalAlignmentMode:"},
+      {"access": "public", "getter": "numberOfLines", "introduced": "11", "name": "numberOfLines", "setter": "setNumberOfLines:"},
+      {"access": "public", "getter": "lineBreakMode", "introduced": "11", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "preferredMaxLayoutWidth", "introduced": "11", "name": "preferredMaxLayoutWidth", "setter": "setPreferredMaxLayoutWidth:"},
+      {"access": "public", "getter": "fontName", "name": "fontName", "setter": "setFontName:"},
+      {"access": "public", "getter": "text", "name": "text", "setter": "setText:"},
+      {"access": "public", "getter": "attributedText", "introduced": "11", "name": "attributedText", "setter": "setAttributedText:"},
+      {"access": "public", "getter": "fontSize", "name": "fontSize", "setter": "setFontSize:"},
+      {"access": "public", "getter": "fontColor", "name": "fontColor", "setter": "setFontColor:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKLightNode",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "lightColor", "name": "lightColor", "setter": "setLightColor:"},
+      {"access": "public", "getter": "ambientColor", "name": "ambientColor", "setter": "setAmbientColor:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"},
+      {"access": "public", "getter": "falloff", "name": "falloff", "setter": "setFalloff:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "mutableTextureWithSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithSize:pixelFormat:"},
+      {"access": "public", "name": "modifyPixelDataWithBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKMutableTexture",
+     "super": "SKTexture"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "node"},
+      {"access": "public", "name": "nodeWithFileNamed:"},
+      {"access": "public", "introduced": "12", "name": "nodeWithFileNamed:securelyWithClasses:andError:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "calculateAccumulatedFrame"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"},
+      {"access": "public", "name": "setScale:"},
+      {"access": "public", "name": "addChild:"},
+      {"access": "public", "name": "insertChild:atIndex:"},
+      {"access": "public", "name": "removeChildrenInArray:"},
+      {"access": "public", "name": "removeAllChildren"},
+      {"access": "public", "name": "removeFromParent"},
+      {"access": "public", "introduced": "9", "name": "moveToParent:"},
+      {"access": "public", "name": "childNodeWithName:"},
+      {"access": "public", "name": "enumerateChildNodesWithName:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "inParentHierarchy:"},
+      {"access": "public", "name": "runAction:"},
+      {"access": "public", "name": "runAction:completion:"},
+      {"access": "public", "name": "runAction:withKey:"},
+      {"access": "public", "name": "hasActions"},
+      {"access": "public", "name": "actionForKey:"},
+      {"access": "public", "name": "removeActionForKey:"},
+      {"access": "public", "name": "removeAllActions"},
+      {"access": "public", "name": "containsPoint:"},
+      {"access": "public", "name": "nodeAtPoint:"},
+      {"access": "public", "name": "nodesAtPoint:"},
+      {"access": "public", "name": "convertPoint:fromNode:"},
+      {"access": "public", "name": "convertPoint:toNode:"},
+      {"access": "public", "name": "intersectsNode:"},
+      {"access": "public", "name": "isEqualToNode:"}
+     ],
+     "linkage": "exported",
+     "name": "SKNode",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "getter": "position", "name": "position", "setter": "setPosition:"},
+      {"access": "public", "getter": "zPosition", "name": "zPosition", "setter": "setZPosition:"},
+      {"access": "public", "getter": "zRotation", "name": "zRotation", "setter": "setZRotation:"},
+      {"access": "public", "getter": "xScale", "name": "xScale", "setter": "setXScale:"},
+      {"access": "public", "getter": "yScale", "name": "yScale", "setter": "setYScale:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "alpha", "name": "alpha", "setter": "setAlpha:"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "isHidden", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "isUserInteractionEnabled", "name": "userInteractionEnabled", "setter": "setUserInteractionEnabled:"},
+      {"access": "public", "getter": "focusBehavior", "introduced": "11", "name": "focusBehavior", "setter": "setFocusBehavior:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parent", "name": "parent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "children", "name": "children"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scene", "name": "scene"},
+      {"access": "public", "getter": "physicsBody", "name": "physicsBody", "setter": "setPhysicsBody:"},
+      {"access": "public", "getter": "userData", "name": "userData", "setter": "setUserData:"},
+      {"access": "public", "getter": "reachConstraints", "name": "reachConstraints", "setter": "setReachConstraints:"},
+      {"access": "public", "getter": "constraints", "name": "constraints", "setter": "setConstraints:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding",
+      "UIFocusItem",
+      "UIFocusItemContainer",
+      "UICoordinateSpace"
+     ],
+     "super": "UIResponder"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "bodyWithCircleOfRadius:"},
+      {"access": "public", "name": "bodyWithCircleOfRadius:center:"},
+      {"access": "public", "name": "bodyWithRectangleOfSize:"},
+      {"access": "public", "name": "bodyWithRectangleOfSize:center:"},
+      {"access": "public", "name": "bodyWithPolygonFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeFromPoint:toPoint:"},
+      {"access": "public", "name": "bodyWithEdgeChainFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeLoopFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeLoopFromRect:"},
+      {"access": "public", "introduced": "8", "name": "bodyWithTexture:size:"},
+      {"access": "public", "introduced": "8", "name": "bodyWithTexture:alphaThreshold:size:"},
+      {"access": "public", "name": "bodyWithBodies:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "applyForce:"},
+      {"access": "public", "name": "applyForce:atPoint:"},
+      {"access": "public", "name": "applyTorque:"},
+      {"access": "public", "name": "applyImpulse:"},
+      {"access": "public", "name": "applyImpulse:atPoint:"},
+      {"access": "public", "name": "applyAngularImpulse:"},
+      {"access": "public", "name": "allContactedBodies"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsBody",
+     "properties": [
+      {"access": "public", "getter": "isDynamic", "name": "dynamic", "setter": "setDynamic:"},
+      {"access": "public", "getter": "usesPreciseCollisionDetection", "name": "usesPreciseCollisionDetection", "setter": "setUsesPreciseCollisionDetection:"},
+      {"access": "public", "getter": "allowsRotation", "name": "allowsRotation", "setter": "setAllowsRotation:"},
+      {"access": "public", "getter": "pinned", "introduced": "8", "name": "pinned", "setter": "setPinned:"},
+      {"access": "public", "getter": "isResting", "name": "resting", "setter": "setResting:"},
+      {"access": "public", "getter": "friction", "name": "friction", "setter": "setFriction:"},
+      {"access": "public", "getter": "charge", "introduced": "8", "name": "charge", "setter": "setCharge:"},
+      {"access": "public", "getter": "restitution", "name": "restitution", "setter": "setRestitution:"},
+      {"access": "public", "getter": "linearDamping", "name": "linearDamping", "setter": "setLinearDamping:"},
+      {"access": "public", "getter": "angularDamping", "name": "angularDamping", "setter": "setAngularDamping:"},
+      {"access": "public", "getter": "density", "name": "density", "setter": "setDensity:"},
+      {"access": "public", "getter": "mass", "name": "mass", "setter": "setMass:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "area", "name": "area"},
+      {"access": "public", "getter": "affectedByGravity", "name": "affectedByGravity", "setter": "setAffectedByGravity:"},
+      {"access": "public", "getter": "fieldBitMask", "introduced": "8", "name": "fieldBitMask", "setter": "setFieldBitMask:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"},
+      {"access": "public", "getter": "collisionBitMask", "name": "collisionBitMask", "setter": "setCollisionBitMask:"},
+      {"access": "public", "getter": "contactTestBitMask", "name": "contactTestBitMask", "setter": "setContactTestBitMask:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "joints", "name": "joints"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "node", "name": "node"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "angularVelocity", "name": "angularVelocity", "setter": "setAngularVelocity:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKPhysicsContact",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bodyA", "name": "bodyA"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bodyB", "name": "bodyB"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contactPoint", "name": "contactPoint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contactNormal", "name": "contactNormal"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collisionImpulse", "name": "collisionImpulse"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKPhysicsJoint",
+     "properties": [
+      {"access": "public", "getter": "bodyA", "name": "bodyA", "setter": "setBodyA:"},
+      {"access": "public", "getter": "bodyB", "name": "bodyB", "setter": "setBodyB:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionForce", "name": "reactionForce"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionTorque", "name": "reactionTorque"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointFixed",
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchorA:anchorB:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointLimit",
+     "properties": [
+      {"access": "public", "getter": "maxLength", "name": "maxLength", "setter": "setMaxLength:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointPin",
+     "properties": [
+      {"access": "public", "getter": "shouldEnableLimits", "name": "shouldEnableLimits", "setter": "setShouldEnableLimits:"},
+      {"access": "public", "getter": "lowerAngleLimit", "name": "lowerAngleLimit", "setter": "setLowerAngleLimit:"},
+      {"access": "public", "getter": "upperAngleLimit", "name": "upperAngleLimit", "setter": "setUpperAngleLimit:"},
+      {"access": "public", "getter": "frictionTorque", "name": "frictionTorque", "setter": "setFrictionTorque:"},
+      {"access": "public", "getter": "rotationSpeed", "name": "rotationSpeed", "setter": "setRotationSpeed:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:axis:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointSliding",
+     "properties": [
+      {"access": "public", "getter": "shouldEnableLimits", "name": "shouldEnableLimits", "setter": "setShouldEnableLimits:"},
+      {"access": "public", "getter": "lowerDistanceLimit", "name": "lowerDistanceLimit", "setter": "setLowerDistanceLimit:"},
+      {"access": "public", "getter": "upperDistanceLimit", "name": "upperDistanceLimit", "setter": "setUpperDistanceLimit:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchorA:anchorB:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointSpring",
+     "properties": [
+      {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"},
+      {"access": "public", "getter": "frequency", "name": "frequency", "setter": "setFrequency:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addJoint:"},
+      {"access": "public", "name": "removeJoint:"},
+      {"access": "public", "name": "removeAllJoints"},
+      {"access": "public", "introduced": "8", "name": "sampleFieldsAt:"},
+      {"access": "public", "name": "bodyAtPoint:"},
+      {"access": "public", "name": "bodyInRect:"},
+      {"access": "public", "name": "bodyAlongRayStart:end:"},
+      {"access": "public", "name": "enumerateBodiesAtPoint:usingBlock:"},
+      {"access": "public", "name": "enumerateBodiesInRect:usingBlock:"},
+      {"access": "public", "name": "enumerateBodiesAlongRayStart:end:usingBlock:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsWorld",
+     "properties": [
+      {"access": "public", "getter": "gravity", "name": "gravity", "setter": "setGravity:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "contactDelegate", "name": "contactDelegate", "setter": "setContactDelegate:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "rangeWithLowerLimit:upperLimit:"},
+      {"access": "public", "name": "rangeWithLowerLimit:"},
+      {"access": "public", "name": "rangeWithUpperLimit:"},
+      {"access": "public", "name": "rangeWithConstantValue:"},
+      {"access": "public", "name": "rangeWithValue:variance:"},
+      {"access": "public", "name": "rangeWithNoLimits"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLowerLimit:upperLimit:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKRange",
+     "properties": [
+      {"access": "public", "getter": "lowerLimit", "name": "lowerLimit", "setter": "setLowerLimit:"},
+      {"access": "public", "getter": "upperLimit", "name": "upperLimit", "setter": "setUpperLimit:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLowerAngleLimit:upperAngleLimit:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKReachConstraints",
+     "properties": [
+      {"access": "public", "getter": "lowerAngleLimit", "name": "lowerAngleLimit", "setter": "setLowerAngleLimit:"},
+      {"access": "public", "getter": "upperAngleLimit", "name": "upperAngleLimit", "setter": "setUpperAngleLimit:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "referenceNodeWithFileNamed:"},
+      {"access": "public", "name": "referenceNodeWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithFileNamed:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "didLoadReferenceNode:"},
+      {"access": "public", "name": "resolveReferenceNode"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKReferenceNode",
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "infiniteRegion"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRadius:"},
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithPath:"},
+      {"access": "public", "name": "inverseRegion"},
+      {"access": "public", "name": "regionByUnionWithRegion:"},
+      {"access": "public", "name": "regionByDifferenceFromRegion:"},
+      {"access": "public", "name": "regionByIntersectionWithRegion:"},
+      {"access": "public", "name": "containsPoint:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKRegion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "path", "name": "path"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "rendererWithDevice:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "renderWithViewport:commandBuffer:renderPassDescriptor:"},
+      {"access": "public", "name": "renderWithViewport:renderCommandEncoder:renderPassDescriptor:commandQueue:"},
+      {"access": "public", "name": "updateAtTime:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "SKRenderer",
+     "properties": [
+      {"access": "public", "getter": "scene", "name": "scene", "setter": "setScene:"},
+      {"access": "public", "getter": "ignoresSiblingOrder", "name": "ignoresSiblingOrder", "setter": "setIgnoresSiblingOrder:"},
+      {"access": "public", "getter": "shouldCullNonVisibleNodes", "name": "shouldCullNonVisibleNodes", "setter": "setShouldCullNonVisibleNodes:"},
+      {"access": "public", "getter": "showsDrawCount", "name": "showsDrawCount", "setter": "setShowsDrawCount:"},
+      {"access": "public", "getter": "showsNodeCount", "name": "showsNodeCount", "setter": "setShowsNodeCount:"},
+      {"access": "public", "getter": "showsQuadCount", "name": "showsQuadCount", "setter": "setShowsQuadCount:"},
+      {"access": "public", "getter": "showsPhysics", "name": "showsPhysics", "setter": "setShowsPhysics:"},
+      {"access": "public", "getter": "showsFields", "name": "showsFields", "setter": "setShowsFields:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sceneWithSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "introduced": "10", "name": "sceneDidLoad"},
+      {"access": "public", "name": "convertPointFromView:"},
+      {"access": "public", "name": "convertPointToView:"},
+      {"access": "public", "name": "update:"},
+      {"access": "public", "name": "didEvaluateActions"},
+      {"access": "public", "name": "didSimulatePhysics"},
+      {"access": "public", "introduced": "8", "name": "didApplyConstraints"},
+      {"access": "public", "introduced": "8", "name": "didFinishUpdate"},
+      {"access": "public", "name": "didMoveToView:"},
+      {"access": "public", "name": "willMoveFromView:"},
+      {"access": "public", "name": "didChangeSize:"}
+     ],
+     "linkage": "exported",
+     "name": "SKScene",
+     "properties": [
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "scaleMode", "name": "scaleMode", "setter": "setScaleMode:"},
+      {"access": "public", "getter": "camera", "introduced": "9", "name": "camera", "setter": "setCamera:"},
+      {"access": "public", "getter": "listener", "introduced": "9", "name": "listener", "setter": "setListener:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioEngine", "introduced": "9", "name": "audioEngine"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "delegate", "introduced": "8", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "physicsWorld", "name": "physicsWorld"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "view", "name": "view"}
+     ],
+     "super": "SKEffectNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "shader"},
+      {"access": "public", "name": "shaderWithSource:"},
+      {"access": "public", "name": "shaderWithSource:uniforms:"},
+      {"access": "public", "name": "shaderWithFileNamed:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSource:"},
+      {"access": "public", "name": "initWithSource:uniforms:"},
+      {"access": "public", "name": "addUniform:"},
+      {"access": "public", "name": "uniformNamed:"},
+      {"access": "public", "name": "removeUniformNamed:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKShader",
+     "properties": [
+      {"access": "public", "getter": "source", "name": "source", "setter": "setSource:"},
+      {"access": "public", "getter": "uniforms", "name": "uniforms", "setter": "setUniforms:"},
+      {"access": "public", "getter": "attributes", "introduced": "9", "name": "attributes", "setter": "setAttributes:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPath:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPath:centered:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRect:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRectOfSize:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRect:cornerRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRectOfSize:cornerRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithCircleOfRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithEllipseInRect:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithEllipseOfSize:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPoints:count:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithSplinePoints:count:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKShapeNode",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "strokeColor", "name": "strokeColor", "setter": "setStrokeColor:"},
+      {"access": "public", "getter": "fillColor", "name": "fillColor", "setter": "setFillColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "isAntialiased", "name": "antialiased", "setter": "setAntialiased:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "glowWidth", "name": "glowWidth", "setter": "setGlowWidth:"},
+      {"access": "public", "getter": "lineCap", "name": "lineCap", "setter": "setLineCap:"},
+      {"access": "public", "getter": "lineJoin", "name": "lineJoin", "setter": "setLineJoin:"},
+      {"access": "public", "getter": "miterLimit", "name": "miterLimit", "setter": "setMiterLimit:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineLength", "name": "lineLength"},
+      {"access": "public", "getter": "fillTexture", "introduced": "8", "name": "fillTexture", "setter": "setFillTexture:"},
+      {"access": "public", "getter": "fillShader", "introduced": "8", "name": "fillShader", "setter": "setFillShader:"},
+      {"access": "public", "getter": "strokeTexture", "introduced": "8", "name": "strokeTexture", "setter": "setStrokeTexture:"},
+      {"access": "public", "getter": "strokeShader", "introduced": "8", "name": "strokeShader", "setter": "setStrokeShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "spriteNodeWithTexture:size:"},
+      {"access": "public", "name": "spriteNodeWithTexture:"},
+      {"access": "public", "name": "spriteNodeWithTexture:normalMap:"},
+      {"access": "public", "name": "spriteNodeWithImageNamed:"},
+      {"access": "public", "name": "spriteNodeWithImageNamed:normalMapped:"},
+      {"access": "public", "name": "spriteNodeWithColor:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTexture:color:size:"},
+      {"access": "public", "name": "initWithTexture:"},
+      {"access": "public", "name": "initWithImageNamed:"},
+      {"access": "public", "name": "initWithColor:size:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "introduced": "10", "name": "scaleToSize:"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKSpriteNode",
+     "properties": [
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"},
+      {"access": "public", "getter": "normalTexture", "introduced": "8", "name": "normalTexture", "setter": "setNormalTexture:"},
+      {"access": "public", "getter": "lightingBitMask", "introduced": "8", "name": "lightingBitMask", "setter": "setLightingBitMask:"},
+      {"access": "public", "getter": "shadowCastBitMask", "introduced": "8", "name": "shadowCastBitMask", "setter": "setShadowCastBitMask:"},
+      {"access": "public", "getter": "shadowedBitMask", "introduced": "8", "name": "shadowedBitMask", "setter": "setShadowedBitMask:"},
+      {"access": "public", "getter": "centerRect", "name": "centerRect", "setter": "setCenterRect:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "shader", "introduced": "8", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "SKWarpable"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textureWithImageNamed:"},
+      {"access": "public", "name": "textureWithRect:inTexture:"},
+      {"access": "public", "introduced": "8", "name": "textureVectorNoiseWithSmoothness:size:"},
+      {"access": "public", "introduced": "8", "name": "textureNoiseWithSmoothness:size:grayscale:"},
+      {"access": "public", "name": "textureWithCGImage:"},
+      {"access": "public", "name": "textureWithImage:"},
+      {"access": "public", "name": "textureWithData:size:"},
+      {"access": "public", "name": "textureWithData:size:flipped:"},
+      {"access": "public", "name": "textureWithData:size:rowLength:alignment:"},
+      {"access": "public", "name": "preloadTextures:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "textureByApplyingCIFilter:"},
+      {"access": "public", "introduced": "8", "name": "textureByGeneratingNormalMap"},
+      {"access": "public", "introduced": "8", "name": "textureByGeneratingNormalMapWithSmoothness:contrast:"},
+      {"access": "public", "name": "textureRect"},
+      {"access": "public", "name": "size"},
+      {"access": "public", "introduced": "9", "name": "CGImage"},
+      {"access": "public", "name": "preloadWithCompletionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTexture",
+     "properties": [
+      {"access": "public", "getter": "filteringMode", "name": "filteringMode", "setter": "setFilteringMode:"},
+      {"access": "public", "getter": "usesMipmaps", "name": "usesMipmaps", "setter": "setUsesMipmaps:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "atlasNamed:"},
+      {"access": "public", "introduced": "8", "name": "atlasWithDictionary:"},
+      {"access": "public", "name": "preloadTextureAtlases:withCompletionHandler:"},
+      {"access": "public", "introduced": "9", "name": "preloadTextureAtlasesNamed:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "textureNamed:"},
+      {"access": "public", "name": "preloadWithCompletionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTextureAtlas",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureNames", "name": "textureNames"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileDefinitionWithTexture:"},
+      {"access": "public", "name": "tileDefinitionWithTexture:size:"},
+      {"access": "public", "name": "tileDefinitionWithTexture:normalTexture:size:"},
+      {"access": "public", "name": "tileDefinitionWithTextures:size:timePerFrame:"},
+      {"access": "public", "name": "tileDefinitionWithTextures:normalTextures:size:timePerFrame:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTexture:"},
+      {"access": "public", "name": "initWithTexture:size:"},
+      {"access": "public", "name": "initWithTexture:normalTexture:size:"},
+      {"access": "public", "name": "initWithTextures:size:timePerFrame:"},
+      {"access": "public", "name": "initWithTextures:normalTextures:size:timePerFrame:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileDefinition",
+     "properties": [
+      {"access": "public", "getter": "textures", "name": "textures", "setter": "setTextures:"},
+      {"access": "public", "getter": "normalTextures", "name": "normalTextures", "setter": "setNormalTextures:"},
+      {"access": "public", "getter": "userData", "name": "userData", "setter": "setUserData:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "timePerFrame", "name": "timePerFrame", "setter": "setTimePerFrame:"},
+      {"access": "public", "getter": "placementWeight", "name": "placementWeight", "setter": "setPlacementWeight:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "flipVertically", "name": "flipVertically", "setter": "setFlipVertically:"},
+      {"access": "public", "getter": "flipHorizontally", "name": "flipHorizontally", "setter": "setFlipHorizontally:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileGroupWithTileDefinition:"},
+      {"access": "public", "name": "tileGroupWithRules:"},
+      {"access": "public", "name": "emptyTileGroup"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileDefinition:"},
+      {"access": "public", "name": "initWithRules:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileGroup",
+     "properties": [
+      {"access": "public", "getter": "rules", "name": "rules", "setter": "setRules:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileGroupRuleWithAdjacency:tileDefinitions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAdjacency:tileDefinitions:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileGroupRule",
+     "properties": [
+      {"access": "public", "getter": "adjacency", "name": "adjacency", "setter": "setAdjacency:"},
+      {"access": "public", "getter": "tileDefinitions", "name": "tileDefinitions", "setter": "setTileDefinitions:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:"},
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:fillWithTileGroup:"},
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:tileGroupLayout:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:"},
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:fillWithTileGroup:"},
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:tileGroupLayout:"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"},
+      {"access": "public", "name": "fillWithTileGroup:"},
+      {"access": "public", "name": "tileDefinitionAtColumn:row:"},
+      {"access": "public", "name": "tileGroupAtColumn:row:"},
+      {"access": "public", "name": "setTileGroup:forColumn:row:"},
+      {"access": "public", "name": "setTileGroup:andTileDefinition:forColumn:row:"},
+      {"access": "public", "name": "tileColumnIndexFromPosition:"},
+      {"access": "public", "name": "tileRowIndexFromPosition:"},
+      {"access": "public", "name": "centerOfTileAtColumn:row:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileMapNode",
+     "properties": [
+      {"access": "public", "getter": "numberOfColumns", "name": "numberOfColumns", "setter": "setNumberOfColumns:"},
+      {"access": "public", "getter": "numberOfRows", "name": "numberOfRows", "setter": "setNumberOfRows:"},
+      {"access": "public", "getter": "tileSize", "name": "tileSize", "setter": "setTileSize:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mapSize", "name": "mapSize"},
+      {"access": "public", "getter": "tileSet", "name": "tileSet", "setter": "setTileSet:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"},
+      {"access": "public", "getter": "lightingBitMask", "name": "lightingBitMask", "setter": "setLightingBitMask:"},
+      {"access": "public", "getter": "enableAutomapping", "name": "enableAutomapping", "setter": "setEnableAutomapping:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileSetWithTileGroups:"},
+      {"access": "public", "name": "tileSetWithTileGroups:tileSetType:"},
+      {"access": "public", "name": "tileSetNamed:"},
+      {"access": "public", "name": "tileSetFromURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileGroups:"},
+      {"access": "public", "name": "initWithTileGroups:tileSetType:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileSet",
+     "properties": [
+      {"access": "public", "getter": "tileGroups", "name": "tileGroups", "setter": "setTileGroups:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "defaultTileGroup", "name": "defaultTileGroup", "setter": "setDefaultTileGroup:"},
+      {"access": "public", "getter": "defaultTileSize", "name": "defaultTileSize", "setter": "setDefaultTileSize:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setEulerAngles:"},
+      {"access": "public", "name": "eulerAngles"},
+      {"access": "public", "name": "setRotationMatrix:"},
+      {"access": "public", "name": "rotationMatrix"},
+      {"access": "public", "name": "setQuaternion:"},
+      {"access": "public", "name": "quaternion"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "SKTransformNode",
+     "properties": [
+      {"access": "public", "getter": "xRotation", "name": "xRotation", "setter": "setXRotation:"},
+      {"access": "public", "getter": "yRotation", "name": "yRotation", "setter": "setYRotation:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "crossFadeWithDuration:"},
+      {"access": "public", "name": "fadeWithDuration:"},
+      {"access": "public", "name": "fadeWithColor:duration:"},
+      {"access": "public", "name": "flipHorizontalWithDuration:"},
+      {"access": "public", "name": "flipVerticalWithDuration:"},
+      {"access": "public", "name": "revealWithDirection:duration:"},
+      {"access": "public", "name": "moveInWithDirection:duration:"},
+      {"access": "public", "name": "pushWithDirection:duration:"},
+      {"access": "public", "name": "doorsOpenHorizontalWithDuration:"},
+      {"access": "public", "name": "doorsOpenVerticalWithDuration:"},
+      {"access": "public", "name": "doorsCloseHorizontalWithDuration:"},
+      {"access": "public", "name": "doorsCloseVerticalWithDuration:"},
+      {"access": "public", "name": "doorwayWithDuration:"},
+      {"access": "public", "name": "transitionWithCIFilter:duration:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTransition",
+     "properties": [
+      {"access": "public", "getter": "pausesIncomingScene", "name": "pausesIncomingScene", "setter": "setPausesIncomingScene:"},
+      {"access": "public", "getter": "pausesOutgoingScene", "name": "pausesOutgoingScene", "setter": "setPausesOutgoingScene:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "uniformWithName:"},
+      {"access": "public", "name": "uniformWithName:texture:"},
+      {"access": "public", "name": "uniformWithName:float:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat2:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat3:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat4:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat2x2:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat3x3:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat4x4:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector2:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector3:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector4:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix2:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix3:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix4:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:"},
+      {"access": "public", "name": "initWithName:texture:"},
+      {"access": "public", "name": "initWithName:float:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat2:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat3:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat4:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat2x2:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat3x3:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat4x4:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector2:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector3:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector4:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix2:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix3:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix4:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKUniform",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformType", "name": "uniformType"},
+      {"access": "public", "getter": "textureValue", "name": "textureValue", "setter": "setTextureValue:"},
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "vectorFloat2Value", "introduced": "10", "name": "vectorFloat2Value", "setter": "setVectorFloat2Value:"},
+      {"access": "public", "getter": "vectorFloat3Value", "introduced": "10", "name": "vectorFloat3Value", "setter": "setVectorFloat3Value:"},
+      {"access": "public", "getter": "vectorFloat4Value", "introduced": "10", "name": "vectorFloat4Value", "setter": "setVectorFloat4Value:"},
+      {"access": "public", "getter": "matrixFloat2x2Value", "introduced": "10", "name": "matrixFloat2x2Value", "setter": "setMatrixFloat2x2Value:"},
+      {"access": "public", "getter": "matrixFloat3x3Value", "introduced": "10", "name": "matrixFloat3x3Value", "setter": "setMatrixFloat3x3Value:"},
+      {"access": "public", "getter": "matrixFloat4x4Value", "introduced": "10", "name": "matrixFloat4x4Value", "setter": "setMatrixFloat4x4Value:"},
+      {"access": "public", "getter": "floatVector2Value", "introduced": "7", "name": "floatVector2Value", "setter": "setFloatVector2Value:"},
+      {"access": "public", "getter": "floatVector3Value", "introduced": "7", "name": "floatVector3Value", "setter": "setFloatVector3Value:"},
+      {"access": "public", "getter": "floatVector4Value", "introduced": "7", "name": "floatVector4Value", "setter": "setFloatVector4Value:"},
+      {"access": "public", "getter": "floatMatrix2Value", "introduced": "7", "name": "floatMatrix2Value", "setter": "setFloatMatrix2Value:"},
+      {"access": "public", "getter": "floatMatrix3Value", "introduced": "7", "name": "floatMatrix3Value", "setter": "setFloatMatrix3Value:"},
+      {"access": "public", "getter": "floatMatrix4Value", "introduced": "7", "name": "floatMatrix4Value", "setter": "setFloatMatrix4Value:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "videoNodeWithAVPlayer:"},
+      {"access": "public", "introduced": "7", "name": "videoNodeWithVideoFileNamed:"},
+      {"access": "public", "introduced": "9", "name": "videoNodeWithFileNamed:"},
+      {"access": "public", "introduced": "7", "name": "videoNodeWithVideoURL:"},
+      {"access": "public", "introduced": "9", "name": "videoNodeWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAVPlayer:"},
+      {"access": "public", "introduced": "7", "name": "initWithVideoFileNamed:"},
+      {"access": "public", "introduced": "8", "name": "initWithFileNamed:"},
+      {"access": "public", "introduced": "7", "name": "initWithVideoURL:"},
+      {"access": "public", "introduced": "8", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "play"},
+      {"access": "public", "name": "pause"}
+     ],
+     "linkage": "exported",
+     "name": "SKVideoNode",
+     "properties": [
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "presentScene:"},
+      {"access": "public", "name": "presentScene:transition:"},
+      {"access": "public", "name": "textureFromNode:"},
+      {"access": "public", "name": "textureFromNode:crop:"},
+      {"access": "public", "name": "convertPoint:toScene:"},
+      {"access": "public", "name": "convertPoint:fromScene:"}
+     ],
+     "linkage": "exported",
+     "name": "SKView",
+     "properties": [
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "showsFPS", "name": "showsFPS", "setter": "setShowsFPS:"},
+      {"access": "public", "getter": "showsDrawCount", "name": "showsDrawCount", "setter": "setShowsDrawCount:"},
+      {"access": "public", "getter": "showsNodeCount", "name": "showsNodeCount", "setter": "setShowsNodeCount:"},
+      {"access": "public", "getter": "showsQuadCount", "introduced": "8", "name": "showsQuadCount", "setter": "setShowsQuadCount:"},
+      {"access": "public", "getter": "showsPhysics", "introduced": "8", "name": "showsPhysics", "setter": "setShowsPhysics:"},
+      {"access": "public", "getter": "showsFields", "introduced": "8", "name": "showsFields", "setter": "setShowsFields:"},
+      {"access": "public", "getter": "isAsynchronous", "name": "asynchronous", "setter": "setAsynchronous:"},
+      {"access": "public", "getter": "allowsTransparency", "introduced": "8", "name": "allowsTransparency", "setter": "setAllowsTransparency:"},
+      {"access": "public", "getter": "ignoresSiblingOrder", "name": "ignoresSiblingOrder", "setter": "setIgnoresSiblingOrder:"},
+      {"access": "public", "getter": "shouldCullNonVisibleNodes", "introduced": "8", "name": "shouldCullNonVisibleNodes", "setter": "setShouldCullNonVisibleNodes:"},
+      {"access": "public", "getter": "preferredFramesPerSecond", "introduced": "10", "name": "preferredFramesPerSecond", "setter": "setPreferredFramesPerSecond:"},
+      {"access": "public", "getter": "disableDepthStencilBuffer", "name": "disableDepthStencilBuffer", "setter": "setDisableDepthStencilBuffer:"},
+      {"access": "public", "getter": "delegate", "introduced": "10", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "frameInterval", "introduced": "7", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "preferredFrameRate", "introduced": "10", "name": "preferredFrameRate", "setter": "setPreferredFrameRate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scene", "name": "scene"}
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKWarpGeometry",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "grid"},
+      {"access": "public", "name": "gridWithColumns:rows:"},
+      {"access": "public", "name": "gridWithColumns:rows:sourcePositions:destPositions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithColumns:rows:sourcePositions:destPositions:"},
+      {"access": "public", "name": "sourcePositionAtIndex:"},
+      {"access": "public", "name": "destPositionAtIndex:"},
+      {"access": "public", "name": "gridByReplacingSourcePositions:"},
+      {"access": "public", "name": "gridByReplacingDestPositions:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKWarpGeometryGrid",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfColumns", "name": "numberOfColumns"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfRows", "name": "numberOfRows"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexCount", "name": "vertexCount"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "SKWarpGeometry"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "didBeginContact:", "optional": true},
+      {"access": "public", "name": "didEndContact:", "optional": true}
+     ],
+     "name": "SKPhysicsContactDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "update:forScene:", "optional": true},
+      {"access": "public", "name": "didEvaluateActionsForScene:", "optional": true},
+      {"access": "public", "name": "didSimulatePhysicsForScene:", "optional": true},
+      {"access": "public", "name": "didApplyConstraintsForScene:", "optional": true},
+      {"access": "public", "name": "didFinishUpdateForScene:", "optional": true}
+     ],
+     "introduced": "8",
+     "name": "SKSceneDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "view:shouldRenderAtTime:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SKViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "SKWarpable",
+     "properties": [
+      {"access": "public", "getter": "warpGeometry", "name": "warpGeometry", "setter": "setWarpGeometry:"},
+      {"access": "public", "getter": "subdivisionLevels", "name": "subdivisionLevels", "setter": "setSubdivisionLevels:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SKActionTimingFunction"},
+    {"access": "public", "name": "SKActionTimingMode"},
+    {"access": "public", "name": "SKAttributeType"},
+    {"access": "public", "name": "SKBlendMode"},
+    {"access": "public", "name": "SKFieldForceEvaluator"},
+    {"access": "public", "name": "SKInterpolationMode"},
+    {"access": "public", "name": "SKLabelHorizontalAlignmentMode"},
+    {"access": "public", "name": "SKLabelVerticalAlignmentMode"},
+    {"access": "public", "name": "SKNodeFocusBehavior"},
+    {"access": "public", "name": "SKParticleRenderOrder"},
+    {"access": "public", "name": "SKRepeatMode"},
+    {"access": "public", "name": "SKSceneScaleMode"},
+    {"access": "public", "name": "SKTextureFilteringMode"},
+    {"access": "public", "name": "SKTileAdjacencyMask"},
+    {"access": "public", "name": "SKTileDefinitionRotation"},
+    {"access": "public", "name": "SKTileSetType"},
+    {"access": "public", "name": "SKTransitionDirection"},
+    {"access": "public", "name": "SKUniformType"},
+    {"access": "public", "name": "vector_float3"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "changeVolumeTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeVolumeBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "MixerControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "changeChargeTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeChargeBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeMassTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeMassBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyForce:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyForce:atPoint:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyTorque:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyImpulse:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyImpulse:atPoint:duration:"},
+      {"access": "public", "introduced": "9", "name": "applyAngularImpulse:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "NodeWithPhysicsBody"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "play"},
+      {"access": "public", "introduced": "9", "name": "pause"},
+      {"access": "public", "introduced": "9", "name": "stop"},
+      {"access": "public", "introduced": "9", "name": "changePlaybackRateTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changePlaybackRateBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "PlaybackControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "moveBy:duration:"},
+      {"access": "public", "name": "moveByX:y:duration:"},
+      {"access": "public", "name": "moveTo:duration:"},
+      {"access": "public", "name": "moveToX:duration:"},
+      {"access": "public", "name": "moveToY:duration:"},
+      {"access": "public", "name": "rotateByAngle:duration:"},
+      {"access": "public", "name": "rotateToAngle:duration:"},
+      {"access": "public", "name": "rotateToAngle:duration:shortestUnitArc:"},
+      {"access": "public", "name": "resizeByWidth:height:duration:"},
+      {"access": "public", "name": "resizeToWidth:height:duration:"},
+      {"access": "public", "name": "resizeToWidth:duration:"},
+      {"access": "public", "name": "resizeToHeight:duration:"},
+      {"access": "public", "name": "scaleBy:duration:"},
+      {"access": "public", "name": "scaleXBy:y:duration:"},
+      {"access": "public", "name": "scaleTo:duration:"},
+      {"access": "public", "name": "scaleXTo:y:duration:"},
+      {"access": "public", "name": "scaleXTo:duration:"},
+      {"access": "public", "name": "scaleYTo:duration:"},
+      {"access": "public", "introduced": "10", "name": "scaleToSize:duration:"},
+      {"access": "public", "name": "sequence:"},
+      {"access": "public", "name": "group:"},
+      {"access": "public", "name": "repeatAction:count:"},
+      {"access": "public", "name": "repeatActionForever:"},
+      {"access": "public", "name": "fadeInWithDuration:"},
+      {"access": "public", "name": "fadeOutWithDuration:"},
+      {"access": "public", "name": "fadeAlphaBy:duration:"},
+      {"access": "public", "name": "fadeAlphaTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "hide"},
+      {"access": "public", "introduced": "8", "name": "unhide"},
+      {"access": "public", "introduced": "7.1", "name": "setTexture:"},
+      {"access": "public", "introduced": "9", "name": "setNormalTexture:"},
+      {"access": "public", "introduced": "7.1", "name": "setTexture:resize:"},
+      {"access": "public", "introduced": "9", "name": "setNormalTexture:resize:"},
+      {"access": "public", "name": "animateWithTextures:timePerFrame:"},
+      {"access": "public", "introduced": "9", "name": "animateWithNormalTextures:timePerFrame:"},
+      {"access": "public", "name": "animateWithTextures:timePerFrame:resize:restore:"},
+      {"access": "public", "introduced": "9", "name": "animateWithNormalTextures:timePerFrame:resize:restore:"},
+      {"access": "public", "name": "playSoundFileNamed:waitForCompletion:"},
+      {"access": "public", "name": "colorizeWithColor:colorBlendFactor:duration:"},
+      {"access": "public", "name": "colorizeWithColorBlendFactor:duration:"},
+      {"access": "public", "introduced": "8", "name": "falloffTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "falloffBy:duration:"},
+      {"access": "public", "name": "followPath:duration:"},
+      {"access": "public", "name": "followPath:asOffset:orientToPath:duration:"},
+      {"access": "public", "name": "followPath:speed:"},
+      {"access": "public", "name": "followPath:asOffset:orientToPath:speed:"},
+      {"access": "public", "name": "speedBy:duration:"},
+      {"access": "public", "name": "speedTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachTo:rootNode:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachTo:rootNode:velocity:"},
+      {"access": "public", "introduced": "8", "name": "reachToNode:rootNode:duration:"},
+      {"access": "public", "introduced": "8", "name": "reachToNode:rootNode:velocity:"},
+      {"access": "public", "introduced": "8", "name": "strengthTo:duration:"},
+      {"access": "public", "introduced": "8", "name": "strengthBy:duration:"},
+      {"access": "public", "name": "waitForDuration:"},
+      {"access": "public", "name": "waitForDuration:withRange:"},
+      {"access": "public", "name": "removeFromParent"},
+      {"access": "public", "name": "performSelector:onTarget:"},
+      {"access": "public", "name": "runBlock:"},
+      {"access": "public", "name": "runBlock:queue:"},
+      {"access": "public", "name": "runAction:onChildWithName:"},
+      {"access": "public", "name": "customActionWithDuration:actionBlock:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:duration:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:fromURL:"},
+      {"access": "public", "introduced": "9", "name": "actionNamed:fromURL:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKActions"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "stereoPanTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "stereoPanBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeReverbTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeReverbBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeObstructionTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeObstructionBy:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeOcclusionTo:duration:"},
+      {"access": "public", "introduced": "9", "name": "changeOcclusionBy:duration:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKAudioNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "locationInNode:"},
+      {"access": "public", "name": "previousLocationInNode:"}
+     ],
+     "interface": "UITouch",
+     "name": "SKNodeTouches"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "10", "name": "warpTo:duration:"},
+      {"access": "public", "introduced": "10", "name": "animateWithWarps:times:"},
+      {"access": "public", "introduced": "10", "name": "animateWithWarps:times:restore:"}
+     ],
+     "interface": "SKAction",
+     "name": "SKWarpable"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKActionTimingLinear"},
+      {"access": "public", "name": "SKActionTimingEaseIn"},
+      {"access": "public", "name": "SKActionTimingEaseOut"},
+      {"access": "public", "name": "SKActionTimingEaseInEaseOut"}
+     ],
+     "introduced": "7",
+     "name": "SKActionTimingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKAttributeTypeNone"},
+      {"access": "public", "name": "SKAttributeTypeFloat"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat2"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat3"},
+      {"access": "public", "name": "SKAttributeTypeVectorFloat4"},
+      {"access": "public", "name": "SKAttributeTypeHalfFloat"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat2"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat3"},
+      {"access": "public", "name": "SKAttributeTypeVectorHalfFloat4"}
+     ],
+     "introduced": "9",
+     "name": "SKAttributeType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKBlendModeAlpha"},
+      {"access": "public", "name": "SKBlendModeAdd"},
+      {"access": "public", "name": "SKBlendModeSubtract"},
+      {"access": "public", "name": "SKBlendModeMultiply"},
+      {"access": "public", "name": "SKBlendModeMultiplyX2"},
+      {"access": "public", "name": "SKBlendModeScreen"},
+      {"access": "public", "name": "SKBlendModeReplace"},
+      {"access": "public", "name": "SKBlendModeMultiplyAlpha"}
+     ],
+     "introduced": "7",
+     "name": "SKBlendMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKInterpolationModeLinear"},
+      {"access": "public", "name": "SKInterpolationModeSpline"},
+      {"access": "public", "name": "SKInterpolationModeStep"}
+     ],
+     "name": "SKInterpolationMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeCenter"},
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeLeft"},
+      {"access": "public", "name": "SKLabelHorizontalAlignmentModeRight"}
+     ],
+     "introduced": "7",
+     "name": "SKLabelHorizontalAlignmentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeBaseline"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeCenter"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeTop"},
+      {"access": "public", "name": "SKLabelVerticalAlignmentModeBottom"}
+     ],
+     "introduced": "7",
+     "name": "SKLabelVerticalAlignmentMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKNodeFocusBehaviorNone"},
+      {"access": "public", "name": "SKNodeFocusBehaviorOccluding"},
+      {"access": "public", "name": "SKNodeFocusBehaviorFocusable"}
+     ],
+     "introduced": "11",
+     "name": "SKNodeFocusBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKParticleRenderOrderOldestLast"},
+      {"access": "public", "name": "SKParticleRenderOrderOldestFirst"},
+      {"access": "public", "name": "SKParticleRenderOrderDontCare"}
+     ],
+     "introduced": "9",
+     "name": "SKParticleRenderOrder"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKRepeatModeClamp"},
+      {"access": "public", "name": "SKRepeatModeLoop"}
+     ],
+     "name": "SKRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKSceneScaleModeFill"},
+      {"access": "public", "name": "SKSceneScaleModeAspectFill"},
+      {"access": "public", "name": "SKSceneScaleModeAspectFit"},
+      {"access": "public", "name": "SKSceneScaleModeResizeFill"}
+     ],
+     "introduced": "7",
+     "name": "SKSceneScaleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTextureFilteringNearest"},
+      {"access": "public", "name": "SKTextureFilteringLinear"}
+     ],
+     "introduced": "7",
+     "name": "SKTextureFilteringMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileAdjacencyUp"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileAdjacencyRight"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileAdjacencyDown"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileAdjacencyLeft"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileAdjacencyAll"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUp"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyDown"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileHexFlatAdjacencyAll"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyUpperLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyUpperRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLowerRight"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLowerLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyLeft"},
+      {"access": "public", "name": "SKTileHexPointyAdjacencyAdd"},
+      {"access": "public", "name": "SKTileAdjacencyUpEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRightEdge"},
+      {"access": "public", "name": "SKTileAdjacencyDownEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeftEdge"},
+      {"access": "public", "name": "SKTileAdjacencyUpperRightCorner"},
+      {"access": "public", "name": "SKTileAdjacencyLowerRightCorner"},
+      {"access": "public", "name": "SKTileAdjacencyLowerLeftCorner"},
+      {"access": "public", "name": "SKTileAdjacencyUpperLeftCorner"}
+     ],
+     "introduced": "10",
+     "name": "SKTileAdjacencyMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileDefinitionRotation0"},
+      {"access": "public", "name": "SKTileDefinitionRotation90"},
+      {"access": "public", "name": "SKTileDefinitionRotation180"},
+      {"access": "public", "name": "SKTileDefinitionRotation270"}
+     ],
+     "introduced": "10",
+     "name": "SKTileDefinitionRotation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTileSetTypeGrid"},
+      {"access": "public", "name": "SKTileSetTypeIsometric"},
+      {"access": "public", "name": "SKTileSetTypeHexagonalFlat"},
+      {"access": "public", "name": "SKTileSetTypeHexagonalPointy"}
+     ],
+     "introduced": "10",
+     "name": "SKTileSetType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKTransitionDirectionUp"},
+      {"access": "public", "name": "SKTransitionDirectionDown"},
+      {"access": "public", "name": "SKTransitionDirectionRight"},
+      {"access": "public", "name": "SKTransitionDirectionLeft"}
+     ],
+     "introduced": "7",
+     "name": "SKTransitionDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SKUniformTypeNone"},
+      {"access": "public", "name": "SKUniformTypeFloat"},
+      {"access": "public", "name": "SKUniformTypeFloatVector2"},
+      {"access": "public", "name": "SKUniformTypeFloatVector3"},
+      {"access": "public", "name": "SKUniformTypeFloatVector4"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix2"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix3"},
+      {"access": "public", "name": "SKUniformTypeFloatMatrix4"},
+      {"access": "public", "name": "SKUniformTypeTexture"}
+     ],
+     "introduced": "8",
+     "name": "SKUniformType"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "nodeWithViewportSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithViewportSize:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "hitTest:options:"},
+      {"access": "public", "name": "projectPoint:"},
+      {"access": "public", "name": "unprojectPoint:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SK3DNode",
+     "properties": [
+      {"access": "public", "getter": "viewportSize", "name": "viewportSize", "setter": "setViewportSize:"},
+      {"access": "public", "getter": "scnScene", "name": "scnScene", "setter": "setScnScene:"},
+      {"access": "public", "getter": "sceneTime", "name": "sceneTime", "setter": "setSceneTime:"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "getter": "loops", "name": "loops", "setter": "setLoops:"},
+      {"access": "public", "getter": "pointOfView", "name": "pointOfView", "setter": "setPointOfView:"},
+      {"access": "public", "getter": "autoenablesDefaultLighting", "name": "autoenablesDefaultLighting", "setter": "setAutoenablesDefaultLighting:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "SKActions",
+      "NodeWithPhysicsBody",
+      "PlaybackControl",
+      "MixerControl",
+      "SKWarpable",
+      "SKAudioNode"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "reversedAction"}
+     ],
+     "linkage": "exported",
+     "name": "SKAction",
+     "properties": [
+      {"access": "public", "getter": "duration", "name": "duration", "setter": "setDuration:"},
+      {"access": "public", "getter": "timingMode", "name": "timingMode", "setter": "setTimingMode:"},
+      {"access": "public", "getter": "timingFunction", "introduced": "8", "name": "timingFunction", "setter": "setTimingFunction:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "attributeWithName:type:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:type:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAttribute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "valueWithFloat:"},
+      {"access": "public", "name": "valueWithVectorFloat2:"},
+      {"access": "public", "name": "valueWithVectorFloat3:"},
+      {"access": "public", "name": "valueWithVectorFloat4:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAttributeValue",
+     "properties": [
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "vectorFloat2Value", "name": "vectorFloat2Value", "setter": "setVectorFloat2Value:"},
+      {"access": "public", "getter": "vectorFloat3Value", "name": "vectorFloat3Value", "setter": "setVectorFloat3Value:"},
+      {"access": "public", "getter": "vectorFloat4Value", "name": "vectorFloat4Value", "setter": "setVectorFloat4Value:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAVAudioNode:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithFileNamed:"},
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKAudioNode",
+     "properties": [
+      {"access": "public", "getter": "avAudioNode", "name": "avAudioNode", "setter": "setAvAudioNode:"},
+      {"access": "public", "getter": "autoplayLooped", "name": "autoplayLooped", "setter": "setAutoplayLooped:"},
+      {"access": "public", "getter": "isPositional", "name": "positional", "setter": "setPositional:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "containsNode:"},
+      {"access": "public", "name": "containedNodeSet"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKCameraNode",
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "positionX:"},
+      {"access": "public", "name": "positionY:"},
+      {"access": "public", "name": "positionX:Y:"},
+      {"access": "public", "name": "distance:toNode:"},
+      {"access": "public", "name": "distance:toPoint:"},
+      {"access": "public", "name": "distance:toPoint:inNode:"},
+      {"access": "public", "name": "zRotation:"},
+      {"access": "public", "name": "orientToNode:offset:"},
+      {"access": "public", "name": "orientToPoint:offset:"},
+      {"access": "public", "name": "orientToPoint:inNode:offset:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKConstraint",
+     "properties": [
+      {"access": "public", "getter": "enabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "referenceNode", "name": "referenceNode", "setter": "setReferenceNode:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKCropNode",
+     "properties": [
+      {"access": "public", "getter": "maskNode", "name": "maskNode", "setter": "setMaskNode:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKEffectNode",
+     "properties": [
+      {"access": "public", "getter": "filter", "name": "filter", "setter": "setFilter:"},
+      {"access": "public", "getter": "shouldCenterFilter", "name": "shouldCenterFilter", "setter": "setShouldCenterFilter:"},
+      {"access": "public", "getter": "shouldEnableEffects", "name": "shouldEnableEffects", "setter": "setShouldEnableEffects:"},
+      {"access": "public", "getter": "shouldRasterize", "name": "shouldRasterize", "setter": "setShouldRasterize:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "SKWarpable"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advanceSimulationTime:"},
+      {"access": "public", "name": "resetSimulation"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKEmitterNode",
+     "properties": [
+      {"access": "public", "getter": "particleTexture", "name": "particleTexture", "setter": "setParticleTexture:"},
+      {"access": "public", "getter": "particleBlendMode", "name": "particleBlendMode", "setter": "setParticleBlendMode:"},
+      {"access": "public", "getter": "particleColor", "name": "particleColor", "setter": "setParticleColor:"},
+      {"access": "public", "getter": "particleColorRedRange", "name": "particleColorRedRange", "setter": "setParticleColorRedRange:"},
+      {"access": "public", "getter": "particleColorGreenRange", "name": "particleColorGreenRange", "setter": "setParticleColorGreenRange:"},
+      {"access": "public", "getter": "particleColorBlueRange", "name": "particleColorBlueRange", "setter": "setParticleColorBlueRange:"},
+      {"access": "public", "getter": "particleColorAlphaRange", "name": "particleColorAlphaRange", "setter": "setParticleColorAlphaRange:"},
+      {"access": "public", "getter": "particleColorRedSpeed", "name": "particleColorRedSpeed", "setter": "setParticleColorRedSpeed:"},
+      {"access": "public", "getter": "particleColorGreenSpeed", "name": "particleColorGreenSpeed", "setter": "setParticleColorGreenSpeed:"},
+      {"access": "public", "getter": "particleColorBlueSpeed", "name": "particleColorBlueSpeed", "setter": "setParticleColorBlueSpeed:"},
+      {"access": "public", "getter": "particleColorAlphaSpeed", "name": "particleColorAlphaSpeed", "setter": "setParticleColorAlphaSpeed:"},
+      {"access": "public", "getter": "particleColorSequence", "name": "particleColorSequence", "setter": "setParticleColorSequence:"},
+      {"access": "public", "getter": "particleColorBlendFactor", "name": "particleColorBlendFactor", "setter": "setParticleColorBlendFactor:"},
+      {"access": "public", "getter": "particleColorBlendFactorRange", "name": "particleColorBlendFactorRange", "setter": "setParticleColorBlendFactorRange:"},
+      {"access": "public", "getter": "particleColorBlendFactorSpeed", "name": "particleColorBlendFactorSpeed", "setter": "setParticleColorBlendFactorSpeed:"},
+      {"access": "public", "getter": "particleColorBlendFactorSequence", "name": "particleColorBlendFactorSequence", "setter": "setParticleColorBlendFactorSequence:"},
+      {"access": "public", "getter": "particlePosition", "name": "particlePosition", "setter": "setParticlePosition:"},
+      {"access": "public", "getter": "particlePositionRange", "name": "particlePositionRange", "setter": "setParticlePositionRange:"},
+      {"access": "public", "getter": "particleSpeed", "name": "particleSpeed", "setter": "setParticleSpeed:"},
+      {"access": "public", "getter": "particleSpeedRange", "name": "particleSpeedRange", "setter": "setParticleSpeedRange:"},
+      {"access": "public", "getter": "emissionAngle", "name": "emissionAngle", "setter": "setEmissionAngle:"},
+      {"access": "public", "getter": "emissionAngleRange", "name": "emissionAngleRange", "setter": "setEmissionAngleRange:"},
+      {"access": "public", "getter": "xAcceleration", "name": "xAcceleration", "setter": "setXAcceleration:"},
+      {"access": "public", "getter": "yAcceleration", "name": "yAcceleration", "setter": "setYAcceleration:"},
+      {"access": "public", "getter": "particleBirthRate", "name": "particleBirthRate", "setter": "setParticleBirthRate:"},
+      {"access": "public", "getter": "numParticlesToEmit", "name": "numParticlesToEmit", "setter": "setNumParticlesToEmit:"},
+      {"access": "public", "getter": "particleLifetime", "name": "particleLifetime", "setter": "setParticleLifetime:"},
+      {"access": "public", "getter": "particleLifetimeRange", "name": "particleLifetimeRange", "setter": "setParticleLifetimeRange:"},
+      {"access": "public", "getter": "particleRotation", "name": "particleRotation", "setter": "setParticleRotation:"},
+      {"access": "public", "getter": "particleRotationRange", "name": "particleRotationRange", "setter": "setParticleRotationRange:"},
+      {"access": "public", "getter": "particleRotationSpeed", "name": "particleRotationSpeed", "setter": "setParticleRotationSpeed:"},
+      {"access": "public", "getter": "particleSize", "name": "particleSize", "setter": "setParticleSize:"},
+      {"access": "public", "getter": "particleScale", "name": "particleScale", "setter": "setParticleScale:"},
+      {"access": "public", "getter": "particleScaleRange", "name": "particleScaleRange", "setter": "setParticleScaleRange:"},
+      {"access": "public", "getter": "particleScaleSpeed", "name": "particleScaleSpeed", "setter": "setParticleScaleSpeed:"},
+      {"access": "public", "getter": "particleScaleSequence", "name": "particleScaleSequence", "setter": "setParticleScaleSequence:"},
+      {"access": "public", "getter": "particleAlpha", "name": "particleAlpha", "setter": "setParticleAlpha:"},
+      {"access": "public", "getter": "particleAlphaRange", "name": "particleAlphaRange", "setter": "setParticleAlphaRange:"},
+      {"access": "public", "getter": "particleAlphaSpeed", "name": "particleAlphaSpeed", "setter": "setParticleAlphaSpeed:"},
+      {"access": "public", "getter": "particleAlphaSequence", "name": "particleAlphaSequence", "setter": "setParticleAlphaSequence:"},
+      {"access": "public", "getter": "particleAction", "name": "particleAction", "setter": "setParticleAction:"},
+      {"access": "public", "getter": "fieldBitMask", "name": "fieldBitMask", "setter": "setFieldBitMask:"},
+      {"access": "public", "getter": "targetNode", "name": "targetNode", "setter": "setTargetNode:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"},
+      {"access": "public", "getter": "particleZPosition", "name": "particleZPosition", "setter": "setParticleZPosition:"},
+      {"access": "public", "getter": "particleRenderOrder", "introduced": "9", "name": "particleRenderOrder", "setter": "setParticleRenderOrder:"},
+      {"access": "public", "getter": "particleZPositionRange", "introduced": "7", "name": "particleZPositionRange", "setter": "setParticleZPositionRange:"},
+      {"access": "public", "getter": "particleZPositionSpeed", "introduced": "7", "name": "particleZPositionSpeed", "setter": "setParticleZPositionSpeed:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "dragField"},
+      {"access": "public", "name": "vortexField"},
+      {"access": "public", "name": "radialGravityField"},
+      {"access": "public", "name": "linearGravityFieldWithVector:"},
+      {"access": "public", "name": "velocityFieldWithVector:"},
+      {"access": "public", "name": "velocityFieldWithTexture:"},
+      {"access": "public", "name": "noiseFieldWithSmoothness:animationSpeed:"},
+      {"access": "public", "name": "turbulenceFieldWithSmoothness:animationSpeed:"},
+      {"access": "public", "name": "springField"},
+      {"access": "public", "name": "electricField"},
+      {"access": "public", "name": "magneticField"},
+      {"access": "public", "name": "customFieldWithEvaluationBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKFieldNode",
+     "properties": [
+      {"access": "public", "getter": "region", "name": "region", "setter": "setRegion:"},
+      {"access": "public", "getter": "strength", "name": "strength", "setter": "setStrength:"},
+      {"access": "public", "getter": "falloff", "name": "falloff", "setter": "setFalloff:"},
+      {"access": "public", "getter": "minimumRadius", "name": "minimumRadius", "setter": "setMinimumRadius:"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "isExclusive", "name": "exclusive", "setter": "setExclusive:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"},
+      {"access": "public", "getter": "direction", "name": "direction", "setter": "setDirection:"},
+      {"access": "public", "getter": "smoothness", "name": "smoothness", "setter": "setSmoothness:"},
+      {"access": "public", "getter": "animationSpeed", "name": "animationSpeed", "setter": "setAnimationSpeed:"},
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithKeyframeValues:times:"},
+      {"access": "public", "name": "initWithCapacity:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "count"},
+      {"access": "public", "name": "addKeyframeValue:time:"},
+      {"access": "public", "name": "removeLastKeyframe"},
+      {"access": "public", "name": "removeKeyframeAtIndex:"},
+      {"access": "public", "name": "setKeyframeValue:forIndex:"},
+      {"access": "public", "name": "setKeyframeTime:forIndex:"},
+      {"access": "public", "name": "setKeyframeValue:time:forIndex:"},
+      {"access": "public", "name": "getKeyframeValueForIndex:"},
+      {"access": "public", "name": "getKeyframeTimeForIndex:"},
+      {"access": "public", "name": "sampleAtTime:"}
+     ],
+     "linkage": "exported",
+     "name": "SKKeyframeSequence",
+     "properties": [
+      {"access": "public", "getter": "interpolationMode", "name": "interpolationMode", "setter": "setInterpolationMode:"},
+      {"access": "public", "getter": "repeatMode", "name": "repeatMode", "setter": "setRepeatMode:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "labelNodeWithText:"},
+      {"access": "public", "introduced": "11", "name": "labelNodeWithAttributedText:"},
+      {"access": "public", "name": "labelNodeWithFontNamed:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFontNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKLabelNode",
+     "properties": [
+      {"access": "public", "getter": "verticalAlignmentMode", "name": "verticalAlignmentMode", "setter": "setVerticalAlignmentMode:"},
+      {"access": "public", "getter": "horizontalAlignmentMode", "name": "horizontalAlignmentMode", "setter": "setHorizontalAlignmentMode:"},
+      {"access": "public", "getter": "numberOfLines", "introduced": "11", "name": "numberOfLines", "setter": "setNumberOfLines:"},
+      {"access": "public", "getter": "lineBreakMode", "introduced": "11", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "preferredMaxLayoutWidth", "introduced": "11", "name": "preferredMaxLayoutWidth", "setter": "setPreferredMaxLayoutWidth:"},
+      {"access": "public", "getter": "fontName", "name": "fontName", "setter": "setFontName:"},
+      {"access": "public", "getter": "text", "name": "text", "setter": "setText:"},
+      {"access": "public", "getter": "attributedText", "introduced": "11", "name": "attributedText", "setter": "setAttributedText:"},
+      {"access": "public", "getter": "fontSize", "name": "fontSize", "setter": "setFontSize:"},
+      {"access": "public", "getter": "fontColor", "name": "fontColor", "setter": "setFontColor:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKLightNode",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "lightColor", "name": "lightColor", "setter": "setLightColor:"},
+      {"access": "public", "getter": "ambientColor", "name": "ambientColor", "setter": "setAmbientColor:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"},
+      {"access": "public", "getter": "falloff", "name": "falloff", "setter": "setFalloff:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "mutableTextureWithSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithSize:pixelFormat:"},
+      {"access": "public", "name": "modifyPixelDataWithBlock:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKMutableTexture",
+     "super": "SKTexture"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "node"},
+      {"access": "public", "name": "nodeWithFileNamed:"},
+      {"access": "public", "introduced": "12", "name": "nodeWithFileNamed:securelyWithClasses:andError:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "calculateAccumulatedFrame"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"},
+      {"access": "public", "name": "setScale:"},
+      {"access": "public", "name": "addChild:"},
+      {"access": "public", "name": "insertChild:atIndex:"},
+      {"access": "public", "name": "removeChildrenInArray:"},
+      {"access": "public", "name": "removeAllChildren"},
+      {"access": "public", "name": "removeFromParent"},
+      {"access": "public", "introduced": "9", "name": "moveToParent:"},
+      {"access": "public", "name": "childNodeWithName:"},
+      {"access": "public", "name": "enumerateChildNodesWithName:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "inParentHierarchy:"},
+      {"access": "public", "name": "runAction:"},
+      {"access": "public", "name": "runAction:completion:"},
+      {"access": "public", "name": "runAction:withKey:"},
+      {"access": "public", "name": "hasActions"},
+      {"access": "public", "name": "actionForKey:"},
+      {"access": "public", "name": "removeActionForKey:"},
+      {"access": "public", "name": "removeAllActions"},
+      {"access": "public", "name": "containsPoint:"},
+      {"access": "public", "name": "nodeAtPoint:"},
+      {"access": "public", "name": "nodesAtPoint:"},
+      {"access": "public", "name": "convertPoint:fromNode:"},
+      {"access": "public", "name": "convertPoint:toNode:"},
+      {"access": "public", "name": "intersectsNode:"},
+      {"access": "public", "name": "isEqualToNode:"}
+     ],
+     "linkage": "exported",
+     "name": "SKNode",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "getter": "position", "name": "position", "setter": "setPosition:"},
+      {"access": "public", "getter": "zPosition", "name": "zPosition", "setter": "setZPosition:"},
+      {"access": "public", "getter": "zRotation", "name": "zRotation", "setter": "setZRotation:"},
+      {"access": "public", "getter": "xScale", "name": "xScale", "setter": "setXScale:"},
+      {"access": "public", "getter": "yScale", "name": "yScale", "setter": "setYScale:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "alpha", "name": "alpha", "setter": "setAlpha:"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "isHidden", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "isUserInteractionEnabled", "name": "userInteractionEnabled", "setter": "setUserInteractionEnabled:"},
+      {"access": "public", "getter": "focusBehavior", "introduced": "11", "name": "focusBehavior", "setter": "setFocusBehavior:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parent", "name": "parent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "children", "name": "children"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scene", "name": "scene"},
+      {"access": "public", "getter": "physicsBody", "name": "physicsBody", "setter": "setPhysicsBody:"},
+      {"access": "public", "getter": "userData", "name": "userData", "setter": "setUserData:"},
+      {"access": "public", "getter": "reachConstraints", "name": "reachConstraints", "setter": "setReachConstraints:"},
+      {"access": "public", "getter": "constraints", "name": "constraints", "setter": "setConstraints:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding",
+      "UIFocusItem",
+      "UIFocusItemContainer",
+      "UICoordinateSpace"
+     ],
+     "super": "UIResponder"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "bodyWithCircleOfRadius:"},
+      {"access": "public", "name": "bodyWithCircleOfRadius:center:"},
+      {"access": "public", "name": "bodyWithRectangleOfSize:"},
+      {"access": "public", "name": "bodyWithRectangleOfSize:center:"},
+      {"access": "public", "name": "bodyWithPolygonFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeFromPoint:toPoint:"},
+      {"access": "public", "name": "bodyWithEdgeChainFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeLoopFromPath:"},
+      {"access": "public", "name": "bodyWithEdgeLoopFromRect:"},
+      {"access": "public", "introduced": "8", "name": "bodyWithTexture:size:"},
+      {"access": "public", "introduced": "8", "name": "bodyWithTexture:alphaThreshold:size:"},
+      {"access": "public", "name": "bodyWithBodies:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "applyForce:"},
+      {"access": "public", "name": "applyForce:atPoint:"},
+      {"access": "public", "name": "applyTorque:"},
+      {"access": "public", "name": "applyImpulse:"},
+      {"access": "public", "name": "applyImpulse:atPoint:"},
+      {"access": "public", "name": "applyAngularImpulse:"},
+      {"access": "public", "name": "allContactedBodies"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsBody",
+     "properties": [
+      {"access": "public", "getter": "isDynamic", "name": "dynamic", "setter": "setDynamic:"},
+      {"access": "public", "getter": "usesPreciseCollisionDetection", "name": "usesPreciseCollisionDetection", "setter": "setUsesPreciseCollisionDetection:"},
+      {"access": "public", "getter": "allowsRotation", "name": "allowsRotation", "setter": "setAllowsRotation:"},
+      {"access": "public", "getter": "pinned", "introduced": "8", "name": "pinned", "setter": "setPinned:"},
+      {"access": "public", "getter": "isResting", "name": "resting", "setter": "setResting:"},
+      {"access": "public", "getter": "friction", "name": "friction", "setter": "setFriction:"},
+      {"access": "public", "getter": "charge", "introduced": "8", "name": "charge", "setter": "setCharge:"},
+      {"access": "public", "getter": "restitution", "name": "restitution", "setter": "setRestitution:"},
+      {"access": "public", "getter": "linearDamping", "name": "linearDamping", "setter": "setLinearDamping:"},
+      {"access": "public", "getter": "angularDamping", "name": "angularDamping", "setter": "setAngularDamping:"},
+      {"access": "public", "getter": "density", "name": "density", "setter": "setDensity:"},
+      {"access": "public", "getter": "mass", "name": "mass", "setter": "setMass:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "area", "name": "area"},
+      {"access": "public", "getter": "affectedByGravity", "name": "affectedByGravity", "setter": "setAffectedByGravity:"},
+      {"access": "public", "getter": "fieldBitMask", "introduced": "8", "name": "fieldBitMask", "setter": "setFieldBitMask:"},
+      {"access": "public", "getter": "categoryBitMask", "name": "categoryBitMask", "setter": "setCategoryBitMask:"},
+      {"access": "public", "getter": "collisionBitMask", "name": "collisionBitMask", "setter": "setCollisionBitMask:"},
+      {"access": "public", "getter": "contactTestBitMask", "name": "contactTestBitMask", "setter": "setContactTestBitMask:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "joints", "name": "joints"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "node", "name": "node"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "angularVelocity", "name": "angularVelocity", "setter": "setAngularVelocity:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKPhysicsContact",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bodyA", "name": "bodyA"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bodyB", "name": "bodyB"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contactPoint", "name": "contactPoint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contactNormal", "name": "contactNormal"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collisionImpulse", "name": "collisionImpulse"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SKPhysicsJoint",
+     "properties": [
+      {"access": "public", "getter": "bodyA", "name": "bodyA", "setter": "setBodyA:"},
+      {"access": "public", "getter": "bodyB", "name": "bodyB", "setter": "setBodyB:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionForce", "name": "reactionForce"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionTorque", "name": "reactionTorque"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointFixed",
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchorA:anchorB:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointLimit",
+     "properties": [
+      {"access": "public", "getter": "maxLength", "name": "maxLength", "setter": "setMaxLength:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointPin",
+     "properties": [
+      {"access": "public", "getter": "shouldEnableLimits", "name": "shouldEnableLimits", "setter": "setShouldEnableLimits:"},
+      {"access": "public", "getter": "lowerAngleLimit", "name": "lowerAngleLimit", "setter": "setLowerAngleLimit:"},
+      {"access": "public", "getter": "upperAngleLimit", "name": "upperAngleLimit", "setter": "setUpperAngleLimit:"},
+      {"access": "public", "getter": "frictionTorque", "name": "frictionTorque", "setter": "setFrictionTorque:"},
+      {"access": "public", "getter": "rotationSpeed", "name": "rotationSpeed", "setter": "setRotationSpeed:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchor:axis:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointSliding",
+     "properties": [
+      {"access": "public", "getter": "shouldEnableLimits", "name": "shouldEnableLimits", "setter": "setShouldEnableLimits:"},
+      {"access": "public", "getter": "lowerDistanceLimit", "name": "lowerDistanceLimit", "setter": "setLowerDistanceLimit:"},
+      {"access": "public", "getter": "upperDistanceLimit", "name": "upperDistanceLimit", "setter": "setUpperDistanceLimit:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "jointWithBodyA:bodyB:anchorA:anchorB:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsJointSpring",
+     "properties": [
+      {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"},
+      {"access": "public", "getter": "frequency", "name": "frequency", "setter": "setFrequency:"}
+     ],
+     "super": "SKPhysicsJoint"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addJoint:"},
+      {"access": "public", "name": "removeJoint:"},
+      {"access": "public", "name": "removeAllJoints"},
+      {"access": "public", "introduced": "8", "name": "sampleFieldsAt:"},
+      {"access": "public", "name": "bodyAtPoint:"},
+      {"access": "public", "name": "bodyInRect:"},
+      {"access": "public", "name": "bodyAlongRayStart:end:"},
+      {"access": "public", "name": "enumerateBodiesAtPoint:usingBlock:"},
+      {"access": "public", "name": "enumerateBodiesInRect:usingBlock:"},
+      {"access": "public", "name": "enumerateBodiesAlongRayStart:end:usingBlock:"}
+     ],
+     "linkage": "exported",
+     "name": "SKPhysicsWorld",
+     "properties": [
+      {"access": "public", "getter": "gravity", "name": "gravity", "setter": "setGravity:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "contactDelegate", "name": "contactDelegate", "setter": "setContactDelegate:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "rangeWithLowerLimit:upperLimit:"},
+      {"access": "public", "name": "rangeWithLowerLimit:"},
+      {"access": "public", "name": "rangeWithUpperLimit:"},
+      {"access": "public", "name": "rangeWithConstantValue:"},
+      {"access": "public", "name": "rangeWithValue:variance:"},
+      {"access": "public", "name": "rangeWithNoLimits"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLowerLimit:upperLimit:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKRange",
+     "properties": [
+      {"access": "public", "getter": "lowerLimit", "name": "lowerLimit", "setter": "setLowerLimit:"},
+      {"access": "public", "getter": "upperLimit", "name": "upperLimit", "setter": "setUpperLimit:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLowerAngleLimit:upperAngleLimit:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKReachConstraints",
+     "properties": [
+      {"access": "public", "getter": "lowerAngleLimit", "name": "lowerAngleLimit", "setter": "setLowerAngleLimit:"},
+      {"access": "public", "getter": "upperAngleLimit", "name": "upperAngleLimit", "setter": "setUpperAngleLimit:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "referenceNodeWithFileNamed:"},
+      {"access": "public", "name": "referenceNodeWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithFileNamed:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "didLoadReferenceNode:"},
+      {"access": "public", "name": "resolveReferenceNode"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "SKReferenceNode",
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "infiniteRegion"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRadius:"},
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithPath:"},
+      {"access": "public", "name": "inverseRegion"},
+      {"access": "public", "name": "regionByUnionWithRegion:"},
+      {"access": "public", "name": "regionByDifferenceFromRegion:"},
+      {"access": "public", "name": "regionByIntersectionWithRegion:"},
+      {"access": "public", "name": "containsPoint:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKRegion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "path", "name": "path"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "rendererWithDevice:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "renderWithViewport:commandBuffer:renderPassDescriptor:"},
+      {"access": "public", "name": "renderWithViewport:renderCommandEncoder:renderPassDescriptor:commandQueue:"},
+      {"access": "public", "name": "updateAtTime:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "SKRenderer",
+     "properties": [
+      {"access": "public", "getter": "scene", "name": "scene", "setter": "setScene:"},
+      {"access": "public", "getter": "ignoresSiblingOrder", "name": "ignoresSiblingOrder", "setter": "setIgnoresSiblingOrder:"},
+      {"access": "public", "getter": "shouldCullNonVisibleNodes", "name": "shouldCullNonVisibleNodes", "setter": "setShouldCullNonVisibleNodes:"},
+      {"access": "public", "getter": "showsDrawCount", "name": "showsDrawCount", "setter": "setShowsDrawCount:"},
+      {"access": "public", "getter": "showsNodeCount", "name": "showsNodeCount", "setter": "setShowsNodeCount:"},
+      {"access": "public", "getter": "showsQuadCount", "name": "showsQuadCount", "setter": "setShowsQuadCount:"},
+      {"access": "public", "getter": "showsPhysics", "name": "showsPhysics", "setter": "setShowsPhysics:"},
+      {"access": "public", "getter": "showsFields", "name": "showsFields", "setter": "setShowsFields:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sceneWithSize:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSize:"},
+      {"access": "public", "introduced": "10", "name": "sceneDidLoad"},
+      {"access": "public", "name": "convertPointFromView:"},
+      {"access": "public", "name": "convertPointToView:"},
+      {"access": "public", "name": "update:"},
+      {"access": "public", "name": "didEvaluateActions"},
+      {"access": "public", "name": "didSimulatePhysics"},
+      {"access": "public", "introduced": "8", "name": "didApplyConstraints"},
+      {"access": "public", "introduced": "8", "name": "didFinishUpdate"},
+      {"access": "public", "name": "didMoveToView:"},
+      {"access": "public", "name": "willMoveFromView:"},
+      {"access": "public", "name": "didChangeSize:"}
+     ],
+     "linkage": "exported",
+     "name": "SKScene",
+     "properties": [
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "scaleMode", "name": "scaleMode", "setter": "setScaleMode:"},
+      {"access": "public", "getter": "camera", "introduced": "9", "name": "camera", "setter": "setCamera:"},
+      {"access": "public", "getter": "listener", "introduced": "9", "name": "listener", "setter": "setListener:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioEngine", "introduced": "9", "name": "audioEngine"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "delegate", "introduced": "8", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "physicsWorld", "name": "physicsWorld"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "view", "name": "view"}
+     ],
+     "super": "SKEffectNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "shader"},
+      {"access": "public", "name": "shaderWithSource:"},
+      {"access": "public", "name": "shaderWithSource:uniforms:"},
+      {"access": "public", "name": "shaderWithFileNamed:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSource:"},
+      {"access": "public", "name": "initWithSource:uniforms:"},
+      {"access": "public", "name": "addUniform:"},
+      {"access": "public", "name": "uniformNamed:"},
+      {"access": "public", "name": "removeUniformNamed:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKShader",
+     "properties": [
+      {"access": "public", "getter": "source", "name": "source", "setter": "setSource:"},
+      {"access": "public", "getter": "uniforms", "name": "uniforms", "setter": "setUniforms:"},
+      {"access": "public", "getter": "attributes", "introduced": "9", "name": "attributes", "setter": "setAttributes:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPath:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPath:centered:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRect:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRectOfSize:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRect:cornerRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithRectOfSize:cornerRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithCircleOfRadius:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithEllipseInRect:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithEllipseOfSize:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithPoints:count:"},
+      {"access": "public", "introduced": "8", "name": "shapeNodeWithSplinePoints:count:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKShapeNode",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "strokeColor", "name": "strokeColor", "setter": "setStrokeColor:"},
+      {"access": "public", "getter": "fillColor", "name": "fillColor", "setter": "setFillColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "isAntialiased", "name": "antialiased", "setter": "setAntialiased:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "glowWidth", "name": "glowWidth", "setter": "setGlowWidth:"},
+      {"access": "public", "getter": "lineCap", "name": "lineCap", "setter": "setLineCap:"},
+      {"access": "public", "getter": "lineJoin", "name": "lineJoin", "setter": "setLineJoin:"},
+      {"access": "public", "getter": "miterLimit", "name": "miterLimit", "setter": "setMiterLimit:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineLength", "name": "lineLength"},
+      {"access": "public", "getter": "fillTexture", "introduced": "8", "name": "fillTexture", "setter": "setFillTexture:"},
+      {"access": "public", "getter": "fillShader", "introduced": "8", "name": "fillShader", "setter": "setFillShader:"},
+      {"access": "public", "getter": "strokeTexture", "introduced": "8", "name": "strokeTexture", "setter": "setStrokeTexture:"},
+      {"access": "public", "getter": "strokeShader", "introduced": "8", "name": "strokeShader", "setter": "setStrokeShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "spriteNodeWithTexture:size:"},
+      {"access": "public", "name": "spriteNodeWithTexture:"},
+      {"access": "public", "name": "spriteNodeWithTexture:normalMap:"},
+      {"access": "public", "name": "spriteNodeWithImageNamed:"},
+      {"access": "public", "name": "spriteNodeWithImageNamed:normalMapped:"},
+      {"access": "public", "name": "spriteNodeWithColor:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTexture:color:size:"},
+      {"access": "public", "name": "initWithTexture:"},
+      {"access": "public", "name": "initWithImageNamed:"},
+      {"access": "public", "name": "initWithColor:size:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "introduced": "10", "name": "scaleToSize:"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "SKSpriteNode",
+     "properties": [
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"},
+      {"access": "public", "getter": "normalTexture", "introduced": "8", "name": "normalTexture", "setter": "setNormalTexture:"},
+      {"access": "public", "getter": "lightingBitMask", "introduced": "8", "name": "lightingBitMask", "setter": "setLightingBitMask:"},
+      {"access": "public", "getter": "shadowCastBitMask", "introduced": "8", "name": "shadowCastBitMask", "setter": "setShadowCastBitMask:"},
+      {"access": "public", "getter": "shadowedBitMask", "introduced": "8", "name": "shadowedBitMask", "setter": "setShadowedBitMask:"},
+      {"access": "public", "getter": "centerRect", "name": "centerRect", "setter": "setCenterRect:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "shader", "introduced": "8", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"}
+     ],
+     "protocols": [
+      "SKWarpable"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textureWithImageNamed:"},
+      {"access": "public", "name": "textureWithRect:inTexture:"},
+      {"access": "public", "introduced": "8", "name": "textureVectorNoiseWithSmoothness:size:"},
+      {"access": "public", "introduced": "8", "name": "textureNoiseWithSmoothness:size:grayscale:"},
+      {"access": "public", "name": "textureWithCGImage:"},
+      {"access": "public", "name": "textureWithImage:"},
+      {"access": "public", "name": "textureWithData:size:"},
+      {"access": "public", "name": "textureWithData:size:flipped:"},
+      {"access": "public", "name": "textureWithData:size:rowLength:alignment:"},
+      {"access": "public", "name": "preloadTextures:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "textureByApplyingCIFilter:"},
+      {"access": "public", "introduced": "8", "name": "textureByGeneratingNormalMap"},
+      {"access": "public", "introduced": "8", "name": "textureByGeneratingNormalMapWithSmoothness:contrast:"},
+      {"access": "public", "name": "textureRect"},
+      {"access": "public", "name": "size"},
+      {"access": "public", "introduced": "9", "name": "CGImage"},
+      {"access": "public", "name": "preloadWithCompletionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTexture",
+     "properties": [
+      {"access": "public", "getter": "filteringMode", "name": "filteringMode", "setter": "setFilteringMode:"},
+      {"access": "public", "getter": "usesMipmaps", "name": "usesMipmaps", "setter": "setUsesMipmaps:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "atlasNamed:"},
+      {"access": "public", "introduced": "8", "name": "atlasWithDictionary:"},
+      {"access": "public", "name": "preloadTextureAtlases:withCompletionHandler:"},
+      {"access": "public", "introduced": "9", "name": "preloadTextureAtlasesNamed:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "textureNamed:"},
+      {"access": "public", "name": "preloadWithCompletionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTextureAtlas",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureNames", "name": "textureNames"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileDefinitionWithTexture:"},
+      {"access": "public", "name": "tileDefinitionWithTexture:size:"},
+      {"access": "public", "name": "tileDefinitionWithTexture:normalTexture:size:"},
+      {"access": "public", "name": "tileDefinitionWithTextures:size:timePerFrame:"},
+      {"access": "public", "name": "tileDefinitionWithTextures:normalTextures:size:timePerFrame:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTexture:"},
+      {"access": "public", "name": "initWithTexture:size:"},
+      {"access": "public", "name": "initWithTexture:normalTexture:size:"},
+      {"access": "public", "name": "initWithTextures:size:timePerFrame:"},
+      {"access": "public", "name": "initWithTextures:normalTextures:size:timePerFrame:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileDefinition",
+     "properties": [
+      {"access": "public", "getter": "textures", "name": "textures", "setter": "setTextures:"},
+      {"access": "public", "getter": "normalTextures", "name": "normalTextures", "setter": "setNormalTextures:"},
+      {"access": "public", "getter": "userData", "name": "userData", "setter": "setUserData:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "timePerFrame", "name": "timePerFrame", "setter": "setTimePerFrame:"},
+      {"access": "public", "getter": "placementWeight", "name": "placementWeight", "setter": "setPlacementWeight:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "flipVertically", "name": "flipVertically", "setter": "setFlipVertically:"},
+      {"access": "public", "getter": "flipHorizontally", "name": "flipHorizontally", "setter": "setFlipHorizontally:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileGroupWithTileDefinition:"},
+      {"access": "public", "name": "tileGroupWithRules:"},
+      {"access": "public", "name": "emptyTileGroup"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileDefinition:"},
+      {"access": "public", "name": "initWithRules:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileGroup",
+     "properties": [
+      {"access": "public", "getter": "rules", "name": "rules", "setter": "setRules:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileGroupRuleWithAdjacency:tileDefinitions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAdjacency:tileDefinitions:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileGroupRule",
+     "properties": [
+      {"access": "public", "getter": "adjacency", "name": "adjacency", "setter": "setAdjacency:"},
+      {"access": "public", "getter": "tileDefinitions", "name": "tileDefinitions", "setter": "setTileDefinitions:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:"},
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:fillWithTileGroup:"},
+      {"access": "public", "name": "tileMapNodeWithTileSet:columns:rows:tileSize:tileGroupLayout:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:"},
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:fillWithTileGroup:"},
+      {"access": "public", "name": "initWithTileSet:columns:rows:tileSize:tileGroupLayout:"},
+      {"access": "public", "introduced": "10", "name": "valueForAttributeNamed:"},
+      {"access": "public", "introduced": "10", "name": "setValue:forAttributeNamed:"},
+      {"access": "public", "name": "fillWithTileGroup:"},
+      {"access": "public", "name": "tileDefinitionAtColumn:row:"},
+      {"access": "public", "name": "tileGroupAtColumn:row:"},
+      {"access": "public", "name": "setTileGroup:forColumn:row:"},
+      {"access": "public", "name": "setTileGroup:andTileDefinition:forColumn:row:"},
+      {"access": "public", "name": "tileColumnIndexFromPosition:"},
+      {"access": "public", "name": "tileRowIndexFromPosition:"},
+      {"access": "public", "name": "centerOfTileAtColumn:row:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileMapNode",
+     "properties": [
+      {"access": "public", "getter": "numberOfColumns", "name": "numberOfColumns", "setter": "setNumberOfColumns:"},
+      {"access": "public", "getter": "numberOfRows", "name": "numberOfRows", "setter": "setNumberOfRows:"},
+      {"access": "public", "getter": "tileSize", "name": "tileSize", "setter": "setTileSize:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mapSize", "name": "mapSize"},
+      {"access": "public", "getter": "tileSet", "name": "tileSet", "setter": "setTileSet:"},
+      {"access": "public", "getter": "colorBlendFactor", "name": "colorBlendFactor", "setter": "setColorBlendFactor:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "blendMode", "name": "blendMode", "setter": "setBlendMode:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "shader", "name": "shader", "setter": "setShader:"},
+      {"access": "public", "getter": "attributeValues", "introduced": "10", "name": "attributeValues", "setter": "setAttributeValues:"},
+      {"access": "public", "getter": "lightingBitMask", "name": "lightingBitMask", "setter": "setLightingBitMask:"},
+      {"access": "public", "getter": "enableAutomapping", "name": "enableAutomapping", "setter": "setEnableAutomapping:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "tileSetWithTileGroups:"},
+      {"access": "public", "name": "tileSetWithTileGroups:tileSetType:"},
+      {"access": "public", "name": "tileSetNamed:"},
+      {"access": "public", "name": "tileSetFromURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTileGroups:"},
+      {"access": "public", "name": "initWithTileGroups:tileSetType:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKTileSet",
+     "properties": [
+      {"access": "public", "getter": "tileGroups", "name": "tileGroups", "setter": "setTileGroups:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "defaultTileGroup", "name": "defaultTileGroup", "setter": "setDefaultTileGroup:"},
+      {"access": "public", "getter": "defaultTileSize", "name": "defaultTileSize", "setter": "setDefaultTileSize:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setEulerAngles:"},
+      {"access": "public", "name": "eulerAngles"},
+      {"access": "public", "name": "setRotationMatrix:"},
+      {"access": "public", "name": "rotationMatrix"},
+      {"access": "public", "name": "setQuaternion:"},
+      {"access": "public", "name": "quaternion"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "SKTransformNode",
+     "properties": [
+      {"access": "public", "getter": "xRotation", "name": "xRotation", "setter": "setXRotation:"},
+      {"access": "public", "getter": "yRotation", "name": "yRotation", "setter": "setYRotation:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "crossFadeWithDuration:"},
+      {"access": "public", "name": "fadeWithDuration:"},
+      {"access": "public", "name": "fadeWithColor:duration:"},
+      {"access": "public", "name": "flipHorizontalWithDuration:"},
+      {"access": "public", "name": "flipVerticalWithDuration:"},
+      {"access": "public", "name": "revealWithDirection:duration:"},
+      {"access": "public", "name": "moveInWithDirection:duration:"},
+      {"access": "public", "name": "pushWithDirection:duration:"},
+      {"access": "public", "name": "doorsOpenHorizontalWithDuration:"},
+      {"access": "public", "name": "doorsOpenVerticalWithDuration:"},
+      {"access": "public", "name": "doorsCloseHorizontalWithDuration:"},
+      {"access": "public", "name": "doorsCloseVerticalWithDuration:"},
+      {"access": "public", "name": "doorwayWithDuration:"},
+      {"access": "public", "name": "transitionWithCIFilter:duration:"}
+     ],
+     "linkage": "exported",
+     "name": "SKTransition",
+     "properties": [
+      {"access": "public", "getter": "pausesIncomingScene", "name": "pausesIncomingScene", "setter": "setPausesIncomingScene:"},
+      {"access": "public", "getter": "pausesOutgoingScene", "name": "pausesOutgoingScene", "setter": "setPausesOutgoingScene:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "uniformWithName:"},
+      {"access": "public", "name": "uniformWithName:texture:"},
+      {"access": "public", "name": "uniformWithName:float:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat2:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat3:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:vectorFloat4:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat2x2:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat3x3:"},
+      {"access": "public", "introduced": "10", "name": "uniformWithName:matrixFloat4x4:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector2:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector3:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatVector4:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix2:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix3:"},
+      {"access": "public", "introduced": "7", "name": "uniformWithName:floatMatrix4:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:"},
+      {"access": "public", "name": "initWithName:texture:"},
+      {"access": "public", "name": "initWithName:float:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat2:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat3:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:vectorFloat4:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat2x2:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat3x3:"},
+      {"access": "public", "introduced": "10", "name": "initWithName:matrixFloat4x4:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector2:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector3:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatVector4:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix2:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix3:"},
+      {"access": "public", "introduced": "7", "name": "initWithName:floatMatrix4:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SKUniform",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniformType", "name": "uniformType"},
+      {"access": "public", "getter": "textureValue", "name": "textureValue", "setter": "setTextureValue:"},
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "vectorFloat2Value", "introduced": "10", "name": "vectorFloat2Value", "setter": "setVectorFloat2Value:"},
+      {"access": "public", "getter": "vectorFloat3Value", "introduced": "10", "name": "vectorFloat3Value", "setter": "setVectorFloat3Value:"},
+      {"access": "public", "getter": "vectorFloat4Value", "introduced": "10", "name": "vectorFloat4Value", "setter": "setVectorFloat4Value:"},
+      {"access": "public", "getter": "matrixFloat2x2Value", "introduced": "10", "name": "matrixFloat2x2Value", "setter": "setMatrixFloat2x2Value:"},
+      {"access": "public", "getter": "matrixFloat3x3Value", "introduced": "10", "name": "matrixFloat3x3Value", "setter": "setMatrixFloat3x3Value:"},
+      {"access": "public", "getter": "matrixFloat4x4Value", "introduced": "10", "name": "matrixFloat4x4Value", "setter": "setMatrixFloat4x4Value:"},
+      {"access": "public", "getter": "floatVector2Value", "introduced": "7", "name": "floatVector2Value", "setter": "setFloatVector2Value:"},
+      {"access": "public", "getter": "floatVector3Value", "introduced": "7", "name": "floatVector3Value", "setter": "setFloatVector3Value:"},
+      {"access": "public", "getter": "floatVector4Value", "introduced": "7", "name": "floatVector4Value", "setter": "setFloatVector4Value:"},
+      {"access": "public", "getter": "floatMatrix2Value", "introduced": "7", "name": "floatMatrix2Value", "setter": "setFloatMatrix2Value:"},
+      {"access": "public", "getter": "floatMatrix3Value", "introduced": "7", "name": "floatMatrix3Value", "setter": "setFloatMatrix3Value:"},
+      {"access": "public", "getter": "floatMatrix4Value", "introduced": "7", "name": "floatMatrix4Value", "setter": "setFloatMatrix4Value:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "videoNodeWithAVPlayer:"},
+      {"access": "public", "introduced": "7", "name": "videoNodeWithVideoFileNamed:"},
+      {"access": "public", "introduced": "9", "name": "videoNodeWithFileNamed:"},
+      {"access": "public", "introduced": "7", "name": "videoNodeWithVideoURL:"},
+      {"access": "public", "introduced": "9", "name": "videoNodeWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAVPlayer:"},
+      {"access": "public", "introduced": "7", "name": "initWithVideoFileNamed:"},
+      {"access": "public", "introduced": "8", "name": "initWithFileNamed:"},
+      {"access": "public", "introduced": "7", "name": "initWithVideoURL:"},
+      {"access": "public", "introduced": "8", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "play"},
+      {"access": "public", "name": "pause"}
+     ],
+     "linkage": "exported",
+     "name": "SKVideoNode",
+     "properties": [
+      {"access": "public", "getter": "size", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"}
+     ],
+     "super": "SKNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "presentScene:"},
+      {"access": "public", "name": "presentScene:transition:"},
+      {"access": "public", "name": "textureFromNode:"},
+      {"access": "public", "name": "textureFromNode:crop:"},
+      {"access": "public", "name": "convertPoint:toScene:"},
+      {"access": "public", "name": "convertPoint:fromScene:"}
+     ],
+     "linkage": "exported",
+     "name": "SKView",
+     "properties": [
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "showsFPS", "name": "showsFPS", "setter": "setShowsFPS:"},
+      {"access": "public", "getter": "showsDrawCount", "name": "showsDrawCount", "setter": "setShowsDrawCount:"},
+      {"access": "public", "getter": "showsNodeCount", "name": "showsNodeCount", "setter": "setShowsNodeCount:"},
+      {"access": "public", "getter": "showsQuadCount", "introduced": "8", "name": "showsQuadCount", "setter": "setShowsQuadCount:"},
+      {"access": "public", "getter": "showsPhysics", "introduced": "8", "name": "showsPhysics", "setter": "setShowsPhysics:"},
+      {"access": "public", "getter": "showsFields", "introduced": "8", "name": "showsFields", "setter": "setShowsFields:"},
+      {"access": "public", "getter": "isAsynchronous", "name": "asynchronous", "setter": "setAsynchronous:"},
+      {"access": "public", "getter": "allowsTransparency", "introduced": "8", "name": "allowsTransparency", "setter": "setAllowsTransparency:"},
+      {"access": "public", "getter": "ignoresSiblingOrder", "name": "ignoresSiblingOrder", "setter": "setIgnoresSiblingOrder:"},
+      {"access": "public", "getter": "shouldCullNonVisibleNodes", "introduced": "8", "name": "shouldCullNonVisibleNodes", "setter": "setShouldCullNonVisibleNodes:"},
+      {"access": "public", "getter": "preferredFramesPerSecond", "introduced": "10", "name": "preferredFramesPerSecond", "setter": "setPreferredFramesPerSecond:"},
+      {"access": "public", "getter": "disableDepthStencilBuffer", "name": "disableDepthStencilBuffer", "setter": "setDisableDepthStencilBuffer:"},
+      {"access": "public", "getter": "delegate", "introduced": "10", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "frameInterval", "introduced": "7", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "preferredFrameRate", "introduced": "10", "name": "preferredFrameRate", "setter": "setPreferredFrameRate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scene", "name": "scene"}
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKWarpGeometry",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "grid"},
+      {"access": "public", "name": "gridWithColumns:rows:"},
+      {"access": "public", "name": "gridWithColumns:rows:sourcePositions:destPositions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithColumns:rows:sourcePositions:destPositions:"},
+      {"access": "public", "name": "sourcePositionAtIndex:"},
+      {"access": "public", "name": "destPositionAtIndex:"},
+      {"access": "public", "name": "gridByReplacingSourcePositions:"},
+      {"access": "public", "name": "gridByReplacingDestPositions:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "SKWarpGeometryGrid",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfColumns", "name": "numberOfColumns"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfRows", "name": "numberOfRows"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexCount", "name": "vertexCount"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "SKWarpGeometry"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "didBeginContact:", "optional": true},
+      {"access": "public", "name": "didEndContact:", "optional": true}
+     ],
+     "name": "SKPhysicsContactDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "update:forScene:", "optional": true},
+      {"access": "public", "name": "didEvaluateActionsForScene:", "optional": true},
+      {"access": "public", "name": "didSimulatePhysicsForScene:", "optional": true},
+      {"access": "public", "name": "didApplyConstraintsForScene:", "optional": true},
+      {"access": "public", "name": "didFinishUpdateForScene:", "optional": true}
+     ],
+     "introduced": "8",
+     "name": "SKSceneDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "view:shouldRenderAtTime:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "SKViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "name": "SKWarpable",
+     "properties": [
+      {"access": "public", "getter": "warpGeometry", "name": "warpGeometry", "setter": "setWarpGeometry:"},
+      {"access": "public", "getter": "subdivisionLevels", "name": "subdivisionLevels", "setter": "setSubdivisionLevels:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SKActionTimingFunction"},
+    {"access": "public", "name": "SKActionTimingMode"},
+    {"access": "public", "name": "SKAttributeType"},
+    {"access": "public", "name": "SKBlendMode"},
+    {"access": "public", "name": "SKFieldForceEvaluator"},
+    {"access": "public", "name": "SKInterpolationMode"},
+    {"access": "public", "name": "SKLabelHorizontalAlignmentMode"},
+    {"access": "public", "name": "SKLabelVerticalAlignmentMode"},
+    {"access": "public", "name": "SKNodeFocusBehavior"},
+    {"access": "public", "name": "SKParticleRenderOrder"},
+    {"access": "public", "name": "SKRepeatMode"},
+    {"access": "public", "name": "SKSceneScaleMode"},
+    {"access": "public", "name": "SKTextureFilteringMode"},
+    {"access": "public", "name": "SKTileAdjacencyMask"},
+    {"access": "public", "name": "SKTileDefinitionRotation"},
+    {"access": "public", "name": "SKTileSetType"},
+    {"access": "public", "name": "SKTransitionDirection"},
+    {"access": "public", "name": "SKUniformType"},
+    {"access": "public", "name": "vector_float3"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

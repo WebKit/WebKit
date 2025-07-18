@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (419,0) width 321: "There should be spaces added before and after the"
           text run at (0,20) width 106: "inserted content."
       RenderBlock {DIV} at (0,56) size 784x20
-        RenderMenuList {SELECT} at (0,0) size 31x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (0,0) size 31x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 19x14
             RenderText at (0,0) size 6x14
               text run at (0,0) width 6: "1"

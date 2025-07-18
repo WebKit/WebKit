@@ -30,7 +30,7 @@ namespace webrtc {
 class BitstreamReader {
  public:
   explicit BitstreamReader(
-      rtc::ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
+      ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
   explicit BitstreamReader(
       absl::string_view bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
   BitstreamReader(const BitstreamReader&) = default;
@@ -64,7 +64,7 @@ class BitstreamReader {
                                     !std::is_same<T, bool>::value &&
                                     sizeof(T) <= 8>::type* = nullptr>
   ABSL_MUST_USE_RESULT T Read() {
-    return rtc::dchecked_cast<T>(ReadBits(sizeof(T) * 8));
+    return dchecked_cast<T>(ReadBits(sizeof(T) * 8));
   }
 
   // Reads single bit as boolean.
@@ -123,13 +123,13 @@ class BitstreamReader {
   mutable bool last_read_is_verified_ = true;
 };
 
-inline BitstreamReader::BitstreamReader(rtc::ArrayView<const uint8_t> bytes)
+inline BitstreamReader::BitstreamReader(ArrayView<const uint8_t> bytes)
     : bytes_(bytes.data()),
-      remaining_bits_(rtc::checked_cast<int>(bytes.size() * 8)) {}
+      remaining_bits_(checked_cast<int>(bytes.size() * 8)) {}
 
 inline BitstreamReader::BitstreamReader(absl::string_view bytes)
     : bytes_(reinterpret_cast<const uint8_t*>(bytes.data())),
-      remaining_bits_(rtc::checked_cast<int>(bytes.size() * 8)) {}
+      remaining_bits_(checked_cast<int>(bytes.size() * 8)) {}
 
 inline BitstreamReader::~BitstreamReader() {
   RTC_DCHECK(last_read_is_verified_) << "Latest calls to Read or ConsumeBit "

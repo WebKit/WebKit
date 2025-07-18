@@ -1,0 +1,3894 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "initWithState:"},
+      {"access": "public", "introduced": "14", "name": "initWithLeaderboardID:playerScope:timeScope:"},
+      {"access": "public", "introduced": "14", "name": "initWithLeaderboard:playerScope:"},
+      {"access": "public", "introduced": "18", "name": "initWithLeaderboardSetID:"},
+      {"access": "public", "introduced": "14", "name": "initWithAchievementID:"},
+      {"access": "public", "introduced": "18", "name": "initWithPlayer:"}
+     ],
+     "interface": "GKGameCenterViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "gameCenterDelegate", "name": "gameCenterDelegate", "setter": "setGameCenterDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "maxNumberOfRecipients"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setMessage:"},
+      {"access": "public", "introduced": "8", "name": "addRecipientPlayers:"},
+      {"access": "public", "introduced": "4.2", "name": "addRecipientsWithPlayerIDs:"},
+      {"access": "public", "name": "addRecipientsWithEmailAddresses:"}
+     ],
+     "interface": "GKFriendRequestComposeViewController",
+     "introduced": "4.2",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "composeViewDelegate", "introduced": "4.2", "name": "composeViewDelegate", "setter": "setComposeViewDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKLeaderboardViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "timeScope", "name": "timeScope", "setter": "setTimeScope:"},
+      {"access": "public", "getter": "category", "name": "category", "setter": "setCategory:"},
+      {"access": "public", "getter": "leaderboardDelegate", "name": "leaderboardDelegate", "setter": "setLeaderboardDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMatchRequest:"}
+     ],
+     "interface": "GKTurnBasedMatchmakerViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "turnBasedMatchmakerDelegate", "name": "turnBasedMatchmakerDelegate", "setter": "setTurnBasedMatchmakerDelegate:"},
+      {"access": "public", "getter": "showExistingMatches", "name": "showExistingMatches", "setter": "setShowExistingMatches:"},
+      {"access": "public", "getter": "matchmakingMode", "introduced": "15", "name": "matchmakingMode", "setter": "setMatchmakingMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadPlayersForIdentifiers:withCompletionHandler:"}
+     ],
+     "interface": "GKPlayer",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFriend", "introduced": "4.1", "name": "isFriend"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "4.1", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadCategoriesWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "setDefaultLeaderboard:withCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "loadLeaderboardsWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "initWithPlayerIDs:"},
+      {"access": "public", "introduced": "4", "name": "init"},
+      {"access": "public", "introduced": "8", "name": "initWithPlayers:"},
+      {"access": "public", "introduced": "4", "name": "loadScoresWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboard",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "category", "introduced": "4.1", "name": "category", "setter": "setCategory:"},
+      {"access": "public", "getter": "timeScope", "introduced": "4", "name": "timeScope", "setter": "setTimeScope:"},
+      {"access": "public", "getter": "playerScope", "introduced": "4", "name": "playerScope", "setter": "setPlayerScope:"},
+      {"access": "public", "getter": "identifier", "introduced": "7", "name": "identifier", "setter": "setIdentifier:"},
+      {"access": "public", "getter": "range", "introduced": "4", "name": "range", "setter": "setRange:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scores", "introduced": "4", "name": "scores"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxRange", "introduced": "4", "name": "maxRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localPlayerScore", "introduced": "4", "name": "localPlayerScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLoading", "introduced": "4.1", "name": "loading"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "reportAchievementWithCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "introduced": "4.1", "name": "hidden"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKGameCenterViewController",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "viewState", "introduced": "6", "name": "viewState", "setter": "setViewState:"},
+      {"access": "public", "getter": "leaderboardTimeScope", "introduced": "4.1", "name": "leaderboardTimeScope", "setter": "setLeaderboardTimeScope:"},
+      {"access": "public", "getter": "leaderboardIdentifier", "introduced": "7", "name": "leaderboardIdentifier", "setter": "setLeaderboardIdentifier:"},
+      {"access": "public", "getter": "leaderboardCategory", "introduced": "4.1", "name": "leaderboardCategory", "setter": "setLeaderboardCategory:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "reportScoreWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "initWithCategory:"}
+     ],
+     "interface": "GKScore",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "category", "introduced": "4.1", "name": "category", "setter": "setCategory:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadLeaderboardsWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboardSet",
+     "name": "Deprecated"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "setDefaultLeaderboardCategoryID:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "loadDefaultLeaderboardCategoryIDWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "authenticateWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "loadFriendPlayersWithCompletionHandler:"},
+      {"access": "public", "introduced": "7", "name": "generateIdentityVerificationSignatureWithCompletionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "Deprecated"
+    },
+    {
+     "access": "public",
+     "interface": "GKVoiceChat",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "playerStateUpdateHandler", "introduced": "4.1", "name": "playerStateUpdateHandler", "setter": "setPlayerStateUpdateHandler:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14.5", "name": "loadFriendsAuthorizationStatus:"},
+      {"access": "public", "introduced": "14.5", "name": "loadFriends:"},
+      {"access": "public", "introduced": "14.5", "name": "loadFriendsWithIdentifiers:completionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "FriendsList"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "reportScores:withEligibleChallenges:withCompletionHandler:"},
+      {"access": "public", "introduced": "14", "name": "reportLeaderboardScores:withEligibleChallenges:withCompletionHandler:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "reportAchievements:withEligibleChallenges:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "selectChallengeablePlayers:withCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "issueChallengeToPlayers:message:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeObsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "issueChallengeToPlayers:message:"},
+      {"access": "public", "introduced": "6", "name": "selectChallengeablePlayerIDs:withCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeObsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "challengeComposeControllerWithPlayers:message:completionHandler:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeObsoletedUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "challengeComposeControllerWithPlayers:message:completionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeObsoletedUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKLeaderboardEntry",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "interface": "GKMatchmaker",
+     "name": "GKDeprecated",
+     "properties": [
+      {"access": "public", "getter": "inviteHandler", "introduced": "4.1", "name": "inviteHandler", "setter": "setInviteHandler:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "10", "name": "addEventListener:"},
+      {"access": "public", "introduced": "10", "name": "removeEventListener:"}
+     ],
+     "interface": "GKGameSession",
+     "name": "GKGameSessionEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "registerListener:"},
+      {"access": "public", "introduced": "7", "name": "unregisterListener:"},
+      {"access": "public", "introduced": "7", "name": "unregisterAllListeners"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "GKLocalPlayerEvents"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchSavedGamesWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "saveGameData:withName:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "deleteSavedGamesWithName:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "resolveConflictingSavedGames:withData:completionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "GKSavedGame",
+     "protocols": [
+      "GKSavedGameListener"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithIdentifier:forPlayer:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "7", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithLeaderboardIdentifier:forPlayer:"}
+     ],
+     "interface": "GKScore",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "4.1", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKChallenge",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "issuingPlayerID", "introduced": "6", "name": "issuingPlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receivingPlayerID", "introduced": "6", "name": "receivingPlayerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKTurnBasedParticipant",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "5", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "startBrowsingForNearbyPlayersWithReachableHandler:"},
+      {"access": "public", "introduced": "6", "name": "cancelInviteToPlayer:"},
+      {"access": "public", "introduced": "4.1", "name": "findPlayersForHostedMatchRequest:withCompletionHandler:"}
+     ],
+     "interface": "GKMatchmaker",
+     "name": "Obsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadFriendsWithCompletionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "friends", "introduced": "4.1", "name": "friends"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "chooseBestHostPlayerWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "sendData:toPlayers:withDataMode:error:"}
+     ],
+     "interface": "GKMatch",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerIDs", "introduced": "4.1", "name": "playerIDs"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "setHostedPlayer:connected:"},
+      {"access": "public", "introduced": "4.1", "name": "setHostedPlayerReady:"}
+     ],
+     "interface": "GKMatchmakerViewController",
+     "name": "Obsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "setMute:forPlayer:"}
+     ],
+     "interface": "GKVoiceChat",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerIDs", "introduced": "5", "name": "playerIDs"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "loadPhotoForSize:withCompletionHandler:"}
+     ],
+     "interface": "GKPlayer",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboard",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "incompleteAchievementImage"},
+      {"access": "public", "name": "placeholderCompletedAchievementImage"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKAchievementDescription",
+     "name": "UI",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "image", "introduced": "4.1", "name": "image"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboardSet",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "presentFriendRequestCreatorFromViewController:error:"},
+      {"access": "public", "name": "presentFriendRequestCreatorFromWindow:error:", "unavailable": true}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "UI",
+     "properties": [
+      {"access": "public", "getter": "authenticateHandler", "introduced": "6", "name": "authenticateHandler", "setter": "setAuthenticateHandler:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPresentingFriendRequestViewController", "introduced": "15", "name": "isPresentingFriendRequestViewController"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKAccessPointLocationTopLeading"},
+      {"access": "public", "name": "GKAccessPointLocationTopTrailing"},
+      {"access": "public", "name": "GKAccessPointLocationBottomLeading"},
+      {"access": "public", "name": "GKAccessPointLocationBottomTrailing"}
+     ],
+     "introduced": "14",
+     "name": "GKAccessPointLocation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKChallengeStateInvalid"},
+      {"access": "public", "name": "GKChallengeStatePending"},
+      {"access": "public", "name": "GKChallengeStateCompleted"},
+      {"access": "public", "name": "GKChallengeStateDeclined"}
+     ],
+     "introduced": "6",
+     "name": "GKChallengeState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKConnectionStateNotConnected"},
+      {"access": "public", "name": "GKConnectionStateConnected"}
+     ],
+     "introduced": "10",
+     "name": "GKConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKErrorUnknown"},
+      {"access": "public", "name": "GKErrorCancelled"},
+      {"access": "public", "name": "GKErrorCommunicationsFailure"},
+      {"access": "public", "name": "GKErrorUserDenied"},
+      {"access": "public", "name": "GKErrorInvalidCredentials"},
+      {"access": "public", "name": "GKErrorNotAuthenticated"},
+      {"access": "public", "name": "GKErrorAuthenticationInProgress"},
+      {"access": "public", "name": "GKErrorInvalidPlayer"},
+      {"access": "public", "name": "GKErrorScoreNotSet"},
+      {"access": "public", "name": "GKErrorParentalControlsBlocked"},
+      {"access": "public", "introduced": "4", "name": "GKErrorPlayerStatusExceedsMaximumLength"},
+      {"access": "public", "introduced": "4", "name": "GKErrorPlayerStatusInvalid"},
+      {"access": "public", "name": "GKErrorMatchRequestInvalid"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorUnderage"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorGameUnrecognized"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorNotSupported"},
+      {"access": "public", "introduced": "4.2", "name": "GKErrorInvalidParameter"},
+      {"access": "public", "introduced": "5", "name": "GKErrorUnexpectedConnection"},
+      {"access": "public", "introduced": "6", "name": "GKErrorChallengeInvalid"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedMatchDataTooLarge"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedTooManySessions"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidParticipant"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidTurn"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidState"},
+      {"access": "public", "introduced": "7", "name": "GKErrorInvitationsDisabled"},
+      {"access": "public", "introduced": "8", "name": "GKErrorPlayerPhotoFailure"},
+      {"access": "public", "introduced": "8", "name": "GKErrorUbiquityContainerUnavailable"},
+      {"access": "public", "introduced": "10", "name": "GKErrorMatchNotConnected"},
+      {"access": "public", "introduced": "10", "name": "GKErrorGameSessionRequestInvalid"},
+      {"access": "public", "introduced": "13", "name": "GKErrorRestrictedToAutomatch"},
+      {"access": "public", "introduced": "13", "name": "GKErrorAPINotAvailable"},
+      {"access": "public", "introduced": "14", "name": "GKErrorNotAuthorized"},
+      {"access": "public", "introduced": "14", "name": "GKErrorConnectionTimeout"},
+      {"access": "public", "introduced": "14", "name": "GKErrorAPIObsolete"},
+      {"access": "public", "introduced": "17.2", "name": "GKErrorICloudUnavailable"},
+      {"access": "public", "introduced": "17.2", "name": "GKErrorLockdownMode"},
+      {"access": "public", "introduced": "17.4", "name": "GKErrorAppUnlisted"},
+      {"access": "public", "introduced": "18.4", "name": "GKErrorDebugMode"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListDescriptionMissing"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListRestricted"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListDenied"},
+      {"access": "public", "introduced": "15", "name": "GKErrorFriendRequestNotAvailable"}
+     ],
+     "introduced": "4",
+     "name": "GKErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKFriendsAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusRestricted"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusDenied"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "14.5",
+     "name": "GKFriendsAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKGameCenterViewControllerStateDefault"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateLeaderboards"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateAchievements"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateChallenges"},
+      {"access": "public", "introduced": "14", "name": "GKGameCenterViewControllerStateLocalPlayerProfile"},
+      {"access": "public", "introduced": "14", "name": "GKGameCenterViewControllerStateDashboard"},
+      {"access": "public", "introduced": "15", "name": "GKGameCenterViewControllerStateLocalPlayerFriendsList"}
+     ],
+     "introduced": "6",
+     "name": "GKGameCenterViewControllerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKGameSessionErrorUnknown"},
+      {"access": "public", "name": "GKGameSessionErrorNotAuthenticated"},
+      {"access": "public", "name": "GKGameSessionErrorSessionConflict"},
+      {"access": "public", "name": "GKGameSessionErrorSessionNotShared"},
+      {"access": "public", "name": "GKGameSessionErrorConnectionCancelledByUser"},
+      {"access": "public", "name": "GKGameSessionErrorConnectionFailed"},
+      {"access": "public", "name": "GKGameSessionErrorSessionHasMaxConnectedPlayers"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNotConnected"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNoRecipients"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNotReachable"},
+      {"access": "public", "name": "GKGameSessionErrorSendRateLimitReached"},
+      {"access": "public", "name": "GKGameSessionErrorBadContainer"},
+      {"access": "public", "name": "GKGameSessionErrorCloudQuotaExceeded"},
+      {"access": "public", "name": "GKGameSessionErrorNetworkFailure"},
+      {"access": "public", "name": "GKGameSessionErrorCloudDriveDisabled"},
+      {"access": "public", "name": "GKGameSessionErrorInvalidSession"}
+     ],
+     "introduced": "10",
+     "name": "GKGameSessionErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKInviteRecipientResponseAccepted"},
+      {"access": "public", "name": "GKInviteRecipientResponseDeclined"},
+      {"access": "public", "name": "GKInviteRecipientResponseFailed"},
+      {"access": "public", "name": "GKInviteRecipientResponseIncompatible"},
+      {"access": "public", "name": "GKInviteRecipientResponseUnableToConnect"},
+      {"access": "public", "name": "GKInviteRecipientResponseNoAnswer"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseAccepted"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseDeclined"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseFailed"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseIncompatible"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseUnableToConnect"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseNoAnswer"}
+     ],
+     "introduced": "8",
+     "name": "GKInviteRecipientResponse"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardPlayerScopeGlobal"},
+      {"access": "public", "name": "GKLeaderboardPlayerScopeFriendsOnly"}
+     ],
+     "introduced": "4",
+     "name": "GKLeaderboardPlayerScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardTimeScopeToday"},
+      {"access": "public", "name": "GKLeaderboardTimeScopeWeek"},
+      {"access": "public", "name": "GKLeaderboardTimeScopeAllTime"}
+     ],
+     "introduced": "4",
+     "name": "GKLeaderboardTimeScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardTypeClassic"},
+      {"access": "public", "name": "GKLeaderboardTypeRecurring"}
+     ],
+     "introduced": "14",
+     "name": "GKLeaderboardType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchSendDataReliable"},
+      {"access": "public", "name": "GKMatchSendDataUnreliable"}
+     ],
+     "introduced": "4",
+     "name": "GKMatchSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchTypePeerToPeer"},
+      {"access": "public", "name": "GKMatchTypeHosted"},
+      {"access": "public", "name": "GKMatchTypeTurnBased"}
+     ],
+     "introduced": "6",
+     "name": "GKMatchType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchmakingModeDefault"},
+      {"access": "public", "name": "GKMatchmakingModeNearbyOnly"},
+      {"access": "public", "name": "GKMatchmakingModeAutomatchOnly"},
+      {"access": "public", "introduced": "15", "name": "GKMatchmakingModeInviteOnly"}
+     ],
+     "introduced": "14",
+     "name": "GKMatchmakingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPeerStateAvailable"},
+      {"access": "public", "name": "GKPeerStateUnavailable"},
+      {"access": "public", "name": "GKPeerStateConnected"},
+      {"access": "public", "name": "GKPeerStateDisconnected"},
+      {"access": "public", "name": "GKPeerStateConnecting"},
+      {"access": "public", "name": "GKPeerStateConnectedRelay"}
+     ],
+     "introduced": "3",
+     "name": "GKPeerConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPeerPickerConnectionTypeOnline"},
+      {"access": "public", "name": "GKPeerPickerConnectionTypeNearby"}
+     ],
+     "introduced": "3",
+     "name": "GKPeerPickerConnectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPhotoSizeSmall"},
+      {"access": "public", "name": "GKPhotoSizeNormal"}
+     ],
+     "introduced": "5",
+     "name": "GKPhotoSize"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPlayerStateUnknown"},
+      {"access": "public", "name": "GKPlayerStateConnected"},
+      {"access": "public", "name": "GKPlayerStateDisconnected"}
+     ],
+     "introduced": "4",
+     "name": "GKPlayerConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKReleaseStateUnknown"},
+      {"access": "public", "name": "GKReleaseStateReleased"},
+      {"access": "public", "name": "GKReleaseStatePrereleased"}
+     ],
+     "introduced": "18.4",
+     "name": "GKReleaseState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSendDataReliable"},
+      {"access": "public", "name": "GKSendDataUnreliable"}
+     ],
+     "introduced": "3",
+     "name": "GKSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSessionInvalidParameterError"},
+      {"access": "public", "name": "GKSessionPeerNotFoundError"},
+      {"access": "public", "name": "GKSessionDeclinedError"},
+      {"access": "public", "name": "GKSessionTimedOutError"},
+      {"access": "public", "name": "GKSessionCancelledError"},
+      {"access": "public", "name": "GKSessionConnectionFailedError"},
+      {"access": "public", "name": "GKSessionConnectionClosedError"},
+      {"access": "public", "name": "GKSessionDataTooBigError"},
+      {"access": "public", "name": "GKSessionNotConnectedError"},
+      {"access": "public", "name": "GKSessionCannotEnableError"},
+      {"access": "public", "name": "GKSessionInProgressError"},
+      {"access": "public", "name": "GKSessionConnectivityError"},
+      {"access": "public", "name": "GKSessionTransportError"},
+      {"access": "public", "name": "GKSessionInternalError"},
+      {"access": "public", "name": "GKSessionUnknownError"},
+      {"access": "public", "name": "GKSessionSystemError"}
+     ],
+     "introduced": "3",
+     "name": "GKSessionError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSessionModeServer"},
+      {"access": "public", "name": "GKSessionModeClient"},
+      {"access": "public", "name": "GKSessionModePeer"}
+     ],
+     "introduced": "3",
+     "name": "GKSessionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTransportTypeUnreliable"},
+      {"access": "public", "name": "GKTransportTypeReliable"}
+     ],
+     "introduced": "10",
+     "name": "GKTransportType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedExchangeStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusActive"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusComplete"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusResolved"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusCanceled"}
+     ],
+     "introduced": "7",
+     "name": "GKTurnBasedExchangeStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeNone"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeQuit"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeWon"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeLost"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeTied"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeTimeExpired"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeFirst"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeSecond"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeThird"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeFourth"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeCustomRange"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchOutcome"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedMatchStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusOpen"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusEnded"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusMatching"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedParticipantStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusInvited"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusDeclined"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusMatching"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusActive"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusDone"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedParticipantStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKVoiceChatPlayerConnected"},
+      {"access": "public", "name": "GKVoiceChatPlayerDisconnected"},
+      {"access": "public", "name": "GKVoiceChatPlayerSpeaking"},
+      {"access": "public", "name": "GKVoiceChatPlayerSilent"},
+      {"access": "public", "name": "GKVoiceChatPlayerConnecting"}
+     ],
+     "introduced": "4.1",
+     "name": "GKVoiceChatPlayerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKVoiceChatServiceInternalError"},
+      {"access": "public", "name": "GKVoiceChatServiceNoRemotePacketsError"},
+      {"access": "public", "name": "GKVoiceChatServiceUnableToConnectError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantHangupError"},
+      {"access": "public", "name": "GKVoiceChatServiceInvalidCallIDError"},
+      {"access": "public", "name": "GKVoiceChatServiceAudioUnavailableError"},
+      {"access": "public", "name": "GKVoiceChatServiceUninitializedClientError"},
+      {"access": "public", "name": "GKVoiceChatServiceClientMissingRequiredMethodsError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantBusyError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantCancelledError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantResponseInvalidError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantDeclinedInviteError"},
+      {"access": "public", "name": "GKVoiceChatServiceMethodCurrentlyInvalidError"},
+      {"access": "public", "name": "GKVoiceChatServiceNetworkConfigurationError"},
+      {"access": "public", "name": "GKVoiceChatServiceUnsupportedRemoteVersionError"},
+      {"access": "public", "name": "GKVoiceChatServiceOutOfMemoryError"},
+      {"access": "public", "name": "GKVoiceChatServiceInvalidParameterError"}
+     ],
+     "introduced": "3",
+     "name": "GKVoiceChatServiceError"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_GKErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_GKExchangeTimeoutDefault"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_GKExchangeTimeoutNone"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_GKGameSessionErrorDomain"},
+    {"access": "public", "introduced": "4.1", "kind": "variable", "linkage": "exported", "name": "_GKPlayerAuthenticationDidChangeNotificationName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_GKPlayerDidChangeNotificationName"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_GKPlayerIDNoLongerAvailable"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_GKSessionErrorDomain"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_GKTurnTimeoutDefault"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_GKTurnTimeoutNone"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_GKVoiceChatServiceErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "triggerAccessPointWithHandler:"},
+      {"access": "public", "name": "triggerAccessPointWithState:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithAchievementID:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithLeaderboardSetID:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithLeaderboardID:playerScope:timeScope:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithPlayer:handler:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKAccessPoint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "shared", "name": "shared"},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "isFocused", "name": "focused", "setter": "setFocused:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVisible", "name": "visible"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPresentingGameCenter", "name": "isPresentingGameCenter"},
+      {"access": "public", "getter": "showHighlights", "name": "showHighlights", "setter": "setShowHighlights:"},
+      {"access": "public", "getter": "location", "name": "location", "setter": "setLocation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameInScreenCoordinates", "name": "frameInScreenCoordinates"},
+      {"access": "public", "getter": "parentWindow", "name": "parentWindow", "setter": "setParentWindow:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted",
+      "GKChallenge",
+      "GKChallengeObsoleted",
+      "GKChallengeUI",
+      "GKChallengeObsoletedUI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadAchievementsWithCompletionHandler:"},
+      {"access": "public", "name": "resetAchievementsWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "reportAchievements:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"},
+      {"access": "public", "introduced": "8", "name": "initWithIdentifier:player:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievement",
+     "properties": [
+      {"access": "public", "getter": "identifier", "name": "identifier", "setter": "setIdentifier:"},
+      {"access": "public", "getter": "percentComplete", "name": "percentComplete", "setter": "setPercentComplete:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCompleted", "name": "completed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastReportedDate", "name": "lastReportedDate"},
+      {"access": "public", "getter": "showsCompletionBanner", "introduced": "5", "name": "showsCompletionBanner", "setter": "setShowsCompletionBanner:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKAchievementChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "achievement", "name": "achievement"}
+     ],
+     "super": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadAchievementDescriptionsWithCompletionHandler:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievementDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "introduced": "6", "name": "groupIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "achievedDescription", "name": "achievedDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unachievedDescription", "name": "unachievedDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumPoints", "name": "maximumPoints"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "name": "hidden"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReplayable", "introduced": "6", "name": "replayable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rarityPercent", "introduced": "17", "name": "rarityPercent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "releaseState", "introduced": "18.4", "name": "releaseState"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievementViewController",
+     "properties": [
+      {"access": "public", "getter": "achievementDelegate", "name": "achievementDelegate", "setter": "setAchievementDelegate:"}
+     ],
+     "super": "GKGameCenterViewController"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKBasePlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "10", "name": "playerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadReceivedChallengesWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "decline"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "issuingPlayer", "introduced": "8", "name": "issuingPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receivingPlayer", "introduced": "8", "name": "receivingPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "issueDate", "name": "issueDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completionDate", "name": "completionDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "challengeEventHandler"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKChallengeEventHandler",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "6", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "getCurrentSignedInPlayerForContainer:completionHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKCloudPlayer",
+     "super": "GKBasePlayer"
+    },
+    {
+     "access": "public",
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "GKFriendRequestComposeViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated"
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKGameCenterViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKGameSessionEventListener"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "createSessionInContainer:withTitle:maxConnectedPlayers:completionHandler:"},
+      {"access": "public", "name": "loadSessionsInContainer:completionHandler:"},
+      {"access": "public", "name": "loadSessionWithIdentifier:completionHandler:"},
+      {"access": "public", "name": "removeSessionWithIdentifier:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "getShareURLWithCompletionHandler:"},
+      {"access": "public", "name": "loadDataWithCompletionHandler:"},
+      {"access": "public", "name": "saveData:completionHandler:"},
+      {"access": "public", "name": "setConnectionState:completionHandler:"},
+      {"access": "public", "name": "playersWithConnectionState:"},
+      {"access": "public", "name": "sendData:withTransportType:completionHandler:"},
+      {"access": "public", "name": "sendMessageWithLocalizedFormatKey:arguments:data:toPlayers:badgePlayers:completionHandler:"},
+      {"access": "public", "name": "clearBadgeForPlayers:completionHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKGameSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "owner", "name": "owner"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedDate", "name": "lastModifiedDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedPlayer", "name": "lastModifiedPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxNumberOfConnectedPlayers", "name": "maxNumberOfConnectedPlayers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "badgedPlayers", "name": "badgedPlayers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKInvite",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "introduced": "8", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHosted", "name": "hosted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerGroup", "introduced": "6", "name": "playerGroup"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerAttributes", "introduced": "6", "name": "playerAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inviter", "introduced": "4.1", "name": "inviter"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "14", "name": "loadLeaderboardsWithIDs:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "submitScore:context:player:leaderboardIDs:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "loadPreviousOccurrenceWithCompletionHandler:"},
+      {"access": "public", "introduced": "14", "name": "submitScore:context:player:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "loadEntriesForPlayerScope:timeScope:range:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "loadEntriesForPlayers:timeScope:completionHandler:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLeaderboard",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "introduced": "6", "name": "groupIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseLeaderboardID", "introduced": "14", "name": "baseLeaderboardID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "14", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "14", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextStartDate", "introduced": "14", "name": "nextStartDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "14", "name": "duration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKChallengeUI"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKLeaderboardEntry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rank", "name": "rank"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "score", "name": "score"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedScore", "name": "formattedScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "name": "context"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKLeaderboardScore",
+     "properties": [
+      {"access": "public", "getter": "player", "name": "player", "setter": "setPlayer:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "context", "name": "context", "setter": "setContext:"},
+      {"access": "public", "getter": "leaderboardID", "name": "leaderboardID", "setter": "setLeaderboardID:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadLeaderboardSetsWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "loadLeaderboardsWithHandler:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKLeaderboardSet",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "name": "groupIdentifier"},
+      {"access": "public", "getter": "identifier", "name": "identifier", "setter": "setIdentifier:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLeaderboardViewController",
+     "super": "GKGameCenterViewController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKLocalPlayerEvents",
+      "Deprecated",
+      "Obsoleted",
+      "FriendsList",
+      "UI",
+      "GKSavedGame"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "loadRecentPlayersWithCompletionHandler:"},
+      {"access": "public", "name": "loadChallengableFriendsWithCompletionHandler:"},
+      {"access": "public", "introduced": "7", "name": "setDefaultLeaderboardIdentifier:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "loadDefaultLeaderboardIdentifierWithCompletionHandler:"},
+      {"access": "public", "introduced": "13.5", "name": "fetchItemsForIdentityVerificationSignature:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLocalPlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "local", "introduced": "13", "name": "local"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "localPlayer", "name": "localPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAuthenticated", "name": "authenticated"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUnderage", "name": "underage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMultiplayerGamingRestricted", "introduced": "13", "name": "multiplayerGamingRestricted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPersonalizedCommunicationRestricted", "introduced": "14", "name": "personalizedCommunicationRestricted"}
+     ],
+     "super": "GKPlayer"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "sendData:toPlayers:dataMode:error:"},
+      {"access": "public", "name": "sendDataToAllPlayers:withDataMode:error:"},
+      {"access": "public", "name": "disconnect"},
+      {"access": "public", "introduced": "8", "name": "chooseBestHostingPlayerWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "rematchWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "voiceChatWithName:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "introduced": "8", "name": "players"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "expectedPlayerCount", "name": "expectedPlayerCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "introduced": "17.2", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerProperties", "introduced": "17.2", "name": "playerProperties"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "maxPlayersAllowedForMatchOfType:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchRequest",
+     "properties": [
+      {"access": "public", "getter": "minPlayers", "name": "minPlayers", "setter": "setMinPlayers:"},
+      {"access": "public", "getter": "maxPlayers", "name": "maxPlayers", "setter": "setMaxPlayers:"},
+      {"access": "public", "getter": "playerGroup", "name": "playerGroup", "setter": "setPlayerGroup:"},
+      {"access": "public", "getter": "playerAttributes", "name": "playerAttributes", "setter": "setPlayerAttributes:"},
+      {"access": "public", "getter": "recipients", "introduced": "8", "name": "recipients", "setter": "setRecipients:"},
+      {"access": "public", "getter": "inviteMessage", "introduced": "6", "name": "inviteMessage", "setter": "setInviteMessage:"},
+      {"access": "public", "getter": "defaultNumberOfPlayers", "introduced": "6", "name": "defaultNumberOfPlayers", "setter": "setDefaultNumberOfPlayers:"},
+      {"access": "public", "getter": "restrictToAutomatch", "introduced": "13", "name": "restrictToAutomatch", "setter": "setRestrictToAutomatch:"},
+      {"access": "public", "getter": "recipientResponseHandler", "introduced": "8", "name": "recipientResponseHandler", "setter": "setRecipientResponseHandler:"},
+      {"access": "public", "getter": "inviteeResponseHandler", "introduced": "6", "name": "inviteeResponseHandler", "setter": "setInviteeResponseHandler:"},
+      {"access": "public", "getter": "playersToInvite", "introduced": "4.1", "name": "playersToInvite", "setter": "setPlayersToInvite:"},
+      {"access": "public", "getter": "queueName", "introduced": "17.2", "name": "queueName", "setter": "setQueueName:"},
+      {"access": "public", "getter": "properties", "introduced": "17.2", "name": "properties", "setter": "setProperties:"},
+      {"access": "public", "getter": "recipientProperties", "introduced": "17.2", "name": "recipientProperties", "setter": "setRecipientProperties:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17.2",
+     "linkage": "exported",
+     "name": "GKMatchedPlayers",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerProperties", "name": "playerProperties"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKDeprecated",
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "sharedMatchmaker"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "matchForInvite:completionHandler:"},
+      {"access": "public", "name": "findMatchForRequest:withCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "findPlayersForHostedRequest:withCompletionHandler:"},
+      {"access": "public", "introduced": "17.2", "name": "findMatchedPlayers:withCompletionHandler:"},
+      {"access": "public", "name": "addPlayersToMatch:matchRequest:completionHandler:"},
+      {"access": "public", "name": "cancel"},
+      {"access": "public", "introduced": "8", "name": "cancelPendingInviteToPlayer:"},
+      {"access": "public", "introduced": "6", "name": "finishMatchmakingForMatch:"},
+      {"access": "public", "name": "queryPlayerGroupActivity:withCompletionHandler:"},
+      {"access": "public", "name": "queryActivityWithCompletionHandler:"},
+      {"access": "public", "introduced": "17.2", "name": "queryQueueActivity:withCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "startBrowsingForNearbyPlayersWithHandler:"},
+      {"access": "public", "introduced": "6", "name": "stopBrowsingForNearbyPlayers"},
+      {"access": "public", "introduced": "16.2", "name": "startGroupActivityWithPlayerHandler:"},
+      {"access": "public", "introduced": "16.2", "name": "stopGroupActivity"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchmaker",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMatchRequest:"},
+      {"access": "public", "name": "initWithInvite:"},
+      {"access": "public", "introduced": "5", "name": "addPlayersToMatch:"},
+      {"access": "public", "introduced": "8", "name": "setHostedPlayer:didConnect:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchmakerViewController",
+     "properties": [
+      {"access": "public", "getter": "matchmakerDelegate", "name": "matchmakerDelegate", "setter": "setMatchmakerDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchRequest", "name": "matchRequest"},
+      {"access": "public", "getter": "isHosted", "name": "hosted", "setter": "setHosted:"},
+      {"access": "public", "getter": "matchmakingMode", "introduced": "14", "name": "matchmakingMode", "setter": "setMatchmakingMode:"},
+      {"access": "public", "getter": "canStartWithMinimumPlayers", "introduced": "15", "name": "canStartWithMinimumPlayers", "setter": "setCanStartWithMinimumPlayers:"},
+      {"access": "public", "getter": "defaultInvitationMessage", "introduced": "5", "name": "defaultInvitationMessage", "setter": "setDefaultInvitationMessage:"}
+     ],
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "showBannerWithTitle:message:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "showBannerWithTitle:message:duration:completionHandler:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKNotificationBanner",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "show"},
+      {"access": "public", "name": "dismiss"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKPeerPickerController",
+     "properties": [
+      {"access": "public", "getter": "connectionTypesMask", "name": "connectionTypesMask", "setter": "setConnectionTypesMask:"},
+      {"access": "public", "getter": "delegate", "introduced": "3", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVisible", "name": "visible"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "UI",
+      "Deprecated"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "anonymousGuestPlayerWithIdentifier:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "scopedIDsArePersistent"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKPlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamePlayerID", "introduced": "12.4", "name": "gamePlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "teamPlayerID", "introduced": "12.4", "name": "teamPlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "introduced": "6", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alias", "name": "alias"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "guestIdentifier", "introduced": "9", "name": "guestIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInvitable", "introduced": "14", "name": "isInvitable"}
+     ],
+     "super": "GKBasePlayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "loadDataWithCompletionHandler:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "GKSavedGame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceName", "name": "deviceName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modificationDate", "name": "modificationDate"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted",
+      "GKChallenge",
+      "GKChallengeObsoleted",
+      "GKChallengeUI",
+      "GKChallengeObsoletedUI"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "reportScores:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLeaderboardIdentifier:"},
+      {"access": "public", "introduced": "8", "name": "initWithLeaderboardIdentifier:player:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKScore",
+     "properties": [
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedValue", "name": "formattedValue"},
+      {"access": "public", "getter": "leaderboardIdentifier", "introduced": "7", "name": "leaderboardIdentifier", "setter": "setLeaderboardIdentifier:"},
+      {"access": "public", "getter": "context", "introduced": "5", "name": "context", "setter": "setContext:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rank", "name": "rank"},
+      {"access": "public", "getter": "shouldSetDefaultLeaderboard", "introduced": "5", "name": "shouldSetDefaultLeaderboard", "setter": "setShouldSetDefaultLeaderboard:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKScoreChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "score", "introduced": "6", "name": "score"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leaderboardEntry", "introduced": "17.4", "name": "leaderboardEntry"}
+     ],
+     "super": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3", "name": "initWithSessionID:displayName:sessionMode:"},
+      {"access": "public", "name": "displayNameForPeer:"},
+      {"access": "public", "introduced": "3", "name": "sendData:toPeers:withDataMode:error:"},
+      {"access": "public", "introduced": "3", "name": "sendDataToAllPeers:withDataMode:error:"},
+      {"access": "public", "name": "setDataReceiveHandler:withContext:"},
+      {"access": "public", "name": "connectToPeer:withTimeout:"},
+      {"access": "public", "name": "cancelConnectToPeer:"},
+      {"access": "public", "name": "acceptConnectionFromPeer:error:"},
+      {"access": "public", "name": "denyConnectionFromPeer:"},
+      {"access": "public", "name": "disconnectPeerFromAllPeers:"},
+      {"access": "public", "name": "disconnectFromAllPeers"},
+      {"access": "public", "introduced": "3", "name": "peersWithConnectionState:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKSession",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "3", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionID", "name": "sessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionMode", "introduced": "3", "name": "sessionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peerID", "name": "peerID"},
+      {"access": "public", "getter": "isAvailable", "name": "available", "setter": "setAvailable:"},
+      {"access": "public", "getter": "disconnectTimeout", "name": "disconnectTimeout", "setter": "setDisconnectTimeout:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "sharedTurnBasedEventHandler"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedEventHandler",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "5", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "cancelWithLocalizableMessageKey:arguments:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "replyWithLocalizableMessageKey:arguments:data:completionHandler:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKTurnBasedExchange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeID", "name": "exchangeID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recipients", "name": "recipients"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sendDate", "name": "sendDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeoutDate", "name": "timeoutDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completionDate", "name": "completionDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "replies", "name": "replies"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKTurnBasedExchangeReply",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recipient", "name": "recipient"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "replyDate", "introduced": "8", "name": "replyDate"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "findMatchForRequest:withCompletionHandler:"},
+      {"access": "public", "name": "loadMatchesWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "loadMatchWithID:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "setLocalizableMessageWithKey:arguments:"},
+      {"access": "public", "introduced": "6", "name": "rematchWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "acceptInviteWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "declineInviteWithCompletionHandler:"},
+      {"access": "public", "name": "removeWithCompletionHandler:"},
+      {"access": "public", "name": "loadMatchDataWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "endTurnWithNextParticipants:turnTimeout:matchData:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "participantQuitInTurnWithOutcome:nextParticipants:turnTimeout:matchData:completionHandler:"},
+      {"access": "public", "name": "participantQuitOutOfTurnWithOutcome:withCompletionHandler:"},
+      {"access": "public", "name": "endMatchInTurnWithMatchData:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "endMatchInTurnWithMatchData:scores:achievements:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "endMatchInTurnWithMatchData:leaderboardScores:achievements:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "saveCurrentTurnWithMatchData:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "saveMergedMatchData:withResolvedExchanges:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "sendExchangeToParticipants:data:localizableMessageKey:arguments:timeout:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "sendReminderToParticipants:localizableMessageKey:arguments:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "endTurnWithNextParticipant:matchData:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "participantQuitInTurnWithOutcome:nextParticipant:matchData:completionHandler:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedMatch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchID", "name": "matchID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participants", "name": "participants"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentParticipant", "name": "currentParticipant"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchData", "name": "matchData"},
+      {"access": "public", "getter": "message", "name": "message", "setter": "setMessage:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchDataMaximumSize", "introduced": "6", "name": "matchDataMaximumSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchanges", "introduced": "7", "name": "exchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeExchanges", "introduced": "7", "name": "activeExchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completedExchanges", "introduced": "7", "name": "completedExchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeDataMaximumSize", "introduced": "7", "name": "exchangeDataMaximumSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeMaxInitiatedExchangesPerPlayer", "introduced": "7", "name": "exchangeMaxInitiatedExchangesPerPlayer"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedMatchmakerViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedParticipant",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastTurnDate", "name": "lastTurnDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "getter": "matchOutcome", "name": "matchOutcome", "setter": "setMatchOutcome:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeoutDate", "introduced": "6", "name": "timeoutDate"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "isVoIPAllowed"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "stop"},
+      {"access": "public", "introduced": "8", "name": "setPlayer:muted:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKVoiceChat",
+     "properties": [
+      {"access": "public", "getter": "playerVoiceChatStateDidChangeHandler", "introduced": "8", "name": "playerVoiceChatStateDidChangeHandler", "setter": "setPlayerVoiceChatStateDidChangeHandler:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "introduced": "8", "name": "players"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultVoiceChatService"},
+      {"access": "public", "name": "isVoIPAllowed"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startVoiceChatWithParticipantID:error:"},
+      {"access": "public", "name": "stopVoiceChatWithParticipantID:"},
+      {"access": "public", "name": "acceptCallID:error:"},
+      {"access": "public", "name": "denyCallID:"},
+      {"access": "public", "name": "receivedRealTimeData:fromParticipantID:"},
+      {"access": "public", "name": "receivedData:fromParticipantID:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKVoiceChatService",
+     "properties": [
+      {"access": "public", "getter": "client", "introduced": "3", "name": "client", "setter": "setClient:"},
+      {"access": "public", "getter": "isMicrophoneMuted", "name": "microphoneMuted", "setter": "setMicrophoneMuted:"},
+      {"access": "public", "getter": "remoteParticipantVolume", "name": "remoteParticipantVolume", "setter": "setRemoteParticipantVolume:"},
+      {"access": "public", "getter": "isOutputMeteringEnabled", "name": "outputMeteringEnabled", "setter": "setOutputMeteringEnabled:"},
+      {"access": "public", "getter": "isInputMeteringEnabled", "name": "inputMeteringEnabled", "setter": "setInputMeteringEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputMeterLevel", "name": "outputMeterLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputMeterLevel", "name": "inputMeterLevel"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "achievementViewControllerDidFinish:"}
+     ],
+     "introduced": "4.1",
+     "name": "GKAchievementViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "localPlayerDidSelectChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForLocallyReceivedChallenge:", "optional": true},
+      {"access": "public", "name": "localPlayerDidReceiveChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForLocallyCompletedChallenge:", "optional": true},
+      {"access": "public", "name": "localPlayerDidCompleteChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForRemotelyCompletedChallenge:", "optional": true},
+      {"access": "public", "name": "remotePlayerDidCompleteChallenge:", "optional": true}
+     ],
+     "introduced": "6",
+     "name": "GKChallengeEventHandlerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "player:wantsToPlayChallenge:", "optional": true},
+      {"access": "public", "name": "player:didReceiveChallenge:", "optional": true},
+      {"access": "public", "name": "player:didCompleteChallenge:issuedByFriend:", "optional": true},
+      {"access": "public", "name": "player:issuedChallengeWasCompleted:byFriend:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKChallengeListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.2", "name": "friendRequestComposeViewControllerDidFinish:"}
+     ],
+     "introduced": "4.2",
+     "name": "GKFriendRequestComposeViewControllerDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "gameCenterViewControllerDidFinish:"}
+     ],
+     "introduced": "6",
+     "name": "GKGameCenterControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didAddPlayer:", "optional": true},
+      {"access": "public", "name": "session:didRemovePlayer:", "optional": true},
+      {"access": "public", "name": "session:player:didChangeConnectionState:", "optional": true},
+      {"access": "public", "name": "session:player:didSaveData:", "optional": true},
+      {"access": "public", "name": "session:didReceiveData:fromPlayer:", "optional": true},
+      {"access": "public", "name": "session:didReceiveMessage:withData:fromPlayer:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "GKGameSessionEventListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "player:didAcceptInvite:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "player:didRequestMatchWithRecipients:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:didRequestMatchWithPlayers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKInviteEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "leaderboardViewControllerDidFinish:"}
+     ],
+     "introduced": "4.1",
+     "name": "GKLeaderboardViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "name": "GKLocalPlayerListener",
+     "protocols": [
+      "GKChallengeListener",
+      "GKInviteEventListener",
+      "GKTurnBasedEventListener",
+      "GKSavedGameListener"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "match:didReceiveData:fromRemotePlayer:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "match:didReceiveData:forRecipient:fromRemotePlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:player:didChangeConnectionState:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:didFailWithError:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "match:shouldReinviteDisconnectedPlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:didReceiveData:fromPlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:player:didChangeState:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "match:shouldReinvitePlayer:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "GKMatchDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewControllerWasCancelled:"},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFailWithError:"},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFindMatch:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "matchmakerViewController:didFindHostedPlayers:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "matchmakerViewController:hostedPlayerDidAccept:", "optional": true},
+      {"access": "public", "introduced": "17.2", "name": "matchmakerViewController:getMatchPropertiesForRecipient:withCompletionHandler:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFindPlayers:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "matchmakerViewController:didReceiveAcceptFromHostedPlayer:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "GKMatchmakerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "peerPickerController:didSelectConnectionType:", "optional": true},
+      {"access": "public", "name": "peerPickerController:sessionForConnectionType:", "optional": true},
+      {"access": "public", "name": "peerPickerController:didConnectPeer:toSession:", "optional": true},
+      {"access": "public", "name": "peerPickerControllerDidCancel:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKPeerPickerControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "player:didModifySavedGame:", "optional": true},
+      {"access": "public", "name": "player:hasConflictingSavedGames:", "optional": true}
+     ],
+     "introduced": "8",
+     "name": "GKSavedGameListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:peer:didChangeState:", "optional": true},
+      {"access": "public", "name": "session:didReceiveConnectionRequestFromPeer:", "optional": true},
+      {"access": "public", "name": "session:connectionWithPeerFailed:withError:", "optional": true},
+      {"access": "public", "name": "session:didFailWithError:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "handleInviteFromGameCenter:"},
+      {"access": "public", "introduced": "6", "name": "handleTurnEventForMatch:didBecomeActive:"},
+      {"access": "public", "introduced": "5", "name": "handleTurnEventForMatch:", "optional": true},
+      {"access": "public", "introduced": "6", "name": "handleMatchEnded:", "optional": true}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedEventHandlerDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "player:didRequestMatchWithOtherPlayers:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedTurnEventForMatch:didBecomeActive:", "optional": true},
+      {"access": "public", "name": "player:matchEnded:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeRequest:forMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeCancellation:forMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeReplies:forCompletedExchange:forMatch:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "player:wantsToQuitMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:didRequestMatchWithPlayers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKTurnBasedEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewControllerWasCancelled:"},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:didFailWithError:"},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:didFindMatch:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:playerQuitForMatch:", "optional": true}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchmakerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "voiceChatService:sendData:toParticipantID:"},
+      {"access": "public", "name": "participantID"},
+      {"access": "public", "name": "voiceChatService:sendRealTimeData:toParticipantID:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didStartWithParticipantID:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didNotStartWithParticipantID:error:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didStopWithParticipantID:error:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didReceiveInvitationFromParticipantID:callID:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKVoiceChatClient",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "GKAccessPointLocation"},
+    {"access": "public", "introduced": "8", "name": "GKChallengeComposeCompletionBlock"},
+    {"access": "public", "introduced": "17", "name": "GKChallengeComposeHandler"},
+    {"access": "public", "name": "GKChallengeState"},
+    {"access": "public", "name": "GKConnectionState"},
+    {"access": "public", "name": "GKErrorCode"},
+    {"access": "public", "name": "GKFriendsAuthorizationStatus"},
+    {"access": "public", "name": "GKGameCenterViewControllerState"},
+    {"access": "public", "name": "GKGameSessionErrorCode"},
+    {"access": "public", "name": "GKInviteRecipientResponse"},
+    {"access": "public", "introduced": "6", "name": "GKInviteeResponse"},
+    {"access": "public", "name": "GKLeaderboardPlayerScope"},
+    {"access": "public", "name": "GKLeaderboardTimeScope"},
+    {"access": "public", "name": "GKLeaderboardType"},
+    {"access": "public", "introduced": "17.2", "name": "GKMatchProperties"},
+    {"access": "public", "name": "GKMatchSendDataMode"},
+    {"access": "public", "name": "GKMatchType"},
+    {"access": "public", "name": "GKMatchmakingMode"},
+    {"access": "public", "name": "GKPeerConnectionState"},
+    {"access": "public", "name": "GKPeerPickerConnectionType"},
+    {"access": "public", "name": "GKPhotoSize"},
+    {"access": "public", "name": "GKPlayerConnectionState"},
+    {"access": "public", "name": "GKReleaseState"},
+    {"access": "public", "name": "GKSendDataMode"},
+    {"access": "public", "name": "GKSessionError"},
+    {"access": "public", "name": "GKSessionMode"},
+    {"access": "public", "name": "GKTransportType"},
+    {"access": "public", "name": "GKTurnBasedExchangeStatus"},
+    {"access": "public", "name": "GKTurnBasedMatchOutcome"},
+    {"access": "public", "name": "GKTurnBasedMatchStatus"},
+    {"access": "public", "name": "GKTurnBasedParticipantStatus"},
+    {"access": "public", "name": "GKVoiceChatPlayerState"},
+    {"access": "public", "name": "GKVoiceChatServiceError"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "initWithState:"},
+      {"access": "public", "introduced": "14", "name": "initWithLeaderboardID:playerScope:timeScope:"},
+      {"access": "public", "introduced": "14", "name": "initWithLeaderboard:playerScope:"},
+      {"access": "public", "introduced": "18", "name": "initWithLeaderboardSetID:"},
+      {"access": "public", "introduced": "14", "name": "initWithAchievementID:"},
+      {"access": "public", "introduced": "18", "name": "initWithPlayer:"}
+     ],
+     "interface": "GKGameCenterViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "gameCenterDelegate", "name": "gameCenterDelegate", "setter": "setGameCenterDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "maxNumberOfRecipients"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setMessage:"},
+      {"access": "public", "introduced": "8", "name": "addRecipientPlayers:"},
+      {"access": "public", "introduced": "4.2", "name": "addRecipientsWithPlayerIDs:"},
+      {"access": "public", "name": "addRecipientsWithEmailAddresses:"}
+     ],
+     "interface": "GKFriendRequestComposeViewController",
+     "introduced": "4.2",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "composeViewDelegate", "introduced": "4.2", "name": "composeViewDelegate", "setter": "setComposeViewDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKLeaderboardViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "timeScope", "name": "timeScope", "setter": "setTimeScope:"},
+      {"access": "public", "getter": "category", "name": "category", "setter": "setCategory:"},
+      {"access": "public", "getter": "leaderboardDelegate", "name": "leaderboardDelegate", "setter": "setLeaderboardDelegate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMatchRequest:"}
+     ],
+     "interface": "GKTurnBasedMatchmakerViewController",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "turnBasedMatchmakerDelegate", "name": "turnBasedMatchmakerDelegate", "setter": "setTurnBasedMatchmakerDelegate:"},
+      {"access": "public", "getter": "showExistingMatches", "name": "showExistingMatches", "setter": "setShowExistingMatches:"},
+      {"access": "public", "getter": "matchmakingMode", "introduced": "15", "name": "matchmakingMode", "setter": "setMatchmakingMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadPlayersForIdentifiers:withCompletionHandler:"}
+     ],
+     "interface": "GKPlayer",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFriend", "introduced": "4.1", "name": "isFriend"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "4.1", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadCategoriesWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "setDefaultLeaderboard:withCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "loadLeaderboardsWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "initWithPlayerIDs:"},
+      {"access": "public", "introduced": "4", "name": "init"},
+      {"access": "public", "introduced": "8", "name": "initWithPlayers:"},
+      {"access": "public", "introduced": "4", "name": "loadScoresWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboard",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "category", "introduced": "4.1", "name": "category", "setter": "setCategory:"},
+      {"access": "public", "getter": "timeScope", "introduced": "4", "name": "timeScope", "setter": "setTimeScope:"},
+      {"access": "public", "getter": "playerScope", "introduced": "4", "name": "playerScope", "setter": "setPlayerScope:"},
+      {"access": "public", "getter": "identifier", "introduced": "7", "name": "identifier", "setter": "setIdentifier:"},
+      {"access": "public", "getter": "range", "introduced": "4", "name": "range", "setter": "setRange:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scores", "introduced": "4", "name": "scores"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxRange", "introduced": "4", "name": "maxRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localPlayerScore", "introduced": "4", "name": "localPlayerScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLoading", "introduced": "4.1", "name": "loading"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "reportAchievementWithCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "introduced": "4.1", "name": "hidden"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKGameCenterViewController",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "viewState", "introduced": "6", "name": "viewState", "setter": "setViewState:"},
+      {"access": "public", "getter": "leaderboardTimeScope", "introduced": "4.1", "name": "leaderboardTimeScope", "setter": "setLeaderboardTimeScope:"},
+      {"access": "public", "getter": "leaderboardIdentifier", "introduced": "7", "name": "leaderboardIdentifier", "setter": "setLeaderboardIdentifier:"},
+      {"access": "public", "getter": "leaderboardCategory", "introduced": "4.1", "name": "leaderboardCategory", "setter": "setLeaderboardCategory:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "reportScoreWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "initWithCategory:"}
+     ],
+     "interface": "GKScore",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "category", "introduced": "4.1", "name": "category", "setter": "setCategory:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadLeaderboardsWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboardSet",
+     "name": "Deprecated"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "setDefaultLeaderboardCategoryID:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "loadDefaultLeaderboardCategoryIDWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "authenticateWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "loadFriendPlayersWithCompletionHandler:"},
+      {"access": "public", "introduced": "7", "name": "generateIdentityVerificationSignatureWithCompletionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "Deprecated"
+    },
+    {
+     "access": "public",
+     "interface": "GKVoiceChat",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "playerStateUpdateHandler", "introduced": "4.1", "name": "playerStateUpdateHandler", "setter": "setPlayerStateUpdateHandler:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14.5", "name": "loadFriendsAuthorizationStatus:"},
+      {"access": "public", "introduced": "14.5", "name": "loadFriends:"},
+      {"access": "public", "introduced": "14.5", "name": "loadFriendsWithIdentifiers:completionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "FriendsList"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "reportScores:withEligibleChallenges:withCompletionHandler:"},
+      {"access": "public", "introduced": "14", "name": "reportLeaderboardScores:withEligibleChallenges:withCompletionHandler:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "reportAchievements:withEligibleChallenges:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "selectChallengeablePlayers:withCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "issueChallengeToPlayers:message:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeObsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "issueChallengeToPlayers:message:"},
+      {"access": "public", "introduced": "6", "name": "selectChallengeablePlayerIDs:withCompletionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeObsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "challengeComposeControllerWithPlayers:message:completionHandler:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeObsoletedUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "challengeComposeControllerWithPlayers:message:completionHandler:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeObsoletedUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKScore",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKLeaderboardEntry",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "challengeComposeControllerWithMessage:players:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "challengeComposeControllerWithMessage:players:completion:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "GKChallengeUI"
+    },
+    {
+     "access": "public",
+     "interface": "GKMatchmaker",
+     "name": "GKDeprecated",
+     "properties": [
+      {"access": "public", "getter": "inviteHandler", "introduced": "4.1", "name": "inviteHandler", "setter": "setInviteHandler:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "10", "name": "addEventListener:"},
+      {"access": "public", "introduced": "10", "name": "removeEventListener:"}
+     ],
+     "interface": "GKGameSession",
+     "name": "GKGameSessionEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "registerListener:"},
+      {"access": "public", "introduced": "7", "name": "unregisterListener:"},
+      {"access": "public", "introduced": "7", "name": "unregisterAllListeners"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "GKLocalPlayerEvents"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "fetchSavedGamesWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "saveGameData:withName:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "deleteSavedGamesWithName:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "resolveConflictingSavedGames:withData:completionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "GKSavedGame",
+     "protocols": [
+      "GKSavedGameListener"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithIdentifier:forPlayer:"}
+     ],
+     "interface": "GKAchievement",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "7", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithLeaderboardIdentifier:forPlayer:"}
+     ],
+     "interface": "GKScore",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "4.1", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKChallenge",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "issuingPlayerID", "introduced": "6", "name": "issuingPlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receivingPlayerID", "introduced": "6", "name": "receivingPlayerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "GKTurnBasedParticipant",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "5", "name": "playerID"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "startBrowsingForNearbyPlayersWithReachableHandler:"},
+      {"access": "public", "introduced": "6", "name": "cancelInviteToPlayer:"},
+      {"access": "public", "introduced": "4.1", "name": "findPlayersForHostedMatchRequest:withCompletionHandler:"}
+     ],
+     "interface": "GKMatchmaker",
+     "name": "Obsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "loadFriendsWithCompletionHandler:"}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "friends", "introduced": "4.1", "name": "friends"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "chooseBestHostPlayerWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "sendData:toPlayers:withDataMode:error:"}
+     ],
+     "interface": "GKMatch",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerIDs", "introduced": "4.1", "name": "playerIDs"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "setHostedPlayer:connected:"},
+      {"access": "public", "introduced": "4.1", "name": "setHostedPlayerReady:"}
+     ],
+     "interface": "GKMatchmakerViewController",
+     "name": "Obsoleted"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "setMute:forPlayer:"}
+     ],
+     "interface": "GKVoiceChat",
+     "name": "Obsoleted",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerIDs", "introduced": "5", "name": "playerIDs"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "loadPhotoForSize:withCompletionHandler:"}
+     ],
+     "interface": "GKPlayer",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboard",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "incompleteAchievementImage"},
+      {"access": "public", "name": "placeholderCompletedAchievementImage"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKAchievementDescription",
+     "name": "UI",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "image", "introduced": "4.1", "name": "image"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "loadImageWithCompletionHandler:"}
+     ],
+     "interface": "GKLeaderboardSet",
+     "name": "UI"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "presentFriendRequestCreatorFromViewController:error:"},
+      {"access": "public", "name": "presentFriendRequestCreatorFromWindow:error:", "unavailable": true}
+     ],
+     "interface": "GKLocalPlayer",
+     "name": "UI",
+     "properties": [
+      {"access": "public", "getter": "authenticateHandler", "introduced": "6", "name": "authenticateHandler", "setter": "setAuthenticateHandler:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPresentingFriendRequestViewController", "introduced": "15", "name": "isPresentingFriendRequestViewController"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKAccessPointLocationTopLeading"},
+      {"access": "public", "name": "GKAccessPointLocationTopTrailing"},
+      {"access": "public", "name": "GKAccessPointLocationBottomLeading"},
+      {"access": "public", "name": "GKAccessPointLocationBottomTrailing"}
+     ],
+     "introduced": "14",
+     "name": "GKAccessPointLocation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKChallengeStateInvalid"},
+      {"access": "public", "name": "GKChallengeStatePending"},
+      {"access": "public", "name": "GKChallengeStateCompleted"},
+      {"access": "public", "name": "GKChallengeStateDeclined"}
+     ],
+     "introduced": "6",
+     "name": "GKChallengeState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKConnectionStateNotConnected"},
+      {"access": "public", "name": "GKConnectionStateConnected"}
+     ],
+     "introduced": "10",
+     "name": "GKConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKErrorUnknown"},
+      {"access": "public", "name": "GKErrorCancelled"},
+      {"access": "public", "name": "GKErrorCommunicationsFailure"},
+      {"access": "public", "name": "GKErrorUserDenied"},
+      {"access": "public", "name": "GKErrorInvalidCredentials"},
+      {"access": "public", "name": "GKErrorNotAuthenticated"},
+      {"access": "public", "name": "GKErrorAuthenticationInProgress"},
+      {"access": "public", "name": "GKErrorInvalidPlayer"},
+      {"access": "public", "name": "GKErrorScoreNotSet"},
+      {"access": "public", "name": "GKErrorParentalControlsBlocked"},
+      {"access": "public", "introduced": "4", "name": "GKErrorPlayerStatusExceedsMaximumLength"},
+      {"access": "public", "introduced": "4", "name": "GKErrorPlayerStatusInvalid"},
+      {"access": "public", "name": "GKErrorMatchRequestInvalid"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorUnderage"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorGameUnrecognized"},
+      {"access": "public", "introduced": "4.1", "name": "GKErrorNotSupported"},
+      {"access": "public", "introduced": "4.2", "name": "GKErrorInvalidParameter"},
+      {"access": "public", "introduced": "5", "name": "GKErrorUnexpectedConnection"},
+      {"access": "public", "introduced": "6", "name": "GKErrorChallengeInvalid"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedMatchDataTooLarge"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedTooManySessions"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidParticipant"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidTurn"},
+      {"access": "public", "introduced": "6", "name": "GKErrorTurnBasedInvalidState"},
+      {"access": "public", "introduced": "7", "name": "GKErrorInvitationsDisabled"},
+      {"access": "public", "introduced": "8", "name": "GKErrorPlayerPhotoFailure"},
+      {"access": "public", "introduced": "8", "name": "GKErrorUbiquityContainerUnavailable"},
+      {"access": "public", "introduced": "10", "name": "GKErrorMatchNotConnected"},
+      {"access": "public", "introduced": "10", "name": "GKErrorGameSessionRequestInvalid"},
+      {"access": "public", "introduced": "13", "name": "GKErrorRestrictedToAutomatch"},
+      {"access": "public", "introduced": "13", "name": "GKErrorAPINotAvailable"},
+      {"access": "public", "introduced": "14", "name": "GKErrorNotAuthorized"},
+      {"access": "public", "introduced": "14", "name": "GKErrorConnectionTimeout"},
+      {"access": "public", "introduced": "14", "name": "GKErrorAPIObsolete"},
+      {"access": "public", "introduced": "17.2", "name": "GKErrorICloudUnavailable"},
+      {"access": "public", "introduced": "17.2", "name": "GKErrorLockdownMode"},
+      {"access": "public", "introduced": "17.4", "name": "GKErrorAppUnlisted"},
+      {"access": "public", "introduced": "18.4", "name": "GKErrorDebugMode"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListDescriptionMissing"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListRestricted"},
+      {"access": "public", "introduced": "14.5", "name": "GKErrorFriendListDenied"},
+      {"access": "public", "introduced": "15", "name": "GKErrorFriendRequestNotAvailable"}
+     ],
+     "introduced": "4",
+     "name": "GKErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKFriendsAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusRestricted"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusDenied"},
+      {"access": "public", "name": "GKFriendsAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "14.5",
+     "name": "GKFriendsAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKGameCenterViewControllerStateDefault"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateLeaderboards"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateAchievements"},
+      {"access": "public", "name": "GKGameCenterViewControllerStateChallenges"},
+      {"access": "public", "introduced": "14", "name": "GKGameCenterViewControllerStateLocalPlayerProfile"},
+      {"access": "public", "introduced": "14", "name": "GKGameCenterViewControllerStateDashboard"},
+      {"access": "public", "introduced": "15", "name": "GKGameCenterViewControllerStateLocalPlayerFriendsList"}
+     ],
+     "introduced": "6",
+     "name": "GKGameCenterViewControllerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKGameSessionErrorUnknown"},
+      {"access": "public", "name": "GKGameSessionErrorNotAuthenticated"},
+      {"access": "public", "name": "GKGameSessionErrorSessionConflict"},
+      {"access": "public", "name": "GKGameSessionErrorSessionNotShared"},
+      {"access": "public", "name": "GKGameSessionErrorConnectionCancelledByUser"},
+      {"access": "public", "name": "GKGameSessionErrorConnectionFailed"},
+      {"access": "public", "name": "GKGameSessionErrorSessionHasMaxConnectedPlayers"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNotConnected"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNoRecipients"},
+      {"access": "public", "name": "GKGameSessionErrorSendDataNotReachable"},
+      {"access": "public", "name": "GKGameSessionErrorSendRateLimitReached"},
+      {"access": "public", "name": "GKGameSessionErrorBadContainer"},
+      {"access": "public", "name": "GKGameSessionErrorCloudQuotaExceeded"},
+      {"access": "public", "name": "GKGameSessionErrorNetworkFailure"},
+      {"access": "public", "name": "GKGameSessionErrorCloudDriveDisabled"},
+      {"access": "public", "name": "GKGameSessionErrorInvalidSession"}
+     ],
+     "introduced": "10",
+     "name": "GKGameSessionErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKInviteRecipientResponseAccepted"},
+      {"access": "public", "name": "GKInviteRecipientResponseDeclined"},
+      {"access": "public", "name": "GKInviteRecipientResponseFailed"},
+      {"access": "public", "name": "GKInviteRecipientResponseIncompatible"},
+      {"access": "public", "name": "GKInviteRecipientResponseUnableToConnect"},
+      {"access": "public", "name": "GKInviteRecipientResponseNoAnswer"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseAccepted"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseDeclined"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseFailed"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseIncompatible"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseUnableToConnect"},
+      {"access": "public", "introduced": "6", "name": "GKInviteeResponseNoAnswer"}
+     ],
+     "introduced": "8",
+     "name": "GKInviteRecipientResponse"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardPlayerScopeGlobal"},
+      {"access": "public", "name": "GKLeaderboardPlayerScopeFriendsOnly"}
+     ],
+     "introduced": "4",
+     "name": "GKLeaderboardPlayerScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardTimeScopeToday"},
+      {"access": "public", "name": "GKLeaderboardTimeScopeWeek"},
+      {"access": "public", "name": "GKLeaderboardTimeScopeAllTime"}
+     ],
+     "introduced": "4",
+     "name": "GKLeaderboardTimeScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKLeaderboardTypeClassic"},
+      {"access": "public", "name": "GKLeaderboardTypeRecurring"}
+     ],
+     "introduced": "14",
+     "name": "GKLeaderboardType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchSendDataReliable"},
+      {"access": "public", "name": "GKMatchSendDataUnreliable"}
+     ],
+     "introduced": "4",
+     "name": "GKMatchSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchTypePeerToPeer"},
+      {"access": "public", "name": "GKMatchTypeHosted"},
+      {"access": "public", "name": "GKMatchTypeTurnBased"}
+     ],
+     "introduced": "6",
+     "name": "GKMatchType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKMatchmakingModeDefault"},
+      {"access": "public", "name": "GKMatchmakingModeNearbyOnly"},
+      {"access": "public", "name": "GKMatchmakingModeAutomatchOnly"},
+      {"access": "public", "introduced": "15", "name": "GKMatchmakingModeInviteOnly"}
+     ],
+     "introduced": "14",
+     "name": "GKMatchmakingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPeerStateAvailable"},
+      {"access": "public", "name": "GKPeerStateUnavailable"},
+      {"access": "public", "name": "GKPeerStateConnected"},
+      {"access": "public", "name": "GKPeerStateDisconnected"},
+      {"access": "public", "name": "GKPeerStateConnecting"},
+      {"access": "public", "name": "GKPeerStateConnectedRelay"}
+     ],
+     "introduced": "3",
+     "name": "GKPeerConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPeerPickerConnectionTypeOnline"},
+      {"access": "public", "name": "GKPeerPickerConnectionTypeNearby"}
+     ],
+     "introduced": "3",
+     "name": "GKPeerPickerConnectionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPhotoSizeSmall"},
+      {"access": "public", "name": "GKPhotoSizeNormal"}
+     ],
+     "introduced": "5",
+     "name": "GKPhotoSize"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKPlayerStateUnknown"},
+      {"access": "public", "name": "GKPlayerStateConnected"},
+      {"access": "public", "name": "GKPlayerStateDisconnected"}
+     ],
+     "introduced": "4",
+     "name": "GKPlayerConnectionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKReleaseStateUnknown"},
+      {"access": "public", "name": "GKReleaseStateReleased"},
+      {"access": "public", "name": "GKReleaseStatePrereleased"}
+     ],
+     "introduced": "18.4",
+     "name": "GKReleaseState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSendDataReliable"},
+      {"access": "public", "name": "GKSendDataUnreliable"}
+     ],
+     "introduced": "3",
+     "name": "GKSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSessionInvalidParameterError"},
+      {"access": "public", "name": "GKSessionPeerNotFoundError"},
+      {"access": "public", "name": "GKSessionDeclinedError"},
+      {"access": "public", "name": "GKSessionTimedOutError"},
+      {"access": "public", "name": "GKSessionCancelledError"},
+      {"access": "public", "name": "GKSessionConnectionFailedError"},
+      {"access": "public", "name": "GKSessionConnectionClosedError"},
+      {"access": "public", "name": "GKSessionDataTooBigError"},
+      {"access": "public", "name": "GKSessionNotConnectedError"},
+      {"access": "public", "name": "GKSessionCannotEnableError"},
+      {"access": "public", "name": "GKSessionInProgressError"},
+      {"access": "public", "name": "GKSessionConnectivityError"},
+      {"access": "public", "name": "GKSessionTransportError"},
+      {"access": "public", "name": "GKSessionInternalError"},
+      {"access": "public", "name": "GKSessionUnknownError"},
+      {"access": "public", "name": "GKSessionSystemError"}
+     ],
+     "introduced": "3",
+     "name": "GKSessionError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKSessionModeServer"},
+      {"access": "public", "name": "GKSessionModeClient"},
+      {"access": "public", "name": "GKSessionModePeer"}
+     ],
+     "introduced": "3",
+     "name": "GKSessionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTransportTypeUnreliable"},
+      {"access": "public", "name": "GKTransportTypeReliable"}
+     ],
+     "introduced": "10",
+     "name": "GKTransportType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedExchangeStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusActive"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusComplete"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusResolved"},
+      {"access": "public", "name": "GKTurnBasedExchangeStatusCanceled"}
+     ],
+     "introduced": "7",
+     "name": "GKTurnBasedExchangeStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeNone"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeQuit"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeWon"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeLost"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeTied"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeTimeExpired"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeFirst"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeSecond"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeThird"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeFourth"},
+      {"access": "public", "name": "GKTurnBasedMatchOutcomeCustomRange"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchOutcome"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedMatchStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusOpen"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusEnded"},
+      {"access": "public", "name": "GKTurnBasedMatchStatusMatching"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKTurnBasedParticipantStatusUnknown"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusInvited"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusDeclined"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusMatching"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusActive"},
+      {"access": "public", "name": "GKTurnBasedParticipantStatusDone"}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedParticipantStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKVoiceChatPlayerConnected"},
+      {"access": "public", "name": "GKVoiceChatPlayerDisconnected"},
+      {"access": "public", "name": "GKVoiceChatPlayerSpeaking"},
+      {"access": "public", "name": "GKVoiceChatPlayerSilent"},
+      {"access": "public", "name": "GKVoiceChatPlayerConnecting"}
+     ],
+     "introduced": "4.1",
+     "name": "GKVoiceChatPlayerState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GKVoiceChatServiceInternalError"},
+      {"access": "public", "name": "GKVoiceChatServiceNoRemotePacketsError"},
+      {"access": "public", "name": "GKVoiceChatServiceUnableToConnectError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantHangupError"},
+      {"access": "public", "name": "GKVoiceChatServiceInvalidCallIDError"},
+      {"access": "public", "name": "GKVoiceChatServiceAudioUnavailableError"},
+      {"access": "public", "name": "GKVoiceChatServiceUninitializedClientError"},
+      {"access": "public", "name": "GKVoiceChatServiceClientMissingRequiredMethodsError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantBusyError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantCancelledError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantResponseInvalidError"},
+      {"access": "public", "name": "GKVoiceChatServiceRemoteParticipantDeclinedInviteError"},
+      {"access": "public", "name": "GKVoiceChatServiceMethodCurrentlyInvalidError"},
+      {"access": "public", "name": "GKVoiceChatServiceNetworkConfigurationError"},
+      {"access": "public", "name": "GKVoiceChatServiceUnsupportedRemoteVersionError"},
+      {"access": "public", "name": "GKVoiceChatServiceOutOfMemoryError"},
+      {"access": "public", "name": "GKVoiceChatServiceInvalidParameterError"}
+     ],
+     "introduced": "3",
+     "name": "GKVoiceChatServiceError"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_GKErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_GKExchangeTimeoutDefault"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_GKExchangeTimeoutNone"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_GKGameSessionErrorDomain"},
+    {"access": "public", "introduced": "4.1", "kind": "variable", "linkage": "exported", "name": "_GKPlayerAuthenticationDidChangeNotificationName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_GKPlayerDidChangeNotificationName"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_GKPlayerIDNoLongerAvailable"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_GKSessionErrorDomain"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_GKTurnTimeoutDefault"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_GKTurnTimeoutNone"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_GKVoiceChatServiceErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "triggerAccessPointWithHandler:"},
+      {"access": "public", "name": "triggerAccessPointWithState:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithAchievementID:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithLeaderboardSetID:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithLeaderboardID:playerScope:timeScope:handler:"},
+      {"access": "public", "introduced": "18", "name": "triggerAccessPointWithPlayer:handler:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKAccessPoint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "shared", "name": "shared"},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "isFocused", "name": "focused", "setter": "setFocused:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVisible", "name": "visible"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPresentingGameCenter", "name": "isPresentingGameCenter"},
+      {"access": "public", "getter": "showHighlights", "name": "showHighlights", "setter": "setShowHighlights:"},
+      {"access": "public", "getter": "location", "name": "location", "setter": "setLocation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameInScreenCoordinates", "name": "frameInScreenCoordinates"},
+      {"access": "public", "getter": "parentWindow", "name": "parentWindow", "setter": "setParentWindow:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted",
+      "GKChallenge",
+      "GKChallengeObsoleted",
+      "GKChallengeUI",
+      "GKChallengeObsoletedUI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadAchievementsWithCompletionHandler:"},
+      {"access": "public", "name": "resetAchievementsWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "reportAchievements:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"},
+      {"access": "public", "introduced": "8", "name": "initWithIdentifier:player:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievement",
+     "properties": [
+      {"access": "public", "getter": "identifier", "name": "identifier", "setter": "setIdentifier:"},
+      {"access": "public", "getter": "percentComplete", "name": "percentComplete", "setter": "setPercentComplete:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCompleted", "name": "completed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastReportedDate", "name": "lastReportedDate"},
+      {"access": "public", "getter": "showsCompletionBanner", "introduced": "5", "name": "showsCompletionBanner", "setter": "setShowsCompletionBanner:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKAchievementChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "achievement", "name": "achievement"}
+     ],
+     "super": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadAchievementDescriptionsWithCompletionHandler:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievementDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "introduced": "6", "name": "groupIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "achievedDescription", "name": "achievedDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unachievedDescription", "name": "unachievedDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumPoints", "name": "maximumPoints"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "name": "hidden"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReplayable", "introduced": "6", "name": "replayable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rarityPercent", "introduced": "17", "name": "rarityPercent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "releaseState", "introduced": "18.4", "name": "releaseState"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKAchievementViewController",
+     "properties": [
+      {"access": "public", "getter": "achievementDelegate", "name": "achievementDelegate", "setter": "setAchievementDelegate:"}
+     ],
+     "super": "GKGameCenterViewController"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKBasePlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerID", "introduced": "10", "name": "playerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadReceivedChallengesWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "decline"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "issuingPlayer", "introduced": "8", "name": "issuingPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receivingPlayer", "introduced": "8", "name": "receivingPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "issueDate", "name": "issueDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completionDate", "name": "completionDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "challengeEventHandler"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKChallengeEventHandler",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "6", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "getCurrentSignedInPlayerForContainer:completionHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKCloudPlayer",
+     "super": "GKBasePlayer"
+    },
+    {
+     "access": "public",
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "GKFriendRequestComposeViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated"
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKGameCenterViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKGameSessionEventListener"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "createSessionInContainer:withTitle:maxConnectedPlayers:completionHandler:"},
+      {"access": "public", "name": "loadSessionsInContainer:completionHandler:"},
+      {"access": "public", "name": "loadSessionWithIdentifier:completionHandler:"},
+      {"access": "public", "name": "removeSessionWithIdentifier:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "getShareURLWithCompletionHandler:"},
+      {"access": "public", "name": "loadDataWithCompletionHandler:"},
+      {"access": "public", "name": "saveData:completionHandler:"},
+      {"access": "public", "name": "setConnectionState:completionHandler:"},
+      {"access": "public", "name": "playersWithConnectionState:"},
+      {"access": "public", "name": "sendData:withTransportType:completionHandler:"},
+      {"access": "public", "name": "sendMessageWithLocalizedFormatKey:arguments:data:toPlayers:badgePlayers:completionHandler:"},
+      {"access": "public", "name": "clearBadgeForPlayers:completionHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "GKGameSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "owner", "name": "owner"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedDate", "name": "lastModifiedDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedPlayer", "name": "lastModifiedPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxNumberOfConnectedPlayers", "name": "maxNumberOfConnectedPlayers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "badgedPlayers", "name": "badgedPlayers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKInvite",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "introduced": "8", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHosted", "name": "hosted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerGroup", "introduced": "6", "name": "playerGroup"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerAttributes", "introduced": "6", "name": "playerAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inviter", "introduced": "4.1", "name": "inviter"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "14", "name": "loadLeaderboardsWithIDs:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "submitScore:context:player:leaderboardIDs:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "loadPreviousOccurrenceWithCompletionHandler:"},
+      {"access": "public", "introduced": "14", "name": "submitScore:context:player:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "loadEntriesForPlayerScope:timeScope:range:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "loadEntriesForPlayers:timeScope:completionHandler:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLeaderboard",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "introduced": "6", "name": "groupIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseLeaderboardID", "introduced": "14", "name": "baseLeaderboardID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "14", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "introduced": "14", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextStartDate", "introduced": "14", "name": "nextStartDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "14", "name": "duration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKChallengeUI"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKLeaderboardEntry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rank", "name": "rank"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "score", "name": "score"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedScore", "name": "formattedScore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "name": "context"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "GKLeaderboardScore",
+     "properties": [
+      {"access": "public", "getter": "player", "name": "player", "setter": "setPlayer:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "context", "name": "context", "setter": "setContext:"},
+      {"access": "public", "getter": "leaderboardID", "name": "leaderboardID", "setter": "setLeaderboardID:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "UI"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "loadLeaderboardSetsWithCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "loadLeaderboardsWithHandler:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKLeaderboardSet",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupIdentifier", "name": "groupIdentifier"},
+      {"access": "public", "getter": "identifier", "name": "identifier", "setter": "setIdentifier:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLeaderboardViewController",
+     "super": "GKGameCenterViewController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKLocalPlayerEvents",
+      "Deprecated",
+      "Obsoleted",
+      "FriendsList",
+      "UI",
+      "GKSavedGame"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "loadRecentPlayersWithCompletionHandler:"},
+      {"access": "public", "name": "loadChallengableFriendsWithCompletionHandler:"},
+      {"access": "public", "introduced": "7", "name": "setDefaultLeaderboardIdentifier:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "loadDefaultLeaderboardIdentifierWithCompletionHandler:"},
+      {"access": "public", "introduced": "13.5", "name": "fetchItemsForIdentityVerificationSignature:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKLocalPlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "local", "introduced": "13", "name": "local"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "localPlayer", "name": "localPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAuthenticated", "name": "authenticated"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUnderage", "name": "underage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMultiplayerGamingRestricted", "introduced": "13", "name": "multiplayerGamingRestricted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPersonalizedCommunicationRestricted", "introduced": "14", "name": "personalizedCommunicationRestricted"}
+     ],
+     "super": "GKPlayer"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "sendData:toPlayers:dataMode:error:"},
+      {"access": "public", "name": "sendDataToAllPlayers:withDataMode:error:"},
+      {"access": "public", "name": "disconnect"},
+      {"access": "public", "introduced": "8", "name": "chooseBestHostingPlayerWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "rematchWithCompletionHandler:"},
+      {"access": "public", "introduced": "4.1", "name": "voiceChatWithName:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "introduced": "8", "name": "players"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "expectedPlayerCount", "name": "expectedPlayerCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "introduced": "17.2", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerProperties", "introduced": "17.2", "name": "playerProperties"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "maxPlayersAllowedForMatchOfType:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchRequest",
+     "properties": [
+      {"access": "public", "getter": "minPlayers", "name": "minPlayers", "setter": "setMinPlayers:"},
+      {"access": "public", "getter": "maxPlayers", "name": "maxPlayers", "setter": "setMaxPlayers:"},
+      {"access": "public", "getter": "playerGroup", "name": "playerGroup", "setter": "setPlayerGroup:"},
+      {"access": "public", "getter": "playerAttributes", "name": "playerAttributes", "setter": "setPlayerAttributes:"},
+      {"access": "public", "getter": "recipients", "introduced": "8", "name": "recipients", "setter": "setRecipients:"},
+      {"access": "public", "getter": "inviteMessage", "introduced": "6", "name": "inviteMessage", "setter": "setInviteMessage:"},
+      {"access": "public", "getter": "defaultNumberOfPlayers", "introduced": "6", "name": "defaultNumberOfPlayers", "setter": "setDefaultNumberOfPlayers:"},
+      {"access": "public", "getter": "restrictToAutomatch", "introduced": "13", "name": "restrictToAutomatch", "setter": "setRestrictToAutomatch:"},
+      {"access": "public", "getter": "recipientResponseHandler", "introduced": "8", "name": "recipientResponseHandler", "setter": "setRecipientResponseHandler:"},
+      {"access": "public", "getter": "inviteeResponseHandler", "introduced": "6", "name": "inviteeResponseHandler", "setter": "setInviteeResponseHandler:"},
+      {"access": "public", "getter": "playersToInvite", "introduced": "4.1", "name": "playersToInvite", "setter": "setPlayersToInvite:"},
+      {"access": "public", "getter": "queueName", "introduced": "17.2", "name": "queueName", "setter": "setQueueName:"},
+      {"access": "public", "getter": "properties", "introduced": "17.2", "name": "properties", "setter": "setProperties:"},
+      {"access": "public", "getter": "recipientProperties", "introduced": "17.2", "name": "recipientProperties", "setter": "setRecipientProperties:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17.2",
+     "linkage": "exported",
+     "name": "GKMatchedPlayers",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "properties", "name": "properties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerProperties", "name": "playerProperties"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "GKDeprecated",
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "sharedMatchmaker"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "matchForInvite:completionHandler:"},
+      {"access": "public", "name": "findMatchForRequest:withCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "findPlayersForHostedRequest:withCompletionHandler:"},
+      {"access": "public", "introduced": "17.2", "name": "findMatchedPlayers:withCompletionHandler:"},
+      {"access": "public", "name": "addPlayersToMatch:matchRequest:completionHandler:"},
+      {"access": "public", "name": "cancel"},
+      {"access": "public", "introduced": "8", "name": "cancelPendingInviteToPlayer:"},
+      {"access": "public", "introduced": "6", "name": "finishMatchmakingForMatch:"},
+      {"access": "public", "name": "queryPlayerGroupActivity:withCompletionHandler:"},
+      {"access": "public", "name": "queryActivityWithCompletionHandler:"},
+      {"access": "public", "introduced": "17.2", "name": "queryQueueActivity:withCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "startBrowsingForNearbyPlayersWithHandler:"},
+      {"access": "public", "introduced": "6", "name": "stopBrowsingForNearbyPlayers"},
+      {"access": "public", "introduced": "16.2", "name": "startGroupActivityWithPlayerHandler:"},
+      {"access": "public", "introduced": "16.2", "name": "stopGroupActivity"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchmaker",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMatchRequest:"},
+      {"access": "public", "name": "initWithInvite:"},
+      {"access": "public", "introduced": "5", "name": "addPlayersToMatch:"},
+      {"access": "public", "introduced": "8", "name": "setHostedPlayer:didConnect:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKMatchmakerViewController",
+     "properties": [
+      {"access": "public", "getter": "matchmakerDelegate", "name": "matchmakerDelegate", "setter": "setMatchmakerDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchRequest", "name": "matchRequest"},
+      {"access": "public", "getter": "isHosted", "name": "hosted", "setter": "setHosted:"},
+      {"access": "public", "getter": "matchmakingMode", "introduced": "14", "name": "matchmakingMode", "setter": "setMatchmakingMode:"},
+      {"access": "public", "getter": "canStartWithMinimumPlayers", "introduced": "15", "name": "canStartWithMinimumPlayers", "setter": "setCanStartWithMinimumPlayers:"},
+      {"access": "public", "getter": "defaultInvitationMessage", "introduced": "5", "name": "defaultInvitationMessage", "setter": "setDefaultInvitationMessage:"}
+     ],
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "showBannerWithTitle:message:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "showBannerWithTitle:message:duration:completionHandler:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKNotificationBanner",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "show"},
+      {"access": "public", "name": "dismiss"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKPeerPickerController",
+     "properties": [
+      {"access": "public", "getter": "connectionTypesMask", "name": "connectionTypesMask", "setter": "setConnectionTypesMask:"},
+      {"access": "public", "getter": "delegate", "introduced": "3", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVisible", "name": "visible"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "UI",
+      "Deprecated"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "anonymousGuestPlayerWithIdentifier:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "scopedIDsArePersistent"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKPlayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamePlayerID", "introduced": "12.4", "name": "gamePlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "teamPlayerID", "introduced": "12.4", "name": "teamPlayerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "introduced": "6", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alias", "name": "alias"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "guestIdentifier", "introduced": "9", "name": "guestIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInvitable", "introduced": "14", "name": "isInvitable"}
+     ],
+     "super": "GKBasePlayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "loadDataWithCompletionHandler:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "GKSavedGame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceName", "name": "deviceName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modificationDate", "name": "modificationDate"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted",
+      "GKChallenge",
+      "GKChallengeObsoleted",
+      "GKChallengeUI",
+      "GKChallengeObsoletedUI"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "6", "name": "reportScores:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLeaderboardIdentifier:"},
+      {"access": "public", "introduced": "8", "name": "initWithLeaderboardIdentifier:player:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKScore",
+     "properties": [
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formattedValue", "name": "formattedValue"},
+      {"access": "public", "getter": "leaderboardIdentifier", "introduced": "7", "name": "leaderboardIdentifier", "setter": "setLeaderboardIdentifier:"},
+      {"access": "public", "getter": "context", "introduced": "5", "name": "context", "setter": "setContext:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rank", "name": "rank"},
+      {"access": "public", "getter": "shouldSetDefaultLeaderboard", "introduced": "5", "name": "shouldSetDefaultLeaderboard", "setter": "setShouldSetDefaultLeaderboard:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "GKScoreChallenge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "score", "introduced": "6", "name": "score"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leaderboardEntry", "introduced": "17.4", "name": "leaderboardEntry"}
+     ],
+     "super": "GKChallenge"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3", "name": "initWithSessionID:displayName:sessionMode:"},
+      {"access": "public", "name": "displayNameForPeer:"},
+      {"access": "public", "introduced": "3", "name": "sendData:toPeers:withDataMode:error:"},
+      {"access": "public", "introduced": "3", "name": "sendDataToAllPeers:withDataMode:error:"},
+      {"access": "public", "name": "setDataReceiveHandler:withContext:"},
+      {"access": "public", "name": "connectToPeer:withTimeout:"},
+      {"access": "public", "name": "cancelConnectToPeer:"},
+      {"access": "public", "name": "acceptConnectionFromPeer:error:"},
+      {"access": "public", "name": "denyConnectionFromPeer:"},
+      {"access": "public", "name": "disconnectPeerFromAllPeers:"},
+      {"access": "public", "name": "disconnectFromAllPeers"},
+      {"access": "public", "introduced": "3", "name": "peersWithConnectionState:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKSession",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "3", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionID", "name": "sessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionMode", "introduced": "3", "name": "sessionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peerID", "name": "peerID"},
+      {"access": "public", "getter": "isAvailable", "name": "available", "setter": "setAvailable:"},
+      {"access": "public", "getter": "disconnectTimeout", "name": "disconnectTimeout", "setter": "setDisconnectTimeout:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "sharedTurnBasedEventHandler"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedEventHandler",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "5", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "cancelWithLocalizableMessageKey:arguments:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "replyWithLocalizableMessageKey:arguments:data:completionHandler:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKTurnBasedExchange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeID", "name": "exchangeID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sender", "name": "sender"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recipients", "name": "recipients"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sendDate", "name": "sendDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeoutDate", "name": "timeoutDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completionDate", "name": "completionDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "replies", "name": "replies"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "GKTurnBasedExchangeReply",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recipient", "name": "recipient"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "message", "name": "message"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "replyDate", "introduced": "8", "name": "replyDate"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "findMatchForRequest:withCompletionHandler:"},
+      {"access": "public", "name": "loadMatchesWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "loadMatchWithID:withCompletionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "setLocalizableMessageWithKey:arguments:"},
+      {"access": "public", "introduced": "6", "name": "rematchWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "acceptInviteWithCompletionHandler:"},
+      {"access": "public", "introduced": "5", "name": "declineInviteWithCompletionHandler:"},
+      {"access": "public", "name": "removeWithCompletionHandler:"},
+      {"access": "public", "name": "loadMatchDataWithCompletionHandler:"},
+      {"access": "public", "introduced": "6", "name": "endTurnWithNextParticipants:turnTimeout:matchData:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "participantQuitInTurnWithOutcome:nextParticipants:turnTimeout:matchData:completionHandler:"},
+      {"access": "public", "name": "participantQuitOutOfTurnWithOutcome:withCompletionHandler:"},
+      {"access": "public", "name": "endMatchInTurnWithMatchData:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "endMatchInTurnWithMatchData:scores:achievements:completionHandler:"},
+      {"access": "public", "introduced": "14", "name": "endMatchInTurnWithMatchData:leaderboardScores:achievements:completionHandler:"},
+      {"access": "public", "introduced": "6", "name": "saveCurrentTurnWithMatchData:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "saveMergedMatchData:withResolvedExchanges:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "sendExchangeToParticipants:data:localizableMessageKey:arguments:timeout:completionHandler:"},
+      {"access": "public", "introduced": "7", "name": "sendReminderToParticipants:localizableMessageKey:arguments:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "endTurnWithNextParticipant:matchData:completionHandler:"},
+      {"access": "public", "introduced": "5", "name": "participantQuitInTurnWithOutcome:nextParticipant:matchData:completionHandler:"}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedMatch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchID", "name": "matchID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participants", "name": "participants"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentParticipant", "name": "currentParticipant"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchData", "name": "matchData"},
+      {"access": "public", "getter": "message", "name": "message", "setter": "setMessage:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "matchDataMaximumSize", "introduced": "6", "name": "matchDataMaximumSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchanges", "introduced": "7", "name": "exchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeExchanges", "introduced": "7", "name": "activeExchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "completedExchanges", "introduced": "7", "name": "completedExchanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeDataMaximumSize", "introduced": "7", "name": "exchangeDataMaximumSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exchangeMaxInitiatedExchangesPerPlayer", "introduced": "7", "name": "exchangeMaxInitiatedExchangesPerPlayer"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedMatchmakerViewController",
+     "super": "UINavigationController"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Obsoleted"
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "GKTurnBasedParticipant",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "player", "introduced": "8", "name": "player"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastTurnDate", "name": "lastTurnDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "getter": "matchOutcome", "name": "matchOutcome", "setter": "setMatchOutcome:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeoutDate", "introduced": "6", "name": "timeoutDate"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated",
+      "Obsoleted"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "isVoIPAllowed"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "stop"},
+      {"access": "public", "introduced": "8", "name": "setPlayer:muted:"}
+     ],
+     "introduced": "4.1",
+     "linkage": "exported",
+     "name": "GKVoiceChat",
+     "properties": [
+      {"access": "public", "getter": "playerVoiceChatStateDidChangeHandler", "introduced": "8", "name": "playerVoiceChatStateDidChangeHandler", "setter": "setPlayerVoiceChatStateDidChangeHandler:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "introduced": "8", "name": "players"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultVoiceChatService"},
+      {"access": "public", "name": "isVoIPAllowed"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startVoiceChatWithParticipantID:error:"},
+      {"access": "public", "name": "stopVoiceChatWithParticipantID:"},
+      {"access": "public", "name": "acceptCallID:error:"},
+      {"access": "public", "name": "denyCallID:"},
+      {"access": "public", "name": "receivedRealTimeData:fromParticipantID:"},
+      {"access": "public", "name": "receivedData:fromParticipantID:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "GKVoiceChatService",
+     "properties": [
+      {"access": "public", "getter": "client", "introduced": "3", "name": "client", "setter": "setClient:"},
+      {"access": "public", "getter": "isMicrophoneMuted", "name": "microphoneMuted", "setter": "setMicrophoneMuted:"},
+      {"access": "public", "getter": "remoteParticipantVolume", "name": "remoteParticipantVolume", "setter": "setRemoteParticipantVolume:"},
+      {"access": "public", "getter": "isOutputMeteringEnabled", "name": "outputMeteringEnabled", "setter": "setOutputMeteringEnabled:"},
+      {"access": "public", "getter": "isInputMeteringEnabled", "name": "inputMeteringEnabled", "setter": "setInputMeteringEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputMeterLevel", "name": "outputMeterLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputMeterLevel", "name": "inputMeterLevel"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "achievementViewControllerDidFinish:"}
+     ],
+     "introduced": "4.1",
+     "name": "GKAchievementViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "localPlayerDidSelectChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForLocallyReceivedChallenge:", "optional": true},
+      {"access": "public", "name": "localPlayerDidReceiveChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForLocallyCompletedChallenge:", "optional": true},
+      {"access": "public", "name": "localPlayerDidCompleteChallenge:", "optional": true},
+      {"access": "public", "name": "shouldShowBannerForRemotelyCompletedChallenge:", "optional": true},
+      {"access": "public", "name": "remotePlayerDidCompleteChallenge:", "optional": true}
+     ],
+     "introduced": "6",
+     "name": "GKChallengeEventHandlerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "player:wantsToPlayChallenge:", "optional": true},
+      {"access": "public", "name": "player:didReceiveChallenge:", "optional": true},
+      {"access": "public", "name": "player:didCompleteChallenge:issuedByFriend:", "optional": true},
+      {"access": "public", "name": "player:issuedChallengeWasCompleted:byFriend:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKChallengeListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.2", "name": "friendRequestComposeViewControllerDidFinish:"}
+     ],
+     "introduced": "4.2",
+     "name": "GKFriendRequestComposeViewControllerDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "gameCenterViewControllerDidFinish:"}
+     ],
+     "introduced": "6",
+     "name": "GKGameCenterControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didAddPlayer:", "optional": true},
+      {"access": "public", "name": "session:didRemovePlayer:", "optional": true},
+      {"access": "public", "name": "session:player:didChangeConnectionState:", "optional": true},
+      {"access": "public", "name": "session:player:didSaveData:", "optional": true},
+      {"access": "public", "name": "session:didReceiveData:fromPlayer:", "optional": true},
+      {"access": "public", "name": "session:didReceiveMessage:withData:fromPlayer:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "GKGameSessionEventListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "player:didAcceptInvite:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "player:didRequestMatchWithRecipients:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:didRequestMatchWithPlayers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKInviteEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "leaderboardViewControllerDidFinish:"}
+     ],
+     "introduced": "4.1",
+     "name": "GKLeaderboardViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "name": "GKLocalPlayerListener",
+     "protocols": [
+      "GKChallengeListener",
+      "GKInviteEventListener",
+      "GKTurnBasedEventListener",
+      "GKSavedGameListener"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "match:didReceiveData:fromRemotePlayer:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "match:didReceiveData:forRecipient:fromRemotePlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:player:didChangeConnectionState:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:didFailWithError:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "match:shouldReinviteDisconnectedPlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:didReceiveData:fromPlayer:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "match:player:didChangeState:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "match:shouldReinvitePlayer:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "GKMatchDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewControllerWasCancelled:"},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFailWithError:"},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFindMatch:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "matchmakerViewController:didFindHostedPlayers:", "optional": true},
+      {"access": "public", "introduced": "8", "name": "matchmakerViewController:hostedPlayerDidAccept:", "optional": true},
+      {"access": "public", "introduced": "17.2", "name": "matchmakerViewController:getMatchPropertiesForRecipient:withCompletionHandler:", "optional": true},
+      {"access": "public", "introduced": "4.1", "name": "matchmakerViewController:didFindPlayers:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "matchmakerViewController:didReceiveAcceptFromHostedPlayer:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "GKMatchmakerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "peerPickerController:didSelectConnectionType:", "optional": true},
+      {"access": "public", "name": "peerPickerController:sessionForConnectionType:", "optional": true},
+      {"access": "public", "name": "peerPickerController:didConnectPeer:toSession:", "optional": true},
+      {"access": "public", "name": "peerPickerControllerDidCancel:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKPeerPickerControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "player:didModifySavedGame:", "optional": true},
+      {"access": "public", "name": "player:hasConflictingSavedGames:", "optional": true}
+     ],
+     "introduced": "8",
+     "name": "GKSavedGameListener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:peer:didChangeState:", "optional": true},
+      {"access": "public", "name": "session:didReceiveConnectionRequestFromPeer:", "optional": true},
+      {"access": "public", "name": "session:connectionWithPeerFailed:withError:", "optional": true},
+      {"access": "public", "name": "session:didFailWithError:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "handleInviteFromGameCenter:"},
+      {"access": "public", "introduced": "6", "name": "handleTurnEventForMatch:didBecomeActive:"},
+      {"access": "public", "introduced": "5", "name": "handleTurnEventForMatch:", "optional": true},
+      {"access": "public", "introduced": "6", "name": "handleMatchEnded:", "optional": true}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedEventHandlerDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "player:didRequestMatchWithOtherPlayers:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedTurnEventForMatch:didBecomeActive:", "optional": true},
+      {"access": "public", "name": "player:matchEnded:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeRequest:forMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeCancellation:forMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:receivedExchangeReplies:forCompletedExchange:forMatch:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "player:wantsToQuitMatch:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "player:didRequestMatchWithPlayers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "GKTurnBasedEventListener"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewControllerWasCancelled:"},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:didFailWithError:"},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:didFindMatch:", "optional": true},
+      {"access": "public", "introduced": "5", "name": "turnBasedMatchmakerViewController:playerQuitForMatch:", "optional": true}
+     ],
+     "introduced": "5",
+     "name": "GKTurnBasedMatchmakerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "voiceChatService:sendData:toParticipantID:"},
+      {"access": "public", "name": "participantID"},
+      {"access": "public", "name": "voiceChatService:sendRealTimeData:toParticipantID:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didStartWithParticipantID:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didNotStartWithParticipantID:error:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didStopWithParticipantID:error:", "optional": true},
+      {"access": "public", "name": "voiceChatService:didReceiveInvitationFromParticipantID:callID:", "optional": true}
+     ],
+     "introduced": "3",
+     "name": "GKVoiceChatClient",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "GKAccessPointLocation"},
+    {"access": "public", "introduced": "8", "name": "GKChallengeComposeCompletionBlock"},
+    {"access": "public", "introduced": "17", "name": "GKChallengeComposeHandler"},
+    {"access": "public", "name": "GKChallengeState"},
+    {"access": "public", "name": "GKConnectionState"},
+    {"access": "public", "name": "GKErrorCode"},
+    {"access": "public", "name": "GKFriendsAuthorizationStatus"},
+    {"access": "public", "name": "GKGameCenterViewControllerState"},
+    {"access": "public", "name": "GKGameSessionErrorCode"},
+    {"access": "public", "name": "GKInviteRecipientResponse"},
+    {"access": "public", "introduced": "6", "name": "GKInviteeResponse"},
+    {"access": "public", "name": "GKLeaderboardPlayerScope"},
+    {"access": "public", "name": "GKLeaderboardTimeScope"},
+    {"access": "public", "name": "GKLeaderboardType"},
+    {"access": "public", "introduced": "17.2", "name": "GKMatchProperties"},
+    {"access": "public", "name": "GKMatchSendDataMode"},
+    {"access": "public", "name": "GKMatchType"},
+    {"access": "public", "name": "GKMatchmakingMode"},
+    {"access": "public", "name": "GKPeerConnectionState"},
+    {"access": "public", "name": "GKPeerPickerConnectionType"},
+    {"access": "public", "name": "GKPhotoSize"},
+    {"access": "public", "name": "GKPlayerConnectionState"},
+    {"access": "public", "name": "GKReleaseState"},
+    {"access": "public", "name": "GKSendDataMode"},
+    {"access": "public", "name": "GKSessionError"},
+    {"access": "public", "name": "GKSessionMode"},
+    {"access": "public", "name": "GKTransportType"},
+    {"access": "public", "name": "GKTurnBasedExchangeStatus"},
+    {"access": "public", "name": "GKTurnBasedMatchOutcome"},
+    {"access": "public", "name": "GKTurnBasedMatchStatus"},
+    {"access": "public", "name": "GKTurnBasedParticipantStatus"},
+    {"access": "public", "name": "GKVoiceChatPlayerState"},
+    {"access": "public", "name": "GKVoiceChatServiceError"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo24GKAchievementDescriptionC7GameKitE13rarityPercentSdSgvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo24GKAchievementDescriptionC7GameKitE13rarityPercentSdSgvpMV"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo24GKAchievementDescriptionC7GameKitE13rarityPercentSdSgvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo24GKAchievementDescriptionC7GameKitE13rarityPercentSdSgvpMV"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

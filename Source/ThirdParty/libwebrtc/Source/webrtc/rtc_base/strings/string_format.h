@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace rtc {
+namespace webrtc {
 
 #if defined(__GNUC__)
 #define RTC_PRINTF_FORMAT(format_param, dots_param) \
@@ -26,6 +26,14 @@ namespace rtc {
 // Based on base::StringPrintf() in Chrome but without its fancy dynamic memory
 // allocation for any size of the input buffer.
 std::string StringFormat(const char* fmt, ...) RTC_PRINTF_FORMAT(1, 2);
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::StringFormat;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_STRINGS_STRING_FORMAT_H_

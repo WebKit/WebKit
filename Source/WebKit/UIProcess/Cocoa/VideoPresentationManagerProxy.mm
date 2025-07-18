@@ -791,9 +791,6 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
-#if ENABLE(MACH_PORT_LAYER_HOSTING)
-        m_layerHandles.remove(contextId);
-#endif
 
         if (RefPtr page = m_page.get())
             page->didCleanupFullscreen(contextId);
@@ -925,15 +922,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 #if USE(EXTENSIONKIT)
     RetainPtr<BELayerHierarchyHandle> layerHandle;
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
-    if (auto handle = m_layerHandles.getOptional(contextId))
-        layerHandle = *handle;
-    else {
-        layerHandle = LayerHostingContext::createHostingHandle(WTF::MachSendRightAnnotated { hostingContext.sendRightAnnotated });
-        if (layerHandle)
-            m_layerHandles.add(contextId, layerHandle);
-        else
-            RELEASE_LOG_ERROR(Media, "Could not create layer hosting handle");
-    }
+    layerHandle = LayerHostingContext::createHostingHandle(WTF::MachSendRightAnnotated { hostingContext.sendRightAnnotated });
 #else
     RefPtr page = m_page.get();
     if (RefPtr gpuProcess = page ? page->configuration().processPool().gpuProcess() : nullptr)
@@ -942,7 +931,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
     if (layerHandle)
         [view->_hostingView setHandle:layerHandle.get()];
     else
-        RELEASE_LOG_ERROR(Media, "VideoPresentationManagerProxy::createLayerHostViewWithID: Unable to initialize hosting view");
+        RELEASE_LOG_ERROR(Media, "VideoPresentationManagerProxy::createLayerHostViewWithID: could not create layer handle");
 #else
     [view setContextID:hostingContext.contextID];
 #endif
@@ -1418,6 +1407,10 @@ void VideoPresentationManagerProxy::returnVideoView(PlaybackSessionContextIdenti
 void VideoPresentationManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)
 {
 #if PLATFORM(IOS_FAMILY)
+    RefPtr page = m_page.get();
+    if (page)
+        page->willEnterFullscreen(contextId);
+
     enterFullscreen(contextId);
 #else
     sendToWebProcess(contextId, Messages::VideoPresentationManager::DidSetupFullscreen(contextId.object()));

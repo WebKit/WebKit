@@ -26,10 +26,13 @@
 #include "config.h"
 #include "ImageQualityController.h"
 
+#include "FrameDestructionObserverInlines.h"
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "RenderBoxModelObject.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>

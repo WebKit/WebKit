@@ -1,7 +1,6 @@
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/encryptedmedia/MediaKeySession.cpp
 Modules/encryptedmedia/NavigatorEME.cpp
 Modules/gamepad/GamepadHapticActuator.cpp
 Modules/indexeddb/client/IDBConnectionProxy.cpp
@@ -14,11 +13,8 @@ Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpSender.cpp
-Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
-Modules/notifications/Notification.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/push-api/PushDatabase.cpp
-Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp
 Modules/webaudio/AudioWorkletThread.cpp
 Modules/webaudio/OfflineAudioContext.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
@@ -113,7 +109,6 @@ testing/MockMediaSessionCoordinator.cpp
 workers/Worker.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletThread.cpp
-workers/WorkerScriptLoader.cpp
 workers/service/ServiceWorkerContainer.cpp
 workers/service/ServiceWorkerGlobalScope.cpp
 workers/shared/SharedWorkerObjectConnection.cpp

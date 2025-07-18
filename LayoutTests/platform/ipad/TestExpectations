@@ -36,10 +36,6 @@ media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
 # This test is iPad-specific
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
 
-webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
-webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
-webkit.org/b/194221 fast/forms/datalist/datalist-hide-using-escape-key.html [ Skip ]
-
 webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
 
 webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]

@@ -563,8 +563,18 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
 
                 existingClip.transform(transform);
                 clipPaths.append(existingClip);
-            } else
-                clipPaths = pathsForRect(rectInLayerCoordinates, region->cornerRadius);
+            } else {
+                auto scaleFactor = 1.f;
+                if (RefPtr page = m_page.get())
+                    scaleFactor = page->pageScaleFactor();
+
+                if (region->useContinuousCorners) {
+                    Path path;
+                    path.addContinuousRoundedRect(rectInLayerCoordinates, region->cornerRadius * scaleFactor);
+                    clipPaths.append(path);
+                } else
+                    clipPaths = pathsForRect(rectInLayerCoordinates, region->cornerRadius * scaleFactor);
+            }
         }
 
         bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash"_s) && valueForSetting("clip"_s));

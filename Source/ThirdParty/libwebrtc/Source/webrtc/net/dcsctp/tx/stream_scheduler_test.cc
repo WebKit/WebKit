@@ -45,7 +45,8 @@ CreateChunk(OutgoingMessageId message_id,
             StreamID sid,
             MID mid,
             size_t payload_size = kPayloadSize) {
-  return [sid, mid, payload_size, message_id](Timestamp now, size_t max_size) {
+  return [sid, mid, payload_size, message_id](Timestamp /* now */,
+                                              size_t /* max_size */) {
     return SendQueue::DataToSend(
         message_id,
         Data(sid, SSN(0), mid, FSN(0), PPID(42),

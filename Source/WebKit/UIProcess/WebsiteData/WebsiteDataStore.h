@@ -445,7 +445,7 @@ public:
     void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
 
-    void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
+    void countNonDefaultSessionSets(CompletionHandler<void(uint64_t)>&&);
 
     bool showPersistentNotification(IPC::Connection*, const WebCore::NotificationData&);
     void cancelServiceWorkerNotification(const WTF::UUID& notificationID);

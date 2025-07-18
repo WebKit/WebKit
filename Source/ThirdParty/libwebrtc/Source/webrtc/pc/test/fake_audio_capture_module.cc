@@ -12,9 +12,15 @@
 
 #include <string.h>
 
+#include <cstdint>
+
+#include "api/audio/audio_device_defines.h"
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 
@@ -52,8 +58,8 @@ FakeAudioCaptureModule::~FakeAudioCaptureModule() {
   }
 }
 
-rtc::scoped_refptr<FakeAudioCaptureModule> FakeAudioCaptureModule::Create() {
-  auto capture_module = rtc::make_ref_counted<FakeAudioCaptureModule>();
+webrtc::scoped_refptr<FakeAudioCaptureModule> FakeAudioCaptureModule::Create() {
+  auto capture_module = webrtc::make_ref_counted<FakeAudioCaptureModule>();
   if (!capture_module->Initialize()) {
     return nullptr;
   }
@@ -421,7 +427,7 @@ bool FakeAudioCaptureModule::ShouldStartProcessing() {
 void FakeAudioCaptureModule::UpdateProcessing(bool start) {
   if (start) {
     if (!process_thread_) {
-      process_thread_ = rtc::Thread::Create();
+      process_thread_ = webrtc::Thread::Create();
       process_thread_->Start();
     }
     process_thread_->PostTask([this] { StartProcessP(); });
@@ -453,7 +459,7 @@ void FakeAudioCaptureModule::ProcessFrameP() {
   {
     webrtc::MutexLock lock(&mutex_);
     if (!started_) {
-      next_frame_time_ = rtc::TimeMillis();
+      next_frame_time_ = webrtc::TimeMillis();
       started_ = true;
     }
 
@@ -467,7 +473,7 @@ void FakeAudioCaptureModule::ProcessFrameP() {
   }
 
   next_frame_time_ += kTimePerFrameMs;
-  const int64_t current_time = rtc::TimeMillis();
+  const int64_t current_time = webrtc::TimeMillis();
   const int64_t wait_time =
       (next_frame_time_ > current_time) ? next_frame_time_ - current_time : 0;
   process_thread_->PostDelayedTask([this] { ProcessFrameP(); },

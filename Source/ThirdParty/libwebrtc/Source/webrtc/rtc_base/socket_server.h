@@ -17,13 +17,15 @@
 #include "rtc_base/event.h"
 #include "rtc_base/socket_factory.h"
 
-namespace rtc {
+namespace webrtc {
 
+class NetworkBinderInterface;
 class Thread;
+class ThreadManager;
+
 // Needs to be forward declared because there's a circular dependency between
 // NetworkMonitor and Thread.
 // TODO(deadbeef): Fix this.
-class NetworkBinderInterface;
 
 // Provides the ability to wait for activity on a set of sockets.  The Thread
 // class provides a nice wrapper on a socket server.
@@ -32,7 +34,7 @@ class NetworkBinderInterface;
 // notified of asynchronous I/O from this server's Wait method.
 class SocketServer : public SocketFactory {
  public:
-  static constexpr webrtc::TimeDelta kForever = rtc::Event::kForever;
+  static constexpr TimeDelta kForever = Event::kForever;
 
   static std::unique_ptr<SocketServer> CreateDefault();
   // When the socket server is installed into a Thread, this function is called
@@ -46,7 +48,7 @@ class SocketServer : public SocketFactory {
   //  `kForever`)
   // 2) WakeUp() is called
   // While sleeping, I/O is performed if process_io is true.
-  virtual bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) = 0;
+  virtual bool Wait(TimeDelta max_wait_duration, bool process_io) = 0;
 
   // Causes the current wait (if one is in progress) to wake up.
   virtual void WakeUp() = 0;
@@ -62,6 +64,14 @@ class SocketServer : public SocketFactory {
   NetworkBinderInterface* network_binder_ = nullptr;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::SocketServer;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_SOCKET_SERVER_H_

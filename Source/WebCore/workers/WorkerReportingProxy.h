@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class WorkerReportingProxy : public CanMakeThreadSafeCheckedPtr<WorkerReportingProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WorkerReportingProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerReportingProxy);
 public:
     virtual ~WorkerReportingProxy() = default;

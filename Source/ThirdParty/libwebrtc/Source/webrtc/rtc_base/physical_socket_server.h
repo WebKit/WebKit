@@ -11,7 +11,10 @@
 #ifndef RTC_BASE_PHYSICAL_SOCKET_SERVER_H_
 #define RTC_BASE_PHYSICAL_SOCKET_SERVER_H_
 
+#include <cstddef>
+
 #include "api/async_dns_resolver.h"
+#include "api/transport/ecn_marking.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
@@ -51,7 +54,9 @@
 typedef int SOCKET;
 #endif  // WEBRTC_POSIX
 
-namespace rtc {
+namespace webrtc {
+
+class Signaler;
 
 // Event constants for the Dispatcher class.
 enum DispatcherEvent {
@@ -61,8 +66,6 @@ enum DispatcherEvent {
   DE_CLOSE = 0x0008,
   DE_ACCEPT = 0x0010,
 };
-
-class Signaler;
 
 class Dispatcher {
  public:
@@ -92,7 +95,7 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
   virtual Socket* WrapSocket(SOCKET s);
 
   // SocketServer:
-  bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
+  bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
 
   void Add(Dispatcher* dispatcher);
@@ -105,7 +108,7 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
   // A local historical definition of "foreverness", in milliseconds.
   static constexpr int kForeverMs = -1;
 
-  static int ToCmsWait(webrtc::TimeDelta max_wait_duration);
+  static int ToCmsWait(TimeDelta max_wait_duration);
 
 #if defined(WEBRTC_POSIX)
   bool WaitSelect(int cmsWait, bool process_io);
@@ -224,7 +227,7 @@ class PhysicalSocket : public Socket, public sigslot::has_slots<> {
                        int64_t* timestamp,
                        EcnMarking* ecn);
 
-  void OnResolveResult(const webrtc::AsyncDnsResolverResult& resolver);
+  void OnResolveResult(const AsyncDnsResolverResult& resolver);
 
   void UpdateLastError();
   void MaybeRemapSendError();
@@ -240,10 +243,10 @@ class PhysicalSocket : public Socket, public sigslot::has_slots<> {
   SOCKET s_;
   bool udp_;
   int family_ = 0;
-  mutable webrtc::Mutex mutex_;
+  mutable Mutex mutex_;
   int error_ RTC_GUARDED_BY(mutex_);
   ConnState state_;
-  std::unique_ptr<webrtc::AsyncDnsResolverInterface> resolver_;
+  std::unique_ptr<AsyncDnsResolverInterface> resolver_;
   uint8_t dscp_ = 0;  // 6bit.
   uint8_t ecn_ = 0;   // 2bits.
 
@@ -304,6 +307,23 @@ class SocketDispatcher : public Dispatcher, public PhysicalSocket {
 #endif
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::DE_ACCEPT;
+using ::webrtc::DE_CLOSE;
+using ::webrtc::DE_CONNECT;
+using ::webrtc::DE_READ;
+using ::webrtc::DE_WRITE;
+using ::webrtc::Dispatcher;
+using ::webrtc::DispatcherEvent;
+using ::webrtc::PhysicalSocket;
+using ::webrtc::PhysicalSocketServer;
+using ::webrtc::SocketDispatcher;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_PHYSICAL_SOCKET_SERVER_H_

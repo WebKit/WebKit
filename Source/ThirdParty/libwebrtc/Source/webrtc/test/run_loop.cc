@@ -40,7 +40,7 @@ void RunLoop::Flush() {
   // thread will loop forever since time never increases. Since the clock is
   // simulated, 0ms can be used as the loop delay, which will process all
   // messages ready for execution.
-  int cms = rtc::GetClockForTesting() ? 0 : 1000;
+  int cms = GetClockForTesting() ? 0 : 1000;
   worker_thread_.ProcessMessages(cms);
 }
 
@@ -51,7 +51,7 @@ void RunLoop::FakeSocketServer::FailNextWait() {
   fail_next_wait_ = true;
 }
 
-bool RunLoop::FakeSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
+bool RunLoop::FakeSocketServer::Wait(TimeDelta max_wait_duration,
                                      bool process_io) {
   if (fail_next_wait_) {
     fail_next_wait_ = false;
@@ -62,12 +62,12 @@ bool RunLoop::FakeSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
 
 void RunLoop::FakeSocketServer::WakeUp() {}
 
-rtc::Socket* RunLoop::FakeSocketServer::CreateSocket(int family, int type) {
+Socket* RunLoop::FakeSocketServer::CreateSocket(int family, int type) {
   return nullptr;
 }
 
-RunLoop::WorkerThread::WorkerThread(rtc::SocketServer* ss)
-    : rtc::Thread(ss), tq_setter_(this) {}
+RunLoop::WorkerThread::WorkerThread(SocketServer* ss)
+    : Thread(ss), tq_setter_(this) {}
 
 }  // namespace test
 }  // namespace webrtc

@@ -212,6 +212,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo usesSecondComponentForStencilBorderColor = {
+        "usesSecondComponentForStencilBorderColor",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsMultiDrawIndirect = {
         "supportsMultiDrawIndirect",
         FeatureCategory::VulkanFeatures,
@@ -1486,6 +1492,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo supportsSwapchainMutableFormat = {
         "supportsSwapchainMutableFormat",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsMaintenance9 = {
+        "supportsMaintenance9",
         FeatureCategory::VulkanFeatures,
         &members,
     };

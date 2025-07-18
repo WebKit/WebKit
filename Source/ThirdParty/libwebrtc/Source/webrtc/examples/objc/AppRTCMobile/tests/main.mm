@@ -13,7 +13,7 @@
 #include "test/ios/coverage_util_ios.h"
 
 int main(int argc, char* argv[]) {
-  rtc::test::ConfigureCoverageReportPath();
+  webrtc::test::ConfigureCoverageReportPath();
 
   @autoreleasepool {
     return UIApplicationMain(argc, argv, nil, nil);

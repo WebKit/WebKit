@@ -1,6 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/ui-helper.js"></script>
+</head>
 <script>
-  if (window.testRunner)
+  if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
   onload = async () => {
     let iframe0 = document.createElement('iframe');
     iframe0.src = 'data:application/pdf,x';
@@ -12,6 +19,9 @@
     $vm.print('before');
     iframe0.remove();
     $vm.print('after');
+    await UIHelper.waitForPDFFadeIn();
+    testRunner?.notifyDone();
   };
 </script>
 <p>This test passes if it does not timeout.</p>
+</html>

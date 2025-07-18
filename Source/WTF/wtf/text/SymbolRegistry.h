@@ -34,7 +34,7 @@ namespace WTF {
 class RegisteredSymbolImpl;
 
 class SymbolRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SymbolRegistry);
     WTF_MAKE_NONCOPYABLE(SymbolRegistry);
 public:
     enum class Type : uint8_t { PublicSymbol, PrivateSymbol };

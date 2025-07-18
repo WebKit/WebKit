@@ -49,7 +49,7 @@ public:
     ~InspectorAgent() final;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // InspectorBackendDispatcherHandler
@@ -64,7 +64,7 @@ public:
 
 private:
     InspectorEnvironment& m_environment;
-    std::unique_ptr<InspectorFrontendDispatcher> m_frontendDispatcher;
+    const UniqueRef<InspectorFrontendDispatcher> m_frontendDispatcher;
     const Ref<InspectorBackendDispatcher> m_backendDispatcher;
 
     Vector<String> m_pendingEvaluateTestCommands;

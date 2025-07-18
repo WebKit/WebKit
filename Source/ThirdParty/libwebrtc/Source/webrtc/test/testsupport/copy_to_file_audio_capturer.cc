@@ -33,7 +33,7 @@ int CopyToFileAudioCapturer::NumChannels() const {
   return delegate_->NumChannels();
 }
 
-bool CopyToFileAudioCapturer::Capture(rtc::BufferT<int16_t>* buffer) {
+bool CopyToFileAudioCapturer::Capture(BufferT<int16_t>* buffer) {
   bool result = delegate_->Capture(buffer);
   if (result) {
     wav_writer_->WriteSamples(buffer->data(), buffer->size());

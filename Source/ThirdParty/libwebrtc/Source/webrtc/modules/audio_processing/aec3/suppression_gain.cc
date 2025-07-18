@@ -22,7 +22,6 @@
 #include "modules/audio_processing/aec3/vector_math.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -65,14 +64,13 @@ void LimitHighFrequencyGains(bool conservative_hf_suppression,
 
 // Scales the echo according to assessed audibility at the other end.
 void WeightEchoForAudibility(const EchoCanceller3Config& config,
-                             rtc::ArrayView<const float> echo,
-                             rtc::ArrayView<float> weighted_echo) {
+                             ArrayView<const float> echo,
+                             ArrayView<float> weighted_echo) {
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, echo.size());
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, weighted_echo.size());
 
   auto weigh = [](float threshold, float normalizer, size_t begin, size_t end,
-                  rtc::ArrayView<const float> echo,
-                  rtc::ArrayView<float> weighted_echo) {
+                  ArrayView<const float> echo, ArrayView<float> weighted_echo) {
     for (size_t k = begin; k < end; ++k) {
       if (echo[k] < threshold) {
         float tmp = (threshold - echo[k]) * normalizer;
@@ -104,8 +102,8 @@ void WeightEchoForAudibility(const EchoCanceller3Config& config,
 std::atomic<int> SuppressionGain::instance_count_(0);
 
 float SuppressionGain::UpperBandsGain(
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     const std::optional<int>& narrow_peak_band,
     bool saturated_echo,
@@ -171,7 +169,7 @@ float SuppressionGain::UpperBandsGain(
   if (!dominant_nearend_detector_->IsNearendState()) {
     // Bound the upper gain during significant echo activity.
     const auto& cfg = config_.suppressor.high_bands_suppression;
-    auto low_frequency_energy = [](rtc::ArrayView<const float> spectrum) {
+    auto low_frequency_energy = [](ArrayView<const float> spectrum) {
       RTC_DCHECK_LE(16, spectrum.size());
       return std::accumulate(spectrum.begin() + 1, spectrum.begin() + 16, 0.f);
     };
@@ -212,13 +210,12 @@ void SuppressionGain::GainToNoAudibleEcho(
 
 // Compute the minimum gain as the attenuating gain to put the signal just
 // above the zero sample values.
-void SuppressionGain::GetMinGain(
-    rtc::ArrayView<const float> weighted_residual_echo,
-    rtc::ArrayView<const float> last_nearend,
-    rtc::ArrayView<const float> last_echo,
-    bool low_noise_render,
-    bool saturated_echo,
-    rtc::ArrayView<float> min_gain) const {
+void SuppressionGain::GetMinGain(ArrayView<const float> weighted_residual_echo,
+                                 ArrayView<const float> last_nearend,
+                                 ArrayView<const float> last_echo,
+                                 bool low_noise_render,
+                                 bool saturated_echo,
+                                 ArrayView<float> min_gain) const {
   if (!saturated_echo) {
     const float min_echo_power =
         low_noise_render ? config_.echo_audibility.low_render_limit
@@ -254,7 +251,7 @@ void SuppressionGain::GetMinGain(
 
 // Compute the maximum gain by limiting the gain increase from the previous
 // gain.
-void SuppressionGain::GetMaxGain(rtc::ArrayView<float> max_gain) const {
+void SuppressionGain::GetMaxGain(ArrayView<float> max_gain) const {
   const auto& inc = dominant_nearend_detector_->IsNearendState()
                         ? nearend_params_.max_inc_factor
                         : normal_params_.max_inc_factor;
@@ -267,10 +264,9 @@ void SuppressionGain::GetMaxGain(rtc::ArrayView<float> max_gain) const {
 void SuppressionGain::LowerBandGain(
     bool low_noise_render,
     const AecState& aec_state,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-        suppressor_input,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> suppressor_input,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
     bool clock_drift,
     std::array<float, kFftLengthBy2Plus1>* gain) {
   gain->fill(1.f);
@@ -360,14 +356,13 @@ SuppressionGain::SuppressionGain(const EchoCanceller3Config& config,
 SuppressionGain::~SuppressionGain() = default;
 
 void SuppressionGain::GetGain(
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-        nearend_spectrum,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
         residual_echo_spectrum,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
         residual_echo_spectrum_unbounded,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     const RenderSignalAnalyzer& render_signal_analyzer,
     const AecState& aec_state,

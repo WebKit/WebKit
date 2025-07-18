@@ -84,12 +84,14 @@ AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID,
     auto responseMaxStaleness = entry->response().cacheControlStaleWhileRevalidate();
     ASSERT(responseMaxStaleness);
     m_timer.startOneShot(*responseMaxStaleness + (lifetime - age));
-    m_load = makeUnique<SpeculativeLoad>(cache, frameID, WTFMove(revalidationRequest), WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [this, key, revalidationRequest](auto&& revalidatedEntry) {
+
+    SpeculativeLoad::RevalidationCompletionHandler loadRevalidationCompletionHandler = [this, key, revalidationRequest](auto&& revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
         if (m_completionHandler)
             m_completionHandler(revalidatedEntry ? Result::Success : Result::Failure);
-    });
+    };
+    lazyInitialize(m_load, makeUnique<SpeculativeLoad>(cache, frameID, WTFMove(revalidationRequest), WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTFMove(loadRevalidationCompletionHandler)));
 }
 
 } // namespace NetworkCache

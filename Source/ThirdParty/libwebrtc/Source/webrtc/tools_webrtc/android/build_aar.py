@@ -118,8 +118,10 @@ def _RunGN(args):
 
 def _RunNinja(output_directory, args):
     cmd = [
-        os.path.join(SRC_DIR, 'third_party', 'ninja', 'ninja'), '-C',
-        output_directory
+        os.path.join(SRC_DIR, 'third_party', 'siso', 'cipd', 'siso'),
+        'ninja',
+        '-C',
+        output_directory,
     ]
     cmd.extend(args)
     logging.debug('Running: %r', cmd)
@@ -175,8 +177,14 @@ def Build(build_dir, arch, use_remoteexec, extra_gn_args, extra_gn_switches,
         'is_component_build': False,
         'rtc_include_tests': False,
         'target_cpu': _GetTargetCpu(arch),
-        'use_remoteexec': use_remoteexec,
+        'android_static_analysis': "off",
+        'use_siso': True,
     }
+    if use_remoteexec:
+        gn_args.update({
+            'use_remoteexec': True,
+            'use_reclient': False,
+        })
     arm_version = _GetArmVersion(arch)
     if arm_version:
         gn_args['arm_version'] = arm_version
@@ -190,7 +198,7 @@ def Build(build_dir, arch, use_remoteexec, extra_gn_args, extra_gn_switches,
 
     ninja_args = TARGETS[:]
     if use_remoteexec:
-        ninja_args.extend(['-j', '200'])
+        ninja_args.extend(['-remote_jobs', '200'])
     ninja_args.extend(extra_ninja_switches)
     _RunNinja(output_directory, ninja_args)
 

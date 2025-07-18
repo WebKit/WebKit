@@ -10,34 +10,38 @@
 
 #include "rtc_base/file_rotating_stream.h"
 
+#include <algorithm>
 #include <cstdio>
+#include <functional>
 #include <string>
-#include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/system/file_wrapper.h"
 
+// IWYU pragma: begin_keep
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 
 #include "rtc_base/string_utils.h"
+#include "rtc_base/strings/string_builder.h"
 #else
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #endif  // WEBRTC_WIN
+// IWYU pragma: end_keep
 
 #include <optional>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
 
 // Note: We use fprintf for logging in the write paths of this stream to avoid
 // infinite loops when logging.
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -282,7 +286,7 @@ bool FileRotatingStream::OpenCurrentFile() {
   // We should always be writing to the zero-th file.
   RTC_DCHECK_EQ(current_file_index_, 0);
   int error;
-  file_ = webrtc::FileWrapper::OpenWriteOnly(file_path, &error);
+  file_ = FileWrapper::OpenWriteOnly(file_path, &error);
   if (!file_.is_open()) {
     std::fprintf(stderr, "Failed to open: %s Error: %d\n", file_path.c_str(),
                  error);
@@ -410,7 +414,7 @@ size_t FileRotatingStreamReader::ReadAll(void* buffer, size_t size) const {
   size_t done = 0;
   for (const auto& file_name : file_names_) {
     if (done < size) {
-      webrtc::FileWrapper f = webrtc::FileWrapper::OpenReadOnly(file_name);
+      FileWrapper f = FileWrapper::OpenReadOnly(file_name);
       if (!f.is_open()) {
         break;
       }
@@ -426,4 +430,4 @@ CallSessionFileRotatingStreamReader::CallSessionFileRotatingStreamReader(
     absl::string_view dir_path)
     : FileRotatingStreamReader(dir_path, kCallSessionLogPrefix) {}
 
-}  // namespace rtc
+}  // namespace webrtc

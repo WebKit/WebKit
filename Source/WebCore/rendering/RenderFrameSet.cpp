@@ -153,8 +153,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderFrameSet::GridAxis::resize(int size)
 {
     m_sizes.resize(size);
-    m_deltas.resize(size);
-    m_deltas.fill(0);
+    m_deltas.fill(0, size);
     
     // To track edges for resizability and borders, we need to be (size + 1). This is because a parent frameset
     // may ask us for information about our left/top/right/bottom edges in order to make its own decisions about

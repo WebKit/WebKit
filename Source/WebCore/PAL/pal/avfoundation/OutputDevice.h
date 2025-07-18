@@ -51,7 +51,7 @@ private:
     friend class OutputContext;
     OutputDevice(RetainPtr<AVOutputDevice>&&);
 
-    RetainPtr<AVOutputDevice> m_device;
+    const RetainPtr<AVOutputDevice> m_device;
 };
 
 }

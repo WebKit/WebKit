@@ -11,20 +11,34 @@
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/call/bitrate_allocation.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
+#include "api/units/time_delta.h"
+#include "common_audio/smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "rtc_base/arraysize.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/exp_filter.h"
@@ -73,11 +87,11 @@ constexpr float kMaxPacketLossFraction = 0.2f;
 int CalculateDefaultBitrate(int max_playback_rate, size_t num_channels) {
   const int bitrate = [&] {
     if (max_playback_rate <= 8000) {
-      return kOpusBitrateNbBps * rtc::dchecked_cast<int>(num_channels);
+      return kOpusBitrateNbBps * dchecked_cast<int>(num_channels);
     } else if (max_playback_rate <= 16000) {
-      return kOpusBitrateWbBps * rtc::dchecked_cast<int>(num_channels);
+      return kOpusBitrateWbBps * dchecked_cast<int>(num_channels);
     } else {
-      return kOpusBitrateFbBps * rtc::dchecked_cast<int>(num_channels);
+      return kOpusBitrateFbBps * dchecked_cast<int>(num_channels);
     }
   }();
   RTC_DCHECK_GE(bitrate, AudioEncoderOpusConfig::kMinBitrateBps);
@@ -94,7 +108,7 @@ int CalculateBitrate(int max_playback_rate_hz,
       CalculateDefaultBitrate(max_playback_rate_hz, num_channels);
 
   if (bitrate_param) {
-    const auto bitrate = rtc::StringToNumber<int>(*bitrate_param);
+    const auto bitrate = StringToNumber<int>(*bitrate_param);
     if (bitrate) {
       const int chosen_bitrate =
           std::max(AudioEncoderOpusConfig::kMinBitrateBps,
@@ -173,7 +187,7 @@ std::vector<float> GetBitrateMultipliers(const FieldTrialsView& field_trials) {
     const std::string field_trial_string =
         field_trials.Lookup(kBitrateMultipliersName);
     std::vector<std::string> pieces;
-    rtc::tokenize(field_trial_string, '-', &pieces);
+    tokenize(field_trial_string, '-', &pieces);
     if (pieces.size() < 2 || pieces[0] != "Enabled") {
       RTC_LOG(LS_WARNING) << "Invalid parameters for "
                           << kBitrateMultipliersName
@@ -182,7 +196,7 @@ std::vector<float> GetBitrateMultipliers(const FieldTrialsView& field_trials) {
     }
     std::vector<float> multipliers(pieces.size() - 1);
     for (size_t i = 1; i < pieces.size(); i++) {
-      if (!rtc::FromString(pieces[i], &multipliers[i - 1])) {
+      if (!FromString(pieces[i], &multipliers[i - 1])) {
         RTC_LOG(LS_WARNING)
             << "Invalid parameters for " << kBitrateMultipliersName
             << ", not using custom values.";
@@ -313,18 +327,18 @@ std::optional<int> AudioEncoderOpusImpl::GetNewBandwidth(
 class AudioEncoderOpusImpl::PacketLossFractionSmoother {
  public:
   explicit PacketLossFractionSmoother()
-      : last_sample_time_ms_(rtc::TimeMillis()),
+      : last_sample_time_ms_(TimeMillis()),
         smoother_(kAlphaForPacketLossFractionSmoother) {}
 
   // Gets the smoothed packet loss fraction.
   float GetAverage() const {
     float value = smoother_.filtered();
-    return (value == rtc::ExpFilter::kValueUndefined) ? 0.0f : value;
+    return (value == ExpFilter::kValueUndefined) ? 0.0f : value;
   }
 
   // Add new observation to the packet loss fraction smoother.
   void AddSample(float packet_loss_fraction) {
-    int64_t now_ms = rtc::TimeMillis();
+    int64_t now_ms = TimeMillis();
     smoother_.Apply(static_cast<float>(now_ms - last_sample_time_ms_),
                     packet_loss_fraction);
     last_sample_time_ms_ = now_ms;
@@ -334,7 +348,7 @@ class AudioEncoderOpusImpl::PacketLossFractionSmoother {
   int64_t last_sample_time_ms_;
 
   // An exponential filter is used to smooth the packet loss fraction.
-  rtc::ExpFilter smoother_;
+  ExpFilter smoother_;
 };
 
 std::unique_ptr<AudioEncoderOpusImpl> AudioEncoderOpusImpl::CreateForTesting(
@@ -580,8 +594,8 @@ void AudioEncoderOpusImpl::SetReceiverFrameLengthRange(
 
 AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
     uint32_t rtp_timestamp,
-    rtc::ArrayView<const int16_t> audio,
-    rtc::Buffer* encoded) {
+    ArrayView<const int16_t> audio,
+    Buffer* encoded) {
   MaybeUpdateUplinkBandwidth();
 
   if (input_buffer_.empty())
@@ -597,12 +611,12 @@ AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
 
   const size_t max_encoded_bytes = SufficientOutputBufferSize();
   EncodedInfo info;
-  info.encoded_bytes = encoded->AppendData(
-      max_encoded_bytes, [&](rtc::ArrayView<uint8_t> encoded) {
+  info.encoded_bytes =
+      encoded->AppendData(max_encoded_bytes, [&](ArrayView<uint8_t> encoded) {
         int status = WebRtcOpus_Encode(
             inst_, &input_buffer_[0],
-            rtc::CheckedDivExact(input_buffer_.size(), config_.num_channels),
-            rtc::saturated_cast<int16_t>(max_encoded_bytes), encoded.data());
+            CheckedDivExact(input_buffer_.size(), config_.num_channels),
+            saturated_cast<int16_t>(max_encoded_bytes), encoded.data());
 
         RTC_CHECK_GE(status, 0);  // Fails only if fed invalid data.
 
@@ -631,12 +645,11 @@ AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
 }
 
 size_t AudioEncoderOpusImpl::Num10msFramesPerPacket() const {
-  return static_cast<size_t>(rtc::CheckedDivExact(config_.frame_size_ms, 10));
+  return static_cast<size_t>(CheckedDivExact(config_.frame_size_ms, 10));
 }
 
 size_t AudioEncoderOpusImpl::SamplesPer10msFrame() const {
-  return rtc::CheckedDivExact(config_.sample_rate_hz, 100) *
-         config_.num_channels;
+  return CheckedDivExact(config_.sample_rate_hz, 100) * config_.num_channels;
 }
 
 size_t AudioEncoderOpusImpl::SufficientOutputBufferSize() const {
@@ -703,9 +716,9 @@ bool AudioEncoderOpusImpl::RecreateEncoderInstance(
 
 void AudioEncoderOpusImpl::SetFrameLength(int frame_length_ms) {
   if (next_frame_length_ms_ != frame_length_ms) {
-    RTC_LOG(LS_VERBOSE) << "Update Opus frame length "
-                        << "from " << next_frame_length_ms_ << " ms "
-                        << "to " << frame_length_ms << " ms.";
+    RTC_LOG(LS_VERBOSE) << "Update Opus frame length " << "from "
+                        << next_frame_length_ms_ << " ms " << "to "
+                        << frame_length_ms << " ms.";
   }
   next_frame_length_ms_ = frame_length_ms;
 }
@@ -733,9 +746,9 @@ void AudioEncoderOpusImpl::SetProjectedPacketLossRate(float fraction) {
 }
 
 void AudioEncoderOpusImpl::SetTargetBitrate(int bits_per_second) {
-  const int new_bitrate = rtc::SafeClamp<int>(
-      bits_per_second, AudioEncoderOpusConfig::kMinBitrateBps,
-      AudioEncoderOpusConfig::kMaxBitrateBps);
+  const int new_bitrate =
+      SafeClamp<int>(bits_per_second, AudioEncoderOpusConfig::kMinBitrateBps,
+                     AudioEncoderOpusConfig::kMaxBitrateBps);
   if (config_.bitrate_bps && *config_.bitrate_bps != new_bitrate) {
     config_.bitrate_bps = new_bitrate;
     RTC_DCHECK(config_.IsOk());
@@ -783,7 +796,7 @@ AudioEncoderOpusImpl::DefaultAudioNetworkAdaptorCreator(
 
 void AudioEncoderOpusImpl::MaybeUpdateUplinkBandwidth() {
   if (audio_network_adaptor_ && !use_stable_target_for_adaptation_) {
-    int64_t now_ms = rtc::TimeMillis();
+    int64_t now_ms = TimeMillis();
     if (!bitrate_smoother_last_update_time_ ||
         now_ms - *bitrate_smoother_last_update_time_ >=
             config_.uplink_bandwidth_update_interval_ms) {

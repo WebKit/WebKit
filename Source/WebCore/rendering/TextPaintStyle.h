@@ -40,6 +40,8 @@ struct PaintInfo;
 
 namespace Style {
 struct TextShadow;
+template<typename> struct Shadows;
+using TextShadows = Shadows<TextShadow>;
 }
 
 struct TextPaintStyle {
@@ -62,7 +64,7 @@ struct TextPaintStyle {
 
 bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor);
 TextPaintStyle computeTextPaintStyle(const RenderText&, const RenderStyle&, const PaintInfo&);
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const RenderStyle&, const PaintInfo&, FixedVector<Style::TextShadow>& selectionShadow);
+TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const RenderStyle&, const PaintInfo&, Style::TextShadows& selectionShadow);
 
 enum FillColorType { UseNormalFillColor, UseEmphasisMarkColor };
 void updateGraphicsContext(GraphicsContext&, const TextPaintStyle&, FillColorType = UseNormalFillColor);

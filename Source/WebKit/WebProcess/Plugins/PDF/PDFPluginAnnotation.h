@@ -47,7 +47,7 @@ namespace WebKit {
 class PDFPluginBase;
 
 class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation>, public CanMakeCheckedPtr<PDFPluginAnnotation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PDFPluginAnnotation);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginAnnotation);
 public:
     static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFPluginBase*);
@@ -105,7 +105,7 @@ private:
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_parent;
 
     RefPtr<WebCore::Element> m_element;
-    RetainPtr<PDFAnnotation> m_annotation;
+    const RetainPtr<PDFAnnotation> m_annotation;
 
     const RefPtr<PDFPluginAnnotationEventListener> m_eventListener;
 

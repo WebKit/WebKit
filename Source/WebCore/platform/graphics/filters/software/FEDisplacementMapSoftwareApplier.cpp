@@ -55,19 +55,19 @@ int FEDisplacementMapSoftwareApplier::yChannelIndex() const
 
 bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
-    Ref input2 = inputs[1];
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto inputPixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
+    auto inputPixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
     auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
-    auto displacementPixelBuffer = input2->getPixelBuffer(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
+    auto displacementPixelBuffer = input2.getPixelBuffer(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
     
     if (!inputPixelBuffer || !displacementPixelBuffer)
         return false;

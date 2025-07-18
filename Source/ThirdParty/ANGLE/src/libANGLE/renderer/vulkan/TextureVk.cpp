@@ -4037,13 +4037,19 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         mImageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
     }
 
-    mImageCreateFlags |=
-        vk::GetMinimalImageCreateFlags(renderer, mState.getType(), mImageUsageFlags);
-
     const VkFormat actualImageFormat =
         rx::vk::GetVkFormatFromFormatID(renderer, actualImageFormatID);
     const VkImageType imageType     = gl_vk::GetImageType(mState.getType());
     const VkImageTiling imageTiling = mImage->getTilingMode();
+
+    if (mipLevels == ImageMipLevels::FullMipChainForGenerateMipmap &&
+        CanGenerateMipmapWithCompute(renderer, imageType, actualImageFormatID, samples, mOwnsImage))
+    {
+        mImageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+    }
+
+    mImageCreateFlags |=
+        vk::GetMinimalImageCreateFlags(renderer, mState.getType(), mImageUsageFlags);
 
     // The MSRTSS bit is included in the create flag for all textures if the feature flag
     // corresponding to its preference is enabled. Otherwise, it is enabled for a texture if it is
@@ -4131,8 +4137,9 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     }
 
     // Fixed rate compression
-    VkImageCompressionControlEXT *compressionInfo   = nullptr;
-    VkImageCompressionControlEXT compressionInfoVar = {};
+    VkImageCompressionControlEXT *compressionInfo        = nullptr;
+    VkImageCompressionControlEXT compressionInfoVar      = {};
+    VkImageCompressionFixedRateFlagsEXT compressionRates = VK_IMAGE_COMPRESSION_FIXED_RATE_NONE_EXT;
     if (renderer->getFeatures().supportsImageCompressionControl.enabled && mOwnsImage &&
         mState.getSurfaceCompressionFixedRate() != GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT)
     {
@@ -4148,8 +4155,6 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         if (!mImage->isYuvResolve() &&
             (GetFormatSupportedCompressionRates(renderer, format, 0, nullptr) != 0))
         {
-            VkImageCompressionFixedRateFlagsEXT compressionRates =
-                VK_IMAGE_COMPRESSION_FIXED_RATE_NONE_EXT;
             GetCompressionFixedRate(&compressionInfoVar, &compressionRates,
                                     mState.getSurfaceCompressionFixedRate());
             compressionInfo = &compressionInfoVar;

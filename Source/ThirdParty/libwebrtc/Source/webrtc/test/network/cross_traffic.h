@@ -11,17 +11,26 @@
 #ifndef TEST_NETWORK_CROSS_TRAFFIC_H_
 #define TEST_NETWORK_CROSS_TRAFFIC_H_
 
-#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <deque>
+#include <list>
 #include <map>
-#include <memory>
+#include <set>
 
+#include "absl/functional/any_invocable.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/test/network_emulation/cross_traffic.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/random.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 #include "test/network/network_emulation.h"
 #include "test/scenario/column_printer.h"
 
@@ -88,14 +97,15 @@ class TcpMessageRouteImpl final : public TcpMessageRoute {
   // Sends a TCP message of the given `size` over the route, `on_received` is
   // called when the message has been delivered. Note that the connection
   // parameters are reset iff there's no currently pending message on the route.
-  void SendMessage(size_t size, std::function<void()> on_received) override;
+  void SendMessage(size_t size,
+                   absl::AnyInvocable<void()> on_received) override;
 
  private:
   // Represents a message sent over the route. When all fragments has been
   // delivered, the message is considered delivered and the handler is
   // triggered. This only happen once.
   struct Message {
-    std::function<void()> handler;
+    absl::AnyInvocable<void()> handler;
     std::set<int> pending_fragment_ids;
   };
   // Represents a piece of a message that fit into a TCP packet.

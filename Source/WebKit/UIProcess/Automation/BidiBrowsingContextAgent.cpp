@@ -91,6 +91,9 @@ void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std
     // FIXME: implement `promptUnload` option.
     // FIXME: raise `invalid argument` if `browsingContext` is not a top-level traversable.
 
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
+
     session->closeBrowsingContext(browsingContext, WTFMove(callback));
 }
 

@@ -26,8 +26,12 @@
 #include "config.h"
 #include "TextPlaceholderElement.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSUnits.h"
+#include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
+#include "LayoutSize.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

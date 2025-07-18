@@ -44,10 +44,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicSkiaApplier);
 
 bool SourceGraphicSkiaApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input->imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 

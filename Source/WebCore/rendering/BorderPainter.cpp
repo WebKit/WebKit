@@ -291,7 +291,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     auto& styleToUse = m_renderer->style();
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
+    if (styleToUse.outlineStyle() == OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
         if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer.get()))
@@ -300,10 +300,11 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
         m_renderer->paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
     }
 
-    if (m_renderer->hasOutlineAnnotation() && !styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
+    if (m_renderer->hasOutlineAnnotation() && styleToUse.outlineStyle() != OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
         m_renderer->addPDFURLRect(m_paintInfo, paintRect.location());
 
-    if (styleToUse.hasAutoOutlineStyle() || styleToUse.outlineStyle() == BorderStyle::None)
+    auto borderStyle = toBorderStyle(styleToUse.outlineStyle());
+    if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
     auto outlineWidth = LayoutUnit { styleToUse.outlineWidth() };
@@ -323,7 +324,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
-    auto edges = borderEdgesForOutline(styleToUse, document().deviceScaleFactor());
+    auto edges = borderEdgesForOutline(styleToUse, *borderStyle, document().deviceScaleFactor());
     auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     paintSides(outlineShape, {

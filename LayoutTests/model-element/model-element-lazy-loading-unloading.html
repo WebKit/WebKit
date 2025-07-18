@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>&lt;model> state transitions</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<style>
+.spacer {
+    height: 200vh;
+}
+.model-element {
+    width: 300px;
+    height: 300px;
+}
+</style>
+<body>
+<div class="spacer"></div>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    model.className = "model-element";
+    assert_equals(internals.modelElementState(model), "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+
+    scrollElementIntoView(model);
+
+    await waitForModelState(model, "Loaded");
+    assert_true(internals.isModelElementIntersectingViewport(model));
+
+    window.scrollTo(0, 0)
+
+    await waitForModelState(model, "Unloaded");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+}, `<model> main load/unload transitions`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    model.className = "model-element";
+    assert_equals(internals.modelElementState(model), "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+
+    scrollElementIntoView(model);
+
+    const intermediateState = internals.modelElementState(model);
+    assert_true(intermediateState !== "Loaded");
+
+    window.scrollTo(0, 0)
+
+    await waitForModelState(model, "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+}, `<model> jump back to deferred when quickly scrolled through`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/does-not-exist.usdz");
+    model.className = "model-element";
+    assert_equals(internals.modelElementState(model), "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+
+    scrollElementIntoView(model);
+    await sleepForSeconds(2.0);
+
+    const failedState = internals.modelElementState(model);
+    assert_true(failedState !== "Loading" && failedState !== "Loaded", "Model should not be loaded");
+    assert_true(internals.isModelElementIntersectingViewport(model));
+    return model.ready.then(
+        value => assert_unreached("Unexpected ready promise resolution."),
+        reason => assert_true(reason.toString().includes("NetworkError"), "The ready promise is rejected with a NetworkError.")
+    );
+}, `<model> invalid state if usdz does not exist`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/error-case.usdz");
+    model.className = "model-element";
+    assert_equals(internals.modelElementState(model), "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+
+    scrollElementIntoView(model);
+    await sleepForSeconds(2.0);
+
+    const failedState = internals.modelElementState(model);
+
+    assert_true(failedState !== "Loaded", "Model should not be loaded");
+    assert_true(internals.isModelElementIntersectingViewport(model));
+    return model.ready.then(
+        value => assert_unreached("Unexpected ready promise resolution."),
+        reason => assert_true(reason.toString().includes("AbortError"), "The ready promise is rejected with an AbortError.")
+    );
+}, `<model> invalid state for incorrect usdz file`);
+
+</script>
+</body>

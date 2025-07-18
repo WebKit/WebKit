@@ -113,7 +113,7 @@ ExceptionOr<void> Attr::setNodeValue(const String& value)
     return setValue(value.isNull() ? emptyAtom() : AtomString(value));
 }
 
-Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return adoptRef(*new Attr(document, qualifiedName(), value()));
 }

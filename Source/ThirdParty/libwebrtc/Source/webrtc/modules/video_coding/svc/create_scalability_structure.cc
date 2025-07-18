@@ -10,6 +10,7 @@
 #include "modules/video_coding/svc/create_scalability_structure.h"
 
 #include <memory>
+#include <optional>
 
 #include "api/video_codecs/scalability_mode.h"
 #include "modules/video_coding/svc/scalability_structure_full_svc.h"
@@ -18,7 +19,6 @@
 #include "modules/video_coding/svc/scalability_structure_simulcast.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
 #include "modules/video_coding/svc/scalable_video_controller_no_layering.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

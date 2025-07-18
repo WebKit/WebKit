@@ -113,6 +113,7 @@ void BasicWheelEventDeltaFilter::updateFromEvent(const PlatformWheelEvent& event
         break;
 
     case PlatformWheelEventPhase::None:
+    case PlatformWheelEventPhase::WillBegin:
         break;
 
     case PlatformWheelEventPhase::Began:

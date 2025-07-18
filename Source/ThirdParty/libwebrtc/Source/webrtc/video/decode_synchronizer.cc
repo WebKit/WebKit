@@ -10,17 +10,21 @@
 
 #include "video/decode_synchronizer.h"
 
-#include <iterator>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
-#include <vector>
 
+#include "api/metronome/metronome.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 #include "video/frame_decode_scheduler.h"
 #include "video/frame_decode_timing.h"
 

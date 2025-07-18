@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CheckedRef.h>
+#include <wtf/RawPtrTraits.h>
 
 namespace WTF {
 
@@ -39,7 +40,7 @@ namespace WTF {
 
 template<typename T, typename PtrTraits>
 class CheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CheckedPtr);
 public:
 
     constexpr CheckedPtr()

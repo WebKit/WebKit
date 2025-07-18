@@ -751,8 +751,8 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
     }
 
     // Use "j" skeleton and parse pattern to retrieve the configured hour-cycle information.
-    constexpr const UChar skeleton[] = { 'j', 0 };
-    Vector<UChar, 32> pattern;
+    constexpr const char16_t skeleton[] = { 'j', 0 };
+    Vector<char16_t, 32> pattern;
     status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, 1, UDATPG_MATCH_HOUR_FIELD_LENGTH, pattern);
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);

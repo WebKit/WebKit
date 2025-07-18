@@ -28,15 +28,15 @@ namespace test {
 // video and they should be interpreted modulo that size. The matching frames
 // will be determined by maximizing SSIM.
 std::vector<size_t> FindMatchingFrameIndices(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video);
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video);
 
 // Generate a new video using the frames from the original video. The returned
 // video will have the same number of frames as the size of `indices`, and
 // frame nr i in the returned video will point to frame nr indices[i] in the
 // original video.
-rtc::scoped_refptr<Video> ReorderVideo(const rtc::scoped_refptr<Video>& video,
-                                       const std::vector<size_t>& indices);
+scoped_refptr<Video> ReorderVideo(const scoped_refptr<Video>& video,
+                                  const std::vector<size_t>& indices);
 
 // Returns a modified version of the reference video where the frames have
 // been aligned to the test video. The test video is assumed to be captured
@@ -46,13 +46,13 @@ rtc::scoped_refptr<Video> ReorderVideo(const rtc::scoped_refptr<Video>& video,
 // over when it reaches the end. The returned result is a version of the
 // reference video where the missing frames are left out so it aligns to the
 // test video.
-rtc::scoped_refptr<Video> GenerateAlignedReferenceVideo(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video);
+scoped_refptr<Video> GenerateAlignedReferenceVideo(
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video);
 
 // As above, but using precalculated indices.
-rtc::scoped_refptr<Video> GenerateAlignedReferenceVideo(
-    const rtc::scoped_refptr<Video>& reference_video,
+scoped_refptr<Video> GenerateAlignedReferenceVideo(
+    const scoped_refptr<Video>& reference_video,
     const std::vector<size_t>& indices);
 
 }  // namespace test

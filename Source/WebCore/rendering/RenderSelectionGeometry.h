@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class FloatQuad;
+
 class RenderSelectionGeometryBase {
     WTF_MAKE_TZONE_ALLOCATED(RenderSelectionGeometryBase);
     WTF_MAKE_NONCOPYABLE(RenderSelectionGeometryBase);

@@ -10,9 +10,17 @@
 
 #include "modules/video_coding/decoder_database.h"
 
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 
+#include "api/sequence_checker.h"
+#include "api/video/encoded_frame.h"
+#include "api/video/render_resolution.h"
+#include "api/video_codecs/video_decoder.h"
+#include "modules/video_coding/generic_decoder.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

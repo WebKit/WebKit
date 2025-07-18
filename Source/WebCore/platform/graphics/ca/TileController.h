@@ -82,6 +82,8 @@ public:
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT bool setNeedsDisplayIfEDRHeadroomExceeds(float);
+    WEBCORE_EXPORT void setTonemappingEnabled(bool);
+    WEBCORE_EXPORT bool tonemappingEnabled() const;
 #endif
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
@@ -229,6 +231,10 @@ private:
 
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
 
+    void clearObscuredInsetsAdjustments() final { m_obscuredInsetsDelta = std::nullopt; }
+    void obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta) final { m_obscuredInsetsDelta = WTFMove(obscuredInsetsDelta); }
+    FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const;
+
     PlatformCALayer* m_tileCacheLayer;
 
     WeakPtr<TiledBackingClient> m_client;
@@ -274,6 +280,9 @@ private:
     bool m_tileSizeLocked { false };
     bool m_haveExternalVelocityData { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    bool m_tonemappingEnabled { false };
+#endif
 
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 
@@ -283,6 +292,7 @@ private:
     float m_tileDebugBorderWidth { 0 };
     ScrollingModeIndication m_indicatorMode { SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication };
     FloatBoxExtent m_obscuredContentInsets;
+    std::optional<FloatBoxExtent> m_obscuredInsetsDelta;
 };
 
 } // namespace WebCore

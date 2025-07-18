@@ -36,7 +36,7 @@ private:
     Comment(Document&, String&&);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
 };
 
 } // namespace WebCore

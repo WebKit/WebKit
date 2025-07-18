@@ -24,7 +24,7 @@ namespace test {
 namespace {
 
 bool IsValidRegion(const CropRegion& region,
-                   const rtc::scoped_refptr<I420BufferInterface>& frame) {
+                   const scoped_refptr<I420BufferInterface>& frame) {
   return region.left >= 0 && region.right >= 0 && region.top >= 0 &&
          region.bottom >= 0 && region.left + region.right < frame->width() &&
          region.top + region.bottom < frame->height();
@@ -32,9 +32,9 @@ bool IsValidRegion(const CropRegion& region,
 
 }  // namespace
 
-rtc::scoped_refptr<I420BufferInterface> CropAndZoom(
+scoped_refptr<I420BufferInterface> CropAndZoom(
     const CropRegion& crop_region,
-    const rtc::scoped_refptr<I420BufferInterface>& frame) {
+    const scoped_refptr<I420BufferInterface>& frame) {
   RTC_CHECK(IsValidRegion(crop_region, frame));
 
   const int uv_crop_left = crop_region.left / 2;
@@ -54,7 +54,7 @@ rtc::scoped_refptr<I420BufferInterface> CropAndZoom(
       frame->DataV() + frame->StrideV() * uv_crop_top + uv_crop_left;
 
   // Stretch the cropped frame to the original size using libyuv.
-  rtc::scoped_refptr<I420Buffer> adjusted_frame =
+  scoped_refptr<I420Buffer> adjusted_frame =
       I420Buffer::Create(frame->width(), frame->height());
   libyuv::I420Scale(y_plane, frame->StrideY(), u_plane, frame->StrideU(),
                     v_plane, frame->StrideV(), cropped_width, cropped_height,
@@ -67,8 +67,8 @@ rtc::scoped_refptr<I420BufferInterface> CropAndZoom(
 }
 
 CropRegion CalculateCropRegion(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame) {
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame) {
   RTC_CHECK_EQ(reference_frame->width(), test_frame->width());
   RTC_CHECK_EQ(reference_frame->height(), test_frame->height());
 
@@ -122,20 +122,19 @@ CropRegion CalculateCropRegion(
   return best_region;
 }
 
-rtc::scoped_refptr<I420BufferInterface> AdjustCropping(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame) {
+scoped_refptr<I420BufferInterface> AdjustCropping(
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame) {
   return CropAndZoom(CalculateCropRegion(reference_frame, test_frame),
                      reference_frame);
 }
 
-rtc::scoped_refptr<Video> AdjustCropping(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video) {
+scoped_refptr<Video> AdjustCropping(const scoped_refptr<Video>& reference_video,
+                                    const scoped_refptr<Video>& test_video) {
   class CroppedVideo : public Video {
    public:
-    CroppedVideo(const rtc::scoped_refptr<Video>& reference_video,
-                 const rtc::scoped_refptr<Video>& test_video)
+    CroppedVideo(const scoped_refptr<Video>& reference_video,
+                 const scoped_refptr<Video>& test_video)
         : reference_video_(reference_video), test_video_(test_video) {
       RTC_CHECK_EQ(reference_video->number_of_frames(),
                    test_video->number_of_frames());
@@ -149,9 +148,8 @@ rtc::scoped_refptr<Video> AdjustCropping(
       return test_video_->number_of_frames();
     }
 
-    rtc::scoped_refptr<I420BufferInterface> GetFrame(
-        size_t index) const override {
-      const rtc::scoped_refptr<I420BufferInterface> reference_frame =
+    scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
+      const scoped_refptr<I420BufferInterface> reference_frame =
           reference_video_->GetFrame(index);
 
       // Only calculate cropping region once per frame since it's expensive.
@@ -164,14 +162,14 @@ rtc::scoped_refptr<Video> AdjustCropping(
     }
 
    private:
-    const rtc::scoped_refptr<Video> reference_video_;
-    const rtc::scoped_refptr<Video> test_video_;
+    const scoped_refptr<Video> reference_video_;
+    const scoped_refptr<Video> test_video_;
     // Mutable since this is a cache that affects performance and not logical
     // behavior.
     mutable std::map<size_t, CropRegion> crop_regions_;
   };
 
-  return rtc::make_ref_counted<CroppedVideo>(reference_video, test_video);
+  return make_ref_counted<CroppedVideo>(reference_video, test_video);
 }
 
 }  // namespace test

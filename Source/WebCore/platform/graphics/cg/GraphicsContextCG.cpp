@@ -54,9 +54,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
-static void setCGFillColor(CGContextRef context, const Color& color)
+static void setCGFillColor(CGContextRef context, const Color& color, const DestinationColorSpace& colorSpace)
 {
-    CGContextSetFillColorWithColor(context, cachedCGColor(color).get());
+    CGContextSetFillColorWithColor(context, cachedSDRCGColorForColorspace(color, colorSpace).get());
 }
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -219,18 +219,6 @@ GraphicsContextCG::~GraphicsContextCG() = default;
 bool GraphicsContextCG::hasPlatformContext() const
 {
     return true;
-}
-
-CGContextRef GraphicsContextCG::platformContext() const
-{
-    return const_cast<GraphicsContextCG*>(this)->contextForDraw(); // Conservative estimate.
-}
-
-CGContextRef GraphicsContextCG::contextForDraw()
-{
-    ASSERT(m_cgContext);
-    m_hasDrawn = true;
-    return m_cgContext.get();
 }
 
 CGContextRef GraphicsContextCG::contextForState() const
@@ -543,7 +531,7 @@ void GraphicsContextCG::drawRect(const FloatRect& rect, float borderThickness)
         // We do a fill of four rects to simulate the stroke of a border.
         Color oldFillColor = fillColor();
         if (oldFillColor != strokeColor())
-            setCGFillColor(context, strokeColor());
+            setCGFillColor(context, strokeColor(), colorSpace());
         CGRect rects[4] = {
             FloatRect(rect.x(), rect.y(), rect.width(), borderThickness),
             FloatRect(rect.x(), rect.maxY() - borderThickness, rect.width(), borderThickness),
@@ -552,7 +540,7 @@ void GraphicsContextCG::drawRect(const FloatRect& rect, float borderThickness)
         };
         CGContextFillRects(context, rects, 4);
         if (oldFillColor != strokeColor())
-            setCGFillColor(context, oldFillColor);
+            setCGFillColor(context, oldFillColor, colorSpace());
     }
 }
 
@@ -578,7 +566,7 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
     if (drawsDashedLine) {
         // Figure out end points to ensure we always paint corners.
         cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth);
-        setCGFillColor(context, strokeColor());
+        setCGFillColor(context, strokeColor(), colorSpace());
         if (isVerticalLine) {
             CGContextFillRect(context, FloatRect(point1.x(), point1.y(), thickness, cornerWidth));
             CGContextFillRect(context, FloatRect(point1.x(), point2.y() - cornerWidth, thickness, cornerWidth));
@@ -887,7 +875,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     Color oldFillColor = fillColor();
 
     if (oldFillColor != color)
-        setCGFillColor(context, color);
+        setCGFillColor(context, color, colorSpace());
 
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
@@ -907,7 +895,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
         stateSaver.restore();
 
     if (oldFillColor != color)
-        setCGFillColor(context, oldFillColor);
+        setCGFillColor(context, oldFillColor, colorSpace());
 }
 
 void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const Color& color)
@@ -916,7 +904,7 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
     Color oldFillColor = fillColor();
 
     if (oldFillColor != color)
-        setCGFillColor(context, color);
+        setCGFillColor(context, color, colorSpace());
 
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
@@ -947,7 +935,7 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
         stateSaver.restore();
 
     if (oldFillColor != color)
-        setCGFillColor(context, oldFillColor);
+        setCGFillColor(context, oldFillColor, colorSpace());
 }
 
 void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
@@ -1125,7 +1113,7 @@ void GraphicsContextCG::setCGShadow(const std::optional<GraphicsDropShadow>& sha
 
     CGContextSetAlpha(context, shadow->opacity);
 
-    auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow->color).get()));
+    auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedSDRCGColorForColorspace(shadow->color, colorSpace()).get()));
     CGContextSetStyle(context, style.get());
 }
 
@@ -1184,7 +1172,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
     for (auto change : state.changes()) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
-            setCGFillColor(context, state.fillBrush().color());
+            setCGFillColor(context, state.fillBrush().color(), colorSpace());
             break;
 
         case GraphicsContextState::Change::StrokeThickness:
@@ -1192,7 +1180,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeBrush().color()).get());
+            CGContextSetStrokeColorWithColor(context, cachedSDRCGColorForColorspace(state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
@@ -1409,10 +1397,10 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& origin, float thickne
         return;
     bool changeFillColor = fillColor() != color;
     if (changeFillColor)
-        setCGFillColor(platformContext(), color);
+        setCGFillColor(platformContext(), color, colorSpace());
     CGContextFillRects(platformContext(), rects.span().data(), rects.size());
     if (changeFillColor)
-        setCGFillColor(platformContext(), fillColor());
+        setCGFillColor(platformContext(), fillColor(), colorSpace());
 }
 
 void GraphicsContextCG::setURLForRect(const URL& link, const FloatRect& destRect)

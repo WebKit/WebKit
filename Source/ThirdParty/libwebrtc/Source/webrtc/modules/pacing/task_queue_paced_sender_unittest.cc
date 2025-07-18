@@ -142,8 +142,8 @@ TEST(TaskQueuePacedSenderTest, PacesPackets) {
   size_t packets_sent = 0;
   Timestamp end_time = Timestamp::PlusInfinity();
   EXPECT_CALL(packet_router, SendPacket)
-      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> packet,
-                          const PacedPacketInfo& cluster_info) {
+      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> /* packet */,
+                          const PacedPacketInfo& /* cluster_info */) {
         ++packets_sent;
         if (packets_sent == kPacketsToSend) {
           end_time = time_controller.GetClock()->CurrentTime();
@@ -188,8 +188,8 @@ TEST(TaskQueuePacedSenderTest, PacesPacketsWithBurst) {
   size_t packets_sent = 0;
   Timestamp end_time = Timestamp::PlusInfinity();
   EXPECT_CALL(packet_router, SendPacket)
-      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> packet,
-                          const PacedPacketInfo& cluster_info) {
+      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> /* packet */,
+                          const PacedPacketInfo& /* cluster_info */) {
         ++packets_sent;
         if (packets_sent == kPacketsToSend) {
           end_time = time_controller.GetClock()->CurrentTime();
@@ -240,8 +240,8 @@ TEST(TaskQueuePacedSenderTest, ReschedulesProcessOnRateChange) {
 
   EXPECT_CALL(packet_router, SendPacket)
       .Times(3)
-      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> packet,
-                          const PacedPacketInfo& cluster_info) {
+      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> /* packet */,
+                          const PacedPacketInfo& /* cluster_info */) {
         if (first_packet_time.IsInfinite()) {
           first_packet_time = time_controller.GetClock()->CurrentTime();
         } else if (second_packet_time.IsInfinite()) {

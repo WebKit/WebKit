@@ -56,7 +56,6 @@ public:
     ExceptionOr<bool> supports(StringView token);
 
     Element& element() const { return m_element.get(); }
-    Ref<Element> protectedElement() const { return m_element.get(); }
 
     WEBCORE_EXPORT void setValue(const AtomString&);
     WEBCORE_EXPORT const AtomString& value() const;

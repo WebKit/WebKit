@@ -246,7 +246,7 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
 
     auto formatRelativeTime = m_numeric ? ureldatefmt_formatNumeric : ureldatefmt_format;
 
-    Vector<UChar, 32> result;
+    Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(formatRelativeTime, m_relativeDateTimeFormatter.get(), value, unitType.value(), result);
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to format relative time"_s);
@@ -283,7 +283,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
 
     double absValue = std::abs(value);
 
-    Vector<UChar, 32> buffer;
+    Vector<char16_t, 32> buffer;
     status = callBufferProducingFunction(unum_formatDoubleForFields, m_numberFormat.get(), absValue, buffer, iterator.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);

@@ -86,8 +86,8 @@ private:
     RefPtr<WorkerThreadableWebSocketChannel::Peer> m_peer;
     bool m_failedWebSocketChannelCreation;
     // ThreadSafeRefCounted must not have String member variables.
-    Vector<UChar> m_subprotocol;
-    Vector<UChar> m_extensions;
+    Vector<char16_t> m_subprotocol;
+    Vector<char16_t> m_extensions;
     bool m_suspended;
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_pendingTasks;
 };

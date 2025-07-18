@@ -10,10 +10,14 @@
 
 #include "modules/audio_coding/neteq/tools/initial_packet_inserter_neteq_input.h"
 
-#include <limits>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 
+#include "api/rtp_headers.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -54,8 +58,8 @@ InitialPacketInserterNetEqInput::PopPacket() {
     RTC_CHECK(first_packet_);
     auto dummy_packet = std::unique_ptr<PacketData>(new PacketData());
     dummy_packet->header = first_packet_->header;
-    dummy_packet->payload = rtc::Buffer(first_packet_->payload.data(),
-                                        first_packet_->payload.size());
+    dummy_packet->payload =
+        Buffer(first_packet_->payload.data(), first_packet_->payload.size());
     dummy_packet->time_ms = first_packet_->time_ms;
     dummy_packet->header.sequenceNumber -= packets_to_insert_;
     // This assumes 20ms per packet.

@@ -84,27 +84,8 @@ struct FrameGeneratorCapturerConfig {
   frame_gen_cap_impl::AutoOpt<SquareSlides> squares_slides;
   frame_gen_cap_impl::AutoOpt<VideoFile> video_file;
   frame_gen_cap_impl::AutoOpt<ImageSlides> image_slides;
+  bool allow_zero_hertz = false;
 };
-
-std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
-    Clock* clock,
-    TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::SquaresVideo config);
-
-std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
-    Clock* clock,
-    TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::SquareSlides config);
-
-std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
-    Clock* clock,
-    TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::VideoFile config);
-
-std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
-    Clock* clock,
-    TaskQueueFactory& task_queue_factory,
-    FrameGeneratorCapturerConfig::ImageSlides config);
 
 std::unique_ptr<FrameGeneratorCapturer> CreateFrameGeneratorCapturer(
     Clock* clock,

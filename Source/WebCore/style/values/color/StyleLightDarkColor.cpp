@@ -28,6 +28,7 @@
 
 #include "CSSLightDarkColor.h"
 #include "Document.h"
+#include "RenderStyle.h"
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include "StyleColorResolutionState.h"

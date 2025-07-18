@@ -17,7 +17,7 @@
 
 namespace webrtc {
 
-NamesCollection::NamesCollection(rtc::ArrayView<const std::string> names) {
+NamesCollection::NamesCollection(ArrayView<const std::string> names) {
   names_ = std::vector<std::string>(names.begin(), names.end());
   for (size_t i = 0; i < names_.size(); ++i) {
     index_.emplace(names_[i], i);

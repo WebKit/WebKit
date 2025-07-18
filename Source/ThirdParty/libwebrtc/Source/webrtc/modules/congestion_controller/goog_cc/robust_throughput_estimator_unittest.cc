@@ -375,14 +375,16 @@ TEST(RobustThroughputEstimatorTest, DeepReordering) {
   // Since the window is 500 ms, the delayed packet was sent ~500
   // ms before the second oldest packet. However, the send rate
   // should not drop.
-  delayed_packets.front().receive_time =
-      feedback_generator.CurrentReceiveClock();
-  throughput_estimator.IncomingPacketFeedbackVector(delayed_packets);
-  auto throughput = throughput_estimator.bitrate();
-  ASSERT_TRUE(throughput.has_value());
-  EXPECT_NEAR(throughput.value().bytes_per_sec<double>(),
-              send_rate.bytes_per_sec<double>(),
-              0.05 * send_rate.bytes_per_sec<double>());  // Allow 5% error
+  {
+    delayed_packets.front().receive_time =
+        feedback_generator.CurrentReceiveClock();
+    throughput_estimator.IncomingPacketFeedbackVector(delayed_packets);
+    auto throughput = throughput_estimator.bitrate();
+    ASSERT_TRUE(throughput.has_value());
+    EXPECT_NEAR(throughput.value().bytes_per_sec<double>(),
+                send_rate.bytes_per_sec<double>(),
+                0.05 * send_rate.bytes_per_sec<double>());  // Allow 5% error
+  }
 
   // Thoughput should stay stable.
   for (int i = 0; i < 10; i++) {

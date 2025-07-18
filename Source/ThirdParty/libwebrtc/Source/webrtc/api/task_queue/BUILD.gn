@@ -90,21 +90,7 @@ rtc_library("default_task_queue_factory") {
     "../../rtc_base/memory:always_valid_pointer",
   ]
 
-  if (rtc_enable_libevent) {
-    if (is_android) {
-      sources +=
-          [ "default_task_queue_factory_stdlib_or_libevent_experiment.cc" ]
-      deps += [
-        "../../api/transport:field_trial_based_config",
-        "../../rtc_base:logging",
-        "../../rtc_base:rtc_task_queue_libevent",
-        "../../rtc_base:rtc_task_queue_stdlib",
-      ]
-    } else {
-      sources += [ "default_task_queue_factory_libevent.cc" ]
-      deps += [ "../../rtc_base:rtc_task_queue_libevent" ]
-    }
-  } else if (is_mac || is_ios) {
+  if (is_mac || is_ios) {
     sources += [ "default_task_queue_factory_gcd.cc" ]
     deps += [ "../../rtc_base:rtc_task_queue_gcd" ]
   } else if (is_win && current_os != "winuwp" && !build_with_chromium) {

@@ -181,9 +181,9 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
     }
 
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, networks = WTFMove(filteredNetworks), ipv4, ipv6, forceSignaling] {
-        std::vector<std::unique_ptr<rtc::Network>> networkList(networks.size());
+        std::vector<std::unique_ptr<webrtc::Network>> networkList(networks.size());
         for (size_t index = 0; index < networks.size(); ++index)
-            networkList[index] = std::make_unique<rtc::Network>(networks[index].value());
+            networkList[index] = std::make_unique<webrtc::Network>(networks[index].value());
 
         bool hasChanged;
         set_default_local_addresses(ipv4.rtcAddress(), ipv6.rtcAddress());
@@ -225,7 +225,7 @@ void LibWebRTCNetworkManager::networkProcessCrashed()
     });
 }
 
-void LibWebRTCNetworkManager::CreateNameForAddress(const rtc::IPAddress& address, NameCreatedCallback callback)
+void LibWebRTCNetworkManager::CreateNameForAddress(const webrtc::IPAddress& address, NameCreatedCallback callback)
 {
     callOnMainRunLoop([weakThis = WeakPtr { *this }, address, callback = std::move(callback)]() mutable {
         if (!weakThis)
@@ -241,7 +241,7 @@ void LibWebRTCNetworkManager::CreateNameForAddress(const rtc::IPAddress& address
     });
 }
 
-void LibWebRTCNetworkManager::RemoveNameForAddress(const rtc::IPAddress&, NameRemovedCallback)
+void LibWebRTCNetworkManager::RemoveNameForAddress(const webrtc::IPAddress&, NameRemovedCallback)
 {
     // LibWebRTC backend defines this method but does not call it.
     ASSERT_NOT_REACHED();

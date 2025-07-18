@@ -9,7 +9,6 @@
  */
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-
 #include "rtc_base/checks.h"
 #include "rtc_base/sanitizer.h"
 
@@ -30,8 +29,8 @@ int WebRtcSpl_DownsampleFastC(const int16_t* data_in,
   size_t endpos = delay + factor * (data_out_length - 1) + 1;
 
   // Return error if any of the running conditions doesn't meet.
-  if (data_out_length == 0 || coefficients_length == 0
-                           || data_in_length < endpos) {
+  if (data_out_length == 0 || coefficients_length == 0 ||
+      data_in_length < endpos) {
     return -1;
   }
 
@@ -45,10 +44,10 @@ int WebRtcSpl_DownsampleFastC(const int16_t* data_in,
       // Negative overflow is permitted here, because this is
       // auto-regressive filters, and the state for each batch run is
       // stored in the "negative" positions of the output vector.
-      rtc_MsanCheckInitialized(&data_in[(ptrdiff_t) i - (ptrdiff_t) j],
-          sizeof(data_in[0]), 1);
+      rtc_MsanCheckInitialized(&data_in[(ptrdiff_t)i - (ptrdiff_t)j],
+                               sizeof(data_in[0]), 1);
       // out_s32 is in Q12 domain.
-      out_s32 += coefficients[j] * data_in[(ptrdiff_t) i - (ptrdiff_t) j];
+      out_s32 += coefficients[j] * data_in[(ptrdiff_t)i - (ptrdiff_t)j];
     }
 
     out_s32 >>= 12;  // Q0.

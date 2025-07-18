@@ -37,7 +37,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
 class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData, StyleFlexibleBoxData);
 public:
     static Ref<StyleFlexibleBoxData> create() { return adoptRef(*new StyleFlexibleBoxData); }
     Ref<StyleFlexibleBoxData> copy() const;

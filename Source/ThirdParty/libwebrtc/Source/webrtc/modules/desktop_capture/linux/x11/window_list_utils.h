@@ -28,8 +28,7 @@ namespace webrtc {
 // native APIs failed. If multiple screens are attached to the `display`, this
 // function returns false only when native APIs failed on all screens. Menus,
 // panels and minimized windows will be ignored.
-bool GetWindowList(XAtomCache* cache,
-                   rtc::FunctionView<bool(::Window)> on_window);
+bool GetWindowList(XAtomCache* cache, FunctionView<bool(::Window)> on_window);
 
 // Returns WM_STATE property of the `window`. This function returns
 // WithdrawnState if the `window` is missing.

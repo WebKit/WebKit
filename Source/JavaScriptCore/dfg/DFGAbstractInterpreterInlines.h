@@ -1635,7 +1635,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (const StringImpl* a = asString(string)->tryGetValueImpl()) {
                     bool lower = true;
                     for (unsigned index = 0; index < a->length(); ++index) {
-                        UChar character = a->at(index);
+                        char16_t character = a->at(index);
                         if (!isASCII(character) || isASCIIUpper(character)) {
                             lower = false;
                             break;

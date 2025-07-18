@@ -34,8 +34,8 @@ class YuvFrameWriterTest : public ::testing::Test {
   ~YuvFrameWriterTest() override = default;
 
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                "yuv_frame_writer_unittest");
+    temp_filename_ =
+        test::TempFilename(test::OutputPath(), "yuv_frame_writer_unittest");
     frame_writer_.reset(
         new YuvFrameWriterImpl(temp_filename_, kFrameWidth, kFrameHeight));
     ASSERT_TRUE(frame_writer_->Init());

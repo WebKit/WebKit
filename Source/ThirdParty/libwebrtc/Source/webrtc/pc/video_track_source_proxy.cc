@@ -17,13 +17,13 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoTrackSourceProxy(
-    rtc::Thread* signaling_thread,
-    rtc::Thread* worker_thread,
+scoped_refptr<VideoTrackSourceInterface> CreateVideoTrackSourceProxy(
+    Thread* signaling_thread,
+    Thread* worker_thread,
     VideoTrackSourceInterface* source) {
   return VideoTrackSourceProxy::Create(
       signaling_thread, worker_thread,
-      rtc::scoped_refptr<VideoTrackSourceInterface>(source));
+      scoped_refptr<VideoTrackSourceInterface>(source));
 }
 
 }  // namespace webrtc

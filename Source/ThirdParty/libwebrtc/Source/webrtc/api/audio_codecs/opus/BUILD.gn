@@ -20,7 +20,10 @@ rtc_library("audio_encoder_opus_config") {
     "audio_encoder_opus_config.cc",
     "audio_encoder_opus_config.h",
   ]
-  deps = [ "../../../rtc_base/system:rtc_export" ]
+  deps = [
+    "..:audio_codecs_api",
+    "../../../rtc_base/system:rtc_export",
+  ]
   defines = []
   if (rtc_opus_variable_complexity) {
     defines += [ "WEBRTC_OPUS_VARIABLE_COMPLEXITY=1" ]
@@ -59,6 +62,7 @@ rtc_library("audio_decoder_opus") {
   ]
   deps = [
     "..:audio_codecs_api",
+    "../..:field_trials_view",
     "../../../modules/audio_coding:webrtc_opus",
     "../../../rtc_base:checks",
     "../../../rtc_base/system:rtc_export",
@@ -96,5 +100,19 @@ rtc_library("audio_decoder_multiopus") {
     "../../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_library("unittests") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [ "audio_decoder_opus_unittest.cc" ]
+  deps = [
+    ":audio_decoder_opus",
+    "..:audio_codecs_api",
+    "../../../api/environment",
+    "../../../api/environment:environment_factory",
+    "../../../test:explicit_key_value_config",
+    "../../../test:test_support",
   ]
 }

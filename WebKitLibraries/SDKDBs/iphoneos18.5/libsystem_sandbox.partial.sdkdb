@@ -1,0 +1,30 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoInternet"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoNetwork"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoWrite"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoWriteExceptTemporary"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfilePureComputation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_free_error"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_init"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoInternet"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoNetwork"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoWrite"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfileNoWriteExceptTemporary"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kSBXProfilePureComputation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_free_error"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_init"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

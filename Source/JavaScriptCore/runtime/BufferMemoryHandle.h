@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #include "MemoryMode.h"
 #include "Options.h"
 #include "PageCount.h"

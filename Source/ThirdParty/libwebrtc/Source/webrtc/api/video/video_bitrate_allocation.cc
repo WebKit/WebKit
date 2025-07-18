@@ -43,7 +43,7 @@ bool VideoBitrateAllocation::SetBitrate(size_t spatial_index,
     return false;
 
   layer_bitrate = bitrate_bps;
-  sum_ = rtc::dchecked_cast<uint32_t>(new_bitrate_sum_bps);
+  sum_ = dchecked_cast<uint32_t>(new_bitrate_sum_bps);
   return true;
 }
 
@@ -147,7 +147,7 @@ std::string VideoBitrateAllocation::ToString() const {
   // Max string length in practice is 260, but let's have some overhead and
   // round up to nearest power of two.
   char string_buf[512];
-  rtc::SimpleStringBuilder ssb(string_buf);
+  SimpleStringBuilder ssb(string_buf);
 
   ssb << "VideoBitrateAllocation [";
   uint32_t spatial_cumulator = 0;

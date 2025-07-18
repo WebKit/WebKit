@@ -31,7 +31,7 @@ namespace webrtc {
 
 std::string FlexfecReceiveStream::Config::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "{payload_type: " << payload_type;
   ss << ", remote_ssrc: " << rtp.remote_ssrc;
   ss << ", local_ssrc: " << rtp.local_ssrc;

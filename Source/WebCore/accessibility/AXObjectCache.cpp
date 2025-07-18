@@ -535,7 +535,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
         return nullptr;
 
     // get the focused node in the page
-    RefPtr focusedOrMainFrame = page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return nullptr;
     RefPtr document = focusedOrMainFrame->document();
@@ -1545,16 +1545,20 @@ void AXObjectCache::onTextRunsChanged(const RenderObject& renderer)
 
 void AXObjectCache::handleMenuOpened(Element& element)
 {
-    if (!element.renderer() || !hasRole(element, "menu"_s))
+    if (!element.renderer() || !hasRole(element, "menu"_s)) {
+        // FIXME: Doesn't this early-return mean we are going to handle display:contents menus incorrectly?
         return;
+    }
 
     postNotification(getOrCreate(element), protectedDocument().get(), AXNotification::MenuOpened);
 }
 
 void AXObjectCache::handleLiveRegionCreated(Element& element)
 {
-    if (!element.renderer())
+    if (!element.renderer()) {
+        // FIXME: Doesn't this early-return mean we are going to handle display:contents live regions incorrectly?
         return;
+    }
 
     auto liveRegionStatus = element.attributeWithoutSynchronization(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
@@ -1567,7 +1571,7 @@ void AXObjectCache::handleLiveRegionCreated(Element& element)
         RefPtr axObject = getOrCreate(element);
 #if PLATFORM(MAC)
         if (axObject)
-            addSortedObject(*axObject, PreSortedObjectType::LiveRegion);
+            deferSortForNewLiveRegion(*axObject);
 #endif // PLATFORM(MAC)
 
         postNotification(axObject.get(), protectedDocument().get(), AXNotification::LiveRegionCreated);
@@ -2100,10 +2104,7 @@ void AXObjectCache::onAccessibilityPaintFinished()
 
     for (auto iterator = m_mostRecentlyPaintedText.begin(); iterator != m_mostRecentlyPaintedText.end(); ++iterator) {
         const auto& renderText = iterator->key;
-        // FIXME: Use InlineIteratorLogicalOrderTraversal instead. Otherwise we'll do the wrong thing for mixed direction
-        // content. We should do this at the same time AccessibilityRenderObject::textRuns switches to this function.
-        // Tracked by: https://bugs.webkit.org/show_bug.cgi?id=294632
-        if (auto textBox = InlineIterator::lineLeftmostTextBoxFor(renderText)) {
+        if (auto textBox = InlineIterator::firstTextBoxInLogicalOrderFor(renderText).first) {
             // The line index from TextBox::lineIndex is relative to the containing block, which count lines from
             // other renderers. The LineRange struct we have built expects the start and end line indices to be
             // relative to just this renderer, so normalize them by getting the first line index for this renderer.
@@ -2609,7 +2610,7 @@ static AXTextChangeContext secureContext(AccessibilityObject& object, AXTextChan
         if (text.isEmpty())
             return;
 
-        std::span<UChar> characters;
+        std::span<char16_t> characters;
         text = String::createUninitialized(text.length(), characters);
         for (unsigned i = 0; i < text.length(); ++i)
             characters[i] = maskingCharacter;
@@ -2898,7 +2899,7 @@ void AXObjectCache::handleRoleChanged(AccessibilityObject& axObject, Accessibili
 
 #if PLATFORM(MAC)
     if (axObject.supportsLiveRegion())
-        addSortedObject(axObject, PreSortedObjectType::LiveRegion);
+        deferSortForNewLiveRegion(axObject);
     else if (AXCoreObject::liveRegionStatusIsEnabled(AtomString { AXCoreObject::defaultLiveRegionStatusForRole(oldRole) }))
         removeLiveRegion(axObject);
 #else
@@ -3036,9 +3037,17 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXNotification::RequiredStatusChanged);
     else if (attrName == tabindexAttr) {
         if (oldValue.isEmpty() || newValue.isEmpty()) {
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+            // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), we don't need to do issue any children-changed events,
+            // which is quite expensive — just re-compute is-ignored on this single object.
+            if (RefPtr object = get(*element))
+                object->recomputeIsIgnored();
+#else
             RefPtr parent = element->parentNode();
             if (auto* renderer = parent ? parent->renderer() : nullptr)
                 childrenChanged(*renderer);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             postNotification(element, AXNotification::FocusableStateChanged);
 #endif
@@ -3155,7 +3164,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 #if PLATFORM(MAC)
         if (RefPtr object = getOrCreate(element)) {
             if (object->supportsLiveRegion())
-                addSortedObject(*object, PreSortedObjectType::LiveRegion);
+                deferSortForNewLiveRegion(object.releaseNonNull());
             else
                 removeLiveRegion(*object);
         }
@@ -4179,7 +4188,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
 
     auto searchRange = rangeForNodeContents(*boundary);
 
-    Vector<UChar, 1024> string;
+    Vector<char16_t, 1024> string;
     unsigned prefixLength = 0;
     
     if (requiresContextForWordBoundary(characterAfter(characterOffset))) {
@@ -4224,7 +4233,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         return CharacterOffset();
     
     auto searchRange = rangeForNodeContents(*boundary);
-    Vector<UChar, 1024> string;
+    Vector<char16_t, 1024> string;
     unsigned suffixLength = 0;
 
     if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && startCharacterOffsetOfParagraph(characterOffset).isEqual(characterOffset)) {
@@ -4731,13 +4740,13 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     handleAllDeferredChildrenChanged();
 
     AXLOGDeferredCollection("ElementAddedOrRemovedList"_s, m_deferredElementAddedOrRemovedList);
-    auto nodeAddedOrRemovedList = copyToVector(m_deferredElementAddedOrRemovedList);
-    for (auto& weakNode : nodeAddedOrRemovedList) {
-        if (RefPtr node = weakNode.get()) {
-            handleMenuOpened(*node);
-            handleLiveRegionCreated(*node);
+    auto elementAddedOrRemovedList = copyToVector(m_deferredElementAddedOrRemovedList);
+    for (auto& weakElement : elementAddedOrRemovedList) {
+        if (RefPtr element = weakElement.get()) {
+            handleMenuOpened(*element);
+            handleLiveRegionCreated(*element);
 
-            if (RefPtr label = dynamicDowncast<HTMLLabelElement>(node.get())) {
+            if (RefPtr label = dynamicDowncast<HTMLLabelElement>(*element)) {
                 // A label was added or removed. Update its LabelFor relationships.
                 handleLabelChanged(getOrCreate(*label));
             }
@@ -5360,7 +5369,7 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
     stream << "\nAXObjectTree:\n";
     RefPtr document = this->document();
     if (RefPtr root = document ? get(document->view()) : nullptr) {
-        OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML };
+        OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role };
         if (additionalOptions)
             options |= additionalOptions.value();
         streamSubtree(stream, *root, options);
@@ -5373,7 +5382,7 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
         stream << "\nAXIsolatedTree:\n";
         RefPtr tree = getOrCreateIsolatedTree();
         if (RefPtr root = tree ? tree->rootNode() : nullptr) {
-            OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID };
+            OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role };
             if (additionalOptions)
                 options |= additionalOptions.value();
             streamSubtree(stream, root.releaseNonNull(), options);

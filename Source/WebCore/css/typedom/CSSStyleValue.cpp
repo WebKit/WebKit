@@ -35,6 +35,7 @@
 #include "CSSSerializationContext.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
+#include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>

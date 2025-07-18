@@ -25,10 +25,12 @@
 #include "config.h"
 #include "StylePosition.h"
 
+#include "CSSPositionValue.h"
 #include "CalculationCategory.h"
 #include "CalculationTree.h"
 #include "LengthPoint.h"
 #include "RenderStyle.h"
+#include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Platform.h"
@@ -38,19 +40,9 @@ namespace Style {
 
 using namespace CSS::Literals;
 
-static LengthPercentage<> toPositionLengthPercentage(const WebCore::Length& length)
-{
-    ASSERT(length.isSpecified());
-    if (length.isCalculated())
-        return LengthPercentage<>::Calc { length.calculationValue() };
-    if (length.isPercent())
-        return LengthPercentage<>::Percentage { length.value() };
-    ASSERT(length.isFixed());
-    return LengthPercentage<>::Dimension { length.value() };
-}
-
 Position::Position(const WebCore::LengthPoint& point)
-    : value { toPositionLengthPercentage(point.x), toPositionLengthPercentage(point.y) }
+    : x { point.x }
+    , y { point.y }
 {
 }
 
@@ -193,21 +185,50 @@ static auto resolve(const CSS::FourComponentPositionVertical& value, const Build
     );
 }
 
+auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositionHorizontal& value, const RenderStyle& style) -> CSS::TwoComponentPositionHorizontal
+{
+    return WTF::switchOn(value.offset,
+        [&](const auto& value) {
+            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
+        }
+    );
+}
+
 auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> TwoComponentPositionHorizontal
 {
-    return { resolve(value, state) };
+    return { PositionX { resolve(value, state) } };
+}
+
+auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionVertical& value, const RenderStyle& style) -> CSS::TwoComponentPositionVertical
+{
+    return WTF::switchOn(value.offset,
+        [&](const auto& value) {
+            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
+        }
+    );
 }
 
 auto ToStyle<CSS::TwoComponentPositionVertical>::operator()(const CSS::TwoComponentPositionVertical& value, const BuilderState& state) -> TwoComponentPositionVertical
 {
-    return { resolve(value, state) };
+    return { PositionY { resolve(value, state) } };
 }
 
 // MARK: <position> conversion
 
 auto ToCSS<Position>::operator()(const Position& value, const RenderStyle& style) -> CSS::Position
 {
-    return CSS::TwoComponentPositionHorizontalVertical { { toCSS(value.x(), style) }, { toCSS(value.y(), style) } };
+    return CSS::TwoComponentPositionHorizontalVertical {
+        WTF::switchOn(value.x,
+            [&](const auto& value) {
+                return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
+            }
+        ),
+        WTF::switchOn(value.y,
+            [&](const auto& value) {
+                return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
+            }
+        )
+    };
 }
 
 auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const BuilderState& state) -> Position
@@ -215,8 +236,8 @@ auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const Bui
     return WTF::switchOn(position,
         [&](const auto& components) {
             return Position {
-                resolve(get<0>(components), state),
-                resolve(get<1>(components), state),
+                PositionX { resolve(get<0>(components), state) },
+                PositionY { resolve(get<1>(components), state) },
             };
         }
     );
@@ -226,7 +247,11 @@ auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const Bui
 
 auto ToCSS<PositionX>::operator()(const PositionX& value, const RenderStyle& style) -> CSS::PositionX
 {
-    return CSS::TwoComponentPositionHorizontal { toCSS(value.value, style) };
+    return WTF::switchOn(value,
+        [&](const auto& value) {
+            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
+        }
+    );
 }
 
 auto ToStyle<CSS::PositionX>::operator()(const CSS::PositionX& positionX, const BuilderState& state) -> PositionX
@@ -242,7 +267,11 @@ auto ToStyle<CSS::PositionX>::operator()(const CSS::PositionX& positionX, const 
 
 auto ToCSS<PositionY>::operator()(const PositionY& value, const RenderStyle& style) -> CSS::PositionY
 {
-    return CSS::TwoComponentPositionVertical { toCSS(value.value, style) };
+    return WTF::switchOn(value,
+        [&](const auto& value) {
+            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
+        }
+    );
 }
 
 auto ToStyle<CSS::PositionY>::operator()(const CSS::PositionY& positionY, const BuilderState& state) -> PositionY
@@ -254,28 +283,45 @@ auto ToStyle<CSS::PositionY>::operator()(const CSS::PositionY& positionY, const 
     );
 }
 
+auto CSSValueConversion<Position>::operator()(BuilderState& state, const CSSValue& value) -> Position
+{
+    RefPtr positionValue = requiredDowncast<CSSPositionValue>(state, value);
+    if (!positionValue)
+        return { 0_css_px, 0_css_px };
+    return toStyle(positionValue->position(), state);
+}
+
+auto CSSValueConversion<PositionX>::operator()(BuilderState& state, const CSSValue& value) -> PositionX
+{
+    RefPtr positionXValue = requiredDowncast<CSSPositionXValue>(state, value);
+    if (!positionXValue)
+        return 0_css_px;
+    return toStyle(positionXValue->position(), state);
+}
+
+auto CSSValueConversion<PositionY>::operator()(BuilderState& state, const CSSValue& value) -> PositionY
+{
+    RefPtr positionYValue = requiredDowncast<CSSPositionYValue>(state, value);
+    if (!positionYValue)
+        return 0_css_px;
+    return toStyle(positionYValue->position(), state);
+}
+
 // MARK: - Evaluation
 
 auto Evaluation<Position>::operator()(const Position& position, FloatSize referenceBox) -> FloatPoint
 {
-    return evaluate(position.value, referenceBox);
+    return {
+        evaluate(position.x, referenceBox.width()),
+        evaluate(position.y, referenceBox.height())
+    };
 }
 
 // MARK: - Platform
 
 auto ToPlatform<Position>::operator()(const Position& position) -> WebCore::LengthPoint
 {
-    return { toPlatform(position.x()), toPlatform(position.y()) };
-}
-
-auto ToPlatform<PositionX>::operator()(const PositionX& positionX) -> WebCore::Length
-{
-    return toPlatform(positionX.value);
-}
-
-auto ToPlatform<PositionY>::operator()(const PositionY& positionY) -> WebCore::Length
-{
-    return toPlatform(positionY.value);
+    return { toPlatform(position.x), toPlatform(position.y) };
 }
 
 } // namespace Style

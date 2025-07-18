@@ -9,8 +9,27 @@
  */
 #include "test/scenario/audio_stream.h"
 
-#include "absl/memory/memory.h"
-#include "test/call_test.h"
+#include <cstdint>
+#include <optional>
+#include <string>
+#include <vector>
+
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/call/transport.h"
+#include "api/media_types.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
+#include "test/scenario/call_client.h"
+#include "test/scenario/column_printer.h"
+#include "test/scenario/scenario_config.h"
 #include "test/video_test_constants.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -83,7 +102,7 @@ std::vector<RtpExtension> GetAudioRtpExtensions(
 SendAudioStream::SendAudioStream(
     CallClient* sender,
     AudioStreamConfig config,
-    rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+    scoped_refptr<AudioEncoderFactory> encoder_factory,
     Transport* send_transport)
     : sender_(sender), config_(config) {
   AudioSendStream::Config send_config(send_transport);
@@ -132,9 +151,6 @@ SendAudioStream::SendAudioStream(
     send_config.max_bitrate_bps = max_rate.bps();
   }
 
-  if (config.stream.in_bandwidth_estimation) {
-    send_config.send_codec_spec->transport_cc_enabled = true;
-  }
   send_config.rtp.extensions = GetAudioRtpExtensions(config);
 
   sender_->SendTask([&] {
@@ -167,7 +183,7 @@ void SendAudioStream::SetMuted(bool mute) {
 ColumnPrinter SendAudioStream::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "audio_target_rate",
-      [this](rtc::SimpleStringBuilder& sb) {
+      [this](SimpleStringBuilder& sb) {
         sender_->SendTask([this, &sb] {
           AudioSendStream::Stats stats = send_stream_->GetStats();
           sb.AppendFormat("%.0lf", stats.target_bitrate_bps / 8.0);
@@ -180,7 +196,7 @@ ReceiveAudioStream::ReceiveAudioStream(
     CallClient* receiver,
     AudioStreamConfig config,
     SendAudioStream* send_stream,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+    scoped_refptr<AudioDecoderFactory> decoder_factory,
     Transport* feedback_transport)
     : receiver_(receiver), config_(config) {
   AudioReceiveStreamInterface::Config recv_config;
@@ -224,9 +240,9 @@ AudioStreamPair::~AudioStreamPair() = default;
 
 AudioStreamPair::AudioStreamPair(
     CallClient* sender,
-    rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+    scoped_refptr<AudioEncoderFactory> encoder_factory,
     CallClient* receiver,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+    scoped_refptr<AudioDecoderFactory> decoder_factory,
     AudioStreamConfig config)
     : config_(config),
       send_stream_(sender, config, encoder_factory, sender->transport_.get()),

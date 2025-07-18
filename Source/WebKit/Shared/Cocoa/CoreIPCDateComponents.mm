@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-std::array calendarUnitForComponentIndex {
+std::array<NSCalendarUnit, CoreIPCDateComponents::numberOfComponentIndexes> calendarUnitForComponentIndex {
     NSCalendarUnitEra,
     NSCalendarUnitYear,
     NSCalendarUnitYearForWeekOfYear,
@@ -44,7 +44,6 @@ std::array calendarUnitForComponentIndex {
     NSCalendarUnitWeekdayOrdinal,
     NSCalendarUnitDay
 };
-static size_t numberOfComponentIndexes = sizeof(calendarUnitForComponentIndex) / sizeof(NSUInteger);
 
 CoreIPCDateComponents::CoreIPCDateComponents(NSDateComponents *components)
 {
@@ -53,9 +52,8 @@ CoreIPCDateComponents::CoreIPCDateComponents(NSDateComponents *components)
     if (components.timeZone)
         m_timeZoneName = components.timeZone.name;
 
-    m_componentValues.reserveInitialCapacity(numberOfComponentIndexes);
     for (size_t i = 0; i < numberOfComponentIndexes; ++i)
-        m_componentValues.append([components valueForComponent:calendarUnitForComponentIndex[i]]);
+        m_componentValues[i] = [components valueForComponent:calendarUnitForComponentIndex[i]];
 }
 
 RetainPtr<id> CoreIPCDateComponents::toID() const
@@ -71,11 +69,6 @@ RetainPtr<id> CoreIPCDateComponents::toID() const
         components.get().timeZone = [NSTimeZone timeZoneWithName:m_timeZoneName.createNSString().get()];
 
     return components;
-}
-
-bool CoreIPCDateComponents::hasCorrectNumberOfComponentValues(const Vector<NSInteger>& componentValues)
-{
-    return componentValues.size() == numberOfComponentIndexes;
 }
 
 } // namespace WebKit

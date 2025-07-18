@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementTextDirection.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"

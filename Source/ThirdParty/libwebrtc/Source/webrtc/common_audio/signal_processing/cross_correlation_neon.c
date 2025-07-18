@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <arm_neon.h>
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/system/arch.h"
-
-#include <arm_neon.h>
 
 static inline void DotProductWithScaleNeon(int32_t* cross_correlation,
                                            const int16_t* vector1,
@@ -28,14 +28,14 @@ static inline void DotProductWithScaleNeon(int32_t* cross_correlation,
     int16x8_t seq1_16x8 = vld1q_s16(vector1);
     int16x8_t seq2_16x8 = vld1q_s16(vector2);
 #if defined(WEBRTC_ARCH_ARM64)
-    int32x4_t tmp0 = vmull_s16(vget_low_s16(seq1_16x8),
-                               vget_low_s16(seq2_16x8));
+    int32x4_t tmp0 =
+        vmull_s16(vget_low_s16(seq1_16x8), vget_low_s16(seq2_16x8));
     int32x4_t tmp1 = vmull_high_s16(seq1_16x8, seq2_16x8);
 #else
-    int32x4_t tmp0 = vmull_s16(vget_low_s16(seq1_16x8),
-                               vget_low_s16(seq2_16x8));
-    int32x4_t tmp1 = vmull_s16(vget_high_s16(seq1_16x8),
-                               vget_high_s16(seq2_16x8));
+    int32x4_t tmp0 =
+        vmull_s16(vget_low_s16(seq1_16x8), vget_low_s16(seq2_16x8));
+    int32x4_t tmp1 =
+        vmull_s16(vget_high_s16(seq1_16x8), vget_high_s16(seq2_16x8));
 #endif
     sum0 = vpadalq_s32(sum0, tmp0);
     sum1 = vpadalq_s32(sum1, tmp1);
@@ -78,10 +78,7 @@ void WebRtcSpl_CrossCorrelationNeon(int32_t* cross_correlation,
     const int16_t* seq1_ptr = seq1;
     const int16_t* seq2_ptr = seq2 + (step_seq2 * i);
 
-    DotProductWithScaleNeon(cross_correlation,
-                            seq1_ptr,
-                            seq2_ptr,
-                            dim_seq,
+    DotProductWithScaleNeon(cross_correlation, seq1_ptr, seq2_ptr, dim_seq,
                             right_shifts);
     cross_correlation++;
   }

@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UsesBackForwardCache=true ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<html>
+<head>
+<title>Suspended &lt;model> with autoplay should play again after it is resumed</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-utils.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    internals.disableModelLoadDelaysForTesting();
+
+    window.addEventListener("pageshow", async () => {
+        assert_equals(document.visibilityState, "visible");
+
+        if (!event.persisted)
+            return;
+
+        // Wait a little bit since the reload of suspended model
+        // is not synchronous.
+        await sleepForSeconds(0.5);
+
+        const model = document.getElementById("test-model");
+        await model.ready;
+        // This page was restored from the page cache. Make sure
+        // the animation is still running and progressing.
+        assert_false(model.paused, "Model's animation should be running after resume; model.paused ");
+
+        document.getElementById("result").innerText = "PASSED: model's animation is running properly after it's suspended (before model is ready) and then resumed";
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }, false);
+
+    window.addEventListener("pagehide", function(event) {
+        assert_true(event.persisted, "Page should have entered the page cache");
+    }, false);
+
+    window.addEventListener('load', async () => {
+        const model = document.getElementById("test-model");
+        assert_true(!!model, "Model element should exist");
+        model.addEventListener("load", async () => {
+            // We want to test suspending the model before it has finished loading
+            window.location.href = "resources/go-back-on-load.html";
+        }, false);
+    }, false);
+</script>
+<body>
+    <model id='test-model' autoplay loop>
+        <source src='resources/stopwatch-60s.usdz'/>
+    </model>
+    <div id="result"></div>
+</body>
+</html>

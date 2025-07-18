@@ -20,41 +20,51 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_frame.h"
 #include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/wav_file.h"
 
 namespace webrtc {
 
 static const AudioProcessing::Error kNoErr = AudioProcessing::kNoError;
-#define EXPECT_NOERR(expr) EXPECT_EQ(kNoErr, (expr))
+#define EXPECT_NOERR(expr) EXPECT_EQ(AudioProcessing::kNoError, (expr))
 
 // Encapsulates samples and metadata for an integer frame.
 struct Int16FrameData {
   // Max data size that matches the data size of the AudioFrame class, providing
   // storage for 8 channels of 96 kHz data.
-  static const int kMaxDataSizeSamples = 7680;
+  static const int kMaxDataSizeSamples = AudioFrame::kMaxDataSizeSamples;
 
-  Int16FrameData() {
-    sample_rate_hz = 0;
-    num_channels = 0;
-    samples_per_channel = 0;
-    data.fill(0);
-  }
+  Int16FrameData() = default;
 
-  void CopyFrom(const Int16FrameData& src) {
-    samples_per_channel = src.samples_per_channel;
-    sample_rate_hz = src.sample_rate_hz;
-    num_channels = src.num_channels;
+  void CopyFrom(const Int16FrameData& src);
+  bool IsEqual(const Int16FrameData& frame) const;
+  void Scale(float f);
 
-    const size_t length = samples_per_channel * num_channels;
-    RTC_CHECK_LE(length, kMaxDataSizeSamples);
-    memcpy(data.data(), src.data.data(), sizeof(int16_t) * length);
-  }
-  std::array<int16_t, kMaxDataSizeSamples> data;
-  int32_t sample_rate_hz;
-  size_t num_channels;
-  size_t samples_per_channel;
+  // Sets `samples_per_channel`, `num_channels` and, implicitly, the sample
+  // rate. The sample rate is set to 100x that of samples per channel. I.e. if
+  // samples_per_channel is 320, the sample rate will be set to 32000.
+  void SetProperties(size_t samples_per_channel, size_t num_channels);
+
+  size_t size() const { return view_.size(); }
+  size_t samples_per_channel() const { return view_.samples_per_channel(); }
+  size_t num_channels() const { return view_.num_channels(); }
+  void set_num_channels(size_t num_channels);
+
+  InterleavedView<int16_t> view() { return view_; }
+  InterleavedView<const int16_t> view() const { return view_; }
+
+  void FillData(int16_t value);
+  void FillStereoData(int16_t left, int16_t right);
+
+  // public struct members.
+  std::array<int16_t, kMaxDataSizeSamples> data = {};
+  int32_t sample_rate_hz = 0;
+
+ private:
+  InterleavedView<int16_t> view_;
 };
 
 // Reads ChannelBuffers from a provided WavReader.
@@ -114,16 +124,13 @@ class ChannelBufferVectorWriter final {
 // Exits on failure; do not use in unit tests.
 FILE* OpenFile(absl::string_view filename, absl::string_view mode);
 
-void SetFrameSampleRate(Int16FrameData* frame, int sample_rate_hz);
-
 template <typename T>
 void SetContainerFormat(int sample_rate_hz,
                         size_t num_channels,
                         Int16FrameData* frame,
                         std::unique_ptr<ChannelBuffer<T> >* cb) {
-  SetFrameSampleRate(frame, sample_rate_hz);
-  frame->num_channels = num_channels;
-  cb->reset(new ChannelBuffer<T>(frame->samples_per_channel, num_channels));
+  frame->SetProperties(sample_rate_hz / 100, num_channels);
+  cb->reset(new ChannelBuffer<T>(frame->samples_per_channel(), num_channels));
 }
 
 template <typename T>

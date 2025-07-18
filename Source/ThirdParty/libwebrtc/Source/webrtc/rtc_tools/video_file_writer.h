@@ -19,17 +19,17 @@ namespace webrtc {
 namespace test {
 
 // Writes video to file, determining YUV or Y4M format from the file extension.
-void WriteVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteVideoToFile(const scoped_refptr<Video>& video,
                       const std::string& file_name,
                       int fps);
 
 // Writes Y4M video to file.
-void WriteY4mVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteY4mVideoToFile(const scoped_refptr<Video>& video,
                          const std::string& file_name,
                          int fps);
 
 // Writes YUV video to file.
-void WriteYuvVideoToFile(const rtc::scoped_refptr<Video>& video,
+void WriteYuvVideoToFile(const scoped_refptr<Video>& video,
                          const std::string& file_name,
                          int fps);
 

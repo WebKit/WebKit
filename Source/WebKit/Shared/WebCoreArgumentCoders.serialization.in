@@ -427,12 +427,18 @@ header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 }
 #endif // USE(APPKIT)
 
-header: <WebCore/ListStyleType.h>
-[Nested] enum class WebCore::ListStyleType::Type : uint8_t {
-    CounterStyle,
-    String,
-    None
-}
+header: <WebCore/StyleListStyleType.h>
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType {
+    Variant<WebCore::Style::ListStyleType::NoneData, WebCore::Style::ListStyleType::StringData, WebCore::Style::ListStyleType::CounterStyleData> ipcData()
+};
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::NoneData {
+};
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::StringData {
+    AtomString identifier;
+};
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::CounterStyleData {
+    AtomString identifier;
+};
 
 header: <WebCore/ScrollTypes.h>
 enum class WebCore::ScrollIsAnimated : bool;
@@ -722,33 +728,6 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
     Other,
 };
 
-#if USE(CG)
-headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
-    CGFloat width
-    CGFloat height
-};
-
-[WebKitPlatform] struct CGPoint {
-    CGFloat x
-    CGFloat y
-};
-
-[WebKitPlatform] struct CGRect {
-    CGPoint origin
-    CGSize size
-};
-
-struct CGAffineTransform {
-  CGFloat a
-  CGFloat b
-  CGFloat c
-  CGFloat d
-  CGFloat tx
-  CGFloat ty
-};
-#endif
-
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRect {
     WebCore::FloatPoint location()
     WebCore::FloatSize size()
@@ -909,7 +888,7 @@ struct WebCore::SpatialBackdropSource {
 };
 #endif
 
-using WebCore::TargetedElementIdentifiers = std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>;
+using WebCore::TargetedElementIdentifiers = std::pair<WebCore::NodeIdentifier, WebCore::ScriptExecutionContextIdentifier>;
 using WebCore::TargetedElementSelectors = Vector<HashSet<String>>;
 
 header: <WebCore/ElementTargetingTypes.h>
@@ -927,7 +906,7 @@ header: <WebCore/ElementTargetingTypes.h>
 
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementInfo {
-    WebCore::ElementIdentifier elementIdentifier
+    WebCore::NodeIdentifier nodeIdentifier
     WebCore::ScriptExecutionContextIdentifier documentIdentifier
     WebCore::RectEdges<bool> offsetEdges
     String renderedText
@@ -2079,7 +2058,7 @@ struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
     Markable<WebCore::PageIdentifier> webPageIdentifier;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentIdentifier;
-    Markable<WebCore::ElementIdentifier> elementIdentifier;
+    Markable<WebCore::NodeIdentifier> nodeIdentifier;
 };
 
 struct WebCore::ElementAnimationContext {
@@ -2712,7 +2691,7 @@ header: <wtf/MachSendRight.h>
 #if OS(WINDOWS)
     [Validator='!!m_handle && *m_handle'] Win32Handle m_handle;
 #endif
-    size_t m_size;
+    uint64_t m_size;
 };
 
 class WebCore::DatabaseDetails {
@@ -2910,6 +2889,31 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
 [CustomHeader] struct WebCore::RequestedKeyboardScrollData {
     WebCore::KeyboardScrollAction action;
     std::optional<WebCore::KeyboardScroll> keyboardScroll;
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[CustomHeader] enum class WebCore::ScrollUpdateType : uint8_t {
+    PositionUpdate,
+    AnimatedScrollWillStart,
+    AnimatedScrollDidEnd,
+    WheelEventScrollWillStart,
+    WheelEventScrollDidEnd,
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[CustomHeader] enum class WebCore::ScrollingLayerPositionAction : uint8_t {
+    Set,
+    SetApproximate,
+    Sync
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[CustomHeader] struct WebCore::ScrollUpdate {
+    WebCore::ScrollingNodeID nodeID;
+    WebCore::FloatPoint scrollPosition;
+    std::optional<WebCore::FloatPoint> layoutViewportOrigin;
+    WebCore::ScrollUpdateType updateType;
+    WebCore::ScrollingLayerPositionAction updateLayerPositionAction;
 };
 
 header: <WebCore/ScrollingCoordinatorTypes.h>
@@ -3220,14 +3224,21 @@ using WebCore::Style::ShapeCommand = Variant<WebCore::Style::MoveCommand, WebCor
 };
 
 header: <WebCore/StylePosition.h>
+[CustomHeader, Nested] struct WebCore::Style::PositionX {
+    Variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData();
+};
+[CustomHeader, Nested] struct WebCore::Style::PositionY {
+    Variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData();
+};
 [CustomHeader, Nested] struct WebCore::Style::Position {
-    WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll> value;
+    WebCore::Style::PositionX x;
+    WebCore::Style::PositionY y;
 };
 [CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionHorizontal {
-    WebCore::Style::LengthPercentageAll offset;
+    WebCore::Style::PositionX offset;
 };
 [CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionVertical {
-    WebCore::Style::LengthPercentageAll offset;
+    WebCore::Style::PositionY offset;
 };
 
 header: <WebCore/StyleGradient.h>
@@ -4305,11 +4316,6 @@ enum class WebCore::TextGranularity : uint8_t {
     DocumentBoundary
 };
 
-struct WebCore::ListStyleType {
-    WebCore::ListStyleType::Type type;
-    AtomString identifier;
-};
-
 header: <pal/SessionID.h>
 [CustomHeader] class PAL::SessionID {
     [Validator='PAL::SessionID::isValidSessionIDValue(*toUInt64)'] uint64_t toUInt64();
@@ -4331,7 +4337,7 @@ struct WebKit::RunJavaScriptParameters {
 
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
-    WebCore::ListStyleType styleType;
+    WebCore::Style::ListStyleType styleType;
     int startingItemNumber
     bool ordered
 };
@@ -4526,7 +4532,7 @@ enum class WebCore::ScrollType : bool;
     Vector<WebCore::FloatSnapOffset> horizontalSnapOffsets;
     Vector<WebCore::FloatSnapOffset> verticalSnapOffsets;
     Vector<WebCore::FloatRect> snapAreas;
-    Vector<WebCore::ElementIdentifier> snapAreasIDs;
+    Vector<WebCore::NodeIdentifier> snapAreasIDs;
 }
 
 enum class WebCore::ScrollSnapStop : bool;
@@ -4535,9 +4541,9 @@ enum class WebCore::ScrollSnapStop : bool;
     float offset;
     WebCore::ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    Markable<WebCore::ElementIdentifier> snapTargetID;
+    Markable<WebCore::NodeIdentifier> snapTargetID;
     bool isFocused;
-    Vector<size_t> snapAreaIndices;
+    Vector<uint64_t> snapAreaIndices;
 };
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -4759,7 +4765,8 @@ header: <WebCore/MediaPlayer.h>
 [OptionSet] enum class WebCore::VideoMediaSampleRendererPreference : uint8_t {
     PrefersDecompressionSession,
     ProtectedFallbackDisabled,
-    UseDecompressionSessionForProtectedContent
+    UseDecompressionSessionForProtectedContent,
+    UseStereoDecoding
 };
 
 header: <WebCore/MediaPlayer.h>
@@ -5699,8 +5706,8 @@ header: <WebCore/SecurityPolicyViolationEvent.h>
     String sample();
     WebCore::SecurityPolicyViolationEventDisposition disposition();
     unsigned short statusCode();
-    unsigned long lineNumber();
-    unsigned long columnNumber();
+    uint64_t lineNumber();
+    uint64_t columnNumber();
 };
 
 class WebCore::SecurityOriginData {
@@ -6460,12 +6467,13 @@ struct WebCore::GlobalWindowIdentifier {
 
 struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
-    WebCore::ElementIdentifier elementIdentifier;
+    WebCore::NodeIdentifier nodeIdentifier;
     WebCore::FloatRect rectInLayerCoordinates;
     float cornerRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
     WebCore::InteractionRegion::ContentHint contentHint;
     std::optional<WebCore::Path> clipPath;
+    bool useContinuousCorners;
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
     String text;
 #endif
@@ -6473,7 +6481,7 @@ struct WebCore::InteractionRegion {
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {
     int y;
-    size_t segmentIndex;
+    uint64_t segmentIndex;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region::Shape {
@@ -6541,8 +6549,8 @@ header: <WebCore/ISOVTTCue.h>
     bool expectCancel;
     bool supportClientPin;
     bool supportInternalUV;
-    long maxCredentialCountInList;
-    long maxCredentialIdLength;
+    int64_t maxCredentialCountInList;
+    int64_t maxCredentialIdLength;
 };
 
 [Nested] enum class WebCore::MockWebAuthenticationConfiguration::NfcError : uint8_t {
@@ -7734,6 +7742,10 @@ struct WebCore::DragItem {
 struct WebCore::KeypressCommand {
     String commandName;
     String text;
+    Vector<WebCore::CompositionUnderline> underlines;
+    Vector<WebCore::CompositionHighlight> highlights;
+    WebCore::CharacterRange selectedRange;
+    WebCore::CharacterRange replacementRange;
 }
 #endif
 
@@ -8014,8 +8026,8 @@ enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
 };
 #endif
 
-header: <WebCore/InspectorClient.h>
-enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
+header: <WebCore/InspectorBackendClient.h>
+enum class WebCore::InspectorBackendClientDeveloperPreference : uint8_t {
     PrivateClickMeasurementDebugModeEnabled,
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
@@ -8081,7 +8093,7 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessageP
     [NotSerialized] std::unique_ptr<Vector<RefPtr<JSC::SharedArrayBufferContents>>> wasmMemoryHandlesArray;
 #endif
     [NotSerialized] Vector<WebCore::URLKeepingBlobAlive> blobHandles;
-    [NotSerialized] size_t memoryCost;
+    [NotSerialized] uint64_t memoryCost;
 };
 
 [RefCounted] class WebCore::SerializedScriptValue {
@@ -8218,7 +8230,7 @@ header: <WebCore/SourceBufferPrivateClient.h>
     uint64_t contentSize;
     int64_t evictableSize;
     uint64_t maximumBufferSize;
-    size_t numMediaSamples;
+    uint64_t numMediaSamples;
 };
 
 using WebCore::SourceBufferPrivate::SamplesPromise::Result = Expected<Vector<String>, WebCore::PlatformMediaError>
@@ -8752,10 +8764,8 @@ using WebCore::GraphicsStyle = Variant<WebCore::GraphicsDropShadow, WebCore::Gra
 enum class WebCore::ScrollBehaviorForFixedElements : bool
 #if USE(CG)
 using WebCore::GlyphBufferGlyph = CGGlyph
-using WebCore::GlyphBufferAdvance = CGSize
 #else
 using WebCore::GlyphBufferGlyph = WebCore::Glyph
-using WebCore::GlyphBufferAdvance = WebCore::FloatSize
 #endif
 using WebCore::Glyph = unsigned short
 
@@ -8838,16 +8848,6 @@ enum class WebCore::PlatformMediaError : uint8_t {
     NotSupportedError,
     NetworkError,
 };
-#endif
-
-#if USE(CG)
-using WebCore::DashArray = FixedVector<CGFloat>;
-#endif
-#if USE(CAIRO)
-using WebCore::DashArray = FixedVector<double>;
-#endif
-#if !USE(CG) && !USE(CAIRO)
-using WebCore::DashArray = FixedVector<float>;
 #endif
 
 [WebKitPlatform] enum class WebCore::NotificationDirection : uint8_t {
@@ -8976,14 +8976,14 @@ header: <WebCore/ImageUtilities.h>
 
 header: <WebCore/ImageBufferResourceLimits.h>
 struct WebCore::ImageBufferResourceLimits {
-    size_t acceleratedImageBufferForCanvasCount;
-    size_t acceleratedImageBufferForCanvasLimit;
-    size_t globalAcceleratedImageBufferCount;
-    size_t globalAcceleratedImageBufferLimit;
-    size_t globalImageBufferForCanvasCount;
-    size_t globalImageBufferForCanvasLimit;
-    size_t imageBufferForCanvasCount;
-    size_t imageBufferForCanvasLimit;
+    uint64_t acceleratedImageBufferForCanvasCount;
+    uint64_t acceleratedImageBufferForCanvasLimit;
+    uint64_t globalAcceleratedImageBufferCount;
+    uint64_t globalAcceleratedImageBufferLimit;
+    uint64_t globalImageBufferForCanvasCount;
+    uint64_t globalImageBufferForCanvasLimit;
+    uint64_t imageBufferForCanvasCount;
+    uint64_t imageBufferForCanvasLimit;
 };
 
 header: <WebCore/FileSystemWriteCommandType.h>
@@ -9083,7 +9083,7 @@ struct WebCore::CryptoKeyData {
     std::optional<WebCore::JsonWebKey> jwk;
     std::optional<WebCore::CryptoAlgorithmIdentifier> hashAlgorithmIdentifier;
     std::optional<String> namedCurveString;
-    std::optional<size_t> lengthBits;
+    std::optional<uint64_t> lengthBits;
     std::optional<WebCore::CryptoKeyType> type;
 };
 
@@ -9119,15 +9119,6 @@ header: <WebCore/MediaSample.h>
     std::optional<WebCore::HdrMetadataType> hdrMetadataType;
     uint32_t flags;
 };
-
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-header: <WebCore/MediaRecorderPrivateWriter.h>
-[Nested] enum class WebCore::MediaRecorderPrivateWriter::Result : uint8_t {
-    Success,
-    Failure,
-    NotReady
-};
-#endif
 
 header: <WebCore/DocumentClasses.h>
 [OptionSet, CustomHeader] enum class WebCore::DocumentClass : uint16_t {
@@ -9195,3 +9186,35 @@ struct WebCore::HostingContext {
     WTF::MachSendRightAnnotated sendRightAnnotated;
 #endif
 }
+
+header: <WebCore/FocusController.h>
+enum class WebCore::FoundElementInRemoteFrame : bool;
+
+struct WebCore::FocusEventData {
+    AtomString type;
+    AtomString keyIdentifier;
+    bool altKey;
+}
+
+header: <WebCore/AXObjectCache.h>
+[CustomHeader] struct WebCore::AXDebugInfo {
+    bool isAccessibilityEnabled;
+    bool isAccessibilityThreadInitialized;
+    String liveTree;
+    String isolatedTree;
+}
+
+header: <WebCore/ScriptTrackingPrivacyCategory.h>
+[OptionSet] enum class WebCore::ScriptTrackingPrivacyFlag : uint16_t {
+    Audio,
+    Canvas,
+    Cookies,
+    HardwareConcurrency,
+    LocalStorage,
+    Payments,
+    QueryParameters,
+    Referrer,
+    ScreenOrViewport,
+    Speech,
+    FormControls,
+};

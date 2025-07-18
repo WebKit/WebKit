@@ -14,12 +14,15 @@
 
 #ifdef RTC_ENABLE_VP9
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 struct vpx_codec_ctx;
 struct vpx_codec_frame_buffer;
@@ -65,18 +68,17 @@ constexpr size_t kDefaultMaxNumBuffers = 68;
 //    vpx_codec_destroy(decoder_ctx);
 class Vp9FrameBufferPool {
  public:
-  class Vp9FrameBuffer final
-      : public rtc::RefCountedNonVirtual<Vp9FrameBuffer> {
+  class Vp9FrameBuffer final : public RefCountedNonVirtual<Vp9FrameBuffer> {
    public:
     uint8_t* GetData();
     size_t GetDataSize() const;
     void SetSize(size_t size);
 
-    using rtc::RefCountedNonVirtual<Vp9FrameBuffer>::HasOneRef;
+    using RefCountedNonVirtual<Vp9FrameBuffer>::HasOneRef;
 
    private:
     // Data as an easily resizable buffer.
-    rtc::Buffer data_;
+    Buffer data_;
   };
 
   // Configures libvpx to, in the specified context, use this memory pool for
@@ -86,7 +88,7 @@ class Vp9FrameBufferPool {
   // Gets a frame buffer of at least `min_size`, recycling an available one or
   // creating a new one. When no longer referenced from the outside the buffer
   // becomes recyclable.
-  rtc::scoped_refptr<Vp9FrameBuffer> GetFrameBuffer(size_t min_size);
+  scoped_refptr<Vp9FrameBuffer> GetFrameBuffer(size_t min_size);
   // Gets the number of buffers currently in use (not ready to be recycled).
   int GetNumBuffersInUse() const;
   // Changes the max amount of buffers in the pool to the new value.
@@ -122,7 +124,7 @@ class Vp9FrameBufferPool {
   // Protects `allocated_buffers_`.
   mutable Mutex buffers_lock_;
   // All buffers, in use or ready to be recycled.
-  std::vector<rtc::scoped_refptr<Vp9FrameBuffer>> allocated_buffers_
+  std::vector<scoped_refptr<Vp9FrameBuffer>> allocated_buffers_
       RTC_GUARDED_BY(buffers_lock_);
   size_t max_num_buffers_ = kDefaultMaxNumBuffers;
 };

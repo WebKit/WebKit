@@ -85,6 +85,7 @@ platform/graphics/gstreamer/eme/CDMThunder.cpp
 platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
 platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
 platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
+platform/graphics/gstreamer/eme/WebKitThunderParser.cpp
 
 platform/graphics/gstreamer/mse/AppendPipeline.cpp
 platform/graphics/gstreamer/mse/GStreamerMediaDescription.cpp

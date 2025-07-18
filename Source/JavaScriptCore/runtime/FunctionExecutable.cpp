@@ -56,10 +56,10 @@ void FunctionExecutable::destroy(JSCell* cell)
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
     CodeBlock* codeBlock = nullptr;
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         codeBlock = codeBlockForCall();
     else {
-        RELEASE_ASSERT(kind == CodeForConstruct);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         codeBlock = codeBlockForConstruct();
     }
     if (!codeBlock)

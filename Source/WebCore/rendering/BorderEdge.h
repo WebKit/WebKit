@@ -69,9 +69,10 @@ private:
 };
 
 using BorderEdges = RectEdges<BorderEdge>;
+
 // inflation is only added to edges with non-zero widths.
 BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true }, LayoutSize inflation = { }, bool setColorsToBlack = false);
-BorderEdges borderEdgesForOutline(const RenderStyle&, float deviceScaleFactor);
+BorderEdges borderEdgesForOutline(const RenderStyle&, BorderStyle, float deviceScaleFactor);
 
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return equalIgnoringSemanticColor(firstEdge.color(), secondEdge.color()); }
 inline BoxSideFlag edgeFlagForSide(BoxSide side) { return static_cast<BoxSideFlag>(1 << static_cast<unsigned>(side)); }

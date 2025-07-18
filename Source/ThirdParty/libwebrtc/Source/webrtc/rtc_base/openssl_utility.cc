@@ -33,7 +33,7 @@
 #include "rtc_base/ssl_roots.h"
 #endif  // WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
 
-namespace rtc {
+namespace webrtc {
 namespace openssl {
 
 // Holds various helper methods.
@@ -272,4 +272,4 @@ CRYPTO_BUFFER_POOL* GetBufferPool() {
 #endif
 
 }  // namespace openssl
-}  // namespace rtc
+}  // namespace webrtc

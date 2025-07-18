@@ -479,6 +479,7 @@ $(PROJECT_DIR)/Modules/fetch/FetchRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl
 $(PROJECT_DIR)/Modules/fetch/FetchResponse.idl
+$(PROJECT_DIR)/Modules/fetch/IPAddressSpace.idl
 $(PROJECT_DIR)/Modules/fetch/RequestPriority.idl
 $(PROJECT_DIR)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
 $(PROJECT_DIR)/Modules/filesystem/FileSystemDirectoryHandle.idl
@@ -610,7 +611,6 @@ $(PROJECT_DIR)/Modules/mediastream/RTCDataChannelEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDegradationPreference.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDtlsTransport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDtlsTransportState.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCDtxStatus.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedAudioFrame.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedVideoFrame.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCError.idl
@@ -646,12 +646,10 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodingParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpContributingSource.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpEncodingParameters.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCRtpFecParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpHeaderExtensionParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCRtpRtxParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransformErrorEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransform.idl
@@ -1929,6 +1927,7 @@ $(PROJECT_DIR)/page/UserMessageHandler.idl
 $(PROJECT_DIR)/page/UserMessageHandlersNamespace.idl
 $(PROJECT_DIR)/page/VisualViewport.idl
 $(PROJECT_DIR)/page/WebKitNamespace.idl
+$(PROJECT_DIR)/page/WebKitNodeInfo.idl
 $(PROJECT_DIR)/page/WebKitPoint.idl
 $(PROJECT_DIR)/page/WindowEventHandlers.idl
 $(PROJECT_DIR)/page/WindowLocalStorage.idl

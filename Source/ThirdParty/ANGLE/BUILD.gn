@@ -125,8 +125,8 @@ if (angle_build_all) {
   }
 }
 
-if (build_angle_end2end_tests_aosp) {
-  group("angle_end2end_tests_aosp") {
+if (build_angle_end2end_tests_library) {
+  group("angle_end2end_tests_library") {
     testonly = true
     deps = [ "src/tests:angle_end2end_tests" ]
   }
@@ -363,6 +363,7 @@ config("extra_warnings") {
       "-Wunused-but-set-variable",
       "-Wsuggest-destructor-override",
       "-Wsuggest-override",
+      "-Wno-thread-safety",
 
       # The below warnings are used by WebKit. We enable them to make rolling
       # ANGLE in WebKit easier.
@@ -1607,7 +1608,8 @@ angle_executable("angle_shader_translator") {
   }
 }
 
-if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
+if (angle_standalone || build_with_chromium ||
+    build_angle_end2end_tests_library) {
   config("angle_feature_support_config") {
     include_dirs = [
       "include",

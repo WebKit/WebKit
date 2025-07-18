@@ -24,11 +24,9 @@
 #include "api/jsep.h"
 #include "api/jsep_ice_candidate.h"
 
-namespace cricket {
-class SessionDescription;
-}
-
 namespace webrtc {
+
+class SessionDescription;
 
 // Implementation of SessionDescriptionInterface.
 class JsepSessionDescription : public SessionDescriptionInterface {
@@ -36,27 +34,24 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   explicit JsepSessionDescription(SdpType type);
   // TODO(steveanton): Remove this once callers have switched to SdpType.
   explicit JsepSessionDescription(const std::string& type);
-  JsepSessionDescription(
-      SdpType type,
-      std::unique_ptr<cricket::SessionDescription> description,
-      absl::string_view session_id,
-      absl::string_view session_version);
+  JsepSessionDescription(SdpType type,
+                         std::unique_ptr<SessionDescription> description,
+                         absl::string_view session_id,
+                         absl::string_view session_version);
   virtual ~JsepSessionDescription();
 
   JsepSessionDescription(const JsepSessionDescription&) = delete;
   JsepSessionDescription& operator=(const JsepSessionDescription&) = delete;
 
   // Takes ownership of `description`.
-  bool Initialize(std::unique_ptr<cricket::SessionDescription> description,
+  bool Initialize(std::unique_ptr<SessionDescription> description,
                   const std::string& session_id,
                   const std::string& session_version);
 
   virtual std::unique_ptr<SessionDescriptionInterface> Clone() const;
 
-  virtual cricket::SessionDescription* description() {
-    return description_.get();
-  }
-  virtual const cricket::SessionDescription* description() const {
+  virtual SessionDescription* description() { return description_.get(); }
+  virtual const SessionDescription* description() const {
     return description_.get();
   }
   virtual std::string session_id() const { return session_id_; }
@@ -65,15 +60,14 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   virtual std::string type() const { return SdpTypeToString(type_); }
   // Allows changing the type. Used for testing.
   virtual bool AddCandidate(const IceCandidateInterface* candidate);
-  virtual size_t RemoveCandidates(
-      const std::vector<cricket::Candidate>& candidates);
+  virtual size_t RemoveCandidates(const std::vector<Candidate>& candidates);
   virtual size_t number_of_mediasections() const;
   virtual const IceCandidateCollection* candidates(
       size_t mediasection_index) const;
   virtual bool ToString(std::string* out) const;
 
  private:
-  std::unique_ptr<cricket::SessionDescription> description_;
+  std::unique_ptr<SessionDescription> description_;
   std::string session_id_;
   std::string session_version_;
   SdpType type_;
@@ -81,7 +75,7 @@ class JsepSessionDescription : public SessionDescriptionInterface {
 
   bool GetMediasectionIndex(const IceCandidateInterface* candidate,
                             size_t* index);
-  int GetMediasectionIndex(const cricket::Candidate& candidate);
+  int GetMediasectionIndex(const Candidate& candidate);
 };
 
 }  // namespace webrtc

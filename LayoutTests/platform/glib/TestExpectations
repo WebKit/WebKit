@@ -23,25 +23,42 @@
 #           The layout test runner evaluates the rules from top to bottom
 #           and it picks as the valid rule the last one matching.
 # * Accessibility
+# * Cairo
+# * Clipboard API
+# * Compositing
 # * CSS
+# * Events
 # * Fonts
 # * GStreamer
+# * Media-controls-related
 # * HiDPI
+# * HTTP
 # * IndexedDB
+# * JavaScriptCore
+# * MathML
 # * OffscreenCanvas
 # * PageOverlay
 # * Perf
+# * ResourceTiming API
 # * Scrolling
+# * Security
 # * Skia
+# * SOUP
+# * Media
+# * Streams
 # * SVG
+# * Text
+# * Transitions
 # * WebAnimations
 # * WebAudio
 # * WebGL
 # * WebRTC
-# * WebSQL
 # * WebSocket
+# * WebXR
 # * WPT
+# * XML
 # * XHR
+# * EME feature
 # * UNSUPPORTED tests
 #   * Things we do not test. (i.e. Skipped)
 # * NEEDS TRIAGING
@@ -94,13 +111,6 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
 css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 fast/block/lineboxcontain/inline-box-vertical.html [ Pass ]
-
-fast/text/emoji-gender-3.html [ Pass ]
-fast/text/emoji-gender-4.html [ Pass ]
-fast/text/emoji-gender-5.html [ Pass ]
-fast/text/emoji-gender-6.html [ Pass ]
-fast/text/emoji-gender-8.html [ Pass ]
-fast/text/emoji-gender-9.html [ Pass ]
 
 # JPEG-XL tests
 fast/images/jpegxl-as-image.html [ Pass ]
@@ -667,6 +677,10 @@ imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [
 # Test passes after 278960@main
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-back-same-document.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-005.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -806,6 +820,9 @@ accessibility/textarea-line-for-index.html [ Skip ]
 # AX support for datetime input elements needs to be completed in glib platforms.
 accessibility/datetime [ Skip ]
 
+# Requires AccessibilityUIElement::dismiss to return whether or not it was handled.
+accessibility/dismiss-action-returns-whether-keyevent-handled.html [ Skip ]
+
 # Added in r263823. Both tests are timing out.
 webkit.org/b/213874 accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
 webkit.org/b/213874 accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
@@ -898,6 +915,9 @@ http/wpt/service-workers/mac [ Skip ]
 
 # TextMarkerRangeForElement is only implemented on Cocoa platforms.
 accessibility/full-size-kana-untransformed.html [ Skip ]
+
+# Static text are not exposed as accessibility elements on glib appointments.
+accessibility/element-outside-modal-with-zindex.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -1227,8 +1247,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-c
 
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 
-webkit.org/b/260972 fast/text/unknown-font.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Fonts-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1248,13 +1266,22 @@ webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass F
 media/video-seek-to-current-time.html [ Pass Failure ]
 webkit.org/b/285595 media/video-seek-after-end-play.html [ Skip ]
 
+# MediaRecorder implementation
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Timeout Pass ]
-webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
+webkit.org/b/213699 webkit.org/b/295985 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Crash Failure ]
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
-webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Pass Failure ]
+webkit.org/b/213699 webkit.org/b/295985 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Crash Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Crash Timeout Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Failure Pass ]
+# Some MediaRecorder flaky crashes related to "Resource deadlock avoided during pthread_join"
+webkit.org/b/295985 http/wpt/mediarecorder/MediaRecorder-video-bitrate.html [ Crash Pass ]
+webkit.org/b/295985 http/wpt/mediarecorder/MediaRecorder-onremovetrack.html [ Crash Pass ]
+webkit.org/b/295985 http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Crash Pass ]
+webkit.org/b/295985 http/wpt/mediarecorder/MediaRecorder-start-stop-crash.html [ Crash Pass ]
+webkit.org/b/295985 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html [ Crash Pass ]
+webkit.org/b/295985 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https.html [ Crash Pass ]
+webkit.org/b/295985 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-blob-timecode.https.html [ Crash Pass ]
 
 # No support for Matroska container in GStreamer port.
 http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html
@@ -1262,7 +1289,7 @@ http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html
 webkit.org/b/293119 http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Timeout Failure ]
 
 # The "Pausing and resuming the recording should impact the video duration" test fails.
-webkit.org/b/285813 http/wpt/mediarecorder/pause-recording.html [ Failure ]
+webkit.org/b/285813 webkit.org/b/295985 http/wpt/mediarecorder/pause-recording.html [ Crash Failure ]
 
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
@@ -1491,6 +1518,8 @@ http/tests/push-api [ Skip ]
 #webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?7-8 [ Failure ]
 #webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?5-6 [ Failure ]
 #webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
+
+webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
@@ -1777,9 +1806,6 @@ webkit.org/b/273396 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailur
 
 webkit.org/b/273472 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 
-webkit.org/b/273474 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
-webkit.org/b/273474 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-1.html [ ImageOnlyFailure ]
-
 webkit.org/b/273475 fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
 webkit.org/b/273475 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
 
@@ -1988,6 +2014,10 @@ imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dyna
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-clipping-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-mirror.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-backdrop-root-filter.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-pixels-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-transform.html [ ImageOnlyFailure ]
 
 
 # The following tests need LBSE enabled builds, which is off by default for this port.
@@ -2130,6 +2160,46 @@ webkit.org/b/251106 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-que
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-restored-worker.html [ Pass Timeout ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.html [ Pass Timeout ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-luminance-luminance-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-luminance_alpha-luminance_alpha-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-luminance_alpha-luminance_alpha-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-luminance-luminance-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-luminance_alpha-luminance_alpha-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-rgba-rgba-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/canvas-teximage-after-multiple-drawimages.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/texture-size-limit.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-rgb-rgb-unsigned_byte.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_data/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Failure Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-luminance-luminance-unsigned_byte.html [ Failure Pass ]
+
+
+# WebGL Video timeout decoding vorbis file that require playbin3
+webkit.org/b/292951 webkit.org/b/251107 webgl/1.0.x/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/1.0.x/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-luminance_alpha-luminance_alpha-unsigned_byte.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-luminance-luminance-unsigned_byte.html [ Timeout Failure ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_byte.html [ Timeout Failure Pass ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Timeout ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/texture-upload-size.html [ Timeout Failure ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/2.0.y/conformance/textures/video/tex-2d-luminance_alpha-luminance_alpha-unsigned_byte.html [ Timeout Failure ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/video/tex-2d-luminance-luminance-unsigned_byte.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Timeout ]
+webkit.org/b/292951 webkit.org/b/251107 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Timeout Failure ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Timeout ]
+webkit.org/b/292951 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -2180,8 +2250,6 @@ fast/mediastream/image-capture-grabFrame.html [ Failure ]
 fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 
 webrtc/clone-audio-track.html [ Pass Failure ]
-
-webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
@@ -2708,8 +2776,6 @@ imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip
 # This test times out only in mac-wk1, WPE and GTK.
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 
-webkit.org/b/260972 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-2.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2764,7 +2830,6 @@ webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https.html [ Skip ]
 webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
 webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
-webkit.org/b/211375 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html [ Skip ]
 webkit.org/b/210113 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure ]
 webkit.org/b/178707 imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html [ Skip ]
 
@@ -2776,6 +2841,7 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-e
 imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Pass ]
@@ -4485,6 +4551,9 @@ webkit.org/b/204001 imported/w3c/web-platform-tests/pointerevents/pointerlock/po
 webkit.org/b/291636 svg/text/timeout-long-text-content.html [ Timeout Pass ]
 
 imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html [ Failure Pass ]
+
+imported/w3c/web-platform-tests/visual-viewport/page-and-offset-in-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/visual-viewport/scroll-event-order.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 

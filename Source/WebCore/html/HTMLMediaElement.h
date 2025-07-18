@@ -533,7 +533,7 @@ public:
     using MediaPlayerEnums::VideoFullscreenMode;
     VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
 
-    void enterFullscreen(VideoFullscreenMode);
+    WEBCORE_EXPORT void enterFullscreen(VideoFullscreenMode);
     WEBCORE_EXPORT void setPlayerIdentifierForVideoElement();
     WEBCORE_EXPORT void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();
@@ -743,6 +743,7 @@ public:
     void incrementCheckedPtrCount() const { CanMakeCheckedPtr<Node>::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const { CanMakeCheckedPtr<Node>::decrementCheckedPtrCount(); }
 
+    void forceStereoDecoding() { m_forceStereoDecoding = true; }
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -1216,7 +1217,7 @@ private:
     RefPtr<MediaError> m_error;
 
     struct PendingSeek {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingSeek);
         PendingSeek(const MediaTime& now, const SeekTarget& inTarget)
             : now(now)
             , target(inTarget)
@@ -1496,6 +1497,8 @@ private:
     bool m_hasEverPreparedToPlay { false };
 
     RefPtr<AggregateMessageClientForTesting> m_internalMessageClient;
+
+    bool m_forceStereoDecoding { false };
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

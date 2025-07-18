@@ -50,12 +50,33 @@ template<size_t I> const auto& get(const TextShadow& value)
         return value.blur;
 }
 
+// <text-shadow-list> = <single-text-shadow>#
+using TextShadowList = ShadowList<TextShadow>;
+
+// <'text-shadow'> = none | <text-list>
+// https://www.w3.org/TR/css-text-decor-3/#propdef-text-shadow
+using TextShadows = Shadows<TextShadow>;
+
+// MARK: - Conversions
+
 template<> struct ToCSS<TextShadow> { auto operator()(const TextShadow&, const RenderStyle&) -> CSS::TextShadow; };
 template<> struct ToStyle<CSS::TextShadow> { auto operator()(const CSS::TextShadow&, const BuilderState&) -> TextShadow; };
+
+// `TextShadowList` is special-cased to return a `CSSTextShadowPropertyValue`.
+template<> struct CSSValueCreation<TextShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const TextShadowList&); };
+template<> struct CSSValueConversion<TextShadows> { auto operator()(BuilderState&, const CSSValue&) -> TextShadows; };
+
+// MARK: - Serialization
+
+template<> struct Serialize<TextShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const TextShadowList&); };
+
+// MARK: - Blending
 
 template<> struct Blending<TextShadow> {
     auto blend(const TextShadow&, const TextShadow&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextShadow;
 };
+
+// MARK: - Shadow-specific Interfaces
 
 constexpr ShadowStyle shadowStyle(const TextShadow&)
 {
@@ -76,3 +97,4 @@ constexpr LayoutUnit paintingSpread(const TextShadow&)
 } // namespace WebCore
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TextShadow, 3)
+template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::TextShadows> = true;

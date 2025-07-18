@@ -51,6 +51,8 @@ if (rtc_include_tests) {
     deps = [
       ":cascaded_biquad_filter",
       "../../../test:test_support",
+      "//api:array_view",
+      "//rtc_base:checks",
       "//testing/gtest",
     ]
   }

@@ -27,7 +27,7 @@ namespace webrtc_pc_e2e {
 namespace {
 
 using EmulatedSFUConfigMap =
-    ::webrtc::webrtc_pc_e2e::QualityAnalyzingVideoEncoder::EmulatedSFUConfigMap;
+    webrtc_pc_e2e::QualityAnalyzingVideoEncoder::EmulatedSFUConfigMap;
 
 constexpr size_t kMaxFrameInPipelineCount = 1000;
 constexpr double kNoMultiplier = 1.0;
@@ -200,7 +200,7 @@ void QualityAnalyzingVideoEncoder::SetRates(
       std::tie(min_bitrate_bps, max_bitrate_bps) =
           GetMinMaxBitratesBps(codec_settings_, si);
       double bitrate_multiplier = bitrate_multiplier_;
-      const uint32_t corrected_bitrate = rtc::checked_cast<uint32_t>(
+      const uint32_t corrected_bitrate = checked_cast<uint32_t>(
           bitrate_multiplier * spatial_layer_bitrate_bps);
       if (corrected_bitrate < min_bitrate_bps) {
         bitrate_multiplier = min_bitrate_bps / spatial_layer_bitrate_bps;
@@ -212,8 +212,8 @@ void QualityAnalyzingVideoEncoder::SetRates(
         if (parameters.bitrate.HasBitrate(si, ti)) {
           multiplied_allocation.SetBitrate(
               si, ti,
-              rtc::checked_cast<uint32_t>(
-                  bitrate_multiplier * parameters.bitrate.GetBitrate(si, ti)));
+              checked_cast<uint32_t>(bitrate_multiplier *
+                                     parameters.bitrate.GetBitrate(si, ti)));
         }
       }
     }

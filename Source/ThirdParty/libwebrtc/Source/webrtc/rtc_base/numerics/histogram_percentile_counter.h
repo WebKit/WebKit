@@ -18,7 +18,7 @@
 #include <optional>
 #include <vector>
 
-namespace rtc {
+namespace webrtc {
 // Calculates percentiles on the stream of data. Use `Add` methods to add new
 // values. Use `GetPercentile` to get percentile of the currently added values.
 class HistogramPercentileCounter {
@@ -40,5 +40,13 @@ class HistogramPercentileCounter {
   size_t total_elements_;
   size_t total_elements_low_;
 };
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::HistogramPercentileCounter;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 #endif  // RTC_BASE_NUMERICS_HISTOGRAM_PERCENTILE_COUNTER_H_

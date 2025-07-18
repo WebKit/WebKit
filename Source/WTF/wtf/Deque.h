@@ -43,7 +43,7 @@ template<typename T, size_t inlineCapacity> class DequeIterator;
 template<typename T, size_t inlineCapacity> class DequeConstIterator;
 
 template<typename T, size_t inlineCapacity> class Deque final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Deque);
 public:
     typedef T ValueType;
 
@@ -146,7 +146,7 @@ private:
 
 template<typename T, size_t inlineCapacity = 0>
 class DequeIteratorBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeIteratorBase);
 protected:
     DequeIteratorBase();
     DequeIteratorBase(const Deque<T, inlineCapacity>*, size_t);
@@ -183,7 +183,7 @@ private:
 
 template<typename T, size_t inlineCapacity = 0>
 class DequeIterator : public DequeIteratorBase<T, inlineCapacity> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeIterator);
 private:
     typedef DequeIteratorBase<T, inlineCapacity> Base;
     typedef DequeIterator<T, inlineCapacity> Iterator;
@@ -218,7 +218,7 @@ public:
 
 template<typename T, size_t inlineCapacity = 0>
 class DequeConstIterator : public DequeIteratorBase<T, inlineCapacity> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeConstIterator);
 private:
     typedef DequeIteratorBase<T, inlineCapacity> Base;
     typedef DequeConstIterator<T, inlineCapacity> Iterator;

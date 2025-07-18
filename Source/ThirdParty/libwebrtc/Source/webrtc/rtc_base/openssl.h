@@ -16,7 +16,7 @@
 #include "rtc_base/win32.h"  // NOLINT
 #endif                       // WEBRTC_WIN
 
-#include <openssl/ssl.h>
+#include <openssl/ssl.h>  // IWYU pragma: export
 
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
 #error OpenSSL is older than 1.1.0, which is the minimum supported version.

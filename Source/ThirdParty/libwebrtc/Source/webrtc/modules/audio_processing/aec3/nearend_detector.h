@@ -28,11 +28,10 @@ class NearendDetector {
 
   // Updates the state selection based on latest spectral estimates.
   virtual void Update(
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-          nearend_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           residual_echo_spectrum,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           comfort_noise_spectrum,
       bool initial_state) = 0;
 };

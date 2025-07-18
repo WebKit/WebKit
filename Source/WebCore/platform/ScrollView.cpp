@@ -37,8 +37,8 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
-#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
+#include "StyleScrollbarGutter.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
@@ -296,7 +296,7 @@ IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars s
         return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
     IntSize scrollbarSpace;
-    if (!scrollbarGutterStyle().isAuto && scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
+    if (!scrollbarGutterStyle().isAuto() && scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
         scrollbarSpace = totalScrollbarSpace();
     else if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
         scrollbarSpace = scrollbarIntrusion();

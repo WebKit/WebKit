@@ -47,7 +47,7 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent : public CanMakeCheckedPtr<WebEvent> {
+class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent> {
     WTF_MAKE_TZONE_ALLOCATED(WebEvent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
 public:

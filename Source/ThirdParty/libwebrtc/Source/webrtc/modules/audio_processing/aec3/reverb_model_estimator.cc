@@ -28,11 +28,11 @@ ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config,
 ReverbModelEstimator::~ReverbModelEstimator() = default;
 
 void ReverbModelEstimator::Update(
-    rtc::ArrayView<const std::vector<float>> impulse_responses,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<float>> impulse_responses,
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         frequency_responses,
-    rtc::ArrayView<const std::optional<float>> linear_filter_qualities,
-    rtc::ArrayView<const int> filter_delays_blocks,
+    ArrayView<const std::optional<float>> linear_filter_qualities,
+    ArrayView<const int> filter_delays_blocks,
     const std::vector<bool>& usable_linear_estimates,
     bool stationary_block) {
   const size_t num_capture_channels = reverb_decay_estimators_.size();

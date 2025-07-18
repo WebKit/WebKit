@@ -169,10 +169,7 @@ IDBError MemoryObjectStore::updateIndexRecordsWithIndexKey(MemoryBackingStoreTra
 
 void MemoryObjectStore::forEachRecord(Function<void(const IDBKeyData& key, const IDBValue& value)>&& apply)
 {
-    if (!m_keyValueStore)
-        return;
-
-    for (auto& [key, value] : *m_keyValueStore)
+    for (auto& [key, value] : m_keyValueStore)
         apply(key, value);
 }
 
@@ -230,10 +227,7 @@ void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transact
 
 bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
 {
-    if (!m_keyValueStore)
-        return false;
-
-    return m_keyValueStore->contains(key);
+    return m_keyValueStore.contains(key);
 }
 
 void MemoryObjectStore::clear()
@@ -241,14 +235,9 @@ void MemoryObjectStore::clear()
     LOG(IndexedDB, "MemoryObjectStore::clear");
     ASSERT(m_writeTransaction);
 
-    if (m_keyValueStore) {
-        for (auto& [key, value] : *m_keyValueStore) {
-            if (!m_transactionModifiedRecords.contains(key))
-                m_transactionModifiedRecords.set(key, value);
-        }
-        m_keyValueStore = nullptr;
-        m_orderedKeys = nullptr;
-    }
+    for (auto& [key, value] : std::exchange(m_keyValueStore, { }))
+        m_transactionModifiedRecords.add(key, value);
+    m_orderedKeys = nullptr;
 
     for (auto& index : m_indexesByIdentifier.values())
         index->objectStoreCleared();
@@ -263,19 +252,16 @@ void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
 
     ASSERT(m_writeTransaction);
 
-    if (!m_keyValueStore)
+    auto iterator = m_keyValueStore.find(key);
+    if (iterator == m_keyValueStore.end())
         return;
 
     ASSERT(m_orderedKeys);
 
-    auto iterator = m_keyValueStore->find(key);
-    if (iterator == m_keyValueStore->end())
-        return;
+    if (!m_writeTransaction->isAborting())
+        m_transactionModifiedRecords.add(key, iterator->value);
 
-    if (!m_writeTransaction->isAborting() && !m_transactionModifiedRecords.contains(key))
-        m_transactionModifiedRecords.set(key, iterator->value);
-
-    m_keyValueStore->remove(iterator);
+    m_keyValueStore.remove(iterator);
     m_orderedKeys->erase(key);
 
     updateIndexesForDeleteRecord(key);
@@ -313,12 +299,10 @@ void MemoryObjectStore::addRecordWithoutUpdatingIndexes(MemoryBackingStoreTransa
 
     ASSERT(m_writeTransaction && m_writeTransaction->isAborting());
 
-    if (!m_keyValueStore) {
-        m_keyValueStore = makeUnique<KeyValueMap>();
+    if (!m_orderedKeys)
         m_orderedKeys = makeUniqueWithoutFastMallocCheck<IDBKeyDataSet>();
-    }
 
-    auto mapResult = m_keyValueStore->set(keyData, value.data());
+    auto mapResult = m_keyValueStore.add(keyData, value.data());
     ASSERT_UNUSED(mapResult, mapResult.isNewEntry);
     auto listResult = m_orderedKeys->insert(keyData);
     ASSERT_UNUSED(listResult, listResult.second);
@@ -332,23 +316,18 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
 
     ASSERT(m_writeTransaction);
     ASSERT_UNUSED(transaction, m_writeTransaction == &transaction);
-    ASSERT(!m_keyValueStore || !m_keyValueStore->contains(keyData));
+    ASSERT(!m_keyValueStore.contains(keyData));
     ASSERT(!m_orderedKeys || m_orderedKeys->find(keyData) == m_orderedKeys->end());
 
-    if (!m_keyValueStore) {
-        ASSERT(!m_orderedKeys);
-        m_keyValueStore = makeUnique<KeyValueMap>();
+    if (!m_orderedKeys)
         m_orderedKeys = makeUniqueWithoutFastMallocCheck<IDBKeyDataSet>();
+
+    if (!m_writeTransaction->isAborting()) {
+        auto iterator = m_keyValueStore.find(keyData);
+        m_transactionModifiedRecords.add(keyData, iterator != m_keyValueStore.end() ? iterator->value : ThreadSafeDataBuffer { });
     }
 
-    if (!m_writeTransaction->isAborting() && !m_transactionModifiedRecords.contains(keyData)) {
-        if (auto iter = m_keyValueStore->find(keyData); iter != m_keyValueStore->end())
-            m_transactionModifiedRecords.set(keyData, iter->value);
-        else // Store an emtpy value to indicate record does not exist before modification.
-            m_transactionModifiedRecords.set(keyData, ThreadSafeDataBuffer { });
-    }
-
-    auto mapResult = m_keyValueStore->set(keyData, value.data());
+    auto mapResult = m_keyValueStore.add(keyData, value.data());
     ASSERT(mapResult.isNewEntry);
     auto listResult = m_orderedKeys->insert(keyData);
     ASSERT(listResult.second);
@@ -356,7 +335,7 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     // If there was an error indexing this addition, then revert it.
     auto error = updateIndexesForPutRecord(keyData, indexKeys);
     if (!error.isNull()) {
-        m_keyValueStore->remove(mapResult.iterator);
+        m_keyValueStore.remove(mapResult.iterator);
         m_orderedKeys->erase(listResult.first);
     } else
         updateCursorsForPutRecord(listResult.first);
@@ -421,7 +400,7 @@ uint64_t MemoryObjectStore::countForKeyRange(std::optional<IDBIndexIdentifier> i
         return index->countForKeyRange(inRange);
     }
 
-    if (!m_keyValueStore)
+    if (m_keyValueStore.isEmpty())
         return 0;
 
     uint64_t count = 0;
@@ -441,10 +420,7 @@ uint64_t MemoryObjectStore::countForKeyRange(std::optional<IDBIndexIdentifier> i
 
 ThreadSafeDataBuffer MemoryObjectStore::valueForKey(const IDBKeyData& key) const
 {
-    if (!m_keyValueStore)
-        return { };
-
-    return m_keyValueStore->get(key);
+    return m_keyValueStore.get(key);
 }
 
 ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& keyRangeData) const
@@ -455,8 +431,7 @@ ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& 
     if (key.isNull())
         return ThreadSafeDataBuffer();
 
-    ASSERT(m_keyValueStore);
-    return m_keyValueStore->get(key);
+    return m_keyValueStore.get(key);
 }
 
 void MemoryObjectStore::getAllRecords(const IDBKeyRangeData& keyRangeData, std::optional<uint32_t> count, IndexedDB::GetAllType type, IDBGetAllResult& result) const
@@ -497,10 +472,10 @@ IDBGetResult MemoryObjectStore::indexValueForKeyRange(IDBIndexIdentifier indexId
 
 IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& keyRangeData) const
 {
-    if (!m_keyValueStore)
+    if (m_keyValueStore.isEmpty())
         return { };
 
-    if (keyRangeData.isExactlyOneKey() && m_keyValueStore->contains(keyRangeData.lowerKey))
+    if (keyRangeData.isExactlyOneKey() && m_keyValueStore.contains(keyRangeData.lowerKey))
         return keyRangeData.lowerKey;
 
     ASSERT(m_orderedKeys);
@@ -532,8 +507,8 @@ void MemoryObjectStore::registerIndex(Ref<MemoryIndex>&& index)
     ASSERT(!m_indexesByName.contains(index->info().name()));
 
     auto identifier = index->info().identifier();
-    m_indexesByName.set(index->info().name(), &index.get());
-    m_indexesByIdentifier.set(identifier, WTFMove(index));
+    m_indexesByName.add(index->info().name(), &index.get());
+    m_indexesByIdentifier.add(identifier, WTFMove(index));
 }
 
 MemoryObjectStoreCursor* MemoryObjectStore::maybeOpenCursor(const IDBCursorInfo& info, MemoryBackingStoreTransaction& transaction)
@@ -557,7 +532,7 @@ void MemoryObjectStore::renameIndex(MemoryIndex& index, const String& newName)
     ASSERT(m_info.infoForExistingIndex(index.info().identifier()) == m_info.infoForExistingIndex(index.info().name()));
 
     m_info.infoForExistingIndex(index.info().identifier())->rename(newName);
-    m_indexesByName.set(newName, m_indexesByName.take(index.info().name()));
+    m_indexesByName.add(newName, m_indexesByName.take(index.info().name()));
     index.rename(newName);
 }
 

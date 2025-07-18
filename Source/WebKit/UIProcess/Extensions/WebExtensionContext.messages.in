@@ -50,6 +50,21 @@ messages -> WebExtensionContext {
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)
     [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> ()
 
+    #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+    // Bookmarks APIs
+    [Validator=isBookmarksMessageAllowed] BookmarksCreate(std::optional<String> parentId, std::optional<uint64_t> index, std::optional<String> url, std::optional<String> title) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetTree() -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetSubTree(String bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGet(Vector<String> bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetChildren(String bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetRecent(uint64_t count) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksSearch(std::optional<String> query, std::optional<String> url, std::optional<String> title) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksUpdate(String bookmarkId,std::optional<String> url, std::optional<String> title) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksMove(String bookmarkId, std::optional<String> parentId, std::optional<uint64_t> index) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksRemove(String bookmarkId) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksRemoveTree(String bookmarkId) -> (Expected<void, WebKit::WebExtensionError> result)
+#endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+
     // Commands APIs
     [Validator=isCommandsMessageAllowed] CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands)
 
@@ -80,7 +95,7 @@ messages -> WebExtensionContext {
 
     // Event APIs
     [Validator=isLoaded] AddListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType)
-    [Validator=isLoaded] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount)
+    [Validator=isLoaded] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, uint64_t removedCount)
 
     // Extensions APIs
     [Validator=isLoaded] ExtensionIsAllowedIncognitoAccess() -> (bool result)
@@ -139,7 +154,7 @@ messages -> WebExtensionContext {
     // Storage APIs
     [Validator=isStorageMessageAllowed] StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<String, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageGetKeys(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (Expected<Vector<String>, WebKit::WebExtensionError> result)
-    [Validator=isStorageMessageAllowed] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<size_t, WebKit::WebExtensionError> result)
+    [Validator=isStorageMessageAllowed] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<uint64_t, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageSet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, String dataJSON) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageRemove(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageClear(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (Expected<void, WebKit::WebExtensionError> result)

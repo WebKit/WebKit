@@ -18,13 +18,12 @@
 #include <optional>
 
 #include "api/field_trials_view.h"
-#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/video_codecs/video_encoder.h"
 #include "rtc_base/experiments/quality_scaling_experiment.h"
 #include "rtc_base/numerics/moving_average.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -88,10 +87,9 @@ class QualityScaler {
   VideoEncoder::QpThresholds thresholds_ RTC_GUARDED_BY(&task_checker_);
   const int64_t sampling_period_ms_;
   bool fast_rampup_ RTC_GUARDED_BY(&task_checker_);
-  rtc::MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
-  rtc::MovingAverage framedrop_percent_media_opt_
-      RTC_GUARDED_BY(&task_checker_);
-  rtc::MovingAverage framedrop_percent_all_ RTC_GUARDED_BY(&task_checker_);
+  MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
+  MovingAverage framedrop_percent_media_opt_ RTC_GUARDED_BY(&task_checker_);
+  MovingAverage framedrop_percent_all_ RTC_GUARDED_BY(&task_checker_);
 
   // Used by QualityScalingExperiment.
   const bool experiment_enabled_;

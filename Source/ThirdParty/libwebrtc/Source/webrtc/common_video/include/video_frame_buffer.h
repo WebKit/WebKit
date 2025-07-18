@@ -20,7 +20,7 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<I420BufferInterface> WrapI420Buffer(
+scoped_refptr<I420BufferInterface> WrapI420Buffer(
     int width,
     int height,
     const uint8_t* y_plane,
@@ -31,7 +31,7 @@ rtc::scoped_refptr<I420BufferInterface> WrapI420Buffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I422BufferInterface> WrapI422Buffer(
+scoped_refptr<I422BufferInterface> WrapI422Buffer(
     int width,
     int height,
     const uint8_t* y_plane,
@@ -42,7 +42,7 @@ rtc::scoped_refptr<I422BufferInterface> WrapI422Buffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I444BufferInterface> WrapI444Buffer(
+scoped_refptr<I444BufferInterface> WrapI444Buffer(
     int width,
     int height,
     const uint8_t* y_plane,
@@ -53,7 +53,7 @@ rtc::scoped_refptr<I444BufferInterface> WrapI444Buffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I420ABufferInterface> WrapI420ABuffer(
+scoped_refptr<I420ABufferInterface> WrapI420ABuffer(
     int width,
     int height,
     const uint8_t* y_plane,
@@ -66,7 +66,7 @@ rtc::scoped_refptr<I420ABufferInterface> WrapI420ABuffer(
     int a_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<PlanarYuvBuffer> WrapYuvBuffer(
+scoped_refptr<PlanarYuvBuffer> WrapYuvBuffer(
     VideoFrameBuffer::Type type,
     int width,
     int height,
@@ -78,7 +78,7 @@ rtc::scoped_refptr<PlanarYuvBuffer> WrapYuvBuffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I010BufferInterface> WrapI010Buffer(
+scoped_refptr<I010BufferInterface> WrapI010Buffer(
     int width,
     int height,
     const uint16_t* y_plane,
@@ -89,7 +89,7 @@ rtc::scoped_refptr<I010BufferInterface> WrapI010Buffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I210BufferInterface> WrapI210Buffer(
+scoped_refptr<I210BufferInterface> WrapI210Buffer(
     int width,
     int height,
     const uint16_t* y_plane,
@@ -100,7 +100,7 @@ rtc::scoped_refptr<I210BufferInterface> WrapI210Buffer(
     int v_stride,
     std::function<void()> no_longer_used);
 
-rtc::scoped_refptr<I410BufferInterface> WrapI410Buffer(
+scoped_refptr<I410BufferInterface> WrapI410Buffer(
     int width,
     int height,
     const uint16_t* y_plane,

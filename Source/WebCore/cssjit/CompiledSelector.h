@@ -43,7 +43,7 @@ enum class SelectorCompilationStatus : uint8_t {
 };
 
 struct CompiledSelector {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CompiledSelector);
     SelectorCompilationStatus status { SelectorCompilationStatus::NotCompiled };
     JSC::MacroAssemblerCodeRef<JSC::CSSSelectorPtrTag> codeRef;
 

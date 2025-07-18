@@ -33,6 +33,8 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "ColorSerialization.h"
+#include "Document.h"
+#include "ExceptionOr.h"
 #include "HTMLSpanElement.h"
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"

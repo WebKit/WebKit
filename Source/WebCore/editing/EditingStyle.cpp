@@ -28,6 +28,7 @@
 #include "EditingStyle.h"
 
 #include "ApplyStyleCommand.h"
+#include "ContainerNodeInlines.h"
 #include "CSSColorValue.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSFontStyleWithAngleValue.h"

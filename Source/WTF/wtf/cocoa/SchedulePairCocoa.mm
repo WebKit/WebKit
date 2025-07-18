@@ -36,7 +36,7 @@ SchedulePair::SchedulePair(NSRunLoop* runLoop, CFStringRef mode)
     , m_runLoop([runLoop getCFRunLoop])
 {
     if (mode)
-        m_mode = adoptCF(CFStringCreateCopy(0, mode));
+        lazyInitialize(m_mode, adoptCF(CFStringCreateCopy(0, mode)));
 }
 
 } // namespace

@@ -27,12 +27,11 @@ constexpr int kRtcpReportIntervalMs = 5000;
 
 }  // namespace
 
-AudioChannel::AudioChannel(
-    const Environment& env,
-    Transport* transport,
-    uint32_t local_ssrc,
-    AudioMixer* audio_mixer,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
+AudioChannel::AudioChannel(const Environment& env,
+                           Transport* transport,
+                           uint32_t local_ssrc,
+                           AudioMixer* audio_mixer,
+                           scoped_refptr<AudioDecoderFactory> decoder_factory)
     : audio_mixer_(audio_mixer) {
   RTC_DCHECK(audio_mixer);
 

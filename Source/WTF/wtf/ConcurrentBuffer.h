@@ -29,11 +29,10 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -44,40 +43,36 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ConcurrentBuffer);
 template<typename T>
 class ConcurrentBuffer final {
     WTF_MAKE_NONCOPYABLE(ConcurrentBuffer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ConcurrentBuffer);
 public:
     
-    ConcurrentBuffer()
-    {
-    }
+    ConcurrentBuffer() = default;
     
     ~ConcurrentBuffer()
     {
-        if (Array* array = m_array) {
-            for (size_t i = 0; i < array->size; ++i)
-                array->data[i].~T();
+        if (auto* array = m_array) {
+            for (auto& item : array->span())
+                item.~T();
         }
-        for (Array* array : m_allArrays)
-            ConcurrentBufferMalloc::free(array);
     }
 
     // Growing is not concurrent. This assumes you are holding some other lock before you do this.
     void growExact(size_t newSize)
     {
-        Array* array = m_array;
+        auto* array = m_array;
         if (array && newSize <= array->size)
             return;
-        Array* newArray = createArray(newSize);
+        auto newArray = createArray(newSize);
         // This allows us to do ConcurrentBuffer<std::unique_ptr<>>.
         // asMutableByteSpan() avoids triggering -Wclass-memaccess.
         if (array)
             memcpySpan(asMutableByteSpan(newArray->span()), asByteSpan(array->span()));
-        for (size_t i = array ? array->size : 0; i < newSize; ++i)
-            new (newArray->data + i) T();
+        for (auto& item : newArray->span().subspan(array ? array->size : 0))
+            new (&item) T();
         WTF::storeStoreFence();
-        m_array = newArray;
+        m_array = newArray.get();
         WTF::storeStoreFence();
-        m_allArrays.append(newArray);
+        m_allArrays.append(WTFMove(newArray));
     }
     
     void grow(size_t newSize)
@@ -98,24 +93,22 @@ public:
     
     Array* array() const { return m_array; }
     
-    T& operator[](size_t index) { return m_array->data[index]; }
-    const T& operator[](size_t index) const { return m_array->data[index]; }
+    T& operator[](size_t index) { return m_array->span()[index]; }
+    const T& operator[](size_t index) const { return m_array->span()[index]; }
     
 private:
-    Array* createArray(size_t size)
+    MallocPtr<Array, ConcurrentBufferMalloc> createArray(size_t size)
     {
         Checked<size_t> objectSize = sizeof(T);
         objectSize *= size;
         objectSize += static_cast<size_t>(OBJECT_OFFSETOF(Array, data));
-        Array* result = static_cast<Array*>(ConcurrentBufferMalloc::malloc(objectSize));
+        auto result = MallocPtr<Array, ConcurrentBufferMalloc>::malloc(objectSize);
         result->size = size;
         return result;
     }
     
     Array* m_array { nullptr };
-    Vector<Array*> m_allArrays;
+    Vector<MallocPtr<Array, ConcurrentBufferMalloc>> m_allArrays;
 };
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

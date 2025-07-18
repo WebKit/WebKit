@@ -35,7 +35,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct HexColor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HexColor);
 
     SRGBA<uint8_t> value;
 

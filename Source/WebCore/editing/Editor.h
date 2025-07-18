@@ -114,6 +114,19 @@ enum class MailBlockquoteHandling : bool {
     IgnoreBlockquote,
 };
 
+enum class ClipboardEventKind : uint8_t {
+    Copy,
+    CopyFont,
+    Cut,
+    Paste,
+    PasteFont,
+    PasteAsPlainText,
+    PasteAsQuotation,
+    BeforeCopy,
+    BeforeCut,
+    BeforePaste,
+};
+
 enum class AllowTextReplacement : bool { No, Yes };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -140,6 +153,8 @@ enum class TemporarySelectionOption : uint16_t {
     UserTriggered = 1 << 7,
     
     ForceCenterScroll = 1 << 8,
+
+    OnlyAllowForwardScrolling = 1 << 9
 };
 
 class TemporarySelectionChange {
@@ -452,8 +467,8 @@ public:
 
     VisibleSelection selectionForCommand(Event*);
 
-    PAL::KillRing& killRing() const { return *m_killRing; }
-    SpellChecker& spellChecker() const { return *m_spellChecker; }
+    PAL::KillRing& killRing() const { return m_killRing; }
+    SpellChecker& spellChecker() const { return m_spellChecker; }
 
     EditingBehavior behavior() const;
 
@@ -651,6 +666,9 @@ private:
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
     void pasteWithPasteboard(Pasteboard*, OptionSet<PasteOption>);
     String plainTextFromPasteboard(const PasteboardPlainText&);
+
+    bool dispatchClipboardEvent(RefPtr<Element>&&, ClipboardEventKind);
+    bool dispatchClipboardEvent(RefPtr<Element>&&, ClipboardEventKind, Ref<DataTransfer>&&);
 
     void platformCopyFont();
     void platformPasteFont();

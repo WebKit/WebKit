@@ -15,7 +15,10 @@
 #include <cstdint>
 #include <vector>
 
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
@@ -42,7 +45,7 @@ void RtpPacketReceived::GetHeader(RTPHeader* header) const {
   header->timestamp = Timestamp();
   header->ssrc = Ssrc();
   std::vector<uint32_t> csrcs = Csrcs();
-  header->numCSRCs = rtc::dchecked_cast<uint8_t>(csrcs.size());
+  header->numCSRCs = dchecked_cast<uint8_t>(csrcs.size());
   for (size_t i = 0; i < csrcs.size(); ++i) {
     header->arrOfCSRCs[i] = csrcs[i];
   }

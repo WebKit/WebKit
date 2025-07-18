@@ -27,6 +27,7 @@
 #pragma once
 
 #include "EventLoop.h"
+#include "XMLHttpRequest.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -53,6 +54,7 @@ enum ProgressEventAction {
 // This implements the XHR2 progress event dispatching: "dispatch a progress event called progress
 // about every 50ms or for every byte received, whichever is least frequent".
 class XMLHttpRequestProgressEventThrottle : public CanMakeWeakPtr<XMLHttpRequestProgressEventThrottle> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XMLHttpsRequestProgressEventThrottle);
 public:
     explicit XMLHttpRequestProgressEventThrottle(XMLHttpRequest&);
     virtual ~XMLHttpRequestProgressEventThrottle();
@@ -72,8 +74,10 @@ private:
     void flushProgressEvent();
     void dispatchEventWhenPossible(Event&);
 
-    // Weak pointer to our XMLHttpRequest object as it is the one holding us.
-    XMLHttpRequest& m_target;
+    Ref<XMLHttpRequest> protectedTarget() { return m_target.get(); }
+
+    // Weak reference to our XMLHttpRequest object as it is the one holding us.
+    WeakRef<XMLHttpRequest, WeakPtrImplWithEventTargetData> m_target;
 
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };

@@ -72,13 +72,24 @@ namespace WebCore {
 //         return reinterpret_cast<MyClass*>(Supplement<MySupplementable>::from(host, supplementName()));
 //     }
 
+class SupplementBase {
+public:
+    virtual ~SupplementBase() = default;
+
+    // To allow a downcast from Supplement<Foo> to a subclass Bar, we require
+    // a TypeCastTraits specialization. The isBar() function needed for this
+    // specialization can be implemented here and overridden in the base class.
+
+    virtual bool isNavigatorClipboard() const { return false; }
+    virtual bool isNavigatorCookieConsent() const { return false; }
+};
+
 template<typename T>
 class Supplementable;
 
 template<typename T>
-class Supplement {
+class Supplement : public SupplementBase {
 public:
-    virtual ~Supplement() = default;
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     virtual bool isRefCountedWrapper() const { return false; }
 #endif

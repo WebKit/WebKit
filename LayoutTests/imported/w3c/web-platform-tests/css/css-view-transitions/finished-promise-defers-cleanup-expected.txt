@@ -1,0 +1,3 @@
+
+FAIL View transition cleanup is deferred until after the frame where `finished` promise resolves assert_equals: expected "inline" but got "block"
+

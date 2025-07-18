@@ -51,8 +51,6 @@ private:
     void currentData(IDBGetResult&) final;
     void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) final;
 
-    Ref<MemoryIndex> protectedIndex() const;
-
     const CheckedRef<MemoryIndex> m_index;
 
     IndexValueStore::Iterator m_currentIterator;

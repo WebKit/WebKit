@@ -90,7 +90,7 @@ public:
     ~InspectorTimelineAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // TimelineBackendDispatcherHandler
@@ -192,8 +192,8 @@ private:
 
     void addRecordToTimeline(Ref<JSON::Object>&&, TimelineRecordType);
 
-    std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
 
     Vector<TimelineRecordEntry> m_recordStack;
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;

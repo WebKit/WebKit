@@ -8,5 +8,7 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>UIDesignRequiresCompatibility</key>
+        <true/>
 </dict>
 </plist>

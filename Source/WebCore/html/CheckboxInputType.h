@@ -41,6 +41,8 @@ namespace WebCore {
 class Touch;
 #endif
 
+class LayoutPoint;
+
 enum class WasSetByJavaScript : bool;
 enum class SwitchAnimationType : bool { VisuallyOn, Held };
 

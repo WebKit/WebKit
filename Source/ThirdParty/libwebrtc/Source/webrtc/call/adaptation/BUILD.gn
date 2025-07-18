@@ -34,21 +34,19 @@ rtc_library("resource_adaptation") {
   deps = [
     "../../api:field_trials_view",
     "../../api:make_ref_counted",
+    "../../api:ref_count",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
     "../../api/adaptation:resource_adaptation_api",
-    "../../api/task_queue:task_queue",
+    "../../api/task_queue",
     "../../api/video:video_adaptation",
     "../../api/video:video_frame",
-    "../../api/video:video_stream_encoder",
     "../../api/video_codecs:video_codecs_api",
-    "../../modules/video_coding:video_coding_utility",
     "../../modules/video_coding/svc:scalability_mode_util",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
-    "../../rtc_base:refcount",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
     "../../rtc_base/experiments:balanced_degradation_settings",
@@ -58,7 +56,6 @@ rtc_library("resource_adaptation") {
     "../../video/config:encoder_config",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/strings:string_view",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -77,27 +74,29 @@ if (rtc_include_tests) {
     deps = [
       ":resource_adaptation",
       ":resource_adaptation_test_utilities",
+      "../../api:rtc_error_matchers",
+      "../../api:rtp_parameters",
       "../../api:scoped_refptr",
+      "../../api:sequence_checker",
       "../../api/adaptation:resource_adaptation_api",
-      "../../api/task_queue:default_task_queue_factory",
-      "../../api/task_queue:task_queue",
+      "../../api/units:time_delta",
       "../../api/video:video_adaptation",
+      "../../api/video:video_frame",
       "../../api/video_codecs:video_codecs_api",
       "../../rtc_base:checks",
-      "../../rtc_base:gunit_helpers",
+      "../../rtc_base:macromagic",
       "../../rtc_base:rtc_event",
       "../../rtc_base:stringutils",
       "../../rtc_base:task_queue_for_test",
-      "../../rtc_base/synchronization:mutex",
-      "../../test:field_trial",
-      "../../test:rtc_expect_death",
+      "../../rtc_base:threading",
       "../../test:scoped_key_value_config",
       "../../test:test_support",
+      "../../test:wait_until",
       "../../video/config:encoder_config",
     ]
   }
 
-  rtc_source_set("resource_adaptation_test_utilities") {
+  rtc_library("resource_adaptation_test_utilities") {
     testonly = true
 
     sources = [
@@ -115,10 +114,10 @@ if (rtc_include_tests) {
       ":resource_adaptation",
       "../../api:make_ref_counted",
       "../../api:scoped_refptr",
-      "../../api:sequence_checker",
       "../../api/adaptation:resource_adaptation_api",
-      "../../api/task_queue:task_queue",
-      "../../api/video:video_stream_encoder",
+      "../../api/video:video_adaptation",
+      "../../api/video:video_bitrate_allocation",
+      "../../api/video_codecs:video_codecs_api",
       "../../test:test_support",
       "../../video:video_stream_encoder_interface",
       "../../video/config:encoder_config",

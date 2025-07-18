@@ -27,11 +27,11 @@ PitchEstimator::PitchEstimator(const AvailableCpuFeatures& cpu_features)
 PitchEstimator::~PitchEstimator() = default;
 
 int PitchEstimator::Estimate(
-    rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer) {
-  rtc::ArrayView<float, kBufSize12kHz> pitch_buffer_12kHz_view(
+    ArrayView<const float, kBufSize24kHz> pitch_buffer) {
+  ArrayView<float, kBufSize12kHz> pitch_buffer_12kHz_view(
       pitch_buffer_12kHz_.data(), kBufSize12kHz);
   RTC_DCHECK_EQ(pitch_buffer_12kHz_.size(), pitch_buffer_12kHz_view.size());
-  rtc::ArrayView<float, kNumLags12kHz> auto_correlation_12kHz_view(
+  ArrayView<float, kNumLags12kHz> auto_correlation_12kHz_view(
       auto_correlation_12kHz_.data(), kNumLags12kHz);
   RTC_DCHECK_EQ(auto_correlation_12kHz_.size(),
                 auto_correlation_12kHz_view.size());
@@ -51,7 +51,7 @@ int PitchEstimator::Estimate(
 
   // Refine the initial pitch period estimation from 12 kHz to 48 kHz.
   // Pre-compute frame energies at 24 kHz.
-  rtc::ArrayView<float, kRefineNumLags24kHz> y_energy_24kHz_view(
+  ArrayView<float, kRefineNumLags24kHz> y_energy_24kHz_view(
       y_energy_24kHz_.data(), kRefineNumLags24kHz);
   RTC_DCHECK_EQ(y_energy_24kHz_.size(), y_energy_24kHz_view.size());
   ComputeSlidingFrameSquareEnergies24kHz(pitch_buffer, y_energy_24kHz_view,

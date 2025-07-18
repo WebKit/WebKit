@@ -44,7 +44,7 @@ String Comment::nodeName() const
     return "#comment"_s;
 }
 
-Ref<Node> Comment::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> Comment::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return create(document, String { data() });
 }

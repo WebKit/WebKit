@@ -164,10 +164,14 @@ void XServerPixelBuffer::Release() {
 void XServerPixelBuffer::ReleaseSharedMemorySegment() {
   if (!shm_segment_info_)
     return;
+  if (xshm_attached_) {
+    XShmDetach(display_, shm_segment_info_);
+    xshm_attached_ = false;
+  }
   if (shm_segment_info_->shmaddr != nullptr)
     shmdt(shm_segment_info_->shmaddr);
   if (shm_segment_info_->shmid != -1)
-    shmctl(shm_segment_info_->shmid, IPC_RMID, 0);
+    shmctl(shm_segment_info_->shmid, IPC_RMID, nullptr);
   delete shm_segment_info_;
   shm_segment_info_ = nullptr;
 }
@@ -211,30 +215,29 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
     return;
   }
 
-  bool using_shm = false;
   shm_segment_info_ = new XShmSegmentInfo;
   shm_segment_info_->shmid = -1;
   shm_segment_info_->shmaddr = nullptr;
   shm_segment_info_->readOnly = False;
   x_shm_image_ = XShmCreateImage(display_, default_visual, default_depth,
-                                 ZPixmap, 0, shm_segment_info_,
+                                 ZPixmap, nullptr, shm_segment_info_,
                                  window_rect_.width(), window_rect_.height());
   if (x_shm_image_) {
     shm_segment_info_->shmid =
         shmget(IPC_PRIVATE, x_shm_image_->bytes_per_line * x_shm_image_->height,
                IPC_CREAT | 0600);
     if (shm_segment_info_->shmid != -1) {
-      void* shmat_result = shmat(shm_segment_info_->shmid, 0, 0);
+      void* shmat_result = shmat(shm_segment_info_->shmid, nullptr, 0);
       if (shmat_result != reinterpret_cast<void*>(-1)) {
         shm_segment_info_->shmaddr = reinterpret_cast<char*>(shmat_result);
         x_shm_image_->data = shm_segment_info_->shmaddr;
 
         XErrorTrap error_trap(display_);
-        using_shm = XShmAttach(display_, shm_segment_info_);
+        xshm_attached_ = XShmAttach(display_, shm_segment_info_);
         XSync(display_, False);
         if (error_trap.GetLastErrorAndDisable() != 0)
-          using_shm = false;
-        if (using_shm) {
+          xshm_attached_ = false;
+        if (xshm_attached_) {
           RTC_LOG(LS_VERBOSE)
               << "Using X shared memory segment " << shm_segment_info_->shmid;
         }
@@ -245,7 +248,7 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
     }
   }
 
-  if (!using_shm) {
+  if (!xshm_attached_) {
     RTC_LOG(LS_WARNING)
         << "Not using shared memory. Performance may be degraded.";
     ReleaseSharedMemorySegment();
@@ -255,7 +258,7 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
   if (have_pixmaps)
     have_pixmaps = InitPixmaps(default_depth);
 
-  shmctl(shm_segment_info_->shmid, IPC_RMID, 0);
+  shmctl(shm_segment_info_->shmid, IPC_RMID, nullptr);
   shm_segment_info_->shmid = -1;
 
   RTC_LOG(LS_VERBOSE) << "Using X shared memory extension v" << major << "."
@@ -292,7 +295,7 @@ bool XServerPixelBuffer::InitPixmaps(int depth) {
     if (error_trap.GetLastErrorAndDisable() != 0) {
       XFreePixmap(display_, shm_pixmap_);
       shm_pixmap_ = 0;
-      shm_gc_ = 0;  // See shm_pixmap_ comment above.
+      shm_gc_ = nullptr;  // See shm_pixmap_ comment above.
       return false;
     }
   }

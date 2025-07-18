@@ -29,7 +29,8 @@
   self.continueAfterFailure = false;
 
   id appDelegate = UIApplication.sharedApplication.delegate;
-  XCTAssertTrue([appDelegate conformsToProtocol:@protocol(GoogleTestRunnerDelegate)]);
+  XCTAssertTrue(
+      [appDelegate conformsToProtocol:@protocol(GoogleTestRunnerDelegate)]);
 
   id<GoogleTestRunnerDelegate> runnerDelegate =
       static_cast<id<GoogleTestRunnerDelegate>>(appDelegate);

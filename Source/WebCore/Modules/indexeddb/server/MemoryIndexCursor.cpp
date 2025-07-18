@@ -212,15 +212,10 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
     currentData(getResult);
 }
 
-Ref<MemoryIndex> MemoryIndexCursor::protectedIndex() const
-{
-    return m_index.get();
-}
-
 void MemoryIndexCursor::indexRecordsAllChanged()
 {
     m_currentIterator.invalidate();
-    protectedIndex()->cursorDidBecomeDirty(*this);
+    m_index->cursorDidBecomeDirty(*this);
 }
 
 void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyData& primaryKey)
@@ -229,7 +224,7 @@ void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyDat
         return;
 
     m_currentIterator.invalidate();
-    protectedIndex()->cursorDidBecomeDirty(*this);
+    m_index->cursorDidBecomeDirty(*this);
 }
 
 } // namespace IDBServer

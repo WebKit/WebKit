@@ -23,11 +23,30 @@
 
 #include "OpenXRUtils.h"
 
+typedef void* EGLDisplay;
+typedef void* EGLContext;
+typedef void* EGLConfig;
+typedef unsigned EGLenum;
+#if defined(XR_USE_PLATFORM_EGL)
+typedef void (*(*PFNEGLGETPROCADDRESSPROC)(const char *))(void);
+#endif
+#include <openxr/openxr_platform.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
+
+struct OpenXRExtensionMethods {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpenXRExtensionMethods);
+public:
+#if defined(XR_USE_PLATFORM_EGL)
+    PFNEGLGETPROCADDRESSPROC getProcAddressFunc { nullptr };
+#endif
+#if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
+    PFN_xrGetOpenGLESGraphicsRequirementsKHR xrGetOpenGLESGraphicsRequirementsKHR { nullptr };
+#endif
+};
 
 class OpenXRExtensions final {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRExtensions);
@@ -35,10 +54,10 @@ class OpenXRExtensions final {
 public:
     static std::unique_ptr<OpenXRExtensions> create();
     OpenXRExtensions(Vector<XrExtensionProperties>&&);
+    ~OpenXRExtensions();
 
-    void loadMethods(XrInstance);
+    bool loadMethods(XrInstance);
     bool isExtensionSupported(std::span<const char>) const;
-    struct OpenXRExtensionMethods;
     const OpenXRExtensionMethods& methods() const { return *m_methods; }
 
 private:

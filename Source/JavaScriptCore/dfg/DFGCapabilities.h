@@ -125,17 +125,17 @@ inline CapabilityLevel inlineFunctionForConstructCapabilityLevel(JITType jitType
 
 inline bool mightInlineFunctionFor(JITType jitType, CodeBlock* codeBlock, CodeSpecializationKind kind)
 {
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         return mightInlineFunctionForCall(jitType, codeBlock);
-    ASSERT(kind == CodeForConstruct);
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
     return mightInlineFunctionForConstruct(jitType, codeBlock);
 }
 
 inline bool mightCompileFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind)
 {
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         return mightCompileFunctionForCall(codeBlock);
-    ASSERT(kind == CodeForConstruct);
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
     return mightCompileFunctionForConstruct(codeBlock);
 }
 
@@ -147,13 +147,13 @@ inline bool mightInlineFunction(JITType jitType, CodeBlock* codeBlock)
 inline CapabilityLevel inlineFunctionForCapabilityLevel(JITType jitType, CodeBlock* codeBlock, CodeSpecializationKind kind, bool isClosureCall)
 {
     if (isClosureCall) {
-        if (kind != CodeForCall)
+        if (kind != CodeSpecializationKind::CodeForCall)
             return CannotCompile;
         return inlineFunctionForClosureCallCapabilityLevel(jitType, codeBlock);
     }
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         return inlineFunctionForCallCapabilityLevel(jitType, codeBlock);
-    ASSERT(kind == CodeForConstruct);
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
     return inlineFunctionForConstructCapabilityLevel(jitType, codeBlock);
 }
 

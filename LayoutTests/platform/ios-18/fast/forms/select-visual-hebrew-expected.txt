@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 632x19
+          text run at (0,0) width 632: "This tests that native pop-ups are rendered in logical order even in visually-ordered Hebrew pages."
+      RenderBlock {P} at (0,54) size 784x20
+        RenderText {#text} at (0,0) size 389x19
+          text run at (0,0) width 389: "Text on the pop-up and in the list should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
+      RenderBlock (anonymous) at (0,90) size 784x20
+        RenderMenuList {SELECT} at (0,0) size 55x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 43x14
+            RenderText at (0,0) size 31x14
+              text run at (0,0) width 31 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,36) size 784x2 [color=#808080] [border: (1px inset #808080)]

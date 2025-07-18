@@ -11,12 +11,14 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_TRANSCEIVER_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_TRANSCEIVER_H_
 
+#include <cstdint>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
 #include "api/task_queue/task_queue_base.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
 #include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -63,7 +65,7 @@ class RtcpTransceiver : public RtcpFeedbackSenderInterface {
   void SetReadyToSend(bool ready);
 
   // Handles incoming rtcp packets.
-  void ReceivePacket(rtc::CopyOnWriteBuffer packet);
+  void ReceivePacket(CopyOnWriteBuffer packet);
 
   // Sends RTCP packets starting with a sender or receiver report.
   void SendCompoundPacket();

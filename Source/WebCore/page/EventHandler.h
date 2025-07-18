@@ -27,12 +27,12 @@
 
 #include "Cursor.h"
 #include "DragActions.h"
-#include "ElementIdentifier.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
 #include "ImmediateActionStage.h"
 #include "IntPointHash.h"
 #include "LayoutPoint.h"
+#include "NodeIdentifier.h"
 #include "PlatformMouseEvent.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
@@ -112,6 +112,7 @@ class HTMLModelElement;
 #endif
 
 struct DragState;
+struct FocusEventData;
 struct RemoteUserInputEventData;
 
 enum class WheelEventProcessingSteps : uint8_t;
@@ -214,7 +215,9 @@ public:
     WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
 
     bool tabsToLinks(KeyboardEvent*) const;
+    bool tabsToLinks(const FocusEventData&) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
+    bool tabsToAllFormControls(const FocusEventData&) const;
 
     WEBCORE_EXPORT HandleUserInputEventResult mouseMoved(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool passMouseMovedEventToScrollbars(const PlatformMouseEvent&);
@@ -361,9 +364,9 @@ public:
     static Widget* widgetForEventTarget(Element* eventTarget);
 
 #if ENABLE(MODEL_PROCESS)
-    WEBCORE_EXPORT std::optional<ElementIdentifier> requestInteractiveModelElementAtPoint(const IntPoint& clientPosition);
-    WEBCORE_EXPORT void stageModeSessionDidUpdate(std::optional<ElementIdentifier>, const TransformationMatrix&);
-    WEBCORE_EXPORT void stageModeSessionDidEnd(std::optional<ElementIdentifier>);
+    WEBCORE_EXPORT std::optional<NodeIdentifier> requestInteractiveModelElementAtPoint(const IntPoint& clientPosition);
+    WEBCORE_EXPORT void stageModeSessionDidUpdate(std::optional<NodeIdentifier>, const TransformationMatrix&);
+    WEBCORE_EXPORT void stageModeSessionDidEnd(std::optional<NodeIdentifier>);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
@@ -453,8 +456,8 @@ private:
     
     bool shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const;
 
-    static bool isKeyboardOptionTab(KeyboardEvent&);
-    static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent&);
+    static bool isKeyboardOptionTab(const FocusEventData&);
+    static bool eventInvertsTabsToLinksClientCallResult(const FocusEventData&);
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
     void fakeMouseMoveEventTimerFired();
@@ -636,7 +639,7 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     DeferrableOneShotTimer m_textRecognitionHoverTimer;
 #endif
-    std::unique_ptr<AutoscrollController> m_autoscrollController;
+    const UniqueRef<AutoscrollController> m_autoscrollController;
     SingleThreadWeakPtr<RenderLayer> m_resizeLayer;
 
     double m_maxMouseMovedDuration { 0 };

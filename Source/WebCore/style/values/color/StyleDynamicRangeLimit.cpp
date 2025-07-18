@@ -30,6 +30,7 @@
 #include "CSSDynamicRangeLimit.h"
 #include "CSSDynamicRangeLimitMix.h"
 #include "CSSDynamicRangeLimitValue.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "PlatformDynamicRangeLimit.h"
 #include "StyleBuilderChecking.h"
 #include "StyleDynamicRangeLimitMix.h"

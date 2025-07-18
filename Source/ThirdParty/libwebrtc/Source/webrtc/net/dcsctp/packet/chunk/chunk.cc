@@ -39,8 +39,8 @@ namespace dcsctp {
 
 template <class Chunk>
 bool ParseAndPrint(uint8_t chunk_type,
-                   rtc::ArrayView<const uint8_t> data,
-                   rtc::StringBuilder& sb) {
+                   webrtc::ArrayView<const uint8_t> data,
+                   webrtc::StringBuilder& sb) {
   if (chunk_type == Chunk::kType) {
     std::optional<Chunk> c = Chunk::Parse(data);
     if (c.has_value()) {
@@ -53,8 +53,8 @@ bool ParseAndPrint(uint8_t chunk_type,
   return false;
 }
 
-std::string DebugConvertChunkToString(rtc::ArrayView<const uint8_t> data) {
-  rtc::StringBuilder sb;
+std::string DebugConvertChunkToString(webrtc::ArrayView<const uint8_t> data) {
+  webrtc::StringBuilder sb;
 
   if (data.empty()) {
     sb << "Failed to parse chunk due to empty data";

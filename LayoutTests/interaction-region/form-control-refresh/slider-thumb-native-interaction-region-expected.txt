@@ -1,0 +1,30 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1600.00 2092.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1600.00 2092.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=1600 height=2092)
+
+      (interaction regions [
+        (interaction (54.50,2) width=24 height=16)
+        (cornerRadius 8.00)
+        (useContinuousCorners 1),
+        (interaction (163.50,42) width=72 height=48)
+        (cornerRadius 24.00)
+        (useContinuousCorners 1),
+        (interaction (54.50,20) width=24 height=16)
+        (cornerRadius 8.00)
+        (clipPath move to (24,8), add line to (3.72,14.76), add curve to (2.29,13.88) (1.18,12.54) (0.57,10.96), add curve to (0.19,10.02) (0,9.01) (0,8), add curve to (0,6.99) (0.19,5.98) (0.57,5.04), add curve to (1.20,3.45) (2.31,2.13) (3.74,1.25), close subpath),
+        (interaction (163.50,96) width=72 height=48)
+        (cornerRadius 24.00)
+        (clipPath move to (72,24), add line to (11.17,44.28), add curve to (6.87,41.65) (3.53,37.62) (1.70,32.88), add curve to (0.58,30.06) (0,27.04) (0,24), add curve to (0,20.96) (0.58,17.94) (1.70,15.12), add curve to (3.60,10.36) (6.92,6.38) (11.22,3.74), close subpath)])
+      )
+    )
+  )
+)
+

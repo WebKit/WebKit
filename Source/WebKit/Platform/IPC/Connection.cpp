@@ -75,21 +75,6 @@ static UnfairLock s_connectionMapLock;
 static Lock s_connectionMapLock;
 #endif
 
-struct Connection::WaitForMessageState {
-    WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
-        : messageName(messageName)
-        , destinationID(destinationID)
-        , waitForOptions(waitForOptions)
-    {
-    }
-
-    MessageName messageName;
-    uint64_t destinationID;
-    OptionSet<WaitForOption> waitForOptions;
-    bool messageWaitingInterrupted = false;
-    std::unique_ptr<Decoder> decoder;
-};
-
 class Connection::SyncMessageState {
 public:
     static std::unique_ptr<SyncMessageState, SyncMessageStateRelease> get(SerialFunctionDispatcher&);
@@ -470,14 +455,14 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
 
     if (decoder->isSyncMessage()) {
         auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, decoder->syncRequestID().toUInt64());
-        messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
+        messageReceiver.didReceiveSyncMessage(*this, decoder.get(), replyEncoder);
         // If the message was not handled or handler tried to decode and marked it invalid, reply with
         // cancel message. For more info, see Connection:dispatchSyncMessage.
         std::unique_ptr remainingReplyEncoder = replyEncoder.moveToUniquePtr();
         if (remainingReplyEncoder)
             sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, decoder->syncRequestID().toUInt64()), { });
     } else
-        messageReceiver.didReceiveMessage(*this, *decoder);
+        messageReceiver.didReceiveMessage(*this, decoder.get());
 
 #if ASSERT_ENABLED
     --m_inDispatchMessageCount;
@@ -720,7 +705,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     if (auto replyHandlerToCancel = takeAsyncReplyHandler(replyID)) {
         // FIXME: Current contract is that completionHandler is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr, nullptr);
         });
     }
@@ -1046,7 +1031,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         return;
     }
 
-    if (!MessageReceiveQueueMap::isValidMessage(*message)) {
+    if (!MessageReceiveQueueMap::isValidMessage(message.get())) {
         dispatchDidReceiveInvalidMessage(message->messageName(), message->indexOfObjectFailingDecoding());
         return;
     }
@@ -1264,7 +1249,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         } else
             decoder.markInvalid();
     } else
-        m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
+        checkedClient()->didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // If the message was not handled, i.e. replyEncoder was not consumed, reply with cancel
     // message. We do not distinquish between a decode failure and failure to find a
@@ -1282,7 +1267,7 @@ void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName, int32
     dispatchToClient([protectedThis = Ref { *this }, messageName, indexOfObjectFailingDecoding] {
         if (!protectedThis->isValid())
             return;
-        protectedThis->m_client->didReceiveInvalidMessage(protectedThis, messageName, indexOfObjectFailingDecoding);
+        protectedThis->checkedClient()->didReceiveInvalidMessage(protectedThis, messageName, indexOfObjectFailingDecoding);
     });
 }
 
@@ -1293,7 +1278,7 @@ void Connection::dispatchDidCloseAndInvalidate()
         // then the connection client will be nullptr here.
         if (!protectedThis->m_client)
             return;
-        protectedThis->m_client->didClose(protectedThis);
+        protectedThis->checkedClient()->didClose(protectedThis);
         protectedThis->invalidate();
     });
 }
@@ -1329,9 +1314,10 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
         if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
             m_didRequestProcessTermination = true;
             dispatchToClientWithIncomingMessagesLock([protectedThis = Ref { *this }] {
-                if (!protectedThis->m_client)
+                CheckedPtr client = protectedThis->m_client;
+                if (!client)
                     return;
-                protectedThis->m_client->requestRemoteProcessTermination();
+                client->requestRemoteProcessTermination();
                 RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, terminating the remote process as it seems to be misbehaving", protectedThis.ptr(), maxPendingIncomingMessagesKillingThreshold);
                 Locker lock { protectedThis->m_incomingMessagesLock };
                 protectedThis->m_incomingMessages.clear();
@@ -1392,7 +1378,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     }
 #endif
 
-    m_client->didReceiveMessage(*this, decoder);
+    checkedClient()->didReceiveMessage(*this, decoder);
 }
 
 void Connection::dispatchMessage(UniqueRef<Decoder> message)
@@ -1408,7 +1394,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
         // go to Connection::m_incomingMessages. Should be fixed by adding all
         // messages to one list.
         Locker incomingMessagesLocker { m_incomingMessagesLock };
-        if (auto* receiveQueue = m_receiveQueues.get(*message)) {
+        if (auto* receiveQueue = m_receiveQueues.get(message.get())) {
             receiveQueue->enqueueMessage(*this, WTFMove(message));
             return;
         }
@@ -1420,7 +1406,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
             if (m_ignoreInvalidMessageForTesting)
                 return;
 #endif
-            m_client->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
+            checkedClient()->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
             return;
         }
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
@@ -1440,9 +1426,9 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
     m_didReceiveInvalidMessage = false;
 
     if (message->isSyncMessage())
-        dispatchSyncMessage(*message);
+        dispatchSyncMessage(message.get());
     else
-        dispatchMessage(*message);
+        dispatchMessage(message.get());
 
     m_didReceiveInvalidMessage |= !message->isValid();
 
@@ -1472,7 +1458,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
     }
 #endif
     if (didReceiveInvalidMessage && isValid())
-        m_client->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
+        checkedClient()->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
 }
 
 size_t Connection::numberOfMessagesToProcess(size_t totalMessages)
@@ -1647,8 +1633,8 @@ void Connection::wakeUpRunLoop()
 {
     if (!isValid())
         return;
-    if (&dispatcher() == &RunLoop::main())
-        RunLoop::protectedMain()->wakeUp();
+    if (&dispatcher() == &RunLoop::mainSingleton())
+        RunLoop::mainSingleton().wakeUp();
 }
 
 template<typename F>

@@ -41,6 +41,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -419,7 +420,7 @@ RetainPtr<id> IOSurface::asCAIOSurfaceLayerContents() const
 #endif
         return bridge_id_cast(result);
     }
-    return nil;
+    return asLayerContents();
 }
 
 RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
@@ -430,6 +431,8 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
 
 RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> context)
 {
+    if (!context)
+        context = surface->createPlatformContext();
     ASSERT(CGIOSurfaceContextGetSurface(context.get()) == surface->m_surface);
     UNUSED_PARAM(surface);
     return adoptCF(CGIOSurfaceContextCreateImageReference(context.get()));

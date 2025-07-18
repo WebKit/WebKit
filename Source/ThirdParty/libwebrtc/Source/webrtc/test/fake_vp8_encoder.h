@@ -53,7 +53,7 @@ class FakeVp8Encoder : public FakeEncoder {
 
   CodecSpecificInfo EncodeHook(
       EncodedImage& encoded_image,
-      rtc::scoped_refptr<EncodedImageBuffer> buffer) override;
+      scoped_refptr<EncodedImageBuffer> buffer) override;
 
   SequenceChecker sequence_checker_;
 

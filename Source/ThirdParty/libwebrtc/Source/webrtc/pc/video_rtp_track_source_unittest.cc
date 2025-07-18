@@ -12,11 +12,14 @@
 
 #include <optional>
 
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
+#include "api/video/recordable_encoded_frame.h"
 #include "api/video/video_codec_type.h"
+#include "api/video/video_sink_interface.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -29,14 +32,14 @@ class MockCallback : public VideoRtpTrackSource::Callback {
   MOCK_METHOD(void, OnEncodedSinkEnabled, (bool), (override));
 };
 
-class MockSink : public rtc::VideoSinkInterface<RecordableEncodedFrame> {
+class MockSink : public VideoSinkInterface<RecordableEncodedFrame> {
  public:
   MOCK_METHOD(void, OnFrame, (const RecordableEncodedFrame&), (override));
 };
 
-rtc::scoped_refptr<VideoRtpTrackSource> MakeSource(
+scoped_refptr<VideoRtpTrackSource> MakeSource(
     VideoRtpTrackSource::Callback* callback) {
-  return rtc::make_ref_counted<VideoRtpTrackSource>(callback);
+  return make_ref_counted<VideoRtpTrackSource>(callback);
 }
 
 TEST(VideoRtpTrackSourceTest, CreatesWithRemoteAtttributeSet) {
@@ -110,11 +113,14 @@ TEST(VideoRtpTrackSourceTest, NoCallbacksAfterClearedCallback) {
 
 class TestFrame : public RecordableEncodedFrame {
  public:
-  rtc::scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
+  scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
       const override {
     return nullptr;
   }
   std::optional<ColorSpace> color_space() const override {
+    return std::nullopt;
+  }
+  std::optional<VideoRotation> video_rotation() const override {
     return std::nullopt;
   }
   VideoCodecType codec() const override { return kVideoCodecGeneric; }

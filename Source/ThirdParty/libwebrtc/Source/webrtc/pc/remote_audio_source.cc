@@ -12,17 +12,22 @@
 
 #include <stddef.h>
 
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <optional>
 #include <utility>
 
 #include "absl/algorithm/container.h"
+#include "api/call/audio_sink.h"
+#include "api/media_stream_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
+#include "media/base/media_channel.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_format.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -48,7 +53,7 @@ class RemoteAudioSource::AudioDataProxy : public AudioSinkInterface {
   }
 
  private:
-  const rtc::scoped_refptr<RemoteAudioSource> source_;
+  const scoped_refptr<RemoteAudioSource> source_;
 };
 
 RemoteAudioSource::RemoteAudioSource(
@@ -70,9 +75,8 @@ RemoteAudioSource::~RemoteAudioSource() {
   }
 }
 
-void RemoteAudioSource::Start(
-    cricket::VoiceMediaReceiveChannelInterface* media_channel,
-    std::optional<uint32_t> ssrc) {
+void RemoteAudioSource::Start(VoiceMediaReceiveChannelInterface* media_channel,
+                              std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(worker_thread_);
 
   // Register for callbacks immediately before AddSink so that we always get
@@ -85,9 +89,8 @@ void RemoteAudioSource::Start(
              std::make_unique<AudioDataProxy>(this));
 }
 
-void RemoteAudioSource::Stop(
-    cricket::VoiceMediaReceiveChannelInterface* media_channel,
-    std::optional<uint32_t> ssrc) {
+void RemoteAudioSource::Stop(VoiceMediaReceiveChannelInterface* media_channel,
+                             std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   RTC_DCHECK(media_channel);
   ssrc ? media_channel->SetRawAudioSink(*ssrc, nullptr)
@@ -115,21 +118,20 @@ bool RemoteAudioSource::remote() const {
 void RemoteAudioSource::SetVolume(double volume) {
   RTC_DCHECK_GE(volume, 0);
   RTC_DCHECK_LE(volume, 10);
-  RTC_LOG(LS_INFO) << rtc::StringFormat("RAS::%s({volume=%.2f})", __func__,
-                                        volume);
+  RTC_LOG(LS_INFO) << StringFormat("RAS::%s({volume=%.2f})", __func__, volume);
   for (auto* observer : audio_observers_) {
     observer->OnSetVolume(volume);
   }
 }
 
 void RemoteAudioSource::RegisterAudioObserver(AudioObserver* observer) {
-  RTC_DCHECK(observer != NULL);
+  RTC_DCHECK(observer != nullptr);
   RTC_DCHECK(!absl::c_linear_search(audio_observers_, observer));
   audio_observers_.push_back(observer);
 }
 
 void RemoteAudioSource::UnregisterAudioObserver(AudioObserver* observer) {
-  RTC_DCHECK(observer != NULL);
+  RTC_DCHECK(observer != nullptr);
   audio_observers_.remove(observer);
 }
 
@@ -174,7 +176,7 @@ void RemoteAudioSource::OnAudioChannelGone() {
   // processed (because the task queue was destroyed shortly after this call),
   // but that is fine because the task queue destructor will take care of
   // destroying task which will release the reference on RemoteAudioSource.
-  rtc::scoped_refptr<RemoteAudioSource> thiz(this);
+  scoped_refptr<RemoteAudioSource> thiz(this);
   main_thread_->PostTask([thiz = std::move(thiz)] {
     thiz->sinks_.clear();
     thiz->SetState(MediaSourceInterface::kEnded);

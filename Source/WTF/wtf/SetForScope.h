@@ -42,7 +42,7 @@ namespace WTF {
 
 template<typename T>
 class SetForScope {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SetForScope);
     WTF_MAKE_NONCOPYABLE(SetForScope);
 public:
     SetForScope(T& scopedVariable)

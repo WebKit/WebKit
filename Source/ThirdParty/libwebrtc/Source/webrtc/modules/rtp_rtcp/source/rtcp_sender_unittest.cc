@@ -77,11 +77,13 @@ class TestTransport : public Transport {
  public:
   TestTransport() {}
 
-  bool SendRtp(rtc::ArrayView<const uint8_t> /*data*/,
-               const PacketOptions& options) override {
+  bool SendRtp(ArrayView<const uint8_t> /*data*/,
+               const PacketOptions& /* options */) override {
     return false;
   }
-  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
+  bool SendRtcp(ArrayView<const uint8_t> data,
+                const PacketOptions& options) override {
+    EXPECT_FALSE(options.is_media);
     parser_.Parse(data);
     return true;
   }
@@ -150,7 +152,7 @@ class RtcpSenderTest : public ::testing::Test {
     return rtp_rtcp_impl_.GetFeedbackState();
   }
 
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   SimulatedClock clock_;
   const Environment env_;
   TestTransport test_transport_;
@@ -680,8 +682,8 @@ TEST_F(RtcpSenderTest, SendsTmmbnIfSetAndEmpty) {
 // of a RTCP compound packet.
 TEST_F(RtcpSenderTest, ByeMustBeLast) {
   MockTransport mock_transport;
-  EXPECT_CALL(mock_transport, SendRtcp(_))
-      .WillOnce(Invoke([](rtc::ArrayView<const uint8_t> data) {
+  EXPECT_CALL(mock_transport, SendRtcp(_, _))
+      .WillOnce(Invoke([](ArrayView<const uint8_t> data, ::testing::Unused) {
         const uint8_t* next_packet = data.data();
         const uint8_t* const packet_end = data.data() + data.size();
         rtcp::CommonHeader packet;

@@ -76,7 +76,7 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
 {
     Ref clone = create(document);
     switch (type) {

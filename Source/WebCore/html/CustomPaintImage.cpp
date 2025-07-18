@@ -44,6 +44,7 @@
 #include "MainThreadStylePropertyMapReadOnly.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "StyleExtractor.h"
 #include <JavaScriptCore/ConstructData.h>
 

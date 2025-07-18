@@ -46,7 +46,7 @@ Ref<NfcService> NfcService::create(AuthenticatorTransportServiceObserver& observ
 
 NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
-    , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
+    , m_restartTimer(RunLoop::mainSingleton(), this, &NfcService::platformStartDiscovery)
 {
 }
 
@@ -111,7 +111,7 @@ void NfcService::platformStartDiscovery()
             return;
         }
 
-        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 [session endSession];

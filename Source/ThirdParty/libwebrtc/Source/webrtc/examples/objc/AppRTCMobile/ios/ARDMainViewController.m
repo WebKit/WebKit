@@ -25,7 +25,8 @@
 
 static NSString *const barButtonImageString = @"ic_settings_black_24dp.png";
 
-// Launch argument to be passed to indicate that the app should start loopback immediatly
+// Launch argument to be passed to indicate that the app should start loopback
+// immediatly
 static NSString *const loopbackLaunchProcessArgument = @"loopback";
 
 @interface ARDMainViewController () <ARDMainViewDelegate,
@@ -44,7 +45,8 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  if ([[[NSProcessInfo processInfo] arguments] containsObject:loopbackLaunchProcessArgument]) {
+  if ([[[NSProcessInfo processInfo] arguments]
+          containsObject:loopbackLaunchProcessArgument]) {
     [self mainView:nil didInputRoom:@"" isLoopback:YES];
   }
 }
@@ -60,9 +62,11 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
       [RTC_OBJC_TYPE(RTCAudioSessionConfiguration) webRTCConfiguration];
   webRTCConfig.categoryOptions = webRTCConfig.categoryOptions |
       AVAudioSessionCategoryOptionDefaultToSpeaker;
-  [RTC_OBJC_TYPE(RTCAudioSessionConfiguration) setWebRTCConfiguration:webRTCConfig];
+  [RTC_OBJC_TYPE(RTCAudioSessionConfiguration)
+      setWebRTCConfiguration:webRTCConfig];
 
-  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session =
+      [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session addDelegate:self];
 
   [self configureAudioSession];
@@ -70,23 +74,26 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 }
 
 - (void)addSettingsBarButton {
-  UIBarButtonItem *settingsButton =
-      [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:barButtonImageString]
-                                       style:UIBarButtonItemStylePlain
-                                      target:self
-                                      action:@selector(showSettings:)];
+  UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc]
+      initWithImage:[UIImage imageNamed:barButtonImageString]
+              style:UIBarButtonItemStylePlain
+             target:self
+             action:@selector(showSettings:)];
   self.navigationItem.rightBarButtonItem = settingsButton;
 }
 
 + (NSString *)loopbackRoomString {
   NSString *loopbackRoomString =
-      [[NSUUID UUID].UUIDString stringByReplacingOccurrencesOfString:@"-" withString:@""];
+      [[NSUUID UUID].UUIDString stringByReplacingOccurrencesOfString:@"-"
+                                                          withString:@""];
   return loopbackRoomString;
 }
 
 #pragma mark - ARDMainViewDelegate
 
-- (void)mainView:(ARDMainView *)mainView didInputRoom:(NSString *)room isLoopback:(BOOL)isLoopback {
+- (void)mainView:(ARDMainView *)mainView
+    didInputRoom:(NSString *)room
+      isLoopback:(BOOL)isLoopback {
   if (!room.length) {
     if (isLoopback) {
       // If this is a loopback call, allow a generated room name.
@@ -123,8 +130,10 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 
   ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
 
-  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
-  session.useManualAudio = [settingsModel currentUseManualAudioConfigSettingFromStore];
+  RTC_OBJC_TYPE(RTCAudioSession) *session =
+      [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+  session.useManualAudio =
+      [settingsModel currentUseManualAudioConfigSettingFromStore];
   session.isAudioEnabled = NO;
 
   // Kick off the video call.
@@ -134,7 +143,8 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
                                              delegate:self];
   videoCallViewController.modalTransitionStyle =
       UIModalTransitionStyleCrossDissolve;
-  videoCallViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+  videoCallViewController.modalPresentationStyle =
+      UIModalPresentationFullScreen;
   [self presentViewController:videoCallViewController
                      animated:YES
                    completion:nil];
@@ -154,17 +164,20 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 - (void)viewControllerDidFinish:(ARDVideoCallViewController *)viewController {
   if (![viewController isBeingDismissed]) {
     RTCLog(@"Dismissing VC");
-    [self dismissViewControllerAnimated:YES completion:^{
-      [self restartAudioPlayerIfNeeded];
-    }];
+    [self dismissViewControllerAnimated:YES
+                             completion:^{
+                               [self restartAudioPlayerIfNeeded];
+                             }];
   }
-  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session =
+      [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   session.isAudioEnabled = NO;
 }
 
 #pragma mark - RTC_OBJC_TYPE(RTCAudioSessionDelegate)
 
-- (void)audioSessionDidStartPlayOrRecord:(RTC_OBJC_TYPE(RTCAudioSession) *)session {
+- (void)audioSessionDidStartPlayOrRecord:
+    (RTC_OBJC_TYPE(RTCAudioSession) *)session {
   // Stop playback on main queue and then configure WebRTC.
   [RTC_OBJC_TYPE(RTCDispatcher)
       dispatchAsyncOnType:RTCDispatcherTypeMain
@@ -178,23 +191,26 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
                     }];
 }
 
-- (void)audioSessionDidStopPlayOrRecord:(RTC_OBJC_TYPE(RTCAudioSession) *)session {
+- (void)audioSessionDidStopPlayOrRecord:
+    (RTC_OBJC_TYPE(RTCAudioSession) *)session {
   // WebRTC is done with the audio session. Restart playback.
-  [RTC_OBJC_TYPE(RTCDispatcher) dispatchAsyncOnType:RTCDispatcherTypeMain
-                                              block:^{
-                                                RTCLog(@"audioSessionDidStopPlayOrRecord");
-                                                [self restartAudioPlayerIfNeeded];
-                                              }];
+  [RTC_OBJC_TYPE(RTCDispatcher)
+      dispatchAsyncOnType:RTCDispatcherTypeMain
+                    block:^{
+                      RTCLog(@"audioSessionDidStopPlayOrRecord");
+                      [self restartAudioPlayerIfNeeded];
+                    }];
 }
 
 #pragma mark - Private
 - (void)showSettings:(id)sender {
   ARDSettingsViewController *settingsController =
-      [[ARDSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped
-                                         settingsModel:[[ARDSettingsModel alloc] init]];
+      [[ARDSettingsViewController alloc]
+          initWithStyle:UITableViewStyleGrouped
+          settingsModel:[[ARDSettingsModel alloc] init]];
 
-  UINavigationController *navigationController =
-      [[UINavigationController alloc] initWithRootViewController:settingsController];
+  UINavigationController *navigationController = [[UINavigationController alloc]
+      initWithRootViewController:settingsController];
   [self presentViewControllerAsModal:navigationController];
 }
 
@@ -209,7 +225,8 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
   configuration.categoryOptions = AVAudioSessionCategoryOptionDuckOthers;
   configuration.mode = AVAudioSessionModeDefault;
 
-  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session =
+      [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session lockForConfiguration];
   BOOL hasSucceeded = NO;
   NSError *error = nil;
@@ -227,8 +244,8 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 }
 
 - (void)setupAudioPlayer {
-  NSString *audioFilePath =
-      [[NSBundle mainBundle] pathForResource:@"mozart" ofType:@"mp3"];
+  NSString *audioFilePath = [[NSBundle mainBundle] pathForResource:@"mozart"
+                                                            ofType:@"mp3"];
   NSURL *audioFileURL = [NSURL URLWithString:audioFilePath];
   _audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioFileURL
                                                         error:nil];
@@ -245,16 +262,17 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
   }
 }
 
-- (void)showAlertWithMessage:(NSString*)message {
+- (void)showAlertWithMessage:(NSString *)message {
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:nil
                                           message:message
                                    preferredStyle:UIAlertControllerStyleAlert];
 
-  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:@"OK"
-                                                          style:UIAlertActionStyleDefault
-                                                        handler:^(UIAlertAction *action){
-                                                        }];
+  UIAlertAction *defaultAction =
+      [UIAlertAction actionWithTitle:@"OK"
+                               style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction *action){
+                             }];
 
   [alert addAction:defaultAction];
   [self presentViewController:alert animated:YES completion:nil];

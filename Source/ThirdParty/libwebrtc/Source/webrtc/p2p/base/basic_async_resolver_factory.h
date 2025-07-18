@@ -11,11 +11,11 @@
 #ifndef P2P_BASE_BASIC_ASYNC_RESOLVER_FACTORY_H_
 #define P2P_BASE_BASIC_ASYNC_RESOLVER_FACTORY_H_
 
-#include <functional>
 #include <memory>
-#include <utility>
 
+#include "absl/functional/any_invocable.h"
 #include "api/async_dns_resolver.h"
+#include "rtc_base/socket_address.h"
 
 namespace webrtc {
 
@@ -26,11 +26,11 @@ class BasicAsyncDnsResolverFactory final
   BasicAsyncDnsResolverFactory() = default;
 
   std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(
-      const rtc::SocketAddress& addr,
+      const SocketAddress& addr,
       absl::AnyInvocable<void()> callback) override;
 
   std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(
-      const rtc::SocketAddress& addr,
+      const SocketAddress& addr,
       int family,
       absl::AnyInvocable<void()> callback) override;
 

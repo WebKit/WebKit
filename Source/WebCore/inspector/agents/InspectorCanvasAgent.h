@@ -65,7 +65,7 @@ public:
     ~InspectorCanvasAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
     void discardAgent();
     virtual bool enabled() const;
@@ -127,7 +127,7 @@ protected:
 
     virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
 
-    std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
+    const UniqueRef<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
 
     MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
 
@@ -152,7 +152,7 @@ private:
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
-    RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 

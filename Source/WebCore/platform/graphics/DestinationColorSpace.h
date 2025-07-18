@@ -67,7 +67,7 @@ public:
 
     WEBCORE_EXPORT bool supportsOutput() const;
 
-    bool usesExtendedRange() const;
+    WEBCORE_EXPORT bool usesExtendedRange() const;
     bool usesITUR_2100TF() const;
 
 private:

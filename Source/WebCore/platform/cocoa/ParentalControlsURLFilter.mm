@@ -159,20 +159,20 @@ void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(
     }).get()];
 }
 
-RetainPtr<WCRBrowserEngineClient> ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
+WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
 {
     if (!isEnabled())
         return nullptr;
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
-        m_wcrBrowserEngineClient = adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]);
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
 #endif
 
     if (!m_wcrBrowserEngineClient)
-        m_wcrBrowserEngineClient = adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]);
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
 
-    return m_wcrBrowserEngineClient;
+    return m_wcrBrowserEngineClient.get();
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ public:
     ~InspectorIndexedDBAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // IndexedDBBackendDispatcherHandler
@@ -65,7 +65,7 @@ public:
 
 private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;
 };

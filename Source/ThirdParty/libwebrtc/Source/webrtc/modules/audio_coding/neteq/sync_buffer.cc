@@ -11,7 +11,12 @@
 #include "modules/audio_coding/neteq/sync_buffer.h"
 
 #include <algorithm>  // Access to min.
+#include <cstddef>
+#include <cstdint>
 
+#include "api/audio/audio_frame.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -37,7 +42,7 @@ void SyncBuffer::PushBack(const AudioMultiVector& append_this) {
   dtmf_index_ -= std::min(dtmf_index_, samples_added);
 }
 
-void SyncBuffer::PushBackInterleaved(const rtc::BufferT<int16_t>& append_this) {
+void SyncBuffer::PushBackInterleaved(const BufferT<int16_t>& append_this) {
   const size_t size_before_adding = Size();
   AudioMultiVector::PushBackInterleaved(append_this);
   const size_t samples_added_per_channel = Size() - size_before_adding;
@@ -73,7 +78,7 @@ void SyncBuffer::ReplaceAtIndex(const AudioMultiVector& insert_this,
                                 size_t position) {
   position = std::min(position, Size());  // Cap `position` in the valid range.
   length = std::min(length, Size() - position);
-  AudioMultiVector::OverwriteAt(insert_this, length, position);
+  OverwriteAt(insert_this, length, position);
 }
 
 void SyncBuffer::ReplaceAtIndex(const AudioMultiVector& insert_this,

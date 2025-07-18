@@ -29,7 +29,7 @@ class MovingAverage {
 
   // Computes the average of input and mem_len-1 previous inputs and stores the
   // result in output.
-  void Average(rtc::ArrayView<const float> input, rtc::ArrayView<float> output);
+  void Average(ArrayView<const float> input, ArrayView<float> output);
 
  private:
   const size_t num_elem_;

@@ -12,14 +12,21 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <optional>
+#include <utility>
 
+#include "api/array_view.h"
 #include "api/video/video_codec_constants.h"
-#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 namespace {
@@ -149,7 +156,7 @@ void ParseSsData(BitstreamReader& parser, RTPVideoHeaderVP9* vp9) {
 }  // namespace
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
-VideoRtpDepacketizerVp9::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
+VideoRtpDepacketizerVp9::Parse(CopyOnWriteBuffer rtp_payload) {
   std::optional<ParsedRtpPayload> result(std::in_place);
   int offset = ParseRtpPayload(rtp_payload, &result->video_header);
   if (offset == 0)
@@ -161,7 +168,7 @@ VideoRtpDepacketizerVp9::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
 }
 
 int VideoRtpDepacketizerVp9::ParseRtpPayload(
-    rtc::ArrayView<const uint8_t> rtp_payload,
+    ArrayView<const uint8_t> rtp_payload,
     RTPVideoHeader* video_header) {
   RTC_DCHECK(video_header);
   // Parse mandatory first byte of payload descriptor.

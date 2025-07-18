@@ -2006,13 +2006,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     bool addLeadingSpace = start.deepEquivalent().leadingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isStartOfParagraph(start);
     if (addLeadingSpace) {
-        if (UChar previousCharacter = start.previous().characterAfter())
+        if (char16_t previousCharacter = start.previous().characterAfter())
             addLeadingSpace = !WebCore::isCharacterSmartReplaceExempt(previousCharacter, true);
     }
     
     bool addTrailingSpace = end.deepEquivalent().trailingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isEndOfParagraph(end);
     if (addTrailingSpace) {
-        if (UChar followingCharacter = end.characterAfter())
+        if (char16_t followingCharacter = end.characterAfter())
             addTrailingSpace = !WebCore::isCharacterSmartReplaceExempt(followingCharacter, false);
     }
 

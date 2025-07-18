@@ -463,6 +463,26 @@ TEST(PasteHTML, ReadSelectionFromPasteboard)
     EXPECT_WK_STREQ(inputValue, "Hello world");
 }
 
+TEST(PasteHTML, ReadSelectionFromPasteboardDispatchesPaste)
+{
+    RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    RetainPtr string = adoptNS([[NSAttributedString alloc] initWithString:@"Bold text" attributes:@{
+        NSFontAttributeName: [NSFont boldSystemFontOfSize:12]
+    }]);
+    [pasteboard writeObjects:@[ string.get() ]];
+
+    RetainPtr webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+    [webView readSelectionFromPasteboard:pasteboard.get()];
+
+    RetainPtr textData = [webView stringByEvaluatingJavaScript:@"document.getElementById('textData').textContent"];
+    RetainPtr types = [webView stringByEvaluatingJavaScript:@"document.getElementById('types').textContent"];
+
+    EXPECT_WK_STREQ(textData.get(), [string string]);
+    EXPECT_TRUE([types containsString:@"text/html"]);
+    EXPECT_TRUE([types containsString:@"text/plain"]);
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(DARK_MODE_CSS)

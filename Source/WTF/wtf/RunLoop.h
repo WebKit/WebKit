@@ -87,15 +87,14 @@ public:
 #endif
 
     WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
-    WTF_EXPORT_PRIVATE static RunLoop& main();
-    static Ref<RunLoop> protectedMain() { return main(); }
+    WTF_EXPORT_PRIVATE static RunLoop& mainSingleton();
 #if USE(WEB_THREAD)
-    WTF_EXPORT_PRIVATE static RunLoop& web();
+    WTF_EXPORT_PRIVATE static RunLoop& webSingleton();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
 
-    static bool isMain() { SUPPRESS_UNCOUNTED_ARG return main().isCurrent(); }
+    static bool isMain() { return mainSingleton().isCurrent(); }
     WTF_EXPORT_PRIVATE bool isCurrent() const final;
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 
@@ -179,7 +178,7 @@ public:
     };
 
     class Timer : public TimerBase {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Timer);
     public:
         template <typename TimerFiredClass>
         requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
@@ -225,7 +224,7 @@ public:
     };
 
     class DispatchTimer final : public TimerBase, public ThreadSafeRefCounted<DispatchTimer> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DispatchTimer);
     public:
         DispatchTimer(RunLoop& runLoop)
             : TimerBase(runLoop)
@@ -269,8 +268,8 @@ private:
     Lock m_loopLock;
 #elif USE(COCOA_EVENT_LOOP)
     static void performWork(void*);
-    RetainPtr<CFRunLoopRef> m_runLoop;
-    RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
+    const RetainPtr<CFRunLoopRef> m_runLoop;
+    const RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
 #elif USE(GLIB_EVENT_LOOP)
     void notify(Event, const char*);
 

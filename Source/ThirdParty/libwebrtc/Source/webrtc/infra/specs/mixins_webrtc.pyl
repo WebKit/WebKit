@@ -14,6 +14,13 @@
       },
     },
   },
+  'arm64': {
+    'swarming': {
+      'dimensions': {
+        'cpu': 'arm64'
+      }
+    }
+  },
   'cores-12': {
     'swarming': {
       'dimensions': {
@@ -38,12 +45,11 @@
       '--test-arg=--undefok=test_launcher_summary_output'
     ],
   },
-  'ios-device-16.7': {
+  'ios-device-18': {
     'swarming': {
       'dimensions': {
-        'os': 'iOS-16.7.5',
+        'os': 'iOS-18',
         'pool': 'chrome.tests',
-        #'device_status': 'available'
       }
     }
   },
@@ -57,6 +63,36 @@
       },
     },
   },
+  'ios_runtime_cache_16_4': {
+    'swarming': {
+      'named_caches': [
+        {
+          'name': 'runtime_ios_16_4',
+          'path': 'Runtime-ios-16.4',
+        },
+      ],
+    },
+  },
+  'ios_runtime_cache_17_5': {
+    'swarming': {
+      'named_caches': [
+        {
+          'name': 'runtime_ios_17_5',
+          'path': 'Runtime-ios-17.5',
+        },
+      ],
+    },
+  },
+  'ios_runtime_cache_18_0': {
+    'swarming': {
+      'named_caches': [
+        {
+          'name': 'runtime_ios_18_0',
+          'path': 'Runtime-ios-18.0',
+        },
+      ],
+    },
+  },
   'limited-capacity': {
     # Sometimes there are multiple tests that can be run only on one machine.
     # We need to increase timeouts so the tests dont expire before the machine is freed.
@@ -65,10 +101,33 @@
       'expiration': 10800,
     },
   },
+  'linux-focal': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Ubuntu-20.04'
+      }
+    }
+  },
   'mac-m1-cpu': {
     'swarming': {
       'dimensions': {
         'cpu': 'arm64-64-Apple_M1',
+      }
+    }
+  },
+  'mac_12_arm64': {
+    'swarming': {
+      'dimensions': {
+        'cpu': 'arm64',
+        'os': 'Mac-12'
+      }
+    }
+  },
+  'mac_14_arm64': {
+    'swarming': {
+      'dimensions': {
+        'cpu': 'arm64',
+        'os': 'Mac-14'
       }
     }
   },
@@ -185,6 +244,21 @@
       'io_timeout': 10800,
     },
   },
+  'walleye': {
+    'swarming': {
+      'dimensions': {
+        'device_type': 'walleye',
+        'os': 'Android'
+      }
+    }
+  },
+  'win11': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Windows-11-22000'
+      }
+    }
+  },
   'webrtc-xctest': {
     'args': [
       '--xctest',
@@ -199,4 +273,21 @@
       }]
     }
   },
+  'xcode_16_main': {
+    'args': [
+      '--xcode-build-version',
+      '16a5230g',
+    ],
+    'swarming': {
+      'named_caches': [
+        {
+          'name': 'xcode_ios_16a5230g',
+          'path': 'Xcode.app',
+        },
+      ],
+    },
+  },
+  'xcodebuild_sim_runner': {
+    'args': ['--xcodebuild-sim-runner']
+  }
 }

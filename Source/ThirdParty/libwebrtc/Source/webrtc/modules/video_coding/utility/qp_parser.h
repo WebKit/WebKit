@@ -11,15 +11,19 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_QP_PARSER_H_
 #define MODULES_VIDEO_CODING_UTILITY_QP_PARSER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
 #include "common_video/h264/h264_bitstream_parser.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+
 #ifdef RTC_ENABLE_H265
 #include "common_video/h265/h265_bitstream_parser.h"
 #endif
-#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 class QpParser {

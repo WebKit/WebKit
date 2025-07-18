@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
+#include "ExceptionOr.h"
 #include "GCryptUtilities.h"
 #include <pal/crypto/CryptoDigest.h>
 

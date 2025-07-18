@@ -1609,7 +1609,7 @@ int main(int argc, char* argv[])
 
     RELEASE_ASSERT(!testCAPIViaCpp(filter));
     if (filter)
-        return 0;
+        return failed;
 
     testCompareAndSwap();
     startMultithreadedMultiVMExecutionTest();
@@ -2391,7 +2391,7 @@ int main(int argc, char* argv[])
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");
-        return 1;
+        return failed;
     }
 
     printf("PASS: Program exited normally.\n");

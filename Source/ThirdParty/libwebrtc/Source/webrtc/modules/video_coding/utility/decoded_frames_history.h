@@ -13,11 +13,10 @@
 
 #include <stdint.h>
 
-#include <bitset>
+#include <cstddef>
 #include <optional>
 #include <vector>
 
-#include "api/video/encoded_frame.h"
 
 namespace webrtc {
 namespace video_coding {

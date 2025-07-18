@@ -33,6 +33,7 @@
 #include "CryptoAlgorithmRsaPssParams.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
+#include "ExceptionOr.h"
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {

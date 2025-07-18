@@ -170,7 +170,7 @@ struct in6_ifreq {
 
 #endif  // WEBRTC_IOS
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -279,4 +279,4 @@ IfAddrsConverter* CreateIfAddrsConverter() {
   return new MacIfAddrsConverter();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

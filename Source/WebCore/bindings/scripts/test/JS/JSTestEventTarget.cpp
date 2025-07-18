@@ -381,7 +381,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item, (JSGlobalObjec
 
 JSC::GCClient::IsoSubspace* JSTestEventTarget::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestEventTarget, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestEventTarget, UseCustomHeapCellType::No>(vm, "JSTestEventTarget"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEventTarget.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventTarget = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEventTarget.get(); },

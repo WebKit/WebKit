@@ -10,14 +10,25 @@
 #include "test/time_controller/simulated_time_controller.h"
 
 #include <algorithm>
-#include <deque>
 #include <list>
 #include <memory>
 #include <string>
-#include <thread>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/socket_server.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/synchronization/yield_policy.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/time_utils.h"
+#include "system_wrappers/include/clock.h"
 #include "test/time_controller/simulated_task_queue.h"
 #include "test/time_controller/simulated_thread.h"
 
@@ -37,7 +48,7 @@ bool RemoveByValue(C* vec, typename C::value_type val) {
 namespace sim_time_impl {
 
 SimulatedTimeControllerImpl::SimulatedTimeControllerImpl(Timestamp start_time)
-    : thread_id_(rtc::CurrentThreadId()), current_time_(start_time) {}
+    : thread_id_(CurrentThreadId()), current_time_(start_time) {}
 
 SimulatedTimeControllerImpl::~SimulatedTimeControllerImpl() = default;
 
@@ -53,9 +64,9 @@ SimulatedTimeControllerImpl::CreateTaskQueue(
   return task_queue;
 }
 
-std::unique_ptr<rtc::Thread> SimulatedTimeControllerImpl::CreateThread(
+std::unique_ptr<Thread> SimulatedTimeControllerImpl::CreateThread(
     const std::string& name,
-    std::unique_ptr<rtc::SocketServer> socket_server) {
+    std::unique_ptr<SocketServer> socket_server) {
   auto thread =
       std::make_unique<SimulatedThread>(this, name, std::move(socket_server));
   Register(thread.get());
@@ -63,7 +74,7 @@ std::unique_ptr<rtc::Thread> SimulatedTimeControllerImpl::CreateThread(
 }
 
 void SimulatedTimeControllerImpl::YieldExecution() {
-  if (rtc::CurrentThreadId() == thread_id_) {
+  if (CurrentThreadId() == thread_id_) {
     TaskQueueBase* yielding_from = TaskQueueBase::Current();
     // Since we might continue execution on a process thread, we should reset
     // the thread local task queue reference. This ensures that thread checkers
@@ -86,7 +97,7 @@ void SimulatedTimeControllerImpl::RunReadyRunners() {
   // by Thread::Current().
   SimulatedThread::CurrentThreadSetter set_current(dummy_thread_.get());
   MutexLock lock(&lock_);
-  RTC_DCHECK_EQ(rtc::CurrentThreadId(), thread_id_);
+  RTC_DCHECK_EQ(CurrentThreadId(), thread_id_);
   Timestamp current_time = CurrentTime();
   // Clearing `ready_runners_` in case this is a recursive call:
   // RunReadyRunners -> Run -> Event::Wait -> Yield ->RunReadyRunners
@@ -182,21 +193,21 @@ TaskQueueFactory* GlobalSimulatedTimeController::GetTaskQueueFactory() {
   return &impl_;
 }
 
-std::unique_ptr<rtc::Thread> GlobalSimulatedTimeController::CreateThread(
+std::unique_ptr<Thread> GlobalSimulatedTimeController::CreateThread(
     const std::string& name,
-    std::unique_ptr<rtc::SocketServer> socket_server) {
+    std::unique_ptr<SocketServer> socket_server) {
   return impl_.CreateThread(name, std::move(socket_server));
 }
 
-rtc::Thread* GlobalSimulatedTimeController::GetMainThread() {
+Thread* GlobalSimulatedTimeController::GetMainThread() {
   return main_thread_.get();
 }
 
 void GlobalSimulatedTimeController::AdvanceTime(TimeDelta duration) {
-  rtc::ScopedYieldPolicy yield_policy(&impl_);
+  ScopedYieldPolicy yield_policy(&impl_);
   Timestamp current_time = impl_.CurrentTime();
   Timestamp target_time = current_time + duration;
-  RTC_DCHECK_EQ(current_time.us(), rtc::TimeMicros());
+  RTC_DCHECK_EQ(current_time.us(), TimeMicros());
   while (current_time < target_time) {
     impl_.RunReadyRunners();
     Timestamp next_time = std::min(impl_.NextRunTime(), target_time);
@@ -212,7 +223,7 @@ void GlobalSimulatedTimeController::AdvanceTime(TimeDelta duration) {
 }
 
 void GlobalSimulatedTimeController::SkipForwardBy(TimeDelta duration) {
-  rtc::ScopedYieldPolicy yield_policy(&impl_);
+  ScopedYieldPolicy yield_policy(&impl_);
   Timestamp current_time = impl_.CurrentTime();
   Timestamp target_time = current_time + duration;
   impl_.AdvanceTime(target_time);

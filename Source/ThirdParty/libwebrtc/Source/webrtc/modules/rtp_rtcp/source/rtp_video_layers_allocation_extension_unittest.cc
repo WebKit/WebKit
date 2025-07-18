@@ -10,17 +10,19 @@
 
 #include "modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.h"
 
+#include <cstdint>
+
+#include "api/units/data_rate.h"
 #include "api/video/video_layers_allocation.h"
-#include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 TEST(RtpVideoLayersAllocationExtension, WriteEmptyLayersAllocationReturnsTrue) {
   VideoLayersAllocation written_allocation;
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -34,7 +36,7 @@ TEST(RtpVideoLayersAllocationExtension,
   written_allocation.resolution_and_frame_rate_is_valid = true;
   written_allocation.rtp_stream_index = 0;
 
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -69,7 +71,7 @@ TEST(RtpVideoLayersAllocationExtension,
           /*frame_rate_fps*/ 0,
       },
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -103,7 +105,7 @@ TEST(RtpVideoLayersAllocationExtension,
        /*height*/ 0,
        /*frame_rate_fps*/ 0},
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -131,7 +133,7 @@ TEST(RtpVideoLayersAllocationExtension,
        /*height*/ 0,
        /*frame_rate_fps*/ 0},
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -159,7 +161,7 @@ TEST(RtpVideoLayersAllocationExtension,
        /*height*/ 0,
        /*frame_rate_fps*/ 0},
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -192,7 +194,7 @@ TEST(RtpVideoLayersAllocationExtension,
           /*frame_rate_fps*/ 0,
       },
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -228,7 +230,7 @@ TEST(RtpVideoLayersAllocationExtension,
       },
   };
 
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -242,7 +244,7 @@ TEST(RtpVideoLayersAllocationExtension,
      WriteEmptyAllocationCanHaveAnyRtpStreamIndex) {
   VideoLayersAllocation written_allocation;
   written_allocation.rtp_stream_index = 1;
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   EXPECT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
@@ -270,7 +272,7 @@ TEST(RtpVideoLayersAllocationExtension, DiscardsInvalidHeight) {
           /*frame_rate_fps*/ 8,
       },
   };
-  rtc::Buffer buffer(
+  Buffer buffer(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   ASSERT_TRUE(
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));

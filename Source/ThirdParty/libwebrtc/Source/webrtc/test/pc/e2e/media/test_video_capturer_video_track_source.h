@@ -86,7 +86,7 @@ class TestVideoCapturerVideoTrackSource : public test::TestVideoTrackSource {
   }
 
  protected:
-  rtc::VideoSourceInterface<VideoFrame>* source() override {
+  VideoSourceInterface<VideoFrame>* source() override {
     return video_capturer_.get();
   }
 

@@ -14,7 +14,6 @@
 #include <atomic>
 
 #include "absl/base/attributes.h"
-#include "absl/base/const_init.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread_annotations.h"
 

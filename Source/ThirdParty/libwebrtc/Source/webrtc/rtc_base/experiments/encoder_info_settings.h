@@ -51,7 +51,7 @@ class EncoderInfoSettings {
                                                  int frame_size_pixels);
 
   static std::vector<VideoEncoder::ResolutionBitrateLimits>
-  GetDefaultSinglecastBitrateLimitsWhenQpIsUntrusted();
+  GetDefaultSinglecastBitrateLimitsWhenQpIsUntrusted(VideoCodecType codec_type);
 
   static std::optional<VideoEncoder::ResolutionBitrateLimits>
   GetSinglecastBitrateLimitForResolutionWhenQpIsUntrusted(

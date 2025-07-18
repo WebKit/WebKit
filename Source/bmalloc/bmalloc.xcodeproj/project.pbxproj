@@ -140,6 +140,7 @@
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 5CDA07D92E0D894900E6D3DD /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
 		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
 		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1372,6 +1373,7 @@
 		4426E27E1C838EE0008EB042 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = bmalloc/Logging.cpp; sourceTree = "<group>"; };
 		4426E27F1C838EE0008EB042 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = bmalloc/Logging.h; sourceTree = "<group>"; };
 		52F47248210BA2F500B730BB /* MemoryStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatusSPI.h; path = bmalloc/darwin/MemoryStatusSPI.h; sourceTree = "<group>"; };
+		5CDA07D92E0D894900E6D3DD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		65072AE52B6195B90065065C /* TZoneHeapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeapManager.cpp; path = bmalloc/TZoneHeapManager.cpp; sourceTree = "<group>"; };
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
 		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
@@ -2121,6 +2123,7 @@
 				14B650C718F39F4800751968 /* DebugRelease.xcconfig */,
 				DD4BEC2229CBA39B00398E35 /* libpas.xcconfig */,
 				14B650C918F3A04200751968 /* mbmalloc.xcconfig */,
+				5CDA07D92E0D894900E6D3DD /* module.modulemap */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -2323,6 +2326,7 @@
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
 				52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */,
+				5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */,
 				143CB81D19022BC900B16A45 /* Mutex.h in Headers */,
 				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
@@ -2768,10 +2772,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14F271BF18EA3963008C152F /* Build configuration list for PBXNativeTarget "bmalloc" */;
 			buildPhases = (
-				14F271BA18EA3963008C152F /* Sources */,
-				14F271BB18EA3963008C152F /* Frameworks */,
 				14F271BC18EA3963008C152F /* Headers */,
 				DDA35E4829CA6FEB006C1018 /* Generate TAPI filelist */,
+				14F271BA18EA3963008C152F /* Sources */,
+				14F271BB18EA3963008C152F /* Frameworks */,
 			);
 			buildRules = (
 			);

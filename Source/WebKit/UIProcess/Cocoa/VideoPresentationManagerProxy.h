@@ -294,9 +294,6 @@ private:
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
     Markable<PlaybackSessionContextIdentifier> m_lastInteractedWithVideo;
-#if ENABLE(MACH_PORT_LAYER_HOSTING)
-    HashMap<PlaybackSessionContextIdentifier, RetainPtr<BELayerHierarchyHandle>> m_layerHandles;
-#endif
 };
 
 } // namespace WebKit

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGValueProperty.h"
 

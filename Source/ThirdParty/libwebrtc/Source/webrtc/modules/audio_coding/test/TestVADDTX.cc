@@ -10,17 +10,33 @@
 
 #include "modules/audio_coding/test/TestVADDTX.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <map>
+#include <memory>
+#include <optional>
 #include <string>
+#include <utility>
 
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
+#include "common_audio/vad/include/vad.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
@@ -205,10 +221,10 @@ void TestWebRtcVadDtx::Test(bool new_outfile, bool expect_dtx_enabled) {
   if (new_outfile) {
     output_file_num_++;
   }
-  rtc::StringBuilder out_filename;
-  out_filename << webrtc::test::OutputPath() << "testWebRtcVadDtx_outFile_"
+  StringBuilder out_filename;
+  out_filename << test::OutputPath() << "testWebRtcVadDtx_outFile_"
                << output_file_num_ << ".pcm";
-  Run(webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
+  Run(test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
       out_filename.str(), !new_outfile, expects);
 }
 
@@ -218,13 +234,13 @@ void TestOpusDtx::Perform() {
 
   // Register Opus as send codec
   std::string out_filename =
-      webrtc::test::OutputPath() + "testOpusDtx_outFile_mono.pcm";
+      test::OutputPath() + "testOpusDtx_outFile_mono.pcm";
   RegisterCodec({"opus", 48000, 2}, std::nullopt);
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     (*encoder_ptr)->SetDtx(false);
   });
 
-  Run(webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
+  Run(test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
       out_filename, false, expects);
 
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
@@ -232,7 +248,7 @@ void TestOpusDtx::Perform() {
   });
   expects[static_cast<int>(AudioFrameType::kEmptyFrame)] = 1;
   expects[static_cast<int>(AudioFrameType::kAudioFrameCN)] = 1;
-  Run(webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
+  Run(test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
       out_filename, true, expects);
 }
 

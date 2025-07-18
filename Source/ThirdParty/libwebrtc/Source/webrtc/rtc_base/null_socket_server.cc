@@ -15,12 +15,12 @@
 #include "rtc_base/event.h"
 #include "rtc_base/socket_server.h"
 
-namespace rtc {
+namespace webrtc {
 
 NullSocketServer::NullSocketServer() = default;
 NullSocketServer::~NullSocketServer() {}
 
-bool NullSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
+bool NullSocketServer::Wait(TimeDelta max_wait_duration,
                             bool /* process_io */) {
   // Wait with the given timeout. Do not log a warning if we end up waiting for
   // a long time; that just means no one has any work for us, which is perfectly
@@ -33,9 +33,9 @@ void NullSocketServer::WakeUp() {
   event_.Set();
 }
 
-rtc::Socket* NullSocketServer::CreateSocket(int /* family */, int /* type */) {
+Socket* NullSocketServer::CreateSocket(int /* family */, int /* type */) {
   RTC_DCHECK_NOTREACHED();
   return nullptr;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

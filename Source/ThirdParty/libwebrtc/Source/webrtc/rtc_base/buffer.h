@@ -25,7 +25,7 @@
 #include "rtc_base/type_traits.h"
 #include "rtc_base/zero_memory.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace internal {
 
@@ -323,7 +323,7 @@ class BufferT {
     const size_t old_size = size_;
     SetSize(old_size + max_elements);
     U* base_ptr = data<U>() + old_size;
-    size_t written_elements = setter(rtc::ArrayView<U>(base_ptr, max_elements));
+    size_t written_elements = setter(ArrayView<U>(base_ptr, max_elements));
 
     RTC_CHECK_LE(written_elements, max_elements);
     size_ = old_size + written_elements;
@@ -447,6 +447,18 @@ using Buffer = BufferT<uint8_t>;
 template <typename T>
 using ZeroOnFreeBuffer = BufferT<T, true>;
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+template <typename T, bool ZeroOnFree = false>
+using BufferT = ::webrtc::BufferT<T, ZeroOnFree>;
+using ::webrtc::Buffer;
+template <typename T>
+using ZeroOnFreeBuffer = ::webrtc::ZeroOnFreeBuffer<T>;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_BUFFER_H_

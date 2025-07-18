@@ -26,30 +26,30 @@ namespace webrtc {
 // Plain I410 (yuv 444 planar 10 bits) buffer in standard memory.
 class RTC_EXPORT I410Buffer : public I410BufferInterface {
  public:
-  static rtc::scoped_refptr<I410Buffer> Create(int width, int height);
-  static rtc::scoped_refptr<I410Buffer> Create(int width,
-                                               int height,
-                                               int stride_y,
-                                               int stride_u,
-                                               int stride_v);
+  static scoped_refptr<I410Buffer> Create(int width, int height);
+  static scoped_refptr<I410Buffer> Create(int width,
+                                          int height,
+                                          int stride_y,
+                                          int stride_u,
+                                          int stride_v);
 
   // Create a new buffer and copy the pixel data.
-  static rtc::scoped_refptr<I410Buffer> Copy(const I410BufferInterface& buffer);
+  static scoped_refptr<I410Buffer> Copy(const I410BufferInterface& buffer);
 
-  static rtc::scoped_refptr<I410Buffer> Copy(int width,
-                                             int height,
-                                             const uint16_t* data_y,
-                                             int stride_y,
-                                             const uint16_t* data_u,
-                                             int stride_u,
-                                             const uint16_t* data_v,
-                                             int stride_v);
+  static scoped_refptr<I410Buffer> Copy(int width,
+                                        int height,
+                                        const uint16_t* data_y,
+                                        int stride_y,
+                                        const uint16_t* data_u,
+                                        int stride_u,
+                                        const uint16_t* data_v,
+                                        int stride_v);
 
   // Returns a rotated copy of |src|.
-  static rtc::scoped_refptr<I410Buffer> Rotate(const I410BufferInterface& src,
-                                               VideoRotation rotation);
+  static scoped_refptr<I410Buffer> Rotate(const I410BufferInterface& src,
+                                          VideoRotation rotation);
 
-  rtc::scoped_refptr<I420BufferInterface> ToI420() final;
+  scoped_refptr<I420BufferInterface> ToI420() final;
   const I420BufferInterface* GetI420() const final { return nullptr; }
 
   // Sets all three planes to all zeros. Used to work around for

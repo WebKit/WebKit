@@ -333,6 +333,14 @@ void SettingsBase::setNeedsRelayoutAllFrames()
     }
 }
 
+void SettingsBase::updateDisplayEDRHeadroom()
+{
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_page)
+        m_page->updateDisplayEDRHeadroom();
+#endif
+}
+
 void SettingsBase::mediaTypeOverrideChanged()
 {
     RefPtr page = m_page.get();

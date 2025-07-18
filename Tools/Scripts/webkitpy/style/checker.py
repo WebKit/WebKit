@@ -56,6 +56,8 @@ from webkitpy.style.checkers.jstest import JSTestChecker
 from webkitpy.style.checkers.messagesin import MessagesInChecker
 from webkitpy.style.checkers.png import PNGChecker
 from webkitpy.style.checkers.python import PythonChecker, Python3Checker
+from webkitpy.style.checkers.spi_allowlist import SPIAllowlistChecker
+from webkitpy.style.checkers.swift import SwiftChecker
 from webkitpy.style.checkers.test_expectations import TestExpectationsChecker
 from webkitpy.style.checkers.text import TextChecker
 from webkitpy.style.checkers.watchlist import WatchListChecker
@@ -305,6 +307,8 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitWebSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitAudioSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitAudioSinkGStreamer.h'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'eme', 'WebKitThunderParser.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'eme', 'WebKitThunderParser.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'mse', 'WebKitMediaSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'audio', 'gstreamer', 'WebKitWebAudioSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'gstreamer', 'VideoEncoderPrivateGStreamer.cpp'),
@@ -447,6 +451,8 @@ _JS_FILE_EXTENSION = 'js'
 _JSON_FILE_EXTENSION = 'json'
 
 _PYTHON_FILE_EXTENSION = 'py'
+
+_SWIFT_FILE_EXTENSION = 'swift'
 
 _TEXT_FILE_EXTENSIONS = [
     'ac',
@@ -666,9 +672,22 @@ def _create_log_handlers(stream):
       stream: See the configure_logging() docstring.
 
     """
-    # Handles logging.WARNING and above.
+    logging.addLevelName(41, "STYLE")
+
+    # Handles logging.STYLE.
+    style_handler = logging.StreamHandler(stream)
+    style_handler.setLevel(logging.getLevelName("STYLE"))
+    formatter = logging.Formatter("%(message)s")
+    style_handler.setFormatter(formatter)
+
+    error_filter = logging.Filter()
+    # The filter method accepts a logging.LogRecord instance.
+    error_filter.filter = lambda record: record.levelno < logging.getLevelName("STYLE")
+
+    # Handles logging.ERROR and logging.WARNING.
     error_handler = logging.StreamHandler(stream)
     error_handler.setLevel(logging.WARNING)
+    error_handler.addFilter(error_filter)
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     error_handler.setFormatter(formatter)
 
@@ -683,7 +702,7 @@ def _create_log_handlers(stream):
     formatter = logging.Formatter("%(message)s")
     non_error_handler.setFormatter(formatter)
 
-    return [error_handler, non_error_handler]
+    return [style_handler, error_handler, non_error_handler]
 
 
 def _create_debug_log_handlers(stream):
@@ -763,6 +782,16 @@ class FileType:
     FEATUREDEFINES = 12
     BASE_XCCONFIG = 13
     XCSCHEME = 14
+    SWIFT = 15
+    SPI_ALLOWLIST = 16
+
+
+class ANSIColor:
+
+    RESET = "\x1b[0m"
+    WHITE = "\x1b[1m"
+    RED = "\x1b[31;1m"
+    YELLOW = "\x1b[33;1m"
 
 
 class CheckerDispatcher(object):
@@ -843,6 +872,8 @@ class CheckerDispatcher(object):
             return FileType.JSON
         elif file_extension == _PYTHON_FILE_EXTENSION:
             return FileType.PYTHON
+        elif file_extension == _SWIFT_FILE_EXTENSION:
+            return FileType.SWIFT
         elif file_extension in _XML_FILE_EXTENSIONS:
             return FileType.XML
         elif os.path.basename(file_path).startswith('ChangeLog'):
@@ -866,6 +897,8 @@ class CheckerDispatcher(object):
             return FileType.BASE_XCCONFIG
         elif os.path.basename(file_path) == "General.xcconfig":  # gtest is different.
             return FileType.BASE_XCCONFIG
+        elif os.path.basename(file_path).startswith('AllowedSPI') and file_extension == 'toml':
+            return FileType.SPI_ALLOWLIST
         else:
             return FileType.NONE
 
@@ -916,6 +949,8 @@ class CheckerDispatcher(object):
                 checker = apple_additions().python_checker(file_path, handle_style_error)
             else:
                 checker = PythonChecker(file_path, handle_style_error)
+        elif file_type == FileType.SWIFT:
+            checker = SwiftChecker(file_path, handle_style_error)
         elif file_type == FileType.XML:
             checker = XMLChecker(file_path, handle_style_error)
         elif file_type == FileType.XCSCHEME:
@@ -943,6 +978,8 @@ class CheckerDispatcher(object):
             checker = FeatureDefinesChecker(file_path, handle_style_error)
         elif file_type == FileType.BASE_XCCONFIG:
             checker = BaseXcconfigChecker(file_path, handle_style_error)
+        elif file_type == FileType.SPI_ALLOWLIST:
+            checker = SPIAllowlistChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."
@@ -1041,15 +1078,14 @@ class StyleProcessorConfiguration(object):
                           message):
         """Write a style error to the configured stderr."""
         if self._output_format == 'vs7':
-            format_string = "%s(%s):  %s  [%s] [%d]"
+            format_string = "%s(%s): error: [%s]  %s"
         else:
-            format_string = "%s:%s:  %s  [%s] [%d]"
+            format_string = f"{ANSIColor.WHITE}%s:%s:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[%s]{ANSIColor.RESET} {ANSIColor.WHITE}%s{ANSIColor.RESET}"
 
-        _log.error(format_string % (file_path,
-                                           line_number,
-                                           message,
-                                           category,
-                                           confidence_in_error))
+        _log.log(41, format_string % (file_path,
+                                      line_number,
+                                      category,
+                                      message))
 
 
 class ProcessorBase(object):

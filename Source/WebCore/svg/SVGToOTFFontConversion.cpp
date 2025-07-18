@@ -1007,11 +1007,11 @@ void SVGToOTFFontConverter::appendVMTXTable()
 
 static String codepointToString(char32_t codepoint)
 {
-    std::array<UChar, 2> buffer;
+    std::array<char16_t, 2> buffer;
     uint8_t length = 0;
     UBool error = false;
     U16_APPEND(buffer, length, 2, codepoint, error);
-    return error ? String() : String(std::span<UChar> { buffer }.first(length));
+    return error ? String() : String(std::span<char16_t> { buffer }.first(length));
 }
 
 Vector<Glyph, 1> SVGToOTFFontConverter::glyphsForCodepoint(char32_t codepoint) const

@@ -10,10 +10,9 @@
 
 #include "common_video/h265/h265_vps_parser.h"
 
-#include "common_video/h265/h265_common.h"
-#include "rtc_base/arraysize.h"
-#include "rtc_base/bit_buffer.h"
-#include "rtc_base/buffer.h"
+#include <cstdint>
+#include <optional>
+
 #include "test/gtest.h"
 
 namespace webrtc {

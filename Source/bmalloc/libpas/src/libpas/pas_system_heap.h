@@ -32,6 +32,12 @@
 #include "pas_log.h"
 #include "pas_utils.h"
 
+#if PAS_BMALLOC
+// FIXME: Find a way to declare bmalloc's symbol visibility without having to
+// import a bmalloc header.
+#include "BExport.h"
+#endif
+
 PAS_BEGIN_EXTERN_C;
 
 /* Bmalloc has a SystemHeap singleton that can be used to divert bmalloc calls to system malloc.
@@ -39,9 +45,6 @@ PAS_BEGIN_EXTERN_C;
 
 #if PAS_BMALLOC
 
-// FIXME: Find a way to declare bmalloc's symbol visibility without having to
-// import a bmalloc header.
-#include "BExport.h"
 
 /* The implementations are provided by bmalloc. */
 BEXPORT extern bool pas_system_heap_is_enabled(pas_heap_config_kind);

@@ -20,8 +20,8 @@
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/sleep.h"
 
 namespace webrtc {
 
@@ -67,12 +67,12 @@ std::string DxgiDuplicatorController::ResultName(
 }
 
 // static
-rtc::scoped_refptr<DxgiDuplicatorController>
+webrtc::scoped_refptr<DxgiDuplicatorController>
 DxgiDuplicatorController::Instance() {
   // The static instance won't be deleted to ensure it can be used by other
   // threads even during program exiting.
   static DxgiDuplicatorController* instance = new DxgiDuplicatorController();
-  return rtc::scoped_refptr<DxgiDuplicatorController>(instance);
+  return webrtc::scoped_refptr<DxgiDuplicatorController>(instance);
 }
 
 // static
@@ -194,6 +194,7 @@ DxgiDuplicatorController::Result DxgiDuplicatorController::DoDuplicate(
   }
 
   frame->frame()->mutable_updated_region()->Clear();
+  frame->frame()->set_device_scale_factor(GetDeviceScaleFactor(monitor_id));
 
   if (DoDuplicateUnlocked(frame->context(), monitor_id, frame->frame())) {
     succeeded_duplications_++;
@@ -331,7 +332,7 @@ bool DxgiDuplicatorController::DoDuplicateUnlocked(Context* context,
                                                    SharedDesktopFrame* target) {
   Setup(context);
 
-  if (!EnsureFrameCaptured(context, target)) {
+  if (!EnsureFrameCaptured(context, monitor_id, target)) {
     return false;
   }
 
@@ -381,17 +382,41 @@ bool DxgiDuplicatorController::DoDuplicateOne(Context* context,
   return false;
 }
 
-int64_t DxgiDuplicatorController::GetNumFramesCaptured() const {
+int64_t DxgiDuplicatorController::GetNumFramesCaptured(int monitor_id) const {
   int64_t min = INT64_MAX;
-  for (const auto& duplicator : duplicators_) {
-    min = std::min(min, duplicator.GetNumFramesCaptured());
+  if (monitor_id < 0) {
+    for (const auto& duplicator : duplicators_) {
+      min = std::min(min, duplicator.GetNumFramesCaptured(monitor_id));
+    }
+    return min;
   }
-
+  for (const auto& duplicator : duplicators_) {
+    if (monitor_id >= duplicator.screen_count()) {
+      monitor_id -= duplicator.screen_count();
+    } else {
+      return duplicator.GetNumFramesCaptured(monitor_id);
+    }
+  }
   return min;
 }
 
 DesktopSize DxgiDuplicatorController::desktop_size() const {
   return desktop_rect_.size();
+}
+
+std::optional<float> DxgiDuplicatorController::GetDeviceScaleFactor(
+    int monitor_id) const {
+  if (monitor_id < 0) {
+    return std::nullopt;
+  }
+  for (const auto& duplicator : duplicators_) {
+    if (monitor_id >= duplicator.screen_count()) {
+      monitor_id -= duplicator.screen_count();
+    } else {
+      return duplicator.GetDeviceScaleFactor(monitor_id);
+    }
+  }
+  return std::nullopt;
 }
 
 DesktopRect DxgiDuplicatorController::ScreenRect(int id) const {
@@ -434,6 +459,7 @@ DesktopSize DxgiDuplicatorController::SelectedDesktopSize(
 }
 
 bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
+                                                   int monitor_id,
                                                    SharedDesktopFrame* target) {
   // On a modern system, the FPS / monitor refresh rate is usually larger than
   // or equal to 60. So 17 milliseconds is enough to capture at least one frame.
@@ -448,7 +474,7 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
   // called. 500 milliseconds should be enough for ~30 frames.
   const int64_t timeout_ms = 500;
 
-  if (GetNumFramesCaptured() == 0 && !IsConsoleSession()) {
+  if (GetNumFramesCaptured(monitor_id) == 0 && !IsConsoleSession()) {
     // When capturing a console session, waiting for a single frame is
     // sufficient to ensure that DXGI output duplication is working. When the
     // session is not attached to the console, it has been observed that DXGI
@@ -460,35 +486,42 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
     frames_to_skip = 5;
   }
 
-  if (GetNumFramesCaptured() >= frames_to_skip) {
+  if (GetNumFramesCaptured(monitor_id) >= frames_to_skip) {
     return true;
   }
 
   std::unique_ptr<SharedDesktopFrame> fallback_frame;
   SharedDesktopFrame* shared_frame = nullptr;
-  if (target->size().width() >= desktop_size().width() &&
-      target->size().height() >= desktop_size().height()) {
-    // `target` is large enough to cover entire screen, we do not need to use
-    // `fallback_frame`.
+  DesktopSize selected_size = SelectedDesktopSize(monitor_id);
+  if (target->size().width() >= selected_size.width() &&
+      target->size().height() >= selected_size.height()) {
+    // `target` is large enough to cover the currently captured screen,
+    // we do not need to use `fallback_frame`.
     shared_frame = target;
   } else {
     fallback_frame = SharedDesktopFrame::Wrap(
-        std::unique_ptr<DesktopFrame>(new BasicDesktopFrame(desktop_size())));
+        std::unique_ptr<DesktopFrame>(new BasicDesktopFrame(selected_size)));
     shared_frame = fallback_frame.get();
   }
 
-  const int64_t start_ms = rtc::TimeMillis();
-  while (GetNumFramesCaptured() < frames_to_skip) {
-    if (!DoDuplicateAll(context, shared_frame)) {
-      return false;
+  const int64_t start_ms = webrtc::TimeMillis();
+  while (GetNumFramesCaptured(monitor_id) < frames_to_skip) {
+    if (monitor_id < 0) {
+      if (!DoDuplicateAll(context, shared_frame)) {
+        return false;
+      }
+    } else {
+      if (!DoDuplicateOne(context, monitor_id, shared_frame)) {
+        return false;
+      }
     }
 
     // Calling DoDuplicateAll() may change the number of frames captured.
-    if (GetNumFramesCaptured() >= frames_to_skip) {
+    if (GetNumFramesCaptured(monitor_id) >= frames_to_skip) {
       break;
     }
 
-    if (rtc::TimeMillis() - start_ms > timeout_ms) {
+    if (webrtc::TimeMillis() - start_ms > timeout_ms) {
       RTC_LOG(LS_ERROR) << "Failed to capture " << frames_to_skip
                         << " frames "
                            "within "
@@ -498,7 +531,7 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
 
     // Sleep `ms_per_frame` before attempting to capture the next frame to
     // ensure the video adapter has time to update the screen.
-    webrtc::SleepMs(ms_per_frame);
+    Thread::SleepMs(ms_per_frame);
   }
   // When capturing multiple monitors, we need to update the captured region to
   // prevent flickering by re-setting context. See

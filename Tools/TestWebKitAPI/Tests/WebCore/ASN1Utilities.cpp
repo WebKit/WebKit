@@ -32,7 +32,7 @@
 namespace ASN1 {
 
 struct Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Object);
     virtual size_t encodedLengthBytes() const = 0;
     virtual void serializeTo(Vector<uint8_t>&) const = 0;
     virtual ~Object() = default;
@@ -56,7 +56,7 @@ protected:
 };
 
 struct ObjectIdentifier : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ObjectIdentifier);
     enum class Type : uint8_t {
         RsaEncryption,
         Rsapss,
@@ -91,7 +91,7 @@ private:
 };
 
 struct Sequence : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Sequence);
     template<typename... Types>
     static UniqueRef<Sequence> create(Types... types)
     {
@@ -123,7 +123,7 @@ private:
 };
 
 struct Null : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Null);
 private:
     size_t encodedLengthBytes() const final { return 2; }
     void serializeTo(Vector<uint8_t>& vector) const final
@@ -134,7 +134,7 @@ private:
 };
 
 struct IndexWrapper : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(IndexWrapper);
     IndexWrapper(uint8_t index, UniqueRef<Object>&& wrapped)
         : index(index), wrapped(WTFMove(wrapped)) { }
 private:
@@ -166,7 +166,7 @@ private:
 };
 
 struct Integer : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Integer);
     Integer(uint8_t value)
         : value(value) { }
 private:
@@ -184,7 +184,7 @@ private:
 };
 
 struct BitString : Object {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BitString);
     BitString(Vector<uint8_t>&& bytes)
         : bytes(WTFMove(bytes)) { }
 private:

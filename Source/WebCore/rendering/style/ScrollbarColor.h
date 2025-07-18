@@ -33,21 +33,26 @@ struct ScrollbarColor {
     Style::Color thumbColor;
     Style::Color trackColor;
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const ScrollbarColor& value)
-        {
-            return Style::Color::MarkableTraits::isEmptyValue(value.thumbColor);
-        }
-
-        static ScrollbarColor emptyValue()
-        {
-            return { Style::Color::MarkableTraits::emptyValue(), Style::Color::MarkableTraits::emptyValue() };
-        }
-    };
-
     bool operator==(const ScrollbarColor&) const = default;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollbarColor&);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::ScrollbarColor> {
+    static bool isEmptyValue(const WebCore::ScrollbarColor& value)
+    {
+        return MarkableTraits<WebCore::Style::Color>::isEmptyValue(value.thumbColor);
+    }
+
+    static WebCore::ScrollbarColor emptyValue()
+    {
+        return { MarkableTraits<WebCore::Style::Color>::emptyValue(), MarkableTraits<WebCore::Style::Color>::emptyValue() };
+    }
+};
+
+}

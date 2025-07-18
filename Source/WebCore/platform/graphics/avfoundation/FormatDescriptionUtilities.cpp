@@ -216,9 +216,6 @@ std::optional<SpatialVideoMetadata> spatialVideoMetadataFromFormatDescription(CM
     if (PAL::CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
         return { };
 
-    if (!PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_StereoCameraBaseline() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_HorizontalDisparityAdjustment())
-        return { };
-
     auto horizontalFieldOfView = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView));
     if (!horizontalFieldOfView)
         return { };

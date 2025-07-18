@@ -10,7 +10,12 @@
 
 #include "call/adaptation/video_stream_input_state_provider.h"
 
+#include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/video_stream_adapter.h"
+#include "call/adaptation/video_stream_input_state.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "video/video_stream_encoder_observer.h"
 
 namespace webrtc {
 

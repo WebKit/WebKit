@@ -39,7 +39,7 @@ class Color;
 class IntRect;
 
 class ColorChooserClient : public AbstractRefCountedAndCanMakeWeakPtr<ColorChooserClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ColorChooserClient);
 public:
     virtual ~ColorChooserClient() = default;
 

@@ -70,7 +70,7 @@ private:
     };
     template<typename CharacterType> bool parseGeneric(StringParsingBuffer<CharacterType>&, ListReplacement = ListReplacement::Append);
     bool parse(StringParsingBuffer<LChar>&);
-    bool parse(StringParsingBuffer<UChar>&);
+    bool parse(StringParsingBuffer<char16_t>&);
 };
 
 } // namespace WebCore

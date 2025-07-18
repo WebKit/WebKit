@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace rtc {
+namespace webrtc {
 namespace test {
 // Launches an iOS app that serves as a host for a test suite.
 // This is necessary as iOS doesn't like processes without a gui
@@ -33,6 +33,6 @@ void InitTestSuite(int (*test_suite)(void),
 bool ShouldRunIOSUnittestsWithXCTest();
 
 }  // namespace test
-}  // namespace rtc
+}  // namespace webrtc
 
 #endif  // TEST_IOS_TEST_SUPPORT_H_

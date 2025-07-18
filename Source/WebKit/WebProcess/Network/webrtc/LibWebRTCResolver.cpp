@@ -56,7 +56,7 @@ LibWebRTCResolver::~LibWebRTCResolver()
     });
 }
 
-void LibWebRTCResolver::start(const rtc::SocketAddress& address, Function<void()>&& callback)
+void LibWebRTCResolver::start(const webrtc::SocketAddress& address, Function<void()>&& callback)
 {
     ASSERT(!m_callback);
 
@@ -83,7 +83,7 @@ const webrtc::AsyncDnsResolverResult& LibWebRTCResolver::result() const
     return *this;
 }
 
-bool LibWebRTCResolver::GetResolvedAddress(int family, rtc::SocketAddress* address) const
+bool LibWebRTCResolver::GetResolvedAddress(int family, webrtc::SocketAddress* address) const
 {
     ASSERT(address);
     if (m_error || !m_addresses.size())
@@ -100,7 +100,7 @@ bool LibWebRTCResolver::GetResolvedAddress(int family, rtc::SocketAddress* addre
     return false;
 }
 
-void LibWebRTCResolver::setResolvedAddress(Vector<rtc::IPAddress>&& addresses)
+void LibWebRTCResolver::setResolvedAddress(Vector<webrtc::IPAddress>&& addresses)
 {
     m_addresses = WTFMove(addresses);
     m_callback();

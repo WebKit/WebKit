@@ -364,8 +364,7 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
 
 void VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)
 {
-    Ref session = AudioSession::sharedSession();
-    completionHandler(session->routeSharingPolicy(), session->routingContextUID());
+    completionHandler(AudioSession::singleton().routeSharingPolicy(), AudioSession::singleton().routingContextUID());
 }
 
 void VideoPresentationModelVideoElement::addClient(VideoPresentationModelClient& client)

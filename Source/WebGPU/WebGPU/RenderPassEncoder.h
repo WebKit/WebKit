@@ -214,7 +214,8 @@ private:
     bool m_passEnded { false };
     bool m_ignoreBufferCache { false };
     Vector<bool> m_bindGroupDynamicOffsetsChanged;
-} SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder);
+// FIXME: remove @safe once rdar://151039766 lands
+} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder);
 
 } // namespace WebGPU
 

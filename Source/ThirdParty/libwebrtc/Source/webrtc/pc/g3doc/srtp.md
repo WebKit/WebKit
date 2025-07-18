@@ -23,16 +23,17 @@ The implementation supports the following cipher suites:
 *   SRTP_AEAD_AES_128_GCM
 *   SRTP_AEAD_AES_256_GCM
 
-The SRTP_AES128_CM_HMAC_SHA1_32 cipher suite is accepted for audio-only
-connections if offered by the other side. It is not actively supported, see
-[SelectCrypto][2] for details.
+The SRTP_AES128_CM_HMAC_SHA1_32 cipher suite is not enabled by default and
+off in Chromium. When enabled, it is accepted for audio-only connections if
+offered by the other side. It is not actively supported, see [SelectCrypto][2]
+for details.
 
 The cipher suite ordering allows a non-WebRTC peer to prefer GCM cipher suites,
 however they are not selected as default by two instances of the WebRTC library.
 
-## cricket::SrtpSession
+## webrtc::SrtpSession
 
-The [`cricket::SrtpSession`][3] is providing encryption and decryption of SRTP
+The [`webrtc::SrtpSession`][3] is providing encryption and decryption of SRTP
 packets using [`libsrtp`](https://github.com/cisco/libsrtp). Keys will be
 provided by `SrtpTransport` or `DtlsSrtpTransport` in the [`SetSend`][4] and
 [`SetRecv`][5] methods.
@@ -54,10 +55,6 @@ extracts the keying material when the DTLS handshake is done and configures it
 in its base class. It will also become writable only once the DTLS handshake is
 done.
 
-## cricket::SrtpFilter
-
-The [`cricket::SrtpFilter`][12] class is used to negotiate SDES.
-
 [1]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/peer_connection_interface.h;l=1413;drc=f467b445631189557d44de86a77ca6a0c3e2108d
 [2]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/media_session.cc;l=297;drc=3ac73bd0aa5322abee98f1ff8705af64a184bf61
 [3]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/srtp_session.h;l=33;drc=be66d95ab7f9428028806bbf66cb83800bda9241
@@ -69,4 +66,3 @@ The [`cricket::SrtpFilter`][12] class is used to negotiate SDES.
 [9]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/srtp_session.h;l=73;drc=be66d95ab7f9428028806bbf66cb83800bda9241
 [10]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/srtp_transport.h;l=37;drc=a4d873786f10eedd72de25ad0d94ad7c53c1f68a
 [11]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/dtls_srtp_transport.h;l=31;drc=2f8e0536eb97ce2131e7a74e3ca06077aa0b64b3
-[12]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/srtp_filter.h;drc=d15a575ec3528c252419149d35977e55269d8a41

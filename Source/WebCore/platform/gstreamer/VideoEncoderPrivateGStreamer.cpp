@@ -28,6 +28,7 @@
 #include "GUniquePtrGStreamer.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include <gst/video/gstvideoencoder.h>
 #include <wtf/StdMap.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
@@ -133,7 +134,8 @@ enum EncoderId {
     Vp8,
     Vp9,
     Av1,
-    VaapiAv1
+    VaapiAv1,
+    SvtAv1
 };
 
 class Encoders {
@@ -359,6 +361,10 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     }
 
     encoderDefinition->setupEncoder(self);
+
+    ASSERT(GST_IS_VIDEO_ENCODER(priv->encoder.get()));
+    gst_video_encoder_set_qos_enabled(GST_VIDEO_ENCODER_CAST(priv->encoder.get()), TRUE);
+
     encoderDefinition->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
     encoderDefinition->setLatencyMode(priv->encoder.get(), priv->latencyMode);
 
@@ -909,6 +915,20 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 
     Encoders::registerEncoder(VaapiAv1, "vaav1enc"_s, "av1parse"_s, "video/x-av1"_s, nullptr,
         [](auto) { }, "bitrate"_s, setBitrateKbitPerSec, "key-int-max"_s, setVaBitrateMode, setVaLatencyMode);
+
+    Encoders::registerEncoder(SvtAv1, "svtav1enc"_s, "av1parse"_s, "video/x-av1"_s, nullptr, [](auto self) {
+        g_object_set(self->priv->encoder.get(), "logical-processors", NUMBER_OF_THREADS, nullptr);
+    }, "target-bitrate"_s, setBitrateKbitPerSec, "intra-period-length"_s, [](GstElement*, BitrateMode) {
+    }, [](GstElement* encoder, LatencyMode mode) {
+        switch (mode) {
+        case REALTIME_LATENCY_MODE:
+            g_object_set(encoder, "preset", 10, nullptr);
+            break;
+        case QUALITY_LATENCY_MODE:
+            g_object_set(encoder, "preset", 0, nullptr);
+            break;
+        }
+    });
 
     if (webkitGstCheckVersion(1, 22, 0)) {
         Encoders::registerEncoder(Av1, "av1enc"_s, "av1parse"_s, "video/x-av1"_s, nullptr,

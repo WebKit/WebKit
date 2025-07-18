@@ -30,8 +30,10 @@ rtc_library("received_packet") {
   ]
   deps = [
     ":ecn_marking",
+    "..:checks",
     "..:socket_address",
     "../../api:array_view",
+    "../../api/transport:ecn_marking",
     "../../api/units:timestamp",
     "../system:rtc_export",
   ]

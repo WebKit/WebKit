@@ -210,6 +210,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     GPUProcess/media/ios/RemoteMediaSessionHelperProxy
 
+    GPUProcess/webrtc/UserMediaCaptureManagerProxy
+
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager
 
     Shared/API/Cocoa/RemoteObjectRegistry
@@ -219,7 +221,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
 
     UIProcess/Cocoa/PlaybackSessionManagerProxy
-    UIProcess/Cocoa/UserMediaCaptureManagerProxy
     UIProcess/Cocoa/VideoFullscreenManagerProxy
 
     UIProcess/Inspector/WebInspectorUIExtensionControllerProxy

@@ -11,7 +11,15 @@
 #include "modules/congestion_controller/remb_throttler.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <utility>
+#include <vector>
+
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

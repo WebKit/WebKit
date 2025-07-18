@@ -5,8 +5,6 @@ list(APPEND PAL_SOURCES
     system/Sound.cpp
 
     text/KillRing.cpp
-
-    unix/LoggingUnix.cpp
 )
 
 list(APPEND PAL_LIBRARIES OpenSSL::Crypto)

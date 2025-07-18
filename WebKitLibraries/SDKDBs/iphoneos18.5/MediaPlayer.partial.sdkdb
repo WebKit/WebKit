@@ -1,0 +1,3234 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "AVPlayerItem",
+     "name": "MPAdditions",
+     "properties": [
+      {"access": "public", "getter": "nowPlayingInfo", "introduced": "16", "name": "nowPlayingInfo", "setter": "setNowPlayingInfo:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.2", "name": "persistentIDPropertyForGroupingType:"},
+      {"access": "public", "introduced": "4.2", "name": "titlePropertyForGroupingType:"}
+     ],
+     "interface": "MPMediaItem",
+     "name": "MPMediaQueryAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMovieLogging",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessLog", "introduced": "4.3", "name": "accessLog"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorLog", "introduced": "4.3", "name": "errorLog"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerDeprecated",
+     "properties": [
+      {"access": "public", "getter": "useApplicationAudioSession", "introduced": "6", "name": "useApplicationAudioSession", "setter": "setUseApplicationAudioSession:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "thumbnailImageAtTime:timeOption:"},
+      {"access": "public", "introduced": "3.2", "name": "requestThumbnailImagesAtTimes:timeOption:"},
+      {"access": "public", "introduced": "3.2", "name": "cancelAllThumbnailImageRequests"}
+     ],
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerThumbnailGeneration"
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerTimedMetadataAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timedMetadata", "introduced": "4", "name": "timedMetadata"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "presentMoviePlayerViewControllerAnimated:"},
+      {"access": "public", "introduced": "3.2", "name": "dismissMoviePlayerViewControllerAnimated"}
+     ],
+     "interface": "UIViewController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeNowPlayingInfoLanguageOption"}
+     ],
+     "interface": "AVMediaSelectionOption",
+     "name": "MPNowPlayingInfoLanguageOptionAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeNowPlayingInfoLanguageOptionGroup"}
+     ],
+     "interface": "AVMediaSelectionGroup",
+     "name": "MPNowPlayingInfoLanguageOptionAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "NSUserActivity",
+     "name": "MediaPlayerAdditions",
+     "properties": [
+      {"access": "public", "getter": "externalMediaContentIdentifier", "introduced": "10.1", "name": "externalMediaContentIdentifier", "setter": "setExternalMediaContentIdentifier:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPChangeLanguageOptionSettingNone"},
+      {"access": "public", "name": "MPChangeLanguageOptionSettingNowPlayingItemOnly"},
+      {"access": "public", "name": "MPChangeLanguageOptionSettingPermanent"}
+     ],
+     "introduced": "9.3",
+     "name": "MPChangeLanguageOptionSetting"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPErrorUnknown"},
+      {"access": "public", "name": "MPErrorPermissionDenied"},
+      {"access": "public", "name": "MPErrorCloudServiceCapabilityMissing"},
+      {"access": "public", "name": "MPErrorNetworkConnectionFailed"},
+      {"access": "public", "name": "MPErrorNotFound"},
+      {"access": "public", "name": "MPErrorNotSupported"},
+      {"access": "public", "introduced": "10.1", "name": "MPErrorCancelled"},
+      {"access": "public", "introduced": "10.3", "name": "MPErrorRequestTimedOut"}
+     ],
+     "introduced": "9.3",
+     "name": "MPErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaGroupingTitle"},
+      {"access": "public", "name": "MPMediaGroupingAlbum"},
+      {"access": "public", "name": "MPMediaGroupingArtist"},
+      {"access": "public", "name": "MPMediaGroupingAlbumArtist"},
+      {"access": "public", "name": "MPMediaGroupingComposer"},
+      {"access": "public", "name": "MPMediaGroupingGenre"},
+      {"access": "public", "name": "MPMediaGroupingPlaylist"},
+      {"access": "public", "name": "MPMediaGroupingPodcastTitle"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaGrouping"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusDenied"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusRestricted"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "9.3",
+     "name": "MPMediaLibraryAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaPlaylistAttributeNone"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeOnTheGo"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeSmart"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeGenius"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPlaylistAttribute"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaPredicateComparisonEqualTo"},
+      {"access": "public", "name": "MPMediaPredicateComparisonContains"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPredicateComparison"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaTypeMusic"},
+      {"access": "public", "name": "MPMediaTypePodcast"},
+      {"access": "public", "name": "MPMediaTypeAudioBook"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeAudioITunesU"},
+      {"access": "public", "name": "MPMediaTypeAnyAudio"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeMovie"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeTVShow"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeVideoPodcast"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeMusicVideo"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeVideoITunesU"},
+      {"access": "public", "introduced": "7", "name": "MPMediaTypeHomeVideo"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeAnyVideo"},
+      {"access": "public", "name": "MPMediaTypeAny"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleEmbedded"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleFullscreen"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleDefault"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieControlStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonPlaybackEnded"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonPlaybackError"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonUserExited"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieFinishReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStateUnknown"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStatePlayable"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStatePlaythroughOK"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStateStalled"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieLoadState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskVideo"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskAudio"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieMediaTypeMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateStopped"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStatePlaying"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStatePaused"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateInterrupted"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateSeekingForward"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateSeekingBackward"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMoviePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatModeNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatModeOne"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeAspectFit"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeAspectFill"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeFill"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieScalingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeUnknown"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeFile"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeStreaming"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieSourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOptionNearestKeyFrame"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOptionExact"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieTimeOption"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicPlaybackStateStopped"},
+      {"access": "public", "name": "MPMusicPlaybackStatePlaying"},
+      {"access": "public", "name": "MPMusicPlaybackStatePaused"},
+      {"access": "public", "name": "MPMusicPlaybackStateInterrupted"},
+      {"access": "public", "name": "MPMusicPlaybackStateSeekingForward"},
+      {"access": "public", "name": "MPMusicPlaybackStateSeekingBackward"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicPlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicRepeatModeDefault"},
+      {"access": "public", "name": "MPMusicRepeatModeNone"},
+      {"access": "public", "name": "MPMusicRepeatModeOne"},
+      {"access": "public", "name": "MPMusicRepeatModeAll"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicShuffleModeDefault"},
+      {"access": "public", "name": "MPMusicShuffleModeOff"},
+      {"access": "public", "name": "MPMusicShuffleModeSongs"},
+      {"access": "public", "name": "MPMusicShuffleModeAlbums"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicShuffleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingInfoLanguageOptionTypeAudible"},
+      {"access": "public", "name": "MPNowPlayingInfoLanguageOptionTypeLegible"}
+     ],
+     "introduced": "9",
+     "name": "MPNowPlayingInfoLanguageOptionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeNone"},
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeAudio"},
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeVideo"}
+     ],
+     "introduced": "10",
+     "name": "MPNowPlayingInfoMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingPlaybackStateUnknown"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStatePlaying"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStatePaused"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStateStopped"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStateInterrupted"}
+     ],
+     "introduced": "11",
+     "name": "MPNowPlayingPlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusSuccess"},
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusNoSuchContent"},
+      {"access": "public", "introduced": "9.1", "name": "MPRemoteCommandHandlerStatusNoActionableNowPlayingItem"},
+      {"access": "public", "introduced": "11", "name": "MPRemoteCommandHandlerStatusDeviceNotFound"},
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusCommandFailed"}
+     ],
+     "introduced": "7.1",
+     "name": "MPRemoteCommandHandlerStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPRepeatTypeOff"},
+      {"access": "public", "name": "MPRepeatTypeOne"},
+      {"access": "public", "name": "MPRepeatTypeAll"}
+     ],
+     "introduced": "3",
+     "name": "MPRepeatType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPSeekCommandEventTypeBeginSeeking"},
+      {"access": "public", "name": "MPSeekCommandEventTypeEndSeeking"}
+     ],
+     "introduced": "7.1",
+     "name": "MPSeekCommandEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPShuffleTypeOff"},
+      {"access": "public", "name": "MPShuffleTypeItems"},
+      {"access": "public", "name": "MPShuffleTypeCollections"}
+     ],
+     "introduced": "3",
+     "name": "MPShuffleType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicContainsOnlyForcedSubtitles"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDescribesMusicAndSound"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDescribesVideo"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDubbedTranslation"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicEasyToRead"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicIsAuxiliaryContent"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicIsMainProgramContent"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicLanguageTranslation"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicTranscribesSpokenDialog"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicVoiceOverTranslation"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaEntityPropertyPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumArtist"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumArtistPersistentID"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTitle"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTrackCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTrackNumber"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtist"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtistPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtwork"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAssetURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyBeatsPerMinute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyBookmarkTime"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComments"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComposer"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComposerPersistentID"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDateAdded"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDiscCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDiscNumber"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyGenre"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyGenrePersistentID"},
+    {"access": "public", "introduced": "9.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyHasProtectedAsset"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsCloudItem"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsCompilation"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsExplicit"},
+    {"access": "public", "introduced": "14.5", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsPreorder"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyLastPlayedDate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyLyrics"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyMediaType"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlayCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlaybackDuration"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlaybackStoreID"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPodcastPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPodcastTitle"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyRating"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyReleaseDate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertySkipCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyTitle"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyUserGrouping"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaLibraryDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaybackIsPreparedToPlayDidChangeNotification"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyAuthorDisplayName"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyCloudGlobalID"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyDescriptionText"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyName"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyPersistentID"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyPlaylistAttributes"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertySeedItems"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieDurationAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieMediaTypesAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieNaturalSizeAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerDidEnterFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerDidExitFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerFullscreenAnimationCurveUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerFullscreenAnimationDurationUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerLoadStateDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerNowPlayingMovieDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackDidFinishNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackStateDidChangeNotification"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerReadyForDisplayDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerScalingModeDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailErrorKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailImageKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailImageRequestDidFinishNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailTimeKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyDataType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyInfo"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyLanguageCode"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyMIMEType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataUpdatedNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerWillEnterFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerWillExitFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieSourceTypeAvailableNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerNowPlayingItemDidChangeNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerPlaybackStateDidChangeNotification"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerQueueDidChangeNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerVolumeDidChangeNotification"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoCollectionIdentifier"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAdTimeRanges"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAssetURL"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAvailableLanguageOptions"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyChapterCount"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyChapterNumber"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCreditsStartTime"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCurrentLanguageOptions"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCurrentPlaybackDate"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyDefaultPlaybackRate"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyElapsedPlaybackTime"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExcludeFromSuggestions"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExternalContentIdentifier"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExternalUserProfileIdentifier"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyInternationalStandardRecordingCode"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyIsLiveStream"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyMediaType"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackProgress"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackQueueCount"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackQueueIndex"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackRate"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyServiceIdentifier"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertHide"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertIsVisible"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertShow"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPVolumeViewWirelessRouteActiveDidChangeNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPVolumeViewWirelessRoutesAvailableDidChangeNotification"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "MPAdTimeRange",
+     "properties": [
+      {"access": "public", "getter": "timeRange", "name": "timeRange", "setter": "setTimeRange:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPChangeLanguageOptionCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOption", "name": "languageOption"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "setting", "name": "setting"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPChangePlaybackPositionCommand",
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangePlaybackPositionCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "positionTime", "name": "positionTime"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPChangePlaybackRateCommand",
+     "properties": [
+      {"access": "public", "getter": "supportedPlaybackRates", "name": "supportedPlaybackRates", "setter": "setSupportedPlaybackRates:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPChangePlaybackRateCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackRate", "name": "playbackRate"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeRepeatModeCommand",
+     "properties": [
+      {"access": "public", "getter": "currentRepeatType", "name": "currentRepeatType", "setter": "setCurrentRepeatType:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeRepeatModeCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "repeatType", "name": "repeatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preservesRepeatMode", "name": "preservesRepeatMode"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeShuffleModeCommand",
+     "properties": [
+      {"access": "public", "getter": "currentShuffleType", "name": "currentShuffleType", "setter": "setCurrentShuffleType:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeShuffleModeCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shuffleType", "name": "shuffleType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preservesShuffleMode", "name": "preservesShuffleMode"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPContentItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "artwork", "name": "artwork", "setter": "setArtwork:"},
+      {"access": "public", "getter": "playbackProgress", "name": "playbackProgress", "setter": "setPlaybackProgress:"},
+      {"access": "public", "getter": "isStreamingContent", "introduced": "10", "name": "streamingContent", "setter": "setStreamingContent:"},
+      {"access": "public", "getter": "isExplicitContent", "introduced": "10", "name": "explicitContent", "setter": "setExplicitContent:"},
+      {"access": "public", "getter": "isContainer", "name": "container", "setter": "setContainer:"},
+      {"access": "public", "getter": "isPlayable", "name": "playable", "setter": "setPlayable:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPFeedbackCommand",
+     "properties": [
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "localizedTitle", "name": "localizedTitle", "setter": "setLocalizedTitle:"},
+      {"access": "public", "getter": "localizedShortTitle", "introduced": "8", "name": "localizedShortTitle", "setter": "setLocalizedShortTitle:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPFeedbackCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isNegative", "name": "negative"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "canFilterByProperty:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "enumerateValuesForProperties:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "valueForProperty:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "MPMediaEntity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "7", "name": "persistentID"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MPMediaQueryAdditions"
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "5", "name": "persistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "7", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "introduced": "7", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTitle", "introduced": "7", "name": "albumTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumPersistentID", "introduced": "8", "name": "albumPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artist", "introduced": "7", "name": "artist"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artistPersistentID", "introduced": "8", "name": "artistPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtist", "introduced": "7", "name": "albumArtist"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtistPersistentID", "introduced": "8", "name": "albumArtistPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "genre", "introduced": "7", "name": "genre"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "genrePersistentID", "introduced": "8", "name": "genrePersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "composer", "introduced": "7", "name": "composer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "composerPersistentID", "introduced": "8", "name": "composerPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackDuration", "introduced": "7", "name": "playbackDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTrackNumber", "introduced": "7", "name": "albumTrackNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTrackCount", "introduced": "8", "name": "albumTrackCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discNumber", "introduced": "7", "name": "discNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discCount", "introduced": "8", "name": "discCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artwork", "introduced": "7", "name": "artwork"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isExplicitItem", "introduced": "10", "name": "explicitItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lyrics", "introduced": "8", "name": "lyrics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCompilation", "introduced": "8", "name": "compilation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "releaseDate", "introduced": "7", "name": "releaseDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beatsPerMinute", "introduced": "8", "name": "beatsPerMinute"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "comments", "introduced": "8", "name": "comments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetURL", "introduced": "8", "name": "assetURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCloudItem", "introduced": "8", "name": "cloudItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasProtectedAsset", "introduced": "9.2", "name": "protectedAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "podcastTitle", "introduced": "7", "name": "podcastTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "podcastPersistentID", "introduced": "8", "name": "podcastPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playCount", "introduced": "7", "name": "playCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipCount", "introduced": "7", "name": "skipCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rating", "introduced": "7", "name": "rating"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastPlayedDate", "introduced": "7", "name": "lastPlayedDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userGrouping", "introduced": "8", "name": "userGrouping"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bookmarkTime", "introduced": "7", "name": "bookmarkTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dateAdded", "introduced": "10", "name": "dateAdded"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStoreID", "introduced": "10.3", "name": "playbackStoreID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPreorder", "introduced": "10.3", "name": "preorder"}
+     ],
+     "super": "MPMediaEntity"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "10", "name": "initWithBoundsSize:requestHandler:"},
+      {"access": "public", "name": "imageWithSize:"},
+      {"access": "public", "introduced": "5", "name": "initWithImage:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItemArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounds", "name": "bounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageCropRect", "introduced": "3", "name": "imageCropRect"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "collectionWithItems:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithItems:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItemCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "representativeItem", "name": "representativeItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaTypes", "name": "mediaTypes"}
+     ],
+     "super": "MPMediaEntity"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultMediaLibrary"},
+      {"access": "public", "introduced": "9.3", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "9.3", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginGeneratingLibraryChangeNotifications"},
+      {"access": "public", "name": "endGeneratingLibraryChangeNotifications"},
+      {"access": "public", "introduced": "9.3", "name": "addItemWithProductID:completionHandler:"},
+      {"access": "public", "introduced": "9.3", "name": "getPlaylistWithUUID:creationMetadata:completionHandler:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaLibrary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedDate", "name": "lastModifiedDate"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMediaTypes:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPickerController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaTypes", "name": "mediaTypes"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "allowsPickingMultipleItems", "name": "allowsPickingMultipleItems", "setter": "setAllowsPickingMultipleItems:"},
+      {"access": "public", "getter": "showsCloudItems", "introduced": "6", "name": "showsCloudItems", "setter": "setShowsCloudItems:"},
+      {"access": "public", "getter": "showsItemsWithProtectedAssets", "introduced": "9.2", "name": "showsItemsWithProtectedAssets", "setter": "setShowsItemsWithProtectedAssets:"},
+      {"access": "public", "getter": "prompt", "name": "prompt", "setter": "setPrompt:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.3", "name": "addItemWithProductID:completionHandler:"},
+      {"access": "public", "introduced": "9.3", "name": "addMediaItems:completionHandler:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPlaylist",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "7", "name": "persistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cloudGlobalID", "introduced": "14", "name": "cloudGlobalID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "introduced": "7", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playlistAttributes", "introduced": "7", "name": "playlistAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seedItems", "introduced": "8", "name": "seedItems"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptionText", "introduced": "9.3", "name": "descriptionText"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorDisplayName", "introduced": "9.3", "name": "authorDisplayName"}
+     ],
+     "super": "MPMediaItemCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithName:"}
+     ],
+     "introduced": "9.3",
+     "linkage": "exported",
+     "name": "MPMediaPlaylistCreationMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "getter": "authorDisplayName", "name": "authorDisplayName", "setter": "setAuthorDisplayName:"},
+      {"access": "public", "getter": "descriptionText", "name": "descriptionText", "setter": "setDescriptionText:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPredicate",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "predicateWithValue:forProperty:"},
+      {"access": "public", "name": "predicateWithValue:forProperty:comparisonType:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPropertyPredicate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "property", "name": "property"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "comparisonType", "name": "comparisonType"}
+     ],
+     "super": "MPMediaPredicate"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "albumsQuery"},
+      {"access": "public", "name": "artistsQuery"},
+      {"access": "public", "name": "songsQuery"},
+      {"access": "public", "name": "playlistsQuery"},
+      {"access": "public", "name": "podcastsQuery"},
+      {"access": "public", "name": "audiobooksQuery"},
+      {"access": "public", "name": "compilationsQuery"},
+      {"access": "public", "name": "composersQuery"},
+      {"access": "public", "name": "genresQuery"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFilterPredicates:"},
+      {"access": "public", "name": "addFilterPredicate:"},
+      {"access": "public", "name": "removeFilterPredicate:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaQuery",
+     "properties": [
+      {"access": "public", "getter": "filterPredicates", "name": "filterPredicates", "setter": "setFilterPredicates:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collections", "name": "collections"},
+      {"access": "public", "getter": "groupingType", "name": "groupingType", "setter": "setGroupingType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "itemSections", "introduced": "4.2", "name": "itemSections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionSections", "introduced": "4.2", "name": "collectionSections"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "MPMediaQuerySection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "range", "name": "range"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieAccessLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogData", "introduced": "3.2", "name": "extendedLogData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogDataStringEncoding", "introduced": "3.2", "name": "extendedLogDataStringEncoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "events", "introduced": "3.2", "name": "events"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieAccessLogEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfSegmentsDownloaded", "introduced": "3.2", "name": "numberOfSegmentsDownloaded"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStartDate", "introduced": "3.2", "name": "playbackStartDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URI", "introduced": "3.2", "name": "URI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serverAddress", "introduced": "3.2", "name": "serverAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfServerAddressChanges", "introduced": "3.2", "name": "numberOfServerAddressChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackSessionID", "introduced": "3.2", "name": "playbackSessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStartOffset", "introduced": "3.2", "name": "playbackStartOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segmentsDownloadedDuration", "introduced": "3.2", "name": "segmentsDownloadedDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "durationWatched", "introduced": "3.2", "name": "durationWatched"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfStalls", "introduced": "3.2", "name": "numberOfStalls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfBytesTransferred", "introduced": "3.2", "name": "numberOfBytesTransferred"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "observedBitrate", "introduced": "3.2", "name": "observedBitrate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indicatedBitrate", "introduced": "3.2", "name": "indicatedBitrate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfDroppedVideoFrames", "introduced": "3.2", "name": "numberOfDroppedVideoFrames"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieErrorLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogData", "introduced": "3.2", "name": "extendedLogData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogDataStringEncoding", "introduced": "3.2", "name": "extendedLogDataStringEncoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "events", "introduced": "3.2", "name": "events"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieErrorLogEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "introduced": "3.2", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URI", "introduced": "3.2", "name": "URI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serverAddress", "introduced": "3.2", "name": "serverAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackSessionID", "introduced": "3.2", "name": "playbackSessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorStatusCode", "introduced": "3.2", "name": "errorStatusCode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorDomain", "introduced": "3.2", "name": "errorDomain"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorComment", "introduced": "3.2", "name": "errorComment"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MPMoviePlayerThumbnailGeneration",
+      "MPMoviePlayerTimedMetadataAdditions",
+      "MPMovieLogging",
+      "MPMoviePlayerDeprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "initWithContentURL:"},
+      {"access": "public", "introduced": "3.2", "name": "setFullscreen:animated:"}
+     ],
+     "introduced": "3.2",
+     "linkage": "exported",
+     "name": "MPMoviePlayerController",
+     "properties": [
+      {"access": "public", "getter": "contentURL", "introduced": "3.2", "name": "contentURL", "setter": "setContentURL:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "view", "introduced": "3.2", "name": "view"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backgroundView", "introduced": "3.2", "name": "backgroundView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackState", "introduced": "3.2", "name": "playbackState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "loadState", "introduced": "3.2", "name": "loadState"},
+      {"access": "public", "getter": "controlStyle", "introduced": "3.2", "name": "controlStyle", "setter": "setControlStyle:"},
+      {"access": "public", "getter": "repeatMode", "introduced": "3.2", "name": "repeatMode", "setter": "setRepeatMode:"},
+      {"access": "public", "getter": "shouldAutoplay", "introduced": "3.2", "name": "shouldAutoplay", "setter": "setShouldAutoplay:"},
+      {"access": "public", "getter": "isFullscreen", "introduced": "3.2", "name": "fullscreen", "setter": "setFullscreen:"},
+      {"access": "public", "getter": "scalingMode", "introduced": "3.2", "name": "scalingMode", "setter": "setScalingMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "readyForDisplay", "introduced": "6", "name": "readyForDisplay"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "movieMediaTypes", "introduced": "3.2", "name": "movieMediaTypes"},
+      {"access": "public", "getter": "movieSourceType", "introduced": "3.2", "name": "movieSourceType", "setter": "setMovieSourceType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "3.2", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playableDuration", "introduced": "3.2", "name": "playableDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "naturalSize", "introduced": "3.2", "name": "naturalSize"},
+      {"access": "public", "getter": "initialPlaybackTime", "introduced": "3.2", "name": "initialPlaybackTime", "setter": "setInitialPlaybackTime:"},
+      {"access": "public", "getter": "endPlaybackTime", "introduced": "3.2", "name": "endPlaybackTime", "setter": "setEndPlaybackTime:"},
+      {"access": "public", "getter": "allowsAirPlay", "introduced": "3.2", "name": "allowsAirPlay", "setter": "setAllowsAirPlay:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAirPlayVideoActive", "introduced": "3.2", "name": "airPlayVideoActive"}
+     ],
+     "protocols": [
+      "MPMediaPlayback"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "initWithContentURL:"}
+     ],
+     "introduced": "3.2",
+     "linkage": "exported",
+     "name": "MPMoviePlayerViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "moviePlayer", "introduced": "3.2", "name": "moviePlayer"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "performQueueTransaction:completionHandler:"}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerApplicationController",
+     "super": "MPMusicPlayerController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "setQueueWithQuery:"},
+      {"access": "public", "name": "setQueueWithItemCollection:"},
+      {"access": "public", "introduced": "9.3", "name": "setQueueWithStoreIDs:"},
+      {"access": "public", "introduced": "10.1", "name": "setQueueWithDescriptor:"},
+      {"access": "public", "introduced": "10.3", "name": "prependQueueDescriptor:"},
+      {"access": "public", "introduced": "10.3", "name": "appendQueueDescriptor:"},
+      {"access": "public", "introduced": "10.1", "name": "prepareToPlayWithCompletionHandler:"},
+      {"access": "public", "name": "skipToNextItem"},
+      {"access": "public", "name": "skipToBeginning"},
+      {"access": "public", "name": "skipToPreviousItem"},
+      {"access": "public", "name": "beginGeneratingPlaybackNotifications"},
+      {"access": "public", "name": "endGeneratingPlaybackNotifications"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "applicationMusicPlayer", "name": "applicationMusicPlayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "applicationQueuePlayer", "introduced": "10.3", "name": "applicationQueuePlayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemMusicPlayer", "name": "systemMusicPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackState", "name": "playbackState"},
+      {"access": "public", "getter": "repeatMode", "name": "repeatMode", "setter": "setRepeatMode:"},
+      {"access": "public", "getter": "shuffleMode", "name": "shuffleMode", "setter": "setShuffleMode:"},
+      {"access": "public", "getter": "volume", "introduced": "3", "name": "volume", "setter": "setVolume:"},
+      {"access": "public", "getter": "nowPlayingItem", "name": "nowPlayingItem", "setter": "setNowPlayingItem:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexOfNowPlayingItem", "introduced": "5", "name": "indexOfNowPlayingItem"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "iPodMusicPlayer", "introduced": "3", "name": "iPodMusicPlayer"}
+     ],
+     "protocols": [
+      "MPMediaPlayback"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "insertQueueDescriptor:afterItem:"},
+      {"access": "public", "name": "removeItem:"}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerControllerMutableQueue",
+     "super": "MPMusicPlayerControllerQueue"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerControllerQueue",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithQuery:"},
+      {"access": "public", "name": "initWithItemCollection:"},
+      {"access": "public", "name": "setStartTime:forItem:"},
+      {"access": "public", "name": "setEndTime:forItem:"}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerMediaItemQueueDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "query", "name": "query"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "itemCollection", "name": "itemCollection"},
+      {"access": "public", "getter": "startItem", "name": "startItem", "setter": "setStartItem:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDictionary:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MPMusicPlayerPlayParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionary", "name": "dictionary"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPlayParametersQueue:"},
+      {"access": "public", "name": "setStartTime:forItemWithPlayParameters:"},
+      {"access": "public", "name": "setEndTime:forItemWithPlayParameters:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MPMusicPlayerPlayParametersQueueDescriptor",
+     "properties": [
+      {"access": "public", "getter": "playParametersQueue", "name": "playParametersQueue", "setter": "setPlayParametersQueue:"},
+      {"access": "public", "getter": "startItemPlayParameters", "name": "startItemPlayParameters", "setter": "setStartItemPlayParameters:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerQueueDescriptor",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithStoreIDs:"},
+      {"access": "public", "name": "setStartTime:forItemWithStoreID:"},
+      {"access": "public", "name": "setEndTime:forItemWithStoreID:"}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerStoreQueueDescriptor",
+     "properties": [
+      {"access": "public", "getter": "storeIDs", "name": "storeIDs", "setter": "setStoreIDs:"},
+      {"access": "public", "getter": "startItemID", "name": "startItemID", "setter": "setStartItemID:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultCenter"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoCenter",
+     "properties": [
+      {"access": "public", "getter": "nowPlayingInfo", "name": "nowPlayingInfo", "setter": "setNowPlayingInfo:"},
+      {"access": "public", "getter": "playbackState", "introduced": "13", "name": "playbackState", "setter": "setPlaybackState:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithType:languageTag:characteristics:displayName:identifier:"},
+      {"access": "public", "name": "isAutomaticLegibleLanguageOption"},
+      {"access": "public", "name": "isAutomaticAudibleLanguageOption"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoLanguageOption",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptionType", "name": "languageOptionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageTag", "name": "languageTag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptionCharacteristics", "name": "languageOptionCharacteristics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLanguageOptions:defaultLanguageOption:allowEmptySelection:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoLanguageOptionGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptions", "name": "languageOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultLanguageOption", "name": "defaultLanguageOption"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowEmptySelection", "name": "allowEmptySelection"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPlayers:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "becomeActiveIfPossibleWithCompletion:"},
+      {"access": "public", "name": "addPlayer:"},
+      {"access": "public", "name": "removePlayer:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "MPNowPlayingSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "automaticallyPublishesNowPlayingInfo", "introduced": "16", "name": "automaticallyPublishesNowPlayingInfo", "setter": "setAutomaticallyPublishesNowPlayingInfo:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nowPlayingInfoCenter", "name": "nowPlayingInfoCenter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "remoteCommandCenter", "name": "remoteCommandCenter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canBecomeActive", "name": "canBecomeActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedContentManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "reloadData"},
+      {"access": "public", "name": "beginUpdates"},
+      {"access": "public", "name": "endUpdates"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPPlayableContentManager",
+     "properties": [
+      {"access": "public", "getter": "dataSource", "name": "dataSource", "setter": "setDataSource:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "introduced": "8.4", "name": "context"},
+      {"access": "public", "getter": "nowPlayingIdentifiers", "introduced": "10", "name": "nowPlayingIdentifiers", "setter": "setNowPlayingIdentifiers:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8.4",
+     "linkage": "exported",
+     "name": "MPPlayableContentManagerContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "enforcedContentItemsCount", "name": "enforcedContentItemsCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enforcedContentTreeDepth", "name": "enforcedContentTreeDepth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentLimitsEnforced", "name": "contentLimitsEnforced"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentLimitsEnabled", "introduced": "8.4", "name": "contentLimitsEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endpointAvailable", "name": "endpointAvailable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRatingCommand",
+     "properties": [
+      {"access": "public", "getter": "minimumRating", "name": "minimumRating", "setter": "setMinimumRating:"},
+      {"access": "public", "getter": "maximumRating", "name": "maximumRating", "setter": "setMaximumRating:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRatingCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rating", "name": "rating"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addTarget:action:"},
+      {"access": "public", "name": "removeTarget:action:"},
+      {"access": "public", "name": "removeTarget:"},
+      {"access": "public", "name": "addTargetWithHandler:"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommand",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedCommandCenter"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommandCenter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pauseCommand", "name": "pauseCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playCommand", "name": "playCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stopCommand", "name": "stopCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "togglePlayPauseCommand", "name": "togglePlayPauseCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enableLanguageOptionCommand", "introduced": "9", "name": "enableLanguageOptionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "disableLanguageOptionCommand", "introduced": "9", "name": "disableLanguageOptionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changePlaybackRateCommand", "name": "changePlaybackRateCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeRepeatModeCommand", "name": "changeRepeatModeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeShuffleModeCommand", "name": "changeShuffleModeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextTrackCommand", "name": "nextTrackCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousTrackCommand", "name": "previousTrackCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipForwardCommand", "name": "skipForwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipBackwardCommand", "name": "skipBackwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekForwardCommand", "name": "seekForwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekBackwardCommand", "name": "seekBackwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changePlaybackPositionCommand", "introduced": "9.1", "name": "changePlaybackPositionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ratingCommand", "name": "ratingCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "likeCommand", "name": "likeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dislikeCommand", "name": "dislikeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bookmarkCommand", "name": "bookmarkCommand"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "command", "name": "command"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSeekCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSkipIntervalCommand",
+     "properties": [
+      {"access": "public", "getter": "preferredIntervals", "name": "preferredIntervals", "setter": "setPreferredIntervals:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSkipIntervalCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "interval", "name": "interval"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "linkage": "exported",
+     "name": "MPTimedMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "key", "introduced": "3.2", "name": "key"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyspace", "introduced": "3.2", "name": "keyspace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "introduced": "3.2", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "introduced": "3.2", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allMetadata", "introduced": "3.2", "name": "allMetadata"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "setMinimumVolumeSliderImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "setMaximumVolumeSliderImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "setVolumeThumbImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "minimumVolumeSliderImageForState:"},
+      {"access": "public", "introduced": "6", "name": "maximumVolumeSliderImageForState:"},
+      {"access": "public", "introduced": "6", "name": "volumeThumbImageForState:"},
+      {"access": "public", "introduced": "6", "name": "volumeSliderRectForBounds:"},
+      {"access": "public", "introduced": "6", "name": "volumeThumbRectForBounds:volumeSliderRect:value:"},
+      {"access": "public", "introduced": "6", "name": "setRouteButtonImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "routeButtonImageForState:"},
+      {"access": "public", "introduced": "6", "name": "routeButtonRectForBounds:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "MPVolumeView",
+     "properties": [
+      {"access": "public", "getter": "showsVolumeSlider", "introduced": "4.2", "name": "showsVolumeSlider", "setter": "setShowsVolumeSlider:"},
+      {"access": "public", "getter": "showsRouteButton", "introduced": "4.2", "name": "showsRouteButton", "setter": "setShowsRouteButton:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "areWirelessRoutesAvailable", "introduced": "7", "name": "wirelessRoutesAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isWirelessRouteActive", "introduced": "7", "name": "wirelessRouteActive"},
+      {"access": "public", "getter": "volumeWarningSliderImage", "introduced": "7", "name": "volumeWarningSliderImage", "setter": "setVolumeWarningSliderImage:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "mediaPicker:didPickMediaItems:", "optional": true},
+      {"access": "public", "name": "mediaPickerDidCancel:", "optional": true}
+     ],
+     "name": "MPMediaPickerControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "prepareToPlay"},
+      {"access": "public", "name": "play"},
+      {"access": "public", "name": "pause"},
+      {"access": "public", "name": "stop"},
+      {"access": "public", "name": "beginSeekingForward"},
+      {"access": "public", "name": "beginSeekingBackward"},
+      {"access": "public", "name": "endSeeking"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPlayback",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPreparedToPlay", "name": "isPreparedToPlay"},
+      {"access": "public", "getter": "currentPlaybackTime", "name": "currentPlaybackTime", "setter": "setCurrentPlaybackTime:"},
+      {"access": "public", "getter": "currentPlaybackRate", "name": "currentPlaybackRate", "setter": "setCurrentPlaybackRate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nowPlayingSessionDidChangeActive:", "optional": true},
+      {"access": "public", "name": "nowPlayingSessionDidChangeCanBecomeActive:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "MPNowPlayingSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "beginLoadingChildItemsAtIndexPath:completionHandler:", "optional": true},
+      {"access": "public", "name": "childItemsDisplayPlaybackProgressAtIndexPath:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "contentItemForIdentifier:completionHandler:", "optional": true},
+      {"access": "public", "name": "numberOfChildItemsAtIndexPath:"},
+      {"access": "public", "name": "contentItemAtIndexPath:"}
+     ],
+     "introduced": "7.1",
+     "name": "MPPlayableContentDataSource",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7.1", "name": "playableContentManager:initiatePlaybackOfContentItemAtIndexPath:completionHandler:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playableContentManager:initializePlaybackQueueWithCompletionHandler:", "optional": true},
+      {"access": "public", "introduced": "9.3", "name": "playableContentManager:initializePlaybackQueueWithContentItems:completionHandler:", "optional": true},
+      {"access": "public", "introduced": "8.4", "name": "playableContentManager:didUpdateContext:", "optional": true}
+     ],
+     "introduced": "7.1",
+     "name": "MPPlayableContentDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "openToPlayQueueDescriptor:"}
+     ],
+     "name": "MPSystemMusicPlayerController",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "MPChangeLanguageOptionSetting"},
+    {"access": "public", "name": "MPErrorCode"},
+    {"access": "public", "name": "MPMediaEntityPersistentID"},
+    {"access": "public", "name": "MPMediaGrouping"},
+    {"access": "public", "name": "MPMediaLibraryAuthorizationStatus"},
+    {"access": "public", "name": "MPMediaPlaylistAttribute"},
+    {"access": "public", "name": "MPMediaPredicateComparison"},
+    {"access": "public", "name": "MPMediaType"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyle"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReason"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieLoadState"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMask"},
+    {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackState"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatMode"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieScalingMode"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieSourceType"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOption"},
+    {"access": "public", "name": "MPMusicPlaybackState"},
+    {"access": "public", "name": "MPMusicRepeatMode"},
+    {"access": "public", "name": "MPMusicShuffleMode"},
+    {"access": "public", "name": "MPNowPlayingInfoLanguageOptionType"},
+    {"access": "public", "name": "MPNowPlayingInfoMediaType"},
+    {"access": "public", "name": "MPNowPlayingPlaybackState"},
+    {"access": "public", "name": "MPRemoteCommandHandlerStatus"},
+    {"access": "public", "name": "MPRepeatType"},
+    {"access": "public", "name": "MPSeekCommandEventType"},
+    {"access": "public", "name": "MPShuffleType"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "AVPlayerItem",
+     "name": "MPAdditions",
+     "properties": [
+      {"access": "public", "getter": "nowPlayingInfo", "introduced": "16", "name": "nowPlayingInfo", "setter": "setNowPlayingInfo:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "4.2", "name": "persistentIDPropertyForGroupingType:"},
+      {"access": "public", "introduced": "4.2", "name": "titlePropertyForGroupingType:"}
+     ],
+     "interface": "MPMediaItem",
+     "name": "MPMediaQueryAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMovieLogging",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessLog", "introduced": "4.3", "name": "accessLog"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorLog", "introduced": "4.3", "name": "errorLog"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerDeprecated",
+     "properties": [
+      {"access": "public", "getter": "useApplicationAudioSession", "introduced": "6", "name": "useApplicationAudioSession", "setter": "setUseApplicationAudioSession:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "thumbnailImageAtTime:timeOption:"},
+      {"access": "public", "introduced": "3.2", "name": "requestThumbnailImagesAtTimes:timeOption:"},
+      {"access": "public", "introduced": "3.2", "name": "cancelAllThumbnailImageRequests"}
+     ],
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerThumbnailGeneration"
+    },
+    {
+     "access": "public",
+     "interface": "MPMoviePlayerController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerTimedMetadataAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timedMetadata", "introduced": "4", "name": "timedMetadata"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "presentMoviePlayerViewControllerAnimated:"},
+      {"access": "public", "introduced": "3.2", "name": "dismissMoviePlayerViewControllerAnimated"}
+     ],
+     "interface": "UIViewController",
+     "introduced": "3.2",
+     "name": "MPMoviePlayerViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeNowPlayingInfoLanguageOption"}
+     ],
+     "interface": "AVMediaSelectionOption",
+     "name": "MPNowPlayingInfoLanguageOptionAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeNowPlayingInfoLanguageOptionGroup"}
+     ],
+     "interface": "AVMediaSelectionGroup",
+     "name": "MPNowPlayingInfoLanguageOptionAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "NSUserActivity",
+     "name": "MediaPlayerAdditions",
+     "properties": [
+      {"access": "public", "getter": "externalMediaContentIdentifier", "introduced": "10.1", "name": "externalMediaContentIdentifier", "setter": "setExternalMediaContentIdentifier:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPChangeLanguageOptionSettingNone"},
+      {"access": "public", "name": "MPChangeLanguageOptionSettingNowPlayingItemOnly"},
+      {"access": "public", "name": "MPChangeLanguageOptionSettingPermanent"}
+     ],
+     "introduced": "9.3",
+     "name": "MPChangeLanguageOptionSetting"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPErrorUnknown"},
+      {"access": "public", "name": "MPErrorPermissionDenied"},
+      {"access": "public", "name": "MPErrorCloudServiceCapabilityMissing"},
+      {"access": "public", "name": "MPErrorNetworkConnectionFailed"},
+      {"access": "public", "name": "MPErrorNotFound"},
+      {"access": "public", "name": "MPErrorNotSupported"},
+      {"access": "public", "introduced": "10.1", "name": "MPErrorCancelled"},
+      {"access": "public", "introduced": "10.3", "name": "MPErrorRequestTimedOut"}
+     ],
+     "introduced": "9.3",
+     "name": "MPErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaGroupingTitle"},
+      {"access": "public", "name": "MPMediaGroupingAlbum"},
+      {"access": "public", "name": "MPMediaGroupingArtist"},
+      {"access": "public", "name": "MPMediaGroupingAlbumArtist"},
+      {"access": "public", "name": "MPMediaGroupingComposer"},
+      {"access": "public", "name": "MPMediaGroupingGenre"},
+      {"access": "public", "name": "MPMediaGroupingPlaylist"},
+      {"access": "public", "name": "MPMediaGroupingPodcastTitle"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaGrouping"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusDenied"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusRestricted"},
+      {"access": "public", "name": "MPMediaLibraryAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "9.3",
+     "name": "MPMediaLibraryAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaPlaylistAttributeNone"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeOnTheGo"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeSmart"},
+      {"access": "public", "name": "MPMediaPlaylistAttributeGenius"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPlaylistAttribute"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaPredicateComparisonEqualTo"},
+      {"access": "public", "name": "MPMediaPredicateComparisonContains"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPredicateComparison"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMediaTypeMusic"},
+      {"access": "public", "name": "MPMediaTypePodcast"},
+      {"access": "public", "name": "MPMediaTypeAudioBook"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeAudioITunesU"},
+      {"access": "public", "name": "MPMediaTypeAnyAudio"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeMovie"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeTVShow"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeVideoPodcast"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeMusicVideo"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeVideoITunesU"},
+      {"access": "public", "introduced": "7", "name": "MPMediaTypeHomeVideo"},
+      {"access": "public", "introduced": "5", "name": "MPMediaTypeAnyVideo"},
+      {"access": "public", "name": "MPMediaTypeAny"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleEmbedded"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleFullscreen"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyleDefault"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieControlStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonPlaybackEnded"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonPlaybackError"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReasonUserExited"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieFinishReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStateUnknown"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStatePlayable"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStatePlaythroughOK"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieLoadStateStalled"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieLoadState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskVideo"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMaskAudio"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieMediaTypeMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateStopped"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStatePlaying"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStatePaused"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateInterrupted"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateSeekingForward"},
+      {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackStateSeekingBackward"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMoviePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatModeNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatModeOne"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeNone"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeAspectFit"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeAspectFill"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieScalingModeFill"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieScalingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeUnknown"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeFile"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieSourceTypeStreaming"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieSourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOptionNearestKeyFrame"},
+      {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOptionExact"}
+     ],
+     "introduced": "3.2",
+     "name": "MPMovieTimeOption"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicPlaybackStateStopped"},
+      {"access": "public", "name": "MPMusicPlaybackStatePlaying"},
+      {"access": "public", "name": "MPMusicPlaybackStatePaused"},
+      {"access": "public", "name": "MPMusicPlaybackStateInterrupted"},
+      {"access": "public", "name": "MPMusicPlaybackStateSeekingForward"},
+      {"access": "public", "name": "MPMusicPlaybackStateSeekingBackward"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicPlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicRepeatModeDefault"},
+      {"access": "public", "name": "MPMusicRepeatModeNone"},
+      {"access": "public", "name": "MPMusicRepeatModeOne"},
+      {"access": "public", "name": "MPMusicRepeatModeAll"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicRepeatMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPMusicShuffleModeDefault"},
+      {"access": "public", "name": "MPMusicShuffleModeOff"},
+      {"access": "public", "name": "MPMusicShuffleModeSongs"},
+      {"access": "public", "name": "MPMusicShuffleModeAlbums"}
+     ],
+     "introduced": "3",
+     "name": "MPMusicShuffleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingInfoLanguageOptionTypeAudible"},
+      {"access": "public", "name": "MPNowPlayingInfoLanguageOptionTypeLegible"}
+     ],
+     "introduced": "9",
+     "name": "MPNowPlayingInfoLanguageOptionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeNone"},
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeAudio"},
+      {"access": "public", "name": "MPNowPlayingInfoMediaTypeVideo"}
+     ],
+     "introduced": "10",
+     "name": "MPNowPlayingInfoMediaType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPNowPlayingPlaybackStateUnknown"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStatePlaying"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStatePaused"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStateStopped"},
+      {"access": "public", "name": "MPNowPlayingPlaybackStateInterrupted"}
+     ],
+     "introduced": "11",
+     "name": "MPNowPlayingPlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusSuccess"},
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusNoSuchContent"},
+      {"access": "public", "introduced": "9.1", "name": "MPRemoteCommandHandlerStatusNoActionableNowPlayingItem"},
+      {"access": "public", "introduced": "11", "name": "MPRemoteCommandHandlerStatusDeviceNotFound"},
+      {"access": "public", "name": "MPRemoteCommandHandlerStatusCommandFailed"}
+     ],
+     "introduced": "7.1",
+     "name": "MPRemoteCommandHandlerStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPRepeatTypeOff"},
+      {"access": "public", "name": "MPRepeatTypeOne"},
+      {"access": "public", "name": "MPRepeatTypeAll"}
+     ],
+     "introduced": "3",
+     "name": "MPRepeatType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPSeekCommandEventTypeBeginSeeking"},
+      {"access": "public", "name": "MPSeekCommandEventTypeEndSeeking"}
+     ],
+     "introduced": "7.1",
+     "name": "MPSeekCommandEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MPShuffleTypeOff"},
+      {"access": "public", "name": "MPShuffleTypeItems"},
+      {"access": "public", "name": "MPShuffleTypeCollections"}
+     ],
+     "introduced": "3",
+     "name": "MPShuffleType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicContainsOnlyForcedSubtitles"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDescribesMusicAndSound"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDescribesVideo"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicDubbedTranslation"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicEasyToRead"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicIsAuxiliaryContent"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicIsMainProgramContent"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicLanguageTranslation"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicTranscribesSpokenDialog"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPLanguageOptionCharacteristicVoiceOverTranslation"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaEntityPropertyPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumArtist"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumArtistPersistentID"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTitle"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTrackCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAlbumTrackNumber"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtist"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtistPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyArtwork"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyAssetURL"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyBeatsPerMinute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyBookmarkTime"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComments"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComposer"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyComposerPersistentID"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDateAdded"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDiscCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyDiscNumber"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyGenre"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyGenrePersistentID"},
+    {"access": "public", "introduced": "9.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyHasProtectedAsset"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsCloudItem"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsCompilation"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsExplicit"},
+    {"access": "public", "introduced": "14.5", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyIsPreorder"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyLastPlayedDate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyLyrics"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyMediaType"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlayCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlaybackDuration"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPlaybackStoreID"},
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPodcastPersistentID"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyPodcastTitle"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyRating"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyReleaseDate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertySkipCount"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyTitle"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMediaItemPropertyUserGrouping"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaLibraryDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaybackIsPreparedToPlayDidChangeNotification"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyAuthorDisplayName"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyCloudGlobalID"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyDescriptionText"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyName"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyPersistentID"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertyPlaylistAttributes"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MPMediaPlaylistPropertySeedItems"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieDurationAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieMediaTypesAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieNaturalSizeAvailableNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerDidEnterFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerDidExitFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerFullscreenAnimationCurveUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerFullscreenAnimationDurationUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerLoadStateDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerNowPlayingMovieDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackDidFinishNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerPlaybackStateDidChangeNotification"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerReadyForDisplayDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerScalingModeDidChangeNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailErrorKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailImageKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailImageRequestDidFinishNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerThumbnailTimeKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyDataType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyInfo"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyLanguageCode"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyMIMEType"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataKeyName"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataUpdatedNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerTimedMetadataUserInfoKey"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerWillEnterFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMoviePlayerWillExitFullscreenNotification"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_MPMovieSourceTypeAvailableNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerNowPlayingItemDidChangeNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerPlaybackStateDidChangeNotification"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerQueueDidChangeNotification"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_MPMusicPlayerControllerVolumeDidChangeNotification"},
+    {"access": "public", "introduced": "9.3", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoCollectionIdentifier"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAdTimeRanges"},
+    {"access": "public", "introduced": "10.3", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAssetURL"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyAvailableLanguageOptions"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyChapterCount"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyChapterNumber"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCreditsStartTime"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCurrentLanguageOptions"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyCurrentPlaybackDate"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyDefaultPlaybackRate"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyElapsedPlaybackTime"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExcludeFromSuggestions"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExternalContentIdentifier"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyExternalUserProfileIdentifier"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyInternationalStandardRecordingCode"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyIsLiveStream"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyMediaType"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackProgress"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackQueueCount"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackQueueIndex"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyPlaybackRate"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MPNowPlayingInfoPropertyServiceIdentifier"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertHide"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertIsVisible"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_MPVolumeSettingsAlertShow"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPVolumeViewWirelessRouteActiveDidChangeNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MPVolumeViewWirelessRoutesAvailableDidChangeNotification"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "MPAdTimeRange",
+     "properties": [
+      {"access": "public", "getter": "timeRange", "name": "timeRange", "setter": "setTimeRange:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPChangeLanguageOptionCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOption", "name": "languageOption"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "setting", "name": "setting"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPChangePlaybackPositionCommand",
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangePlaybackPositionCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "positionTime", "name": "positionTime"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPChangePlaybackRateCommand",
+     "properties": [
+      {"access": "public", "getter": "supportedPlaybackRates", "name": "supportedPlaybackRates", "setter": "setSupportedPlaybackRates:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPChangePlaybackRateCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackRate", "name": "playbackRate"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeRepeatModeCommand",
+     "properties": [
+      {"access": "public", "getter": "currentRepeatType", "name": "currentRepeatType", "setter": "setCurrentRepeatType:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeRepeatModeCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "repeatType", "name": "repeatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preservesRepeatMode", "name": "preservesRepeatMode"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeShuffleModeCommand",
+     "properties": [
+      {"access": "public", "getter": "currentShuffleType", "name": "currentShuffleType", "setter": "setCurrentShuffleType:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "MPChangeShuffleModeCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shuffleType", "name": "shuffleType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preservesShuffleMode", "name": "preservesShuffleMode"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPContentItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "artwork", "name": "artwork", "setter": "setArtwork:"},
+      {"access": "public", "getter": "playbackProgress", "name": "playbackProgress", "setter": "setPlaybackProgress:"},
+      {"access": "public", "getter": "isStreamingContent", "introduced": "10", "name": "streamingContent", "setter": "setStreamingContent:"},
+      {"access": "public", "getter": "isExplicitContent", "introduced": "10", "name": "explicitContent", "setter": "setExplicitContent:"},
+      {"access": "public", "getter": "isContainer", "name": "container", "setter": "setContainer:"},
+      {"access": "public", "getter": "isPlayable", "name": "playable", "setter": "setPlayable:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPFeedbackCommand",
+     "properties": [
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "getter": "localizedTitle", "name": "localizedTitle", "setter": "setLocalizedTitle:"},
+      {"access": "public", "getter": "localizedShortTitle", "introduced": "8", "name": "localizedShortTitle", "setter": "setLocalizedShortTitle:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPFeedbackCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isNegative", "name": "negative"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "canFilterByProperty:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "enumerateValuesForProperties:usingBlock:"},
+      {"access": "public", "introduced": "8", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "valueForProperty:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "MPMediaEntity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "7", "name": "persistentID"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MPMediaQueryAdditions"
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "5", "name": "persistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "introduced": "7", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "introduced": "7", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTitle", "introduced": "7", "name": "albumTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumPersistentID", "introduced": "8", "name": "albumPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artist", "introduced": "7", "name": "artist"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artistPersistentID", "introduced": "8", "name": "artistPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtist", "introduced": "7", "name": "albumArtist"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtistPersistentID", "introduced": "8", "name": "albumArtistPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "genre", "introduced": "7", "name": "genre"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "genrePersistentID", "introduced": "8", "name": "genrePersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "composer", "introduced": "7", "name": "composer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "composerPersistentID", "introduced": "8", "name": "composerPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackDuration", "introduced": "7", "name": "playbackDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTrackNumber", "introduced": "7", "name": "albumTrackNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumTrackCount", "introduced": "8", "name": "albumTrackCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discNumber", "introduced": "7", "name": "discNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discCount", "introduced": "8", "name": "discCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artwork", "introduced": "7", "name": "artwork"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isExplicitItem", "introduced": "10", "name": "explicitItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lyrics", "introduced": "8", "name": "lyrics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCompilation", "introduced": "8", "name": "compilation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "releaseDate", "introduced": "7", "name": "releaseDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beatsPerMinute", "introduced": "8", "name": "beatsPerMinute"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "comments", "introduced": "8", "name": "comments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetURL", "introduced": "8", "name": "assetURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCloudItem", "introduced": "8", "name": "cloudItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasProtectedAsset", "introduced": "9.2", "name": "protectedAsset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "podcastTitle", "introduced": "7", "name": "podcastTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "podcastPersistentID", "introduced": "8", "name": "podcastPersistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playCount", "introduced": "7", "name": "playCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipCount", "introduced": "7", "name": "skipCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rating", "introduced": "7", "name": "rating"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastPlayedDate", "introduced": "7", "name": "lastPlayedDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userGrouping", "introduced": "8", "name": "userGrouping"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bookmarkTime", "introduced": "7", "name": "bookmarkTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dateAdded", "introduced": "10", "name": "dateAdded"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStoreID", "introduced": "10.3", "name": "playbackStoreID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPreorder", "introduced": "10.3", "name": "preorder"}
+     ],
+     "super": "MPMediaEntity"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "10", "name": "initWithBoundsSize:requestHandler:"},
+      {"access": "public", "name": "imageWithSize:"},
+      {"access": "public", "introduced": "5", "name": "initWithImage:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItemArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounds", "name": "bounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageCropRect", "introduced": "3", "name": "imageCropRect"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "collectionWithItems:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithItems:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaItemCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "representativeItem", "name": "representativeItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaTypes", "name": "mediaTypes"}
+     ],
+     "super": "MPMediaEntity"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultMediaLibrary"},
+      {"access": "public", "introduced": "9.3", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "9.3", "name": "requestAuthorization:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginGeneratingLibraryChangeNotifications"},
+      {"access": "public", "name": "endGeneratingLibraryChangeNotifications"},
+      {"access": "public", "introduced": "9.3", "name": "addItemWithProductID:completionHandler:"},
+      {"access": "public", "introduced": "9.3", "name": "getPlaylistWithUUID:creationMetadata:completionHandler:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaLibrary",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedDate", "name": "lastModifiedDate"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMediaTypes:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPickerController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaTypes", "name": "mediaTypes"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "allowsPickingMultipleItems", "name": "allowsPickingMultipleItems", "setter": "setAllowsPickingMultipleItems:"},
+      {"access": "public", "getter": "showsCloudItems", "introduced": "6", "name": "showsCloudItems", "setter": "setShowsCloudItems:"},
+      {"access": "public", "getter": "showsItemsWithProtectedAssets", "introduced": "9.2", "name": "showsItemsWithProtectedAssets", "setter": "setShowsItemsWithProtectedAssets:"},
+      {"access": "public", "getter": "prompt", "name": "prompt", "setter": "setPrompt:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.3", "name": "addItemWithProductID:completionHandler:"},
+      {"access": "public", "introduced": "9.3", "name": "addMediaItems:completionHandler:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPlaylist",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "persistentID", "introduced": "7", "name": "persistentID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cloudGlobalID", "introduced": "14", "name": "cloudGlobalID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "introduced": "7", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playlistAttributes", "introduced": "7", "name": "playlistAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seedItems", "introduced": "8", "name": "seedItems"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptionText", "introduced": "9.3", "name": "descriptionText"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorDisplayName", "introduced": "9.3", "name": "authorDisplayName"}
+     ],
+     "super": "MPMediaItemCollection"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithName:"}
+     ],
+     "introduced": "9.3",
+     "linkage": "exported",
+     "name": "MPMediaPlaylistCreationMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "getter": "authorDisplayName", "name": "authorDisplayName", "setter": "setAuthorDisplayName:"},
+      {"access": "public", "getter": "descriptionText", "name": "descriptionText", "setter": "setDescriptionText:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPredicate",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "predicateWithValue:forProperty:"},
+      {"access": "public", "name": "predicateWithValue:forProperty:comparisonType:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaPropertyPredicate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "property", "name": "property"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "comparisonType", "name": "comparisonType"}
+     ],
+     "super": "MPMediaPredicate"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "albumsQuery"},
+      {"access": "public", "name": "artistsQuery"},
+      {"access": "public", "name": "songsQuery"},
+      {"access": "public", "name": "playlistsQuery"},
+      {"access": "public", "name": "podcastsQuery"},
+      {"access": "public", "name": "audiobooksQuery"},
+      {"access": "public", "name": "compilationsQuery"},
+      {"access": "public", "name": "composersQuery"},
+      {"access": "public", "name": "genresQuery"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFilterPredicates:"},
+      {"access": "public", "name": "addFilterPredicate:"},
+      {"access": "public", "name": "removeFilterPredicate:"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMediaQuery",
+     "properties": [
+      {"access": "public", "getter": "filterPredicates", "name": "filterPredicates", "setter": "setFilterPredicates:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collections", "name": "collections"},
+      {"access": "public", "getter": "groupingType", "name": "groupingType", "setter": "setGroupingType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "itemSections", "introduced": "4.2", "name": "itemSections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "collectionSections", "introduced": "4.2", "name": "collectionSections"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "MPMediaQuerySection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "range", "name": "range"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieAccessLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogData", "introduced": "3.2", "name": "extendedLogData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogDataStringEncoding", "introduced": "3.2", "name": "extendedLogDataStringEncoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "events", "introduced": "3.2", "name": "events"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieAccessLogEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfSegmentsDownloaded", "introduced": "3.2", "name": "numberOfSegmentsDownloaded"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStartDate", "introduced": "3.2", "name": "playbackStartDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URI", "introduced": "3.2", "name": "URI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serverAddress", "introduced": "3.2", "name": "serverAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfServerAddressChanges", "introduced": "3.2", "name": "numberOfServerAddressChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackSessionID", "introduced": "3.2", "name": "playbackSessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackStartOffset", "introduced": "3.2", "name": "playbackStartOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segmentsDownloadedDuration", "introduced": "3.2", "name": "segmentsDownloadedDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "durationWatched", "introduced": "3.2", "name": "durationWatched"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfStalls", "introduced": "3.2", "name": "numberOfStalls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfBytesTransferred", "introduced": "3.2", "name": "numberOfBytesTransferred"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "observedBitrate", "introduced": "3.2", "name": "observedBitrate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indicatedBitrate", "introduced": "3.2", "name": "indicatedBitrate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfDroppedVideoFrames", "introduced": "3.2", "name": "numberOfDroppedVideoFrames"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieErrorLog",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogData", "introduced": "3.2", "name": "extendedLogData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLogDataStringEncoding", "introduced": "3.2", "name": "extendedLogDataStringEncoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "events", "introduced": "3.2", "name": "events"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4.3",
+     "linkage": "exported",
+     "name": "MPMovieErrorLogEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "introduced": "3.2", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URI", "introduced": "3.2", "name": "URI"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serverAddress", "introduced": "3.2", "name": "serverAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackSessionID", "introduced": "3.2", "name": "playbackSessionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorStatusCode", "introduced": "3.2", "name": "errorStatusCode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorDomain", "introduced": "3.2", "name": "errorDomain"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorComment", "introduced": "3.2", "name": "errorComment"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MPMoviePlayerThumbnailGeneration",
+      "MPMoviePlayerTimedMetadataAdditions",
+      "MPMovieLogging",
+      "MPMoviePlayerDeprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "initWithContentURL:"},
+      {"access": "public", "introduced": "3.2", "name": "setFullscreen:animated:"}
+     ],
+     "introduced": "3.2",
+     "linkage": "exported",
+     "name": "MPMoviePlayerController",
+     "properties": [
+      {"access": "public", "getter": "contentURL", "introduced": "3.2", "name": "contentURL", "setter": "setContentURL:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "view", "introduced": "3.2", "name": "view"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backgroundView", "introduced": "3.2", "name": "backgroundView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackState", "introduced": "3.2", "name": "playbackState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "loadState", "introduced": "3.2", "name": "loadState"},
+      {"access": "public", "getter": "controlStyle", "introduced": "3.2", "name": "controlStyle", "setter": "setControlStyle:"},
+      {"access": "public", "getter": "repeatMode", "introduced": "3.2", "name": "repeatMode", "setter": "setRepeatMode:"},
+      {"access": "public", "getter": "shouldAutoplay", "introduced": "3.2", "name": "shouldAutoplay", "setter": "setShouldAutoplay:"},
+      {"access": "public", "getter": "isFullscreen", "introduced": "3.2", "name": "fullscreen", "setter": "setFullscreen:"},
+      {"access": "public", "getter": "scalingMode", "introduced": "3.2", "name": "scalingMode", "setter": "setScalingMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "readyForDisplay", "introduced": "6", "name": "readyForDisplay"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "movieMediaTypes", "introduced": "3.2", "name": "movieMediaTypes"},
+      {"access": "public", "getter": "movieSourceType", "introduced": "3.2", "name": "movieSourceType", "setter": "setMovieSourceType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "introduced": "3.2", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playableDuration", "introduced": "3.2", "name": "playableDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "naturalSize", "introduced": "3.2", "name": "naturalSize"},
+      {"access": "public", "getter": "initialPlaybackTime", "introduced": "3.2", "name": "initialPlaybackTime", "setter": "setInitialPlaybackTime:"},
+      {"access": "public", "getter": "endPlaybackTime", "introduced": "3.2", "name": "endPlaybackTime", "setter": "setEndPlaybackTime:"},
+      {"access": "public", "getter": "allowsAirPlay", "introduced": "3.2", "name": "allowsAirPlay", "setter": "setAllowsAirPlay:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAirPlayVideoActive", "introduced": "3.2", "name": "airPlayVideoActive"}
+     ],
+     "protocols": [
+      "MPMediaPlayback"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "3.2", "name": "initWithContentURL:"}
+     ],
+     "introduced": "3.2",
+     "linkage": "exported",
+     "name": "MPMoviePlayerViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "moviePlayer", "introduced": "3.2", "name": "moviePlayer"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "performQueueTransaction:completionHandler:"}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerApplicationController",
+     "super": "MPMusicPlayerController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "setQueueWithQuery:"},
+      {"access": "public", "name": "setQueueWithItemCollection:"},
+      {"access": "public", "introduced": "9.3", "name": "setQueueWithStoreIDs:"},
+      {"access": "public", "introduced": "10.1", "name": "setQueueWithDescriptor:"},
+      {"access": "public", "introduced": "10.3", "name": "prependQueueDescriptor:"},
+      {"access": "public", "introduced": "10.3", "name": "appendQueueDescriptor:"},
+      {"access": "public", "introduced": "10.1", "name": "prepareToPlayWithCompletionHandler:"},
+      {"access": "public", "name": "skipToNextItem"},
+      {"access": "public", "name": "skipToBeginning"},
+      {"access": "public", "name": "skipToPreviousItem"},
+      {"access": "public", "name": "beginGeneratingPlaybackNotifications"},
+      {"access": "public", "name": "endGeneratingPlaybackNotifications"}
+     ],
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "applicationMusicPlayer", "name": "applicationMusicPlayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "applicationQueuePlayer", "introduced": "10.3", "name": "applicationQueuePlayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemMusicPlayer", "name": "systemMusicPlayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackState", "name": "playbackState"},
+      {"access": "public", "getter": "repeatMode", "name": "repeatMode", "setter": "setRepeatMode:"},
+      {"access": "public", "getter": "shuffleMode", "name": "shuffleMode", "setter": "setShuffleMode:"},
+      {"access": "public", "getter": "volume", "introduced": "3", "name": "volume", "setter": "setVolume:"},
+      {"access": "public", "getter": "nowPlayingItem", "name": "nowPlayingItem", "setter": "setNowPlayingItem:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexOfNowPlayingItem", "introduced": "5", "name": "indexOfNowPlayingItem"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "iPodMusicPlayer", "introduced": "3", "name": "iPodMusicPlayer"}
+     ],
+     "protocols": [
+      "MPMediaPlayback"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "insertQueueDescriptor:afterItem:"},
+      {"access": "public", "name": "removeItem:"}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerControllerMutableQueue",
+     "super": "MPMusicPlayerControllerQueue"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10.3",
+     "linkage": "exported",
+     "name": "MPMusicPlayerControllerQueue",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithQuery:"},
+      {"access": "public", "name": "initWithItemCollection:"},
+      {"access": "public", "name": "setStartTime:forItem:"},
+      {"access": "public", "name": "setEndTime:forItem:"}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerMediaItemQueueDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "query", "name": "query"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "itemCollection", "name": "itemCollection"},
+      {"access": "public", "getter": "startItem", "name": "startItem", "setter": "setStartItem:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDictionary:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MPMusicPlayerPlayParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionary", "name": "dictionary"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPlayParametersQueue:"},
+      {"access": "public", "name": "setStartTime:forItemWithPlayParameters:"},
+      {"access": "public", "name": "setEndTime:forItemWithPlayParameters:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MPMusicPlayerPlayParametersQueueDescriptor",
+     "properties": [
+      {"access": "public", "getter": "playParametersQueue", "name": "playParametersQueue", "setter": "setPlayParametersQueue:"},
+      {"access": "public", "getter": "startItemPlayParameters", "name": "startItemPlayParameters", "setter": "setStartItemPlayParameters:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerQueueDescriptor",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithStoreIDs:"},
+      {"access": "public", "name": "setStartTime:forItemWithStoreID:"},
+      {"access": "public", "name": "setEndTime:forItemWithStoreID:"}
+     ],
+     "introduced": "10.1",
+     "linkage": "exported",
+     "name": "MPMusicPlayerStoreQueueDescriptor",
+     "properties": [
+      {"access": "public", "getter": "storeIDs", "name": "storeIDs", "setter": "setStoreIDs:"},
+      {"access": "public", "getter": "startItemID", "name": "startItemID", "setter": "setStartItemID:"}
+     ],
+     "super": "MPMusicPlayerQueueDescriptor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultCenter"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoCenter",
+     "properties": [
+      {"access": "public", "getter": "nowPlayingInfo", "name": "nowPlayingInfo", "setter": "setNowPlayingInfo:"},
+      {"access": "public", "getter": "playbackState", "introduced": "13", "name": "playbackState", "setter": "setPlaybackState:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithType:languageTag:characteristics:displayName:identifier:"},
+      {"access": "public", "name": "isAutomaticLegibleLanguageOption"},
+      {"access": "public", "name": "isAutomaticAudibleLanguageOption"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoLanguageOption",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptionType", "name": "languageOptionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageTag", "name": "languageTag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptionCharacteristics", "name": "languageOptionCharacteristics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLanguageOptions:defaultLanguageOption:allowEmptySelection:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MPNowPlayingInfoLanguageOptionGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "languageOptions", "name": "languageOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultLanguageOption", "name": "defaultLanguageOption"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowEmptySelection", "name": "allowEmptySelection"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPlayers:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "becomeActiveIfPossibleWithCompletion:"},
+      {"access": "public", "name": "addPlayer:"},
+      {"access": "public", "name": "removePlayer:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "MPNowPlayingSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "players", "name": "players"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "automaticallyPublishesNowPlayingInfo", "introduced": "16", "name": "automaticallyPublishesNowPlayingInfo", "setter": "setAutomaticallyPublishesNowPlayingInfo:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nowPlayingInfoCenter", "name": "nowPlayingInfoCenter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "remoteCommandCenter", "name": "remoteCommandCenter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canBecomeActive", "name": "canBecomeActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedContentManager"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "reloadData"},
+      {"access": "public", "name": "beginUpdates"},
+      {"access": "public", "name": "endUpdates"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPPlayableContentManager",
+     "properties": [
+      {"access": "public", "getter": "dataSource", "name": "dataSource", "setter": "setDataSource:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "introduced": "8.4", "name": "context"},
+      {"access": "public", "getter": "nowPlayingIdentifiers", "introduced": "10", "name": "nowPlayingIdentifiers", "setter": "setNowPlayingIdentifiers:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8.4",
+     "linkage": "exported",
+     "name": "MPPlayableContentManagerContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "enforcedContentItemsCount", "name": "enforcedContentItemsCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enforcedContentTreeDepth", "name": "enforcedContentTreeDepth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentLimitsEnforced", "name": "contentLimitsEnforced"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentLimitsEnabled", "introduced": "8.4", "name": "contentLimitsEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endpointAvailable", "name": "endpointAvailable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRatingCommand",
+     "properties": [
+      {"access": "public", "getter": "minimumRating", "name": "minimumRating", "setter": "setMinimumRating:"},
+      {"access": "public", "getter": "maximumRating", "name": "maximumRating", "setter": "setMaximumRating:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRatingCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rating", "name": "rating"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addTarget:action:"},
+      {"access": "public", "name": "removeTarget:action:"},
+      {"access": "public", "name": "removeTarget:"},
+      {"access": "public", "name": "addTargetWithHandler:"}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommand",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedCommandCenter"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommandCenter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pauseCommand", "name": "pauseCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playCommand", "name": "playCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stopCommand", "name": "stopCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "togglePlayPauseCommand", "name": "togglePlayPauseCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enableLanguageOptionCommand", "introduced": "9", "name": "enableLanguageOptionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "disableLanguageOptionCommand", "introduced": "9", "name": "disableLanguageOptionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changePlaybackRateCommand", "name": "changePlaybackRateCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeRepeatModeCommand", "name": "changeRepeatModeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeShuffleModeCommand", "name": "changeShuffleModeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextTrackCommand", "name": "nextTrackCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousTrackCommand", "name": "previousTrackCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipForwardCommand", "name": "skipForwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "skipBackwardCommand", "name": "skipBackwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekForwardCommand", "name": "seekForwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekBackwardCommand", "name": "seekBackwardCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changePlaybackPositionCommand", "introduced": "9.1", "name": "changePlaybackPositionCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ratingCommand", "name": "ratingCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "likeCommand", "name": "likeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dislikeCommand", "name": "dislikeCommand"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bookmarkCommand", "name": "bookmarkCommand"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPRemoteCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "command", "name": "command"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSeekCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSkipIntervalCommand",
+     "properties": [
+      {"access": "public", "getter": "preferredIntervals", "name": "preferredIntervals", "setter": "setPreferredIntervals:"}
+     ],
+     "super": "MPRemoteCommand"
+    },
+    {
+     "access": "public",
+     "introduced": "7.1",
+     "linkage": "exported",
+     "name": "MPSkipIntervalCommandEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "interval", "name": "interval"}
+     ],
+     "super": "MPRemoteCommandEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "linkage": "exported",
+     "name": "MPTimedMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "key", "introduced": "3.2", "name": "key"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyspace", "introduced": "3.2", "name": "keyspace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "introduced": "3.2", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "introduced": "3.2", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allMetadata", "introduced": "3.2", "name": "allMetadata"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "setMinimumVolumeSliderImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "setMaximumVolumeSliderImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "setVolumeThumbImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "minimumVolumeSliderImageForState:"},
+      {"access": "public", "introduced": "6", "name": "maximumVolumeSliderImageForState:"},
+      {"access": "public", "introduced": "6", "name": "volumeThumbImageForState:"},
+      {"access": "public", "introduced": "6", "name": "volumeSliderRectForBounds:"},
+      {"access": "public", "introduced": "6", "name": "volumeThumbRectForBounds:volumeSliderRect:value:"},
+      {"access": "public", "introduced": "6", "name": "setRouteButtonImage:forState:"},
+      {"access": "public", "introduced": "6", "name": "routeButtonImageForState:"},
+      {"access": "public", "introduced": "6", "name": "routeButtonRectForBounds:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "MPVolumeView",
+     "properties": [
+      {"access": "public", "getter": "showsVolumeSlider", "introduced": "4.2", "name": "showsVolumeSlider", "setter": "setShowsVolumeSlider:"},
+      {"access": "public", "getter": "showsRouteButton", "introduced": "4.2", "name": "showsRouteButton", "setter": "setShowsRouteButton:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "areWirelessRoutesAvailable", "introduced": "7", "name": "wirelessRoutesAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isWirelessRouteActive", "introduced": "7", "name": "wirelessRouteActive"},
+      {"access": "public", "getter": "volumeWarningSliderImage", "introduced": "7", "name": "volumeWarningSliderImage", "setter": "setVolumeWarningSliderImage:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "mediaPicker:didPickMediaItems:", "optional": true},
+      {"access": "public", "name": "mediaPickerDidCancel:", "optional": true}
+     ],
+     "name": "MPMediaPickerControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "prepareToPlay"},
+      {"access": "public", "name": "play"},
+      {"access": "public", "name": "pause"},
+      {"access": "public", "name": "stop"},
+      {"access": "public", "name": "beginSeekingForward"},
+      {"access": "public", "name": "beginSeekingBackward"},
+      {"access": "public", "name": "endSeeking"}
+     ],
+     "introduced": "3",
+     "name": "MPMediaPlayback",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPreparedToPlay", "name": "isPreparedToPlay"},
+      {"access": "public", "getter": "currentPlaybackTime", "name": "currentPlaybackTime", "setter": "setCurrentPlaybackTime:"},
+      {"access": "public", "getter": "currentPlaybackRate", "name": "currentPlaybackRate", "setter": "setCurrentPlaybackRate:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nowPlayingSessionDidChangeActive:", "optional": true},
+      {"access": "public", "name": "nowPlayingSessionDidChangeCanBecomeActive:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "MPNowPlayingSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "beginLoadingChildItemsAtIndexPath:completionHandler:", "optional": true},
+      {"access": "public", "name": "childItemsDisplayPlaybackProgressAtIndexPath:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "contentItemForIdentifier:completionHandler:", "optional": true},
+      {"access": "public", "name": "numberOfChildItemsAtIndexPath:"},
+      {"access": "public", "name": "contentItemAtIndexPath:"}
+     ],
+     "introduced": "7.1",
+     "name": "MPPlayableContentDataSource",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7.1", "name": "playableContentManager:initiatePlaybackOfContentItemAtIndexPath:completionHandler:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playableContentManager:initializePlaybackQueueWithCompletionHandler:", "optional": true},
+      {"access": "public", "introduced": "9.3", "name": "playableContentManager:initializePlaybackQueueWithContentItems:completionHandler:", "optional": true},
+      {"access": "public", "introduced": "8.4", "name": "playableContentManager:didUpdateContext:", "optional": true}
+     ],
+     "introduced": "7.1",
+     "name": "MPPlayableContentDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "openToPlayQueueDescriptor:"}
+     ],
+     "name": "MPSystemMusicPlayerController",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "MPChangeLanguageOptionSetting"},
+    {"access": "public", "name": "MPErrorCode"},
+    {"access": "public", "name": "MPMediaEntityPersistentID"},
+    {"access": "public", "name": "MPMediaGrouping"},
+    {"access": "public", "name": "MPMediaLibraryAuthorizationStatus"},
+    {"access": "public", "name": "MPMediaPlaylistAttribute"},
+    {"access": "public", "name": "MPMediaPredicateComparison"},
+    {"access": "public", "name": "MPMediaType"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieControlStyle"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieFinishReason"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieLoadState"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieMediaTypeMask"},
+    {"access": "public", "introduced": "3.2", "name": "MPMoviePlaybackState"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieRepeatMode"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieScalingMode"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieSourceType"},
+    {"access": "public", "introduced": "3.2", "name": "MPMovieTimeOption"},
+    {"access": "public", "name": "MPMusicPlaybackState"},
+    {"access": "public", "name": "MPMusicRepeatMode"},
+    {"access": "public", "name": "MPMusicShuffleMode"},
+    {"access": "public", "name": "MPNowPlayingInfoLanguageOptionType"},
+    {"access": "public", "name": "MPNowPlayingInfoMediaType"},
+    {"access": "public", "name": "MPNowPlayingPlaybackState"},
+    {"access": "public", "name": "MPRemoteCommandHandlerStatus"},
+    {"access": "public", "name": "MPRepeatType"},
+    {"access": "public", "name": "MPSeekCommandEventType"},
+    {"access": "public", "name": "MPShuffleType"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSE05MediaB0Mc"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSe05MediaB0Mc"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSE05MediaB0Mc"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSe05MediaB0Mc"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

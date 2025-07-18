@@ -63,5 +63,20 @@ const streamMedias = {
                                                       ],
                                        keys         : {   	"b0b1b2b3b4b5b6b7b8b9babbbcbdbebf" : "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf" }
                                    }
+                                  },
+    "clearToEncryptedMSE" : {    audio : {    initDataType : "cenc",
+                                       mimeType     : 'audio/mp4; codecs="mp4a.40.2"',
+                                       segments     : [
+                                                        "../media-source/content/test-48kHz.m4a",
+                                                        { timestampOffset: 10 },
+                                                        "../content/encrypted/segments/AudioClearKeyCenc-seg-0.mp4",
+                                                        "../content/encrypted/segments/AudioClearKeyCenc-seg-1.mp4",
+                                                        "../content/encrypted/segments/AudioClearKeyCenc-seg-2.mp4",
+                                                        "../content/encrypted/segments/AudioClearKeyCenc-seg-3.mp4",
+                                                        { timestampOffset: 13 },
+                                                        "../media-source/content/test-48kHz.m4a",
+                                                      ],
+                                       keys         : {   	"b0b1b2b3b4b5b6b7b8b9babbbcbdbebf" : "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf" }
+                                   }
                       }
                    };

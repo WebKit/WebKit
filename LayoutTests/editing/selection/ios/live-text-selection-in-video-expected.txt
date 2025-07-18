@@ -1,0 +1,13 @@
+
+Select text in the video above. This test requires WebKitTestRunner.
+
+Verifies that the highlight and handles show up in the correct place when selecting Live Text inside a video
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS viewBeforeSelecting is not viewAfterSelecting
+PASS viewAfterSelecting is not viewAfterClearingSelection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

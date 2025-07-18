@@ -190,10 +190,18 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
             const auto& unlinkedTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
             auto end = unlinkedTable.m_branchOffsets.end();
-            for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
-                if (!*iter)
-                    continue;
-                this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
+            if (unlinkedTable.isList()) {
+                for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end;) {
+                    int32_t value = *iter++;
+                    int32_t target = *iter++;
+                    this->m_out.printf("\t\t%4d => %04d\n", value, target);
+                }
+            } else {
+                for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
+                    if (!*iter)
+                        continue;
+                    this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
+                }
             }
             this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");

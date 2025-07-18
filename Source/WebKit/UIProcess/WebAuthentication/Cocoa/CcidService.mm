@@ -62,7 +62,7 @@ Ref<CcidService> CcidService::create(AuthenticatorTransportServiceObserver& obse
 
 CcidService::CcidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
-    , m_restartTimer(RunLoop::main(), this, &CcidService::platformStartDiscovery)
+    , m_restartTimer(RunLoop::mainSingleton(), this, &CcidService::platformStartDiscovery)
 {
 }
 

@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 324x19
           text run at (0,0) width 324: "This list box should be tall enough to fit 6 options."
       RenderBlock (anonymous) at (0,92) size 784x20
-        RenderMenuList {SELECT} at (0,0) size 55x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (0,0) size 55x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 43x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "

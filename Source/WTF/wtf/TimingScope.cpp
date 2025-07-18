@@ -35,7 +35,7 @@ namespace {
 
 class State {
     WTF_MAKE_NONCOPYABLE(State);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(State);
 public:
 
     struct CallData {

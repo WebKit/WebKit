@@ -107,7 +107,7 @@ private:
 
     State m_state { State::Inactive };
     Vector<Ref<SpeechRecognitionResult>> m_finalResults;
-    RefPtr<SpeechRecognitionConnection> m_connection;
+    const RefPtr<SpeechRecognitionConnection> m_connection;
 };
 
 } // namespace WebCore

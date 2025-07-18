@@ -16,6 +16,7 @@
 
     grid {
       display: inline-grid;
+      display: inline-masonry;
       gap: 10px 20px;
       grid-template-columns: repeat(4,80px);
       grid-template-rows: masonry;
@@ -36,12 +37,12 @@
 <body>
 
 <grid>
-  <item style="grid-column:1">6</item>
-  <item>5</item>
-  <item style="margin-top:10px">3</item>
-  <item style="grid-column:span 2">1</item>
+  <item style="grid-column:1">1</item>
   <item>2</item>
-  <item style="grid-column:3/span 2">4</item>
+  <item style="margin-top:10px">3</item>
+  <item style="grid-column:span 2">4</item>
+  <item>5</item>
+  <item style="grid-column:3/span 2">6</item>
 </grid>
 
 </body>

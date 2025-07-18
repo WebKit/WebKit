@@ -11,10 +11,13 @@
 #ifndef MODULES_AUDIO_CODING_TEST_TESTALLCODECS_H_
 #define MODULES_AUDIO_CODING_TEST_TESTALLCODECS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "api/environment/environment.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/PCMFile.h"
 
 namespace webrtc {

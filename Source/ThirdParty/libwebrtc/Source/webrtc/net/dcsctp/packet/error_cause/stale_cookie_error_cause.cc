@@ -34,7 +34,7 @@ namespace dcsctp {
 constexpr int StaleCookieErrorCause::kType;
 
 std::optional<StaleCookieErrorCause> StaleCookieErrorCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -49,7 +49,7 @@ void StaleCookieErrorCause::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string StaleCookieErrorCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Stale Cookie Error, staleness_us=" << staleness_us_;
   return sb.Release();
 }

@@ -60,7 +60,7 @@ public:
     void reportWarning(const String&);
     void reportError(const String&);
 
-    SVGResourcesCache& resourcesCache() { return *m_resourcesCache; }
+    SVGResourcesCache& resourcesCache() { return m_resourcesCache; }
 
     void addElementToRebuild(SVGElement&);
     void removeElementToRebuild(SVGElement&);
@@ -78,7 +78,7 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     WeakHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElements;
-    std::unique_ptr<SVGResourcesCache> m_resourcesCache;
+    const UniqueRef<SVGResourcesCache> m_resourcesCache;
 
     Vector<Ref<SVGElement>> m_rebuildElements;
     bool m_areAnimationsPaused;

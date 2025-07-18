@@ -38,11 +38,11 @@ class DecodedHTMLEntity;
 class SegmentedString;
 
 // This function expects a null character at the end, otherwise it assumes the source is partial.
-DecodedHTMLEntity consumeHTMLEntity(SegmentedString&, UChar additionalAllowedCharacter = 0);
+DecodedHTMLEntity consumeHTMLEntity(SegmentedString&, char16_t additionalAllowedCharacter = 0);
 
 // This function assumes the source is complete, and does not expect a null character.
 DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<LChar>&);
-DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>&);
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<char16_t>&);
 
 // This function does not check for "not enough characters" at all.
 DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char*);
@@ -50,9 +50,9 @@ DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char*);
 class DecodedHTMLEntity {
 public:
     constexpr DecodedHTMLEntity();
-    constexpr DecodedHTMLEntity(UChar);
-    constexpr DecodedHTMLEntity(UChar, UChar);
-    constexpr DecodedHTMLEntity(UChar, UChar, UChar);
+    constexpr DecodedHTMLEntity(char16_t);
+    constexpr DecodedHTMLEntity(char16_t, char16_t);
+    constexpr DecodedHTMLEntity(char16_t, char16_t, char16_t);
 
     enum ConstructNotEnoughCharactersType { ConstructNotEnoughCharacters };
     constexpr DecodedHTMLEntity(ConstructNotEnoughCharactersType);
@@ -60,12 +60,12 @@ public:
     constexpr bool failed() const { return !m_length; }
     constexpr bool notEnoughCharacters() const { return m_notEnoughCharacters; }
 
-    constexpr std::span<const UChar> span() const LIFETIME_BOUND { return std::span { m_characters }.first(m_length); }
+    constexpr std::span<const char16_t> span() const LIFETIME_BOUND { return std::span { m_characters }.first(m_length); }
 
 private:
     uint8_t m_length { 0 };
     bool m_notEnoughCharacters { false };
-    std::array<UChar, 3> m_characters;
+    std::array<char16_t, 3> m_characters;
 };
 
 } // namespace WebCore

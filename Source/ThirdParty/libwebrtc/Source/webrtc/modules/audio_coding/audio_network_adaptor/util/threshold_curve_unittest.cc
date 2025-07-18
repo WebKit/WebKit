@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 // A threshold curve divides 2D space into three domains - below, on and above

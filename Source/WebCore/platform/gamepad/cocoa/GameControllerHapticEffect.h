@@ -57,10 +57,10 @@ private:
     void startEngine(CHHapticEngine *, Function<void(bool)>&&);
     void registerNotification(CHHapticEngine *, Function<void(bool)>&&);
 
-    RetainPtr<CHHapticEngine> m_leftEngine;
-    RetainPtr<CHHapticEngine> m_rightEngine;
-    RetainPtr<id> m_leftPlayer;
-    RetainPtr<id> m_rightPlayer;
+    const RetainPtr<CHHapticEngine> m_leftEngine;
+    const RetainPtr<CHHapticEngine> m_rightEngine;
+    const RetainPtr<id> m_leftPlayer;
+    const RetainPtr<id> m_rightPlayer;
     unsigned m_engineStarted { 0 };
     unsigned m_playerFinished { 0 };
     CompletionHandler<void(bool)> m_completionHandler;

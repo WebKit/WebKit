@@ -10,9 +10,16 @@
 
 #include "media/base/fake_video_renderer.h"
 
-namespace cricket {
+#include <cstdint>
+
+#include "api/scoped_refptr.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "rtc_base/synchronization/mutex.h"
+
+namespace webrtc {
 namespace {
-bool CheckFrameColorYuv(const webrtc::VideoFrame& frame) {
+bool CheckFrameColorYuv(const VideoFrame& frame) {
   // TODO(zhurunz) Check with VP8 team to see if we can remove this
   // tolerance on Y values. Some unit tests produce Y values close
   // to 16 rather than close to zero, for supposedly black frames.
@@ -28,7 +35,7 @@ bool CheckFrameColorYuv(const webrtc::VideoFrame& frame) {
   if (!frame.video_frame_buffer()) {
     return false;
   }
-  rtc::scoped_refptr<const webrtc::I420BufferInterface> i420_buffer =
+  scoped_refptr<const I420BufferInterface> i420_buffer =
       frame.video_frame_buffer()->ToI420();
   // Y
   int y_width = frame.width();
@@ -74,8 +81,8 @@ bool CheckFrameColorYuv(const webrtc::VideoFrame& frame) {
 
 FakeVideoRenderer::FakeVideoRenderer() = default;
 
-void FakeVideoRenderer::OnFrame(const webrtc::VideoFrame& frame) {
-  webrtc::MutexLock lock(&mutex_);
+void FakeVideoRenderer::OnFrame(const VideoFrame& frame) {
+  MutexLock lock(&mutex_);
   black_frame_ = CheckFrameColorYuv(frame);
   ++num_rendered_frames_;
   width_ = frame.width();
@@ -84,4 +91,4 @@ void FakeVideoRenderer::OnFrame(const webrtc::VideoFrame& frame) {
   timestamp_us_ = frame.timestamp_us();
 }
 
-}  // namespace cricket
+}  // namespace webrtc

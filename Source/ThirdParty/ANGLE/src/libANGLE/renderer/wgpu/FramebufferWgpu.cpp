@@ -113,9 +113,8 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
                 {
                     deferredClearValue.stencilValue = mDeferredClears.getStencilValue();
                 }
-                renderTarget->getImage()->stageClear(
-                    renderTarget->getImage()->toGlLevel(renderTarget->getLevelIndex()),
-                    deferredClearValue, false, false);
+                renderTarget->getImage()->stageClear(renderTarget->getGlLevel(), deferredClearValue,
+                                                     false, false);
             }
             if (mDeferredClears.hasDepth() || mDeferredClears.hasStencil())
             {
@@ -123,9 +122,9 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
                 dsClearValue.depthValue          = mDeferredClears.getDepthValue();
                 dsClearValue.stencilValue        = mDeferredClears.getStencilValue();
                 RenderTargetWgpu *renderTarget   = mRenderTargetCache.getDepthStencil();
-                renderTarget->getImage()->stageClear(
-                    renderTarget->getImage()->toGlLevel(renderTarget->getLevelIndex()),
-                    dsClearValue, mDeferredClears.hasDepth(), mDeferredClears.hasStencil());
+                renderTarget->getImage()->stageClear(renderTarget->getGlLevel(), dsClearValue,
+                                                     mDeferredClears.hasDepth(),
+                                                     mDeferredClears.hasStencil());
             }
             mDeferredClears.reset();
         }
@@ -223,8 +222,15 @@ angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
         params.reverseRowOrder = !params.reverseRowOrder;
     }
 
-    webgpu::ImageHelper *sourceImageHelper = getReadPixelsRenderTarget()->getImage();
+    // Does not handle reading from depth/stencil buffer(s).
+    ASSERT(format != GL_DEPTH_COMPONENT && format != GL_STENCIL_INDEX);
+
+    RenderTargetWgpu *readRT = getReadPixelsRenderTarget();
+    uint32_t layer           = readRT->getLayer();
+
+    webgpu::ImageHelper *sourceImageHelper = readRT->getImage();
     ANGLE_TRY(sourceImageHelper->readPixels(contextWgpu, flippedArea, params,
+                                            readRT->getLevelIndex(), layer,
                                             static_cast<uint8_t *>(pixels) + outputSkipBytes));
 
     return angle::Result::Continue;

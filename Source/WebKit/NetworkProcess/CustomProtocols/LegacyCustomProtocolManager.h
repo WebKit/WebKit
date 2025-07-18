@@ -97,7 +97,6 @@ private:
     void wasRedirectedToRequest(LegacyCustomProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
 
     void registerProtocolClass();
-    Ref<NetworkProcess> protectedNetworkProcess() const;
 
     const CheckedRef<NetworkProcess> m_networkProcess;
 

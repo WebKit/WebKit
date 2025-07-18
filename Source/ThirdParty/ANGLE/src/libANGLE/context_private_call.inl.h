@@ -480,6 +480,14 @@ inline void ContextPrivateShadingRate(PrivateState *privateState,
     privateState->setShadingRate(rate);
 }
 
+inline void ContextPrivateShadingRateCombinerOps(PrivateState *privateState,
+                                                 PrivateStateCache *privateStateCache,
+                                                 GLenum combinerOp0,
+                                                 GLenum combinerOp1)
+{
+    privateState->setShadingRateCombinerOps(combinerOp0, combinerOp1);
+}
+
 inline void ContextPrivateBlendColor(PrivateState *privateState,
                                      PrivateStateCache *privateStateCache,
                                      GLfloat red,

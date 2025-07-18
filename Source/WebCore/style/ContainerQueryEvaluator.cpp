@@ -29,6 +29,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueList.h"
 #include "ComposedTreeAncestorIterator.h"
+#include "ContainerNodeInlines.h"
 #include "ContainerQueryFeatures.h"
 #include "Document.h"
 #include "MediaList.h"

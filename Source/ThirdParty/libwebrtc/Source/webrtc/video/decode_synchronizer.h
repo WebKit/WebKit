@@ -13,18 +13,16 @@
 
 #include <stdint.h>
 
-#include <functional>
 #include <memory>
 #include <optional>
 #include <set>
-#include <utility>
 
 #include "api/metronome/metronome.h"
-#include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 #include "video/frame_decode_scheduler.h"
 #include "video/frame_decode_timing.h"
 

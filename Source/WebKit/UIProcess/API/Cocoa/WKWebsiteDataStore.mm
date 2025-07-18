@@ -1252,9 +1252,9 @@ struct WKWebsiteData {
     return !!WebKit::NetworkProcessProxy::defaultNetworkProcess();
 }
 
-- (void)_countNonDefaultSessionSets:(void(^)(size_t))completionHandler
+- (void)_countNonDefaultSessionSets:(void(^)(uint64_t))completionHandler
 {
-    _websiteDataStore->countNonDefaultSessionSets([completionHandler = makeBlockPtr(completionHandler)] (size_t count) {
+    _websiteDataStore->countNonDefaultSessionSets([completionHandler = makeBlockPtr(completionHandler)] (uint64_t count) {
         completionHandler(count);
     });
 }

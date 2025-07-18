@@ -37,8 +37,8 @@ class MediaHelper {
 
   void MaybeAddAudio(TestPeer* peer);
 
-  std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>
-  MaybeAddVideo(TestPeer* peer);
+  std::vector<scoped_refptr<TestVideoCapturerVideoTrackSource>> MaybeAddVideo(
+      TestPeer* peer);
 
  private:
   std::unique_ptr<test::TestVideoCapturer> CreateVideoCapturer(

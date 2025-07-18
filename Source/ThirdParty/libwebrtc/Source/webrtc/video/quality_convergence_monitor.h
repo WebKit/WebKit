@@ -11,6 +11,7 @@
 #ifndef VIDEO_QUALITY_CONVERGENCE_MONITOR_H_
 #define VIDEO_QUALITY_CONVERGENCE_MONITOR_H_
 
+#include <cstddef>
 #include <deque>
 #include <memory>
 

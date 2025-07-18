@@ -36,6 +36,7 @@
 #include "CSSUnparsedValue.h"
 #include "CSSVariableData.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "PaintWorkletGlobalScope.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/text/MakeString.h>

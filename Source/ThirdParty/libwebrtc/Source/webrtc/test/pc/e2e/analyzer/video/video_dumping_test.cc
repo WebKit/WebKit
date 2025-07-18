@@ -40,7 +40,7 @@ uint8_t RandByte(Random& random) {
 }
 
 VideoFrame CreateRandom2x2VideoFrame(uint16_t id, Random& random) {
-  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
+  scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
 
   uint8_t data[6] = {RandByte(random), RandByte(random), RandByte(random),
                      RandByte(random), RandByte(random), RandByte(random)};
@@ -63,12 +63,11 @@ std::vector<uint8_t> AsVector(const uint8_t* data, size_t size) {
   return out;
 }
 
-void AssertFramesEqual(rtc::scoped_refptr<webrtc::I420BufferInterface> actual,
-                       rtc::scoped_refptr<VideoFrameBuffer> expected) {
+void AssertFramesEqual(scoped_refptr<I420BufferInterface> actual,
+                       scoped_refptr<VideoFrameBuffer> expected) {
   ASSERT_THAT(actual->width(), Eq(expected->width()));
   ASSERT_THAT(actual->height(), Eq(expected->height()));
-  rtc::scoped_refptr<webrtc::I420BufferInterface> expected_i420 =
-      expected->ToI420();
+  scoped_refptr<I420BufferInterface> expected_i420 = expected->ToI420();
 
   int height = actual->height();
 
@@ -103,10 +102,10 @@ class VideoDumpingTest : public Test {
   ~VideoDumpingTest() override = default;
 
   void SetUp() override {
-    video_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                 "video_dumping_test");
-    ids_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                               "video_dumping_test");
+    video_filename_ =
+        test::TempFilename(test::OutputPath(), "video_dumping_test");
+    ids_filename_ =
+        test::TempFilename(test::OutputPath(), "video_dumping_test");
   }
 
   void TearDown() override {

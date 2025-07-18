@@ -45,7 +45,13 @@ class RobustBufferAccessBehaviorTest : public ANGLETest<>
         }
         setWindowVisible(mOSWindow, true);
 
-        Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(GLESDriverType::AngleEGL);
+        Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(getDriverType());
+
+        if (!driverLib)
+        {
+            std::cout << "Error: Failed to load driver library!";
+            return false;
+        }
 
         const PlatformParameters &params = GetParam();
         mEGLWindow                       = EGLWindow::New(params.majorVersion, params.minorVersion);

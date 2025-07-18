@@ -27,6 +27,7 @@
 #include "StyleOriginatedAnimationEvent.h"
 
 #include "Node.h"
+#include "NodeInlines.h"
 #include "WebAnimationUtilities.h"
 
 #include <wtf/TZoneMallocInlines.h>

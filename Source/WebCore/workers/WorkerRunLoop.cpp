@@ -205,7 +205,7 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
     Seconds timeoutDelay = Seconds::infinity();
 
 #if USE(CF)
-    CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(RetainPtr { CFRunLoopGetCurrent() }.get(), kCFRunLoopDefaultMode);
     double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
     timeoutDelay = std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
 #endif
@@ -337,12 +337,15 @@ void WorkerMainRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task
     if (m_terminated)
         return;
 
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
-        if (!weakThis || !weakThis->m_workerOrWorkletGlobalScope || weakThis->m_terminated)
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
+        if (!weakThis || weakThis->m_terminated)
+            return;
+        RefPtr workerOrWorkletGlobalScope = weakThis->m_workerOrWorkletGlobalScope.get();
+        if (!workerOrWorkletGlobalScope)
             return;
 
         weakThis->m_terminated = true;
-        task.performTask(*weakThis->m_workerOrWorkletGlobalScope);
+        task.performTask(*workerOrWorkletGlobalScope);
     });
 }
 
@@ -351,17 +354,20 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
     if (m_terminated)
         return;
 
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
-        if (!weakThis || !weakThis->m_workerOrWorkletGlobalScope || weakThis->m_terminated)
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
+        if (!weakThis || weakThis->m_terminated)
+            return;
+        RefPtr workerOrWorkletGlobalScope = weakThis->m_workerOrWorkletGlobalScope.get();
+        if (!workerOrWorkletGlobalScope)
             return;
 
-        task.performTask(*weakThis->m_workerOrWorkletGlobalScope);
+        task.performTask(*workerOrWorkletGlobalScope);
     });
 }
 
 bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&, bool)
 {
-    RunLoop::main().cycle();
+    RunLoop::mainSingleton().cycle();
     return true;
 }
 

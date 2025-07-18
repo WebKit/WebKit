@@ -36,6 +36,7 @@
 #include "BlobLoader.h"
 #include "BlobPart.h"
 #include "BlobURL.h"
+#include "ContextDestructionObserverInlines.h"
 #include "File.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PolicyContainer.h"

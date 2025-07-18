@@ -11,11 +11,11 @@
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 
 #include <bitset>
+#include <cstddef>
 #include <cstdint>
 
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_reader.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_writer.h"
 #include "rtc_base/numerics/divide_round.h"
@@ -23,7 +23,7 @@
 namespace webrtc {
 
 bool RtpDependencyDescriptorExtension::Parse(
-    rtc::ArrayView<const uint8_t> data,
+    ArrayView<const uint8_t> data,
     const FrameDependencyStructure* structure,
     DependencyDescriptor* descriptor) {
   RtpDependencyDescriptorReader reader(data, structure, descriptor);
@@ -40,7 +40,7 @@ size_t RtpDependencyDescriptorExtension::ValueSize(
 }
 
 bool RtpDependencyDescriptorExtension::Write(
-    rtc::ArrayView<uint8_t> data,
+    ArrayView<uint8_t> data,
     const FrameDependencyStructure& structure,
     std::bitset<32> active_chains,
     const DependencyDescriptor& descriptor) {
@@ -50,7 +50,7 @@ bool RtpDependencyDescriptorExtension::Write(
 }
 
 bool RtpDependencyDescriptorExtension::Parse(
-    rtc::ArrayView<const uint8_t> data,
+    ArrayView<const uint8_t> data,
     DependencyDescriptorMandatory* descriptor) {
   if (data.size() < 3) {
     return false;

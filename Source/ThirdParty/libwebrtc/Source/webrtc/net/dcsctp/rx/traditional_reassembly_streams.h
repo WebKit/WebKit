@@ -36,10 +36,10 @@ class TraditionalReassemblyStreams : public ReassemblyStreams {
 
   size_t HandleForwardTsn(
       UnwrappedTSN new_cumulative_ack_tsn,
-      rtc::ArrayView<const AnyForwardTsnChunk::SkippedStream> skipped_streams)
-      override;
+      webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
+          skipped_streams) override;
 
-  void ResetStreams(rtc::ArrayView<const StreamID> stream_ids) override;
+  void ResetStreams(webrtc::ArrayView<const StreamID> stream_ids) override;
 
   HandoverReadinessStatus GetHandoverReadiness() const override;
   void AddHandoverState(DcSctpSocketHandoverState& state) override;

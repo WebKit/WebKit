@@ -42,17 +42,17 @@ class TestAudioTransport : public AudioTransport {
   ~TestAudioTransport() override = default;
 
   int32_t RecordedDataIsAvailable(
-      const void* audioSamples,
+      const void* /* audioSamples */,
       size_t samples_per_channel,
       size_t bytes_per_sample,
       size_t number_of_channels,
       uint32_t samples_per_second,
-      uint32_t total_delay_ms,
-      int32_t clock_drift,
-      uint32_t current_mic_level,
-      bool key_pressed,
+      uint32_t /* total_delay_ms */,
+      int32_t /* clock_drift */,
+      uint32_t /* current_mic_level */,
+      bool /* key_pressed */,
       uint32_t& new_mic_level,
-      std::optional<int64_t> estimated_capture_time_ns) override {
+      std::optional<int64_t> /* estimated_capture_time_ns */) override {
     new_mic_level = 1;
 
     if (mode_ != Mode::kRecording) {
@@ -97,26 +97,26 @@ class TestAudioTransport : public AudioTransport {
     return 0;
   }
 
-  int32_t RecordedDataIsAvailable(const void* audio_samples,
-                                  size_t samples_per_channel,
-                                  size_t bytes_per_sample,
-                                  size_t number_of_channels,
-                                  uint32_t samples_per_second,
-                                  uint32_t total_delay_ms,
-                                  int32_t clockDrift,
-                                  uint32_t current_mic_level,
-                                  bool key_pressed,
-                                  uint32_t& new_mic_level) override {
+  int32_t RecordedDataIsAvailable(const void* /* audio_samples */,
+                                  size_t /* samples_per_channel */,
+                                  size_t /* bytes_per_sample */,
+                                  size_t /* number_of_channels */,
+                                  uint32_t /* samples_per_second */,
+                                  uint32_t /* total_delay_ms */,
+                                  int32_t /* clockDrift */,
+                                  uint32_t /* current_mic_level */,
+                                  bool /* key_pressed */,
+                                  uint32_t& /* new_mic_level */) override {
     RTC_CHECK(false) << "This methods should be never executed";
   }
 
-  void PullRenderData(int bits_per_sample,
-                      int sample_rate,
-                      size_t number_of_channels,
-                      size_t number_of_frames,
-                      void* audio_data,
-                      int64_t* elapsed_time_ms,
-                      int64_t* ntp_time_ms) override {
+  void PullRenderData(int /* bits_per_sample */,
+                      int /* sample_rate */,
+                      size_t /* number_of_channels */,
+                      size_t /* number_of_frames */,
+                      void* /* audio_data */,
+                      int64_t* /* elapsed_time_ms */,
+                      int64_t* /* ntp_time_ms */) override {
     RTC_CHECK(false) << "This methods should be never executed";
   }
 

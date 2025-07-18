@@ -48,7 +48,6 @@ enum class LayerChangeIndex : size_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged,
 #endif
-    ContentsFormatChanged,
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged,
 #endif
@@ -90,11 +89,11 @@ enum class LayerChange : uint64_t {
     GeometryFlippedChanged              = 1LLU << 32,
     DoubleSidedChanged                  = 1LLU << 33,
     MasksToBoundsChanged                = 1LLU << 34,
-    OpaqueChanged                       = 1LLU << 35,
-    ContentsHiddenChanged               = 1LLU << 36,
-    UserInteractionEnabledChanged       = 1LLU << 37,
-    BackdropRootChanged                 = 1LLU << 38,
-    BackdropRootIsOpaqueChanged         = 1LLU << 39,
+    ContentsHiddenChanged               = 1LLU << 35,
+    UserInteractionEnabledChanged       = 1LLU << 36,
+    BackdropRootChanged                 = 1LLU << 37,
+    BackdropRootIsOpaqueChanged         = 1LLU << 38,
+    TonemappingEnabledChanged           = 1LLU << 39,
     EventRegionChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::EventRegionChanged),
 #if ENABLE(SCROLLING_THREAD)
     ScrollingNodeIDChanged              = 1LLU << static_cast<size_t>(LayerChangeIndex::ScrollingNodeIDChanged),
@@ -109,7 +108,6 @@ enum class LayerChange : uint64_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::VisibleRectChanged),
 #endif
-    ContentsFormatChanged               = 1LLU << static_cast<size_t>(LayerChangeIndex::ContentsFormatChanged),
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged            = 1LLU << static_cast<size_t>(LayerChangeIndex::AppleVisualEffectChanged),
 #endif
@@ -129,7 +127,7 @@ struct RemoteLayerBackingStoreOrProperties {
 };
 
 struct LayerProperties {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LayerProperties);
 
     void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
     {
@@ -195,6 +193,7 @@ struct LayerProperties {
     bool userInteractionEnabled { true };
     bool backdropRoot { false };
     bool backdropRootIsOpaque { false };
+    bool tonemappingEnabled { false };
     WebCore::EventRegion eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)

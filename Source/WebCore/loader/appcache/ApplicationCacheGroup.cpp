@@ -996,7 +996,7 @@ void ApplicationCacheGroup::associateDocumentLoaderWithCache(DocumentLoader* loa
 }
 
 class ChromeClientCallbackTimer final : public TimerBase {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ChromeClientCallbackTimer, Loader);
 public:
     ChromeClientCallbackTimer(ApplicationCacheGroup& group)
         : m_group(group)

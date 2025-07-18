@@ -25,6 +25,7 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

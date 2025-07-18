@@ -23,6 +23,7 @@ rtc_library("options") {
     "crypto_options.h",
   ]
   deps = [
+    "..:field_trials_view",
     "../../rtc_base:checks",
     "../../rtc_base:ssl_adapter",
     "../../rtc_base/system:rtc_export",
@@ -34,6 +35,7 @@ rtc_source_set("frame_decryptor_interface") {
   sources = [ "frame_decryptor_interface.h" ]
   deps = [
     "..:array_view",
+    "..:ref_count",
     "..:rtp_parameters",
     "../../rtc_base:refcount",
   ]
@@ -44,7 +46,26 @@ rtc_source_set("frame_encryptor_interface") {
   sources = [ "frame_encryptor_interface.h" ]
   deps = [
     "..:array_view",
+    "..:ref_count",
     "..:rtp_parameters",
     "../../rtc_base:refcount",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("crypto_options_unittest") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "crypto_options_unittest.cc" ]
+    deps = [
+      ":options",
+      "../../rtc_base:ssl_adapter",
+      "../../test:scoped_key_value_config",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+    if (rtc_build_ssl) {
+      deps += [ "//third_party/boringssl" ]
+    }
+  }
 }

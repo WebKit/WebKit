@@ -62,7 +62,7 @@ struct ClientOrigin;
 // -------|-----+++++++++++++++|+++++
 
 class MemoryCache {
-    WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MemoryCache, Loader);
     friend NeverDestroyed<MemoryCache>;
     friend class Internals;
 public:

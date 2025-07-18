@@ -276,7 +276,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach, (JSGlob
 
 JSC::GCClient::IsoSubspace* JSTestReadOnlySetLike::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestReadOnlySetLike, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestReadOnlySetLike, UseCustomHeapCellType::No>(vm, "JSTestReadOnlySetLike"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestReadOnlySetLike.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReadOnlySetLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestReadOnlySetLike.get(); },

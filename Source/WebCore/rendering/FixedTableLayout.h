@@ -27,6 +27,10 @@
 
 namespace WebCore {
 
+namespace Style {
+struct PreferredSize;
+}
+
 class RenderTable;
 
 class FixedTableLayout final : public TableLayout {

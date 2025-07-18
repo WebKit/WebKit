@@ -72,7 +72,7 @@ static void determineDirectionality(TextDirection& dir, LegacyInlineIterator ite
     while (!iter.atEnd()) {
         if (iter.atParagraphSeparator())
             return;
-        if (UChar current = iter.current()) {
+        if (char16_t current = iter.current()) {
             UCharDirection charDirection = u_charDirection(current);
             if (charDirection == U_LEFT_TO_RIGHT) {
                 dir = TextDirection::LTR;
@@ -576,7 +576,7 @@ void LegacyLineLayout::layoutLineBoxes()
     }
 
     if (!legacyRootBox() && m_flow.hasLineIfEmpty())
-        m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight(true, m_flow.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+        m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight());
 }
 
 void LegacyLineLayout::addOverflowFromInlineChildren()

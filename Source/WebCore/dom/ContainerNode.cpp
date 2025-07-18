@@ -1031,7 +1031,7 @@ void ContainerNode::childrenChanged(const ChildChange& change)
         cache->childrenChanged(*this);
 }
 
-void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* registry, ContainerNode& clone, size_t currentDepth)
+void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* registry, ContainerNode& clone, size_t currentDepth) const
 {
     if (currentDepth == 1024)
         return;

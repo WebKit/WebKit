@@ -28,6 +28,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
+#include "ExceptionOr.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"

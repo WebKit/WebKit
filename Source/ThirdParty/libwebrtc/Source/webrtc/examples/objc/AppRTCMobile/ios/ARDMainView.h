@@ -14,7 +14,9 @@
 
 @protocol ARDMainViewDelegate <NSObject>
 
-- (void)mainView:(ARDMainView *)mainView didInputRoom:(NSString *)room isLoopback:(BOOL)isLoopback;
+- (void)mainView:(ARDMainView *)mainView
+    didInputRoom:(NSString *)room
+      isLoopback:(BOOL)isLoopback;
 - (void)mainViewDidToggleAudioLoop:(ARDMainView *)mainView;
 
 @end

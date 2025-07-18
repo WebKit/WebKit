@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FrameIdentifier.h"
+#include "NodeIdentifier.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -39,7 +39,7 @@
 namespace WebCore {
 
 using TargetedElementSelectors = Vector<HashSet<String>>;
-using TargetedElementIdentifiers = std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>;
+using TargetedElementIdentifiers = std::pair<NodeIdentifier, ScriptExecutionContextIdentifier>;
 
 struct TargetedElementAdjustment {
     TargetedElementIdentifiers identifiers;
@@ -53,7 +53,7 @@ struct TargetedElementRequest {
 };
 
 struct TargetedElementInfo {
-    ElementIdentifier elementIdentifier;
+    NodeIdentifier nodeIdentifier;
     ScriptExecutionContextIdentifier documentIdentifier;
     RectEdges<bool> offsetEdges;
     String renderedText;

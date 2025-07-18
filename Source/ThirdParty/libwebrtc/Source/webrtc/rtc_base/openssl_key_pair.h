@@ -20,7 +20,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 // OpenSSLKeyPair encapsulates an OpenSSL EVP_PKEY* keypair object,
 // which is reference counted inside the OpenSSL library.
@@ -56,6 +56,14 @@ class OpenSSLKeyPair final {
   EVP_PKEY* pkey_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::OpenSSLKeyPair;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_OPENSSL_KEY_PAIR_H_

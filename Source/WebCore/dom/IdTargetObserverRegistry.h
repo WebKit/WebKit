@@ -55,7 +55,7 @@ private:
     void notifyObserversInternal(Element&, const AtomString& id);
 
     struct ObserverSet final : public CanMakeCheckedPtr<ObserverSet> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ObserverSet);
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ObserverSet);
 
         ObserverSet();

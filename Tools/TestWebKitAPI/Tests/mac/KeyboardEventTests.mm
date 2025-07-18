@@ -133,7 +133,7 @@ TEST(KeyboardEventTests, TerminateWebContentProcessDuringKeyEventHandling)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@""];
 
-    RunLoop::protectedMain()->dispatchAfter(5_ms, [&] {
+    RunLoop::mainSingleton().dispatchAfter(5_ms, [&] {
         [webView _killWebContentProcessAndResetState];
     });
     for (unsigned i = 0; i < 10; ++i) {

@@ -4,4 +4,5 @@ PASS testing width: calc(20% * 0.5em / 1px)
 PASS testing width: calc(4px * 4em / 1px)
 PASS testing width: calc(400px / 4lh * 1px)
 PASS testing width: calc(20% / 0.5em * 1px)
+FAIL testing width: calc(52px * 1px / 10%) assert_equals: expected "1px" but got "27.03125px"
 

@@ -33,7 +33,7 @@ TEST(ParameterTest, SerializeDeserializeParameter) {
                                                 TSN(789), {StreamID(42)}))
           .Build();
 
-  rtc::ArrayView<const uint8_t> serialized = parameters.data();
+  webrtc::ArrayView<const uint8_t> serialized = parameters.data();
 
   ASSERT_HAS_VALUE_AND_ASSIGN(Parameters parsed, Parameters::Parse(serialized));
   auto descriptors = parsed.descriptors();

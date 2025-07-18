@@ -58,6 +58,7 @@ enum class SnapshotFlags : uint16_t {
     PaintWith3xBaseScale                    = 1 << 10,
     ExcludeText                             = 1 << 11,
     FixedAndStickyLayersOnly                = 1 << 12,
+    DraggableElement                        = 1 << 13,
 };
 
 struct SnapshotOptions {

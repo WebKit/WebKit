@@ -1,0 +1,37 @@
+Check that script-writeable website data does not get removed after a navigation with unfiltered link decoration from a prevalent resource but before the Short data removal period.
+
+1 day(s): Client-side cookie exists.
+1 day(s): Client-side persistent cookie exists.
+1 day(s): HttpOnly cookie exists.
+1 day(s): Regular server-side cookie exists.
+1 day(s): LocalStorage entry does exist.
+1 day(s): IDB entry does exist.
+
+6 day(s): Client-side cookie exists.
+6 day(s): Client-side persistent cookie exists.
+6 day(s): HttpOnly cookie exists.
+6 day(s): Regular server-side cookie exists.
+6 day(s): LocalStorage entry does exist.
+6 day(s): IDB entry does exist.
+
+
+Resource load statistics:
+
+Registrable domain: 127.0.0.1
+    hadUserInteraction: Yes
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    TopFrameLinkDecorationsFrom:
+        localhost
+    DataRemovalFrequency: Short
+    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+Registrable domain: localhost
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    DataRemovalFrequency: Never
+    isPrevalentResource: Yes
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 1

@@ -121,6 +121,11 @@ void InjectedBundleScriptWorld::setAllowAutofill()
     m_world->setAllowAutofill();
 }
 
+void InjectedBundleScriptWorld::setNodeInfoEnabled()
+{
+    m_world->setNodeInfoEnabled();
+}
+
 void InjectedBundleScriptWorld::setAllowElementUserInfo()
 {
     m_world->setAllowElementUserInfo();

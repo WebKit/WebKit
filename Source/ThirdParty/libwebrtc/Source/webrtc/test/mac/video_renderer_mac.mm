@@ -35,8 +35,8 @@
 @end
 
 @implementation CocoaWindow
-  static NSInteger nextXOrigin_;
-  static NSInteger nextYOrigin_;
+static NSInteger nextXOrigin_;
+static NSInteger nextYOrigin_;
 
 - (id)initWithTitle:(NSString *)title width:(int)width height:(int)height {
   self = [super init];
@@ -117,10 +117,10 @@
 namespace webrtc {
 namespace test {
 
-VideoRenderer* VideoRenderer::CreatePlatformRenderer(const char* window_title,
+VideoRenderer *VideoRenderer::CreatePlatformRenderer(const char *window_title,
                                                      size_t width,
                                                      size_t height) {
-  MacRenderer* renderer = new MacRenderer();
+  MacRenderer *renderer = new MacRenderer();
   if (!renderer->Init(window_title, width, height)) {
     delete renderer;
     return NULL;
@@ -128,8 +128,7 @@ VideoRenderer* VideoRenderer::CreatePlatformRenderer(const char* window_title,
   return renderer;
 }
 
-MacRenderer::MacRenderer()
-    : window_(NULL) {}
+MacRenderer::MacRenderer() : window_(NULL) {}
 
 MacRenderer::~MacRenderer() {
 #if WEBRTC_WEBKIT_BUILD
@@ -147,10 +146,9 @@ bool MacRenderer::Init(const char* window_title, int width, int height) {
 #endif
   window_ = [[CocoaWindow alloc]
       initWithTitle:[NSString stringWithUTF8String:window_title]
-                                             width:width
-                                            height:height];
-  if (!window_)
-    return false;
+              width:width
+             height:height];
+  if (!window_) return false;
   [window_ performSelectorOnMainThread:@selector(createWindow:)
                             withObject:nil
                          waitUntilDone:YES];
@@ -175,5 +173,5 @@ void MacRenderer::OnFrame(const VideoFrame& frame) {
 #endif
 }
 
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc

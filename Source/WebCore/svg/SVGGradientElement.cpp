@@ -24,6 +24,7 @@
 #include "config.h"
 #include "SVGGradientElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "LegacyRenderSVGResourceLinearGradient.h"
 #include "LegacyRenderSVGResourceRadialGradient.h"

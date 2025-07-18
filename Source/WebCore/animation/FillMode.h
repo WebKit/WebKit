@@ -31,6 +31,6 @@ namespace WebCore {
 
 enum class FillMode : uint8_t { None, Forwards, Backwards, Both, Auto };
 
-using OptionalFillMode = Markable<FillMode, EnumMarkableTraits<FillMode>>;
+using OptionalFillMode = Markable<FillMode>;
 
 } // namespace WebCore

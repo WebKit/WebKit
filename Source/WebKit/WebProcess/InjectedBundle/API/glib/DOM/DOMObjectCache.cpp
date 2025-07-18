@@ -36,7 +36,7 @@
 namespace WebKit {
 
 struct DOMObjectCacheData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMObjectCacheData);
     DOMObjectCacheData(GObject* wrapper)
         : object(wrapper)
         , cacheReferences(1)
@@ -158,7 +158,7 @@ private:
         for (auto* data : objects)
             g_object_weak_unref(data->object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
 
-        RunLoop::protectedMain()->dispatch([objects] {
+        RunLoop::mainSingleton().dispatch([objects] {
             for (auto* data : objects)
                 data->clearObject();
         });

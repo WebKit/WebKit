@@ -65,7 +65,7 @@ absl::string_view ToString(ReconfigurationResponseParameter::Result result) {
 }
 
 std::optional<ReconfigurationResponseParameter>
-ReconfigurationResponseParameter::Parse(rtc::ArrayView<const uint8_t> data) {
+ReconfigurationResponseParameter::Parse(webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -144,7 +144,7 @@ void ReconfigurationResponseParameter::SerializeTo(
 }
 
 std::string ReconfigurationResponseParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Re-configuration Response, resp_seq_nbr="
      << *response_sequence_number();
   return sb.Release();

@@ -5,6 +5,7 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
 
 using namespace angle;
@@ -52,6 +53,47 @@ class CubeMapTextureTest : public ANGLETest<>
     GLint mColorLocation;
 };
 
+// Verify that uploading to the faces of a cube map consecutively will correctly upload to each
+// face.
+TEST_P(CubeMapTextureTest, UploadToFacesConsecutively)
+{
+    const GLColor faceColors[] = {
+        GLColor::red,    GLColor::green,   GLColor::blue,
+        GLColor::yellow, GLColor::magenta, GLColor::cyan,
+    };
+
+    GLuint tex = 0;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    for (int face = 5; face >= 0; face--)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, faceColors[face].data());
+        EXPECT_GL_NO_ERROR();
+    }
+    EXPECT_GL_NO_ERROR();
+
+    GLuint fbo = 0;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    for (GLenum face = 0; face < 6; face++)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, tex, 0);
+        EXPECT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_COLOR_EQ(0, 0, faceColors[face]);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteTextures(1, &tex);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify that rendering to the faces of a cube map consecutively will correctly render to each
 // face.
 TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
@@ -94,6 +136,10 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
         glUniform4f(mColorLocation, faceColor[0], faceColor[1], faceColor[2], faceColor[3]);
 
         drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_EQ(0, 0, faceColor[0] * 255, faceColor[1] * 255, faceColor[2] * 255,
+                        faceColor[3] * 255);
         EXPECT_GL_NO_ERROR();
     }
 
@@ -253,17 +299,20 @@ void main()
     if (gl_FragCoord.x < 2.0)
     {
         coord.x = gl_FragCoord.x < 1.0 ? 1.0 : -1.0;
-        coord.zy = coordInSection[int(gl_FragCoord.y)].xy;
+        coord.z = coordInSection[int(gl_FragCoord.y)].x;
+        coord.y = coordInSection[int(gl_FragCoord.y)].y;
     }
     else if (gl_FragCoord.x < 4.0)
     {
         coord.y = gl_FragCoord.x < 3.0 ? 1.0 : -1.0;
-        coord.xz = coordInSection[int(gl_FragCoord.y)].xy;
+        coord.x = coordInSection[int(gl_FragCoord.y)].x;
+        coord.z = coordInSection[int(gl_FragCoord.y)].y;
     }
     else
     {
         coord.z = gl_FragCoord.x < 5.0 ? 1.0 : -1.0;
-        coord.xy = coordInSection[int(gl_FragCoord.y)].xy;
+        coord.x = coordInSection[int(gl_FragCoord.y)].x;
+        coord.y = coordInSection[int(gl_FragCoord.y)].y;
     }
 
     gl_FragColor = textureCube(texCube, coord);
@@ -361,4 +410,4 @@ void main()
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(CubeMapTextureTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(CubeMapTextureTest, ES2_WEBGPU(), ES3_WEBGPU());

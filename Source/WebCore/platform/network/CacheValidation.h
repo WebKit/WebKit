@@ -67,9 +67,9 @@ struct CacheControlDirectives {
         , immutable(false)
         { }
 
-    Markable<Seconds, Seconds::MarkableTraits> maxAge;
-    Markable<Seconds, Seconds::MarkableTraits> maxStale;
-    Markable<Seconds, Seconds::MarkableTraits> staleWhileRevalidate;
+    Markable<Seconds> maxAge;
+    Markable<Seconds> maxStale;
+    Markable<Seconds> staleWhileRevalidate;
     bool noCache : 1;
     bool noStore : 1;
     bool mustRevalidate : 1;

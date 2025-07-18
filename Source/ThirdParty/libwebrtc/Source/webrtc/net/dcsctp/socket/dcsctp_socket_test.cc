@@ -68,6 +68,7 @@ using ::testing::AllOf;
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 using ::testing::Eq;
+using ::testing::Field;
 using ::testing::HasSubstr;
 using ::testing::IsEmpty;
 using ::testing::Not;
@@ -808,6 +809,35 @@ TEST(DcSctpSocketTest, SendMessageAfterEstablished) {
 
   std::optional<DcSctpMessage> msg = z.cb.ConsumeReceivedMessage();
   ASSERT_TRUE(msg.has_value());
+  EXPECT_EQ(msg->stream_id(), StreamID(1));
+
+  // Calling the pull-mode API with it not enabled just returns false.
+  EXPECT_EQ(z.socket.MessagesReady(), 0u);
+  EXPECT_FALSE(z.socket.GetNextMessage().has_value());
+}
+
+TEST(DcSctpSocketTest, SendMessageAfterEstablishedInPullMode) {
+  SocketUnderTest a("A");
+  SocketUnderTest z("Z", {.enable_receive_pull_mode = true});
+
+  EXPECT_CALL(z.cb, OnMessageReceived).Times(0);
+  EXPECT_CALL(z.cb, OnMessageReady).Times(1);
+
+  ConnectSockets(a, z);
+
+  EXPECT_EQ(z.socket.MessagesReady(), 0u);
+  EXPECT_FALSE(z.socket.GetNextMessage().has_value());
+
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(53), {1, 2}), kSendOptions);
+  z.socket.ReceivePacket(a.cb.ConsumeSentPacket());
+
+  // Not delivered by callback.
+  ASSERT_FALSE(z.cb.ConsumeReceivedMessage().has_value());
+
+  // But available by polling.
+  EXPECT_EQ(z.socket.MessagesReady(), 1u);
+  std::optional<DcSctpMessage> msg = z.socket.GetNextMessage();
+  EXPECT_TRUE(msg.has_value());
   EXPECT_EQ(msg->stream_id(), StreamID(1));
 }
 
@@ -3072,13 +3102,14 @@ TEST_P(DcSctpSocketParametrizedTest, AllPacketsAfterConnectHaveZeroChecksum) {
   z->socket.Send(DcSctpMessage(StreamID(1), PPID(53), payload), kSendOptions);
 
   for (;;) {
-    if (auto data = a.cb.ConsumeSentPacket(); !data.empty()) {
+    std::vector<uint8_t> data;
+    if (data = a.cb.ConsumeSentPacket(); !data.empty()) {
       ASSERT_HAS_VALUE_AND_ASSIGN(SctpPacket packet,
                                   SctpPacket::Parse(data, options));
       EXPECT_THAT(packet.common_header().checksum, 0u);
       z->socket.ReceivePacket(std::move(data));
 
-    } else if (auto data = z->cb.ConsumeSentPacket(); !data.empty()) {
+    } else if (data = z->cb.ConsumeSentPacket(); !data.empty()) {
       ASSERT_HAS_VALUE_AND_ASSIGN(SctpPacket packet,
                                   SctpPacket::Parse(data, options));
       EXPECT_THAT(packet.common_header().checksum, 0u);
@@ -3220,7 +3251,7 @@ TEST(DcSctpSocketTest, ResentInitAckHasDifferentParameters) {
   EXPECT_NE(init_ack_chunk_1.initial_tsn(), init_ack_chunk_2.initial_tsn());
 }
 
-TEST(DcSctpSocketResendInitTest, ConnectionCanContinueFromFirstInitAck) {
+TEST(DcSctpSocketTest, ConnectionCanContinueFromFirstInitAck) {
   // If an INIT chunk has to be resent (due to INIT_ACK not received in time),
   // another INIT will be sent, and if both INITs were actually received, both
   // will be responded to by an INIT_ACK. While these two INIT_ACKs may have
@@ -3261,7 +3292,7 @@ TEST(DcSctpSocketResendInitTest, ConnectionCanContinueFromFirstInitAck) {
   EXPECT_THAT(msg->payload(), SizeIs(kLargeMessageSize));
 }
 
-TEST(DcSctpSocketResendInitTest, ConnectionCanContinueFromSecondInitAck) {
+TEST(DcSctpSocketTest, ConnectionCanContinueFromSecondInitAck) {
   // Just as above, but discarding the first INIT_ACK.
   SocketUnderTest a("A");
   SocketUnderTest z("Z");
@@ -3296,6 +3327,92 @@ TEST(DcSctpSocketResendInitTest, ConnectionCanContinueFromSecondInitAck) {
   ASSERT_TRUE(msg.has_value());
   EXPECT_EQ(msg->stream_id(), StreamID(1));
   EXPECT_THAT(msg->payload(), SizeIs(kLargeMessageSize));
+}
+
+TEST_P(DcSctpSocketParametrizedTest, LowCongestionWindowSetsIsackBit) {
+  // This test verifies the option `immediate_sack_under_cwnd_mtus`.
+  DcSctpOptions options = {.cwnd_mtus_initial = 4,
+                           .immediate_sack_under_cwnd_mtus = 2};
+  SocketUnderTest a("A", options);
+  SocketUnderTest z("Z");
+
+  ConnectSockets(a, z);
+
+  EXPECT_EQ(a.socket.GetMetrics()->cwnd_bytes,
+            options.cwnd_mtus_initial * options.mtu);
+
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(51), std::vector<uint8_t>(1)),
+                SendOptions());
+
+  // Drop the first packet, and let T3-rtx fire, which lowers cwnd.
+  auto packet1 = a.cb.ConsumeSentPacket();
+  EXPECT_THAT(packet1,
+              HasChunks(ElementsAre(IsDataChunk(AllOf(
+                  Property(&DataChunk::stream_id, StreamID(1)),
+                  Property(&DataChunk::options,
+                           Field(&AnyDataChunk::Options::immediate_ack,
+                                 AnyDataChunk::ImmediateAckFlag(false))))))));
+
+  AdvanceTime(a, z, a.options.rto_initial.ToTimeDelta());
+  EXPECT_EQ(a.socket.GetMetrics()->cwnd_bytes, 1 * options.mtu);
+
+  // Observe that the retransmission will have the I-SACK bit set.
+  auto packet2 = a.cb.ConsumeSentPacket();
+  z.socket.ReceivePacket(packet2);
+  EXPECT_THAT(packet2,
+              HasChunks(ElementsAre(IsDataChunk(AllOf(
+                  Property(&DataChunk::stream_id, StreamID(1)),
+                  Property(&DataChunk::options,
+                           Field(&AnyDataChunk::Options::immediate_ack,
+                                 AnyDataChunk::ImmediateAckFlag(true))))))));
+
+  // The receiver immediately SACKS. It would even without this bit set.
+  auto packet3 = z.cb.ConsumeSentPacket();
+  a.socket.ReceivePacket(packet3);
+  EXPECT_THAT(packet3, HasChunks(ElementsAre(IsChunkType(SackChunk::kType))));
+
+  // Next sent chunk will also have the i-sack set, as cwnd is low.
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(53),
+                              std::vector<uint8_t>(kLargeMessageSize)),
+                kSendOptions);
+
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(51), std::vector<uint8_t>(1)),
+                SendOptions());
+
+  // Observe that the retransmission will have the I-SACK bit set.
+  auto packet4 = a.cb.ConsumeSentPacket();
+  z.socket.ReceivePacket(packet4);
+  EXPECT_THAT(packet4,
+              HasChunks(ElementsAre(IsDataChunk(AllOf(
+                  Property(&DataChunk::stream_id, StreamID(1)),
+                  Property(&DataChunk::options,
+                           Field(&AnyDataChunk::Options::immediate_ack,
+                                 AnyDataChunk::ImmediateAckFlag(true))))))));
+
+  // The receiver would normally delay this sack, but now it's sent directly.
+  auto packet5 = z.cb.ConsumeSentPacket();
+  a.socket.ReceivePacket(packet5);
+  EXPECT_THAT(packet5, HasChunks(ElementsAre(IsChunkType(SackChunk::kType))));
+
+  // Transfer the rest of the message.
+  ExchangeMessages(a, z);
+
+  // This will grow the cwnd, as the message was large.
+  EXPECT_GT(a.socket.GetMetrics()->cwnd_bytes,
+            options.immediate_sack_under_cwnd_mtus * options.mtu);
+
+  // Future chunks will then not have the I-SACK bit set.
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(51), std::vector<uint8_t>(1)),
+                SendOptions());
+
+  // Drop the first packet, and let T3-rtx fire, which lowers cwnd.
+  auto packet6 = a.cb.ConsumeSentPacket();
+  EXPECT_THAT(packet6,
+              HasChunks(ElementsAre(IsDataChunk(AllOf(
+                  Property(&DataChunk::stream_id, StreamID(1)),
+                  Property(&DataChunk::options,
+                           Field(&AnyDataChunk::Options::immediate_ack,
+                                 AnyDataChunk::ImmediateAckFlag(false))))))));
 }
 
 }  // namespace

@@ -362,7 +362,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 0:
 #if USE(AUDIO_SESSION)
         // Pick a value between 256 (2^8) and 16384 (2^14), based on the buffer size of the current AudioSession:
-        bufferSize = 1 << std::max<size_t>(8, std::min<size_t>(14, std::log2(AudioSession::sharedSession().bufferSize())));
+        bufferSize = 1 << std::max<size_t>(8, std::min<size_t>(14, std::log2(AudioSession::singleton().bufferSize())));
 #else
         bufferSize = 2048;
 #endif

@@ -30,7 +30,7 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
  public:
   static constexpr Type kType = Type::RtcpPacketOutgoing;
 
-  explicit RtcEventRtcpPacketOutgoing(rtc::ArrayView<const uint8_t> packet);
+  explicit RtcEventRtcpPacketOutgoing(ArrayView<const uint8_t> packet);
   ~RtcEventRtcpPacketOutgoing() override;
 
   Type GetType() const override { return kType; }
@@ -38,9 +38,9 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
 
   std::unique_ptr<RtcEventRtcpPacketOutgoing> Copy() const;
 
-  const rtc::Buffer& packet() const { return packet_; }
+  const Buffer& packet() const { return packet_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }
@@ -56,7 +56,7 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
  private:
   RtcEventRtcpPacketOutgoing(const RtcEventRtcpPacketOutgoing& other);
 
-  rtc::Buffer packet_;
+  Buffer packet_;
 };
 
 }  // namespace webrtc

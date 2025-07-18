@@ -190,7 +190,7 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return WebCore::subspaceForImpl<TestAsyncKeyValueIterableIterator, UseCustomHeapCellType::No>(vm,
+        return WebCore::subspaceForImpl<TestAsyncKeyValueIterableIterator, UseCustomHeapCellType::No>(vm, "TestAsyncKeyValueIterableIterator"_s,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestAsyncKeyValueIterableIterator.get(); },
             [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestAsyncKeyValueIterableIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestAsyncKeyValueIterableIterator.get(); },
@@ -265,7 +265,7 @@ JSC_ANNOTATE_HOST_FUNCTION(TestAsyncKeyValueIterableIteratorBaseOnPromiseFulfill
 JSC_ANNOTATE_HOST_FUNCTION(TestAsyncKeyValueIterableIteratorBaseOnPromiseRejected, TestAsyncKeyValueIterableIteratorBase::onPromiseRejected);
 JSC::GCClient::IsoSubspace* JSTestAsyncKeyValueIterable::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestAsyncKeyValueIterable, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestAsyncKeyValueIterable, UseCustomHeapCellType::No>(vm, "JSTestAsyncKeyValueIterable"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestAsyncKeyValueIterable.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestAsyncKeyValueIterable = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestAsyncKeyValueIterable.get(); },

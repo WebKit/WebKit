@@ -1,0 +1,1358 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sendIns:p1:p2:data:le:reply:"},
+      {"access": "public", "name": "inSessionWithError:executeBlock:"},
+      {"access": "public", "name": "sendIns:p1:p2:data:le:sw:error:"}
+     ],
+     "interface": "TKSmartCard",
+     "name": "APDULevelTransmit",
+     "properties": [
+      {"access": "public", "getter": "cla", "name": "cla", "setter": "setCla:"},
+      {"access": "public", "getter": "useExtendedLength", "name": "useExtendedLength", "setter": "setUseExtendedLength:"},
+      {"access": "public", "getter": "useCommandChaining", "name": "useCommandChaining", "setter": "setUseCommandChaining:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKErrorCodeNotImplemented"},
+      {"access": "public", "name": "TKErrorCodeCommunicationError"},
+      {"access": "public", "name": "TKErrorCodeCorruptedData"},
+      {"access": "public", "name": "TKErrorCodeCanceledByUser"},
+      {"access": "public", "name": "TKErrorCodeAuthenticationFailed"},
+      {"access": "public", "name": "TKErrorCodeObjectNotFound"},
+      {"access": "public", "name": "TKErrorCodeTokenNotFound"},
+      {"access": "public", "name": "TKErrorCodeBadParameter"},
+      {"access": "public", "name": "TKErrorCodeAuthenticationNeeded"},
+      {"access": "public", "introduced": "9", "name": "TKErrorAuthenticationFailed"},
+      {"access": "public", "introduced": "9", "name": "TKErrorObjectNotFound"},
+      {"access": "public", "introduced": "9", "name": "TKErrorTokenNotFound"}
+     ],
+     "name": "TKErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINCharsetNumeric"},
+      {"access": "public", "name": "TKSmartCardPINCharsetAlphanumeric"},
+      {"access": "public", "name": "TKSmartCardPINCharsetUpperAlphanumeric"}
+     ],
+     "name": "TKSmartCardPINCharset"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINCompletionMaxLength"},
+      {"access": "public", "name": "TKSmartCardPINCompletionKey"},
+      {"access": "public", "name": "TKSmartCardPINCompletionTimeout"}
+     ],
+     "name": "TKSmartCardPINCompletion"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINConfirmationNone"},
+      {"access": "public", "name": "TKSmartCardPINConfirmationNew"},
+      {"access": "public", "name": "TKSmartCardPINConfirmationCurrent"}
+     ],
+     "name": "TKSmartCardPINConfirmation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINEncodingBinary"},
+      {"access": "public", "name": "TKSmartCardPINEncodingASCII"},
+      {"access": "public", "name": "TKSmartCardPINEncodingBCD"}
+     ],
+     "name": "TKSmartCardPINEncoding"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINJustificationLeft"},
+      {"access": "public", "name": "TKSmartCardPINJustificationRight"}
+     ],
+     "name": "TKSmartCardPINJustification"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardProtocolNone"},
+      {"access": "public", "name": "TKSmartCardProtocolT0"},
+      {"access": "public", "name": "TKSmartCardProtocolT1"},
+      {"access": "public", "name": "TKSmartCardProtocolT15"},
+      {"access": "public", "name": "TKSmartCardProtocolAny"}
+     ],
+     "name": "TKSmartCardProtocol"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardSlotStateMissing"},
+      {"access": "public", "name": "TKSmartCardSlotStateEmpty"},
+      {"access": "public", "name": "TKSmartCardSlotStateProbing"},
+      {"access": "public", "name": "TKSmartCardSlotStateMuteCard"},
+      {"access": "public", "name": "TKSmartCardSlotStateValidCard"}
+     ],
+     "name": "TKSmartCardSlotState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKTokenOperationNone"},
+      {"access": "public", "name": "TKTokenOperationReadData"},
+      {"access": "public", "name": "TKTokenOperationSignData"},
+      {"access": "public", "name": "TKTokenOperationDecryptData"},
+      {"access": "public", "name": "TKTokenOperationPerformKeyExchange"}
+     ],
+     "introduced": "10",
+     "name": "TKTokenOperation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_TKErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "dataForTag:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"},
+      {"access": "public", "name": "initWithTag:records:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKBERTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKCompactTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSimpleTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "APDULevelTransmit"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginSessionWithReply:"},
+      {"access": "public", "name": "transmitRequest:reply:"},
+      {"access": "public", "name": "endSession"},
+      {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINVerificationWithPINFormat:APDU:PINByteOffset:"},
+      {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINChangeWithPINFormat:APDU:currentPINByteOffset:newPINByteOffset:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCard",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "slot", "name": "slot"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "valid", "name": "valid"},
+      {"access": "public", "getter": "allowedProtocols", "name": "allowedProtocols", "setter": "setAllowedProtocols:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentProtocol", "name": "currentProtocol"},
+      {"access": "public", "getter": "sensitive", "name": "sensitive", "setter": "setSensitive:"},
+      {"access": "public", "getter": "context", "name": "context", "setter": "setContext:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBytes:"},
+      {"access": "public", "name": "initWithSource:"},
+      {"access": "public", "name": "interfaceGroupAtIndex:"},
+      {"access": "public", "name": "interfaceGroupForProtocol:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardATR",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocols", "name": "protocols"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "historicalBytes", "name": "historicalBytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "historicalRecords", "name": "historicalRecords"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardATRInterfaceGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "TA", "name": "TA"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "TB", "name": "TB"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "TC", "name": "TC"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocol", "name": "protocol"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardPINFormat",
+     "properties": [
+      {"access": "public", "getter": "charset", "name": "charset", "setter": "setCharset:"},
+      {"access": "public", "getter": "encoding", "name": "encoding", "setter": "setEncoding:"},
+      {"access": "public", "getter": "minPINLength", "name": "minPINLength", "setter": "setMinPINLength:"},
+      {"access": "public", "getter": "maxPINLength", "name": "maxPINLength", "setter": "setMaxPINLength:"},
+      {"access": "public", "getter": "PINBlockByteLength", "name": "PINBlockByteLength", "setter": "setPINBlockByteLength:"},
+      {"access": "public", "getter": "PINJustification", "name": "PINJustification", "setter": "setPINJustification:"},
+      {"access": "public", "getter": "PINBitOffset", "name": "PINBitOffset", "setter": "setPINBitOffset:"},
+      {"access": "public", "getter": "PINLengthBitOffset", "name": "PINLengthBitOffset", "setter": "setPINLengthBitOffset:"},
+      {"access": "public", "getter": "PINLengthBitSize", "name": "PINLengthBitSize", "setter": "setPINLengthBitSize:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeSmartCard"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardSlot",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ATR", "name": "ATR"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxInputLength", "name": "maxInputLength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxOutputLength", "name": "maxOutputLength"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "getSlotWithName:reply:"},
+      {"access": "public", "name": "slotNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardSlotManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultManager", "name": "defaultManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slotNames", "name": "slotNames"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSmartCard:AID:instanceID:tokenDriver:"},
+      {"access": "public", "name": "initWithTokenDriver:instanceID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "AID", "name": "AID"}
+     ],
+     "super": "TKToken"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardTokenDriver",
+     "super": "TKTokenDriver"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardTokenSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "smartCard", "name": "smartCard"}
+     ],
+     "super": "TKTokenSession"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runWithReply:"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteraction",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "initialTimeout", "name": "initialTimeout", "setter": "setInitialTimeout:"},
+      {"access": "public", "getter": "interactionTimeout", "name": "interactionTimeout", "setter": "setInteractionTimeout:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForPINOperation",
+     "properties": [
+      {"access": "public", "getter": "PINCompletion", "name": "PINCompletion", "setter": "setPINCompletion:"},
+      {"access": "public", "getter": "PINMessageIndices", "name": "PINMessageIndices", "setter": "setPINMessageIndices:"},
+      {"access": "public", "getter": "locale", "name": "locale", "setter": "setLocale:"},
+      {"access": "public", "getter": "resultSW", "name": "resultSW", "setter": "setResultSW:"},
+      {"access": "public", "getter": "resultData", "name": "resultData", "setter": "setResultData:"}
+     ],
+     "super": "TKSmartCardUserInteraction"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForSecurePINChange",
+     "properties": [
+      {"access": "public", "getter": "PINConfirmation", "name": "PINConfirmation", "setter": "setPINConfirmation:"}
+     ],
+     "super": "TKSmartCardUserInteractionForPINOperation"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForSecurePINVerification",
+     "super": "TKSmartCardUserInteractionForPINOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "recordFromData:"},
+      {"access": "public", "name": "sequenceOfRecordsFromData:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTLVRecord",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tag", "name": "tag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTokenDriver:instanceID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenDriver", "name": "tokenDriver"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "14", "name": "configuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keychainContents", "name": "keychainContents"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "finishWithError:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenAuthOperation",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "keyForObjectID:error:"},
+      {"access": "public", "name": "certificateForObjectID:error:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "TKTokenConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "instanceID", "name": "instanceID"},
+      {"access": "public", "getter": "configurationData", "name": "configurationData", "setter": "setConfigurationData:"},
+      {"access": "public", "getter": "keychainItems", "name": "keychainItems", "setter": "setKeychainItems:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenDriver",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addTokenConfigurationForTokenInstanceID:"},
+      {"access": "public", "name": "removeTokenConfigurationForTokenInstanceID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "TKTokenDriverConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "driverConfigurations", "name": "driverConfigurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classID", "name": "classID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenConfigurations", "name": "tokenConfigurations"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "isAlgorithm:"},
+      {"access": "public", "name": "supportsAlgorithm:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeyAlgorithm",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeyExchangeParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "requestedSize", "name": "requestedSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sharedInfo", "name": "sharedInfo"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCertificate:objectID:"},
+      {"access": "public", "name": "initWithObjectID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainCertificate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "super": "TKTokenKeychainItem"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fillWithItems:"},
+      {"access": "public", "name": "keyForObjectID:error:"},
+      {"access": "public", "name": "certificateForObjectID:error:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainContents",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithObjectID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectID", "name": "objectID"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "constraints", "name": "constraints", "setter": "setConstraints:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCertificate:objectID:"},
+      {"access": "public", "name": "initWithObjectID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainKey",
+     "properties": [
+      {"access": "public", "getter": "keyType", "name": "keyType", "setter": "setKeyType:"},
+      {"access": "public", "getter": "applicationTag", "name": "applicationTag", "setter": "setApplicationTag:"},
+      {"access": "public", "getter": "keySizeInBits", "name": "keySizeInBits", "setter": "setKeySizeInBits:"},
+      {"access": "public", "getter": "publicKeyData", "name": "publicKeyData", "setter": "setPublicKeyData:"},
+      {"access": "public", "getter": "publicKeyHash", "name": "publicKeyHash", "setter": "setPublicKeyHash:"},
+      {"access": "public", "getter": "canDecrypt", "name": "canDecrypt", "setter": "setCanDecrypt:"},
+      {"access": "public", "getter": "canSign", "name": "canSign", "setter": "setCanSign:"},
+      {"access": "public", "getter": "canPerformKeyExchange", "name": "canPerformKeyExchange", "setter": "setCanPerformKeyExchange:"},
+      {"access": "public", "getter": "isSuitableForLogin", "name": "suitableForLogin", "setter": "setSuitableForLogin:"}
+     ],
+     "super": "TKTokenKeychainItem"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenPasswordAuthOperation",
+     "properties": [
+      {"access": "public", "getter": "password", "name": "password", "setter": "setPassword:"}
+     ],
+     "super": "TKTokenAuthOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithToken:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "token", "name": "token"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenSmartCardPINAuthOperation",
+     "properties": [
+      {"access": "public", "getter": "PINFormat", "name": "PINFormat", "setter": "setPINFormat:"},
+      {"access": "public", "getter": "APDUTemplate", "name": "APDUTemplate", "setter": "setAPDUTemplate:"},
+      {"access": "public", "getter": "PINByteOffset", "name": "PINByteOffset", "setter": "setPINByteOffset:"},
+      {"access": "public", "getter": "smartCard", "name": "smartCard", "setter": "setSmartCard:"},
+      {"access": "public", "getter": "PIN", "name": "PIN", "setter": "setPIN:"}
+     ],
+     "super": "TKTokenAuthOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "10", "name": "initWithInsertionHandler:"},
+      {"access": "public", "introduced": "11", "name": "setInsertionHandler:"},
+      {"access": "public", "name": "addRemovalHandler:forTokenID:"},
+      {"access": "public", "introduced": "15", "name": "tokenInfoForTokenID:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenWatcher",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenIDs", "name": "tokenIDs"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "TKTokenWatcherTokenInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenID", "name": "tokenID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slotName", "name": "slotName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "driverName", "name": "driverName"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "tokenDriver:createTokenForSmartCard:AID:error:"}
+     ],
+     "name": "TKSmartCardTokenDriverDelegate",
+     "protocols": [
+      "TKTokenDriverDelegate"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "characterEnteredInUserInteraction:", "optional": true},
+      {"access": "public", "name": "correctionKeyPressedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "validationKeyPressedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "invalidCharacterEnteredInUserInteraction:", "optional": true},
+      {"access": "public", "name": "oldPINRequestedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "newPINRequestedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "newPINConfirmationRequestedInUserInteraction:", "optional": true}
+     ],
+     "name": "TKSmartCardUserInteractionDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "token:createSessionWithError:"},
+      {"access": "public", "name": "token:terminateSession:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "tokenDriver:tokenForConfiguration:error:", "optional": true},
+      {"access": "public", "name": "tokenDriver:terminateToken:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenDriverDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "tokenSession:beginAuthForOperation:constraint:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:supportsOperation:usingKey:algorithm:", "optional": true},
+      {"access": "public", "name": "tokenSession:signData:usingKey:algorithm:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:decryptData:usingKey:algorithm:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:performKeyExchangeWithPublicKey:usingKey:algorithm:parameters:error:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "9", "name": "TKErrorCode"},
+    {"access": "public", "name": "TKSmartCardPINCharset"},
+    {"access": "public", "name": "TKSmartCardPINCompletion"},
+    {"access": "public", "name": "TKSmartCardPINConfirmation"},
+    {"access": "public", "name": "TKSmartCardPINEncoding"},
+    {"access": "public", "name": "TKSmartCardPINJustification"},
+    {"access": "public", "name": "TKSmartCardProtocol"},
+    {"access": "public", "name": "TKSmartCardSlotState"},
+    {"access": "public", "introduced": "10", "name": "TKTLVTag"},
+    {"access": "public", "introduced": "14", "name": "TKTokenDriverClassID"},
+    {"access": "public", "introduced": "14", "name": "TKTokenInstanceID"},
+    {"access": "public", "introduced": "10", "name": "TKTokenObjectID"},
+    {"access": "public", "name": "TKTokenOperation"},
+    {"access": "public", "introduced": "10", "name": "TKTokenOperationConstraint"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sendIns:p1:p2:data:le:reply:"},
+      {"access": "public", "name": "inSessionWithError:executeBlock:"},
+      {"access": "public", "name": "sendIns:p1:p2:data:le:sw:error:"}
+     ],
+     "interface": "TKSmartCard",
+     "name": "APDULevelTransmit",
+     "properties": [
+      {"access": "public", "getter": "cla", "name": "cla", "setter": "setCla:"},
+      {"access": "public", "getter": "useExtendedLength", "name": "useExtendedLength", "setter": "setUseExtendedLength:"},
+      {"access": "public", "getter": "useCommandChaining", "name": "useCommandChaining", "setter": "setUseCommandChaining:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKErrorCodeNotImplemented"},
+      {"access": "public", "name": "TKErrorCodeCommunicationError"},
+      {"access": "public", "name": "TKErrorCodeCorruptedData"},
+      {"access": "public", "name": "TKErrorCodeCanceledByUser"},
+      {"access": "public", "name": "TKErrorCodeAuthenticationFailed"},
+      {"access": "public", "name": "TKErrorCodeObjectNotFound"},
+      {"access": "public", "name": "TKErrorCodeTokenNotFound"},
+      {"access": "public", "name": "TKErrorCodeBadParameter"},
+      {"access": "public", "name": "TKErrorCodeAuthenticationNeeded"},
+      {"access": "public", "introduced": "9", "name": "TKErrorAuthenticationFailed"},
+      {"access": "public", "introduced": "9", "name": "TKErrorObjectNotFound"},
+      {"access": "public", "introduced": "9", "name": "TKErrorTokenNotFound"}
+     ],
+     "name": "TKErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINCharsetNumeric"},
+      {"access": "public", "name": "TKSmartCardPINCharsetAlphanumeric"},
+      {"access": "public", "name": "TKSmartCardPINCharsetUpperAlphanumeric"}
+     ],
+     "name": "TKSmartCardPINCharset"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINCompletionMaxLength"},
+      {"access": "public", "name": "TKSmartCardPINCompletionKey"},
+      {"access": "public", "name": "TKSmartCardPINCompletionTimeout"}
+     ],
+     "name": "TKSmartCardPINCompletion"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINConfirmationNone"},
+      {"access": "public", "name": "TKSmartCardPINConfirmationNew"},
+      {"access": "public", "name": "TKSmartCardPINConfirmationCurrent"}
+     ],
+     "name": "TKSmartCardPINConfirmation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINEncodingBinary"},
+      {"access": "public", "name": "TKSmartCardPINEncodingASCII"},
+      {"access": "public", "name": "TKSmartCardPINEncodingBCD"}
+     ],
+     "name": "TKSmartCardPINEncoding"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardPINJustificationLeft"},
+      {"access": "public", "name": "TKSmartCardPINJustificationRight"}
+     ],
+     "name": "TKSmartCardPINJustification"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardProtocolNone"},
+      {"access": "public", "name": "TKSmartCardProtocolT0"},
+      {"access": "public", "name": "TKSmartCardProtocolT1"},
+      {"access": "public", "name": "TKSmartCardProtocolT15"},
+      {"access": "public", "name": "TKSmartCardProtocolAny"}
+     ],
+     "name": "TKSmartCardProtocol"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKSmartCardSlotStateMissing"},
+      {"access": "public", "name": "TKSmartCardSlotStateEmpty"},
+      {"access": "public", "name": "TKSmartCardSlotStateProbing"},
+      {"access": "public", "name": "TKSmartCardSlotStateMuteCard"},
+      {"access": "public", "name": "TKSmartCardSlotStateValidCard"}
+     ],
+     "name": "TKSmartCardSlotState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "TKTokenOperationNone"},
+      {"access": "public", "name": "TKTokenOperationReadData"},
+      {"access": "public", "name": "TKTokenOperationSignData"},
+      {"access": "public", "name": "TKTokenOperationDecryptData"},
+      {"access": "public", "name": "TKTokenOperationPerformKeyExchange"}
+     ],
+     "introduced": "10",
+     "name": "TKTokenOperation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_TKErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "dataForTag:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"},
+      {"access": "public", "name": "initWithTag:records:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKBERTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKCompactTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTag:value:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSimpleTLVRecord",
+     "super": "TKTLVRecord"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "APDULevelTransmit"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginSessionWithReply:"},
+      {"access": "public", "name": "transmitRequest:reply:"},
+      {"access": "public", "name": "endSession"},
+      {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINVerificationWithPINFormat:APDU:PINByteOffset:"},
+      {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINChangeWithPINFormat:APDU:currentPINByteOffset:newPINByteOffset:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCard",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "slot", "name": "slot"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "valid", "name": "valid"},
+      {"access": "public", "getter": "allowedProtocols", "name": "allowedProtocols", "setter": "setAllowedProtocols:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentProtocol", "name": "currentProtocol"},
+      {"access": "public", "getter": "sensitive", "name": "sensitive", "setter": "setSensitive:"},
+      {"access": "public", "getter": "context", "name": "context", "setter": "setContext:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBytes:"},
+      {"access": "public", "name": "initWithSource:"},
+      {"access": "public", "name": "interfaceGroupAtIndex:"},
+      {"access": "public", "name": "interfaceGroupForProtocol:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardATR",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocols", "name": "protocols"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "historicalBytes", "name": "historicalBytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "historicalRecords", "name": "historicalRecords"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardATRInterfaceGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "TA", "name": "TA"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "TB", "name": "TB"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "TC", "name": "TC"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocol", "name": "protocol"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardPINFormat",
+     "properties": [
+      {"access": "public", "getter": "charset", "name": "charset", "setter": "setCharset:"},
+      {"access": "public", "getter": "encoding", "name": "encoding", "setter": "setEncoding:"},
+      {"access": "public", "getter": "minPINLength", "name": "minPINLength", "setter": "setMinPINLength:"},
+      {"access": "public", "getter": "maxPINLength", "name": "maxPINLength", "setter": "setMaxPINLength:"},
+      {"access": "public", "getter": "PINBlockByteLength", "name": "PINBlockByteLength", "setter": "setPINBlockByteLength:"},
+      {"access": "public", "getter": "PINJustification", "name": "PINJustification", "setter": "setPINJustification:"},
+      {"access": "public", "getter": "PINBitOffset", "name": "PINBitOffset", "setter": "setPINBitOffset:"},
+      {"access": "public", "getter": "PINLengthBitOffset", "name": "PINLengthBitOffset", "setter": "setPINLengthBitOffset:"},
+      {"access": "public", "getter": "PINLengthBitSize", "name": "PINLengthBitSize", "setter": "setPINLengthBitSize:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeSmartCard"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardSlot",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ATR", "name": "ATR"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxInputLength", "name": "maxInputLength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxOutputLength", "name": "maxOutputLength"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "getSlotWithName:reply:"},
+      {"access": "public", "name": "slotNamed:"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardSlotManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultManager", "name": "defaultManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slotNames", "name": "slotNames"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSmartCard:AID:instanceID:tokenDriver:"},
+      {"access": "public", "name": "initWithTokenDriver:instanceID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "AID", "name": "AID"}
+     ],
+     "super": "TKToken"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardTokenDriver",
+     "super": "TKTokenDriver"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKSmartCardTokenSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "smartCard", "name": "smartCard"}
+     ],
+     "super": "TKTokenSession"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runWithReply:"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteraction",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "initialTimeout", "name": "initialTimeout", "setter": "setInitialTimeout:"},
+      {"access": "public", "getter": "interactionTimeout", "name": "interactionTimeout", "setter": "setInteractionTimeout:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForPINOperation",
+     "properties": [
+      {"access": "public", "getter": "PINCompletion", "name": "PINCompletion", "setter": "setPINCompletion:"},
+      {"access": "public", "getter": "PINMessageIndices", "name": "PINMessageIndices", "setter": "setPINMessageIndices:"},
+      {"access": "public", "getter": "locale", "name": "locale", "setter": "setLocale:"},
+      {"access": "public", "getter": "resultSW", "name": "resultSW", "setter": "setResultSW:"},
+      {"access": "public", "getter": "resultData", "name": "resultData", "setter": "setResultData:"}
+     ],
+     "super": "TKSmartCardUserInteraction"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForSecurePINChange",
+     "properties": [
+      {"access": "public", "getter": "PINConfirmation", "name": "PINConfirmation", "setter": "setPINConfirmation:"}
+     ],
+     "super": "TKSmartCardUserInteractionForPINOperation"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "TKSmartCardUserInteractionForSecurePINVerification",
+     "super": "TKSmartCardUserInteractionForPINOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "recordFromData:"},
+      {"access": "public", "name": "sequenceOfRecordsFromData:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTLVRecord",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tag", "name": "tag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTokenDriver:instanceID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenDriver", "name": "tokenDriver"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "14", "name": "configuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keychainContents", "name": "keychainContents"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "finishWithError:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenAuthOperation",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "keyForObjectID:error:"},
+      {"access": "public", "name": "certificateForObjectID:error:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "TKTokenConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "instanceID", "name": "instanceID"},
+      {"access": "public", "getter": "configurationData", "name": "configurationData", "setter": "setConfigurationData:"},
+      {"access": "public", "getter": "keychainItems", "name": "keychainItems", "setter": "setKeychainItems:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenDriver",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addTokenConfigurationForTokenInstanceID:"},
+      {"access": "public", "name": "removeTokenConfigurationForTokenInstanceID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "TKTokenDriverConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "driverConfigurations", "name": "driverConfigurations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classID", "name": "classID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenConfigurations", "name": "tokenConfigurations"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "isAlgorithm:"},
+      {"access": "public", "name": "supportsAlgorithm:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeyAlgorithm",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeyExchangeParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "requestedSize", "name": "requestedSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sharedInfo", "name": "sharedInfo"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCertificate:objectID:"},
+      {"access": "public", "name": "initWithObjectID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainCertificate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "super": "TKTokenKeychainItem"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fillWithItems:"},
+      {"access": "public", "name": "keyForObjectID:error:"},
+      {"access": "public", "name": "certificateForObjectID:error:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainContents",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "items", "name": "items"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithObjectID:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectID", "name": "objectID"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "constraints", "name": "constraints", "setter": "setConstraints:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCertificate:objectID:"},
+      {"access": "public", "name": "initWithObjectID:", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenKeychainKey",
+     "properties": [
+      {"access": "public", "getter": "keyType", "name": "keyType", "setter": "setKeyType:"},
+      {"access": "public", "getter": "applicationTag", "name": "applicationTag", "setter": "setApplicationTag:"},
+      {"access": "public", "getter": "keySizeInBits", "name": "keySizeInBits", "setter": "setKeySizeInBits:"},
+      {"access": "public", "getter": "publicKeyData", "name": "publicKeyData", "setter": "setPublicKeyData:"},
+      {"access": "public", "getter": "publicKeyHash", "name": "publicKeyHash", "setter": "setPublicKeyHash:"},
+      {"access": "public", "getter": "canDecrypt", "name": "canDecrypt", "setter": "setCanDecrypt:"},
+      {"access": "public", "getter": "canSign", "name": "canSign", "setter": "setCanSign:"},
+      {"access": "public", "getter": "canPerformKeyExchange", "name": "canPerformKeyExchange", "setter": "setCanPerformKeyExchange:"},
+      {"access": "public", "getter": "isSuitableForLogin", "name": "suitableForLogin", "setter": "setSuitableForLogin:"}
+     ],
+     "super": "TKTokenKeychainItem"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenPasswordAuthOperation",
+     "properties": [
+      {"access": "public", "getter": "password", "name": "password", "setter": "setPassword:"}
+     ],
+     "super": "TKTokenAuthOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithToken:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "token", "name": "token"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenSmartCardPINAuthOperation",
+     "properties": [
+      {"access": "public", "getter": "PINFormat", "name": "PINFormat", "setter": "setPINFormat:"},
+      {"access": "public", "getter": "APDUTemplate", "name": "APDUTemplate", "setter": "setAPDUTemplate:"},
+      {"access": "public", "getter": "PINByteOffset", "name": "PINByteOffset", "setter": "setPINByteOffset:"},
+      {"access": "public", "getter": "smartCard", "name": "smartCard", "setter": "setSmartCard:"},
+      {"access": "public", "getter": "PIN", "name": "PIN", "setter": "setPIN:"}
+     ],
+     "super": "TKTokenAuthOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "10", "name": "initWithInsertionHandler:"},
+      {"access": "public", "introduced": "11", "name": "setInsertionHandler:"},
+      {"access": "public", "name": "addRemovalHandler:forTokenID:"},
+      {"access": "public", "introduced": "15", "name": "tokenInfoForTokenID:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "TKTokenWatcher",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenIDs", "name": "tokenIDs"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "TKTokenWatcherTokenInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tokenID", "name": "tokenID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slotName", "name": "slotName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "driverName", "name": "driverName"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "tokenDriver:createTokenForSmartCard:AID:error:"}
+     ],
+     "name": "TKSmartCardTokenDriverDelegate",
+     "protocols": [
+      "TKTokenDriverDelegate"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "characterEnteredInUserInteraction:", "optional": true},
+      {"access": "public", "name": "correctionKeyPressedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "validationKeyPressedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "invalidCharacterEnteredInUserInteraction:", "optional": true},
+      {"access": "public", "name": "oldPINRequestedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "newPINRequestedInUserInteraction:", "optional": true},
+      {"access": "public", "name": "newPINConfirmationRequestedInUserInteraction:", "optional": true}
+     ],
+     "name": "TKSmartCardUserInteractionDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "token:createSessionWithError:"},
+      {"access": "public", "name": "token:terminateSession:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "tokenDriver:tokenForConfiguration:error:", "optional": true},
+      {"access": "public", "name": "tokenDriver:terminateToken:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenDriverDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "tokenSession:beginAuthForOperation:constraint:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:supportsOperation:usingKey:algorithm:", "optional": true},
+      {"access": "public", "name": "tokenSession:signData:usingKey:algorithm:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:decryptData:usingKey:algorithm:error:", "optional": true},
+      {"access": "public", "name": "tokenSession:performKeyExchangeWithPublicKey:usingKey:algorithm:parameters:error:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "TKTokenSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "9", "name": "TKErrorCode"},
+    {"access": "public", "name": "TKSmartCardPINCharset"},
+    {"access": "public", "name": "TKSmartCardPINCompletion"},
+    {"access": "public", "name": "TKSmartCardPINConfirmation"},
+    {"access": "public", "name": "TKSmartCardPINEncoding"},
+    {"access": "public", "name": "TKSmartCardPINJustification"},
+    {"access": "public", "name": "TKSmartCardProtocol"},
+    {"access": "public", "name": "TKSmartCardSlotState"},
+    {"access": "public", "introduced": "10", "name": "TKTLVTag"},
+    {"access": "public", "introduced": "14", "name": "TKTokenDriverClassID"},
+    {"access": "public", "introduced": "14", "name": "TKTokenInstanceID"},
+    {"access": "public", "introduced": "10", "name": "TKTokenObjectID"},
+    {"access": "public", "name": "TKTokenOperation"},
+    {"access": "public", "introduced": "10", "name": "TKTokenOperationConstraint"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

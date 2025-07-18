@@ -15,7 +15,7 @@
 
 #include <memory>
 
-#include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/include/audio_util.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "rtc_base/checks.h"
@@ -77,8 +77,8 @@ void PushResampler<T>::EnsureInitialized(size_t src_samples_per_channel,
 }
 
 template <typename T>
-int PushResampler<T>::Resample(InterleavedView<const T> src,
-                               InterleavedView<T> dst) {
+void PushResampler<T>::Resample(InterleavedView<const T> src,
+                                InterleavedView<T> dst) {
   EnsureInitialized(SamplesPerChannel(src), SamplesPerChannel(dst),
                     NumChannels(src));
 
@@ -91,7 +91,7 @@ int PushResampler<T>::Resample(InterleavedView<const T> src,
     // The old resampler provides this memcpy facility in the case of matching
     // sample rates, so reproduce it here for the sinc resampler.
     CopySamples(dst, src);
-    return static_cast<int>(src.data().size());
+    return;
   }
 
   Deinterleave(src, source_view_);
@@ -103,21 +103,19 @@ int PushResampler<T>::Resample(InterleavedView<const T> src,
   }
 
   Interleave<T>(destination_view_, dst);
-  return static_cast<int>(dst.size());
 }
 
 template <typename T>
-int PushResampler<T>::Resample(MonoView<const T> src, MonoView<T> dst) {
+void PushResampler<T>::Resample(MonoView<const T> src, MonoView<T> dst) {
   RTC_DCHECK_EQ(resamplers_.size(), 1);
   RTC_DCHECK_EQ(SamplesPerChannel(src), SamplesPerChannel(source_view_));
   RTC_DCHECK_EQ(SamplesPerChannel(dst), SamplesPerChannel(destination_view_));
 
   if (SamplesPerChannel(src) == SamplesPerChannel(dst)) {
     CopySamples(dst, src);
-    return static_cast<int>(src.size());
+  } else {
+    resamplers_[0]->Resample(src, dst);
   }
-
-  return resamplers_[0]->Resample(src, dst);
 }
 
 // Explictly generate required instantiations.

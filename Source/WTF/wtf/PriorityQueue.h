@@ -40,7 +40,7 @@ namespace WTF {
 
 template<typename T, bool (*isHigherPriority)(const T&, const T&) = &isLessThan<T>, size_t inlineCapacity = 0>
 class PriorityQueue final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PriorityQueue);
     using BufferType = Vector<T, inlineCapacity>;
     using const_iterator = typename BufferType::const_iterator;
 public:

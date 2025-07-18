@@ -100,7 +100,7 @@ void DelayConstraints::UpdateEffectiveMinimumDelay() {
   // Clamp `base_minimum_delay_ms_` into the range which can be effectively
   // used.
   const int base_minimum_delay_ms =
-      rtc::SafeClamp(base_minimum_delay_ms_, 0, MinimumDelayUpperBound());
+      SafeClamp(base_minimum_delay_ms_, 0, MinimumDelayUpperBound());
   effective_minimum_delay_ms_ =
       std::max(minimum_delay_ms_, base_minimum_delay_ms);
 }

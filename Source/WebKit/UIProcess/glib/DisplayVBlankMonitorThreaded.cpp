@@ -35,7 +35,7 @@ namespace WebKit {
 
 DisplayVBlankMonitorThreaded::DisplayVBlankMonitorThreaded(unsigned refreshRate)
     : DisplayVBlankMonitor(refreshRate)
-    , m_destroyThreadTimer(RunLoop::main(), this, &DisplayVBlankMonitorThreaded::destroyThreadTimerFired)
+    , m_destroyThreadTimer(RunLoop::mainSingleton(), this, &DisplayVBlankMonitorThreaded::destroyThreadTimerFired)
 {
     m_destroyThreadTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 }

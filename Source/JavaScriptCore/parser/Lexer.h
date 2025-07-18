@@ -58,7 +58,7 @@ public:
     static bool isWhiteSpace(T character);
     static bool isLineTerminator(T character);
     static unsigned char convertHex(int c1, int c2);
-    static UChar convertUnicode(int c1, int c2, int c3, int c4);
+    static char16_t convertUnicode(int c1, int c2, int c3, int c4);
 
     // Functions to set up parsing.
     void setCode(const SourceCode&, ParserArena*);
@@ -80,7 +80,7 @@ public:
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool hasLineTerminatorBeforeToken() const { return m_hasLineTerminatorBeforeToken; }
-    JSTokenType scanRegExp(JSToken*, UChar patternPrefix = 0);
+    JSTokenType scanRegExp(JSToken*, char16_t patternPrefix = 0);
     enum class RawStringsBuildMode { BuildRawStrings, DontBuildRawStrings };
     JSTokenType scanTemplateString(JSToken*, RawStringsBuildMode);
 
@@ -144,7 +144,7 @@ private:
     void record16(T);
     void recordUnicodeCodePoint(char32_t);
     void append16(std::span<const LChar>);
-    void append16(std::span<const UChar> characters) { m_buffer16.append(characters); }
+    void append16(std::span<const char16_t> characters) { m_buffer16.append(characters); }
 
     static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
     char32_t currentCodePoint() const;
@@ -167,9 +167,9 @@ private:
     ALWAYS_INLINE const Identifier* makeIdentifier(std::span<const CharacterType>);
 
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(std::span<const LChar>);
-    ALWAYS_INLINE const Identifier* makeLCharIdentifier(std::span<const UChar>);
-    ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(std::span<const UChar>, UChar orAllChars);
-    ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(std::span<const UChar>);
+    ALWAYS_INLINE const Identifier* makeLCharIdentifier(std::span<const char16_t>);
+    ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(std::span<const char16_t>, char16_t orAllChars);
+    ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(std::span<const char16_t>);
     ALWAYS_INLINE const Identifier* makeEmptyIdentifier();
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
@@ -215,8 +215,8 @@ private:
     int m_lastLineNumber;
 
     Vector<LChar> m_buffer8;
-    Vector<UChar> m_buffer16;
-    Vector<UChar> m_bufferForRawTemplateString16;
+    Vector<char16_t> m_buffer16;
+    Vector<char16_t> m_bufferForRawTemplateString16;
     bool m_hasLineTerminatorBeforeToken;
     int m_lastToken;
 
@@ -257,7 +257,7 @@ ALWAYS_INLINE bool Lexer<LChar>::isWhiteSpace(LChar ch)
 }
 
 template <>
-ALWAYS_INLINE bool Lexer<UChar>::isWhiteSpace(UChar ch)
+ALWAYS_INLINE bool Lexer<char16_t>::isWhiteSpace(char16_t ch)
 {
     return isLatin1(ch) ? Lexer<LChar>::isWhiteSpace(static_cast<LChar>(ch)) : (u_charType(ch) == U_SPACE_SEPARATOR || ch == byteOrderMark);
 }
@@ -269,7 +269,7 @@ ALWAYS_INLINE bool Lexer<LChar>::isLineTerminator(LChar ch)
 }
 
 template <>
-ALWAYS_INLINE bool Lexer<UChar>::isLineTerminator(UChar ch)
+ALWAYS_INLINE bool Lexer<char16_t>::isLineTerminator(char16_t ch)
 {
     return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
 }
@@ -281,7 +281,7 @@ inline unsigned char Lexer<T>::convertHex(int c1, int c2)
 }
 
 template <typename T>
-inline UChar Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
+inline char16_t Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
 {
     return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
 }
@@ -294,13 +294,13 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(std::span<const Charact
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(std::span<const UChar> characters, UChar)
+ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(std::span<const char16_t> characters, char16_t)
 {
     return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(std::span<const UChar> characters, UChar orAllChars)
+ALWAYS_INLINE const Identifier* Lexer<char16_t>::makeRightSizedIdentifier(std::span<const char16_t> characters, char16_t orAllChars)
 {
     if (!(orAllChars & ~0xff))
         return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
@@ -322,14 +322,14 @@ ALWAYS_INLINE void Lexer<LChar>::setCodeStart(StringView sourceString)
 }
 
 template <>
-ALWAYS_INLINE void Lexer<UChar>::setCodeStart(StringView sourceString)
+ALWAYS_INLINE void Lexer<char16_t>::setCodeStart(StringView sourceString)
 {
     ASSERT(!sourceString.is8Bit());
     m_codeStart = sourceString.span16().data();
 }
 
 template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(std::span<const UChar> characters)
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(std::span<const char16_t> characters)
 {
     return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }
@@ -341,7 +341,7 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(std::span<const LC
 }
 
 template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(std::span<const UChar> characters)
+ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(std::span<const char16_t> characters)
 {
     return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }

@@ -13,6 +13,7 @@
 #include <stddef.h>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace {
 constexpr size_t kDtmfOutbandMax = 20;

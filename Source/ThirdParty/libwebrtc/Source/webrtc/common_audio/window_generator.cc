@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <complex>
+#include <numbers>
 
 #include "rtc_base/checks.h"
 
@@ -41,7 +42,7 @@ void WindowGenerator::Hanning(int length, float* window) {
   RTC_CHECK(window != nullptr);
   for (int i = 0; i < length; ++i) {
     window[i] =
-        0.5f * (1 - cosf(2 * static_cast<float>(M_PI) * i / (length - 1)));
+        0.5f * (1 - cosf(2 * std::numbers::pi_v<float> * i / (length - 1)));
   }
 }
 
@@ -56,7 +57,7 @@ void WindowGenerator::KaiserBesselDerived(float alpha,
 
   for (size_t i = 0; i <= half; ++i) {
     complex<float> r = (4.0f * i) / length - 1.0f;
-    sum += I0(static_cast<float>(M_PI) * alpha * sqrt(1.0f - r * r)).real();
+    sum += I0(std::numbers::pi_v<float> * alpha * sqrt(1.0f - r * r)).real();
     window[i] = sum;
   }
   for (size_t i = length - 1; i >= half; --i) {

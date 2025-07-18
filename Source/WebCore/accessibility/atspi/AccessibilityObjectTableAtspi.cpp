@@ -24,9 +24,11 @@
 
 #include "AccessibilityAtspi.h"
 #include "AccessibilityObject.h" // NOLINT: check-webkit-style has problems with files that do not have primary header
+#include "ContainerNodeInlines.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include <gio/gio.h>
 #include <wtf/text/StringBuilder.h>
 

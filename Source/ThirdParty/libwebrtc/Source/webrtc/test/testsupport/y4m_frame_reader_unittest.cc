@@ -41,8 +41,8 @@ class Y4mFrameReaderTest : public ::testing::Test {
   ~Y4mFrameReaderTest() override = default;
 
   void SetUp() override {
-    filepath_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                           "y4m_frame_reader_unittest");
+    filepath_ =
+        test::TempFilename(test::OutputPath(), "y4m_frame_reader_unittest");
     FILE* file = fopen(filepath_.c_str(), "wb");
     fwrite(kFileHeader, 1, sizeof(kFileHeader) - 1, file);
     for (int n = 0; n < kNumFrames; ++n) {
@@ -65,13 +65,13 @@ TEST_F(Y4mFrameReaderTest, num_frames) {
 }
 
 TEST_F(Y4mFrameReaderTest, PullFrame_frameResolution) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
+  scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
   EXPECT_EQ(kResolution.width, buffer->width());
   EXPECT_EQ(kResolution.height, buffer->height());
 }
 
 TEST_F(Y4mFrameReaderTest, PullFrame_frameContent) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
+  scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
   EXPECT_EQ(kFrameContent[0][0], *buffer->DataY());
   EXPECT_EQ(kFrameContent[0][1], *buffer->DataU());
   EXPECT_EQ(kFrameContent[0][2], *buffer->DataV());
@@ -81,15 +81,14 @@ TEST_F(Y4mFrameReaderTest, ReadFrame_randomOrder) {
   std::vector<int> expected_frames = {2, 0, 1};
   std::vector<int> actual_frames;
   for (int frame_num : expected_frames) {
-    rtc::scoped_refptr<I420BufferInterface> buffer =
-        reader_->ReadFrame(frame_num);
+    scoped_refptr<I420BufferInterface> buffer = reader_->ReadFrame(frame_num);
     actual_frames.push_back(*buffer->DataY());
   }
   EXPECT_EQ(expected_frames, actual_frames);
 }
 
 TEST_F(Y4mFrameReaderTest, PullFrame_scale) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame(
+  scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame(
       /*pulled_frame_num=*/nullptr, Resolution({.width = 2, .height = 2}),
       FrameReader::kNoScale);
   EXPECT_EQ(2, buffer->width());
@@ -108,7 +107,7 @@ TEST_P(Y4mFrameReaderRepeatModeTest, PullFrame) {
   reader_ = CreateY4mFrameReader(filepath_, mode);
   std::vector<int> read_frames;
   for (size_t i = 0; i < expected_frames.size(); ++i) {
-    rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
+    scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
     read_frames.push_back(*buffer->DataY());
   }
   EXPECT_EQ(expected_frames, read_frames);
@@ -136,7 +135,7 @@ TEST_P(Y4mFrameReaderFramerateScaleTest, PullFrame) {
   std::vector<int> actual_frames;
   for (size_t i = 0; i < expected_frames.size(); ++i) {
     int pulled_frame;
-    rtc::scoped_refptr<I420BufferInterface> buffer =
+    scoped_refptr<I420BufferInterface> buffer =
         reader_->PullFrame(&pulled_frame, kResolution, framerate_scale);
     actual_frames.push_back(pulled_frame);
   }

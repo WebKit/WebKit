@@ -542,7 +542,7 @@ void AcceleratedBackingStoreDMABuf::BufferGBM::didUpdateContents(Buffer*, const 
     m_surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(map), cairoFormat, m_size.width(), m_size.height(), mapStride));
     cairo_surface_set_device_scale(m_surface.get(), deviceScaleFactor(), deviceScaleFactor());
     struct BufferData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BufferData);
         RefPtr<BufferGBM> buffer;
         void* data;
     };

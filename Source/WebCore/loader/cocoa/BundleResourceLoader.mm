@@ -57,13 +57,13 @@ void loadResourceFromBundle(ResourceLoader& loader, const String& subdirectory)
         auto *data = [NSData dataWithContentsOfFile:path];
 
         if (!data) {
-            RunLoop::protectedMain()->dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy()] {
+            RunLoop::mainSingleton().dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy()] {
                 protectedLoader->didFail(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
             });
             return;
         }
 
-        RunLoop::protectedMain()->dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy(), buffer = SharedBuffer::create(data)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy(), buffer = SharedBuffer::create(data)]() mutable {
             auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path());
             ResourceResponse response { WTFMove(url), WTFMove(mimeType), static_cast<long long>(buffer->size()), MIMETypeRegistry::isTextMIMEType(mimeType) ? "UTF-8"_s : String() };
             response.setHTTPStatusCode(200);

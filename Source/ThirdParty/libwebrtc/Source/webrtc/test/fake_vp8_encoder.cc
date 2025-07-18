@@ -92,7 +92,7 @@ CodecSpecificInfo FakeVp8Encoder::PopulateCodecSpecific(
 
 CodecSpecificInfo FakeVp8Encoder::EncodeHook(
     EncodedImage& encoded_image,
-    rtc::scoped_refptr<EncodedImageBuffer> buffer) {
+    scoped_refptr<EncodedImageBuffer> buffer) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   uint8_t simulcast_index = encoded_image.SimulcastIndex().value_or(0);
   frame_buffer_controller_->NextFrameConfig(simulcast_index,

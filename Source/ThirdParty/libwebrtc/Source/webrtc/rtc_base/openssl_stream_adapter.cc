@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -27,6 +28,7 @@
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/units/time_delta.h"
@@ -40,7 +42,6 @@
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #ifdef OPENSSL_IS_BORINGSSL
-#include <openssl/base.h>
 #include <openssl/digest.h>
 #include <openssl/dtls1.h>
 #include <openssl/pool.h>
@@ -48,6 +49,7 @@
 
 #include "rtc_base/boringssl_certificate.h"
 #include "rtc_base/boringssl_identity.h"
+#include "rtc_base/openssl.h"
 #else
 #include "rtc_base/openssl_identity.h"
 #endif
@@ -57,7 +59,6 @@
 #include "rtc_base/string_encode.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
 #error "webrtc requires at least OpenSSL version 1.1.0, to support DTLS-SRTP"
@@ -69,21 +70,14 @@ static constexpr absl::string_view kDtlsSrtpExporterLabel =
     "EXTRACTOR-dtls_srtp";
 }  // namespace
 
-namespace rtc {
+namespace webrtc {
 namespace {
-using ::webrtc::SafeTask;
 // SRTP cipher suite table. `internal_name` is used to construct a
 // colon-separated profile strings which is needed by
 // SSL_CTX_set_tlsext_use_srtp().
 struct SrtpCipherMapEntry {
   const char* internal_name;
   const int id;
-};
-
-// Cipher name table. Maps internal OpenSSL cipher ids to the RFC name.
-struct SslCipherMapEntry {
-  uint32_t openssl_id;
-  const char* rfc_name;
 };
 
 // This isn't elegant, but it's better than an external reference
@@ -104,6 +98,62 @@ void TimeCallbackForTesting(const SSL* ssl, struct timeval* out_clock) {
   out_clock->tv_usec = (time % kNumNanosecsPerSec) / kNumNanosecsPerMicrosec;
 }
 #endif
+
+uint16_t GetMaxVersion(SSLMode ssl_mode, SSLProtocolVersion version) {
+  switch (ssl_mode) {
+    case SSL_MODE_TLS:
+      switch (version) {
+        default:
+        case SSL_PROTOCOL_NOT_GIVEN:
+        case SSL_PROTOCOL_TLS_10:
+        case SSL_PROTOCOL_TLS_11:
+        case SSL_PROTOCOL_TLS_12:
+          return TLS1_2_VERSION;
+        case SSL_PROTOCOL_TLS_13:
+#ifdef TLS1_3_VERSION
+          return TLS1_3_VERSION;
+#else
+          return TLS1_2_VERSION;
+#endif
+      }
+    case SSL_MODE_DTLS:
+      switch (version) {
+        default:
+        case SSL_PROTOCOL_NOT_GIVEN:
+        case SSL_PROTOCOL_DTLS_10:
+        case SSL_PROTOCOL_DTLS_12:
+          return DTLS1_2_VERSION;
+        case SSL_PROTOCOL_DTLS_13:
+#ifdef DTLS1_3_VERSION
+          return DTLS1_3_VERSION;
+#else
+          return DTLS1_2_VERSION;
+#endif
+      }
+  }
+}
+
+constexpr int kForceDtls13Off = 0;
+#ifdef DTLS1_3_VERSION
+constexpr int kForceDtls13Enabled = 1;
+constexpr int kForceDtls13Only = 2;
+#endif
+
+int GetForceDtls13(const FieldTrialsView* field_trials) {
+  if (field_trials == nullptr) {
+    return kForceDtls13Off;
+  }
+#ifdef DTLS1_3_VERSION
+  auto mode = field_trials->Lookup("WebRTC-ForceDtls13");
+  RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13: " << mode;
+  if (mode == "Enabled") {
+    return kForceDtls13Enabled;
+  } else if (mode == "Only") {
+    return kForceDtls13Only;
+  }
+#endif
+  return kForceDtls13Off;
+}
 
 }  // namespace
 
@@ -146,7 +196,7 @@ static BIO* BIO_new_stream(StreamInterface* stream) {
 static int stream_new(BIO* b) {
   BIO_set_shutdown(b, 0);
   BIO_set_init(b, 1);
-  BIO_set_data(b, 0);
+  BIO_set_data(b, nullptr);
   return 1;
 }
 
@@ -166,7 +216,7 @@ static int stream_read(BIO* b, char* out, int outl) {
   size_t read;
   int error;
   StreamResult result = stream->Read(
-      rtc::MakeArrayView(reinterpret_cast<uint8_t*>(out), outl), read, error);
+      MakeArrayView(reinterpret_cast<uint8_t*>(out), outl), read, error);
   if (result == SR_SUCCESS) {
     return checked_cast<int>(read);
   } else if (result == SR_BLOCK) {
@@ -184,8 +234,7 @@ static int stream_write(BIO* b, const char* in, int inl) {
   size_t written;
   int error;
   StreamResult result = stream->Write(
-      rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(in), inl), written,
-      error);
+      MakeArrayView(reinterpret_cast<const uint8_t*>(in), inl), written, error);
   if (result == SR_SUCCESS) {
     return checked_cast<int>(written);
   } else if (result == SR_BLOCK) {
@@ -210,13 +259,22 @@ static long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
     case BIO_CTRL_WPENDING:
     case BIO_CTRL_PENDING:
       return 0;
-    case BIO_CTRL_FLUSH:
+    case BIO_CTRL_FLUSH: {
+      StreamInterface* stream = static_cast<StreamInterface*>(BIO_get_data(b));
+      RTC_DCHECK(stream);
+      if (stream->Flush()) {
+        RTC_LOG(LS_WARNING) << "Failed to flush stream";
+        return 0;
+      }
       return 1;
+    }
     case BIO_CTRL_DGRAM_QUERY_MTU:
       // openssl defaults to mtu=256 unless we return something here.
       // The handshake doesn't actually need to send packets above 1k,
       // so this seems like a sensible value that should work in most cases.
       // Webrtc uses the same value for video packets.
+      RTC_DCHECK_NOTREACHED()
+          << "We should be using SSL_set_mtu instead of this!";
       return 1200;
     default:
       return 0;
@@ -229,10 +287,11 @@ static long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
 
 OpenSSLStreamAdapter::OpenSSLStreamAdapter(
     std::unique_ptr<StreamInterface> stream,
-    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error)
+    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error,
+    const FieldTrialsView* field_trials)
     : stream_(std::move(stream)),
       handshake_error_(std::move(handshake_error)),
-      owner_(rtc::Thread::Current()),
+      owner_(Thread::Current()),
       state_(SSL_NONE),
       role_(SSL_CLIENT),
       ssl_read_needs_write_(false),
@@ -241,8 +300,9 @@ OpenSSLStreamAdapter::OpenSSLStreamAdapter(
       ssl_ctx_(nullptr),
       ssl_mode_(SSL_MODE_DTLS),
       ssl_max_version_(SSL_PROTOCOL_DTLS_12),
-      disable_handshake_ticket_(!webrtc::field_trial::IsDisabled(
-          "WebRTC-DisableTlsSessionTicketKillswitch")) {
+      force_dtls_13_(GetForceDtls13(field_trials)),
+      disable_ssl_group_ids_(field_trials && field_trials->IsEnabled(
+                                                 "WebRTC-DisableSslGroupIds")) {
   stream_->SetEventCallback(
       [this](int events, int err) { OnEvent(events, err); });
 }
@@ -257,7 +317,7 @@ void OpenSSLStreamAdapter::SetIdentity(std::unique_ptr<SSLIdentity> identity) {
 #ifdef OPENSSL_IS_BORINGSSL
   identity_.reset(static_cast<BoringSSLIdentity*>(identity.release()));
 #else
-  identity_.reset(static_cast<OpenSSLIdentity*>(identity.release()));
+  identity_.reset(static_cast<webrtc::OpenSSLIdentity*>(identity.release()));
 #endif
 }
 
@@ -269,47 +329,33 @@ void OpenSSLStreamAdapter::SetServerRole(SSLRole role) {
   role_ = role;
 }
 
-bool OpenSSLStreamAdapter::SetPeerCertificateDigest(
+SSLPeerCertificateDigestError OpenSSLStreamAdapter::SetPeerCertificateDigest(
     absl::string_view digest_alg,
-    const unsigned char* digest_val,
-    size_t digest_len,
-    SSLPeerCertificateDigestError* error) {
+    ArrayView<const uint8_t> digest_val) {
   RTC_DCHECK(!peer_certificate_verified_);
   RTC_DCHECK(!HasPeerCertificateDigest());
   size_t expected_len;
-  if (error) {
-    *error = SSLPeerCertificateDigestError::NONE;
-  }
 
   if (!OpenSSLDigest::GetDigestSize(digest_alg, &expected_len)) {
     RTC_LOG(LS_WARNING) << "Unknown digest algorithm: " << digest_alg;
-    if (error) {
-      *error = SSLPeerCertificateDigestError::UNKNOWN_ALGORITHM;
-    }
-    return false;
+    return SSLPeerCertificateDigestError::UNKNOWN_ALGORITHM;
   }
-  if (expected_len != digest_len) {
-    if (error) {
-      *error = SSLPeerCertificateDigestError::INVALID_LENGTH;
-    }
-    return false;
+  if (expected_len != digest_val.size()) {
+    return SSLPeerCertificateDigestError::INVALID_LENGTH;
   }
 
-  peer_certificate_digest_value_.SetData(digest_val, digest_len);
+  peer_certificate_digest_value_.SetData(digest_val);
   peer_certificate_digest_algorithm_ = std::string(digest_alg);
 
   if (!peer_cert_chain_) {
     // Normal case, where the digest is set before we obtain the certificate
     // from the handshake.
-    return true;
+    return SSLPeerCertificateDigestError::NONE;
   }
 
   if (!VerifyPeerCertificate()) {
     Error("SetPeerCertificateDigest", -1, SSL_AD_BAD_CERTIFICATE, false);
-    if (error) {
-      *error = SSLPeerCertificateDigestError::VERIFICATION_FAILED;
-    }
-    return false;
+    return SSLPeerCertificateDigestError::VERIFICATION_FAILED;
   }
 
   if (state_ == SSL_CONNECTED) {
@@ -318,8 +364,7 @@ bool OpenSSLStreamAdapter::SetPeerCertificateDigest(
     // events and may not be prepared for reentrancy.
     PostEvent(SE_OPEN | SE_READ | SE_WRITE, 0);
   }
-
-  return true;
+  return SSLPeerCertificateDigestError::NONE;
 }
 
 std::optional<absl::string_view> OpenSSLStreamAdapter::GetTlsCipherSuiteName()
@@ -358,6 +403,11 @@ SSLProtocolVersion OpenSSLStreamAdapter::GetSslVersion() const {
     } else if (ssl_version == DTLS1_2_VERSION) {
       return SSL_PROTOCOL_DTLS_12;
     }
+#ifdef DTLS1_3_VERSION
+    if (ssl_version == DTLS1_3_VERSION) {
+      return SSL_PROTOCOL_DTLS_13;
+    }
+#endif
   } else {
     if (ssl_version == TLS1_VERSION) {
       return SSL_PROTOCOL_TLS_10;
@@ -366,6 +416,11 @@ SSLProtocolVersion OpenSSLStreamAdapter::GetSslVersion() const {
     } else if (ssl_version == TLS1_2_VERSION) {
       return SSL_PROTOCOL_TLS_12;
     }
+#ifdef TLS1_3_VERSION
+    if (ssl_version == TLS1_3_VERSION) {
+      return SSL_PROTOCOL_TLS_13;
+    }
+#endif
   }
 
   return SSL_PROTOCOL_NOT_GIVEN;
@@ -379,8 +434,19 @@ bool OpenSSLStreamAdapter::GetSslVersionBytes(int* version) const {
   return true;
 }
 
+uint16_t OpenSSLStreamAdapter::GetSslGroupId() const {
+  if (state_ != SSL_CONNECTED) {
+    return 0;
+  }
+#ifdef OPENSSL_IS_BORINGSSL
+  return SSL_get_group_id(ssl_);
+#else
+  return 0;
+#endif
+}
+
 bool OpenSSLStreamAdapter::ExportSrtpKeyingMaterial(
-    rtc::ZeroOnFreeBuffer<uint8_t>& keying_material) {
+    ZeroOnFreeBuffer<uint8_t>& keying_material) {
   // Arguments are:
   // keying material/len -- a buffer to hold the keying material.
   // label               -- the exporter label.
@@ -392,20 +458,6 @@ bool OpenSSLStreamAdapter::ExportSrtpKeyingMaterial(
           ssl_, keying_material.data(), keying_material.size(),
           kDtlsSrtpExporterLabel.data(), kDtlsSrtpExporterLabel.size(), nullptr,
           0, false) != 1) {
-    return false;
-  }
-  return true;
-}
-
-bool OpenSSLStreamAdapter::ExportKeyingMaterial(absl::string_view label,
-                                                const uint8_t* context,
-                                                size_t context_len,
-                                                bool use_context,
-                                                uint8_t* result,
-                                                size_t result_len) {
-  if (SSL_export_keying_material(ssl_, result, result_len, label.data(),
-                                 label.length(), context, context_len,
-                                 use_context) != 1) {
     return false;
   }
   return true;
@@ -509,14 +561,27 @@ void OpenSSLStreamAdapter::SetMaxProtocolVersion(SSLProtocolVersion version) {
 }
 
 void OpenSSLStreamAdapter::SetInitialRetransmissionTimeout(int timeout_ms) {
-  RTC_DCHECK(ssl_ctx_ == nullptr);
   dtls_handshake_timeout_ms_ = timeout_ms;
+#ifdef OPENSSL_IS_BORINGSSL
+  if (ssl_ctx_ != nullptr && ssl_mode_ == SSL_MODE_DTLS) {
+    // TODO (jonaso, webrtc:367395350): Switch to upcoming
+    // DTLSv1_set_timeout_duration.
+    DTLSv1_set_initial_timeout_duration(ssl_, dtls_handshake_timeout_ms_);
+  }
+#endif
+}
+
+void OpenSSLStreamAdapter::SetMTU(int mtu) {
+  dtls_mtu_ = mtu;
+  if (ssl_) {
+    RTC_CHECK(SSL_set_mtu(ssl_, dtls_mtu_)) << "Call to SSL_set_mtu failed.";
+  }
 }
 
 //
 // StreamInterface Implementation
 //
-StreamResult OpenSSLStreamAdapter::Write(rtc::ArrayView<const uint8_t> data,
+StreamResult OpenSSLStreamAdapter::Write(ArrayView<const uint8_t> data,
                                          size_t& written,
                                          int& error) {
   RTC_DLOG(LS_VERBOSE) << "OpenSSLStreamAdapter::Write(" << data.size() << ")";
@@ -573,7 +638,7 @@ StreamResult OpenSSLStreamAdapter::Write(rtc::ArrayView<const uint8_t> data,
   // not reached
 }
 
-StreamResult OpenSSLStreamAdapter::Read(rtc::ArrayView<uint8_t> data,
+StreamResult OpenSSLStreamAdapter::Read(ArrayView<uint8_t> data,
                                         size_t& read,
                                         int& error) {
   RTC_DLOG(LS_VERBOSE) << "OpenSSLStreamAdapter::Read(" << data.size() << ")";
@@ -705,8 +770,8 @@ void OpenSSLStreamAdapter::OnEvent(int events, int err) {
       events_to_signal |= SE_OPEN;
     } else {
       state_ = SSL_CONNECTING;
-      if (int err = BeginSSL()) {
-        Error("BeginSSL", err, 0, true);
+      if (int error = BeginSSL()) {
+        Error("BeginSSL", error, 0, true);
         return;
       }
     }
@@ -719,8 +784,8 @@ void OpenSSLStreamAdapter::OnEvent(int events, int err) {
     if (state_ == SSL_NONE) {
       events_to_signal |= events & (SE_READ | SE_WRITE);
     } else if (state_ == SSL_CONNECTING) {
-      if (int err = ContinueSSL()) {
-        Error("ContinueSSL", err, 0, true);
+      if (int error = ContinueSSL()) {
+        Error("ContinueSSL", error, 0, true);
         return;
       }
     } else if (state_ == SSL_CONNECTED) {
@@ -767,26 +832,31 @@ void OpenSSLStreamAdapter::SetTimeout(int delay_ms) {
   RTC_DCHECK_GE(delay_ms, 0);
   RTC_DCHECK(!timeout_task_.Running());
 
-  timeout_task_ = webrtc::RepeatingTaskHandle::DelayedStart(
-      owner_, webrtc::TimeDelta::Millis(delay_ms),
+  timeout_task_ = RepeatingTaskHandle::DelayedStart(
+      owner_, TimeDelta::Millis(delay_ms),
       [flag = task_safety_.flag(), this]() {
         if (flag->alive()) {
           RTC_DLOG(LS_INFO) << "DTLS timeout expired";
           timeout_task_.Stop();
           int res = DTLSv1_handle_timeout(ssl_);
           if (res > 0) {
+            retransmission_count_++;
             RTC_LOG(LS_INFO) << "DTLS retransmission";
           } else if (res < 0) {
             RTC_LOG(LS_INFO) << "DTLSv1_handle_timeout() return -1";
             Error("DTLSv1_handle_timeout", res, -1, true);
-            return webrtc::TimeDelta::PlusInfinity();
+            return TimeDelta::PlusInfinity();
           }
-          ContinueSSL();
+          // We check the timer even after SSL_CONNECTED,
+          // but ContinueSSL() is only needed when SSL_CONNECTING
+          if (state_ == SSL_CONNECTING) {
+            ContinueSSL();
+          }
         } else {
           RTC_DCHECK_NOTREACHED();
         }
         // This callback will never run again (stopped above).
-        return webrtc::TimeDelta::PlusInfinity();
+        return TimeDelta::PlusInfinity();
       });
 }
 
@@ -818,9 +888,23 @@ int OpenSSLStreamAdapter::BeginSSL() {
   SSL_set_app_data(ssl_, this);
 
   SSL_set_bio(ssl_, bio, bio);  // the SSL object owns the bio now.
+
+  // Use SSL_set_mtu to configure MTU insted of
+  // BIO_CTRL_DGRAM_QUERY_MTU
+  SSL_set_options(ssl_, SSL_OP_NO_QUERY_MTU);
+  SSL_set_mtu(ssl_, dtls_mtu_);
+
 #ifdef OPENSSL_IS_BORINGSSL
   if (ssl_mode_ == SSL_MODE_DTLS) {
     DTLSv1_set_initial_timeout_duration(ssl_, dtls_handshake_timeout_ms_);
+  }
+
+  if (!disable_ssl_group_ids_) {
+    if (!SSL_set1_group_ids(ssl_, ssl_cipher_groups_.data(),
+                            ssl_cipher_groups_.size())) {
+      RTC_LOG(LS_WARNING) << "Failed to call SSL_set1_group_ids.";
+      return -1;
+    }
   }
 #endif
 
@@ -844,7 +928,7 @@ int OpenSSLStreamAdapter::ContinueSSL() {
 
   switch (ssl_error) {
     case SSL_ERROR_NONE:
-      RTC_DLOG(LS_VERBOSE) << " -- success";
+      RTC_DLOG(LS_INFO) << " -- success";
       // By this point, OpenSSL should have given us a certificate, or errored
       // out if one was missing.
       RTC_DCHECK(peer_cert_chain_ || !GetClientAuthEnabled());
@@ -862,16 +946,11 @@ int OpenSSLStreamAdapter::ContinueSSL() {
         FireEvent(SE_OPEN | SE_READ | SE_WRITE, 0);
       }
       break;
-    case SSL_ERROR_WANT_READ: {
-      RTC_DLOG(LS_VERBOSE) << " -- error want read";
-      struct timeval timeout;
-      if (DTLSv1_get_timeout(ssl_, &timeout)) {
-        int delay = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
-        SetTimeout(delay);
-      }
-    } break;
+    case SSL_ERROR_WANT_READ:
+      RTC_DLOG(LS_INFO) << " -- error when we want to read";
+      break;
     case SSL_ERROR_WANT_WRITE:
-      RTC_DLOG(LS_VERBOSE) << " -- error want write";
+      RTC_DLOG(LS_INFO) << " -- error when we want to write";
       break;
     case SSL_ERROR_ZERO_RETURN:
     default: {
@@ -886,6 +965,14 @@ int OpenSSLStreamAdapter::ContinueSSL() {
         handshake_error_(ssl_handshake_err);
       }
       return (ssl_error != 0) ? ssl_error : -1;
+    }
+  }
+
+  if (ssl_ != nullptr) {
+    struct timeval timeout;
+    if (DTLSv1_get_timeout(ssl_, &timeout)) {
+      int delay = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
+      SetTimeout(delay);
     }
   }
 
@@ -964,10 +1051,20 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
     return nullptr;
   }
 
-  SSL_CTX_set_min_proto_version(
-      ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
-  SSL_CTX_set_max_proto_version(
-      ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
+  auto min_version =
+      ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION;
+  auto max_version = GetMaxVersion(ssl_mode_, ssl_max_version_);
+#ifdef DTLS1_3_VERSION
+  if (force_dtls_13_ == kForceDtls13Enabled) {
+    max_version = DTLS1_3_VERSION;
+  } else if (force_dtls_13_ == kForceDtls13Only) {
+    min_version = DTLS1_3_VERSION;
+    max_version = DTLS1_3_VERSION;
+  }
+#endif
+
+  SSL_CTX_set_min_proto_version(ctx, min_version);
+  SSL_CTX_set_max_proto_version(ctx, max_version);
 
 #ifdef OPENSSL_IS_BORINGSSL
   // SSL_CTX_set_current_time_cb is only supported in BoringSSL.
@@ -1024,9 +1121,10 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
   SSL_CTX_set_permute_extensions(ctx, true);
 #endif
 
-  if (disable_handshake_ticket_) {
-    SSL_CTX_set_options(ctx, SSL_OP_NO_TICKET);
-  }
+#if defined(OPENSSL_IS_BORINGSSL) || (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+  SSL_CTX_set_options(ctx, SSL_OP_NO_TICKET);
+#endif
+
   return ctx;
 }
 
@@ -1037,22 +1135,19 @@ bool OpenSSLStreamAdapter::VerifyPeerCertificate() {
     return false;
   }
 
-  unsigned char digest[EVP_MAX_MD_SIZE];
-  size_t digest_length;
+  Buffer computed_digest(0, EVP_MAX_MD_SIZE);
   if (!peer_cert_chain_->Get(0).ComputeDigest(
-          peer_certificate_digest_algorithm_, digest, sizeof(digest),
-          &digest_length)) {
+          peer_certificate_digest_algorithm_, computed_digest)) {
     RTC_LOG(LS_WARNING) << "Failed to compute peer cert digest.";
     return false;
   }
 
-  Buffer computed_digest(digest, digest_length);
   if (computed_digest != peer_certificate_digest_value_) {
     RTC_LOG(LS_WARNING)
         << "Rejected peer certificate due to mismatched digest using "
         << peer_certificate_digest_algorithm_ << ". Expected "
-        << rtc::hex_encode_with_delimiter(peer_certificate_digest_value_, ':')
-        << " got " << rtc::hex_encode_with_delimiter(computed_digest, ':');
+        << hex_encode_with_delimiter(peer_certificate_digest_value_, ':')
+        << " got " << hex_encode_with_delimiter(computed_digest, ':');
     return false;
   }
   // Ignore any verification error if the digest matches, since there is no
@@ -1108,7 +1203,7 @@ int OpenSSLStreamAdapter::SSLVerifyCallback(X509_STORE_CTX* store, void* arg) {
   // Record the peer's certificate.
   X509* cert = X509_STORE_CTX_get0_cert(store);
   stream->peer_cert_chain_.reset(
-      new SSLCertChain(std::make_unique<OpenSSLCertificate>(cert)));
+      new SSLCertChain(std::make_unique<webrtc::OpenSSLCertificate>(cert)));
 
   // If the peer certificate digest isn't known yet, we'll wait to verify
   // until it's known, and for now just return a success status.
@@ -1172,6 +1267,21 @@ static const cipher_list OK_ECDSA_ciphers[] = {
 };
 #undef CDEF
 
+static const cipher_list OK_DTLS13_ciphers[] = {
+#ifdef TLS1_3_CK_AES_128_GCM_SHA256  // BoringSSL TLS 1.3
+    {static_cast<uint16_t>(TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff),
+     "TLS_AES_128_GCM_SHA256"},
+#endif
+#ifdef TLS1_3_CK_AES_256_GCM_SHA256  // BoringSSL TLS 1.3
+    {static_cast<uint16_t>(TLS1_3_CK_AES_256_GCM_SHA256 & 0xffff),
+     "TLS_AES_256_GCM_SHA256"},
+#endif
+#ifdef TLS1_3_CK_CHACHA20_POLY1305_SHA256  // BoringSSL TLS 1.3
+    {static_cast<uint16_t>(TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff),
+     "TLS_CHACHA20_POLY1305_SHA256"},
+#endif
+};
+
 bool OpenSSLStreamAdapter::IsAcceptableCipher(int cipher, KeyType key_type) {
   if (key_type == KT_RSA) {
     for (const cipher_list& c : OK_RSA_ciphers) {
@@ -1186,6 +1296,12 @@ bool OpenSSLStreamAdapter::IsAcceptableCipher(int cipher, KeyType key_type) {
       if (cipher == c.cipher) {
         return true;
       }
+    }
+  }
+
+  for (const cipher_list& c : OK_DTLS13_ciphers) {
+    if (cipher == c.cipher) {
+      return true;
     }
   }
 
@@ -1210,6 +1326,12 @@ bool OpenSSLStreamAdapter::IsAcceptableCipher(absl::string_view cipher,
     }
   }
 
+  for (const cipher_list& c : OK_DTLS13_ciphers) {
+    if (cipher == c.cipher_str) {
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -1219,4 +1341,20 @@ void OpenSSLStreamAdapter::EnableTimeCallbackForTesting() {
 #endif
 }
 
-}  // namespace rtc
+SSLProtocolVersion OpenSSLStreamAdapter::GetMaxSupportedDTLSProtocolVersion() {
+#if defined(OPENSSL_IS_BORINGSSL) && defined(DTLS1_3_VERSION)
+  return SSL_PROTOCOL_DTLS_13;
+#else
+  return SSL_PROTOCOL_DTLS_12;
+#endif
+}
+
+bool OpenSSLStreamAdapter::SetSslGroupIds(const std::vector<uint16_t>& groups) {
+  if (state_ != SSL_NONE) {
+    return false;
+  }
+  ssl_cipher_groups_ = groups;
+  return true;
+}
+
+}  // namespace webrtc

@@ -101,7 +101,7 @@ rtc_library("audio_device_name") {
   deps = [ "//third_party/abseil-cpp/absl/strings:string_view" ]
 }
 
-rtc_source_set("windows_core_audio_utility") {
+rtc_library("windows_core_audio_utility") {
   if (is_win && !build_with_chromium) {
     sources = [
       "win/core_audio_utility_win.cc",
@@ -129,7 +129,7 @@ rtc_source_set("windows_core_audio_utility") {
 # audio_device_impl target. The goal is to use this new structure and
 # gradually phase out the old design.
 # TODO(henrika): currently only supported on Windows.
-rtc_source_set("audio_device_module_from_input_and_output") {
+rtc_library("audio_device_module_from_input_and_output") {
   visibility = [ "*" ]
   if (is_win && !build_with_chromium) {
     sources = [
@@ -178,6 +178,11 @@ if (!build_with_chromium) {
       "test_audio_device_impl.cc",
       "test_audio_device_impl.h",
     ]
+
+    # TODO: bugs.webrtc.org/413413572 - Mark this build target as testonly or
+    # or update downstream not to use deprecated function. Explicit poison
+    # can be removed then.
+    allow_poison = [ "environment_construction" ]
     deps = [
       ":audio_device_buffer",
       ":audio_device_default",
@@ -187,6 +192,8 @@ if (!build_with_chromium) {
       "../../api:make_ref_counted",
       "../../api:scoped_refptr",
       "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
       "../../api/task_queue",
       "../../api/units:time_delta",
       "../../common_audio",
@@ -200,6 +207,7 @@ if (!build_with_chromium) {
       "../../rtc_base:safe_conversions",
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:file_wrapper",
       "../../rtc_base/task_utils:repeating_task",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
@@ -238,10 +246,10 @@ if (!build_with_chromium) {
       "../../rtc_base:logging",
       "../../rtc_base:platform_thread",
       "../../rtc_base:stringutils",
+      "../../rtc_base:threading",
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:file_wrapper",
-      "../../system_wrappers",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
@@ -263,6 +271,7 @@ rtc_library("audio_device_impl") {
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
     "../../api/audio:audio_device",
+    "../../api/environment",
     "../../api/task_queue",
     "../../api/units:time_delta",
     "../../common_audio",
@@ -276,16 +285,16 @@ rtc_library("audio_device_impl") {
     "../../rtc_base:rtc_event",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
+    "../../rtc_base:threading",
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:arch",
     "../../rtc_base/system:file_wrapper",
     "../../rtc_base/task_utils:repeating_task",
-    "../../system_wrappers",
-    "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",
     "../utility",
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   if (rtc_include_internal_audio_device && is_ios) {
@@ -317,8 +326,6 @@ rtc_library("audio_device_impl") {
       "include/audio_device_data_observer.h",
     ]
     if (is_android) {
-      deps += [ "../../sdk/android:native_api_audio_device_module" ]
-
       if (build_with_mozilla) {
         include_dirs += [
           "/config/external/nspr",
@@ -457,6 +464,9 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
       "../../api/audio:audio_device",
+      "../../api/audio:create_audio_device_module",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
       "../../api/task_queue",
       "../../api/task_queue:default_task_queue_factory",
       "../../api/units:time_delta",
@@ -493,7 +503,6 @@ if (rtc_include_tests && !build_with_chromium) {
         "../../sdk/android:internal_jni",
         "../../sdk/android:libjingle_peerconnection_java",
         "../../sdk/android:native_api_jni",
-        "../../sdk/android:native_test_jni_onload",
         "../utility",
       ]
     }

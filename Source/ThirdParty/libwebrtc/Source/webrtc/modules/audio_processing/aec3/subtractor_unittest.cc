@@ -11,14 +11,31 @@
 #include "modules/audio_processing/aec3/subtractor.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
 #include <memory>
 #include <numeric>
+#include <optional>
 #include <string>
+#include <tuple>
+#include <vector>
 
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/delay_estimate.h"
+#include "modules/audio_processing/aec3/echo_path_variability.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
+#include "modules/audio_processing/aec3/render_signal_analyzer.h"
+#include "modules/audio_processing/aec3/subtractor_output.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
@@ -27,6 +44,7 @@ namespace webrtc {
 namespace {
 
 std::vector<float> RunSubtractorTest(
+    const Environment& env,
     size_t num_render_channels,
     size_t num_capture_channels,
     int num_blocks_to_process,
@@ -42,7 +60,7 @@ std::vector<float> RunSubtractorTest(
   config.filter.refined.length_blocks = refined_filter_length_blocks;
   config.filter.coarse.length_blocks = coarse_filter_length_blocks;
 
-  Subtractor subtractor(config, num_render_channels, num_capture_channels,
+  Subtractor subtractor(env, config, num_render_channels, num_capture_channels,
                         &data_dumper, DetectOptimization());
   std::optional<DelayEstimate> delay_estimate;
   Block x(kNumBands, num_render_channels);
@@ -59,7 +77,7 @@ std::vector<float> RunSubtractorTest(
   std::vector<std::array<float, kFftLengthBy2Plus1>> E2_refined(
       num_capture_channels);
   std::array<float, kFftLengthBy2Plus1> E2_coarse;
-  AecState aec_state(config, num_capture_channels);
+  AecState aec_state(env, config, num_capture_channels);
   x_old.fill(0.f);
   for (auto& Y2_ch : Y2) {
     Y2_ch.fill(0.f);
@@ -80,23 +98,26 @@ std::vector<float> RunSubtractorTest(
   }
 
   // [B,A] = butter(2,100/8000,'high')
-  constexpr CascadedBiQuadFilter::BiQuadCoefficients
-      kHighPassFilterCoefficients = {{0.97261f, -1.94523f, 0.97261f},
-                                     {-1.94448f, 0.94598f}};
+  constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
+      kHighPassFilterCoefficients = {{
+          {{0.97261f, -1.94523f, 0.97261f}, {-1.94448f, 0.94598f}},
+      }};
   std::vector<std::unique_ptr<CascadedBiQuadFilter>> x_hp_filter(
       num_render_channels);
   for (size_t ch = 0; ch < num_render_channels; ++ch) {
-    x_hp_filter[ch] =
-        std::make_unique<CascadedBiQuadFilter>(kHighPassFilterCoefficients, 1);
+    x_hp_filter[ch] = std::make_unique<CascadedBiQuadFilter>(
+        ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+            kHighPassFilterCoefficients));
   }
   std::vector<std::unique_ptr<CascadedBiQuadFilter>> y_hp_filter(
       num_capture_channels);
   for (size_t ch = 0; ch < num_capture_channels; ++ch) {
-    y_hp_filter[ch] =
-        std::make_unique<CascadedBiQuadFilter>(kHighPassFilterCoefficients, 1);
+    y_hp_filter[ch] = std::make_unique<CascadedBiQuadFilter>(
+        ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+            kHighPassFilterCoefficients));
   }
 
-  for (int k = 0; k < num_blocks_to_process; ++k) {
+  for (int block_num = 0; block_num < num_blocks_to_process; ++block_num) {
     for (size_t render_ch = 0; render_ch < num_render_channels; ++render_ch) {
       RandomizeSampleVector(&random_generator, x.View(/*band=*/0, render_ch));
     }
@@ -109,7 +130,7 @@ std::vector<float> RunSubtractorTest(
     } else {
       for (size_t capture_ch = 0; capture_ch < num_capture_channels;
            ++capture_ch) {
-        rtc::ArrayView<float> y_view = y.View(/*band=*/0, capture_ch);
+        ArrayView<float> y_view = y.View(/*band=*/0, capture_ch);
         for (size_t render_ch = 0; render_ch < num_render_channels;
              ++render_ch) {
           std::array<float, kBlockSize> y_channel;
@@ -129,7 +150,7 @@ std::vector<float> RunSubtractorTest(
     }
 
     render_delay_buffer->Insert(x);
-    if (k == 0) {
+    if (block_num == 0) {
       render_delay_buffer->Reset();
     }
     render_delay_buffer->PrepareCaptureProcessing();
@@ -139,7 +160,7 @@ std::vector<float> RunSubtractorTest(
     // Handle echo path changes.
     if (std::find(blocks_with_echo_path_changes.begin(),
                   blocks_with_echo_path_changes.end(),
-                  k) != blocks_with_echo_path_changes.end()) {
+                  block_num) != blocks_with_echo_path_changes.end()) {
       subtractor.HandleEchoPathChange(EchoPathVariability(
           true, EchoPathVariability::DelayAdjustment::kNewDetectedDelay,
           false));
@@ -176,7 +197,7 @@ std::string ProduceDebugText(size_t num_render_channels,
                              size_t num_capture_channels,
                              size_t delay,
                              int filter_length_blocks) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "delay: " << delay << ", ";
   ss << "filter_length_blocks:" << filter_length_blocks << ", ";
   ss << "num_render_channels:" << num_render_channels << ", ";
@@ -190,22 +211,23 @@ std::string ProduceDebugText(size_t num_render_channels,
 
 // Verifies that the check for non data dumper works.
 TEST(SubtractorDeathTest, NullDataDumper) {
-  EXPECT_DEATH(
-      Subtractor(EchoCanceller3Config(), 1, 1, nullptr, DetectOptimization()),
-      "");
+  EXPECT_DEATH(Subtractor(CreateEnvironment(), EchoCanceller3Config(), 1, 1,
+                          nullptr, DetectOptimization()),
+               "");
 }
 
 #endif
 
 // Verifies that the subtractor is able to converge on correlated data.
 TEST(Subtractor, Convergence) {
+  const Environment env = CreateEnvironment();
   std::vector<int> blocks_with_echo_path_changes;
   for (size_t filter_length_blocks : {12, 20, 30}) {
     for (size_t delay_samples : {0, 64, 150, 200, 301}) {
       SCOPED_TRACE(ProduceDebugText(1, 1, delay_samples, filter_length_blocks));
       std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-          1, 1, 2500, delay_samples, filter_length_blocks, filter_length_blocks,
-          false, blocks_with_echo_path_changes);
+          env, 1, 1, 2500, delay_samples, filter_length_blocks,
+          filter_length_blocks, false, blocks_with_echo_path_changes);
 
       for (float echo_to_nearend_power : echo_to_nearend_powers) {
         EXPECT_GT(0.1f, echo_to_nearend_power);
@@ -217,9 +239,10 @@ TEST(Subtractor, Convergence) {
 // Verifies that the subtractor is able to handle the case when the refined
 // filter is longer than the coarse filter.
 TEST(Subtractor, RefinedFilterLongerThanCoarseFilter) {
+  const Environment env = CreateEnvironment();
   std::vector<int> blocks_with_echo_path_changes;
   std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-      1, 1, 400, 64, 20, 15, false, blocks_with_echo_path_changes);
+      env, 1, 1, 400, 64, 20, 15, false, blocks_with_echo_path_changes);
   for (float echo_to_nearend_power : echo_to_nearend_powers) {
     EXPECT_GT(0.5f, echo_to_nearend_power);
   }
@@ -228,9 +251,10 @@ TEST(Subtractor, RefinedFilterLongerThanCoarseFilter) {
 // Verifies that the subtractor is able to handle the case when the coarse
 // filter is longer than the refined filter.
 TEST(Subtractor, CoarseFilterLongerThanRefinedFilter) {
+  const Environment env = CreateEnvironment();
   std::vector<int> blocks_with_echo_path_changes;
   std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-      1, 1, 400, 64, 15, 20, false, blocks_with_echo_path_changes);
+      env, 1, 1, 400, 64, 15, 20, false, blocks_with_echo_path_changes);
   for (float echo_to_nearend_power : echo_to_nearend_powers) {
     EXPECT_GT(0.5f, echo_to_nearend_power);
   }
@@ -238,14 +262,15 @@ TEST(Subtractor, CoarseFilterLongerThanRefinedFilter) {
 
 // Verifies that the subtractor does not converge on uncorrelated signals.
 TEST(Subtractor, NonConvergenceOnUncorrelatedSignals) {
+  const Environment env = CreateEnvironment();
   std::vector<int> blocks_with_echo_path_changes;
   for (size_t filter_length_blocks : {12, 20, 30}) {
     for (size_t delay_samples : {0, 64, 150, 200, 301}) {
       SCOPED_TRACE(ProduceDebugText(1, 1, delay_samples, filter_length_blocks));
 
       std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-          1, 1, 3000, delay_samples, filter_length_blocks, filter_length_blocks,
-          true, blocks_with_echo_path_changes);
+          env, 1, 1, 3000, delay_samples, filter_length_blocks,
+          filter_length_blocks, true, blocks_with_echo_path_changes);
       for (float echo_to_nearend_power : echo_to_nearend_powers) {
         EXPECT_NEAR(1.f, echo_to_nearend_power, 0.1);
       }
@@ -273,12 +298,13 @@ INSTANTIATE_TEST_SUITE_P(DebugMultiChannel,
 TEST_P(SubtractorMultiChannelUpToEightRender, Convergence) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
+  const Environment env = CreateEnvironment();
 
   std::vector<int> blocks_with_echo_path_changes;
   size_t num_blocks_to_process = 2500 * num_render_channels;
   std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-      num_render_channels, num_capture_channels, num_blocks_to_process, 64, 20,
-      20, false, blocks_with_echo_path_changes);
+      env, num_render_channels, num_capture_channels, num_blocks_to_process, 64,
+      20, 20, false, blocks_with_echo_path_changes);
 
   for (float echo_to_nearend_power : echo_to_nearend_powers) {
     EXPECT_GT(0.1f, echo_to_nearend_power);
@@ -306,12 +332,13 @@ TEST_P(SubtractorMultiChannelUpToFourRender,
        NonConvergenceOnUncorrelatedSignals) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
+  const Environment env = CreateEnvironment();
 
   std::vector<int> blocks_with_echo_path_changes;
   size_t num_blocks_to_process = 5000 * num_render_channels;
   std::vector<float> echo_to_nearend_powers = RunSubtractorTest(
-      num_render_channels, num_capture_channels, num_blocks_to_process, 64, 20,
-      20, true, blocks_with_echo_path_changes);
+      env, num_render_channels, num_capture_channels, num_blocks_to_process, 64,
+      20, 20, true, blocks_with_echo_path_changes);
   for (float echo_to_nearend_power : echo_to_nearend_powers) {
     EXPECT_LT(.8f, echo_to_nearend_power);
     EXPECT_NEAR(1.f, echo_to_nearend_power, 0.25f);

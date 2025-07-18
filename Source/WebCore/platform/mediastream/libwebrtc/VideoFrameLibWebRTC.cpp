@@ -38,7 +38,7 @@ static PlatformVideoColorSpace defaultVPXColorSpace()
     return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
 }
 
-RefPtr<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, std::optional<PlatformVideoColorSpace>&& colorSpace, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
+RefPtr<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, std::optional<PlatformVideoColorSpace>&& colorSpace, webrtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
 {
     auto bufferType = buffer->type();
     if (bufferType != webrtc::VideoFrameBuffer::Type::kI420
@@ -197,7 +197,7 @@ std::optional<PlatformVideoColorSpace> VideoFrameLibWebRTC::colorSpaceFromFrame(
     return PlatformVideoColorSpace { primaries, transfer, matrix, fullRange };
 }
 
-VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
+VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace, webrtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
     : VideoFrame(presentationTime, isMirrored, rotation, WTFMove(colorSpace))
     , m_buffer(WTFMove(buffer))
     , m_size(m_buffer->width(),  m_buffer->height())
@@ -229,7 +229,7 @@ CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
 
 Ref<VideoFrame> VideoFrameLibWebRTC::clone()
 {
-    return adoptRef(*new VideoFrameLibWebRTC(presentationTime(), isMirrored(), rotation(), PlatformVideoColorSpace { colorSpace() }, rtc::scoped_refptr<webrtc::VideoFrameBuffer> { m_buffer }, ConversionCallback { m_conversionCallback }));
+    return adoptRef(*new VideoFrameLibWebRTC(presentationTime(), isMirrored(), rotation(), PlatformVideoColorSpace { colorSpace() }, webrtc::scoped_refptr<webrtc::VideoFrameBuffer> { m_buffer }, ConversionCallback { m_conversionCallback }));
 }
 
 }

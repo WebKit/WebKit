@@ -27,7 +27,7 @@ VideoCodecTestStats::FrameStatistics::FrameStatistics(size_t frame_number,
       spatial_idx(spatial_idx) {}
 
 std::string VideoCodecTestStats::FrameStatistics::ToString() const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   for (const auto& entry : ToMap()) {
     if (ss.size() > 0) {
       ss << " ";
@@ -66,7 +66,7 @@ std::map<std::string, std::string> VideoCodecTestStats::FrameStatistics::ToMap()
 
 std::string VideoCodecTestStats::VideoStatistics::ToString(
     std::string prefix) const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   for (const auto& entry : ToMap()) {
     if (ss.size() > 0) {
       ss << "\n";

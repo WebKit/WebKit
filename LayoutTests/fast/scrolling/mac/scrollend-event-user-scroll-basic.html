@@ -1,0 +1,169 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .scroller {
+            position: absolute;
+            top: 310px;
+            left: 10px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollendEventCount = 0;
+        var windowScrollendEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 300);
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over content');
+            await resetScrollPositions();
+            overflowScrollendEventCount = 0;
+            windowScrollendEventCount = 0;
+
+            const wheelEventSquence = {
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 100,
+                        deltaY : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -80,
+                        momentumPhase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    }
+                ]
+            };
+            await UIHelper.mouseWheelSequence(wheelEventSquence);
+            await UIHelper.renderingUpdate();
+
+            shouldBe('overflowScrollendEventCount == 1', 'true');
+            shouldBe('windowScrollendEventCount == 0', 'true');
+        }
+
+        async function testScrollOverDocument()
+        {
+            debug('');
+            debug('Test scroll over document');
+            await resetScrollPositions();
+            overflowScrollendEventCount = 0;
+            windowScrollendEventCount = 0;
+
+            const wheelEventSquence = {
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 350,
+                        deltaY : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -80,
+                        momentumPhase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    }
+                ]
+            };
+            await UIHelper.mouseWheelSequence(wheelEventSquence);
+            await UIHelper.renderingUpdate();
+
+            shouldBe('overflowScrollendEventCount == 0', 'true');
+            shouldBe('windowScrollendEventCount == 1', 'true');
+        }
+
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            await testScrollOverDocument();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scrollend', () => {
+                ++overflowScrollendEventCount;
+            }, false);
+
+            window.addEventListener('scrollend', () => {
+                ++windowScrollendEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div class="overlapper"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

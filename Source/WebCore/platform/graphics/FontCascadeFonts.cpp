@@ -434,7 +434,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         if (!data.isValid())
             continue;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
         if (fontRanges.isGenericFontFamily()) {
             if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
                 continue;

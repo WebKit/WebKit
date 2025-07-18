@@ -35,9 +35,9 @@ class AudioMixerImpl : public AudioMixer {
   // AudioProcessing only accepts 10 ms frames.
   static const int kFrameDurationInMs = 10;
 
-  static rtc::scoped_refptr<AudioMixerImpl> Create();
+  static scoped_refptr<AudioMixerImpl> Create();
 
-  static rtc::scoped_refptr<AudioMixerImpl> Create(
+  static scoped_refptr<AudioMixerImpl> Create(
       std::unique_ptr<OutputRateCalculator> output_rate_calculator,
       bool use_limiter);
 
@@ -64,7 +64,7 @@ class AudioMixerImpl : public AudioMixer {
   void UpdateSourceCountStats() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Fetches audio frames to mix from sources.
-  rtc::ArrayView<AudioFrame* const> GetAudioFromSources(int output_frequency)
+  ArrayView<AudioFrame* const> GetAudioFromSources(int output_frequency)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The critical section lock guards audio source insertion and

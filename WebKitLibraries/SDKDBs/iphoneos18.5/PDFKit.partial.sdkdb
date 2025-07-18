@@ -1,0 +1,1876 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "lineStyleFromName:"},
+      {"access": "public", "name": "nameForLineStyle:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addBezierPath:"},
+      {"access": "public", "name": "removeBezierPath:"}
+     ],
+     "interface": "PDFAnnotation",
+     "name": "PDFAnnotationUtilities",
+     "properties": [
+      {"access": "public", "getter": "font", "name": "font", "setter": "setFont:"},
+      {"access": "public", "getter": "fontColor", "name": "fontColor", "setter": "setFontColor:"},
+      {"access": "public", "getter": "interiorColor", "name": "interiorColor", "setter": "setInteriorColor:"},
+      {"access": "public", "getter": "alignment", "name": "alignment", "setter": "setAlignment:"},
+      {"access": "public", "getter": "startPoint", "name": "startPoint", "setter": "setStartPoint:"},
+      {"access": "public", "getter": "endPoint", "name": "endPoint", "setter": "setEndPoint:"},
+      {"access": "public", "getter": "startLineStyle", "name": "startLineStyle", "setter": "setStartLineStyle:"},
+      {"access": "public", "getter": "endLineStyle", "name": "endLineStyle", "setter": "setEndLineStyle:"},
+      {"access": "public", "getter": "iconType", "name": "iconType", "setter": "setIconType:"},
+      {"access": "public", "getter": "quadrilateralPoints", "name": "quadrilateralPoints", "setter": "setQuadrilateralPoints:"},
+      {"access": "public", "getter": "markupType", "name": "markupType", "setter": "setMarkupType:"},
+      {"access": "public", "getter": "widgetFieldType", "name": "widgetFieldType", "setter": "setWidgetFieldType:"},
+      {"access": "public", "getter": "widgetControlType", "name": "widgetControlType", "setter": "setWidgetControlType:"},
+      {"access": "public", "getter": "isMultiline", "name": "multiline", "setter": "setMultiline:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivatableTextField", "name": "activatableTextField"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPasswordField", "name": "isPasswordField"},
+      {"access": "public", "getter": "hasComb", "name": "comb", "setter": "setComb:"},
+      {"access": "public", "getter": "maximumLength", "name": "maximumLength", "setter": "setMaximumLength:"},
+      {"access": "public", "getter": "widgetStringValue", "name": "widgetStringValue", "setter": "setWidgetStringValue:"},
+      {"access": "public", "getter": "widgetDefaultStringValue", "name": "widgetDefaultStringValue", "setter": "setWidgetDefaultStringValue:"},
+      {"access": "public", "getter": "allowsToggleToOff", "name": "allowsToggleToOff", "setter": "setAllowsToggleToOff:"},
+      {"access": "public", "getter": "radiosInUnison", "name": "radiosInUnison", "setter": "setRadiosInUnison:"},
+      {"access": "public", "getter": "isReadOnly", "name": "readOnly", "setter": "setReadOnly:"},
+      {"access": "public", "getter": "isListChoice", "name": "listChoice", "setter": "setListChoice:"},
+      {"access": "public", "getter": "choices", "name": "choices", "setter": "setChoices:"},
+      {"access": "public", "getter": "values", "name": "values", "setter": "setValues:"},
+      {"access": "public", "getter": "buttonWidgetState", "name": "buttonWidgetState", "setter": "setButtonWidgetState:"},
+      {"access": "public", "getter": "buttonWidgetStateString", "name": "buttonWidgetStateString", "setter": "setButtonWidgetStateString:"},
+      {"access": "public", "getter": "isOpen", "name": "open", "setter": "setOpen:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paths", "name": "paths"},
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "fieldName", "name": "fieldName", "setter": "setFieldName:"},
+      {"access": "public", "getter": "caption", "name": "caption", "setter": "setCaption:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "stampName", "name": "stampName", "setter": "setStampName:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFAllowsLowQualityPrinting"},
+      {"access": "public", "name": "PDFAllowsHighQualityPrinting"},
+      {"access": "public", "name": "PDFAllowsDocumentChanges"},
+      {"access": "public", "name": "PDFAllowsDocumentAssembly"},
+      {"access": "public", "name": "PDFAllowsContentCopying"},
+      {"access": "public", "name": "PDFAllowsContentAccessibility"},
+      {"access": "public", "name": "PDFAllowsCommenting"},
+      {"access": "public", "name": "PDFAllowsFormFieldEntry"}
+     ],
+     "name": "PDFAccessPermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFActionNamedNone"},
+      {"access": "public", "name": "kPDFActionNamedNextPage"},
+      {"access": "public", "name": "kPDFActionNamedPreviousPage"},
+      {"access": "public", "name": "kPDFActionNamedFirstPage"},
+      {"access": "public", "name": "kPDFActionNamedLastPage"},
+      {"access": "public", "name": "kPDFActionNamedGoBack"},
+      {"access": "public", "name": "kPDFActionNamedGoForward"},
+      {"access": "public", "name": "kPDFActionNamedGoToPage"},
+      {"access": "public", "name": "kPDFActionNamedFind"},
+      {"access": "public", "name": "kPDFActionNamedPrint"},
+      {"access": "public", "name": "kPDFActionNamedZoomIn"},
+      {"access": "public", "name": "kPDFActionNamedZoomOut"}
+     ],
+     "name": "PDFActionNamedName"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFNoArea"},
+      {"access": "public", "name": "kPDFPageArea"},
+      {"access": "public", "name": "kPDFTextArea"},
+      {"access": "public", "name": "kPDFAnnotationArea"},
+      {"access": "public", "name": "kPDFLinkArea"},
+      {"access": "public", "name": "kPDFControlArea"},
+      {"access": "public", "name": "kPDFTextFieldArea"},
+      {"access": "public", "name": "kPDFIconArea"},
+      {"access": "public", "name": "kPDFPopupArea"},
+      {"access": "public", "name": "kPDFImageArea"},
+      {"access": "public", "name": "kPDFAnyArea"}
+     ],
+     "name": "PDFAreaOfInterest"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFBorderStyleSolid"},
+      {"access": "public", "name": "kPDFBorderStyleDashed"},
+      {"access": "public", "name": "kPDFBorderStyleBeveled"},
+      {"access": "public", "name": "kPDFBorderStyleInset"},
+      {"access": "public", "name": "kPDFBorderStyleUnderline"}
+     ],
+     "name": "PDFBorderStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplayBoxMediaBox"},
+      {"access": "public", "name": "kPDFDisplayBoxCropBox"},
+      {"access": "public", "name": "kPDFDisplayBoxBleedBox"},
+      {"access": "public", "name": "kPDFDisplayBoxTrimBox"},
+      {"access": "public", "name": "kPDFDisplayBoxArtBox"}
+     ],
+     "name": "PDFDisplayBox"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplayDirectionVertical"},
+      {"access": "public", "name": "kPDFDisplayDirectionHorizontal"}
+     ],
+     "name": "PDFDisplayDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplaySinglePage"},
+      {"access": "public", "name": "kPDFDisplaySinglePageContinuous"},
+      {"access": "public", "name": "kPDFDisplayTwoUp"},
+      {"access": "public", "name": "kPDFDisplayTwoUpContinuous"}
+     ],
+     "name": "PDFDisplayMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDocumentPermissionsNone"},
+      {"access": "public", "name": "kPDFDocumentPermissionsUser"},
+      {"access": "public", "name": "kPDFDocumentPermissionsOwner"}
+     ],
+     "name": "PDFDocumentPermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFInterpolationQualityNone"},
+      {"access": "public", "name": "kPDFInterpolationQualityLow"},
+      {"access": "public", "name": "kPDFInterpolationQualityHigh"}
+     ],
+     "name": "PDFInterpolationQuality"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFLineStyleNone"},
+      {"access": "public", "name": "kPDFLineStyleSquare"},
+      {"access": "public", "name": "kPDFLineStyleCircle"},
+      {"access": "public", "name": "kPDFLineStyleDiamond"},
+      {"access": "public", "name": "kPDFLineStyleOpenArrow"},
+      {"access": "public", "name": "kPDFLineStyleClosedArrow"}
+     ],
+     "name": "PDFLineStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFMarkupTypeHighlight"},
+      {"access": "public", "name": "kPDFMarkupTypeStrikeOut"},
+      {"access": "public", "name": "kPDFMarkupTypeUnderline"},
+      {"access": "public", "name": "kPDFMarkupTypeRedact"}
+     ],
+     "name": "PDFMarkupType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFSelectionGranularityCharacter"},
+      {"access": "public", "name": "PDFSelectionGranularityWord"},
+      {"access": "public", "name": "PDFSelectionGranularityLine"}
+     ],
+     "name": "PDFSelectionGranularity"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFTextAnnotationIconComment"},
+      {"access": "public", "name": "kPDFTextAnnotationIconKey"},
+      {"access": "public", "name": "kPDFTextAnnotationIconNote"},
+      {"access": "public", "name": "kPDFTextAnnotationIconHelp"},
+      {"access": "public", "name": "kPDFTextAnnotationIconNewParagraph"},
+      {"access": "public", "name": "kPDFTextAnnotationIconParagraph"},
+      {"access": "public", "name": "kPDFTextAnnotationIconInsert"}
+     ],
+     "name": "PDFTextAnnotationIconType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFThumbnailLayoutModeVertical"},
+      {"access": "public", "name": "PDFThumbnailLayoutModeHorizontal"}
+     ],
+     "name": "PDFThumbnailLayoutMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFWidgetMixedState"},
+      {"access": "public", "name": "kPDFWidgetOffState"},
+      {"access": "public", "name": "kPDFWidgetOnState"}
+     ],
+     "name": "PDFWidgetCellState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFWidgetUnknownControl"},
+      {"access": "public", "name": "kPDFWidgetPushButtonControl"},
+      {"access": "public", "name": "kPDFWidgetRadioButtonControl"},
+      {"access": "public", "name": "kPDFWidgetCheckBoxControl"}
+     ],
+     "name": "PDFWidgetControlType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeInvert"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeNone"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeOutline"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModePush"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAction"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAdditionalActions"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAppearanceDictionary"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAppearanceState"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyBorder"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyBorderStyle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyContents"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDate"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDefaultAppearance"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDestination"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyFlags"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyHighlightingMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyIconName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyInklist"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyInteriorColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyLineEndingStyles"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyLinePoints"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyOpen"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyPage"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyParent"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyPopup"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyQuadPoints"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyQuadding"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyRect"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeySubtype"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyTextLabel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetAppearanceDictionary"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetBackgroundColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetBorderColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetDefaultValue"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetDownCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetFieldFlags"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetFieldType"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetMaxLen"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetOptions"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetRolloverCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetRotation"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetTextLabelUI"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetValue"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleCircle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleClosedArrow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleDiamond"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleNone"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleOpenArrow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleSquare"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeCircle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeFreeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeHighlight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeInk"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeLine"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeLink"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypePopup"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeSquare"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeStamp"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeStrikeOut"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeUnderline"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeWidget"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeComment"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeHelp"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeInsert"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeNewParagraph"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeNote"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeParagraph"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeButton"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeChoice"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeSignature"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyBackgroundColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyBorderColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyDownCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyRolloverCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyRotation"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyDashPattern"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyLineWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyStyle"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentAccessPermissionsOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentAuthorAttribute"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentBurnInAnnotationsOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentCreationDateAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentCreatorAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginPageFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginPageWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndPageFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndPageWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidFindMatchNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidUnlockNotification"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentFoundSelectionKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentKeywordsAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentModificationDateAttribute"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentOptimizeImagesForScreenOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentOwnerPasswordOption"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentPageIndexKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentProducerAttribute"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSaveImagesAsJPEGOption"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSaveTextFromOCROption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSubjectAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentTitleAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentUserPasswordOption"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionCompressionQuality"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionMediaBox"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionRotation"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionUpscaleIfSmaller"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFThumbnailViewDocumentEditedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewAnnotationHitNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewAnnotationWillHitNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewChangedHistoryNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewCopyPermissionNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDisplayBoxChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDisplayModeChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDocumentChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewPageChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewPrintPermissionNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewScaleChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewSelectionChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewVisiblePagesChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kPDFDestinationUnspecifiedValue"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFAction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDestination:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionGoTo",
+     "properties": [
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionNamed",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPageIndex:atPoint:fileURL:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionRemoteGoTo",
+     "properties": [
+      {"access": "public", "getter": "pageIndex", "name": "pageIndex", "setter": "setPageIndex:"},
+      {"access": "public", "getter": "point", "name": "point", "setter": "setPoint:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionResetForm",
+     "properties": [
+      {"access": "public", "getter": "fields", "name": "fields", "setter": "setFields:"},
+      {"access": "public", "getter": "fieldsIncludedAreCleared", "name": "fieldsIncludedAreCleared", "setter": "setFieldsIncludedAreCleared:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionURL",
+     "properties": [
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PDFAnnotationUtilities"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "initWithBounds:forType:withProperties:"},
+      {"access": "public", "introduced": "11", "name": "drawWithBox:inContext:"},
+      {"access": "public", "introduced": "11", "name": "setValue:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "setBoolean:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "setRect:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "valueForAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "removeValueForAnnotationKey:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFAnnotation",
+     "properties": [
+      {"access": "public", "getter": "page", "name": "page", "setter": "setPage:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"},
+      {"access": "public", "getter": "shouldDisplay", "name": "shouldDisplay", "setter": "setShouldDisplay:"},
+      {"access": "public", "getter": "shouldPrint", "name": "shouldPrint", "setter": "setShouldPrint:"},
+      {"access": "public", "getter": "modificationDate", "introduced": "11", "name": "modificationDate", "setter": "setModificationDate:"},
+      {"access": "public", "getter": "userName", "introduced": "11", "name": "userName", "setter": "setUserName:"},
+      {"access": "public", "getter": "popup", "introduced": "11", "name": "popup", "setter": "setPopup:"},
+      {"access": "public", "getter": "border", "introduced": "11", "name": "border", "setter": "setBorder:"},
+      {"access": "public", "getter": "color", "introduced": "11", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "contents", "introduced": "11", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "action", "introduced": "11", "name": "action", "setter": "setAction:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAppearanceStream", "name": "hasAppearanceStream"},
+      {"access": "public", "getter": "isHighlighted", "introduced": "11", "name": "highlighted", "setter": "setHighlighted:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "annotationKeyValues", "introduced": "11", "name": "annotationKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFAppearanceCharacteristics",
+     "properties": [
+      {"access": "public", "getter": "controlType", "name": "controlType", "setter": "setControlType:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "borderColor", "name": "borderColor", "setter": "setBorderColor:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "caption", "name": "caption", "setter": "setCaption:"},
+      {"access": "public", "getter": "rolloverCaption", "name": "rolloverCaption", "setter": "setRolloverCaption:"},
+      {"access": "public", "getter": "downCaption", "name": "downCaption", "setter": "setDownCaption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "appearanceCharacteristicsKeyValues", "name": "appearanceCharacteristicsKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "drawInRect:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFBorder",
+     "properties": [
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "dashPattern", "name": "dashPattern", "setter": "setDashPattern:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "borderKeyValues", "name": "borderKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPage:atPoint:"},
+      {"access": "public", "introduced": "11", "name": "compare:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFDestination",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "page", "name": "page"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "point", "name": "point"},
+      {"access": "public", "getter": "zoom", "introduced": "11", "name": "zoom", "setter": "setZoom:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithData:"},
+      {"access": "public", "name": "unlockWithPassword:"},
+      {"access": "public", "name": "dataRepresentation"},
+      {"access": "public", "introduced": "11", "name": "dataRepresentationWithOptions:"},
+      {"access": "public", "name": "writeToFile:"},
+      {"access": "public", "name": "writeToFile:withOptions:"},
+      {"access": "public", "name": "writeToURL:"},
+      {"access": "public", "name": "writeToURL:withOptions:"},
+      {"access": "public", "name": "outlineItemForSelection:"},
+      {"access": "public", "name": "pageAtIndex:"},
+      {"access": "public", "name": "indexForPage:"},
+      {"access": "public", "name": "insertPage:atIndex:"},
+      {"access": "public", "name": "removePageAtIndex:"},
+      {"access": "public", "name": "exchangePageAtIndex:withPageAtIndex:"},
+      {"access": "public", "name": "findString:withOptions:"},
+      {"access": "public", "name": "beginFindString:withOptions:"},
+      {"access": "public", "introduced": "11", "name": "beginFindStrings:withOptions:"},
+      {"access": "public", "name": "findString:fromSelection:withOptions:"},
+      {"access": "public", "name": "cancelFindString"},
+      {"access": "public", "name": "selectionFromPage:atPoint:toPage:atPoint:"},
+      {"access": "public", "introduced": "18", "name": "selectionFromPage:atPoint:toPage:atPoint:withGranularity:"},
+      {"access": "public", "name": "selectionFromPage:atCharacterIndex:toPage:atCharacterIndex:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFDocument",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentURL", "name": "documentURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentRef", "name": "documentRef"},
+      {"access": "public", "getter": "documentAttributes", "name": "documentAttributes", "setter": "setDocumentAttributes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "majorVersion", "name": "majorVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minorVersion", "name": "minorVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEncrypted", "name": "isEncrypted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLocked", "name": "isLocked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsPrinting", "introduced": "11", "name": "allowsPrinting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsCopying", "introduced": "11", "name": "allowsCopying"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDocumentChanges", "introduced": "11", "name": "allowsDocumentChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDocumentAssembly", "introduced": "11", "name": "allowsDocumentAssembly"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsContentAccessibility", "introduced": "11", "name": "allowsContentAccessibility"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsCommenting", "introduced": "11", "name": "allowsCommenting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsFormFieldEntry", "introduced": "11", "name": "allowsFormFieldEntry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessPermissions", "name": "accessPermissions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "permissionsStatus", "introduced": "11", "name": "permissionsStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "outlineRoot", "introduced": "11", "name": "outlineRoot", "setter": "setOutlineRoot:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageCount", "name": "pageCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageClass", "name": "pageClass"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinding", "name": "isFinding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectionForEntireDocument", "name": "selectionForEntireDocument"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "childAtIndex:"},
+      {"access": "public", "introduced": "11", "name": "insertChild:atIndex:"},
+      {"access": "public", "introduced": "11", "name": "removeFromParent"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFOutline",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "document", "name": "document"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parent", "introduced": "11", "name": "parent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfChildren", "name": "numberOfChildren"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "index", "introduced": "11", "name": "index"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "isOpen", "introduced": "11", "name": "isOpen", "setter": "setIsOpen:"},
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"},
+      {"access": "public", "getter": "action", "introduced": "11", "name": "action", "setter": "setAction:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "16", "name": "initWithImage:options:"},
+      {"access": "public", "introduced": "11", "name": "initWithImage:"},
+      {"access": "public", "name": "boundsForBox:"},
+      {"access": "public", "name": "setBounds:forBox:"},
+      {"access": "public", "name": "addAnnotation:"},
+      {"access": "public", "name": "removeAnnotation:"},
+      {"access": "public", "name": "annotationAtPoint:"},
+      {"access": "public", "introduced": "11", "name": "transformForBox:"},
+      {"access": "public", "introduced": "11", "name": "drawWithBox:toContext:"},
+      {"access": "public", "introduced": "11", "name": "transformContext:forBox:"},
+      {"access": "public", "introduced": "11", "name": "thumbnailOfSize:forBox:"},
+      {"access": "public", "name": "characterBoundsAtIndex:"},
+      {"access": "public", "name": "characterIndexAtPoint:"},
+      {"access": "public", "name": "selectionForRect:"},
+      {"access": "public", "name": "selectionForWordAtPoint:"},
+      {"access": "public", "name": "selectionForLineAtPoint:"},
+      {"access": "public", "name": "selectionFromPoint:toPoint:"},
+      {"access": "public", "name": "selectionForRange:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFPage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "document", "name": "document"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageRef", "name": "pageRef"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "label", "name": "label"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "annotations", "name": "annotations"},
+      {"access": "public", "getter": "displaysAnnotations", "name": "displaysAnnotations", "setter": "setDisplaysAnnotations:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfCharacters", "name": "numberOfCharacters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataRepresentation", "name": "dataRepresentation"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "initWithDocument:"},
+      {"access": "public", "name": "boundsForPage:"},
+      {"access": "public", "introduced": "11", "name": "numberOfTextRangesOnPage:"},
+      {"access": "public", "introduced": "11", "name": "rangeAtIndex:onPage:"},
+      {"access": "public", "introduced": "11", "name": "selectionsByLine"},
+      {"access": "public", "name": "addSelection:"},
+      {"access": "public", "introduced": "11", "name": "addSelections:"},
+      {"access": "public", "name": "extendSelectionAtEnd:"},
+      {"access": "public", "name": "extendSelectionAtStart:"},
+      {"access": "public", "introduced": "11", "name": "extendSelectionForLineBoundaries"},
+      {"access": "public", "name": "drawForPage:active:"},
+      {"access": "public", "name": "drawForPage:withBox:active:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFSelection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pages", "name": "pages"},
+      {"access": "public", "getter": "color", "introduced": "11", "name": "color", "setter": "setColor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFThumbnailView",
+     "properties": [
+      {"access": "public", "getter": "PDFView", "name": "PDFView", "setter": "setPDFView:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectedPages", "name": "selectedPages"},
+      {"access": "public", "getter": "thumbnailSize", "name": "thumbnailSize", "setter": "setThumbnailSize:"},
+      {"access": "public", "getter": "layoutMode", "introduced": "11", "name": "layoutMode", "setter": "setLayoutMode:"},
+      {"access": "public", "getter": "contentInset", "introduced": "11", "name": "contentInset", "setter": "setContentInset:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "goToFirstPage:"},
+      {"access": "public", "name": "goToLastPage:"},
+      {"access": "public", "name": "goToNextPage:"},
+      {"access": "public", "name": "goToPreviousPage:"},
+      {"access": "public", "name": "goBack:"},
+      {"access": "public", "name": "goForward:"},
+      {"access": "public", "name": "goToPage:"},
+      {"access": "public", "name": "goToDestination:"},
+      {"access": "public", "name": "goToSelection:"},
+      {"access": "public", "name": "goToRect:onPage:"},
+      {"access": "public", "introduced": "11", "name": "usePageViewController:withViewOptions:"},
+      {"access": "public", "name": "zoomIn:"},
+      {"access": "public", "name": "zoomOut:"},
+      {"access": "public", "name": "areaOfInterestForMouse:"},
+      {"access": "public", "name": "areaOfInterestForPoint:"},
+      {"access": "public", "introduced": "11", "name": "performAction:"},
+      {"access": "public", "introduced": "11", "name": "setCurrentSelection:animate:"},
+      {"access": "public", "name": "clearSelection"},
+      {"access": "public", "name": "selectAll:"},
+      {"access": "public", "name": "scrollSelectionToVisible:"},
+      {"access": "public", "introduced": "11", "name": "drawPage:toContext:"},
+      {"access": "public", "introduced": "11", "name": "drawPagePost:toContext:"},
+      {"access": "public", "name": "copy:"},
+      {"access": "public", "name": "pageForPoint:nearest:"},
+      {"access": "public", "name": "convertPoint:toPage:"},
+      {"access": "public", "name": "convertRect:toPage:"},
+      {"access": "public", "name": "convertPoint:fromPage:"},
+      {"access": "public", "name": "convertRect:fromPage:"},
+      {"access": "public", "name": "layoutDocumentView"},
+      {"access": "public", "introduced": "11", "name": "annotationsChangedOnPage:"},
+      {"access": "public", "name": "rowSizeForPage:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFView",
+     "properties": [
+      {"access": "public", "getter": "document", "name": "document", "setter": "setDocument:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToFirstPage", "name": "canGoToFirstPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToLastPage", "name": "canGoToLastPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToNextPage", "name": "canGoToNextPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToPreviousPage", "name": "canGoToPreviousPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoBack", "name": "canGoBack"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoForward", "name": "canGoForward"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentPage", "name": "currentPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentDestination", "name": "currentDestination"},
+      {"access": "public", "getter": "displayMode", "name": "displayMode", "setter": "setDisplayMode:"},
+      {"access": "public", "getter": "displayDirection", "introduced": "11", "name": "displayDirection", "setter": "setDisplayDirection:"},
+      {"access": "public", "getter": "displaysPageBreaks", "name": "displaysPageBreaks", "setter": "setDisplaysPageBreaks:"},
+      {"access": "public", "getter": "pageBreakMargins", "introduced": "11", "name": "pageBreakMargins", "setter": "setPageBreakMargins:"},
+      {"access": "public", "getter": "displayBox", "name": "displayBox", "setter": "setDisplayBox:"},
+      {"access": "public", "getter": "displaysAsBook", "name": "displaysAsBook", "setter": "setDisplaysAsBook:"},
+      {"access": "public", "getter": "displaysRTL", "introduced": "11", "name": "displaysRTL", "setter": "setDisplaysRTL:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "interpolationQuality", "introduced": "11", "name": "interpolationQuality", "setter": "setInterpolationQuality:"},
+      {"access": "public", "getter": "pageShadowsEnabled", "introduced": "12", "name": "pageShadowsEnabled", "setter": "enablePageShadows:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUsingPageViewController", "introduced": "11", "name": "isUsingPageViewController"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "pageOverlayViewProvider", "introduced": "16", "name": "pageOverlayViewProvider", "setter": "setPageOverlayViewProvider:"},
+      {"access": "public", "getter": "scaleFactor", "name": "scaleFactor", "setter": "setScaleFactor:"},
+      {"access": "public", "getter": "minScaleFactor", "introduced": "11", "name": "minScaleFactor", "setter": "setMinScaleFactor:"},
+      {"access": "public", "getter": "maxScaleFactor", "introduced": "11", "name": "maxScaleFactor", "setter": "setMaxScaleFactor:"},
+      {"access": "public", "getter": "autoScales", "name": "autoScales", "setter": "setAutoScales:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactorForSizeToFit", "introduced": "11", "name": "scaleFactorForSizeToFit"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canZoomIn", "name": "canZoomIn"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canZoomOut", "name": "canZoomOut"},
+      {"access": "public", "getter": "currentSelection", "name": "currentSelection", "setter": "setCurrentSelection:"},
+      {"access": "public", "getter": "highlightedSelections", "introduced": "11", "name": "highlightedSelections", "setter": "setHighlightedSelections:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentView", "name": "documentView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "visiblePages", "introduced": "11", "name": "visiblePages"},
+      {"access": "public", "getter": "enableDataDetectors", "introduced": "11", "name": "enableDataDetectors", "setter": "setEnableDataDetectors:"},
+      {"access": "public", "getter": "isInMarkupMode", "introduced": "16", "name": "inMarkupMode", "setter": "setInMarkupMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "findInteraction", "introduced": "16", "name": "findInteraction"},
+      {"access": "public", "getter": "isFindInteractionEnabled", "introduced": "16", "name": "findInteractionEnabled", "setter": "setFindInteractionEnabled:"}
+     ],
+     "protocols": [
+      "UIGestureRecognizerDelegate",
+      "UIFindInteractionDelegate"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "documentDidUnlock:", "optional": true},
+      {"access": "public", "name": "documentDidBeginDocumentFind:", "optional": true},
+      {"access": "public", "name": "documentDidEndDocumentFind:", "optional": true},
+      {"access": "public", "name": "documentDidBeginPageFind:", "optional": true},
+      {"access": "public", "name": "documentDidEndPageFind:", "optional": true},
+      {"access": "public", "name": "documentDidFindMatch:", "optional": true},
+      {"access": "public", "name": "didMatchString:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "classForPage", "optional": true},
+      {"access": "public", "introduced": "11", "name": "classForAnnotationType:", "optional": true}
+     ],
+     "name": "PDFDocumentDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "pdfView:overlayViewForPage:"},
+      {"access": "public", "name": "pdfView:willDisplayOverlayView:forPage:", "optional": true},
+      {"access": "public", "name": "pdfView:willEndDisplayingOverlayView:forPage:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "PDFPageOverlayViewProvider",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "PDFViewWillClickOnLink:withURL:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "PDFViewParentViewController", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewPerformFind:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewPerformGoToPage:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewOpenPDF:forRemoteGoToAction:", "optional": true}
+     ],
+     "name": "PDFViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "PDFAccessPermissions"},
+    {"access": "public", "introduced": "11", "name": "PDFActionNamedName"},
+    {"access": "public", "name": "PDFAnnotationHighlightingMode"},
+    {"access": "public", "name": "PDFAnnotationKey"},
+    {"access": "public", "name": "PDFAnnotationLineEndingStyle"},
+    {"access": "public", "name": "PDFAnnotationSubtype"},
+    {"access": "public", "name": "PDFAnnotationTextIconType"},
+    {"access": "public", "name": "PDFAnnotationWidgetSubtype"},
+    {"access": "public", "name": "PDFAppearanceCharacteristicsKey"},
+    {"access": "public", "introduced": "11", "name": "PDFAreaOfInterest"},
+    {"access": "public", "name": "PDFBorderKey"},
+    {"access": "public", "introduced": "11", "name": "PDFBorderStyle"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayBox"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayDirection"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayMode"},
+    {"access": "public", "name": "PDFDocumentAttribute"},
+    {"access": "public", "introduced": "11", "name": "PDFDocumentPermissions"},
+    {"access": "public", "name": "PDFDocumentWriteOption"},
+    {"access": "public", "introduced": "11", "name": "PDFInterpolationQuality"},
+    {"access": "public", "name": "PDFLineStyle"},
+    {"access": "public", "name": "PDFMarkupType"},
+    {"access": "public", "name": "PDFPageImageInitializationOption"},
+    {"access": "public", "introduced": "18", "name": "PDFSelectionGranularity"},
+    {"access": "public", "name": "PDFTextAnnotationIconType"},
+    {"access": "public", "introduced": "11", "name": "PDFThumbnailLayoutMode"},
+    {"access": "public", "name": "PDFWidgetCellState"},
+    {"access": "public", "name": "PDFWidgetControlType"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "lineStyleFromName:"},
+      {"access": "public", "name": "nameForLineStyle:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addBezierPath:"},
+      {"access": "public", "name": "removeBezierPath:"}
+     ],
+     "interface": "PDFAnnotation",
+     "name": "PDFAnnotationUtilities",
+     "properties": [
+      {"access": "public", "getter": "font", "name": "font", "setter": "setFont:"},
+      {"access": "public", "getter": "fontColor", "name": "fontColor", "setter": "setFontColor:"},
+      {"access": "public", "getter": "interiorColor", "name": "interiorColor", "setter": "setInteriorColor:"},
+      {"access": "public", "getter": "alignment", "name": "alignment", "setter": "setAlignment:"},
+      {"access": "public", "getter": "startPoint", "name": "startPoint", "setter": "setStartPoint:"},
+      {"access": "public", "getter": "endPoint", "name": "endPoint", "setter": "setEndPoint:"},
+      {"access": "public", "getter": "startLineStyle", "name": "startLineStyle", "setter": "setStartLineStyle:"},
+      {"access": "public", "getter": "endLineStyle", "name": "endLineStyle", "setter": "setEndLineStyle:"},
+      {"access": "public", "getter": "iconType", "name": "iconType", "setter": "setIconType:"},
+      {"access": "public", "getter": "quadrilateralPoints", "name": "quadrilateralPoints", "setter": "setQuadrilateralPoints:"},
+      {"access": "public", "getter": "markupType", "name": "markupType", "setter": "setMarkupType:"},
+      {"access": "public", "getter": "widgetFieldType", "name": "widgetFieldType", "setter": "setWidgetFieldType:"},
+      {"access": "public", "getter": "widgetControlType", "name": "widgetControlType", "setter": "setWidgetControlType:"},
+      {"access": "public", "getter": "isMultiline", "name": "multiline", "setter": "setMultiline:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivatableTextField", "name": "activatableTextField"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPasswordField", "name": "isPasswordField"},
+      {"access": "public", "getter": "hasComb", "name": "comb", "setter": "setComb:"},
+      {"access": "public", "getter": "maximumLength", "name": "maximumLength", "setter": "setMaximumLength:"},
+      {"access": "public", "getter": "widgetStringValue", "name": "widgetStringValue", "setter": "setWidgetStringValue:"},
+      {"access": "public", "getter": "widgetDefaultStringValue", "name": "widgetDefaultStringValue", "setter": "setWidgetDefaultStringValue:"},
+      {"access": "public", "getter": "allowsToggleToOff", "name": "allowsToggleToOff", "setter": "setAllowsToggleToOff:"},
+      {"access": "public", "getter": "radiosInUnison", "name": "radiosInUnison", "setter": "setRadiosInUnison:"},
+      {"access": "public", "getter": "isReadOnly", "name": "readOnly", "setter": "setReadOnly:"},
+      {"access": "public", "getter": "isListChoice", "name": "listChoice", "setter": "setListChoice:"},
+      {"access": "public", "getter": "choices", "name": "choices", "setter": "setChoices:"},
+      {"access": "public", "getter": "values", "name": "values", "setter": "setValues:"},
+      {"access": "public", "getter": "buttonWidgetState", "name": "buttonWidgetState", "setter": "setButtonWidgetState:"},
+      {"access": "public", "getter": "buttonWidgetStateString", "name": "buttonWidgetStateString", "setter": "setButtonWidgetStateString:"},
+      {"access": "public", "getter": "isOpen", "name": "open", "setter": "setOpen:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paths", "name": "paths"},
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "fieldName", "name": "fieldName", "setter": "setFieldName:"},
+      {"access": "public", "getter": "caption", "name": "caption", "setter": "setCaption:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "stampName", "name": "stampName", "setter": "setStampName:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFAllowsLowQualityPrinting"},
+      {"access": "public", "name": "PDFAllowsHighQualityPrinting"},
+      {"access": "public", "name": "PDFAllowsDocumentChanges"},
+      {"access": "public", "name": "PDFAllowsDocumentAssembly"},
+      {"access": "public", "name": "PDFAllowsContentCopying"},
+      {"access": "public", "name": "PDFAllowsContentAccessibility"},
+      {"access": "public", "name": "PDFAllowsCommenting"},
+      {"access": "public", "name": "PDFAllowsFormFieldEntry"}
+     ],
+     "name": "PDFAccessPermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFActionNamedNone"},
+      {"access": "public", "name": "kPDFActionNamedNextPage"},
+      {"access": "public", "name": "kPDFActionNamedPreviousPage"},
+      {"access": "public", "name": "kPDFActionNamedFirstPage"},
+      {"access": "public", "name": "kPDFActionNamedLastPage"},
+      {"access": "public", "name": "kPDFActionNamedGoBack"},
+      {"access": "public", "name": "kPDFActionNamedGoForward"},
+      {"access": "public", "name": "kPDFActionNamedGoToPage"},
+      {"access": "public", "name": "kPDFActionNamedFind"},
+      {"access": "public", "name": "kPDFActionNamedPrint"},
+      {"access": "public", "name": "kPDFActionNamedZoomIn"},
+      {"access": "public", "name": "kPDFActionNamedZoomOut"}
+     ],
+     "name": "PDFActionNamedName"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFNoArea"},
+      {"access": "public", "name": "kPDFPageArea"},
+      {"access": "public", "name": "kPDFTextArea"},
+      {"access": "public", "name": "kPDFAnnotationArea"},
+      {"access": "public", "name": "kPDFLinkArea"},
+      {"access": "public", "name": "kPDFControlArea"},
+      {"access": "public", "name": "kPDFTextFieldArea"},
+      {"access": "public", "name": "kPDFIconArea"},
+      {"access": "public", "name": "kPDFPopupArea"},
+      {"access": "public", "name": "kPDFImageArea"},
+      {"access": "public", "name": "kPDFAnyArea"}
+     ],
+     "name": "PDFAreaOfInterest"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFBorderStyleSolid"},
+      {"access": "public", "name": "kPDFBorderStyleDashed"},
+      {"access": "public", "name": "kPDFBorderStyleBeveled"},
+      {"access": "public", "name": "kPDFBorderStyleInset"},
+      {"access": "public", "name": "kPDFBorderStyleUnderline"}
+     ],
+     "name": "PDFBorderStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplayBoxMediaBox"},
+      {"access": "public", "name": "kPDFDisplayBoxCropBox"},
+      {"access": "public", "name": "kPDFDisplayBoxBleedBox"},
+      {"access": "public", "name": "kPDFDisplayBoxTrimBox"},
+      {"access": "public", "name": "kPDFDisplayBoxArtBox"}
+     ],
+     "name": "PDFDisplayBox"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplayDirectionVertical"},
+      {"access": "public", "name": "kPDFDisplayDirectionHorizontal"}
+     ],
+     "name": "PDFDisplayDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDisplaySinglePage"},
+      {"access": "public", "name": "kPDFDisplaySinglePageContinuous"},
+      {"access": "public", "name": "kPDFDisplayTwoUp"},
+      {"access": "public", "name": "kPDFDisplayTwoUpContinuous"}
+     ],
+     "name": "PDFDisplayMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFDocumentPermissionsNone"},
+      {"access": "public", "name": "kPDFDocumentPermissionsUser"},
+      {"access": "public", "name": "kPDFDocumentPermissionsOwner"}
+     ],
+     "name": "PDFDocumentPermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFInterpolationQualityNone"},
+      {"access": "public", "name": "kPDFInterpolationQualityLow"},
+      {"access": "public", "name": "kPDFInterpolationQualityHigh"}
+     ],
+     "name": "PDFInterpolationQuality"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFLineStyleNone"},
+      {"access": "public", "name": "kPDFLineStyleSquare"},
+      {"access": "public", "name": "kPDFLineStyleCircle"},
+      {"access": "public", "name": "kPDFLineStyleDiamond"},
+      {"access": "public", "name": "kPDFLineStyleOpenArrow"},
+      {"access": "public", "name": "kPDFLineStyleClosedArrow"}
+     ],
+     "name": "PDFLineStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFMarkupTypeHighlight"},
+      {"access": "public", "name": "kPDFMarkupTypeStrikeOut"},
+      {"access": "public", "name": "kPDFMarkupTypeUnderline"},
+      {"access": "public", "name": "kPDFMarkupTypeRedact"}
+     ],
+     "name": "PDFMarkupType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFSelectionGranularityCharacter"},
+      {"access": "public", "name": "PDFSelectionGranularityWord"},
+      {"access": "public", "name": "PDFSelectionGranularityLine"}
+     ],
+     "name": "PDFSelectionGranularity"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFTextAnnotationIconComment"},
+      {"access": "public", "name": "kPDFTextAnnotationIconKey"},
+      {"access": "public", "name": "kPDFTextAnnotationIconNote"},
+      {"access": "public", "name": "kPDFTextAnnotationIconHelp"},
+      {"access": "public", "name": "kPDFTextAnnotationIconNewParagraph"},
+      {"access": "public", "name": "kPDFTextAnnotationIconParagraph"},
+      {"access": "public", "name": "kPDFTextAnnotationIconInsert"}
+     ],
+     "name": "PDFTextAnnotationIconType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PDFThumbnailLayoutModeVertical"},
+      {"access": "public", "name": "PDFThumbnailLayoutModeHorizontal"}
+     ],
+     "name": "PDFThumbnailLayoutMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFWidgetMixedState"},
+      {"access": "public", "name": "kPDFWidgetOffState"},
+      {"access": "public", "name": "kPDFWidgetOnState"}
+     ],
+     "name": "PDFWidgetCellState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kPDFWidgetUnknownControl"},
+      {"access": "public", "name": "kPDFWidgetPushButtonControl"},
+      {"access": "public", "name": "kPDFWidgetRadioButtonControl"},
+      {"access": "public", "name": "kPDFWidgetCheckBoxControl"}
+     ],
+     "name": "PDFWidgetControlType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeInvert"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeNone"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModeOutline"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationHighlightingModePush"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAction"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAdditionalActions"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAppearanceDictionary"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyAppearanceState"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyBorder"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyBorderStyle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyContents"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDate"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDefaultAppearance"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyDestination"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyFlags"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyHighlightingMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyIconName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyInklist"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyInteriorColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyLineEndingStyles"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyLinePoints"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyOpen"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyPage"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyParent"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyPopup"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyQuadPoints"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyQuadding"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyRect"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeySubtype"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyTextLabel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetAppearanceDictionary"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetBackgroundColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetBorderColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetDefaultValue"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetDownCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetFieldFlags"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetFieldType"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetMaxLen"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetOptions"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetRolloverCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetRotation"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetTextLabelUI"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationKeyWidgetValue"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleCircle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleClosedArrow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleDiamond"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleNone"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleOpenArrow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationLineEndingStyleSquare"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeCircle"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeFreeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeHighlight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeInk"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeLine"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeLink"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypePopup"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeSquare"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeStamp"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeStrikeOut"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeUnderline"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationSubtypeWidget"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeComment"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeHelp"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeInsert"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeNewParagraph"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeNote"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationTextIconTypeParagraph"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeButton"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeChoice"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeSignature"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAnnotationWidgetSubtypeText"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyBackgroundColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyBorderColor"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyDownCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyRolloverCaption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFAppearanceCharacteristicsKeyRotation"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyDashPattern"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyLineWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFBorderKeyStyle"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentAccessPermissionsOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentAuthorAttribute"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentBurnInAnnotationsOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentCreationDateAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentCreatorAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginPageFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginPageWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidBeginWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndPageFindNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndPageWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidEndWriteNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidFindMatchNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentDidUnlockNotification"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentFoundSelectionKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentKeywordsAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentModificationDateAttribute"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentOptimizeImagesForScreenOption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentOwnerPasswordOption"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentPageIndexKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentProducerAttribute"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSaveImagesAsJPEGOption"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSaveTextFromOCROption"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentSubjectAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentTitleAttribute"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFDocumentUserPasswordOption"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionCompressionQuality"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionMediaBox"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionRotation"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_PDFPageImageInitializationOptionUpscaleIfSmaller"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFThumbnailViewDocumentEditedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewAnnotationHitNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewAnnotationWillHitNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewChangedHistoryNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewCopyPermissionNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDisplayBoxChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDisplayModeChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewDocumentChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewPageChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewPrintPermissionNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewScaleChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewSelectionChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PDFViewVisiblePagesChangedNotification"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kPDFDestinationUnspecifiedValue"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFAction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDestination:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionGoTo",
+     "properties": [
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionNamed",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPageIndex:atPoint:fileURL:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionRemoteGoTo",
+     "properties": [
+      {"access": "public", "getter": "pageIndex", "name": "pageIndex", "setter": "setPageIndex:"},
+      {"access": "public", "getter": "point", "name": "point", "setter": "setPoint:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionResetForm",
+     "properties": [
+      {"access": "public", "getter": "fields", "name": "fields", "setter": "setFields:"},
+      {"access": "public", "getter": "fieldsIncludedAreCleared", "name": "fieldsIncludedAreCleared", "setter": "setFieldsIncludedAreCleared:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private2"}
+     ],
+     "linkage": "exported",
+     "name": "PDFActionURL",
+     "properties": [
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "PDFAction"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "PDFAnnotationUtilities"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "initWithBounds:forType:withProperties:"},
+      {"access": "public", "introduced": "11", "name": "drawWithBox:inContext:"},
+      {"access": "public", "introduced": "11", "name": "setValue:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "setBoolean:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "setRect:forAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "valueForAnnotationKey:"},
+      {"access": "public", "introduced": "11", "name": "removeValueForAnnotationKey:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFAnnotation",
+     "properties": [
+      {"access": "public", "getter": "page", "name": "page", "setter": "setPage:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"},
+      {"access": "public", "getter": "shouldDisplay", "name": "shouldDisplay", "setter": "setShouldDisplay:"},
+      {"access": "public", "getter": "shouldPrint", "name": "shouldPrint", "setter": "setShouldPrint:"},
+      {"access": "public", "getter": "modificationDate", "introduced": "11", "name": "modificationDate", "setter": "setModificationDate:"},
+      {"access": "public", "getter": "userName", "introduced": "11", "name": "userName", "setter": "setUserName:"},
+      {"access": "public", "getter": "popup", "introduced": "11", "name": "popup", "setter": "setPopup:"},
+      {"access": "public", "getter": "border", "introduced": "11", "name": "border", "setter": "setBorder:"},
+      {"access": "public", "getter": "color", "introduced": "11", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "contents", "introduced": "11", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "action", "introduced": "11", "name": "action", "setter": "setAction:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAppearanceStream", "name": "hasAppearanceStream"},
+      {"access": "public", "getter": "isHighlighted", "introduced": "11", "name": "highlighted", "setter": "setHighlighted:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "annotationKeyValues", "introduced": "11", "name": "annotationKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFAppearanceCharacteristics",
+     "properties": [
+      {"access": "public", "getter": "controlType", "name": "controlType", "setter": "setControlType:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "borderColor", "name": "borderColor", "setter": "setBorderColor:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "caption", "name": "caption", "setter": "setCaption:"},
+      {"access": "public", "getter": "rolloverCaption", "name": "rolloverCaption", "setter": "setRolloverCaption:"},
+      {"access": "public", "getter": "downCaption", "name": "downCaption", "setter": "setDownCaption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "appearanceCharacteristicsKeyValues", "name": "appearanceCharacteristicsKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "drawInRect:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFBorder",
+     "properties": [
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "dashPattern", "name": "dashPattern", "setter": "setDashPattern:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "borderKeyValues", "name": "borderKeyValues"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPage:atPoint:"},
+      {"access": "public", "introduced": "11", "name": "compare:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFDestination",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "page", "name": "page"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "point", "name": "point"},
+      {"access": "public", "getter": "zoom", "introduced": "11", "name": "zoom", "setter": "setZoom:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithData:"},
+      {"access": "public", "name": "unlockWithPassword:"},
+      {"access": "public", "name": "dataRepresentation"},
+      {"access": "public", "introduced": "11", "name": "dataRepresentationWithOptions:"},
+      {"access": "public", "name": "writeToFile:"},
+      {"access": "public", "name": "writeToFile:withOptions:"},
+      {"access": "public", "name": "writeToURL:"},
+      {"access": "public", "name": "writeToURL:withOptions:"},
+      {"access": "public", "name": "outlineItemForSelection:"},
+      {"access": "public", "name": "pageAtIndex:"},
+      {"access": "public", "name": "indexForPage:"},
+      {"access": "public", "name": "insertPage:atIndex:"},
+      {"access": "public", "name": "removePageAtIndex:"},
+      {"access": "public", "name": "exchangePageAtIndex:withPageAtIndex:"},
+      {"access": "public", "name": "findString:withOptions:"},
+      {"access": "public", "name": "beginFindString:withOptions:"},
+      {"access": "public", "introduced": "11", "name": "beginFindStrings:withOptions:"},
+      {"access": "public", "name": "findString:fromSelection:withOptions:"},
+      {"access": "public", "name": "cancelFindString"},
+      {"access": "public", "name": "selectionFromPage:atPoint:toPage:atPoint:"},
+      {"access": "public", "introduced": "18", "name": "selectionFromPage:atPoint:toPage:atPoint:withGranularity:"},
+      {"access": "public", "name": "selectionFromPage:atCharacterIndex:toPage:atCharacterIndex:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFDocument",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentURL", "name": "documentURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentRef", "name": "documentRef"},
+      {"access": "public", "getter": "documentAttributes", "name": "documentAttributes", "setter": "setDocumentAttributes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "majorVersion", "name": "majorVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minorVersion", "name": "minorVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEncrypted", "name": "isEncrypted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLocked", "name": "isLocked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsPrinting", "introduced": "11", "name": "allowsPrinting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsCopying", "introduced": "11", "name": "allowsCopying"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDocumentChanges", "introduced": "11", "name": "allowsDocumentChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDocumentAssembly", "introduced": "11", "name": "allowsDocumentAssembly"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsContentAccessibility", "introduced": "11", "name": "allowsContentAccessibility"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsCommenting", "introduced": "11", "name": "allowsCommenting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsFormFieldEntry", "introduced": "11", "name": "allowsFormFieldEntry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessPermissions", "name": "accessPermissions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "permissionsStatus", "introduced": "11", "name": "permissionsStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "outlineRoot", "introduced": "11", "name": "outlineRoot", "setter": "setOutlineRoot:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageCount", "name": "pageCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageClass", "name": "pageClass"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFinding", "name": "isFinding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectionForEntireDocument", "name": "selectionForEntireDocument"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "childAtIndex:"},
+      {"access": "public", "introduced": "11", "name": "insertChild:atIndex:"},
+      {"access": "public", "introduced": "11", "name": "removeFromParent"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFOutline",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "document", "name": "document"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parent", "introduced": "11", "name": "parent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfChildren", "name": "numberOfChildren"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "index", "introduced": "11", "name": "index"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "isOpen", "introduced": "11", "name": "isOpen", "setter": "setIsOpen:"},
+      {"access": "public", "getter": "destination", "name": "destination", "setter": "setDestination:"},
+      {"access": "public", "getter": "action", "introduced": "11", "name": "action", "setter": "setAction:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "16", "name": "initWithImage:options:"},
+      {"access": "public", "introduced": "11", "name": "initWithImage:"},
+      {"access": "public", "name": "boundsForBox:"},
+      {"access": "public", "name": "setBounds:forBox:"},
+      {"access": "public", "name": "addAnnotation:"},
+      {"access": "public", "name": "removeAnnotation:"},
+      {"access": "public", "name": "annotationAtPoint:"},
+      {"access": "public", "introduced": "11", "name": "transformForBox:"},
+      {"access": "public", "introduced": "11", "name": "drawWithBox:toContext:"},
+      {"access": "public", "introduced": "11", "name": "transformContext:forBox:"},
+      {"access": "public", "introduced": "11", "name": "thumbnailOfSize:forBox:"},
+      {"access": "public", "name": "characterBoundsAtIndex:"},
+      {"access": "public", "name": "characterIndexAtPoint:"},
+      {"access": "public", "name": "selectionForRect:"},
+      {"access": "public", "name": "selectionForWordAtPoint:"},
+      {"access": "public", "name": "selectionForLineAtPoint:"},
+      {"access": "public", "name": "selectionFromPoint:toPoint:"},
+      {"access": "public", "name": "selectionForRange:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFPage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "document", "name": "document"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageRef", "name": "pageRef"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "label", "name": "label"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "annotations", "name": "annotations"},
+      {"access": "public", "getter": "displaysAnnotations", "name": "displaysAnnotations", "setter": "setDisplaysAnnotations:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfCharacters", "name": "numberOfCharacters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataRepresentation", "name": "dataRepresentation"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "initWithDocument:"},
+      {"access": "public", "name": "boundsForPage:"},
+      {"access": "public", "introduced": "11", "name": "numberOfTextRangesOnPage:"},
+      {"access": "public", "introduced": "11", "name": "rangeAtIndex:onPage:"},
+      {"access": "public", "introduced": "11", "name": "selectionsByLine"},
+      {"access": "public", "name": "addSelection:"},
+      {"access": "public", "introduced": "11", "name": "addSelections:"},
+      {"access": "public", "name": "extendSelectionAtEnd:"},
+      {"access": "public", "name": "extendSelectionAtStart:"},
+      {"access": "public", "introduced": "11", "name": "extendSelectionForLineBoundaries"},
+      {"access": "public", "name": "drawForPage:active:"},
+      {"access": "public", "name": "drawForPage:withBox:active:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFSelection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pages", "name": "pages"},
+      {"access": "public", "getter": "color", "introduced": "11", "name": "color", "setter": "setColor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "string", "name": "string"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "PDFThumbnailView",
+     "properties": [
+      {"access": "public", "getter": "PDFView", "name": "PDFView", "setter": "setPDFView:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectedPages", "name": "selectedPages"},
+      {"access": "public", "getter": "thumbnailSize", "name": "thumbnailSize", "setter": "setThumbnailSize:"},
+      {"access": "public", "getter": "layoutMode", "introduced": "11", "name": "layoutMode", "setter": "setLayoutMode:"},
+      {"access": "public", "getter": "contentInset", "introduced": "11", "name": "contentInset", "setter": "setContentInset:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "goToFirstPage:"},
+      {"access": "public", "name": "goToLastPage:"},
+      {"access": "public", "name": "goToNextPage:"},
+      {"access": "public", "name": "goToPreviousPage:"},
+      {"access": "public", "name": "goBack:"},
+      {"access": "public", "name": "goForward:"},
+      {"access": "public", "name": "goToPage:"},
+      {"access": "public", "name": "goToDestination:"},
+      {"access": "public", "name": "goToSelection:"},
+      {"access": "public", "name": "goToRect:onPage:"},
+      {"access": "public", "introduced": "11", "name": "usePageViewController:withViewOptions:"},
+      {"access": "public", "name": "zoomIn:"},
+      {"access": "public", "name": "zoomOut:"},
+      {"access": "public", "name": "areaOfInterestForMouse:"},
+      {"access": "public", "name": "areaOfInterestForPoint:"},
+      {"access": "public", "introduced": "11", "name": "performAction:"},
+      {"access": "public", "introduced": "11", "name": "setCurrentSelection:animate:"},
+      {"access": "public", "name": "clearSelection"},
+      {"access": "public", "name": "selectAll:"},
+      {"access": "public", "name": "scrollSelectionToVisible:"},
+      {"access": "public", "introduced": "11", "name": "drawPage:toContext:"},
+      {"access": "public", "introduced": "11", "name": "drawPagePost:toContext:"},
+      {"access": "public", "name": "copy:"},
+      {"access": "public", "name": "pageForPoint:nearest:"},
+      {"access": "public", "name": "convertPoint:toPage:"},
+      {"access": "public", "name": "convertRect:toPage:"},
+      {"access": "public", "name": "convertPoint:fromPage:"},
+      {"access": "public", "name": "convertRect:fromPage:"},
+      {"access": "public", "name": "layoutDocumentView"},
+      {"access": "public", "introduced": "11", "name": "annotationsChangedOnPage:"},
+      {"access": "public", "name": "rowSizeForPage:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_private"}
+     ],
+     "linkage": "exported",
+     "name": "PDFView",
+     "properties": [
+      {"access": "public", "getter": "document", "name": "document", "setter": "setDocument:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToFirstPage", "name": "canGoToFirstPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToLastPage", "name": "canGoToLastPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToNextPage", "name": "canGoToNextPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoToPreviousPage", "name": "canGoToPreviousPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoBack", "name": "canGoBack"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canGoForward", "name": "canGoForward"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentPage", "name": "currentPage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentDestination", "name": "currentDestination"},
+      {"access": "public", "getter": "displayMode", "name": "displayMode", "setter": "setDisplayMode:"},
+      {"access": "public", "getter": "displayDirection", "introduced": "11", "name": "displayDirection", "setter": "setDisplayDirection:"},
+      {"access": "public", "getter": "displaysPageBreaks", "name": "displaysPageBreaks", "setter": "setDisplaysPageBreaks:"},
+      {"access": "public", "getter": "pageBreakMargins", "introduced": "11", "name": "pageBreakMargins", "setter": "setPageBreakMargins:"},
+      {"access": "public", "getter": "displayBox", "name": "displayBox", "setter": "setDisplayBox:"},
+      {"access": "public", "getter": "displaysAsBook", "name": "displaysAsBook", "setter": "setDisplaysAsBook:"},
+      {"access": "public", "getter": "displaysRTL", "introduced": "11", "name": "displaysRTL", "setter": "setDisplaysRTL:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "interpolationQuality", "introduced": "11", "name": "interpolationQuality", "setter": "setInterpolationQuality:"},
+      {"access": "public", "getter": "pageShadowsEnabled", "introduced": "12", "name": "pageShadowsEnabled", "setter": "enablePageShadows:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUsingPageViewController", "introduced": "11", "name": "isUsingPageViewController"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "pageOverlayViewProvider", "introduced": "16", "name": "pageOverlayViewProvider", "setter": "setPageOverlayViewProvider:"},
+      {"access": "public", "getter": "scaleFactor", "name": "scaleFactor", "setter": "setScaleFactor:"},
+      {"access": "public", "getter": "minScaleFactor", "introduced": "11", "name": "minScaleFactor", "setter": "setMinScaleFactor:"},
+      {"access": "public", "getter": "maxScaleFactor", "introduced": "11", "name": "maxScaleFactor", "setter": "setMaxScaleFactor:"},
+      {"access": "public", "getter": "autoScales", "name": "autoScales", "setter": "setAutoScales:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactorForSizeToFit", "introduced": "11", "name": "scaleFactorForSizeToFit"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canZoomIn", "name": "canZoomIn"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canZoomOut", "name": "canZoomOut"},
+      {"access": "public", "getter": "currentSelection", "name": "currentSelection", "setter": "setCurrentSelection:"},
+      {"access": "public", "getter": "highlightedSelections", "introduced": "11", "name": "highlightedSelections", "setter": "setHighlightedSelections:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentView", "name": "documentView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "visiblePages", "introduced": "11", "name": "visiblePages"},
+      {"access": "public", "getter": "enableDataDetectors", "introduced": "11", "name": "enableDataDetectors", "setter": "setEnableDataDetectors:"},
+      {"access": "public", "getter": "isInMarkupMode", "introduced": "16", "name": "inMarkupMode", "setter": "setInMarkupMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "findInteraction", "introduced": "16", "name": "findInteraction"},
+      {"access": "public", "getter": "isFindInteractionEnabled", "introduced": "16", "name": "findInteractionEnabled", "setter": "setFindInteractionEnabled:"}
+     ],
+     "protocols": [
+      "UIGestureRecognizerDelegate",
+      "UIFindInteractionDelegate"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "documentDidUnlock:", "optional": true},
+      {"access": "public", "name": "documentDidBeginDocumentFind:", "optional": true},
+      {"access": "public", "name": "documentDidEndDocumentFind:", "optional": true},
+      {"access": "public", "name": "documentDidBeginPageFind:", "optional": true},
+      {"access": "public", "name": "documentDidEndPageFind:", "optional": true},
+      {"access": "public", "name": "documentDidFindMatch:", "optional": true},
+      {"access": "public", "name": "didMatchString:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "classForPage", "optional": true},
+      {"access": "public", "introduced": "11", "name": "classForAnnotationType:", "optional": true}
+     ],
+     "name": "PDFDocumentDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "pdfView:overlayViewForPage:"},
+      {"access": "public", "name": "pdfView:willDisplayOverlayView:forPage:", "optional": true},
+      {"access": "public", "name": "pdfView:willEndDisplayingOverlayView:forPage:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "PDFPageOverlayViewProvider",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "PDFViewWillClickOnLink:withURL:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "PDFViewParentViewController", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewPerformFind:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewPerformGoToPage:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "PDFViewOpenPDF:forRemoteGoToAction:", "optional": true}
+     ],
+     "name": "PDFViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "PDFAccessPermissions"},
+    {"access": "public", "introduced": "11", "name": "PDFActionNamedName"},
+    {"access": "public", "name": "PDFAnnotationHighlightingMode"},
+    {"access": "public", "name": "PDFAnnotationKey"},
+    {"access": "public", "name": "PDFAnnotationLineEndingStyle"},
+    {"access": "public", "name": "PDFAnnotationSubtype"},
+    {"access": "public", "name": "PDFAnnotationTextIconType"},
+    {"access": "public", "name": "PDFAnnotationWidgetSubtype"},
+    {"access": "public", "name": "PDFAppearanceCharacteristicsKey"},
+    {"access": "public", "introduced": "11", "name": "PDFAreaOfInterest"},
+    {"access": "public", "name": "PDFBorderKey"},
+    {"access": "public", "introduced": "11", "name": "PDFBorderStyle"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayBox"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayDirection"},
+    {"access": "public", "introduced": "11", "name": "PDFDisplayMode"},
+    {"access": "public", "name": "PDFDocumentAttribute"},
+    {"access": "public", "introduced": "11", "name": "PDFDocumentPermissions"},
+    {"access": "public", "name": "PDFDocumentWriteOption"},
+    {"access": "public", "introduced": "11", "name": "PDFInterpolationQuality"},
+    {"access": "public", "name": "PDFLineStyle"},
+    {"access": "public", "name": "PDFMarkupType"},
+    {"access": "public", "name": "PDFPageImageInitializationOption"},
+    {"access": "public", "introduced": "18", "name": "PDFSelectionGranularity"},
+    {"access": "public", "name": "PDFTextAnnotationIconType"},
+    {"access": "public", "introduced": "11", "name": "PDFThumbnailLayoutMode"},
+    {"access": "public", "name": "PDFWidgetCellState"},
+    {"access": "public", "name": "PDFWidgetControlType"}
+   ]
+  },
+  {
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

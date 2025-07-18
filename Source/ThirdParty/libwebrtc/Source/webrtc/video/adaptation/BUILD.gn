@@ -32,6 +32,7 @@ rtc_library("video_adaptation") {
 
   deps = [
     "../../api:field_trials_view",
+    "../../api:make_ref_counted",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
@@ -39,7 +40,9 @@ rtc_library("video_adaptation") {
     "../../api/environment",
     "../../api/task_queue:task_queue",
     "../../api/units:data_rate",
+    "../../api/units:data_size",
     "../../api/units:time_delta",
+    "../../api/video:encoded_image",
     "../../api/video:video_adaptation",
     "../../api/video:video_frame",
     "../../api/video:video_stream_encoder",
@@ -60,6 +63,7 @@ rtc_library("video_adaptation") {
     "../../rtc_base/experiments:balanced_degradation_settings",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/experiments:quality_scaler_settings",
+    "../../rtc_base/experiments:quality_scaling_experiment",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:repeating_task",
@@ -84,8 +88,12 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":video_adaptation",
+      "..:video_stream_encoder_interface",
+      "../../api:array_view",
       "../../api:field_trials_view",
+      "../../api:rtp_parameters",
       "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
       "../../api/environment",
       "../../api/environment:environment_factory",
       "../../api/task_queue:task_queue",
@@ -94,6 +102,7 @@ if (rtc_include_tests) {
       "../../api/video:encoded_image",
       "../../api/video:video_adaptation",
       "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
       "../../api/video_codecs:scalability_mode",
       "../../api/video_codecs:video_codecs_api",
       "../../call/adaptation:resource_adaptation",
@@ -107,9 +116,11 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_numerics",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
+      "../../rtc_base:timeutils",
       "../../test:rtc_expect_death",
       "../../test:test_support",
       "../../test/time_controller:time_controller",
+      "../config:encoder_config",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
     ]
   }

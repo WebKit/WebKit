@@ -32,6 +32,7 @@
 #include "Font.h"
 #include "FontSelector.h"
 #include "ScriptExecutionContext.h"
+#include "StyleRule.h"
 #include "Timer.h"
 #include "WebKitFontFamilyNames.h"
 #include <memory>
@@ -47,9 +48,6 @@ class CSSSegmentedFontFace;
 class CSSValueList;
 class CachedFont;
 class ScriptExecutionContext;
-class StyleRuleFontFace;
-class StyleRuleFontFeatureValues;
-class StyleRuleFontPaletteValues;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
@@ -124,7 +122,7 @@ private:
     void fontModified();
 
     struct PendingFontFaceRule {
-        StyleRuleFontFace& styleRuleFontFace;
+        const Ref<StyleRuleFontFace> styleRuleFontFace;
         bool isInitiatingElementInUserAgentShadowTree;
     };
     Vector<PendingFontFaceRule> m_stagingArea;

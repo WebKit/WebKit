@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO)
 
 #include "DataCue.h"
+#include "Document.h"
 #include "ExceptionOr.h"
 #include "InbandTextTrackPrivate.h"
 #include "TextTrackList.h"

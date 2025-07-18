@@ -95,7 +95,7 @@ struct PrintToStringParamName
 // are checked by using them to select the color of the draw.
 class DrawBaseVertexBaseInstanceTest
     : public ANGLETestBase,
-      public ::testing::TestWithParam<DrawBaseVertexBaseInstanceTestParams>
+      public ::testing::WithParamInterface<DrawBaseVertexBaseInstanceTestParams>
 {
   protected:
     DrawBaseVertexBaseInstanceTest() : ANGLETestBase(std::get<0>(GetParam()))
@@ -490,7 +490,7 @@ using DrawBaseInstanceTestParams = std::
 // gl_VertexID, gl_InstanceID, gl_BaseVertex, and gl_BaseInstance
 // are checked by using them to select the color of the draw.
 class DrawBaseInstanceTest : public ANGLETestBase,
-                             public ::testing::TestWithParam<DrawBaseInstanceTestParams>
+                             public ::testing::WithParamInterface<DrawBaseInstanceTestParams>
 {
   protected:
     DrawBaseInstanceTest() : ANGLETestBase(std::get<0>(GetParam()))

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLFrameElementBase.h"
 
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"

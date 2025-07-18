@@ -127,6 +127,7 @@ constexpr FormatMap<VkFormatProperties> kFormatProperties = {
     {FormatID::EXTERNAL5, {0, 0, 0}},
     {FormatID::EXTERNAL6, {0, 0, 0}},
     {FormatID::EXTERNAL7, {0, 0, 0}},
+    {FormatID::G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16, {0, 0, 0}},
     {FormatID::G8_B8R8_2PLANE_420_UNORM, {0, 0, 0}},
     {FormatID::G8_B8_R8_3PLANE_420_UNORM, {0, 0, 0}},
     {FormatID::NONE, {0, 0, 0}},

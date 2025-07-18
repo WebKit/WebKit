@@ -316,8 +316,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerManagerProxyMessage
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerManagerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderPrivateWriterManagerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderPrivateWriterManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaResourceManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaResourceManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaSessionCoordinatorMessageReceiver.cpp
@@ -530,6 +528,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIExtensionControllerPro
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIExtensionControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorBackendProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorBackendProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogClientDeclarations.h

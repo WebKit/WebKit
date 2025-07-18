@@ -47,9 +47,8 @@ public:
         : m_graph(graph)
         , m_graphDumpMode(graphDumpMode)
         , m_graphDumpBeforePhase(graphDumpBeforePhase)
-        , m_myTupleRefCounts(m_graph.m_tupleData.size())
+        , m_myTupleRefCounts(m_graph.m_tupleData.size(), 0)
     {
-        m_myTupleRefCounts.fill(0);
     }
     
     #define VALIDATE(context, assertion) do { \
@@ -980,7 +979,7 @@ private:
                     break;
 
                 case GetButterfly:
-                    VALIDATE((node), !node->child1()->isPhantomAllocation() || node->child1()->op() == PhantomNewArrayWithConstantSize);
+                    VALIDATE((node), !node->child1()->isPhantomAllocation());
                     break;
 
                 default:

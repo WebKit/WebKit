@@ -38,16 +38,16 @@ class RestartOfAnAssociationWithNewAddressesCause
       RestartOfAnAssociationWithNewAddressesCauseConfig::kType;
 
   explicit RestartOfAnAssociationWithNewAddressesCause(
-      rtc::ArrayView<const uint8_t> new_address_tlvs)
+      webrtc::ArrayView<const uint8_t> new_address_tlvs)
       : new_address_tlvs_(new_address_tlvs.begin(), new_address_tlvs.end()) {}
 
   static std::optional<RestartOfAnAssociationWithNewAddressesCause> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  rtc::ArrayView<const uint8_t> new_address_tlvs() const {
+  webrtc::ArrayView<const uint8_t> new_address_tlvs() const {
     return new_address_tlvs_;
   }
 

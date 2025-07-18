@@ -31,22 +31,21 @@ namespace test {
 
 namespace {
 
-std::string UnitWithDirection(
-    absl::string_view units,
-    webrtc::test::ImproveDirection improve_direction) {
+std::string UnitWithDirection(absl::string_view units,
+                              test::ImproveDirection improve_direction) {
   switch (improve_direction) {
-    case webrtc::test::ImproveDirection::kNone:
+    case test::ImproveDirection::kNone:
       return std::string(units);
-    case webrtc::test::ImproveDirection::kSmallerIsBetter:
+    case test::ImproveDirection::kSmallerIsBetter:
       return std::string(units) + "_smallerIsBetter";
-    case webrtc::test::ImproveDirection::kBiggerIsBetter:
+    case test::ImproveDirection::kBiggerIsBetter:
       return std::string(units) + "_biggerIsBetter";
   }
 }
 
 std::vector<SamplesStatsCounter::StatsSample> GetSortedSamples(
     const SamplesStatsCounter& counter) {
-  rtc::ArrayView<const SamplesStatsCounter::StatsSample> view =
+  ArrayView<const SamplesStatsCounter::StatsSample> view =
       counter.GetTimedSamples();
   std::vector<SamplesStatsCounter::StatsSample> out(view.begin(), view.end());
   std::stable_sort(out.begin(), out.end(),
@@ -69,7 +68,7 @@ void OutputListToStream(std::ostream* ostream, const Container& values) {
 struct PlottableCounter {
   std::string graph_name;
   std::string trace_name;
-  webrtc::SamplesStatsCounter counter;
+  SamplesStatsCounter counter;
   std::string units;
 };
 
@@ -84,7 +83,7 @@ class PlottableCounterPrinter {
 
   void AddCounter(absl::string_view graph_name,
                   absl::string_view trace_name,
-                  const webrtc::SamplesStatsCounter& counter,
+                  const SamplesStatsCounter& counter,
                   absl::string_view units) {
     MutexLock lock(&mutex_);
     plottable_counters_.push_back({std::string(graph_name),
@@ -178,10 +177,10 @@ class ResultsLinePrinter {
 
   void PrintResultList(absl::string_view graph_name,
                        absl::string_view trace_name,
-                       const rtc::ArrayView<const double> values,
+                       const ArrayView<const double> values,
                        absl::string_view units,
                        const bool important,
-                       webrtc::test::ImproveDirection improve_direction) {
+                       test::ImproveDirection improve_direction) {
     std::ostringstream value_stream;
     value_stream.precision(8);
     OutputListToStream(&value_stream, values);
@@ -198,7 +197,7 @@ class ResultsLinePrinter {
                        absl::string_view units,
                        bool important) {
     MutexLock lock(&mutex_);
-    rtc::StringBuilder message;
+    StringBuilder message;
     message << (important ? "*" : "") << "RESULT " << graph_name << ": "
             << trace_name << "= " << prefix << values << suffix << " " << units;
     // <*>RESULT <graph_name>: <trace_name>= <value> <units>
@@ -244,7 +243,7 @@ bool WritePerfResults(const std::string& output_path) {
   std::string results = GetPerfResults();
   CreateDir(DirName(output_path));
   FILE* output = fopen(output_path.c_str(), "wb");
-  if (output == NULL) {
+  if (output == nullptr) {
     printf("Failed to write to %s.\n", output_path.c_str());
     return false;
   }
@@ -268,7 +267,7 @@ void PrintResult(absl::string_view measurement,
                  absl::string_view units,
                  bool important,
                  ImproveDirection improve_direction) {
-  rtc::StringBuilder graph_name;
+  StringBuilder graph_name;
   graph_name << measurement << modifier;
   RTC_CHECK(std::isfinite(value))
       << "Expected finite value for graph " << graph_name.str()
@@ -286,7 +285,7 @@ void PrintResult(absl::string_view measurement,
                  absl::string_view units,
                  const bool important,
                  ImproveDirection improve_direction) {
-  rtc::StringBuilder graph_name;
+  StringBuilder graph_name;
   graph_name << measurement << modifier;
   GetPlottableCounterPrinter().AddCounter(graph_name.str(), trace, counter,
                                           units);
@@ -323,7 +322,7 @@ void PrintResultMeanAndError(absl::string_view measurement,
   RTC_CHECK(std::isfinite(mean));
   RTC_CHECK(std::isfinite(error));
 
-  rtc::StringBuilder graph_name;
+  StringBuilder graph_name;
   graph_name << measurement << modifier;
   GetPerfWriter().LogResultMeanAndError(graph_name.str(), trace, mean, error,
                                         units, important, improve_direction);
@@ -335,7 +334,7 @@ void PrintResultMeanAndError(absl::string_view measurement,
 void PrintResultList(absl::string_view measurement,
                      absl::string_view modifier,
                      absl::string_view trace,
-                     const rtc::ArrayView<const double> values,
+                     const ArrayView<const double> values,
                      absl::string_view units,
                      bool important,
                      ImproveDirection improve_direction) {
@@ -343,7 +342,7 @@ void PrintResultList(absl::string_view measurement,
     RTC_CHECK(std::isfinite(v));
   }
 
-  rtc::StringBuilder graph_name;
+  StringBuilder graph_name;
   graph_name << measurement << modifier;
   GetPerfWriter().LogResultList(graph_name.str(), trace, values, units,
                                 important, improve_direction);

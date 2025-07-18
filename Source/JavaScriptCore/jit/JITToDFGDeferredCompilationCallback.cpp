@@ -59,7 +59,7 @@ void JITToDFGDeferredCompilationCallback::compilationDidComplete(
     
     dataLogLnIf(Options::verboseOSR(), "Optimizing compilation of ", *codeBlock, " result: ", result);
     
-    if (result == CompilationSuccessful)
+    if (result == CompilationResult::CompilationSuccessful)
         codeBlock->ownerExecutable()->installCode(codeBlock);
     
     codeBlock->alternative()->setOptimizationThresholdBasedOnCompilationResult(result);

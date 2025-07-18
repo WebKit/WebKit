@@ -106,7 +106,7 @@ private:
     void startMonitoringWirelessRoutesInternal() final;
     void stopMonitoringWirelessRoutesInternal() final;
 
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
+    const RetainPtr<WebMediaSessionHelper> m_objcObserver;
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     std::optional<int> m_presentedApplicationPID;
 #endif
@@ -258,7 +258,7 @@ void MediaSessionHelper::setActiveAudioRouteSupportsSpatialPlayback(bool support
 MediaSessionHelperIOS::MediaSessionHelperIOS()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_objcObserver = adoptNS([[WebMediaSessionHelper alloc] initWithCallback:*this]);
+    lazyInitialize(m_objcObserver, adoptNS([[WebMediaSessionHelper alloc] initWithCallback:*this]));
     setIsExternalOutputDeviceAvailable([m_objcObserver hasWirelessTargetsAvailable]);
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -387,7 +387,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
-    RunLoop::protectedMain()->dispatch([] {
+    RunLoop::mainSingleton().dispatch([] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [[PAL::getUIApplicationClass() sharedApplication] beginReceivingRemoteControlEvents];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -402,7 +402,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 
 #if !PLATFORM(WATCHOS)
     if (!pthread_main_np()) {
-        RunLoop::protectedMain()->dispatch([routeDetector = std::exchange(_routeDetector, nil)]() {
+        RunLoop::mainSingleton().dispatch([routeDetector = std::exchange(_routeDetector, nil)]() {
             LOG(Media, "safelyTearDown - dipatched to UI thread.");
             BEGIN_BLOCK_OBJC_EXCEPTIONS
             [routeDetector setRouteDetectionEnabled:NO];

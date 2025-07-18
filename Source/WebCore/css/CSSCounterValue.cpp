@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CSSCounterValue::CSSCounterValue(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle)
+CSSCounterValue::CSSCounterValue(AtomString&& identifier, AtomString&& separator, Ref<CSSValue>&& counterStyle)
     : CSSValue(ClassType::Counter)
     , m_identifier(WTFMove(identifier))
     , m_separator(WTFMove(separator))
@@ -42,7 +42,7 @@ CSSCounterValue::CSSCounterValue(AtomString identifier, AtomString separator, Re
 {
 }
 
-Ref<CSSCounterValue> CSSCounterValue::create(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle)
+Ref<CSSCounterValue> CSSCounterValue::create(AtomString identifier, AtomString separator, Ref<CSSValue> counterStyle)
 {
     return adoptRef(*new CSSCounterValue(WTFMove(identifier), WTFMove(separator), WTFMove(counterStyle)));
 }
@@ -55,22 +55,19 @@ bool CSSCounterValue::equals(const CSSCounterValue& other) const
 String CSSCounterValue::customCSSText(const CSS::SerializationContext&) const
 {
     bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent() == "decimal"_s);
-    auto listStyleSeparator = isDecimal ? ""_s : ", "_s;
-    auto listStyleLiteral = isDecimal ? ""_s : counterStyleCSSText();
+    auto styleSeparator = isDecimal ? ""_s : ", "_s;
+    auto styleLiteral = isDecimal ? ""_s : counterStyleCSSText();
     if (m_separator.isEmpty())
-        return makeString("counter("_s, m_identifier, listStyleSeparator, listStyleLiteral, ')');
+        return makeString("counter("_s, m_identifier, styleSeparator, styleLiteral, ')');
     StringBuilder result;
     result.append("counters("_s, m_identifier, ", "_s);
     serializeString(m_separator, result);
-    result.append(listStyleSeparator, listStyleLiteral, ')');
+    result.append(styleSeparator, styleLiteral, ')');
     return result.toString();
 }
 
 String CSSCounterValue::counterStyleCSSText() const
 {
-    if (!m_counterStyle)
-        return emptyString();
-
     if (m_counterStyle->isValueID())
         return nameString(m_counterStyle->valueID()).string();
     if (m_counterStyle->isCustomIdent())

@@ -10,13 +10,17 @@
 
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/random.h"
+#include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -128,7 +132,7 @@ TEST_P(ReceiveStatisticsTest, TwoIncomingSsrcs) {
 
   StreamStatistician* statistician =
       receive_statistics_->GetStatistician(kSsrc1);
-  ASSERT_TRUE(statistician != NULL);
+  ASSERT_TRUE(statistician != nullptr);
   EXPECT_GT(statistician->BitrateReceived(), 0u);
   StreamDataCounters counters = statistician->GetReceiveStreamDataCounters();
   EXPECT_EQ(176u, counters.transmitted.payload_bytes);
@@ -137,7 +141,7 @@ TEST_P(ReceiveStatisticsTest, TwoIncomingSsrcs) {
   EXPECT_EQ(2u, counters.transmitted.packets);
 
   statistician = receive_statistics_->GetStatistician(kSsrc2);
-  ASSERT_TRUE(statistician != NULL);
+  ASSERT_TRUE(statistician != nullptr);
   EXPECT_GT(statistician->BitrateReceived(), 0u);
   counters = statistician->GetReceiveStreamDataCounters();
   EXPECT_EQ(576u, counters.transmitted.payload_bytes);
@@ -233,7 +237,7 @@ TEST_P(ReceiveStatisticsTest, ActiveStatisticians) {
   EXPECT_EQ(1u, receive_statistics_->RtcpReportBlocks(3).size());
   StreamStatistician* statistician =
       receive_statistics_->GetStatistician(kSsrc1);
-  ASSERT_TRUE(statistician != NULL);
+  ASSERT_TRUE(statistician != nullptr);
   StreamDataCounters counters = statistician->GetReceiveStreamDataCounters();
   EXPECT_EQ(176u, counters.transmitted.payload_bytes);
   EXPECT_EQ(24u, counters.transmitted.header_bytes);
@@ -256,7 +260,7 @@ TEST_P(ReceiveStatisticsTest, GetReceiveStreamDataCounters) {
   receive_statistics_->OnRtpPacket(packet1_);
   StreamStatistician* statistician =
       receive_statistics_->GetStatistician(kSsrc1);
-  ASSERT_TRUE(statistician != NULL);
+  ASSERT_TRUE(statistician != nullptr);
 
   StreamDataCounters counters = statistician->GetReceiveStreamDataCounters();
   EXPECT_TRUE(counters.first_packet_time.IsFinite());
@@ -627,7 +631,7 @@ TEST_P(ReceiveStatisticsTest, SimpleJitterComputation) {
   // See jitter caluculation in https://www.rfc-editor.org/rfc/rfc3550 6.4.1.
   const uint32_t expected_jitter = (kLateArrivalDeltaSamples) / 16;
   EXPECT_EQ(expected_jitter, statistician->GetStats().jitter);
-  EXPECT_EQ(webrtc::TimeDelta::Seconds(expected_jitter) / kCodecSampleRate,
+  EXPECT_EQ(TimeDelta::Seconds(expected_jitter) / kCodecSampleRate,
             statistician->GetStats().interarrival_jitter);
 }
 

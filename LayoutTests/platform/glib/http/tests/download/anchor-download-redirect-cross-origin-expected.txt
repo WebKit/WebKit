@@ -1,0 +1,6 @@
+Download started.
+Download failed.
+Failed: WebKitNetworkError, code=302, description=Load request cancelled
+Download cross origin redirect with anchor in an iframe. Logs should say it failed.
+
+

@@ -1,0 +1,56 @@
+This test ensures we compute the relative frame of position:fixed elements correctly when they have specified `top` and `bottom` CSS properties.
+
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{117, 130}, {551, 36}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{117, 130}, {523, 36}}
+
+{ AXRole: AXProgressIndicator #progress } has AXRelativeFrame: NSRect: {{117, 216}, {161, 21}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 3000}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 3000}, {78, 18}}
+
+Setting scroll to 1000px
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{117, 130}, {551, 36}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{117, 130}, {523, 36}}
+
+{ AXRole: AXProgressIndicator #progress } has AXRelativeFrame: NSRect: {{117, 216}, {161, 21}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 2000}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 2000}, {78, 18}}
+
+Setting scroll to 2000px
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{117, 130}, {551, 36}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{117, 130}, {523, 36}}
+
+{ AXRole: AXProgressIndicator #progress } has AXRelativeFrame: NSRect: {{117, 216}, {161, 21}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 1000}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 1000}, {78, 18}}
+
+Setting scroll to 3000px
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{117, 130}, {551, 36}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{117, 130}, {523, 36}}
+
+{ AXRole: AXProgressIndicator #progress } has AXRelativeFrame: NSRect: {{117, 216}, {161, 21}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 0}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 0}, {78, 18}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some filler text. You can read it, but it's not overly important. Have a great day!
+
+
+End of page

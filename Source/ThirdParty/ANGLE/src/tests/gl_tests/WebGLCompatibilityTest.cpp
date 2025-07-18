@@ -65,6 +65,7 @@ class WebGLCompatibilityTest : public ANGLETest<>
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
         setWebGLCompatibilityEnabled(true);
+        setExtensionsEnabled(false);
     }
 
     template <typename T>
@@ -5756,6 +5757,33 @@ TEST_P(WebGL2CompatibilityTest, TransformFeedbackDoubleBinding)
     ASSERT_GL_NO_ERROR();
     // Two varyings bound to the same buffer should be an error.
     glBeginTransformFeedback(GL_POINTS);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Writing to the contents of a currently active transform feedback buffer is invalid
+TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModification)
+{
+    constexpr char kVS[] = R"(attribute float a; varying float b; void main() { b = a; })";
+    constexpr char kFS[] = R"(void main(){})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    static const char *varyings[] = {"b"};
+    glTransformFeedbackVaryings(program, 1, varyings, GL_SEPARATE_ATTRIBS);
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the transform feedback varyings to non-overlapping regions of the same buffer.
+    GLBuffer buffer;
+    glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer, 0, 4);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr uint8_t data[8] = {0};
+    glBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 8, data);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 

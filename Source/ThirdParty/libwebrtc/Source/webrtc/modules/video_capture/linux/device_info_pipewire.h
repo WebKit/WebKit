@@ -44,7 +44,7 @@ class DeviceInfoPipeWire : public DeviceInfoImpl {
   int32_t Init() override;
 
  private:
-  rtc::scoped_refptr<PipeWireSession> pipewire_session_;
+  webrtc::scoped_refptr<PipeWireSession> pipewire_session_;
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc

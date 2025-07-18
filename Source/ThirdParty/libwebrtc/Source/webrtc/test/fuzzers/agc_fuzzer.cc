@@ -8,13 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <vector>
 
+#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
+#include "modules/audio_processing/agc/gain_control.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/gain_control_impl.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/thread_annotations.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
@@ -46,18 +50,18 @@ void FuzzGainControllerConfig(test::FuzzDataHelper* fuzz_data,
   GainControl::Mode mode = fuzz_data->SelectOneOf(modes);
   const bool enable_limiter = fuzz_data->ReadOrDefaultValue(true);
   // The values are capped to comply with the API of webrtc::GainControl.
-  const int analog_level_min =
-      rtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<uint16_t>(0), 0, 65534);
+  const int analog_level_min = webrtc::SafeClamp<int>(
+      fuzz_data->ReadOrDefaultValue<uint16_t>(0), 0, 65534);
   const int analog_level_max =
-      rtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<uint16_t>(65535),
-                          analog_level_min + 1, 65535);
+      webrtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<uint16_t>(65535),
+                             analog_level_min + 1, 65535);
   const int stream_analog_level =
-      rtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<uint16_t>(30000),
-                          analog_level_min, analog_level_max);
-  const int gain =
-      rtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<int8_t>(30), -1, 100);
+      webrtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<uint16_t>(30000),
+                             analog_level_min, analog_level_max);
+  const int gain = webrtc::SafeClamp<int>(
+      fuzz_data->ReadOrDefaultValue<int8_t>(30), -1, 100);
   const int target_level_dbfs =
-      rtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<int8_t>(15), -1, 35);
+      webrtc::SafeClamp<int>(fuzz_data->ReadOrDefaultValue<int8_t>(15), -1, 35);
 
   gc->set_mode(mode);
   gc->enable_limiter(enable_limiter);
@@ -117,7 +121,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > 200000) {
     return;
   }
-  test::FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
+  test::FuzzDataHelper fuzz_data(webrtc::ArrayView<const uint8_t>(data, size));
   auto gci = std::make_unique<GainControlImpl>();
   FuzzGainController(&fuzz_data, gci.get());
 }

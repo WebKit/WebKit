@@ -11,9 +11,15 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_INTERFACE_MOCK_LIBVPX_INTERFACE_H_
 #define MODULES_VIDEO_CODING_CODECS_INTERFACE_MOCK_LIBVPX_INTERFACE_H_
 
+#include <cstdint>
+
 #include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "test/gmock.h"
-#include "test/gtest.h"
+#include "vpx/vp8cx.h"
+#include "vpx/vpx_codec.h"
+#include "vpx/vpx_encoder.h"
+#include "vpx/vpx_ext_ratectrl.h"
+#include "vpx/vpx_image.h"
 
 namespace webrtc {
 

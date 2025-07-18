@@ -85,7 +85,7 @@ void AlrDetector::OnBytesSent(size_t bytes_sent, int64_t send_time_ms) {
   bool state_changed = false;
   if (alr_budget_.budget_ratio() > conf_.start_budget_level_ratio &&
       !alr_started_time_ms_) {
-    alr_started_time_ms_.emplace(rtc::TimeMillis());
+    alr_started_time_ms_.emplace(TimeMillis());
     state_changed = true;
   } else if (alr_budget_.budget_ratio() < conf_.stop_budget_level_ratio &&
              alr_started_time_ms_) {

@@ -145,7 +145,7 @@ StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(cons
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationLineInEffect(), isFirstLine, paintInfo.paintBehavior);
     style.textStyles = computeTextPaintStyle(renderer, lineStyle, paintInfo);
-    style.textShadow = paintInfo.forceTextColor() ? FixedVector<WebCore::Style::TextShadow> { } : lineStyle.textShadow();
+    style.textShadow = paintInfo.forceTextColor() ? WebCore::Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
     return style;
 }
 

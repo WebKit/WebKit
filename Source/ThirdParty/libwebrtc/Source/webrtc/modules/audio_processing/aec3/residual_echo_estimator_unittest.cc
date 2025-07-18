@@ -13,6 +13,8 @@
 #include <numeric>
 
 #include "api/audio/echo_canceller3_config.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
@@ -37,8 +39,8 @@ class ResidualEchoEstimatorTest {
       : num_render_channels_(num_render_channels),
         num_capture_channels_(num_capture_channels),
         config_(config),
-        estimator_(config_, num_render_channels_),
-        aec_state_(config_, num_capture_channels_),
+        estimator_(env_, config_, num_render_channels_),
+        aec_state_(env_, config_, num_capture_channels_),
         render_delay_buffer_(RenderDelayBuffer::Create(config_,
                                                        kSampleRateHz,
                                                        num_render_channels_)),
@@ -98,13 +100,14 @@ class ResidualEchoEstimatorTest {
                         S2_linear_, Y2_, dominant_nearend, R2_, R2_unbounded_);
   }
 
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> R2() const {
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> R2() const {
     return R2_;
   }
 
  private:
   const size_t num_render_channels_;
   const size_t num_capture_channels_;
+  const Environment env_ = CreateEnvironment();
   const EchoCanceller3Config& config_;
   ResidualEchoEstimator estimator_;
   AecState aec_state_;

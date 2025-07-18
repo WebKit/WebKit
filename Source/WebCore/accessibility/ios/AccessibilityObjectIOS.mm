@@ -100,10 +100,6 @@ bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
     return false;
 }
 
-void AccessibilityObject::overrideAttachmentParent(AccessibilityObject*)
-{
-}
-    
 // In iPhone only code for now. It's debateable whether this is desired on all platforms.
 unsigned AccessibilityObject::accessibilitySecureFieldLength()
 {

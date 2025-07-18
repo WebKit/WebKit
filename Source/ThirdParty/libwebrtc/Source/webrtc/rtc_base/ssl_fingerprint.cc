@@ -12,6 +12,7 @@
 
 #include <ctype.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -19,6 +20,7 @@
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/rtc_certificate.h"
@@ -26,31 +28,28 @@
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/string_encode.h"
 
-namespace rtc {
+namespace webrtc {
 
 SSLFingerprint* SSLFingerprint::Create(absl::string_view algorithm,
-                                       const rtc::SSLIdentity* identity) {
+                                       const SSLIdentity* identity) {
   return CreateUnique(algorithm, *identity).release();
 }
 
 std::unique_ptr<SSLFingerprint> SSLFingerprint::CreateUnique(
     absl::string_view algorithm,
-    const rtc::SSLIdentity& identity) {
+    const SSLIdentity& identity) {
   return Create(algorithm, identity.certificate());
 }
 
 std::unique_ptr<SSLFingerprint> SSLFingerprint::Create(
     absl::string_view algorithm,
-    const rtc::SSLCertificate& cert) {
-  uint8_t digest_val[64];
-  size_t digest_len;
-  bool ret = cert.ComputeDigest(algorithm, digest_val, sizeof(digest_val),
-                                &digest_len);
+    const SSLCertificate& cert) {
+  Buffer digest(0, MessageDigest::kMaxSize);
+  bool ret = cert.ComputeDigest(algorithm, digest);
   if (!ret) {
     return nullptr;
   }
-  return std::make_unique<SSLFingerprint>(
-      algorithm, ArrayView<const uint8_t>(digest_val, digest_len));
+  return std::make_unique<SSLFingerprint>(algorithm, digest);
 }
 
 SSLFingerprint* SSLFingerprint::CreateFromRfc4572(
@@ -62,15 +61,15 @@ SSLFingerprint* SSLFingerprint::CreateFromRfc4572(
 std::unique_ptr<SSLFingerprint> SSLFingerprint::CreateUniqueFromRfc4572(
     absl::string_view algorithm,
     absl::string_view fingerprint) {
-  if (algorithm.empty() || !rtc::IsFips180DigestAlgorithm(algorithm))
+  if (algorithm.empty() || !IsFips180DigestAlgorithm(algorithm))
     return nullptr;
 
   if (fingerprint.empty())
     return nullptr;
 
-  char value[rtc::MessageDigest::kMaxSize];
+  char value[MessageDigest::kMaxSize];
   size_t value_len =
-      rtc::hex_decode_with_delimiter(ArrayView<char>(value), fingerprint, ':');
+      hex_decode_with_delimiter(ArrayView<char>(value), fingerprint, ':');
   if (!value_len)
     return nullptr;
 
@@ -111,7 +110,7 @@ bool SSLFingerprint::operator==(const SSLFingerprint& other) const {
 }
 
 std::string SSLFingerprint::GetRfc4572Fingerprint() const {
-  std::string fingerprint = rtc::hex_encode_with_delimiter(
+  std::string fingerprint = hex_encode_with_delimiter(
       absl::string_view(digest.data<char>(), digest.size()), ':');
   absl::c_transform(fingerprint, fingerprint.begin(), ::toupper);
   return fingerprint;
@@ -124,4 +123,4 @@ std::string SSLFingerprint::ToString() const {
   return fp_str;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

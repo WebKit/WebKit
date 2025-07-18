@@ -11,7 +11,14 @@
 #ifndef VIDEO_TASK_QUEUE_FRAME_DECODE_SCHEDULER_H_
 #define VIDEO_TASK_QUEUE_FRAME_DECODE_SCHEDULER_H_
 
+#include <cstdint>
+#include <optional>
+
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
+#include "system_wrappers/include/clock.h"
 #include "video/frame_decode_scheduler.h"
+#include "video/frame_decode_timing.h"
 
 namespace webrtc {
 

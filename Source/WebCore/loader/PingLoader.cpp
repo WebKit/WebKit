@@ -71,13 +71,14 @@ static bool processContentRuleListsForLoad(const LocalFrame& frame, ResourceRequ
     RefPtr documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
         return false;
+
     RefPtr page = frame.page();
     if (!page)
         return false;
+
     auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, request.url(), resourceType, *documentLoader);
-    bool result = results.summary.blockedLoad;
     ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);
-    return result;
+    return results.shouldBlock();
 }
 
 #endif

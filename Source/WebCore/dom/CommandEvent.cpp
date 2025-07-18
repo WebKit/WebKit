@@ -27,6 +27,7 @@
 #include "CommandEvent.h"
 
 #include "Element.h"
+#include "TreeScope.h"
 
 #include <wtf/TZoneMallocInlines.h>
 

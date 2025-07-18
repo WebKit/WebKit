@@ -28,7 +28,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -67,7 +67,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -107,7 +107,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "hard_timeout": 7200,
@@ -149,7 +149,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -163,6 +163,45 @@
         },
         "test": "modules_unittests",
         "test_id_prefix": "ninja://modules:modules_unittests/"
+      },
+      {
+        "args": [
+          "--xctest",
+          "--xcode-build-version",
+          "15f31d",
+          "--out-dir",
+          "${ISOLATED_OUTDIR}"
+        ],
+        "merge": {
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "name": "rtc_p2p_unittests",
+        "resultdb": {
+          "enable": true,
+          "has_native_resultdb_integration": true
+        },
+        "swarming": {
+          "cipd_packages": [
+            {
+              "cipd_package": "infra/tools/mac_toolchain/${platform}",
+              "location": ".",
+              "revision": "git_revision:a18b7d95d26f3c6bf9591978b19cf0ca8268ac7d"
+            }
+          ],
+          "dimensions": {
+            "os": "iOS-18",
+            "pool": "chrome.tests"
+          },
+          "named_caches": [
+            {
+              "name": "xcode_ios_15f31d",
+              "path": "Xcode.app"
+            }
+          ],
+          "service_account": "chrome-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "rtc_p2p_unittests",
+        "test_id_prefix": "ninja://:rtc_p2p_unittests/"
       },
       {
         "args": [
@@ -189,7 +228,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -228,7 +267,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -267,7 +306,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -306,7 +345,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -345,7 +384,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -384,7 +423,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -481,7 +520,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -520,7 +559,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -560,7 +599,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "hard_timeout": 7200,
@@ -602,7 +641,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -616,6 +655,45 @@
         },
         "test": "modules_unittests",
         "test_id_prefix": "ninja://modules:modules_unittests/"
+      },
+      {
+        "args": [
+          "--xctest",
+          "--xcode-build-version",
+          "15f31d",
+          "--out-dir",
+          "${ISOLATED_OUTDIR}"
+        ],
+        "merge": {
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "name": "rtc_p2p_unittests",
+        "resultdb": {
+          "enable": true,
+          "has_native_resultdb_integration": true
+        },
+        "swarming": {
+          "cipd_packages": [
+            {
+              "cipd_package": "infra/tools/mac_toolchain/${platform}",
+              "location": ".",
+              "revision": "git_revision:a18b7d95d26f3c6bf9591978b19cf0ca8268ac7d"
+            }
+          ],
+          "dimensions": {
+            "os": "iOS-18",
+            "pool": "chrome.tests"
+          },
+          "named_caches": [
+            {
+              "name": "xcode_ios_15f31d",
+              "path": "Xcode.app"
+            }
+          ],
+          "service_account": "chrome-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "rtc_p2p_unittests",
+        "test_id_prefix": "ninja://:rtc_p2p_unittests/"
       },
       {
         "args": [
@@ -642,7 +720,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -681,7 +759,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -720,7 +798,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -759,7 +837,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -798,7 +876,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [
@@ -837,7 +915,7 @@
             }
           ],
           "dimensions": {
-            "os": "iOS-16.7.5",
+            "os": "iOS-18",
             "pool": "chrome.tests"
           },
           "named_caches": [

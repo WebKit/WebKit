@@ -45,7 +45,7 @@ std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuf
     return parseZoomAndPanGeneric(buffer);
 }
 
-std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<char16_t>& buffer)
 {
     return parseZoomAndPanGeneric(buffer);
 }

@@ -85,8 +85,7 @@ public:
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
-    RemoteLayerBackingStoreCollection& backingStoreCollection() { return *m_backingStoreCollection; }
-    Ref<RemoteLayerBackingStoreCollection> protectedBackingStoreCollection() { return *m_backingStoreCollection; }
+    RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
     
     void setNextRenderingUpdateRequiresSynchronousImageDecoding() { m_nextRenderingUpdateRequiresSynchronousImageDecoding = true; }
     bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }

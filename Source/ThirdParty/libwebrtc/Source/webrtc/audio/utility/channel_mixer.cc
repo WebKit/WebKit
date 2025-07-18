@@ -94,7 +94,7 @@ void ChannelMixer::Transform(AudioFrame* frame) {
       }
       const size_t index = output_channels_ * i + output_ch;
       RTC_CHECK_LE(index, audio_vector_size_);
-      out_audio[index] = rtc::saturated_cast<int16_t>(acc_value);
+      out_audio[index] = saturated_cast<int16_t>(acc_value);
     }
   }
 

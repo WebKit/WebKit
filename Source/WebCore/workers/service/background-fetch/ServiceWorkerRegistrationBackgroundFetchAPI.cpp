@@ -57,7 +57,7 @@ RefPtr<BackgroundFetchManager> ServiceWorkerRegistrationBackgroundFetchAPI::back
 BackgroundFetchManager& ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetchManager()
 {
     if (!m_backgroundFetchManager)
-        m_backgroundFetchManager = BackgroundFetchManager::create(m_serviceWorkerRegistration);
+        lazyInitialize(m_backgroundFetchManager, BackgroundFetchManager::create(m_serviceWorkerRegistration));
 
     return *m_backgroundFetchManager;
 }

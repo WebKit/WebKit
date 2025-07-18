@@ -108,7 +108,7 @@ private:
     bool hasCustomFocusLogic() const final { return true; }
     int defaultTabIndex() const final { return 0; }
     bool isMouseFocusable() const final { return isFocusable(); }
-    bool isKeyboardFocusable(KeyboardEvent*) const final { return isFocusable(); }
+    bool isKeyboardFocusable(const FocusEventData&) const final { return isFocusable(); }
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
 
     bool accessKeyAction(bool) final;

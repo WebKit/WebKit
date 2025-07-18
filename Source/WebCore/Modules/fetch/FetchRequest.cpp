@@ -150,7 +150,7 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
-    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *scriptExecutionContext(), init);
+    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *protectedScriptExecutionContext(), init);
     if (exception)
         return WTFMove(exception.value());
 
@@ -179,9 +179,9 @@ static inline std::optional<Exception> processInvalidSignal(ScriptExecutionConte
 
 ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 {
-    ASSERT(scriptExecutionContext());
+    Ref context = *scriptExecutionContext();
 
-    URL requestURL = scriptExecutionContext()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
+    URL requestURL = context->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     if (!requestURL.isValid() || requestURL.hasCredentials())
         return Exception { ExceptionCode::TypeError, "URL is not valid or contains user credentials."_s };
 
@@ -189,18 +189,18 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
     m_request.setURL(WTFMove(requestURL));
-    m_requestURL = { m_request.url(), scriptExecutionContext()->topOrigin().data() };
-    m_request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
+    m_requestURL = { m_request.url(), context->topOrigin().data() };
+    m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
         return optionsResult.releaseException();
 
     if (init.signal) {
-        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
+        if (RefPtr signal = JSAbortSignal::toWrapped(context->vm(), init.signal))
             m_signal->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
-            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+            if (auto exception = processInvalidSignal(context.get()))
                 return WTFMove(*exception);
         }
     }
@@ -223,7 +223,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     m_request = input.m_request;
-    m_requestURL = { m_request.url(), scriptExecutionContext()->topOrigin().data() };
+    Ref context = *scriptExecutionContext();
+    m_requestURL = { m_request.url(), context->topOrigin().data() };
 
     m_options = input.m_options;
     m_referrer = input.m_referrer;
@@ -235,10 +236,10 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         return optionsResult.releaseException();
 
     if (init.signal && !init.signal.isUndefined()) {
-        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
+        if (RefPtr signal = JSAbortSignal::toWrapped(context->vm(), init.signal))
             m_signal->signalFollow(*signal);
         else if (!init.signal.isNull()) {
-            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+            if (auto exception = processInvalidSignal(context.get()))
                 return WTFMove(*exception);
         }
 
@@ -305,7 +306,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
         if (result.hasException())
             return result.releaseException();
     } else {
-        auto result = request->initializeWith(*std::get<RefPtr<FetchRequest>>(input), WTFMove(init));
+        auto result = request->initializeWith(Ref { *std::get<RefPtr<FetchRequest>>(input) }.get(), WTFMove(init));
         if (result.hasException())
             return result.releaseException();
     }

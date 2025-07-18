@@ -59,7 +59,7 @@ public:
         u.value = value;
     }
     
-    static LazyJSValue singleCharacterString(UChar character)
+    static LazyJSValue singleCharacterString(char16_t character)
     {
         LazyJSValue result;
         result.m_kind = SingleCharacterString;
@@ -95,7 +95,7 @@ public:
         return u.value;
     }
     
-    UChar character() const
+    char16_t character() const
     {
         ASSERT(m_kind == SingleCharacterString);
         return u.character;
@@ -123,7 +123,7 @@ private:
     
     union {
         FrozenValue* value;
-        UChar character;
+        char16_t character;
         StringImpl* stringImpl;
     } u;
     LazinessKind m_kind;

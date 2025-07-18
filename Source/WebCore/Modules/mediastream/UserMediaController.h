@@ -41,10 +41,9 @@ class UserMediaRequest;
 class UserMediaController : public Supplement<Page> {
     WTF_MAKE_TZONE_ALLOCATED(UserMediaController);
 public:
-    explicit UserMediaController(UserMediaClient*);
-    ~UserMediaController();
+    explicit UserMediaController(Ref<UserMediaClient>&&);
 
-    UserMediaClient* client() const { return m_client; }
+    UserMediaClient* client() const { return m_client.get(); }
 
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
@@ -68,7 +67,7 @@ public:
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
-    UserMediaClient* m_client;
+    RefPtr<UserMediaClient> m_client;
 
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_voiceActivityDocuments;
     bool m_shouldListenToVoiceActivity { false };
@@ -76,33 +75,40 @@ private:
 
 inline void UserMediaController::requestUserMediaAccess(UserMediaRequest& request)
 {
-    m_client->requestUserMediaAccess(request);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->requestUserMediaAccess(request);
 }
 
 inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
-    m_client->cancelUserMediaAccessRequest(request);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->cancelUserMediaAccessRequest(request);
 }
 
 inline void UserMediaController::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
-    m_client->enumerateMediaDevices(document, WTFMove(completionHandler));
+    if (RefPtr mediaClient = m_client)
+        mediaClient->enumerateMediaDevices(document, WTFMove(completionHandler));
 }
 
 
 inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(Function<void()>&& observer)
 {
-    return m_client->addDeviceChangeObserver(WTFMove(observer));
+    if (RefPtr mediaClient = m_client)
+        return mediaClient->addDeviceChangeObserver(WTFMove(observer));
+    return UserMediaClient::DeviceChangeObserverToken { 0 };
 }
 
 inline void UserMediaController::removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken token)
 {
-    m_client->removeDeviceChangeObserver(token);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->removeDeviceChangeObserver(token);
 }
 
 inline void UserMediaController::updateCaptureState(const Document& document, bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
-    m_client->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+    if (RefPtr mediaClient = m_client)
+        mediaClient->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
 }
 
 } // namespace WebCore

@@ -39,14 +39,13 @@ class RTC_EXPORT SctpTransportInformation {
   SctpTransportInformation() = default;
   SctpTransportInformation(const SctpTransportInformation&) = default;
   explicit SctpTransportInformation(SctpTransportState state);
-  SctpTransportInformation(
-      SctpTransportState state,
-      rtc::scoped_refptr<DtlsTransportInterface> dtls_transport,
-      std::optional<double> max_message_size,
-      std::optional<int> max_channels);
+  SctpTransportInformation(SctpTransportState state,
+                           scoped_refptr<DtlsTransportInterface> dtls_transport,
+                           std::optional<double> max_message_size,
+                           std::optional<int> max_channels);
   ~SctpTransportInformation();
   // The DTLS transport that supports this SCTP transport.
-  rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const {
+  scoped_refptr<DtlsTransportInterface> dtls_transport() const {
     return dtls_transport_;
   }
   SctpTransportState state() const { return state_; }
@@ -55,7 +54,7 @@ class RTC_EXPORT SctpTransportInformation {
 
  private:
   SctpTransportState state_ = SctpTransportState::kNew;
-  rtc::scoped_refptr<DtlsTransportInterface> dtls_transport_;
+  scoped_refptr<DtlsTransportInterface> dtls_transport_;
   std::optional<double> max_message_size_;
   std::optional<int> max_channels_;
 };
@@ -79,13 +78,33 @@ class SctpTransportObserverInterface {
 class SctpTransportInterface : public webrtc::RefCountInterface {
  public:
   // This function can be called from other threads.
-  virtual rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const = 0;
+  virtual scoped_refptr<DtlsTransportInterface> dtls_transport() const = 0;
   // Returns information on the state of the SctpTransport.
   // This function can be called from other threads.
   virtual SctpTransportInformation Information() const = 0;
   // Observer management.
   virtual void RegisterObserver(SctpTransportObserverInterface* observer) = 0;
   virtual void UnregisterObserver() = 0;
+};
+
+// The size of the SCTP association send buffer. 256kB, the usrsctp default.
+constexpr int kSctpSendBufferSize = 256 * 1024;
+
+// SCTP options negotiated in the SDP.
+struct SctpOptions {
+  // https://www.rfc-editor.org/rfc/rfc8841.html#name-sctp-port
+  // `local_port` and `remote_port` are passed along the wire and the
+  // listener and connector must be using the same port. They are not related
+  // to the ports at the IP level. If set to -1 we default to
+  // kSctpDefaultPort.
+  // TODO(bugs.webrtc.org/402429107): make these optional<uint16_t>.
+  int local_port = -1;
+  int remote_port = -1;
+
+  // https://www.rfc-editor.org/rfc/rfc8841.html#name-max-message-size
+  // `max_message_size` sets the maxium message size on the connection.
+  // It must be smaller than or equal to kSctpSendBufferSize.
+  int max_message_size = kSctpSendBufferSize;
 };
 
 }  // namespace webrtc

@@ -167,7 +167,7 @@ public:
     void commitPropertyChange(SVGAnimatedProperty&);
 
     const SVGElement* attributeContextElement() const override { return this; }
-    SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return *m_propertyAnimatorFactory; }
+    SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return m_propertyAnimatorFactory; }
     RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive);
     void animatorWillBeDeleted(const QualifiedName&);
 
@@ -231,7 +231,7 @@ private:
     bool m_selfHasRelativeLengths { false };
     bool m_hasInitializedRelativeLengthsState { false };
 
-    const std::unique_ptr<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
+    const UniqueRef<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
 
     const UniqueRef<SVGPropertyRegistry> m_propertyRegistry;
     Ref<SVGAnimatedString> m_className;

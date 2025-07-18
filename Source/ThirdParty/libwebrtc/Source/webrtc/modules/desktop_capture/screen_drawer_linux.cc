@@ -22,7 +22,7 @@
 #include "modules/desktop_capture/screen_drawer.h"
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -47,7 +47,7 @@ class ScreenDrawerLinux : public ScreenDrawer {
   // windows or shadow effect.
   void BringToFront();
 
-  rtc::scoped_refptr<SharedXDisplay> display_;
+  scoped_refptr<SharedXDisplay> display_;
   int screen_num_;
   DesktopRect rect_;
   Window window_;
@@ -97,7 +97,7 @@ ScreenDrawerLinux::ScreenDrawerLinux() {
   colormap_ = DefaultColormap(display_->display(), screen_num_);
   BringToFront();
   // Wait for window animations.
-  SleepMs(200);
+  Thread::SleepMs(200);
 }
 
 ScreenDrawerLinux::~ScreenDrawerLinux() {
@@ -134,7 +134,7 @@ void ScreenDrawerLinux::Clear() {
 // TODO(zijiehe): Find the right signal from X11 to indicate the finish of all
 // pending paintings.
 void ScreenDrawerLinux::WaitForPendingDraws() {
-  SleepMs(50);
+  Thread::SleepMs(50);
 }
 
 bool ScreenDrawerLinux::MayDrawIncompleteShapes() {

@@ -344,6 +344,15 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return [];
     }
 
+    get isStartingStyle()
+    {
+        for (let grouping of this.groupings) {
+            if (grouping.isStartingStyle)
+                return true;
+        }
+        return false;
+    }
+
     get selectorText()
     {
         if (this._ownerRule)

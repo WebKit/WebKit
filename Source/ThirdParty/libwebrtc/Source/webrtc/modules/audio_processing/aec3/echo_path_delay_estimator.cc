@@ -62,8 +62,8 @@ std::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
     const Block& capture) {
   std::array<float, kBlockSize> downsampled_capture_data;
-  rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
-                                            sub_block_size_);
+  ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+                                       sub_block_size_);
 
   std::array<float, kBlockSize> downmixed_capture;
   capture_mixer_.ProduceOutput(capture, downmixed_capture);

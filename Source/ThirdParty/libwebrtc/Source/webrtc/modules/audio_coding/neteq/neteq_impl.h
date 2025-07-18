@@ -11,26 +11,33 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
 #define MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
-#include <string>
-#include <utility>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/neteq_controller_factory.h"
 #include "api/neteq/tick_timer.h"
+#include "api/rtp_headers.h"
 #include "api/rtp_packet_info.h"
+#include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "modules/audio_coding/neteq/random_vector.h"
 #include "modules/audio_coding/neteq/statistics_calculator.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -68,7 +75,7 @@ class NetEqImpl : public webrtc::NetEq {
     kCodecPLC
   };
 
-  enum ErrorCodes {
+  enum Error : int {
     kNoError = 0,
     kOtherError,
     kUnknownRtpPayloadType,
@@ -85,7 +92,7 @@ class NetEqImpl : public webrtc::NetEq {
     kSampleUnderrun,
     kDecodedTooMuch,
     kRedundancySplitError,
-    kPacketBufferCorruption
+    kPacketBufferCorruption,
   };
 
   struct Dependencies {
@@ -125,10 +132,17 @@ class NetEqImpl : public webrtc::NetEq {
   NetEqImpl(const NetEqImpl&) = delete;
   NetEqImpl& operator=(const NetEqImpl&) = delete;
 
+  int InsertPacket(const RTPHeader& rtp_header,
+                   ArrayView<const uint8_t> payload) override {
+    return InsertPacket(
+        rtp_header, payload,
+        RtpPacketInfo(rtp_header, /*receive_time=*/Timestamp::MinusInfinity()));
+  }
+
   // Inserts a new packet into NetEq. Returns 0 on success, -1 on failure.
   int InsertPacket(const RTPHeader& rtp_header,
-                   rtc::ArrayView<const uint8_t> payload,
-                   Timestamp receive_time) override;
+                   ArrayView<const uint8_t> payload,
+                   const RtpPacketInfo& packet_info) override;
 
   void InsertEmptyPacket(const RTPHeader& rtp_header) override;
 
@@ -203,9 +217,9 @@ class NetEqImpl : public webrtc::NetEq {
   // Inserts a new packet into NetEq. This is used by the InsertPacket method
   // above. Returns 0 on success, otherwise an error code.
   // TODO(hlundin): Merge this with InsertPacket above?
-  int InsertPacketInternal(const RTPHeader& rtp_header,
-                           rtc::ArrayView<const uint8_t> payload,
-                           Timestamp receive_time)
+  Error InsertPacketInternal(const RTPHeader& rtp_header,
+                             ArrayView<const uint8_t> payload,
+                             const RtpPacketInfo& packet_info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns true if the payload type changed (this should be followed by
@@ -284,7 +298,7 @@ class NetEqImpl : public webrtc::NetEq {
                    bool fast_accelerate) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Sub-method which calls the PreemptiveExpand class to perform the
-  // preemtive expand operation.
+  // preemptive expand operation.
   int DoPreemptiveExpand(int16_t* decoded_buffer,
                          size_t decoded_length,
                          AudioDecoder::SpeechType speech_type,
@@ -320,6 +334,8 @@ class NetEqImpl : public webrtc::NetEq {
 
   // Resets various variables and objects to new values based on the sample rate
   // `fs_hz` and `channels` number audio channels.
+  // If the sample rate, the number of channels or a combination thereof aren't
+  // supported, the function will fail on an RTC_CHECK.
   void SetSampleRateAndChannels(int fs_hz, size_t channels)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
@@ -395,7 +411,7 @@ class NetEqImpl : public webrtc::NetEq {
       RTC_GUARDED_BY(mutex_);
   std::vector<RtpPacketInfo> last_decoded_packet_infos_ RTC_GUARDED_BY(mutex_);
   bool no_time_stretching_ RTC_GUARDED_BY(mutex_);  // Only used for test.
-  rtc::BufferT<int16_t> concealment_audio_ RTC_GUARDED_BY(mutex_);
+  BufferT<int16_t> concealment_audio_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace webrtc

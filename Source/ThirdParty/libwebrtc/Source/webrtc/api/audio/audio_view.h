@@ -11,8 +11,12 @@
 #ifndef API_AUDIO_AUDIO_VIEW_H_
 #define API_AUDIO_AUDIO_VIEW_H_
 
+#include <cstddef>
+#include <iterator>
+#include <variant>
+#include <vector>
+
 #include "api/array_view.h"
-#include "api/audio/channel_layout.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -29,7 +33,7 @@ namespace webrtc {
 //   buffer. Channels can be enumerated and accessing the individual channel
 //   data is done via MonoView<>.
 //
-// The views are comparable to and built on rtc::ArrayView<> but add
+// The views are comparable to and built on webrtc::ArrayView<> but add
 // audio specific properties for the dimensions of the buffer and the above
 // specialized [de]interleaved support.
 //
@@ -40,7 +44,14 @@ namespace webrtc {
 // can be either an single channel (mono) interleaved buffer (e.g. AudioFrame),
 // or a de-interleaved channel (e.g. from AudioBuffer).
 template <typename T>
-using MonoView = rtc::ArrayView<T>;
+using MonoView = ArrayView<T>;
+
+// The maximum number of audio channels supported by WebRTC encoders, decoders
+// and the AudioFrame class.
+// TODO(peah, tommi): Should kMaxNumberOfAudioChannels be 16 rather than 24?
+// The reason is that AudioFrame's max number of samples is 7680, which can
+// hold 16 10ms 16bit channels at 48 kHz (and not 24 channels).
+static constexpr size_t kMaxNumberOfAudioChannels = 24;
 
 // InterleavedView<> is a view over an interleaved audio buffer (e.g. from
 // AudioFrame).
@@ -56,7 +67,7 @@ class InterleavedView {
       : num_channels_(num_channels),
         samples_per_channel_(samples_per_channel),
         data_(data, num_channels * samples_per_channel) {
-    RTC_DCHECK_LE(num_channels_, kMaxConcurrentChannels);
+    RTC_DCHECK_LE(num_channels_, kMaxNumberOfAudioChannels);
     RTC_DCHECK(num_channels_ == 0u || samples_per_channel_ != 0u);
   }
 
@@ -77,7 +88,7 @@ class InterleavedView {
 
   size_t num_channels() const { return num_channels_; }
   size_t samples_per_channel() const { return samples_per_channel_; }
-  rtc::ArrayView<T> data() const { return data_; }
+  ArrayView<T> data() const { return data_; }
   bool empty() const { return data_.empty(); }
   size_t size() const { return data_.size(); }
 
@@ -116,7 +127,7 @@ class InterleavedView {
   // construction.
   size_t num_channels_ = 0u;
   size_t samples_per_channel_ = 0u;
-  rtc::ArrayView<T> data_;
+  ArrayView<T> data_;
 };
 
 template <typename T>
@@ -126,31 +137,65 @@ class DeinterleavedView {
 
   DeinterleavedView() = default;
 
+  // Construct a view where all the channels are coallocated in a single buffer.
   template <typename U>
   DeinterleavedView(U* data, size_t samples_per_channel, size_t num_channels)
       : num_channels_(num_channels),
         samples_per_channel_(samples_per_channel),
-        data_(data, num_channels * samples_per_channel_) {}
+        data_(data) {}
 
+  // Construct a view from an array of channel pointers where the channels
+  // may all be allocated seperately.
+  template <typename U>
+  DeinterleavedView(U* const* channels,
+                    size_t samples_per_channel,
+                    size_t num_channels)
+      : num_channels_(num_channels),
+        samples_per_channel_(samples_per_channel),
+        data_(channels) {}
+
+  // Construct a view from an array of channel pointers where the pointers are
+  // helt in a `std::vector<>`.
+  template <typename U>
+  DeinterleavedView(const std::vector<U*>& channels, size_t samples_per_channel)
+      : num_channels_(channels.size()),
+        samples_per_channel_(samples_per_channel),
+        data_(channels.data()) {}
+
+  // Construct a view from another view. Note that the type of
+  // the other view may be different from the current type and
+  // therefore the internal data types may not be exactly the
+  // same, but still compatible.
+  // E.g.:
+  // DeinterleavedView<float> mutable_view;
+  // DeinterleavedView<const float> const_view(mutable_view);
   template <typename U>
   DeinterleavedView(const DeinterleavedView<U>& other)
-      : num_channels_(other.num_channels()),
-        samples_per_channel_(other.samples_per_channel()),
-        data_(other.data()) {}
+      : num_channels_(other.num_channels_),
+        samples_per_channel_(other.samples_per_channel()) {
+    if (other.is_ptr_array()) {
+      data_ = std::get<U* const*>(other.data_);
+    } else {
+      data_ = std::get<U*>(other.data_);
+    }
+  }
 
   // Returns a deinterleaved channel where `idx` is the zero based index,
   // in the range [0 .. num_channels()-1].
   MonoView<T> operator[](size_t idx) const {
-    RTC_DCHECK_LT(idx, num_channels_);
-    return MonoView<T>(&data_[idx * samples_per_channel_],
+    RTC_DCHECK_LT(idx, num_channels());
+    if (is_ptr_array())
+      return MonoView<T>(std::get<T* const*>(data_)[idx], samples_per_channel_);
+    return MonoView<T>(&std::get<T*>(data_)[idx * samples_per_channel_],
                        samples_per_channel_);
   }
 
   size_t num_channels() const { return num_channels_; }
   size_t samples_per_channel() const { return samples_per_channel_; }
-  rtc::ArrayView<T> data() const { return data_; }
-  bool empty() const { return data_.empty(); }
-  size_t size() const { return data_.size(); }
+  bool empty() const {
+    return num_channels_ == 0u || samples_per_channel_ == 0u;
+  }
+  size_t size() const { return num_channels_ * samples_per_channel_; }
 
   // Returns the first (and possibly only) channel.
   MonoView<T> AsMono() const {
@@ -158,12 +203,23 @@ class DeinterleavedView {
     return (*this)[0];
   }
 
+  // Zeros out all samples in channels represented by the view.
+  void Clear() {
+    for (size_t i = 0u; i < num_channels_; ++i) {
+      MonoView<T> view = (*this)[i];
+      ClearSamples(view);
+    }
+  }
+
  private:
-  // TODO(tommi): Consider having these be stored as uint16_t to save a few
-  // bytes per view. Use `dchecked_cast` to support size_t during construction.
+  bool is_ptr_array() const { return std::holds_alternative<T* const*>(data_); }
+
+  template <typename U>
+  friend class DeinterleavedView;
+
   size_t num_channels_ = 0u;
   size_t samples_per_channel_ = 0u;
-  rtc::ArrayView<T> data_;
+  std::variant<T* const*, T*> data_;
 };
 
 template <typename T>

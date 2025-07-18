@@ -715,7 +715,7 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
             for (auto& pair : m_audioRenderers)
                 [cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
         }
-        cdmInstance->removeKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
+        cdmInstance->removeKeyStatusesChangedObserver(m_keyStatusesChangedObserver);
     }
 
     m_cdmInstance = fpsInstance;
@@ -728,7 +728,7 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
             for (auto& pair : m_audioRenderers)
                 [cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
         }
-        cdmInstance->addKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
+        cdmInstance->addKeyStatusesChangedObserver(m_keyStatusesChangedObserver);
     }
 
     attemptToDecrypt();

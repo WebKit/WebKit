@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
@@ -19,7 +20,6 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -76,10 +76,10 @@ void SetBit(size_t index, uint8_t* packet_mask) {
   packet_mask[index / 8] |= (1 << (7 - index % 8));
 }
 
-rtc::scoped_refptr<Packet> WriteHeader(const uint8_t* packet_mask,
-                                       size_t packet_mask_size) {
+scoped_refptr<Packet> WriteHeader(const uint8_t* packet_mask,
+                                  size_t packet_mask_size) {
   Flexfec03HeaderWriter writer;
-  rtc::scoped_refptr<Packet> written_packet(new Packet());
+  scoped_refptr<Packet> written_packet(new Packet());
   written_packet->data.SetSize(kMediaPacketLength);
   uint8_t* data = written_packet->data.MutableData();
   for (size_t i = 0; i < written_packet->data.size(); ++i) {
@@ -97,7 +97,7 @@ std::unique_ptr<ReceivedFecPacket> ReadHeader(const Packet& written_packet) {
   Flexfec03HeaderReader reader;
   std::unique_ptr<ReceivedFecPacket> read_packet(new ReceivedFecPacket());
   read_packet->ssrc = kFlexfecSsrc;
-  read_packet->pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet->pkt = scoped_refptr<Packet>(new Packet());
   read_packet->pkt->data = written_packet.data;
   EXPECT_TRUE(reader.ReadFecHeader(read_packet.get()));
   return read_packet;
@@ -188,7 +188,7 @@ TEST(Flexfec03HeaderReaderTest, ReadsHeaderWithKBit0Set) {
       kPayloadBits,      kPayloadBits,   kPayloadBits,       kPayloadBits};
   const size_t packet_length = sizeof(kPacketData);
   ReceivedFecPacket read_packet;
-  read_packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet.pkt = scoped_refptr<Packet>(new Packet());
   read_packet.pkt->data.SetData(kPacketData, packet_length);
 
   Flexfec03HeaderReader reader;
@@ -219,7 +219,7 @@ TEST(Flexfec03HeaderReaderTest, ReadsHeaderWithKBit1Set) {
       kPayloadBits,      kPayloadBits,     kPayloadBits,     kPayloadBits};
   const size_t packet_length = sizeof(kPacketData);
   ReceivedFecPacket read_packet;
-  read_packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet.pkt = scoped_refptr<Packet>(new Packet());
   read_packet.pkt->data.SetData(kPacketData, packet_length);
 
   Flexfec03HeaderReader reader;
@@ -257,7 +257,7 @@ TEST(Flexfec03HeaderReaderTest, ReadsHeaderWithKBit2Set) {
       kPayloadBits,      kPayloadBits,     kPayloadBits,     kPayloadBits};
   const size_t packet_length = sizeof(kPacketData);
   ReceivedFecPacket read_packet;
-  read_packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet.pkt = scoped_refptr<Packet>(new Packet());
   read_packet.pkt->data.SetData(kPacketData, packet_length);
 
   Flexfec03HeaderReader reader;

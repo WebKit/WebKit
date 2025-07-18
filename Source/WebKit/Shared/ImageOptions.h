@@ -33,6 +33,8 @@ enum class ImageOption : uint8_t {
     Shareable = 1 << 0,
     // Makes local in process buffer
     Local = 1 << 1,
+    Accelerated = 1 << 2,
+    AllowHDR = 1 << 3,
 };
 
 using ImageOptions = OptionSet<ImageOption>;
@@ -50,6 +52,9 @@ enum class SnapshotOption : uint16_t {
     VisibleContentRect = 1 << 10,
     FullContentRect = 1 << 11,
     TransparentBackground = 1 << 12,
+    // Not supported with takeSnapshotLegacy
+    Accelerated = 1 << 13,
+    AllowHDR = 1 << 14,
 };
 
 using SnapshotOptions = OptionSet<SnapshotOption>;
@@ -58,6 +63,10 @@ inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOption
 {
     if (snapshotOptions.contains(SnapshotOption::Shareable))
         return ImageOption::Shareable;
+    if (snapshotOptions.contains(SnapshotOption::Accelerated))
+        return ImageOption::Accelerated;
+    if (snapshotOptions.contains(SnapshotOption::AllowHDR))
+        return ImageOption::AllowHDR;
     return { };
 }
 

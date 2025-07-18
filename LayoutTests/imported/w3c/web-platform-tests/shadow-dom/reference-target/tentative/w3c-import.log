@@ -17,9 +17,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/README.md
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/anchor.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/aria-labelledby.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/commandfor.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/dom-mutation.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/form.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/interesttarget.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/label-descendant.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/label-for.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/popovertarget.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/property-reflection-idl-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/property-reflection-imperative-setup.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/property-reflection.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/reference-target-basics.html

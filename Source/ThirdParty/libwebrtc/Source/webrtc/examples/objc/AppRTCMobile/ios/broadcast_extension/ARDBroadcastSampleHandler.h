@@ -17,7 +17,8 @@
 @protocol ARDExternalSampleDelegate;
 
 API_AVAILABLE(ios(10.0))
-@interface ARDBroadcastSampleHandler : RPBroadcastSampleHandler <ARDAppClientDelegate>
+@interface ARDBroadcastSampleHandler
+    : RPBroadcastSampleHandler <ARDAppClientDelegate>
 
 @property(nonatomic, strong) id<ARDExternalSampleDelegate> capturer;
 

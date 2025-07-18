@@ -12,7 +12,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(RateLimiterTest, TestCanUse) {
   // Diet: Can eat 2,000 calories per day.
@@ -57,4 +57,4 @@ TEST(RateLimiterTest, TestCanUse) {
   EXPECT_FALSE(limiter.CanUse(1001, tuesday));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

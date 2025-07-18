@@ -51,12 +51,12 @@ void FillSubFrameView(
     size_t sub_frame_counter,
     int offset,
     std::vector<std::vector<std::vector<float>>>* sub_frame,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame_view) {
   FillSubFrame(sub_frame_counter, offset, sub_frame);
   for (size_t band = 0; band < sub_frame_view->size(); ++band) {
     for (size_t channel = 0; channel < (*sub_frame_view)[band].size();
          ++channel) {
-      (*sub_frame_view)[band][channel] = rtc::ArrayView<float>(
+      (*sub_frame_view)[band][channel] = ArrayView<float>(
           &(*sub_frame)[band][channel][0], (*sub_frame)[band][channel].size());
     }
   }
@@ -65,7 +65,7 @@ void FillSubFrameView(
 bool VerifySubFrame(
     size_t sub_frame_counter,
     int offset,
-    const std::vector<std::vector<rtc::ArrayView<float>>>& sub_frame_view) {
+    const std::vector<std::vector<ArrayView<float>>>& sub_frame_view) {
   std::vector<std::vector<std::vector<float>>> reference_sub_frame(
       sub_frame_view.size(),
       std::vector<std::vector<float>>(
@@ -111,8 +111,8 @@ void RunBlockerTest(int sample_rate_hz, size_t num_channels) {
   std::vector<std::vector<std::vector<float>>> input_sub_frame(
       num_bands, std::vector<std::vector<float>>(
                      num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> input_sub_frame_view(
-      num_bands, std::vector<rtc::ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> input_sub_frame_view(
+      num_bands, std::vector<ArrayView<float>>(num_channels));
   FrameBlocker blocker(num_bands, num_channels);
 
   size_t block_counter = 0;
@@ -149,10 +149,10 @@ void RunBlockerAndFramerTest(int sample_rate_hz, size_t num_channels) {
   std::vector<std::vector<std::vector<float>>> output_sub_frame(
       num_bands, std::vector<std::vector<float>>(
                      num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> output_sub_frame_view(
-      num_bands, std::vector<rtc::ArrayView<float>>(num_channels));
-  std::vector<std::vector<rtc::ArrayView<float>>> input_sub_frame_view(
-      num_bands, std::vector<rtc::ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> output_sub_frame_view(
+      num_bands, std::vector<ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> input_sub_frame_view(
+      num_bands, std::vector<ArrayView<float>>(num_channels));
   FrameBlocker blocker(num_bands, num_channels);
   BlockFramer framer(num_bands, num_channels);
 
@@ -199,9 +199,9 @@ void RunWronglySizedInsertAndExtractParametersTest(
       num_sub_frame_bands,
       std::vector<std::vector<float>>(
           num_sub_frame_channels, std::vector<float>(sub_frame_length, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> input_sub_frame_view(
+  std::vector<std::vector<ArrayView<float>>> input_sub_frame_view(
       input_sub_frame.size(),
-      std::vector<rtc::ArrayView<float>>(num_sub_frame_channels));
+      std::vector<ArrayView<float>>(num_sub_frame_channels));
   FillSubFrameView(0, 0, &input_sub_frame, &input_sub_frame_view);
   FrameBlocker blocker(correct_num_bands, correct_num_channels);
   EXPECT_DEATH(
@@ -222,9 +222,9 @@ void RunWronglySizedExtractParameterTest(int sample_rate_hz,
       correct_num_bands,
       std::vector<std::vector<float>>(
           correct_num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> input_sub_frame_view(
+  std::vector<std::vector<ArrayView<float>>> input_sub_frame_view(
       input_sub_frame.size(),
-      std::vector<rtc::ArrayView<float>>(correct_num_channels));
+      std::vector<ArrayView<float>>(correct_num_channels));
   FillSubFrameView(0, 0, &input_sub_frame, &input_sub_frame_view);
   FrameBlocker blocker(correct_num_bands, correct_num_channels);
   blocker.InsertSubFrameAndExtractBlock(input_sub_frame_view, &correct_block);
@@ -247,8 +247,8 @@ void RunWrongExtractOrderTest(int sample_rate_hz,
   std::vector<std::vector<std::vector<float>>> input_sub_frame(
       num_bands, std::vector<std::vector<float>>(
                      num_channels, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> input_sub_frame_view(
-      input_sub_frame.size(), std::vector<rtc::ArrayView<float>>(num_channels));
+  std::vector<std::vector<ArrayView<float>>> input_sub_frame_view(
+      input_sub_frame.size(), std::vector<ArrayView<float>>(num_channels));
   FillSubFrameView(0, 0, &input_sub_frame, &input_sub_frame_view);
   FrameBlocker blocker(num_bands, num_channels);
   for (size_t k = 0; k < num_preceeding_api_calls; ++k) {
@@ -260,7 +260,7 @@ void RunWrongExtractOrderTest(int sample_rate_hz,
 #endif
 
 std::string ProduceDebugText(int sample_rate_hz, size_t num_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   ss << ", number of channels: " << num_channels;
   return ss.Release();
@@ -366,7 +366,7 @@ TEST(FrameBlockerDeathTest, WrongNumberOfPreceedingApiCallsForExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t num_channels : {1, 2, 4, 8}) {
       for (size_t num_calls = 0; num_calls < 4; ++num_calls) {
-        rtc::StringBuilder ss;
+        StringBuilder ss;
         ss << "Sample rate: " << rate;
         ss << "Num channels: " << num_channels;
         ss << ", Num preceeding InsertSubFrameAndExtractBlock calls: "
@@ -394,8 +394,7 @@ TEST(FrameBlockerDeathTest, NullBlockParameter) {
   std::vector<std::vector<std::vector<float>>> sub_frame(
       1, std::vector<std::vector<float>>(
              1, std::vector<float>(kSubFrameLength, 0.f)));
-  std::vector<std::vector<rtc::ArrayView<float>>> sub_frame_view(
-      sub_frame.size());
+  std::vector<std::vector<ArrayView<float>>> sub_frame_view(sub_frame.size());
   FillSubFrameView(0, 0, &sub_frame, &sub_frame_view);
   EXPECT_DEATH(
       FrameBlocker(1, 1).InsertSubFrameAndExtractBlock(sub_frame_view, nullptr),

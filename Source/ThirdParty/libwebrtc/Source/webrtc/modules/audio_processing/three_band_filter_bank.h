@@ -57,13 +57,13 @@ class ThreeBandFilterBank final {
 
   // Splits `in` of size kFullBandSize into 3 downsampled frequency bands in
   // `out`, each of size 160.
-  void Analysis(rtc::ArrayView<const float, kFullBandSize> in,
-                rtc::ArrayView<const rtc::ArrayView<float>, kNumBands> out);
+  void Analysis(ArrayView<const float, kFullBandSize> in,
+                ArrayView<const ArrayView<float>, kNumBands> out);
 
   // Merges the 3 downsampled frequency bands in `in`, each of size 160, into
   // `out`, which is of size kFullBandSize.
-  void Synthesis(rtc::ArrayView<const rtc::ArrayView<float>, kNumBands> in,
-                 rtc::ArrayView<float, kFullBandSize> out);
+  void Synthesis(ArrayView<const ArrayView<float>, kNumBands> in,
+                 ArrayView<float, kFullBandSize> out);
 
  private:
   std::array<std::array<float, kMemorySize>, kNumNonZeroFilters>

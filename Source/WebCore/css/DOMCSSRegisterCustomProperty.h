@@ -36,7 +36,7 @@ template<typename> class ExceptionOr;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty);
 class DOMCSSRegisterCustomProperty final : public Supplement<DOMCSSNamespace> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty, DOMCSSRegisterCustomProperty);
 public:
     explicit DOMCSSRegisterCustomProperty(DOMCSSNamespace&) { }
 

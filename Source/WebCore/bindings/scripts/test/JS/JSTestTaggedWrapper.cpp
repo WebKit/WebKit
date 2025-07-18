@@ -160,7 +160,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestTaggedWrapperConstructor, (JSGlobalObject* lexica
 
 JSC::GCClient::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestTaggedWrapper, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestTaggedWrapper, UseCustomHeapCellType::No>(vm, "JSTestTaggedWrapper"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestTaggedWrapper.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTaggedWrapper = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestTaggedWrapper.get(); },

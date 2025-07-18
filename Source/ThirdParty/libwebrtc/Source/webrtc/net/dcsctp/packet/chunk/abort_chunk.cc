@@ -37,7 +37,7 @@ namespace dcsctp {
 constexpr int AbortChunk::kType;
 
 std::optional<AbortChunk> AbortChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -53,7 +53,7 @@ std::optional<AbortChunk> AbortChunk::Parse(
 }
 
 void AbortChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
+  webrtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, error_causes.size());
   writer.Store8<1>(filled_in_verification_tag_ ? 0 : (1 << kFlagsBitT));
   writer.CopyToVariableData(error_causes);

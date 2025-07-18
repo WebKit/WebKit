@@ -1,0 +1,1882 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "NSNull",
+     "introduced": "2",
+     "name": "CAActionAdditions",
+     "protocols": [
+      "CAAction"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "scrollPoint:"},
+      {"access": "public", "name": "scrollRectToVisible:"}
+     ],
+     "interface": "CALayer",
+     "name": "CALayerScrolling",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "visibleRect", "name": "visibleRect"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "valueWithCATransform3D:"}
+     ],
+     "interface": "NSValue",
+     "introduced": "2",
+     "name": "CATransform3DAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "CATransform3DValue", "name": "CATransform3DValue"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCALayerMinXMinYCorner"},
+      {"access": "public", "name": "kCALayerMaxXMinYCorner"},
+      {"access": "public", "name": "kCALayerMinXMaxYCorner"},
+      {"access": "public", "name": "kCALayerMaxXMaxYCorner"}
+     ],
+     "introduced": "11",
+     "name": "CACornerMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCALayerLeftEdge"},
+      {"access": "public", "name": "kCALayerRightEdge"},
+      {"access": "public", "name": "kCALayerBottomEdge"},
+      {"access": "public", "name": "kCALayerTopEdge"}
+     ],
+     "introduced": "8",
+     "name": "CAEdgeAntialiasingMask"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CACurrentMediaTime"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_CAFrameRateRangeDefault"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_CAFrameRateRangeIsEqualToRange"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_CAFrameRateRangeMake"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeAutomatic"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeIfSupported"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeNever"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DConcat"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DEqualToTransform"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DGetAffineTransform"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_CATransform3DIdentity"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DInvert"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DIsAffine"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DIsIdentity"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeAffineTransform"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeRotation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeScale"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeTranslation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DRotate"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DScale"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DTranslate"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentCenter"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentJustified"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentLeft"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentNatural"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentRight"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationCubic"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationCubicPaced"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationDiscrete"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationPaced"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationRotateAuto"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationRotateAutoReverse"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatGray8Uint"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatRGBA16Float"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatRGBA8Uint"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kCACornerCurveCircular"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kCACornerCurveContinuous"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerAdditive"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerBackToFront"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerCircle"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerCuboid"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerLine"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOldestFirst"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOldestLast"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOutline"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerPoint"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerPoints"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerRectangle"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerSphere"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerSurface"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerUnordered"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerVolume"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeBackwards"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeBoth"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeForwards"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeRemoved"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFillRuleEvenOdd"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFillRuleNonZero"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFilterLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFilterNearest"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFilterTrilinear"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerAxial"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerConic"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerRadial"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottom"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottomLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottomRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityCenter"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResize"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResizeAspect"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResizeAspectFill"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTop"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTopLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTopRight"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapButt"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapRound"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapSquare"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinBevel"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinMiter"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinRound"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionDefault"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseInEaseOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAOnOrderIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAOnOrderOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCARendererColorSpace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kCARendererMetalCommandQueue"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollBoth"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollHorizontally"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollNone"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollVertically"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransactionAnimationDuration"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCATransactionAnimationTimingFunction"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCATransactionCompletionBlock"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransactionDisableActions"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransition"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFade"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromBottom"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromTop"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionMoveIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionPush"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionReveal"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationEnd"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationMiddle"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationNone"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationStart"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateZ"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScale"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleZ"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateZ"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "animation"},
+      {"access": "public", "name": "defaultValueForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "shouldArchiveValueForKey:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_attr"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_flags"}
+     ],
+     "linkage": "exported",
+     "name": "CAAnimation",
+     "properties": [
+      {"access": "public", "getter": "timingFunction", "name": "timingFunction", "setter": "setTimingFunction:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "isRemovedOnCompletion", "name": "removedOnCompletion", "setter": "setRemovedOnCompletion:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "introduced": "15", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying",
+      "CAMediaTiming",
+      "CAAction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAAnimationGroup",
+     "properties": [
+      {"access": "public", "getter": "animations", "name": "animations", "setter": "setAnimations:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CABasicAnimation",
+     "properties": [
+      {"access": "public", "getter": "fromValue", "name": "fromValue", "setter": "setFromValue:"},
+      {"access": "public", "getter": "toValue", "name": "toValue", "setter": "setToValue:"},
+      {"access": "public", "getter": "byValue", "name": "byValue", "setter": "setByValue:"}
+     ],
+     "super": "CAPropertyAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "displayLinkWithTarget:selector:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addToRunLoop:forMode:"},
+      {"access": "public", "name": "removeFromRunLoop:forMode:"},
+      {"access": "public", "name": "invalidate"}
+     ],
+     "introduced": "3.1",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "CADisplayLink",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetTimestamp", "introduced": "10", "name": "targetTimestamp"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "frameInterval", "introduced": "3.1", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "preferredFramesPerSecond", "introduced": "10", "name": "preferredFramesPerSecond", "setter": "setPreferredFramesPerSecond:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "introduced": "15", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_win"}
+     ],
+     "linkage": "exported",
+     "name": "CAEAGLLayer",
+     "properties": [
+      {"access": "public", "getter": "presentsWithTransaction", "introduced": "9", "name": "presentsWithTransaction", "setter": "setPresentsWithTransaction:"}
+     ],
+     "protocols": [
+      "EAGLDrawable"
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "HDR10MetadataWithDisplayInfo:contentInfo:opticalOutputScale:"},
+      {"access": "public", "name": "HDR10MetadataWithMinLuminance:maxLuminance:opticalOutputScale:"},
+      {"access": "public", "introduced": "17", "name": "HLGMetadataWithAmbientViewingEnvironment:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAEDRMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "HLGMetadata", "name": "HLGMetadata"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAvailable", "introduced": "16", "name": "available"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "emitterCell"},
+      {"access": "public", "name": "defaultValueForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "shouldArchiveValueForKey:"}
+     ],
+     "introduced": "5",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_attr"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_state"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_flags"}
+     ],
+     "linkage": "exported",
+     "name": "CAEmitterCell",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "birthRate", "name": "birthRate", "setter": "setBirthRate:"},
+      {"access": "public", "getter": "lifetime", "name": "lifetime", "setter": "setLifetime:"},
+      {"access": "public", "getter": "lifetimeRange", "name": "lifetimeRange", "setter": "setLifetimeRange:"},
+      {"access": "public", "getter": "emissionLatitude", "name": "emissionLatitude", "setter": "setEmissionLatitude:"},
+      {"access": "public", "getter": "emissionLongitude", "name": "emissionLongitude", "setter": "setEmissionLongitude:"},
+      {"access": "public", "getter": "emissionRange", "name": "emissionRange", "setter": "setEmissionRange:"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "velocityRange", "name": "velocityRange", "setter": "setVelocityRange:"},
+      {"access": "public", "getter": "xAcceleration", "name": "xAcceleration", "setter": "setXAcceleration:"},
+      {"access": "public", "getter": "yAcceleration", "name": "yAcceleration", "setter": "setYAcceleration:"},
+      {"access": "public", "getter": "zAcceleration", "name": "zAcceleration", "setter": "setZAcceleration:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"},
+      {"access": "public", "getter": "scaleRange", "name": "scaleRange", "setter": "setScaleRange:"},
+      {"access": "public", "getter": "scaleSpeed", "name": "scaleSpeed", "setter": "setScaleSpeed:"},
+      {"access": "public", "getter": "spin", "name": "spin", "setter": "setSpin:"},
+      {"access": "public", "getter": "spinRange", "name": "spinRange", "setter": "setSpinRange:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "redRange", "name": "redRange", "setter": "setRedRange:"},
+      {"access": "public", "getter": "greenRange", "name": "greenRange", "setter": "setGreenRange:"},
+      {"access": "public", "getter": "blueRange", "name": "blueRange", "setter": "setBlueRange:"},
+      {"access": "public", "getter": "alphaRange", "name": "alphaRange", "setter": "setAlphaRange:"},
+      {"access": "public", "getter": "redSpeed", "name": "redSpeed", "setter": "setRedSpeed:"},
+      {"access": "public", "getter": "greenSpeed", "name": "greenSpeed", "setter": "setGreenSpeed:"},
+      {"access": "public", "getter": "blueSpeed", "name": "blueSpeed", "setter": "setBlueSpeed:"},
+      {"access": "public", "getter": "alphaSpeed", "name": "alphaSpeed", "setter": "setAlphaSpeed:"},
+      {"access": "public", "getter": "contents", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "contentsRect", "name": "contentsRect", "setter": "setContentsRect:"},
+      {"access": "public", "getter": "contentsScale", "name": "contentsScale", "setter": "setContentsScale:"},
+      {"access": "public", "getter": "minificationFilter", "name": "minificationFilter", "setter": "setMinificationFilter:"},
+      {"access": "public", "getter": "magnificationFilter", "name": "magnificationFilter", "setter": "setMagnificationFilter:"},
+      {"access": "public", "getter": "minificationFilterBias", "name": "minificationFilterBias", "setter": "setMinificationFilterBias:"},
+      {"access": "public", "getter": "emitterCells", "name": "emitterCells", "setter": "setEmitterCells:"},
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "CAMediaTiming"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CAEmitterLayer",
+     "properties": [
+      {"access": "public", "getter": "emitterCells", "name": "emitterCells", "setter": "setEmitterCells:"},
+      {"access": "public", "getter": "birthRate", "name": "birthRate", "setter": "setBirthRate:"},
+      {"access": "public", "getter": "lifetime", "name": "lifetime", "setter": "setLifetime:"},
+      {"access": "public", "getter": "emitterPosition", "name": "emitterPosition", "setter": "setEmitterPosition:"},
+      {"access": "public", "getter": "emitterZPosition", "name": "emitterZPosition", "setter": "setEmitterZPosition:"},
+      {"access": "public", "getter": "emitterSize", "name": "emitterSize", "setter": "setEmitterSize:"},
+      {"access": "public", "getter": "emitterDepth", "name": "emitterDepth", "setter": "setEmitterDepth:"},
+      {"access": "public", "getter": "emitterShape", "name": "emitterShape", "setter": "setEmitterShape:"},
+      {"access": "public", "getter": "emitterMode", "name": "emitterMode", "setter": "setEmitterMode:"},
+      {"access": "public", "getter": "renderMode", "name": "renderMode", "setter": "setRenderMode:"},
+      {"access": "public", "getter": "preservesDepth", "name": "preservesDepth", "setter": "setPreservesDepth:"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"},
+      {"access": "public", "getter": "spin", "name": "spin", "setter": "setSpin:"},
+      {"access": "public", "getter": "seed", "name": "seed", "setter": "setSeed:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAGradientLayer",
+     "properties": [
+      {"access": "public", "getter": "colors", "name": "colors", "setter": "setColors:"},
+      {"access": "public", "getter": "locations", "name": "locations", "setter": "setLocations:"},
+      {"access": "public", "getter": "startPoint", "name": "startPoint", "setter": "setStartPoint:"},
+      {"access": "public", "getter": "endPoint", "name": "endPoint", "setter": "setEndPoint:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAKeyframeAnimation",
+     "properties": [
+      {"access": "public", "getter": "values", "name": "values", "setter": "setValues:"},
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "keyTimes", "name": "keyTimes", "setter": "setKeyTimes:"},
+      {"access": "public", "getter": "timingFunctions", "name": "timingFunctions", "setter": "setTimingFunctions:"},
+      {"access": "public", "getter": "calculationMode", "name": "calculationMode", "setter": "setCalculationMode:"},
+      {"access": "public", "getter": "tensionValues", "name": "tensionValues", "setter": "setTensionValues:"},
+      {"access": "public", "getter": "continuityValues", "name": "continuityValues", "setter": "setContinuityValues:"},
+      {"access": "public", "getter": "biasValues", "name": "biasValues", "setter": "setBiasValues:"},
+      {"access": "public", "getter": "rotationMode", "name": "rotationMode", "setter": "setRotationMode:"}
+     ],
+     "super": "CAPropertyAnimation"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CALayerScrolling"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "layer"},
+      {"access": "public", "name": "defaultValueForKey:"},
+      {"access": "public", "name": "needsDisplayForKey:"},
+      {"access": "public", "introduced": "13", "name": "cornerCurveExpansionFactor:"},
+      {"access": "public", "name": "defaultActionForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithLayer:"},
+      {"access": "public", "name": "presentationLayer"},
+      {"access": "public", "name": "modelLayer"},
+      {"access": "public", "name": "shouldArchiveValueForKey:"},
+      {"access": "public", "name": "affineTransform"},
+      {"access": "public", "name": "setAffineTransform:"},
+      {"access": "public", "name": "contentsAreFlipped"},
+      {"access": "public", "name": "removeFromSuperlayer"},
+      {"access": "public", "name": "addSublayer:"},
+      {"access": "public", "name": "insertSublayer:atIndex:"},
+      {"access": "public", "name": "insertSublayer:below:"},
+      {"access": "public", "name": "insertSublayer:above:"},
+      {"access": "public", "name": "replaceSublayer:with:"},
+      {"access": "public", "name": "convertPoint:fromLayer:"},
+      {"access": "public", "name": "convertPoint:toLayer:"},
+      {"access": "public", "name": "convertRect:fromLayer:"},
+      {"access": "public", "name": "convertRect:toLayer:"},
+      {"access": "public", "name": "convertTime:fromLayer:"},
+      {"access": "public", "name": "convertTime:toLayer:"},
+      {"access": "public", "name": "hitTest:"},
+      {"access": "public", "name": "containsPoint:"},
+      {"access": "public", "name": "display"},
+      {"access": "public", "name": "setNeedsDisplay"},
+      {"access": "public", "name": "setNeedsDisplayInRect:"},
+      {"access": "public", "name": "needsDisplay"},
+      {"access": "public", "name": "displayIfNeeded"},
+      {"access": "public", "name": "drawInContext:"},
+      {"access": "public", "name": "renderInContext:"},
+      {"access": "public", "name": "preferredFrameSize"},
+      {"access": "public", "name": "setNeedsLayout"},
+      {"access": "public", "name": "needsLayout"},
+      {"access": "public", "name": "layoutIfNeeded"},
+      {"access": "public", "name": "layoutSublayers"},
+      {"access": "public", "name": "actionForKey:"},
+      {"access": "public", "name": "addAnimation:forKey:"},
+      {"access": "public", "name": "removeAllAnimations"},
+      {"access": "public", "name": "removeAnimationForKey:"},
+      {"access": "public", "name": "animationKeys"},
+      {"access": "public", "name": "animationForKey:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CALayer",
+     "properties": [
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"},
+      {"access": "public", "getter": "position", "name": "position", "setter": "setPosition:"},
+      {"access": "public", "getter": "zPosition", "name": "zPosition", "setter": "setZPosition:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "anchorPointZ", "name": "anchorPointZ", "setter": "setAnchorPointZ:"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"},
+      {"access": "public", "getter": "frame", "name": "frame", "setter": "setFrame:"},
+      {"access": "public", "getter": "isHidden", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "isDoubleSided", "name": "doubleSided", "setter": "setDoubleSided:"},
+      {"access": "public", "getter": "isGeometryFlipped", "name": "geometryFlipped", "setter": "setGeometryFlipped:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "superlayer", "name": "superlayer"},
+      {"access": "public", "getter": "sublayers", "name": "sublayers", "setter": "setSublayers:"},
+      {"access": "public", "getter": "sublayerTransform", "name": "sublayerTransform", "setter": "setSublayerTransform:"},
+      {"access": "public", "getter": "mask", "name": "mask", "setter": "setMask:"},
+      {"access": "public", "getter": "masksToBounds", "name": "masksToBounds", "setter": "setMasksToBounds:"},
+      {"access": "public", "getter": "contents", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "contentsRect", "name": "contentsRect", "setter": "setContentsRect:"},
+      {"access": "public", "getter": "contentsGravity", "name": "contentsGravity", "setter": "setContentsGravity:"},
+      {"access": "public", "getter": "contentsScale", "introduced": "4", "name": "contentsScale", "setter": "setContentsScale:"},
+      {"access": "public", "getter": "contentsCenter", "name": "contentsCenter", "setter": "setContentsCenter:"},
+      {"access": "public", "getter": "contentsFormat", "introduced": "10", "name": "contentsFormat", "setter": "setContentsFormat:"},
+      {"access": "public", "getter": "wantsExtendedDynamicRangeContent", "introduced": "17", "name": "wantsExtendedDynamicRangeContent", "setter": "setWantsExtendedDynamicRangeContent:"},
+      {"access": "public", "getter": "toneMapMode", "introduced": "18", "name": "toneMapMode", "setter": "setToneMapMode:"},
+      {"access": "public", "getter": "minificationFilter", "name": "minificationFilter", "setter": "setMinificationFilter:"},
+      {"access": "public", "getter": "magnificationFilter", "name": "magnificationFilter", "setter": "setMagnificationFilter:"},
+      {"access": "public", "getter": "minificationFilterBias", "name": "minificationFilterBias", "setter": "setMinificationFilterBias:"},
+      {"access": "public", "getter": "isOpaque", "name": "opaque", "setter": "setOpaque:"},
+      {"access": "public", "getter": "needsDisplayOnBoundsChange", "name": "needsDisplayOnBoundsChange", "setter": "setNeedsDisplayOnBoundsChange:"},
+      {"access": "public", "getter": "drawsAsynchronously", "introduced": "6", "name": "drawsAsynchronously", "setter": "setDrawsAsynchronously:"},
+      {"access": "public", "getter": "edgeAntialiasingMask", "name": "edgeAntialiasingMask", "setter": "setEdgeAntialiasingMask:"},
+      {"access": "public", "getter": "allowsEdgeAntialiasing", "introduced": "2", "name": "allowsEdgeAntialiasing", "setter": "setAllowsEdgeAntialiasing:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "cornerRadius", "name": "cornerRadius", "setter": "setCornerRadius:"},
+      {"access": "public", "getter": "maskedCorners", "introduced": "11", "name": "maskedCorners", "setter": "setMaskedCorners:"},
+      {"access": "public", "getter": "cornerCurve", "introduced": "13", "name": "cornerCurve", "setter": "setCornerCurve:"},
+      {"access": "public", "getter": "borderWidth", "name": "borderWidth", "setter": "setBorderWidth:"},
+      {"access": "public", "getter": "borderColor", "name": "borderColor", "setter": "setBorderColor:"},
+      {"access": "public", "getter": "opacity", "name": "opacity", "setter": "setOpacity:"},
+      {"access": "public", "getter": "allowsGroupOpacity", "introduced": "2", "name": "allowsGroupOpacity", "setter": "setAllowsGroupOpacity:"},
+      {"access": "public", "getter": "compositingFilter", "name": "compositingFilter", "setter": "setCompositingFilter:"},
+      {"access": "public", "getter": "filters", "name": "filters", "setter": "setFilters:"},
+      {"access": "public", "getter": "backgroundFilters", "name": "backgroundFilters", "setter": "setBackgroundFilters:"},
+      {"access": "public", "getter": "shouldRasterize", "name": "shouldRasterize", "setter": "setShouldRasterize:"},
+      {"access": "public", "getter": "rasterizationScale", "name": "rasterizationScale", "setter": "setRasterizationScale:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"},
+      {"access": "public", "getter": "shadowOpacity", "name": "shadowOpacity", "setter": "setShadowOpacity:"},
+      {"access": "public", "getter": "shadowOffset", "name": "shadowOffset", "setter": "setShadowOffset:"},
+      {"access": "public", "getter": "shadowRadius", "name": "shadowRadius", "setter": "setShadowRadius:"},
+      {"access": "public", "getter": "shadowPath", "name": "shadowPath", "setter": "setShadowPath:"},
+      {"access": "public", "getter": "actions", "name": "actions", "setter": "setActions:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "CAMediaTiming"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "functionWithName:"},
+      {"access": "public", "name": "functionWithControlPoints::::"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithControlPoints::::"},
+      {"access": "public", "name": "getControlPointAtIndex:values:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAMediaTimingFunction",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMetalLayer:"},
+      {"access": "public", "name": "addToRunLoop:forMode:"},
+      {"access": "public", "name": "removeFromRunLoop:forMode:"},
+      {"access": "public", "name": "invalidate"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CAMetalDisplayLink",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "preferredFrameLatency", "name": "preferredFrameLatency", "setter": "setPreferredFrameLatency:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CAMetalDisplayLinkUpdate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "drawable", "name": "drawable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetTimestamp", "name": "targetTimestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetPresentationTimestamp", "name": "targetPresentationTimestamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nextDrawable"}
+     ],
+     "introduced": "8",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAMetalLayer",
+     "properties": [
+      {"access": "public", "getter": "device", "name": "device", "setter": "setDevice:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredDevice", "introduced": "13", "name": "preferredDevice"},
+      {"access": "public", "getter": "pixelFormat", "name": "pixelFormat", "setter": "setPixelFormat:"},
+      {"access": "public", "getter": "framebufferOnly", "name": "framebufferOnly", "setter": "setFramebufferOnly:"},
+      {"access": "public", "getter": "drawableSize", "name": "drawableSize", "setter": "setDrawableSize:"},
+      {"access": "public", "getter": "maximumDrawableCount", "introduced": "11.2", "name": "maximumDrawableCount", "setter": "setMaximumDrawableCount:"},
+      {"access": "public", "getter": "presentsWithTransaction", "name": "presentsWithTransaction", "setter": "setPresentsWithTransaction:"},
+      {"access": "public", "getter": "colorspace", "name": "colorspace", "setter": "setColorspace:"},
+      {"access": "public", "getter": "wantsExtendedDynamicRangeContent", "introduced": "16", "name": "wantsExtendedDynamicRangeContent", "setter": "setWantsExtendedDynamicRangeContent:"},
+      {"access": "public", "getter": "EDRMetadata", "introduced": "16", "name": "EDRMetadata", "setter": "setEDRMetadata:"},
+      {"access": "public", "getter": "allowsNextDrawableTimeout", "introduced": "11", "name": "allowsNextDrawableTimeout", "setter": "setAllowsNextDrawableTimeout:"},
+      {"access": "public", "getter": "developerHUDProperties", "introduced": "16", "name": "developerHUDProperties", "setter": "setDeveloperHUDProperties:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "animationWithKeyPath:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAPropertyAnimation",
+     "properties": [
+      {"access": "public", "getter": "keyPath", "name": "keyPath", "setter": "setKeyPath:"},
+      {"access": "public", "getter": "isAdditive", "name": "additive", "setter": "setAdditive:"},
+      {"access": "public", "getter": "isCumulative", "name": "cumulative", "setter": "setCumulative:"},
+      {"access": "public", "getter": "valueFunction", "name": "valueFunction", "setter": "setValueFunction:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "11", "name": "rendererWithMTLTexture:options:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginFrameAtTime:timeStamp:"},
+      {"access": "public", "name": "updateBounds"},
+      {"access": "public", "name": "addUpdateRect:"},
+      {"access": "public", "name": "render"},
+      {"access": "public", "name": "nextFrameTime"},
+      {"access": "public", "name": "endFrame"},
+      {"access": "public", "name": "setDestination:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CARenderer",
+     "properties": [
+      {"access": "public", "getter": "layer", "name": "layer", "setter": "setLayer:"},
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAReplicatorLayer",
+     "properties": [
+      {"access": "public", "getter": "instanceCount", "name": "instanceCount", "setter": "setInstanceCount:"},
+      {"access": "public", "getter": "preservesDepth", "name": "preservesDepth", "setter": "setPreservesDepth:"},
+      {"access": "public", "getter": "instanceDelay", "name": "instanceDelay", "setter": "setInstanceDelay:"},
+      {"access": "public", "getter": "instanceTransform", "name": "instanceTransform", "setter": "setInstanceTransform:"},
+      {"access": "public", "getter": "instanceColor", "name": "instanceColor", "setter": "setInstanceColor:"},
+      {"access": "public", "getter": "instanceRedOffset", "name": "instanceRedOffset", "setter": "setInstanceRedOffset:"},
+      {"access": "public", "getter": "instanceGreenOffset", "name": "instanceGreenOffset", "setter": "setInstanceGreenOffset:"},
+      {"access": "public", "getter": "instanceBlueOffset", "name": "instanceBlueOffset", "setter": "setInstanceBlueOffset:"},
+      {"access": "public", "getter": "instanceAlphaOffset", "name": "instanceAlphaOffset", "setter": "setInstanceAlphaOffset:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "scrollToPoint:"},
+      {"access": "public", "name": "scrollToRect:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAScrollLayer",
+     "properties": [
+      {"access": "public", "getter": "scrollMode", "name": "scrollMode", "setter": "setScrollMode:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAShapeLayer",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "fillColor", "name": "fillColor", "setter": "setFillColor:"},
+      {"access": "public", "getter": "fillRule", "name": "fillRule", "setter": "setFillRule:"},
+      {"access": "public", "getter": "strokeColor", "name": "strokeColor", "setter": "setStrokeColor:"},
+      {"access": "public", "getter": "strokeStart", "name": "strokeStart", "setter": "setStrokeStart:"},
+      {"access": "public", "getter": "strokeEnd", "name": "strokeEnd", "setter": "setStrokeEnd:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "miterLimit", "name": "miterLimit", "setter": "setMiterLimit:"},
+      {"access": "public", "getter": "lineCap", "name": "lineCap", "setter": "setLineCap:"},
+      {"access": "public", "getter": "lineJoin", "name": "lineJoin", "setter": "setLineJoin:"},
+      {"access": "public", "getter": "lineDashPhase", "name": "lineDashPhase", "setter": "setLineDashPhase:"},
+      {"access": "public", "getter": "lineDashPattern", "name": "lineDashPattern", "setter": "setLineDashPattern:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "17", "name": "initWithPerceptualDuration:bounce:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CASpringAnimation",
+     "properties": [
+      {"access": "public", "getter": "mass", "name": "mass", "setter": "setMass:"},
+      {"access": "public", "getter": "stiffness", "name": "stiffness", "setter": "setStiffness:"},
+      {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"},
+      {"access": "public", "getter": "initialVelocity", "name": "initialVelocity", "setter": "setInitialVelocity:"},
+      {"access": "public", "getter": "allowsOverdamping", "introduced": "17", "name": "allowsOverdamping", "setter": "setAllowsOverdamping:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "settlingDuration", "name": "settlingDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "perceptualDuration", "introduced": "17", "name": "perceptualDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounce", "introduced": "17", "name": "bounce"}
+     ],
+     "super": "CABasicAnimation"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_state"}
+     ],
+     "linkage": "exported",
+     "name": "CATextLayer",
+     "properties": [
+      {"access": "public", "getter": "string", "name": "string", "setter": "setString:"},
+      {"access": "public", "getter": "font", "name": "font", "setter": "setFont:"},
+      {"access": "public", "getter": "fontSize", "name": "fontSize", "setter": "setFontSize:"},
+      {"access": "public", "getter": "foregroundColor", "name": "foregroundColor", "setter": "setForegroundColor:"},
+      {"access": "public", "getter": "isWrapped", "name": "wrapped", "setter": "setWrapped:"},
+      {"access": "public", "getter": "truncationMode", "name": "truncationMode", "setter": "setTruncationMode:"},
+      {"access": "public", "getter": "alignmentMode", "name": "alignmentMode", "setter": "setAlignmentMode:"},
+      {"access": "public", "getter": "allowsFontSubpixelQuantization", "name": "allowsFontSubpixelQuantization", "setter": "setAllowsFontSubpixelQuantization:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "fadeDuration"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATiledLayer",
+     "properties": [
+      {"access": "public", "getter": "levelsOfDetail", "name": "levelsOfDetail", "setter": "setLevelsOfDetail:"},
+      {"access": "public", "getter": "levelsOfDetailBias", "name": "levelsOfDetailBias", "setter": "setLevelsOfDetailBias:"},
+      {"access": "public", "getter": "tileSize", "name": "tileSize", "setter": "setTileSize:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "begin"},
+      {"access": "public", "name": "commit"},
+      {"access": "public", "name": "flush"},
+      {"access": "public", "name": "lock"},
+      {"access": "public", "name": "unlock"},
+      {"access": "public", "name": "animationDuration"},
+      {"access": "public", "name": "setAnimationDuration:"},
+      {"access": "public", "name": "animationTimingFunction"},
+      {"access": "public", "name": "setAnimationTimingFunction:"},
+      {"access": "public", "name": "disableActions"},
+      {"access": "public", "name": "setDisableActions:"},
+      {"access": "public", "name": "completionBlock"},
+      {"access": "public", "name": "setCompletionBlock:"},
+      {"access": "public", "name": "valueForKey:"},
+      {"access": "public", "name": "setValue:forKey:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATransaction",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CATransformLayer",
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATransition",
+     "properties": [
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "subtype", "name": "subtype", "setter": "setSubtype:"},
+      {"access": "public", "getter": "startProgress", "name": "startProgress", "setter": "setStartProgress:"},
+      {"access": "public", "getter": "endProgress", "name": "endProgress", "setter": "setEndProgress:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "functionWithName:"}
+     ],
+     "introduced": "3",
+     "ivars": [
+      {"access": "public", "accessControl": "protected", "linkage": "exported", "name": "_string"},
+      {"access": "public", "accessControl": "protected", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "CAValueFunction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runActionForKey:object:arguments:"}
+     ],
+     "introduced": "2",
+     "name": "CAAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "animationDidStart:", "optional": true},
+      {"access": "public", "name": "animationDidStop:finished:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "CAAnimationDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "displayLayer:", "optional": true},
+      {"access": "public", "name": "drawLayer:inContext:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "layerWillDraw:", "optional": true},
+      {"access": "public", "name": "layoutSublayersOfLayer:", "optional": true},
+      {"access": "public", "name": "actionForLayer:forKey:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "CALayerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "name": "CAMediaTiming",
+     "properties": [
+      {"access": "public", "getter": "beginTime", "name": "beginTime", "setter": "setBeginTime:"},
+      {"access": "public", "getter": "duration", "name": "duration", "setter": "setDuration:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "timeOffset", "name": "timeOffset", "setter": "setTimeOffset:"},
+      {"access": "public", "getter": "repeatCount", "name": "repeatCount", "setter": "setRepeatCount:"},
+      {"access": "public", "getter": "repeatDuration", "name": "repeatDuration", "setter": "setRepeatDuration:"},
+      {"access": "public", "getter": "autoreverses", "name": "autoreverses", "setter": "setAutoreverses:"},
+      {"access": "public", "getter": "fillMode", "name": "fillMode", "setter": "setFillMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "metalDisplayLink:needsUpdate:"}
+     ],
+     "introduced": "17",
+     "name": "CAMetalDisplayLinkDelegate"
+    },
+    {
+     "access": "public",
+     "name": "CAMetalDrawable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "texture", "name": "texture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layer", "name": "layer"}
+     ],
+     "protocols": [
+      "MTLDrawable"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "2", "name": "CAAnimationCalculationMode"},
+    {"access": "public", "introduced": "2", "name": "CAAnimationRotationMode"},
+    {"access": "public", "name": "CACornerMask"},
+    {"access": "public", "name": "CAEdgeAntialiasingMask"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerEmitterMode"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerEmitterShape"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerRenderMode"},
+    {"access": "public", "introduced": "15", "name": "CAFrameRateRange"},
+    {"access": "public", "introduced": "3", "name": "CAGradientLayerType"},
+    {"access": "public", "introduced": "2", "name": "CALayerContentsFilter"},
+    {"access": "public", "introduced": "10", "name": "CALayerContentsFormat"},
+    {"access": "public", "introduced": "2", "name": "CALayerContentsGravity"},
+    {"access": "public", "introduced": "13", "name": "CALayerCornerCurve"},
+    {"access": "public", "introduced": "2", "name": "CAMediaTimingFillMode"},
+    {"access": "public", "introduced": "2", "name": "CAMediaTimingFunctionName"},
+    {"access": "public", "introduced": "2", "name": "CAScrollLayerScrollMode"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerFillRule"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerLineCap"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerLineJoin"},
+    {"access": "public", "introduced": "3.2", "name": "CATextLayerAlignmentMode"},
+    {"access": "public", "introduced": "3.2", "name": "CATextLayerTruncationMode"},
+    {"access": "public", "introduced": "18", "name": "CAToneMapMode"},
+    {"access": "public", "introduced": "2", "name": "CATransform3D"},
+    {"access": "public", "introduced": "2", "name": "CATransitionSubtype"},
+    {"access": "public", "introduced": "2", "name": "CATransitionType"},
+    {"access": "public", "introduced": "3", "name": "CAValueFunctionName"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "NSNull",
+     "introduced": "2",
+     "name": "CAActionAdditions",
+     "protocols": [
+      "CAAction"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "scrollPoint:"},
+      {"access": "public", "name": "scrollRectToVisible:"}
+     ],
+     "interface": "CALayer",
+     "name": "CALayerScrolling",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "visibleRect", "name": "visibleRect"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "valueWithCATransform3D:"}
+     ],
+     "interface": "NSValue",
+     "introduced": "2",
+     "name": "CATransform3DAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "CATransform3DValue", "name": "CATransform3DValue"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCALayerMinXMinYCorner"},
+      {"access": "public", "name": "kCALayerMaxXMinYCorner"},
+      {"access": "public", "name": "kCALayerMinXMaxYCorner"},
+      {"access": "public", "name": "kCALayerMaxXMaxYCorner"}
+     ],
+     "introduced": "11",
+     "name": "CACornerMask"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCALayerLeftEdge"},
+      {"access": "public", "name": "kCALayerRightEdge"},
+      {"access": "public", "name": "kCALayerBottomEdge"},
+      {"access": "public", "name": "kCALayerTopEdge"}
+     ],
+     "introduced": "8",
+     "name": "CAEdgeAntialiasingMask"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CACurrentMediaTime"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_CAFrameRateRangeDefault"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_CAFrameRateRangeIsEqualToRange"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_CAFrameRateRangeMake"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeAutomatic"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeIfSupported"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_CAToneMapModeNever"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DConcat"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DEqualToTransform"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DGetAffineTransform"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_CATransform3DIdentity"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DInvert"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DIsAffine"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DIsIdentity"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeAffineTransform"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeRotation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeScale"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DMakeTranslation"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DRotate"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DScale"},
+    {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_CATransform3DTranslate"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentCenter"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentJustified"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentLeft"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentNatural"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAAlignmentRight"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationCubic"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationCubicPaced"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationDiscrete"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationPaced"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationRotateAuto"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAAnimationRotateAutoReverse"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatGray8Uint"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatRGBA16Float"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCAContentsFormatRGBA8Uint"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kCACornerCurveCircular"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kCACornerCurveContinuous"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerAdditive"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerBackToFront"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerCircle"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerCuboid"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerLine"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOldestFirst"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOldestLast"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerOutline"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerPoint"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerPoints"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerRectangle"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerSphere"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerSurface"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerUnordered"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_kCAEmitterLayerVolume"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeBackwards"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeBoth"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeForwards"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFillModeRemoved"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFillRuleEvenOdd"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFillRuleNonZero"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFilterLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAFilterNearest"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAFilterTrilinear"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerAxial"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerConic"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCAGradientLayerRadial"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottom"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottomLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityBottomRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityCenter"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResize"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResizeAspect"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityResizeAspectFill"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTop"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTopLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAGravityTopRight"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapButt"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapRound"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineCapSquare"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinBevel"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinMiter"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCALineJoinRound"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionDefault"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseInEaseOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionEaseOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAMediaTimingFunctionLinear"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAOnOrderIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAOnOrderOut"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCARendererColorSpace"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kCARendererMetalCommandQueue"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollBoth"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollHorizontally"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollNone"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCAScrollVertically"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransactionAnimationDuration"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCATransactionAnimationTimingFunction"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCATransactionCompletionBlock"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransactionDisableActions"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransition"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFade"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromBottom"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromLeft"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromRight"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionFromTop"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionMoveIn"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionPush"},
+    {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kCATransitionReveal"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationEnd"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationMiddle"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationNone"},
+    {"access": "public", "introduced": "3.2", "kind": "variable", "linkage": "exported", "name": "_kCATruncationStart"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionRotateZ"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScale"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionScaleZ"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslate"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateX"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateY"},
+    {"access": "public", "introduced": "3", "kind": "variable", "linkage": "exported", "name": "_kCAValueFunctionTranslateZ"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "animation"},
+      {"access": "public", "name": "defaultValueForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "shouldArchiveValueForKey:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_attr"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_flags"}
+     ],
+     "linkage": "exported",
+     "name": "CAAnimation",
+     "properties": [
+      {"access": "public", "getter": "timingFunction", "name": "timingFunction", "setter": "setTimingFunction:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "isRemovedOnCompletion", "name": "removedOnCompletion", "setter": "setRemovedOnCompletion:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "introduced": "15", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying",
+      "CAMediaTiming",
+      "CAAction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAAnimationGroup",
+     "properties": [
+      {"access": "public", "getter": "animations", "name": "animations", "setter": "setAnimations:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CABasicAnimation",
+     "properties": [
+      {"access": "public", "getter": "fromValue", "name": "fromValue", "setter": "setFromValue:"},
+      {"access": "public", "getter": "toValue", "name": "toValue", "setter": "setToValue:"},
+      {"access": "public", "getter": "byValue", "name": "byValue", "setter": "setByValue:"}
+     ],
+     "super": "CAPropertyAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "displayLinkWithTarget:selector:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addToRunLoop:forMode:"},
+      {"access": "public", "name": "removeFromRunLoop:forMode:"},
+      {"access": "public", "name": "invalidate"}
+     ],
+     "introduced": "3.1",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "CADisplayLink",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetTimestamp", "introduced": "10", "name": "targetTimestamp"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"},
+      {"access": "public", "getter": "frameInterval", "introduced": "3.1", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "preferredFramesPerSecond", "introduced": "10", "name": "preferredFramesPerSecond", "setter": "setPreferredFramesPerSecond:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "introduced": "15", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_win"}
+     ],
+     "linkage": "exported",
+     "name": "CAEAGLLayer",
+     "properties": [
+      {"access": "public", "getter": "presentsWithTransaction", "introduced": "9", "name": "presentsWithTransaction", "setter": "setPresentsWithTransaction:"}
+     ],
+     "protocols": [
+      "EAGLDrawable"
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "HDR10MetadataWithDisplayInfo:contentInfo:opticalOutputScale:"},
+      {"access": "public", "name": "HDR10MetadataWithMinLuminance:maxLuminance:opticalOutputScale:"},
+      {"access": "public", "introduced": "17", "name": "HLGMetadataWithAmbientViewingEnvironment:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAEDRMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "HLGMetadata", "name": "HLGMetadata"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAvailable", "introduced": "16", "name": "available"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "emitterCell"},
+      {"access": "public", "name": "defaultValueForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "shouldArchiveValueForKey:"}
+     ],
+     "introduced": "5",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_attr"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_state"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_flags"}
+     ],
+     "linkage": "exported",
+     "name": "CAEmitterCell",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "getter": "birthRate", "name": "birthRate", "setter": "setBirthRate:"},
+      {"access": "public", "getter": "lifetime", "name": "lifetime", "setter": "setLifetime:"},
+      {"access": "public", "getter": "lifetimeRange", "name": "lifetimeRange", "setter": "setLifetimeRange:"},
+      {"access": "public", "getter": "emissionLatitude", "name": "emissionLatitude", "setter": "setEmissionLatitude:"},
+      {"access": "public", "getter": "emissionLongitude", "name": "emissionLongitude", "setter": "setEmissionLongitude:"},
+      {"access": "public", "getter": "emissionRange", "name": "emissionRange", "setter": "setEmissionRange:"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "velocityRange", "name": "velocityRange", "setter": "setVelocityRange:"},
+      {"access": "public", "getter": "xAcceleration", "name": "xAcceleration", "setter": "setXAcceleration:"},
+      {"access": "public", "getter": "yAcceleration", "name": "yAcceleration", "setter": "setYAcceleration:"},
+      {"access": "public", "getter": "zAcceleration", "name": "zAcceleration", "setter": "setZAcceleration:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"},
+      {"access": "public", "getter": "scaleRange", "name": "scaleRange", "setter": "setScaleRange:"},
+      {"access": "public", "getter": "scaleSpeed", "name": "scaleSpeed", "setter": "setScaleSpeed:"},
+      {"access": "public", "getter": "spin", "name": "spin", "setter": "setSpin:"},
+      {"access": "public", "getter": "spinRange", "name": "spinRange", "setter": "setSpinRange:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "redRange", "name": "redRange", "setter": "setRedRange:"},
+      {"access": "public", "getter": "greenRange", "name": "greenRange", "setter": "setGreenRange:"},
+      {"access": "public", "getter": "blueRange", "name": "blueRange", "setter": "setBlueRange:"},
+      {"access": "public", "getter": "alphaRange", "name": "alphaRange", "setter": "setAlphaRange:"},
+      {"access": "public", "getter": "redSpeed", "name": "redSpeed", "setter": "setRedSpeed:"},
+      {"access": "public", "getter": "greenSpeed", "name": "greenSpeed", "setter": "setGreenSpeed:"},
+      {"access": "public", "getter": "blueSpeed", "name": "blueSpeed", "setter": "setBlueSpeed:"},
+      {"access": "public", "getter": "alphaSpeed", "name": "alphaSpeed", "setter": "setAlphaSpeed:"},
+      {"access": "public", "getter": "contents", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "contentsRect", "name": "contentsRect", "setter": "setContentsRect:"},
+      {"access": "public", "getter": "contentsScale", "name": "contentsScale", "setter": "setContentsScale:"},
+      {"access": "public", "getter": "minificationFilter", "name": "minificationFilter", "setter": "setMinificationFilter:"},
+      {"access": "public", "getter": "magnificationFilter", "name": "magnificationFilter", "setter": "setMagnificationFilter:"},
+      {"access": "public", "getter": "minificationFilterBias", "name": "minificationFilterBias", "setter": "setMinificationFilterBias:"},
+      {"access": "public", "getter": "emitterCells", "name": "emitterCells", "setter": "setEmitterCells:"},
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "CAMediaTiming"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "linkage": "exported",
+     "name": "CAEmitterLayer",
+     "properties": [
+      {"access": "public", "getter": "emitterCells", "name": "emitterCells", "setter": "setEmitterCells:"},
+      {"access": "public", "getter": "birthRate", "name": "birthRate", "setter": "setBirthRate:"},
+      {"access": "public", "getter": "lifetime", "name": "lifetime", "setter": "setLifetime:"},
+      {"access": "public", "getter": "emitterPosition", "name": "emitterPosition", "setter": "setEmitterPosition:"},
+      {"access": "public", "getter": "emitterZPosition", "name": "emitterZPosition", "setter": "setEmitterZPosition:"},
+      {"access": "public", "getter": "emitterSize", "name": "emitterSize", "setter": "setEmitterSize:"},
+      {"access": "public", "getter": "emitterDepth", "name": "emitterDepth", "setter": "setEmitterDepth:"},
+      {"access": "public", "getter": "emitterShape", "name": "emitterShape", "setter": "setEmitterShape:"},
+      {"access": "public", "getter": "emitterMode", "name": "emitterMode", "setter": "setEmitterMode:"},
+      {"access": "public", "getter": "renderMode", "name": "renderMode", "setter": "setRenderMode:"},
+      {"access": "public", "getter": "preservesDepth", "name": "preservesDepth", "setter": "setPreservesDepth:"},
+      {"access": "public", "getter": "velocity", "name": "velocity", "setter": "setVelocity:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"},
+      {"access": "public", "getter": "spin", "name": "spin", "setter": "setSpin:"},
+      {"access": "public", "getter": "seed", "name": "seed", "setter": "setSeed:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAGradientLayer",
+     "properties": [
+      {"access": "public", "getter": "colors", "name": "colors", "setter": "setColors:"},
+      {"access": "public", "getter": "locations", "name": "locations", "setter": "setLocations:"},
+      {"access": "public", "getter": "startPoint", "name": "startPoint", "setter": "setStartPoint:"},
+      {"access": "public", "getter": "endPoint", "name": "endPoint", "setter": "setEndPoint:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAKeyframeAnimation",
+     "properties": [
+      {"access": "public", "getter": "values", "name": "values", "setter": "setValues:"},
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "keyTimes", "name": "keyTimes", "setter": "setKeyTimes:"},
+      {"access": "public", "getter": "timingFunctions", "name": "timingFunctions", "setter": "setTimingFunctions:"},
+      {"access": "public", "getter": "calculationMode", "name": "calculationMode", "setter": "setCalculationMode:"},
+      {"access": "public", "getter": "tensionValues", "name": "tensionValues", "setter": "setTensionValues:"},
+      {"access": "public", "getter": "continuityValues", "name": "continuityValues", "setter": "setContinuityValues:"},
+      {"access": "public", "getter": "biasValues", "name": "biasValues", "setter": "setBiasValues:"},
+      {"access": "public", "getter": "rotationMode", "name": "rotationMode", "setter": "setRotationMode:"}
+     ],
+     "super": "CAPropertyAnimation"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CALayerScrolling"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "layer"},
+      {"access": "public", "name": "defaultValueForKey:"},
+      {"access": "public", "name": "needsDisplayForKey:"},
+      {"access": "public", "introduced": "13", "name": "cornerCurveExpansionFactor:"},
+      {"access": "public", "name": "defaultActionForKey:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithLayer:"},
+      {"access": "public", "name": "presentationLayer"},
+      {"access": "public", "name": "modelLayer"},
+      {"access": "public", "name": "shouldArchiveValueForKey:"},
+      {"access": "public", "name": "affineTransform"},
+      {"access": "public", "name": "setAffineTransform:"},
+      {"access": "public", "name": "contentsAreFlipped"},
+      {"access": "public", "name": "removeFromSuperlayer"},
+      {"access": "public", "name": "addSublayer:"},
+      {"access": "public", "name": "insertSublayer:atIndex:"},
+      {"access": "public", "name": "insertSublayer:below:"},
+      {"access": "public", "name": "insertSublayer:above:"},
+      {"access": "public", "name": "replaceSublayer:with:"},
+      {"access": "public", "name": "convertPoint:fromLayer:"},
+      {"access": "public", "name": "convertPoint:toLayer:"},
+      {"access": "public", "name": "convertRect:fromLayer:"},
+      {"access": "public", "name": "convertRect:toLayer:"},
+      {"access": "public", "name": "convertTime:fromLayer:"},
+      {"access": "public", "name": "convertTime:toLayer:"},
+      {"access": "public", "name": "hitTest:"},
+      {"access": "public", "name": "containsPoint:"},
+      {"access": "public", "name": "display"},
+      {"access": "public", "name": "setNeedsDisplay"},
+      {"access": "public", "name": "setNeedsDisplayInRect:"},
+      {"access": "public", "name": "needsDisplay"},
+      {"access": "public", "name": "displayIfNeeded"},
+      {"access": "public", "name": "drawInContext:"},
+      {"access": "public", "name": "renderInContext:"},
+      {"access": "public", "name": "preferredFrameSize"},
+      {"access": "public", "name": "setNeedsLayout"},
+      {"access": "public", "name": "needsLayout"},
+      {"access": "public", "name": "layoutIfNeeded"},
+      {"access": "public", "name": "layoutSublayers"},
+      {"access": "public", "name": "actionForKey:"},
+      {"access": "public", "name": "addAnimation:forKey:"},
+      {"access": "public", "name": "removeAllAnimations"},
+      {"access": "public", "name": "removeAnimationForKey:"},
+      {"access": "public", "name": "animationKeys"},
+      {"access": "public", "name": "animationForKey:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CALayer",
+     "properties": [
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"},
+      {"access": "public", "getter": "position", "name": "position", "setter": "setPosition:"},
+      {"access": "public", "getter": "zPosition", "name": "zPosition", "setter": "setZPosition:"},
+      {"access": "public", "getter": "anchorPoint", "name": "anchorPoint", "setter": "setAnchorPoint:"},
+      {"access": "public", "getter": "anchorPointZ", "name": "anchorPointZ", "setter": "setAnchorPointZ:"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"},
+      {"access": "public", "getter": "frame", "name": "frame", "setter": "setFrame:"},
+      {"access": "public", "getter": "isHidden", "name": "hidden", "setter": "setHidden:"},
+      {"access": "public", "getter": "isDoubleSided", "name": "doubleSided", "setter": "setDoubleSided:"},
+      {"access": "public", "getter": "isGeometryFlipped", "name": "geometryFlipped", "setter": "setGeometryFlipped:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "superlayer", "name": "superlayer"},
+      {"access": "public", "getter": "sublayers", "name": "sublayers", "setter": "setSublayers:"},
+      {"access": "public", "getter": "sublayerTransform", "name": "sublayerTransform", "setter": "setSublayerTransform:"},
+      {"access": "public", "getter": "mask", "name": "mask", "setter": "setMask:"},
+      {"access": "public", "getter": "masksToBounds", "name": "masksToBounds", "setter": "setMasksToBounds:"},
+      {"access": "public", "getter": "contents", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "contentsRect", "name": "contentsRect", "setter": "setContentsRect:"},
+      {"access": "public", "getter": "contentsGravity", "name": "contentsGravity", "setter": "setContentsGravity:"},
+      {"access": "public", "getter": "contentsScale", "introduced": "4", "name": "contentsScale", "setter": "setContentsScale:"},
+      {"access": "public", "getter": "contentsCenter", "name": "contentsCenter", "setter": "setContentsCenter:"},
+      {"access": "public", "getter": "contentsFormat", "introduced": "10", "name": "contentsFormat", "setter": "setContentsFormat:"},
+      {"access": "public", "getter": "wantsExtendedDynamicRangeContent", "introduced": "17", "name": "wantsExtendedDynamicRangeContent", "setter": "setWantsExtendedDynamicRangeContent:"},
+      {"access": "public", "getter": "toneMapMode", "introduced": "18", "name": "toneMapMode", "setter": "setToneMapMode:"},
+      {"access": "public", "getter": "minificationFilter", "name": "minificationFilter", "setter": "setMinificationFilter:"},
+      {"access": "public", "getter": "magnificationFilter", "name": "magnificationFilter", "setter": "setMagnificationFilter:"},
+      {"access": "public", "getter": "minificationFilterBias", "name": "minificationFilterBias", "setter": "setMinificationFilterBias:"},
+      {"access": "public", "getter": "isOpaque", "name": "opaque", "setter": "setOpaque:"},
+      {"access": "public", "getter": "needsDisplayOnBoundsChange", "name": "needsDisplayOnBoundsChange", "setter": "setNeedsDisplayOnBoundsChange:"},
+      {"access": "public", "getter": "drawsAsynchronously", "introduced": "6", "name": "drawsAsynchronously", "setter": "setDrawsAsynchronously:"},
+      {"access": "public", "getter": "edgeAntialiasingMask", "name": "edgeAntialiasingMask", "setter": "setEdgeAntialiasingMask:"},
+      {"access": "public", "getter": "allowsEdgeAntialiasing", "introduced": "2", "name": "allowsEdgeAntialiasing", "setter": "setAllowsEdgeAntialiasing:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"},
+      {"access": "public", "getter": "cornerRadius", "name": "cornerRadius", "setter": "setCornerRadius:"},
+      {"access": "public", "getter": "maskedCorners", "introduced": "11", "name": "maskedCorners", "setter": "setMaskedCorners:"},
+      {"access": "public", "getter": "cornerCurve", "introduced": "13", "name": "cornerCurve", "setter": "setCornerCurve:"},
+      {"access": "public", "getter": "borderWidth", "name": "borderWidth", "setter": "setBorderWidth:"},
+      {"access": "public", "getter": "borderColor", "name": "borderColor", "setter": "setBorderColor:"},
+      {"access": "public", "getter": "opacity", "name": "opacity", "setter": "setOpacity:"},
+      {"access": "public", "getter": "allowsGroupOpacity", "introduced": "2", "name": "allowsGroupOpacity", "setter": "setAllowsGroupOpacity:"},
+      {"access": "public", "getter": "compositingFilter", "name": "compositingFilter", "setter": "setCompositingFilter:"},
+      {"access": "public", "getter": "filters", "name": "filters", "setter": "setFilters:"},
+      {"access": "public", "getter": "backgroundFilters", "name": "backgroundFilters", "setter": "setBackgroundFilters:"},
+      {"access": "public", "getter": "shouldRasterize", "name": "shouldRasterize", "setter": "setShouldRasterize:"},
+      {"access": "public", "getter": "rasterizationScale", "name": "rasterizationScale", "setter": "setRasterizationScale:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"},
+      {"access": "public", "getter": "shadowOpacity", "name": "shadowOpacity", "setter": "setShadowOpacity:"},
+      {"access": "public", "getter": "shadowOffset", "name": "shadowOffset", "setter": "setShadowOffset:"},
+      {"access": "public", "getter": "shadowRadius", "name": "shadowRadius", "setter": "setShadowRadius:"},
+      {"access": "public", "getter": "shadowPath", "name": "shadowPath", "setter": "setShadowPath:"},
+      {"access": "public", "getter": "actions", "name": "actions", "setter": "setActions:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "style", "name": "style", "setter": "setStyle:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "CAMediaTiming"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "functionWithName:"},
+      {"access": "public", "name": "functionWithControlPoints::::"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithControlPoints::::"},
+      {"access": "public", "name": "getControlPointAtIndex:values:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAMediaTimingFunction",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMetalLayer:"},
+      {"access": "public", "name": "addToRunLoop:forMode:"},
+      {"access": "public", "name": "removeFromRunLoop:forMode:"},
+      {"access": "public", "name": "invalidate"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CAMetalDisplayLink",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "preferredFrameLatency", "name": "preferredFrameLatency", "setter": "setPreferredFrameLatency:"},
+      {"access": "public", "getter": "preferredFrameRateRange", "name": "preferredFrameRateRange", "setter": "setPreferredFrameRateRange:"},
+      {"access": "public", "getter": "isPaused", "name": "paused", "setter": "setPaused:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CAMetalDisplayLinkUpdate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "drawable", "name": "drawable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetTimestamp", "name": "targetTimestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetPresentationTimestamp", "name": "targetPresentationTimestamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nextDrawable"}
+     ],
+     "introduced": "8",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CAMetalLayer",
+     "properties": [
+      {"access": "public", "getter": "device", "name": "device", "setter": "setDevice:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredDevice", "introduced": "13", "name": "preferredDevice"},
+      {"access": "public", "getter": "pixelFormat", "name": "pixelFormat", "setter": "setPixelFormat:"},
+      {"access": "public", "getter": "framebufferOnly", "name": "framebufferOnly", "setter": "setFramebufferOnly:"},
+      {"access": "public", "getter": "drawableSize", "name": "drawableSize", "setter": "setDrawableSize:"},
+      {"access": "public", "getter": "maximumDrawableCount", "introduced": "11.2", "name": "maximumDrawableCount", "setter": "setMaximumDrawableCount:"},
+      {"access": "public", "getter": "presentsWithTransaction", "name": "presentsWithTransaction", "setter": "setPresentsWithTransaction:"},
+      {"access": "public", "getter": "colorspace", "name": "colorspace", "setter": "setColorspace:"},
+      {"access": "public", "getter": "wantsExtendedDynamicRangeContent", "introduced": "16", "name": "wantsExtendedDynamicRangeContent", "setter": "setWantsExtendedDynamicRangeContent:"},
+      {"access": "public", "getter": "EDRMetadata", "introduced": "16", "name": "EDRMetadata", "setter": "setEDRMetadata:"},
+      {"access": "public", "getter": "allowsNextDrawableTimeout", "introduced": "11", "name": "allowsNextDrawableTimeout", "setter": "setAllowsNextDrawableTimeout:"},
+      {"access": "public", "getter": "developerHUDProperties", "introduced": "16", "name": "developerHUDProperties", "setter": "setDeveloperHUDProperties:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "animationWithKeyPath:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAPropertyAnimation",
+     "properties": [
+      {"access": "public", "getter": "keyPath", "name": "keyPath", "setter": "setKeyPath:"},
+      {"access": "public", "getter": "isAdditive", "name": "additive", "setter": "setAdditive:"},
+      {"access": "public", "getter": "isCumulative", "name": "cumulative", "setter": "setCumulative:"},
+      {"access": "public", "getter": "valueFunction", "name": "valueFunction", "setter": "setValueFunction:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "11", "name": "rendererWithMTLTexture:options:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "beginFrameAtTime:timeStamp:"},
+      {"access": "public", "name": "updateBounds"},
+      {"access": "public", "name": "addUpdateRect:"},
+      {"access": "public", "name": "render"},
+      {"access": "public", "name": "nextFrameTime"},
+      {"access": "public", "name": "endFrame"},
+      {"access": "public", "name": "setDestination:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_priv"}
+     ],
+     "linkage": "exported",
+     "name": "CARenderer",
+     "properties": [
+      {"access": "public", "getter": "layer", "name": "layer", "setter": "setLayer:"},
+      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAReplicatorLayer",
+     "properties": [
+      {"access": "public", "getter": "instanceCount", "name": "instanceCount", "setter": "setInstanceCount:"},
+      {"access": "public", "getter": "preservesDepth", "name": "preservesDepth", "setter": "setPreservesDepth:"},
+      {"access": "public", "getter": "instanceDelay", "name": "instanceDelay", "setter": "setInstanceDelay:"},
+      {"access": "public", "getter": "instanceTransform", "name": "instanceTransform", "setter": "setInstanceTransform:"},
+      {"access": "public", "getter": "instanceColor", "name": "instanceColor", "setter": "setInstanceColor:"},
+      {"access": "public", "getter": "instanceRedOffset", "name": "instanceRedOffset", "setter": "setInstanceRedOffset:"},
+      {"access": "public", "getter": "instanceGreenOffset", "name": "instanceGreenOffset", "setter": "setInstanceGreenOffset:"},
+      {"access": "public", "getter": "instanceBlueOffset", "name": "instanceBlueOffset", "setter": "setInstanceBlueOffset:"},
+      {"access": "public", "getter": "instanceAlphaOffset", "name": "instanceAlphaOffset", "setter": "setInstanceAlphaOffset:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "scrollToPoint:"},
+      {"access": "public", "name": "scrollToRect:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CAScrollLayer",
+     "properties": [
+      {"access": "public", "getter": "scrollMode", "name": "scrollMode", "setter": "setScrollMode:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CAShapeLayer",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "fillColor", "name": "fillColor", "setter": "setFillColor:"},
+      {"access": "public", "getter": "fillRule", "name": "fillRule", "setter": "setFillRule:"},
+      {"access": "public", "getter": "strokeColor", "name": "strokeColor", "setter": "setStrokeColor:"},
+      {"access": "public", "getter": "strokeStart", "name": "strokeStart", "setter": "setStrokeStart:"},
+      {"access": "public", "getter": "strokeEnd", "name": "strokeEnd", "setter": "setStrokeEnd:"},
+      {"access": "public", "getter": "lineWidth", "name": "lineWidth", "setter": "setLineWidth:"},
+      {"access": "public", "getter": "miterLimit", "name": "miterLimit", "setter": "setMiterLimit:"},
+      {"access": "public", "getter": "lineCap", "name": "lineCap", "setter": "setLineCap:"},
+      {"access": "public", "getter": "lineJoin", "name": "lineJoin", "setter": "setLineJoin:"},
+      {"access": "public", "getter": "lineDashPhase", "name": "lineDashPhase", "setter": "setLineDashPhase:"},
+      {"access": "public", "getter": "lineDashPattern", "name": "lineDashPattern", "setter": "setLineDashPattern:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "17", "name": "initWithPerceptualDuration:bounce:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CASpringAnimation",
+     "properties": [
+      {"access": "public", "getter": "mass", "name": "mass", "setter": "setMass:"},
+      {"access": "public", "getter": "stiffness", "name": "stiffness", "setter": "setStiffness:"},
+      {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"},
+      {"access": "public", "getter": "initialVelocity", "name": "initialVelocity", "setter": "setInitialVelocity:"},
+      {"access": "public", "getter": "allowsOverdamping", "introduced": "17", "name": "allowsOverdamping", "setter": "setAllowsOverdamping:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "settlingDuration", "name": "settlingDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "perceptualDuration", "introduced": "17", "name": "perceptualDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounce", "introduced": "17", "name": "bounce"}
+     ],
+     "super": "CABasicAnimation"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_state"}
+     ],
+     "linkage": "exported",
+     "name": "CATextLayer",
+     "properties": [
+      {"access": "public", "getter": "string", "name": "string", "setter": "setString:"},
+      {"access": "public", "getter": "font", "name": "font", "setter": "setFont:"},
+      {"access": "public", "getter": "fontSize", "name": "fontSize", "setter": "setFontSize:"},
+      {"access": "public", "getter": "foregroundColor", "name": "foregroundColor", "setter": "setForegroundColor:"},
+      {"access": "public", "getter": "isWrapped", "name": "wrapped", "setter": "setWrapped:"},
+      {"access": "public", "getter": "truncationMode", "name": "truncationMode", "setter": "setTruncationMode:"},
+      {"access": "public", "getter": "alignmentMode", "name": "alignmentMode", "setter": "setAlignmentMode:"},
+      {"access": "public", "getter": "allowsFontSubpixelQuantization", "name": "allowsFontSubpixelQuantization", "setter": "setAllowsFontSubpixelQuantization:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "fadeDuration"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATiledLayer",
+     "properties": [
+      {"access": "public", "getter": "levelsOfDetail", "name": "levelsOfDetail", "setter": "setLevelsOfDetail:"},
+      {"access": "public", "getter": "levelsOfDetailBias", "name": "levelsOfDetailBias", "setter": "setLevelsOfDetailBias:"},
+      {"access": "public", "getter": "tileSize", "name": "tileSize", "setter": "setTileSize:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "begin"},
+      {"access": "public", "name": "commit"},
+      {"access": "public", "name": "flush"},
+      {"access": "public", "name": "lock"},
+      {"access": "public", "name": "unlock"},
+      {"access": "public", "name": "animationDuration"},
+      {"access": "public", "name": "setAnimationDuration:"},
+      {"access": "public", "name": "animationTimingFunction"},
+      {"access": "public", "name": "setAnimationTimingFunction:"},
+      {"access": "public", "name": "disableActions"},
+      {"access": "public", "name": "setDisableActions:"},
+      {"access": "public", "name": "completionBlock"},
+      {"access": "public", "name": "setCompletionBlock:"},
+      {"access": "public", "name": "valueForKey:"},
+      {"access": "public", "name": "setValue:forKey:"}
+     ],
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATransaction",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "3",
+     "linkage": "exported",
+     "name": "CATransformLayer",
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "linkage": "exported",
+     "name": "CATransition",
+     "properties": [
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "subtype", "name": "subtype", "setter": "setSubtype:"},
+      {"access": "public", "getter": "startProgress", "name": "startProgress", "setter": "setStartProgress:"},
+      {"access": "public", "getter": "endProgress", "name": "endProgress", "setter": "setEndProgress:"}
+     ],
+     "super": "CAAnimation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "functionWithName:"}
+     ],
+     "introduced": "3",
+     "ivars": [
+      {"access": "public", "accessControl": "protected", "linkage": "exported", "name": "_string"},
+      {"access": "public", "accessControl": "protected", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "CAValueFunction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runActionForKey:object:arguments:"}
+     ],
+     "introduced": "2",
+     "name": "CAAction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "animationDidStart:", "optional": true},
+      {"access": "public", "name": "animationDidStop:finished:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "CAAnimationDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "displayLayer:", "optional": true},
+      {"access": "public", "name": "drawLayer:inContext:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "layerWillDraw:", "optional": true},
+      {"access": "public", "name": "layoutSublayersOfLayer:", "optional": true},
+      {"access": "public", "name": "actionForLayer:forKey:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "CALayerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "2",
+     "name": "CAMediaTiming",
+     "properties": [
+      {"access": "public", "getter": "beginTime", "name": "beginTime", "setter": "setBeginTime:"},
+      {"access": "public", "getter": "duration", "name": "duration", "setter": "setDuration:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "timeOffset", "name": "timeOffset", "setter": "setTimeOffset:"},
+      {"access": "public", "getter": "repeatCount", "name": "repeatCount", "setter": "setRepeatCount:"},
+      {"access": "public", "getter": "repeatDuration", "name": "repeatDuration", "setter": "setRepeatDuration:"},
+      {"access": "public", "getter": "autoreverses", "name": "autoreverses", "setter": "setAutoreverses:"},
+      {"access": "public", "getter": "fillMode", "name": "fillMode", "setter": "setFillMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "metalDisplayLink:needsUpdate:"}
+     ],
+     "introduced": "17",
+     "name": "CAMetalDisplayLinkDelegate"
+    },
+    {
+     "access": "public",
+     "name": "CAMetalDrawable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "texture", "name": "texture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layer", "name": "layer"}
+     ],
+     "protocols": [
+      "MTLDrawable"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "2", "name": "CAAnimationCalculationMode"},
+    {"access": "public", "introduced": "2", "name": "CAAnimationRotationMode"},
+    {"access": "public", "name": "CACornerMask"},
+    {"access": "public", "name": "CAEdgeAntialiasingMask"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerEmitterMode"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerEmitterShape"},
+    {"access": "public", "introduced": "5", "name": "CAEmitterLayerRenderMode"},
+    {"access": "public", "introduced": "15", "name": "CAFrameRateRange"},
+    {"access": "public", "introduced": "3", "name": "CAGradientLayerType"},
+    {"access": "public", "introduced": "2", "name": "CALayerContentsFilter"},
+    {"access": "public", "introduced": "10", "name": "CALayerContentsFormat"},
+    {"access": "public", "introduced": "2", "name": "CALayerContentsGravity"},
+    {"access": "public", "introduced": "13", "name": "CALayerCornerCurve"},
+    {"access": "public", "introduced": "2", "name": "CAMediaTimingFillMode"},
+    {"access": "public", "introduced": "2", "name": "CAMediaTimingFunctionName"},
+    {"access": "public", "introduced": "2", "name": "CAScrollLayerScrollMode"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerFillRule"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerLineCap"},
+    {"access": "public", "introduced": "3", "name": "CAShapeLayerLineJoin"},
+    {"access": "public", "introduced": "3.2", "name": "CATextLayerAlignmentMode"},
+    {"access": "public", "introduced": "3.2", "name": "CATextLayerTruncationMode"},
+    {"access": "public", "introduced": "18", "name": "CAToneMapMode"},
+    {"access": "public", "introduced": "2", "name": "CATransform3D"},
+    {"access": "public", "introduced": "2", "name": "CATransitionSubtype"},
+    {"access": "public", "introduced": "2", "name": "CATransitionType"},
+    {"access": "public", "introduced": "3", "name": "CAValueFunctionName"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

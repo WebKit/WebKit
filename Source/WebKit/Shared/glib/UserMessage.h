@@ -90,7 +90,7 @@ struct UserMessage {
 private:
     friend struct IPC::ArgumentCoder<UserMessage, void>;
 
-    using IPCData = std::variant<NullMessage, ErrorMessage, DataMessage>;
+    using IPCData = Variant<NullMessage, ErrorMessage, DataMessage>;
     static UserMessage fromIPCData(IPCData&&);
     IPCData toIPCData() const;
 };

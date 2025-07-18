@@ -62,7 +62,7 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
     Seconds delta = event->timeStamp() - m_lastTypeTime;
     m_lastTypeTime = event->timeStamp();
 
-    UChar c = event->charCode();
+    char16_t c = event->charCode();
 
     if (delta > typeAheadTimeout)
         m_buffer.clear();

@@ -64,6 +64,10 @@ class AudioFrame {
   enum : size_t {
     // Stereo, 32 kHz, 120 ms (2 * 32 * 120)
     // Stereo, 192 kHz, 20 ms (2 * 192 * 20)
+    // 8 channels (kMaxConcurrentChannels), 48 kHz, 20 ms (8 * 48 * 20).
+    // 24 channels (kMaxNumberOfAudioChannels), 32 kHz kHz, 10 ms (24 * 32 * 10)
+    // At 48 kHz, 10 ms buffers, the maximum number of channels AudioFrame can
+    // hold, is 16. (16 * 48 * 10).
     kMaxDataSizeSamples = 7680,
     kMaxDataSizeBytes = kMaxDataSizeSamples * sizeof(int16_t),
   };
@@ -212,7 +216,7 @@ class AudioFrame {
   // A permanently zeroed out buffer to represent muted frames. This is a
   // header-only class, so the only way to avoid creating a separate zeroed
   // buffer per translation unit is to wrap a static in an inline function.
-  static rtc::ArrayView<const int16_t> zeroed_data();
+  static ArrayView<const int16_t> zeroed_data();
 
   std::array<int16_t, kMaxDataSizeSamples> data_;
   bool muted_ = true;
@@ -221,7 +225,7 @@ class AudioFrame {
   // Absolute capture timestamp when this audio frame was originally captured.
   // This is only valid for audio frames captured on this machine. The absolute
   // capture timestamp of a received frame is found in `packet_infos_`.
-  // This timestamp MUST be based on the same clock as rtc::TimeMillis().
+  // This timestamp MUST be based on the same clock as webrtc::TimeMillis().
   std::optional<int64_t> absolute_capture_timestamp_ms_;
 };
 

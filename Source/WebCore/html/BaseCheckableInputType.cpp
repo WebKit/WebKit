@@ -39,7 +39,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

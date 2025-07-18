@@ -120,9 +120,7 @@ VideoEncoder::EncoderInfo::EncoderInfo(const EncoderInfo&) = default;
 VideoEncoder::EncoderInfo::~EncoderInfo() = default;
 
 std::string VideoEncoder::EncoderInfo::ToString() const {
-  char string_buf[2048];
-  rtc::SimpleStringBuilder oss(string_buf);
-
+  StringBuilder oss;
   oss << "EncoderInfo { "
          "ScalingSettings { ";
   if (scaling_settings.thresholds) {
@@ -162,11 +160,11 @@ std::string VideoEncoder::EncoderInfo::ToString() const {
     if (!fractions.empty()) {
       first = false;
       oss << "[ ";
-      for (size_t i = 0; i < fractions.size(); ++i) {
-        if (i > 0) {
+      for (size_t j = 0; j < fractions.size(); ++j) {
+        if (j > 0) {
           oss << ", ";
         }
-        oss << (static_cast<double>(fractions[i]) / kMaxFramerateFraction);
+        oss << (static_cast<double>(fractions[j]) / kMaxFramerateFraction);
       }
       oss << "] ";
     }

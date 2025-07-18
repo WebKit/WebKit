@@ -11,8 +11,6 @@
 #ifndef MODULES_VIDEO_CODING_TIMING_FRAME_DELAY_VARIATION_KALMAN_FILTER_H_
 #define MODULES_VIDEO_CODING_TIMING_FRAME_DELAY_VARIATION_KALMAN_FILTER_H_
 
-#include "api/units/data_size.h"
-#include "api/units/time_delta.h"
 
 namespace webrtc {
 

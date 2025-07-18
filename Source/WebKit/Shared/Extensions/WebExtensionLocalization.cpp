@@ -333,7 +333,7 @@ String WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString
         if (index < 0)
             break;
 
-        auto originalKey = localizedString.substring(index, matchLength).trim(isASCIIWhitespace<UChar>);
+        auto originalKey = localizedString.substring(index, matchLength).trim(isASCIIWhitespace<char16_t>);
         auto key = originalKey.substring(1, originalKey.length());
         auto keyInteger = parseInteger<size_t>(key);
 

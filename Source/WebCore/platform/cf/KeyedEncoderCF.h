@@ -59,7 +59,7 @@ private:
     void endArrayElement() final;
     void endArray() final;
 
-    RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
+    const RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
 
     Vector<CFMutableDictionaryRef, 16> m_dictionaryStack;
     Vector<CFMutableArrayRef, 16> m_arrayStack;

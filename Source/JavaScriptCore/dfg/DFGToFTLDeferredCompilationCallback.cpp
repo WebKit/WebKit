@@ -67,7 +67,7 @@ void ToFTLDeferredCompilationCallback::compilationDidComplete(
         return;
     }
     
-    if (result == CompilationSuccessful)
+    if (result == CompilationResult::CompilationSuccessful)
         codeBlock->ownerExecutable()->installCode(codeBlock);
     
     profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(

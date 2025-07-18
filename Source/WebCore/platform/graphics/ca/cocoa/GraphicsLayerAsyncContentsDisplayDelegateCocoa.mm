@@ -31,6 +31,8 @@
 #import "NativeImage.h"
 #import "WebCoreCALayerExtras.h"
 
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+
 namespace WebCore {
 
 GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDisplayDelegateCocoa(GraphicsLayerCA& layer)
@@ -41,7 +43,7 @@ GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDispla
     layer.setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
-bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image)
+bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image, bool opaque)
 {
     m_image = ImageBuffer::sinkIntoNativeImage(image.clone());
     if (!m_image)
@@ -51,6 +53,7 @@ bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer&
     [CATransaction setDisableActions:YES];
 
     [m_layer setContents:(__bridge id)m_image->platformImage().get()];
+    [m_layer setContentsOpaque:opaque];
 
     [CATransaction commit];
 

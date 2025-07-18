@@ -84,7 +84,7 @@ CoreIPCPlistObject::CoreIPCPlistObject(UniqueRef<PlistValue>&& value)
 
 RetainPtr<id> CoreIPCPlistObject::toID() const
 {
-    return WTF::switchOn(*m_value, [&](auto& object) {
+    return WTF::switchOn(m_value.get(), [&](auto& object) {
         return object.toID();
     });
 }
@@ -95,7 +95,7 @@ namespace IPC {
 
 void ArgumentCoder<UniqueRef<WebKit::PlistValue>>::encode(Encoder& encoder, const UniqueRef<WebKit::PlistValue>& object)
 {
-    encoder << *object;
+    encoder << object.get();
 }
 
 std::optional<UniqueRef<WebKit::PlistValue>> ArgumentCoder<UniqueRef<WebKit::PlistValue>>::decode(Decoder& decoder)

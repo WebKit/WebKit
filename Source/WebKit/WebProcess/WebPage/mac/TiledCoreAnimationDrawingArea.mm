@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingArea.h"
 
-#if PLATFORM(MAC)
+#if ENABLE(TILED_CA_DRAWING_AREA)
 
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
@@ -80,7 +80,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledCoreAnimationDrawingArea);
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaType::TiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
+    : DrawingArea(parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
     m_hostingLayer = [CALayer layer];
@@ -888,4 +888,4 @@ void TiledCoreAnimationDrawingArea::postRenderingUpdateRunLoopCallback()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(TILED_CA_DRAWING_AREA)

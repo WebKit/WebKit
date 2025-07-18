@@ -4404,6 +4404,37 @@ void GL_APIENTRY glBufferStorageExternalEXT(GLenum target,
 
 // GL_EXT_float_blend
 
+// GL_EXT_fragment_shading_rate
+void GL_APIENTRY glFramebufferShadingRateEXT(GLenum target,
+                                             GLenum attachment,
+                                             GLuint texture,
+                                             GLint baseLayer,
+                                             GLsizei numLayers,
+                                             GLsizei texelWidth,
+                                             GLsizei texelHeight)
+{
+    return GL_FramebufferShadingRateEXT(target, attachment, texture, baseLayer, numLayers,
+                                        texelWidth, texelHeight);
+}
+
+void GL_APIENTRY glGetFragmentShadingRatesEXT(GLsizei samples,
+                                              GLsizei maxCount,
+                                              GLsizei *count,
+                                              GLenum *shadingRates)
+{
+    return GL_GetFragmentShadingRatesEXT(samples, maxCount, count, shadingRates);
+}
+
+void GL_APIENTRY glShadingRateEXT(GLenum rate)
+{
+    return GL_ShadingRateEXT(rate);
+}
+
+void GL_APIENTRY glShadingRateCombinerOpsEXT(GLenum combinerOp0, GLenum combinerOp1)
+{
+    return GL_ShadingRateCombinerOpsEXT(combinerOp0, combinerOp1);
+}
+
 // GL_EXT_geometry_shader
 void GL_APIENTRY glFramebufferTextureEXT(GLenum target,
                                          GLenum attachment,

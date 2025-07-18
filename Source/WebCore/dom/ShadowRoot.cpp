@@ -279,7 +279,7 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> ShadowRoot::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> ShadowRoot::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
     ASSERT(m_isClonable);
@@ -298,7 +298,6 @@ Ref<Node> ShadowRoot::cloneNodeInternal(Document& document, CloningOperation typ
     }
 
     RELEASE_ASSERT_NOT_REACHED(); // ShadowRoot is never cloned directly on its own.
-    return *this;
 }
 
 void ShadowRoot::removeAllEventListeners()

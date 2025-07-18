@@ -10,9 +10,12 @@
 
 #include "video/quality_convergence_monitor.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <memory>
 #include <numeric>
 
+#include "api/field_trials_view.h"
+#include "api/video/video_codec_type.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 
@@ -56,6 +59,7 @@ QualityConvergenceMonitor::Parameters GetParameters(
   int max_qp = 0;
   switch (codec) {
     case kVideoCodecVP8:
+      dynamic_config.enabled = true;
       dynamic_config.Parser()->Parse(trials.Lookup("WebRTC-QCM-Dynamic-VP8"));
       max_qp = 127;
       break;

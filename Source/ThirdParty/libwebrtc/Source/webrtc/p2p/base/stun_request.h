@@ -23,8 +23,9 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/stun.h"
 #include "api/units/time_delta.h"
+#include "rtc_base/thread_annotations.h"
 
-namespace cricket {
+namespace webrtc {
 
 class StunRequest;
 
@@ -40,8 +41,9 @@ const int STUN_TOTAL_TIMEOUT = 39750;  // milliseconds
 class StunRequestManager {
  public:
   StunRequestManager(
-      webrtc::TaskQueueBase* thread,
-      std::function<void(const void*, size_t, StunRequest*)> send_packet);
+      TaskQueueBase* thread,
+      std::function<void(const void*, size_t, webrtc::StunRequest*)>
+          send_packet);
   ~StunRequestManager();
 
   // Starts sending the given request (perhaps after a delay).
@@ -74,16 +76,17 @@ class StunRequestManager {
 
   bool empty() const;
 
-  webrtc::TaskQueueBase* network_thread() const { return thread_; }
+  TaskQueueBase* network_thread() const { return thread_; }
 
   void SendPacket(const void* data, size_t size, StunRequest* request);
 
  private:
   typedef std::map<std::string, std::unique_ptr<StunRequest>> RequestMap;
 
-  webrtc::TaskQueueBase* const thread_;
+  TaskQueueBase* const thread_;
   RequestMap requests_ RTC_GUARDED_BY(thread_);
-  const std::function<void(const void*, size_t, StunRequest*)> send_packet_;
+  const std::function<void(const void*, size_t, webrtc::StunRequest*)>
+      send_packet_;
 };
 
 // Represents an individual request to be sent.  The STUN message can either be
@@ -125,7 +128,7 @@ class StunRequest {
   friend class StunRequestManager;
 
   // Called by StunRequestManager.
-  void Send(webrtc::TimeDelta delay);
+  void Send(TimeDelta delay);
 
   // Called from FlushForTest.
   // TODO(tommi): Remove when FlushForTest gets removed.
@@ -142,9 +145,7 @@ class StunRequest {
   // Returns the next delay for resends in milliseconds.
   virtual int resend_delay();
 
-  webrtc::TaskQueueBase* network_thread() const {
-    return manager_.network_thread();
-  }
+  TaskQueueBase* network_thread() const { return manager_.network_thread(); }
 
   void set_timed_out();
 
@@ -152,18 +153,29 @@ class StunRequest {
   void SendInternal();
   // Calls `PostDelayedTask` to queue up a call to SendInternal after the
   // specified timeout.
-  void SendDelayed(webrtc::TimeDelta delay);
+  void SendDelayed(TimeDelta delay);
 
   StunRequestManager& manager_;
   const std::unique_ptr<StunMessage> msg_;
   int64_t tstamp_ RTC_GUARDED_BY(network_thread());
   int count_ RTC_GUARDED_BY(network_thread());
   bool timeout_ RTC_GUARDED_BY(network_thread());
-  webrtc::ScopedTaskSafety task_safety_{
-      webrtc::PendingTaskSafetyFlag::CreateDetachedInactive()};
+  ScopedTaskSafety task_safety_{
+      PendingTaskSafetyFlag::CreateDetachedInactive()};
   bool authentication_required_ = true;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::kAllRequestsForTest;
+using ::webrtc::STUN_TOTAL_TIMEOUT;
+using ::webrtc::StunRequest;
+using ::webrtc::StunRequestManager;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_STUN_REQUEST_H_

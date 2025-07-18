@@ -48,7 +48,7 @@ static std::pair<SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>, bool> g
 {
     bool isDefaultValue = false;
 
-    SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>::Vector result;
+    SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>::Container result;
     result.append(values.value[0]);
 
     if (values.value[3] != values.value[1]) {

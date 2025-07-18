@@ -221,8 +221,9 @@ int InterleavedReassemblyStreams::Add(UnwrappedTSN tsn, Data data) {
 }
 
 size_t InterleavedReassemblyStreams::HandleForwardTsn(
-    UnwrappedTSN new_cumulative_ack_tsn,
-    rtc::ArrayView<const AnyForwardTsnChunk::SkippedStream> skipped_streams) {
+    UnwrappedTSN /* new_cumulative_ack_tsn */,
+    webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
+        skipped_streams) {
   size_t removed_bytes = 0;
   for (const auto& skipped : skipped_streams) {
     removed_bytes +=
@@ -233,7 +234,7 @@ size_t InterleavedReassemblyStreams::HandleForwardTsn(
 }
 
 void InterleavedReassemblyStreams::ResetStreams(
-    rtc::ArrayView<const StreamID> stream_ids) {
+    webrtc::ArrayView<const StreamID> stream_ids) {
   if (stream_ids.empty()) {
     for (auto& entry : streams_) {
       entry.second.Reset();
@@ -273,16 +274,16 @@ void InterleavedReassemblyStreams::RestoreFromState(
   // Validate that the component is in pristine state.
   RTC_DCHECK(streams_.empty());
 
-  for (const DcSctpSocketHandoverState::OrderedStream& state :
+  for (const DcSctpSocketHandoverState::OrderedStream& stream_state :
        state.rx.ordered_streams) {
-    FullStreamId stream_id(IsUnordered(false), StreamID(state.id));
+    FullStreamId stream_id(IsUnordered(false), StreamID(stream_state.id));
     streams_.emplace(
         std::piecewise_construct, std::forward_as_tuple(stream_id),
-        std::forward_as_tuple(stream_id, this, MID(state.next_ssn)));
+        std::forward_as_tuple(stream_id, this, MID(stream_state.next_ssn)));
   }
-  for (const DcSctpSocketHandoverState::UnorderedStream& state :
+  for (const DcSctpSocketHandoverState::UnorderedStream& stream_state :
        state.rx.unordered_streams) {
-    FullStreamId stream_id(IsUnordered(true), StreamID(state.id));
+    FullStreamId stream_id(IsUnordered(true), StreamID(stream_state.id));
     streams_.emplace(std::piecewise_construct, std::forward_as_tuple(stream_id),
                      std::forward_as_tuple(stream_id, this));
   }

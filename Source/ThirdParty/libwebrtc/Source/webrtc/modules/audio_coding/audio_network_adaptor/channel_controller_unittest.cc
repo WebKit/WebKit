@@ -10,8 +10,12 @@
 
 #include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
 
+#include <cstddef>
 #include <memory>
+#include <optional>
 
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -151,7 +151,7 @@ void WebChromeClientIOS::runOpenPanel(LocalFrame&, FileChooser& chooser)
     };
 
     if (WebThreadIsCurrent()) {
-        RunLoop::protectedMain()->dispatch([this, listener = WTFMove(listener), configuration = retainPtr(configuration)] {
+        RunLoop::mainSingleton().dispatch([this, listener = WTFMove(listener), configuration = retainPtr(configuration)] {
             [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration.get()];
         });
     } else

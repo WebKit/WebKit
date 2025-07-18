@@ -205,7 +205,7 @@ void WritePcmWavHeader(size_t num_channels,
   RTC_CHECK(buf);
   RTC_CHECK(header_size);
   *header_size = kPcmWavHeaderSize;
-  auto header = rtc::MsanUninitialized<WavHeaderPcm>({});
+  auto header = MsanUninitialized<WavHeaderPcm>({});
   const size_t bytes_in_payload = bytes_per_sample * num_samples;
 
   header.riff.header.ID = PackFourCC('R', 'I', 'F', 'F');
@@ -236,7 +236,7 @@ void WriteIeeeFloatWavHeader(size_t num_channels,
   RTC_CHECK(buf);
   RTC_CHECK(header_size);
   *header_size = kIeeeFloatWavHeaderSize;
-  auto header = rtc::MsanUninitialized<WavHeaderIeeeFloat>({});
+  auto header = MsanUninitialized<WavHeaderIeeeFloat>({});
   const size_t bytes_in_payload = bytes_per_sample * num_samples;
 
   header.riff.header.ID = PackFourCC('R', 'I', 'F', 'F');
@@ -374,7 +374,7 @@ bool ReadWavHeader(WavHeaderReader* readable,
                    size_t* num_samples,
                    int64_t* data_start_pos) {
   // Read using the PCM header, even though it might be float Wav file
-  auto header = rtc::MsanUninitialized<WavHeaderPcm>({});
+  auto header = MsanUninitialized<WavHeaderPcm>({});
 
   // Read RIFF chunk.
   if (readable->Read(&header.riff, sizeof(header.riff)) != sizeof(header.riff))

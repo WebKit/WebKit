@@ -10,16 +10,20 @@
 
 #include "api/stats/rtc_stats_report.h"
 
-#include <type_traits>
+#include <memory>
+#include <string>
 #include <utility>
 
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 RTCStatsReport::ConstIterator::ConstIterator(
-    const rtc::scoped_refptr<const RTCStatsReport>& report,
+    const scoped_refptr<const RTCStatsReport>& report,
     StatsMap::const_iterator it)
     : report_(report), it_(it) {}
 
@@ -54,14 +58,14 @@ bool RTCStatsReport::ConstIterator::operator!=(
   return !(*this == other);
 }
 
-rtc::scoped_refptr<RTCStatsReport> RTCStatsReport::Create(Timestamp timestamp) {
-  return rtc::scoped_refptr<RTCStatsReport>(new RTCStatsReport(timestamp));
+scoped_refptr<RTCStatsReport> RTCStatsReport::Create(Timestamp timestamp) {
+  return scoped_refptr<RTCStatsReport>(new RTCStatsReport(timestamp));
 }
 
 RTCStatsReport::RTCStatsReport(Timestamp timestamp) : timestamp_(timestamp) {}
 
-rtc::scoped_refptr<RTCStatsReport> RTCStatsReport::Copy() const {
-  rtc::scoped_refptr<RTCStatsReport> copy = Create(timestamp_);
+scoped_refptr<RTCStatsReport> RTCStatsReport::Copy() const {
+  scoped_refptr<RTCStatsReport> copy = Create(timestamp_);
   for (auto it = stats_.begin(); it != stats_.end(); ++it) {
     copy->AddStats(it->second->copy());
   }
@@ -96,7 +100,7 @@ std::unique_ptr<const RTCStats> RTCStatsReport::Take(const std::string& id) {
   return stats;
 }
 
-void RTCStatsReport::TakeMembersFrom(rtc::scoped_refptr<RTCStatsReport> other) {
+void RTCStatsReport::TakeMembersFrom(scoped_refptr<RTCStatsReport> other) {
   for (StatsMap::iterator it = other->stats_.begin(); it != other->stats_.end();
        ++it) {
     AddStats(std::unique_ptr<const RTCStats>(it->second.release()));
@@ -105,12 +109,12 @@ void RTCStatsReport::TakeMembersFrom(rtc::scoped_refptr<RTCStatsReport> other) {
 }
 
 RTCStatsReport::ConstIterator RTCStatsReport::begin() const {
-  return ConstIterator(rtc::scoped_refptr<const RTCStatsReport>(this),
+  return ConstIterator(scoped_refptr<const RTCStatsReport>(this),
                        stats_.cbegin());
 }
 
 RTCStatsReport::ConstIterator RTCStatsReport::end() const {
-  return ConstIterator(rtc::scoped_refptr<const RTCStatsReport>(this),
+  return ConstIterator(scoped_refptr<const RTCStatsReport>(this),
                        stats_.cend());
 }
 
@@ -118,7 +122,7 @@ std::string RTCStatsReport::ToJson() const {
   if (begin() == end()) {
     return "";
   }
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   sb << "[";
   const char* separator = "";
   for (ConstIterator it = begin(); it != end(); ++it) {

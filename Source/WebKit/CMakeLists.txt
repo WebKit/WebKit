@@ -311,6 +311,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/Model/ModelProcessProxy
 
     UIProcess/Inspector/RemoteWebInspectorUIProxy
+    UIProcess/Inspector/WebInspectorBackendProxy
     UIProcess/Inspector/WebInspectorUIProxy
 
     UIProcess/Network/NetworkProcessProxy
@@ -568,6 +569,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
     Shared/Extensions/WebExtensionAlarmParameters.serialization.in
+    Shared/Extensions/WebExtensionBookmarksParameters.serialization.in
     Shared/Extensions/WebExtensionCommandParameters.serialization.in
     Shared/Extensions/WebExtensionContentWorldType.serialization.in
     Shared/Extensions/WebExtensionContext.serialization.in

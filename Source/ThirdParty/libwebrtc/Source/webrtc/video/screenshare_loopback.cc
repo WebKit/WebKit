@@ -21,12 +21,12 @@
 #include "api/test/video_quality_test_fixture.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/units/data_rate.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
 #include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/run_test.h"
 #include "test/test_flags.h"
@@ -310,7 +310,7 @@ ABSL_FLAG(std::string,
 std::vector<std::string> Slides() {
   std::vector<std::string> slides;
   std::string slides_list = absl::GetFlag(FLAGS_slides);
-  rtc::tokenize(slides_list, ',', &slides);
+  webrtc::tokenize(slides_list, ',', &slides);
   return slides;
 }
 
@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   absl::ParseCommandLine(argc, argv);
 
-  rtc::LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs));
+  webrtc::LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs));
 
   // InitFieldTrialsFromString stores the char*, so the char array must outlive
   // the application.

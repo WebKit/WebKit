@@ -105,7 +105,7 @@ bool SessionHost::isConnected() const
 }
 
 struct ConnectToBrowserAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ConnectToBrowserAsyncData);
     ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<String>)>&& completionHandler)
         : sessionHost(sessionHost)
         , inspectorAddress(WTFMove(inspectorAddress))
@@ -191,7 +191,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
     if (!m_browser && !m_isRemoteBrowser)
         return;
 
-    RunLoop::protectedMain()->dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
+    RunLoop::mainSingleton().dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
         auto* data = connectToBrowserData.release();
         if (g_cancellable_is_cancelled(data->cancellable.get()))
             return;

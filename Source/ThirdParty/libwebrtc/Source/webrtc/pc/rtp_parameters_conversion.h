@@ -23,7 +23,7 @@
 namespace webrtc {
 
 //*****************************************************************************
-// Functions for converting from old cricket:: structures to new webrtc::
+// Functions for converting from old webrtc:: structures to new webrtc::
 // structures. These are permissive with regards to
 // input validation; it's assumed that any necessary validation already
 // occurred.
@@ -35,13 +35,13 @@ namespace webrtc {
 // Returns empty value if `cricket_feedback` is a feedback type not
 // supported/recognized.
 std::optional<RtcpFeedback> ToRtcpFeedback(
-    const cricket::FeedbackParam& cricket_feedback);
+    const FeedbackParam& cricket_feedback);
 
-RtpCodecCapability ToRtpCodecCapability(const cricket::Codec& cricket_codec);
+RtpCodecCapability ToRtpCodecCapability(const Codec& cricket_codec);
 
 RtpCapabilities ToRtpCapabilities(
-    const std::vector<cricket::Codec>& cricket_codecs,
-    const cricket::RtpHeaderExtensions& cricket_extensions);
+    const std::vector<Codec>& cricket_codecs,
+    const RtpHeaderExtensions& cricket_extensions);
 
 }  // namespace webrtc
 

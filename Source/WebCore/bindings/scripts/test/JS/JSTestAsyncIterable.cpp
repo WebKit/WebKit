@@ -189,7 +189,7 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return WebCore::subspaceForImpl<TestAsyncIterableIterator, UseCustomHeapCellType::No>(vm,
+        return WebCore::subspaceForImpl<TestAsyncIterableIterator, UseCustomHeapCellType::No>(vm, "TestAsyncIterableIterator"_s,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestAsyncIterableIterator.get(); },
             [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestAsyncIterableIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestAsyncIterableIterator.get(); },
@@ -264,7 +264,7 @@ JSC_ANNOTATE_HOST_FUNCTION(TestAsyncIterableIteratorBaseOnPromiseFulfilled, Test
 JSC_ANNOTATE_HOST_FUNCTION(TestAsyncIterableIteratorBaseOnPromiseRejected, TestAsyncIterableIteratorBase::onPromiseRejected);
 JSC::GCClient::IsoSubspace* JSTestAsyncIterable::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestAsyncIterable, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestAsyncIterable, UseCustomHeapCellType::No>(vm, "JSTestAsyncIterable"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestAsyncIterable.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestAsyncIterable = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestAsyncIterable.get(); },

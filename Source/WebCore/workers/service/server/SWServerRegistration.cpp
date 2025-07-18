@@ -429,12 +429,12 @@ std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderVal
 
 void SWServerRegistration::addCookieChangeSubscriptions(Vector<CookieChangeSubscription>&& subscriptions)
 {
-    m_cookieChangeSubscriptions.add(subscriptions.begin(), subscriptions.end());
+    m_cookieChangeSubscriptions.addAll(WTFMove(subscriptions));
 }
 
 void SWServerRegistration::removeCookieChangeSubscriptions(Vector<CookieChangeSubscription>&& subscriptions)
 {
-    m_cookieChangeSubscriptions.remove(subscriptions.begin(), subscriptions.end());
+    m_cookieChangeSubscriptions.removeAll(subscriptions);
 }
 
 Vector<CookieChangeSubscription> SWServerRegistration::cookieChangeSubscriptions() const

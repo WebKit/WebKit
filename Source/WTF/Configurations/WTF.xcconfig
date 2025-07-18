@@ -46,3 +46,13 @@ SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(WK_PRIVATE_SDK_DIR)$(SYSTEM_LIBRA
 // Used to generate headers filelist for TAPI in JavaScriptCore. CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE
 // is not exported to script phases, so it must be bound to a different name.
 WK_HEADERS_VFS_FILE = $(CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE);
+
+// A WTF modulemap confuses the building of PALSwift on older SDKs
+// For now we enable only on the most recent macOS SDKs and we will
+// gradually expand to the most recent of all platforms.
+// This variable affects whether a custom action generates a modulemap
+// in the pbxproj file.
+GENERATE_WTF_MODULEMAP = NO
+GENERATE_WTF_MODULEMAP[sdk=macosx*] = $(GENERATE_WTF_MODULEMAP$(WK_MACOS_2600));
+GENERATE_WTF_MODULEMAP_MACOS_SINCE_2600 = YES;
+GENERATE_WTF_MODULEMAP_MACOS_BEFORE_2600 = NO;

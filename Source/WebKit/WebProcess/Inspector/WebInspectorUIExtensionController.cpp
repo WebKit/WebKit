@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSContextRef.h>
 #include <WebCore/ExceptionDetails.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/JSDOMGlobalObject.h>

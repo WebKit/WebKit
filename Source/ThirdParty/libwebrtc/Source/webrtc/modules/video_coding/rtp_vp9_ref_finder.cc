@@ -11,15 +11,28 @@
 #include "modules/video_coding/rtp_vp9_ref_finder.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <utility>
 
+#include "api/video/encoded_frame.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_frame_type.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "modules/video_coding/rtp_frame_reference_finder.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/mod_ops.h"
+#include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {
 RtpFrameReferenceFinder::ReturnVector RtpVp9RefFinder::ManageFrame(
     std::unique_ptr<RtpFrameObject> frame) {
-  const RTPVideoHeaderVP9& codec_header = absl::get<RTPVideoHeaderVP9>(
-      frame->GetRtpVideoHeader().video_type_header);
+  const RTPVideoHeaderVP9& codec_header =
+      std::get<RTPVideoHeaderVP9>(frame->GetRtpVideoHeader().video_type_header);
 
   if (codec_header.temporal_idx != kNoTemporalIdx)
     frame->SetTemporalIndex(codec_header.temporal_idx);
@@ -311,7 +324,7 @@ void RtpVp9RefFinder::RetryStashedFrames(
   do {
     complete_frame = false;
     for (auto it = stashed_frames_.begin(); it != stashed_frames_.end();) {
-      const RTPVideoHeaderVP9& codec_header = absl::get<RTPVideoHeaderVP9>(
+      const RTPVideoHeaderVP9& codec_header = std::get<RTPVideoHeaderVP9>(
           it->frame->GetRtpVideoHeader().video_type_header);
       RTC_DCHECK(!codec_header.flexible_mode);
       FrameDecision decision =

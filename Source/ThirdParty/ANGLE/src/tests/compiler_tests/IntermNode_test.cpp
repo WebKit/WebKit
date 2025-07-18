@@ -25,14 +25,13 @@ class IntermNodeTest : public testing::Test
   protected:
     void SetUp() override
     {
-        allocator.push();
         SetGlobalPoolAllocator(&allocator);
     }
 
     void TearDown() override
     {
         SetGlobalPoolAllocator(nullptr);
-        allocator.pop();
+        allocator.reset();
     }
 
     TIntermSymbol *createTestSymbol(const TType &type)

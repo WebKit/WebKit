@@ -36,7 +36,7 @@ static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 
 MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
     : m_player(player)
-    , m_readyTimer(RunLoop::main(), this, &MediaPlayerPrivateHolePunch::notifyReadyState)
+    , m_readyTimer(RunLoop::mainSingleton(), this, &MediaPlayerPrivateHolePunch::notifyReadyState)
     , m_networkState(MediaPlayer::NetworkState::Empty)
 #if USE(COORDINATED_GRAPHICS)
     , m_contentsBufferProxy(CoordinatedPlatformLayerBufferProxy::create())

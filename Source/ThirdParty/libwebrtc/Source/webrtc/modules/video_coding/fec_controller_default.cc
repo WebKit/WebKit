@@ -13,12 +13,18 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #include "api/environment/environment.h"
+#include "api/fec_controller.h"
 #include "api/field_trials_view.h"
+#include "api/video/video_frame_type.h"
 #include "modules/include/module_fec_types.h"
+#include "modules/video_coding/media_opt_util.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -80,7 +86,7 @@ uint32_t FecControllerDefault::UpdateFecRates(
     uint32_t estimated_bitrate_bps,
     int actual_framerate_fps,
     uint8_t fraction_lost,
-    std::vector<bool> loss_mask_vector,
+    std::vector<bool> /* loss_mask_vector */,
     int64_t round_trip_time_ms) {
   float target_bitrate_kbps =
       static_cast<float>(estimated_bitrate_bps) / 1000.0f;

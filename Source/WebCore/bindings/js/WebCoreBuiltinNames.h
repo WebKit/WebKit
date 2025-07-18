@@ -500,6 +500,7 @@ namespace WebCore {
     macro(WebKitMediaKeyNeededEvent) \
     macro(WebKitMediaKeySession) \
     macro(WebKitMediaKeys) \
+    macro(WebKitNodeInfo) \
     macro(WebSocket) \
     macro(WebTransport) \
     macro(WebTransportBidirectionalStream) \
@@ -648,6 +649,7 @@ namespace WebCore {
     macro(onbackgroundfetchfail) \
     macro(onbackgroundfetchabort) \
     macro(onbackgroundfetchclick) \
+    macro(onbeforematch) \
     macro(oncommand) \
     macro(oncookiechange) \
     macro(onnotificationclick) \
@@ -655,6 +657,7 @@ namespace WebCore {
     macro(onpush) \
     macro(onpushsubscriptionchange) \
     macro(onrtctransform) \
+    macro(onscrollend) \
     macro(ontouchcancel) \
     macro(ontouchend) \
     macro(ontouchmove) \

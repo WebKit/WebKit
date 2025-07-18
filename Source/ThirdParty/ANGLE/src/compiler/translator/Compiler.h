@@ -302,6 +302,8 @@ class TCompiler : public TShHandleBase
 
     void collectInterfaceBlocks();
 
+    bool sortUniforms(TIntermBlock *root);
+
     bool mVariablesCollected;
 
     bool mGLPositionInitialized;

@@ -126,7 +126,7 @@ inline DynamicRangeLimit::Kind DynamicRangeLimit::copyKind(const Kind& other)
             return Kind { keyword };
         },
         [](const UniqueRef<DynamicRangeLimitMixFunction>& mix) {
-            return Kind { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(*mix) };
+            return Kind { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(mix) };
         }
     );
 }

@@ -91,12 +91,12 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView s
 {
     LengthType lengthType = LengthType::UnitLess;
     unsigned stringLength = string.length();
-    UChar lastChar = string[stringLength - 1];
+    char16_t lastChar = string[stringLength - 1];
     if (lastChar == '%') {
         lengthType = LengthType::Percentage;
         stringLength--;
     } else if (stringLength >= 2) {
-        UChar penultimateChar = string[stringLength - 2];
+        char16_t penultimateChar = string[stringLength - 2];
         if (penultimateChar == 'c' && lastChar == 'm')
             lengthType = LengthType::Cm;
         if (penultimateChar == 'e' && lastChar == 'm')
@@ -184,13 +184,13 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
 
     // We first skip whitespace from both ends of the string.
     StringView stringView = string;
-    StringView trimmedLength = stringView.trim(isASCIIWhitespaceWithoutFF<UChar>);
+    StringView trimmedLength = stringView.trim(isASCIIWhitespaceWithoutFF<char16_t>);
 
     if (trimmedLength.isEmpty())
         return Length();
 
     // We consider the most typical case: a number followed by an optional unit.
-    UChar firstChar = trimmedLength[0];
+    char16_t firstChar = trimmedLength[0];
     if (isASCIIDigit(firstChar) || firstChar == '-' || firstChar == '.')
         return parseNumberAndUnit(trimmedLength, acceptLegacyMathMLLengths);
 

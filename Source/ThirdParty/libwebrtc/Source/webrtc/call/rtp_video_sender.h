@@ -15,7 +15,6 @@
 #include <cstdint>
 #include <map>
 #include <memory>
-#include <optional>
 #include <vector>
 
 #include "absl/base/nullability.h"
@@ -34,7 +33,6 @@
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
 #include "api/video/encoded_image.h"
-#include "api/video/video_codec_type.h"
 #include "api/video/video_layers_allocation.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/rtp_config.h"
@@ -87,7 +85,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   // Rtp modules are assumed to be sorted in simulcast index order.
   RtpVideoSender(
       const Environment& env,
-      absl::Nonnull<TaskQueueBase*> transport_queue,
+      TaskQueueBase* absl_nonnull transport_queue,
       const std::map<uint32_t, RtpState>& suspended_ssrcs,
       const std::map<uint32_t, RtpPayloadState>& states,
       const RtpConfig& rtp_config,
@@ -99,7 +97,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
       std::unique_ptr<FecController> fec_controller,
       FrameEncryptorInterface* frame_encryptor,
       const CryptoOptions& crypto_options,  // move inside RtpTransport
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+      scoped_refptr<FrameTransformerInterface> frame_transformer);
   ~RtpVideoSender() override;
 
   RtpVideoSender(const RtpVideoSender&) = delete;
@@ -156,7 +154,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
 
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
       uint32_t ssrc,
-      rtc::ArrayView<const uint16_t> sequence_numbers) const
+      ArrayView<const uint16_t> sequence_numbers) const
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
   // From StreamFeedbackObserver.
@@ -201,7 +199,6 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   const std::vector<webrtc_internal_rtp_video_sender::RtpStreamSender>
       rtp_streams_;
   const RtpConfig rtp_config_;
-  const std::optional<VideoCodecType> codec_type_;
   RtpTransportControllerSendInterface* const transport_;
 
   // When using the generic descriptor we want all simulcast streams to share

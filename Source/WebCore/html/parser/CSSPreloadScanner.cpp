@@ -53,7 +53,7 @@ void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestSt
     ASSERT(!m_requests);
     SetForScope change(m_requests, &requests);
 
-    for (UChar c : data) {
+    for (char16_t c : data) {
         if (m_state == DoneParsingImportRules)
             break;
 
@@ -75,7 +75,7 @@ bool CSSPreloadScanner::hasFinishedRuleValue() const
     return m_ruleValue[m_ruleValue.size() - 1] == ')';
 }
 
-inline void CSSPreloadScanner::tokenize(UChar c)
+inline void CSSPreloadScanner::tokenize(char16_t c)
 {
     // We are just interested in @import rules, no need for real tokenization here
     // Searching for other types of resources is probably low payoff.
@@ -172,7 +172,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     }
 }
 
-static String parseCSSStringOrURL(std::span<const UChar> characters)
+static String parseCSSStringOrURL(std::span<const char16_t> characters)
 {
     size_t offset = 0;
     size_t reducedLength = characters.size();
@@ -221,7 +221,7 @@ static bool hasValidImportConditions(StringView conditions)
     if (conditions.isEmpty())
         return true;
 
-    conditions = conditions.trim(isASCIIWhitespace<UChar>);
+    conditions = conditions.trim(isASCIIWhitespace<char16_t>);
 
     // FIXME: Support multiple conditions.
     // FIXME: Support media queries.

@@ -32,7 +32,7 @@
 
 namespace webrtc {
 
-typedef rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
+typedef scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
     RtpTransceiverProxyRefPtr;
 
 // Captures partial state to be used for rollback. Applicable only in
@@ -94,7 +94,7 @@ class TransceiverStableState {
 class TransceiverList {
  public:
   // Returns a copy of the currently active list of transceivers. The
-  // list consists of rtc::scoped_refptrs, which will keep the transceivers
+  // list consists of webrtc::scoped_refptrs, which will keep the transceivers
   // from being deallocated, even if they are removed from the TransceiverList.
   std::vector<RtpTransceiverProxyRefPtr> List() const {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
@@ -122,7 +122,7 @@ class TransceiverList {
         transceivers_.end());
   }
   RtpTransceiverProxyRefPtr FindBySender(
-      rtc::scoped_refptr<RtpSenderInterface> sender) const;
+      scoped_refptr<RtpSenderInterface> sender) const;
   RtpTransceiverProxyRefPtr FindByMid(const std::string& mid) const;
   RtpTransceiverProxyRefPtr FindByMLineIndex(size_t mline_index) const;
 

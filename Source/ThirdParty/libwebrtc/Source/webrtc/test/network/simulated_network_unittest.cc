@@ -9,14 +9,11 @@
  */
 #include "test/network/simulated_network.h"
 
-#include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <map>
 #include <optional>
-#include <set>
 #include <vector>
 
-#include "absl/algorithm/container.h"
 #include "api/test/simulated_network.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"

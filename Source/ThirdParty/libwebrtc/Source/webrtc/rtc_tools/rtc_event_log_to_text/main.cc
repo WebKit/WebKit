@@ -45,10 +45,10 @@ int main(int argc, char* argv[]) {
   std::vector<char*> args = absl::ParseCommandLine(argc, argv);
 
   // Print RTC_LOG warnings and errors even in release builds.
-  if (rtc::LogMessage::GetLogToDebug() > rtc::LS_WARNING) {
-    rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
+  if (webrtc::LogMessage::GetLogToDebug() > webrtc::LS_WARNING) {
+    webrtc::LogMessage::LogToDebug(webrtc::LS_WARNING);
   }
-  rtc::LogMessage::SetLogToStderr(true);
+  webrtc::LogMessage::SetLogToStderr(true);
 
   webrtc::ParsedRtcEventLog::UnconfiguredHeaderExtensions header_extensions =
       webrtc::ParsedRtcEventLog::UnconfiguredHeaderExtensions::kDontParse;

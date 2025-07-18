@@ -45,7 +45,7 @@ String CDATASection::nodeName() const
     return "#cdata-section"_s;
 }
 
-Ref<Node> CDATASection::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> CDATASection::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return create(document, String { data() });
 }

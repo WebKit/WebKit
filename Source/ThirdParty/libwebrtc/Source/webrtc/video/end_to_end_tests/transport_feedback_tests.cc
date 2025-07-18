@@ -8,25 +8,46 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <map>
 #include <memory>
+#include <set>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/call/transport.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/test/simulated_network.h"
+#include "api/transport/bitrate_settings.h"
 #include "api/units/time_delta.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/call_test.h"
+#include "test/direct_transport.h"
+#include "test/fake_videorenderer.h"
 #include "test/field_trial.h"
+#include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
 #include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
+#include "test/rtp_rtcp_observer.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 #include "video/end_to_end_tests/multi_stream_tester.h"
 
 namespace webrtc {
@@ -50,8 +71,8 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
         Call* sender_call,
         const std::map<uint32_t, uint32_t>& ssrc_map,
         const std::map<uint8_t, MediaType>& payload_type_map,
-        rtc::ArrayView<const RtpExtension> audio_extensions,
-        rtc::ArrayView<const RtpExtension> video_extensions)
+        ArrayView<const RtpExtension> audio_extensions,
+        ArrayView<const RtpExtension> video_extensions)
         : DirectTransport(task_queue,
                           std::make_unique<FakeNetworkPipe>(
                               Clock::GetRealTimeClock(),
@@ -70,7 +91,7 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
     }
     virtual ~RtpExtensionHeaderObserver() {}
 
-    bool SendRtp(rtc::ArrayView<const uint8_t> data,
+    bool SendRtp(ArrayView<const uint8_t> data,
                  const PacketOptions& options) override {
       {
         MutexLock lock(&lock_);
@@ -157,7 +178,7 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
 
    private:
     Mutex lock_;
-    rtc::Event done_;
+    Event done_;
     RtpHeaderExtensionMap extensions_;
     RtpSequenceNumberUnwrapper unwrapper_;
     std::set<int64_t> received_packed_ids_;
@@ -261,18 +282,18 @@ class TransportFeedbackTester : public test::EndToEndTest {
   }
 
  protected:
-  Action OnSendRtcp(rtc::ArrayView<const uint8_t> data) override {
+  Action OnSendRtcp(ArrayView<const uint8_t> data) override {
     EXPECT_FALSE(HasTransportFeedback(data));
     return SEND_PACKET;
   }
 
-  Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
+  Action OnReceiveRtcp(ArrayView<const uint8_t> data) override {
     if (HasTransportFeedback(data))
       observation_complete_.Set();
     return SEND_PACKET;
   }
 
-  bool HasTransportFeedback(rtc::ArrayView<const uint8_t> data) const {
+  bool HasTransportFeedback(ArrayView<const uint8_t> data) const {
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(data));
     return parser.transport_feedback()->num_packets() > 0;
@@ -339,7 +360,7 @@ TEST_F(TransportFeedbackEndToEndTest,
     }
 
    protected:
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
       const bool only_padding = rtp_packet.payload_size() == 0;
@@ -362,7 +383,7 @@ TEST_F(TransportFeedbackEndToEndTest,
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
+    Action OnReceiveRtcp(ArrayView<const uint8_t> data) override {
       MutexLock lock(&mutex_);
       // To fill up the congestion window we drop feedback on packets after 20
       // packets have been sent. This means that any packets that has not yet
@@ -379,7 +400,7 @@ TEST_F(TransportFeedbackEndToEndTest,
       return SEND_PACKET;
     }
 
-    bool HasTransportFeedback(rtc::ArrayView<const uint8_t> data) const {
+    bool HasTransportFeedback(ArrayView<const uint8_t> data) const {
       test::RtcpPacketParser parser;
       EXPECT_TRUE(parser.Parse(data));
       return parser.transport_feedback()->num_packets() > 0;
@@ -433,7 +454,7 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
                        kTransportSequenceNumberExtensionId));
     }
 
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet(&extensions_);
       EXPECT_TRUE(rtp_packet.Parse(packet));
       uint16_t transport_sequence_number = 0;

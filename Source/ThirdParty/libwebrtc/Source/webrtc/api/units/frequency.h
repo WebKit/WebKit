@@ -41,7 +41,7 @@ class Frequency final : public rtc_units_impl::RelativeUnit<Frequency> {
     return FromFraction(1'000'000, value);
   }
 
-  Frequency() = delete;
+  constexpr Frequency() = default;
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, Frequency value);

@@ -214,17 +214,16 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::EncodeFrame() {
 
 void VideoEncoderSoftwareFallbackWrapperTestBase::EncodeFrame(
     int expected_ret) {
-  rtc::scoped_refptr<I420Buffer> buffer =
+  scoped_refptr<I420Buffer> buffer =
       I420Buffer::Create(codec_.width, codec_.height);
   I420Buffer::SetBlack(buffer.get());
   std::vector<VideoFrameType> types(1, VideoFrameType::kVideoFrameKey);
 
-  frame_ =
-      std::make_unique<VideoFrame>(VideoFrame::Builder()
-                                       .set_video_frame_buffer(buffer)
-                                       .set_rotation(webrtc::kVideoRotation_0)
-                                       .set_timestamp_us(0)
-                                       .build());
+  frame_ = std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                            .set_video_frame_buffer(buffer)
+                                            .set_rotation(kVideoRotation_0)
+                                            .set_timestamp_us(0)
+                                            .build());
   EXPECT_EQ(expected_ret, fallback_wrapper_->Encode(*frame_, &types));
 }
 
@@ -555,7 +554,7 @@ class ForcedFallbackTest : public VideoEncoderSoftwareFallbackWrapperTestBase {
     CheckLastEncoderName(expected_name);
   }
 
-  rtc::ScopedFakeClock clock_;
+  ScopedFakeClock clock_;
 };
 
 class ForcedFallbackTestEnabled : public ForcedFallbackTest {

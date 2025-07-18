@@ -101,7 +101,7 @@ ACTION_P(SaveUniquePtrArg, dest) {
 #define MAYBE_GetScreenListAndSelectScreen GetScreenListAndSelectScreen
 #endif
 TEST_F(ScreenCapturerTest, MAYBE_GetScreenListAndSelectScreen) {
-  webrtc::DesktopCapturer::SourceList screens;
+  DesktopCapturer::SourceList screens;
   EXPECT_TRUE(capturer_->GetSourceList(&screens));
   for (const auto& screen : screens) {
     EXPECT_TRUE(capturer_->SelectSource(screen.id));
@@ -138,7 +138,7 @@ TEST_F(ScreenCapturerTest, MAYBE_Capture) {
   EXPECT_GT(frame->size().height(), 0);
   EXPECT_GE(frame->stride(),
             frame->size().width() * DesktopFrame::kBytesPerPixel);
-  EXPECT_TRUE(frame->shared_memory() == NULL);
+  EXPECT_TRUE(frame->shared_memory() == nullptr);
 
   // Verify that the region contains whole screen.
   EXPECT_FALSE(frame->updated_region().is_empty());

@@ -221,7 +221,7 @@ static ASCIILiteral authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSp
 }
 
 struct SecretServiceSearchData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SecretServiceSearchData);
     SecretServiceSearchData(GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
         : cancellable(cancellable)
         , completionHandler(WTFMove(completionHandler))

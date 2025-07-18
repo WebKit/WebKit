@@ -42,7 +42,7 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral ke
 static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
-static bool isSeparator(UChar character, FeatureMode mode)
+static bool isSeparator(char16_t character, FeatureMode mode)
 {
     if (mode == FeatureMode::Viewport)
         return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
@@ -106,7 +106,7 @@ OptionSet<DisabledAdaptations> parseDisabledAdaptations(StringView disabledAdapt
 {
     OptionSet<DisabledAdaptations> disabledAdaptations;
     for (auto name : disabledAdaptationsString.split(',')) {
-        auto trimmedName = name.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto trimmedName = name.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
         if (equalIgnoringASCIICase(trimmedName, watchAdaptationName()))
             disabledAdaptations.add(DisabledAdaptations::Watch);
     }
@@ -251,12 +251,12 @@ static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
         if (separatorPosition == notFound)
             separatorPosition = colonPosition;
 
-        auto key = featureString.left(separatorPosition).trim(isUnicodeCompatibleASCIIWhitespace<UChar>).toString();
+        auto key = featureString.left(separatorPosition).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>).toString();
 
         // Null string for value indicates key without value.
         String value;
         if (separatorPosition != notFound) {
-            auto valueView = featureString.substring(separatorPosition + 1).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+            auto valueView = featureString.substring(separatorPosition + 1).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
             value = valueView.left(valueView.find(' ')).toString();
         }
 

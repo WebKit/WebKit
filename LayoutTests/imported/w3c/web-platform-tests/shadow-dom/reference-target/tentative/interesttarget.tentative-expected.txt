@@ -1,0 +1,6 @@
+Toggle the popover  Toggle the popover  Toggle the popover
+
+FAIL Shadow root reference target works with interesttarget attribute. assert_equals: showCount expected 1 but got 0
+FAIL Shadow root reference target works with interesttarget attribute via options. assert_equals: showCount expected 1 but got 0
+FAIL Shadow root reference target works with .interestTargetElement property. assert_equals: showCount expected 1 but got 0
+

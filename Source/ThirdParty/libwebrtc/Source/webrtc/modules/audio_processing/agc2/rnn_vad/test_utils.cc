@@ -44,7 +44,7 @@ class FloatFileReader : public FileReader {
   ~FloatFileReader() = default;
 
   int size() const override { return size_; }
-  bool ReadChunk(rtc::ArrayView<float> dst) override {
+  bool ReadChunk(ArrayView<float> dst) override {
     const std::streamsize bytes_to_read = dst.size() * sizeof(T);
     if (std::is_same<T, float>::value) {
       is_.read(reinterpret_cast<char*>(dst.data()), bytes_to_read);
@@ -68,22 +68,22 @@ class FloatFileReader : public FileReader {
 
 }  // namespace
 
-using webrtc::test::ResourcePath;
+using test::ResourcePath;
 
-void ExpectEqualFloatArray(rtc::ArrayView<const float> expected,
-                           rtc::ArrayView<const float> computed) {
+void ExpectEqualFloatArray(ArrayView<const float> expected,
+                           ArrayView<const float> computed) {
   ASSERT_EQ(expected.size(), computed.size());
-  for (int i = 0; rtc::SafeLt(i, expected.size()); ++i) {
+  for (int i = 0; SafeLt(i, expected.size()); ++i) {
     SCOPED_TRACE(i);
     EXPECT_FLOAT_EQ(expected[i], computed[i]);
   }
 }
 
-void ExpectNearAbsolute(rtc::ArrayView<const float> expected,
-                        rtc::ArrayView<const float> computed,
+void ExpectNearAbsolute(ArrayView<const float> expected,
+                        ArrayView<const float> computed,
                         float tolerance) {
   ASSERT_EQ(expected.size(), computed.size());
-  for (int i = 0; rtc::SafeLt(i, expected.size()); ++i) {
+  for (int i = 0; SafeLt(i, expected.size()); ++i) {
     SCOPED_TRACE(i);
     EXPECT_NEAR(expected[i], computed[i], tolerance);
   }
@@ -99,7 +99,7 @@ ChunksFileReader CreatePitchBuffer24kHzReader() {
   auto reader = std::make_unique<FloatFileReader<float>>(
       /*filename=*/test::ResourcePath(
           "audio_processing/agc2/rnn_vad/pitch_buf_24k", "dat"));
-  const int num_chunks = rtc::CheckedDivExact(reader->size(), kBufSize24kHz);
+  const int num_chunks = CheckedDivExact(reader->size(), kBufSize24kHz);
   return {/*chunk_size=*/kBufSize24kHz, num_chunks, std::move(reader)};
 }
 
@@ -109,7 +109,7 @@ ChunksFileReader CreateLpResidualAndPitchInfoReader() {
   auto reader = std::make_unique<FloatFileReader<float>>(
       /*filename=*/test::ResourcePath(
           "audio_processing/agc2/rnn_vad/pitch_lp_res", "dat"));
-  const int num_chunks = rtc::CheckedDivExact(reader->size(), kChunkSize);
+  const int num_chunks = CheckedDivExact(reader->size(), kChunkSize);
   return {kChunkSize, num_chunks, std::move(reader)};
 }
 

@@ -77,7 +77,7 @@ BandwidthLimitedCause GetBandwidthLimitedCause(LossBasedState loss_based_state,
     case LossBasedState::kDecreasing:
       // Probes may not be sent in this state.
       return BandwidthLimitedCause::kLossLimitedBwe;
-    case webrtc::LossBasedState::kIncreaseUsingPadding:
+    case LossBasedState::kIncreaseUsingPadding:
       // Probes may not be sent in this state.
       return BandwidthLimitedCause::kLossLimitedBwe;
     case LossBasedState::kIncreasing:
@@ -105,8 +105,6 @@ GoogCcNetworkController::GoogCcNetworkController(NetworkControllerConfig config,
           !env_.field_trials().IsDisabled(
               "WebRTC-Bwe-LimitProbesLowerThanThroughputEstimate")),
       rate_control_settings_(env_.field_trials()),
-      pace_at_max_of_bwe_and_lower_link_capacity_(env_.field_trials().IsEnabled(
-          "WebRTC-Bwe-PaceAtMaxOfBweAndLowerLinkCapacity")),
       limit_pacingfactor_by_upper_link_capacity_estimate_(
           env_.field_trials().IsEnabled(
               "WebRTC-Bwe-LimitPacingFactorByUpperLinkCapacityEstimate")),
@@ -711,18 +709,10 @@ void GoogCcNetworkController::MaybeTriggerOnNetworkChanged(
 PacerConfig GoogCcNetworkController::GetPacingRates(Timestamp at_time) const {
   // Pacing rate is based on target rate before congestion window pushback,
   // because we don't want to build queues in the pacer when pushback occurs.
-  DataRate pacing_rate = DataRate::Zero();
-  if (pace_at_max_of_bwe_and_lower_link_capacity_ && estimate_ &&
-      !bandwidth_estimation_->PaceAtLossBasedEstimate()) {
-    pacing_rate =
-        std::max({min_total_allocated_bitrate_, estimate_->link_capacity_lower,
-                  last_loss_based_target_rate_}) *
-        pacing_factor_;
-  } else {
-    pacing_rate =
-        std::max(min_total_allocated_bitrate_, last_loss_based_target_rate_) *
-        pacing_factor_;
-  }
+  DataRate pacing_rate =
+      std::max(min_total_allocated_bitrate_, last_loss_based_target_rate_) *
+      pacing_factor_;
+
   if (limit_pacingfactor_by_upper_link_capacity_estimate_ && estimate_ &&
       estimate_->link_capacity_upper.IsFinite() &&
       pacing_rate > estimate_->link_capacity_upper) {

@@ -11,8 +11,11 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FEC_TEST_HELPER_H_
 #define MODULES_RTP_RTCP_SOURCE_FEC_TEST_HELPER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
+#include "api/rtp_headers.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/random.h"

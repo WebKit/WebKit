@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "FileSystemDirectoryEntry.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
@@ -37,7 +38,6 @@ class File;
 class FileSystemFileEntry;
 class FileSystemEntry;
 class ScriptExecutionContext;
-template<typename> class ExceptionOr;
 
 class DOMFileSystem final : public ScriptWrappable, public RefCounted<DOMFileSystem> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMFileSystem);

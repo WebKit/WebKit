@@ -52,7 +52,7 @@ class Chunk {
 
 // Introspects the chunk in `data` and returns a human readable textual
 // representation of it, to be used in debugging.
-std::string DebugConvertChunkToString(rtc::ArrayView<const uint8_t> data);
+std::string DebugConvertChunkToString(webrtc::ArrayView<const uint8_t> data);
 
 struct ChunkConfig {
   static constexpr int kTypeSizeInBytes = 1;

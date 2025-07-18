@@ -32,7 +32,7 @@ class FrameCombiner {
   // because 'mix_list' can be empty. The parameter
   // 'number_of_streams' is used for determining whether to pass the
   // data through a limiter.
-  void Combine(rtc::ArrayView<AudioFrame* const> mix_list,
+  void Combine(ArrayView<AudioFrame* const> mix_list,
                size_t number_of_channels,
                int sample_rate,
                size_t number_of_streams,

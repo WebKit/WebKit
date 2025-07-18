@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 
+#include <cstdint>
+
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -41,7 +44,7 @@ TEST(RtcpPacketRapidResyncRequestTest, Create) {
   rrr.SetSenderSsrc(kSenderSsrc);
   rrr.SetMediaSsrc(kRemoteSsrc);
 
-  rtc::Buffer packet = rrr.Build();
+  Buffer packet = rrr.Build();
 
   EXPECT_THAT(make_tuple(packet.data(), packet.size()),
               ElementsAreArray(kPacket));

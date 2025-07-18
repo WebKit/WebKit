@@ -213,7 +213,7 @@ using PlatformTextMarkerData = NSData *;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
 class AXTextMarker {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker, AXTextMarker);
     friend class AXTextMarkerRange;
     friend std::partial_ordering operator<=>(const AXTextMarker&, const AXTextMarker&);
 public:

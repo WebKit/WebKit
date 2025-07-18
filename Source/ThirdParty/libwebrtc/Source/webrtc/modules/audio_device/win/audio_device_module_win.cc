@@ -195,11 +195,11 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
     int ret = -1;
     if (guid != nullptr) {
       ret = output_->DeviceName(index, &name_str, &guid_str);
-      rtc::strcpyn(guid, kAdmMaxGuidSize, guid_str.c_str());
+      webrtc::strcpyn(guid, kAdmMaxGuidSize, guid_str.c_str());
     } else {
       ret = output_->DeviceName(index, &name_str, nullptr);
     }
-    rtc::strcpyn(name, kAdmMaxDeviceNameSize, name_str.c_str());
+    webrtc::strcpyn(name, kAdmMaxDeviceNameSize, name_str.c_str());
     return ret;
   }
   int32_t RecordingDeviceName(uint16_t index,
@@ -212,11 +212,11 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
     int ret = -1;
     if (guid != nullptr) {
       ret = input_->DeviceName(index, &name_str, &guid_str);
-      rtc::strcpyn(guid, kAdmMaxGuidSize, guid_str.c_str());
+      webrtc::strcpyn(guid, kAdmMaxGuidSize, guid_str.c_str());
     } else {
       ret = input_->DeviceName(index, &name_str, nullptr);
     }
-    rtc::strcpyn(name, kAdmMaxDeviceNameSize, name_str.c_str());
+    webrtc::strcpyn(name, kAdmMaxDeviceNameSize, name_str.c_str());
     return ret;
   }
 
@@ -508,13 +508,13 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
 }  // namespace
 
-rtc::scoped_refptr<AudioDeviceModuleForTest>
+webrtc::scoped_refptr<AudioDeviceModuleForTest>
 CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
     std::unique_ptr<AudioInput> audio_input,
     std::unique_ptr<AudioOutput> audio_output,
     TaskQueueFactory* task_queue_factory) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
-  return rtc::make_ref_counted<WindowsAudioDeviceModule>(
+  return webrtc::make_ref_counted<WindowsAudioDeviceModule>(
       std::move(audio_input), std::move(audio_output), task_queue_factory);
 }
 

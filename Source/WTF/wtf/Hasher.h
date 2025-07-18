@@ -37,7 +37,7 @@ template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializ
 template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned_v<UnsignedInteger> && sizeof(UnsignedInteger) <= sizeof(uint32_t) && !std::is_enum_v<UnsignedInteger>, void> add(Hasher&, UnsignedInteger);
 
 class Hasher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Hasher);
 public:
     template<typename... Types> friend uint32_t computeHash(const Types&... values)
     {

@@ -86,6 +86,11 @@
 
 namespace WebKit {
 
+#if HAVE(LIQUID_GLASS)
+bool isLiquidGlassEnabled();
+void setLiquidGlassEnabled(bool);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultShouldPrintBackgrounds();
@@ -109,7 +114,6 @@ bool defaultAppleMailPaginationQuirkEnabled();
 
 #if ENABLE(MEDIA_STREAM)
 bool defaultCaptureAudioInGPUProcessEnabled();
-bool defaultCaptureAudioInUIProcessEnabled();
 bool defaultManageCaptureStatusBarInGPUProcessEnabled();
 #endif
 
@@ -177,13 +181,10 @@ bool defaultRequiresPageVisibilityForVideoToBeNowPlaying();
 bool defaultCookieStoreAPIEnabled();
 
 bool defaultContentInsetBackgroundFillEnabled();
+bool defaultTopContentInsetBackgroundCanChangeAfterScrolling();
 
 #if ENABLE(SCREEN_TIME)
 bool defaultScreenTimeEnabled();
-#endif
-
-#if ENABLE(FORM_CONTROL_REFRESH)
-bool defaultFormControlRefreshEnabled();
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -197,5 +198,9 @@ bool defaultPreferSpatialAudioExperience();
 bool defaultMutationEventsEnabled();
 
 bool defaultTrustedTypesEnabled();
+
+#if HAVE(MATERIAL_HOSTING)
+bool defaultHostedBlurMaterialInMediaControlsEnabled();
+#endif
 
 } // namespace WebKit

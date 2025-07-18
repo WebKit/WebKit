@@ -136,7 +136,7 @@ std::optional<std::pair<int, int>> Swap(
 
 }  // namespace
 
-namespace cricket {
+namespace webrtc {
 
 VideoAdapter::VideoAdapter(int source_resolution_alignment)
     : frames_in_(0),
@@ -171,7 +171,7 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
                                         int* cropped_height,
                                         int* out_width,
                                         int* out_height) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   ++frames_in_;
 
   // The max output pixel count is the minimum of the requests from
@@ -230,9 +230,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
     *cropped_height =
         std::min(in_height, static_cast<int>(in_width / requested_aspect));
   }
-  const Fraction scale =
-      FindScale(*cropped_width, *cropped_height, target_pixel_count,
-                max_pixel_count);
+  const Fraction scale = FindScale(*cropped_width, *cropped_height,
+                                   target_pixel_count, max_pixel_count);
   // Adjust cropping slightly to get correctly aligned output size and a perfect
   // scale factor.
   *cropped_width = roundUp(*cropped_width,
@@ -253,8 +252,7 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   // or cropping, only `out_width` and `out_height`.
   if (scale_resolution_down_to_.has_value()) {
     // Make frame and "scale to" have matching orientation.
-    webrtc::Resolution scale_resolution_down_to =
-        scale_resolution_down_to_.value();
+    Resolution scale_resolution_down_to = scale_resolution_down_to_.value();
     if ((*out_width < *out_height) != (scale_resolution_down_to_->width <
                                        scale_resolution_down_to_->height)) {
       scale_resolution_down_to = {.width = scale_resolution_down_to_->height,
@@ -311,7 +309,7 @@ void VideoAdapter::OnOutputFormatRequest(
     target_aspect_ratio = std::make_pair(format->width, format->height);
     max_pixel_count = format->width * format->height;
     if (format->interval > 0)
-      max_fps = rtc::kNumNanosecsPerSec / format->interval;
+      max_fps = kNumNanosecsPerSec / format->interval;
   }
   OnOutputFormatRequest(target_aspect_ratio, max_pixel_count, max_fps);
 }
@@ -342,7 +340,7 @@ void VideoAdapter::OnOutputFormatRequest(
     const std::optional<std::pair<int, int>>& target_portrait_aspect_ratio,
     const std::optional<int>& max_portrait_pixel_count,
     const std::optional<int>& max_fps) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
 
   OutputFormatRequest request = {
       .target_landscape_aspect_ratio = target_landscape_aspect_ratio,
@@ -367,8 +365,8 @@ void VideoAdapter::OnOutputFormatRequest(
   framerate_controller_.Reset();
 }
 
-void VideoAdapter::OnSinkWants(const rtc::VideoSinkWants& sink_wants) {
-  webrtc::MutexLock lock(&mutex_);
+void VideoAdapter::OnSinkWants(const VideoSinkWants& sink_wants) {
+  MutexLock lock(&mutex_);
   resolution_request_max_pixel_count_ = sink_wants.max_pixel_count;
   resolution_request_target_pixel_count_ =
       sink_wants.target_pixel_count.value_or(
@@ -376,7 +374,7 @@ void VideoAdapter::OnSinkWants(const rtc::VideoSinkWants& sink_wants) {
   max_framerate_request_ = sink_wants.max_framerate_fps;
   resolution_alignment_ =
       std::lcm(source_resolution_alignment_, sink_wants.resolution_alignment);
-  // Convert from std::optional<rtc::VideoSinkWants::FrameSize> to
+  // Convert from std::optional<webrtc::VideoSinkWants::FrameSize> to
   // std::optional<webrtc::Resolution>. Both are {int,int}.
   scale_resolution_down_to_ = std::nullopt;
   if (sink_wants.requested_resolution.has_value()) {
@@ -429,12 +427,12 @@ void VideoAdapter::OnSinkWants(const rtc::VideoSinkWants& sink_wants) {
 }
 
 int VideoAdapter::GetTargetPixels() const {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   return resolution_request_target_pixel_count_;
 }
 
 float VideoAdapter::GetMaxFramerate() const {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   // Minimum of `output_format_request_.max_fps` and `max_framerate_request_` is
   // used to throttle frame-rate.
   int framerate =
@@ -448,7 +446,7 @@ float VideoAdapter::GetMaxFramerate() const {
 }
 
 std::string VideoAdapter::OutputFormatRequest::ToString() const {
-  rtc::StringBuilder oss;
+  StringBuilder oss;
   oss << "[ ";
   if (target_landscape_aspect_ratio == Swap(target_portrait_aspect_ratio) &&
       max_landscape_pixel_count == max_portrait_pixel_count) {
@@ -492,4 +490,4 @@ std::string VideoAdapter::OutputFormatRequest::ToString() const {
   return oss.Release();
 }
 
-}  // namespace cricket
+}  // namespace webrtc

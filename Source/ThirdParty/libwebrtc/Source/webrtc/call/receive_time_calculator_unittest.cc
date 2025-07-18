@@ -98,7 +98,7 @@ class EmulatedMonotoneousClock : public EmulatedClock {
                                        : 0;
   }
 
-  const int64_t kMaxStallDurationUs = rtc::kNumMicrosecsPerSec;
+  const int64_t kMaxStallDurationUs = kNumMicrosecsPerSec;
 
  private:
   const float kChanceOfStallPerUs = 5e-6f;
@@ -159,9 +159,9 @@ class EmulatedNonMonotoneousClock : public EmulatedClock {
 
  private:
   const float kChanceOfResetPerUs = 1e-6f;
-  const int64_t kMaxAbsResetUs = rtc::kNumMicrosecsPerSec;
-  const int64_t kMinTimeBetweenResetsUs = 3 * rtc::kNumMicrosecsPerSec;
-  const int64_t kResolutionUs = rtc::kNumMicrosecsPerMillisec;
+  const int64_t kMaxAbsResetUs = kNumMicrosecsPerSec;
+  const int64_t kMinTimeBetweenResetsUs = 3 * kNumMicrosecsPerSec;
+  const int64_t kResolutionUs = kNumMicrosecsPerMillisec;
   int64_t last_reset_query_time_us_ = 0;
   int64_t last_reset_size_us_ = 0;
   std::vector<int64_t> pregenerated_clock_;
@@ -169,16 +169,16 @@ class EmulatedNonMonotoneousClock : public EmulatedClock {
 };
 
 TEST(ClockRepair, NoClockDrift) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
+  test::ScopedKeyValueConfig field_trials;
   const int kSeeds = 10;
   const int kFirstSeed = 1;
-  const int64_t kRuntimeUs = 10 * rtc::kNumMicrosecsPerSec;
+  const int64_t kRuntimeUs = 10 * kNumMicrosecsPerSec;
   const float kDrift = 0.0f;
-  const int64_t kMaxPacketInterarrivalUs = 50 * rtc::kNumMicrosecsPerMillisec;
+  const int64_t kMaxPacketInterarrivalUs = 50 * kNumMicrosecsPerMillisec;
   for (int seed = kFirstSeed; seed < kSeeds + kFirstSeed; ++seed) {
     EmulatedMonotoneousClock monotone_clock(seed);
     EmulatedNonMonotoneousClock non_monotone_clock(
-        seed + 1, kRuntimeUs + rtc::kNumMicrosecsPerSec, kDrift);
+        seed + 1, kRuntimeUs + kNumMicrosecsPerSec, kDrift);
     ReceiveTimeCalculator reception_time_tracker(field_trials);
     int64_t corrected_clock_0 = 0;
     int64_t reset_during_stall_tol_us = 0;
@@ -233,11 +233,10 @@ TEST(ClockRepair, NoClockDrift) {
       // Resets during stalls may lead to small errors temporarily.
       int64_t lower_tol_us = accumulated_lower_bound_tolerance_us -
                              reset_during_stall_tol_us - monotone_noise_us -
-                             2 * rtc::kNumMicrosecsPerMillisec;
+                             2 * kNumMicrosecsPerMillisec;
       EXPECT_GE(err, lower_tol_us);
       int64_t upper_tol_us = accumulated_upper_bound_tolerance_us +
-                             monotone_noise_us +
-                             2 * rtc::kNumMicrosecsPerMillisec;
+                             monotone_noise_us + 2 * kNumMicrosecsPerMillisec;
       EXPECT_LE(err, upper_tol_us);
 
       last_time_us = time_us;

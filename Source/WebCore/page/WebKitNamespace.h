@@ -33,8 +33,10 @@
 
 namespace WebCore {
 
+class Node;
 class UserContentProvider;
 class UserMessageHandlersNamespace;
+class WebKitNodeInfo;
 
 class WebKitNamespace : public LocalDOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
@@ -46,6 +48,7 @@ public:
     virtual ~WebKitNamespace();
 
     UserMessageHandlersNamespace* messageHandlers();
+    RefPtr<WebKitNodeInfo> createNodeInfo(Node&);
 
 private:
     explicit WebKitNamespace(LocalDOMWindow&, UserContentProvider&);

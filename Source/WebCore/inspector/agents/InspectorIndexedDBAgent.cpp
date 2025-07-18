@@ -57,6 +57,7 @@
 #include "JSDOMWindowCustom.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -510,7 +511,7 @@ InspectorIndexedDBAgent::InspectorIndexedDBAgent(PageAgentContext& context)
 
 InspectorIndexedDBAgent::~InspectorIndexedDBAgent() = default;
 
-void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorIndexedDBAgent::didCreateFrontendAndBackend()
 {
 }
 

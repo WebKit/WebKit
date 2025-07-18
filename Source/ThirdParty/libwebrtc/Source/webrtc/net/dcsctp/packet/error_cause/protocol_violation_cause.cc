@@ -37,7 +37,7 @@ namespace dcsctp {
 constexpr int ProtocolViolationCause::kType;
 
 std::optional<ProtocolViolationCause> ProtocolViolationCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -50,13 +50,13 @@ std::optional<ProtocolViolationCause> ProtocolViolationCause::Parse(
 void ProtocolViolationCause::SerializeTo(std::vector<uint8_t>& out) const {
   BoundedByteWriter<kHeaderSize> writer =
       AllocateTLV(out, additional_information_.size());
-  writer.CopyToVariableData(rtc::MakeArrayView(
+  writer.CopyToVariableData(webrtc::MakeArrayView(
       reinterpret_cast<const uint8_t*>(additional_information_.data()),
       additional_information_.size()));
 }
 
 std::string ProtocolViolationCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Protocol Violation, additional_information="
      << additional_information_;
   return sb.Release();

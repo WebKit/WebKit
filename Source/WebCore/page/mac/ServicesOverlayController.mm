@@ -299,7 +299,7 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
         return 0_s;
 
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    RefPtr focusedOrMainFrame = page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (focusedOrMainFrame && focusedOrMainFrame->selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
@@ -399,7 +399,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         newPotentialHighlights.add(WTFMove(highlight));
     }
 
-    replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, DataDetectorHighlight::Type::TelephoneNumber);
+    replaceHighlightsOfTypePreservingEquivalentHighlights(WTFMove(newPotentialHighlights), DataDetectorHighlight::Type::TelephoneNumber);
 }
 
 void ServicesOverlayController::buildSelectionHighlight()
@@ -439,10 +439,10 @@ void ServicesOverlayController::buildSelectionHighlight()
         }
     }
 
-    replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, DataDetectorHighlight::Type::Selection);
+    replaceHighlightsOfTypePreservingEquivalentHighlights(WTFMove(newPotentialHighlights), DataDetectorHighlight::Type::Selection);
 }
 
-void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>& newPotentialHighlights, DataDetectorHighlight::Type type)
+void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>&& newPotentialHighlights, DataDetectorHighlight::Type type)
 {
     // If any old Highlights are equivalent (by Range) to a new Highlight, reuse the old
     // one so that any metadata is retained.
@@ -466,8 +466,8 @@ void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighl
 
     removeAllPotentialHighlightsOfType(type);
 
-    m_potentialHighlights.add(newPotentialHighlights.begin(), newPotentialHighlights.end());
-    m_potentialHighlights.add(reusedPotentialHighlights.begin(), reusedPotentialHighlights.end());
+    m_potentialHighlights.addAll(WTFMove(newPotentialHighlights));
+    m_potentialHighlights.addAll(WTFMove(reusedPotentialHighlights));
 }
 
 bool ServicesOverlayController::hasRelevantSelectionServices()
@@ -491,7 +491,7 @@ void ServicesOverlayController::createOverlayIfNeeded()
 
 Vector<SimpleRange> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
 {
-    RefPtr focusedOrMainFrame = m_page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = m_page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return { };
     return focusedOrMainFrame->editor().detectedTelephoneNumberRanges();
@@ -659,7 +659,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
 
     IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
 
-    RefPtr focusedOrMainFrame = page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return;
 

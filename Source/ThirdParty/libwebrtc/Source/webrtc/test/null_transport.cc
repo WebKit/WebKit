@@ -9,15 +9,21 @@
  */
 #include "test/null_transport.h"
 
+#include <cstdint>
+
+#include "api/array_view.h"
+#include "api/call/transport.h"
+
 namespace webrtc {
 namespace test {
 
-bool NullTransport::SendRtp(rtc::ArrayView<const uint8_t> packet,
+bool NullTransport::SendRtp(ArrayView<const uint8_t> packet,
                             const PacketOptions& options) {
   return true;
 }
 
-bool NullTransport::SendRtcp(rtc::ArrayView<const uint8_t> packet) {
+bool NullTransport::SendRtcp(ArrayView<const uint8_t> packet,
+                             const PacketOptions& options) {
   return true;
 }
 

@@ -27,6 +27,7 @@
 #include "JSRange.h"
 
 #include "Range.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

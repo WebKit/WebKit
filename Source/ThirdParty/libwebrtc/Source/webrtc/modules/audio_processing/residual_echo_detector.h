@@ -32,10 +32,10 @@ class ResidualEchoDetector : public EchoDetector {
   ~ResidualEchoDetector() override;
 
   // This function should be called while holding the render lock.
-  void AnalyzeRenderAudio(rtc::ArrayView<const float> render_audio) override;
+  void AnalyzeRenderAudio(ArrayView<const float> render_audio) override;
 
   // This function should be called while holding the capture lock.
-  void AnalyzeCaptureAudio(rtc::ArrayView<const float> capture_audio) override;
+  void AnalyzeCaptureAudio(ArrayView<const float> capture_audio) override;
 
   // This function should be called while holding the capture lock.
   void Initialize(int capture_sample_rate_hz,

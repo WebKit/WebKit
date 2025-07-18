@@ -42,7 +42,7 @@ private:
     void doApply() final;
 
     Vector<Vector<String>> m_dictationPhrases;
-    RetainPtr<id> m_metadata;
+    const RetainPtr<id> m_metadata;
 };
 
 } // namespace WebCore

@@ -55,6 +55,7 @@ enum PromotedLocationKind {
     ArgumentsCalleePLoc,
     ArrayPLoc,
     ArrayLengthPropertyPLoc,
+    ArrayButterflyPropertyPLoc,
     ArrayIndexedPropertyPLoc,
     ClosureVarPLoc,
     InternalFieldObjectPLoc,
@@ -201,8 +202,6 @@ struct PromotedHeapLocationHash {
 } } // namespace JSC::DFG
 
 namespace WTF {
-
-void printInternal(PrintStream&, JSC::DFG::PromotedLocationKind);
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::DFG::PromotedHeapLocation> : JSC::DFG::PromotedHeapLocationHash { };

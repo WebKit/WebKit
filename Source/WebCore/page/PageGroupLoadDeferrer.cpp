@@ -21,9 +21,12 @@
 #include "config.h"
 #include "PageGroupLoadDeferrer.h"
 
+#include "ActiveDOMObject.h"
 #include "Document.h"
 #include "DocumentParser.h"
+#include "FrameInlines.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptRunner.h"

@@ -10,9 +10,19 @@
 
 #include "modules/rtp_rtcp/source/absolute_capture_time_interpolator.h"
 
-#include <limits>
+#include <cstdint>
+#include <cstdlib>
+#include <optional>
 
+#include "api/array_view.h"
+#include "api/rtp_headers.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/metrics.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 
@@ -21,7 +31,7 @@ AbsoluteCaptureTimeInterpolator::AbsoluteCaptureTimeInterpolator(Clock* clock)
 
 uint32_t AbsoluteCaptureTimeInterpolator::GetSource(
     uint32_t ssrc,
-    rtc::ArrayView<const uint32_t> csrcs) {
+    ArrayView<const uint32_t> csrcs) {
   if (csrcs.empty()) {
     return ssrc;
   }
@@ -36,6 +46,9 @@ AbsoluteCaptureTimeInterpolator::OnReceivePacket(
     int rtp_clock_frequency_hz,
     const std::optional<AbsoluteCaptureTime>& received_extension) {
   const Timestamp receive_time = clock_->CurrentTime();
+  if (!first_packet_time_) {
+    first_packet_time_ = receive_time;
+  }
 
   MutexLock lock(&mutex_);
 
@@ -60,7 +73,41 @@ AbsoluteCaptureTimeInterpolator::OnReceivePacket(
     last_received_extension_ = *received_extension;
 
     last_receive_time_ = receive_time;
-
+    // Record statistics on the abs-capture-time extension
+    if (!first_extension_time_) {
+      RTC_HISTOGRAM_COUNTS_1M("WebRTC.Call.AbsCapture.ExtensionWait",
+                              (receive_time - *first_packet_time_).ms());
+      first_extension_time_ = receive_time;
+    }
+    int64_t ntp_delta =
+        uint64_t{clock_->ConvertTimestampToNtpTime(receive_time)} -
+        received_extension->absolute_capture_timestamp;
+    TimeDelta capture_delta = TimeDelta::Micros(Q32x32ToInt64Us(ntp_delta));
+    RTC_HISTOGRAM_COUNTS_1G("WebRTC.Call.AbsCapture.Delta",
+                            abs(capture_delta.us()));
+    if (previous_capture_delta_) {
+      RTC_HISTOGRAM_COUNTS_1G(
+          "WebRTC.Call.AbsCapture.DeltaDeviation",
+          abs((capture_delta - *previous_capture_delta_).us()));
+    }
+    previous_capture_delta_ = capture_delta;
+    if (received_extension->estimated_capture_clock_offset) {
+      if (!first_offset_time_) {
+        RTC_HISTOGRAM_COUNTS_1M("WebRTC.Call.AbsCapture.OffsetWait",
+                                (receive_time - *first_packet_time_).ms());
+        first_offset_time_ = receive_time;
+      }
+      TimeDelta offset_as_delta = TimeDelta::Micros(
+          Q32x32ToInt64Us(*received_extension->estimated_capture_clock_offset));
+      RTC_HISTOGRAM_COUNTS_1G("WebRTC.Call.AbsCapture.Offset",
+                              abs(offset_as_delta.us()));
+      if (previous_offset_as_delta_) {
+        RTC_HISTOGRAM_COUNTS_1G(
+            "WebRTC.Call.AbsCapture.OffsetDeviation",
+            abs((offset_as_delta - *previous_offset_as_delta_).us()));
+      }
+      previous_offset_as_delta_ = offset_as_delta;
+    }
     return received_extension;
   }
 }
@@ -81,7 +128,7 @@ uint64_t AbsoluteCaptureTimeInterpolator::InterpolateAbsoluteCaptureTimestamp(
 bool AbsoluteCaptureTimeInterpolator::ShouldInterpolateExtension(
     Timestamp receive_time,
     uint32_t source,
-    uint32_t rtp_timestamp,
+    uint32_t /* rtp_timestamp */,
     int rtp_clock_frequency_hz) const {
   // Shouldn't if the last received extension is not eligible for interpolation,
   // in particular if we don't have a previously received extension stored.

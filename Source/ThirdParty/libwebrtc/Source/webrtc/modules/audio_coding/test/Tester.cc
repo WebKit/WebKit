@@ -10,10 +10,6 @@
 
 #include <stdio.h>
 
-#include <string>
-#include <vector>
-
-#include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/EncodeDecodeTest.h"
 #include "modules/audio_coding/test/PacketLossTest.h"
 #include "modules/audio_coding/test/TestAllCodecs.h"

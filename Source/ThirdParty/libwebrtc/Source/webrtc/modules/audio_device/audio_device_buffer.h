@@ -186,11 +186,11 @@ class AudioDeviceBuffer {
   // Buffer used for audio samples to be played out. Size can be changed
   // dynamically. The 16-bit samples are interleaved, hence the size is
   // proportional to the number of channels.
-  rtc::BufferT<int16_t> play_buffer_;
+  BufferT<int16_t> play_buffer_;
 
   // Byte buffer used for recorded audio samples. Size can be changed
   // dynamically.
-  rtc::BufferT<int16_t> rec_buffer_;
+  BufferT<int16_t> rec_buffer_;
 
   // Contains true of a key-press has been detected.
   bool typing_status_;
@@ -240,7 +240,7 @@ class AudioDeviceBuffer {
 
   // Used for converting capture timestaps (received from AudioRecordThread
   // via AudioRecordJni::DataIsRecorded) to RTC clock.
-  rtc::TimestampAligner timestamp_aligner_;
+  TimestampAligner timestamp_aligner_;
 
 // Should *never* be defined in production builds. Only used for testing.
 // When defined, the output signal will be replaced by a sinus tone at 440Hz.

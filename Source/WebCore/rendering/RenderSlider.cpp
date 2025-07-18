@@ -72,12 +72,6 @@ Ref<HTMLInputElement> RenderSlider::protectedElement() const
     return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
 
-LayoutUnit RenderSlider::baselinePosition(bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
-{
-    // FIXME: Patch this function for writing-mode.
-    return height() + marginTop();
-}
-
 void RenderSlider::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     if (shouldApplySizeOrInlineSizeContainment()) {

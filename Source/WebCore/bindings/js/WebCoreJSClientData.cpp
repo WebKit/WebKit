@@ -100,7 +100,7 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_runtimeObjectSpace ISO_SUBSPACE_INIT(heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
     , m_windowProxySpace ISO_SUBSPACE_INIT(heap, m_windowProxyHeapCellType, JSWindowProxy)
     , m_idbSerializationSpace ISO_SUBSPACE_INIT(heap, m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
-    , m_subspaces(makeUnique<ExtendedDOMIsoSubspaces>())
+    , m_subspaces(makeUniqueRef<ExtendedDOMIsoSubspaces>())
 {
 }
 
@@ -138,7 +138,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , CLIENT_ISO_SUBSPACE_INIT(m_runtimeObjectSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_windowProxySpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_idbSerializationSpace)
-    , m_clientSubspaces(makeUnique<ExtendedDOMClientIsoSubspaces>())
+    , m_clientSubspaces(makeUniqueRef<ExtendedDOMClientIsoSubspaces>())
 {
 }
 

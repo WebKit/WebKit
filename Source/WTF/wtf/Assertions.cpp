@@ -117,7 +117,7 @@ ALLOW_NONLITERAL_FORMAT_END
     return StringImpl::create(buffer.subspan(0, buffer.size() - 1));
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(ANDROID)
 void disableForwardingVPrintfStdErrToOSLog()
 {
     g_wtfConfig.disableForwardingVPrintfStdErrToOSLog = true;
@@ -144,6 +144,8 @@ static void logToStderr([[maybe_unused]] WTFLogChannel* channel, const char* buf
 {
 #if PLATFORM(COCOA)
     os_log(channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog(), "%s", buffer);
+#elif OS(ANDROID)
+    __android_log_write(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, buffer);
 #endif
     fputs(buffer, stderr);
 }
@@ -174,6 +176,15 @@ ALLOW_NONLITERAL_FORMAT_END
         va_list copyOfArgs;
         va_copy(copyOfArgs, args);
         os_log_with_args(osLogChannel, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
+        va_end(copyOfArgs);
+    }
+#endif
+
+#if OS(ANDROID)
+    if (!g_wtfConfig.disableForwardingVPrintfStdErrToOSLog) {
+        va_list copyOfArgs;
+        va_copy(copyOfArgs, args);
+        __android_log_vprint(ANDROID_LOG_ERROR, LOG_CHANNEL_WEBKIT_SUBSYSTEM, format, copyOfArgs);
         va_end(copyOfArgs);
     }
 #endif
@@ -309,8 +320,7 @@ void WTFReportBacktraceWithStackDepth(int framesToShow)
 void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToShow)
 {
     int frames = framesToShow + kDefaultFramesToSkip;
-    Vector<void*> samples;
-    samples.resize(frames);
+    Vector<void*> samples(frames);
 
     WTFGetBacktrace(samples.mutableSpan().data(), &frames);
     CrashLogPrintStream out;
@@ -431,7 +441,7 @@ void WTFReportError(const char* file, int line, const char* function, const char
 }
 
 class WTFLoggingAccumulator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WTFLoggingAccumulator);
 public:
     void accumulate(const String&);
     void resetAccumulatedLogs();

@@ -7,6 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/video_coding/utility/vp8_header_parser.h"
 
 namespace webrtc {

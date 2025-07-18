@@ -45,14 +45,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorConsoleAgent);
 InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
     : InspectorAgentBase("Console"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_frontendDispatcher(makeUnique<ConsoleFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<ConsoleFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ConsoleBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
 InspectorConsoleAgent::~InspectorConsoleAgent() = default;
 
-void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorConsoleAgent::didCreateFrontendAndBackend()
 {
 }
 
@@ -76,11 +76,11 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::enable()
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, makeString(m_expiredConsoleMessageCount, " console messages are not shown."_s));
-        expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
+        expiredMessage.addToFrontend(m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
     for (auto& message : m_consoleMessages)
-        message->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
+        message->addToFrontend(m_frontendDispatcher, m_injectedScriptManager, false);
 
     return { };
 }
@@ -252,13 +252,13 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
     if (previousMessage && previousMessage->isEqual(consoleMessage.get())) {
         previousMessage->incrementCount();
         if (m_enabled)
-            previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);
+            previousMessage->updateRepeatCountInConsole(m_frontendDispatcher);
     } else {
         if (m_enabled) {
             auto generatePreview = !m_isAddingMessageToFrontend;
             SetForScope isAddingMessageToFrontend(m_isAddingMessageToFrontend, true);
 
-            consoleMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, generatePreview);
+            consoleMessage->addToFrontend(m_frontendDispatcher, m_injectedScriptManager, generatePreview);
         }
 
         m_consoleMessages.append(WTFMove(consoleMessage));

@@ -33,6 +33,15 @@ enum class GLESDriverType
     ZinkEGL,
 };
 
+// The ANGLE test suite with all the various front/backend combinations can be instantiated for
+// only either the packaged ANGLE libraries (AngleEGL) or the system libraries (SystemEGL), but not
+// both at the same time.
+#if !defined(ANGLE_TEST_ENABLE_SYSTEM_EGL)
+constexpr GLESDriverType kDefaultGLESDriver = GLESDriverType::AngleEGL;
+#else
+constexpr GLESDriverType kDefaultGLESDriver = GLESDriverType::SystemEGL;
+#endif
+
 inline bool IsANGLE(angle::GLESDriverType driverType)
 {
     return driverType == angle::GLESDriverType::AngleEGL ||

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "SQLResultSet.h"
 
+#include "ExceptionOr.h"
+
 namespace WebCore {
 
 SQLResultSet::SQLResultSet()

@@ -11,10 +11,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/video/video_frame_type.h"
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #if WEBRTC_WEBKIT_BUILD
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_h264.h"
 #endif
@@ -23,7 +24,7 @@
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(rtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;

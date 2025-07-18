@@ -221,7 +221,6 @@ platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
 platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm
 platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
-platform/network/cocoa/CookieCocoa.mm
 platform/network/cocoa/CredentialCocoa.mm
 platform/network/cocoa/NetworkStorageSessionCocoa.mm
 platform/network/cocoa/ProtectionSpaceCocoa.mm
@@ -241,4 +240,3 @@ rendering/mac/RenderThemeMac.mm
 testing/Internals.mm
 testing/ServiceWorkerInternals.mm
 testing/cocoa/WebArchiveDumpSupport.mm
-workers/WorkerRunLoop.cpp

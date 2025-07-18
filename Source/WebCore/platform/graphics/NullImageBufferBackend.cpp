@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NullImageBufferBackend.h"
 
+#include "NativeImage.h"
 #include "PixelBuffer.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>

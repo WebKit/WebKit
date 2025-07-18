@@ -27,6 +27,7 @@
 
 #include "BuiltinNames.h"
 #include "IntlNumberFormat.h"
+#include "IntlPluralRules.h"
 #include "IntlObjectInlines.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
@@ -279,6 +280,38 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
         break;
     case IntlTrailingZeroDisplay::StripIfInteger:
         skeletonBuilder.append("/w"_s);
+        break;
+    }
+}
+
+template<typename IntlType>
+void appendNumberFormatNotationOptionsToSkeleton(IntlType* intlInstance, StringBuilder& skeletonBuilder)
+{
+    // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#notation
+    switch (intlInstance->m_notation) {
+    case IntlNotation::Standard:
+        break;
+    case IntlNotation::Scientific:
+        skeletonBuilder.append(" scientific"_s);
+        break;
+    case IntlNotation::Engineering:
+        skeletonBuilder.append(" engineering"_s);
+        break;
+    case IntlNotation::Compact:
+        if constexpr (std::is_same_v<IntlType, JSC::IntlPluralRules>) {
+            // Intl.PluralRules does not support `compactDisplay` option
+            // https://github.com/tc39/ecma402/issues/1013
+            skeletonBuilder.append(" compact-short"_s);
+        } else {
+            switch (intlInstance->m_compactDisplay) {
+            case IntlNumberFormat::CompactDisplay::Short:
+                skeletonBuilder.append(" compact-short"_s);
+                break;
+            case IntlNumberFormat::CompactDisplay::Long:
+                skeletonBuilder.append(" compact-long"_s);
+                break;
+            }
+        }
         break;
     }
 }

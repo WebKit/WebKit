@@ -23,6 +23,7 @@ rtc_library("streams_config") {
     "../../api/units:data_rate",
     "../../api/video:resolution",
     "../../api/video:video_codec_constants",
+    "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
     "../../call/adaptation:resource_adaptation",
     "../../media:media_constants",
@@ -31,6 +32,7 @@ rtc_library("streams_config") {
     "../../modules/video_coding:webrtc_vp9_helpers",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../../rtc_base:safe_conversions",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/experiments:min_video_bitrate_experiment",
     "../../rtc_base/experiments:normalize_simulcast_size_experiment",
@@ -48,8 +50,10 @@ rtc_library("encoder_config") {
 
   deps = [
     "../../api:field_trials_view",
+    "../../api:ref_count",
     "../../api:scoped_refptr",
     "../../api/video:resolution",
+    "../../api/video:video_frame",
     "../../api/video_codecs:scalability_mode",
     "../../api/video_codecs:video_codecs_api",
     "../../rtc_base:checks",
@@ -68,13 +72,22 @@ if (rtc_include_tests) {
       "simulcast_unittest.cc",
     ]
     deps = [
+      ":encoder_config",
       ":streams_config",
+      "../../api:field_trials_view",
+      "../../api:make_ref_counted",
+      "../../api/units:data_rate",
+      "../../api/video:resolution",
+      "../../api/video:video_frame",
       "../../api/video_codecs:scalability_mode",
+      "../../api/video_codecs:video_codecs_api",
       "../../call/adaptation:resource_adaptation",
       "../../media:media_constants",
+      "../../rtc_base:safe_conversions",
       "../../rtc_base/experiments:min_video_bitrate_experiment",
       "../../test:explicit_key_value_config",
       "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
     if (!build_with_mozilla) {
       deps += [ "../../media:rtc_media_base" ]

@@ -420,7 +420,7 @@ TEST(WTF_Expected, destructors)
 static int snowflakes = 0;
 static int melted = 0;
 struct snowflake {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(snowflake);
     static void reset() { snowflakes = melted = 0; }
     snowflake() { ++snowflakes; }
     ~snowflake() { ++melted; }

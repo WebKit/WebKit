@@ -131,7 +131,7 @@ void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recompu
         return;
 
     const auto& textShadow = style().textShadow();
-    if (textShadow.isEmpty())
+    if (textShadow.isNone())
         return;
 
     auto borderRect = borderBoxRect();

@@ -38,7 +38,8 @@ class ReConfigChunk : public Chunk, public TLVTrait<ReConfigChunkConfig> {
   explicit ReConfigChunk(Parameters parameters)
       : parameters_(std::move(parameters)) {}
 
-  static std::optional<ReConfigChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<ReConfigChunk> Parse(
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

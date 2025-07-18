@@ -41,7 +41,7 @@ class InternalStatsObserver : public RTCStatsCollectorCallback {
   void PollStats();
 
   void OnStatsDelivered(
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
 
  private:
   std::string pc_label_;
@@ -70,7 +70,7 @@ class StatsPoller {
  private:
   const std::vector<StatsObserverInterface*> observers_;
   webrtc::Mutex mutex_;
-  std::vector<rtc::scoped_refptr<InternalStatsObserver>> pollers_
+  std::vector<scoped_refptr<InternalStatsObserver>> pollers_
       RTC_GUARDED_BY(mutex_);
 };
 

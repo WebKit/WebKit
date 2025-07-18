@@ -14,14 +14,21 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/svc/scalability_structure_test_helpers.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -45,7 +52,7 @@ using ::testing::TestWithParam;
 using ::testing::Values;
 
 std::string FrameDependencyTemplateToString(const FrameDependencyTemplate& t) {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   sb << "S" << t.spatial_id << "T" << t.temporal_id;
   sb << ": dtis = ";
   for (const auto dtis : t.decode_target_indications) {
@@ -110,11 +117,11 @@ TEST_P(ScalabilityStructureTest,
   EXPECT_EQ(config.num_spatial_layers, static_config->num_spatial_layers);
   EXPECT_EQ(config.num_temporal_layers, static_config->num_temporal_layers);
   EXPECT_THAT(
-      rtc::MakeArrayView(config.scaling_factor_num, config.num_spatial_layers),
+      MakeArrayView(config.scaling_factor_num, config.num_spatial_layers),
       ElementsAreArray(static_config->scaling_factor_num,
                        static_config->num_spatial_layers));
   EXPECT_THAT(
-      rtc::MakeArrayView(config.scaling_factor_den, config.num_spatial_layers),
+      MakeArrayView(config.scaling_factor_den, config.num_spatial_layers),
       ElementsAreArray(static_config->scaling_factor_den,
                        static_config->num_spatial_layers));
 }

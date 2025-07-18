@@ -51,7 +51,7 @@
   return self;
 }
 
-- (instancetype)initWithFrameBuffer:(rtc::scoped_refptr<webrtc::I420BufferInterface>)i420Buffer {
+- (instancetype)initWithFrameBuffer:(webrtc::scoped_refptr<webrtc::I420BufferInterface>)i420Buffer {
   if (self = [super init]) {
     _i420Buffer = i420Buffer;
   }
@@ -105,7 +105,7 @@
 
 #pragma mark - Private
 
-- (rtc::scoped_refptr<webrtc::I420BufferInterface>)nativeI420Buffer {
+- (webrtc::scoped_refptr<webrtc::I420BufferInterface>)nativeI420Buffer {
   return _i420Buffer;
 }
 

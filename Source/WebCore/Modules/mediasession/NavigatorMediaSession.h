@@ -52,7 +52,7 @@ private:
     static NavigatorMediaSession* from(Navigator&);
     static ASCIILiteral supplementName();
 
-    RefPtr<MediaSession> m_mediaSession;
+    const RefPtr<MediaSession> m_mediaSession;
     const CheckedRef<Navigator> m_navigator;
 };
 

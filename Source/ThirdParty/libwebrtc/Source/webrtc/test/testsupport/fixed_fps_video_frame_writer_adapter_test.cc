@@ -36,7 +36,7 @@ class InMemoryVideoWriter : public VideoFrameWriter {
  public:
   ~InMemoryVideoWriter() override = default;
 
-  bool WriteFrame(const webrtc::VideoFrame& frame) override {
+  bool WriteFrame(const VideoFrame& frame) override {
     MutexLock lock(&mutex_);
     received_frames_.push_back(frame);
     return true;

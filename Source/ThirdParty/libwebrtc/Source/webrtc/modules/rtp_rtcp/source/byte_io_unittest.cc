@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/byte_io.h"
 
+#include <cstdint>
 #include <limits>
 
 #include "test/gtest.h"

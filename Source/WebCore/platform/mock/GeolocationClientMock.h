@@ -35,6 +35,8 @@
 #include "GeolocationPositionData.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,12 +46,14 @@ class GeolocationController;
 
 // FIXME: this should not be in WebCore. It should be moved to WebKit.
 // Provides a mock object for the geolocation client.
-class GeolocationClientMock : public GeolocationClient {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GeolocationClientMock);
+class GeolocationClientMock : public GeolocationClient, public RefCounted<GeolocationClientMock> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GeolocationClientMock);
 public:
-    GeolocationClientMock();
+    static Ref<GeolocationClientMock> create() { return adoptRef(*new GeolocationClientMock); }
     virtual ~GeolocationClientMock();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void reset();
     void setController(GeolocationController*);
@@ -69,6 +73,8 @@ public:
     void cancelPermissionRequest(Geolocation&) override;
 
 private:
+    GeolocationClientMock();
+
     void asyncUpdateController();
     void controllerTimerFired();
 

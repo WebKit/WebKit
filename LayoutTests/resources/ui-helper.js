@@ -165,6 +165,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async scrollDown()
+    {
+        const midX = innerWidth / 2;
+        const midY = innerHeight / 2;
+        if (!this.isIOSFamily())
+            return await this.mouseWheelScrollAt(midX, midY, 0, -1, 0, -100);
+
+        await this.sendEventStream(new this.EventStreamBuilder()
+            .begin(midX, midY + 180)
+            .move(midX, midY - 180, 0.3)
+            .end()
+            .takeResult());
+    }
+
     static async animationFrame()
     {
         return new Promise(requestAnimationFrame);
@@ -793,7 +807,7 @@ window.UIHelper = class UIHelper {
     {
         do {
             await this.ensureStablePresentationUpdate();
-        } while (await this.isZoomingOrScrolling());
+        } while (this.isIOSFamily() && await this.isZoomingOrScrolling());
     }
 
     static deactivateFormControl(element)
@@ -1522,7 +1536,11 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.removeViewFromWindow()`, resolve));
+        const scriptToRun = `(function() {
+            uiController.removeViewFromWindow();
+            uiController.uiScriptComplete();
+        })()`;
+        return new Promise(resolve => testRunner.runUIScript(scriptToRun, resolve));
     }
 
     static addViewToWindow()
@@ -1530,7 +1548,11 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.addViewToWindow()`, resolve));
+        const scriptToRun = `(function() {
+            uiController.addViewToWindow();
+            uiController.uiScriptComplete();
+        })()`;
+        return new Promise(resolve => testRunner.runUIScript(scriptToRun, resolve));
     }
 
     static minimumZoomScale()

@@ -47,7 +47,7 @@ struct NotAdvertised {
 
 }  // namespace
 
-rtc::scoped_refptr<AudioDecoderFactory> CreateOpusAudioDecoderFactory() {
+scoped_refptr<AudioDecoderFactory> CreateOpusAudioDecoderFactory() {
   return CreateAudioDecoderFactory<
       AudioDecoderOpus, NotAdvertised<AudioDecoderMultiChannelOpus>>();
 }

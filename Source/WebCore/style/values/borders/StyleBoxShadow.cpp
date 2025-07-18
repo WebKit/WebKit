@@ -25,11 +25,14 @@
 #include "config.h"
 #include "StyleBoxShadow.h"
 
+#include "CSSBoxShadowPropertyValue.h"
 #include "ColorBlending.h"
 #include "RenderStyle.h"
+#include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 namespace Style {
@@ -58,6 +61,44 @@ auto ToStyle<CSS::BoxShadow>::operator()(const CSS::BoxShadow& value, const Buil
         .inset = toStyle(value.inset, state),
         .isWebkitBoxShadow = value.isWebkitBoxShadow,
     };
+}
+
+Ref<CSSValue> CSSValueCreation<BoxShadowList>::operator()(CSSValuePool&, const RenderStyle& style, const BoxShadowList& value)
+{
+    CSS::BoxShadowProperty::List list;
+
+    for (const auto& shadow : makeReversedRange(value))
+        list.value.append(toCSS(shadow, style));
+
+    return CSSBoxShadowPropertyValue::create(CSS::BoxShadowProperty { WTFMove(list) });
+}
+
+auto CSSValueConversion<BoxShadows>::operator()(BuilderState& state, const CSSValue& value) -> BoxShadows
+{
+    if (value.valueID() == CSSValueNone)
+        return CSS::Keyword::None { };
+
+    RefPtr shadow = requiredDowncast<CSSBoxShadowPropertyValue>(state, value);
+    if (!shadow)
+        return CSS::Keyword::None { };
+
+    return WTF::switchOn(shadow->shadow(),
+        [&](const CSS::Keyword::None&) -> BoxShadows {
+            return CSS::Keyword::None { };
+        },
+        [&](const typename CSS::BoxShadowProperty::List& list) -> BoxShadows {
+            return BoxShadows::List::map(makeReversedRange(list), [&](const CSS::BoxShadow& element) {
+                return toStyle(element, state);
+            });
+        }
+    );
+}
+
+// MARK: - Serialization
+
+void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BoxShadowList& value)
+{
+    serializationForCSSOnRangeLike(builder, context, style, makeReversedRange(value), SerializationSeparatorString<BoxShadowList>);
 }
 
 // MARK: - Blending

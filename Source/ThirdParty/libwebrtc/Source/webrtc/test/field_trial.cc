@@ -21,18 +21,17 @@ namespace test {
 
 ScopedFieldTrials::ScopedFieldTrials(absl::string_view config)
     : current_field_trials_(config),
-      previous_field_trials_(webrtc::field_trial::GetFieldTrialString()) {
-  RTC_CHECK(webrtc::field_trial::FieldTrialsStringIsValid(
-      current_field_trials_.c_str()))
+      previous_field_trials_(field_trial::GetFieldTrialString()) {
+  RTC_CHECK(
+      field_trial::FieldTrialsStringIsValid(current_field_trials_.c_str()))
       << "Invalid field trials string: " << current_field_trials_;
-  webrtc::field_trial::InitFieldTrialsFromString(current_field_trials_.c_str());
+  field_trial::InitFieldTrialsFromString(current_field_trials_.c_str());
 }
 
 ScopedFieldTrials::~ScopedFieldTrials() {
-  RTC_CHECK(
-      webrtc::field_trial::FieldTrialsStringIsValid(previous_field_trials_))
+  RTC_CHECK(field_trial::FieldTrialsStringIsValid(previous_field_trials_))
       << "Invalid field trials string: " << previous_field_trials_;
-  webrtc::field_trial::InitFieldTrialsFromString(previous_field_trials_);
+  field_trial::InitFieldTrialsFromString(previous_field_trials_);
 }
 
 }  // namespace test

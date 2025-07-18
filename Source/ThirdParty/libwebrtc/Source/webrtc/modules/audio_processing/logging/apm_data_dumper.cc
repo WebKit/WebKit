@@ -36,7 +36,7 @@ std::string FormFileName(absl::string_view output_dir,
                          int reinit_index,
                          absl::string_view suffix) {
   char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  webrtc::SimpleStringBuilder ss(buf);
   if (!output_dir.empty()) {
     ss << output_dir;
     if (output_dir.back() != kPathDelimiter) {

@@ -44,7 +44,7 @@ enum class PrivateRelayed : bool;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
 class NetworkLoadClient : public CanMakeThreadSafeCheckedPtr<NetworkLoadClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkLoadClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkLoadClient);
 public:
     virtual ~NetworkLoadClient() { }

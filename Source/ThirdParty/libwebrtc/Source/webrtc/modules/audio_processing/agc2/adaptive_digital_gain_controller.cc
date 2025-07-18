@@ -96,8 +96,8 @@ float ComputeGainChangeThisFrameDb(float target_gain_db,
   if (!gain_increase_allowed) {
     target_gain_difference_db = std::min(target_gain_difference_db, 0.0f);
   }
-  return rtc::SafeClamp(target_gain_difference_db, -max_gain_decrease_db,
-                        max_gain_increase_db);
+  return SafeClamp(target_gain_difference_db, -max_gain_decrease_db,
+                   max_gain_increase_db);
 }
 
 }  // namespace

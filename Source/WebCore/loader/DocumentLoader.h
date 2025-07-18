@@ -197,7 +197,7 @@ class DocumentLoader
     , public ContentFilterClient
 #endif
     , public CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
     friend class ContentFilter;
 public:
 #if ENABLE(CONTENT_FILTERING)

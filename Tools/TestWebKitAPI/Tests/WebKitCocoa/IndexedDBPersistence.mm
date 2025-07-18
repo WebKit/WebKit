@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
+#import "TestWKWebView.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -41,7 +42,11 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/FileHandle.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
+
+static RetainPtr<NSString> selectedFilePath;
 
 @interface IndexedDBMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -52,6 +57,25 @@
 {
     receivedScriptMessage = true;
     scriptMessages.append(message);
+}
+
+@end
+
+@interface IndexedDBOpenPanelUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation IndexedDBOpenPanelUIDelegate
+
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
+{
+    EXPECT_FALSE(parameters.allowsMultipleSelection);
+    EXPECT_FALSE(parameters.allowsDirectories);
+    constexpr auto TestFileData = "This is test file"_s;
+    auto [path, handle] = FileSystem::openTemporaryFile("IndexedDBPersistence"_s);
+    handle.write(TestFileData.span8());
+    handle = { };
+    selectedFilePath = path.createNSString();
+    completionHandler(@[ [NSURL fileURLWithPath:selectedFilePath.get()] ]);
 }
 
 @end
@@ -596,4 +620,113 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:appleDirectoryURL.get().path]);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:appleWebkitDirectoryURL.get().path]);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:webkitDirectoryURL.get().path]);
+}
+
+static NSString *openFileHTMLString = @"<input style='width: 100vw; height: 100vh;' id='file' type='file'> \
+    <script> \
+    var database = null; \
+    var selectedFile = null; \
+    function fileSelected(event) { \
+        selectedFile = event.target.files[0]; \
+        if (!database) { \
+            window.webkit.messageHandlers.testHandler.postMessage('Error: no database'); \
+            return; \
+        } \
+        const transaction = database.transaction('TestObjectStore', 'readwrite'); \
+        const objectStore = transaction.objectStore('TestObjectStore'); \
+        objectStore.put({ }); \
+        const request = objectStore.put({ index:1, file: selectedFile }); \
+        request.onsuccess = function() { \
+            window.webkit.messageHandlers.testHandler.postMessage('Put'); \
+        }; \
+        request.onerror = function() { \
+            window.webkit.messageHandlers.testHandler.postMessage('Error: put failed'); \
+        }; \
+    } \
+    function indexGetAll() { \
+        if (!database) { \
+            window.webkit.messageHandlers.testHandler.postMessage('Error: no database'); \
+            return; \
+        } \
+        const transaction = database.transaction('TestObjectStore'); \
+        const objectStore = transaction.objectStore('TestObjectStore', 'readonly'); \
+        const index = objectStore.index('index'); \
+        const request = index.getAll(1); \
+        request.onsuccess = function(event) { \
+            const files = event.target.result; \
+            if (files.length == 1) { \
+                readFileAsText(files[0].file); \
+            } else { \
+                window.webkit.messageHandlers.testHandler.postMessage('Error: files length ' + files.length); \
+            } \
+        }; \
+    } \
+    function indexGet() { \
+        if (!database) { \
+            window.webkit.messageHandlers.testHandler.postMessage('Error: no database'); \
+            return; \
+        } \
+        const transaction = database.transaction('TestObjectStore'); \
+        const objectStore = transaction.objectStore('TestObjectStore', 'readonly'); \
+        const index = objectStore.index('index'); \
+        const request = index.get(IDBKeyRange.upperBound(1)); \
+        request.onsuccess = function(event) { \
+            readFileAsText(event.target.result.file); \
+        }; \
+    } \
+    function readFileAsText(file) \
+    { \
+        const reader = new FileReader(); \
+        reader.onload = function(event) { \
+            window.webkit.messageHandlers.testHandler.postMessage(event.target.result); \
+        }; \
+        reader.readAsText(file); \
+    } \
+    const openRequest = indexedDB.open('StoreFile'); \
+    openRequest.onupgradeneeded = function(event) { \
+        database = event.target.result; \
+        const objectStore = database.createObjectStore('TestObjectStore', { keyPath: 'id', autoIncrement: true }); \
+        objectStore.createIndex('index', 'index'); \
+    }; \
+    openRequest.onsuccess = function(event) { \
+        database = event.target.result; \
+        window.webkit.messageHandlers.testHandler.postMessage('Opened'); \
+    }; \
+    const fileElement = document.getElementById('file'); \
+    fileElement.onchange = fileSelected; \
+    </script>";
+
+TEST(IndexedDB, GetFileByIndex)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    auto uiDelegate = adoptNS([[IndexedDBOpenPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadHTMLString:openFileHTMLString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    EXPECT_WK_STREQ(@"Opened", [getNextMessage() body]);
+
+    [webView clickOnElementID:@"file"];
+    EXPECT_WK_STREQ(@"Put", [getNextMessage() body]);
+
+    EXPECT_NOT_NULL(selectedFilePath);
+    // Remove file on disk to validate that database stores a copy.
+    [[NSFileManager defaultManager] removeItemAtPath:selectedFilePath.get() error:nil];
+    [webView _killWebContentProcessAndResetState];
+
+    [webView loadHTMLString:openFileHTMLString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    EXPECT_WK_STREQ(@"Opened", [getNextMessage() body]);
+
+    [webView evaluateJavaScript:@"indexGetAll()" completionHandler:nil];
+    EXPECT_WK_STREQ(@"This is test file", [getNextMessage() body]);
+
+    [webView evaluateJavaScript:@"indexGet()" completionHandler:nil];
+    EXPECT_WK_STREQ(@"This is test file", [getNextMessage() body]);
 }

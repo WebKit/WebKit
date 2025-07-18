@@ -27,9 +27,8 @@ namespace {
 // Computes the ratio of the energies between the direct path and the tail. The
 // energy is computed in the power spectrum domain discarding the DC
 // contributions.
-float AverageDecayWithinFilter(
-    rtc::ArrayView<const float> freq_resp_direct_path,
-    rtc::ArrayView<const float> freq_resp_tail) {
+float AverageDecayWithinFilter(ArrayView<const float> freq_resp_direct_path,
+                               ArrayView<const float> freq_resp_tail) {
   // Skipping the DC for the ratio computation
   constexpr size_t kSkipBins = 1;
   RTC_CHECK_EQ(freq_resp_direct_path.size(), freq_resp_tail.size());
@@ -76,10 +75,10 @@ void ReverbFrequencyResponse::Update(
         frequency_response,
     int filter_delay_blocks,
     float linear_filter_quality) {
-  rtc::ArrayView<const float> freq_resp_tail(
+  ArrayView<const float> freq_resp_tail(
       frequency_response[frequency_response.size() - 1]);
 
-  rtc::ArrayView<const float> freq_resp_direct_path(
+  ArrayView<const float> freq_resp_direct_path(
       frequency_response[filter_delay_blocks]);
 
   float average_decay =

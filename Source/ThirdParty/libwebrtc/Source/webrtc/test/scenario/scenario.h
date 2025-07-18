@@ -176,8 +176,8 @@ class Scenario {
   std::vector<std::unique_ptr<SimulationNode>> simulation_nodes_;
   std::vector<std::unique_ptr<StatesPrinter>> printers_;
 
-  rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
-  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
+  scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
+  scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
 
   Timestamp start_time_ = Timestamp::PlusInfinity();
   // Defined last so it's destroyed first.

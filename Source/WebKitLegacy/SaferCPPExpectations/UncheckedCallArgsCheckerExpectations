@@ -85,7 +85,6 @@ mac/DOM/DOMXPathResult.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
 mac/Misc/WebNSPasteboardExtras.mm
-mac/Misc/WebSharingServicePickerController.mm
 mac/Misc/WebStringTruncator.mm
 mac/Plugins/WebPluginContainerCheck.mm
 mac/Plugins/WebPluginController.mm

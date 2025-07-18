@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DatagramSink.h"
 #include "DatagramSource.h"
+#include "ExceptionOr.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportBidirectionalStream.h"
@@ -190,7 +191,7 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
         ASSERT(!m_readStreamSources.contains(identifier));
         m_readStreamSources.add(identifier, WTFMove(incomingStream));
     } else
-        m_session->destroyStream(identifier, std::nullopt);
+        protectedSession()->destroyStream(identifier, std::nullopt);
 }
 
 static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStream(JSDOMGlobalObject& globalObject, WebTransportBidirectionalStreamConstructionParameters& parameters, Ref<WebTransportReceiveStreamSource>&& source)
@@ -231,7 +232,7 @@ void WebTransport::receiveBidirectionalStream(WebTransportBidirectionalStreamCon
         ASSERT(!m_readStreamSources.contains(parameters.identifier));
         m_readStreamSources.add(parameters.identifier, WTFMove(incomingStream));
     } else
-        m_session->destroyStream(parameters.identifier, std::nullopt);
+        protectedSession()->destroyStream(parameters.identifier, std::nullopt);
 }
 
 void WebTransport::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)
@@ -319,6 +320,8 @@ void WebTransport::cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseI
     m_incomingUnidirectionalStreams->cancel(Exception { ExceptionCode::NetworkError });
     if (closeInfo) {
         m_state = State::Closed;
+        // FIXME: The six Safer CPP warnings here and elsewhere in this file are due to the lack of
+        // support for const std::pair holding const smart pointers: rdar://155857105.
         m_closed.second->resolve<IDLDictionary<WebTransportCloseInfo>>(*closeInfo);
     } else {
         m_state = State::Failed;
@@ -337,10 +340,11 @@ WebTransportDatagramDuplexStream& WebTransport::datagrams()
 void WebTransport::createBidirectionalStream(ScriptExecutionContext& context, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&& promise)
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransport-createbidirectionalstream
-    if (m_state == State::Closed || m_state == State::Failed || !m_session)
+    RefPtr session = m_session;
+    if (m_state == State::Closed || m_state == State::Failed || !session)
         return promise->reject(ExceptionCode::InvalidStateError);
 
-    context.enqueueTaskWhenSettled(m_session->createBidirectionalStream(), WebCore::TaskSource::Networking, [promise = WTFMove(promise), context = WeakPtr { context }, protectedThis = Ref { *this }] (auto&& parameters) mutable {
+    context.enqueueTaskWhenSettled(session->createBidirectionalStream(), WebCore::TaskSource::Networking, [promise = WTFMove(promise), context = WeakPtr { context }, protectedThis = Ref { *this }] (auto&& parameters) mutable {
         if (!parameters)
             return promise->reject(nullptr);
         if (!context)
@@ -370,10 +374,11 @@ ReadableStream& WebTransport::incomingBidirectionalStreams()
 void WebTransport::createUnidirectionalStream(ScriptExecutionContext& context, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&& promise)
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransport-createunidirectionalstream
-    if (m_state == State::Closed || m_state == State::Failed || !m_session)
+    RefPtr session = m_session;
+    if (m_state == State::Closed || m_state == State::Failed || !session)
         return promise->reject(ExceptionCode::InvalidStateError);
 
-    context.enqueueTaskWhenSettled(m_session->createOutgoingUnidirectionalStream(), WebCore::TaskSource::Networking, [promise = WTFMove(promise), context = WeakPtr { context }, protectedThis = Ref { *this }] (auto&& sink) mutable {
+    context.enqueueTaskWhenSettled(session->createOutgoingUnidirectionalStream(), WebCore::TaskSource::Networking, [promise = WTFMove(promise), context = WeakPtr { context }, protectedThis = Ref { *this }](auto&& sink) mutable {
         if (!sink)
             return promise->reject(nullptr);
         if (!context)
@@ -403,4 +408,10 @@ void WebTransport::networkProcessCrashed()
 {
     cleanup(DOMException::create(ExceptionCode::AbortError), std::nullopt);
 }
+
+RefPtr<WebTransportSession> WebTransport::protectedSession()
+{
+    return m_session;
 }
+
+} // namespace WebCore

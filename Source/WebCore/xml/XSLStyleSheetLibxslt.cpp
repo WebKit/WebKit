@@ -142,7 +142,7 @@ bool XSLStyleSheet::parseString(const String& string)
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const char* buffer = reinterpret_cast<const char*>(upconvertedCharacters.get());
     CheckedUint32 unsignedSize = string.length();
-    unsignedSize *= sizeof(UChar);
+    unsignedSize *= sizeof(char16_t);
     if (unsignedSize.hasOverflowed() || unsignedSize > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return false;
 

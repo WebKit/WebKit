@@ -82,7 +82,7 @@ bool RRSendQueue::IsConsistent() const {
     }
   }
   if (expected_active_streams != actual_active_streams) {
-    auto fn = [&](rtc::StringBuilder& sb, const auto& p) { sb << *p; };
+    auto fn = [&](webrtc::StringBuilder& sb, const auto& p) { sb << *p; };
     RTC_DLOG(LS_ERROR) << "Active streams mismatch, is=["
                        << webrtc::StrJoin(actual_active_streams, ",", fn)
                        << "], expected=["
@@ -167,9 +167,9 @@ std::optional<SendQueue::DataToSend> RRSendQueue::OutgoingStream::Produce(
     }
 
     // Grab the next `max_size` fragment from this message and calculate flags.
-    rtc::ArrayView<const uint8_t> chunk_payload =
+    webrtc::ArrayView<const uint8_t> chunk_payload =
         item.message.payload().subview(item.remaining_offset, max_size);
-    rtc::ArrayView<const uint8_t> message_payload = message.payload();
+    webrtc::ArrayView<const uint8_t> message_payload = message.payload();
     Data::IsBeginning is_beginning(chunk_payload.data() ==
                                    message_payload.data());
     Data::IsEnd is_end((chunk_payload.data() + chunk_payload.size()) ==

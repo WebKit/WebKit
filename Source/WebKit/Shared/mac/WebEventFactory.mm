@@ -190,10 +190,13 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         
         rawPlatformDelta = { WebCore::FloatSize(-IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollX), -IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollY)) };
 
-#if HAVE(PLATFORM_SCROLL_MOMENTUM_INTERRUPTION_REASON)
+        if (IOHIDEventGetScrollMomentum(ioHIDEvent.get()) & kIOHIDEventScrollMomentumWillBegin) {
+            ASSERT(momentumPhase == WebWheelEvent::Phase::PhaseNone && phase == WebWheelEvent::Phase::PhaseEnded);
+            momentumPhase = WebWheelEvent::Phase::PhaseWillBegin;
+        }
+
         bool momentumWasInterrupted = IOHIDEventGetScrollMomentum(ioHIDEvent.get()) & kIOHIDEventScrollMomentumInterrupted;
         momentumEndType = momentumWasInterrupted ? WebWheelEvent::MomentumEndType::Interrupted : WebWheelEvent::MomentumEndType::Natural;
-#endif
     })();
 
     if (phase == WebWheelEvent::PhaseCancelled) {

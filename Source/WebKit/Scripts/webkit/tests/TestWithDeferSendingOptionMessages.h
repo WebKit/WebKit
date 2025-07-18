@@ -145,25 +145,25 @@ public:
 
     void encodeCoalescingKey(IPC::Encoder& encoder) const
     {
-        encoder << m_bar;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_bar;
         encoder << m_url;
-        encoder << m_foo;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_foo;
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
         encoder << m_url;
-        encoder << m_foo;
-        encoder << m_bar;
-        encoder << m_baz;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_foo;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_bar;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_baz;
     }
 
 private:
     const String& m_url;
-    const int& m_foo;
-    const int& m_bar;
-    const int& m_baz;
+    SUPPRESS_FORWARD_DECL_MEMBER const int& m_foo;
+    SUPPRESS_FORWARD_DECL_MEMBER const int& m_bar;
+    SUPPRESS_FORWARD_DECL_MEMBER const int& m_baz;
 };
 
 } // namespace TestWithDeferSendingOption

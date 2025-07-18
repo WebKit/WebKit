@@ -38,10 +38,10 @@ static constexpr int kMaxChannelId = 100000;
 }  // namespace
 
 VoipCore::VoipCore(const Environment& env,
-                   rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
-                   rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
-                   rtc::scoped_refptr<AudioDeviceModule> audio_device_module,
-                   rtc::scoped_refptr<AudioProcessing> audio_processing)
+                   scoped_refptr<AudioEncoderFactory> encoder_factory,
+                   scoped_refptr<AudioDecoderFactory> decoder_factory,
+                   scoped_refptr<AudioDeviceModule> audio_device_module,
+                   scoped_refptr<AudioProcessing> audio_processing)
     : env_(env),
       encoder_factory_(std::move(encoder_factory)),
       decoder_factory_(std::move(decoder_factory)),
@@ -127,13 +127,13 @@ ChannelId VoipCore::CreateChannel(Transport* transport,
 
   // Set local ssrc to random if not set by caller.
   if (!local_ssrc) {
-    Random random(rtc::TimeMicros());
+    Random random(TimeMicros());
     local_ssrc = random.Rand<uint32_t>();
   }
 
-  rtc::scoped_refptr<AudioChannel> channel =
-      rtc::make_ref_counted<AudioChannel>(env_, transport, local_ssrc.value(),
-                                          audio_mixer_.get(), decoder_factory_);
+  scoped_refptr<AudioChannel> channel =
+      make_ref_counted<AudioChannel>(env_, transport, local_ssrc.value(),
+                                     audio_mixer_.get(), decoder_factory_);
 
   {
     MutexLock lock(&lock_);
@@ -154,7 +154,7 @@ ChannelId VoipCore::CreateChannel(Transport* transport,
 
 VoipResult VoipCore::ReleaseChannel(ChannelId channel_id) {
   // Destroy channel outside of the lock.
-  rtc::scoped_refptr<AudioChannel> channel;
+  scoped_refptr<AudioChannel> channel;
 
   bool no_channels_after_release = false;
 
@@ -193,8 +193,8 @@ VoipResult VoipCore::ReleaseChannel(ChannelId channel_id) {
   return status_code;
 }
 
-rtc::scoped_refptr<AudioChannel> VoipCore::GetChannel(ChannelId channel_id) {
-  rtc::scoped_refptr<AudioChannel> channel;
+scoped_refptr<AudioChannel> VoipCore::GetChannel(ChannelId channel_id) {
+  scoped_refptr<AudioChannel> channel;
   {
     MutexLock lock(&lock_);
     auto iter = channels_.find(channel_id);
@@ -221,7 +221,7 @@ bool VoipCore::UpdateAudioTransportWithSenders() {
     // Reserve to prevent run time vector re-allocation.
     audio_senders.reserve(channels_.size());
     for (auto kv : channels_) {
-      rtc::scoped_refptr<AudioChannel>& channel = kv.second;
+      scoped_refptr<AudioChannel>& channel = kv.second;
       if (channel->IsSendingMedia()) {
         auto encoder_format = channel->GetEncoderFormat();
         if (!encoder_format) {
@@ -269,7 +269,7 @@ bool VoipCore::UpdateAudioTransportWithSenders() {
 }
 
 VoipResult VoipCore::StartSend(ChannelId channel_id) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -284,7 +284,7 @@ VoipResult VoipCore::StartSend(ChannelId channel_id) {
 }
 
 VoipResult VoipCore::StopSend(ChannelId channel_id) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -297,7 +297,7 @@ VoipResult VoipCore::StopSend(ChannelId channel_id) {
 }
 
 VoipResult VoipCore::StartPlayout(ChannelId channel_id) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -331,7 +331,7 @@ VoipResult VoipCore::StartPlayout(ChannelId channel_id) {
 }
 
 VoipResult VoipCore::StopPlayout(ChannelId channel_id) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -342,10 +342,9 @@ VoipResult VoipCore::StopPlayout(ChannelId channel_id) {
   return VoipResult::kOk;
 }
 
-VoipResult VoipCore::ReceivedRTPPacket(
-    ChannelId channel_id,
-    rtc::ArrayView<const uint8_t> rtp_packet) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+VoipResult VoipCore::ReceivedRTPPacket(ChannelId channel_id,
+                                       ArrayView<const uint8_t> rtp_packet) {
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -356,10 +355,9 @@ VoipResult VoipCore::ReceivedRTPPacket(
   return VoipResult::kOk;
 }
 
-VoipResult VoipCore::ReceivedRTCPPacket(
-    ChannelId channel_id,
-    rtc::ArrayView<const uint8_t> rtcp_packet) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+VoipResult VoipCore::ReceivedRTCPPacket(ChannelId channel_id,
+                                        ArrayView<const uint8_t> rtcp_packet) {
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -373,7 +371,7 @@ VoipResult VoipCore::ReceivedRTCPPacket(
 VoipResult VoipCore::SetSendCodec(ChannelId channel_id,
                                   int payload_type,
                                   const SdpAudioFormat& encoder_format) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -389,7 +387,7 @@ VoipResult VoipCore::SetSendCodec(ChannelId channel_id,
 VoipResult VoipCore::SetReceiveCodecs(
     ChannelId channel_id,
     const std::map<int, SdpAudioFormat>& decoder_specs) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -403,7 +401,7 @@ VoipResult VoipCore::SetReceiveCodecs(
 VoipResult VoipCore::RegisterTelephoneEventType(ChannelId channel_id,
                                                 int rtp_payload_type,
                                                 int sample_rate_hz) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -417,7 +415,7 @@ VoipResult VoipCore::RegisterTelephoneEventType(ChannelId channel_id,
 VoipResult VoipCore::SendDtmfEvent(ChannelId channel_id,
                                    DtmfEvent dtmf_event,
                                    int duration_ms) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -430,7 +428,7 @@ VoipResult VoipCore::SendDtmfEvent(ChannelId channel_id,
 
 VoipResult VoipCore::GetIngressStatistics(ChannelId channel_id,
                                           IngressStatistics& ingress_stats) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -443,7 +441,7 @@ VoipResult VoipCore::GetIngressStatistics(ChannelId channel_id,
 
 VoipResult VoipCore::GetChannelStatistics(ChannelId channel_id,
                                           ChannelStatistics& channel_stats) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -455,7 +453,7 @@ VoipResult VoipCore::GetChannelStatistics(ChannelId channel_id,
 }
 
 VoipResult VoipCore::SetInputMuted(ChannelId channel_id, bool enable) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -468,7 +466,7 @@ VoipResult VoipCore::SetInputMuted(ChannelId channel_id, bool enable) {
 
 VoipResult VoipCore::GetInputVolumeInfo(ChannelId channel_id,
                                         VolumeInfo& input_volume) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;
@@ -483,7 +481,7 @@ VoipResult VoipCore::GetInputVolumeInfo(ChannelId channel_id,
 
 VoipResult VoipCore::GetOutputVolumeInfo(ChannelId channel_id,
                                          VolumeInfo& output_volume) {
-  rtc::scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
+  scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
     return VoipResult::kInvalidArgument;

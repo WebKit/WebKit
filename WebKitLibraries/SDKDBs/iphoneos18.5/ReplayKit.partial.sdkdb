@@ -1,0 +1,578 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "loadBroadcastingApplicationInfoWithCompletion:"},
+      {"access": "public", "introduced": "10", "name": "completeRequestWithBroadcastURL:broadcastConfiguration:setupInfo:"},
+      {"access": "public", "introduced": "11", "name": "completeRequestWithBroadcastURL:setupInfo:"}
+     ],
+     "interface": "NSExtensionContext",
+     "name": "RPBroadcastExtension"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPCameraPositionFront"},
+      {"access": "public", "name": "RPCameraPositionBack"}
+     ],
+     "name": "RPCameraPosition"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPRecordingErrorUnknown"},
+      {"access": "public", "name": "RPRecordingErrorUserDeclined"},
+      {"access": "public", "name": "RPRecordingErrorDisabled"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStart"},
+      {"access": "public", "name": "RPRecordingErrorFailed"},
+      {"access": "public", "name": "RPRecordingErrorInsufficientStorage"},
+      {"access": "public", "name": "RPRecordingErrorInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorContentResize"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorSystemDormancy"},
+      {"access": "public", "name": "RPRecordingErrorEntitlements"},
+      {"access": "public", "name": "RPRecordingErrorActivePhoneCall"},
+      {"access": "public", "name": "RPRecordingErrorFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorCarPlay"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInvalid"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoMatchingApplicationContext"},
+      {"access": "public", "name": "RPRecordingErrorFailedMediaServicesFailure"},
+      {"access": "public", "name": "RPRecordingErrorVideoMixingFailure"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastSetupFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToObtainURL"},
+      {"access": "public", "name": "RPRecordingErrorFailedIncorrectTimeStamps"},
+      {"access": "public", "name": "RPRecordingErrorFailedToProcessFirstSample"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoAssetWriter"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterInWrongState"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToRemoveFile"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportCanceled"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStopNonRecording"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStartInRecordingState"},
+      {"access": "public", "name": "RPRecordingErrorPhotoFailure"},
+      {"access": "public", "name": "RPRecordingErrorRecordingInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStartCaptureStack"},
+      {"access": "public", "name": "RPRecordingErrorInvalidParameter"},
+      {"access": "public", "name": "RPRecordingErrorFilePermissions"},
+      {"access": "public", "name": "RPRecordingErrorExportClipToURLInProgress"},
+      {"access": "public", "name": "RPRecordingErrorCodeSuccessful"}
+     ],
+     "name": "RPRecordingErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPSampleBufferTypeVideo"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioApp"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioMic"}
+     ],
+     "name": "RPSampleBufferType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_RPApplicationInfoBundleIdentifierKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_RPVideoSampleOrientationKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "loadBroadcastActivityViewControllerWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "loadBroadcastActivityViewControllerWithPreferredExtension:handler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastActivityViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastConfiguration",
+     "properties": [
+      {"access": "public", "getter": "clipDuration", "name": "clipDuration", "setter": "setClipDuration:"},
+      {"access": "public", "getter": "videoCompressionProperties", "name": "videoCompressionProperties", "setter": "setVideoCompressionProperties:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startBroadcastWithHandler:"},
+      {"access": "public", "name": "pauseBroadcast"},
+      {"access": "public", "name": "resumeBroadcast"},
+      {"access": "public", "name": "finishBroadcastWithHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBroadcasting", "name": "broadcasting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPaused", "name": "paused"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastURL", "name": "broadcastURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceInfo", "name": "serviceInfo"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastExtensionBundleID", "introduced": "10", "name": "broadcastExtensionBundleID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "updateServiceInfo:"},
+      {"access": "public", "introduced": "11", "name": "updateBroadcastURL:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastHandler",
+     "protocols": [
+      "NSExtensionRequestHandling"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "processMP4ClipWithURL:setupInfo:finished:"},
+      {"access": "public", "name": "finishedProcessingMP4ClipWithUpdatedBroadcastConfiguration:error:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastMP4ClipHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastStartedWithSetupInfo:"},
+      {"access": "public", "name": "broadcastPaused"},
+      {"access": "public", "name": "broadcastResumed"},
+      {"access": "public", "name": "broadcastFinished"},
+      {"access": "public", "introduced": "11.2", "name": "broadcastAnnotatedWithApplicationInfo:"},
+      {"access": "public", "name": "processSampleBuffer:withType:"},
+      {"access": "public", "name": "finishBroadcastWithError:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastSampleHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "RPPreviewViewController",
+     "properties": [
+      {"access": "public", "getter": "previewControllerDelegate", "name": "previewControllerDelegate", "setter": "setPreviewControllerDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedRecorder"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "9", "name": "startRecordingWithMicrophoneEnabled:handler:"},
+      {"access": "public", "introduced": "10", "name": "startRecordingWithHandler:"},
+      {"access": "public", "name": "stopRecordingWithHandler:"},
+      {"access": "public", "introduced": "14", "name": "stopRecordingWithOutputURL:completionHandler:"},
+      {"access": "public", "name": "discardRecordingWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "startCaptureWithHandler:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "stopCaptureWithHandler:"},
+      {"access": "public", "introduced": "15", "name": "startClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "stopClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "exportClipToURL:duration:completionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "RPScreenRecorder",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "name": "recording"},
+      {"access": "public", "getter": "isMicrophoneEnabled", "name": "microphoneEnabled", "setter": "setMicrophoneEnabled:"},
+      {"access": "public", "getter": "isCameraEnabled", "introduced": "10", "name": "cameraEnabled", "setter": "setCameraEnabled:"},
+      {"access": "public", "getter": "cameraPosition", "introduced": "11", "name": "cameraPosition", "setter": "setCameraPosition:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraPreviewView", "introduced": "10", "name": "cameraPreviewView"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "RPSystemBroadcastPickerView",
+     "properties": [
+      {"access": "public", "getter": "preferredExtension", "name": "preferredExtension", "setter": "setPreferredExtension:"},
+      {"access": "public", "getter": "showsMicrophoneButton", "name": "showsMicrophoneButton", "setter": "setShowsMicrophoneButton:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "broadcastActivityViewController:didFinishWithBroadcastController:error:"}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastActivityViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastController:didFinishWithError:", "optional": true},
+      {"access": "public", "name": "broadcastController:didUpdateServiceInfo:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "broadcastController:didUpdateBroadcastURL:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "previewControllerDidFinish:", "optional": true},
+      {"access": "public", "name": "previewController:didFinishWithActivityTypes:", "optional": true}
+     ],
+     "name": "RPPreviewViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "screenRecorder:didStopRecordingWithError:previewViewController:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "screenRecorder:didStopRecordingWithPreviewViewController:error:", "optional": true},
+      {"access": "public", "name": "screenRecorderDidChangeAvailability:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "RPScreenRecorderDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
+    {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
+    {"access": "public", "introduced": "10", "name": "RPSampleBufferType"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "loadBroadcastingApplicationInfoWithCompletion:"},
+      {"access": "public", "introduced": "10", "name": "completeRequestWithBroadcastURL:broadcastConfiguration:setupInfo:"},
+      {"access": "public", "introduced": "11", "name": "completeRequestWithBroadcastURL:setupInfo:"}
+     ],
+     "interface": "NSExtensionContext",
+     "name": "RPBroadcastExtension"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPCameraPositionFront"},
+      {"access": "public", "name": "RPCameraPositionBack"}
+     ],
+     "name": "RPCameraPosition"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPRecordingErrorUnknown"},
+      {"access": "public", "name": "RPRecordingErrorUserDeclined"},
+      {"access": "public", "name": "RPRecordingErrorDisabled"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStart"},
+      {"access": "public", "name": "RPRecordingErrorFailed"},
+      {"access": "public", "name": "RPRecordingErrorInsufficientStorage"},
+      {"access": "public", "name": "RPRecordingErrorInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorContentResize"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorSystemDormancy"},
+      {"access": "public", "name": "RPRecordingErrorEntitlements"},
+      {"access": "public", "name": "RPRecordingErrorActivePhoneCall"},
+      {"access": "public", "name": "RPRecordingErrorFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorCarPlay"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInvalid"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoMatchingApplicationContext"},
+      {"access": "public", "name": "RPRecordingErrorFailedMediaServicesFailure"},
+      {"access": "public", "name": "RPRecordingErrorVideoMixingFailure"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastSetupFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToObtainURL"},
+      {"access": "public", "name": "RPRecordingErrorFailedIncorrectTimeStamps"},
+      {"access": "public", "name": "RPRecordingErrorFailedToProcessFirstSample"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoAssetWriter"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterInWrongState"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToRemoveFile"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportCanceled"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStopNonRecording"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStartInRecordingState"},
+      {"access": "public", "name": "RPRecordingErrorPhotoFailure"},
+      {"access": "public", "name": "RPRecordingErrorRecordingInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStartCaptureStack"},
+      {"access": "public", "name": "RPRecordingErrorInvalidParameter"},
+      {"access": "public", "name": "RPRecordingErrorFilePermissions"},
+      {"access": "public", "name": "RPRecordingErrorExportClipToURLInProgress"},
+      {"access": "public", "name": "RPRecordingErrorCodeSuccessful"}
+     ],
+     "name": "RPRecordingErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPSampleBufferTypeVideo"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioApp"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioMic"}
+     ],
+     "name": "RPSampleBufferType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_RPApplicationInfoBundleIdentifierKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_RPVideoSampleOrientationKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "loadBroadcastActivityViewControllerWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "loadBroadcastActivityViewControllerWithPreferredExtension:handler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastActivityViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastConfiguration",
+     "properties": [
+      {"access": "public", "getter": "clipDuration", "name": "clipDuration", "setter": "setClipDuration:"},
+      {"access": "public", "getter": "videoCompressionProperties", "name": "videoCompressionProperties", "setter": "setVideoCompressionProperties:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startBroadcastWithHandler:"},
+      {"access": "public", "name": "pauseBroadcast"},
+      {"access": "public", "name": "resumeBroadcast"},
+      {"access": "public", "name": "finishBroadcastWithHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBroadcasting", "name": "broadcasting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPaused", "name": "paused"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastURL", "name": "broadcastURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceInfo", "name": "serviceInfo"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastExtensionBundleID", "introduced": "10", "name": "broadcastExtensionBundleID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "updateServiceInfo:"},
+      {"access": "public", "introduced": "11", "name": "updateBroadcastURL:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastHandler",
+     "protocols": [
+      "NSExtensionRequestHandling"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "processMP4ClipWithURL:setupInfo:finished:"},
+      {"access": "public", "name": "finishedProcessingMP4ClipWithUpdatedBroadcastConfiguration:error:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastMP4ClipHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastStartedWithSetupInfo:"},
+      {"access": "public", "name": "broadcastPaused"},
+      {"access": "public", "name": "broadcastResumed"},
+      {"access": "public", "name": "broadcastFinished"},
+      {"access": "public", "introduced": "11.2", "name": "broadcastAnnotatedWithApplicationInfo:"},
+      {"access": "public", "name": "processSampleBuffer:withType:"},
+      {"access": "public", "name": "finishBroadcastWithError:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastSampleHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "RPPreviewViewController",
+     "properties": [
+      {"access": "public", "getter": "previewControllerDelegate", "name": "previewControllerDelegate", "setter": "setPreviewControllerDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedRecorder"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "9", "name": "startRecordingWithMicrophoneEnabled:handler:"},
+      {"access": "public", "introduced": "10", "name": "startRecordingWithHandler:"},
+      {"access": "public", "name": "stopRecordingWithHandler:"},
+      {"access": "public", "introduced": "14", "name": "stopRecordingWithOutputURL:completionHandler:"},
+      {"access": "public", "name": "discardRecordingWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "startCaptureWithHandler:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "stopCaptureWithHandler:"},
+      {"access": "public", "introduced": "15", "name": "startClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "stopClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "exportClipToURL:duration:completionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "RPScreenRecorder",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "name": "recording"},
+      {"access": "public", "getter": "isMicrophoneEnabled", "name": "microphoneEnabled", "setter": "setMicrophoneEnabled:"},
+      {"access": "public", "getter": "isCameraEnabled", "introduced": "10", "name": "cameraEnabled", "setter": "setCameraEnabled:"},
+      {"access": "public", "getter": "cameraPosition", "introduced": "11", "name": "cameraPosition", "setter": "setCameraPosition:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraPreviewView", "introduced": "10", "name": "cameraPreviewView"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "RPSystemBroadcastPickerView",
+     "properties": [
+      {"access": "public", "getter": "preferredExtension", "name": "preferredExtension", "setter": "setPreferredExtension:"},
+      {"access": "public", "getter": "showsMicrophoneButton", "name": "showsMicrophoneButton", "setter": "setShowsMicrophoneButton:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "broadcastActivityViewController:didFinishWithBroadcastController:error:"}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastActivityViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastController:didFinishWithError:", "optional": true},
+      {"access": "public", "name": "broadcastController:didUpdateServiceInfo:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "broadcastController:didUpdateBroadcastURL:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "previewControllerDidFinish:", "optional": true},
+      {"access": "public", "name": "previewController:didFinishWithActivityTypes:", "optional": true}
+     ],
+     "name": "RPPreviewViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "screenRecorder:didStopRecordingWithError:previewViewController:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "screenRecorder:didStopRecordingWithPreviewViewController:error:", "optional": true},
+      {"access": "public", "name": "screenRecorderDidChangeAvailability:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "RPScreenRecorderDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
+    {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
+    {"access": "public", "introduced": "10", "name": "RPSampleBufferType"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

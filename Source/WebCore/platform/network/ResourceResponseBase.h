@@ -270,7 +270,7 @@ protected:
 
 private:
     friend struct WTF::Persistence::Coder<ResourceResponse>;
-    mutable Markable<Seconds, Seconds::MarkableTraits> m_age;
+    mutable Markable<Seconds> m_age;
     mutable Markable<WallTime> m_date;
     mutable Markable<WallTime> m_expires;
     mutable Markable<WallTime> m_lastModified;

@@ -113,6 +113,8 @@ def __lldb_init_module(debugger, dict):
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLength_SummaryProvider WebCore::Length')
 
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreStyleSelfAlignmentData_SummaryProvider WebCore::StyleSelfAlignmentData')
+
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreSecurityOrigin_SummaryProvider WebCore::SecurityOrigin')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFrame_SummaryProvider WebCore::Frame')
 
@@ -302,6 +304,11 @@ def WebCoreLength_SummaryProvider(valobj, dict):
 def WebCoreSecurityOrigin_SummaryProvider(valobj, dict):
     provider = WebCoreSecurityOriginProvider(valobj, dict)
     return '{ %s, domain = %s, hasUniversalAccess = %d }' % (provider.to_string(), provider.domain(), provider.has_universal_access())
+
+
+def WebCoreStyleSelfAlignmentData_SummaryProvider(valobj, dict):
+    provider = WebCoreStyleSelfAlignmentDataProvider(valobj, dict)
+    return "{ %s, %s, %s }" % (provider.get_item_position(), provider.get_item_position_type(), provider.get_overflow_alignment())
 
 
 def WebCoreFrame_SummaryProvider(valobj, dict):
@@ -863,6 +870,24 @@ class WebCoreLengthProvider:
 
         return self.valobj.GetChildMemberWithName('m_intValue').GetValueAsSigned()
 
+
+class WebCoreStyleSelfAlignmentDataProvider:
+    "Print a WebCore::StyleSelfAlignmentData"
+
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_item_position(self):
+        item_position = self.valobj.GetChildMemberWithName("m_position").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("itemPosition", f"(WebCore::ItemPosition){item_position}")
+
+    def get_item_position_type(self):
+        item_position_type = self.valobj.GetChildMemberWithName("m_positionType").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("positionType", f"(WebCore::ItemPositionType){item_position_type}")
+
+    def get_overflow_alignment(self):
+        overflow_alignment = self.valobj.GetChildMemberWithName("m_overflow").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("overflow", f"(WebCore::OverflowAlignment){overflow_alignment}")
 
 
 class WTFURLProvider:

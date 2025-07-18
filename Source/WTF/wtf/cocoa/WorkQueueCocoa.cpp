@@ -34,7 +34,7 @@ namespace WTF {
 namespace {
 
 struct DispatchWorkItem {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DispatchWorkItem);
     Function<void()> m_function;
     void operator()() { m_function(); }
 };
@@ -82,7 +82,7 @@ void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
-    m_dispatchQueue = adoptOSObject(dispatch_queue_create(name, attr));
+    lazyInitialize(m_dispatchQueue, adoptOSObject(dispatch_queue_create(name, attr)));
     dispatch_set_context(m_dispatchQueue.get(), this);
     // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
     // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.

@@ -34,7 +34,6 @@
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
 #include <gtk/gtk.h>
-#include <variant>
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -238,7 +237,7 @@ private:
     GRefPtr<GCancellable> m_cancellable;
     GRefPtr<GMainLoop> m_mainLoop;
     unsigned m_timeoutSourceID { 0 };
-    std::variant<ReadTextCompletionHandler, ReadFilePathsCompletionHandler, ReadBufferCompletionHandler, ReadURLCompletionHandler> m_completionHandler;
+    Variant<ReadTextCompletionHandler, ReadFilePathsCompletionHandler, ReadBufferCompletionHandler, ReadURLCompletionHandler> m_completionHandler;
 };
 
 void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, ReadMode readMode)

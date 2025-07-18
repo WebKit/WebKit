@@ -142,6 +142,9 @@ public:
     float tilingScaleFactor() const final { return 1; }
     IntRect bounds() const final { return { { }, IntSize(m_owner.size()) }; };
     IntRect boundsWithoutMargin() const final { return bounds(); };
+    void clearObscuredInsetsAdjustments() final { }
+    void obscuredInsetsWillChange(FloatBoxExtent&&) final { }
+    FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const final { return { }; }
 
 private:
     bool m_isInWindow { false };

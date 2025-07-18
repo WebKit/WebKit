@@ -53,7 +53,7 @@ public:
         return adoptRef(*new RTCCertificateGeneratorCallbackWrapper(WTFMove(origin), WTFMove(resultCallback)));
     }
 
-    void process(rtc::scoped_refptr<rtc::RTCCertificate> certificate)
+    void process(webrtc::scoped_refptr<webrtc::RTCCertificate> certificate)
     {
         callOnMainThread([origin = m_origin.releaseNonNull(), callback = WTFMove(m_resultCallback), certificate = WTFMove(certificate)]() mutable {
             if (!certificate) {
@@ -86,15 +86,15 @@ private:
     Function<void(ExceptionOr<Ref<RTCCertificate>>&&)> m_resultCallback;
 };
 
-static inline rtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBackend::CertificateInformation& info)
+static inline webrtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBackend::CertificateInformation& info)
 {
     switch (info.type) {
     case PeerConnectionBackend::CertificateInformation::Type::ECDSAP256:
-        return rtc::KeyParams::ECDSA();
+        return webrtc::KeyParams::ECDSA();
     case PeerConnectionBackend::CertificateInformation::Type::RSASSAPKCS1v15:
         if (info.rsaParameters)
-            return rtc::KeyParams::RSA(info.rsaParameters->modulusLength, info.rsaParameters->publicExponent);
-        return rtc::KeyParams::RSA(2048, 65537);
+            return webrtc::KeyParams::RSA(info.rsaParameters->modulusLength, info.rsaParameters->publicExponent);
+        return webrtc::KeyParams::RSA(2048, 65537);
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -109,7 +109,7 @@ void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provid
         expiresMs = static_cast<uint64_t>(*info.expires);
 
     provider.prepareCertificateGenerator([info, expiresMs, callbackWrapper = WTFMove(callbackWrapper)](auto& generator) mutable {
-        generator.GenerateCertificateAsync(keyParamsFromCertificateType(info), expiresMs, [callbackWrapper = WTFMove(callbackWrapper)](rtc::scoped_refptr<rtc::RTCCertificate> certificate) mutable {
+        generator.GenerateCertificateAsync(keyParamsFromCertificateType(info), expiresMs, [callbackWrapper = WTFMove(callbackWrapper)](webrtc::scoped_refptr<webrtc::RTCCertificate> certificate) mutable {
             callbackWrapper->process(WTFMove(certificate));
         });
     });

@@ -89,7 +89,7 @@ static void performAfterFirstUnlock(Function<void()>&& function)
         RELEASE_LOG(Push, "Device has unlocked. Running initialization.");
 
         for (auto& function : functions.get())
-            WorkQueue::protectedMain()->dispatch(WTFMove(function));
+            WorkQueue::mainSingleton().dispatch(WTFMove(function));
         functions->clear();
 
         if (notifyToken != NOTIFY_TOKEN_INVALID) {
@@ -460,7 +460,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
 #if !HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
     UNUSED_PARAM(topic);
 #else
-    WorkQueue::protectedMain()->dispatch([weakThis = WeakPtr { *this }, topic = WTFMove(topic)]() mutable {
+    WorkQueue::mainSingleton().dispatch([weakThis = WeakPtr { *this }, topic = WTFMove(topic)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -473,7 +473,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
         connection->setIgnoredTopics(WTFMove(augmentedTopics));
         connection->setIgnoredTopics(WTFMove(originalTopics));
 
-        WorkQueue::protectedMain()->dispatch([weakThis = WTFMove(weakThis)]() mutable {
+        WorkQueue::mainSingleton().dispatch([weakThis = WTFMove(weakThis)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->startImpl(IsRetry::Yes);
         });
@@ -586,7 +586,7 @@ void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushSer
         nextRequest = requestQueue.first().copyRef();
 
     // Even if there's no next request to start, hold on to currentRequest until the next turn of the run loop since we're in the middle of executing the finish() member function of currentRequest.
-    WorkQueue::protectedMain()->dispatch([currentRequest = WTFMove(currentRequest), nextRequest = WTFMove(nextRequest)] {
+    WorkQueue::mainSingleton().dispatch([currentRequest = WTFMove(currentRequest), nextRequest = WTFMove(nextRequest)] {
         if (nextRequest)
             nextRequest->start();
     });

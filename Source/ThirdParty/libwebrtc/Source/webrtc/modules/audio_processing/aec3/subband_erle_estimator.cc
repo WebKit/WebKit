@@ -13,9 +13,10 @@
 #include <algorithm>
 #include <functional>
 
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -34,18 +35,20 @@ std::array<float, kFftLengthBy2Plus1> SetMaxErleBands(float max_erle_l,
   return max_erle;
 }
 
-bool EnableMinErleDuringOnsets() {
-  return !field_trial::IsEnabled("WebRTC-Aec3MinErleDuringOnsetsKillSwitch");
+bool EnableMinErleDuringOnsets(const FieldTrialsView& field_trials) {
+  return !field_trials.IsEnabled("WebRTC-Aec3MinErleDuringOnsetsKillSwitch");
 }
 
 }  // namespace
 
-SubbandErleEstimator::SubbandErleEstimator(const EchoCanceller3Config& config,
+SubbandErleEstimator::SubbandErleEstimator(const Environment& env,
+                                           const EchoCanceller3Config& config,
                                            size_t num_capture_channels)
     : use_onset_detection_(config.erle.onset_detection),
       min_erle_(config.erle.min),
       max_erle_(SetMaxErleBands(config.erle.max_l, config.erle.max_h)),
-      use_min_erle_during_onsets_(EnableMinErleDuringOnsets()),
+      use_min_erle_during_onsets_(
+          EnableMinErleDuringOnsets(env.field_trials())),
       accum_spectra_(num_capture_channels),
       erle_(num_capture_channels),
       erle_onset_compensated_(num_capture_channels),
@@ -72,9 +75,9 @@ void SubbandErleEstimator::Reset() {
 }
 
 void SubbandErleEstimator::Update(
-    rtc::ArrayView<const float, kFftLengthBy2Plus1> X2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    ArrayView<const float, kFftLengthBy2Plus1> X2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
     const std::vector<bool>& converged_filters) {
   UpdateAccumulatedSpectra(X2, Y2, E2, converged_filters);
   UpdateBands(converged_filters);
@@ -138,7 +141,7 @@ void SubbandErleEstimator::UpdateBands(
             if (!use_min_erle_during_onsets_) {
               float alpha =
                   new_erle[k] < erle_during_onsets_[ch][k] ? 0.3f : 0.15f;
-              erle_during_onsets_[ch][k] = rtc::SafeClamp(
+              erle_during_onsets_[ch][k] = SafeClamp(
                   erle_during_onsets_[ch][k] +
                       alpha * (new_erle[k] - erle_during_onsets_[ch][k]),
                   min_erle_, max_erle_[k]);
@@ -156,8 +159,7 @@ void SubbandErleEstimator::UpdateBands(
       if (new_erle < erle) {
         alpha = low_render_energy ? 0.f : 0.1f;
       }
-      erle =
-          rtc::SafeClamp(erle + alpha * (new_erle - erle), min_erle, max_erle);
+      erle = SafeClamp(erle + alpha * (new_erle - erle), min_erle, max_erle);
     };
 
     for (size_t k = 1; k < kFftLengthBy2; ++k) {
@@ -211,9 +213,9 @@ void SubbandErleEstimator::ResetAccumulatedSpectra() {
 }
 
 void SubbandErleEstimator::UpdateAccumulatedSpectra(
-    rtc::ArrayView<const float, kFftLengthBy2Plus1> X2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    ArrayView<const float, kFftLengthBy2Plus1> X2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
     const std::vector<bool>& converged_filters) {
   auto& st = accum_spectra_;
   RTC_DCHECK_EQ(st.E2.size(), E2.size());

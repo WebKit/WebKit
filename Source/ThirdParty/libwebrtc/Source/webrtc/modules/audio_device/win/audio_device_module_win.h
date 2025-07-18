@@ -74,7 +74,7 @@ class AudioOutput {
 
 // Combines an AudioInput and an AudioOutput implementation to build an
 // AudioDeviceModule. Hides most parts of the full ADM interface.
-rtc::scoped_refptr<AudioDeviceModuleForTest>
+webrtc::scoped_refptr<AudioDeviceModuleForTest>
 CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
     std::unique_ptr<AudioInput> audio_input,
     std::unique_ptr<AudioOutput> audio_output,

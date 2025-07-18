@@ -145,14 +145,22 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode,
         }
     }
 
+    // In case of zero texture bound to draw, do not try to update the vertex attribute array.
+    // However, if the zero texture is enabled on the currently active texture unit, we need to
+    // update the vertex attribute array.
+    unsigned int clientActiveTexture = gles1State->getClientTextureUnit();
+    bool isTextureEnabled =
+        tex2DEnables[clientActiveTexture] || texCubeEnables[clientActiveTexture];
+    const bool needToUpdateVertexAttribArray = !context->isZeroTextureBound(TextureType::_2D) ||
+                                               !context->isZeroTextureBound(TextureType::CubeMap) ||
+                                               isTextureEnabled;
+
     // If texture has been disabled on the active sampler, texture coordinate data should not be
     // used. However, according to the spec, a rasterized fragment is passed on unaltered to the
     // next stage.
-    if (gles1State->isDirty(GLES1State::DIRTY_GLES1_TEXTURE_UNIT_ENABLE))
+    if (gles1State->isDirty(GLES1State::DIRTY_GLES1_TEXTURE_UNIT_ENABLE) &&
+        needToUpdateVertexAttribArray)
     {
-        unsigned int clientActiveTexture = gles1State->getClientTextureUnit();
-        bool isTextureEnabled =
-            tex2DEnables[clientActiveTexture] || texCubeEnables[clientActiveTexture];
         glState->setEnableVertexAttribArray(
             TexCoordArrayIndex(clientActiveTexture),
             isTextureEnabled && gles1State->isTexCoordArrayEnabled(clientActiveTexture));

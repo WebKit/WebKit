@@ -36,7 +36,7 @@ class CopyToFileAudioCapturer : public TestAudioDeviceModule::Capturer {
 
   int SamplingFrequency() const override;
   int NumChannels() const override;
-  bool Capture(rtc::BufferT<int16_t>* buffer) override;
+  bool Capture(BufferT<int16_t>* buffer) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Capturer> delegate_;

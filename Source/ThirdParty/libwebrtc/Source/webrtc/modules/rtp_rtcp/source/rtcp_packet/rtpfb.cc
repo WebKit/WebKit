@@ -10,6 +10,8 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
 
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 
 namespace webrtc {

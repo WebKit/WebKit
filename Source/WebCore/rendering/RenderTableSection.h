@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTable.h"
+#include "StylePreferredSize.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

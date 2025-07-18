@@ -397,9 +397,12 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
             scrollView.contentOffset = CGPointMake(-contentInset.left, -contentInset.top);
         }
 
-        auto obscuredInsetTop = options.obscuredInsetTop();
-        if (auto obscuredInset = webView._obscuredInsets; obscuredInset.top != obscuredInsetTop) {
-            obscuredInset.top = obscuredInsetTop;
+        auto newObscuredInsetTop = options.obscuredInsetTop();
+        auto newObscuredInsetLeft = options.obscuredInsetLeft();
+        auto obscuredInset = webView._obscuredInsets;
+        if (obscuredInset.top != newObscuredInsetTop || obscuredInset.left != newObscuredInsetLeft) {
+            obscuredInset.top = newObscuredInsetTop;
+            obscuredInset.left = newObscuredInsetLeft;
             webView._obscuredInsets = obscuredInset;
         }
 

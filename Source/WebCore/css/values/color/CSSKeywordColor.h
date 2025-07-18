@@ -42,7 +42,7 @@ struct PlatformColorResolutionState;
 enum class ColorType : uint8_t;
 
 struct KeywordColor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(KeywordColor);
 
     CSSValueID valueID;
 

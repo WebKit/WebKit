@@ -35,6 +35,8 @@
 namespace WebCore {
 
 class Document;
+class HTMLElement;
+class HTMLFormControlElement;
 class HTMLFormElement;
 
 enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
@@ -43,7 +45,7 @@ using StringPairVector = Vector<std::pair<String, String>>;
 
 class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
 public:
-    static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
+    static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
     ~FormState();
 
     HTMLFormElement& form() const { return m_form; }
@@ -51,15 +53,17 @@ public:
     Document& sourceDocument() const { return m_sourceDocument; }
 
     FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
+    HTMLFormControlElement* submitter() const { return m_submitter.get(); }
 
 private:
-    FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
+    FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger, HTMLFormControlElement* submitter);
     void willDetachPage() override;
 
     const Ref<HTMLFormElement> m_form;
     StringPairVector m_textFieldValues;
     const Ref<Document> m_sourceDocument;
     FormSubmissionTrigger m_formSubmissionTrigger;
+    RefPtr<HTMLFormControlElement> m_submitter;
 };
 
 } // namespace WebCore

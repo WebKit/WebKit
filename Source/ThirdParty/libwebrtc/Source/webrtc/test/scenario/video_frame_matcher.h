@@ -48,24 +48,24 @@ class VideoFrameMatcher {
     int id;
     Timestamp decoded_time = Timestamp::PlusInfinity();
     Timestamp render_time = Timestamp::PlusInfinity();
-    rtc::scoped_refptr<VideoFrameBuffer> frame;
-    rtc::scoped_refptr<VideoFrameBuffer> thumb;
+    scoped_refptr<VideoFrameBuffer> frame;
+    scoped_refptr<VideoFrameBuffer> thumb;
     int repeat_count = 0;
   };
-  using DecodedFrame = rtc::FinalRefCountedObject<DecodedFrameBase>;
+  using DecodedFrame = FinalRefCountedObject<DecodedFrameBase>;
   struct CapturedFrame {
     int id;
     Timestamp capture_time = Timestamp::PlusInfinity();
-    rtc::scoped_refptr<VideoFrameBuffer> frame;
-    rtc::scoped_refptr<VideoFrameBuffer> thumb;
+    scoped_refptr<VideoFrameBuffer> frame;
+    scoped_refptr<VideoFrameBuffer> thumb;
     double best_score = INFINITY;
-    rtc::scoped_refptr<DecodedFrame> best_decode;
+    scoped_refptr<DecodedFrame> best_decode;
     bool matched = false;
   };
   struct VideoLayer {
     int layer_id;
     std::deque<CapturedFrame> captured_frames;
-    rtc::scoped_refptr<DecodedFrame> last_decode;
+    scoped_refptr<DecodedFrame> last_decode;
     int next_decoded_id = 1;
   };
   void HandleMatch(CapturedFrame captured, int layer_id);
@@ -76,7 +76,7 @@ class VideoFrameMatcher {
   TaskQueueForTest task_queue_;
 };
 
-class CapturedFrameTap : public rtc::VideoSinkInterface<VideoFrame> {
+class CapturedFrameTap : public VideoSinkInterface<VideoFrame> {
  public:
   CapturedFrameTap(Clock* clock, VideoFrameMatcher* matcher);
   CapturedFrameTap(CapturedFrameTap&) = delete;
@@ -91,13 +91,12 @@ class CapturedFrameTap : public rtc::VideoSinkInterface<VideoFrame> {
   int discarded_count_ = 0;
 };
 
-class ForwardingCapturedFrameTap
-    : public rtc::VideoSinkInterface<VideoFrame>,
-      public rtc::VideoSourceInterface<VideoFrame> {
+class ForwardingCapturedFrameTap : public VideoSinkInterface<VideoFrame>,
+                                   public VideoSourceInterface<VideoFrame> {
  public:
   ForwardingCapturedFrameTap(Clock* clock,
                              VideoFrameMatcher* matcher,
-                             rtc::VideoSourceInterface<VideoFrame>* source);
+                             VideoSourceInterface<VideoFrame>* source);
   ForwardingCapturedFrameTap(ForwardingCapturedFrameTap&) = delete;
   ForwardingCapturedFrameTap& operator=(ForwardingCapturedFrameTap&) = delete;
 
@@ -107,18 +106,18 @@ class ForwardingCapturedFrameTap
 
   // VideoSourceInterface interface
   void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
+                       const VideoSinkWants& wants) override;
   void RemoveSink(VideoSinkInterface<VideoFrame>* sink) override;
 
  private:
   Clock* const clock_;
   VideoFrameMatcher* const matcher_;
-  rtc::VideoSourceInterface<VideoFrame>* const source_;
+  VideoSourceInterface<VideoFrame>* const source_;
   VideoSinkInterface<VideoFrame>* sink_ = nullptr;
   int discarded_count_ = 0;
 };
 
-class DecodedFrameTap : public rtc::VideoSinkInterface<VideoFrame> {
+class DecodedFrameTap : public VideoSinkInterface<VideoFrame> {
  public:
   DecodedFrameTap(Clock* clock, VideoFrameMatcher* matcher, int layer_id);
   // VideoSinkInterface interface

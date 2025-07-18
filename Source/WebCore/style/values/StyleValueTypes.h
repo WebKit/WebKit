@@ -129,6 +129,7 @@ template<typename... Ts> struct ToCSSMapping<CommaSeparatedTuple<Ts...>> { using
 template<typename T> struct ToCSSMapping<SpaceSeparatedPoint<T>> { using type = SpaceSeparatedPoint<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<SpaceSeparatedSize<T>> { using type = SpaceSeparatedSize<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<SpaceSeparatedRectEdges<T>> { using type = SpaceSeparatedRectEdges<CSSType<T>>; };
+template<typename T> struct ToCSSMapping<CommaSeparatedRectEdges<T>> { using type = CommaSeparatedRectEdges<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<CSSType<T>>; };
 
@@ -187,7 +188,7 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<SpaceSeparatedV
 
     template<typename... Rest> Result operator()(const SpaceSeparatedVector<StyleType, inlineCapacity>& value, const RenderStyle& style, Rest&&... rest)
     {
-        return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toCSS(x, style, rest...); }) };
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
     }
 };
 
@@ -197,7 +198,7 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<CommaSeparatedV
 
     template<typename... Rest> Result operator()(const CommaSeparatedVector<StyleType, inlineCapacity>& value, const RenderStyle& style, Rest&&... rest)
     {
-        return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toCSS(x, style, rest...); }) };
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
     }
 };
 
@@ -260,6 +261,7 @@ template<typename... Ts> struct ToStyleMapping<CommaSeparatedTuple<Ts...>> { usi
 template<typename T> struct ToStyleMapping<SpaceSeparatedPoint<T>> { using type = SpaceSeparatedPoint<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<SpaceSeparatedSize<T>> { using type = SpaceSeparatedSize<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<SpaceSeparatedRectEdges<T>> { using type = SpaceSeparatedRectEdges<StyleType<T>>; };
+template<typename T> struct ToStyleMapping<CommaSeparatedRectEdges<T>> { using type = CommaSeparatedRectEdges<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<StyleType<T>>; };
 
@@ -318,7 +320,7 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<SpaceSeparatedV
 
     template<typename... Rest> Result operator()(const SpaceSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
     {
-        return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, rest...); }) };
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toStyle(x, rest...); }) };
     }
 };
 
@@ -328,7 +330,7 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CommaSeparatedV
 
     template<typename... Rest> Result operator()(const CommaSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
     {
-        return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, rest...); }) };
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toStyle(x, rest...); }) };
     }
 };
 
@@ -1143,7 +1145,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
     auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const BlendingContext& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
-        typename SpaceSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        typename SpaceSeparatedVector<StyleType, inlineCapacity>::Container result;
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], context));
@@ -1152,7 +1154,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
     auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
-        typename SpaceSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        typename SpaceSeparatedVector<StyleType, inlineCapacity>::Container result;
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], aStyle, bStyle, context));
@@ -1225,7 +1227,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
     auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const BlendingContext& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
-        typename CommaSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        typename CommaSeparatedVector<StyleType, inlineCapacity>::Container result;
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], context));
@@ -1234,7 +1236,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
     auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
-        typename CommaSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        typename CommaSeparatedVector<StyleType, inlineCapacity>::Container result;
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], aStyle, bStyle, context));

@@ -30,7 +30,7 @@
 #include <wtf/Noncopyable.h>
 
 class ClassMethodSwizzler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ClassMethodSwizzler);
     WTF_MAKE_NONCOPYABLE(ClassMethodSwizzler);
 public:
     ClassMethodSwizzler(Class, SEL, IMP);

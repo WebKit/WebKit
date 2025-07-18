@@ -68,7 +68,7 @@ bool RemoteLayerWithInProcessRenderingBackingStore::frontBufferMayBeVolatile() c
 void RemoteLayerWithInProcessRenderingBackingStore::clearBackingStore()
 {
     m_bufferSet.clearBuffers();
-    m_contentsBufferHandle = std::nullopt;
+    RemoteLayerBackingStore::clearBackingStore();
 }
 
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)

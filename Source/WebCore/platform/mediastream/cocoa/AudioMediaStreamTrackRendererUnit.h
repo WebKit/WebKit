@@ -48,7 +48,7 @@ class AudioSampleBufferList;
 class CAAudioStreamDescription;
 
 class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AudioMediaStreamTrackRendererUnit);
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
     static bool supportsPerDeviceRendering();

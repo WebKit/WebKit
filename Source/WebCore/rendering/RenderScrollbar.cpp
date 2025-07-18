@@ -28,7 +28,9 @@
 
 #include "ContainerNodeInlines.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "RenderObjectInlines.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderStyleSetters.h"

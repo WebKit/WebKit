@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeNode.h"
 
+#import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeLayers.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -40,7 +41,6 @@
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-#import "RemoteLayerTreeHost.h"
 #import <WebCore/AcceleratedEffectStack.h>
 #endif
 
@@ -128,6 +128,22 @@ void RemoteLayerTreeNode::initializeLayer()
     if (![layer() isKindOfClass:[CATransformLayer class]])
         [layer() setHitTestsContentsAlphaChannel:YES];
 #endif
+}
+
+void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLayerBackingStoreProperties& properties)
+{
+    if (asyncContentsIdentifier() && properties.contentsRenderingResourceIdentifier() && *asyncContentsIdentifier() >= *properties.contentsRenderingResourceIdentifier())
+        return;
+
+    UIView* hostingView = nil;
+#if PLATFORM(IOS_FAMILY)
+    hostingView = uiView();
+#endif
+
+    properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView);
+
+    if (auto identifier = properties.contentsRenderingResourceIdentifier())
+        setAsyncContentsIdentifier(*identifier);
 }
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)

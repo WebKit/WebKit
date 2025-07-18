@@ -101,7 +101,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         if (!this._sourceMap.originalSourceCode.supportsScriptBlackboxing)
             return false;
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): Debugger.setShouldBlackboxURL.sourceRanges did not exist yet.
+        // COMPATIBILITY (macOS 15.0, iOS 18.0): Debugger.setShouldBlackboxURL.sourceRanges did not exist yet.
         return InspectorBackend.hasCommand("Debugger.setShouldBlackboxURL", "sourceRanges");
     }
 

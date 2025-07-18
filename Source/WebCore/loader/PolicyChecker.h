@@ -74,7 +74,7 @@ enum class PolicyDecisionMode { Synchronous, Asynchronous };
 
 class PolicyChecker : public CanMakeWeakPtr<PolicyChecker> {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PolicyChecker, Loader);
 public:
     explicit PolicyChecker(LocalFrame&);
 

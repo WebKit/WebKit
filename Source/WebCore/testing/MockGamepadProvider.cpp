@@ -67,7 +67,7 @@ void MockGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble)
 {
     if (index >= m_mockGamepadVector.size())
-        m_mockGamepadVector.resize(index + 1);
+        m_mockGamepadVector.grow(index + 1);
 
     if (m_mockGamepadVector[index])
         m_mockGamepadVector[index]->updateDetails(gamepadID, mapping, axisCount, buttonCount, supportsDualRumble);

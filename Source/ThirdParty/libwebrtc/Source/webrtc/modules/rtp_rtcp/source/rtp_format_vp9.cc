@@ -12,10 +12,12 @@
 
 #include <string.h>
 
-#include "api/video/video_codec_constants.h"
+#include <cstdint>
+
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -155,8 +157,7 @@ size_t PayloadDescriptorLengthMinusSsData(const RTPVideoHeaderVP9& hdr) {
 // M:   | EXTENDED PID  |
 //      +-+-+-+-+-+-+-+-+
 //
-bool WritePictureId(const RTPVideoHeaderVP9& vp9,
-                    rtc::BitBufferWriter* writer) {
+bool WritePictureId(const RTPVideoHeaderVP9& vp9, BitBufferWriter* writer) {
   bool m_bit = (PictureIdLength(vp9) == 2);
   RETURN_FALSE_ON_ERROR(writer->WriteBits(m_bit ? 1 : 0, 1));
   RETURN_FALSE_ON_ERROR(writer->WriteBits(vp9.picture_id, m_bit ? 15 : 7));
@@ -172,7 +173,7 @@ bool WritePictureId(const RTPVideoHeaderVP9& vp9,
 //      +-+-+-+-+-+-+-+-+
 //
 bool WriteLayerInfoCommon(const RTPVideoHeaderVP9& vp9,
-                          rtc::BitBufferWriter* writer) {
+                          BitBufferWriter* writer) {
   RETURN_FALSE_ON_ERROR(writer->WriteBits(TemporalIdxField(vp9, 0), 3));
   RETURN_FALSE_ON_ERROR(writer->WriteBits(vp9.temporal_up_switch ? 1 : 0, 1));
   RETURN_FALSE_ON_ERROR(writer->WriteBits(SpatialIdxField(vp9, 0), 3));
@@ -190,13 +191,12 @@ bool WriteLayerInfoCommon(const RTPVideoHeaderVP9& vp9,
 //      +-+-+-+-+-+-+-+-+
 //
 bool WriteLayerInfoNonFlexibleMode(const RTPVideoHeaderVP9& vp9,
-                                   rtc::BitBufferWriter* writer) {
+                                   BitBufferWriter* writer) {
   RETURN_FALSE_ON_ERROR(writer->WriteUInt8(Tl0PicIdxField(vp9, 0)));
   return true;
 }
 
-bool WriteLayerInfo(const RTPVideoHeaderVP9& vp9,
-                    rtc::BitBufferWriter* writer) {
+bool WriteLayerInfo(const RTPVideoHeaderVP9& vp9, BitBufferWriter* writer) {
   if (!WriteLayerInfoCommon(vp9, writer))
     return false;
 
@@ -213,8 +213,7 @@ bool WriteLayerInfo(const RTPVideoHeaderVP9& vp9,
 //      +-+-+-+-+-+-+-+-+                    N=1: An additional P_DIFF follows
 //                                                current P_DIFF.
 //
-bool WriteRefIndices(const RTPVideoHeaderVP9& vp9,
-                     rtc::BitBufferWriter* writer) {
+bool WriteRefIndices(const RTPVideoHeaderVP9& vp9, BitBufferWriter* writer) {
   if (!PictureIdPresent(vp9) || vp9.num_ref_pics == 0 ||
       vp9.num_ref_pics > kMaxVp9RefPics) {
     return false;
@@ -247,7 +246,7 @@ bool WriteRefIndices(const RTPVideoHeaderVP9& vp9,
 //      |    P_DIFF     | (OPTIONAL)    . R times    .
 //      +-+-+-+-+-+-+-+-+              -|           -|
 //
-bool WriteSsData(const RTPVideoHeaderVP9& vp9, rtc::BitBufferWriter* writer) {
+bool WriteSsData(const RTPVideoHeaderVP9& vp9, BitBufferWriter* writer) {
   RTC_CHECK_GT(vp9.num_spatial_layers, 0U);
   RTC_CHECK_LE(vp9.num_spatial_layers, kMaxVp9NumberOfSpatialLayers);
   RTC_CHECK_LE(vp9.gof.num_frames_in_gof, kMaxVp9FramesInGof);
@@ -313,7 +312,7 @@ RTPVideoHeaderVP9 RemoveInactiveSpatialLayers(
 }
 }  // namespace
 
-RtpPacketizerVp9::RtpPacketizerVp9(rtc::ArrayView<const uint8_t> payload,
+RtpPacketizerVp9::RtpPacketizerVp9(ArrayView<const uint8_t> payload,
                                    PayloadSizeLimits limits,
                                    const RTPVideoHeaderVP9& hdr)
     : hdr_(RemoveInactiveSpatialLayers(hdr)),
@@ -355,8 +354,7 @@ bool RtpPacketizerVp9::NextPacket(RtpPacketToSend* packet) {
   uint8_t* buffer = packet->AllocatePayload(header_size + packet_payload_len);
   RTC_CHECK(buffer);
 
-  if (!WriteHeader(layer_begin, layer_end,
-                   rtc::MakeArrayView(buffer, header_size)))
+  if (!WriteHeader(layer_begin, layer_end, MakeArrayView(buffer, header_size)))
     return false;
 
   memcpy(buffer + header_size, remaining_payload_.data(), packet_payload_len);
@@ -408,7 +406,7 @@ bool RtpPacketizerVp9::NextPacket(RtpPacketToSend* packet) {
 //      +-+-+-+-+-+-+-+-+
 bool RtpPacketizerVp9::WriteHeader(bool layer_begin,
                                    bool layer_end,
-                                   rtc::ArrayView<uint8_t> buffer) const {
+                                   ArrayView<uint8_t> buffer) const {
   // Required payload descriptor byte.
   bool i_bit = PictureIdPresent(hdr_);
   bool p_bit = hdr_.inter_pic_predicted;
@@ -419,7 +417,7 @@ bool RtpPacketizerVp9::WriteHeader(bool layer_begin,
   bool v_bit = hdr_.ss_data_available && b_bit;
   bool z_bit = hdr_.non_ref_for_inter_layer_pred;
 
-  rtc::BitBufferWriter writer(buffer.data(), buffer.size());
+  BitBufferWriter writer(buffer.data(), buffer.size());
   RETURN_FALSE_ON_ERROR(writer.WriteBits(i_bit ? 1 : 0, 1));
   RETURN_FALSE_ON_ERROR(writer.WriteBits(p_bit ? 1 : 0, 1));
   RETURN_FALSE_ON_ERROR(writer.WriteBits(l_bit ? 1 : 0, 1));

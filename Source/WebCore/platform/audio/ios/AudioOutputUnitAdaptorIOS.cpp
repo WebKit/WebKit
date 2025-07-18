@@ -96,7 +96,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT_UNUSED(result, !result);
 
-    AudioSession::sharedSession().setPreferredBufferSize(kPreferredBufferSize);
+    AudioSession::singleton().setPreferredBufferSize(kPreferredBufferSize);
 }
 
 } // namespace WebCore

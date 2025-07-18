@@ -16,12 +16,12 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/virtual_socket_server.h"
 
-namespace rtc {
+namespace webrtc {
 
 class AsyncTCPSocketTest : public ::testing::Test, public sigslot::has_slots<> {
  public:
   AsyncTCPSocketTest()
-      : vss_(new rtc::VirtualSocketServer()),
+      : vss_(new webrtc::VirtualSocketServer()),
         socket_(vss_->CreateSocket(SOCK_STREAM)),
         tcp_socket_(new AsyncTCPSocket(socket_, true)),
         ready_to_send_(false) {
@@ -29,7 +29,9 @@ class AsyncTCPSocketTest : public ::testing::Test, public sigslot::has_slots<> {
                                            &AsyncTCPSocketTest::OnReadyToSend);
   }
 
-  void OnReadyToSend(rtc::AsyncPacketSocket* socket) { ready_to_send_ = true; }
+  void OnReadyToSend(webrtc::AsyncPacketSocket* socket) {
+    ready_to_send_ = true;
+  }
 
  protected:
   std::unique_ptr<VirtualSocketServer> vss_;
@@ -44,4 +46,4 @@ TEST_F(AsyncTCPSocketTest, OnWriteEvent) {
   EXPECT_TRUE(ready_to_send_);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

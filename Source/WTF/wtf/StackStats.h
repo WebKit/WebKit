@@ -47,7 +47,7 @@ namespace WTF {
 #if !ENABLE(STACK_STATS) 
 
 class StackStats {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackStats);
 public:
     // The CheckPoint class is for marking check points corresponding
     // each location in code where a stack recursion check is being done.
@@ -73,7 +73,7 @@ public:
 #else // ENABLE(STACK_STATS)
 
 class StackStats {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackStats);
 public:
     // The CheckPoint class is for marking check points corresponding
     // each location in code where a stack recursion check is being done.

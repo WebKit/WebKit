@@ -10,7 +10,6 @@
 
 #include "modules/audio_coding/codecs/opus/test/lapped_transform.h"
 
-#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 

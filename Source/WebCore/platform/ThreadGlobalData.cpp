@@ -32,6 +32,7 @@
 #include "FontCache.h"
 #include "MIMETypeRegistry.h"
 #include "QualifiedNameCache.h"
+#include "SharedTimer.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -43,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadGlobalData);
 
 ThreadGlobalData::ThreadGlobalData()
-    : m_threadTimers(makeUnique<ThreadTimers>())
+    : m_threadTimers(makeUniqueRef<ThreadTimers>())
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif

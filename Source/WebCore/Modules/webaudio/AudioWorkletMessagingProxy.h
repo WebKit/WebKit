@@ -39,7 +39,7 @@ class AudioWorkletThread;
 class Document;
 
 class AudioWorkletMessagingProxy final : public WorkletGlobalScopeProxy, public WorkerLoaderProxy, public CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AudioWorkletMessagingProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioWorkletMessagingProxy);
 public:
     static Ref<AudioWorkletMessagingProxy> create(AudioWorklet& worklet)

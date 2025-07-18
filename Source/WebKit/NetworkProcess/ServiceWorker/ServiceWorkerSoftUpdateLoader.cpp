@@ -81,7 +81,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
                 if (!lastModified.isEmpty())
                     request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
-            loadFromNetwork(*m_session, WTFMove(request));
+            loadFromNetwork(CheckedRef { *m_session }.get(), WTFMove(request));
         });
         return;
     }

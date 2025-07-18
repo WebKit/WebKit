@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>Loading multiple &lt;model></title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "resources/heart.usdz");
+    const [model2, source2] = createModelAndSource(t, "resources/cube.usdz");
+    const [model3, source3] = createModelAndSource(t, "resources/stopwatch-30s.usdz");
+    const [model4, source4] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    const [model5, source5] = createModelAndSource(t, "resources/heart.usdz");
+    const [model6, source6] = createModelAndSource(t, "resources/cube.usdz");
+    const [model7, source7] = createModelAndSource(t, "resources/stopwatch-30s.usdz");
+    const [model8, source8] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    const [model9, source9] = createModelAndSource(t, "resources/heart.usdz");
+    const [model10, source10] = createModelAndSource(t, "resources/cube.usdz");
+
+    await model1.ready;
+    await model2.ready;
+    await model3.ready;
+    await model4.ready;
+    await model5.ready;
+    await model6.ready;
+    await model7.ready;
+    await model8.ready;
+    await model9.ready;
+    await model10.ready;
+}, `<model> resolves the ready promises of all models created at the same time.`);
+
+</script>
+</body>

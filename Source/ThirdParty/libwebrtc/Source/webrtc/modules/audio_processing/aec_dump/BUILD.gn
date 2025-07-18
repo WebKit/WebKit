@@ -34,6 +34,9 @@ if (rtc_include_tests) {
       "..:aec_dump_interface",
       "..:audioproc_test_utils",
       "../",
+      "../../../api/audio:audio_frame_api",
+      "../../../api/audio:audio_processing",
+      "../../../modules/audio_processing:audio_frame_view",
       "../../../test:test_support",
     ]
   }
@@ -47,9 +50,12 @@ if (rtc_include_tests) {
       ":mock_aec_dump",
       "..:audioproc_test_utils",
       "../",
+      "../../../api:scoped_refptr",
       "../../../api/audio:audio_processing",
       "../../../api/audio:builtin_audio_processing_builder",
       "../../../api/environment:environment_factory",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
       "//testing/gtest",
     ]
   }
@@ -68,7 +74,9 @@ if (rtc_enable_protobuf) {
       ":aec_dump",
       "..:aec_dump_interface",
       "../../../api/audio:audio_frame_api",
+      "../../../api/audio:audio_processing",
       "../../../api/task_queue",
+      "../../../modules/audio_processing:audio_frame_view",
       "../../../rtc_base:checks",
       "../../../rtc_base:logging",
       "../../../rtc_base:macromagic",

@@ -45,7 +45,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LikelyDenseUnsignedIntegerSet);
 // This reduces repeated re-indexings of the bitvector when repeatedly adding a value just below the current minimum.
 template<typename IndexType>
 class LikelyDenseUnsignedIntegerSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LikelyDenseUnsignedIntegerSet);
     WTF_MAKE_NONCOPYABLE(LikelyDenseUnsignedIntegerSet);
     static_assert(std::is_unsigned<IndexType>::value);
     using Set = UncheckedKeyHashSet<IndexType, WTF::IntHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType> >;
@@ -182,7 +182,7 @@ public:
     }
 
     class iterator {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         iterator(BitVector::iterator it, IndexType shift)
             : m_underlying({ it })

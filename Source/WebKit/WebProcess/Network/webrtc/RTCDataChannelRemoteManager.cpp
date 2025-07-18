@@ -163,7 +163,7 @@ void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier 
     });
 }
 
-void RTCDataChannelRemoteManager::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier handlerIdentifier, size_t amount)
+void RTCDataChannelRemoteManager::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier handlerIdentifier, uint64_t amount)
 {
     postTaskToHandler(handlerIdentifier, [amount](auto& handler) {
         handler.bufferedAmountIsDecreasing(amount);
@@ -239,7 +239,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::DetectError { identifier, type, message }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, uint64_t amount)
 {
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::BufferedAmountIsDecreasing { identifier, amount }, 0);
 }

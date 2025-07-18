@@ -40,11 +40,11 @@ namespace webrtc_pc_e2e {
 // vector and they will be added in the same order, as they were in
 // `supported_codecs`.
 std::vector<RtpCodecCapability> FilterVideoCodecCapabilities(
-    rtc::ArrayView<const VideoCodecConfig> video_codecs,
+    ArrayView<const VideoCodecConfig> video_codecs,
     bool use_rtx,
     bool use_ulpfec,
     bool use_flexfec,
-    rtc::ArrayView<const RtpCodecCapability> supported_codecs);
+    ArrayView<const RtpCodecCapability> supported_codecs);
 
 struct LocalAndRemoteSdp {
   LocalAndRemoteSdp(std::unique_ptr<SessionDescriptionInterface> local_sdp,
@@ -82,27 +82,27 @@ class SignalingInterceptor {
       const VideoCodecConfig& first_codec);
 
   std::vector<std::unique_ptr<IceCandidateInterface>> PatchOffererIceCandidates(
-      rtc::ArrayView<const IceCandidateInterface* const> candidates);
+      ArrayView<const IceCandidateInterface* const> candidates);
   std::vector<std::unique_ptr<IceCandidateInterface>>
   PatchAnswererIceCandidates(
-      rtc::ArrayView<const IceCandidateInterface* const> candidates);
+      ArrayView<const IceCandidateInterface* const> candidates);
 
  private:
   // Contains information about simulcast section, that is required to perform
   // modified offer/answer and ice candidates exchange.
   struct SimulcastSectionInfo {
     SimulcastSectionInfo(const std::string& mid,
-                         cricket::MediaProtocolType media_protocol_type,
-                         const std::vector<cricket::RidDescription>& rids_desc);
+                         MediaProtocolType media_protocol_type,
+                         const std::vector<RidDescription>& rids_desc);
 
     const std::string mid;
-    const cricket::MediaProtocolType media_protocol_type;
+    const MediaProtocolType media_protocol_type;
     std::vector<std::string> rids;
-    cricket::SimulcastDescription simulcast_description;
+    SimulcastDescription simulcast_description;
     webrtc::RtpExtension mid_extension;
     webrtc::RtpExtension rid_extension;
     webrtc::RtpExtension rrid_extension;
-    cricket::TransportDescription transport_description;
+    TransportDescription transport_description;
   };
 
   struct SignalingContext {
@@ -133,8 +133,8 @@ class SignalingInterceptor {
       std::unique_ptr<SessionDescriptionInterface> answer);
 
   void FillSimulcastContext(SessionDescriptionInterface* offer);
-  std::unique_ptr<cricket::SessionDescription> RestoreMediaSectionsOrder(
-      std::unique_ptr<cricket::SessionDescription> source);
+  std::unique_ptr<SessionDescription> RestoreMediaSectionsOrder(
+      std::unique_ptr<SessionDescription> source);
 
   PatchingParams params_;
   SignalingContext context_;

@@ -92,6 +92,7 @@ public:
 
     WEBCORE_EXPORT String action() const;
     WEBCORE_EXPORT String method() const;
+    bool isMethodPost() const { return method() == "post"_s; }
 
     DOMTokenList& relList();
 

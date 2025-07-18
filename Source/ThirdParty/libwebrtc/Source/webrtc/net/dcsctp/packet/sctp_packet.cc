@@ -105,8 +105,9 @@ std::vector<uint8_t> SctpPacket::Builder::Build(bool write_checksum) {
   return out;
 }
 
-std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
-                                            const DcSctpOptions& options) {
+std::optional<SctpPacket> SctpPacket::Parse(
+    webrtc::ArrayView<const uint8_t> data,
+    const DcSctpOptions& options) {
   if (data.size() < kHeaderSize + kChunkTlvHeaderSize ||
       data.size() > kMaxUdpPacketSize) {
     RTC_DLOG(LS_WARNING) << "Invalid packet size";
@@ -139,7 +140,7 @@ std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
     BoundedByteWriter<kHeaderSize>(data_copy).Store32<8>(0);
     uint32_t calculated_checksum = GenerateCrc32C(data_copy);
     if (calculated_checksum != common_header.checksum) {
-      RTC_DLOG(LS_WARNING) << rtc::StringFormat(
+      RTC_DLOG(LS_WARNING) << webrtc::StringFormat(
           "Invalid packet checksum, packet_checksum=0x%08x, "
           "calculated_checksum=0x%08x",
           common_header.checksum, calculated_checksum);
@@ -161,8 +162,8 @@ std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
 
   std::vector<ChunkDescriptor> descriptors;
   descriptors.reserve(kExpectedDescriptorCount);
-  rtc::ArrayView<const uint8_t> descriptor_data =
-      rtc::ArrayView<const uint8_t>(data_copy).subview(kHeaderSize);
+  webrtc::ArrayView<const uint8_t> descriptor_data =
+      webrtc::ArrayView<const uint8_t>(data_copy).subview(kHeaderSize);
   while (!descriptor_data.empty()) {
     if (descriptor_data.size() < kChunkTlvHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Too small chunk";

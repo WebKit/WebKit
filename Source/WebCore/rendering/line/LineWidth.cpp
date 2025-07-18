@@ -69,7 +69,7 @@ bool LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace() const
 void LineWidth::updateAvailableWidth()
 {
     LayoutUnit height = m_block.logicalHeight();
-    auto lineHeight = std::max(0_lu, m_block.lineHeight(true, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+    auto lineHeight = std::max(0_lu, m_block.lineHeight());
     m_left = m_block.logicalLeftOffsetForLine(height, lineHeight);
     m_right = m_block.logicalRightOffsetForLine(height, lineHeight);
 

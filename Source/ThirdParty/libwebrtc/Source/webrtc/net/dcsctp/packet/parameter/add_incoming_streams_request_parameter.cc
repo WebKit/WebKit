@@ -39,7 +39,8 @@ namespace dcsctp {
 constexpr int AddIncomingStreamsRequestParameter::kType;
 
 std::optional<AddIncomingStreamsRequestParameter>
-AddIncomingStreamsRequestParameter::Parse(rtc::ArrayView<const uint8_t> data) {
+AddIncomingStreamsRequestParameter::Parse(
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -59,7 +60,7 @@ void AddIncomingStreamsRequestParameter::SerializeTo(
 }
 
 std::string AddIncomingStreamsRequestParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Add Incoming Streams Request, req_seq_nbr="
      << *request_sequence_number();
   return sb.Release();

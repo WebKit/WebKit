@@ -177,6 +177,7 @@ def types_that_must_be_moved():
         'WebKit::SharedVideoFrame::Buffer',
         'WebKit::UpdateInfo',
         'WebKit::WebProcessCreationParameters',
+        'WebKit::RemoteLayerBackingStoreProperties',
         'Win32Handle',
         'std::optional<MachSendRight>',
         'std::optional<WebCore::ShareableBitmapHandle>',
@@ -190,24 +191,24 @@ def types_that_must_be_moved():
     ]
 
 
+builtin_types = frozenset([
+    'bool',
+    'float',
+    'double',
+    'uint8_t',
+    'uint16_t',
+    'uint32_t',
+    'uint64_t',
+    'int8_t',
+    'int16_t',
+    'int32_t',
+    'int64_t',
+    'size_t',
+    'WebCore::TrackID',
+])
+
 def function_parameter_type(type, kind, for_reply=False):
     # Don't use references for built-in types.
-    builtin_types = frozenset([
-        'bool',
-        'float',
-        'double',
-        'uint8_t',
-        'uint16_t',
-        'uint32_t',
-        'uint64_t',
-        'int8_t',
-        'int16_t',
-        'int32_t',
-        'int64_t',
-        'size_t',
-        'WebCore::TrackID',
-    ])
-
     if type in builtin_types:
         return type
 
@@ -220,6 +221,14 @@ def function_parameter_type(type, kind, for_reply=False):
     return 'const %s&' % type
 
 
+def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=False):
+    return not (
+        type in builtin_types or
+        kind.startswith('enum:') or
+        type in types_that_cannot_be_forward_declared()
+    )
+
+
 def arguments_constructor_name(type, name):
     if type in types_that_must_be_moved():
         return 'WTFMove(%s)' % name
@@ -229,6 +238,7 @@ def arguments_constructor_name(type, name):
 def message_to_struct_declaration(receiver, message):
     result = []
     function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
+    requires_suppress_forward_decl = [function_parameter_requires_suppress_forward_decl(x.type, x.kind) for x in message.parameters]
 
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
@@ -279,7 +289,10 @@ def message_to_struct_declaration(receiver, message):
             result.append('    void encodeCoalescingKey(IPC::Encoder& encoder) const\n')
             result.append('    {\n')
             for i in message.coalescing_key_indices:
-                result.append('        encoder << m_%s;\n' % message.parameters[i].name)
+                result.append('        ')
+                if requires_suppress_forward_decl[i]:
+                    result.append('SUPPRESS_FORWARD_DECL_ARG ')
+                result.append('encoder << m_%s;\n' % message.parameters[i].name)
         else:
             result.append('    void encodeCoalescingKey(IPC::Encoder&) const\n')
             result.append('    {\n')
@@ -289,16 +302,24 @@ def message_to_struct_declaration(receiver, message):
     result.append('    template<typename Encoder>\n')
     result.append('    void encode(Encoder& encoder)\n')
     result.append('    {\n')
-    for parameter in message.parameters:
+    for i in range(len(message.parameters)):
+        parameter = message.parameters[i]
+        result.append('        ')
+        if requires_suppress_forward_decl[i]:
+            result.append('SUPPRESS_FORWARD_DECL_ARG ')
         if parameter.type in types_that_must_be_moved():
-            result.append('        encoder << WTFMove(m_%s);\n' % parameter.name)
+            result.append('encoder << WTFMove(m_%s);\n' % parameter.name)
         else:
-            result.append('        encoder << m_%s;\n' % parameter.name)
+            result.append('encoder << m_%s;\n' % parameter.name)
     result.append('    }\n')
     result.append('\n')
     result.append('private:\n')
-    for parameter in function_parameters:
-        result.append('    %s m_%s;\n' % parameter)
+    for i in range(len(function_parameters)):
+        parameter = function_parameters[i]
+        result.append('    ')
+        if requires_suppress_forward_decl[i]:
+            result.append('SUPPRESS_FORWARD_DECL_MEMBER ')
+        result.append('%s m_%s;\n' % parameter)
     result.append('};\n')
     return surround_in_condition(''.join(result), message.condition)
 
@@ -377,7 +398,7 @@ def serialized_identifiers():
         'WebCore::BackgroundFetchRecordIdentifier',
         'WebCore::DOMCacheIdentifierID',
         'WebCore::DictationContext',
-        'WebCore::ElementIdentifier',
+        'WebCore::NodeIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
@@ -459,7 +480,6 @@ def serialized_identifiers():
         'WebKit::RemoteDisplayListRecorderIdentifier',
         'WebKit::RemoteLegacyCDMIdentifier',
         'WebKit::RemoteLegacyCDMSessionIdentifier',
-        'WebKit::RemoteMediaRecorderPrivateWriterIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
         'WebKit::RemoteMediaSourceIdentifier',
         'WebKit::RemoteRemoteCommandListenerIdentifier',
@@ -515,18 +535,12 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::SessionMode',
         'PlatformXR::VisibilityState',
         'String',
-        'WebCore::ApplePayShippingMethodUpdate',
-        'WebCore::ApplePayShippingContactUpdate',
-        'WebCore::ApplePayPaymentMethodUpdate',
-        'WebCore::ApplePayCouponCodeUpdate',
         'WebCore::BackForwardFrameItemIdentifier',
         'WebCore::BackForwardItemIdentifier',
         'WebCore::ControlStyle',
-        'WebCore::ClientOrigin',
         'WebCore::DOMCacheIdentifier',
         'WebCore::DOMCacheEngine::CacheIdentifierOrError',
         'WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError',
-        'WebCore::DashArray',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',
@@ -558,11 +572,9 @@ def types_that_cannot_be_forward_declared():
         'WebCore::RTCDataChannelIdentifier',
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
-        'WebCore::RemoteUserInputEventData',
         'WebCore::SandboxFlags',
         'WebCore::ScriptExecutionContextIdentifier',
         'WebCore::ScrollingNodeID',
-        'WebCore::ServiceWorkerJobDataIdentifier',
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::SharedStringHash',
@@ -573,7 +585,6 @@ def types_that_cannot_be_forward_declared():
         'WebCore::TrackID',
         'WebCore::TransferredMessagePort',
         'WebCore::UserGestureTokenIdentifier',
-        'WebCore::ViewportArguments',
         'WebCore::WebLockIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::DisplayLinkObserverID',
@@ -583,7 +594,6 @@ def types_that_cannot_be_forward_declared():
         'WebKit::FileSystemSyncAccessHandleInfo',
         'WebKit::FocusedElementInformation',
         'WebKit::GPUProcessConnectionInfo',
-        'WebKit::InputMethodState',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
         'WebKit::PlaybackSessionContextIdentifier',
@@ -612,7 +622,6 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WebExtensionTabParameters',
         'WebKit::WebExtensionTabQueryParameters',
         'WebKit::WebExtensionWindowParameters',
-        'WebKit::WebKeyboardEvent',
         'WebKit::XRDeviceIdentifier',
         'WTF::SystemMemoryPressureStatus',
     ] + types_that_must_be_moved())
@@ -635,7 +644,6 @@ def conditions_for_header(header):
         '"RemoteCDMInstanceSessionIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)"],
         '"RemoteLegacyCDMIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)"],
         '"RemoteLegacyCDMSessionIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)"],
-        '"RemoteMediaRecorderPrivateWriterIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)"],
         '"RemoteMediaSourceIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)"],
         '"RemoteSourceBufferIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)"],
         '"SoupCookiePersistentStorageType.h"': ["USE(SOUP)"],
@@ -888,6 +896,7 @@ def class_template_headers(template_string):
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},
         'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::unique_ptr': {'headers': ['<memory>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'FixedVector': {'headers': ['<wtf/FixedVector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
@@ -968,6 +977,7 @@ def headers_for_type(type, for_implementation_file=False):
         'URL': ['<wtf/URLHash.h>'],
         'WTF::UUID': ['<wtf/UUID.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
+        'WebCore::AXDebugInfo': ['<WebCore/AXObjectCache.h>'],
         'WebCore::AlternativeTextType': ['<WebCore/AlternativeTextClient.h>'],
         'WebCore::ApplyTrackingPrevention': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::AttachmentAssociatedElementType': ['<WebCore/AttachmentAssociatedElement.h>'],
@@ -1033,6 +1043,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::FontPlatformDataAttributes': ['<WebCore/FontPlatformData.h>'],
         'WebCore::FontCustomPlatformSerializedData': ['<WebCore/FontCustomPlatformData.h>'],
         'WebCore::FontSmoothingMode': ['<WebCore/GraphicsTypes.h>'],
+        'WebCore::FoundElementInRemoteFrame': ['<WebCore/FocusController.h>'],
         'WebCore::FragmentedSharedBuffer': ['<WebCore/SharedBuffer.h>'],
         'WebCore::FrameIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
@@ -1053,6 +1064,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::GraphicsDropShadow': ['<WebCore/GraphicsStyle.h>'],
         'WebCore::HasAvailableTargets': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::Headroom': ['<WebCore/ImageTypes.h>'],
         'WebCore::HighlightRequestOriginatedInApp': ['<WebCore/AppHighlight.h>'],
         'WebCore::HighlightVisibility': ['<WebCore/HighlightVisibility.h>'],
         'WebCore::InterpolationQuality': ['<WebCore/GraphicsTypes.h>'],
@@ -1064,7 +1076,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::IndexIDToIndexKeyMap': ['<WebCore/IndexKey.h>'],
         'WebCore::IndexedDB::ObjectStoreOverwriteMode': ['<WebCore/IndexedDB.h>'],
         'WebCore::InputMode': ['<WebCore/InputMode.h>'],
-        'WebCore::InspectorClientDeveloperPreference': ['<WebCore/InspectorClient.h>'],
+        'WebCore::InspectorBackendClientDeveloperPreference': ['<WebCore/InspectorBackendClient.h>'],
         'WebCore::InspectorFrontendClientAppearance': ['<WebCore/InspectorFrontendClient.h>'],
         'WebCore::InspectorFrontendClientSaveData': ['<WebCore/InspectorFrontendClient.h>'],
         'WebCore::InspectorOverlayHighlight': ['<WebCore/InspectorOverlay.h>'],
@@ -1100,7 +1112,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::MediaProducerMediaState': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaProducerMutedState': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaPromise::Result': ['<WebCore/MediaPromiseTypes.h>'],
-        'WebCore::MediaRecorderPrivateWriter::Result': ['<WebCore/MediaRecorderPrivateWriter.h>'],
         'WebCore::MediaSamplesBlock::MediaSampleItem': ['<WebCore/MediaSample.h>'],
         'WebCore::MediaSessionHelper::ShouldOverride': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::MediaSettingsRange': ['<WebCore/MediaSettingsRange.h>'],
@@ -1151,7 +1162,9 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::RubberBandingBehavior': ['<WebCore/ScrollTypes.h>'],
         'WebCore::SameSiteStrictEnforcementEnabled': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::ScriptExecutionContextIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/ScriptExecutionContextIdentifier.h>', '<wtf/ObjectIdentifier.h>'],
+        'WebCore::ScriptTrackingPrivacyFlag': ['<WebCore/ScriptTrackingPrivacyCategory.h>'],
         'WebCore::ScheduleLocationChangeResult': ['<WebCore/NavigationScheduler.h>'],
+        'WebCore::ScrollUpdate': ['<WebCore/ScrollingCoordinatorTypes.h>'],
         'WebCore::ScrollbarMode': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollbarOverlayStyle': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollDirection': ['<WebCore/ScrollTypes.h>'],
@@ -1318,16 +1331,18 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
         'WebKit::ImageBufferSetPrepareBufferForDisplayInputData': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData': ['"PrepareBackingStoreBuffersData.h"'],
-        'WebKit::RTC::Network::EcnMarking': ['"RTCNetwork.h"'],
-        'WebKit::RTC::Network::IPAddress': ['"RTCNetwork.h"'],
-        'WebKit::RTC::Network::SocketAddress': ['"RTCNetwork.h"'],
+        'WebKit::WebRTCNetwork::EcnMarking': ['"RTCNetwork.h"'],
+        'WebKit::WebRTCNetwork::IPAddress': ['"RTCNetwork.h"'],
+        'WebKit::WebRTCNetwork::SocketAddress': ['"RTCNetwork.h"'],
         'WebKit::ReloadFromOrigin': ['"WebExtensionTab.h"'],
         'WebKit::RemoteAudioInfo': ['"RemoteTrackInfo.h"'],
+        'WebKit::RemoteLayerBackingStoreProperties': ['"RemoteLayerBackingStore.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoInfo': ['"RemoteTrackInfo.h"'],
         'WebKit::RespectSelectionAnchor': ['"GestureTypes.h"'],
         'WebKit::SandboxExtensionHandle': ['"SandboxExtension.h"'],
+        'WebKit::ScriptTrackingPrivacyHost': ['"ScriptTrackingPrivacyFilter.h"'],
         'WebKit::ScriptTrackingPrivacyRules': ['"ScriptTrackingPrivacyFilter.h"'],
         'WebKit::SelectionFlags': ['"GestureTypes.h"'],
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],

@@ -12,6 +12,11 @@
 
 #include "modules/audio_coding/neteq/decision_logic.h"
 
+#include <memory>
+#include <optional>
+#include <utility>
+
+#include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/delay_manager.h"
@@ -19,6 +24,7 @@
 #include "modules/audio_coding/neteq/mock/mock_delay_manager.h"
 #include "modules/audio_coding/neteq/mock/mock_packet_arrival_history.h"
 #include "test/explicit_key_value_config.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

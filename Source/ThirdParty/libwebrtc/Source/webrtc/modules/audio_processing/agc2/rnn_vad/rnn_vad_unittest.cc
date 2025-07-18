@@ -135,7 +135,7 @@ TEST_P(RnnVadProbabilityParametrization, DISABLED_RnnVadPerformance) {
   std::array<float, kFeatureVectorSize> feature_vector;
   RnnVad rnn_vad(cpu_features);
   constexpr int number_of_tests = 100;
-  ::webrtc::test::PerformanceTimer perf_timer(number_of_tests);
+  test::PerformanceTimer perf_timer(number_of_tests);
   for (int k = 0; k < number_of_tests; ++k) {
     features_extractor.Reset();
     rnn_vad.Reset();

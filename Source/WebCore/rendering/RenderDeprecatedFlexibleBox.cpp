@@ -510,7 +510,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
         ASSERT(childIndex == childLayoutDeltas.size());
 
         if (!iterator.first() && hasLineIfEmpty())
-            setHeight(height() + lineHeight(true, writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+            setHeight(height() + lineHeight());
 
         setHeight(height() + toAdd);
 
@@ -848,7 +848,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         yPos = height();
 
         if (!iterator.first() && hasLineIfEmpty())
-            setHeight(height() + lineHeight(true, writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+            setHeight(height() + lineHeight());
 
         setHeight(height() + toAdd);
 

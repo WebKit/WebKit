@@ -25,9 +25,8 @@ namespace {
 // Computes auto-correlation coefficients for `x` and writes them in
 // `auto_corr`. The lag values are in {0, ..., max_lag - 1}, where max_lag
 // equals the size of `auto_corr`.
-void ComputeAutoCorrelation(
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<float, kNumLpcCoefficients> auto_corr) {
+void ComputeAutoCorrelation(ArrayView<const float> x,
+                            ArrayView<float, kNumLpcCoefficients> auto_corr) {
   constexpr int max_lag = auto_corr.size();
   RTC_DCHECK_LT(max_lag, x.size());
   for (int lag = 0; lag < max_lag; ++lag) {
@@ -37,8 +36,7 @@ void ComputeAutoCorrelation(
 }
 
 // Applies denoising to the auto-correlation coefficients.
-void DenoiseAutoCorrelation(
-    rtc::ArrayView<float, kNumLpcCoefficients> auto_corr) {
+void DenoiseAutoCorrelation(ArrayView<float, kNumLpcCoefficients> auto_corr) {
   // Assume -40 dB white noise floor.
   auto_corr[0] *= 1.0001f;
   // Hard-coded values obtained as
@@ -53,8 +51,8 @@ void DenoiseAutoCorrelation(
 // Computes the initial inverse filter coefficients given the auto-correlation
 // coefficients of an input frame.
 void ComputeInitialInverseFilterCoefficients(
-    rtc::ArrayView<const float, kNumLpcCoefficients> auto_corr,
-    rtc::ArrayView<float, kNumLpcCoefficients - 1> lpc_coeffs) {
+    ArrayView<const float, kNumLpcCoefficients> auto_corr,
+    ArrayView<float, kNumLpcCoefficients - 1> lpc_coeffs) {
   float error = auto_corr[0];
   for (int i = 0; i < kNumLpcCoefficients - 1; ++i) {
     float reflection_coeff = 0.f;
@@ -88,8 +86,8 @@ void ComputeInitialInverseFilterCoefficients(
 }  // namespace
 
 void ComputeAndPostProcessLpcCoefficients(
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<float, kNumLpcCoefficients> lpc_coeffs) {
+    ArrayView<const float> x,
+    ArrayView<float, kNumLpcCoefficients> lpc_coeffs) {
   std::array<float, kNumLpcCoefficients> auto_corr;
   ComputeAutoCorrelation(x, auto_corr);
   if (auto_corr[0] == 0.f) {  // Empty frame.
@@ -114,10 +112,9 @@ void ComputeAndPostProcessLpcCoefficients(
   static_assert(kNumLpcCoefficients == 5, "Update `lpc_coeffs(_pre)`.");
 }
 
-void ComputeLpResidual(
-    rtc::ArrayView<const float, kNumLpcCoefficients> lpc_coeffs,
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<float> y) {
+void ComputeLpResidual(ArrayView<const float, kNumLpcCoefficients> lpc_coeffs,
+                       ArrayView<const float> x,
+                       ArrayView<float> y) {
   RTC_DCHECK_GT(x.size(), kNumLpcCoefficients);
   RTC_DCHECK_EQ(x.size(), y.size());
   // The code below implements the following operation:
@@ -131,7 +128,7 @@ void ComputeLpResidual(
   }
   // Regular case.
   auto last = x.crend();
-  for (int i = kNumLpcCoefficients; rtc::SafeLt(i, y.size()); ++i, --last) {
+  for (int i = kNumLpcCoefficients; SafeLt(i, y.size()); ++i, --last) {
     y[i] = std::inner_product(last - kNumLpcCoefficients, last,
                               lpc_coeffs.cbegin(), x[i]);
   }

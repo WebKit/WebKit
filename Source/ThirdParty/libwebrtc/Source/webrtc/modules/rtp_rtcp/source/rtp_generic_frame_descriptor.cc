@@ -12,6 +12,7 @@
 
 #include <cstdint>
 
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -74,10 +75,10 @@ void RtpGenericFrameDescriptor::SetFrameId(uint16_t frame_id) {
   frame_id_ = frame_id;
 }
 
-rtc::ArrayView<const uint16_t>
-RtpGenericFrameDescriptor::FrameDependenciesDiffs() const {
+ArrayView<const uint16_t> RtpGenericFrameDescriptor::FrameDependenciesDiffs()
+    const {
   RTC_DCHECK(FirstPacketInSubFrame());
-  return rtc::MakeArrayView(frame_deps_id_diffs_, num_frame_deps_);
+  return MakeArrayView(frame_deps_id_diffs_, num_frame_deps_);
 }
 
 bool RtpGenericFrameDescriptor::AddFrameDependencyDiff(uint16_t fdiff) {

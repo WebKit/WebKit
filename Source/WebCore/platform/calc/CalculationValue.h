@@ -43,7 +43,7 @@ enum class Category : uint8_t;
 }
 
 class CalculationValue : public RefCounted<CalculationValue> {
-    WTF_MAKE_FAST_COMPACT_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(CalculationValue);
 public:
     WEBCORE_EXPORT static Ref<CalculationValue> create(Calculation::Category, Calculation::Range, Calculation::Tree&&);
     WEBCORE_EXPORT ~CalculationValue();

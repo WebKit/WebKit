@@ -45,7 +45,7 @@ using namespace WebCore;
 
 static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 {
-    if (session.protectedNetworkProcess()->sessionIsControlledByAutomation(session.sessionID()))
+    if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
         return true;
 
     return session.sessionID().isAlwaysOnLoggingAllowed();
@@ -417,7 +417,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 
 ShouldRelaxThirdPartyCookieBlocking NetworkTaskCocoa::shouldRelaxThirdPartyCookieBlocking() const
 {
-    return checkedNetworkSession()->protectedNetworkProcess()->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
+    return checkedNetworkSession()->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
 }
 
 } // namespace WebKit

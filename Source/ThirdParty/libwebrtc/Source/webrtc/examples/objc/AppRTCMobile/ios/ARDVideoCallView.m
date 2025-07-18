@@ -41,11 +41,13 @@ static CGFloat const kStatusBarHeight = 20;
 - (instancetype)initWithFrame:(CGRect)frame {
   self = [super initWithFrame:frame];
   if (self) {
-    _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
+    _remoteVideoView =
+        [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
 
     [self addSubview:_remoteVideoView];
 
-    _localVideoView = [[RTC_OBJC_TYPE(RTCCameraPreviewView) alloc] initWithFrame:CGRectZero];
+    _localVideoView =
+        [[RTC_OBJC_TYPE(RTCCameraPreviewView) alloc] initWithFrame:CGRectZero];
     [self addSubview:_localVideoView];
 
     _statsView = [[ARDStatsView alloc] initWithFrame:CGRectZero];
@@ -69,11 +71,12 @@ static CGFloat const kStatusBarHeight = 20;
     _cameraSwitchButton.backgroundColor = [UIColor grayColor];
     _cameraSwitchButton.layer.cornerRadius = kButtonSize / 2;
     _cameraSwitchButton.layer.masksToBounds = YES;
-    image = [UIImage imageForName:@"ic_switch_video_black_24dp.png" color:[UIColor whiteColor]];
+    image = [UIImage imageForName:@"ic_switch_video_black_24dp.png"
+                            color:[UIColor whiteColor]];
     [_cameraSwitchButton setImage:image forState:UIControlStateNormal];
     [_cameraSwitchButton addTarget:self
-                      action:@selector(onCameraSwitch:)
-            forControlEvents:UIControlEventTouchUpInside];
+                            action:@selector(onCameraSwitch:)
+                  forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_cameraSwitchButton];
 
     _hangupButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -93,10 +96,9 @@ static CGFloat const kStatusBarHeight = 20;
     _statusLabel.textColor = [UIColor whiteColor];
     [self addSubview:_statusLabel];
 
-    UITapGestureRecognizer *tapRecognizer =
-        [[UITapGestureRecognizer alloc]
-            initWithTarget:self
-                    action:@selector(didTripleTap:)];
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
+        initWithTarget:self
+                action:@selector(didTripleTap:)];
     tapRecognizer.numberOfTapsRequired = 3;
     [self addGestureRecognizer:tapRecognizer];
   }
@@ -130,23 +132,23 @@ static CGFloat const kStatusBarHeight = 20;
   CGRect localVideoFrame =
       CGRectMake(0, 0, kLocalVideoViewSize, kLocalVideoViewSize);
   // Place the view in the bottom right.
-  localVideoFrame.origin.x = CGRectGetMaxX(bounds)
-      - localVideoFrame.size.width - kLocalVideoViewPadding;
-  localVideoFrame.origin.y = CGRectGetMaxY(bounds)
-      - localVideoFrame.size.height - kLocalVideoViewPadding;
+  localVideoFrame.origin.x = CGRectGetMaxX(bounds) -
+      localVideoFrame.size.width - kLocalVideoViewPadding;
+  localVideoFrame.origin.y = CGRectGetMaxY(bounds) -
+      localVideoFrame.size.height - kLocalVideoViewPadding;
   _localVideoView.frame = localVideoFrame;
 
   // Place stats at the top.
   CGSize statsSize = [_statsView sizeThatFits:bounds.size];
   _statsView.frame = CGRectMake(CGRectGetMinX(bounds),
                                 CGRectGetMinY(bounds) + kStatusBarHeight,
-                                statsSize.width, statsSize.height);
+                                statsSize.width,
+                                statsSize.height);
 
   // Place hangup button in the bottom left.
   _hangupButton.frame =
       CGRectMake(CGRectGetMinX(bounds) + kButtonPadding,
-                 CGRectGetMaxY(bounds) - kButtonPadding -
-                     kButtonSize,
+                 CGRectGetMaxY(bounds) - kButtonPadding - kButtonSize,
                  kButtonSize,
                  kButtonSize);
 
@@ -158,8 +160,7 @@ static CGFloat const kStatusBarHeight = 20;
 
   // Place route button to the right of camera button.
   CGRect routeChangeFrame = _cameraSwitchButton.frame;
-  routeChangeFrame.origin.x =
-      CGRectGetMaxX(routeChangeFrame) + kButtonPadding;
+  routeChangeFrame.origin.x = CGRectGetMaxX(routeChangeFrame) + kButtonPadding;
   _routeChangeButton.frame = routeChangeFrame;
 
   [_statusLabel sizeToFit];
@@ -169,7 +170,8 @@ static CGFloat const kStatusBarHeight = 20;
 
 #pragma mark - RTC_OBJC_TYPE(RTCVideoViewDelegate)
 
-- (void)videoView:(id<RTC_OBJC_TYPE(RTCVideoRenderer)>)videoView didChangeVideoSize:(CGSize)size {
+- (void)videoView:(id<RTC_OBJC_TYPE(RTCVideoRenderer)>)videoView
+    didChangeVideoSize:(CGSize)size {
   if (videoView == _remoteVideoView) {
     _remoteVideoSize = size;
   }

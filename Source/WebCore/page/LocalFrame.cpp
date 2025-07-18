@@ -147,7 +147,7 @@ static const Seconds scrollFrequency { 1000_s / 60. };
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
 struct OverrideScreenSize {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(OverrideScreenSize);
 
     FloatSize size;
 };
@@ -1144,17 +1144,6 @@ void LocalFrame::deviceOrPageScaleFactorChanged()
 
     if (CheckedPtr root = contentRenderer())
         root->compositor().deviceOrPageScaleFactorChanged();
-}
-
-void LocalFrame::screenSupportedContentsFormatsChanged()
-{
-    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
-            localFrame->screenSupportedContentsFormatsChanged();
-    }
-
-    if (CheckedPtr root = contentRenderer())
-        root->compositor().screenSupportedContentsFormatsChanged();
 }
 
 void LocalFrame::dropChildren()

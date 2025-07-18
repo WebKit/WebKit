@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("scalability_mode_util") {
+rtc_library("scalability_mode_util") {
   sources = [
     "scalability_mode_util.cc",
     "scalability_mode_util.h",
@@ -17,12 +17,13 @@ rtc_source_set("scalability_mode_util") {
     "../../../api/video_codecs:scalability_mode",
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
+    "../../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
-rtc_source_set("scalable_video_controller") {
+rtc_library("scalable_video_controller") {
   sources = [
     "scalable_video_controller.h",
     "scalable_video_controller_no_layering.cc",
@@ -31,13 +32,14 @@ rtc_source_set("scalable_video_controller") {
   deps = [
     "../../../api/transport/rtp:dependency_descriptor",
     "../../../api/video:video_bitrate_allocation",
+    "../../../api/video:video_codec_constants",
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
 }
 
-rtc_source_set("scalability_structures") {
+rtc_library("scalability_structures") {
   sources = [
     "create_scalability_structure.cc",
     "create_scalability_structure.h",
@@ -64,7 +66,7 @@ rtc_source_set("scalability_structures") {
   ]
 }
 
-rtc_source_set("svc_rate_allocator") {
+rtc_library("svc_rate_allocator") {
   sources = [
     "svc_rate_allocator.cc",
     "svc_rate_allocator.h",
@@ -86,7 +88,7 @@ rtc_source_set("svc_rate_allocator") {
   ]
 }
 
-rtc_source_set("simulcast_to_svc_converter") {
+rtc_library("simulcast_to_svc_converter") {
   sources = [
     "simulcast_to_svc_converter.cc",
     "simulcast_to_svc_converter.h",
@@ -95,7 +97,10 @@ rtc_source_set("simulcast_to_svc_converter") {
     ":scalability_mode_util",
     ":scalability_structures",
     ":scalable_video_controller",
+    "..:codec_globals_headers",
     "../../../api/video:encoded_image",
+    "../../../api/video:video_bitrate_allocation",
+    "../../../api/video_codecs:scalability_mode",
     "../../../api/video_codecs:video_codecs_api",
     "../../../modules/video_coding:video_codec_interface",
     "../../../modules/video_coding:video_coding_utility",
@@ -105,7 +110,7 @@ rtc_source_set("simulcast_to_svc_converter") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("scalability_structure_tests") {
+  rtc_library("scalability_structure_tests") {
     testonly = true
     sources = [
       "scalability_mode_util_unittest.cc",
@@ -129,13 +134,14 @@ if (rtc_include_tests) {
       "../../../api/video:video_frame_type",
       "../../../api/video_codecs:scalability_mode",
       "../../../common_video/generic_frame_descriptor",
+      "../../../rtc_base:checks",
       "../../../rtc_base:stringutils",
       "../../../test:test_support",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 
-  rtc_source_set("svc_rate_allocator_tests") {
+  rtc_library("svc_rate_allocator_tests") {
     testonly = true
     sources = [ "svc_rate_allocator_unittest.cc" ]
     deps = [
@@ -156,13 +162,19 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_source_set("simulcast_to_svc_converter_tests") {
+  rtc_library("simulcast_to_svc_converter_tests") {
     testonly = true
     sources = [ "simulcast_to_svc_converter_unittest.cc" ]
     deps = [
       ":scalability_structures",
       ":scalable_video_controller",
       ":simulcast_to_svc_converter",
+      "..:video_codec_interface",
+      "../../../api/video:encoded_image",
+      "../../../api/video:video_bitrate_allocation",
+      "../../../api/video:video_frame",
+      "../../../api/video_codecs:scalability_mode",
+      "../../../api/video_codecs:video_codecs_api",
       "../../../rtc_base:checks",
       "../../../test:test_support",
     ]

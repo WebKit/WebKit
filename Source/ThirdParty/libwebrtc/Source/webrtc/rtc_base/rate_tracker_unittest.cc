@@ -10,9 +10,11 @@
 
 #include "rtc_base/rate_tracker.h"
 
+#include <cstdint>
+
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 const uint32_t kBucketIntervalMs = 100;
 }  // namespace
@@ -175,4 +177,4 @@ TEST(RateTrackerTest, TestLargeNumbers) {
   EXPECT_DOUBLE_EQ(large_number * 2, tracker.ComputeRate());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

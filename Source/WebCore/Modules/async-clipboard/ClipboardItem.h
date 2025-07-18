@@ -76,7 +76,7 @@ private:
 
     WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_clipboard;
     WeakPtr<Navigator> m_navigator;
-    std::unique_ptr<ClipboardItemDataSource> m_dataSource;
+    const UniqueRef<ClipboardItemDataSource> m_dataSource;
     PresentationStyle m_presentationStyle { PresentationStyle::Unspecified };
 };
 

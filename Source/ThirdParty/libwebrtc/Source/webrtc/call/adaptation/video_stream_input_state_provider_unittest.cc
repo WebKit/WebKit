@@ -10,12 +10,17 @@
 
 #include "call/adaptation/video_stream_input_state_provider.h"
 
+#include <optional>
 #include <utility>
 
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/test/fake_frame_rate_provider.h"
+#include "call/adaptation/video_stream_input_state.h"
 #include "test/gtest.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 

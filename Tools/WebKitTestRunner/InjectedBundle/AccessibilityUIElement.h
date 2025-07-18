@@ -117,7 +117,7 @@ public:
     void decrement();
     void showMenu();
     void press();
-    void dismiss();
+    bool dismiss();
 #if PLATFORM(MAC)
     void syncPress();
     void asyncIncrement();
@@ -153,7 +153,7 @@ public:
     RetainPtr<id> attributeValue(NSString *) const;
     void attributeValueAsync(JSContextRef, JSStringRef attribute, JSValueRef callback);
     NSArray *actionNames() const;
-    void performAction(NSString *) const;
+    bool performAction(NSString *) const;
 #else
     void attributeValueAsync(JSContextRef, JSStringRef attribute, JSValueRef callback) { }
 #endif

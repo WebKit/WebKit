@@ -131,6 +131,9 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     patternData->transform.scale(tileBoundaries.size() / tileImageSize);
 
     AffineTransform patternTransform = m_attributes.patternTransform();
+    if (!patternTransform.isInvertible())
+        return nullptr;
+
     if (!patternTransform.isIdentity())
         patternData->transform = patternTransform * patternData->transform;
 

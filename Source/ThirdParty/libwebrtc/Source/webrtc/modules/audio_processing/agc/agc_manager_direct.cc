@@ -14,6 +14,8 @@
 #include <cmath>
 
 #include "api/array_view.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc/gain_control.h"
 #include "modules/audio_processing/agc2/gain_map_internal.h"
@@ -22,7 +24,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -69,14 +70,13 @@ using AnalogAgcConfig =
 // string. Returns an unspecified value if the field trial is not specified, if
 // disabled or if it cannot be parsed. Example:
 // 'WebRTC-Audio-2ndAgcMinMicLevelExperiment/Enabled-80' => returns 80.
-std::optional<int> GetMinMicLevelOverride() {
+std::optional<int> GetMinMicLevelOverride(const FieldTrialsView& field_trials) {
   constexpr char kMinMicLevelFieldTrial[] =
       "WebRTC-Audio-2ndAgcMinMicLevelExperiment";
-  if (!webrtc::field_trial::IsEnabled(kMinMicLevelFieldTrial)) {
+  if (!field_trials.IsEnabled(kMinMicLevelFieldTrial)) {
     return std::nullopt;
   }
-  const auto field_trial_string =
-      webrtc::field_trial::FindFullName(kMinMicLevelFieldTrial);
+  const auto field_trial_string = field_trials.Lookup(kMinMicLevelFieldTrial);
   int min_mic_level = -1;
   sscanf(field_trial_string.c_str(), "Enabled-%d", &min_mic_level);
   if (min_mic_level >= 0 && min_mic_level <= 255) {
@@ -152,7 +152,7 @@ int GetSpeechLevelErrorDb(float speech_level_dbfs, float speech_probability) {
     return 0;
   }
 
-  const float speech_level = rtc::SafeClamp<float>(
+  const float speech_level = SafeClamp<float>(
       speech_level_dbfs, kMinSpeechLevelDbfs, kMaxSpeechLevelDbfs);
 
   return std::round(kOverrideTargetSpeechLevelDbfs - speech_level);
@@ -188,7 +188,7 @@ void MonoAgc::Initialize() {
   is_first_frame_ = true;
 }
 
-void MonoAgc::Process(rtc::ArrayView<const int16_t> audio,
+void MonoAgc::Process(ArrayView<const int16_t> audio,
                       std::optional<int> rms_error_override) {
   new_compression_to_set_ = std::nullopt;
 
@@ -376,7 +376,7 @@ void MonoAgc::UpdateGain(int rms_error_db) {
 
   // Handle as much error as possible with the compressor first.
   int raw_compression =
-      rtc::SafeClamp(rms_error, kMinCompressionGain, max_compression_gain_);
+      SafeClamp(rms_error, kMinCompressionGain, max_compression_gain_);
 
   // Deemphasize the compression gain error. Move halfway between the current
   // target and the newly received target. This serves to soften perceptible
@@ -397,8 +397,8 @@ void MonoAgc::UpdateGain(int rms_error_db) {
   // raw rather than deemphasized compression here as we would otherwise
   // shrink the amount of slack the compressor provides.
   const int residual_gain =
-      rtc::SafeClamp(rms_error - raw_compression, -kMaxResidualGainChange,
-                     kMaxResidualGainChange);
+      SafeClamp(rms_error - raw_compression, -kMaxResidualGainChange,
+                kMaxResidualGainChange);
   RTC_DLOG(LS_INFO) << "[agc] rms_error=" << rms_error
                     << ", target_compression=" << target_compression_
                     << ", residual_gain=" << residual_gain;
@@ -447,19 +447,21 @@ void MonoAgc::UpdateCompressor() {
 std::atomic<int> AgcManagerDirect::instance_counter_(0);
 
 AgcManagerDirect::AgcManagerDirect(
+    const Environment& env,
     const AudioProcessing::Config::GainController1::AnalogGainController&
         analog_config,
     Agc* agc)
-    : AgcManagerDirect(/*num_capture_channels=*/1, analog_config) {
+    : AgcManagerDirect(env, /*num_capture_channels=*/1, analog_config) {
   RTC_DCHECK(channel_agcs_[0]);
   RTC_DCHECK(agc);
   channel_agcs_[0]->set_agc(agc);
 }
 
-AgcManagerDirect::AgcManagerDirect(int num_capture_channels,
+AgcManagerDirect::AgcManagerDirect(const Environment& env,
+                                   int num_capture_channels,
                                    const AnalogAgcConfig& analog_config)
     : analog_controller_enabled_(analog_config.enabled),
-      min_mic_level_override_(GetMinMicLevelOverride()),
+      min_mic_level_override_(GetMinMicLevelOverride(env.field_trials())),
       data_dumper_(new ApmDataDumper(instance_counter_.fetch_add(1) + 1)),
       num_capture_channels_(num_capture_channels),
       disable_digital_adaptive_(!analog_config.enable_digital_adaptive),

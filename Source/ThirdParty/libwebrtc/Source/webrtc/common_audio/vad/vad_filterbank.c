@@ -10,23 +10,23 @@
 
 #include "common_audio/vad/vad_filterbank.h"
 
-#include "rtc_base/checks.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/checks.h"
 
 // Constants used in LogOfEnergy().
-static const int16_t kLogConst = 24660;  // 160*log10(2) in Q9.
+static const int16_t kLogConst = 24660;          // 160*log10(2) in Q9.
 static const int16_t kLogEnergyIntPart = 14336;  // 14 in Q10
 
 // Coefficients used by HighPassFilter, Q14.
-static const int16_t kHpZeroCoefs[3] = { 6631, -13262, 6631 };
-static const int16_t kHpPoleCoefs[3] = { 16384, -7756, 5620 };
+static const int16_t kHpZeroCoefs[3] = {6631, -13262, 6631};
+static const int16_t kHpPoleCoefs[3] = {16384, -7756, 5620};
 
 // Allpass filter coefficients, upper and lower, in Q15.
 // Upper: 0.64, Lower: 0.17
-static const int16_t kAllPassCoefsQ15[2] = { 20972, 5571 };
+static const int16_t kAllPassCoefsQ15[2] = {20972, 5571};
 
 // Adjustment for division with two in SplitFilter.
-static const int16_t kOffsetVector[6] = { 368, 368, 272, 176, 176, 176 };
+static const int16_t kOffsetVector[6] = {368, 368, 272, 176, 176, 176};
 
 // High pass filtering, with a cut-off frequency at 80 Hz, if the `data_in` is
 // sampled at 500 Hz.
@@ -36,13 +36,14 @@ static const int16_t kOffsetVector[6] = { 368, 368, 272, 176, 176, 176 };
 // - filter_state [i/o] : State of the filter.
 // - data_out     [o]   : Output audio data in the frequency interval
 //                        80 - 250 Hz.
-static void HighPassFilter(const int16_t* data_in, size_t data_length,
-                           int16_t* filter_state, int16_t* data_out) {
+static void HighPassFilter(const int16_t* data_in,
+                           size_t data_length,
+                           int16_t* filter_state,
+                           int16_t* data_out) {
   size_t i;
   const int16_t* in_ptr = data_in;
   int16_t* out_ptr = data_out;
   int32_t tmp32 = 0;
-
 
   // The sum of the absolute values of the impulse response:
   // The zero/pole-filter has a max amplification of a single sample of: 1.4546
@@ -64,7 +65,7 @@ static void HighPassFilter(const int16_t* data_in, size_t data_length,
     tmp32 -= kHpPoleCoefs[1] * filter_state[2];
     tmp32 -= kHpPoleCoefs[2] * filter_state[3];
     filter_state[3] = filter_state[2];
-    filter_state[2] = (int16_t) (tmp32 >> 14);
+    filter_state[2] = (int16_t)(tmp32 >> 14);
     *out_ptr++ = filter_state[2];
   }
 }
@@ -78,8 +79,10 @@ static void HighPassFilter(const int16_t* data_in, size_t data_length,
 // - filter_coefficient [i]   : Given in Q15.
 // - filter_state       [i/o] : State of the filter given in Q(-1).
 // - data_out           [o]   : Output audio signal given in Q(-1).
-static void AllPassFilter(const int16_t* data_in, size_t data_length,
-                          int16_t filter_coefficient, int16_t* filter_state,
+static void AllPassFilter(const int16_t* data_in,
+                          size_t data_length,
+                          int16_t filter_coefficient,
+                          int16_t* filter_state,
                           int16_t* data_out) {
   // The filter can only cause overflow (in the w16 output variable)
   // if more than 4 consecutive input numbers are of maximum value and
@@ -90,18 +93,18 @@ static void AllPassFilter(const int16_t* data_in, size_t data_length,
   size_t i;
   int16_t tmp16 = 0;
   int32_t tmp32 = 0;
-  int32_t state32 = ((int32_t) (*filter_state) * (1 << 16));  // Q15
+  int32_t state32 = ((int32_t)(*filter_state) * (1 << 16));  // Q15
 
   for (i = 0; i < data_length; i++) {
     tmp32 = state32 + filter_coefficient * *data_in;
-    tmp16 = (int16_t) (tmp32 >> 16);  // Q(-1)
+    tmp16 = (int16_t)(tmp32 >> 16);  // Q(-1)
     *data_out++ = tmp16;
     state32 = (*data_in * (1 << 14)) - filter_coefficient * tmp16;  // Q14
-    state32 *= 2;  // Q15.
+    state32 *= 2;                                                   // Q15.
     data_in += 2;
   }
 
-  *filter_state = (int16_t) (state32 >> 16);  // Q(-1)
+  *filter_state = (int16_t)(state32 >> 16);  // Q(-1)
 }
 
 // Splits `data_in` into `hp_data_out` and `lp_data_out` corresponding to
@@ -115,9 +118,12 @@ static void AllPassFilter(const int16_t* data_in, size_t data_length,
 //                        The length is `data_length` / 2.
 // - lp_data_out  [o]   : Output audio data of the lower half of the spectrum.
 //                        The length is `data_length` / 2.
-static void SplitFilter(const int16_t* data_in, size_t data_length,
-                        int16_t* upper_state, int16_t* lower_state,
-                        int16_t* hp_data_out, int16_t* lp_data_out) {
+static void SplitFilter(const int16_t* data_in,
+                        size_t data_length,
+                        int16_t* upper_state,
+                        int16_t* lower_state,
+                        int16_t* hp_data_out,
+                        int16_t* lp_data_out) {
   size_t i;
   size_t half_length = data_length >> 1;  // Downsampling by 2.
   int16_t tmp_out;
@@ -149,8 +155,10 @@ static void SplitFilter(const int16_t* data_in, size_t data_length,
 //                        NOTE: `total_energy` is only updated if
 //                        `total_energy` <= `kMinEnergy`.
 // - log_energy   [o]   : 10 * log10("energy of `data_in`") given in Q4.
-static void LogOfEnergy(const int16_t* data_in, size_t data_length,
-                        int16_t offset, int16_t* total_energy,
+static void LogOfEnergy(const int16_t* data_in,
+                        size_t data_length,
+                        int16_t offset,
+                        int16_t* total_energy,
                         int16_t* log_energy) {
   // `tot_rshifts` accumulates the number of right shifts performed on `energy`.
   int tot_rshifts = 0;
@@ -161,8 +169,8 @@ static void LogOfEnergy(const int16_t* data_in, size_t data_length,
   RTC_DCHECK(data_in);
   RTC_DCHECK_GT(data_length, 0);
 
-  energy = (uint32_t) WebRtcSpl_Energy((int16_t*) data_in, data_length,
-                                       &tot_rshifts);
+  energy =
+      (uint32_t)WebRtcSpl_Energy((int16_t*)data_in, data_length, &tot_rshifts);
 
   if (energy != 0) {
     // By construction, normalizing to 15 bits is equivalent with 17 leading
@@ -205,12 +213,12 @@ static void LogOfEnergy(const int16_t* data_in, size_t data_length,
     // Note that frac_Q15 = (`energy` & 0x00003FFF)
 
     // Calculate and add the fractional part to `log2_energy`.
-    log2_energy += (int16_t) ((energy & 0x00003FFF) >> 4);
+    log2_energy += (int16_t)((energy & 0x00003FFF) >> 4);
 
     // `kLogConst` is in Q9, `log2_energy` in Q10 and `tot_rshifts` in Q0.
     // Note that we in our derivation above have accounted for an output in Q4.
     *log_energy = (int16_t)(((kLogConst * log2_energy) >> 19) +
-        ((tot_rshifts * kLogConst) >> 9));
+                            ((tot_rshifts * kLogConst) >> 9));
 
     if (*log_energy < 0) {
       *log_energy = 0;
@@ -235,13 +243,15 @@ static void LogOfEnergy(const int16_t* data_in, size_t data_length,
       // right shifted `energy` will fit in an int16_t. In addition, adding the
       // value to `total_energy` is wrap around safe as long as
       // `kMinEnergy` < 8192.
-      *total_energy += (int16_t) (energy >> -tot_rshifts);  // Q0.
+      *total_energy += (int16_t)(energy >> -tot_rshifts);  // Q0.
     }
   }
 }
 
-int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
-                                    size_t data_length, int16_t* features) {
+int16_t WebRtcVad_CalculateFeatures(VadInstT* self,
+                                    const int16_t* data_in,
+                                    size_t data_length,
+                                    int16_t* features) {
   int16_t total_energy = 0;
   // We expect `data_length` to be 80, 160 or 240 samples, which corresponds to
   // 10, 20 or 30 ms in 8 kHz. Therefore, the intermediate downsampled data will
@@ -256,8 +266,8 @@ int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
   // Initialize variables for the first SplitFilter().
   int frequency_band = 0;
   const int16_t* in_ptr = data_in;  // [0 - 4000] Hz.
-  int16_t* hp_out_ptr = hp_120;  // [2000 - 4000] Hz.
-  int16_t* lp_out_ptr = lp_120;  // [0 - 2000] Hz.
+  int16_t* hp_out_ptr = hp_120;     // [2000 - 4000] Hz.
+  int16_t* lp_out_ptr = lp_120;     // [0 - 2000] Hz.
 
   RTC_DCHECK_LE(data_length, 240);
   RTC_DCHECK_LT(4, kNumChannels - 1);  // Checking maximum `frequency_band`.
@@ -268,7 +278,7 @@ int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
 
   // For the upper band (2000 Hz - 4000 Hz) split at 3000 Hz and downsample.
   frequency_band = 1;
-  in_ptr = hp_120;  // [2000 - 4000] Hz.
+  in_ptr = hp_120;     // [2000 - 4000] Hz.
   hp_out_ptr = hp_60;  // [3000 - 4000] Hz.
   lp_out_ptr = lp_60;  // [2000 - 3000] Hz.
   SplitFilter(in_ptr, length, &self->upper_state[frequency_band],
@@ -284,9 +294,9 @@ int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
 
   // For the lower band (0 Hz - 2000 Hz) split at 1000 Hz and downsample.
   frequency_band = 2;
-  in_ptr = lp_120;  // [0 - 2000] Hz.
-  hp_out_ptr = hp_60;  // [1000 - 2000] Hz.
-  lp_out_ptr = lp_60;  // [0 - 1000] Hz.
+  in_ptr = lp_120;            // [0 - 2000] Hz.
+  hp_out_ptr = hp_60;         // [1000 - 2000] Hz.
+  lp_out_ptr = lp_60;         // [0 - 1000] Hz.
   length = half_data_length;  // `data_length` / 2 <=> bandwidth = 2000 Hz.
   SplitFilter(in_ptr, length, &self->upper_state[frequency_band],
               &self->lower_state[frequency_band], hp_out_ptr, lp_out_ptr);
@@ -297,7 +307,7 @@ int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
 
   // For the lower band (0 Hz - 1000 Hz) split at 500 Hz and downsample.
   frequency_band = 3;
-  in_ptr = lp_60;  // [0 - 1000] Hz.
+  in_ptr = lp_60;       // [0 - 1000] Hz.
   hp_out_ptr = hp_120;  // [500 - 1000] Hz.
   lp_out_ptr = lp_120;  // [0 - 500] Hz.
   SplitFilter(in_ptr, length, &self->upper_state[frequency_band],
@@ -309,7 +319,7 @@ int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
 
   // For the lower band (0 Hz - 500 Hz) split at 250 Hz and downsample.
   frequency_band = 4;
-  in_ptr = lp_120;  // [0 - 500] Hz.
+  in_ptr = lp_120;     // [0 - 500] Hz.
   hp_out_ptr = hp_60;  // [250 - 500] Hz.
   lp_out_ptr = lp_60;  // [0 - 250] Hz.
   SplitFilter(in_ptr, length, &self->upper_state[frequency_band],

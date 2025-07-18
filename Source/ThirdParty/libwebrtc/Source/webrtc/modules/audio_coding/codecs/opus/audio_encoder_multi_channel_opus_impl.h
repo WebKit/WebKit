@@ -60,8 +60,8 @@ class AudioEncoderMultiChannelOpusImpl final : public AudioEncoder {
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         rtc::ArrayView<const int16_t> audio,
-                         rtc::Buffer* encoded) override;
+                         ArrayView<const int16_t> audio,
+                         Buffer* encoded) override;
 
  private:
   static std::optional<AudioEncoderMultiChannelOpusConfig> SdpToConfig(

@@ -72,9 +72,7 @@ public:
     static WKRetainPtr<WKTypeRef> deserializeWK(WebCore::SerializedScriptValue&);
 #endif
 
-#if PLATFORM(COCOA)
     static JSRetainPtr<JSGlobalContextRef> deserializationContext();
-#endif
 
 #if USE(GLIB)
     static JSCContext* sharedJSCContext();

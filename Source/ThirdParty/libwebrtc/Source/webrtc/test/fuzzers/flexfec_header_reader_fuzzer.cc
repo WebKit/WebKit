@@ -9,6 +9,9 @@
  */
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
 #include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -22,7 +25,7 @@ using ReceivedFecPacket = ForwardErrorCorrection::ReceivedFecPacket;
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   ReceivedFecPacket packet;
-  packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  packet.pkt = webrtc::scoped_refptr<Packet>(new Packet());
   const size_t packet_size =
       std::min(size, static_cast<size_t>(IP_PACKET_SIZE));
   packet.pkt->data.SetSize(packet_size);

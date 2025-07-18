@@ -42,9 +42,8 @@ public:
     SVGImageElement& imageElement() const;
     Ref<SVGImageElement> protectedImageElement() const;
 
-    RenderImageResource& imageResource() { return *m_imageResource; }
-    const RenderImageResource& imageResource() const { return *m_imageResource; }
-    CheckedRef<RenderImageResource> checkedImageResource() const;
+    RenderImageResource& imageResource() { return m_imageResource; }
+    const RenderImageResource& imageResource() const { return m_imageResource; }
 
     bool updateImageViewport();
 
@@ -82,7 +81,7 @@ private:
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 
     FloatRect m_objectBoundingBox;
-    std::unique_ptr<RenderImageResource> m_imageResource;
+    const UniqueRef<RenderImageResource> m_imageResource;
     RefPtr<ImageBuffer> m_bufferedForeground;
 };
 

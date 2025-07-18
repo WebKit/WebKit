@@ -11,12 +11,18 @@
 #ifndef VIDEO_ENCODER_BITRATE_ADJUSTER_H_
 #define VIDEO_ENCODER_BITRATE_ADJUSTER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
+#include "absl/container/inlined_vector.h"
 #include "api/field_trials_view.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
-#include "api/video/encoded_image.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "system_wrappers/include/clock.h"
 #include "video/encoder_overshoot_detector.h"

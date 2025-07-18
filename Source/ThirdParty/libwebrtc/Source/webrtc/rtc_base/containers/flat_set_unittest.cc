@@ -12,7 +12,6 @@
 
 #include "rtc_base/containers/flat_set.h"
 
-#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
@@ -100,7 +99,7 @@ TEST(FlatSet, CopySwap) {
 }
 
 TEST(FlatSet, UsingTransparentCompare) {
-  using ExplicitInt = webrtc::MoveOnlyInt;
+  using ExplicitInt = MoveOnlyInt;
   flat_set<ExplicitInt> s;
   const auto& s1 = s;
   int x = 0;

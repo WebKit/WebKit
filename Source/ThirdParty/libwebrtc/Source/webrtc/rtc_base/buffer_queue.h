@@ -21,7 +21,7 @@
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 
-namespace rtc {
+namespace webrtc {
 
 class BufferQueue final {
  public:
@@ -58,13 +58,21 @@ class BufferQueue final {
   }
 
  private:
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
   const size_t capacity_;
   const size_t default_size_;
   std::deque<Buffer*> queue_ RTC_GUARDED_BY(sequence_checker_);
   std::vector<Buffer*> free_list_ RTC_GUARDED_BY(sequence_checker_);
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::BufferQueue;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_BUFFER_QUEUE_H_

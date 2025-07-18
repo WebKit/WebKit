@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation. Test timed out
-NOTRUN Verifies that beforematch is only fired on elements targeted by a text fragment when there is both a text fragment and an element fragment.
-NOTRUN Verifies that the beforematch event bubbles with scroll to text fragment.
+PASS Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation.
+PASS Verifies that beforematch is only fired on elements targeted by a text fragment when there is both a text fragment and an element fragment.
+PASS Verifies that the beforematch event bubbles with scroll to text fragment.
 

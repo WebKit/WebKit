@@ -22,6 +22,7 @@
 #include "config.h"
 #include "HTMLFrameOwnerElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -115,9 +116,9 @@ void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
         contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
 }
 
-bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLFrameOwnerElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return m_contentFrame && HTMLElement::isKeyboardFocusable(event);
+    return m_contentFrame && HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
 Document* HTMLFrameOwnerElement::getSVGDocument() const

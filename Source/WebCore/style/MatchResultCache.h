@@ -43,7 +43,7 @@ struct CachedMatchResult {
 };
 
 class MatchResultCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MatchResultCache);
 public:
     MatchResultCache();
     ~MatchResultCache();

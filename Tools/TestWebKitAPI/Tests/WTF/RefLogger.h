@@ -31,7 +31,7 @@
 namespace TestWebKitAPI {
 
 struct RefLogger {
-    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED(RefLogger);
 
     RefLogger(const char* name);
     void ref() const;

@@ -1372,7 +1372,10 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
     CGImagePixelReader snapshotReaderExpected { expected.get() };
     CGImagePixelReader snapshotReaderActual { actual.get() };
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
     auto scale = UIScreen.mainScreen.scale;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (int x = 0; x < frame.size.width * scale; ++x) {
         for (int y = 0; y < frame.size.height * scale; ++y)

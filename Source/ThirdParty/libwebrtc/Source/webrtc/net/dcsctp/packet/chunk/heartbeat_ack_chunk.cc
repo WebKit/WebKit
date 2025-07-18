@@ -37,7 +37,7 @@ namespace dcsctp {
 constexpr int HeartbeatAckChunk::kType;
 
 std::optional<HeartbeatAckChunk> HeartbeatAckChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -52,7 +52,7 @@ std::optional<HeartbeatAckChunk> HeartbeatAckChunk::Parse(
 }
 
 void HeartbeatAckChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> parameters = parameters_.data();
+  webrtc::ArrayView<const uint8_t> parameters = parameters_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, parameters.size());
   writer.CopyToVariableData(parameters);
 }

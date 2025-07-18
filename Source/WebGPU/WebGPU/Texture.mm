@@ -2112,7 +2112,7 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
         return MTLPixelFormatASTC_12x12_LDR;
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return MTLPixelFormatASTC_12x12_sRGB;
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if !PLATFORM(WATCHOS)
     case WGPUTextureFormat_BC1RGBAUnorm:
         return MTLPixelFormatBC1_RGBA;
     case WGPUTextureFormat_BC1RGBAUnormSrgb:

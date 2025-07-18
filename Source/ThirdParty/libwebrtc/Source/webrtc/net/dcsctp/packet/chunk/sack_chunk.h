@@ -54,14 +54,14 @@ class SackChunk : public Chunk, public TLVTrait<SackChunkConfig> {
         a_rwnd_(a_rwnd),
         gap_ack_blocks_(std::move(gap_ack_blocks)),
         duplicate_tsns_(std::move(duplicate_tsns)) {}
-  static std::optional<SackChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<SackChunk> Parse(webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
   TSN cumulative_tsn_ack() const { return cumulative_tsn_ack_; }
   uint32_t a_rwnd() const { return a_rwnd_; }
-  rtc::ArrayView<const GapAckBlock> gap_ack_blocks() const {
+  webrtc::ArrayView<const GapAckBlock> gap_ack_blocks() const {
     return gap_ack_blocks_;
   }
   const std::set<TSN>& duplicate_tsns() const { return duplicate_tsns_; }

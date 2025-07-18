@@ -30,7 +30,7 @@
 namespace WTF {
 
 class CompilationScope final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompilationScope);
 public:
     CompilationScope()
         : m_oldValue(Thread::exchangeIsCompilationThread(true))

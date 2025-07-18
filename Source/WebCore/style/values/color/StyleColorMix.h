@@ -41,7 +41,7 @@ namespace Style {
 struct ColorResolutionState;
 
 struct ColorMix {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
 
     struct Component {
         using Percentage = Style::Percentage<CSS::Range{0, 100}>;

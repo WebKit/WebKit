@@ -69,15 +69,14 @@ SecurityOrigin* MediaKeySystemRequest::topLevelDocumentOrigin() const
 
 void MediaKeySystemRequest::start()
 {
-    RefPtr context = scriptExecutionContext();
-    ASSERT(context);
-    if (!context) {
+    RefPtr document = this->document();
+    ASSERT(document);
+    if (!document) {
         deny();
         return;
     }
 
-    auto& document = downcast<Document>(*context);
-    auto* controller = MediaKeySystemController::from(document.page());
+    auto* controller = MediaKeySystemController::from(document->protectedPage().get());
     if (!controller) {
         deny();
         return;
@@ -99,20 +98,24 @@ void MediaKeySystemRequest::allow(String&& mediaKeysHashSalt)
 
 void MediaKeySystemRequest::deny(const String& message)
 {
-    if (!scriptExecutionContext() || !m_promise)
+    if (!scriptExecutionContext())
+        return;
+
+    RefPtr promise = m_promise;
+    if (!promise)
         return;
 
     ExceptionCode code = ExceptionCode::NotSupportedError;
     if (!message.isEmpty())
-        m_promise->reject(code, message);
+        promise->reject(code, message);
     else
-        m_promise->reject(code);
+        promise->reject(code);
 }
 
 void MediaKeySystemRequest::stop()
 {
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    if (auto* controller = MediaKeySystemController::from(document.page()))
+    Ref document = *this->document();
+    if (auto* controller = MediaKeySystemController::from(document->protectedPage().get()))
         controller->cancelMediaKeySystemRequest(*this);
 }
 

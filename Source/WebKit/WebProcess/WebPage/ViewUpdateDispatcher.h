@@ -62,7 +62,7 @@ private:
     void dispatchVisibleContentRectUpdate();
 
     struct UpdateData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UpdateData);
         UpdateData(const VisibleContentRectUpdateInfo& info, MonotonicTime timestamp)
             : visibleContentRectUpdateInfo(info)
             , oldestTimestamp(timestamp) { }

@@ -16,7 +16,7 @@
 #include <pthread.h>
 #endif
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 #if defined(ABSL_HAVE_THREAD_LOCAL)
@@ -79,4 +79,4 @@ void ScopedYieldPolicy::YieldExecution() {
     current->YieldExecution();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

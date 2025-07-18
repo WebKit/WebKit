@@ -145,6 +145,13 @@
                                GLeglClientBufferEXT clientBuffer, GLbitfield flags);               \
     /* GL_EXT_float_blend */                                                                       \
     /* GL_EXT_frag_depth */                                                                        \
+    /* GL_EXT_fragment_shading_rate */                                                             \
+    void framebufferShadingRate(GLenum target, GLenum attachment, GLuint texture, GLint baseLayer, \
+                                GLsizei numLayers, GLsizei texelWidth, GLsizei texelHeight);       \
+    void getFragmentShadingRates(GLsizei samples, GLsizei maxCount, GLsizei *count,                \
+                                 GLenum *shadingRates);                                            \
+    /* GL_EXT_fragment_shading_rate_attachment */                                                  \
+    /* GL_EXT_fragment_shading_rate_primitive */                                                   \
     /* GL_EXT_geometry_shader */                                                                   \
     /* GL_EXT_gpu_shader5 */                                                                       \
     /* GL_EXT_instanced_arrays */                                                                  \

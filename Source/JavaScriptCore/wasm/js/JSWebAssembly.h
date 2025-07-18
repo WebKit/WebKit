@@ -50,9 +50,9 @@ public:
     DECLARE_INFO;
 
     JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&);
-    static JSValue instantiate(JSGlobalObject*, JSPromise*, const Identifier&, JSValue);
+    static JSValue instantiate(JSGlobalObject*, JSPromise*, RefPtr<SourceProvider>&&, const Identifier&, JSValue);
 
-    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*);
+    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*, RefPtr<SourceProvider>&&);
 
 private:
     JSWebAssembly(VM&, Structure*);

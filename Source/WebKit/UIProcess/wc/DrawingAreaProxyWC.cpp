@@ -47,7 +47,7 @@ Ref<DrawingAreaProxyWC> DrawingAreaProxyWC::create(WebPageProxy& page, WebProces
 }
 
 DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
-    : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy, webProcessProxy)
+    : DrawingAreaProxy(webPageProxy, webProcessProxy)
 {
 }
 

@@ -10,6 +10,8 @@
 
 #include "rtc_base/memory_usage.h"
 
+#include <cstdint>
+
 #if defined(WEBRTC_LINUX)
 #include <unistd.h>
 
@@ -29,7 +31,7 @@
 
 #include "rtc_base/logging.h"
 
-namespace rtc {
+namespace webrtc {
 
 int64_t GetProcessResidentSizeBytes() {
 #if defined(WEBRTC_LINUX)
@@ -82,4 +84,4 @@ int64_t GetProcessResidentSizeBytes() {
 #endif
 }
 
-}  // namespace rtc
+}  // namespace webrtc

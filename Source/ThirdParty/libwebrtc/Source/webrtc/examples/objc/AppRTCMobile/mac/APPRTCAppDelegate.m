@@ -26,10 +26,8 @@
   RTCInitializeSSL();
   NSScreen* screen = [NSScreen mainScreen];
   NSRect visibleRect = [screen visibleFrame];
-  NSRect windowRect = NSMakeRect(NSMidX(visibleRect),
-                                 NSMidY(visibleRect),
-                                 1320,
-                                 1140);
+  NSRect windowRect =
+      NSMakeRect(NSMidX(visibleRect), NSMidY(visibleRect), 1320, 1140);
   NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
   _window = [[NSWindow alloc] initWithContentRect:windowRect
                                         styleMask:styleMask
@@ -52,4 +50,3 @@
 }
 
 @end
-

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "XPathEvaluator.h"
 
+#include "ExceptionOr.h"
 #include "NativeXPathNSResolver.h"
 #include "XPathExpression.h"
 #include "XPathResult.h"

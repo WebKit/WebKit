@@ -26,15 +26,15 @@ namespace webrtc {
 
 class AsyncDnsResolverResultImpl : public AsyncDnsResolverResult {
  public:
-  bool GetResolvedAddress(int family, rtc::SocketAddress* addr) const override;
+  bool GetResolvedAddress(int family, SocketAddress* addr) const override;
   // Returns error from resolver.
   int GetError() const override;
 
  private:
   friend class AsyncDnsResolver;
   RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
-  rtc::SocketAddress addr_ RTC_GUARDED_BY(sequence_checker_);
-  std::vector<rtc::IPAddress> addresses_ RTC_GUARDED_BY(sequence_checker_);
+  SocketAddress addr_ RTC_GUARDED_BY(sequence_checker_);
+  std::vector<IPAddress> addresses_ RTC_GUARDED_BY(sequence_checker_);
   int error_ RTC_GUARDED_BY(sequence_checker_);
 };
 
@@ -43,10 +43,10 @@ class RTC_EXPORT AsyncDnsResolver : public AsyncDnsResolverInterface {
   AsyncDnsResolver();
   ~AsyncDnsResolver();
   // Start address resolution of the hostname in `addr`.
-  void Start(const rtc::SocketAddress& addr,
+  void Start(const SocketAddress& addr,
              absl::AnyInvocable<void()> callback) override;
   // Start address resolution of the hostname in `addr` matching `family`.
-  void Start(const rtc::SocketAddress& addr,
+  void Start(const SocketAddress& addr,
              int family,
              absl::AnyInvocable<void()> callback) override;
   const AsyncDnsResolverResult& result() const override;
@@ -54,7 +54,7 @@ class RTC_EXPORT AsyncDnsResolver : public AsyncDnsResolverInterface {
  private:
   class State;
   ScopedTaskSafety safety_;          // To check for client going away
-  rtc::scoped_refptr<State> state_;  // To check for "this" going away
+  scoped_refptr<State> state_;       // To check for "this" going away
   AsyncDnsResolverResultImpl result_;
   absl::AnyInvocable<void()> callback_;
 };

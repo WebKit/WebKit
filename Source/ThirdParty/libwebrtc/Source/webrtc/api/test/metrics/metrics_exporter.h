@@ -24,7 +24,7 @@ class MetricsExporter {
 
   // Exports specified metrics in a format that depends on the implementation.
   // Returns true if export succeeded, false otherwise.
-  virtual bool Export(rtc::ArrayView<const Metric> metrics) = 0;
+  virtual bool Export(ArrayView<const Metric> metrics) = 0;
 };
 
 }  // namespace test

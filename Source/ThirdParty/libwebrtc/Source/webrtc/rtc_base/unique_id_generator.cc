@@ -18,7 +18,7 @@
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
 
-namespace rtc {
+namespace webrtc {
 
 UniqueRandomIdGenerator::UniqueRandomIdGenerator() : known_ids_() {}
 UniqueRandomIdGenerator::UniqueRandomIdGenerator(ArrayView<uint32_t> known_ids)
@@ -27,7 +27,7 @@ UniqueRandomIdGenerator::UniqueRandomIdGenerator(ArrayView<uint32_t> known_ids)
 UniqueRandomIdGenerator::~UniqueRandomIdGenerator() = default;
 
 uint32_t UniqueRandomIdGenerator::GenerateId() {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
 
   RTC_CHECK_LT(known_ids_.size(), std::numeric_limits<uint32_t>::max() - 1);
   while (true) {
@@ -39,7 +39,7 @@ uint32_t UniqueRandomIdGenerator::GenerateId() {
 }
 
 bool UniqueRandomIdGenerator::AddKnownId(uint32_t value) {
-  webrtc::MutexLock lock(&mutex_);
+  MutexLock lock(&mutex_);
   return known_ids_.insert(value).second;
 }
 
@@ -53,7 +53,7 @@ UniqueStringGenerator::UniqueStringGenerator(ArrayView<std::string> known_ids) {
 UniqueStringGenerator::~UniqueStringGenerator() = default;
 
 std::string UniqueStringGenerator::GenerateString() {
-  return ToString(unique_number_generator_.GenerateNumber());
+  return absl::StrCat(unique_number_generator_.GenerateNumber());
 }
 
 bool UniqueStringGenerator::AddKnownId(absl::string_view value) {
@@ -69,4 +69,4 @@ bool UniqueStringGenerator::AddKnownId(absl::string_view value) {
   return false;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

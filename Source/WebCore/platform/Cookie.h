@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -49,6 +50,7 @@ struct Cookie {
 #ifdef __OBJC__
     WEBCORE_EXPORT Cookie(NSHTTPCookie *);
     WEBCORE_EXPORT operator NSHTTPCookie *() const;
+    WEBCORE_EXPORT RetainPtr<NSHTTPCookie> toProtectedNSHTTPCookie() const;
 #elif USE(SOUP)
     explicit Cookie(SoupCookie*);
     SoupCookie* toSoupCookie() const;

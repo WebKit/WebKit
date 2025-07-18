@@ -26,6 +26,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderView.h"
@@ -106,17 +107,14 @@ const AffineTransform& LegacyRenderSVGForeignObject::localToParentTransform() co
 
 void LegacyRenderSVGForeignObject::updateLogicalWidth()
 {
-    // FIXME: Investigate in size rounding issues
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    setWidth(static_cast<int>(roundf(m_viewport.width())));
+    auto logicalWidth = style().writingMode().isHorizontal() ? m_viewport.width() : m_viewport.height();
+    setLogicalWidth(LayoutUnit { logicalWidth * style().usedZoom() });
 }
 
 RenderBox::LogicalExtentComputedValues LegacyRenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
-    // FIXME: Investigate in size rounding issues
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    // FIXME: Is this correct for vertical writing mode?
-    return { static_cast<int>(roundf(m_viewport.height())), logicalTop, ComputedMarginValues() };
+    auto logicalHeight = style().writingMode().isHorizontal() ? m_viewport.height() : m_viewport.width();
+    return { LayoutUnit { logicalHeight * style().usedZoom() }, logicalTop, ComputedMarginValues() };
 }
 
 void LegacyRenderSVGForeignObject::layout()

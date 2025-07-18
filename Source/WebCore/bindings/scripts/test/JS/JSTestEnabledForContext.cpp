@@ -185,7 +185,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextCons
 
 JSC::GCClient::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestEnabledForContext, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestEnabledForContext, UseCustomHeapCellType::No>(vm, "JSTestEnabledForContext"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEnabledForContext.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEnabledForContext = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEnabledForContext.get(); },

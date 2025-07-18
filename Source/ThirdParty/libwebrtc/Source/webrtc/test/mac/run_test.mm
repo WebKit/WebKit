@@ -13,9 +13,11 @@
 #include "test/run_test.h"
 
 // Converting a C++ function pointer to an Objective-C block.
-typedef void(^TestBlock)();
-TestBlock functionToBlock(void(*function)()) {
-  return [^(void) { function(); } copy];
+typedef void (^TestBlock)();
+TestBlock functionToBlock(void (*function)()) {
+  return [^(void) {
+    function();
+  } copy];
 }
 
 // Class calling the test function on the platform specific thread.
@@ -50,7 +52,7 @@ TestBlock functionToBlock(void(*function)()) {
 namespace webrtc {
 namespace test {
 
-void RunTest(void(*test)()) {
+void RunTest(void (*test)()) {
   @autoreleasepool {
     [NSApplication sharedApplication];
 
@@ -63,8 +65,9 @@ void RunTest(void(*test)()) {
                            withObject:testBlock];
 
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    while ([testRunner running] && [runLoop runMode:NSDefaultRunLoopMode
-                                         beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]])
+    while ([testRunner running] &&
+           [runLoop runMode:NSDefaultRunLoopMode
+                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]])
       ;
   }
 }

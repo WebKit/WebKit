@@ -32,7 +32,7 @@ class PitchEstimator {
   PitchEstimator& operator=(const PitchEstimator&) = delete;
   ~PitchEstimator();
   // Returns the estimated pitch period at 48 kHz.
-  int Estimate(rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer);
+  int Estimate(ArrayView<const float, kBufSize24kHz> pitch_buffer);
 
  private:
   FRIEND_TEST_ALL_PREFIXES(RnnVadTest, PitchSearchWithinTolerance);

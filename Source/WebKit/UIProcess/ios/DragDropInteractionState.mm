@@ -370,9 +370,9 @@ void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeAc
     m_stagedDragSource = std::nullopt;
 }
 
-void DragDropInteractionState::setElementIdentifier(const std::optional<ElementIdentifier>& elementID)
+void DragDropInteractionState::setElementIdentifier(const std::optional<NodeIdentifier>& nodeID)
 {
-    m_elementIdentifier = elementID;
+    m_nodeIdentifier = nodeID;
 }
 
 void DragDropInteractionState::dragAndDropSessionsDidBecomeInactive()

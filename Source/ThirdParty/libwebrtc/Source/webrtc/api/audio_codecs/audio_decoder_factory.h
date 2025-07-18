@@ -45,7 +45,7 @@ class AudioDecoderFactory : public RefCountInterface {
   // Note: Implementations need to be robust against combinations other than
   // one encoder, one decoder getting the same ID; such decoders must still
   // work.
-  virtual absl::Nullable<std::unique_ptr<AudioDecoder>> Create(
+  virtual absl_nullable std::unique_ptr<AudioDecoder> Create(
       const Environment& env,
       const SdpAudioFormat& format,
       std::optional<AudioCodecPairId> codec_pair_id) = 0;

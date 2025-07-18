@@ -1,0 +1,576 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentNameUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentNameAlpha"},
+      {"access": "public", "name": "kIOSurfaceComponentNameRed"},
+      {"access": "public", "name": "kIOSurfaceComponentNameGreen"},
+      {"access": "public", "name": "kIOSurfaceComponentNameBlue"},
+      {"access": "public", "name": "kIOSurfaceComponentNameLuma"},
+      {"access": "public", "name": "kIOSurfaceComponentNameChromaRed"},
+      {"access": "public", "name": "kIOSurfaceComponentNameChromaBlue"}
+     ],
+     "name": "IOSurfaceComponentName"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentRangeUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeFullRange"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeVideoRange"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeWideRange"}
+     ],
+     "name": "IOSurfaceComponentRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentTypeUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeUnsignedInteger"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeSignedInteger"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeFloat"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeSignedNormalized"}
+     ],
+     "name": "IOSurfaceComponentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceLockReadOnly"},
+      {"access": "public", "name": "kIOSurfaceLockAvoidSync"}
+     ],
+     "name": "IOSurfaceLockOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerFlagNoFootprint"}
+     ],
+     "name": "IOSurfaceMemoryLedgerFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagDefault"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagNetwork"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagMedia"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagGraphics"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagNeural"}
+     ],
+     "name": "IOSurfaceMemoryLedgerTags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfacePurgeableNonVolatile"},
+      {"access": "public", "name": "kIOSurfacePurgeableVolatile"},
+      {"access": "public", "name": "kIOSurfacePurgeableEmpty"},
+      {"access": "public", "name": "kIOSurfacePurgeableKeepCurrent"}
+     ],
+     "name": "IOSurfacePurgeabilityState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceSubsamplingUnknown"},
+      {"access": "public", "name": "kIOSurfaceSubsamplingNone"},
+      {"access": "public", "name": "kIOSurfaceSubsampling422"},
+      {"access": "public", "name": "kIOSurfaceSubsampling420"},
+      {"access": "public", "name": "kIOSurfaceSubsampling411"}
+     ],
+     "name": "IOSurfaceSubsampling"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceDefaultCache"},
+      {"access": "public", "name": "kIOSurfaceInhibitCache"},
+      {"access": "public", "name": "kIOSurfaceWriteThruCache"},
+      {"access": "public", "name": "kIOSurfaceCopybackCache"},
+      {"access": "public", "name": "kIOSurfaceWriteCombineCache"},
+      {"access": "public", "name": "kIOSurfaceCopybackInnerCache"}
+     ],
+     "name": "enum (unnamed at IOSurfaceTypes.h:431)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMapCacheShift"},
+      {"access": "public", "name": "kIOSurfaceMapDefaultCache"},
+      {"access": "public", "name": "kIOSurfaceMapInhibitCache"},
+      {"access": "public", "name": "kIOSurfaceMapWriteThruCache"},
+      {"access": "public", "name": "kIOSurfaceMapCopybackCache"},
+      {"access": "public", "name": "kIOSurfaceMapWriteCombineCache"},
+      {"access": "public", "name": "kIOSurfaceMapCopybackInnerCache"}
+     ],
+     "name": "enum (unnamed at IOSurfaceTypes.h:531)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceAlignProperty"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceAllowsPixelSizeCasting"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCopyAllValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCopyValue"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCreate"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCreateMachPort"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceDecrementUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBaseAddress"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBaseAddressOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBitDepthOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBitOffsetOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerElementOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerRowOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementHeightOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementWidthOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetHeight"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetHeightOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetID"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetNameOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetNumberOfComponentsOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPlaneCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPropertyAlignment"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPropertyMaximum"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetRangeOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetSeed"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetSubsampling"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetTypeID"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetTypeOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetWidthOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceIncrementUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceIsInUse"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLock"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLookup"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLookupFromMachPort"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyAllocSizeKey"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyCacheMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyHeight"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPixelSizeCastingAllowed"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBase"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneInfo"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceRemoveAllValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceRemoveValue"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetOwnershipIdentity"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetPurgeable"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetValue"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceUnlock"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceCacheMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceColorSpace"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceContentHeadroom"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceICCProfile"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceIsGlobal"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePixelSizeCastingAllowed"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBase"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBitsPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentBitDepths"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentBitOffsets"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentNames"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentRanges"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentTypes"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneInfo"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceSubsampling"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceWidth"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithProperties:"},
+      {"access": "public", "name": "lockWithOptions:seed:"},
+      {"access": "public", "name": "unlockWithOptions:seed:"},
+      {"access": "public", "name": "widthOfPlaneAtIndex:"},
+      {"access": "public", "name": "heightOfPlaneAtIndex:"},
+      {"access": "public", "name": "bytesPerRowOfPlaneAtIndex:"},
+      {"access": "public", "name": "bytesPerElementOfPlaneAtIndex:"},
+      {"access": "public", "name": "elementWidthOfPlaneAtIndex:"},
+      {"access": "public", "name": "elementHeightOfPlaneAtIndex:"},
+      {"access": "public", "name": "baseAddressOfPlaneAtIndex:"},
+      {"access": "public", "name": "setAttachment:forKey:"},
+      {"access": "public", "name": "attachmentForKey:"},
+      {"access": "public", "name": "removeAttachmentForKey:"},
+      {"access": "public", "name": "setAllAttachments:"},
+      {"access": "public", "name": "allAttachments"},
+      {"access": "public", "name": "removeAllAttachments"},
+      {"access": "public", "name": "incrementUseCount"},
+      {"access": "public", "name": "decrementUseCount"},
+      {"access": "public", "introduced": "11", "name": "setPurgeable:oldState:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "IOSurface",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocationSize", "name": "allocationSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseAddress", "name": "baseAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelFormat", "name": "pixelFormat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytesPerRow", "name": "bytesPerRow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytesPerElement", "name": "bytesPerElement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementWidth", "name": "elementWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementHeight", "name": "elementHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "surfaceID", "introduced": "18", "name": "surfaceID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seed", "name": "seed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "planeCount", "name": "planeCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInUse", "name": "inUse"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localUseCount", "name": "localUseCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsPixelSizeCasting", "name": "allowsPixelSizeCasting"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "IOSurfaceComponentName"},
+    {"access": "public", "name": "IOSurfaceComponentRange"},
+    {"access": "public", "name": "IOSurfaceComponentType"},
+    {"access": "public", "name": "IOSurfaceID"},
+    {"access": "public", "name": "IOSurfaceLockOptions"},
+    {"access": "public", "name": "IOSurfaceMemoryLedgerFlags"},
+    {"access": "public", "name": "IOSurfaceMemoryLedgerTags"},
+    {"access": "public", "name": "IOSurfacePropertyKey"},
+    {"access": "public", "name": "IOSurfacePurgeabilityState"},
+    {"access": "public", "name": "IOSurfaceRef"},
+    {"access": "public", "name": "IOSurfaceSubsampling"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentNameUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentNameAlpha"},
+      {"access": "public", "name": "kIOSurfaceComponentNameRed"},
+      {"access": "public", "name": "kIOSurfaceComponentNameGreen"},
+      {"access": "public", "name": "kIOSurfaceComponentNameBlue"},
+      {"access": "public", "name": "kIOSurfaceComponentNameLuma"},
+      {"access": "public", "name": "kIOSurfaceComponentNameChromaRed"},
+      {"access": "public", "name": "kIOSurfaceComponentNameChromaBlue"}
+     ],
+     "name": "IOSurfaceComponentName"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentRangeUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeFullRange"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeVideoRange"},
+      {"access": "public", "name": "kIOSurfaceComponentRangeWideRange"}
+     ],
+     "name": "IOSurfaceComponentRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceComponentTypeUnknown"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeUnsignedInteger"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeSignedInteger"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeFloat"},
+      {"access": "public", "name": "kIOSurfaceComponentTypeSignedNormalized"}
+     ],
+     "name": "IOSurfaceComponentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceLockReadOnly"},
+      {"access": "public", "name": "kIOSurfaceLockAvoidSync"}
+     ],
+     "name": "IOSurfaceLockOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerFlagNoFootprint"}
+     ],
+     "name": "IOSurfaceMemoryLedgerFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagDefault"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagNetwork"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagMedia"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagGraphics"},
+      {"access": "public", "name": "kIOSurfaceMemoryLedgerTagNeural"}
+     ],
+     "name": "IOSurfaceMemoryLedgerTags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfacePurgeableNonVolatile"},
+      {"access": "public", "name": "kIOSurfacePurgeableVolatile"},
+      {"access": "public", "name": "kIOSurfacePurgeableEmpty"},
+      {"access": "public", "name": "kIOSurfacePurgeableKeepCurrent"}
+     ],
+     "name": "IOSurfacePurgeabilityState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceSubsamplingUnknown"},
+      {"access": "public", "name": "kIOSurfaceSubsamplingNone"},
+      {"access": "public", "name": "kIOSurfaceSubsampling422"},
+      {"access": "public", "name": "kIOSurfaceSubsampling420"},
+      {"access": "public", "name": "kIOSurfaceSubsampling411"}
+     ],
+     "name": "IOSurfaceSubsampling"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceDefaultCache"},
+      {"access": "public", "name": "kIOSurfaceInhibitCache"},
+      {"access": "public", "name": "kIOSurfaceWriteThruCache"},
+      {"access": "public", "name": "kIOSurfaceCopybackCache"},
+      {"access": "public", "name": "kIOSurfaceWriteCombineCache"},
+      {"access": "public", "name": "kIOSurfaceCopybackInnerCache"}
+     ],
+     "name": "enum (unnamed at IOSurfaceTypes.h:431)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kIOSurfaceMapCacheShift"},
+      {"access": "public", "name": "kIOSurfaceMapDefaultCache"},
+      {"access": "public", "name": "kIOSurfaceMapInhibitCache"},
+      {"access": "public", "name": "kIOSurfaceMapWriteThruCache"},
+      {"access": "public", "name": "kIOSurfaceMapCopybackCache"},
+      {"access": "public", "name": "kIOSurfaceMapWriteCombineCache"},
+      {"access": "public", "name": "kIOSurfaceMapCopybackInnerCache"}
+     ],
+     "name": "enum (unnamed at IOSurfaceTypes.h:531)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceAlignProperty"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceAllowsPixelSizeCasting"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCopyAllValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCopyValue"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCreate"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceCreateMachPort"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceDecrementUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBaseAddress"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBaseAddressOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBitDepthOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBitOffsetOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerElementOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetBytesPerRowOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementHeightOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetElementWidthOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetHeight"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetHeightOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetID"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetNameOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetNumberOfComponentsOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPlaneCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPropertyAlignment"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetPropertyMaximum"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetRangeOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetSeed"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetSubsampling"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetTypeID"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetTypeOfComponentOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceGetWidthOfPlane"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceIncrementUseCount"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceIsInUse"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLock"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLookup"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceLookupFromMachPort"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyAllocSizeKey"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyCacheMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyHeight"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPixelSizeCastingAllowed"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBase"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneInfo"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyPlaneWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_IOSurfacePropertyKeyWidth"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceRemoveAllValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceRemoveValue"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetOwnershipIdentity"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetPurgeable"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetValue"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceSetValues"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_IOSurfaceUnlock"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceAllocSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceCacheMode"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceColorSpace"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceContentHeadroom"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceICCProfile"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceIsGlobal"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceName"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePixelFormat"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePixelSizeCastingAllowed"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBase"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBitsPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBytesPerElement"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneBytesPerRow"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentBitDepths"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentBitOffsets"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentNames"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentRanges"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneComponentTypes"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneElementHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneElementWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneHeight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneInfo"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneOffset"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneSize"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfacePlaneWidth"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceSubsampling"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kIOSurfaceWidth"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithProperties:"},
+      {"access": "public", "name": "lockWithOptions:seed:"},
+      {"access": "public", "name": "unlockWithOptions:seed:"},
+      {"access": "public", "name": "widthOfPlaneAtIndex:"},
+      {"access": "public", "name": "heightOfPlaneAtIndex:"},
+      {"access": "public", "name": "bytesPerRowOfPlaneAtIndex:"},
+      {"access": "public", "name": "bytesPerElementOfPlaneAtIndex:"},
+      {"access": "public", "name": "elementWidthOfPlaneAtIndex:"},
+      {"access": "public", "name": "elementHeightOfPlaneAtIndex:"},
+      {"access": "public", "name": "baseAddressOfPlaneAtIndex:"},
+      {"access": "public", "name": "setAttachment:forKey:"},
+      {"access": "public", "name": "attachmentForKey:"},
+      {"access": "public", "name": "removeAttachmentForKey:"},
+      {"access": "public", "name": "setAllAttachments:"},
+      {"access": "public", "name": "allAttachments"},
+      {"access": "public", "name": "removeAllAttachments"},
+      {"access": "public", "name": "incrementUseCount"},
+      {"access": "public", "name": "decrementUseCount"},
+      {"access": "public", "introduced": "11", "name": "setPurgeable:oldState:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "package", "linkage": "exported", "name": "_impl"}
+     ],
+     "linkage": "exported",
+     "name": "IOSurface",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocationSize", "name": "allocationSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseAddress", "name": "baseAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelFormat", "name": "pixelFormat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytesPerRow", "name": "bytesPerRow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytesPerElement", "name": "bytesPerElement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementWidth", "name": "elementWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementHeight", "name": "elementHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "surfaceID", "introduced": "18", "name": "surfaceID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seed", "name": "seed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "planeCount", "name": "planeCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInUse", "name": "inUse"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localUseCount", "name": "localUseCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsPixelSizeCasting", "name": "allowsPixelSizeCasting"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "IOSurfaceComponentName"},
+    {"access": "public", "name": "IOSurfaceComponentRange"},
+    {"access": "public", "name": "IOSurfaceComponentType"},
+    {"access": "public", "name": "IOSurfaceID"},
+    {"access": "public", "name": "IOSurfaceLockOptions"},
+    {"access": "public", "name": "IOSurfaceMemoryLedgerFlags"},
+    {"access": "public", "name": "IOSurfaceMemoryLedgerTags"},
+    {"access": "public", "name": "IOSurfacePropertyKey"},
+    {"access": "public", "name": "IOSurfacePurgeabilityState"},
+    {"access": "public", "name": "IOSurfaceRef"},
+    {"access": "public", "name": "IOSurfaceSubsampling"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

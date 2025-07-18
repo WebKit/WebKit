@@ -80,6 +80,7 @@ class XServerPixelBuffer {
   XImage* x_shm_image_ = nullptr;
   Pixmap shm_pixmap_ = 0;
   GC shm_gc_ = nullptr;
+  bool xshm_attached_ = false;
   bool xshm_get_image_succeeded_ = false;
   std::vector<uint8_t> icc_profile_;
 };

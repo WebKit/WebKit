@@ -50,8 +50,6 @@ cocoa/UISideCompositingScope.mm
 cocoa/UserMediaCaptureUIDelegate.mm
 ios/IOSMouseEventTestHarness.mm
 
-Tests/mac/CustomSwipeViewTests.mm
-
 Tests/WTF/cocoa/URLExtras.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
@@ -199,10 +197,12 @@ Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm
 Tests/WebKitCocoa/NSFileManagerExtras.mm
 Tests/WebKitCocoa/Navigation.mm
 Tests/WebKitCocoa/NavigationAction.mm
+Tests/WebKitCocoa/NavigationSwipeTests.mm
 Tests/WebKitCocoa/NetworkProcess.mm
 Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm
 Tests/WebKitCocoa/NoPauseWhenSwitchingTabs.mm
 Tests/WebKitCocoa/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm
+Tests/WebKitCocoa/NodeInfo.mm
 Tests/WebKitCocoa/NotificationAPI.mm
 Tests/WebKitCocoa/NowPlaying.mm
 Tests/WebKitCocoa/NowPlayingControlsTests.mm
@@ -402,4 +402,5 @@ Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm
 Tests/WebKitCocoa/iOSMouseSupport.mm
 Tests/WebKitCocoa/iOSStylusSupport.mm
 
+Tests/WebKitCocoa/UI/ElementFullscreen.mm
 Tests/WebKitCocoa/UI/VideoPresentationMode.mm

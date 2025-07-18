@@ -137,7 +137,8 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
-} SWIFT_SHARED_REFERENCE(refQueue, derefQueue);
+// FIXME: remove @safe once rdar://151039766 lands
+} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refQueue, derefQueue);
 
 } // namespace WebGPU
 

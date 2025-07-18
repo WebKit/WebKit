@@ -97,7 +97,7 @@ unsigned MultiGamepadProvider::indexForNewlyConnectedDevice()
     ASSERT(index <= m_gamepadVector.size());
 
     if (index == m_gamepadVector.size())
-        m_gamepadVector.resize(index + 1);
+        m_gamepadVector.grow(index + 1);
 
     return index;
 }

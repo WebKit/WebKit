@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -282,7 +282,7 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
     if (m_origin) {
         const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
         for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
-            auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<UChar>);
+            auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
             if (origin == "*"_s || origin == protectedOrigin()->toString())
                 return true;
         }
@@ -311,6 +311,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
             auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
             contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
         }
+
         if (!this->isAllowedByContentSecurityPolicy(request, client)) {
             contentSecurityPolicy = nullptr;
             handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
@@ -325,12 +326,15 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
             handler(WTFMove(result.error()));
             return;
         }
+
         if (!weakThis)
             return handler({ ResourceError { ResourceError::Type::Cancellation }});
-        if (result.value().results.summary.blockedLoad) {
+
+        if (result.value().results.shouldBlock()) {
             handler(weakThis->accessControlErrorForValidationHandler("Blocked by content extension"_s));
             return;
         }
+
         weakThis->continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(result.value().request), WTFMove(handler));
     });
 #else

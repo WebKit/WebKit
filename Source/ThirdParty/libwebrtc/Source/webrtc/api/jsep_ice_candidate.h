@@ -32,19 +32,17 @@ class RTC_EXPORT JsepIceCandidate : public IceCandidateInterface {
   JsepIceCandidate(const std::string& sdp_mid, int sdp_mline_index);
   JsepIceCandidate(const std::string& sdp_mid,
                    int sdp_mline_index,
-                   const cricket::Candidate& candidate);
+                   const Candidate& candidate);
   JsepIceCandidate(const JsepIceCandidate&) = delete;
   JsepIceCandidate& operator=(const JsepIceCandidate&) = delete;
   ~JsepIceCandidate() override;
   // `err` may be null.
   bool Initialize(const std::string& sdp, SdpParseError* err);
-  void SetCandidate(const cricket::Candidate& candidate) {
-    candidate_ = candidate;
-  }
+  void SetCandidate(const Candidate& candidate) { candidate_ = candidate; }
 
   std::string sdp_mid() const override;
   int sdp_mline_index() const override;
-  const cricket::Candidate& candidate() const override;
+  const Candidate& candidate() const override;
 
   std::string server_url() const override;
 
@@ -53,7 +51,7 @@ class RTC_EXPORT JsepIceCandidate : public IceCandidateInterface {
  private:
   std::string sdp_mid_;
   int sdp_mline_index_;
-  cricket::Candidate candidate_;
+  Candidate candidate_;
 };
 
 // Implementation of IceCandidateCollection which stores JsepIceCandidates.
@@ -79,7 +77,7 @@ class JsepCandidateCollection : public IceCandidateCollection {
   // Removes the candidate that has a matching address and protocol.
   //
   // Returns the number of candidates that were removed.
-  size_t remove(const cricket::Candidate& candidate);
+  size_t remove(const Candidate& candidate);
 
  private:
   std::vector<std::unique_ptr<JsepIceCandidate>> candidates_;

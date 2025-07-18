@@ -1,18 +1,18 @@
 
 PASS __Secure: Non-secure origin: Should not set 'Path=/;'
-FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "0.023894435577849094"
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "bar2"
 PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;'
 PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;'
 PASS __Secure: Non-secure origin: Should not set 'Path=/;domain=localhost'
-FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;domain=localhost' assert_equals: expected (undefined) undefined but got (string) "0.4041873598930722"
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;domain=localhost' assert_equals: expected (undefined) undefined but got (string) "bar6"
 PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;domain=localhost'
 PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;domain=localhost'
 PASS __Secure: Non-secure origin: Should not set 'Path=/;MaxAge=10'
-FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "0.16476032691404519"
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar10"
 PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;MaxAge=10'
 PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;MaxAge=10'
 PASS __Secure: Non-secure origin: Should not set 'Path=/;HttpOnly'
-FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "0.7251950854736183"
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar14"
 PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;HttpOnly'
 PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;HttpOnly'
 

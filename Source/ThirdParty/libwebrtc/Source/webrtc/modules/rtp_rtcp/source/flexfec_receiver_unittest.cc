@@ -10,13 +10,21 @@
 
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <list>
 #include <memory>
+#include <utility>
 
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/mocks/mock_recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/rtp_rtcp/source/ulpfec_receiver.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

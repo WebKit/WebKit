@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
-#include <functional>
+#include <optional>
 
-#include "api/task_queue/pending_task_safety_flag.h"
-#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/video_coding/timing/timing.h"
 #include "system_wrappers/include/clock.h"
 

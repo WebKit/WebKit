@@ -335,7 +335,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterCallWith::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedGetterCallWith, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedGetterCallWith, UseCustomHeapCellType::No>(vm, "JSTestNamedGetterCallWith"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedGetterCallWith.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedGetterCallWith = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedGetterCallWith.get(); },

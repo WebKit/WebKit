@@ -62,7 +62,7 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyInstanceType, StructureFlags), info());
 }
 
-JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord)
+JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord, RefPtr<SourceProvider>&& sourceProvider)
     : Base(vm, structure)
     , m_vm(&vm)
     , m_jsModule(module, WriteBarrierEarlyInit)
@@ -70,6 +70,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     , m_tables(module->module().moduleInformation().tableCount())
     , m_softStackLimit(vm.softStackLimit())
     , m_module(module->module())
+    , m_sourceProvider(sourceProvider)
     , m_globalsToMark(m_module.get().moduleInformation().globalCount())
     , m_globalsToBinding(m_module.get().moduleInformation().globalCount())
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
@@ -276,7 +277,7 @@ size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info
 }
 
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode)
+JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode, RefPtr<SourceProvider>&& provider)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -301,7 +302,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
         return nullptr;
     }
 
-    auto* jsInstance = new (NotNull, cell) JSWebAssemblyInstance(vm, instanceStructure, jsModule, moduleRecord);
+    auto* jsInstance = new (NotNull, cell) JSWebAssemblyInstance(vm, instanceStructure, jsModule, moduleRecord, WTFMove(provider));
     jsInstance->finishCreation(vm);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 

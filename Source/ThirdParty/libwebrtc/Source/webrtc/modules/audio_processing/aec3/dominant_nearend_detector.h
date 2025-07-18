@@ -29,13 +29,13 @@ class DominantNearendDetector : public NearendDetector {
   bool IsNearendState() const override { return nearend_state_; }
 
   // Updates the state selection based on latest spectral estimates.
-  void Update(rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-                  nearend_spectrum,
-              rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-                  residual_echo_spectrum,
-              rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-                  comfort_noise_spectrum,
-              bool initial_state) override;
+  void Update(
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+          residual_echo_spectrum,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+          comfort_noise_spectrum,
+      bool initial_state) override;
 
  private:
   const float enr_threshold_;

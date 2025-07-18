@@ -63,11 +63,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_s0;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_s0;
     }
 
 private:
-    const RetainPtr<CVPixelBufferRef>& m_s0;
+    SUPPRESS_FORWARD_DECL_MEMBER const RetainPtr<CVPixelBufferRef>& m_s0;
 };
 #endif
 

@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x141
+  RenderBlock {HTML} at (0,0) size 800x142
+    RenderBody {BODY} at (8,13) size 784x121
+      RenderBlock {PRE} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 164x42
+          text run at (0,0) width 118: "table width=50%"
+          text run at (117,0) width 1: " "
+          text run at (0,14) width 94: "  td nowrap "
+          text run at (93,14) width 1: " "
+          text run at (0,28) width 164: "    input width=100% "
+          text run at (163,28) width 1: " "
+      RenderTable {TABLE} at (0,55) size 392x46 [bgcolor=#C0C0C0] [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 390x44
+          RenderTableRow {TR} at (0,2) size 390x40
+            RenderTableCell {TD} at (2,2) size 386x40 [bgcolor=#AABBFF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (9,9) size 381x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,100) size 784x21
+        RenderBR {BR} at (0,0) size 0x19
+layer at (27,83) size 368x14
+  RenderBlock {DIV} at (6,3) size 369x15

@@ -36,6 +36,7 @@
 #include "InsertLineBreakCommand.h"
 #include "NodeName.h"
 #include "NodeTraversal.h"
+#include "PositionInlines.h"
 #include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"

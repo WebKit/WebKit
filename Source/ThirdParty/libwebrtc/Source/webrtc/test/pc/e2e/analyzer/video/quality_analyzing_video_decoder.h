@@ -86,11 +86,11 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
                                              uint32_t timestamp_ms);
 
    private:
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> GetDummyFrameBuffer();
+    scoped_refptr<webrtc::VideoFrameBuffer> GetDummyFrameBuffer();
 
     QualityAnalyzingVideoDecoder* const decoder_;
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
+    scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
 
     Mutex callback_mutex_;
     DecodedImageCallback* delegate_callback_ RTC_GUARDED_BY(callback_mutex_);

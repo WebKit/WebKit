@@ -27,7 +27,7 @@
 #include "WorkerInspectorController.h"
 
 #include "CommandLineAPIHost.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "InspectorController.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
@@ -69,7 +69,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorController);
 
 WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope& globalScope)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
-    , m_injectedScriptManager(makeUnique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
+    , m_injectedScriptManager(makeUniqueRef<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
@@ -139,7 +139,7 @@ void WorkerInspectorController::connectFrontend(bool isAutomaticInspection, bool
 
     m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
-    m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend();
 
     updateServiceWorkerPageFrontendCount();
 }
@@ -179,11 +179,11 @@ void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
 
     // When a service worker is loaded in a Page, we need to report its inspector frontend count
     // up to the page's inspectorController so the client knows about it.
-    auto inspectorClient = serviceWorkerPage->inspectorController().inspectorClient();
-    if (!inspectorClient)
+    auto inspectorBackendClient = serviceWorkerPage->inspectorController().inspectorBackendClient();
+    if (!inspectorBackendClient)
         return;
 
-    inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
+    inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
 }
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
@@ -195,9 +195,9 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        *m_injectedScriptManager,
-        m_frontendRouter.get(),
-        m_backendDispatcher.get(),
+        m_injectedScriptManager,
+        m_frontendRouter,
+        m_backendDispatcher,
     };
 
     WebAgentContext webContext = {

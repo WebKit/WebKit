@@ -38,59 +38,71 @@ class PositionedLayoutConstraints {
 public:
     PositionedLayoutConstraints(const RenderBox&, LogicalBoxAxis selfAxis);
     PositionedLayoutConstraints(const RenderBox&, const RenderStyle& selfStyleOverride, LogicalBoxAxis selfAxis);
+    void computeInsets();
 
-    // Logical top or left wrt containing block.
-    Style::MarginEdge marginBefore() const { return m_marginBefore; }
-    // Logical bottom or right wrt containing block.
-    Style::MarginEdge marginAfter() const { return m_marginAfter; }
-    Style::InsetEdge insetBefore() const { return m_insetBefore; }
-    Style::InsetEdge insetAfter() const { return m_insetAfter; }
-    const RenderBoxModelObject& container() const { return *m_container; }
-    const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
-    LayoutUnit bordersPlusPadding() const { return m_bordersPlusPadding; }
-    const StyleSelfAlignmentData& alignment() const { return m_alignment; }
-    LogicalBoxAxis containingAxis() const { return m_containingAxis; }
+    /*** The following are available without calling computeInsets(). ***/
+
+    LayoutUnit containingSize() const { return m_containingRange.size(); }
+    LayoutUnit containingInlineSize() const { return m_containingInlineSize; }
     BoxAxis physicalAxis() const { return m_physicalAxis; }
+    LogicalBoxAxis containingAxis() const { return m_containingAxis; }
     WritingMode containingWritingMode() const { return m_containingWritingMode; }
+    const RenderBoxModelObject& container() const { return *m_container; }
 
     bool needsAnchor() const;
+    const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
+    const StyleSelfAlignmentData& alignment() const { return m_alignment; }
+    ItemPosition resolveAlignmentValue() const; // Convert auto/normal as necessary.
+    bool alignmentAppliesStretch(ItemPosition normalAlignment) const;
+
     bool isOrthogonal() const { return m_containingWritingMode.isOrthogonal(m_writingMode); }
     bool isBlockOpposing() const { return m_containingWritingMode.isBlockOpposing(m_writingMode); }
     bool isBlockFlipped() const { return m_containingWritingMode.isBlockFlipped(); }
     bool startIsBefore() const { return m_containingAxis == LogicalBoxAxis::Block || m_containingWritingMode.isLogicalLeftInlineStart(); }
-    bool containingCoordsAreFlipped() const;
 
-    LayoutUnit containingSize() const { return m_containingRange.size(); }
-    LayoutUnit marginBeforeValue() const { return Style::evaluateMinimum(m_marginBefore, m_marginPercentageBasis); }
-    LayoutUnit marginAfterValue() const { return Style::evaluateMinimum(m_marginAfter, m_marginPercentageBasis); }
+    /*** For everything else, you MUST call computeInsets() after the constructor. ***/
+
+    // Before = logical top or left wrt containing block (i.e. the lower-coordinate side).
+    // After = logical bottom or right wrt containing block (i.e. the higher-coordinate side).
+    LayoutUnit bordersPlusPadding() const { return m_bordersPlusPadding; }
+    Style::MarginEdge marginBefore() const { return m_marginBefore; }
+    Style::MarginEdge marginAfter() const { return m_marginAfter; }
+    Style::InsetEdge insetBefore() const { return m_insetBefore; }
+    Style::InsetEdge insetAfter() const { return m_insetAfter; }
+    LayoutUnit marginBeforeValue() const { return Style::evaluateMinimum(m_marginBefore, m_containingInlineSize); }
+    LayoutUnit marginAfterValue() const { return Style::evaluateMinimum(m_marginAfter, m_containingInlineSize); }
     LayoutUnit insetBeforeValue() const { return Style::evaluateMinimum(m_insetBefore, containingSize()); }
     LayoutUnit insetAfterValue() const { return Style::evaluateMinimum(m_insetAfter, containingSize()); }
+
     LayoutUnit insetModifiedContainingSize() const { return m_insetModifiedContainingRange.size(); }
     LayoutUnit availableContentSpace() const { return insetModifiedContainingSize() - marginBeforeValue() - bordersPlusPadding() - marginAfterValue(); } // This may be negative.
 
     void resolvePosition(RenderBox::LogicalExtentComputedValues&) const;
     LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
-    ItemPosition resolveAlignmentValue() const;
-    bool alignmentAppliesStretch(ItemPosition normalAlignment) const;
 
     void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
-    void fixupLogicalTopPosition(RenderBox::LogicalExtentComputedValues&, const RenderBox& renderer) const;
+    void fixupLogicalTopPosition(RenderBox::LogicalExtentComputedValues&) const;
 
 private:
-    void captureInsets(const RenderBox&, const LogicalBoxAxis selfAxis);
-    void captureGridArea(const RenderBox&);
-    void captureAnchorGeometry(const RenderBox&);
+    bool containingCoordsAreFlipped() const;
+
+    void captureInsets();
+    void captureGridArea();
+    void captureAnchorGeometry();
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
 
-    void computeStaticPosition(const RenderBox&, LogicalBoxAxis selfAxis);
-    void computeInlineStaticDistance(const RenderBox&);
-    void computeBlockStaticDistance(const RenderBox&);
+    bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
+    void computeStaticPosition();
+    void computeInlineStaticDistance();
+    void computeBlockStaticDistance();
 
+    CheckedRef<const RenderBox> m_renderer;
     CheckedPtr<const RenderBoxModelObject> m_container;
     const WritingMode m_containingWritingMode;
     const WritingMode m_writingMode;
-    const BoxAxis m_physicalAxis;
+    const LogicalBoxAxis m_selfAxis;
     const LogicalBoxAxis m_containingAxis;
+    const BoxAxis m_physicalAxis;
     const RenderStyle& m_style;
     StyleSelfAlignmentData m_alignment;
     const CheckedPtr<const RenderBoxModelObject> m_defaultAnchorBox; // Only set if needed.
@@ -99,7 +111,7 @@ private:
     LayoutRange m_containingRange;
     LayoutRange m_originalContainingRange;
     LayoutRange m_insetModifiedContainingRange;
-    LayoutUnit m_marginPercentageBasis;
+    LayoutUnit m_containingInlineSize;
 
     LayoutUnit m_bordersPlusPadding;
     Style::MarginEdge m_marginBefore;

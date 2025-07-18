@@ -24,7 +24,7 @@ class RepeatingTask {
                 TimeDelta first_delay,
                 absl::AnyInvocable<TimeDelta()> task,
                 Clock* clock,
-                rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag,
+                scoped_refptr<PendingTaskSafetyFlag> alive_flag,
                 const Location& location);
   RepeatingTask(RepeatingTask&&) = default;
   RepeatingTask& operator=(RepeatingTask&&) = delete;
@@ -40,18 +40,16 @@ class RepeatingTask {
   absl::AnyInvocable<TimeDelta()> task_;
   // This is always finite.
   Timestamp next_run_time_ RTC_GUARDED_BY(task_queue_);
-  rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag_
-      RTC_GUARDED_BY(task_queue_);
+  scoped_refptr<PendingTaskSafetyFlag> alive_flag_ RTC_GUARDED_BY(task_queue_);
 };
 
-RepeatingTask::RepeatingTask(
-    TaskQueueBase* task_queue,
-    TaskQueueBase::DelayPrecision precision,
-    TimeDelta first_delay,
-    absl::AnyInvocable<TimeDelta()> task,
-    Clock* clock,
-    rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag,
-    const Location& location)
+RepeatingTask::RepeatingTask(TaskQueueBase* task_queue,
+                             TaskQueueBase::DelayPrecision precision,
+                             TimeDelta first_delay,
+                             absl::AnyInvocable<TimeDelta()> task,
+                             Clock* clock,
+                             scoped_refptr<PendingTaskSafetyFlag> alive_flag,
+                             const Location& location)
     : task_queue_(task_queue),
       precision_(precision),
       clock_(clock),

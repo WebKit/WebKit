@@ -154,7 +154,15 @@ template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
     return OSObjectPtr<T> { typename OSObjectPtr<T>::AdoptOSObject { }, WTFMove(ptr) };
 }
 
+template<typename T, typename U>
+ALWAYS_INLINE void lazyInitialize(const OSObjectPtr<T>& ptr, OSObjectPtr<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<OSObjectPtr<T>&>(ptr) = std::move(obj);
+}
+
 } // namespace WTF
 
 using WTF::OSObjectPtr;
 using WTF::adoptOSObject;
+using WTF::lazyInitialize;

@@ -94,7 +94,7 @@ private:
 
 template<typename T>
 class DeferrableRefCounted : public DeferrableRefCountedBase {
-    WTF_MAKE_NONCOPYABLE(DeferrableRefCounted); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DeferrableRefCounted); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DeferrableRefCounted);
 public:
     void deref() const
     {

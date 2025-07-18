@@ -621,7 +621,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     if (RefPtr networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
         if (CheckedPtr sessionCocoa = networkDataTask->networkSession()) {
-            CheckedPtr storageSession = sessionCocoa->protectedNetworkProcess()->storageSession(sessionCocoa->sessionID());
+            CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             RetainPtr firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(firstPartyForCookies.get(), request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
@@ -674,7 +674,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     if (RefPtr networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
         if (CheckedPtr sessionCocoa = networkDataTask->networkSession()) {
-            CheckedPtr storageSession = sessionCocoa->protectedNetworkProcess()->storageSession(sessionCocoa->sessionID());
+            CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
@@ -729,8 +729,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
     if (auto downloadID = _sessionWrapper->downloadMap.getOptional(task.taskIdentifier)) {
         if (CheckedPtr session = _session.get()) {
-            if (RefPtr download = session->protectedNetworkProcess()->checkedDownloadManager()->download(*downloadID))
-                return downcast<NetworkSessionCocoa>(session->protectedNetworkProcess()->networkSession(download->sessionID()));
+            if (RefPtr download = session->networkProcess().checkedDownloadManager()->download(*downloadID))
+                return downcast<NetworkSessionCocoa>(session->networkProcess().networkSession(download->sessionID()));
         }
         return nullptr;
     }
@@ -743,7 +743,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
 void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChallenge& challenge)
 {
-    if (auto auditData = protectedNetworkProcess()->sourceApplicationAuditData())
+    if (auto auditData = networkProcess().sourceApplicationAuditData())
         SecTrustSetClientAuditToken(RetainPtr { challenge.protectedNSURLAuthenticationChallenge().get().protectionSpace.serverTrust }.get(), auditData.get());
 
 }
@@ -948,7 +948,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             return;
         if (!_session)
             return;
-        RefPtr download = CheckedPtr { _session.get() }->protectedNetworkProcess()->checkedDownloadManager()->download(*downloadID);
+        RefPtr download = CheckedPtr { _session.get() }->networkProcess().checkedDownloadManager()->download(*downloadID);
         if (!download)
             return;
 
@@ -1164,7 +1164,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!downloadID)
         return;
     if (CheckedPtr session = _session.get()) {
-        if (RefPtr download = session->protectedNetworkProcess()->checkedDownloadManager()->download(*downloadID))
+        if (RefPtr download = session->networkProcess().checkedDownloadManager()->download(*downloadID))
             download->didFinish();
     }
 }
@@ -1179,7 +1179,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!downloadID)
         return;
     if (CheckedPtr session = _session.get()) {
-        if (RefPtr download = session->protectedNetworkProcess()->checkedDownloadManager()->download(*downloadID))
+        if (RefPtr download = session->networkProcess().checkedDownloadManager()->download(*downloadID))
             download->didReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
     }
 }
@@ -1195,7 +1195,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
     auto downloadID = *networkDataTask->pendingDownloadID();
-    CheckedRef downloadManager = sessionCocoa->protectedNetworkProcess()->downloadManager();
+    CheckedRef downloadManager = sessionCocoa->networkProcess().downloadManager();
     Ref download = WebKit::Download::create(downloadManager, downloadID, downloadTask, *sessionCocoa, networkDataTask->suggestedFilename());
     networkDataTask->transferSandboxExtensionToDownload(download);
     ASSERT(FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
@@ -1880,11 +1880,11 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
     if (!networkDataTask) {
         if (CheckedPtr webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier).get()) {
             auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTFMove(completionHandler));
-            protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
+            networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
             return;
         }
         if (auto downloadID = sessionWrapper.downloadMap.getOptional(taskIdentifier)) {
-            if (RefPtr download = protectedNetworkProcess()->checkedDownloadManager()->download(*downloadID)) {
+            if (RefPtr download = networkProcess().checkedDownloadManager()->download(*downloadID)) {
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 // Received an authentication challenge for a download being resumed.
                 download->didReceiveChallenge(authenticationChallenge, WTFMove(completionHandler));
@@ -2270,7 +2270,7 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
         ", sourceWebRegistrableDomain: "_s,
         pcm.sourceSite().registrableDomain.string(),
         ", version: 3"_s);
-    protectedNetworkProcess()->broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
+    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
 }
 
 void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<String>& hosts)

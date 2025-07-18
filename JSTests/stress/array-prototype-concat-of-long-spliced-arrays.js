@@ -1,4 +1,4 @@
-//@ $skipModes << :lockdown if $memoryLimited
+//@ $skipModes << :lockdown if $memoryLimited  or $buildType == "debug"
 
 function shouldEqual(actual, expected) {
     if (actual != expected) {

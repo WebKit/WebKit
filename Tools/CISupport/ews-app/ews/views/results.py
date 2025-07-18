@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -64,21 +64,21 @@ class Results(View):
             return HttpResponse('Incomplete data.')
 
         change_id = data['change_id']
-        pr_id = data.get('pr_id', None) or -1
+        pr_number = data.get('pr_number', data.get('pr_id')) or -1
         pr_project = data.get('pr_project', '') or ''
 
-        _log.info('Build {}, change_id: {}, build_id: {}, pr_id: {}, pr_project: {}'.format(data['status'], change_id, data['build_id'], pr_id, pr_project))
+        _log.info(f'Build {data["status"]}, change_id: {change_id}, build_id: {data["build_id"]}, pr_number: {pr_number}, pr_project: {pr_project}')
         if not change_id:
             _log.error('change_id missing: {}'.format(change_id))
             return HttpResponse('Invalid change id: {}.'.format(change_id))
 
         rc = Build.save_build(change_id=change_id, hostname=data['hostname'], build_id=data['build_id'], builder_id=data['builder_id'], builder_name=data['builder_name'],
-                   builder_display_name=data['builder_display_name'], number=data['number'], result=data['result'],
-                   state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_id=pr_id, pr_project=pr_project)
-        if rc == SUCCESS and pr_id and pr_id != -1:
+                              builder_display_name=data['builder_display_name'], number=data['number'], result=data['result'],
+                              state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_number=pr_number, pr_project=pr_project)
+        if rc == SUCCESS and pr_number and pr_number != -1:
             # For PR builds leave comment on PR
             allow_new_comment = (data['status'] == 'started' and data['builder_display_name'] in ['services', 'ios-wk2'])
-            GitHubEWS.add_or_update_comment_for_change_id(change_id, pr_id, pr_project, allow_new_comment)
+            GitHubEWS.add_or_update_comment_for_change_id(change_id, pr_number, pr_project, allow_new_comment)
         return HttpResponse('Saved data for change: {}.\n'.format(change_id))
 
     def step_event(self, data):

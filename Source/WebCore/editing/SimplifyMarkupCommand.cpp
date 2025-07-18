@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimplifyMarkupCommand.h"
 
+#include "ContainerNodeInlines.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "RenderInline.h"

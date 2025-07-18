@@ -10,9 +10,16 @@
 
 #include "modules/video_coding/rtp_generic_ref_finder.h"
 
+#include <cstddef>
+#include <memory>
 #include <utility>
 
+#include "api/video/encoded_frame.h"
 #include "api/video/video_codec_constants.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

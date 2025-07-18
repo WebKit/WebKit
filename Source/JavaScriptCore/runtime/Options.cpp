@@ -83,7 +83,7 @@ namespace OptionsHelper {
 struct Metadata {
     // This struct does not need to be TZONE_ALLOCATED because it is only used for transient memory
     // during Options initialization, and will not be re-allocated thereafter. See comment above.
-    WTF_MAKE_FAST_ALLOCATED(Metadata);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Metadata);
 public:
     OptionsStorage defaults;
 };

@@ -57,7 +57,7 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
                                size_t num_temporal_layers) = 0;
   virtual std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
       uint32_t ssrc,
-      rtc::ArrayView<const uint16_t> sequence_numbers) const = 0;
+      ArrayView<const uint16_t> sequence_numbers) const = 0;
 
   // Implements FecControllerOverride.
   void SetFecAllowed(bool fec_allowed) override = 0;

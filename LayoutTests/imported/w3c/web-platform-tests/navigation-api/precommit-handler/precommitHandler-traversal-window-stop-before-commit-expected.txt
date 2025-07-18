@@ -1,0 +1,3 @@
+
+FAIL  precommitHandler traverse with window.stop() before commit assert_equals: expected "#2" but got "#1"
+

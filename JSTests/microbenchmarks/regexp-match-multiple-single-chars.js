@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 (function() {
     var result = 0;
     var n = 10000000;

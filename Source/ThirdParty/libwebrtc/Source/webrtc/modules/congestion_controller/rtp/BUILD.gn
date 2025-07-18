@@ -41,6 +41,7 @@ rtc_library("transport_feedback") {
   deps = [
     "../..:module_api_public",
     "../../../api:sequence_checker",
+    "../../../api/transport:ecn_marking",
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
     "../../../api/units:time_delta",
@@ -54,7 +55,6 @@ rtc_library("transport_feedback") {
     "../../../rtc_base/synchronization:mutex",
     "../../../rtc_base/system:no_unique_address",
     "../../../system_wrappers",
-    "../../../system_wrappers:field_trial",
     "../../rtp_rtcp:ntp_time_util",
     "../../rtp_rtcp:rtp_rtcp_format",
     "//third_party/abseil-cpp/absl/algorithm:container",

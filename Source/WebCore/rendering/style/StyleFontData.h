@@ -35,7 +35,7 @@ class TextStream;
 namespace WebCore {
 
 class StyleFontData : public RefCounted<StyleFontData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleFontData);
 public:
     static Ref<StyleFontData> create() { return adoptRef(*new StyleFontData); }
     Ref<StyleFontData> copy() const;

@@ -30,5 +30,5 @@ messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy {
     void WillCommitLayerTree(WebKit::TransactionID transactionID)
     void CommitLayerTreeNotTriggered(WebKit::TransactionID nextCommitTransactionID)
     void CommitLayerTree(Vector<std::pair<WebKit::RemoteLayerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction>> transactions, HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>> handlesMap) CanDispatchOutOfOrder
-    void AsyncSetLayerContents(WebCore::PlatformLayerIdentifier layer, WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier identifier)
+    void AsyncSetLayerContents(WebCore::PlatformLayerIdentifier layer, WebKit::RemoteLayerBackingStoreProperties properties)
 }

@@ -277,7 +277,7 @@ void PushDatabase::create(const String& path, CreationHandler&& completionHandle
     auto queue = WorkQueue::create("PushDatabase I/O Thread"_s);
     queue->dispatch([queue, path = crossThreadCopy(path), completionHandler = WTFMove(completionHandler)]() mutable {
         auto database = openAndMigrateDatabase(path);
-        WorkQueue::protectedMain()->dispatch([queue = WTFMove(queue), database = WTFMove(database), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([queue = WTFMove(queue), database = WTFMove(database), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!database) {
                 completionHandler(nullptr);
                 return;
@@ -396,7 +396,7 @@ template <class T, class U>
 static void completeOnMainQueue(CompletionHandler<void(T)>&& completionHandler, U&& result)
 {
     ASSERT(!RunLoop::isMain());
-    WorkQueue::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(std::forward<U>(result))]() mutable {
+    WorkQueue::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(std::forward<U>(result))]() mutable {
         completionHandler(WTFMove(result));
     });
 }

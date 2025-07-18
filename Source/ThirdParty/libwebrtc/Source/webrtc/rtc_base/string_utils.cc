@@ -10,9 +10,14 @@
 
 #include "rtc_base/string_utils.h"
 
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+#include <string>
+
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 size_t strcpyn(char* buffer, size_t buflen, absl::string_view source) {
   if (buflen <= 0)
@@ -34,4 +39,4 @@ std::string ToHex(const int i) {
   return std::string(buffer);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

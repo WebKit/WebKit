@@ -145,7 +145,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 
-    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork) -> (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
+    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
 
     SetLoginStatus(WebCore::RegistrableDomain domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus> lastAuthentication) -> ()
     IsLoggedIn(WebCore::RegistrableDomain domain) -> (bool result)

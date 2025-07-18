@@ -34,7 +34,7 @@ class IntRect;
 struct DataListSuggestion;
 
 class DataListSuggestionsClient : public CanMakeCheckedPtr<DataListSuggestionsClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DataListSuggestionsClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DataListSuggestionsClient);
 public:
     virtual ~DataListSuggestionsClient() = default;

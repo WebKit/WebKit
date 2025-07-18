@@ -34,7 +34,7 @@
 namespace WTR {
 
 class InjectedBundlePage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InjectedBundlePage);
 public:
     InjectedBundlePage(WKBundlePageRef);
     ~InjectedBundlePage();

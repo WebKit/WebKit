@@ -79,13 +79,13 @@ public:
     void releaseNativeImages();
 
 private:
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Gradient>> m_gradients;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>> m_decomposedGlyphs;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Gradient>> m_gradients;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>> m_decomposedGlyphs;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
 };
 
 } // namespace WebKit

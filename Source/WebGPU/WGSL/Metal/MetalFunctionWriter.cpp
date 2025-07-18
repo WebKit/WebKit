@@ -82,6 +82,23 @@ namespace Metal {
 #define DEFINE_VOLATILE_BOUND_HELPER(__name, __capitalizedName, __lowerBound, __upperBound, ...) \
     DEFINE_VOLATILE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __name, __lowerBound, __upperBound, __VA_ARGS__)
 
+#define DEFINE_VOLATILE_HELPER_RENAMED(__name, __capitalizedName) \
+    DEFINE_HELPER(__capitalizedName, \
+    template <typename T>\n \
+    auto __wgsl##__capitalizedName(T value)\n \
+    {\n \
+        if constexpr(__wgslMetalAppleGPUFamily < 9) { \n\
+            volatile auto result = __name(value);\n \
+            return result;\n \
+        } else { \n\
+            auto result = __name(value);\n \
+            return result;\n \
+        }\n \
+    }\n)
+
+#define DEFINE_VOLATILE_HELPER(__name, __capitalizedName) \
+    DEFINE_VOLATILE_HELPER_RENAMED(__name, __capitalizedName)
+
 struct HelperGenerator {
     StringBuilder& m_output;
 
@@ -98,6 +115,10 @@ DEFINE_BOUND_HELPER_RENAMED(inverseSqrt, InverseSqrt, rsqrt, 0, numeric_limits<T
 DEFINE_VOLATILE_BOUND_HELPER(log, Log, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(log2, Log2, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(sqrt, Sqrt, 0, numeric_limits<T>::infinity())
+DEFINE_VOLATILE_HELPER(pack_float_to_snorm2x16, PackFloatToSnorm2x16)
+DEFINE_VOLATILE_HELPER(pack_float_to_unorm2x16, PackFloatToUnorm2x16)
+DEFINE_VOLATILE_HELPER(pack_float_to_snorm4x8, PackFloatToSnorm4x8)
+DEFINE_VOLATILE_HELPER(pack_float_to_unorm4x8, PackFloatToUnorm4x8)
 
 };
 
@@ -2199,10 +2220,10 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "log"_s, EMIT_HELPER(Log) },
             { "log2"_s, EMIT_HELPER(Log2) },
             { "modf"_s, NOOP_HELPER(__wgslModf) },
-            { "pack2x16snorm"_s, NOOP_HELPER(pack_float_to_snorm2x16) },
-            { "pack2x16unorm"_s, NOOP_HELPER(pack_float_to_unorm2x16) },
-            { "pack4x8snorm"_s, NOOP_HELPER(pack_float_to_snorm4x8) },
-            { "pack4x8unorm"_s, NOOP_HELPER(pack_float_to_unorm4x8) },
+            { "pack2x16snorm"_s, EMIT_HELPER(PackFloatToSnorm2x16) },
+            { "pack2x16unorm"_s, EMIT_HELPER(PackFloatToUnorm2x16) },
+            { "pack4x8snorm"_s, EMIT_HELPER(PackFloatToSnorm4x8) },
+            { "pack4x8unorm"_s, EMIT_HELPER(PackFloatToUnorm4x8) },
             { "reverseBits"_s, NOOP_HELPER(reverse_bits) },
             { "round"_s, NOOP_HELPER(rint) },
             { "sign"_s, NOOP_HELPER(__wgslSign) },
@@ -2710,11 +2731,11 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         }
         if (isDefault)
             m_body.append('\n', m_indent, "default:"_s);
-        m_body.append("\n#if __wgslMetalAppleGPUFamily >= 9\n{ " DECLARE_FORWARD_PROGRESS "\n#endif\n"_s);
+        m_body.append("\n{ " DECLARE_FORWARD_PROGRESS "\n"_s);
         visit(clause.body);
 
         IndentationScope scope(m_indent);
-        m_body.append('\n', m_indent, "#if __wgslMetalAppleGPUFamily >= 9\n}\n#endif\nbreak;"_s);
+        m_body.append('\n', m_indent, "\n}\nbreak;"_s);
     };
 
     m_body.append("switch ("_s);

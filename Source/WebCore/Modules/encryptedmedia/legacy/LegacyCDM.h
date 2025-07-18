@@ -46,7 +46,7 @@ using CDMSupportsKeySystem = Function<bool(const String&)>;
 using CDMSupportsKeySystemAndMimeType = Function<bool(const String&, const String&)>;
 
 class LegacyCDMClient : public CanMakeCheckedPtr<LegacyCDMClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LegacyCDMClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyCDMClient);
 public:
     virtual ~LegacyCDMClient() = default;

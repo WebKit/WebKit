@@ -35,6 +35,7 @@
 #include "SVGPathConsumer.h"
 #include "SVGPathSource.h"
 #include "SVGPropertyAnimatorFactory.h"
+#include "SVGStringList.h"
 #include "SVGValuePropertyAnimatorImpl.h"
 
 #include <wtf/TZoneMallocInlines.h>

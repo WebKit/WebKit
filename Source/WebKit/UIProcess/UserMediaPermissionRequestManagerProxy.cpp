@@ -107,8 +107,8 @@ Ref<UserMediaPermissionRequestManagerProxy> UserMediaPermissionRequestManagerPro
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
-    , m_rejectionTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
-    , m_watchdogTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
+    , m_rejectionTimer(RunLoop::mainSingleton(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
+    , m_watchdogTimer(RunLoop::mainSingleton(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -324,7 +324,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 static bool doesPageNeedTCCD(const WebPageProxy& page)
 {
     Ref preferences = page.preferences();
-    return (!preferences->captureAudioInGPUProcessEnabled() && !preferences->captureAudioInUIProcessEnabled()) || !preferences->captureVideoInGPUProcessEnabled();
+    return !preferences->captureAudioInGPUProcessEnabled() || !preferences->captureVideoInGPUProcessEnabled();
 }
 #endif
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MarginTypes.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 namespace Layout {
@@ -78,7 +79,7 @@ private:
     const LayoutState& layoutState() const { return m_layoutState; }
     const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
 
-    const LayoutState& m_layoutState;
+    const CheckedRef<const LayoutState> m_layoutState;
     const BlockFormattingState& m_blockFormattingState;
     bool m_inQuirksMode { false };
 };

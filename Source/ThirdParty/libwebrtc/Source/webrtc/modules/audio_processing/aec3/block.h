@@ -58,14 +58,14 @@ class Block {
   }
 
   // Access data via ArrayView.
-  rtc::ArrayView<float, kBlockSize> View(int band, int channel) {
-    return rtc::ArrayView<float, kBlockSize>(&data_[GetIndex(band, channel)],
-                                             kBlockSize);
+  ArrayView<float, kBlockSize> View(int band, int channel) {
+    return ArrayView<float, kBlockSize>(&data_[GetIndex(band, channel)],
+                                        kBlockSize);
   }
 
-  rtc::ArrayView<const float, kBlockSize> View(int band, int channel) const {
-    return rtc::ArrayView<const float, kBlockSize>(
-        &data_[GetIndex(band, channel)], kBlockSize);
+  ArrayView<const float, kBlockSize> View(int band, int channel) const {
+    return ArrayView<const float, kBlockSize>(&data_[GetIndex(band, channel)],
+                                              kBlockSize);
   }
 
   // Lets two Blocks swap audio data.

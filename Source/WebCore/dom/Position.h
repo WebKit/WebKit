@@ -120,7 +120,7 @@ public:
     Node* deprecatedNode() const { return m_anchorNode.get(); }
     RefPtr<Node> protectedDeprecatedNode() const { return m_anchorNode; }
 
-    inline Document* document() const;
+    inline Document* document() const; // Defined in PositionInlines.h.
     inline TreeScope* treeScope() const;
     inline Element* rootEditableElement() const
     {

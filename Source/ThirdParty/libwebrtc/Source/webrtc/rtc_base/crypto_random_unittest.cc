@@ -20,7 +20,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 using ::testing::_;
@@ -169,4 +169,4 @@ TEST(RandomTest, TestSetRandomGenerator) {
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

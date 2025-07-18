@@ -31,11 +31,9 @@
 
 #pragma once
 
-#include "GridPosition.h"
 #include "GridSpan.h"
-#include <wtf/HashMap.h>
+#include "StyleGridTrackSizingDirection.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -43,7 +41,7 @@ namespace WebCore {
 class GridArea {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GridArea);
 public:
-    // HashMap requires a default constuctor.
+    // HashMap requires a default constructor.
     GridArea()
         : columns(GridSpan::indefiniteGridSpan())
         , rows(GridSpan::indefiniteGridSpan())
@@ -56,19 +54,15 @@ public:
     {
     }
 
-    bool operator==(const GridArea& o) const
-    {
-        return columns == o.columns && rows == o.rows;
-    }
+    bool operator==(const GridArea&) const = default;
 
     GridSpan columns;
     GridSpan rows;
-};
 
-struct NamedGridAreaMap {
-    HashMap<String, GridArea> map;
-
-    friend bool operator==(const NamedGridAreaMap&, const NamedGridAreaMap&) = default;
+    const GridSpan& span(Style::GridTrackSizingDirection direction) const
+    {
+        return direction == Style::GridTrackSizingDirection::Columns ? columns : rows;
+    }
 };
 
 } // namespace WebCore

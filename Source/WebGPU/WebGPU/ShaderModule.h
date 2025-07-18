@@ -27,6 +27,7 @@
 
 #import "ASTInterpolateAttribute.h"
 #import "WGSL.h"
+#import <variant>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>

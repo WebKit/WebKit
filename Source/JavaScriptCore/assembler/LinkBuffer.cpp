@@ -467,7 +467,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
-    macroAssembler.padBeforePatch();
+    macroAssembler.label();
 
 #if ENABLE(JIT)
 #if !ENABLE(BRANCH_COMPACTION)

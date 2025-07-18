@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerFileSystemStorageConnection.h"
 
+#include "ExceptionOr.h"
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemSyncAccessHandle.h"
 #include "WorkerGlobalScope.h"

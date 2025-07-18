@@ -80,6 +80,7 @@ public:
     void invalidate();
 
     DDHighlightRef highlight() const { return m_highlight.get(); }
+    RetainPtr<DDHighlightRef> protectedHighlight() const { return m_highlight; }
     const SimpleRange& range() const;
     GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
 

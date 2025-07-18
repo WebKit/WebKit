@@ -74,14 +74,14 @@ internal import WebKit_Internal
         connectionObservationTask = Task {
             let connectSequence = NotificationCenter.default.notifications(named: .GCMouseDidConnect).map { $0.object is GCMouse }
             for await _ in connectSequence {
-                connectedDeviceCount += 1
+                connectedDeviceCount = GCMouse.mice().count
             }
         }
 
         disconnectionObservationTask = Task {
             let disconnectSequence = NotificationCenter.default.notifications(named: .GCMouseDidDisconnect).map { $0.object is GCMouse }
             for await _ in disconnectSequence {
-                connectedDeviceCount -= 1
+                connectedDeviceCount = GCMouse.mice().count
             }
         }
     }

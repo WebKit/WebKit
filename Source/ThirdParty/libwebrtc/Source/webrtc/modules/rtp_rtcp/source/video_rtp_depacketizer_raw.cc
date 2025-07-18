@@ -19,7 +19,7 @@
 namespace webrtc {
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
-VideoRtpDepacketizerRaw::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
+VideoRtpDepacketizerRaw::Parse(CopyOnWriteBuffer rtp_payload) {
   std::optional<ParsedRtpPayload> parsed(std::in_place);
   parsed->video_payload = std::move(rtp_payload);
   return parsed;

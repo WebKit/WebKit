@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "ImageBufferBackendHandle.h"
 #include "ImageOptions.h"
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/Ref.h>
@@ -68,6 +69,8 @@ public:
 #endif
 
     std::optional<WebCore::ShareableBitmap::Handle> createHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const;
+    std::optional<ImageBufferBackendHandle> createImageBufferBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const;
+
 
 private:
     WebImage(RefPtr<WebCore::ImageBuffer>&&);

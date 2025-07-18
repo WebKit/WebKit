@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  * using the user provided encryption mechanism regardless of whether SRTP is
  * enabled or not.
  */
-- (void)setFrameEncryptor:(rtc::scoped_refptr<webrtc::FrameEncryptorInterface>)frameEncryptor;
+- (void)setFrameEncryptor:(webrtc::scoped_refptr<webrtc::FrameEncryptorInterface>)frameEncryptor;
 
 @end
 

@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/multiple-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-new-navigation-before-commit.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-redirect-options.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-redirect-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-redirect-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-redirect-throws.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-traversal-commit-new-navigation-before-commit.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-traversal-window-stop-before-commit.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-traverse.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-uncancelable.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-window-stop-before-commit.html

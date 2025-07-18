@@ -11,12 +11,16 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_G711_AUDIO_ENCODER_PCM_H_
 #define MODULES_AUDIO_CODING_CODECS_G711_AUDIO_ENCODER_PCM_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <utility>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/units/time_delta.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 
@@ -50,8 +54,8 @@ class AudioEncoderPcm : public AudioEncoder {
   AudioEncoderPcm(const Config& config, int sample_rate_hz);
 
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         rtc::ArrayView<const int16_t> audio,
-                         rtc::Buffer* encoded) override;
+                         ArrayView<const int16_t> audio,
+                         Buffer* encoded) override;
 
   virtual size_t EncodeCall(const int16_t* audio,
                             size_t input_len,

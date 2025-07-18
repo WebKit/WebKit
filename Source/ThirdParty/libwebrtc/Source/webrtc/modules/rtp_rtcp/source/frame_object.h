@@ -11,13 +11,24 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FRAME_OBJECT_H_
 #define MODULES_RTP_RTCP_SOURCE_FRAME_OBJECT_H_
 
+#include <cstdint>
 #include <optional>
+#include <variant>
 #include <vector>
 
-#include "absl/types/variant.h"
+#include "api/rtp_packet_infos.h"
+#include "api/scoped_refptr.h"
+#include "api/video/color_space.h"
 #include "api/video/encoded_frame.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
 #include "api/video/video_frame_metadata.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
 #include "common_video/frame_instrumentation_data.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 
 namespace webrtc {
 
@@ -38,11 +49,11 @@ class RtpFrameObject : public EncodedFrame {
                  VideoContentType content_type,
                  const RTPVideoHeader& video_header,
                  const std::optional<webrtc::ColorSpace>& color_space,
-                 const std::optional<absl::variant<FrameInstrumentationSyncData,
-                                                   FrameInstrumentationData>>&
+                 const std::optional<std::variant<FrameInstrumentationSyncData,
+                                                  FrameInstrumentationData>>&
                      frame_instrumentation_data,
                  RtpPacketInfos packet_infos,
-                 rtc::scoped_refptr<EncodedImageBuffer> image_buffer);
+                 scoped_refptr<EncodedImageBuffer> image_buffer);
 
   ~RtpFrameObject() override;
   uint16_t first_seq_num() const;
@@ -67,7 +78,7 @@ class RtpFrameObject : public EncodedFrame {
 
  private:
   // Reference for mutable access.
-  rtc::scoped_refptr<EncodedImageBuffer> image_buffer_;
+  scoped_refptr<EncodedImageBuffer> image_buffer_;
   RTPVideoHeader rtp_video_header_;
   VideoCodecType codec_type_;
   uint16_t first_seq_num_;

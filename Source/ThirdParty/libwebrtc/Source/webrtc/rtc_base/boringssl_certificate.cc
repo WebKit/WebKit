@@ -10,7 +10,11 @@
 
 #include "rtc_base/boringssl_certificate.h"
 
-#include "absl/strings/string_view.h"
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <string>
+#include <utility>
 
 #if defined(WEBRTC_WIN)
 // Must be included first before openssl headers.
@@ -18,6 +22,7 @@
 #endif                       // WEBRTC_WIN
 
 #include <openssl/asn1.h>
+#include <openssl/base.h>
 #include <openssl/bytestring.h>
 #include <openssl/digest.h>
 #include <openssl/evp.h>
@@ -26,11 +31,8 @@
 #include <openssl/rand.h>
 #include <time.h>
 
-#include <cstring>
-#include <memory>
-#include <utility>
-#include <vector>
-
+#include "absl/strings/string_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
@@ -38,8 +40,10 @@
 #include "rtc_base/openssl_digest.h"
 #include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/openssl_utility.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 // List of OIDs of signature algorithms accepted by WebRTC.
@@ -343,30 +347,23 @@ bool BoringSSLCertificate::GetSignatureDigestAlgorithm(
 }
 
 bool BoringSSLCertificate::ComputeDigest(absl::string_view algorithm,
-                                         unsigned char* digest,
-                                         size_t size,
-                                         size_t* length) const {
-  return ComputeDigest(cert_buffer_.get(), algorithm, digest, size, length);
-}
+                                         Buffer& digest) const {
+  RTC_DCHECK_GT(digest.capacity(), 0);
 
-bool BoringSSLCertificate::ComputeDigest(const CRYPTO_BUFFER* cert_buffer,
-                                         absl::string_view algorithm,
-                                         unsigned char* digest,
-                                         size_t size,
-                                         size_t* length) {
   const EVP_MD* md = nullptr;
   unsigned int n = 0;
   if (!OpenSSLDigest::GetDigestEVP(algorithm, &md)) {
     return false;
   }
-  if (size < static_cast<size_t>(EVP_MD_size(md))) {
+  if (digest.capacity() < static_cast<size_t>(EVP_MD_size(md))) {
     return false;
   }
-  if (!EVP_Digest(CRYPTO_BUFFER_data(cert_buffer),
-                  CRYPTO_BUFFER_len(cert_buffer), digest, &n, md, nullptr)) {
+  if (!EVP_Digest(CRYPTO_BUFFER_data(cert_buffer_.get()),
+                  CRYPTO_BUFFER_len(cert_buffer_.get()), digest.data(), &n, md,
+                  nullptr)) {
     return false;
   }
-  *length = n;
+  digest.SetSize(n);
   return true;
 }
 
@@ -409,4 +406,4 @@ int64_t BoringSSLCertificate::CertificateExpirationTime() const {
   return ret;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

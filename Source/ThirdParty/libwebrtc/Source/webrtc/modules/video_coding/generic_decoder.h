@@ -11,22 +11,31 @@
 #ifndef MODULES_VIDEO_CODING_GENERIC_DECODER_H_
 #define MODULES_VIDEO_CODING_GENERIC_DECODER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <deque>
 #include <optional>
-#include <string>
 #include <utility>
+#include <variant>
 
-#include "absl/types/variant.h"
 #include "api/field_trials_view.h"
+#include "api/rtp_packet_infos.h"
 #include "api/sequence_checker.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_frame.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -53,7 +62,7 @@ struct FrameInfo {
   // ColorSpace is not stored here, as it might be modified by decoders.
   VideoFrameType frame_type;
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       frame_instrumentation_data;
 };
 
@@ -131,8 +140,8 @@ class VCMGenericDecoder {
   int32_t Decode(const EncodedImage& frame,
                  Timestamp now,
                  int64_t render_time_ms,
-                 const std::optional<absl::variant<FrameInstrumentationSyncData,
-                                                   FrameInstrumentationData>>&
+                 const std::optional<std::variant<FrameInstrumentationSyncData,
+                                                  FrameInstrumentationData>>&
                      frame_instrumentation_data);
   VCMDecodedFrameCallback* _callback = nullptr;
   VideoDecoder* const decoder_;

@@ -229,7 +229,7 @@ void RenderMenuList::updateOptionsWidth()
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
             if (auto* optionStyle = option->computedStyleForEditability())
-                optionWidth += minimumValueForLength(optionStyle->textIndent(), 0);
+                optionWidth += Style::evaluate(optionStyle->textIndent().length, 0);
             if (!text.isEmpty()) {
                 const FontCascade& font = style().fontCascade();
                 TextRun run = RenderBlock::constructTextRun(text, style());
@@ -543,9 +543,19 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
     if (!style)
         return menuStyle();
 
-    return PopupMenuStyle(style->visitedDependentColorWithColorFilter(CSSPropertyColor), itemBackgroundColor, style->fontCascade(), style->visibility() == Visibility::Visible,
-        style->display() == DisplayType::None, true, style->textIndent(), style->writingMode().bidiDirection(), isOverride(style->unicodeBidi()),
-        itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor);
+    return PopupMenuStyle(
+        style->visitedDependentColorWithColorFilter(CSSPropertyColor),
+        itemBackgroundColor,
+        style->fontCascade(),
+        element->getAttribute(langAttr),
+        style->visibility() == Visibility::Visible,
+        style->display() == DisplayType::None,
+        true,
+        Style::toPlatform(style->textIndent().length),
+        style->writingMode().bidiDirection(),
+        isOverride(style->unicodeBidi()),
+        itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor
+    );
 }
 
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
@@ -582,13 +592,23 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
 
 PopupMenuStyle RenderMenuList::menuStyle() const
 {
-    const RenderStyle& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
-    IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
-    return PopupMenuStyle(styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor), styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
-        styleToUse.fontCascade(), styleToUse.usedVisibility() == Visibility::Visible, styleToUse.display() == DisplayType::None,
-        style().hasUsedAppearance() && style().usedAppearance() == StyleAppearance::Menulist, styleToUse.textIndent(),
-        style().writingMode().bidiDirection(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
-        PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
+    auto& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
+    auto absBounds = absoluteBoundingBoxRectIgnoringTransforms();
+    return PopupMenuStyle(
+        styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor),
+        styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
+        styleToUse.fontCascade(),
+        nullString(),
+        styleToUse.usedVisibility() == Visibility::Visible,
+        styleToUse.display() == DisplayType::None,
+        style().hasUsedAppearance() && style().usedAppearance() == StyleAppearance::Menulist,
+        Style::toPlatform(styleToUse.textIndent().length),
+        style().writingMode().bidiDirection(),
+        isOverride(style().unicodeBidi()),
+        PopupMenuStyle::DefaultBackgroundColor,
+        PopupMenuStyle::SelectPopup,
+        theme().popupMenuSize(styleToUse, absBounds)
+    );
 }
 
 HostWindow* RenderMenuList::hostWindow() const

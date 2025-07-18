@@ -152,7 +152,7 @@ interface AccessibilityUIElement {
     undefined press();
     undefined syncPress();
     undefined showMenu();
-    undefined dismiss();
+    boolean dismiss();
 
     // Attribute info.
     DOMString allAttributes();

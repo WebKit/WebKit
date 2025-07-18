@@ -46,6 +46,7 @@
 #include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "FrameInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
@@ -57,8 +58,11 @@
 #include "JSExecState.h"
 #include "JSInspectorFrontendHost.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "LocalFrameView.h"
 #include "MouseEvent.h"
 #include "Node.h"
+#include "NodeInlines.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
@@ -443,7 +447,7 @@ void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKil
     if (!m_frontendPage)
         return;
 
-    RefPtr focusedOrMainFrame = m_frontendPage->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = m_frontendPage->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return;
 

@@ -40,22 +40,22 @@ class SpectralFeaturesExtractor {
   // detects silence and computes features. If silence is detected, the output
   // is neither computed nor written.
   bool CheckSilenceComputeFeatures(
-      rtc::ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
-      rtc::ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
-      rtc::ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
-      rtc::ArrayView<float, kNumLowerBands> average,
-      rtc::ArrayView<float, kNumLowerBands> first_derivative,
-      rtc::ArrayView<float, kNumLowerBands> second_derivative,
-      rtc::ArrayView<float, kNumLowerBands> bands_cross_corr,
+      ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
+      ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
+      ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
+      ArrayView<float, kNumLowerBands> average,
+      ArrayView<float, kNumLowerBands> first_derivative,
+      ArrayView<float, kNumLowerBands> second_derivative,
+      ArrayView<float, kNumLowerBands> bands_cross_corr,
       float* variability);
 
  private:
   void ComputeAvgAndDerivatives(
-      rtc::ArrayView<float, kNumLowerBands> average,
-      rtc::ArrayView<float, kNumLowerBands> first_derivative,
-      rtc::ArrayView<float, kNumLowerBands> second_derivative) const;
+      ArrayView<float, kNumLowerBands> average,
+      ArrayView<float, kNumLowerBands> first_derivative,
+      ArrayView<float, kNumLowerBands> second_derivative) const;
   void ComputeNormalizedCepstralCorrelation(
-      rtc::ArrayView<float, kNumLowerBands> bands_cross_corr);
+      ArrayView<float, kNumLowerBands> bands_cross_corr);
   float ComputeVariability() const;
 
   const std::array<float, kFrameSize20ms24kHz / 2> half_window_;

@@ -10,15 +10,33 @@
 #include "modules/audio_processing/aec3/echo_canceller3.h"
 
 #include <algorithm>
+#include <atomic>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "api/audio/echo_control.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/block_delay_buffer.h"
+#include "modules/audio_processing/aec3/block_framer.h"
+#include "modules/audio_processing/aec3/block_processor.h"
+#include "modules/audio_processing/aec3/frame_blocker.h"
 #include "modules/audio_processing/high_pass_filter.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/swap_queue.h"
 
 namespace webrtc {
 
@@ -26,7 +44,7 @@ namespace {
 
 enum class EchoCanceller3ApiCall { kCapture, kRender };
 
-bool DetectSaturation(rtc::ArrayView<const float> y) {
+bool DetectSaturation(ArrayView<const float> y) {
   for (size_t k = 0; k < y.size(); ++k) {
     if (y[k] >= 32700.0f || y[k] <= -32700.0f) {
       return true;
@@ -38,11 +56,12 @@ bool DetectSaturation(rtc::ArrayView<const float> y) {
 // Retrieves a value from a field trial if it is available. If no value is
 // present, the default value is returned. If the retrieved value is beyond the
 // specified limits, the default value is returned instead.
-void RetrieveFieldTrialValue(absl::string_view trial_name,
+void RetrieveFieldTrialValue(const FieldTrialsView& field_trials,
+                             absl::string_view trial_name,
                              float min,
                              float max,
                              float* value_to_update) {
-  const std::string field_trial_str = field_trial::FindFullName(trial_name);
+  const std::string field_trial_str = field_trials.Lookup(trial_name);
 
   FieldTrialParameter<double> field_trial_param(/*key=*/"", *value_to_update);
 
@@ -58,11 +77,12 @@ void RetrieveFieldTrialValue(absl::string_view trial_name,
   }
 }
 
-void RetrieveFieldTrialValue(absl::string_view trial_name,
+void RetrieveFieldTrialValue(const FieldTrialsView& field_trials,
+                             absl::string_view trial_name,
                              int min,
                              int max,
                              int* value_to_update) {
-  const std::string field_trial_str = field_trial::FindFullName(trial_name);
+  const std::string field_trial_str = field_trials.Lookup(trial_name);
 
   FieldTrialParameter<int> field_trial_param(/*key=*/"", *value_to_update);
 
@@ -81,14 +101,14 @@ void RetrieveFieldTrialValue(absl::string_view trial_name,
 void FillSubFrameView(
     AudioBuffer* frame,
     size_t sub_frame_index,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame_view) {
   RTC_DCHECK_GE(1, sub_frame_index);
   RTC_DCHECK_LE(0, sub_frame_index);
   RTC_DCHECK_EQ(frame->num_bands(), sub_frame_view->size());
   RTC_DCHECK_EQ(frame->num_channels(), (*sub_frame_view)[0].size());
   for (size_t band = 0; band < sub_frame_view->size(); ++band) {
     for (size_t channel = 0; channel < (*sub_frame_view)[0].size(); ++channel) {
-      (*sub_frame_view)[band][channel] = rtc::ArrayView<float>(
+      (*sub_frame_view)[band][channel] = ArrayView<float>(
           &frame->split_bands(channel)[band][sub_frame_index * kSubFrameLength],
           kSubFrameLength);
     }
@@ -99,7 +119,7 @@ void FillSubFrameView(
     bool proper_downmix_needed,
     std::vector<std::vector<std::vector<float>>>* frame,
     size_t sub_frame_index,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame_view) {
   RTC_DCHECK_GE(1, sub_frame_index);
   RTC_DCHECK_EQ(frame->size(), sub_frame_view->size());
   const size_t frame_num_channels = (*frame)[0].size();
@@ -127,7 +147,7 @@ void FillSubFrameView(
       }
     }
     for (size_t band = 0; band < frame->size(); ++band) {
-      (*sub_frame_view)[band][/*channel=*/0] = rtc::ArrayView<float>(
+      (*sub_frame_view)[band][/*channel=*/0] = ArrayView<float>(
           &(*frame)[band][/*channel=*/0][sub_frame_index * kSubFrameLength],
           kSubFrameLength);
     }
@@ -135,7 +155,7 @@ void FillSubFrameView(
     RTC_DCHECK_EQ(frame_num_channels, sub_frame_num_channels);
     for (size_t band = 0; band < frame->size(); ++band) {
       for (size_t channel = 0; channel < (*frame)[band].size(); ++channel) {
-        (*sub_frame_view)[band][channel] = rtc::ArrayView<float>(
+        (*sub_frame_view)[band][channel] = ArrayView<float>(
             &(*frame)[band][channel][sub_frame_index * kSubFrameLength],
             kSubFrameLength);
       }
@@ -155,10 +175,9 @@ void ProcessCaptureFrameContent(
     BlockFramer* output_framer,
     BlockProcessor* block_processor,
     Block* linear_output_block,
-    std::vector<std::vector<rtc::ArrayView<float>>>*
-        linear_output_sub_frame_view,
+    std::vector<std::vector<ArrayView<float>>>* linear_output_sub_frame_view,
     Block* capture_block,
-    std::vector<std::vector<rtc::ArrayView<float>>>* capture_sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* capture_sub_frame_view) {
   FillSubFrameView(capture, sub_frame_index, capture_sub_frame_view);
 
   if (linear_output) {
@@ -218,7 +237,7 @@ void BufferRenderFrameContent(
     FrameBlocker* render_blocker,
     BlockProcessor* block_processor,
     Block* block,
-    std::vector<std::vector<rtc::ArrayView<float>>>* sub_frame_view) {
+    std::vector<std::vector<ArrayView<float>>>* sub_frame_view) {
   FillSubFrameView(proper_downmix_needed, render_frame, sub_frame_index,
                    sub_frame_view);
   render_blocker->InsertSubFrameAndExtractBlock(*sub_frame_view, block);
@@ -244,7 +263,7 @@ void CopyBufferIntoFrame(const AudioBuffer& buffer,
   RTC_DCHECK_EQ(AudioBuffer::kSplitBandSize, (*frame)[0][0].size());
   for (size_t band = 0; band < num_bands; ++band) {
     for (size_t channel = 0; channel < num_channels; ++channel) {
-      rtc::ArrayView<const float> buffer_view(
+      ArrayView<const float> buffer_view(
           &buffer.split_bands_const(channel)[band][0],
           AudioBuffer::kSplitBandSize);
       std::copy(buffer_view.begin(), buffer_view.end(),
@@ -256,61 +275,62 @@ void CopyBufferIntoFrame(const AudioBuffer& buffer,
 }  // namespace
 
 // TODO(webrtc:5298): Move this to a separate file.
-EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
+EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config,
+                                  const FieldTrialsView& field_trials) {
   EchoCanceller3Config adjusted_cfg = config;
 
-  if (field_trial::IsEnabled("WebRTC-Aec3StereoContentDetectionKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3StereoContentDetectionKillSwitch")) {
     adjusted_cfg.multi_channel.detect_stereo_content = false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3AntiHowlingMinimizationKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3AntiHowlingMinimizationKillSwitch")) {
     adjusted_cfg.suppressor.high_bands_suppression
         .anti_howling_activation_threshold = 25.f;
     adjusted_cfg.suppressor.high_bands_suppression.anti_howling_gain = 0.01f;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3UseShortConfigChangeDuration")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3UseShortConfigChangeDuration")) {
     adjusted_cfg.filter.config_change_duration_blocks = 10;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3UseZeroInitialStateDuration")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3UseZeroInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = 0.f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3UseDot1SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = .1f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3UseDot2SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = .2f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3UseDot3SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = .3f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3UseDot6SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = .6f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3UseDot9SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = .9f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3Use1Dot2SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = 1.2f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3Use1Dot6SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = 1.6f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3Use2Dot0SecondsInitialStateDuration")) {
     adjusted_cfg.filter.initial_state_seconds = 2.0f;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3HighPassFilterEchoReference")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3HighPassFilterEchoReference")) {
     adjusted_cfg.filter.high_pass_filter_echo_reference = true;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3EchoSaturationDetectionKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3EchoSaturationDetectionKillSwitch")) {
     adjusted_cfg.ep_strength.echo_can_saturate = false;
   }
 
   const std::string use_nearend_reverb_len_tunings =
-      field_trial::FindFullName("WebRTC-Aec3UseNearendReverbLen");
+      field_trials.Lookup("WebRTC-Aec3UseNearendReverbLen");
   FieldTrialParameter<double> nearend_reverb_default_len(
       "default_len", adjusted_cfg.ep_strength.default_len);
   FieldTrialParameter<double> nearend_reverb_nearend_len(
@@ -328,138 +348,138 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
         static_cast<float>(nearend_reverb_nearend_len.Get());
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3ConservativeTailFreqResponse")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3ConservativeTailFreqResponse")) {
     adjusted_cfg.ep_strength.use_conservative_tail_frequency_response = true;
   }
 
-  if (field_trial::IsDisabled("WebRTC-Aec3ConservativeTailFreqResponse")) {
+  if (field_trials.IsDisabled("WebRTC-Aec3ConservativeTailFreqResponse")) {
     adjusted_cfg.ep_strength.use_conservative_tail_frequency_response = false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3ShortHeadroomKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3ShortHeadroomKillSwitch")) {
     // Two blocks headroom.
     adjusted_cfg.delay.delay_headroom_samples = kBlockSize * 2;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3ClampInstQualityToZeroKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3ClampInstQualityToZeroKillSwitch")) {
     adjusted_cfg.erle.clamp_quality_estimate_to_zero = false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3ClampInstQualityToOneKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3ClampInstQualityToOneKillSwitch")) {
     adjusted_cfg.erle.clamp_quality_estimate_to_one = false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3OnsetDetectionKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3OnsetDetectionKillSwitch")) {
     adjusted_cfg.erle.onset_detection = false;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceRenderDelayEstimationDownmixing")) {
     adjusted_cfg.delay.render_alignment_mixing.downmix = true;
     adjusted_cfg.delay.render_alignment_mixing.adaptive_selection = false;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceCaptureDelayEstimationDownmixing")) {
     adjusted_cfg.delay.capture_alignment_mixing.downmix = true;
     adjusted_cfg.delay.capture_alignment_mixing.adaptive_selection = false;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceCaptureDelayEstimationLeftRightPrioritization")) {
     adjusted_cfg.delay.capture_alignment_mixing.prefer_first_two_channels =
         true;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-"
           "Aec3RenderDelayEstimationLeftRightPrioritizationKillSwitch")) {
     adjusted_cfg.delay.capture_alignment_mixing.prefer_first_two_channels =
         false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3SensitiveDominantNearendActivation")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3SensitiveDominantNearendActivation")) {
     adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold = 0.5f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3VerySensitiveDominantNearendActivation")) {
     adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold = 0.75f;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3TransparentAntiHowlingGain")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3TransparentAntiHowlingGain")) {
     adjusted_cfg.suppressor.high_bands_suppression.anti_howling_gain = 1.f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceMoreTransparentNormalSuppressorTuning")) {
     adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_transparent = 0.4f;
     adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_suppress = 0.5f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceMoreTransparentNearendSuppressorTuning")) {
     adjusted_cfg.suppressor.nearend_tuning.mask_lf.enr_transparent = 1.29f;
     adjusted_cfg.suppressor.nearend_tuning.mask_lf.enr_suppress = 1.3f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceMoreTransparentNormalSuppressorHfTuning")) {
     adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_transparent = 0.3f;
     adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_suppress = 0.4f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceMoreTransparentNearendSuppressorHfTuning")) {
     adjusted_cfg.suppressor.nearend_tuning.mask_hf.enr_transparent = 1.09f;
     adjusted_cfg.suppressor.nearend_tuning.mask_hf.enr_suppress = 1.1f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceRapidlyAdjustingNormalSuppressorTunings")) {
     adjusted_cfg.suppressor.normal_tuning.max_inc_factor = 2.5f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceRapidlyAdjustingNearendSuppressorTunings")) {
     adjusted_cfg.suppressor.nearend_tuning.max_inc_factor = 2.5f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceSlowlyAdjustingNormalSuppressorTunings")) {
     adjusted_cfg.suppressor.normal_tuning.max_dec_factor_lf = .2f;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceSlowlyAdjustingNearendSuppressorTunings")) {
     adjusted_cfg.suppressor.nearend_tuning.max_dec_factor_lf = .2f;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3EnforceConservativeHfSuppression")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3EnforceConservativeHfSuppression")) {
     adjusted_cfg.suppressor.conservative_hf_suppression = true;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3EnforceStationarityProperties")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3EnforceStationarityProperties")) {
     adjusted_cfg.echo_audibility.use_stationarity_properties = true;
   }
 
-  if (field_trial::IsEnabled(
+  if (field_trials.IsEnabled(
           "WebRTC-Aec3EnforceStationarityPropertiesAtInit")) {
     adjusted_cfg.echo_audibility.use_stationarity_properties_at_init = true;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3EnforceLowActiveRenderLimit")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3EnforceLowActiveRenderLimit")) {
     adjusted_cfg.render_levels.active_render_limit = 50.f;
-  } else if (field_trial::IsEnabled(
+  } else if (field_trials.IsEnabled(
                  "WebRTC-Aec3EnforceVeryLowActiveRenderLimit")) {
     adjusted_cfg.render_levels.active_render_limit = 30.f;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3NonlinearModeReverbKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Aec3NonlinearModeReverbKillSwitch")) {
     adjusted_cfg.echo_model.model_reverb_in_nonlinear_mode = false;
   }
 
   // Field-trial based override for the whole suppressor tuning.
   const std::string suppressor_tuning_override_trial_name =
-      field_trial::FindFullName("WebRTC-Aec3SuppressorTuningOverride");
+      field_trials.Lookup("WebRTC-Aec3SuppressorTuningOverride");
 
   FieldTrialParameter<double> nearend_tuning_mask_lf_enr_transparent(
       "nearend_tuning_mask_lf_enr_transparent",
@@ -568,76 +588,84 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
 
   // Field trial-based overrides of individual suppressor parameters.
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendLfMaskTransparentOverride", 0.f, 10.f,
+      field_trials, "WebRTC-Aec3SuppressorNearendLfMaskTransparentOverride",
+      0.f, 10.f,
       &adjusted_cfg.suppressor.nearend_tuning.mask_lf.enr_transparent);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendLfMaskSuppressOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.nearend_tuning.mask_lf.enr_suppress);
+      field_trials, "WebRTC-Aec3SuppressorNearendLfMaskSuppressOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.nearend_tuning.mask_lf.enr_suppress);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendHfMaskTransparentOverride", 0.f, 10.f,
+      field_trials, "WebRTC-Aec3SuppressorNearendHfMaskTransparentOverride",
+      0.f, 10.f,
       &adjusted_cfg.suppressor.nearend_tuning.mask_hf.enr_transparent);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendHfMaskSuppressOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.nearend_tuning.mask_hf.enr_suppress);
+      field_trials, "WebRTC-Aec3SuppressorNearendHfMaskSuppressOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.nearend_tuning.mask_hf.enr_suppress);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendMaxIncFactorOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.nearend_tuning.max_inc_factor);
+      field_trials, "WebRTC-Aec3SuppressorNearendMaxIncFactorOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.nearend_tuning.max_inc_factor);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNearendMaxDecFactorLfOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.nearend_tuning.max_dec_factor_lf);
+      field_trials, "WebRTC-Aec3SuppressorNearendMaxDecFactorLfOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.nearend_tuning.max_dec_factor_lf);
 
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalLfMaskTransparentOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_transparent);
+      field_trials, "WebRTC-Aec3SuppressorNormalLfMaskTransparentOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_transparent);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalLfMaskSuppressOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_suppress);
+      field_trials, "WebRTC-Aec3SuppressorNormalLfMaskSuppressOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.mask_lf.enr_suppress);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalHfMaskTransparentOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_transparent);
+      field_trials, "WebRTC-Aec3SuppressorNormalHfMaskTransparentOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_transparent);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalHfMaskSuppressOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_suppress);
+      field_trials, "WebRTC-Aec3SuppressorNormalHfMaskSuppressOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.mask_hf.enr_suppress);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalMaxIncFactorOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.max_inc_factor);
+      field_trials, "WebRTC-Aec3SuppressorNormalMaxIncFactorOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.max_inc_factor);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorNormalMaxDecFactorLfOverride", 0.f, 10.f,
-      &adjusted_cfg.suppressor.normal_tuning.max_dec_factor_lf);
+      field_trials, "WebRTC-Aec3SuppressorNormalMaxDecFactorLfOverride", 0.f,
+      10.f, &adjusted_cfg.suppressor.normal_tuning.max_dec_factor_lf);
 
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorDominantNearendEnrThresholdOverride", 0.f, 100.f,
+      field_trials, "WebRTC-Aec3SuppressorDominantNearendEnrThresholdOverride",
+      0.f, 100.f,
       &adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold);
   RetrieveFieldTrialValue(
+      field_trials,
       "WebRTC-Aec3SuppressorDominantNearendEnrExitThresholdOverride", 0.f,
       100.f,
       &adjusted_cfg.suppressor.dominant_nearend_detection.enr_exit_threshold);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorDominantNearendSnrThresholdOverride", 0.f, 100.f,
+      field_trials, "WebRTC-Aec3SuppressorDominantNearendSnrThresholdOverride",
+      0.f, 100.f,
       &adjusted_cfg.suppressor.dominant_nearend_detection.snr_threshold);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorDominantNearendHoldDurationOverride", 0, 1000,
+      field_trials, "WebRTC-Aec3SuppressorDominantNearendHoldDurationOverride",
+      0, 1000,
       &adjusted_cfg.suppressor.dominant_nearend_detection.hold_duration);
   RetrieveFieldTrialValue(
+      field_trials,
       "WebRTC-Aec3SuppressorDominantNearendTriggerThresholdOverride", 0, 1000,
       &adjusted_cfg.suppressor.dominant_nearend_detection.trigger_threshold);
 
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3SuppressorAntiHowlingGainOverride", 0.f, 10.f,
+      field_trials, "WebRTC-Aec3SuppressorAntiHowlingGainOverride", 0.f, 10.f,
       &adjusted_cfg.suppressor.high_bands_suppression.anti_howling_gain);
 
   // Field trial-based overrides of individual delay estimator parameters.
-  RetrieveFieldTrialValue("WebRTC-Aec3DelayEstimateSmoothingOverride", 0.f, 1.f,
+  RetrieveFieldTrialValue(field_trials,
+                          "WebRTC-Aec3DelayEstimateSmoothingOverride", 0.f, 1.f,
                           &adjusted_cfg.delay.delay_estimate_smoothing);
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3DelayEstimateSmoothingDelayFoundOverride", 0.f, 1.f,
-      &adjusted_cfg.delay.delay_estimate_smoothing_delay_found);
+      field_trials, "WebRTC-Aec3DelayEstimateSmoothingDelayFoundOverride", 0.f,
+      1.f, &adjusted_cfg.delay.delay_estimate_smoothing_delay_found);
 
   int max_allowed_excess_render_blocks_override =
       adjusted_cfg.buffering.max_allowed_excess_render_blocks;
   RetrieveFieldTrialValue(
-      "WebRTC-Aec3BufferingMaxAllowedExcessRenderBlocksOverride", 0, 20,
-      &max_allowed_excess_render_blocks_override);
+      field_trials, "WebRTC-Aec3BufferingMaxAllowedExcessRenderBlocksOverride",
+      0, 20, &max_allowed_excess_render_blocks_override);
   adjusted_cfg.buffering.max_allowed_excess_render_blocks =
       max_allowed_excess_render_blocks_override;
   return adjusted_cfg;
@@ -717,18 +745,20 @@ void EchoCanceller3::RenderWriter::Insert(const AudioBuffer& input) {
 std::atomic<int> EchoCanceller3::instance_count_(0);
 
 EchoCanceller3::EchoCanceller3(
+    const Environment& env,
     const EchoCanceller3Config& config,
     const std::optional<EchoCanceller3Config>& multichannel_config,
     int sample_rate_hz,
     size_t num_render_channels,
     size_t num_capture_channels)
-    : data_dumper_(new ApmDataDumper(instance_count_.fetch_add(1) + 1)),
-      config_(AdjustConfig(config)),
+    : env_(env),
+      data_dumper_(new ApmDataDumper(instance_count_.fetch_add(1) + 1)),
+      config_(AdjustConfig(config, env.field_trials())),
       sample_rate_hz_(sample_rate_hz),
       num_bands_(NumBandsForRate(sample_rate_hz_)),
       num_render_input_channels_(num_render_channels),
       num_capture_channels_(num_capture_channels),
-      config_selector_(AdjustConfig(config),
+      config_selector_(config_,
                        multichannel_config,
                        num_render_input_channels_),
       multichannel_content_detector_(
@@ -761,7 +791,7 @@ EchoCanceller3::EchoCanceller3(
       capture_block_(num_bands_, num_capture_channels_),
       capture_sub_frame_view_(
           num_bands_,
-          std::vector<rtc::ArrayView<float>>(num_capture_channels_)) {
+          std::vector<ArrayView<float>>(num_capture_channels_)) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz_));
 
   if (config_selector_.active_config().delay.fixed_capture_delay_samples > 0) {
@@ -782,9 +812,8 @@ EchoCanceller3::EchoCanceller3(
         new BlockFramer(/*num_bands=*/1, num_capture_channels_));
     linear_output_block_ =
         std::make_unique<Block>(/*num_bands=*/1, num_capture_channels_),
-    linear_output_sub_frame_view_ =
-        std::vector<std::vector<rtc::ArrayView<float>>>(
-            1, std::vector<rtc::ArrayView<float>>(num_capture_channels_));
+    linear_output_sub_frame_view_ = std::vector<std::vector<ArrayView<float>>>(
+        1, std::vector<ArrayView<float>>(num_capture_channels_));
   }
 
   Initialize();
@@ -812,13 +841,12 @@ void EchoCanceller3::Initialize() {
   render_blocker_.reset(
       new FrameBlocker(num_bands_, num_render_channels_to_aec_));
 
-  block_processor_.reset(BlockProcessor::Create(
-      config_selector_.active_config(), sample_rate_hz_,
-      num_render_channels_to_aec_, num_capture_channels_));
+  block_processor_ = BlockProcessor::Create(
+      env_, config_selector_.active_config(), sample_rate_hz_,
+      num_render_channels_to_aec_, num_capture_channels_);
 
-  render_sub_frame_view_ = std::vector<std::vector<rtc::ArrayView<float>>>(
-      num_bands_,
-      std::vector<rtc::ArrayView<float>>(num_render_channels_to_aec_));
+  render_sub_frame_view_ = std::vector<std::vector<ArrayView<float>>>(
+      num_bands_, std::vector<ArrayView<float>>(num_render_channels_to_aec_));
 }
 
 void EchoCanceller3::AnalyzeRender(const AudioBuffer& render) {
@@ -837,9 +865,8 @@ void EchoCanceller3::AnalyzeCapture(const AudioBuffer& capture) {
                         capture.channels_const()[0], sample_rate_hz_, 1);
   saturated_microphone_signal_ = false;
   for (size_t channel = 0; channel < capture.num_channels(); ++channel) {
-    saturated_microphone_signal_ |=
-        DetectSaturation(rtc::ArrayView<const float>(
-            capture.channels_const()[channel], capture.num_frames()));
+    saturated_microphone_signal_ |= DetectSaturation(ArrayView<const float>(
+        capture.channels_const()[channel], capture.num_frames()));
     if (saturated_microphone_signal_) {
       break;
     }
@@ -877,7 +904,7 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture,
     block_delay_buffer_->DelaySignal(capture);
   }
 
-  rtc::ArrayView<float> capture_lower_band = rtc::ArrayView<float>(
+  ArrayView<float> capture_lower_band = ArrayView<float>(
       &capture->split_bands(0)[0][0], AudioBuffer::kSplitBandSize);
 
   data_dumper_->DumpWav("aec3_capture_input", capture_lower_band, 16000, 1);
@@ -930,21 +957,6 @@ void EchoCanceller3::SetCaptureOutputUsage(bool capture_output_used) {
 
 bool EchoCanceller3::ActiveProcessing() const {
   return true;
-}
-
-EchoCanceller3Config EchoCanceller3::CreateDefaultMultichannelConfig() {
-  EchoCanceller3Config cfg;
-  // Use shorter and more rapidly adapting coarse filter to compensate for
-  // thge increased number of total filter parameters to adapt.
-  cfg.filter.coarse.length_blocks = 11;
-  cfg.filter.coarse.rate = 0.95f;
-  cfg.filter.coarse_initial.length_blocks = 11;
-  cfg.filter.coarse_initial.rate = 0.95f;
-
-  // Use more concervative suppressor behavior for non-nearend speech.
-  cfg.suppressor.normal_tuning.max_dec_factor_lf = 0.35f;
-  cfg.suppressor.normal_tuning.max_inc_factor = 1.5f;
-  return cfg;
 }
 
 void EchoCanceller3::SetBlockProcessorForTesting(

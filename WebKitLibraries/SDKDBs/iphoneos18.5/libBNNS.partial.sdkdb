@@ -1,0 +1,1430 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionIdentity"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionRectifiedLinear"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionLeakyRectifiedLinear"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionSigmoid"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionTanh"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionScaledTanh"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionAbs"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionLinear"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionClamp"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionIntegerLinearSaturate"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionIntegerLinearSaturatePerChannel"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionSoftmax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGELUApproximation"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGumbel"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGumbelMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionHardSigmoid"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftplus"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftsign"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionClampedLeakyRectifiedLinear"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLinearWithBias"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLogSoftmax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLogSigmoid"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionCELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionHardShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionTanhShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionThreshold"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionPReLUPerChannel"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGELUApproximation2"},
+      {"access": "public", "introduced": "15", "name": "BNNSActivationFunctionHardSwish"},
+      {"access": "public", "introduced": "15", "name": "BNNSActivationFunctionSiLU"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionReLU6"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionErf"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionGELU"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionGELUApproximationSigmoid"}
+     ],
+     "name": "BNNSActivationFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAdd"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSubtract"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticMultiply"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticDivide"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSquareRoot"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticReciprocalSquareRoot"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCeil"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticFloor"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticRound"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSin"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCos"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticTan"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAsin"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAcos"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAtan"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSinh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCosh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticTanh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAsinh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAcosh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAtanh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticPow"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticExp"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticExp2"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticLog2"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticMultiplyNoNaN"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticDivideNoNaN"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMultiplyAdd"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMinimum"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMaximum"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticSelect"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticAbs"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticSign"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticNegate"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticReciprocal"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticSquare"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticFloorDivide"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticTruncDivide"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticTruncRemainder"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticErf"}
+     ],
+     "name": "BNNSArithmeticFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSCornersHeightFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCornersWidthFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCenterSizeHeightFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCenterSizeWidthFirst"}
+     ],
+     "name": "BNNSBoxCoordinateMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutVector"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout1DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout1DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutRowMajorMatrix"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutColumnMajorMatrix"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout2DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout2DFirstMajor"},
+      {"access": "public", "introduced": "16", "name": "BNNSDataLayoutFullyConnectedSparse"},
+      {"access": "public", "introduced": "13", "name": "BNNSDataLayoutImageCHW"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataLayoutSNE"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataLayoutNSE"},
+      {"access": "public", "introduced": "16", "name": "BNNSDataLayoutMHA_DHK"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout3DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout3DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHW"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHrWr"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsIOHrWr"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHW_Pack32"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout4DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout4DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout5DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout5DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout6DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout6DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout7DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout7DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout8DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout8DFirstMajor"}
+     ],
+     "name": "BNNSDataLayout"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloatBit"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloat16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloat32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeBFloat16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIntBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt2"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt4"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt8"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeInt64"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUIntBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt2"},
+      {"access": "public", "introduced": "18", "name": "BNNSDataTypeUInt3"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt4"},
+      {"access": "public", "introduced": "18", "name": "BNNSDataTypeUInt6"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt8"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt16"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeUInt64"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIndexedBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed2"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed4"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIndexed8"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeMiscellaneousBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeBoolean"}
+     ],
+     "name": "BNNSDataType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSConstant"},
+      {"access": "public", "introduced": "14", "name": "BNNSSample"},
+      {"access": "public", "introduced": "14", "name": "BNNSParameter"}
+     ],
+     "name": "BNNSDescriptorType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSEmbeddingFlagScaleGradientByFrequency"}
+     ],
+     "name": "BNNSEmbeddingFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSConvolution"},
+      {"access": "public", "introduced": "14", "name": "BNNSFullyConnected"},
+      {"access": "public", "introduced": "14", "name": "BNNSBatchNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSInstanceNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSLayerNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSGroupNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSTransposedConvolution"},
+      {"access": "public", "introduced": "15", "name": "BNNSQuantization"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmetic"}
+     ],
+     "name": "BNNSFilterType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSFlagsUseClientPtr"}
+     ],
+     "name": "BNNSFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentIn"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentOut"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentInOut"}
+     ],
+     "name": "BNNSGraphArgumentIntent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentTypePointer"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentTypeTensor"}
+     ],
+     "name": "BNNSGraphArgumentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelInfo"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelUnsupported"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelWarning"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelError"}
+     ],
+     "name": "BNNSGraphMessageLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphOptimizationPreferencePerformance"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphOptimizationPreferenceIRSize"}
+     ],
+     "name": "BNNSGraphOptimizationPreference"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSInterpolationMethodNearest"},
+      {"access": "public", "introduced": "14", "name": "BNNSInterpolationMethodLinear"}
+     ],
+     "name": "BNNSInterpolationMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLayerFlagsLSTMBidirectional"},
+      {"access": "public", "introduced": "14", "name": "BNNSLayerFlagsLSTMDefaultActivations"}
+     ],
+     "name": "BNNSLayerFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingDefault"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingAlignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingUnalignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingStrictAlignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingOffsetCorners"}
+     ],
+     "name": "BNNSLinearSamplingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionSoftmaxCrossEntropy"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionSigmoidCrossEntropy"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionMeanSquareError"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionHuber"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionYolo"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionCosineDistance"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionHinge"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionMeanAbsoluteError"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionCategoricalCrossEntropy"}
+     ],
+     "name": "BNNSLossFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionNone"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionWeightedMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionNonZeroWeightMean"}
+     ],
+     "name": "BNNSLossReductionFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSNDArrayFlagBackpropSet"},
+      {"access": "public", "introduced": "14", "name": "BNNSNDArrayFlagBackpropAccumulate"}
+     ],
+     "name": "BNNSNDArrayFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSL2Norm"}
+     ],
+     "name": "BNNSNormType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingNone"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByValue"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByNorm"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByGlobalNorm"}
+     ],
+     "name": "BNNSOptimizerClippingFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionSGDMomentum"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionAdam"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionRMSProp"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamW"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamAMSGrad"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWAMSGrad"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionSGDMomentumWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionRMSPropWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamAMSGradWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWAMSGradWithClipping"}
+     ],
+     "name": "BNNSOptimizerFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationNone"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationL1"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationL2"}
+     ],
+     "name": "BNNSOptimizerRegularizationFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant0"},
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant1"},
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant2"}
+     ],
+     "name": "BNNSOptimizerSGDMomentumVariant"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeConstant"},
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeReflect"},
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeSymmetric"}
+     ],
+     "name": "BNNSPaddingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSPointerSpecifierAlpha"},
+      {"access": "public", "introduced": "14", "name": "BNNSPointerSpecifierBeta"}
+     ],
+     "name": "BNNSPointerSpecifier"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSPoolingFunctionMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionAverageCountIncludePadding"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionAverageCountExcludePadding"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionUnMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionL2Norm"},
+      {"access": "public", "introduced": "10", "name": "BNNSPoolingFunctionAverage"}
+     ],
+     "name": "BNNSPoolingFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSQuantizerFunctionQuantize"},
+      {"access": "public", "introduced": "15", "name": "BNNSQuantizerFunctionDequantize"}
+     ],
+     "name": "BNNSQuantizerFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSRandomGeneratorMethodAES_CTR"}
+     ],
+     "name": "BNNSRandomGeneratorMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMin"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionArgMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionArgMin"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMeanNonZero"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSumSquare"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSumLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionL1Norm"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionLogicalOr"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionLogicalAnd"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionL2Norm"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionLogSumExp"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionProduct"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionNone"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSReduceFunctionLogSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionAny"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionAll"}
+     ],
+     "name": "BNNSReduceFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLess"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLessEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorGreater"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorGreaterEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorNotEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalAND"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalOR"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNOT"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNAND"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNOR"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalXOR"}
+     ],
+     "name": "BNNSRelationalOperator"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSShuffleTypePixelShuffleNCHW"},
+      {"access": "public", "introduced": "16", "name": "BNNSShuffleTypePixelUnshuffleNCHW"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSShuffleTypeDepthToSpaceNCHW"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSShuffleTypeSpaceToDepthNCHW"}
+     ],
+     "name": "BNNSShuffleType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSSparsityTypeUnstructured"}
+     ],
+     "name": "BNNSSparsityType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSTargetSystemGeneric"}
+     ],
+     "name": "BNNSTargetSystem"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSApplyMultiheadAttention"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSApplyMultiheadAttentionBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSArithmeticFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSArithmeticFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSBandPart"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByGlobalNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByValue"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSCompareTensor"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSComputeLSTMTrainingCacheCapacity"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSComputeNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSComputeNormBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSCopy"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSCreateNearestNeighbors"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSCreateRandomGenerator"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSCreateRandomGeneratorWithSeed"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSCropResize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSCropResizeBackward"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_BNNSDataLayoutGetRank"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSDestroyNearestNeighbors"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSDestroyRandomGenerator"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyActivationBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyInTopK"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyLSTMBatchBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyLSTMBatchTrainingCaching"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyQuantizer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyReduction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyTopK"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApply"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBackwardTwoInputBatch"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyTwoInput"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyTwoInputBatch"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateConvolutionLayer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateFullyConnectedLayer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateFusedLayer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerActivation"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerArithmetic"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerConvolution"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerDropout"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerEmbedding"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerFullyConnected"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerGram"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerLoss"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerMultiheadAttention"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerNormalization"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPadding"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPermute"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPooling"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerReduction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerResize"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerTensorContraction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerTransposedConvolution"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreatePoolingLayer"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateVectorActivationLayer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterDestroy"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBackwardMultiInputBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBatch"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyMultiInputBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSGather"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSGatherND"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSGetPointer"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileFromFile_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsDestroy"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetGenerateDebugInfo"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOptimizationPreference"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOutputFD"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOutputPath"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetTargetSingleThread"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsMakeDefault"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetGenerateDebugInfo"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetMessageLogCallback"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetMessageLogMask"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOptimizationPreference"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOutputFD"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOutputPath"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetTargetSingleThread"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextDestroy_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextEnableNanAndInfChecks"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextExecute_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextGetTensor"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextGetWorkspaceSize_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextMake"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextMakeStreaming"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetArgumentType"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetBatchSize_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetDynamicShapes_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetMessageLogCallback"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetMessageLogMask"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetOutputAllocationCallback_v2"},
+    {"access": "public", "introduced": "18.4", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetStreamingAdvanceCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetWorkspaceAllocationCallback_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentIntents"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentInterleaveFactors"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentNames"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentPosition"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetFunctionCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetFunctionNames"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetInputCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetInputNames_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetOutputCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetOutputNames_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphTensorFillStrides"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSLossFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSLossFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSMatMul"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSMatMulWorkspaceSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayFullyConnectedSparsifySparseCOO"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayFullyConnectedSparsifySparseCSR"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayGetDataSize"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSNearestNeighborsGetInfo"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSNearestNeighborsLoad"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSNormalizationFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSNormalizationFilterApplyBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSOptimizerStep"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPermuteFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBackwardBatchEx"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBatchEx"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillCategoricalFloat"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillNormalFloat"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillUniformFloat"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillUniformInt"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorGetState"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorSetState"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorStateSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSScatter"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSScatterND"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSShuffle"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSTensorGetAllocationSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTile"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTileBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSTranspose"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "BNNSActivation"},
+    {"access": "public", "name": "BNNSActivationFunction"},
+    {"access": "public", "name": "BNNSAlloc"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticBinary"},
+    {"access": "public", "name": "BNNSArithmeticFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticTernary"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticUnary"},
+    {"access": "public", "name": "BNNSBoxCoordinateMode"},
+    {"access": "public", "introduced": "10", "name": "BNNSConvolutionLayerParameters"},
+    {"access": "public", "name": "BNNSDataLayout"},
+    {"access": "public", "name": "BNNSDataType"},
+    {"access": "public", "name": "BNNSDescriptorType"},
+    {"access": "public", "name": "BNNSEmbeddingFlags"},
+    {"access": "public", "introduced": "10", "name": "BNNSFilter"},
+    {"access": "public", "name": "BNNSFilterParameters"},
+    {"access": "public", "name": "BNNSFilterType"},
+    {"access": "public", "name": "BNNSFlags"},
+    {"access": "public", "name": "BNNSFree"},
+    {"access": "public", "introduced": "10", "name": "BNNSFullyConnectedLayerParameters"},
+    {"access": "public", "name": "BNNSGraphArgumentIntent"},
+    {"access": "public", "name": "BNNSGraphArgumentType"},
+    {"access": "public", "name": "BNNSGraphMessageLevel"},
+    {"access": "public", "name": "BNNSGraphOptimizationPreference"},
+    {"access": "public", "introduced": "10", "name": "BNNSImageStackDescriptor"},
+    {"access": "public", "name": "BNNSInterpolationMethod"},
+    {"access": "public", "introduced": "14", "name": "BNNSLSTMDataDescriptor"},
+    {"access": "public", "introduced": "14", "name": "BNNSLSTMGateDescriptor"},
+    {"access": "public", "introduced": "10", "name": "BNNSLayerData"},
+    {"access": "public", "name": "BNNSLayerFlags"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersActivation"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersArithmetic"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersConvolution"},
+    {"access": "public", "introduced": "16", "name": "BNNSLayerParametersCropResize"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersDropout"},
+    {"access": "public", "introduced": "15", "name": "BNNSLayerParametersEmbedding"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersFullyConnected"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersGram"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLSTM"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossBase"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossHuber"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossSigmoidCrossEntropy"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossSoftmaxCrossEntropy"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossYolo"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersMultiheadAttention"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersNormalization"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPadding"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPermute"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPooling"},
+    {"access": "public", "introduced": "15", "name": "BNNSLayerParametersQuantization"},
+    {"access": "public", "name": "BNNSLayerParametersReduction"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersResize"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersTensorContraction"},
+    {"access": "public", "name": "BNNSLinearSamplingMode"},
+    {"access": "public", "name": "BNNSLossFunction"},
+    {"access": "public", "name": "BNNSLossReductionFunction"},
+    {"access": "public", "name": "BNNSMHAProjectionParameters"},
+    {"access": "public", "name": "BNNSNDArrayDescriptor"},
+    {"access": "public", "name": "BNNSNDArrayFlags"},
+    {"access": "public", "name": "BNNSNearestNeighbors"},
+    {"access": "public", "name": "BNNSNormType"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerAdamFields"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerAdamWithClippingFields"},
+    {"access": "public", "name": "BNNSOptimizerClippingFunction"},
+    {"access": "public", "name": "BNNSOptimizerFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerRMSPropFields"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerRMSPropWithClippingFields"},
+    {"access": "public", "name": "BNNSOptimizerRegularizationFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerSGDMomentumFields"},
+    {"access": "public", "name": "BNNSOptimizerSGDMomentumVariant"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerSGDMomentumWithClippingFields"},
+    {"access": "public", "name": "BNNSPaddingMode"},
+    {"access": "public", "name": "BNNSPointerSpecifier"},
+    {"access": "public", "name": "BNNSPoolingFunction"},
+    {"access": "public", "introduced": "10", "name": "BNNSPoolingLayerParameters"},
+    {"access": "public", "name": "BNNSQuantizerFunction"},
+    {"access": "public", "name": "BNNSRandomGenerator"},
+    {"access": "public", "name": "BNNSRandomGeneratorMethod"},
+    {"access": "public", "name": "BNNSReduceFunction"},
+    {"access": "public", "name": "BNNSRelationalOperator"},
+    {"access": "public", "name": "BNNSShuffleType"},
+    {"access": "public", "introduced": "16", "name": "BNNSSparsityParameters"},
+    {"access": "public", "name": "BNNSSparsityType"},
+    {"access": "public", "name": "BNNSTargetSystem"},
+    {"access": "public", "name": "BNNSTensor"},
+    {"access": "public", "introduced": "10", "name": "BNNSVectorDescriptor"},
+    {"access": "public", "name": "bnns_graph_argument_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_compile_message_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_compile_options_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_context_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_execute_message_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_free_all_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_realloc_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_shape_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_user_message_data_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionIdentity"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionRectifiedLinear"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionLeakyRectifiedLinear"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionSigmoid"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionTanh"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionScaledTanh"},
+      {"access": "public", "introduced": "10", "name": "BNNSActivationFunctionAbs"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionLinear"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionClamp"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionIntegerLinearSaturate"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionIntegerLinearSaturatePerChannel"},
+      {"access": "public", "introduced": "11", "name": "BNNSActivationFunctionSoftmax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGELUApproximation"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGumbel"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGumbelMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionHardSigmoid"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftplus"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftsign"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionClampedLeakyRectifiedLinear"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLinearWithBias"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLogSoftmax"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionLogSigmoid"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionCELU"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionHardShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionSoftShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionTanhShrink"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionThreshold"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionPReLUPerChannel"},
+      {"access": "public", "introduced": "14", "name": "BNNSActivationFunctionGELUApproximation2"},
+      {"access": "public", "introduced": "15", "name": "BNNSActivationFunctionHardSwish"},
+      {"access": "public", "introduced": "15", "name": "BNNSActivationFunctionSiLU"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionReLU6"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionErf"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionGELU"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSActivationFunctionGELUApproximationSigmoid"}
+     ],
+     "name": "BNNSActivationFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAdd"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSubtract"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticMultiply"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticDivide"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSquareRoot"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticReciprocalSquareRoot"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCeil"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticFloor"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticRound"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSin"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCos"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticTan"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAsin"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAcos"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAtan"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticSinh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticCosh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticTanh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAsinh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAcosh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticAtanh"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticPow"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticExp"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticExp2"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticLog2"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticMultiplyNoNaN"},
+      {"access": "public", "introduced": "14", "name": "BNNSArithmeticDivideNoNaN"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMultiplyAdd"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMinimum"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticMaximum"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmeticSelect"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticAbs"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticSign"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticNegate"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticReciprocal"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticSquare"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticFloorDivide"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticTruncDivide"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticTruncRemainder"},
+      {"access": "public", "introduced": "16", "name": "BNNSArithmeticErf"}
+     ],
+     "name": "BNNSArithmeticFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSCornersHeightFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCornersWidthFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCenterSizeHeightFirst"},
+      {"access": "public", "introduced": "16", "name": "BNNSCenterSizeWidthFirst"}
+     ],
+     "name": "BNNSBoxCoordinateMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutVector"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout1DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout1DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutRowMajorMatrix"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutColumnMajorMatrix"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout2DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout2DFirstMajor"},
+      {"access": "public", "introduced": "16", "name": "BNNSDataLayoutFullyConnectedSparse"},
+      {"access": "public", "introduced": "13", "name": "BNNSDataLayoutImageCHW"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataLayoutSNE"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataLayoutNSE"},
+      {"access": "public", "introduced": "16", "name": "BNNSDataLayoutMHA_DHK"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout3DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout3DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHW"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHrWr"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsIOHrWr"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayoutConvolutionWeightsOIHW_Pack32"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout4DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout4DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout5DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout5DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout6DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout6DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout7DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout7DFirstMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout8DLastMajor"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataLayout8DFirstMajor"}
+     ],
+     "name": "BNNSDataLayout"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloatBit"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloat16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeFloat32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeBFloat16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIntBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt2"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeInt4"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt8"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt16"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeInt32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeInt64"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUIntBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt2"},
+      {"access": "public", "introduced": "18", "name": "BNNSDataTypeUInt3"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeUInt4"},
+      {"access": "public", "introduced": "18", "name": "BNNSDataTypeUInt6"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt8"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt16"},
+      {"access": "public", "introduced": "11", "name": "BNNSDataTypeUInt32"},
+      {"access": "public", "introduced": "15", "name": "BNNSDataTypeUInt64"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIndexedBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed1"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed2"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeIndexed4"},
+      {"access": "public", "introduced": "10", "name": "BNNSDataTypeIndexed8"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeMiscellaneousBit"},
+      {"access": "public", "introduced": "14", "name": "BNNSDataTypeBoolean"}
+     ],
+     "name": "BNNSDataType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSConstant"},
+      {"access": "public", "introduced": "14", "name": "BNNSSample"},
+      {"access": "public", "introduced": "14", "name": "BNNSParameter"}
+     ],
+     "name": "BNNSDescriptorType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSEmbeddingFlagScaleGradientByFrequency"}
+     ],
+     "name": "BNNSEmbeddingFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSConvolution"},
+      {"access": "public", "introduced": "14", "name": "BNNSFullyConnected"},
+      {"access": "public", "introduced": "14", "name": "BNNSBatchNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSInstanceNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSLayerNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSGroupNorm"},
+      {"access": "public", "introduced": "14", "name": "BNNSTransposedConvolution"},
+      {"access": "public", "introduced": "15", "name": "BNNSQuantization"},
+      {"access": "public", "introduced": "15", "name": "BNNSArithmetic"}
+     ],
+     "name": "BNNSFilterType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSFlagsUseClientPtr"}
+     ],
+     "name": "BNNSFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentIn"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentOut"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentIntentInOut"}
+     ],
+     "name": "BNNSGraphArgumentIntent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentTypePointer"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphArgumentTypeTensor"}
+     ],
+     "name": "BNNSGraphArgumentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelInfo"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelUnsupported"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelWarning"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphMessageLevelError"}
+     ],
+     "name": "BNNSGraphMessageLevel"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "18", "name": "BNNSGraphOptimizationPreferencePerformance"},
+      {"access": "public", "introduced": "18", "name": "BNNSGraphOptimizationPreferenceIRSize"}
+     ],
+     "name": "BNNSGraphOptimizationPreference"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSInterpolationMethodNearest"},
+      {"access": "public", "introduced": "14", "name": "BNNSInterpolationMethodLinear"}
+     ],
+     "name": "BNNSInterpolationMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLayerFlagsLSTMBidirectional"},
+      {"access": "public", "introduced": "14", "name": "BNNSLayerFlagsLSTMDefaultActivations"}
+     ],
+     "name": "BNNSLayerFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingDefault"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingAlignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingUnalignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingStrictAlignCorners"},
+      {"access": "public", "introduced": "16", "name": "BNNSLinearSamplingOffsetCorners"}
+     ],
+     "name": "BNNSLinearSamplingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionSoftmaxCrossEntropy"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionSigmoidCrossEntropy"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionMeanSquareError"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionHuber"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionYolo"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionCosineDistance"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionHinge"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionMeanAbsoluteError"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossFunctionCategoricalCrossEntropy"}
+     ],
+     "name": "BNNSLossFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionNone"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionWeightedMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSLossReductionNonZeroWeightMean"}
+     ],
+     "name": "BNNSLossReductionFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSNDArrayFlagBackpropSet"},
+      {"access": "public", "introduced": "14", "name": "BNNSNDArrayFlagBackpropAccumulate"}
+     ],
+     "name": "BNNSNDArrayFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSL2Norm"}
+     ],
+     "name": "BNNSNormType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingNone"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByValue"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByNorm"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerClippingByGlobalNorm"}
+     ],
+     "name": "BNNSOptimizerClippingFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionSGDMomentum"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionAdam"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerFunctionRMSProp"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamW"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamAMSGrad"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWAMSGrad"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionSGDMomentumWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionRMSPropWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamAMSGradWithClipping"},
+      {"access": "public", "introduced": "15", "name": "BNNSOptimizerFunctionAdamWAMSGradWithClipping"}
+     ],
+     "name": "BNNSOptimizerFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationNone"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationL1"},
+      {"access": "public", "introduced": "14", "name": "BNNSOptimizerRegularizationL2"}
+     ],
+     "name": "BNNSOptimizerRegularizationFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant0"},
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant1"},
+      {"access": "public", "introduced": "14", "name": "BNNSSGDMomentumVariant2"}
+     ],
+     "name": "BNNSOptimizerSGDMomentumVariant"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeConstant"},
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeReflect"},
+      {"access": "public", "introduced": "14", "name": "BNNSPaddingModeSymmetric"}
+     ],
+     "name": "BNNSPaddingMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSPointerSpecifierAlpha"},
+      {"access": "public", "introduced": "14", "name": "BNNSPointerSpecifierBeta"}
+     ],
+     "name": "BNNSPointerSpecifier"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "10", "name": "BNNSPoolingFunctionMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionAverageCountIncludePadding"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionAverageCountExcludePadding"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionUnMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSPoolingFunctionL2Norm"},
+      {"access": "public", "introduced": "10", "name": "BNNSPoolingFunctionAverage"}
+     ],
+     "name": "BNNSPoolingFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSQuantizerFunctionQuantize"},
+      {"access": "public", "introduced": "15", "name": "BNNSQuantizerFunctionDequantize"}
+     ],
+     "name": "BNNSQuantizerFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "15", "name": "BNNSRandomGeneratorMethodAES_CTR"}
+     ],
+     "name": "BNNSRandomGeneratorMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMin"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionArgMax"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionArgMin"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMean"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionMeanNonZero"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSumSquare"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionSumLog"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionL1Norm"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionLogicalOr"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionLogicalAnd"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionL2Norm"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionLogSumExp"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionProduct"},
+      {"access": "public", "introduced": "16", "name": "BNNSReduceFunctionNone"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSReduceFunctionLogSum"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionAny"},
+      {"access": "public", "introduced": "14", "name": "BNNSReduceFunctionAll"}
+     ],
+     "name": "BNNSReduceFunction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLess"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLessEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorGreater"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorGreaterEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorNotEqual"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalAND"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalOR"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNOT"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNAND"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalNOR"},
+      {"access": "public", "introduced": "14", "name": "BNNSRelationalOperatorLogicalXOR"}
+     ],
+     "name": "BNNSRelationalOperator"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSShuffleTypePixelShuffleNCHW"},
+      {"access": "public", "introduced": "16", "name": "BNNSShuffleTypePixelUnshuffleNCHW"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSShuffleTypeDepthToSpaceNCHW"},
+      {"access": "public", "introduced": "16.4", "name": "BNNSShuffleTypeSpaceToDepthNCHW"}
+     ],
+     "name": "BNNSShuffleType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSSparsityTypeUnstructured"}
+     ],
+     "name": "BNNSSparsityType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "16", "name": "BNNSTargetSystemGeneric"}
+     ],
+     "name": "BNNSTargetSystem"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSApplyMultiheadAttention"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSApplyMultiheadAttentionBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSArithmeticFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSArithmeticFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSBandPart"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByGlobalNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSClipByValue"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSCompareTensor"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSComputeLSTMTrainingCacheCapacity"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSComputeNorm"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSComputeNormBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSCopy"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSCreateNearestNeighbors"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSCreateRandomGenerator"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSCreateRandomGeneratorWithSeed"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSCropResize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSCropResizeBackward"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_BNNSDataLayoutGetRank"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSDestroyNearestNeighbors"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSDestroyRandomGenerator"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyActivationBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyInTopK"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyLSTMBatchBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyLSTMBatchTrainingCaching"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyQuantizer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyReduction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSDirectApplyTopK"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApply"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBackwardTwoInputBatch"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyTwoInput"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterApplyTwoInputBatch"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateConvolutionLayer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateFullyConnectedLayer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateFusedLayer"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerActivation"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerArithmetic"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerConvolution"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerDropout"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerEmbedding"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerFullyConnected"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerGram"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerLoss"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerMultiheadAttention"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerNormalization"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPadding"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPermute"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerPooling"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerReduction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerResize"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerTensorContraction"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateLayerTransposedConvolution"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreatePoolingLayer"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_BNNSFilterCreateVectorActivationLayer"},
+    {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_BNNSFilterDestroy"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBackwardMultiInputBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyBatch"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSFusedFilterApplyMultiInputBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSGather"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSGatherND"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSGetPointer"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileFromFile_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsDestroy"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetGenerateDebugInfo"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOptimizationPreference"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOutputFD"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetOutputPath"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsGetTargetSingleThread"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsMakeDefault"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetGenerateDebugInfo"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetMessageLogCallback"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetMessageLogMask"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOptimizationPreference"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOutputFD"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetOutputPath"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphCompileOptionsSetTargetSingleThread"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextDestroy_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextEnableNanAndInfChecks"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextExecute_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextGetTensor"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextGetWorkspaceSize_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextMake"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextMakeStreaming"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetArgumentType"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetBatchSize_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetDynamicShapes_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetMessageLogCallback"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetMessageLogMask"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetOutputAllocationCallback_v2"},
+    {"access": "public", "introduced": "18.4", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetStreamingAdvanceCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphContextSetWorkspaceAllocationCallback_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentIntents"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentInterleaveFactors"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentNames"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetArgumentPosition"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetFunctionCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetFunctionNames"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetInputCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetInputNames_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetOutputCount"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphGetOutputNames_v2"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSGraphTensorFillStrides"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSLossFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSLossFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSMatMul"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSMatMulWorkspaceSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayFullyConnectedSparsifySparseCOO"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayFullyConnectedSparsifySparseCSR"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSNDArrayGetDataSize"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSNearestNeighborsGetInfo"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSNearestNeighborsLoad"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSNormalizationFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSNormalizationFilterApplyBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSOptimizerStep"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPermuteFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBackwardBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBackwardBatchEx"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBatch"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSPoolingFilterApplyBatchEx"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillCategoricalFloat"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillNormalFloat"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillUniformFloat"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomFillUniformInt"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorGetState"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorSetState"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_BNNSRandomGeneratorStateSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSScatter"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSScatterND"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSShuffle"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_BNNSTensorGetAllocationSize"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTile"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTileBackward"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSTranspose"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "BNNSActivation"},
+    {"access": "public", "name": "BNNSActivationFunction"},
+    {"access": "public", "name": "BNNSAlloc"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticBinary"},
+    {"access": "public", "name": "BNNSArithmeticFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticTernary"},
+    {"access": "public", "introduced": "14", "name": "BNNSArithmeticUnary"},
+    {"access": "public", "name": "BNNSBoxCoordinateMode"},
+    {"access": "public", "introduced": "10", "name": "BNNSConvolutionLayerParameters"},
+    {"access": "public", "name": "BNNSDataLayout"},
+    {"access": "public", "name": "BNNSDataType"},
+    {"access": "public", "name": "BNNSDescriptorType"},
+    {"access": "public", "name": "BNNSEmbeddingFlags"},
+    {"access": "public", "introduced": "10", "name": "BNNSFilter"},
+    {"access": "public", "name": "BNNSFilterParameters"},
+    {"access": "public", "name": "BNNSFilterType"},
+    {"access": "public", "name": "BNNSFlags"},
+    {"access": "public", "name": "BNNSFree"},
+    {"access": "public", "introduced": "10", "name": "BNNSFullyConnectedLayerParameters"},
+    {"access": "public", "name": "BNNSGraphArgumentIntent"},
+    {"access": "public", "name": "BNNSGraphArgumentType"},
+    {"access": "public", "name": "BNNSGraphMessageLevel"},
+    {"access": "public", "name": "BNNSGraphOptimizationPreference"},
+    {"access": "public", "introduced": "10", "name": "BNNSImageStackDescriptor"},
+    {"access": "public", "name": "BNNSInterpolationMethod"},
+    {"access": "public", "introduced": "14", "name": "BNNSLSTMDataDescriptor"},
+    {"access": "public", "introduced": "14", "name": "BNNSLSTMGateDescriptor"},
+    {"access": "public", "introduced": "10", "name": "BNNSLayerData"},
+    {"access": "public", "name": "BNNSLayerFlags"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersActivation"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersArithmetic"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersBroadcastMatMul"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersConvolution"},
+    {"access": "public", "introduced": "16", "name": "BNNSLayerParametersCropResize"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersDropout"},
+    {"access": "public", "introduced": "15", "name": "BNNSLayerParametersEmbedding"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersFullyConnected"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersGram"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLSTM"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossBase"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossHuber"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossSigmoidCrossEntropy"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossSoftmaxCrossEntropy"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersLossYolo"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersMultiheadAttention"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersNormalization"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPadding"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPermute"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersPooling"},
+    {"access": "public", "introduced": "15", "name": "BNNSLayerParametersQuantization"},
+    {"access": "public", "name": "BNNSLayerParametersReduction"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersResize"},
+    {"access": "public", "introduced": "14", "name": "BNNSLayerParametersTensorContraction"},
+    {"access": "public", "name": "BNNSLinearSamplingMode"},
+    {"access": "public", "name": "BNNSLossFunction"},
+    {"access": "public", "name": "BNNSLossReductionFunction"},
+    {"access": "public", "name": "BNNSMHAProjectionParameters"},
+    {"access": "public", "name": "BNNSNDArrayDescriptor"},
+    {"access": "public", "name": "BNNSNDArrayFlags"},
+    {"access": "public", "name": "BNNSNearestNeighbors"},
+    {"access": "public", "name": "BNNSNormType"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerAdamFields"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerAdamWithClippingFields"},
+    {"access": "public", "name": "BNNSOptimizerClippingFunction"},
+    {"access": "public", "name": "BNNSOptimizerFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerRMSPropFields"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerRMSPropWithClippingFields"},
+    {"access": "public", "name": "BNNSOptimizerRegularizationFunction"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerSGDMomentumFields"},
+    {"access": "public", "name": "BNNSOptimizerSGDMomentumVariant"},
+    {"access": "public", "introduced": "14", "name": "BNNSOptimizerSGDMomentumWithClippingFields"},
+    {"access": "public", "name": "BNNSPaddingMode"},
+    {"access": "public", "name": "BNNSPointerSpecifier"},
+    {"access": "public", "name": "BNNSPoolingFunction"},
+    {"access": "public", "introduced": "10", "name": "BNNSPoolingLayerParameters"},
+    {"access": "public", "name": "BNNSQuantizerFunction"},
+    {"access": "public", "name": "BNNSRandomGenerator"},
+    {"access": "public", "name": "BNNSRandomGeneratorMethod"},
+    {"access": "public", "name": "BNNSReduceFunction"},
+    {"access": "public", "name": "BNNSRelationalOperator"},
+    {"access": "public", "name": "BNNSShuffleType"},
+    {"access": "public", "introduced": "16", "name": "BNNSSparsityParameters"},
+    {"access": "public", "name": "BNNSSparsityType"},
+    {"access": "public", "name": "BNNSTargetSystem"},
+    {"access": "public", "name": "BNNSTensor"},
+    {"access": "public", "introduced": "10", "name": "BNNSVectorDescriptor"},
+    {"access": "public", "name": "bnns_graph_argument_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_compile_message_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_compile_options_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_context_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_execute_message_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_free_all_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_realloc_fn_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_shape_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_graph_t"},
+    {"access": "public", "introduced": "18", "name": "bnns_user_message_data_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

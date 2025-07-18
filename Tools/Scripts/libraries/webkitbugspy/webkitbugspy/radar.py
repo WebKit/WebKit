@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
+import os
 import re
 import subprocess
 import sys
@@ -146,7 +147,7 @@ class Tracker(GenericTracker):
 
         try:
             if identity and os.path.isdir(identity):
-                return AuthenticationStrategyNarrative(identity)
+                return self.library.AuthenticationStrategyNarrative(identity)
             if username and password and totp_secret and totp_id:
                 return self.library.AuthenticationStrategySystemAccountOAuth(
                     username, password, totp_secret, totp_id,

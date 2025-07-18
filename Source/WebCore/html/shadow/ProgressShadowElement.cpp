@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ProgressShadowElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderProgress.h"

@@ -954,6 +954,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFramebufferRenderbufferOES";
         case EntryPoint::GLFramebufferResolveRenderbufferWEBKIT:
             return "glFramebufferResolveRenderbufferWEBKIT";
+        case EntryPoint::GLFramebufferShadingRateEXT:
+            return "glFramebufferShadingRateEXT";
         case EntryPoint::GLFramebufferTexture:
             return "glFramebufferTexture";
         case EntryPoint::GLFramebufferTexture2D:
@@ -1080,6 +1082,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glGetFragDataIndexEXT";
         case EntryPoint::GLGetFragDataLocation:
             return "glGetFragDataLocation";
+        case EntryPoint::GLGetFragmentShadingRatesEXT:
+            return "glGetFragmentShadingRatesEXT";
         case EntryPoint::GLGetFramebufferAttachmentParameteriv:
             return "glGetFramebufferAttachmentParameteriv";
         case EntryPoint::GLGetFramebufferAttachmentParameterivOES:
@@ -1876,6 +1880,10 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glShaderBinary";
         case EntryPoint::GLShaderSource:
             return "glShaderSource";
+        case EntryPoint::GLShadingRateCombinerOpsEXT:
+            return "glShadingRateCombinerOpsEXT";
+        case EntryPoint::GLShadingRateEXT:
+            return "glShadingRateEXT";
         case EntryPoint::GLShadingRateQCOM:
             return "glShadingRateQCOM";
         case EntryPoint::GLSignalSemaphoreEXT:

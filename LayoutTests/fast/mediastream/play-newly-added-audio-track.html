@@ -19,6 +19,9 @@ promise_test(async () => {
     let stream2 = await navigator.mediaDevices.getUserMedia({ audio : true });
     video.srcObject.addTrack(stream2.getAudioTracks()[0]);
     await new Promise(resolve => setTimeout(resolve, 50));
+
+    stream.getTracks().forEach(t => t.stop());
+    stream2.getTracks().forEach(t => t.stop());
 }, "Add an audio track while playing video");
 
 promise_test(async () => {
@@ -34,6 +37,8 @@ promise_test(async () => {
 
     video.srcObject.addTrack(stream.getAudioTracks()[0]);
     await new Promise(resolve => setTimeout(resolve, 50));
+
+    stream.getTracks().forEach(t => t.stop());
 }, "Add an audio track while playing audio");
         </script>
     </head>

@@ -17,10 +17,10 @@
 #include <utility>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/str_cat.h"
 #include "api/make_ref_counted.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/string_encode.h"
 
 // TODO(tommi): Could we have a static map of value name -> expected type
 // and use this to RTC_DCHECK on correct usage (somewhat strongly typed values)?
@@ -104,7 +104,7 @@ class TypedIntId : public StatsReport::IdBase {
 
   std::string ToString() const override {
     return std::string(InternalTypeToString(type_)) + kSeparator +
-           rtc::ToString(id_);
+           absl::StrCat(id_);
   }
 
  protected:
@@ -170,7 +170,7 @@ class ComponentId : public StatsReport::IdBase {
     std::string ret(prefix);
     ret += content_name_;
     ret += '-';
-    ret += rtc::ToString(component_);
+    ret += absl::StrCat(component_);
     return ret;
   }
 
@@ -195,7 +195,7 @@ class CandidatePairId : public ComponentId {
   std::string ToString() const override {
     std::string ret(ComponentId::ToString("Conn-"));
     ret += '-';
-    ret += rtc::ToString(index_);
+    ret += absl::StrCat(index_);
     return ret;
   }
 
@@ -672,11 +672,11 @@ const char* StatsReport::Value::display_name() const {
 std::string StatsReport::Value::ToString() const {
   switch (type_) {
     case kInt:
-      return rtc::ToString(value_.int_);
+      return absl::StrCat(value_.int_);
     case kInt64:
-      return rtc::ToString(value_.int64_);
+      return absl::StrCat(value_.int64_);
     case kFloat:
-      return rtc::ToString(value_.float_);
+      return absl::StrCat(value_.float_);
     case kStaticString:
       return std::string(value_.static_string_);
     case kString:
@@ -698,17 +698,17 @@ StatsReport::~StatsReport() = default;
 
 // static
 StatsReport::Id StatsReport::NewBandwidthEstimationId() {
-  return rtc::make_ref_counted<BandwidthEstimationId>();
+  return make_ref_counted<BandwidthEstimationId>();
 }
 
 // static
 StatsReport::Id StatsReport::NewTypedId(StatsType type, const std::string& id) {
-  return rtc::make_ref_counted<TypedId>(type, id);
+  return make_ref_counted<TypedId>(type, id);
 }
 
 // static
 StatsReport::Id StatsReport::NewTypedIntId(StatsType type, int id) {
-  return rtc::make_ref_counted<TypedIntId>(type, id);
+  return make_ref_counted<TypedIntId>(type, id);
 }
 
 // static
@@ -716,25 +716,25 @@ StatsReport::Id StatsReport::NewIdWithDirection(
     StatsType type,
     const std::string& id,
     StatsReport::Direction direction) {
-  return rtc::make_ref_counted<IdWithDirection>(type, id, direction);
+  return make_ref_counted<IdWithDirection>(type, id, direction);
 }
 
 // static
 StatsReport::Id StatsReport::NewCandidateId(bool local, const std::string& id) {
-  return rtc::make_ref_counted<CandidateId>(local, id);
+  return make_ref_counted<CandidateId>(local, id);
 }
 
 // static
 StatsReport::Id StatsReport::NewComponentId(const std::string& content_name,
                                             int component) {
-  return rtc::make_ref_counted<ComponentId>(content_name, component);
+  return make_ref_counted<ComponentId>(content_name, component);
 }
 
 // static
 StatsReport::Id StatsReport::NewCandidatePairId(const std::string& content_name,
                                                 int component,
                                                 int index) {
-  return rtc::make_ref_counted<CandidatePairId>(content_name, component, index);
+  return make_ref_counted<CandidatePairId>(content_name, component, index);
 }
 
 const char* StatsReport::TypeToString() const {

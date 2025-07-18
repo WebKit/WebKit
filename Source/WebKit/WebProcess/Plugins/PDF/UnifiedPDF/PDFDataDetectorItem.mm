@@ -42,14 +42,15 @@ namespace WebKit {
 
 static bool hasActionsForResult(DDScannerResult *dataDetectorResult)
 {
-    return [[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:[dataDetectorResult coreResult] actionContext:nil];
+    RetainPtr ddActionsManagerClass = PAL::getDDActionsManagerClass();
+    return [[ddActionsManagerClass.get() sharedManager] hasActionsForResult:RetainPtr { [dataDetectorResult coreResult] }.get() actionContext:nil];
 }
 
 static bool resultIsPastDate(DDScannerResult *dataDetectorResult, PDFPage *pdfPage)
 {
-    NSDate *referenceDate = [[[pdfPage document] documentAttributes] objectForKey:get_PDFKit_PDFDocumentCreationDateAttribute()];
+    RetainPtr referenceDate = [[[pdfPage document] documentAttributes] objectForKey:RetainPtr { get_PDFKit_PDFDocumentCreationDateAttribute() }.get()];
     RetainPtr referenceTimeZone = adoptCF(CFTimeZoneCopyDefault());
-    return PAL::softLink_DataDetectorsCore_DDResultIsPastDate([dataDetectorResult coreResult], (CFDateRef)referenceDate, (CFTimeZoneRef)referenceTimeZone.get());
+    return PAL::softLink_DataDetectorsCore_DDResultIsPastDate(RetainPtr { [dataDetectorResult coreResult] }.get(), (CFDateRef)referenceDate.get(), (CFTimeZoneRef)referenceTimeZone.get());
 }
 
 Ref<PDFDataDetectorItem> PDFDataDetectorItem::create(DDScannerResult *dataDetectorResult, PDFPage *pdfPage)

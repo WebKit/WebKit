@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "GridPositionsResolver.h"
 #include "OrderIterator.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -33,19 +32,23 @@
 
 namespace WebCore {
 
-typedef Vector<SingleThreadWeakPtr<RenderBox>, 1> GridCell;
-typedef Vector<Vector<GridCell>> GridAsMatrix;
-typedef ListHashSet<size_t> OrderedTrackIndexSet;
+namespace Style {
+enum class GridTrackSizingDirection : bool;
+}
+
+using GridCell = Vector<SingleThreadWeakPtr<RenderBox>, 1>;
+using GridAsMatrix = Vector<Vector<GridCell>>;
+using OrderedTrackIndexSet = ListHashSet<size_t>;
 
 class GridArea;
-class GridPositionsResolver;
+class GridSpan;
 class RenderGrid;
 
 class Grid final {
 public:
     explicit Grid(RenderGrid&);
 
-    unsigned numTracks(GridTrackSizingDirection) const;
+    unsigned numTracks(Style::GridTrackSizingDirection) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
     GridArea insert(RenderBox&, const GridArea&);
@@ -57,15 +60,15 @@ public:
     GridArea gridItemArea(const RenderBox& item) const;
     void setGridItemArea(const RenderBox& item, GridArea);
 
-    GridSpan gridItemSpan(const RenderBox&, GridTrackSizingDirection) const;
-    GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, GridTrackSizingDirection) const;
+    GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
+    GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, Style::GridTrackSizingDirection) const;
 
     const GridCell& cell(unsigned row, unsigned column) const;
 
-    unsigned explicitGridStart(GridTrackSizingDirection) const;
+    unsigned explicitGridStart(Style::GridTrackSizingDirection) const;
     void setExplicitGridStart(unsigned rowStart, unsigned columnStart);
 
-    unsigned autoRepeatTracks(GridTrackSizingDirection) const;
+    unsigned autoRepeatTracks(Style::GridTrackSizingDirection) const;
     void setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
 
     void setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
@@ -75,11 +78,11 @@ public:
     void setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet>);
     void setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet>);
 
-    unsigned autoRepeatEmptyTracksCount(GridTrackSizingDirection) const;
-    bool hasAutoRepeatEmptyTracks(GridTrackSizingDirection) const;
-    bool isEmptyAutoRepeatTrack(GridTrackSizingDirection, unsigned) const;
+    unsigned autoRepeatEmptyTracksCount(Style::GridTrackSizingDirection) const;
+    bool hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
+    bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
 
-    OrderedTrackIndexSet* autoRepeatEmptyTracks(GridTrackSizingDirection) const;
+    OrderedTrackIndexSet* autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
 
     OrderIterator& orderIterator() { return m_orderIterator; }
 
@@ -118,7 +121,7 @@ class GridIterator {
 public:
     // |direction| is the direction that is fixed to |fixedTrackIndex| so e.g
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
-    GridIterator(const Grid&, GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
+    GridIterator(const Grid&, Style::GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
     static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 
@@ -126,14 +129,14 @@ public:
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
     std::optional<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
 
-    GridTrackSizingDirection direction() const
+    Style::GridTrackSizingDirection direction() const
     {
         return m_direction;
     }
 
 private:
     const Grid& m_grid;
-    GridTrackSizingDirection m_direction;
+    Style::GridTrackSizingDirection m_direction;
     unsigned m_rowIndex;
     unsigned m_columnIndex;
     unsigned m_gridItemIndex;

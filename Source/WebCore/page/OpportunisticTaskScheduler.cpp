@@ -41,7 +41,7 @@ namespace WebCore {
 
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)
-    , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::OpportunisticTask, [weakThis = WeakPtr { this }] {
+    , m_runLoopObserver(makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::OpportunisticTask, [weakThis = WeakPtr { this }] {
         if (auto protectedThis = weakThis.get())
             protectedThis->runLoopObserverFired();
     }, RunLoopObserver::Type::OneShot))
@@ -180,7 +180,7 @@ static bool isBusyForTimerBasedGC(JSC::VM& vm)
 OpportunisticTaskScheduler::FullGCActivityCallback::FullGCActivityCallback(JSC::Heap& heap)
     : Base(heap, JSC::Synchronousness::Sync)
     , m_vm(heap.vm())
-    , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
+    , m_runLoopObserver(makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
         JSC::JSLockHolder locker(m_vm);
         m_version = 0;
         m_deferCount = 0;
@@ -226,7 +226,7 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
 OpportunisticTaskScheduler::EdenGCActivityCallback::EdenGCActivityCallback(JSC::Heap& heap)
     : Base(heap, JSC::Synchronousness::Sync)
     , m_vm(heap.vm())
-    , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
+    , m_runLoopObserver(makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
         JSC::JSLockHolder locker(m_vm);
         m_version = 0;
         m_deferCount = 0;

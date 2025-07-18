@@ -45,7 +45,7 @@ class ResourceResponse;
 class SubstituteData;
 
 class ContentFilter : public CanMakeWeakPtr<ContentFilter>, public CanMakeCheckedPtr<ContentFilter> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContentFilter, Loader);
     WTF_MAKE_NONCOPYABLE(ContentFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentFilter);
 public:

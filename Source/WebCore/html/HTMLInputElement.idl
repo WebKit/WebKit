@@ -116,6 +116,8 @@ enum AutofillButtonType {
     [EnabledForWorld=allowAutofill] attribute AutofillVisibility autofillVisibility;
     [EnabledForWorld=allowAutofill] attribute AutofillButtonType autofillButtonType;
     [EnabledForWorld=allowAutofill] attribute boolean autofillSpellcheck;
+    [EnabledForWorld=allowAutofill] attribute boolean autofilledAndObscured;
+    [EnabledForWorld=allowAutofill] attribute boolean autofilledAndViewable;
 
     // See http://www.w3.org/TR/html-media-capture/
     [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;

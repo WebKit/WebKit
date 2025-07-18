@@ -144,11 +144,10 @@ std::optional<ForcedFallbackParams> GetForcedFallbackParams(
 
 class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
  public:
-  VideoEncoderSoftwareFallbackWrapper(
-      const FieldTrialsView& field_trials,
-      std::unique_ptr<webrtc::VideoEncoder> sw_encoder,
-      std::unique_ptr<webrtc::VideoEncoder> hw_encoder,
-      bool prefer_temporal_support);
+  VideoEncoderSoftwareFallbackWrapper(const FieldTrialsView& field_trials,
+                                      std::unique_ptr<VideoEncoder> sw_encoder,
+                                      std::unique_ptr<VideoEncoder> hw_encoder,
+                                      bool prefer_temporal_support);
   ~VideoEncoderSoftwareFallbackWrapper() override;
 
   void SetFecControllerOverride(
@@ -221,8 +220,8 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
   };
 
   EncoderState encoder_state_;
-  const std::unique_ptr<webrtc::VideoEncoder> encoder_;
-  const std::unique_ptr<webrtc::VideoEncoder> fallback_encoder_;
+  const std::unique_ptr<VideoEncoder> encoder_;
+  const std::unique_ptr<VideoEncoder> fallback_encoder_;
 
   EncodedImageCallback* callback_;
 
@@ -233,8 +232,8 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
 
 VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
     const FieldTrialsView& field_trials,
-    std::unique_ptr<webrtc::VideoEncoder> sw_encoder,
-    std::unique_ptr<webrtc::VideoEncoder> hw_encoder,
+    std::unique_ptr<VideoEncoder> sw_encoder,
+    std::unique_ptr<VideoEncoder> hw_encoder,
     bool prefer_temporal_support)
     : encoder_state_(EncoderState::kUninitialized),
       encoder_(std::move(hw_encoder)),
@@ -409,13 +408,13 @@ int32_t VideoEncoderSoftwareFallbackWrapper::EncodeWithMainEncoder(
     } else {
       RTC_LOG(LS_INFO) << "Fallback encoder does not support native handle - "
                           "converting frame to I420";
-      rtc::scoped_refptr<I420BufferInterface> src_buffer =
+      scoped_refptr<I420BufferInterface> src_buffer =
           frame.video_frame_buffer()->ToI420();
       if (!src_buffer) {
         RTC_LOG(LS_ERROR) << "Failed to convert from to I420";
         return WEBRTC_VIDEO_CODEC_ENCODER_FAILURE;
       }
-      rtc::scoped_refptr<VideoFrameBuffer> dst_buffer =
+      scoped_refptr<VideoFrameBuffer> dst_buffer =
           src_buffer->Scale(codec_settings_.width, codec_settings_.height);
       if (!dst_buffer) {
         RTC_LOG(LS_ERROR) << "Failed to scale video frame.";

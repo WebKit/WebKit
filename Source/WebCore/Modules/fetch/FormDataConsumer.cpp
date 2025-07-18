@@ -27,6 +27,7 @@
 #include "FormDataConsumer.h"
 
 #include "BlobLoader.h"
+#include "ExceptionOr.h"
 #include "FormData.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>

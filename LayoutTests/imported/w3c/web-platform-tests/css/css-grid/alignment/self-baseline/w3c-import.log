@@ -86,6 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-two-dimensional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-001.html

@@ -71,7 +71,7 @@ public:
 
     // Characters
 
-    std::span<const UChar> characters() const;
+    std::span<const char16_t> characters() const;
     bool charactersIsAll8BitData() const;
 
     // Comment
@@ -92,7 +92,7 @@ private:
     // We don't want to copy the characters out of the HTMLToken, so we keep a pointer to its buffer instead.
     // This buffer is owned by the HTMLToken and causes a lifetime dependence between these objects.
     // FIXME: Add a mechanism for "internalizing" the characters when the HTMLToken is destroyed.
-    std::span<const UChar> m_externalCharacters; // Character
+    std::span<const char16_t> m_externalCharacters; // Character
 
     Type m_type;
     TagName m_tagName; // StartTag, EndTag.
@@ -159,7 +159,7 @@ inline const Vector<Attribute>& AtomHTMLToken::attributes() const
     return m_attributes;
 }
 
-inline std::span<const UChar> AtomHTMLToken::characters() const
+inline std::span<const char16_t> AtomHTMLToken::characters() const
 {
     ASSERT(m_type == Type::Character);
     return m_externalCharacters;

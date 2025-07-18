@@ -41,7 +41,7 @@
 namespace WebKit {
 
 struct WebPage::Internals {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WebPage);
 #if PLATFORM(IOS_FAMILY)
     WebCore::VisibleSelection storedSelectionForAccessibility { WebCore::VisibleSelection() };
     FocusedElementInformationIdentifier lastFocusedElementInformationIdentifier;

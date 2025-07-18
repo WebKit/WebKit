@@ -33,7 +33,7 @@ class CongestionControlFeedback : public Rtpfb {
     //  Time offset from report timestamp. Minus infinity if the packet has not
     //  been received.
     TimeDelta arrival_time_offset = TimeDelta::MinusInfinity();
-    rtc::EcnMarking ecn = rtc::EcnMarking::kNotEct;
+    EcnMarking ecn = EcnMarking::kNotEct;
   };
 
   static constexpr uint8_t kFeedbackMessageType = 11;
@@ -47,7 +47,7 @@ class CongestionControlFeedback : public Rtpfb {
 
   bool Parse(const CommonHeader& packet);
 
-  rtc::ArrayView<const PacketInfo> packets() const { return packets_; }
+  ArrayView<const PacketInfo> packets() const { return packets_; }
 
   uint32_t report_timestamp_compact_ntp() const {
     return report_timestamp_compact_ntp_;

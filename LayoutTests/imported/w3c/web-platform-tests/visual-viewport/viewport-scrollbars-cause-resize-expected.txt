@@ -4,4 +4,6 @@ Test Description: This test checks that the appearance of classic scrollbars wil
 
 
 PASS view size initially matches window size
+PASS Resize event was fired at window.visualViewport if, and only if, scrollbars are classic (i.e. affect flow)
+PASS view size reflects appearance of classic scrollbars
 

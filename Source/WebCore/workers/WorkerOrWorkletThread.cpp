@@ -28,6 +28,7 @@
 
 #include "ThreadGlobalData.h"
 #include "WorkerEventLoop.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 
@@ -97,7 +98,7 @@ void WorkerOrWorkletThread::startRunningDebuggerTasks()
 
     MessageQueueWaitResult result;
     do {
-        result = downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).runInDebuggerMode(*m_globalScope);
+        result = downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).runInDebuggerMode(*protectedGlobalScope());
     } while (result != MessageQueueTerminated && m_pausedForDebugger);
 }
 
@@ -110,7 +111,7 @@ void WorkerOrWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
     if (auto* runLoop = dynamicDowncast<WorkerDedicatedRunLoop>(m_runLoop.get()))
-        runLoop->run(RefPtr { m_globalScope }.get());
+        runLoop->run(protectedGlobalScope().get());
 }
 
 void WorkerOrWorkletThread::workerOrWorkletThread()
@@ -122,7 +123,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         if (!m_globalScope)
             return;
 
-        downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*m_globalScope);
+        downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*protectedGlobalScope());
 
         String exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
@@ -321,14 +322,14 @@ void WorkerOrWorkletThread::suspend()
     if (is<WorkerMainRunLoop>(m_runLoop.get()))
         return;
 
-    m_runLoop->postTask([&](ScriptExecutionContext&) {
-        if (globalScope())
-            globalScope()->suspend();
+    m_runLoop->postTask([protectedThis = Ref { *this }](ScriptExecutionContext&) {
+        if (RefPtr globalScope = protectedThis->m_globalScope)
+            globalScope->suspend();
 
-        m_suspensionSemaphore.wait();
+        protectedThis->m_suspensionSemaphore.wait();
 
-        if (globalScope())
-            globalScope()->resume();
+        if (RefPtr globalScope = protectedThis->m_globalScope)
+            globalScope->resume();
     });
 }
 
@@ -361,6 +362,16 @@ void WorkerOrWorkletThread::removeChildThread(WorkerOrWorkletThread& childThread
     m_childThreads.remove(childThread);
     if (m_childThreads.isEmptyIgnoringNullReferences() && m_runWhenLastChildThreadIsGone)
         std::exchange(m_runWhenLastChildThreadIsGone, nullptr)();
+}
+
+CheckedPtr<WorkerLoaderProxy> WorkerOrWorkletThread::checkedWorkerLoaderProxy() const
+{
+    return workerLoaderProxy();
+}
+
+RefPtr<WorkerOrWorkletGlobalScope> WorkerOrWorkletThread::protectedGlobalScope() const
+{
+    return m_globalScope.get();
 }
 
 } // namespace WebCore

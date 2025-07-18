@@ -37,7 +37,7 @@ RefPtr<DisplayRefreshMonitorWin> DisplayRefreshMonitorWin::create(PlatformDispla
 
 DisplayRefreshMonitorWin::DisplayRefreshMonitorWin(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
-    , m_timer(RunLoop::main(), this, &DisplayRefreshMonitorWin::displayLinkCallbackFired)
+    , m_timer(RunLoop::mainSingleton(), this, &DisplayRefreshMonitorWin::displayLinkCallbackFired)
     , m_currentUpdate({ 0, DefaultFramesPerSecond })
 {
 }

@@ -95,8 +95,9 @@ private:
     };
 
     static AST::Identifier argumentBufferParameterName(unsigned group);
-    static AST::Identifier argumentBufferStructName(unsigned group);
     static AST::Identifier dynamicOffsetVariableName();
+
+    AST::Identifier argumentBufferStructName(unsigned group);
 
     void def(const AST::Identifier&, AST::Variable*);
 
@@ -164,6 +165,7 @@ private:
     PipelineLayout* m_generatedLayout { nullptr };
     unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
+    unsigned m_entryPointID { 0 };
     Vector<Insertion> m_pendingInsertions;
     HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
     ShaderStage m_stage { ShaderStage::Vertex };
@@ -187,6 +189,7 @@ std::optional<Error> RewriteGlobalVariables::run()
         return error;
     for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
         auto maybeError = visitEntryPoint(entryPoint);
+        ++m_entryPointID;
         if (maybeError.has_value())
             return maybeError;
     }
@@ -2649,7 +2652,7 @@ AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned gro
 
 AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
-    return AST::Identifier::make(makeString("__ArgumentBufferT_"_s, group));
+    return AST::Identifier::make(makeString("__ArgumentBufferT_"_s, m_entryPointID, "_"_s, group));
 }
 
 AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()

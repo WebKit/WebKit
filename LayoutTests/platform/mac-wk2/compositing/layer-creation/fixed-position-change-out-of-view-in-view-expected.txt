@@ -1,0 +1,46 @@
+Layer tree when the fixed elements are out-of-view (should be blank):
+Layer tree when the fixed elements are in-view (both fixed elements should have layers):
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (bounds 800.00 600.00)
+          (children 1
+            (GraphicsLayer
+              (position 100.00 50.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 10.00 10.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (bounds 800.00 600.00)
+          (children 1
+            (GraphicsLayer
+              (position 100.00 100.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 10.00 10.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+Layer tree when the fixed elements are out-of-view again (should be blank):
+

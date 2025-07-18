@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

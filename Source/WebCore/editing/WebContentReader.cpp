@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "LocalFrameInlines.h"
 
 namespace WebCore {
 

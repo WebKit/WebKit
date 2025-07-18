@@ -21,12 +21,12 @@ namespace {
 
 constexpr int kNumGruGates = 3;  // Update, reset, output.
 
-std::vector<float> PreprocessGruTensor(rtc::ArrayView<const int8_t> tensor_src,
+std::vector<float> PreprocessGruTensor(ArrayView<const int8_t> tensor_src,
                                        int output_size) {
   // Transpose, cast and scale.
   // `n` is the size of the first dimension of the 3-dim tensor `weights`.
-  const int n = rtc::CheckedDivExact(rtc::dchecked_cast<int>(tensor_src.size()),
-                                     output_size * kNumGruGates);
+  const int n = CheckedDivExact(dchecked_cast<int>(tensor_src.size()),
+                                output_size * kNumGruGates);
   const int stride_src = kNumGruGates * output_size;
   const int stride_dst = n * output_size;
   std::vector<float> tensor_dst(tensor_src.size());
@@ -54,12 +54,12 @@ std::vector<float> PreprocessGruTensor(rtc::ArrayView<const int8_t> tensor_src,
 void ComputeUpdateResetGate(int input_size,
                             int output_size,
                             const VectorMath& vector_math,
-                            rtc::ArrayView<const float> input,
-                            rtc::ArrayView<const float> state,
-                            rtc::ArrayView<const float> bias,
-                            rtc::ArrayView<const float> weights,
-                            rtc::ArrayView<const float> recurrent_weights,
-                            rtc::ArrayView<float> gate) {
+                            ArrayView<const float> input,
+                            ArrayView<const float> state,
+                            ArrayView<const float> bias,
+                            ArrayView<const float> weights,
+                            ArrayView<const float> recurrent_weights,
+                            ArrayView<float> gate) {
   RTC_DCHECK_EQ(input.size(), input_size);
   RTC_DCHECK_EQ(state.size(), output_size);
   RTC_DCHECK_EQ(bias.size(), output_size);
@@ -90,13 +90,13 @@ void ComputeUpdateResetGate(int input_size,
 void ComputeStateGate(int input_size,
                       int output_size,
                       const VectorMath& vector_math,
-                      rtc::ArrayView<const float> input,
-                      rtc::ArrayView<const float> update,
-                      rtc::ArrayView<const float> reset,
-                      rtc::ArrayView<const float> bias,
-                      rtc::ArrayView<const float> weights,
-                      rtc::ArrayView<const float> recurrent_weights,
-                      rtc::ArrayView<float> state) {
+                      ArrayView<const float> input,
+                      ArrayView<const float> update,
+                      ArrayView<const float> reset,
+                      ArrayView<const float> bias,
+                      ArrayView<const float> weights,
+                      ArrayView<const float> recurrent_weights,
+                      ArrayView<float> state) {
   RTC_DCHECK_EQ(input.size(), input_size);
   RTC_DCHECK_GE(update.size(), output_size);  // `update` is over-allocated.
   RTC_DCHECK_GE(reset.size(), output_size);   // `reset` is over-allocated.
@@ -124,9 +124,9 @@ void ComputeStateGate(int input_size,
 GatedRecurrentLayer::GatedRecurrentLayer(
     const int input_size,
     const int output_size,
-    const rtc::ArrayView<const int8_t> bias,
-    const rtc::ArrayView<const int8_t> weights,
-    const rtc::ArrayView<const int8_t> recurrent_weights,
+    const ArrayView<const int8_t> bias,
+    const ArrayView<const int8_t> weights,
+    const ArrayView<const int8_t> recurrent_weights,
     const AvailableCpuFeatures& cpu_features,
     absl::string_view layer_name)
     : input_size_(input_size),
@@ -157,19 +157,19 @@ void GatedRecurrentLayer::Reset() {
   state_.fill(0.f);
 }
 
-void GatedRecurrentLayer::ComputeOutput(rtc::ArrayView<const float> input) {
+void GatedRecurrentLayer::ComputeOutput(ArrayView<const float> input) {
   RTC_DCHECK_EQ(input.size(), input_size_);
 
   // The tensors below are organized as a sequence of flattened tensors for the
   // `update`, `reset` and `state` gates.
-  rtc::ArrayView<const float> bias(bias_);
-  rtc::ArrayView<const float> weights(weights_);
-  rtc::ArrayView<const float> recurrent_weights(recurrent_weights_);
+  ArrayView<const float> bias(bias_);
+  ArrayView<const float> weights(weights_);
+  ArrayView<const float> recurrent_weights(recurrent_weights_);
   // Strides to access to the flattened tensors for a specific gate.
   const int stride_weights = input_size_ * output_size_;
   const int stride_recurrent_weights = output_size_ * output_size_;
 
-  rtc::ArrayView<float> state(state_.data(), output_size_);
+  ArrayView<float> state(state_.data(), output_size_);
 
   // Update gate.
   std::array<float, kGruLayerMaxUnits> update;

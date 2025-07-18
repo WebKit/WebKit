@@ -8,25 +8,33 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <string>
 #include <vector>
 
+#include "absl/flags/flag.h"
+#include "absl/strings/string_view.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
 #include "api/test/create_frame_generator.h"
+#include "api/test/frame_generator_interface.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
-#include "api/test/metrics/stdout_metrics_exporter.h"
+#include "api/test/video_quality_analyzer_interface.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
-#include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
+#include "test/test_flags.h"
 
 namespace webrtc {
 namespace {
@@ -35,16 +43,21 @@ using ::testing::Contains;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
 
-using ::webrtc::test::DefaultMetricsLogger;
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Metric;
-using ::webrtc::test::MetricsExporter;
-using ::webrtc::test::StdoutMetricsExporter;
-using ::webrtc::test::Unit;
+using test::DefaultMetricsLogger;
+using test::ImprovementDirection;
+using test::Metric;
+using test::Unit;
 
 constexpr int kAnalyzerMaxThreadsCount = 1;
 constexpr int kFrameWidth = 320;
 constexpr int kFrameHeight = 240;
+
+std::string GetExpectedTestCaseName(const std::string& stream_label) {
+  if (!absl::GetFlag(FLAGS_isolated_script_test_perf_output).empty()) {
+    return "test_case/" + stream_label;
+  }
+  return "test_case";
+}
 
 DefaultVideoQualityAnalyzerOptions AnalyzerOptionsForTest() {
   DefaultVideoQualityAnalyzerOptions options;
@@ -110,7 +123,7 @@ void PassFramesThroughAnalyzer(DefaultVideoQualityAnalyzer& analyzer,
       analyzer.OnFrameRendered(receiver, received_frame);
     }
     if (i < frames_count - 1 && interframe_delay_ms > 0) {
-      SleepMs(interframe_delay_ms);
+      Thread::SleepMs(interframe_delay_ms);
     }
   }
 }
@@ -181,147 +194,147 @@ TEST(DefaultVideoQualityAnalyzerMetricNamesTest, MetricNamesForP2PAreCorrect) {
       metrics,
       UnorderedElementsAre(
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "ssim",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "transport_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "total_delay_incl_transport",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "time_between_rendered_frames",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "harmonic_framerate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "encode_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "encode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "time_between_freezes",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "freeze_time_ms",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "pixels_per_frame",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "min_psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "decode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "receive_to_render_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "dropped_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "frames_in_flight",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "rendered_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "max_skipped",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "target_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "qp_sl0",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "rendered_frame_qp",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "actual_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "capture_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "num_encoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "num_decoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "num_send_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "num_recv_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "recv_key_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video",
+              .test_case = GetExpectedTestCaseName("alice_video"),
               .name = "recv_delta_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
@@ -360,294 +373,294 @@ TEST(DefaultVideoQualityAnalyzerMetricNamesTest,
       UnorderedElementsAre(
           // Bob
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "ssim",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "transport_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "total_delay_incl_transport",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "time_between_rendered_frames",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "harmonic_framerate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "encode_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "encode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "time_between_freezes",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "freeze_time_ms",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "pixels_per_frame",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "min_psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "decode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "receive_to_render_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "dropped_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "frames_in_flight",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "rendered_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "max_skipped",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "target_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "qp_sl0",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "rendered_frame_qp",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "actual_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "capture_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "num_encoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "num_decoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "num_send_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "num_recv_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "recv_key_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_bob",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_bob"),
               .name = "recv_delta_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
 
           // Charlie
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "ssim",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "transport_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "total_delay_incl_transport",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "time_between_rendered_frames",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "harmonic_framerate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "encode_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "encode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "time_between_freezes",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "freeze_time_ms",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "pixels_per_frame",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "min_psnr_dB",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "decode_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "receive_to_render_time",
               .unit = Unit::kMilliseconds,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "dropped_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "frames_in_flight",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "rendered_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "max_skipped",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "target_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "qp_sl0",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "rendered_frame_qp",
               .unit = Unit::kUnitless,
               .improvement_direction = ImprovementDirection::kSmallerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "actual_encode_bitrate",
               .unit = Unit::kKilobitsPerSecond,
               .improvement_direction = ImprovementDirection::kNeitherIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "capture_frame_rate",
               .unit = Unit::kHertz,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "num_encoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "num_decoded_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "num_send_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "num_recv_key_frames",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "recv_key_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
           MetricValidationInfo{
-              .test_case = "test_case/alice_video_alice_charlie",
+              .test_case = GetExpectedTestCaseName("alice_video_alice_charlie"),
               .name = "recv_delta_frame_size_bytes",
               .unit = Unit::kCount,
               .improvement_direction = ImprovementDirection::kBiggerIsBetter},
@@ -685,10 +698,6 @@ TEST(DefaultVideoQualityAnalyzerMetricNamesTest,
   std::vector<std::string> metrics =
       ToTestCases(metrics_logger.GetCollectedMetrics());
   EXPECT_THAT(metrics, SizeIs(59));
-  EXPECT_THAT(metrics, Contains("test_case/alice_video_alice_bob").Times(29));
-  EXPECT_THAT(metrics,
-              Contains("test_case/alice_video_alice_charlie").Times(29));
-  EXPECT_THAT(metrics, Contains("test_case").Times(1));
 }
 
 }  // namespace

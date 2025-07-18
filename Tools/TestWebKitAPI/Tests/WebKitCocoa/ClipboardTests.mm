@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
@@ -32,7 +33,12 @@
 #import <CoreServices/CoreServices.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKFeature.h>
+
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSPasteboardSPI.h>
+#endif
 
 @interface TestWKWebView (ClipboardTests)
 
@@ -64,13 +70,8 @@
 
 @end
 
-static RetainPtr<TestWKWebView> createWebViewForClipboardTests()
+static void setClipboardConfigurationPreferences(WKWebViewConfiguration *configuration)
 {
-#if PLATFORM(IOS_FAMILY)
-    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
-#endif
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setDOMPasteAllowed:YES];
     [[configuration preferences] _setJavaScriptCanAccessClipboard:YES];
     for (_WKFeature *feature in [WKPreferences _features]) {
@@ -79,8 +80,17 @@ static RetainPtr<TestWKWebView> createWebViewForClipboardTests()
             break;
         }
     }
+}
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+static RetainPtr<TestWKWebView> createWebViewForClipboardTests()
+{
+#if PLATFORM(IOS_FAMILY)
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
+#endif
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setClipboardConfigurationPreferences(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"clipboard"];
     return webView;
 }
@@ -88,16 +98,16 @@ static RetainPtr<TestWKWebView> createWebViewForClipboardTests()
 static void writeMultipleObjectsToPlatformPasteboard()
 {
 #if PLATFORM(MAC)
-    auto firstItem = adoptNS([[NSPasteboardItem alloc] init]);
+    RetainPtr firstItem = adoptNS([[NSPasteboardItem alloc] init]);
     [firstItem setString:@"Hello" forType:NSPasteboardTypeString];
 
-    auto secondItem = adoptNS([[NSPasteboardItem alloc] init]);
+    RetainPtr secondItem = adoptNS([[NSPasteboardItem alloc] init]);
     [secondItem setString:@"https://apple.com/" forType:NSPasteboardTypeURL];
 
-    auto thirdItem = adoptNS([[NSPasteboardItem alloc] init]);
+    RetainPtr thirdItem = adoptNS([[NSPasteboardItem alloc] init]);
     [thirdItem setString:@"<strong style='color: rgb(0, 255, 0);'>Hello world</strong>" forType:NSPasteboardTypeHTML];
 
-    auto fourthItem = adoptNS([[NSPasteboardItem alloc] init]);
+    RetainPtr fourthItem = adoptNS([[NSPasteboardItem alloc] init]);
     [fourthItem setString:@"WebKit" forType:NSPasteboardTypeString];
     [fourthItem setString:@"https://webkit.org/" forType:NSPasteboardTypeURL];
     [fourthItem setString:@"<a href='https://webkit.org/'>Hello world</a>" forType:NSPasteboardTypeHTML];
@@ -106,15 +116,15 @@ static void writeMultipleObjectsToPlatformPasteboard()
     [pasteboard clearContents];
     [pasteboard writeObjects:@[firstItem.get(), secondItem.get(), thirdItem.get(), fourthItem.get()]];
 #elif PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    auto firstItem = adoptNS([[NSItemProvider alloc] initWithObject:@"Hello"]);
-    auto secondItem = adoptNS([[NSItemProvider alloc] initWithObject:[NSURL URLWithString:@"https://apple.com/"]]);
-    auto thirdItem = adoptNS([[NSItemProvider alloc] init]);
+    RetainPtr firstItem = adoptNS([[NSItemProvider alloc] initWithObject:@"Hello"]);
+    RetainPtr secondItem = adoptNS([[NSItemProvider alloc] initWithObject:[NSURL URLWithString:@"https://apple.com/"]]);
+    RetainPtr thirdItem = adoptNS([[NSItemProvider alloc] init]);
     [thirdItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
         completionHandler([@"<strong style='color: rgb(0, 255, 0);'>Hello world</strong>" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
     }];
 
-    auto fourthItem = adoptNS([[NSItemProvider alloc] init]);
+    RetainPtr fourthItem = adoptNS([[NSItemProvider alloc] init]);
     [fourthItem registerObject:@"WebKit" visibility:NSItemProviderRepresentationVisibilityAll];
     [fourthItem registerObject:[NSURL URLWithString:@"https://webkit.org/"] visibility:NSItemProviderRepresentationVisibilityAll];
     [fourthItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
@@ -143,7 +153,7 @@ TEST(ClipboardTests, DISABLED_ReadMultipleItems)
 TEST(ClipboardTests, ReadMultipleItems)
 #endif
 {
-    auto webView = createWebViewForClipboardTests();
+    RetainPtr webView = createWebViewForClipboardTests();
     writeMultipleObjectsToPlatformPasteboard();
     [webView readClipboard];
 
@@ -159,10 +169,10 @@ TEST(ClipboardTests, ReadMultipleItems)
 
 TEST(ClipboardTests, WriteSanitizedMarkup)
 {
-    auto webView = createWebViewForClipboardTests();
+    RetainPtr webView = createWebViewForClipboardTests();
     [webView writeString:@"<script>/* super secret */</script>This is a test." toClipboardWithType:@"text/html"];
 
-    auto writtenMarkup = readMarkupFromPasteboard();
+    RetainPtr writtenMarkup = readMarkupFromPasteboard();
     EXPECT_TRUE([writtenMarkup containsString:@"This is a test."]);
     EXPECT_FALSE([writtenMarkup containsString:@"super secret"]);
     EXPECT_FALSE([writtenMarkup containsString:@"<script>"]);
@@ -170,18 +180,70 @@ TEST(ClipboardTests, WriteSanitizedMarkup)
 
 #if PLATFORM(MAC)
 
+static RetainPtr<TestWKWebView> createEphemeralWebViewForClipboardTests()
+{
+    RetainPtr ephemeralStore = [WKWebsiteDataStore nonPersistentDataStore];
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = ephemeralStore.get();
+
+    setClipboardConfigurationPreferences(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world</body>"];
+    return webView;
+}
+
 TEST(ClipboardTests, ConvertTIFFToPNGWhenPasting)
 {
-    auto webView = createWebViewForClipboardTests();
-    auto url = [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"];
+    RetainPtr webView = createWebViewForClipboardTests();
+    RetainPtr url = [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"];
     auto pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard clearContents];
-    [pasteboard setData:[NSData dataWithContentsOfURL:url] forType:NSPasteboardTypeTIFF];
+    [pasteboard setData:[NSData dataWithContentsOfURL:url.get()] forType:NSPasteboardTypeTIFF];
     [webView readClipboard];
 
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"exception ? exception.message : ''"]);
     EXPECT_EQ(1U, [[webView objectByEvaluatingJavaScript:@"clipboardData.length"] unsignedIntValue]);
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"clipboardData[0]['image/png'].src"] containsString:@"blob:"]);
+}
+
+TEST(ClipboardTests, EphemeralSessionClipboardHasExpirationJavaScript)
+{
+    RetainPtr webView = createEphemeralWebViewForClipboardTests();
+
+    __block bool pasteboardHaveExpirationDate = false;
+    auto setExpirationDateSwizzler = InstanceMethodSwizzler {
+        NSPasteboard.class,
+        @selector(_setExpirationDate:),
+        imp_implementationWithBlock(^{
+            pasteboardHaveExpirationDate = true;
+            return YES;
+        })
+    };
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.execCommand(\"selectAll\", true); document.execCommand(\"copy\");"]);
+
+    EXPECT_TRUE(pasteboardHaveExpirationDate);
+}
+
+TEST(ClipboardTests, EphemeralSessionClipboardHasExpirationWebView)
+{
+    RetainPtr webView = createEphemeralWebViewForClipboardTests();
+
+    __block bool pasteboardHaveExpirationDate = false;
+    auto setExpirationDateSwizzler = InstanceMethodSwizzler {
+        NSPasteboard.class,
+        @selector(_setExpirationDate:),
+        imp_implementationWithBlock(^{
+            pasteboardHaveExpirationDate = true;
+            return YES;
+        })
+    };
+
+    [webView selectAll:nil];
+    [webView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+
+    EXPECT_TRUE(pasteboardHaveExpirationDate);
 }
 
 #endif // PLATFORM(MAC)

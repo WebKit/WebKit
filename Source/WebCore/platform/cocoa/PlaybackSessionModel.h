@@ -120,6 +120,7 @@ public:
     virtual double bufferedTime() const = 0;
 
     using PlaybackState = PlaybackSessionModelPlaybackState;
+    virtual OptionSet<PlaybackState> playbackState() const = 0;
 
     virtual bool isPlaying() const = 0;
     virtual bool isStalled() const = 0;

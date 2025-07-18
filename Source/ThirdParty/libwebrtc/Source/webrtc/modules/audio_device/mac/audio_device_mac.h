@@ -170,7 +170,7 @@ class AudioDeviceMac : public AudioDeviceGeneric {
   static void AtomicSet32(int32_t* theValue, int32_t newValue);
   static int32_t AtomicGet32(int32_t* theValue);
 
-  static void logCAMsg(rtc::LoggingSeverity sev,
+  static void logCAMsg(webrtc::LoggingSeverity sev,
                        const char* msg,
                        const char* err);
 
@@ -180,7 +180,7 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   int32_t GetDeviceName(AudioObjectPropertyScope scope,
                         uint16_t index,
-                        rtc::ArrayView<char> name);
+                        webrtc::ArrayView<char> name);
 
   int32_t InitDevice(uint16_t userDeviceIndex,
                      AudioDeviceID& deviceId,
@@ -267,14 +267,14 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   Mutex mutex_;
 
-  rtc::Event _stopEventRec;
-  rtc::Event _stopEvent;
+  webrtc::Event _stopEventRec;
+  webrtc::Event _stopEvent;
 
   // Only valid/running between calls to StartRecording and StopRecording.
-  rtc::PlatformThread capture_worker_thread_;
+  webrtc::PlatformThread capture_worker_thread_;
 
   // Only valid/running between calls to StartPlayout and StopPlayout.
-  rtc::PlatformThread render_worker_thread_;
+  webrtc::PlatformThread render_worker_thread_;
 
   AudioMixerManagerMac _mixerManager;
 

@@ -64,7 +64,7 @@ Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(Uniqu
 }
 
 PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
-    : m_firePendingAttributionRequestsTimer(RunLoop::main(), this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
+    : m_firePendingAttributionRequestsTimer(RunLoop::mainSingleton(), this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
     , m_storageDirectory(storageDirectory)
     , m_client(WTFMove(client))
 {

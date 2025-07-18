@@ -11,12 +11,21 @@
 #include "modules/video_coding/timing/timing.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <optional>
 
+#include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_timing.h"
 #include "modules/video_coding/timing/decode_time_percentile_filter.h"
 #include "modules/video_coding/timing/timestamp_extrapolator.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -92,12 +101,12 @@ void VCMTiming::set_min_playout_delay(TimeDelta min_playout_delay) {
   }
 }
 
-void VCMTiming::set_max_playout_delay(TimeDelta max_playout_delay) {
+void VCMTiming::set_playout_delay(const VideoPlayoutDelay& playout_delay) {
   MutexLock lock(&mutex_);
-  if (max_playout_delay_ != max_playout_delay) {
-    CheckDelaysValid(min_playout_delay_, max_playout_delay);
-    max_playout_delay_ = max_playout_delay;
-  }
+  // No need to call `CheckDelaysValid` as the same invariant (min <= max)
+  // is guaranteed by the `VideoPlayoutDelay` type.
+  min_playout_delay_ = playout_delay.min();
+  max_playout_delay_ = playout_delay.max();
 }
 
 void VCMTiming::SetJitterDelay(TimeDelta jitter_delay) {
@@ -201,8 +210,12 @@ Timestamp VCMTiming::RenderTimeInternal(uint32_t frame_timestamp,
   }
   // Note that TimestampExtrapolator::ExtrapolateLocalTime is not a const
   // method; it mutates the object's wraparound state.
-  Timestamp estimated_complete_time =
-      ts_extrapolator_->ExtrapolateLocalTime(frame_timestamp).value_or(now);
+  std::optional<Timestamp> local_time =
+      ts_extrapolator_->ExtrapolateLocalTime(frame_timestamp);
+  if (!local_time.has_value()) {
+    return now;
+  }
+  Timestamp estimated_complete_time = *local_time;
 
   // Make sure the actual delay stays in the range of `min_playout_delay_`
   // and `max_playout_delay_`.

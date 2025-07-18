@@ -46,6 +46,7 @@ from webkitpy.style.checker import _all_categories
 from webkitpy.style.checker import check_webkit_style_configuration
 from webkitpy.style.checker import check_webkit_style_parser
 from webkitpy.style.checker import configure_logging
+from webkitpy.style.checker import ANSIColor
 from webkitpy.style.checker import CheckerDispatcher
 from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.checker import StyleProcessor
@@ -687,12 +688,13 @@ class StyleProcessorConfigurationTest(LoggingTestCase):
     def test_write_style_error_emacs(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("emacs")
-        self.assertLog(["ERROR: foo.h:100:  message  [whitespace/tab] [5]\n"])
+        expected = f"{ANSIColor.WHITE}foo.h:100:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[whitespace/tab]{ANSIColor.RESET} {ANSIColor.WHITE}message{ANSIColor.RESET}\n"
+        self.assertLog([expected])
 
     def test_write_style_error_vs7(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("vs7")
-        self.assertLog(["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["foo.h(100): error: [whitespace/tab]  message\n"])
 
 
 class StyleProcessor_EndToEndTest(LoggingTestCase):
@@ -724,8 +726,8 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
                           file_path='foo.txt')
 
         self.assertEqual(processor.error_count, 1)
-        expected_messages = ['ERROR: foo.txt(2):  Line contains tab character.  '
-                             '[whitespace/tab] [5]\n']
+        expected_messages = ['foo.txt(2): error: [whitespace/tab]  '
+                             'Line contains tab character.\n']
         self.assertLog(expected_messages)
 
 
@@ -875,8 +877,8 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
 
         self.assertFalse(self._processor.should_process(file_path))
 
-        self.assertLog(['ERROR: foo/invalid_file.txt(-):  File type is unsupported by the WebKit '
-                        'project  [policy/language] [5]\n'.format(os.path.join('foo', 'skip_with_warning.txt'))])
+        self.assertLog(['foo/invalid_file.txt(-): error: [policy/language]  File type is unsupported by the WebKit '
+                        'project\n'.format(os.path.join('foo', 'skip_with_warning.txt'))])
 
     def test_process__checker_dispatched(self):
         """Test the process() method for a path with a dispatched checker."""

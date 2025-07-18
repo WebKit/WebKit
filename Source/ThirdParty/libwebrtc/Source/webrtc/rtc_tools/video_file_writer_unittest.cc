@@ -26,8 +26,7 @@ namespace test {
 class VideoFileWriterTest : public ::testing::Test {
  public:
   void SetUp() override {
-    video_filename_ =
-        TempFilename(webrtc::test::OutputPath(), "test_video_file.y4m");
+    video_filename_ = TempFilename(test::OutputPath(), "test_video_file.y4m");
 
     // Create simple test video of size 6x4.
     FILE* file = fopen(video_filename_.c_str(), "wb");
@@ -46,7 +45,7 @@ class VideoFileWriterTest : public ::testing::Test {
     fclose(file);
 
     // Open the newly created file.
-    video_ = webrtc::test::OpenY4mFile(video_filename_);
+    video_ = test::OpenY4mFile(video_filename_);
     ASSERT_TRUE(video_);
     ASSERT_EQ(video_->number_of_frames(), 2u);
   }
@@ -68,9 +67,9 @@ class VideoFileWriterTest : public ::testing::Test {
     }
     // Create an unique filename, e.g. test_video_file2.y4mZapata.
     written_video_filename_ =
-        TempFilename(webrtc::test::OutputPath(), "test_video_file2.y4m");
-    webrtc::test::WriteY4mVideoToFile(video_, written_video_filename_, fps);
-    written_video_ = webrtc::test::OpenY4mFile(written_video_filename_);
+        TempFilename(test::OutputPath(), "test_video_file2.y4m");
+    test::WriteY4mVideoToFile(video_, written_video_filename_, fps);
+    written_video_ = test::OpenY4mFile(written_video_filename_);
     ASSERT_TRUE(written_video_);
   }
 
@@ -82,18 +81,17 @@ class VideoFileWriterTest : public ::testing::Test {
     }
     // Create an unique filename, e.g. test_video_file2.yuvZapata.
     written_video_filename_ =
-        TempFilename(webrtc::test::OutputPath(), "test_video_file2.yuv");
-    webrtc::test::WriteYuvVideoToFile(video_, written_video_filename_, fps);
-    written_video_ =
-        webrtc::test::OpenYuvFile(written_video_filename_, width, height);
+        TempFilename(test::OutputPath(), "test_video_file2.yuv");
+    test::WriteYuvVideoToFile(video_, written_video_filename_, fps);
+    written_video_ = test::OpenYuvFile(written_video_filename_, width, height);
     ASSERT_TRUE(written_video_);
   }
 
   const int width = 6;
   const int height = 4;
   const int fps = 60;
-  rtc::scoped_refptr<webrtc::test::Video> video_;
-  rtc::scoped_refptr<webrtc::test::Video> written_video_;
+  scoped_refptr<test::Video> video_;
+  scoped_refptr<test::Video> written_video_;
   // Each video object must be backed by file!
   std::string video_filename_;
   std::string written_video_filename_;
@@ -124,7 +122,7 @@ TEST_F(VideoFileWriterTest, TestParsingNumberOfFramesYuv) {
 TEST_F(VideoFileWriterTest, TestPixelContentY4m) {
   WriteVideoY4m();
   int cnt = 0;
-  for (const rtc::scoped_refptr<I420BufferInterface> frame : *written_video_) {
+  for (const scoped_refptr<I420BufferInterface> frame : *written_video_) {
     for (int i = 0; i < width * height; ++i, ++cnt)
       EXPECT_EQ(cnt, frame->DataY()[i]);
     for (int i = 0; i < width / 2 * height / 2; ++i, ++cnt)
@@ -137,7 +135,7 @@ TEST_F(VideoFileWriterTest, TestPixelContentY4m) {
 TEST_F(VideoFileWriterTest, TestPixelContentYuv) {
   WriteVideoYuv();
   int cnt = 0;
-  for (const rtc::scoped_refptr<I420BufferInterface> frame : *written_video_) {
+  for (const scoped_refptr<I420BufferInterface> frame : *written_video_) {
     for (int i = 0; i < width * height; ++i, ++cnt)
       EXPECT_EQ(cnt, frame->DataY()[i]);
     for (int i = 0; i < width / 2 * height / 2; ++i, ++cnt)

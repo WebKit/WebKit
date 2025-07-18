@@ -25,29 +25,27 @@ MockAudioEncoder::FakeEncoding::FakeEncoding(size_t encoded_bytes) {
 
 AudioEncoder::EncodedInfo MockAudioEncoder::FakeEncoding::operator()(
     uint32_t timestamp,
-    rtc::ArrayView<const int16_t> audio,
-    rtc::Buffer* encoded) {
+    ArrayView<const int16_t> audio,
+    Buffer* encoded) {
   encoded->SetSize(encoded->size() + info_.encoded_bytes);
   return info_;
 }
 
 MockAudioEncoder::CopyEncoding::~CopyEncoding() = default;
 
-MockAudioEncoder::CopyEncoding::CopyEncoding(
-    AudioEncoder::EncodedInfo info,
-    rtc::ArrayView<const uint8_t> payload)
+MockAudioEncoder::CopyEncoding::CopyEncoding(AudioEncoder::EncodedInfo info,
+                                             ArrayView<const uint8_t> payload)
     : info_(info), payload_(payload) {}
 
-MockAudioEncoder::CopyEncoding::CopyEncoding(
-    rtc::ArrayView<const uint8_t> payload)
+MockAudioEncoder::CopyEncoding::CopyEncoding(ArrayView<const uint8_t> payload)
     : payload_(payload) {
   info_.encoded_bytes = payload_.size();
 }
 
 AudioEncoder::EncodedInfo MockAudioEncoder::CopyEncoding::operator()(
     uint32_t timestamp,
-    rtc::ArrayView<const int16_t> audio,
-    rtc::Buffer* encoded) {
+    ArrayView<const int16_t> audio,
+    Buffer* encoded) {
   RTC_CHECK(encoded);
   RTC_CHECK_LE(info_.encoded_bytes, payload_.size());
   encoded->AppendData(payload_.data(), info_.encoded_bytes);

@@ -14,6 +14,9 @@
 
 #include <math.h>
 
+#include <cstddef>
+#include <numbers>
+
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "rtc_base/strings/string_builder.h"
@@ -34,7 +37,7 @@ class DtmfToneGeneratorTest : public ::testing::Test {
     AudioMultiVector signal(channels);
 
     for (int event = 0; event <= 15; ++event) {
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Checking event " << event << " at sample rate " << fs_hz;
       SCOPED_TRACE(ss.str());
       const int kAttenuation = 0;
@@ -44,7 +47,7 @@ class DtmfToneGeneratorTest : public ::testing::Test {
 
       double f1 = kLowFreqHz[event];
       double f2 = kHighFreqHz[event];
-      const double pi = 3.14159265358979323846;
+      const double pi = std::numbers::pi;
 
       for (int n = 0; n < kNumSamples; ++n) {
         double x = k3dbAttenuation * sin(2.0 * pi * f1 / fs_hz * (-n - 1)) +
@@ -73,7 +76,7 @@ class DtmfToneGeneratorTest : public ::testing::Test {
       EXPECT_EQ(kNumSamples, tone_gen_.Generate(kNumSamples, &ref_signal));
       // Test every 5 steps (to save time).
       for (int attenuation = 1; attenuation <= 63; attenuation += 5) {
-        rtc::StringBuilder ss;
+        StringBuilder ss;
         ss << "Checking event " << event << " at sample rate " << fs_hz;
         ss << "; attenuation " << attenuation;
         SCOPED_TRACE(ss.str());
@@ -174,7 +177,7 @@ TEST(DtmfToneGenerator, TestErrors) {
   EXPECT_TRUE(tone_gen.initialized());
   // NULL pointer to destination.
   EXPECT_EQ(DtmfToneGenerator::kParameterError,
-            tone_gen.Generate(kNumSamples, NULL));
+            tone_gen.Generate(kNumSamples, nullptr));
 }
 
 }  // namespace webrtc

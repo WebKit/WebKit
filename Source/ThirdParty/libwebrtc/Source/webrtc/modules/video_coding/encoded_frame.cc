@@ -12,8 +12,16 @@
 
 #include <string.h>
 
-#include "absl/types/variant.h"
+#include <cstdint>
+#include <optional>
+
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
@@ -57,7 +65,7 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
     switch (header->codec) {
       case kVideoCodecVP8: {
         const auto& vp8_header =
-            absl::get<RTPVideoHeaderVP8>(header->video_type_header);
+            std::get<RTPVideoHeaderVP8>(header->video_type_header);
         if (_codecSpecificInfo.codecType != kVideoCodecVP8) {
           // This is the first packet for this frame.
           _codecSpecificInfo.codecSpecific.VP8.temporalIdx = 0;
@@ -79,7 +87,7 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
       }
       case kVideoCodecVP9: {
         const auto& vp9_header =
-            absl::get<RTPVideoHeaderVP9>(header->video_type_header);
+            std::get<RTPVideoHeaderVP9>(header->video_type_header);
         if (_codecSpecificInfo.codecType != kVideoCodecVP9) {
           // This is the first packet for this frame.
           _codecSpecificInfo.codecSpecific.VP9.temporal_idx = 0;

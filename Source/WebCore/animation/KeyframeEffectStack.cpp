@@ -182,7 +182,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
                 timeline->animationTimingDidChange(animation.get());
         }
 
-        affectedProperties.formUnion(effect->animatedProperties());
+        affectedProperties.addAll(effect->animatedProperties());
     }
 
     return impact;
@@ -241,7 +241,7 @@ bool KeyframeEffectStack::allowsAcceleration() const
                 return false;
             }
         }
-        allAcceleratedProperties.add(acceleratedProperties.begin(), acceleratedProperties.end());
+        allAcceleratedProperties.addAll(acceleratedProperties);
     }
 
     return true;

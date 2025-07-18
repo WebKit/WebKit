@@ -25,7 +25,7 @@ namespace webrtc {
 class RtcEventLogDependencyDescriptorEncoderDecoder {
  public:
   static std::optional<rtclog2::DependencyDescriptorsWireInfo> Encode(
-      const std::vector<rtc::ArrayView<const uint8_t>>& raw_dd_data);
+      const std::vector<ArrayView<const uint8_t>>& raw_dd_data);
   static RtcEventLogParseStatusOr<std::vector<std::vector<uint8_t>>> Decode(
       const rtclog2::DependencyDescriptorsWireInfo& dd_wire_info,
       size_t num_packets);

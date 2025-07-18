@@ -69,17 +69,17 @@ AudioMixerImpl::AudioMixerImpl(
 
 AudioMixerImpl::~AudioMixerImpl() {}
 
-rtc::scoped_refptr<AudioMixerImpl> AudioMixerImpl::Create() {
+scoped_refptr<AudioMixerImpl> AudioMixerImpl::Create() {
   return Create(std::unique_ptr<DefaultOutputRateCalculator>(
                     new DefaultOutputRateCalculator()),
                 /*use_limiter=*/true);
 }
 
-rtc::scoped_refptr<AudioMixerImpl> AudioMixerImpl::Create(
+scoped_refptr<AudioMixerImpl> AudioMixerImpl::Create(
     std::unique_ptr<OutputRateCalculator> output_rate_calculator,
     bool use_limiter) {
-  return rtc::make_ref_counted<AudioMixerImpl>(
-      std::move(output_rate_calculator), use_limiter);
+  return make_ref_counted<AudioMixerImpl>(std::move(output_rate_calculator),
+                                          use_limiter);
 }
 
 void AudioMixerImpl::Mix(size_t number_of_channels,
@@ -97,8 +97,8 @@ void AudioMixerImpl::Mix(size_t number_of_channels,
                  });
 
   int output_frequency = output_rate_calculator_->CalculateOutputRateFromRange(
-      rtc::ArrayView<const int>(helper_containers_->preferred_rates.data(),
-                                number_of_streams));
+      ArrayView<const int>(helper_containers_->preferred_rates.data(),
+                           number_of_streams));
 
   frame_combiner_.Combine(GetAudioFromSources(output_frequency),
                           number_of_channels, output_frequency,
@@ -125,7 +125,7 @@ void AudioMixerImpl::RemoveSource(Source* audio_source) {
   audio_source_list_.erase(iter);
 }
 
-rtc::ArrayView<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
+ArrayView<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
     int output_frequency) {
   int audio_to_mix_count = 0;
   for (auto& source_and_status : audio_source_list_) {
@@ -144,8 +144,8 @@ rtc::ArrayView<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
             &source_and_status->audio_frame;
     }
   }
-  return rtc::ArrayView<AudioFrame* const>(
-      helper_containers_->audio_to_mix.data(), audio_to_mix_count);
+  return ArrayView<AudioFrame* const>(helper_containers_->audio_to_mix.data(),
+                                      audio_to_mix_count);
 }
 
 void AudioMixerImpl::UpdateSourceCountStats() {

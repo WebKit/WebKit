@@ -11,10 +11,15 @@
 #include "video/alignment_adjuster.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdlib>
 #include <limits>
+#include <optional>
 
 #include "absl/algorithm/container.h"
+#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/logging.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {

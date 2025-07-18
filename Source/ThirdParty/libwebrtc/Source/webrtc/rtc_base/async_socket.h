@@ -20,7 +20,7 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
-namespace rtc {
+namespace webrtc {
 
 class AsyncSocketAdapter : public Socket, public sigslot::has_slots<> {
  public:
@@ -60,6 +60,14 @@ class AsyncSocketAdapter : public Socket, public sigslot::has_slots<> {
   const std::unique_ptr<Socket> socket_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::AsyncSocketAdapter;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_ASYNC_SOCKET_H_

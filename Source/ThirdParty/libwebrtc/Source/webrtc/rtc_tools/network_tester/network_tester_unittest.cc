@@ -12,11 +12,13 @@
 
 #include <string>
 
-#include "rtc_base/gunit.h"
+#include "api/test/rtc_error_matchers.h"
 #include "rtc_base/random.h"
 #include "rtc_tools/network_tester/test_controller.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 
@@ -25,9 +27,9 @@ TEST(NetworkTesterTest, ServerClient) {
   // running the test in parallel in stress runs. Skipping all reserved ports.
   const int MIN_PORT = 49152;
   const int MAX_PORT = 65535;
-  int port = webrtc::Random(rtc::TimeMicros()).Rand(MIN_PORT, MAX_PORT);
+  int port = webrtc::Random(webrtc::TimeMicros()).Rand(MIN_PORT, MAX_PORT);
 
-  rtc::AutoThread main_thread;
+  webrtc::AutoThread main_thread;
 
   TestController client(
       0, 0, webrtc::test::ResourcePath("network_tester/client_config", "dat"),
@@ -37,7 +39,10 @@ TEST(NetworkTesterTest, ServerClient) {
       webrtc::test::ResourcePath("network_tester/server_config", "dat"),
       webrtc::test::OutputPath() + "server_packet_log.dat");
   client.SendConnectTo("127.0.0.1", port);
-  EXPECT_TRUE_WAIT(server.IsTestDone() && client.IsTestDone(), 2000);
+  EXPECT_THAT(
+      WaitUntil([&] { return server.IsTestDone() && client.IsTestDone(); },
+                ::testing::IsTrue()),
+      IsRtcOk());
 }
 
 }  // namespace webrtc

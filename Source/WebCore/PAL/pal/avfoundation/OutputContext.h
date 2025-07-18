@@ -49,7 +49,7 @@ private:
     friend class NeverDestroyed<OutputContext>;
     OutputContext(RetainPtr<AVOutputContext>&&);
 
-    RetainPtr<AVOutputContext> m_context;
+    const RetainPtr<AVOutputContext> m_context;
 };
 
 }

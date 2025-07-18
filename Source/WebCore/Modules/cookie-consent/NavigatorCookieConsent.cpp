@@ -73,7 +73,7 @@ void NavigatorCookieConsent::requestCookieConsent(RequestCookieConsentOptions&& 
 
 NavigatorCookieConsent& NavigatorCookieConsent::from(Navigator& navigator)
 {
-    if (auto supplement = static_cast<NavigatorCookieConsent*>(Supplement<Navigator>::from(&navigator, supplementName())))
+    if (auto supplement = downcast<NavigatorCookieConsent>(Supplement<Navigator>::from(&navigator, supplementName())))
         return *supplement;
 
     auto newSupplement = makeUnique<NavigatorCookieConsent>(navigator);

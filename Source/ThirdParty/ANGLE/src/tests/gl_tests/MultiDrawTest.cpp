@@ -131,7 +131,8 @@ struct DrawElementsIndirectCommand
 // more fully tested in InstancingTest.cpp.
 // Correct interaction with the instancing APIs is tested here by using scaling
 // and then instancing the array of quads over four quadrants on the screen.
-class MultiDrawTest : public ANGLETestBase, public ::testing::TestWithParam<MultiDrawTestParams>
+class MultiDrawTest : public ANGLETestBase,
+                      public ::testing::WithParamInterface<MultiDrawTestParams>
 {
   protected:
     MultiDrawTest()
@@ -488,7 +489,7 @@ class MultiDrawNoInstancingSupportTest : public MultiDrawTest
 // 4 magenta triangles are drawn at the corners of the screen
 // in different orders from the same vertex and index arrays.
 class MultiDrawIndirectTest : public ANGLETestBase,
-                              public ::testing::TestWithParam<MultiDrawIndirectTestParams>
+                              public ::testing::WithParamInterface<MultiDrawIndirectTestParams>
 {
   protected:
     MultiDrawIndirectTest()

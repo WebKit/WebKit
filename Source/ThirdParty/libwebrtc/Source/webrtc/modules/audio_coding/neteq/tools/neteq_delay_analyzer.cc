@@ -11,13 +11,21 @@
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <fstream>
 #include <ios>
-#include <iterator>
 #include <limits>
+#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_frame.h"
+#include "api/neteq/neteq.h"
+#include "api/rtp_packet_info.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 
@@ -144,9 +152,8 @@ void NetEqDelayAnalyzer::CreateGraphs(Delays* arrival_delay_ms,
   // This loop traverses data_ and populates rtp_timestamps_ms as well as
   // calculates the base offset.
   for (auto& d : data_) {
-    rtp_timestamps_ms.push_back(
-        static_cast<double>(unwrapper.Unwrap(d.first)) /
-        rtc::CheckedDivExact(last_sample_rate_hz_, 1000));
+    rtp_timestamps_ms.push_back(static_cast<double>(unwrapper.Unwrap(d.first)) /
+                                CheckedDivExact(last_sample_rate_hz_, 1000));
     offset =
         std::min(offset, d.second.arrival_time_ms - rtp_timestamps_ms.back());
   }

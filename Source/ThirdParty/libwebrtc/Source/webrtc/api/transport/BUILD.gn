@@ -62,6 +62,7 @@ rtc_library("network_control") {
 
 rtc_library("field_trial_based_config") {
   visibility = [ "*" ]
+  allow_poison = [ "environment_construction" ]
   sources = [
     "field_trial_based_config.cc",
     "field_trial_based_config.h",
@@ -106,7 +107,7 @@ rtc_source_set("sctp_transport_factory_interface") {
   deps = [ "../../api/environment" ]
 }
 
-rtc_source_set("stun_types") {
+rtc_library("stun_types") {
   visibility = [ "*" ]
   sources = [
     "stun.cc",
@@ -138,6 +139,8 @@ if (rtc_include_tests) {
     deps = [
       ":network_control",
       "..:simulated_network_api",
+      "../../api:network_emulation_manager_api",
+      "../../api/rtc_event_log:rtc_event_log",
       "../units:data_rate",
       "../units:data_size",
       "../units:time_delta",
@@ -154,13 +157,15 @@ if (rtc_include_tests) {
     deps = [
       ":network_control",
       ":test_feedback_generator_interface",
+      "../../api:network_emulation_manager_api",
+      "../../api/rtc_event_log:rtc_event_log",
       "../../test/network:feedback_generator",
     ]
   }
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("stun_unittest") {
+  rtc_library("stun_unittest") {
     visibility = [ "*" ]
     testonly = true
     sources = [ "stun_unittest.cc" ]
@@ -170,7 +175,6 @@ if (rtc_include_tests) {
       "../../rtc_base:byte_buffer",
       "../../rtc_base:byte_order",
       "../../rtc_base:ip_address",
-      "../../rtc_base:macromagic",
       "../../rtc_base:socket_address",
       "../../system_wrappers:metrics",
       "../../test:test_support",

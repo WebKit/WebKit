@@ -12,6 +12,7 @@
 
 #include <optional>
 
+#include "api/video/video_codec_type.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 

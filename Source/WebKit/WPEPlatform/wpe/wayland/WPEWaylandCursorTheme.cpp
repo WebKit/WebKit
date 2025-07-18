@@ -106,7 +106,7 @@ void WaylandCursorTheme::loadCursor(const char* name, double scale, std::optiona
 
         // FIXME: support upscaling cursor.
         if (effectiveScale == 1)
-            memcpy(reinterpret_cast<char*>(m_pool->data()) + offset, cursorImage.pixels.span().data(), sizeInBytes);
+            m_pool->write(cursorImage.pixels.span(), offset);
 
         image.buffer = m_pool->createBuffer(offset, image.width, image.height, image.width * 4);
         images.append(WTFMove(image));

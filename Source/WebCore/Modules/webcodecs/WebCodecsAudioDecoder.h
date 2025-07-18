@@ -42,6 +42,8 @@ namespace WebCore {
 class WebCodecsEncodedAudioChunk;
 class WebCodecsErrorCallback;
 class WebCodecsAudioDataOutputCallback;
+template<typename> class ExceptionOr;
+class Exception;
 
 class WebCodecsAudioDecoder : public WebCodecsBase {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioDecoder);

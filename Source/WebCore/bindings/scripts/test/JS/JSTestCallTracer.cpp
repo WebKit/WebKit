@@ -517,7 +517,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithDefa
 
 JSC::GCClient::IsoSubspace* JSTestCallTracer::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestCallTracer, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestCallTracer, UseCustomHeapCellType::No>(vm, "JSTestCallTracer"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCallTracer.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCallTracer = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCallTracer.get(); },

@@ -113,7 +113,7 @@ private:
     void createLazyAgents();
 
     JSC::JSGlobalObject& m_globalObject;
-    std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
+    const UniqueRef<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     const Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<JSGlobalObjectDebugger> m_debugger;

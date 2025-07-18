@@ -252,7 +252,7 @@ class RTC_EXPORT StatsReport {
     // Users of IdBase will be using the Id typedef, which is compatible with
     // this Equals() function.  It simply calls the protected (and overridden)
     // Equals() method.
-    bool Equals(const rtc::scoped_refptr<IdBase>& other) const {
+    bool Equals(const scoped_refptr<IdBase>& other) const {
       return Equals(*other.get());
     }
 
@@ -268,7 +268,7 @@ class RTC_EXPORT StatsReport {
     static const char kSeparator = '_';
   };
 
-  typedef rtc::scoped_refptr<IdBase> Id;
+  typedef scoped_refptr<IdBase> Id;
 
   struct RTC_EXPORT Value {
     enum Type {
@@ -372,7 +372,7 @@ class RTC_EXPORT StatsReport {
     } value_;
   };
 
-  typedef rtc::scoped_refptr<Value> ValuePtr;
+  typedef scoped_refptr<Value> ValuePtr;
   typedef std::map<StatsValueName, ValuePtr> Values;
 
   // Ownership of `id` is passed to `this`.

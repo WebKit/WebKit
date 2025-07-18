@@ -272,7 +272,7 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
                     return scrollView;
             }
 
-            scrollersToSkip.add(node->stationaryScrollContainerIDs().begin(), node->stationaryScrollContainerIDs().end());
+            scrollersToSkip.addAll(node->stationaryScrollContainerIDs());
         }
     }
     return nil;

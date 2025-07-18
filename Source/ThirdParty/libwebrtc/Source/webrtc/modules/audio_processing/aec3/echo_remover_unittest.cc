@@ -15,6 +15,8 @@
 #include <numeric>
 #include <string>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
@@ -27,13 +29,13 @@
 namespace webrtc {
 namespace {
 std::string ProduceDebugText(int sample_rate_hz) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   return ss.Release();
 }
 
 std::string ProduceDebugText(int sample_rate_hz, int delay) {
-  rtc::StringBuilder ss(ProduceDebugText(sample_rate_hz));
+  StringBuilder ss(ProduceDebugText(sample_rate_hz));
   ss << ", Delay: " << delay;
   return ss.Release();
 }
@@ -53,12 +55,13 @@ INSTANTIATE_TEST_SUITE_P(MultiChannel,
 TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
+  const Environment env = CreateEnvironment();
   std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<EchoRemover> remover(
-        EchoRemover::Create(EchoCanceller3Config(), rate, num_render_channels,
-                            num_capture_channels));
+    std::unique_ptr<EchoRemover> remover =
+        EchoRemover::Create(env, EchoCanceller3Config(), rate,
+                            num_render_channels, num_capture_channels);
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
         EchoCanceller3Config(), rate, num_render_channels));
 
@@ -86,8 +89,8 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
 TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
-  EXPECT_DEATH(std::unique_ptr<EchoRemover>(
-                   EchoRemover::Create(EchoCanceller3Config(), 8001, 1, 1)),
+  EXPECT_DEATH(EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(),
+                                   8001, 1, 1),
                "");
 }
 
@@ -95,11 +98,12 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
 TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
+  const Environment env = CreateEnvironment();
   std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<EchoRemover> remover(
-        EchoRemover::Create(EchoCanceller3Config(), rate, 1, 1));
+    std::unique_ptr<EchoRemover> remover =
+        EchoRemover::Create(env, EchoCanceller3Config(), rate, 1, 1);
     std::unique_ptr<RenderDelayBuffer> render_buffer(
         RenderDelayBuffer::Create(EchoCanceller3Config(), rate, 1));
     Block capture(NumBandsForRate(rate == 48000 ? 16000 : rate + 16000), 1);
@@ -115,8 +119,8 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
 // Verifies the check for non-null capture block.
 TEST(EchoRemoverDeathTest, NullCapture) {
   std::optional<DelayEstimate> delay_estimate;
-  std::unique_ptr<EchoRemover> remover(
-      EchoRemover::Create(EchoCanceller3Config(), 16000, 1, 1));
+  std::unique_ptr<EchoRemover> remover = EchoRemover::Create(
+      CreateEnvironment(), EchoCanceller3Config(), 16000, 1, 1);
   std::unique_ptr<RenderDelayBuffer> render_buffer(
       RenderDelayBuffer::Create(EchoCanceller3Config(), 16000, 1));
   EchoPathVariability echo_path_variability(
@@ -133,6 +137,7 @@ TEST(EchoRemoverDeathTest, NullCapture) {
 // remove echoes.
 TEST(EchoRemover, BasicEchoRemoval) {
   constexpr int kNumBlocksToProcess = 500;
+  const Environment env = CreateEnvironment();
   Random random_generator(42U);
   std::optional<DelayEstimate> delay_estimate;
   for (size_t num_channels : {1, 2, 4}) {
@@ -144,8 +149,8 @@ TEST(EchoRemover, BasicEchoRemoval) {
       for (size_t delay_samples : {0, 64, 150, 200, 301}) {
         SCOPED_TRACE(ProduceDebugText(rate, delay_samples));
         EchoCanceller3Config config;
-        std::unique_ptr<EchoRemover> remover(
-            EchoRemover::Create(config, rate, num_channels, num_channels));
+        std::unique_ptr<EchoRemover> remover =
+            EchoRemover::Create(env, config, rate, num_channels, num_channels);
         std::unique_ptr<RenderDelayBuffer> render_buffer(
             RenderDelayBuffer::Create(config, rate, num_channels));
         render_buffer->AlignFromDelay(delay_samples / kBlockSize);

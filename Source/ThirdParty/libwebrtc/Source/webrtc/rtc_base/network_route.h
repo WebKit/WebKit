@@ -23,7 +23,7 @@
 // the media code can rely on and the network code can implement, and both can
 // depend on that, but not depend on each other. Then, move this file to that
 // directory.
-namespace rtc {
+namespace webrtc {
 
 class RouteEndpoint {
  public:
@@ -42,7 +42,7 @@ class RouteEndpoint {
 
   // Used by tests.
   static RouteEndpoint CreateWithNetworkId(uint16_t network_id) {
-    return RouteEndpoint(ADAPTER_TYPE_UNKNOWN,
+    return RouteEndpoint(webrtc::ADAPTER_TYPE_UNKNOWN,
                          /* adapter_id = */ 0, network_id,
                          /* uses_turn = */ false);
   }
@@ -58,7 +58,7 @@ class RouteEndpoint {
   bool operator==(const RouteEndpoint& other) const;
 
  private:
-  AdapterType adapter_type_ = ADAPTER_TYPE_UNKNOWN;
+  AdapterType adapter_type_ = webrtc::ADAPTER_TYPE_UNKNOWN;
   uint16_t adapter_id_ = 0;
   uint16_t network_id_ = 0;
   bool uses_turn_ = false;
@@ -75,13 +75,13 @@ struct NetworkRoute {
   int packet_overhead = 0;
 
   RTC_NO_INLINE inline std::string DebugString() const {
-    rtc::StringBuilder oss;
+    StringBuilder oss;
     oss << "[ connected: " << connected << " local: [ " << local.adapter_id()
         << "/" << local.network_id() << " "
-        << AdapterTypeToString(local.adapter_type())
+        << webrtc::AdapterTypeToString(local.adapter_type())
         << " turn: " << local.uses_turn() << " ] remote: [ "
         << remote.adapter_id() << "/" << remote.network_id() << " "
-        << AdapterTypeToString(remote.adapter_type())
+        << webrtc::AdapterTypeToString(remote.adapter_type())
         << " turn: " << remote.uses_turn()
         << " ] packet_overhead_bytes: " << packet_overhead << " ]";
     return oss.Release();
@@ -91,6 +91,15 @@ struct NetworkRoute {
   bool operator!=(const NetworkRoute& other) { return !operator==(other); }
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::NetworkRoute;
+using ::webrtc::RouteEndpoint;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_NETWORK_ROUTE_H_

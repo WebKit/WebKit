@@ -53,7 +53,7 @@ namespace WebCore {
 class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCDTMFSenderBackend);
 public:
-    explicit LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
+    explicit LibWebRTCDTMFSenderBackend(webrtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
     ~LibWebRTCDTMFSenderBackend();
 
 private:
@@ -68,7 +68,7 @@ private:
     // DtmfSenderObserverInterface
     void OnToneChange(const std::string& tone, const std::string&) final;
 
-    rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_sender;
+    webrtc::scoped_refptr<webrtc::DtmfSenderInterface> m_sender;
     Function<void()> m_onTonePlayed;
 };
 

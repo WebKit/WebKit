@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TIMESTAMP_SCALER_H_
 #define MODULES_AUDIO_CODING_NETEQ_TIMESTAMP_SCALER_H_
 
+#include <cstdint>
+
 #include "modules/audio_coding/neteq/packet.h"
 
 namespace webrtc {

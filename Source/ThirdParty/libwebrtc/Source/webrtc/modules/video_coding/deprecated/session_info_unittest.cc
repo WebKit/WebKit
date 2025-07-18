@@ -12,6 +12,10 @@
 
 #include <string.h>
 
+#include <cstdint>
+
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "modules/video_coding/deprecated/packet.h"
 #include "test/gtest.h"
 

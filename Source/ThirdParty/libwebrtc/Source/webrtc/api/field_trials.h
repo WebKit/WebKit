@@ -13,7 +13,9 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
 #include "api/field_trials_registry.h"
 #include "rtc_base/containers/flat_map.h"
@@ -30,29 +32,71 @@ namespace webrtc {
 // feature is on/off.
 //
 // The field trials are injected into objects that use them at creation time.
-//
-// NOTE: Creating multiple FieldTrials-object is currently prohibited
-// until we remove the global string (TODO(bugs.webrtc.org/10335))
-// (unless using CreateNoGlobal):
 class FieldTrials : public FieldTrialsRegistry {
  public:
-  explicit FieldTrials(const std::string& s);
-  ~FieldTrials();
+  // Creates field trials from a valid field trial string.
+  // Returns nullptr if the string is invalid.
+  // E.g., valid string:
+  //   "WebRTC-ExperimentFoo/Enabled/WebRTC-ExperimentBar/Enabled100kbps/"
+  //   Assigns to group "Enabled" on WebRTC-ExperimentFoo trial
+  //   and to group "Enabled100kbps" on WebRTC-ExperimentBar.
+  //
+  // E.g., invalid string:
+  //   "WebRTC-experiment1/Enabled"  (note missing / separator at the end).
+  static absl_nullable std::unique_ptr<FieldTrials> Create(absl::string_view s);
 
-  // Create a FieldTrials object that is not reading/writing from
-  // global variable (i.e can not be used for all parts of webrtc).
-  static std::unique_ptr<FieldTrials> CreateNoGlobal(const std::string& s);
+  // Creates field trials from a string.
+  // It is an error to call the constructor with an invalid field trial string.
+  explicit FieldTrials(absl::string_view s);
+
+  FieldTrials(const FieldTrials&) = default;
+  FieldTrials(FieldTrials&&) = default;
+  FieldTrials& operator=(const FieldTrials&) = default;
+  FieldTrials& operator=(FieldTrials&&) = default;
+
+  ~FieldTrials() override = default;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const FieldTrials& self);
+
+  // Merges field trials from the `other` into this.
+  //
+  // If a key (trial) exists twice with conflicting values (groups), the value
+  // in `other` takes precedence.
+  void Merge(const FieldTrials& other);
+
+  // Sets value (`group`) for an indvidual `trial`.
+  // It is an error to call this function with an invalid `trial` or `group`.
+  // Setting empty `group` is valid and removes the `trial`.
+  void Set(absl::string_view trial, absl::string_view group);
+
+  // TODO: bugs.webrtc.org/42220378 - Deprecate and inline once no longer used
+  // within webrtc.
+  static std::unique_ptr<FieldTrials> CreateNoGlobal(absl::string_view s) {
+    return std::make_unique<FieldTrials>(s);
+  }
 
  private:
-  explicit FieldTrials(const std::string& s, bool);
+  explicit FieldTrials(flat_map<std::string, std::string> key_value_map)
+      : key_value_map_(std::move(key_value_map)) {}
 
   std::string GetValue(absl::string_view key) const override;
 
-  const bool uses_global_;
-  const std::string field_trial_string_;
-  const char* const previous_field_trial_string_;
-  const flat_map<std::string, std::string> key_value_map_;
+  flat_map<std::string, std::string> key_value_map_;
 };
+
+template <typename Sink>
+void AbslStringify(Sink& sink, const FieldTrials& self) {
+  for (const auto& [trial, group] : self.key_value_map_) {
+    sink.Append(trial);
+    sink.Append("/");
+    sink.Append(group);
+    // Intentionally output a string that is not a valid field trial string.
+    // Stringification is intended only for human readable logs, and is not
+    // intended for reusing as `FieldTrials` construction parameter.
+    sink.Append("//");
+  }
+}
 
 }  // namespace webrtc
 

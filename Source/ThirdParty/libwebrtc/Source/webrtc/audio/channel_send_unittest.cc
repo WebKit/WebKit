@@ -34,6 +34,7 @@
 #include "api/scoped_refptr.h"
 #include "api/test/mock_frame_transformer.h"
 #include "api/test/mock_transformable_audio_frame.h"
+#include "api/test/rtc_error_matchers.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -42,18 +43,20 @@
 #include "call/rtp_transport_controller_send.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
 #include "test/scoped_key_value_config.h"
 #include "test/time_controller/simulated_time_controller.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 namespace voe {
 namespace {
 
+using ::testing::Eq;
 using ::testing::Invoke;
+using ::testing::IsTrue;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::SaveArg;
@@ -120,13 +123,13 @@ class ChannelSendTest : public ::testing::Test {
   void ProcessNextFrame() { ProcessNextFrame(CreateAudioFrame()); }
 
   GlobalSimulatedTimeController time_controller_;
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
   Environment env_;
   NiceMock<MockTransport> transport_;
   CryptoOptions crypto_options_;
   RtpTransportControllerSend transport_controller_;
   std::unique_ptr<ChannelSendInterface> channel_;
-  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
+  scoped_refptr<AudioEncoderFactory> encoder_factory_;
 };
 
 TEST_F(ChannelSendTest, StopSendShouldResetEncoder) {
@@ -152,7 +155,7 @@ TEST_F(ChannelSendTest, IncreaseRtpTimestampByPauseDuration) {
   channel_->StartSend();
   uint32_t timestamp;
   int sent_packets = 0;
-  auto send_rtp = [&](rtc::ArrayView<const uint8_t> data,
+  auto send_rtp = [&](ArrayView<const uint8_t> data,
                       const PacketOptions& /* options */) {
     ++sent_packets;
     RtpPacketReceived packet;
@@ -178,16 +181,16 @@ TEST_F(ChannelSendTest, IncreaseRtpTimestampByPauseDuration) {
 }
 
 TEST_F(ChannelSendTest, FrameTransformerGetsCorrectTimestamp) {
-  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      rtc::make_ref_counted<MockFrameTransformer>();
+  scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      make_ref_counted<MockFrameTransformer>();
   channel_->SetEncoderToPacketizerFrameTransformer(mock_frame_transformer);
-  rtc::scoped_refptr<TransformedFrameCallback> callback;
+  scoped_refptr<TransformedFrameCallback> callback;
   EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
       .WillOnce(SaveArg<0>(&callback));
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::optional<uint32_t> sent_timestamp;
-  auto send_rtp = [&](rtc::ArrayView<const uint8_t> data,
+  auto send_rtp = [&](ArrayView<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet;
     packet.Parse(data);
@@ -212,9 +215,11 @@ TEST_F(ChannelSendTest, FrameTransformerGetsCorrectTimestamp) {
   // Ensure the RTP timestamp on the frame passed to the transformer
   // includes the RTP offset and matches the actual RTP timestamp on the sent
   // packet.
-  EXPECT_EQ_WAIT(transformable_frame_timestamp,
-                 0 + channel_->GetRtpRtcp()->StartTimestamp(), 1000);
-  EXPECT_TRUE_WAIT(sent_timestamp, 1000);
+  EXPECT_THAT(
+      WaitUntil([&] { return 0 + channel_->GetRtpRtcp()->StartTimestamp(); },
+                Eq(transformable_frame_timestamp)),
+      IsRtcOk());
+  EXPECT_THAT(WaitUntil([&] { return sent_timestamp; }, IsTrue()), IsRtcOk());
   EXPECT_EQ(*sent_timestamp, transformable_frame_timestamp);
 }
 
@@ -225,16 +230,16 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
   RtpPacketReceived::ExtensionManager extension_manager;
   extension_manager.RegisterByType(1, kRtpExtensionAudioLevel);
 
-  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      rtc::make_ref_counted<MockFrameTransformer>();
+  scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      make_ref_counted<MockFrameTransformer>();
   channel_->SetEncoderToPacketizerFrameTransformer(mock_frame_transformer);
-  rtc::scoped_refptr<TransformedFrameCallback> callback;
+  scoped_refptr<TransformedFrameCallback> callback;
   EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
       .WillOnce(SaveArg<0>(&callback));
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::vector<uint8_t> sent_audio_levels;
-  auto send_rtp = [&](rtc::ArrayView<const uint8_t> data,
+  auto send_rtp = [&](ArrayView<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet(&extension_manager);
     packet.Parse(data);
@@ -264,7 +269,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
   ProcessNextFrame(CreateAudioFrame(/*data_init_value=*/3));
 
   // Wait for both packets to be encoded and sent to the transform.
-  EXPECT_EQ_WAIT(frames.size(), 2ul, 1000);
+  EXPECT_THAT(WaitUntil([&] { return frames.size(); }, Eq(2ul)), IsRtcOk());
   // Complete the transforms on both frames at the same time
   callback->OnTransformedFrame(std::move(frames[0]));
   callback->OnTransformedFrame(std::move(frames[1]));
@@ -274,7 +279,8 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
 
   // Ensure the audio levels on both sent packets is present and
   // matches their contents.
-  EXPECT_EQ_WAIT(sent_audio_levels.size(), 2ul, 1000);
+  EXPECT_THAT(WaitUntil([&] { return sent_audio_levels.size(); }, Eq(2ul)),
+              IsRtcOk());
   // rms dbov of the packet with raw audio of 7s is 73.
   EXPECT_EQ(sent_audio_levels[0], 73);
   // rms dbov of the second packet with raw audio of 3s is 81.
@@ -288,16 +294,16 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
   RtpPacketReceived::ExtensionManager extension_manager;
   extension_manager.RegisterByType(1, kRtpExtensionAudioLevel);
 
-  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      rtc::make_ref_counted<MockFrameTransformer>();
+  scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      make_ref_counted<MockFrameTransformer>();
   channel_->SetEncoderToPacketizerFrameTransformer(mock_frame_transformer);
-  rtc::scoped_refptr<TransformedFrameCallback> callback;
+  scoped_refptr<TransformedFrameCallback> callback;
   EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
       .WillOnce(SaveArg<0>(&callback));
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::optional<uint8_t> sent_audio_level;
-  auto send_rtp = [&](rtc::ArrayView<const uint8_t> data,
+  auto send_rtp = [&](ArrayView<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet(&extension_manager);
     packet.Parse(data);
@@ -317,15 +323,15 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
   ON_CALL(*mock_frame, AudioLevel()).WillByDefault(Return(audio_level));
   uint8_t payload[10];
   ON_CALL(*mock_frame, GetData())
-      .WillByDefault(Return(rtc::ArrayView<uint8_t>(&payload[0], 10)));
-  EXPECT_TRUE_WAIT(callback, 1000);
+      .WillByDefault(Return(ArrayView<uint8_t>(&payload[0], 10)));
+  EXPECT_THAT(WaitUntil([&] { return callback; }, IsTrue()), IsRtcOk());
   callback->OnTransformedFrame(std::move(mock_frame));
 
   // Allow things posted back to the encoder queue to run.
   time_controller_.AdvanceTime(TimeDelta::Millis(10));
 
   // Ensure the audio levels is set on the sent packet.
-  EXPECT_TRUE_WAIT(sent_audio_level, 1000);
+  EXPECT_THAT(WaitUntil([&] { return sent_audio_level; }, IsTrue()), IsRtcOk());
   EXPECT_EQ(*sent_audio_level, audio_level);
 }
 

@@ -31,6 +31,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSVariableData.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Page.h"
 #include "StyleCustomProperty.h"
 #include <wtf/NeverDestroyed.h>

@@ -11,9 +11,11 @@
 
 #include <string>
 
+#include "absl/strings/str_replace.h"
 #include "absl/strings/string_view.h"
 #include "modules/portal/scoped_glib.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace webrtc {
 namespace xdg_portal {
@@ -50,17 +52,20 @@ RequestResponse RequestResponseFromPortalResponse(uint32_t portal_response) {
 
 std::string PrepareSignalHandle(absl::string_view token,
                                 GDBusConnection* connection) {
-  Scoped<char> sender(
-      g_strdup(g_dbus_connection_get_unique_name(connection) + 1));
-  for (int i = 0; sender.get()[i]; ++i) {
-    if (sender.get()[i] == '.') {
-      sender.get()[i] = '_';
-    }
+  const char* unique_name = g_dbus_connection_get_unique_name(connection);
+  if (unique_name == nullptr || *unique_name == '\0') {
+    return std::string();
   }
-  const char* handle =
-      g_strconcat(kDesktopRequestObjectPath, "/", sender.get(), "/",
-                  std::string(token).c_str(), /*end of varargs*/ nullptr);
-  return handle;
+
+  absl::string_view unique_name_sv = unique_name;
+  if (!unique_name_sv.empty()) {
+    unique_name_sv.remove_prefix(1);
+  }
+
+  std::string sender = absl::StrReplaceAll(unique_name_sv, {{".", "_"}});
+  std::vector<absl::string_view> parts = {kDesktopRequestObjectPath, sender,
+                                          token};
+  return webrtc::StrJoin(parts, "/");
 }
 
 uint32_t SetupRequestResponseSignal(absl::string_view object_path,

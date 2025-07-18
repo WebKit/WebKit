@@ -122,7 +122,7 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
 
     virtual angle::NativeWindowSystem getWindowSystem() const;
 
-    virtual bool supportsDmaBufFormat(EGLint format) const;
+    virtual bool supportsDmaBufFormat(EGLint format);
     virtual egl::Error queryDmaBufFormats(EGLint max_formats, EGLint *formats, EGLint *num_formats);
     virtual egl::Error queryDmaBufModifiers(EGLint format,
                                             EGLint max_modifiers,

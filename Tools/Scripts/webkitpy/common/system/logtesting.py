@@ -147,11 +147,24 @@ class LogTesting(object):
                          of log messages you would like to test.
 
         """
+        logging.addLevelName(41, "STYLE")
+
         stream = TestLogStream(test_case)
-        handler = logging.StreamHandler(stream)
-        handler.setLevel(logging_level)
+        style_handler = logging.StreamHandler(stream)
+        style_handler.setLevel(logging.getLevelName("STYLE"))
+        formatter = logging.Formatter("%(message)s")
+        style_handler.setFormatter(formatter)
+
+        error_filter = logging.Filter()
+        # The filter method accepts a logging.LogRecord instance.
+        error_filter.filter = lambda record: record.levelno < logging.getLevelName("STYLE")
+
+        # Handles logging.ERROR.
+        error_handler = logging.StreamHandler(stream)
+        error_handler.setLevel(logging_level)
+        error_handler.addFilter(error_filter)
         formatter = logging.Formatter("%(levelname)s: %(message)s")
-        handler.setFormatter(formatter)
+        error_handler.setFormatter(formatter)
 
         # Notice that we only change the root logger by adding a handler
         # to it.  In particular, we do not reset its level using
@@ -159,9 +172,10 @@ class LogTesting(object):
         # with how the code being tested may have configured the root
         # logger.
         logger = LogTesting._getLogger()
-        logger.addHandler(handler)
+        logger.addHandler(style_handler)
+        logger.addHandler(error_handler)
 
-        return LogTesting(stream, handler)
+        return LogTesting(stream, style_handler)
 
     def tearDown(self):
         """Assert there are no remaining log messages, and reset logging.

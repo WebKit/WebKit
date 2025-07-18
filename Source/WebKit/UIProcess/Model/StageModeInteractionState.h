@@ -30,19 +30,19 @@
 #import <simd/simd.h>
 
 namespace WebCore {
-struct ElementIdentifierType;
-using ElementIdentifier = ObjectIdentifier<ElementIdentifierType>;
+struct NodeIdentifierType;
+using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
 }
 
 namespace WebKit {
 
 struct StageModeSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StageModeSession);
 
 public:
     bool isPreparingForInteraction { true };
     simd_float4x4 transform { matrix_identity_float4x4 };
-    std::optional<WebCore::ElementIdentifier> elementID;
+    std::optional<WebCore::NodeIdentifier> nodeID;
 };
 } // namespace WebKit
 

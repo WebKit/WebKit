@@ -11,20 +11,32 @@
 #ifndef P2P_BASE_TCP_PORT_H_
 #define P2P_BASE_TCP_PORT_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <list>
 #include <memory>
-#include <string>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/candidate.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/transport/stun.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/port.h"
+#include "p2p/base/port_interface.h"
+#include "p2p/base/stun_request.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/network/received_packet.h"
+#include "rtc_base/network/sent_packet.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/weak_ptr.h"
 
-namespace cricket {
+namespace webrtc {
 
 class TCPConnection;
 
@@ -44,25 +56,7 @@ class TCPPort : public Port {
     return absl::WrapUnique(
         new TCPPort(args, min_port, max_port, allow_listen));
   }
-  [[deprecated("Pass arguments using PortParametersRef")]] static std::
-      unique_ptr<TCPPort>
-      Create(webrtc::TaskQueueBase* thread,
-             rtc::PacketSocketFactory* factory,
-             const rtc::Network* network,
-             uint16_t min_port,
-             uint16_t max_port,
-             absl::string_view username,
-             absl::string_view password,
-             bool allow_listen,
-             const webrtc::FieldTrialsView* field_trials = nullptr) {
-    return Create({.network_thread = thread,
-                   .socket_factory = factory,
-                   .network = network,
-                   .ice_username_fragment = username,
-                   .ice_password = password,
-                   .field_trials = field_trials},
-                  min_port, max_port, allow_listen);
-  }
+
   ~TCPPort() override;
 
   Connection* CreateConnection(const Candidate& address,
@@ -73,8 +67,8 @@ class TCPPort : public Port {
   // Options apply to accepted sockets.
   // TODO(bugs.webrtc.org/13065): Apply also to outgoing and existing
   // connections.
-  int GetOption(rtc::Socket::Option opt, int* value) override;
-  int SetOption(rtc::Socket::Option opt, int value) override;
+  int GetOption(Socket::Option opt, int* value) override;
+  int SetOption(Socket::Option opt, int value) override;
   int GetError() override;
   bool SupportsProtocol(absl::string_view protocol) const override;
   ProtocolType GetProtocol() const override;
@@ -88,41 +82,40 @@ class TCPPort : public Port {
   // Handles sending using the local TCP socket.
   int SendTo(const void* data,
              size_t size,
-             const rtc::SocketAddress& addr,
-             const rtc::PacketOptions& options,
+             const SocketAddress& addr,
+             const AsyncSocketPacketOptions& options,
              bool payload) override;
 
   // Accepts incoming TCP connection.
-  void OnNewConnection(rtc::AsyncListenSocket* socket,
-                       rtc::AsyncPacketSocket* new_socket);
+  void OnNewConnection(AsyncListenSocket* socket,
+                       AsyncPacketSocket* new_socket);
 
  private:
   struct Incoming {
-    rtc::SocketAddress addr;
-    rtc::AsyncPacketSocket* socket;
+    SocketAddress addr;
+    AsyncPacketSocket* socket;
   };
 
   void TryCreateServerSocket();
 
-  rtc::AsyncPacketSocket* GetIncoming(const rtc::SocketAddress& addr,
-                                      bool remove = false);
+  AsyncPacketSocket* GetIncoming(const SocketAddress& addr,
+                                 bool remove = false);
 
   // Receives packet signal from the local TCP Socket.
-  void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const rtc::ReceivedPacket& packet);
+  void OnReadPacket(AsyncPacketSocket* socket, const ReceivedIpPacket& packet);
 
-  void OnSentPacket(rtc::AsyncPacketSocket* socket,
-                    const rtc::SentPacket& sent_packet) override;
+  void OnSentPacket(AsyncPacketSocket* socket,
+                    const SentPacketInfo& sent_packet) override;
 
-  void OnReadyToSend(rtc::AsyncPacketSocket* socket);
+  void OnReadyToSend(AsyncPacketSocket* socket);
 
   bool allow_listen_;
-  std::unique_ptr<rtc::AsyncListenSocket> listen_socket_;
+  std::unique_ptr<AsyncListenSocket> listen_socket_;
   // Options to be applied to accepted sockets.
   // TODO(bugs.webrtc:13065): Configure connect/accept in the same way, but
   // currently, setting OPT_NODELAY for client sockets is done (unconditionally)
   // by BasicPacketSocketFactory::CreateClientTcpSocket.
-  webrtc::flat_map<rtc::Socket::Option, int> socket_options_;
+  flat_map<Socket::Option, int> socket_options_;
 
   int error_;
   std::list<Incoming> incoming_;
@@ -133,17 +126,17 @@ class TCPPort : public Port {
 class TCPConnection : public Connection, public sigslot::has_slots<> {
  public:
   // Connection is outgoing unless socket is specified
-  TCPConnection(rtc::WeakPtr<Port> tcp_port,
+  TCPConnection(WeakPtr<Port> tcp_port,
                 const Candidate& candidate,
-                rtc::AsyncPacketSocket* socket = nullptr);
+                AsyncPacketSocket* socket = nullptr);
   ~TCPConnection() override;
 
   int Send(const void* data,
            size_t size,
-           const rtc::PacketOptions& options) override;
+           const AsyncSocketPacketOptions& options) override;
   int GetError() override;
 
-  rtc::AsyncPacketSocket* socket() { return socket_.get(); }
+  AsyncPacketSocket* socket() { return socket_.get(); }
 
   // Allow test cases to overwrite the default timeout period.
   int reconnection_timeout() const { return reconnection_timeout_; }
@@ -166,27 +159,26 @@ class TCPConnection : public Connection, public sigslot::has_slots<> {
 
   void CreateOutgoingTcpSocket() RTC_RUN_ON(network_thread());
 
-  void ConnectSocketSignals(rtc::AsyncPacketSocket* socket)
+  void ConnectSocketSignals(AsyncPacketSocket* socket)
       RTC_RUN_ON(network_thread());
 
-  void DisconnectSocketSignals(rtc::AsyncPacketSocket* socket)
+  void DisconnectSocketSignals(AsyncPacketSocket* socket)
       RTC_RUN_ON(network_thread());
 
-  void OnConnect(rtc::AsyncPacketSocket* socket);
-  void OnClose(rtc::AsyncPacketSocket* socket, int error);
-  void OnSentPacket(rtc::AsyncPacketSocket* socket,
-                    const rtc::SentPacket& sent_packet);
-  void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const rtc::ReceivedPacket& packet);
-  void OnReadyToSend(rtc::AsyncPacketSocket* socket);
+  void OnConnect(AsyncPacketSocket* socket);
+  void OnClose(AsyncPacketSocket* socket, int error);
+  void OnSentPacket(AsyncPacketSocket* socket,
+                    const SentPacketInfo& sent_packet);
+  void OnReadPacket(AsyncPacketSocket* socket, const ReceivedIpPacket& packet);
+  void OnReadyToSend(AsyncPacketSocket* socket);
   void OnDestroyed(Connection* c);
 
   TCPPort* tcp_port() {
-    RTC_DCHECK_EQ(port()->GetProtocol(), PROTO_TCP);
+    RTC_DCHECK_EQ(port()->GetProtocol(), webrtc::PROTO_TCP);
     return static_cast<TCPPort*>(port());
   }
 
-  std::unique_ptr<rtc::AsyncPacketSocket> socket_;
+  std::unique_ptr<AsyncPacketSocket> socket_;
   int error_;
   const bool outgoing_;
 
@@ -204,9 +196,18 @@ class TCPConnection : public Connection, public sigslot::has_slots<> {
   // Allow test case to overwrite the default timeout period.
   int reconnection_timeout_;
 
-  webrtc::ScopedTaskSafety network_safety_;
+  ScopedTaskSafety network_safety_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::TCPConnection;
+using ::webrtc::TCPPort;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // P2P_BASE_TCP_PORT_H_

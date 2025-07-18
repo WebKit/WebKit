@@ -28,10 +28,12 @@
 
 #include "HitTestSource.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace JSC {
@@ -133,7 +135,6 @@ public:
     bool isMatchingAnchor(HTMLAnchorElement&, StringView name);
 
     inline ContainerNode& rootNode() const; // Defined in TreeScopeInlines.h
-    inline Ref<ContainerNode> protectedRootNode() const; // Defined in TreeScopeInlines.h
 
     inline IdTargetObserverRegistry& idTargetObserverRegistry();
     IdTargetObserverRegistry* idTargetObserverRegistryIfExists() { return m_idTargetObserverRegistry.get(); }

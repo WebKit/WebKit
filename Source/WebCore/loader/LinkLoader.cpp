@@ -41,6 +41,7 @@
 #include "CrossOriginAccessControl.h"
 #include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
+#include "DocumentLoader.h"
 #include "FetchRequestDestination.h"
 #include "FrameLoader.h"
 #include "HTMLSrcsetParser.h"
@@ -63,6 +64,7 @@
 #include "SizesAttributeParser.h"
 #include "StyleResolver.h"
 #include "UserContentProvider.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -292,7 +294,7 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
         return;
 
     auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, params.href, ContentExtensions::ResourceType::Ping, *documentLoader);
-    if (results.summary.blockedLoad && !results.summary.redirectedPriorToBlock)
+    if (results.shouldBlock())
         return;
 
     ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);

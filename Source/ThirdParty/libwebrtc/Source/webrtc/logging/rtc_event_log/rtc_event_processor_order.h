@@ -439,6 +439,20 @@ class TieBreaker<LoggedRtcpPacketTransportFeedback> {
 };
 
 template <>
+class TieBreaker<LoggedRtcpPacketSenderReport> {
+ public:
+  static constexpr int type_order(PacketDirection direction) {
+    return static_cast<int>(direction == PacketDirection::kIncomingPacket
+                                ? TypeOrder::RtcpIn
+                                : TypeOrder::RtcpOut);
+  }
+  static std::optional<uint16_t> transport_seq_num_accessor(
+      const LoggedRtcpPacketSenderReport&) {
+    return std::optional<uint16_t>();
+  }
+};
+
+template <>
 class TieBreaker<LoggedRtcpPacketReceiverReport> {
  public:
   static constexpr int type_order(PacketDirection direction) {

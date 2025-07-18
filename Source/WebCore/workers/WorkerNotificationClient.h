@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 class WorkerNotificationClient : public NotificationClient, public ThreadSafeRefCounted<WorkerNotificationClient> {
@@ -54,7 +55,7 @@ private:
     void postToWorkerThread(Function<void(ScriptExecutionContext&)>&&);
 
     ScriptExecutionContextIdentifier m_workerScopeIdentifier;
-    WorkerGlobalScope& m_workerScope;
+    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_workerScope;
 };
 
 } // namespace WebCore

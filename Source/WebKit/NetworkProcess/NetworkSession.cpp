@@ -96,18 +96,12 @@ std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkPr
 #endif
 }
 
-Ref<NetworkProcess> NetworkSession::protectedNetworkProcess()
-{
-    return networkProcess();
-}
-
 NetworkStorageSession* NetworkSession::networkStorageSession() const
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194926 NetworkSession should own NetworkStorageSession
     // instead of having separate maps with the same key and different management.
-    auto* storageSession = m_networkProcess->storageSession(m_sessionID);
-    ASSERT(storageSession);
-    return storageSession;
+    ASSERT(m_networkProcess->storageSession(m_sessionID));
+    return m_networkProcess->storageSession(m_sessionID);
 }
 
 CheckedPtr<NetworkStorageSession> NetworkSession::checkedNetworkStorageSession() const
@@ -655,7 +649,7 @@ void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
 NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
 {
     if (!m_networkLoadScheduler)
-        m_networkLoadScheduler = NetworkLoadScheduler::create();
+        lazyInitialize(m_networkLoadScheduler, NetworkLoadScheduler::create());
     return *m_networkLoadScheduler;
 }
 
@@ -753,17 +747,11 @@ void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin
 WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
 {
     if (!m_sharedWorkerServer)
-        m_sharedWorkerServer = makeUnique<WebSharedWorkerServer>(*this);
+        lazyInitialize(m_sharedWorkerServer, makeUnique<WebSharedWorkerServer>(*this));
     return *m_sharedWorkerServer;
 }
 
-Ref<NetworkStorageManager> NetworkSession::protectedStorageManager()
-{
-    return m_storageManager.copyRef();
-}
-
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-
 void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
 {
     m_bytesPerSecondLimit = WTFMove(bytesPerSecondLimit);
@@ -772,7 +760,6 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
         task.setEmulatedConditions(m_bytesPerSecondLimit);
     });
 }
-
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 static double connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
@@ -872,7 +859,7 @@ Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
 BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
 {
     if (!m_backgroundFetchStore)
-        m_backgroundFetchStore = BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer());
+        lazyInitialize(m_backgroundFetchStore, BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer()));
     return *m_backgroundFetchStore;
 }
 
@@ -935,24 +922,12 @@ CheckedRef<PrefetchCache> NetworkSession::checkedPrefetchCache()
     return m_prefetchCache;
 }
 
-#if ENABLE(WEB_PUSH_NOTIFICATIONS)
-Ref<NetworkNotificationManager> NetworkSession::protectedNotificationManager()
-{
-    return m_notificationManager.get();
-}
-#endif
-
-Ref<NetworkBroadcastChannelRegistry> NetworkSession::protectedBroadcastChannelRegistry()
-{
-    return m_broadcastChannelRegistry;
-}
-
 #if ENABLE(CONTENT_EXTENSIONS)
 WebCore::ResourceMonitorThrottlerHolder& NetworkSession::resourceMonitorThrottler()
 {
     if (!m_resourceMonitorThrottler) {
         RELEASE_LOG(ResourceMonitoring, "NetworkSession::resourceMonitorThrottler sessionID=%" PRIu64 ", ResourceMonitorThrottler is created.", m_sessionID.toUInt64());
-        m_resourceMonitorThrottler = WebCore::ResourceMonitorThrottlerHolder::create(m_resourceMonitorThrottlerDirectory);
+        lazyInitialize(m_resourceMonitorThrottler, WebCore::ResourceMonitorThrottlerHolder::create(m_resourceMonitorThrottlerDirectory));
     }
 
     return *m_resourceMonitorThrottler;

@@ -56,6 +56,7 @@
 #include "ResourceLoadInfo.h"
 #include "ThreadableBlobRegistry.h"
 #include "URLKeepingBlobAlive.h"
+#include "UserContentProvider.h"
 #include <wtf/CompletionHandler.h>
 
 #if USE(QUICK_LOOK)

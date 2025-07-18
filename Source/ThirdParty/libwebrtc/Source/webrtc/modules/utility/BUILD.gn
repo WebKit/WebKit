@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("utility") {
+rtc_library("utility") {
   if (is_android) {
     visibility = [ "*" ]
     sources = [

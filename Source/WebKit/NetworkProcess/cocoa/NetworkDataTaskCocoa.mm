@@ -673,7 +673,6 @@ String NetworkDataTaskCocoa::description() const
 
 void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
-#if HAVE(PRECONNECT_PING)
     ASSERT(m_task.get()._preconnect);
     auto handler = CompletionHandlerWithFinalizer<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>(WTFMove(completionHandler), [url = url.isolatedCopy()] (Function<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>& completionHandler) {
         ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), url = WTFMove(url).isolatedCopy()]() mutable {
@@ -687,10 +686,6 @@ void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<v
             completionHandler(Seconds(interval));
         }).get()];
     }).get()];
-#else
-    ASSERT_NOT_REACHED();
-    return completionHandler(makeUnexpected(WebCore::internalError(url)));
-#endif
 }
 
 void NetworkDataTaskCocoa::setPriority(WebCore::ResourceLoadPriority priority)

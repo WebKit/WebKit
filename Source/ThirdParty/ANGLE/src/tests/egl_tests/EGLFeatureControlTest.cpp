@@ -38,7 +38,7 @@ class EGLFeatureControlTest : public ANGLETest<>
             return false;
 
         EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_NE(mDisplay, EGL_NO_DISPLAY);
 
@@ -178,7 +178,7 @@ void EGLFeatureControlTest::testOverrideFeatures(FeatureNameModifier modifyName)
                              EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
                              reinterpret_cast<EGLAttrib>(disabled.data()),
                              EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                   reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
@@ -258,7 +258,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
                                  testEnableOverride ? EGL_FEATURE_OVERRIDES_ENABLED_ANGLE
                                                     : EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
                                  reinterpret_cast<EGLAttrib>(featuresToOverride.data()), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_EGL_SUCCESS();
         ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
@@ -348,7 +348,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
     EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
                              EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
                              reinterpret_cast<EGLAttrib>(featuresDisabled.data()), EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                   reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mDisplay, EGL_NO_DISPLAY);

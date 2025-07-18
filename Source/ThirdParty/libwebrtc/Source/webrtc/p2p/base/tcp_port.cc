@@ -68,28 +68,40 @@
 
 #include <errno.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <list>
 #include <utility>
-#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/candidate.h"
+#include "api/packet_socket_factory.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/transport/stun.h"
 #include "api/units/time_delta.h"
+#include "p2p/base/connection.h"
+#include "p2p/base/connection_info.h"
 #include "p2p/base/p2p_constants.h"
+#include "p2p/base/port.h"
+#include "p2p/base/port_interface.h"
+#include "p2p/base/stun_request.h"
+#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/network/received_packet.h"
+#include "rtc_base/network/sent_packet.h"
 #include "rtc_base/rate_tracker.h"
-#include "rtc_base/thread.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/weak_ptr.h"
 
-namespace cricket {
-using ::webrtc::IceCandidateType;
-using ::webrtc::SafeTask;
-using ::webrtc::TimeDelta;
+namespace webrtc {
 
 TCPPort::TCPPort(const PortParametersRef& args,
                  uint16_t min_port,
@@ -106,7 +118,7 @@ TCPPort::TCPPort(const PortParametersRef& args,
   // Set TCP_NODELAY (via OPT_NODELAY) for improved performance; this causes
   // small media packets to be sent immediately rather than being buffered up,
   // reducing latency.
-  SetOption(rtc::Socket::OPT_NODELAY, 1);
+  SetOption(Socket::OPT_NODELAY, 1);
 }
 
 TCPPort::~TCPPort() {
@@ -120,32 +132,32 @@ TCPPort::~TCPPort() {
 Connection* TCPPort::CreateConnection(const Candidate& address,
                                       CandidateOrigin origin) {
   if (!SupportsProtocol(address.protocol())) {
-    return NULL;
+    return nullptr;
   }
 
   if ((address.tcptype() == TCPTYPE_ACTIVE_STR && !address.is_prflx()) ||
       (address.tcptype().empty() && address.address().port() == 0)) {
     // It's active only candidate, we should not try to create connections
     // for these candidates.
-    return NULL;
+    return nullptr;
   }
 
   // We can't accept TCP connections incoming on other ports
   if (origin == ORIGIN_OTHER_PORT)
-    return NULL;
+    return nullptr;
 
   // We don't know how to act as an ssl server yet
   if ((address.protocol() == SSLTCP_PROTOCOL_NAME) &&
       (origin == ORIGIN_THIS_PORT)) {
-    return NULL;
+    return nullptr;
   }
 
   if (!IsCompatibleAddress(address.address())) {
-    return NULL;
+    return nullptr;
   }
 
-  TCPConnection* conn = NULL;
-  if (rtc::AsyncPacketSocket* socket = GetIncoming(address.address(), true)) {
+  TCPConnection* conn = nullptr;
+  if (AsyncPacketSocket* socket = GetIncoming(address.address(), true)) {
     // Incoming connection; we already created a socket and connected signals,
     // so we need to hand off the "read packet" responsibility to
     // TCPConnection.
@@ -167,7 +179,7 @@ void TCPPort::PrepareAddress() {
                         << static_cast<int>(listen_socket_->GetState());
     AddAddress(
         listen_socket_->GetLocalAddress(), listen_socket_->GetLocalAddress(),
-        rtc::SocketAddress(), TCP_PROTOCOL_NAME, "", TCPTYPE_PASSIVE_STR,
+        SocketAddress(), TCP_PROTOCOL_NAME, "", TCPTYPE_PASSIVE_STR,
         IceCandidateType::kHost, ICE_TYPE_PREFERENCE_HOST_TCP, 0, "", true);
   } else {
     RTC_LOG(LS_INFO) << ToString()
@@ -180,9 +192,9 @@ void TCPPort::PrepareAddress() {
     // can do.
     // TODO(deadbeef): We could do something like create a dummy socket just to
     // see what IP we get. But that may be overkill.
-    AddAddress(rtc::SocketAddress(Network()->GetBestIP(), DISCARD_PORT),
-               rtc::SocketAddress(Network()->GetBestIP(), 0),
-               rtc::SocketAddress(), TCP_PROTOCOL_NAME, "", TCPTYPE_ACTIVE_STR,
+    AddAddress(SocketAddress(Network()->GetBestIP(), DISCARD_PORT),
+               SocketAddress(Network()->GetBestIP(), 0), SocketAddress(),
+               TCP_PROTOCOL_NAME, "", TCPTYPE_ACTIVE_STR,
                IceCandidateType::kHost, ICE_TYPE_PREFERENCE_HOST_TCP, 0, "",
                true);
   }
@@ -190,10 +202,10 @@ void TCPPort::PrepareAddress() {
 
 int TCPPort::SendTo(const void* data,
                     size_t size,
-                    const rtc::SocketAddress& addr,
-                    const rtc::PacketOptions& options,
+                    const SocketAddress& addr,
+                    const AsyncSocketPacketOptions& options,
                     bool payload) {
-  rtc::AsyncPacketSocket* socket = NULL;
+  AsyncPacketSocket* socket = nullptr;
   TCPConnection* conn = static_cast<TCPConnection*>(GetConnection(addr));
 
   // For Connection, this is the code path used by Ping() to establish
@@ -224,7 +236,7 @@ int TCPPort::SendTo(const void* data,
       return SOCKET_ERROR;
     }
   }
-  rtc::PacketOptions modified_options(options);
+  AsyncSocketPacketOptions modified_options(options);
   CopyPortInformationToPacketInfo(&modified_options.info_signaled_after_sent);
   int sent = socket->Send(data, size, modified_options);
   if (sent < 0) {
@@ -238,7 +250,7 @@ int TCPPort::SendTo(const void* data,
   return sent;
 }
 
-int TCPPort::GetOption(rtc::Socket::Option opt, int* value) {
+int TCPPort::GetOption(Socket::Option opt, int* value) {
   auto const& it = socket_options_.find(opt);
   if (it == socket_options_.end()) {
     return -1;
@@ -247,7 +259,7 @@ int TCPPort::GetOption(rtc::Socket::Option opt, int* value) {
   return 0;
 }
 
-int TCPPort::SetOption(rtc::Socket::Option opt, int value) {
+int TCPPort::SetOption(Socket::Option opt, int value) {
   socket_options_[opt] = value;
   return 0;
 }
@@ -264,8 +276,8 @@ ProtocolType TCPPort::GetProtocol() const {
   return PROTO_TCP;
 }
 
-void TCPPort::OnNewConnection(rtc::AsyncListenSocket* socket,
-                              rtc::AsyncPacketSocket* new_socket) {
+void TCPPort::OnNewConnection(AsyncListenSocket* socket,
+                              AsyncPacketSocket* new_socket) {
   RTC_DCHECK_EQ(socket, listen_socket_.get());
 
   for (const auto& option : socket_options_) {
@@ -275,7 +287,7 @@ void TCPPort::OnNewConnection(rtc::AsyncListenSocket* socket,
   incoming.addr = new_socket->GetRemoteAddress();
   incoming.socket = new_socket;
   incoming.socket->RegisterReceivedPacketCallback(
-      [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+      [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
         OnReadPacket(socket, packet);
       });
   incoming.socket->SignalReadyToSend.connect(this, &TCPPort::OnReadyToSend);
@@ -288,7 +300,7 @@ void TCPPort::OnNewConnection(rtc::AsyncListenSocket* socket,
 
 void TCPPort::TryCreateServerSocket() {
   listen_socket_ = absl::WrapUnique(socket_factory()->CreateServerTcpSocket(
-      rtc::SocketAddress(Network()->GetBestIP(), 0), min_port(), max_port(),
+      SocketAddress(Network()->GetBestIP(), 0), min_port(), max_port(),
       false /* ssl */));
   if (!listen_socket_) {
     RTC_LOG(LS_WARNING)
@@ -299,9 +311,9 @@ void TCPPort::TryCreateServerSocket() {
   listen_socket_->SignalNewConnection.connect(this, &TCPPort::OnNewConnection);
 }
 
-rtc::AsyncPacketSocket* TCPPort::GetIncoming(const rtc::SocketAddress& addr,
-                                             bool remove) {
-  rtc::AsyncPacketSocket* socket = NULL;
+AsyncPacketSocket* TCPPort::GetIncoming(const SocketAddress& addr,
+                                        bool remove) {
+  AsyncPacketSocket* socket = nullptr;
   for (std::list<Incoming>::iterator it = incoming_.begin();
        it != incoming_.end(); ++it) {
     if (it->addr == addr) {
@@ -314,17 +326,17 @@ rtc::AsyncPacketSocket* TCPPort::GetIncoming(const rtc::SocketAddress& addr,
   return socket;
 }
 
-void TCPPort::OnReadPacket(rtc::AsyncPacketSocket* socket,
-                           const rtc::ReceivedPacket& packet) {
+void TCPPort::OnReadPacket(AsyncPacketSocket* socket,
+                           const ReceivedIpPacket& packet) {
   Port::OnReadPacket(packet, PROTO_TCP);
 }
 
-void TCPPort::OnSentPacket(rtc::AsyncPacketSocket* socket,
-                           const rtc::SentPacket& sent_packet) {
+void TCPPort::OnSentPacket(AsyncPacketSocket* socket,
+                           const SentPacketInfo& sent_packet) {
   PortInterface::SignalSentPacket(sent_packet);
 }
 
-void TCPPort::OnReadyToSend(rtc::AsyncPacketSocket* socket) {
+void TCPPort::OnReadyToSend(AsyncPacketSocket* socket) {
   Port::OnReadyToSend();
 }
 
@@ -332,18 +344,19 @@ void TCPPort::OnReadyToSend(rtc::AsyncPacketSocket* socket) {
 // `ice_unwritable_timeout` in IceConfig when determining the writability state.
 // Replace this constant with the config parameter assuming the default value if
 // we decide it is also applicable here.
-TCPConnection::TCPConnection(rtc::WeakPtr<Port> tcp_port,
+TCPConnection::TCPConnection(WeakPtr<Port> tcp_port,
                              const Candidate& candidate,
-                             rtc::AsyncPacketSocket* socket)
+                             AsyncPacketSocket* socket)
     : Connection(std::move(tcp_port), 0, candidate),
       socket_(socket),
       error_(0),
-      outgoing_(socket == NULL),
+      outgoing_(socket == nullptr),
       connection_pending_(false),
       pretending_to_be_writable_(false),
-      reconnection_timeout_(cricket::CONNECTION_WRITE_CONNECT_TIMEOUT) {
+      reconnection_timeout_(CONNECTION_WRITE_CONNECT_TIMEOUT) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  RTC_DCHECK_EQ(port()->GetProtocol(), PROTO_TCP);  // Needs to be TCPPort.
+  RTC_DCHECK_EQ(port()->GetProtocol(),
+                PROTO_TCP);  // Needs to be TCPPort.
 
   SignalDestroyed.connect(this, &TCPConnection::OnDestroyed);
 
@@ -360,7 +373,7 @@ TCPConnection::TCPConnection(rtc::WeakPtr<Port> tcp_port,
 #else
     RTC_DCHECK(absl::c_any_of(
 #endif
-        port_->Network()->GetIPs(), [this](const rtc::InterfaceAddress& addr) {
+        port_->Network()->GetIPs(), [this](const InterfaceAddress& addr) {
           return socket_->GetLocalAddress().ipaddr() == addr;
         }));
     ConnectSocketSignals(socket);
@@ -373,7 +386,7 @@ TCPConnection::~TCPConnection() {
 
 int TCPConnection::Send(const void* data,
                         size_t size,
-                        const rtc::PacketOptions& options) {
+                        const AsyncSocketPacketOptions& options) {
   if (!socket_) {
     error_ = ENOTCONN;
     return SOCKET_ERROR;
@@ -396,11 +409,11 @@ int TCPConnection::Send(const void* data,
     return SOCKET_ERROR;
   }
   stats_.sent_total_packets++;
-  rtc::PacketOptions modified_options(options);
+  AsyncSocketPacketOptions modified_options(options);
   tcp_port()->CopyPortInformationToPacketInfo(
       &modified_options.info_signaled_after_sent);
   int sent = socket_->Send(data, size, modified_options);
-  int64_t now = rtc::TimeMillis();
+  int64_t now = TimeMillis();
   if (sent < 0) {
     stats_.sent_discarded_packets++;
     error_ = socket_->GetError();
@@ -415,8 +428,8 @@ int TCPConnection::GetError() {
   return error_;
 }
 
-void TCPConnection::OnSentPacket(rtc::AsyncPacketSocket* socket,
-                                 const rtc::SentPacket& sent_packet) {
+void TCPConnection::OnSentPacket(AsyncPacketSocket* socket,
+                                 const SentPacketInfo& sent_packet) {
   RTC_DCHECK_RUN_ON(network_thread());
   if (port()) {
     port()->SignalSentPacket(sent_packet);
@@ -438,7 +451,7 @@ void TCPConnection::OnConnectionRequestResponse(StunRequest* req,
   RTC_DCHECK(write_state() == STATE_WRITABLE);
 }
 
-void TCPConnection::OnConnect(rtc::AsyncPacketSocket* socket) {
+void TCPConnection::OnConnect(AsyncPacketSocket* socket) {
   RTC_DCHECK_EQ(socket, socket_.get());
 
   if (!port_) {
@@ -460,9 +473,9 @@ void TCPConnection::OnConnect(rtc::AsyncPacketSocket* socket) {
   //
   // Note that, aside from minor differences in log statements, this logic is
   // identical to that in TurnPort.
-  const rtc::SocketAddress& socket_address = socket->GetLocalAddress();
+  const SocketAddress& socket_address = socket->GetLocalAddress();
   if (absl::c_any_of(port_->Network()->GetIPs(),
-                     [socket_address](const rtc::InterfaceAddress& addr) {
+                     [socket_address](const InterfaceAddress& addr) {
                        return socket_address.ipaddr() == addr;
                      })) {
     RTC_LOG(LS_VERBOSE) << ToString() << ": Connection established to "
@@ -497,7 +510,7 @@ void TCPConnection::OnConnect(rtc::AsyncPacketSocket* socket) {
   connection_pending_ = false;
 }
 
-void TCPConnection::OnClose(rtc::AsyncPacketSocket* socket, int error) {
+void TCPConnection::OnClose(AsyncPacketSocket* socket, int error) {
   RTC_DCHECK_RUN_ON(network_thread());
   RTC_DCHECK_EQ(socket, socket_.get());
   RTC_LOG(LS_INFO) << ToString() << ": Connection closed with error " << error;
@@ -556,8 +569,8 @@ void TCPConnection::MaybeReconnect() {
   error_ = EPIPE;
 }
 
-void TCPConnection::OnReadPacket(rtc::AsyncPacketSocket* socket,
-                                 const rtc::ReceivedPacket& packet) {
+void TCPConnection::OnReadPacket(AsyncPacketSocket* socket,
+                                 const ReceivedIpPacket& packet) {
   RTC_DCHECK_RUN_ON(network_thread());
   RTC_DCHECK_EQ(socket, socket_.get());
 
@@ -571,7 +584,7 @@ void TCPConnection::OnReadPacket(rtc::AsyncPacketSocket* socket,
   Connection::OnReadPacket(packet);
 }
 
-void TCPConnection::OnReadyToSend(rtc::AsyncPacketSocket* socket) {
+void TCPConnection::OnReadyToSend(AsyncPacketSocket* socket) {
   RTC_DCHECK_RUN_ON(network_thread());
   RTC_DCHECK_EQ(socket, socket_.get());
   Connection::OnReadyToSend();
@@ -588,17 +601,17 @@ void TCPConnection::OnDestroyed(Connection* c) {
 void TCPConnection::CreateOutgoingTcpSocket() {
   RTC_DCHECK(outgoing_);
   int opts = (remote_candidate().protocol() == SSLTCP_PROTOCOL_NAME)
-                 ? rtc::PacketSocketFactory::OPT_TLS_FAKE
+                 ? PacketSocketFactory::OPT_TLS_FAKE
                  : 0;
 
   if (socket_) {
     DisconnectSocketSignals(socket_.get());
   }
 
-  rtc::PacketSocketTcpOptions tcp_opts;
+  PacketSocketTcpOptions tcp_opts;
   tcp_opts.opts = opts;
   socket_.reset(port()->socket_factory()->CreateClientTcpSocket(
-      rtc::SocketAddress(port()->Network()->GetBestIP(), 0),
+      SocketAddress(port()->Network()->GetBestIP(), 0),
       remote_candidate().address(), tcp_opts));
   if (socket_) {
     RTC_LOG(LS_VERBOSE) << ToString() << ": Connecting from "
@@ -621,7 +634,7 @@ void TCPConnection::CreateOutgoingTcpSocket() {
   }
 }
 
-void TCPConnection::ConnectSocketSignals(rtc::AsyncPacketSocket* socket) {
+void TCPConnection::ConnectSocketSignals(AsyncPacketSocket* socket) {
   // Incoming connections register SignalSentPacket and SignalReadyToSend
   // directly on the port in TCPPort::OnNewConnection.
   if (outgoing_) {
@@ -633,17 +646,17 @@ void TCPConnection::ConnectSocketSignals(rtc::AsyncPacketSocket* socket) {
   // For incoming connections, this re-register ReceivedPacketCallback to the
   // connection instead of the port.
   socket->RegisterReceivedPacketCallback(
-      [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+      [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
         OnReadPacket(socket, packet);
       });
   socket->SubscribeCloseEvent(this, [this, safety = network_safety_.flag()](
-                                        rtc::AsyncPacketSocket* s, int err) {
+                                        AsyncPacketSocket* s, int err) {
     if (safety->alive())
       OnClose(s, err);
   });
 }
 
-void TCPConnection::DisconnectSocketSignals(rtc::AsyncPacketSocket* socket) {
+void TCPConnection::DisconnectSocketSignals(AsyncPacketSocket* socket) {
   if (outgoing_) {
     // Incoming connections do not register these signals in TCPConnection.
     socket->SignalConnect.disconnect(this);
@@ -654,4 +667,4 @@ void TCPConnection::DisconnectSocketSignals(rtc::AsyncPacketSocket* socket) {
   socket->UnsubscribeCloseEvent(this);
 }
 
-}  // namespace cricket
+}  // namespace webrtc

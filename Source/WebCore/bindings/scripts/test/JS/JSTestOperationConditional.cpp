@@ -224,7 +224,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditional
 
 JSC::GCClient::IsoSubspace* JSTestOperationConditional::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestOperationConditional, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestOperationConditional, UseCustomHeapCellType::No>(vm, "JSTestOperationConditional"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOperationConditional.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOperationConditional = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOperationConditional.get(); },

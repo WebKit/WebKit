@@ -3659,10 +3659,24 @@ bool ValidateBufferData(const Context *context,
         return false;
     }
 
-    if (buffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+    // Do some additional WebGL-specific validation
+    if (ANGLE_UNLIKELY(context->isWebGL()))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
-        return false;
+        if (buffer->hasWebGLXFBBindingConflict(true))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
+            return false;
+        }
+
+        const TransformFeedback *transformFeedbackObject =
+            context->getState().getCurrentTransformFeedback();
+        if (transformFeedbackObject && transformFeedbackObject->isActive() &&
+            !transformFeedbackObject->isPaused() &&
+            transformFeedbackObject->isBufferBound(buffer->id()))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
+            return false;
+        }
     }
 
     if (buffer->isImmutable())
@@ -3717,10 +3731,24 @@ bool ValidateBufferSubData(const Context *context,
         return false;
     }
 
-    if (buffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+    // Do some additional WebGL-specific validation
+    if (ANGLE_UNLIKELY(context->isWebGL()))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
-        return false;
+        if (buffer->hasWebGLXFBBindingConflict(true))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
+            return false;
+        }
+
+        const TransformFeedback *transformFeedbackObject =
+            context->getState().getCurrentTransformFeedback();
+        if (transformFeedbackObject && transformFeedbackObject->isActive() &&
+            !transformFeedbackObject->isPaused() &&
+            transformFeedbackObject->isBufferBound(buffer->id()))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
+            return false;
+        }
     }
 
     if (buffer->isImmutable() &&

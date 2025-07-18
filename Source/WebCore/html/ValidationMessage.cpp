@@ -32,6 +32,7 @@
 #include "config.h"
 #include "ValidationMessage.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ElementInlines.h"

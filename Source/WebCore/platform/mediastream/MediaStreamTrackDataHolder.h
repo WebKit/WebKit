@@ -36,7 +36,7 @@ namespace WebCore {
 class PreventSourceFromEndingObserverWrapper;
 
 struct MediaStreamTrackDataHolder {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaStreamTrackDataHolder);
 
     WEBCORE_EXPORT MediaStreamTrackDataHolder(String&& trackId, String&& label, RealtimeMediaSource::Type, CaptureDevice::DeviceType, bool isEnabled, bool isEnded, MediaStreamTrackHintValue, bool isProducingData, bool isMuted, bool isInterrupted, RealtimeMediaSourceSettings, RealtimeMediaSourceCapabilities, Ref<RealtimeMediaSource>&&);
     WEBCORE_EXPORT ~MediaStreamTrackDataHolder();

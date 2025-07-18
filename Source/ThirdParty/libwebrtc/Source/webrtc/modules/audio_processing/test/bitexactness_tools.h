@@ -33,21 +33,21 @@ std::string GetApmCaptureTestVectorFileName(int sample_rate_hz);
 void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
                                     size_t num_channels,
                                     InputAudioFile* stereo_pcm_file,
-                                    rtc::ArrayView<float> data);
+                                    ArrayView<float> data);
 
 // Verifies a frame against a reference and returns the results as an
 // AssertionResult.
 ::testing::AssertionResult VerifyDeinterleavedArray(
     size_t samples_per_channel,
     size_t num_channels,
-    rtc::ArrayView<const float> reference,
-    rtc::ArrayView<const float> output,
+    ArrayView<const float> reference,
+    ArrayView<const float> output,
     float element_error_bound);
 
 // Verifies a vector against a reference and returns the results as an
 // AssertionResult.
-::testing::AssertionResult VerifyArray(rtc::ArrayView<const float> reference,
-                                       rtc::ArrayView<const float> output,
+::testing::AssertionResult VerifyArray(ArrayView<const float> reference,
+                                       ArrayView<const float> output,
                                        float element_error_bound);
 
 }  // namespace test

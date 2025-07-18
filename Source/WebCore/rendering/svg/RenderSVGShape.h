@@ -147,8 +147,8 @@ private:
 
 protected:
     FloatRect m_fillBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_approximateStrokeBoundingBox;
+    mutable Markable<FloatRect> m_strokeBoundingBox;
+    mutable Markable<FloatRect> m_approximateStrokeBoundingBox;
 private:
     bool m_needsShapeUpdate { true };
 protected:

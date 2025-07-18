@@ -12,8 +12,12 @@
 
 #include <string.h>
 
+#include <cstdint>
+
+#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -246,7 +250,7 @@ size_t Flexfec03HeaderWriter::FecHeaderSize(size_t packet_mask_size) const {
 // FecHeaderSize(), so in this function we can be sure that we are
 // writing in space that is intended for the header.
 void Flexfec03HeaderWriter::FinalizeFecHeader(
-    rtc::ArrayView<const ProtectedStream> protected_streams,
+    ArrayView<const ProtectedStream> protected_streams,
     ForwardErrorCorrection::Packet& fec_packet) const {
   RTC_CHECK_EQ(protected_streams.size(), 1);
   uint32_t media_ssrc = protected_streams[0].ssrc;

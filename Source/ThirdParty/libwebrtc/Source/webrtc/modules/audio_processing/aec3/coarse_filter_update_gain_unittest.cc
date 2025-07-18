@@ -100,7 +100,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
                    e_coarse.begin(),
                    [&](float a, float b) { return a - b * kScale; });
     std::for_each(e_coarse.begin(), e_coarse.end(),
-                  [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+                  [](float& a) { a = SafeClamp(a, -32768.f, 32767.f); });
     fft.ZeroPaddedFft(e_coarse, Aec3Fft::Window::kRectangular, &E_coarse);
 
     std::array<float, kFftLengthBy2Plus1> render_power;
@@ -118,13 +118,13 @@ void RunFilterUpdateTest(int num_blocks_to_process,
 }
 
 std::string ProduceDebugText(int filter_length_blocks) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Length: " << filter_length_blocks;
   return ss.Release();
 }
 
 std::string ProduceDebugText(size_t delay, int filter_length_blocks) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Delay: " << delay << ", ";
   ss << ProduceDebugText(filter_length_blocks);
   return ss.Release();
@@ -226,7 +226,7 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(1, 2, 4),
     [](const ::testing::TestParamInfo<
         CoarseFilterUpdateGainOneTwoFourRenderChannels::ParamType>& info) {
-      return (rtc::StringBuilder() << "Render" << info.param).str();
+      return (StringBuilder() << "Render" << info.param).str();
     });
 
 // Verifies that the magnitude of the gain on average decreases for a

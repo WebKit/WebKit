@@ -33,7 +33,7 @@ namespace WebKit {
 
 class WebPageLoadTiming {
     WTF_MAKE_NONCOPYABLE(WebPageLoadTiming);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPageLoadTiming);
 public:
     explicit WebPageLoadTiming(WallTime navigationStart)
         : m_navigationStart(navigationStart)

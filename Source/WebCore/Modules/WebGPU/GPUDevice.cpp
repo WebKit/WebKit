@@ -128,8 +128,8 @@ void GPUDevice::removeBufferToUnmap(GPUBuffer& buffer)
 
 void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
-    for (auto& buffer : m_buffersToUnmap)
-        buffer.destroy(scriptExecutionContext);
+    for (Ref buffer : m_buffersToUnmap)
+        buffer->destroy(scriptExecutionContext);
 
     m_buffersToUnmap.clear();
 
@@ -337,9 +337,10 @@ private:
         RefPtr videoElement = m_videoElement.get();
         if (!videoElement)
             return { };
-        if (!m_gpuDevice)
+        RefPtr gpuDevice = m_gpuDevice.get();
+        if (!gpuDevice)
             return { };
-        auto texture = m_gpuDevice->takeExternalTextureForVideoElement(*videoElement);
+        auto texture = gpuDevice->takeExternalTextureForVideoElement(*videoElement);
         if (!texture)
             return { };
         if (texture.get() == m_externalTexture.ptr())
@@ -353,8 +354,8 @@ private:
     }
 
     const Ref<GPUExternalTexture> m_externalTexture;
-    WeakPtr<HTMLVideoElement> m_videoElement;
-    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_gpuDevice;
+    const WeakPtr<HTMLVideoElement> m_videoElement;
+    const WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_gpuDevice;
 };
 #endif
 
@@ -389,7 +390,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
         m_previouslyImportedExternalTexture.first = *videoElement;
         m_previouslyImportedExternalTexture.second = externalTexture.ptr();
-        videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, scriptExecutionContext()));
+        videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, RefPtr { scriptExecutionContext() }.get()));
         queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef = externalTexture](auto& gpuDevice) {
             if (!videoElementPtr)
                 return;
@@ -443,11 +444,10 @@ ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(const GPUBindGroupDesc
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     bool hasExternalTexture = false;
     auto* externalTexture = bindGroupDescriptor.externalTextureMatches(m_lastCreatedExternalTextureBindGroup.first, hasExternalTexture);
-    if (auto externalTextureValue = externalTexture ? externalTexture->get() : nullptr) {
-        if (m_lastCreatedExternalTextureBindGroup.second->updateExternalTextures(*externalTextureValue)) {
-            RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second.get();
+    if (RefPtr externalTextureValue = externalTexture ? externalTexture->get() : nullptr) {
+        RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second;
+        if (bindGroup->updateExternalTextures(*externalTextureValue))
             return bindGroup.releaseNonNull();
-        }
     }
 #endif
 
@@ -637,10 +637,11 @@ bool GPUDevice::addEventListener(const AtomString& eventType, Ref<EventListener>
 #if PLATFORM(COCOA)
     if (eventType == WebCore::eventNames().uncapturederrorEvent) {
         m_backing->resolveUncapturedErrorEvent([eventType, weakThis = WeakPtr { *this }](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
-            if (!weakThis || !hasUncapturedError)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !hasUncapturedError)
                 return;
 
-            queueTaskToDispatchEvent(*weakThis.get(), TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(error) }));
+            queueTaskToDispatchEvent(*protectedThis, TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(error) }));
         });
     }
 #endif

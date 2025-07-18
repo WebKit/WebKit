@@ -48,8 +48,9 @@ class Environment(object):
             if prefix and prefix not in prefixes:
                 continue
             self._paths.add(os.path.join(self.path, file))
-            with open(os.path.join(self.path, file), 'r') as fl:
-                self._mapping[key] = fl.read().rstrip('\n')
+            if os.path.isfile(os.path.join(self.path, file)):
+                with open(os.path.join(self.path, file), 'r') as fl:
+                    self._mapping[key] = fl.read().rstrip('\n')
         return self
 
     def get(self, key, value=None):

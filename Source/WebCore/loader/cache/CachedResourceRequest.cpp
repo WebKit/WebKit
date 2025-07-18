@@ -38,6 +38,7 @@
 #include "HTTPHeaderValues.h"
 #include "ImageDecoder.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "OriginAccessPatterns.h"

@@ -75,7 +75,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIde
 }
 
 struct PendingRegistrationRequest {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingRegistrationRequest);
     PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess>&& connection, String&& name, PAL::SessionID sessionID, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
         : connection(WTFMove(connection))
         , name(WTFMove(name))

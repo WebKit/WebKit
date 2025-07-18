@@ -127,7 +127,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
 
     if (!isStartOfParagraph(end)) {
         VisiblePosition previous = end.previous();
-        UChar c(previous.characterAfter());
+        char16_t c(previous.characterAfter());
         // FIXME: Should use something from ICU or ASCIICType that is not subject to POSIX current language rather than iswpunct.
         if (!iswpunct(c) && !deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             end = startOfWord(end);
@@ -166,7 +166,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
 
     if ([words count] > 0 && isEndOfParagraph(position) && !isStartOfParagraph(position)) {
         VisiblePosition previous = position.previous();
-        UChar c(previous.characterAfter());
+        char16_t c(previous.characterAfter());
         if (!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             [words removeLastObject];
     }
@@ -742,7 +742,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
     for (auto& marker : markersInRoot)
         interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
 
-    Vector<Vector<UChar>> interpretations;
+    Vector<Vector<char16_t>> interpretations;
     interpretations.grow(interpretationsCount);
 
     Position precedingTextStartPosition = makeDeprecatedLegacyPosition(root, 0);

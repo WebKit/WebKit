@@ -145,6 +145,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-013-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-015-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001.html

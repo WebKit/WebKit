@@ -47,6 +47,7 @@ public:
         PhaseEnded       = 1 << 3,
         PhaseCancelled   = 1 << 4,
         PhaseMayBegin    = 1 << 5,
+        PhaseWillBegin   = 1 << 6,
     };
 
     enum class MomentumEndType : uint8_t {
@@ -81,6 +82,8 @@ public:
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
+
+    bool isMomentumEvent() const { return momentumPhase() != Phase::PhaseNone && momentumPhase() != Phase::PhaseWillBegin; }
 
     static bool isWheelEventType(WebEventType);
 

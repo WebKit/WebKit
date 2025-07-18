@@ -44,13 +44,13 @@ public:
     static Ref<WebTransportDatagramDuplexStream> create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
     ~WebTransportDatagramDuplexStream();
 
-    ReadableStream& readable();
-    WritableStream& writable();
-    unsigned maxDatagramSize();
-    double incomingMaxAge();
-    double outgoingMaxAge();
-    double incomingHighWaterMark();
-    double outgoingHighWaterMark();
+    ReadableStream& readable() { return m_readable; }
+    WritableStream& writable() { return m_writable; }
+    unsigned maxDatagramSize() { return m_outgoingMaxDatagramSize; }
+    double incomingMaxAge() { return m_incomingDatagramsExpirationDuration; }
+    double outgoingMaxAge() { return m_outgoingDatagramsExpirationDuration; }
+    double incomingHighWaterMark() { return m_incomingDatagramsHighWaterMark; }
+    double outgoingHighWaterMark() { return m_outgoingDatagramsHighWaterMark; }
     ExceptionOr<void> setIncomingMaxAge(double);
     ExceptionOr<void> setOutgoingMaxAge(double);
     ExceptionOr<void> setIncomingHighWaterMark(double);

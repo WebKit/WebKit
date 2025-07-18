@@ -54,7 +54,7 @@ CSPViolationReportBody::CSPViolationReportBody(Init&& init)
 {
 }
 
-CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber)
+CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber)
     : m_documentURL(WTFMove(documentURL))
     , m_referrer(WTFMove(referrer))
     , m_blockedURL(WTFMove(blockedURL))
@@ -74,7 +74,7 @@ Ref<CSPViolationReportBody> CSPViolationReportBody::create(Init&& init)
     return adoptRef(*new CSPViolationReportBody(WTFMove(init)));
 }
 
-Ref<CSPViolationReportBody> CSPViolationReportBody::create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber)
+Ref<CSPViolationReportBody> CSPViolationReportBody::create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber)
 {
     return adoptRef(*new CSPViolationReportBody(WTFMove(documentURL), WTFMove(referrer), WTFMove(blockedURL), WTFMove(effectiveDirective), WTFMove(originalPolicy), WTFMove(sourceFile), WTFMove(sample), disposition, statusCode, lineNumber, columnNumber));
 }

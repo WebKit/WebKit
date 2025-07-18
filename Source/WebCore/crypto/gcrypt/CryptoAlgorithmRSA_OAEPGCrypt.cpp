@@ -28,6 +28,7 @@
 
 #include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoKeyRSA.h"
+#include "ExceptionOr.h"
 #include "GCryptUtilities.h"
 #include "NotImplemented.h"
 

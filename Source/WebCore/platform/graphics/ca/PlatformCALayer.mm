@@ -263,6 +263,15 @@ bool PlatformCALayer::setNeedsDisplayIfEDRHeadroomExceeds(float)
 {
     return false;
 }
+
+void PlatformCALayer::setTonemappingEnabled(bool)
+{
+}
+
+bool PlatformCALayer::tonemappingEnabled() const
+{
+    return false;
+}
 #endif
 
 void PlatformCALayer::dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>)

@@ -30,7 +30,7 @@ class RtpFileWriterTest : public ::testing::Test {
   }
 
   void WriteRtpPackets(int num_packets, int time_ms_offset = 0) {
-    ASSERT_TRUE(rtp_writer_.get() != NULL);
+    ASSERT_TRUE(rtp_writer_.get() != nullptr);
     test::RtpPacket packet;
     for (int i = 1; i <= num_packets; ++i) {
       packet.length = i;
@@ -44,11 +44,11 @@ class RtpFileWriterTest : public ::testing::Test {
   void CloseOutputFile() { rtp_writer_.reset(); }
 
   void VerifyFileContents(int expected_packets) {
-    ASSERT_TRUE(rtp_writer_.get() == NULL)
+    ASSERT_TRUE(rtp_writer_.get() == nullptr)
         << "Must call CloseOutputFile before VerifyFileContents";
     std::unique_ptr<test::RtpFileReader> rtp_reader(
         test::RtpFileReader::Create(test::RtpFileReader::kRtpDump, filename_));
-    ASSERT_TRUE(rtp_reader.get() != NULL);
+    ASSERT_TRUE(rtp_reader.get() != nullptr);
     test::RtpPacket packet;
     int i = 0;
     while (rtp_reader->NextPacket(&packet)) {

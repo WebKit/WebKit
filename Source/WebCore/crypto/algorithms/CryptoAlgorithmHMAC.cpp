@@ -28,6 +28,7 @@
 
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoKeyHMAC.h"
+#include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

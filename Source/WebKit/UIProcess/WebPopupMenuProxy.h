@@ -44,7 +44,7 @@ struct WebPopupItem;
 class WebPopupMenuProxy;
 
 class WebPopupMenuProxyClient : public CanMakeCheckedPtr<WebPopupMenuProxyClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPopupMenuProxyClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPopupMenuProxyClient);
 protected:
     virtual ~WebPopupMenuProxyClient() = default;

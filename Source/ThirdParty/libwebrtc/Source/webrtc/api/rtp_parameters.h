@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
+#include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "api/media_types.h"
 #include "api/priority.h"
@@ -136,7 +137,7 @@ struct RTC_EXPORT RtpCodec {
   std::string name;
 
   // The media type of this codec. Equivalent to MIME top-level type.
-  cricket::MediaType kind = cricket::MEDIA_TYPE_AUDIO;
+  webrtc::MediaType kind = webrtc::MediaType::AUDIO;
 
   // If unset, the implementation default is used.
   std::optional<int> clock_rate;
@@ -191,6 +192,16 @@ struct RTC_EXPORT RtpCodecCapability : public RtpCodec {
            scalability_modes == o.scalability_modes;
   }
   bool operator!=(const RtpCodecCapability& o) const { return !(*this == o); }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpCodecCapability& cap) {
+    if (cap.kind == webrtc::MediaType::AUDIO) {
+      absl::Format(&sink, "[audio/%s/%d/%d]", cap.name,
+                   cap.clock_rate.value_or(0), cap.num_channels.value_or(1));
+    } else {
+      absl::Format(&sink, "[video/%s]", cap.name);
+    }
+  }
 };
 
 // Used in RtpCapabilities and RtpTransceiverInterface's header extensions query
@@ -202,8 +213,9 @@ struct RTC_EXPORT RtpCodecCapability : public RtpCodec {
 // RtpHeaderExtensionParameters.
 //
 // Note that ORTC includes a "kind" field, but we omit this because it's
-// redundant; if you call "RtpReceiver::GetCapabilities(MEDIA_TYPE_AUDIO)",
-// you know you're getting audio capabilities.
+// redundant; if you call
+// "RtpReceiver::GetCapabilities(webrtc::MediaType::AUDIO)", you know you're
+// getting audio capabilities.
 struct RTC_EXPORT RtpHeaderExtensionCapability {
   // URI of this extension, as defined in RFC8285.
   std::string uri;
@@ -395,6 +407,15 @@ struct RTC_EXPORT RtpExtension {
   std::string uri;
   int id = 0;
   bool encrypt = false;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpExtension& extension) {
+    if (extension.encrypt) {
+      absl::Format(&sink, "[%d %s (encrypted)]", extension.id, extension.uri);
+    } else {
+      absl::Format(&sink, "[%d %s]", extension.id, extension.uri);
+    }
+  }
 };
 
 struct RTC_EXPORT RtpFecParameters {

@@ -78,7 +78,7 @@ static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffer
                 return { };
 
             memcpySpan(buffered.mutableSpan(), data);
-            buffered.resize(data.size());
+            buffered.shrink(data.size());
             return WTFMove(buffered);
         }
 

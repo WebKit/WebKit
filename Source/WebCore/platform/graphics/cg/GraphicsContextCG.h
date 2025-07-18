@@ -46,8 +46,8 @@ public:
 
     bool hasPlatformContext() const final;
 
-    // Returns the platform context for any purpose, including draws.
-    CGContextRef platformContext() const final;
+    // Returns the platform context for any purpose, including draws. Conservative estimate.
+    CGContextRef platformContext() const final { return const_cast<GraphicsContextCG*>(this)->contextForDraw(); }
 
     const DestinationColorSpace& colorSpace() const final;
 
@@ -139,7 +139,12 @@ public:
     FloatRect roundToDevicePixels(const FloatRect&) const;
 
     // Returns the platform context for draws.
-    CGContextRef contextForDraw();
+    CGContextRef contextForDraw()
+    {
+        ASSERT(m_cgContext);
+        m_hasDrawn = true;
+        return m_cgContext.get();
+    }
 
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.

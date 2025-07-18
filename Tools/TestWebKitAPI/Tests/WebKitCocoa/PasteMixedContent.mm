@@ -304,7 +304,7 @@ TEST(PasteMixedContent, PasteOneOrMoreURLs)
 #if PLATFORM(IOS_FAMILY)
 
 class PasteboardAccessChecker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PasteboardAccessChecker);
     WTF_MAKE_NONCOPYABLE(PasteboardAccessChecker);
 public:
     PasteboardAccessChecker()

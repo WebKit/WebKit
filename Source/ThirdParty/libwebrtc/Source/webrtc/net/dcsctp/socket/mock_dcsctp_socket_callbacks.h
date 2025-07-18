@@ -58,7 +58,7 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
         random_(internal::GetUniqueSeed()),
         timeout_manager_([this]() { return now_; }) {
     ON_CALL(*this, SendPacketWithStatus)
-        .WillByDefault([this](rtc::ArrayView<const uint8_t> data) {
+        .WillByDefault([this](webrtc::ArrayView<const uint8_t> data) {
           sent_packets_.emplace_back(
               std::vector<uint8_t>(data.begin(), data.end()));
           return SendPacketStatus::kSuccess;
@@ -85,11 +85,11 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
 
   MOCK_METHOD(SendPacketStatus,
               SendPacketWithStatus,
-              (rtc::ArrayView<const uint8_t> data),
+              (webrtc::ArrayView<const uint8_t> data),
               (override));
 
   std::unique_ptr<Timeout> CreateTimeout(
-      webrtc::TaskQueueBase::DelayPrecision precision) override {
+      webrtc::TaskQueueBase::DelayPrecision /* precision */) override {
     // The fake timeout manager does not implement |precision|.
     return timeout_manager_.CreateTimeout();
   }
@@ -100,6 +100,7 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
   }
 
   MOCK_METHOD(void, OnMessageReceived, (DcSctpMessage message), (override));
+  MOCK_METHOD(void, OnMessageReady, (), (override));
   MOCK_METHOD(void,
               OnError,
               (ErrorKind error, absl::string_view message),
@@ -113,16 +114,16 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
   MOCK_METHOD(void, OnConnectionRestarted, (), (override));
   MOCK_METHOD(void,
               OnStreamsResetFailed,
-              (rtc::ArrayView<const StreamID> outgoing_streams,
+              (webrtc::ArrayView<const StreamID> outgoing_streams,
                absl::string_view reason),
               (override));
   MOCK_METHOD(void,
               OnStreamsResetPerformed,
-              (rtc::ArrayView<const StreamID> outgoing_streams),
+              (webrtc::ArrayView<const StreamID> outgoing_streams),
               (override));
   MOCK_METHOD(void,
               OnIncomingStreamsReset,
-              (rtc::ArrayView<const StreamID> incoming_streams),
+              (webrtc::ArrayView<const StreamID> incoming_streams),
               (override));
   MOCK_METHOD(void, OnBufferedAmountLow, (StreamID stream_id), (override));
   MOCK_METHOD(void, OnTotalBufferedAmountLow, (), (override));

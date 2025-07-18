@@ -14,7 +14,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(BufferQueueTest, TestAll) {
   const size_t kSize = 16;
@@ -86,4 +86,4 @@ TEST(BufferQueueTest, TestAll) {
   EXPECT_EQ(0u, queue2.size());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

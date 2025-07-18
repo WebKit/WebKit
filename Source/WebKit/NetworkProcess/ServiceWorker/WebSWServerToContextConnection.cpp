@@ -273,12 +273,12 @@ void WebSWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier serv
 
         if (session && worker) {
             auto scopeURL = worker->registrationKey().scope();
-            session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, true);
+            session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, true);
 
             worker->whenTerminated([connection = WeakPtr { m_connection }, scopeURL]() {
                 if (RefPtr protectedConnection = connection.get()) {
                     if (CheckedPtr session = protectedConnection->networkSession())
-                        session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, false);
+                        session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, false);
                 }
             });
         }
@@ -378,7 +378,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
     sendWithAsyncReplyToParentProcess(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
 }
 
-void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, uint64_t requestIdentifier)
 {
     RefPtr server = this->server();
     RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
@@ -500,7 +500,7 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier identifier, size_t bytesTransferredOverNetworkDelta)
+void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier identifier, uint64_t bytesTransferredOverNetworkDelta)
 {
     if (RefPtr server = this->server()) {
         if (RefPtr connection = dynamicDowncast<WebSWServerConnection>(server->connection(identifier.processIdentifier())))

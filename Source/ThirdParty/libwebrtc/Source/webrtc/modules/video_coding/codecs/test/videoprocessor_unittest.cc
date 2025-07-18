@@ -10,14 +10,18 @@
 
 #include "modules/video_coding/codecs/test/videoprocessor.h"
 
+#include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "api/environment/environment_factory.h"
-#include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_encoder.h"
 #include "api/test/videocodec_test_fixture.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_encoder.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/videocodec_test_stats_impl.h"
 #include "rtc_base/task_queue_for_test.h"
@@ -45,8 +49,8 @@ const int kHeight = 288;
 class VideoProcessorTest : public ::testing::Test {
  protected:
   VideoProcessorTest() : q_("VP queue") {
-    config_.SetCodecSettings(cricket::kVp8CodecName, 1, 1, 1, false, false,
-                             false, kWidth, kHeight);
+    config_.SetCodecSettings(kVp8CodecName, 1, 1, 1, false, false, false,
+                             kWidth, kHeight);
 
     decoder_mock_ = new MockVideoDecoder();
     decoders_.push_back(std::unique_ptr<VideoDecoder>(decoder_mock_));

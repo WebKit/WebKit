@@ -10,8 +10,11 @@
 
 #include "modules/audio_coding/codecs/opus/test/blocker.h"
 
+#include <cstddef>
+#include <cstring>
 #include <memory>
 
+#include "common_audio/channel_buffer.h"
 #include "rtc_base/arraysize.h"
 #include "test/gtest.h"
 

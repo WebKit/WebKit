@@ -10,7 +10,14 @@
 
 #include "modules/audio_coding/neteq/tools/packet.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <list>
+#include <utility>
+
 #include "api/array_view.h"
+#include "api/rtp_headers.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -18,7 +25,7 @@
 namespace webrtc {
 namespace test {
 
-Packet::Packet(rtc::CopyOnWriteBuffer packet,
+Packet::Packet(CopyOnWriteBuffer packet,
                size_t virtual_packet_length_bytes,
                double time_ms,
                const RtpHeaderExtensionMap* extension_map)
@@ -88,7 +95,7 @@ void Packet::DeleteRedHeaders(std::list<RTPHeader*>* headers) {
 bool Packet::ParseHeader(const RtpHeaderExtensionMap* extension_map) {
   // Use RtpPacketReceived instead of RtpPacket because former already has a
   // converter into legacy RTPHeader.
-  webrtc::RtpPacketReceived rtp_packet(extension_map);
+  RtpPacketReceived rtp_packet(extension_map);
 
   // Because of the special case of dummy packets that have padding marked in
   // the RTP header, but do not have rtp payload with the padding size, handle
@@ -98,7 +105,7 @@ bool Packet::ParseHeader(const RtpHeaderExtensionMap* extension_map) {
   size_t padding_size = 0;
   if (padding) {
     // Clear the padding bit to prevent failure when rtp payload is omited.
-    rtc::CopyOnWriteBuffer packet(packet_);
+    CopyOnWriteBuffer packet(packet_);
     packet.MutableData()[0] &= ~0b0010'0000;
     if (!rtp_packet.Parse(std::move(packet))) {
       return false;
@@ -114,8 +121,8 @@ bool Packet::ParseHeader(const RtpHeaderExtensionMap* extension_map) {
       return false;
     }
   }
-  rtp_payload_ = rtc::MakeArrayView(packet_.data() + rtp_packet.headers_size(),
-                                    rtp_packet.payload_size() - padding_size);
+  rtp_payload_ = MakeArrayView(packet_.data() + rtp_packet.headers_size(),
+                               rtp_packet.payload_size() - padding_size);
   rtp_packet.GetHeader(&header_);
 
   RTC_CHECK_GE(virtual_packet_length_bytes_, rtp_packet.size());

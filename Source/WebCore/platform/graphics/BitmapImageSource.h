@@ -40,7 +40,7 @@ class ImageFrameAnimator;
 class ImageObserver;
 
 class BitmapImageSource final : public ImageSource, public CanMakeCheckedPtr<BitmapImageSource> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BitmapImageSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BitmapImageSource);
 public:
     static Ref<BitmapImageSource> create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);

@@ -58,10 +58,6 @@ namespace WebKit {
 struct WebHitTestResultPlatformData {
     struct DetectedDataActionContext {
         RetainPtr<WKDDActionContext> context;
-        struct MarkableTraits {
-            static bool isEmptyValue(const DetectedDataActionContext& context) { return !context.context; }
-            static DetectedDataActionContext emptyValue() { return { nullptr }; }
-        };
     };
     Markable<DetectedDataActionContext> detectedDataActionContext;
     WebCore::FloatRect detectedDataBoundingBox;
@@ -138,3 +134,15 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+#if PLATFORM(MAC)
+template<>
+struct MarkableTraits<WebKit::WebHitTestResultPlatformData::DetectedDataActionContext> {
+    static bool isEmptyValue(const WebKit::WebHitTestResultPlatformData::DetectedDataActionContext& context) { return !context.context; }
+    static WebKit::WebHitTestResultPlatformData::DetectedDataActionContext emptyValue() { return { nullptr }; }
+};
+#endif
+
+}

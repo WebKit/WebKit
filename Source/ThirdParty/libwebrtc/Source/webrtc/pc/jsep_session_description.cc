@@ -10,24 +10,32 @@
 
 #include "api/jsep_session_description.h"
 
+#include <cstddef>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/candidate.h"
+#include "api/jsep.h"
+#include "api/jsep_ice_candidate.h"
 #include "p2p/base/p2p_constants.h"
-#include "p2p/base/port.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
 #include "pc/media_session.h"  // IWYU pragma: keep
+#include "pc/session_description.h"
 #include "pc/webrtc_sdp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
+#include "rtc_base/net_helpers.h"
 #include "rtc_base/socket_address.h"
 
-using cricket::Candidate;
-using cricket::SessionDescription;
+using webrtc::Candidate;
+using ::webrtc::SessionDescription;
 
 namespace webrtc {
 namespace {
@@ -39,7 +47,7 @@ constexpr int kDummyPort = 9;
 // candidates.
 void UpdateConnectionAddress(
     const JsepCandidateCollection& candidate_collection,
-    cricket::MediaContentDescription* media_desc) {
+    MediaContentDescription* media_desc) {
   int port = kDummyPort;
   std::string ip = kDummyAddress;
   std::string hostname;
@@ -48,11 +56,11 @@ void UpdateConnectionAddress(
   for (size_t i = 0; i < candidate_collection.count(); ++i) {
     const IceCandidateInterface* jsep_candidate = candidate_collection.at(i);
     if (jsep_candidate->candidate().component() !=
-        cricket::ICE_CANDIDATE_COMPONENT_RTP) {
+        ICE_CANDIDATE_COMPONENT_RTP) {
       continue;
     }
     // Default destination should be UDP only.
-    if (jsep_candidate->candidate().protocol() != cricket::UDP_PROTOCOL_NAME) {
+    if (jsep_candidate->candidate().protocol() != UDP_PROTOCOL_NAME) {
       continue;
     }
     const int preference = jsep_candidate->candidate().type_preference();
@@ -67,14 +75,13 @@ void UpdateConnectionAddress(
     }
     current_preference = preference;
     current_family = family;
-    const rtc::SocketAddress& candidate_addr =
-        jsep_candidate->candidate().address();
+    const SocketAddress& candidate_addr = jsep_candidate->candidate().address();
     port = candidate_addr.port();
     ip = candidate_addr.ipaddr().ToString();
     hostname = candidate_addr.hostname();
   }
-  rtc::SocketAddress connection_addr(ip, port);
-  if (rtc::IPIsUnspec(connection_addr.ipaddr()) && !hostname.empty()) {
+  SocketAddress connection_addr(ip, port);
+  if (IPIsUnspec(connection_addr.ipaddr()) && !hostname.empty()) {
     // When a hostname candidate becomes the (default) connection address,
     // we use the dummy address 0.0.0.0 and port 9 in the c= and the m= lines.
     //
@@ -91,7 +98,7 @@ void UpdateConnectionAddress(
     // populate the c= and the m= lines. See `BuildMediaDescription` in
     // webrtc_sdp.cc for the SDP generation with
     // `media_desc->connection_address()`.
-    connection_addr = rtc::SocketAddress(kDummyAddress, kDummyPort);
+    connection_addr = SocketAddress(kDummyAddress, kDummyPort);
   }
   media_desc->set_connection_address(connection_addr);
 }
@@ -147,7 +154,7 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     SdpType type,
     const std::string& session_id,
     const std::string& session_version,
-    std::unique_ptr<cricket::SessionDescription> description) {
+    std::unique_ptr<SessionDescription> description) {
   auto jsep_description = std::make_unique<JsepSessionDescription>(type);
   bool initialize_success = jsep_description->Initialize(
       std::move(description), session_id, session_version);
@@ -171,7 +178,7 @@ JsepSessionDescription::JsepSessionDescription(const std::string& type) {
 
 JsepSessionDescription::JsepSessionDescription(
     SdpType type,
-    std::unique_ptr<cricket::SessionDescription> description,
+    std::unique_ptr<SessionDescription> description,
     absl::string_view session_id,
     absl::string_view session_version)
     : description_(std::move(description)),
@@ -185,7 +192,7 @@ JsepSessionDescription::JsepSessionDescription(
 JsepSessionDescription::~JsepSessionDescription() {}
 
 bool JsepSessionDescription::Initialize(
-    std::unique_ptr<cricket::SessionDescription> description,
+    std::unique_ptr<SessionDescription> description,
     const std::string& session_id,
     const std::string& session_version) {
   if (!description)
@@ -223,8 +230,8 @@ bool JsepSessionDescription::AddCandidate(
   if (mediasection_index >= number_of_mediasections())
     return false;
   const std::string& content_name =
-      description_->contents()[mediasection_index].name;
-  const cricket::TransportInfo* transport_info =
+      description_->contents()[mediasection_index].mid();
+  const TransportInfo* transport_info =
       description_->GetTransportInfoByName(content_name);
   if (!transport_info) {
     return false;
@@ -280,7 +287,7 @@ size_t JsepSessionDescription::number_of_mediasections() const {
 const IceCandidateCollection* JsepSessionDescription::candidates(
     size_t mediasection_index) const {
   if (mediasection_index >= candidate_collection_.size())
-    return NULL;
+    return nullptr;
   return &candidate_collection_[mediasection_index];
 }
 
@@ -314,7 +321,7 @@ bool JsepSessionDescription::GetMediasectionIndex(
     bool found = false;
     // Try to match the sdp_mid with content name.
     for (size_t i = 0; i < description_->contents().size(); ++i) {
-      if (candidate->sdp_mid() == description_->contents().at(i).name) {
+      if (candidate->sdp_mid() == description_->contents().at(i).mid()) {
         *index = i;
         found = true;
         break;
@@ -333,7 +340,7 @@ int JsepSessionDescription::GetMediasectionIndex(const Candidate& candidate) {
   // Find the description with a matching transport name of the candidate.
   const std::string& transport_name = candidate.transport_name();
   for (size_t i = 0; i < description_->contents().size(); ++i) {
-    if (transport_name == description_->contents().at(i).name) {
+    if (transport_name == description_->contents().at(i).mid()) {
       return static_cast<int>(i);
     }
   }

@@ -244,7 +244,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadView
 {
     RELEASE_LOG(XR, "%s", __FUNCTION__);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
     RetainPtr view = adoptNS([[UIView alloc] initWithFrame:UIScreen.mainScreen.bounds]);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     _touchGestureRecognizer = adoptNS([[_WKTransientGestureRecognizer alloc] initWithSession:self]);
     [_touchGestureRecognizer setDelegate:self];

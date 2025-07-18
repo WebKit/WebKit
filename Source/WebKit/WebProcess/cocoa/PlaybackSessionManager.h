@@ -120,7 +120,7 @@ class PlaybackSessionManager
     , public WebCore::MediaSessionObserver
 #endif
     {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlaybackSessionManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionManager);
 public:
     static Ref<PlaybackSessionManager> create(WebPage&);

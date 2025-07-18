@@ -64,7 +64,7 @@ typedef uint32_t WKEventModifiers;
 namespace TestWebKitAPI {
 
 class PlatformWebView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformWebView);
     WTF_MAKE_NONCOPYABLE(PlatformWebView);
 public:
     explicit PlatformWebView(WKPageConfigurationRef);

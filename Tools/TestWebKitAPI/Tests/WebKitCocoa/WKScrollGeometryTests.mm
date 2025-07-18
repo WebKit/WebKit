@@ -86,6 +86,22 @@ static void runContentSizeTest(NSString *html, CGSize expectedSize, BOOL needsSc
     EXPECT_EQ([delegate currentContentSize], expectedSize);
 }
 
+TEST(WKScrollGeometry, NoScrollGeometryUpdates)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<head>"
+        "<style>"
+        "    div { background: red; height: 10000px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div>Test</div>"
+        "</body>"
+        "</html>", CGSizeZero, NO);
+}
+
 TEST(WKScrollGeometry, ContentSizeTallerThanWebView)
 {
     CGFloat expectedWidth = 800;
@@ -105,22 +121,290 @@ TEST(WKScrollGeometry, ContentSizeTallerThanWebView)
         "<body>"
         "<div>Test</div>"
         "</body>"
-        "</html>", CGSizeMake(expectedWidth, 10016));
+        "</html>", CGSizeMake(expectedWidth - 8, 10016));
 }
 
-TEST(WKScrollGeometry, NoScrollGeometryUpdates)
+TEST(WKScrollGeometry, FixedSizeDiv)
 {
     runContentSizeTest(@""
         "<html>"
         "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
         "<style>"
-        "    div { background: red; height: 10000px; }"
+        "    div { background: red; width: 200px; height: 200px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div></div>"
+        "</body>"
+        "</html>", CGSizeMake(208, 216));
+}
+
+TEST(WKScrollGeometry, AbsolutePositionedRootElement)
+{
+#if PLATFORM(IOS_FAMILY)
+    CGFloat expectedHeight = 136;
+#else
+    CGFloat expectedHeight = 134;
+#endif
+
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    html { position: absolute; top: 100px; }"
         "</style>"
         "</head>"
         "<body>"
         "<div>Test</div>"
         "</body>"
-        "</html>", CGSizeZero, NO);
+        "</html>", CGSizeMake(34, expectedHeight));
+}
+
+TEST(WKScrollGeometry, SimpleText)
+{
+#if PLATFORM(IOS_FAMILY)
+    CGFloat expectedHeight = 36;
+#else
+    CGFloat expectedHeight = 34;
+#endif
+
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "</head>"
+        "<body>"
+        "<div>Test</div>"
+        "</body>"
+        "</html>", CGSizeMake(792, expectedHeight));
+}
+
+TEST(WKScrollGeometry, FixedHeightRootElementWithTallAbsolutePositionedDiv)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    html { height: 200px; }"
+        "    div { background: red; width: 20px; height: 10000px; position: absolute; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div>Test</div>"
+        "</body>"
+        "</html>", CGSizeMake(34, 10008));
+}
+
+TEST(WKScrollGeometry, ClippedRootElementWithFixedHeightBodyAndTallDiv)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    html { overflow: clip; }"
+        "    body { height: 200px; }"
+        "    div { background: red; width: 20px; height: 10000px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div>Test</div>"
+        "</body>"
+        "</html>", CGSizeMake(34, 600));
+}
+
+TEST(WKScrollGeometry, NestedDivsWithAbsolutePositioning)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { position: absolute; top: 100px; }"
+        "    #inner { background: red; width: 200px; height: 200px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(208, 300));
+}
+
+TEST(WKScrollGeometry, NestedDivsWithMargin)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { background: red; width: 200px; height: 200px; }"
+        "    #inner { background: blue; width: 200px; height: 200px; margin: 8px 8px 8px 8px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(216, 216));
+}
+
+TEST(WKScrollGeometry, NestedDivsWithAbsolutePositioningAndClipOnOutermostDiv)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    html { height: 200px; overflow: clip; }"
+        "    #outer { background: red; width: 20px; height: 300px; position: absolute; overflow: clip; }"
+        "    #inner { background: blue; height: 10000px; width: 20px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'>Outer<div id='inner'>Inner</div></div>"
+        "</body>"
+        "</html>", CGSizeMake(28, 308));
+}
+
+TEST(WKScrollGeometry, NestedDivsWithAbsolutePositioningAndClipOnInnermostDiv)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { background: red; width: 400px; height: 400px; overflow: clip; }"
+        "    #inner { background: blue; width: 500px; height: 600px; }"
+        "    #inner-inner { background: green; width: 700px; height: 600px; position: absolute; top: 5px; left: 100px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'>Test<div id='inner'>B<div id='inner-inner'>C</div></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(800, 605));
+}
+
+TEST(WKScrollGeometry, NestedDivsRelativePosition)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { background: red; width: 400px; height: 400px; position: relative; }"
+        "    #inner { background: blue; width: 500px; height: 600px; }"
+        "    #inner-inner { background: green; width: 700px; height: 600px; position: absolute; top: 100px; left: 100px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'>Test<div id='inner'>B<div id='inner-inner'>C</div></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(808, 708));
+}
+
+TEST(WKScrollGeometry, NestedDivsRelativePositionAndClip)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { background: red; width: 400px; height: 400px; overflow: clip; position: relative; }"
+        "    #inner { background: blue; width: 500px; height: 600px; }"
+        "    #inner-inner { background: green; width: 700px; height: 600px; position: absolute; top: 100px; left: 100px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'>Test<div id='inner'>B<div id='inner-inner'>C</div></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(408, 408));
+}
+
+TEST(WKScrollGeometry, NestedDivsOverflowYClip)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { background: red; width: 400px; height: 400px; overflow-y: clip; }"
+        "    #inner { background: blue; width: 500px; height: 600px; }"
+        "    #inner-inner { background: green; width: 700px; height: 600px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'>Test<div id='inner'>B<div id='inner-inner'>C</div></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(708, 416));
+}
+
+TEST(WKScrollGeometry, NestedDivsOverflowYScroll)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { width: 200px; height: 200px; overflow-y: scroll; }"
+        "    #inner { background: red; height: 10000px; width: 400px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'></div></div>"
+        "</body>"
+        "</html>", CGSizeMake(208, 216));
+}
+
+TEST(WKScrollGeometry, FixedSizeBody)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    body { width: 400px; height: 400px; }"
+        "    #outer { background: red; width: 200px; height: 200px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'>Test</div></div>"
+        "</body>"
+        "</html>", CGSizeMake(408, 416));
+}
+
+TEST(WKScrollGeometry, MarginBottom)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #inner { background: red; width: 200px; height: 200px; margin-bottom: 50px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'>Test</div></div>"
+        "</body>"
+        "</html>", CGSizeMake(792, 258));
+}
+
+TEST(WKScrollGeometry, MarginBottomCollapsePrevented)
+{
+    runContentSizeTest(@""
+        "<html>"
+        "<head>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
+        "<style>"
+        "    #outer { border: 1px solid black; }"
+        "    #inner { background: red; width: 200px; height: 200px; margin-bottom: 50px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='outer'><div id='inner'>Test</div></div>"
+        "</body>"
+        "</html>", CGSizeMake(792, 268));
 }
 
 #endif

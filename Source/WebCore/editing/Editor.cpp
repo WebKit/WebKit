@@ -309,6 +309,8 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
             options.add(FrameSelection::SetSelectionOption::RevealSelectionBounds);
         if (m_options & TemporarySelectionOption::ForceCenterScroll)
             options.add(FrameSelection::SetSelectionOption::ForceCenterScroll);
+        if (m_options & TemporarySelectionOption::OnlyAllowForwardScrolling)
+            options.add(FrameSelection::SetSelectionOption::OnlyAllowForwardScrolling);
     }
 
     m_document->selection().setSelection(selection, options);
@@ -419,19 +421,6 @@ bool Editor::canEditRichly() const
     return document().selection().selection().isContentRichlyEditable();
 }
 
-enum class ClipboardEventKind {
-    Copy,
-    CopyFont,
-    Cut,
-    Paste,
-    PasteFont,
-    PasteAsPlainText,
-    PasteAsQuotation,
-    BeforeCopy,
-    BeforeCut,
-    BeforePaste,
-};
-
 static AtomString eventNameForClipboardEvent(ClipboardEventKind kind)
 {
     switch (kind) {
@@ -488,13 +477,11 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
 // Returns whether caller should continue with "the default processing", which is the same as
 // the event handler NOT setting the return value to false
 // https://w3c.github.io/clipboard-apis/#fire-a-clipboard-event
-static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind kind)
+bool Editor::dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind kind, Ref<DataTransfer>&& dataTransfer)
 {
     // FIXME: Move the target selection code here.
     if (!target)
         return true;
-
-    auto dataTransfer = createDataTransferForClipboardEvent(target->document(), kind);
 
     auto event = ClipboardEvent::create(eventNameForClipboardEvent(kind), dataTransfer.copyRef());
 
@@ -506,6 +493,14 @@ static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind 
     dataTransfer->makeInvalidForSecurity();
 
     return !noDefaultProcessing;
+}
+
+bool Editor::dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind kind)
+{
+    if (!target)
+        return true;
+
+    return Editor::dispatchClipboardEvent(WTFMove(target), kind, createDataTransferForClipboardEvent(target->document(), kind));
 }
 
 // WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items.  They
@@ -1441,7 +1436,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (text.length() == 1 && u_ispunct(text[0]) && !isAmbiguousBoundaryCharacter(text[0]))
         shouldConsiderApplyingAutocorrection = true;
 
-    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && didApplyAutocorrection(document(), *m_alternativeTextController);
+    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && didApplyAutocorrection(document(), m_alternativeTextController);
 
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
@@ -4594,8 +4589,12 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
         attributes.foregroundColor = foregroundColor;
 
-    if (auto& shadow = style->textShadow(); !shadow.isEmpty())
-        attributes.fontShadow = { style->colorWithColorFilter(shadow[0].color), { shadow[0].location.x().value, shadow[0].location.y().value }, shadow[0].blur.value };
+    WTF::switchOn(style->textShadow(),
+        [&](const CSS::Keyword::None&) { },
+        [&](const auto& shadows) {
+            attributes.fontShadow = { style->colorWithColorFilter(shadows[0].color), { shadows[0].location.x().value, shadows[0].location.y().value }, shadows[0].blur.value };
+        }
+    );
 
     switch (style->verticalAlign()) {
     case VerticalAlign::Baseline:

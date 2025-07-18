@@ -28,9 +28,7 @@
 #include "rtc_base/system/warn_current_thread_is_deadlocked.h"
 #include "rtc_base/time_utils.h"
 
-namespace rtc {
-
-using ::webrtc::TimeDelta;
+namespace webrtc {
 
 Event::Event() : Event(false, false) {}
 
@@ -125,7 +123,7 @@ timespec GetTimespec(TimeDelta duration_from_now) {
   timeval tv;
   gettimeofday(&tv, nullptr);
   ts.tv_sec = tv.tv_sec;
-  ts.tv_nsec = tv.tv_usec * kNumNanosecsPerMicrosec;
+  ts.tv_nsec = tv.tv_usec * webrtc::kNumNanosecsPerMicrosec;
 #endif
 
   // Add the specified number of milliseconds to it.
@@ -189,7 +187,7 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
   } else {
     error = wait(warn_ts);
     if (error == ETIMEDOUT) {
-      webrtc::WarnThatTheCurrentThreadIsProbablyDeadlocked();
+      WarnThatTheCurrentThreadIsProbablyDeadlocked();
       error = wait(give_up_ts);
     }
   }
@@ -207,4 +205,4 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
 
 #endif
 
-}  // namespace rtc
+}  // namespace webrtc

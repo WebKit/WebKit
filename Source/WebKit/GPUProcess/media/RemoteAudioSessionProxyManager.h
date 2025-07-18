@@ -63,10 +63,10 @@ public:
     void beginInterruptionRemote();
     void endInterruptionRemote(WebCore::AudioSession::MayResume);
 
-    WebCore::AudioSession& session() { return WebCore::AudioSession::sharedSession(); }
-    const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
-    Ref<WebCore::AudioSession> protectedSession() { return WebCore::AudioSession::sharedSession(); }
-    Ref<const WebCore::AudioSession> protectedSession() const { return WebCore::AudioSession::sharedSession(); }
+    WebCore::AudioSession& session() { return WebCore::AudioSession::singleton(); }
+    const WebCore::AudioSession& session() const { return WebCore::AudioSession::singleton(); }
+    Ref<WebCore::AudioSession> protectedSession() { return WebCore::AudioSession::singleton(); }
+    Ref<const WebCore::AudioSession> protectedSession() const { return WebCore::AudioSession::singleton(); }
 
     void updatePresentingProcesses();
 

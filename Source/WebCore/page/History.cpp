@@ -88,7 +88,7 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
     if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
-    auto* historyItem = frame->loader().history().currentItem();
+    RefPtr historyItem = frame->loader().history().currentItem();
     if (!historyItem)
         return ScrollRestoration::Auto;
     
@@ -118,10 +118,10 @@ ExceptionOr<SerializedScriptValue*> History::state()
 
 SerializedScriptValue* History::stateInternal() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return nullptr;
-    auto* historyItem = frame->loader().history().currentItem();
+    RefPtr historyItem = frame->loader().history().currentItem();
     if (!historyItem)
         return nullptr;
     return historyItem->stateObject();
@@ -289,7 +289,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
             return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs."_s);
         }
 
-        Ref documentSecurityOrigin = frame->document()->securityOrigin();
+        Ref documentSecurityOrigin = document->securityOrigin();
         // We allow sandboxed documents, 'data:'/'file:' URLs, etc. to use 'pushState'/'replaceState' to modify the URL query and fragments.
         // See https://bugs.webkit.org/show_bug.cgi?id=183028 for the compatibility concerns.
         bool allowSandboxException = (documentSecurityOrigin->isLocal() || documentSecurityOrigin->isOpaque())
@@ -303,7 +303,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return result.releaseException();
 
     if (document->settings().navigationAPIEnabled()) {
-        Ref navigation = document->window()->navigation();
+        Ref navigation = document->protectedWindow()->navigation();
         if (!navigation->dispatchPushReplaceReloadNavigateEvent(fullURL, historyBehavior == NavigationHistoryBehavior::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
             return { };
     }

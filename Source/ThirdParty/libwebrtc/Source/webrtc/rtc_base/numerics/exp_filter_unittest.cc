@@ -14,7 +14,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(ExpFilterTest, FirstTimeOutputEqualInput) {
   // No max value defined.
@@ -69,4 +69,4 @@ TEST(ExpfilterTest, OutputLimitedByMax) {
   EXPECT_FLOAT_EQ(value, filter.filtered());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

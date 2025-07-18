@@ -5,6 +5,7 @@ URL: https://chromium.googlesource.com/chromium/src/base/+/main
 SOURCE CODE: Copy the Chromium folder manually into this folder and run git cl format.
 Date: 2017-05-24
 Revision: 28b5bbb227d331c01e6ff9b2f8729732135aadc7
+Update Mechanism: Static.HardFork (https://crbug.com/419410757)
 Security Critical: no
 Shipped: yes
 License: Chromium

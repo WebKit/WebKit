@@ -10,10 +10,16 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

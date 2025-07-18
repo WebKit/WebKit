@@ -139,13 +139,13 @@ public:
         m_epsilonTransitionTargets.add(targetNodeId);
     }
 
-    template<typename ActionIterator>
-    void setActions(ActionIterator begin, ActionIterator end)
+    template<typename ActionContainer>
+    void setActions(ActionContainer&& actions)
     {
         ASSERT(!m_finalized);
         ASSERT(m_immutableNFA);
 
-        m_actions.add(begin, end);
+        m_actions.addAll(WTFMove(actions));
     }
 
     ImmutableNFANodeBuilder& operator=(ImmutableNFANodeBuilder&& other)

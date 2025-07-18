@@ -32,7 +32,7 @@ FrameBlocker::FrameBlocker(size_t num_bands, size_t num_channels)
 FrameBlocker::~FrameBlocker() = default;
 
 void FrameBlocker::InsertSubFrameAndExtractBlock(
-    const std::vector<std::vector<rtc::ArrayView<float>>>& sub_frame,
+    const std::vector<std::vector<ArrayView<float>>>& sub_frame,
     Block* block) {
   RTC_DCHECK(block);
   RTC_DCHECK_EQ(num_bands_, block->NumBands());

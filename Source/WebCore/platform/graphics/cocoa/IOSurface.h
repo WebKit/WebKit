@@ -162,7 +162,7 @@ public:
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
     // Passed in context is the context through which the contents was drawn.
-    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef>);
+    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> = nullptr);
 
     WEBCORE_EXPORT static Name nameForRenderingPurpose(RenderingPurpose);
     Name name() const { return m_name; }

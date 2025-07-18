@@ -15,6 +15,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
+#include "api/video/corruption_detection_filter_settings.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
@@ -77,7 +78,8 @@ double FramePairCorruptionScorer::CalculateScore(
   scoped_refptr<I420Buffer> test_i420_buffer =
       GetAsI420Buffer(test_buffer.ToI420());
 
-  FilterSettings filter_settings = GetCorruptionFilterSettings(qp, codec_type_);
+  CorruptionDetectionFilterSettings filter_settings =
+      GetCorruptionFilterSettings(qp, codec_type_);
 
   const std::vector<FilteredSample> filtered_reference_sample_values =
       GetSampleValuesForFrame(

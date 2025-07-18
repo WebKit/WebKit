@@ -11,12 +11,16 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
-#include <string>
+#include <optional>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 
 namespace webrtc {
@@ -49,7 +53,7 @@ class ControllerManagerImpl final : public ControllerManager {
   static std::unique_ptr<ControllerManager> Create(
       absl::string_view config_string,
       size_t num_encoder_channels,
-      rtc::ArrayView<const int> encoder_frame_lengths_ms,
+      ArrayView<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,
       size_t intial_channels_to_encode,
       int initial_frame_length_ms,
@@ -60,7 +64,7 @@ class ControllerManagerImpl final : public ControllerManager {
   static std::unique_ptr<ControllerManager> Create(
       absl::string_view config_string,
       size_t num_encoder_channels,
-      rtc::ArrayView<const int> encoder_frame_lengths_ms,
+      ArrayView<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,
       size_t intial_channels_to_encode,
       int initial_frame_length_ms,

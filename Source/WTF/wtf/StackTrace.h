@@ -60,7 +60,7 @@ WTF_EXPORT_PRIVATE char** symbolize(void* const*, int);
 #endif
 
 class StackTrace {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StackTrace);
 public:
     WTF_EXPORT_PRIVATE NEVER_INLINE static std::unique_ptr<StackTrace> captureStackTrace(size_t maxFrames, size_t framesToSkip = 0);
 
@@ -97,7 +97,7 @@ public:
     }
 
     class DemangleEntry {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DemangleEntry);
     public:
         friend class StackTraceSymbolResolver;
         const char* mangledName() const { return m_mangledName; }

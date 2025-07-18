@@ -13,9 +13,13 @@
 #include <string.h>  // memset
 
 #include <algorithm>  // min, max
+#include <cstdint>
 #include <limits>     // numeric_limits<T>
+#include <memory>
 
+#include "common_audio/signal_processing/dot_product_with_scale.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/cross_correlation.h"
@@ -23,6 +27,7 @@
 #include "modules/audio_coding/neteq/random_vector.h"
 #include "modules/audio_coding/neteq/statistics_calculator.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
@@ -100,45 +105,48 @@ int Expand::Process(AudioMultiVector* output) {
 
   // Voiced part.
   // Generate a weighted vector with the current lag.
-  size_t expansion_vector_length = max_lag_ + overlap_length_;
-  size_t current_lag = expand_lags_[current_lag_index_];
+  const size_t expansion_vector_length = max_lag_ + overlap_length_;
+  const size_t current_lag = expand_lags_[current_lag_index_];
   // Copy lag+overlap data.
-  size_t expansion_vector_position =
+  const size_t expansion_vector_position =
       expansion_vector_length - current_lag - overlap_length_;
-  size_t temp_length = current_lag + overlap_length_;
+  const size_t expansion_temp_length = current_lag + overlap_length_;
   for (size_t channel_ix = 0; channel_ix < num_channels_; ++channel_ix) {
     ChannelParameters& parameters = channel_parameters_[channel_ix];
     if (current_lag_index_ == 0) {
       // Use only expand_vector0.
-      RTC_DCHECK_LE(expansion_vector_position + temp_length,
+      RTC_DCHECK_LE(expansion_vector_position + expansion_temp_length,
                     parameters.expand_vector0.Size());
-      parameters.expand_vector0.CopyTo(temp_length, expansion_vector_position,
+      parameters.expand_vector0.CopyTo(expansion_temp_length,
+                                       expansion_vector_position,
                                        voiced_vector_storage);
     } else if (current_lag_index_ == 1) {
-      std::unique_ptr<int16_t[]> temp_0(new int16_t[temp_length]);
-      parameters.expand_vector0.CopyTo(temp_length, expansion_vector_position,
-                                       temp_0.get());
-      std::unique_ptr<int16_t[]> temp_1(new int16_t[temp_length]);
-      parameters.expand_vector1.CopyTo(temp_length, expansion_vector_position,
-                                       temp_1.get());
+      std::unique_ptr<int16_t[]> temp_0(new int16_t[expansion_temp_length]);
+      parameters.expand_vector0.CopyTo(expansion_temp_length,
+                                       expansion_vector_position, temp_0.get());
+      std::unique_ptr<int16_t[]> temp_1(new int16_t[expansion_temp_length]);
+      parameters.expand_vector1.CopyTo(expansion_temp_length,
+                                       expansion_vector_position, temp_1.get());
       // Mix 3/4 of expand_vector0 with 1/4 of expand_vector1.
       WebRtcSpl_ScaleAndAddVectorsWithRound(temp_0.get(), 3, temp_1.get(), 1, 2,
-                                            voiced_vector_storage, temp_length);
+                                            voiced_vector_storage,
+                                            expansion_temp_length);
     } else if (current_lag_index_ == 2) {
       // Mix 1/2 of expand_vector0 with 1/2 of expand_vector1.
-      RTC_DCHECK_LE(expansion_vector_position + temp_length,
+      RTC_DCHECK_LE(expansion_vector_position + expansion_temp_length,
                     parameters.expand_vector0.Size());
-      RTC_DCHECK_LE(expansion_vector_position + temp_length,
+      RTC_DCHECK_LE(expansion_vector_position + expansion_temp_length,
                     parameters.expand_vector1.Size());
 
-      std::unique_ptr<int16_t[]> temp_0(new int16_t[temp_length]);
-      parameters.expand_vector0.CopyTo(temp_length, expansion_vector_position,
-                                       temp_0.get());
-      std::unique_ptr<int16_t[]> temp_1(new int16_t[temp_length]);
-      parameters.expand_vector1.CopyTo(temp_length, expansion_vector_position,
-                                       temp_1.get());
+      std::unique_ptr<int16_t[]> temp_0(new int16_t[expansion_temp_length]);
+      parameters.expand_vector0.CopyTo(expansion_temp_length,
+                                       expansion_vector_position, temp_0.get());
+      std::unique_ptr<int16_t[]> temp_1(new int16_t[expansion_temp_length]);
+      parameters.expand_vector1.CopyTo(expansion_temp_length,
+                                       expansion_vector_position, temp_1.get());
       WebRtcSpl_ScaleAndAddVectorsWithRound(temp_0.get(), 1, temp_1.get(), 1, 1,
-                                            voiced_vector_storage, temp_length);
+                                            voiced_vector_storage,
+                                            expansion_temp_length);
     }
 
     // Get tapering window parameters. Values are in Q15.
@@ -223,7 +231,7 @@ int Expand::Process(AudioMultiVector* output) {
     //   >= 64 * fs_mult            => go from 1 to 0 in about 32 ms.
     // temp_shift = getbits(max_lag_) - 5.
     int temp_shift =
-        (31 - WebRtcSpl_NormW32(rtc::dchecked_cast<int32_t>(max_lag_))) - 5;
+        (31 - WebRtcSpl_NormW32(dchecked_cast<int32_t>(max_lag_))) - 5;
     int16_t mix_factor_increment = 256 >> temp_shift;
     if (stop_muting_) {
       mix_factor_increment = 0;
@@ -314,8 +322,8 @@ int Expand::Process(AudioMultiVector* output) {
                              : consecutive_expands_ + 1;
   expand_duration_samples_ += output->Size();
   // Clamp the duration counter at 2 seconds.
-  expand_duration_samples_ = std::min(expand_duration_samples_,
-                                      rtc::dchecked_cast<size_t>(fs_hz_ * 2));
+  expand_duration_samples_ =
+      std::min(expand_duration_samples_, dchecked_cast<size_t>(fs_hz_ * 2));
   return 0;
 }
 
@@ -743,8 +751,7 @@ void Expand::AnalyzeSignal(int16_t* random_vector) {
       // the division.
       // Shift the denominator from Q13 to Q5 before the division. The result of
       // the division will then be in Q20.
-      int16_t denom =
-          rtc::saturated_cast<int16_t>((distortion_lag * slope) >> 8);
+      int16_t denom = saturated_cast<int16_t>((distortion_lag * slope) >> 8);
       int temp_ratio = WebRtcSpl_DivW32W16((slope - 8192) << 12, denom);
       if (slope > 14746) {
         // slope > 1.8.

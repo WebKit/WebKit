@@ -8,12 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/ulpfec_receiver.h"
+#include "system_wrappers/include/clock.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
@@ -38,7 +42,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   DummyCallback callback;
   UlpfecReceiver receiver(ulpfec_ssrc, 0, &callback, Clock::GetRealTimeClock());
 
-  test::FuzzDataHelper fuzz_data(rtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_data(webrtc::MakeArrayView(data, size));
   while (fuzz_data.CanReadBytes(kMinDataNeeded)) {
     size_t packet_length = kRtpHeaderSize + fuzz_data.Read<uint8_t>();
     auto raw_packet = fuzz_data.ReadByteArray(packet_length);

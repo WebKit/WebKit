@@ -11,12 +11,14 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_IVF_FILE_READER_H_
 #define MODULES_VIDEO_CODING_UTILITY_IVF_FILE_READER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <utility>
 
 #include "api/video/encoded_image.h"
-#include "api/video_codecs/video_codec.h"
+#include "api/video/video_codec_type.h"
 #include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {

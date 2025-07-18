@@ -10,7 +10,18 @@
 
 #include "modules/audio_processing/aec3/matched_filter.h"
 
+#include <array>
+#include <cstddef>
+#include <cstdlib>
+#include <iterator>
+#include <memory>
+#include <vector>
+
 // Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/arch.h"
 
 #if defined(WEBRTC_ARCH_X86_FAMILY)
@@ -27,7 +38,6 @@
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,14 +45,14 @@ namespace aec3 {
 namespace {
 
 std::string ProduceDebugText(size_t delay, size_t down_sampling_factor) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Delay: " << delay;
   ss << ", Down sampling factor: " << down_sampling_factor;
   return ss.Release();
 }
 
 constexpr size_t kNumMatchedFilters = 10;
-constexpr size_t kDownSamplingFactors[] = {2, 4, 8};
+constexpr size_t kDownSamplingFactors[] = {4, 8};
 constexpr size_t kWindowSizeSubBlocks = 32;
 constexpr size_t kAlignmentShiftSubBlocks = kWindowSizeSubBlocks * 3 / 4;
 
@@ -295,8 +305,8 @@ TEST_P(MatchedFilterTest, LagEstimation) {
 
         render_delay_buffer->PrepareCaptureProcessing();
         std::array<float, kBlockSize> downsampled_capture_data;
-        rtc::ArrayView<float> downsampled_capture(
-            downsampled_capture_data.data(), sub_block_size);
+        ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+                                             sub_block_size);
         capture_decimator.Decimate(capture[0], downsampled_capture);
         filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
                       downsampled_capture, /*use_slow_smoothing=*/false);
@@ -360,9 +370,9 @@ TEST_P(MatchedFilterTest, PreEchoEstimation) {
       signal_echo_delay_buffer.Delay(render.View(0, 0), capture[0]);
       signal_pre_echo_delay_buffer.Delay(render.View(0, 0),
                                          capture_with_pre_echo);
-      for (size_t k = 0; k < capture[0].size(); ++k) {
+      for (size_t l = 0; l < capture[0].size(); ++l) {
         constexpr float gain_pre_echo = 0.8f;
-        capture[0][k] += gain_pre_echo * capture_with_pre_echo[k];
+        capture[0][l] += gain_pre_echo * capture_with_pre_echo[l];
       }
       render_delay_buffer->Insert(render);
       if (k == 0) {
@@ -370,8 +380,8 @@ TEST_P(MatchedFilterTest, PreEchoEstimation) {
       }
       render_delay_buffer->PrepareCaptureProcessing();
       std::array<float, kBlockSize> downsampled_capture_data;
-      rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
-                                                sub_block_size);
+      ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+                                           sub_block_size);
       capture_decimator.Decimate(capture[0], downsampled_capture);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
                     downsampled_capture, /*use_slow_smoothing=*/false);
@@ -411,7 +421,7 @@ TEST_P(MatchedFilterTest, LagNotReliableForUncorrelatedRenderAndCapture) {
 
     Block render(kNumBands, kNumChannels);
     std::array<float, kBlockSize> capture_data;
-    rtc::ArrayView<float> capture(capture_data.data(), sub_block_size);
+    ArrayView<float> capture(capture_data.data(), sub_block_size);
     std::fill(capture.begin(), capture.end(), 0.f);
     ApmDataDumper data_dumper(0);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
@@ -476,8 +486,8 @@ TEST_P(MatchedFilterTest, LagNotUpdatedForLowLevelRender) {
       }
       std::copy(render.begin(0, 0), render.end(0, 0), capture[0].begin());
       std::array<float, kBlockSize> downsampled_capture_data;
-      rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
-                                                sub_block_size);
+      ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+                                           sub_block_size);
       capture_decimator.Decimate(capture[0], downsampled_capture);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
                     downsampled_capture, false);

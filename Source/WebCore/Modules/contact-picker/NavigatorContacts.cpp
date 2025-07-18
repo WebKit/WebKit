@@ -50,7 +50,7 @@ RefPtr<ContactsManager> NavigatorContacts::contacts(Navigator& navigator)
 RefPtr<ContactsManager> NavigatorContacts::contacts()
 {
     if (!m_contactsManager)
-        m_contactsManager = ContactsManager::create(Ref { m_navigator.get() });
+        lazyInitialize(m_contactsManager, ContactsManager::create(Ref { m_navigator.get() }));
     return m_contactsManager;
 }
 

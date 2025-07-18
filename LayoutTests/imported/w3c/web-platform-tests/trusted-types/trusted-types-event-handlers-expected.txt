@@ -198,6 +198,10 @@ CONSOLE MESSAGE: This requires a TrustedScript value else it violates the follow
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Event handler onclick should be blocked.
 PASS Event handler onchange should be blocked.
@@ -216,6 +220,7 @@ PASS Non-event handler div.inert should not be blocked.
 PASS Event handler div.onabort should be blocked.
 PASS Event handler div.onauxclick should be blocked.
 PASS Event handler div.onbeforeinput should be blocked.
+PASS Event handler div.onbeforematch should be blocked.
 PASS Event handler div.onbeforetoggle should be blocked.
 PASS Event handler div.onblur should be blocked.
 PASS Event handler div.oncancel should be blocked.
@@ -269,6 +274,7 @@ PASS Event handler div.onratechange should be blocked.
 PASS Event handler div.onreset should be blocked.
 PASS Event handler div.onresize should be blocked.
 PASS Event handler div.onscroll should be blocked.
+PASS Event handler div.onscrollend should be blocked.
 PASS Event handler div.onsecuritypolicyviolation should be blocked.
 PASS Event handler div.onseeked should be blocked.
 PASS Event handler div.onseeking should be blocked.

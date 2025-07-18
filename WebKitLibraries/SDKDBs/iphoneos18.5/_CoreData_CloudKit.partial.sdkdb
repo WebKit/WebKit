@@ -1,0 +1,32 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "target": "arm64e-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0VvM"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0Vvg"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0VvpMV"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0Vvs"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E28_databaseScope_compatibilitySo010CKDatabaseI0VvpMV"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0VvM"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0Vvg"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0VvpMV"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E13databaseScopeSo010CKDatabaseI0Vvs"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo36NSPersistentCloudKitContainerOptionsC010_CoreData_bC0E28_databaseScope_compatibilitySo010CKDatabaseI0VvpMV"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

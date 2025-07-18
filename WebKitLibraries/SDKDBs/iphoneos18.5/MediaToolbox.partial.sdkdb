@@ -1,0 +1,100 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapCallbacksVersion_0"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:2551)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapCreationFlag_PreEffects"},
+      {"access": "public", "name": "kMTAudioProcessingTapCreationFlag_PostEffects"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:421)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapFlag_StartOfStream"},
+      {"access": "public", "name": "kMTAudioProcessingTapFlag_EndOfStream"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:671)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapCreate"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetSourceAudio"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetStorage"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetTypeID"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaSubType"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaType"}
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "6", "name": "MTAudioProcessingTapCallbacks"},
+    {"access": "public", "name": "MTAudioProcessingTapCreationFlags"},
+    {"access": "public", "name": "MTAudioProcessingTapFinalizeCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapFlags"},
+    {"access": "public", "name": "MTAudioProcessingTapInitCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapPrepareCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapProcessCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapRef"},
+    {"access": "public", "name": "MTAudioProcessingTapUnprepareCallback"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapCallbacksVersion_0"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:2551)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapCreationFlag_PreEffects"},
+      {"access": "public", "name": "kMTAudioProcessingTapCreationFlag_PostEffects"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:421)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kMTAudioProcessingTapFlag_StartOfStream"},
+      {"access": "public", "name": "kMTAudioProcessingTapFlag_EndOfStream"}
+     ],
+     "name": "enum (unnamed at MTAudioProcessingTap.h:671)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapCreate"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetSourceAudio"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetStorage"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTAudioProcessingTapGetTypeID"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaSubType"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaType"}
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "introduced": "6", "name": "MTAudioProcessingTapCallbacks"},
+    {"access": "public", "name": "MTAudioProcessingTapCreationFlags"},
+    {"access": "public", "name": "MTAudioProcessingTapFinalizeCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapFlags"},
+    {"access": "public", "name": "MTAudioProcessingTapInitCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapPrepareCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapProcessCallback"},
+    {"access": "public", "name": "MTAudioProcessingTapRef"},
+    {"access": "public", "name": "MTAudioProcessingTapUnprepareCallback"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

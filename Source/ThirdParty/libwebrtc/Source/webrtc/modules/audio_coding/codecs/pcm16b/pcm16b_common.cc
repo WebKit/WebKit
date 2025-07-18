@@ -13,6 +13,9 @@
 #include <stdint.h>
 
 #include <initializer_list>
+#include <vector>
+
+#include "api/audio_codecs/audio_format.h"
 
 namespace webrtc {
 

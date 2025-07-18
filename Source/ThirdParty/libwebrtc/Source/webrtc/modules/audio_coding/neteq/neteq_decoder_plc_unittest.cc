@@ -10,18 +10,28 @@
 
 // Test to verify correct operation when using the decoder-internal PLC.
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/make_ref_counted.h"
+#include "api/neteq/neteq.h"
+#include "api/rtp_headers.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/audio_checksum.h"
-#include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
-#include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/audio_decoder_proxy_factory.h"
 #include "test/gtest.h"
@@ -61,7 +71,7 @@ class AudioDecoderPlc : public AudioDecoder {
   }
 
   void GeneratePlc(size_t requested_samples_per_channel,
-                   rtc::BufferT<int16_t>* concealment_audio) override {
+                   BufferT<int16_t>* concealment_audio) override {
     // Instead of generating random data for GeneratePlc we use the same data as
     // the input, so we can check that we produce the same result independently
     // of the losses.
@@ -75,7 +85,7 @@ class AudioDecoderPlc : public AudioDecoder {
     int dec_len = DecodeInternal(nullptr, 2 * 10 * sample_rate_hz_ / 1000,
                                  sample_rate_hz_, decoded.data(), &speech_type);
     concealment_audio->AppendData(decoded.data(), dec_len);
-    concealed_samples_ += rtc::checked_cast<size_t>(dec_len);
+    concealed_samples_ += checked_cast<size_t>(dec_len);
 
     if (!last_was_plc) {
       ++concealment_events_;
@@ -97,9 +107,9 @@ class AudioDecoderPlc : public AudioDecoder {
 // An input sample generator which generates only zero-samples.
 class ZeroSampleGenerator : public EncodeNetEqInput::Generator {
  public:
-  rtc::ArrayView<const int16_t> Generate(size_t num_samples) override {
+  ArrayView<const int16_t> Generate(size_t num_samples) override {
     vec.resize(num_samples, 0);
-    rtc::ArrayView<const int16_t> view(vec);
+    ArrayView<const int16_t> view(vec);
     RTC_DCHECK_EQ(view.size(), num_samples);
     return view;
   }
@@ -202,7 +212,7 @@ TestStatistics RunTest(int loss_cadence,
   NetEqTest::DecoderMap decoders;
   // Using a fake decoder which simply reads the output audio from a file.
   auto input_file = std::make_unique<InputAudioFile>(
-      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"));
+      test::ResourcePath("audio_coding/testfile32kHz", "pcm"));
   AudioDecoderPlc dec(std::move(input_file), kSampleRateHz);
   // Masquerading as a PCM16b decoder.
   decoders.emplace(kPayloadType, SdpAudioFormat("l16", 32000, 1));
@@ -215,7 +225,7 @@ TestStatistics RunTest(int loss_cadence,
 
   NetEqTest neteq_test(
       config, /*decoder_factory=*/
-      rtc::make_ref_counted<test::AudioDecoderProxyFactory>(&dec),
+      make_ref_counted<test::AudioDecoderProxyFactory>(&dec),
       /*codecs=*/decoders, /*text_log=*/nullptr, /*neteq_factory=*/nullptr,
       /*input=*/std::move(lossy_input), std::move(output), callbacks);
   EXPECT_LE(kRunTimeMs, neteq_test.Run());

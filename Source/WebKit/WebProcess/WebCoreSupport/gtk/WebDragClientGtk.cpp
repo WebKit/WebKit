@@ -85,7 +85,7 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame&, const std::optional<WebCore::ElementIdentifier>&)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame&, const std::optional<WebCore::NodeIdentifier>&)
 {
     std::optional<ShareableBitmap::Handle> handle;
     auto* dragSurface = dragItem.image.get().get();

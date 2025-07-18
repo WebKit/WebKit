@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/reference/border-spacing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/reference/container-queries-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/reference/iframe-zoom-nested-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/reference/iframe-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/reference/letter-spacing-ref.html

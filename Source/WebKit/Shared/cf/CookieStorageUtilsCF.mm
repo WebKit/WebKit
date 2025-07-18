@@ -41,7 +41,7 @@ RetainPtr<CFHTTPCookieStorageRef> cookieStorageFromIdentifyingData(const Vector<
     RetainPtr cookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
     ASSERT(cookieStorage);
 
-    CFHTTPCookieStorageScheduleWithRunLoop(cookieStorage.get(), [NSURLConnection resourceLoaderRunLoop], kCFRunLoopCommonModes);
+    CFHTTPCookieStorageScheduleWithRunLoop(cookieStorage.get(), RetainPtr { [NSURLConnection resourceLoaderRunLoop] }.get(), kCFRunLoopCommonModes);
 
     return cookieStorage;
 }

@@ -148,7 +148,7 @@ private:
     const Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
 
     struct RequestData;
-    std::unique_ptr<RequestData> m_requestData;
+    const UniqueRef<RequestData> m_requestData;
 
     ThreadSafeWeakHashSet<SemaphoreWrapper> m_dataSemaphores WTF_GUARDED_BY_LOCK(m_wasPDFThreadTerminationRequestedLock);
 

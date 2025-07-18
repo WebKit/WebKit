@@ -39,7 +39,7 @@ namespace JSC {
 // FIXME: Use ObjectPropertyConditionSet instead.
 // https://bugs.webkit.org/show_bug.cgi?id=216112
 struct SpecialPropertyCacheEntry {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SpecialPropertyCacheEntry);
     ~SpecialPropertyCacheEntry();
 
     static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(SpecialPropertyCacheEntry, m_value); }
@@ -50,7 +50,7 @@ struct SpecialPropertyCacheEntry {
 };
 
 struct SpecialPropertyCache {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SpecialPropertyCache);
     SpecialPropertyCacheEntry m_cache[numberOfCachedSpecialPropertyKeys];
 
     static constexpr ptrdiff_t offsetOfCache(CachedSpecialPropertyKey key)

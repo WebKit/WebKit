@@ -60,7 +60,7 @@ class RTCPReceiver final {
     virtual void OnReceivedNack(
         const std::vector<uint16_t>& nack_sequence_numbers) = 0;
     virtual void OnReceivedRtcpReportBlocks(
-        rtc::ArrayView<const ReportBlockData> report_blocks) = 0;
+        ArrayView<const ReportBlockData> report_blocks) = 0;
 
    protected:
     virtual ~ModuleRtpRtcp() = default;
@@ -105,7 +105,7 @@ class RTCPReceiver final {
 
   ~RTCPReceiver();
 
-  void IncomingPacket(rtc::ArrayView<const uint8_t> packet);
+  void IncomingPacket(ArrayView<const uint8_t> packet);
 
   int64_t LastReceivedReportBlockMs() const;
 
@@ -261,7 +261,7 @@ class RTCPReceiver final {
     size_t num_rtts_ = 0;
   };
 
-  bool ParseCompoundPacket(rtc::ArrayView<const uint8_t> packet,
+  bool ParseCompoundPacket(ArrayView<const uint8_t> packet,
                            PacketInformation* packet_information);
 
   void TriggerCallbacksFromRtcpPacket(

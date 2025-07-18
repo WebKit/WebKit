@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGTextLayoutEngineBaseline.h"
 
-#include "FontCascade.h"
 #include "LengthFunctions.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGInlineText.h"
@@ -43,11 +42,11 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& 
     case BaselineShift::Baseline:
         return 0;
     case BaselineShift::Sub:
-        return -m_font.metricsOfPrimaryFont().height() / 2;
+        return -m_font->metricsOfPrimaryFont().height() / 2;
     case BaselineShift::Super:
-        return m_font.metricsOfPrimaryFont().height() / 2;
+        return m_font->metricsOfPrimaryFont().height() / 2;
     case BaselineShift::Length:
-        return floatValueForLength(style.baselineShiftValue(), m_font.size());
+        return floatValueForLength(style.baselineShiftValue(), m_font->size());
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -106,7 +105,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }
 
-    const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = m_font->metricsOfPrimaryFont();
     float ascent = fontMetrics.ascent();
     float descent = fontMetrics.descent();
 
@@ -137,7 +136,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     return 0;
 }
 
-float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const SVGRenderStyle& style, const UChar& character) const
+float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const SVGRenderStyle& style, const char16_t& character) const
 {
     switch (isVerticalText ? style.glyphOrientationVertical() : style.glyphOrientationHorizontal()) {
     case GlyphOrientation::Auto:
@@ -186,7 +185,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
     // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
     // 180 degrees, then the current text position is incremented according to the horizontal metrics of the glyph.
 
-    const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = m_font->metricsOfPrimaryFont();
     float ascent = fontMetrics.ascent();
     float descent = fontMetrics.descent();
 

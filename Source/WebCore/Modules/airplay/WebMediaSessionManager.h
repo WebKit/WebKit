@@ -46,7 +46,7 @@ class WebMediaSessionManagerClient;
 
 class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client, public CanMakeCheckedPtr<WebMediaSessionManager> {
     WTF_MAKE_NONCOPYABLE(WebMediaSessionManager);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebMediaSessionManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebMediaSessionManager);
 public:
 

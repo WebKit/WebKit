@@ -67,6 +67,7 @@ enum class RenderingMode : uint8_t;
 
 namespace WebKit {
 
+class ImageBufferSetClient;
 class WebPage;
 class RemoteImageBufferProxy;
 class RemoteSerializedImageBufferProxy;
@@ -78,7 +79,7 @@ class RemoteImageBufferSetProxy;
 
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, public RefCounted<RemoteRenderingBackendProxy>, SerialFunctionDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteRenderingBackendProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteRenderingBackendProxy);
 public:
     static Ref<RemoteRenderingBackendProxy> create(WebPage&);
@@ -121,7 +122,7 @@ public:
     void releaseMemory();
     void releaseNativeImages();
     void markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool madeAllVolatile)>&&, bool forcePurge);
-    Ref<RemoteImageBufferSetProxy> createImageBufferSet();
+    Ref<RemoteImageBufferSetProxy> createImageBufferSet(ImageBufferSetClient&);
     void releaseImageBufferSet(RemoteImageBufferSetProxy&);
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
 
@@ -137,16 +138,19 @@ public:
         RefPtr<WebCore::ImageBuffer> secondaryBack;
     };
 
+#if PLATFORM(COCOA)
     struct LayerPrepareBuffersData {
-        RefPtr<RemoteImageBufferSetProxy> bufferSet;
+        Ref<RemoteImageBufferSetProxy> bufferSet;
         WebCore::Region dirtyRegion;
         bool supportsPartialRepaint { true };
         bool hasEmptyDirtyRegion { false };
         bool requiresClearedPixels { true };
     };
 
-#if PLATFORM(COCOA)
-    Vector<SwapBuffersDisplayRequirement> prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&&);
+    void startPreparingImageBufferSetsForDisplay();
+    void endPreparingImageBufferSetsForDisplay();
+
+    void prepareImageBufferSetForDisplay(LayerPrepareBuffersData&&);
 #endif
 
     void finalizeRenderingUpdate();
@@ -223,6 +227,10 @@ private:
     HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>> m_imageBuffers;
     HashMap<RemoteImageBufferSetIdentifier, ThreadSafeWeakPtr<RemoteImageBufferSetProxy>> m_imageBufferSets;
     const Ref<WorkQueue> m_queue;
+
+#if PLATFORM(COCOA)
+    Vector<LayerPrepareBuffersData> m_bufferSetsToPrepare;
+#endif
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

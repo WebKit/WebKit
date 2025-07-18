@@ -225,6 +225,8 @@ public:
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool setNeedsDisplayIfEDRHeadroomExceeds(float) override;
+    void setTonemappingEnabled(bool) override;
+    bool tonemappingEnabled() const override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

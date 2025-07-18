@@ -24,10 +24,11 @@ rtc_library("rtc_stats") {
 
   deps = [
     "../api:rtc_stats_api",
+    "../api:scoped_refptr",
+    "../api/units:timestamp",
     "../rtc_base:checks",
     "../rtc_base:macromagic",
     "../rtc_base:stringutils",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -42,6 +43,7 @@ rtc_library("rtc_stats_test_utils") {
   deps = [
     ":rtc_stats",
     "../api:rtc_stats_api",
+    "../api/units:timestamp",
     "../rtc_base:checks",
     "../rtc_base/system:rtc_export",
   ]
@@ -59,6 +61,8 @@ if (rtc_include_tests && !build_with_chromium) {
       ":rtc_stats",
       ":rtc_stats_test_utils",
       "../api:rtc_stats_api",
+      "../api:scoped_refptr",
+      "../api/units:timestamp",
       "../rtc_base:checks",
       "../rtc_base:gunit_helpers",
       "../rtc_base:rtc_json",
@@ -68,11 +72,7 @@ if (rtc_include_tests && !build_with_chromium) {
 
     if (is_android) {
       use_default_launcher = false
-      deps += [
-        "//build/android/gtest_apk:native_test_instrumentation_test_runner_java",
-        "//testing/android/native_test:native_test_java",
-        "//testing/android/native_test:native_test_support",
-      ]
+      deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
     }
   }
 }

@@ -16,11 +16,25 @@ rtc_source_set("audio_device") {
   ]
   deps = [
     "..:ref_count",
-    "..:scoped_refptr",
-    "../../rtc_base:checks",
     "../../rtc_base:stringutils",
-    "../task_queue",
   ]
+}
+
+if (rtc_include_internal_audio_device) {
+  rtc_library("create_audio_device_module") {
+    visibility = [ "*" ]
+    sources = [
+      "create_audio_device_module.cc",
+      "create_audio_device_module.h",
+    ]
+    deps = [
+      ":audio_device",
+      "..:scoped_refptr",
+      "../../modules/audio_device:audio_device_impl",
+      "../environment",
+      "//third_party/abseil-cpp/absl/base:nullability",
+    ]
+  }
 }
 
 rtc_library("audio_frame_api") {
@@ -38,7 +52,6 @@ rtc_library("audio_frame_api") {
     "..:rtp_packet_info",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
-    "../../rtc_base:macromagic",
     "../../rtc_base:timeutils",
   ]
 }
@@ -55,11 +68,12 @@ rtc_source_set("audio_mixer_api") {
   deps = [
     ":audio_frame_api",
     "..:make_ref_counted",
+    "..:ref_count",
     "../../rtc_base:refcount",
   ]
 }
 
-rtc_source_set("audio_processing") {
+rtc_library("audio_processing") {
   visibility = [ "*" ]
   sources = [
     "audio_processing.cc",
@@ -73,7 +87,6 @@ rtc_source_set("audio_processing") {
     "..:ref_count",
     "..:scoped_refptr",
     "../../rtc_base:checks",
-    "../../rtc_base:macromagic",
     "../../rtc_base:stringutils",
     "../../rtc_base/system:arch",
     "../../rtc_base/system:file_wrapper",
@@ -105,7 +118,7 @@ rtc_library("builtin_audio_processing_builder") {
   ]
 }
 
-rtc_source_set("audio_processing_statistics") {
+rtc_library("audio_processing_statistics") {
   visibility = [ "*" ]
   sources = [
     "audio_processing_statistics.cc",
@@ -140,16 +153,22 @@ rtc_library("aec3_factory") {
     ":echo_control",
     "../../modules/audio_processing/aec3",
     "../../rtc_base/system:rtc_export",
+    "../environment",
+    "//third_party/abseil-cpp/absl/base:nullability",
   ]
 }
 
 rtc_source_set("echo_control") {
   visibility = [ "*" ]
   sources = [ "echo_control.h" ]
-  deps = [ "../../rtc_base:checks" ]
+  deps = [
+    "../../rtc_base:checks",
+    "../environment",
+    "//third_party/abseil-cpp/absl/base:nullability",
+  ]
 }
 
-rtc_source_set("echo_detector_creator") {
+rtc_library("echo_detector_creator") {
   visibility = [ "*" ]
   allow_poison = [ "default_echo_detector" ]
   sources = [

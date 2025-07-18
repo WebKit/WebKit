@@ -38,6 +38,7 @@
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
 #include "ComposedTreeIterator.h"
+#include "ContainerNodeInlines.h"
 #include "DateComponents.h"
 #include "EditingInlines.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -1350,14 +1351,16 @@ static bool dispatchSimulatedKeyboardUpDownEvent(AccessibilityObject* object, co
     if (auto* node = object->node()) {
         auto event = KeyboardEvent::create(eventNames().keydownEvent, keyInit, Event::IsTrusted::Yes);
         node->dispatchEvent(event);
-        handled |= event->defaultHandled();
+        handled |= event->defaultHandled(); // The browser handled it.
+        handled |= event->defaultPrevented(); // A JavaScript event listener handled it.
     }
 
     // Ensure node is still valid and wasn't removed after the keydown.
     if (auto* node = object->node()) {
         auto event = KeyboardEvent::create(eventNames().keyupEvent, keyInit, Event::IsTrusted::Yes);
         node->dispatchEvent(event);
-        handled |= event->defaultHandled();
+        handled |= event->defaultHandled(); // The browser handled it.
+        handled |= event->defaultPrevented(); // A JavaScript event listener handled it.
     }
     return handled;
 }

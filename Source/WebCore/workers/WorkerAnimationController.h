@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class RequestAnimationFrameCallback;
+class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 class WorkerAnimationController final : public ThreadSafeRefCounted<WorkerAnimationController>, public ActiveDOMObject {
@@ -65,7 +66,7 @@ private:
     void animationTimerFired();
     void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
 
-    WorkerGlobalScope& m_workerGlobalScope;
+    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_workerGlobalScope;
 
     typedef Vector<RefPtr<RequestAnimationFrameCallback>> CallbackList;
     CallbackList m_animationCallbacks;

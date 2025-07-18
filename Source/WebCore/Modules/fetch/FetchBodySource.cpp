@@ -42,8 +42,8 @@ void FetchBodySource::setActive()
 {
     ASSERT(m_bodyOwner);
     ASSERT(!m_pendingActivity);
-    if (m_bodyOwner)
-        m_pendingActivity = m_bodyOwner->makePendingActivity(*m_bodyOwner);
+    if (RefPtr bodyOwner = m_bodyOwner.get())
+        m_pendingActivity = bodyOwner->makePendingActivity(*bodyOwner);
 }
 
 void FetchBodySource::setInactive()
@@ -56,24 +56,25 @@ void FetchBodySource::setInactive()
 void FetchBodySource::doStart()
 {
     ASSERT(m_bodyOwner);
-    if (m_bodyOwner)
-        m_bodyOwner->consumeBodyAsStream();
+    if (RefPtr bodyOwner = m_bodyOwner.get())
+        bodyOwner->consumeBodyAsStream();
 }
 
 void FetchBodySource::doPull()
 {
     ASSERT(m_bodyOwner);
-    if (m_bodyOwner)
-        m_bodyOwner->feedStream();
+    if (RefPtr bodyOwner = m_bodyOwner.get())
+        bodyOwner->feedStream();
 }
 
 void FetchBodySource::doCancel()
 {
     m_isCancelling = true;
-    if (!m_bodyOwner)
+    RefPtr bodyOwner = m_bodyOwner.get();
+    if (!bodyOwner)
         return;
 
-    m_bodyOwner->cancel();
+    bodyOwner->cancel();
     m_bodyOwner = nullptr;
 }
 

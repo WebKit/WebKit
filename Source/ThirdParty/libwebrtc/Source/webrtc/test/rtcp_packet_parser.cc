@@ -21,7 +21,7 @@ namespace test {
 RtcpPacketParser::RtcpPacketParser() = default;
 RtcpPacketParser::~RtcpPacketParser() = default;
 
-bool RtcpPacketParser::Parse(rtc::ArrayView<const uint8_t> data) {
+bool RtcpPacketParser::Parse(ArrayView<const uint8_t> data) {
   ++processed_rtcp_packets_;
 
   const uint8_t* const buffer = data.data();

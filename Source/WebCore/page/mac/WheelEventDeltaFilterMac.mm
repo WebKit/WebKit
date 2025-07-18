@@ -47,7 +47,7 @@ WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
 
 void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
-    if (event.momentumPhase() != PlatformWheelEventPhase::None) {
+    if (event.isMomentumEvent()) {
         if (event.momentumPhase() == PlatformWheelEventPhase::Began)
             updateCurrentVelocityFromEvent(event);
         m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
@@ -55,6 +55,7 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
     }
 
     switch (event.phase()) {
+    case PlatformWheelEventPhase::WillBegin:
     case PlatformWheelEventPhase::None:
     case PlatformWheelEventPhase::Ended:
         break;

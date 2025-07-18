@@ -17,7 +17,7 @@
 
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 MovingAverage::MovingAverage(size_t window_size) : history_(window_size, 0) {
   // Limit window size to avoid overflow.
@@ -60,4 +60,4 @@ void MovingAverage::Reset() {
 size_t MovingAverage::Size() const {
   return std::min(count_, history_.size());
 }
-}  // namespace rtc
+}  // namespace webrtc

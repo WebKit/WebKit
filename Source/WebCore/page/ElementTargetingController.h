@@ -26,10 +26,10 @@
 #pragma once
 
 #include "Document.h"
-#include "ElementIdentifier.h"
 #include "ElementTargetingTypes.h"
 #include "EventTarget.h"
 #include "IntRectHash.h"
+#include "NodeIdentifier.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "Timer.h"
@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects();
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>&);
 
-    WEBCORE_EXPORT RefPtr<Image> snapshotIgnoringVisibilityAdjustment(ElementIdentifier, ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT RefPtr<Image> snapshotIgnoringVisibilityAdjustment(NodeIdentifier, ScriptExecutionContextIdentifier);
 
 private:
     void cleanUpAdjustmentClientRects();
@@ -95,16 +95,16 @@ private:
 
     void recomputeAdjustedElementsIfNeeded();
 
-    void topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
-    Vector<ElementIdentifier> topologicallySortElements(const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+    void topologicallySortElementsHelper(NodeIdentifier currentElementID, Vector<NodeIdentifier>& depthSortedIDs, HashSet<NodeIdentifier>& processingIDs, HashSet<NodeIdentifier>& unprocessedIDs, const HashMap<NodeIdentifier, HashSet<NodeIdentifier>>& nodeIDToOccludedElementIDs);
+    Vector<NodeIdentifier> topologicallySortElements(const HashMap<NodeIdentifier, HashSet<NodeIdentifier>>& nodeIDToOccludedElementIDs);
 
     WeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_documentsAffectedByVisibilityAdjustment;
-    HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
+    HashMap<NodeIdentifier, IntRect> m_recentAdjustmentClientRects;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Timer m_selectorBasedVisibilityAdjustmentTimer;
-    Vector<std::pair<Markable<ElementIdentifier>, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
+    Vector<std::pair<Markable<NodeIdentifier>, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
     Vector<TargetedElementSelectors> m_initialVisibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;

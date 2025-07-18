@@ -21,8 +21,8 @@ constexpr float kOneByFftSizeBy2Plus1 = 1.f / kFftSizeBy2Plus1;
 // Computes the difference measure between input spectrum and a template/learned
 // noise spectrum.
 float ComputeSpectralDiff(
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
     float signal_spectral_sum,
     float diff_normalization) {
   // spectral_diff = var(signal_spectrum) - cov(signal_spectrum, magnAvgPause)^2
@@ -61,7 +61,7 @@ float ComputeSpectralDiff(
 
 // Updates the spectral flatness based on the input spectrum.
 void UpdateSpectralFlatness(
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
     float signal_spectral_sum,
     float* spectral_flatness) {
   RTC_DCHECK(spectral_flatness);
@@ -94,9 +94,9 @@ void UpdateSpectralFlatness(
 }
 
 // Updates the log LRT measures.
-void UpdateSpectralLrt(rtc::ArrayView<const float, kFftSizeBy2Plus1> prior_snr,
-                       rtc::ArrayView<const float, kFftSizeBy2Plus1> post_snr,
-                       rtc::ArrayView<float, kFftSizeBy2Plus1> avg_log_lrt,
+void UpdateSpectralLrt(ArrayView<const float, kFftSizeBy2Plus1> prior_snr,
+                       ArrayView<const float, kFftSizeBy2Plus1> post_snr,
+                       ArrayView<float, kFftSizeBy2Plus1> avg_log_lrt,
                        float* lrt) {
   RTC_DCHECK(lrt);
 
@@ -129,10 +129,10 @@ void SignalModelEstimator::AdjustNormalization(int32_t num_analyzed_frames,
 
 // Update the noise features.
 void SignalModelEstimator::Update(
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> prior_snr,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> post_snr,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> prior_snr,
+    ArrayView<const float, kFftSizeBy2Plus1> post_snr,
+    ArrayView<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
     float signal_spectral_sum,
     float signal_energy) {
   // Compute spectral flatness on input spectrum.

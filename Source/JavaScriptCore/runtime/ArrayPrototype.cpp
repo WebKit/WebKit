@@ -881,14 +881,14 @@ static unsigned sortBucketSort(std::span<EncodedJSValue> sorted, unsigned dst, S
         return dst;
     }
 
-    StdMap<UChar, SortEntryVector> buckets;
+    StdMap<char16_t, SortEntryVector> buckets;
     for (const auto& entry : bucket) {
         if (std::get<1>(entry).length() == depth) {
             sorted[dst++] = JSValue::encode(std::get<0>(entry));
             continue;
         }
 
-        UChar character = std::get<1>(entry).characterAt(depth);
+        char16_t character = std::get<1>(entry).characterAt(depth);
         buckets.insert(std::pair { character, SortEntryVector { } }).first->second.append(entry);
     }
 

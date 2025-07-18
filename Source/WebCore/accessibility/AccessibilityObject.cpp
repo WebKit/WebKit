@@ -82,9 +82,11 @@
 #include "PositionInlines.h"
 #include "ProgressTracker.h"
 #include "Range.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
@@ -2433,6 +2435,26 @@ bool AccessibilityObject::isModalNode() const
     return false;
 }
 
+
+static RenderObject* nearestRendererFromNode(Node& node)
+{
+    CheckedPtr renderer = node.renderer();
+    for (RefPtr ancestor = &node; ancestor && !renderer; ancestor = composedParentIgnoringDocumentFragments(*ancestor))
+        renderer = ancestor->renderer();
+
+    return renderer.get();
+}
+
+static int zIndexFromRenderer(RenderObject* renderer)
+{
+    for (CheckedPtr layer = renderer->enclosingLayer(); layer; layer = layer->parent()) {
+        if (int zIndex = layer->zIndex())
+            return zIndex;
+    }
+
+    return 0;
+}
+
 bool AccessibilityObject::ignoredFromModalPresence() const
 {
     // We shouldn't ignore the top node.
@@ -2452,6 +2474,29 @@ bool AccessibilityObject::ignoredFromModalPresence() const
     if (modalNode->document().frame() != this->frame())
         return false;
     
+    // Some objects might be outside of a modal, but are linked to elements inside of it. Don't ignore those.
+    for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentObject()) {
+        for (auto& controller : ancestor->controllers()) {
+            if (downcast<AccessibilityObject>(controller)->isModalDescendant(*modalNode))
+                return false;
+        }
+
+        for (auto& activeDescendant : ancestor->activeDescendantOfObjects()) {
+            if (downcast<AccessibilityObject>(activeDescendant)->isModalDescendant(*modalNode))
+                return false;
+        }
+    }
+
+    // If this element has a higher z-index than the active modal, also don't ignore it.
+    if (CheckedPtr renderer = this->rendererOrNearestAncestor()) {
+        if (CheckedPtr modalRenderer = nearestRendererFromNode(*modalNode)) {
+            int thisZIndex = zIndexFromRenderer(renderer.get());
+            int modalZIndex = zIndexFromRenderer(modalRenderer.get());
+            if (thisZIndex > modalZIndex)
+                return false;
+        }
+    }
+
     return !isModalDescendant(*modalNode);
 }
 
@@ -2843,12 +2888,6 @@ String AccessibilityObject::embeddedImageDescription() const
     return renderImage->accessibilityDescription();
 }
 
-bool AccessibilityObject::supportsDatetimeAttribute() const
-{
-    auto elementName = this->elementName();
-    return elementName == ElementName::HTML_ins || elementName == ElementName::HTML_del || elementName == ElementName::HTML_time;
-}
-
 String AccessibilityObject::datetimeAttributeValue() const
 {
     return getAttribute(datetimeAttr);
@@ -2883,6 +2922,12 @@ String AccessibilityObject::keyShortcuts() const
 Element* AccessibilityObject::element() const
 {
     return dynamicDowncast<Element>(node());
+}
+
+RenderObject* AccessibilityObject::rendererOrNearestAncestor() const
+{
+    RefPtr node = this->node();
+    return node ? nearestRendererFromNode(*node) : nullptr;
 }
 
 const RenderStyle* AccessibilityObject::style() const
@@ -3130,7 +3175,7 @@ void AccessibilityObject::setFocused(bool focus)
         // first focused element. Making the page focused is a requirement for making the page selection focused.
         // This is iOS only until there's a demonstrated need for this preemptive focus on other platforms.
         if (!page->focusController().isFocused())
-            page->checkedFocusController()->setFocused(true);
+            page->focusController().setFocused(true);
 
         // Reset the page pointer in case FocusController::setFocused(true) caused a side effect that invalidated our old one.
         page = document() ? document()->page() : nullptr;

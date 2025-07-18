@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WakeLockSentinel.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "Exception.h"

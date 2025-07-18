@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<input id="select" type="select">
+<input id="submit" type="submit">
+<input id="button" type="button">
+<script>
+    description("This tests that buttons, submit buttons, and select buttons all have the same CSS color.");
+    shouldBeTrue("select.style.color == submit.style.color && submit.style.color == button.style.color");
+</script>
+</body>
+</html>

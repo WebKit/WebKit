@@ -1615,7 +1615,9 @@ class BlitFramebufferTest : public ANGLETest<>
     void BlitDepthStencilPixelByPixelTestHelper(bool mesaYFlip)
     {
         if (mesaYFlip)
+        {
             ASSERT_TRUE(IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+        }
 
         ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
 

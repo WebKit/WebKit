@@ -11,6 +11,10 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
 #define MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/audio_codecs/audio_encoder.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 
 namespace webrtc {

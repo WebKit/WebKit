@@ -722,17 +722,35 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
-static void forEachCALayer(CALayer *layer, void(^visitor)(CALayer *))
+static IterationStatus forEachCALayer(CALayer *layer, IterationStatus(^visitor)(CALayer *))
 {
-    visitor(layer);
+    if (visitor(layer) == IterationStatus::Done)
+        return IterationStatus::Done;
 
-    for (CALayer *sublayer in layer.sublayers)
-        forEachCALayer(sublayer, visitor);
+    for (CALayer *sublayer in layer.sublayers) {
+        if (forEachCALayer(sublayer, visitor) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
+
+    return IterationStatus::Continue;
 }
 
-- (void)forEachCALayer:(void(^)(CALayer *))visitor
+- (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor
 {
     forEachCALayer(self.layer, visitor);
+}
+
+- (CALayer *)firstLayerWithName:(NSString *)layerName
+{
+    __block RetainPtr<CALayer> result;
+    [self forEachCALayer:^(CALayer *layer) {
+        if (![layer.name isEqualToString:@"Gesture Swipe Snapshot Layer"])
+            return IterationStatus::Continue;
+
+        result = layer;
+        return IterationStatus::Done;
+    }];
+    return result.autorelease();
 }
 
 - (CGImageRef)snapshotAfterScreenUpdates
@@ -1242,6 +1260,20 @@ static UIWindowScene *windowScene()
             samples.append(reader.at(x, y));
     }
     return samples;
+}
+
+- (RetainPtr<_WKFrameTreeNode>)frameTree
+{
+    __block RetainPtr<_WKFrameTreeNode> result;
+    __block bool isDone = false;
+
+    [self _frames:^(_WKFrameTreeNode *tree) {
+        result = tree;
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    return result;
 }
 
 #if PLATFORM(IOS_FAMILY)

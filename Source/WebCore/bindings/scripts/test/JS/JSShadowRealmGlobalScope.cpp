@@ -151,7 +151,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstruc
 
 JSC::GCClient::IsoSubspace* JSShadowRealmGlobalScope::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSShadowRealmGlobalScope, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSShadowRealmGlobalScope, UseCustomHeapCellType::Yes>(vm, "JSShadowRealmGlobalScope"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForShadowRealmGlobalScope.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForShadowRealmGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForShadowRealmGlobalScope.get(); },

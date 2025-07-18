@@ -13,6 +13,9 @@
 #include <utility>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+
 namespace webrtc {
 namespace {
 
@@ -74,8 +77,8 @@ class TransformableOutgoingAudioFrame
         sequence_number_(sequence_number),
         audio_level_dbov_(audio_level_dbov) {}
   ~TransformableOutgoingAudioFrame() override = default;
-  rtc::ArrayView<const uint8_t> GetData() const override { return payload_; }
-  void SetData(rtc::ArrayView<const uint8_t> data) override {
+  ArrayView<const uint8_t> GetData() const override { return payload_; }
+  void SetData(ArrayView<const uint8_t> data) override {
     payload_.SetData(data.data(), data.size());
   }
   uint32_t GetTimestamp() const override { return rtp_timestamp_with_offset_; }
@@ -86,10 +89,14 @@ class TransformableOutgoingAudioFrame
   }
 
   uint8_t GetPayloadType() const override { return payload_type_; }
+  bool CanSetPayloadType() const override { return true; }
+  void SetPayloadType(uint8_t payload_type) override {
+    payload_type_ = payload_type;
+  }
   Direction GetDirection() const override { return Direction::kSender; }
   std::string GetMimeType() const override { return codec_mime_type_; }
 
-  rtc::ArrayView<const uint32_t> GetContributingSources() const override {
+  ArrayView<const uint32_t> GetContributingSources() const override {
     return csrcs_;
   }
 
@@ -109,13 +116,36 @@ class TransformableOutgoingAudioFrame
     return audio_level_dbov_;
   }
 
+  bool CanSetAudioLevel() const override { return true; }
+  void SetAudioLevel(std::optional<uint8_t> audio_level_dbov) override {
+    if (audio_level_dbov.has_value() && audio_level_dbov > 127u) {
+      audio_level_dbov = 127u;
+    }
+    audio_level_dbov_ = audio_level_dbov;
+  }
+
   std::optional<Timestamp> ReceiveTime() const override { return std::nullopt; }
+
+  std::optional<Timestamp> CaptureTime() const override {
+    return absolute_capture_timestamp_ms_
+               ? std::make_optional(
+                     Timestamp::Millis(*absolute_capture_timestamp_ms_))
+               : std::nullopt;
+  }
+  bool CanSetCaptureTime() const override { return true; }
+  void SetCaptureTime(std::optional<Timestamp> capture_time) override {
+    absolute_capture_timestamp_ms_ =
+        capture_time ? std::make_optional(capture_time->ms()) : std::nullopt;
+  }
+  std::optional<TimeDelta> SenderCaptureTimeOffset() const override {
+    return std::nullopt;
+  }
 
  private:
   AudioFrameType frame_type_;
   uint8_t payload_type_;
   uint32_t rtp_timestamp_with_offset_;
-  rtc::Buffer payload_;
+  Buffer payload_;
   std::optional<uint64_t> absolute_capture_timestamp_ms_;
   uint32_t ssrc_;
   std::vector<uint32_t> csrcs_;
@@ -126,7 +156,7 @@ class TransformableOutgoingAudioFrame
 
 ChannelSendFrameTransformerDelegate::ChannelSendFrameTransformerDelegate(
     SendFrameCallback send_frame_callback,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
+    scoped_refptr<FrameTransformerInterface> frame_transformer,
     TaskQueueBase* encoder_queue)
     : send_frame_callback_(send_frame_callback),
       frame_transformer_(std::move(frame_transformer)),
@@ -134,7 +164,7 @@ ChannelSendFrameTransformerDelegate::ChannelSendFrameTransformerDelegate(
 
 void ChannelSendFrameTransformerDelegate::Init() {
   frame_transformer_->RegisterTransformedFrameCallback(
-      rtc::scoped_refptr<TransformedFrameCallback>(this));
+      scoped_refptr<TransformedFrameCallback>(this));
 }
 
 void ChannelSendFrameTransformerDelegate::Reset() {
@@ -158,10 +188,10 @@ void ChannelSendFrameTransformerDelegate::Transform(
   {
     MutexLock lock(&send_lock_);
     if (short_circuit_) {
-      send_frame_callback_(
-          frame_type, payload_type, rtp_timestamp,
-          rtc::ArrayView<const uint8_t>(payload_data, payload_size),
-          absolute_capture_timestamp_ms, /*csrcs=*/{}, audio_level_dbov);
+      send_frame_callback_(frame_type, payload_type, rtp_timestamp,
+                           ArrayView<const uint8_t>(payload_data, payload_size),
+                           absolute_capture_timestamp_ms, /*csrcs=*/{},
+                           audio_level_dbov);
       return;
     }
   }
@@ -178,7 +208,7 @@ void ChannelSendFrameTransformerDelegate::OnTransformedFrame(
   MutexLock lock(&send_lock_);
   if (!send_frame_callback_)
     return;
-  rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate(this);
+  scoped_refptr<ChannelSendFrameTransformerDelegate> delegate(this);
   encoder_queue_->PostTask(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {
         delegate->SendFrame(std::move(frame));

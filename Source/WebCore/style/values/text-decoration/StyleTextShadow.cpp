@@ -25,11 +25,14 @@
 #include "config.h"
 #include "StyleTextShadow.h"
 
+#include "CSSTextShadowPropertyValue.h"
 #include "ColorBlending.h"
 #include "RenderStyle.h"
+#include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 namespace Style {
@@ -52,6 +55,44 @@ auto ToStyle<CSS::TextShadow>::operator()(const CSS::TextShadow& value, const Bu
         .location = toStyle(value.location, state),
         .blur = value.blur ? toStyle(*value.blur, state) : Length<CSS::Nonnegative> { 0 },
     };
+}
+
+Ref<CSSValue> CSSValueCreation<TextShadowList>::operator()(CSSValuePool&, const RenderStyle& style, const TextShadowList& value)
+{
+    CSS::TextShadowProperty::List list;
+
+    for (const auto& shadow : makeReversedRange(value))
+        list.value.append(toCSS(shadow, style));
+
+    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTFMove(list) });
+}
+
+auto CSSValueConversion<TextShadows>::operator()(BuilderState& state, const CSSValue& value) -> TextShadows
+{
+    if (value.valueID() == CSSValueNone)
+        return CSS::Keyword::None { };
+
+    RefPtr shadow = requiredDowncast<CSSTextShadowPropertyValue>(state, value);
+    if (!shadow)
+        return CSS::Keyword::None { };
+
+    return WTF::switchOn(shadow->shadow(),
+        [&](const CSS::Keyword::None&) -> TextShadows {
+            return CSS::Keyword::None { };
+        },
+        [&](const typename CSS::TextShadowProperty::List& list) -> TextShadows {
+            return TextShadows::List::map(makeReversedRange(list), [&](const CSS::TextShadow& element) {
+                return toStyle(element, state);
+            });
+        }
+    );
+}
+
+// MARK: - Serialization
+
+void Serialize<TextShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const TextShadowList& value)
+{
+    serializationForCSSOnRangeLike(builder, context, style, makeReversedRange(value), SerializationSeparatorString<TextShadowList>);
 }
 
 // MARK: - Blending

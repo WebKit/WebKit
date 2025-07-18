@@ -28,7 +28,6 @@
 #include "rtc_base/win/scoped_com_initializer.h"
 #include "rtc_base/win/windows_version.h"
 #include "system_wrappers/include/metrics.h"
-#include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -126,7 +125,7 @@ class WgcCapturerWinTest : public ::testing::TestWithParam<CaptureType>,
   // having GraphicsCaptureItem events (i.e. the Closed event) fire, and it more
   // closely resembles how capture works in the wild.
   void CreateWindowOnSeparateThread(int window_width, int window_height) {
-    window_thread_ = rtc::Thread::Create();
+    window_thread_ = webrtc::Thread::Create();
     window_thread_->SetName(kWindowThreadName, nullptr);
     window_thread_->Start();
     SendTask(window_thread_.get(), [this, window_width, window_height]() {
@@ -267,7 +266,7 @@ class WgcCapturerWinTest : public ::testing::TestWithParam<CaptureType>,
  protected:
   std::unique_ptr<ScopedCOMInitializer> com_initializer_;
   DWORD window_thread_id_;
-  std::unique_ptr<rtc::Thread> window_thread_;
+  std::unique_ptr<webrtc::Thread> window_thread_;
   WindowInfo window_info_;
   intptr_t source_id_;
   bool window_open_ = false;
@@ -331,11 +330,11 @@ TEST_P(WgcCapturerWinTest, CaptureTime) {
   capturer_->Start(this);
 
   int64_t start_time;
-  start_time = rtc::TimeNanos();
+  start_time = webrtc::TimeNanos();
   capturer_->CaptureFrame();
 
   int capture_time_ms =
-      (rtc::TimeNanos() - start_time) / rtc::kNumNanosecsPerMillisec;
+      (webrtc::TimeNanos() - start_time) / webrtc::kNumNanosecsPerMillisec;
   EXPECT_EQ(result_, DesktopCapturer::Result::SUCCESS);
   EXPECT_TRUE(frame_);
 
@@ -366,7 +365,7 @@ TEST(WgcCapturerNoMonitorTest, NoMonitors) {
 
   // A bug in the DWM (Desktop Window Manager) prevents it from providing image
   // data if there are no displays attached. This was fixed in Windows 11.
-  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN11)
+  if (webrtc::rtc_win::GetVersion() < webrtc::rtc_win::Version::VERSION_WIN11)
     EXPECT_FALSE(IsWgcSupported(CaptureType::kWindow));
   else
     EXPECT_TRUE(IsWgcSupported(CaptureType::kWindow));
@@ -548,7 +547,7 @@ TEST_F(WgcCapturerWindowTest, CloseWindowMidCapture) {
     // Unlike GetMessage, PeekMessage will not hang if there are no messages in
     // the queue.
     PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
-    SleepMs(1);
+    Thread::SleepMs(1);
   }
 
   EXPECT_FALSE(wgc_capturer->IsSourceBeingCaptured(source_id_));

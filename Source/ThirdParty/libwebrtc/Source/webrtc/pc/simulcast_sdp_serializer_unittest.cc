@@ -14,18 +14,21 @@
 
 #include <map>
 #include <string>
-#include <utility>
 #include <vector>
 
+#include "media/base/codec.h"
+#include "media/base/rid_description.h"
+#include "pc/session_description.h"
+#include "pc/simulcast_description.h"
 #include "test/gtest.h"
 
-using cricket::RidDescription;
-using cricket::RidDirection;
-using cricket::SimulcastDescription;
-using cricket::SimulcastLayer;
-using cricket::SimulcastLayerList;
 using ::testing::TestWithParam;
 using ::testing::ValuesIn;
+using ::webrtc::RidDescription;
+using ::webrtc::RidDirection;
+using ::webrtc::SimulcastDescription;
+using ::webrtc::SimulcastLayer;
+using ::webrtc::SimulcastLayerList;
 
 namespace webrtc {
 
@@ -90,7 +93,7 @@ void ExpectEqual(const SimulcastDescription& expected,
 void ExpectEqual(const RidDescription& expected, const RidDescription& actual) {
   EXPECT_EQ(expected.rid, actual.rid);
   EXPECT_EQ(expected.direction, actual.direction);
-  ExpectEqual(expected.payload_types, actual.payload_types);
+  ExpectEqual(expected.codecs, actual.codecs);
   ExpectEqual(expected.restrictions, actual.restrictions);
 }
 }  // namespace
@@ -284,10 +287,11 @@ class RidDescriptionSdpSerializerTest : public TestWithParam<const char*> {
   // Runs a test for deserializing Rid Descriptions.
   // `str` - The serialized Rid Description to parse.
   // `expected` - The expected output RidDescription to compare to.
-  void TestDeserialization(const std::string& str,
+  void TestDeserialization(const MediaContentDescription& media_desc,
+                           const std::string& str,
                            const RidDescription& expected) const {
     SimulcastSdpSerializer deserializer;
-    auto result = deserializer.DeserializeRidDescription(str);
+    auto result = deserializer.DeserializeRidDescription(media_desc, str);
     EXPECT_TRUE(result.ok());
     ExpectEqual(expected, result.value());
   }
@@ -295,10 +299,12 @@ class RidDescriptionSdpSerializerTest : public TestWithParam<const char*> {
   // Runs a test for serializing RidDescriptions.
   // `rid_description` - The RidDescription to serialize.
   // `expected` - The expected output string to compare to.
-  void TestSerialization(const RidDescription& rid_description,
+  void TestSerialization(const MediaContentDescription& media_desc,
+                         const RidDescription& rid_description,
                          const std::string& expected) const {
     SimulcastSdpSerializer serializer;
-    auto result = serializer.SerializeRidDescription(rid_description);
+    auto result =
+        serializer.SerializeRidDescription(media_desc, rid_description);
     EXPECT_EQ(expected, result);
   }
 };
@@ -306,27 +312,36 @@ class RidDescriptionSdpSerializerTest : public TestWithParam<const char*> {
 // Test serialization for RidDescription that only specifies send.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_OnlyDirectionSend) {
   RidDescription rid_description("1", RidDirection::kSend);
-  TestSerialization(rid_description, "1 send");
+  TestSerialization(VideoContentDescription(), rid_description, "1 send");
 }
 
 // Test serialization for RidDescription that only specifies receive.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_OnlyDirectionReceive) {
   RidDescription rid_description("2", RidDirection::kReceive);
-  TestSerialization(rid_description, "2 recv");
+  TestSerialization(VideoContentDescription(), rid_description, "2 recv");
 }
 
 // Test serialization for RidDescription with format list.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_FormatList) {
+  Codec vp8 = CreateVideoCodec(101, "VP8");
+  Codec vp9 = CreateVideoCodec(102, "VP9");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8, vp9});
+
   RidDescription rid_description("3", RidDirection::kSend);
-  rid_description.payload_types = {102, 101};
-  TestSerialization(rid_description, "3 send pt=102,101");
+  rid_description.codecs = {vp9, vp8};
+  TestSerialization(video_desc, rid_description, "3 send pt=102,101");
 }
 
 // Test serialization for RidDescription with format list.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_FormatListSingleFormat) {
+  Codec vp8 = CreateVideoCodec(100, "VP8");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8});
+
   RidDescription rid_description("4", RidDirection::kReceive);
-  rid_description.payload_types = {100};
-  TestSerialization(rid_description, "4 recv pt=100");
+  rid_description.codecs = {vp8};
+  TestSerialization(video_desc, rid_description, "4 recv pt=100");
 }
 
 // Test serialization for RidDescription with restriction list.
@@ -335,63 +350,97 @@ TEST_F(RidDescriptionSdpSerializerTest, Serialize_AttributeList) {
   RidDescription rid_description("5", RidDirection::kSend);
   rid_description.restrictions["max-width"] = "1280";
   rid_description.restrictions["max-height"] = "720";
-  TestSerialization(rid_description, "5 send max-height=720;max-width=1280");
+  TestSerialization(VideoContentDescription(), rid_description,
+                    "5 send max-height=720;max-width=1280");
 }
 
 // Test serialization for RidDescription with format list and attribute list.
 // Note: restriction list will be sorted because it is stored in a map.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_FormatAndAttributeList) {
+  Codec vp8 = CreateVideoCodec(103, "VP8");
+  Codec vp9 = CreateVideoCodec(104, "VP9");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8, vp9});
+
   RidDescription rid_description("6", RidDirection::kSend);
-  rid_description.payload_types = {103, 104};
+  rid_description.codecs = {vp8, vp9};
   rid_description.restrictions["max-mbps"] = "108000";
   rid_description.restrictions["max-br"] = "64000";
-  TestSerialization(rid_description,
+  TestSerialization(video_desc, rid_description,
                     "6 send pt=103,104;max-br=64000;max-mbps=108000");
 }
 
 // Test serialization for attribute list that has key with no value.
 // Note: restriction list will be sorted because it is stored in a map.
 TEST_F(RidDescriptionSdpSerializerTest, Serialize_RestrictionWithoutValue) {
+  Codec vp8 = CreateVideoCodec(103, "VP8");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8});
+
   RidDescription rid_description("7", RidDirection::kReceive);
-  rid_description.payload_types = {103};
+  rid_description.codecs = {vp8};
   rid_description.restrictions["max-width"] = "1280";
   rid_description.restrictions["max-height"] = "720";
   rid_description.restrictions["max-myval"] = "";
-  TestSerialization(rid_description,
+  TestSerialization(video_desc, rid_description,
                     "7 recv pt=103;max-height=720;max-myval;max-width=1280");
 }
 
 // Test simulcast deserialization with simple send stream.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_SimpleSendCase) {
   RidDescription rid_description("1", RidDirection::kSend);
-  TestDeserialization("1 send", rid_description);
+  TestDeserialization(VideoContentDescription(), "1 send", rid_description);
 }
 
 // Test simulcast deserialization with simple receive stream.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_SimpleReceiveCase) {
   RidDescription rid_description("2", RidDirection::kReceive);
-  TestDeserialization("2 recv", rid_description);
+  TestDeserialization(VideoContentDescription(), "2 recv", rid_description);
 }
 
 // Test simulcast deserialization with single format.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithFormat) {
+  Codec vp8 = CreateVideoCodec(101, "VP8");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8});
+
   RidDescription rid_description("3", RidDirection::kSend);
-  rid_description.payload_types = {101};
-  TestDeserialization("3 send pt=101", rid_description);
+  rid_description.codecs = {vp8};
+  TestDeserialization(video_desc, "3 send pt=101", rid_description);
+}
+
+// Test simulcast deserialization with valid format syntax (`pt=97`) but using
+// a payload type that does not refer to any codec in the media description.
+TEST_F(RidDescriptionSdpSerializerTest, Deserialize_ReferencingUnknownCodec) {
+  Codec vp8 = CreateVideoCodec(101, "VP8");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8});
+
+  RidDescription rid_description("3", RidDirection::kSend);
+  rid_description.codecs = {};  // pt=97 is ignored resulting in an empty list.
+  TestDeserialization(video_desc, "3 send pt=97", rid_description);
 }
 
 // Test simulcast deserialization with multiple formats.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithMultipleFormats) {
+  Codec vp8 = CreateVideoCodec(101, "VP8");
+  Codec vp9 = CreateVideoCodec(102, "VP9");
+  Codec av1 = CreateVideoCodec(103, "AV1");
+  Codec h264 = CreateVideoCodec(104, "H264");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({vp8, vp9, av1, h264});
+
   RidDescription rid_description("4", RidDirection::kSend);
-  rid_description.payload_types = {103, 104, 101, 102};
-  TestDeserialization("4 send pt=103,104,101,102", rid_description);
+  rid_description.codecs = {av1, h264, vp8, vp9};
+  TestDeserialization(video_desc, "4 send pt=103,104,101,102", rid_description);
 }
 
 // Test simulcast deserialization with restriction.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithRestriction) {
   RidDescription rid_description("5", RidDirection::kReceive);
   rid_description.restrictions["max-height"] = "720";
-  TestDeserialization("5 recv max-height=720", rid_description);
+  TestDeserialization(VideoContentDescription(), "5 recv max-height=720",
+                      rid_description);
 }
 
 // Test simulcast deserialization with multiple restrictions.
@@ -402,6 +451,7 @@ TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithMultipleRestrictions) {
   rid_description.restrictions["max-fr"] = "60";
   rid_description.restrictions["max-bps"] = "14000";
   TestDeserialization(
+      VideoContentDescription(),
       "6 recv max-height=720;max-width=1920;max-bps=14000;max-fr=60",
       rid_description);
 }
@@ -411,26 +461,37 @@ TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithCustomRestrictions) {
   RidDescription rid_description("7", RidDirection::kSend);
   rid_description.restrictions["foo"] = "bar";
   rid_description.restrictions["max-height"] = "720";
-  TestDeserialization("7 send max-height=720;foo=bar", rid_description);
+  TestDeserialization(VideoContentDescription(),
+                      "7 send max-height=720;foo=bar", rid_description);
 }
 
 // Test simulcast deserialization with multiple formats and restrictions.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_WithFormatAndRestrictions) {
+  Codec av1 = CreateVideoCodec(103, "AV1");
+  Codec h264 = CreateVideoCodec(104, "H264");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({av1, h264});
+
   RidDescription rid_description("8", RidDirection::kSend);
-  rid_description.payload_types = {104, 103};
+  rid_description.codecs = {h264, av1};
   rid_description.restrictions["max-height"] = "720";
   rid_description.restrictions["max-width"] = "1920";
-  TestDeserialization("8 send pt=104,103;max-height=720;max-width=1920",
+  TestDeserialization(video_desc,
+                      "8 send pt=104,103;max-height=720;max-width=1920",
                       rid_description);
 }
 
 // Test simulcast deserialization with restriction that has no value.
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_RestrictionHasNoValue) {
+  Codec h264 = CreateVideoCodec(104, "H264");
+  VideoContentDescription video_desc;
+  video_desc.set_codecs({h264});
+
   RidDescription rid_description("9", RidDirection::kReceive);
-  rid_description.payload_types = {104};
+  rid_description.codecs = {h264};
   rid_description.restrictions["max-height"];
   rid_description.restrictions["max-width"] = "1920";
-  TestDeserialization("9 recv pt=104;max-height;max-width=1920",
+  TestDeserialization(video_desc, "9 recv pt=104;max-height;max-width=1920",
                       rid_description);
 }
 
@@ -442,13 +503,18 @@ TEST_F(RidDescriptionSdpSerializerTest, Deserialize_RestrictionHasNoValue) {
 TEST_F(RidDescriptionSdpSerializerTest, Deserialize_AmbiguousCase) {
   RidDescription rid_description("1", RidDirection::kSend);
   rid_description.restrictions["recv"];  // No value.
-  TestDeserialization("1 send recv", rid_description);
+  TestDeserialization(VideoContentDescription(), "1 send recv",
+                      rid_description);
 }
 
 // Parameterized negative test case for deserialization with invalid inputs.
 TEST_P(RidDescriptionSdpSerializerTest, RidDescriptionDeserializationFailed) {
+  VideoContentDescription video_desc;
+  video_desc.set_codecs(
+      {CreateVideoCodec(101, "VP8"), CreateVideoCodec(102, "VP9")});
+
   SimulcastSdpSerializer deserializer;
-  auto result = deserializer.DeserializeRidDescription(GetParam());
+  auto result = deserializer.DeserializeRidDescription(video_desc, GetParam());
   EXPECT_FALSE(result.ok());
 }
 

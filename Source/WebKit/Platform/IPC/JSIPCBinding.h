@@ -148,8 +148,7 @@ template<typename T, typename... Elements>
 std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<T, Elements...>*)
 {
     auto startingBufferOffset = decoder.currentBufferOffset();
-    std::optional<T> value;
-    decoder >> value;
+    std::optional<T> value = decoder.decode<T>();
     if (!value)
         return std::nullopt;
 

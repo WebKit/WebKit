@@ -34,8 +34,8 @@ namespace WebCore {
 static String wildcardRegexPatternString(const String& string)
 {
     String metaCharacters = ".|+?()[]{}^$"_s;
-    UChar escapeCharacter = '\\';
-    UChar wildcardCharacter = '*';
+    char16_t escapeCharacter = '\\';
+    char16_t wildcardCharacter = '*';
     
     StringBuilder stringBuilder;
     

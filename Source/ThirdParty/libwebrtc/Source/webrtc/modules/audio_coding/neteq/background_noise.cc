@@ -13,10 +13,15 @@
 #include <string.h>  // memcpy
 
 #include <algorithm>  // min, max
+#include <cstdint>
 
+#include "api/array_view.h"
+#include "common_audio/signal_processing/dot_product_with_scale.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/cross_correlation.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {
@@ -118,7 +123,7 @@ bool BackgroundNoise::Update(const AudioMultiVector& sync_buffer) {
 }
 
 void BackgroundNoise::GenerateBackgroundNoise(
-    rtc::ArrayView<const int16_t> random_vector,
+    ArrayView<const int16_t> random_vector,
     size_t channel,
     int /* mute_slope */,
     bool /* too_many_expands */,
@@ -193,7 +198,7 @@ const int16_t* BackgroundNoise::FilterState(size_t channel) const {
 }
 
 void BackgroundNoise::SetFilterState(size_t channel,
-                                     rtc::ArrayView<const int16_t> input) {
+                                     ArrayView<const int16_t> input) {
   RTC_DCHECK_LT(channel, num_channels_);
   size_t length = std::min(input.size(), kMaxLpcOrder);
   memcpy(channel_parameters_[channel].filter_state, input.data(),

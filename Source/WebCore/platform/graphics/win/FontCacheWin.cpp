@@ -191,7 +191,7 @@ static bool currentFontContainsCharacter(HDC hdc, StringView stringView)
     char32_t utf32Character = *stringView.codePoints().begin();
     if (U_IS_SUPPLEMENTARY(utf32Character))
         return currentFontContainsCharacterNonBMP(hdc, stringView);
-    UChar character = utf32Character;
+    char16_t character = utf32Character;
 
     static Vector<char, 512> glyphsetBuffer;
     glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, 0));
@@ -206,7 +206,7 @@ static bool currentFontContainsCharacter(HDC hdc, StringView stringView)
     return i && glyphset->ranges[i - 1].wcLow + glyphset->ranges[i - 1].cGlyphs > character;
 }
 
-static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD codePageMask, UChar character = 0)
+static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD codePageMask, char16_t character = 0)
 {
     HFONT MLangFont;
     HFONT hfont = 0;
@@ -229,7 +229,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     IMLangFontLinkType* langFontLink = getFontLinkInterface();
 
     if (stringView.length() == 1 && langFontLink) {
-        UChar character = stringView[0];
+        char16_t character = stringView[0];
         // Try MLang font linking first.
         DWORD codePages = 0;
         if (SUCCEEDED(langFontLink->GetCharCodePages(character, &codePages))) {
@@ -310,7 +310,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
 
         LOGFONT logFont;
         logFont.lfCharSet = DEFAULT_CHARSET;
-        StringView(linkedFonts->at(linkedFontIndex)).getCharacters(spanReinterpretCast<UChar>(std::span<wchar_t> { logFont.lfFaceName }));
+        StringView(linkedFonts->at(linkedFontIndex)).getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { logFont.lfFaceName }));
         logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
@@ -502,7 +502,7 @@ GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, boo
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(family).left(static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharacters(spanReinterpretCast<UChar>(std::span<wchar_t> { logFont.lfFaceName }));
+    truncatedFamily.getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { logFont.lfFaceName }));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
@@ -607,7 +607,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(familyName).left(static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharacters(spanReinterpretCast<UChar>(std::span<wchar_t> { logFont.lfFaceName }));
+    truncatedFamily.getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { logFont.lfFaceName }));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 

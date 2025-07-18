@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct RouterCondition;
 class RouterNotCondition {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RouterNotCondition);
 public:
     RouterNotCondition(RouterCondition&&);
 
@@ -48,7 +48,7 @@ private:
 };
 
 struct RouterCondition {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RouterCondition);
 
     std::optional<URLPattern::Compatible> urlPattern;
     String requestMethod;

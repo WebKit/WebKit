@@ -32,6 +32,7 @@
 
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -55,9 +56,6 @@ public:
         virtual ExceptionOr<void> redo() = 0;
 
         virtual bool isUndoableStateMark() { return false; }
-
-    private:
-        String m_name;
     };
 
     InspectorHistory() = default;

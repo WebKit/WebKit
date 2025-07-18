@@ -28,7 +28,7 @@
 namespace WTF {
 
 struct ProcessMemoryStatus {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ProcessMemoryStatus);
     size_t size { 0 };
     size_t resident { 0 };
     size_t shared { 0 };

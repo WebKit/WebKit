@@ -44,12 +44,12 @@ class CompileTimeTestForGuardedBy {
 
  private:
   int guarded_ RTC_GUARDED_BY(sequence_checker_);
-  ::webrtc::SequenceChecker sequence_checker_;
+  SequenceChecker sequence_checker_;
 };
 
-void RunOnDifferentThread(rtc::FunctionView<void()> run) {
-  rtc::Event thread_has_run_event;
-  rtc::PlatformThread::SpawnJoinable(
+void RunOnDifferentThread(FunctionView<void()> run) {
+  Event thread_has_run_event;
+  PlatformThread::SpawnJoinable(
       [&] {
         run();
         thread_has_run_event.Set();
@@ -148,13 +148,13 @@ TEST(SequenceCheckerTest, ExpectationToString) {
 
   SequenceChecker sequence_checker(SequenceChecker::kDetached);
 
-  rtc::Event blocker;
+  Event blocker;
   queue1.PostTask([&blocker, &sequence_checker]() {
     (void)sequence_checker.IsCurrent();
     blocker.Set();
   });
 
-  blocker.Wait(rtc::Event::kForever);
+  blocker.Wait(Event::kForever);
 
 #if RTC_DCHECK_IS_ON
 
@@ -177,13 +177,13 @@ TEST(SequenceCheckerTest, InitiallyDetached) {
 
   SequenceChecker sequence_checker(SequenceChecker::kDetached);
 
-  rtc::Event blocker;
+  Event blocker;
   queue1.PostTask([&blocker, &sequence_checker]() {
     EXPECT_TRUE(sequence_checker.IsCurrent());
     blocker.Set();
   });
 
-  blocker.Wait(rtc::Event::kForever);
+  blocker.Wait(Event::kForever);
 
 #if RTC_DCHECK_IS_ON
   EXPECT_FALSE(sequence_checker.IsCurrent());

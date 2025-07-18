@@ -11,24 +11,27 @@
 #ifndef MEDIA_BASE_VIDEO_BROADCASTER_H_
 #define MEDIA_BASE_VIDEO_BROADCASTER_H_
 
-#include "api/media_stream_interface.h"
+#include <optional>
+
 #include "api/scoped_refptr.h"
-#include "api/sequence_checker.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
+#include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
+#include "api/video_track_source_constraints.h"
 #include "media/base/video_source_base.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
-namespace rtc {
+namespace webrtc {
 
 // VideoBroadcaster broadcast video frames to sinks and combines VideoSinkWants
-// from its sinks. It does that by implementing rtc::VideoSourceInterface and
-// rtc::VideoSinkInterface. The class is threadsafe; methods may be called on
+// from its sinks. It does that by implementing webrtc::VideoSourceInterface and
+// webrtc::VideoSinkInterface. The class is threadsafe; methods may be called on
 // any thread. This is needed because VideoStreamEncoder calls AddOrUpdateSink
 // both on the worker thread and on the encoder task queue.
 class VideoBroadcaster : public VideoSourceBase,
-                         public VideoSinkInterface<webrtc::VideoFrame> {
+                         public VideoSinkInterface<VideoFrame> {
  public:
   VideoBroadcaster();
   ~VideoBroadcaster() override;
@@ -37,9 +40,9 @@ class VideoBroadcaster : public VideoSourceBase,
   // ProcessConstraints has been called previously, the new sink's
   // OnConstraintsCalled method will be invoked with the most recent
   // constraints.
-  void AddOrUpdateSink(VideoSinkInterface<webrtc::VideoFrame>* sink,
+  void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
                        const VideoSinkWants& wants) override;
-  void RemoveSink(VideoSinkInterface<webrtc::VideoFrame>* sink) override;
+  void RemoveSink(VideoSinkInterface<VideoFrame>* sink) override;
 
   // Returns true if the next frame will be delivered to at least one sink.
   bool frame_wanted() const;
@@ -52,31 +55,38 @@ class VideoBroadcaster : public VideoSourceBase,
   // it will never receive a frame with pending rotation. Our caller
   // may pass in frames without precise synchronization with changes
   // to the VideoSinkWants.
-  void OnFrame(const webrtc::VideoFrame& frame) override;
+  void OnFrame(const VideoFrame& frame) override;
 
   void OnDiscardedFrame() override;
 
   // Called on the network thread when constraints change. Forwards the
   // constraints to sinks added with AddOrUpdateSink via OnConstraintsChanged.
-  void ProcessConstraints(
-      const webrtc::VideoTrackSourceConstraints& constraints);
+  void ProcessConstraints(const VideoTrackSourceConstraints& constraints);
 
  protected:
   void UpdateWants() RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
-  const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& GetBlackFrameBuffer(
-      int width,
-      int height) RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
+  const scoped_refptr<VideoFrameBuffer>& GetBlackFrameBuffer(int width,
+                                                             int height)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
 
-  mutable webrtc::Mutex sinks_and_wants_lock_;
+  mutable Mutex sinks_and_wants_lock_;
 
   VideoSinkWants current_wants_ RTC_GUARDED_BY(sinks_and_wants_lock_);
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> black_frame_buffer_;
+  scoped_refptr<VideoFrameBuffer> black_frame_buffer_;
   bool previous_frame_sent_to_all_sinks_ RTC_GUARDED_BY(sinks_and_wants_lock_) =
       true;
-  std::optional<webrtc::VideoTrackSourceConstraints> last_constraints_
+  std::optional<VideoTrackSourceConstraints> last_constraints_
       RTC_GUARDED_BY(sinks_and_wants_lock_);
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::VideoBroadcaster;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_VIDEO_BROADCASTER_H_

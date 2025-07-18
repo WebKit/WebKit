@@ -28,11 +28,14 @@
 #include "ScrollSnapOffsetsInfo.h"
 
 #include "ElementChildIteratorInlines.h"
+#include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Length.h"
 #include "Logging.h"
 #include "RenderBox.h"
 #include "RenderStyleInlines.h"
+#include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "ScrollableArea.h"
 #include "StyleScrollSnapPoints.h"
@@ -287,7 +290,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         return;
     }
 
-    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, ElementIdentifier snapTargetID, bool isFocused, size_t snapAreaIndices)
+    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, NodeIdentifier snapTargetID, bool isFocused, size_t snapAreaIndices)
     {
         if (!offsets.isValidKey(newOffset))
             return;
@@ -307,7 +310,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
     Vector<LayoutRect> snapAreas;
-    Vector<ElementIdentifier> snapAreasIDs;
+    Vector<NodeIdentifier> snapAreasIDs;
 
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
     maxScrollOffset.clampNegativeToZero();
@@ -345,7 +348,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
             scrollSnapArea.moveBy(scrollPosition);
 
         scrollSnapArea = computeScrollSnapAreaRect(child.style().scrollMarginBox(), scrollSnapArea);
-        LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea << " scroll snap id: " << child.element()->identifier() << " element: " << *child.element());
+        LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea << " scroll snap id: " << child.element()->nodeIdentifier() << " element: " << *child.element());
         auto alignment = child.style().scrollSnapAlign();
         auto stop = child.style().scrollSnapStop();
 
@@ -375,7 +378,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         snapAreas.append(scrollSnapAreaAsOffsets);
         
         auto isFocused = child.element() ? focusedElement == child.element() : false;
-        auto identifier = child.element()->identifier();
+        auto identifier = child.element()->nodeIdentifier();
         snapAreasIDs.append(identifier);
 
         if (snapsHorizontally) {

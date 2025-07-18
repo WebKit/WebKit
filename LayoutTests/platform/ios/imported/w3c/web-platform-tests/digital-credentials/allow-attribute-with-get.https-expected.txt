@@ -1,0 +1,14 @@
+
+PASS With Get: Policy to use: null, is cross-origin: false, is allowed by policy: true
+PASS With Get: Policy to use: null, is cross-origin: true, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get, is cross-origin: false, is allowed by policy: true
+PASS With Get: Policy to use: digital-credentials-get, is cross-origin: true, is allowed by policy: true
+PASS With Get: Policy to use: digital-credentials-get *, is cross-origin: false, is allowed by policy: true
+PASS With Get: Policy to use: digital-credentials-get *, is cross-origin: true, is allowed by policy: true
+PASS With Get: Policy to use: digital-credentials-get 'none', is cross-origin: false, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get 'none', is cross-origin: true, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get 'self', is cross-origin: false, is allowed by policy: true
+PASS With Get: Policy to use: digital-credentials-get 'self', is cross-origin: true, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get https://127.0.0.1:9443, is cross-origin: false, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get https://127.0.0.1:9443, is cross-origin: true, is allowed by policy: true
+

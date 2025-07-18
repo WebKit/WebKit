@@ -11,12 +11,14 @@
 
 #include <stdint.h>
 
+#include <bitset>
+#include <cstddef>
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/chain_diff_calculator.h"
 #include "modules/video_coding/frame_dependencies_calculator.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
@@ -65,7 +67,7 @@ void ScalabilityStructureWrapper::GenerateFrames(
 }
 
 bool ScalabilityStructureWrapper::FrameReferencesAreValid(
-    rtc::ArrayView<const GenericFrameInfo> frames) const {
+    ArrayView<const GenericFrameInfo> frames) const {
   bool valid = true;
   // VP9 and AV1 supports up to 8 buffers. Expect no more buffers are not used.
   std::bitset<8> buffer_contains_frame;

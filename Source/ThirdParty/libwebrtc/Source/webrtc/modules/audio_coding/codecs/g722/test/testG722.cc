@@ -21,6 +21,8 @@
 
 /* Runtime statistics */
 #include <time.h>
+
+#include <cstdint>
 #define CLOCKS_PER_SEC_G722 100000
 
 // Forward declaration
@@ -85,15 +87,15 @@ int main(int argc, char* argv[]) {
   sscanf(argv[3], "%s", outbit);
   sscanf(argv[4], "%s", outname);
 
-  if ((inp = fopen(inname, "rb")) == NULL) {
+  if ((inp = fopen(inname, "rb")) == nullptr) {
     printf("  G.722: Cannot read file %s.\n", inname);
     exit(1);
   }
-  if ((outbitp = fopen(outbit, "wb")) == NULL) {
+  if ((outbitp = fopen(outbit, "wb")) == nullptr) {
     printf("  G.722: Cannot write file %s.\n", outbit);
     exit(1);
   }
-  if ((outp = fopen(outname, "wb")) == NULL) {
+  if ((outp = fopen(outname, "wb")) == nullptr) {
     printf("  G.722: Cannot write file %s.\n", outname);
     exit(1);
   }

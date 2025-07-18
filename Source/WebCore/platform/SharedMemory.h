@@ -73,7 +73,7 @@ public:
 #else
     explicit SharedMemoryHandle(const SharedMemoryHandle&) = default;
 #endif
-    WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
+    WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, uint64_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
 
@@ -93,7 +93,7 @@ private:
     friend class SharedMemory;
 
     Type m_handle;
-    size_t m_size { 0 };
+    uint64_t m_size { 0 };
 };
 
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {

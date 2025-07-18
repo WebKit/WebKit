@@ -46,10 +46,15 @@ public:
 
 private:
     static NavigatorClipboard* from(Navigator&);
-    static ASCIILiteral supplementName();
+    static ASCIILiteral supplementName() { return "NavigatorClipboard"_s; }
+    bool isNavigatorClipboard() const final { return true; }
 
-    RefPtr<Clipboard> m_clipboard;
+    const RefPtr<Clipboard> m_clipboard;
     const CheckedRef<Navigator> m_navigator;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NavigatorClipboard)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isNavigatorClipboard(); }
+SPECIALIZE_TYPE_TRAITS_END()

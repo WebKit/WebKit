@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// https://wicg.github.io/ViewportAPI/spec.html
+// https://drafts.csswg.org/cssom-view/#the-visualviewport-interface
 [
     EnabledBySetting=VisualViewportAPIEnabled,
     GenerateIsReachable=ReachableFromDOMWindow,
@@ -42,4 +42,5 @@
 
     attribute EventHandler onresize;
     attribute EventHandler onscroll;
+    [EnabledBySetting=ScrollendEventEnabled] attribute EventHandler onscrollend;
 };

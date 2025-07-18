@@ -1389,6 +1389,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKWebsiteDataStoreResetResourceMonitorThrottler(websiteDataStore(), nullptr, nullptr);
 
+    WKURLRequestSetDefaultTimeoutInterval((60_s).value());
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.
@@ -3454,7 +3456,7 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     }
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
-        RunLoop::protectedMain()->dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
     else
         decisionFunction();
 }
@@ -3497,7 +3499,7 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
     }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
-        RunLoop::protectedMain()->dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
     else
         decisionFunction();
 }

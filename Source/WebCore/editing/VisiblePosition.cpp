@@ -41,6 +41,7 @@
 #include "InlineRunAndOffset.h"
 #include "LineSelection.h"
 #include "Logging.h"
+#include "PositionInlines.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderObjectInlines.h"
@@ -705,7 +706,8 @@ void VisiblePosition::debugPosition(ASCIILiteral msg) const
 
 String VisiblePosition::debugDescription() const
 {
-    return m_deepPosition.debugDescription();
+    // Only log affinity when it's the non-default value of upstream.
+    return makeString(m_deepPosition.debugDescription(), ", affinity: "_s, m_affinity == Affinity::Upstream ? "upstream"_s : ""_s);
 }
 
 void VisiblePosition::showTreeForThis() const

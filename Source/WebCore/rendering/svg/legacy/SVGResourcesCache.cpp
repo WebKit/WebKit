@@ -22,6 +22,7 @@
 
 #include "ElementInlines.h"
 #include "LegacyRenderSVGResourceContainer.h"
+#include "RenderElementInlines.h"
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCycleSolver.h"

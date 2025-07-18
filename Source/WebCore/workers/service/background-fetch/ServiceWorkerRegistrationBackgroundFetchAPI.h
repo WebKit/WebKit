@@ -50,7 +50,7 @@ private:
     static ASCIILiteral supplementName();
 
     ServiceWorkerRegistration& m_serviceWorkerRegistration;
-    RefPtr<BackgroundFetchManager> m_backgroundFetchManager;
+    const RefPtr<BackgroundFetchManager> m_backgroundFetchManager;
 };
 
 }

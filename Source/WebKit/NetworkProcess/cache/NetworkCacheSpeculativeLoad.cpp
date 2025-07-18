@@ -55,7 +55,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
 
     CheckedPtr networkSession = m_cache->networkProcess().networkSession(m_cache->sessionID());
     if (!networkSession) {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(m_completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(m_completionHandler)]() mutable {
             completionHandler(nullptr);
         });
         return;

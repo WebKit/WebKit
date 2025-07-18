@@ -29,8 +29,7 @@ typedef union _XEvent XEvent;
 namespace webrtc {
 
 // A ref-counted object to store XDisplay connection.
-class RTC_EXPORT SharedXDisplay
-    : public rtc::RefCountedNonVirtual<SharedXDisplay> {
+class RTC_EXPORT SharedXDisplay : public RefCountedNonVirtual<SharedXDisplay> {
  public:
   class XEventHandler {
    public:
@@ -43,12 +42,11 @@ class RTC_EXPORT SharedXDisplay
   // Creates a new X11 Display for the `display_name`. NULL is returned if X11
   // connection failed. Equivalent to CreateDefault() when `display_name` is
   // empty.
-  static rtc::scoped_refptr<SharedXDisplay> Create(
-      absl::string_view display_name);
+  static scoped_refptr<SharedXDisplay> Create(absl::string_view display_name);
 
   // Creates X11 Display connection for the default display (e.g. specified in
   // DISPLAY). NULL is returned if X11 connection failed.
-  static rtc::scoped_refptr<SharedXDisplay> CreateDefault();
+  static scoped_refptr<SharedXDisplay> CreateDefault();
 
   Display* display() { return display_; }
 

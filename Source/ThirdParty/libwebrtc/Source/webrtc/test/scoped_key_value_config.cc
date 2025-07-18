@@ -115,7 +115,7 @@ std::string ScopedKeyValueConfig::LookupRecurse(absl::string_view key) const {
 
   // When at the root, check the global string so that test programs using
   // a mix between ScopedKeyValueConfig and the global string continue to work
-  return webrtc::field_trial::FindFullName(std::string(key));
+  return field_trial::FindFullName(std::string(key));
 }
 
 }  // namespace test

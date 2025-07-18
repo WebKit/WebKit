@@ -20,6 +20,7 @@
 #include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/memory/aligned_malloc.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 #include "third_party/libyuv/include/libyuv/rotate.h"
@@ -33,9 +34,14 @@ namespace webrtc {
 
 namespace {
 
-int I210DataSize(int height, int stride_y, int stride_u, int stride_v) {
-  return kBytesPerPixel *
-         (stride_y * height + stride_u * height + stride_v * height);
+int I210DataSize(int width,
+                 int height,
+                 int stride_y,
+                 int stride_u,
+                 int stride_v) {
+  CheckValidDimensions(width, height, stride_y, stride_u, stride_v);
+  int64_t h = height, y = stride_y, u = stride_u, v = stride_v;
+  return checked_cast<int>(kBytesPerPixel * (y * h + u * h + v * h));
 }
 
 }  // namespace
@@ -50,12 +56,9 @@ I210Buffer::I210Buffer(int width,
       stride_y_(stride_y),
       stride_u_(stride_u),
       stride_v_(stride_v),
-      data_(static_cast<uint16_t*>(
-          AlignedMalloc(I210DataSize(height, stride_y, stride_u, stride_v),
-                        kBufferAlignment))) {
-  RTC_DCHECK_GT(width, 0);
-  RTC_DCHECK_GT(height, 0);
-  RTC_DCHECK_GE(stride_y, width);
+      data_(static_cast<uint16_t*>(AlignedMalloc(
+          I210DataSize(width, height, stride_y, stride_u, stride_v),
+          kBufferAlignment))) {
   RTC_DCHECK_GE(stride_u, (width + 1) / 2);
   RTC_DCHECK_GE(stride_v, (width + 1) / 2);
 }
@@ -63,17 +66,16 @@ I210Buffer::I210Buffer(int width,
 I210Buffer::~I210Buffer() {}
 
 // static
-rtc::scoped_refptr<I210Buffer> I210Buffer::Create(int width, int height) {
-  return rtc::make_ref_counted<I210Buffer>(width, height, width,
-                                           (width + 1) / 2, (width + 1) / 2);
+scoped_refptr<I210Buffer> I210Buffer::Create(int width, int height) {
+  return make_ref_counted<I210Buffer>(width, height, width, (width + 1) / 2,
+                                      (width + 1) / 2);
 }
 
 // static
-rtc::scoped_refptr<I210Buffer> I210Buffer::Copy(
-    const I210BufferInterface& source) {
+scoped_refptr<I210Buffer> I210Buffer::Copy(const I210BufferInterface& source) {
   const int width = source.width();
   const int height = source.height();
-  rtc::scoped_refptr<I210Buffer> buffer = Create(width, height);
+  scoped_refptr<I210Buffer> buffer = Create(width, height);
   RTC_CHECK_EQ(
       0, libyuv::I210Copy(
              source.DataY(), source.StrideY(), source.DataU(), source.StrideU(),
@@ -84,12 +86,11 @@ rtc::scoped_refptr<I210Buffer> I210Buffer::Copy(
 }
 
 // static
-rtc::scoped_refptr<I210Buffer> I210Buffer::Copy(
-    const I420BufferInterface& source) {
+scoped_refptr<I210Buffer> I210Buffer::Copy(const I420BufferInterface& source) {
   const int width = source.width();
   const int height = source.height();
   auto i422buffer = I422Buffer::Copy(source);
-  rtc::scoped_refptr<I210Buffer> buffer = Create(width, height);
+  scoped_refptr<I210Buffer> buffer = Create(width, height);
   RTC_CHECK_EQ(0, libyuv::I422ToI210(i422buffer->DataY(), i422buffer->StrideY(),
                                      i422buffer->DataU(), i422buffer->StrideU(),
                                      i422buffer->DataV(), i422buffer->StrideV(),
@@ -101,21 +102,19 @@ rtc::scoped_refptr<I210Buffer> I210Buffer::Copy(
 }
 
 // static
-rtc::scoped_refptr<I210Buffer> I210Buffer::Rotate(
-    const I210BufferInterface& src,
-    VideoRotation rotation) {
+scoped_refptr<I210Buffer> I210Buffer::Rotate(const I210BufferInterface& src,
+                                             VideoRotation rotation) {
   RTC_CHECK(src.DataY());
   RTC_CHECK(src.DataU());
   RTC_CHECK(src.DataV());
 
   int rotated_width = src.width();
   int rotated_height = src.height();
-  if (rotation == webrtc::kVideoRotation_90 ||
-      rotation == webrtc::kVideoRotation_270) {
+  if (rotation == kVideoRotation_90 || rotation == kVideoRotation_270) {
     std::swap(rotated_width, rotated_height);
   }
 
-  rtc::scoped_refptr<webrtc::I210Buffer> buffer =
+  scoped_refptr<I210Buffer> buffer =
       I210Buffer::Create(rotated_width, rotated_height);
 
   RTC_CHECK_EQ(0,
@@ -129,9 +128,8 @@ rtc::scoped_refptr<I210Buffer> I210Buffer::Rotate(
   return buffer;
 }
 
-rtc::scoped_refptr<I420BufferInterface> I210Buffer::ToI420() {
-  rtc::scoped_refptr<I420Buffer> i420_buffer =
-      I420Buffer::Create(width(), height());
+scoped_refptr<I420BufferInterface> I210Buffer::ToI420() {
+  scoped_refptr<I420Buffer> i420_buffer = I420Buffer::Create(width(), height());
   libyuv::I210ToI420(DataY(), StrideY(), DataU(), StrideU(), DataV(), StrideV(),
                      i420_buffer->MutableDataY(), i420_buffer->StrideY(),
                      i420_buffer->MutableDataU(), i420_buffer->StrideU(),

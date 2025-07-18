@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class FEFlood final : public FilterEffect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEFlood);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEFlood);
 public:
     WEBCORE_EXPORT static Ref<FEFlood> create(const Color& floodColor, float floodOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());

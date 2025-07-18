@@ -19,7 +19,7 @@
 #error Only for Windows
 #endif
 
-namespace rtc {
+namespace webrtc {
 
 class Win32Test : public ::testing::Test {
  public:
@@ -86,4 +86,4 @@ TEST_F(Win32Test, InvalidIPv6AddressParsing) {
   EXPECT_FALSE(IPFromString("1:2:3:4:5:6:7", &ipv6));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

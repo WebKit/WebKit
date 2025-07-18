@@ -2223,7 +2223,7 @@ CodeBlock* CodeBlock::replacement()
     const ClassInfo* classInfo = this->classInfo();
 
     if (classInfo == FunctionCodeBlock::info())
-        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(isConstructor() ? CodeForConstruct : CodeForCall);
+        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(isConstructor() ? CodeSpecializationKind::CodeForConstruct : CodeSpecializationKind::CodeForCall);
 
     if (classInfo == EvalCodeBlock::info())
         return jsCast<EvalExecutable*>(ownerExecutable())->codeBlock();
@@ -2749,7 +2749,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     
     CodeBlock* replacement = this->replacement();
     bool hasReplacement = (replacement && replacement != this);
-    if ((result == CompilationSuccessful) != hasReplacement) {
+    if ((result == CompilationResult::CompilationSuccessful) != hasReplacement) {
         dataLog(*this, ": we have result = ", result, " but ");
         if (replacement == this)
             dataLog("we are our own replacement.\n");
@@ -2759,14 +2759,14 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     }
     
     switch (result) {
-    case CompilationSuccessful:
+    case CompilationResult::CompilationSuccessful:
         RELEASE_ASSERT(replacement && JSC::JITCode::isOptimizingJIT(replacement->jitType()));
         optimizeNextInvocation();
         return;
-    case CompilationFailed:
+    case CompilationResult::CompilationFailed:
         dontOptimizeAnytimeSoon();
         return;
-    case CompilationDeferred:
+    case CompilationResult::CompilationDeferred:
         // We'd like to do dontOptimizeAnytimeSoon() but we cannot because
         // forceOptimizationSlowPathConcurrently() is inherently racy. It won't
         // necessarily guarantee anything. So, we make sure that even if that
@@ -2774,7 +2774,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
         // that we have optimized code ready.
         optimizeAfterWarmUp();
         return;
-    case CompilationInvalidated:
+    case CompilationResult::CompilationInvalidated:
         // Retry with exponential backoff.
         countReoptimization();
         optimizeAfterWarmUp();

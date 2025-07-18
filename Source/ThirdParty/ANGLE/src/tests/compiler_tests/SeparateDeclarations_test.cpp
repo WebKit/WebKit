@@ -355,10 +355,10 @@ void main(){
     const char kExpected[] = R"(struct sbbf {
   highp vec4 _ue;
 };
-sbbf _ug;
 struct _usbbf {
   highp vec4 _uf;
 };
+sbbf _ug;
 void main(){
   _usbbf _us;
   (gl_FragColor = (_ug._ue + _us._uf));

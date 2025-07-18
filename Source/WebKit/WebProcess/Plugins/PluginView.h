@@ -72,6 +72,7 @@ public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
     WebCore::LocalFrame* frame() const;
+    RefPtr<WebCore::LocalFrame> protectedFrame() const;
 
     bool isBeingDestroyed() const;
 
@@ -127,7 +128,7 @@ public:
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
-    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&);
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect& clipRect);
     RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 

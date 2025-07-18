@@ -115,7 +115,9 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, MultiCacheQueryOptions
 {
     retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise->reject(WTFMove(*exception));
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception.value())](auto&) mutable {
+                promise->reject(WTFMove(exception));
+            });
             return;
         }
 
@@ -137,7 +139,9 @@ void DOMCacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise.reject(WTFMove(exception.value()));
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception.value())](auto&) mutable {
+                promise.reject(WTFMove(exception));
+            });
             return;
         }
         promise.resolve(m_caches.findIf([&](auto& item) { return item->name() == name; }) != notFound);
@@ -225,7 +229,9 @@ void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<D
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise.reject(WTFMove(*exception));
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception.value())](auto&) mutable {
+                promise.reject(WTFMove(exception));
+            });
             return;
         }
         doOpen(name, WTFMove(promise));
@@ -269,7 +275,9 @@ void DOMCacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise.reject(WTFMove(*exception));
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception.value())](auto&) mutable {
+                promise.reject(WTFMove(exception));
+            });
             return;
         }
         doRemove(name, WTFMove(promise));
@@ -296,7 +304,9 @@ void DOMCacheStorage::keys(KeysPromise&& promise)
 {
     retrieveCaches([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise.reject(WTFMove(exception.value()));
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception.value())](auto&) mutable {
+                promise.reject(WTFMove(exception));
+            });
             return;
         }
 

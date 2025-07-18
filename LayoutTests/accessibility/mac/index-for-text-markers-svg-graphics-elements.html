@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<svg>
+    <path d="M0 0" fill="#252526"/>
+    <path d="M1000 1000" fill="#252526"/>
+    <path d="M50 50" fill="#252526"/>
+    <path d="M10 10" fill="#252526"/>
+    <path d="M42 42" fill="#252526"/>
+    <path d="M9999 9999" fill="#252526"/>
+
+    <clipPath id="clip">
+        <circle cx="40" cy="35" r="35" />
+    </clipPath>
+
+    <path id="foo-path" d="M10,30 A20,20,0,0,1,50,30 Z" />
+    <use clip-path="url(#clip)" href="#foo-path" fill="red" />
+
+    <symbol id="dot" width="10" height="15" viewBox="0 0 3 2">
+        <circle cx="2" cy="3" r="4" />
+    </symbol>
+    <use href="#dot" x="5" y="5" opacity="1.0" />
+
+    <circle id="circle" cx="5" cy="5" r="4" stroke="blue" />
+    <use href="#circle" x="10" fill="blue" />
+
+    <image href="../resources/cake.png" height="200" width="200" />
+
+    <text>This text should be counted</text>
+</svg>
+
+<script>
+var output = "This test ensures we don't consider SVG graphics elements something that can be walked over in a next-text-marker traversal, nor something that is counted in the AXIndexForTextMarker-style APIs.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var textMarker = webArea.startTextMarker;
+    for (let i = 0; i < 29; i++) {
+        output += `Text marker ${i} had index ${webArea.indexForTextMarker(textMarker)}\n`;
+        textMarker = webArea.nextTextMarker(textMarker);
+    }
+    debug(output);
+}
+</script>
+</body>
+</html>
+

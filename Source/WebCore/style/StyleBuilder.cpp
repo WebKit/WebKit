@@ -262,11 +262,11 @@ void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCasc
 
     SetForScope levelScope(m_state.m_currentProperty, &property);
     SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, SelectorChecker::MatchDefault);
-    applyCustomProperty(name, WTFMove(*resolvedValue), SelectorChecker::MatchDefault, property.cascadeLevel);
+    applyCustomProperty(name, WTFMove(*resolvedValue));
 
     AtomString takenName = m_state.m_inProgressCustomProperties.take(name);
     m_state.m_appliedCustomProperties.add(WTFMove(takenName));
-    m_state.m_inCycleCustomProperties.formUnion(savedInCycleProperties);
+    m_state.m_inCycleCustomProperties.addAll(WTFMove(savedInCycleProperties));
 }
 
 inline void Builder::applyCascadeProperty(const PropertyCascade::Property& property)
@@ -291,15 +291,44 @@ inline void Builder::applyCascadeProperty(const PropertyCascade::Property& prope
     m_state.m_linkMatch = SelectorChecker::MatchDefault;
 }
 
-void Builder::applyRollbackCascadeProperty(const PropertyCascade::Property& property, SelectorChecker::LinkMatchMask linkMatchMask)
+bool Builder::applyRollbackCascadeProperty(const PropertyCascade& rollbackCascade, CSSPropertyID propertyID, SelectorChecker::LinkMatchMask linkMatchMask)
 {
-    auto* value = property.cssValue[linkMatchMask];
-    if (!value)
-        return;
+    ASSERT(propertyID != CSSPropertyCustom);
 
-    SetForScope levelScope(m_state.m_currentProperty, &property);
+    auto* rollbackProperty = [&]() -> const PropertyCascade::Property* {
+        if (propertyID < firstLogicalGroupProperty) {
+            if (rollbackCascade.hasNormalProperty(propertyID))
+                return &rollbackCascade.normalProperty(propertyID);
+            return nullptr;
+        }
+        return rollbackCascade.lastPropertyResolvingLogicalPropertyPair(propertyID, m_state.style().writingMode());
+    }();
 
-    applyProperty(property.id, *value, linkMatchMask, property.cascadeLevel);
+    if (!rollbackProperty)
+        return false;
+
+    if (auto* value = rollbackProperty->cssValue[linkMatchMask]) {
+        SetForScope levelScope(m_state.m_currentProperty, rollbackProperty);
+        applyProperty(propertyID, *value, linkMatchMask, rollbackProperty->cascadeLevel);
+    }
+    return true;
+}
+
+bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollbackCascade, const AtomString& name)
+{
+    auto iterator = rollbackCascade.customProperties().find(name);
+    if (iterator == rollbackCascade.customProperties().end())
+        return false;
+
+    auto& rollbackProperty = iterator->value;
+    if (auto* value = rollbackProperty.cssValue[SelectorChecker::MatchDefault]) {
+        Ref customPropertyValue = downcast<CSSCustomPropertyValue>(*value);
+
+        SetForScope levelScope(m_state.m_currentProperty, &rollbackProperty);
+        auto resolvedValue = resolveCustomPropertyValue(customPropertyValue);
+        applyCustomProperty(name, WTFMove(*resolvedValue));
+    }
+    return true;
 }
 
 void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask, CascadeLevel cascadeLevel)
@@ -344,16 +373,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         if (rollbackCascade) {
             // With the rollback cascade built, we need to obtain the property and apply it. If the property is
             // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
-            if (id < firstLogicalGroupProperty) {
-                if (rollbackCascade->hasNormalProperty(id)) {
-                    auto& property = rollbackCascade->normalProperty(id);
-                    applyRollbackCascadeProperty(property, linkMatchMask);
-                    return;
-                }
-            } else if (auto* property = rollbackCascade->lastPropertyResolvingLogicalPropertyPair(id, style.writingMode())) {
-                applyRollbackCascadeProperty(*property, linkMatchMask);
+            if (applyRollbackCascadeProperty(*rollbackCascade, id, linkMatchMask))
                 return;
-            }
         }
     }
 
@@ -409,7 +430,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 }
 
-void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>&& parsedCustomProperty, SelectorChecker::LinkMatchMask linkMatchMask, CascadeLevel)
+void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>&& parsedCustomProperty)
 {
     auto& style = m_state.style();
 
@@ -488,13 +509,8 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
                 if (rollbackCascade) {
                     // With the rollback cascade built, we need to obtain the property and apply it. If the property is
                     // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
-                    if (registeredCustomProperty && registeredCustomProperty->inherits) {
-                        auto iterator = rollbackCascade->customProperties().find(name);
-                        if (iterator != rollbackCascade->customProperties().end()) {
-                            applyRollbackCascadeProperty(iterator->value, linkMatchMask);
-                            return;
-                        }
-                    }
+                    if (applyRollbackCascadeCustomProperty(*rollbackCascade, name))
+                        return;
                 }
             }
 
@@ -523,7 +539,6 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
                 // Limit the properties that can be applied to only the ones honored by :visited.
                 return;
             }
-
             applyValue(WTFMove(resolved));
         }
     );
@@ -643,8 +658,13 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> Builder
     if (!resolvedData)
         return { };
 
-    if (!registered)
+    if (!registered) {
+        // CSS-wide keywords are allowed in var() fallbacks of unregistered properties.
+        if (auto keyword = CSSPropertyParser::parseCSSWideKeyword(resolvedData->tokens()))
+            return { { *keyword } };
+
         return { { CustomProperty::createForVariableData(name, *resolvedData) } };
+    }
 
     auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(registered->syntax, resolvedData->tokens(), resolvedData->context());
 

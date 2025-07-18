@@ -1,0 +1,262 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SLComposeViewControllerResultCancelled"},
+      {"access": "public", "name": "SLComposeViewControllerResultDone"}
+     ],
+     "name": "SLComposeViewControllerResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SLRequestMethodGET"},
+      {"access": "public", "name": "SLRequestMethodPOST"},
+      {"access": "public", "name": "SLRequestMethodDELETE"},
+      {"access": "public", "name": "SLRequestMethodPUT"}
+     ],
+     "name": "SLRequestMethod"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeFacebook"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeLinkedIn"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeSinaWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeTencentWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeTwitter"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "presentationAnimationDidFinish"},
+      {"access": "public", "name": "didSelectPost"},
+      {"access": "public", "name": "didSelectCancel"},
+      {"access": "public", "name": "cancel"},
+      {"access": "public", "name": "isContentValid"},
+      {"access": "public", "name": "validateContent"},
+      {"access": "public", "name": "configurationItems"},
+      {"access": "public", "name": "reloadConfigurationItems"},
+      {"access": "public", "name": "pushConfigurationViewController:"},
+      {"access": "public", "name": "popConfigurationViewController"},
+      {"access": "public", "name": "loadPreviewView"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SLComposeServiceViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textView", "name": "textView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentText", "name": "contentText"},
+      {"access": "public", "getter": "placeholder", "name": "placeholder", "setter": "setPlaceholder:"},
+      {"access": "public", "getter": "charactersRemaining", "name": "charactersRemaining", "setter": "setCharactersRemaining:"},
+      {"access": "public", "getter": "autoCompletionViewController", "name": "autoCompletionViewController", "setter": "setAutoCompletionViewController:"}
+     ],
+     "protocols": [
+      "UITextViewDelegate"
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SLComposeSheetConfigurationItem",
+     "properties": [
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "valuePending", "name": "valuePending", "setter": "setValuePending:"},
+      {"access": "public", "getter": "tapHandler", "name": "tapHandler", "setter": "setTapHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAvailableForServiceType:"},
+      {"access": "public", "name": "composeViewControllerForServiceType:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setInitialText:"},
+      {"access": "public", "name": "addImage:"},
+      {"access": "public", "name": "removeAllImages"},
+      {"access": "public", "name": "addURL:"},
+      {"access": "public", "name": "removeAllURLs"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "SLComposeViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"},
+      {"access": "public", "getter": "completionHandler", "name": "completionHandler", "setter": "setCompletionHandler:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "requestForServiceType:requestMethod:URL:parameters:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addMultipartData:withName:type:filename:"},
+      {"access": "public", "name": "preparedURLRequest"},
+      {"access": "public", "name": "performRequestWithHandler:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "SLRequest",
+     "properties": [
+      {"access": "public", "getter": "account", "name": "account", "setter": "setAccount:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requestMethod", "name": "requestMethod"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parameters", "name": "parameters"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SLComposeSheetConfigurationItemTapHandler"},
+    {"access": "public", "name": "SLComposeViewControllerCompletionHandler"},
+    {"access": "public", "name": "SLComposeViewControllerResult"},
+    {"access": "public", "name": "SLRequestHandler"},
+    {"access": "public", "name": "SLRequestMethod"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SLComposeViewControllerResultCancelled"},
+      {"access": "public", "name": "SLComposeViewControllerResultDone"}
+     ],
+     "name": "SLComposeViewControllerResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SLRequestMethodGET"},
+      {"access": "public", "name": "SLRequestMethodPOST"},
+      {"access": "public", "name": "SLRequestMethodDELETE"},
+      {"access": "public", "name": "SLRequestMethodPUT"}
+     ],
+     "name": "SLRequestMethod"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeFacebook"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeLinkedIn"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeSinaWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeTencentWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_SLServiceTypeTwitter"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "presentationAnimationDidFinish"},
+      {"access": "public", "name": "didSelectPost"},
+      {"access": "public", "name": "didSelectCancel"},
+      {"access": "public", "name": "cancel"},
+      {"access": "public", "name": "isContentValid"},
+      {"access": "public", "name": "validateContent"},
+      {"access": "public", "name": "configurationItems"},
+      {"access": "public", "name": "reloadConfigurationItems"},
+      {"access": "public", "name": "pushConfigurationViewController:"},
+      {"access": "public", "name": "popConfigurationViewController"},
+      {"access": "public", "name": "loadPreviewView"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SLComposeServiceViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textView", "name": "textView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentText", "name": "contentText"},
+      {"access": "public", "getter": "placeholder", "name": "placeholder", "setter": "setPlaceholder:"},
+      {"access": "public", "getter": "charactersRemaining", "name": "charactersRemaining", "setter": "setCharactersRemaining:"},
+      {"access": "public", "getter": "autoCompletionViewController", "name": "autoCompletionViewController", "setter": "setAutoCompletionViewController:"}
+     ],
+     "protocols": [
+      "UITextViewDelegate"
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "SLComposeSheetConfigurationItem",
+     "properties": [
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "valuePending", "name": "valuePending", "setter": "setValuePending:"},
+      {"access": "public", "getter": "tapHandler", "name": "tapHandler", "setter": "setTapHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAvailableForServiceType:"},
+      {"access": "public", "name": "composeViewControllerForServiceType:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setInitialText:"},
+      {"access": "public", "name": "addImage:"},
+      {"access": "public", "name": "removeAllImages"},
+      {"access": "public", "name": "addURL:"},
+      {"access": "public", "name": "removeAllURLs"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "SLComposeViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"},
+      {"access": "public", "getter": "completionHandler", "name": "completionHandler", "setter": "setCompletionHandler:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "requestForServiceType:requestMethod:URL:parameters:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addMultipartData:withName:type:filename:"},
+      {"access": "public", "name": "preparedURLRequest"},
+      {"access": "public", "name": "performRequestWithHandler:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "SLRequest",
+     "properties": [
+      {"access": "public", "getter": "account", "name": "account", "setter": "setAccount:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requestMethod", "name": "requestMethod"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parameters", "name": "parameters"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "SLComposeSheetConfigurationItemTapHandler"},
+    {"access": "public", "name": "SLComposeViewControllerCompletionHandler"},
+    {"access": "public", "name": "SLComposeViewControllerResult"},
+    {"access": "public", "name": "SLRequestHandler"},
+    {"access": "public", "name": "SLRequestMethod"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

@@ -30,42 +30,41 @@ namespace test {
 namespace {
 
 #if WEBRTC_ENABLE_PROTOBUF
-webrtc::test_metrics::Unit ToProtoUnit(Unit unit) {
+test_metrics::Unit ToProtoUnit(Unit unit) {
   switch (unit) {
     case Unit::kMilliseconds:
-      return webrtc::test_metrics::Unit::MILLISECONDS;
+      return test_metrics::Unit::MILLISECONDS;
     case Unit::kPercent:
-      return webrtc::test_metrics::Unit::PERCENT;
+      return test_metrics::Unit::PERCENT;
     case Unit::kBytes:
-      return webrtc::test_metrics::Unit::BYTES;
+      return test_metrics::Unit::BYTES;
     case Unit::kKilobitsPerSecond:
-      return webrtc::test_metrics::Unit::KILOBITS_PER_SECOND;
+      return test_metrics::Unit::KILOBITS_PER_SECOND;
     case Unit::kHertz:
-      return webrtc::test_metrics::Unit::HERTZ;
+      return test_metrics::Unit::HERTZ;
     case Unit::kUnitless:
-      return webrtc::test_metrics::Unit::UNITLESS;
+      return test_metrics::Unit::UNITLESS;
     case Unit::kCount:
-      return webrtc::test_metrics::Unit::COUNT;
+      return test_metrics::Unit::COUNT;
   }
 }
 
-webrtc::test_metrics::ImprovementDirection ToProtoImprovementDirection(
+test_metrics::ImprovementDirection ToProtoImprovementDirection(
     ImprovementDirection direction) {
   switch (direction) {
     case ImprovementDirection::kBiggerIsBetter:
-      return webrtc::test_metrics::ImprovementDirection::BIGGER_IS_BETTER;
+      return test_metrics::ImprovementDirection::BIGGER_IS_BETTER;
     case ImprovementDirection::kNeitherIsBetter:
-      return webrtc::test_metrics::ImprovementDirection::NEITHER_IS_BETTER;
+      return test_metrics::ImprovementDirection::NEITHER_IS_BETTER;
     case ImprovementDirection::kSmallerIsBetter:
-      return webrtc::test_metrics::ImprovementDirection::SMALLER_IS_BETTER;
+      return test_metrics::ImprovementDirection::SMALLER_IS_BETTER;
   }
 }
 
-void SetTimeSeries(
-    const Metric::TimeSeries& time_series,
-    webrtc::test_metrics::Metric::TimeSeries* proto_time_series) {
+void SetTimeSeries(const Metric::TimeSeries& time_series,
+                   test_metrics::Metric::TimeSeries* proto_time_series) {
   for (const Metric::TimeSeries::Sample& sample : time_series.samples) {
-    webrtc::test_metrics::Metric::TimeSeries::Sample* proto_sample =
+    test_metrics::Metric::TimeSeries::Sample* proto_sample =
         proto_time_series->add_samples();
     proto_sample->set_value(sample.value);
     proto_sample->set_timestamp_us(sample.timestamp.us());
@@ -76,7 +75,7 @@ void SetTimeSeries(
 }
 
 void SetStats(const Metric::Stats& stats,
-              webrtc::test_metrics::Metric::Stats* proto_stats) {
+              test_metrics::Metric::Stats* proto_stats) {
   if (stats.mean.has_value()) {
     proto_stats->set_mean(*stats.mean);
   }
@@ -92,7 +91,7 @@ void SetStats(const Metric::Stats& stats,
 }
 
 bool WriteMetricsToFile(const std::string& path,
-                        const webrtc::test_metrics::MetricsSet& metrics_set) {
+                        const test_metrics::MetricsSet& metrics_set) {
   std::string data;
   bool ok = metrics_set.SerializeToString(&data);
   if (!ok) {
@@ -102,7 +101,7 @@ bool WriteMetricsToFile(const std::string& path,
 
   CreateDir(DirName(path));
   FILE* output = fopen(path.c_str(), "wb");
-  if (output == NULL) {
+  if (output == nullptr) {
     RTC_LOG(LS_ERROR) << "Failed to write to " << path;
     return false;
   }
@@ -133,14 +132,14 @@ MetricsSetProtoFileExporter::Options::Options(
     std::map<std::string, std::string> metadata)
     : export_file_path(export_file_path), metadata(std::move(metadata)) {}
 
-bool MetricsSetProtoFileExporter::Export(rtc::ArrayView<const Metric> metrics) {
+bool MetricsSetProtoFileExporter::Export(ArrayView<const Metric> metrics) {
 #if WEBRTC_ENABLE_PROTOBUF
-  webrtc::test_metrics::MetricsSet metrics_set;
+  test_metrics::MetricsSet metrics_set;
   for (const auto& [key, value] : options_.metadata) {
     metrics_set.mutable_metadata()->insert({key, value});
   }
   for (const Metric& metric : metrics) {
-    webrtc::test_metrics::Metric* metric_proto = metrics_set.add_metrics();
+    test_metrics::Metric* metric_proto = metrics_set.add_metrics();
     metric_proto->set_name(metric.name);
     metric_proto->set_unit(ToProtoUnit(metric.unit));
     metric_proto->set_improvement_direction(

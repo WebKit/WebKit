@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
 
+#include <cstddef>
+#include <cstdint>
+
 #include "api/rtp_headers.h"
 
 namespace webrtc {

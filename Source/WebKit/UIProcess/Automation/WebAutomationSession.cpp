@@ -147,11 +147,11 @@ WebAutomationSession::WebAutomationSession()
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
-    , m_domainNotifier(makeUnique<AutomationFrontendDispatcher>(m_frontendRouter))
+    , m_domainNotifier(makeUniqueRef<AutomationFrontendDispatcher>(m_frontendRouter))
 #if ENABLE(WEBDRIVER_BIDI)
-    , m_bidiProcessor(makeUnique<WebDriverBidiProcessor>(*this))
+    , m_bidiProcessor(makeUniqueRef<WebDriverBidiProcessor>(*this))
 #endif
-    , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
+    , m_loadTimer(RunLoop::mainSingleton(), this, &WebAutomationSession::loadTimerFired)
 #if ENABLE(REMOTE_INSPECTOR)
     , m_debuggable(Debuggable::create(*this))
 #endif
@@ -166,7 +166,7 @@ WebAutomationSession::~WebAutomationSession()
     ASSERT(!m_client);
     ASSERT(!m_processPool);
 #if ENABLE(REMOTE_INSPECTOR)
-    protectedDebuggable()->sessionDestroyed();
+    m_debuggable->sessionDestroyed();
 #endif
 }
 
@@ -198,7 +198,7 @@ RefPtr<WebProcessPool> WebAutomationSession::protectedProcessPool() const
 
 void WebAutomationSession::dispatchMessageFromRemote(String&& message)
 {
-    protectedBackendDispatcher()->dispatch(WTFMove(message));
+    m_backendDispatcher->dispatch(WTFMove(message));
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
@@ -207,9 +207,9 @@ void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isA
     UNUSED_PARAM(immediatelyPause);
 
     m_remoteChannel = &channel;
-    protectedFrontendRouter()->connectFrontend(channel);
+    m_frontendRouter->connectFrontend(channel);
 
-    protectedDebuggable()->setIsPaired(true);
+    m_debuggable->setIsPaired(true);
 }
 
 void WebAutomationSession::disconnect(Inspector::FrontendChannel& channel)
@@ -220,7 +220,7 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel& channel)
 
 void WebAutomationSession::init()
 {
-    protectedDebuggable()->init();
+    m_debuggable->init();
 }
 
 bool WebAutomationSession::isPaired() const
@@ -261,10 +261,10 @@ void WebAutomationSession::terminate()
 #if ENABLE(REMOTE_INSPECTOR)
     if (Inspector::FrontendChannel* channel = m_remoteChannel) {
         m_remoteChannel = nullptr;
-        protectedFrontendRouter()->disconnectFrontend(*channel);
+        m_frontendRouter->disconnectFrontend(*channel);
     }
 
-    protectedDebuggable()->setIsPaired(false);
+    m_debuggable->setIsPaired(false);
 #endif
 
     if (m_client)
@@ -450,7 +450,7 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
 
     page->closePage();
 
-    RunLoop::protectedMain()->dispatch([callback = WTFMove(callback)] {
+    RunLoop::mainSingleton().dispatch([callback = WTFMove(callback)] {
         callback({ });
     });
 }
@@ -752,7 +752,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page, const St
     // the load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
     // If the dialog was shown during a script execution, we want to finish the evaluateJavaScriptFunction
     // operation with an unexpected alert open error.
-    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, page = Ref { page }, message, defaultText] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, page = Ref { page }, message, defaultText] {
         if (!page->hasRunningProcess() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 
@@ -2514,23 +2514,6 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageIDInMainFrameProcess(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport), ipcCompletionHandler(WTFMove(callback)));
 #endif
 }
-
-Ref<Inspector::FrontendRouter> WebAutomationSession::protectedFrontendRouter() const
-{
-    return m_frontendRouter;
-}
-
-Ref<Inspector::BackendDispatcher> WebAutomationSession::protectedBackendDispatcher() const
-{
-    return m_backendDispatcher;
-}
-
-#if ENABLE(REMOTE_INSPECTOR)
-Ref<WebAutomationSession::Debuggable> WebAutomationSession::protectedDebuggable() const
-{
-    return m_debuggable;
-}
-#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
 static String logEntryLevelForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)

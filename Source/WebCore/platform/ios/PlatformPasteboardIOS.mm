@@ -340,7 +340,7 @@ int64_t PlatformPasteboard::addTypes(const Vector<String>&)
     return 0;
 }
 
-int64_t PlatformPasteboard::setTypes(const Vector<String>&)
+int64_t PlatformPasteboard::setTypes(const Vector<String>&, PasteboardDataLifetime)
 {
     return 0;
 }
@@ -682,7 +682,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return representationsToRegister;
 }
 
-int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData, PasteboardDataLifetime)
 {
     auto registrationLists = createNSArray(itemData, [] (auto& data) {
         return createItemProviderRegistrationList(data);
@@ -724,7 +724,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>&, PasteboardDataLifetime)
 {
     return 0;
 }
@@ -851,7 +851,7 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
     [m_pasteboard updateSupportedTypeIdentifiers:createNSArray(types).get()];
 }
 
-int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
+int64_t PlatformPasteboard::write(const PasteboardCustomData& data, PasteboardDataLifetime)
 {
     return write(Vector<PasteboardCustomData> { data });
 }

@@ -49,7 +49,7 @@ class WorkerOrWorkletGlobalScope;
 class WorkerLoaderProxy;
 
 class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WorkerThreadableLoader, Loader);
 public:
     static void loadResourceSynchronously(WorkerOrWorkletGlobalScope&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
     static Ref<WorkerThreadableLoader> create(WorkerOrWorkletGlobalScope& WorkerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
@@ -92,7 +92,7 @@ private:
     //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
     //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
     class MainThreadBridge final : public ThreadableLoaderClient {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MainThreadBridge, Loader);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadBridge);
     public:
         // All executed on the worker context's thread.

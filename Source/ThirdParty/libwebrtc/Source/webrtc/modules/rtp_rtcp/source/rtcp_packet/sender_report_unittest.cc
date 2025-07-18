@@ -10,8 +10,14 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "rtc_base/buffer.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -43,7 +49,7 @@ TEST(RtcpPacketSenderReportTest, CreateWithoutReportBlocks) {
   sr.SetPacketCount(kPacketCount);
   sr.SetOctetCount(kOctetCount);
 
-  rtc::Buffer raw = sr.Build();
+  Buffer raw = sr.Build();
   EXPECT_THAT(make_tuple(raw.data(), raw.size()), ElementsAreArray(kPacket));
 }
 
@@ -67,7 +73,7 @@ TEST(RtcpPacketSenderReportTest, CreateAndParseWithOneReportBlock) {
   sr.SetSenderSsrc(kSenderSsrc);
   EXPECT_TRUE(sr.AddReportBlock(rb));
 
-  rtc::Buffer raw = sr.Build();
+  Buffer raw = sr.Build();
   SenderReport parsed;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed));
 
@@ -87,7 +93,7 @@ TEST(RtcpPacketSenderReportTest, CreateAndParseWithTwoReportBlocks) {
   EXPECT_TRUE(sr.AddReportBlock(rb1));
   EXPECT_TRUE(sr.AddReportBlock(rb2));
 
-  rtc::Buffer raw = sr.Build();
+  Buffer raw = sr.Build();
   SenderReport parsed;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed));
 

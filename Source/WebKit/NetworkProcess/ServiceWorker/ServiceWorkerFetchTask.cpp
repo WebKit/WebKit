@@ -117,7 +117,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
         m_preloader = makeUnique<ServiceWorkerNavigationPreloader>(*session, WTFMove(parameters), registration.navigationPreloadState(), loader.shouldCaptureExtraNetworkLoadMetrics());
         session->addNavigationPreloaderTask(*this);
 
-        m_preloader->waitForResponse([weakThis = WeakPtr { *this }] {
+        checkedPreloader()->waitForResponse([weakThis = WeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->preloadResponseIsReady();
         });
@@ -400,7 +400,7 @@ void ServiceWorkerFetchTask::cannotHandle()
 {
     SWFETCH_RELEASE_LOG("cannotHandle:");
     // Make sure we call didNotHandle asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->didNotHandle();
     });
@@ -485,7 +485,7 @@ void ServiceWorkerFetchTask::loadResponseFromPreloader()
         return;
 
     m_isLoadingFromPreloader = true;
-    m_preloader->waitForResponse([weakThis = WeakPtr { *this }] {
+    checkedPreloader()->waitForResponse([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->preloadResponseIsReady();
     });
@@ -530,6 +530,11 @@ void ServiceWorkerFetchTask::sendNavigationPreloadUpdate()
     connection->send(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() }, 0);
 }
 
+CheckedPtr<ServiceWorkerNavigationPreloader> ServiceWorkerFetchTask::checkedPreloader()
+{
+    return m_preloader.get();
+}
+
 void ServiceWorkerFetchTask::loadBodyFromPreloader()
 {
     SWFETCH_RELEASE_LOG("loadBodyFromPreloader");
@@ -541,7 +546,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
         return;
     }
 
-    m_preloader->waitForBody([weakThis = WeakPtr { *this }](RefPtr<const WebCore::FragmentedSharedBuffer>&& chunk) {
+    checkedPreloader()->waitForBody([weakThis = WeakPtr { *this }](RefPtr<const WebCore::FragmentedSharedBuffer>&& chunk) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -566,7 +571,7 @@ void ServiceWorkerFetchTask::cancelPreloadIfNecessary()
     if (CheckedPtr session = this->session())
         session->removeNavigationPreloaderTask(*this);
 
-    m_preloader->cancel();
+    checkedPreloader()->cancel();
     m_preloader = nullptr;
 }
 
@@ -578,8 +583,8 @@ NetworkSession* ServiceWorkerFetchTask::session()
 
 bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    if (m_preloader)
-        return m_preloader->convertToDownload(manager, downloadID, request, response);
+    if (CheckedPtr preloader = m_preloader.get())
+        return preloader->convertToDownload(manager, downloadID, request, response);
 
     CheckedPtr session = this->session();
     if (!session)

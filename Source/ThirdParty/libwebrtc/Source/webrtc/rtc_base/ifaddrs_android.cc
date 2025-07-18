@@ -37,7 +37,7 @@ const int kMaxReadSize = 4096;
 
 }  // namespace
 
-namespace rtc {
+namespace webrtc {
 
 int set_ifname(struct ifaddrs* ifaddr, int interface) {
   char buf[IFNAMSIZ] = {0};
@@ -223,5 +223,5 @@ void freeifaddrs(struct ifaddrs* addrs) {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc
 #endif  // defined(WEBRTC_ANDROID)

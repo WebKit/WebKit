@@ -163,7 +163,7 @@ private:
 // will lead to RELEASE_ASSERT's or worse.
 class ParallelHelperClient {
     WTF_MAKE_NONCOPYABLE(ParallelHelperClient);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParallelHelperClient);
 public:
     WTF_EXPORT_PRIVATE ParallelHelperClient(RefPtr<ParallelHelperPool>&&);
     WTF_EXPORT_PRIVATE ~ParallelHelperClient();

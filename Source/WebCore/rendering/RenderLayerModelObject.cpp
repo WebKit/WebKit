@@ -27,11 +27,13 @@
 #include "RenderLayerModelObject.h"
 
 #include "BlendingKeyframes.h"
+#include "ContainerNodeInlines.h"
 #include "InspectorInstrumentation.h"
 #include "MotionPath.h"
 #include "ReferenceFilterOperation.h"
 #include "ReferencedSVGResources.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"

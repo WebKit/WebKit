@@ -151,7 +151,7 @@ class ClippingEventPredictor : public ClippingPredictor {
     }
     if (PredictClippingEvent(channel)) {
       const int new_level =
-          rtc::SafeClamp(level - default_step, min_mic_level, max_mic_level);
+          SafeClamp(level - default_step, min_mic_level, max_mic_level);
       const int step = level - new_level;
       if (step > 0) {
         return step;
@@ -296,15 +296,15 @@ class ClippingPeakPredictor : public ClippingPredictor {
         step = default_step;
       } else {
         const int estimated_gain_change =
-            rtc::SafeClamp(-static_cast<int>(std::ceil(estimate_db.value())),
-                           -kClippingPredictorMaxGainChange, 0);
+            SafeClamp(-static_cast<int>(std::ceil(estimate_db.value())),
+                      -kClippingPredictorMaxGainChange, 0);
         step =
             std::max(level - ComputeVolumeUpdate(estimated_gain_change, level,
                                                  min_mic_level, max_mic_level),
                      default_step);
       }
       const int new_level =
-          rtc::SafeClamp(level - step, min_mic_level, max_mic_level);
+          SafeClamp(level - step, min_mic_level, max_mic_level);
       if (level > new_level) {
         return level - new_level;
       }

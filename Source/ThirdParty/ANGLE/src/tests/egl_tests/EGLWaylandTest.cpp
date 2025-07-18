@@ -45,8 +45,7 @@ class EGLWaylandTest : public ANGLETest<>
 
         EGLNativeDisplayType waylandDisplay = mOsWindow->getNativeDisplay();
         std::vector<EGLAttrib> attribs      = getDisplayAttributes();
-        mDisplay =
-            eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE, (void *)waylandDisplay, attribs.data());
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(), (void *)waylandDisplay, attribs.data());
         ASSERT_NE(EGL_NO_DISPLAY, mDisplay);
 
         ASSERT_TRUE(EGL_TRUE == eglInitialize(mDisplay, nullptr, nullptr));

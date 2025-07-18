@@ -247,7 +247,10 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
     queryExtensions();
 
 #if defined(ANGLE_HAS_LIBDRM)
-    mEGLDisplay = getPreferredDisplay(&majorVersion, &minorVersion);
+    if (platformType != EGL_PLATFORM_GBM_KHR || !nativeDisplay)
+    {
+        mEGLDisplay = getPreferredDisplay(&majorVersion, &minorVersion);
+    }
 #endif  // defined(ANGLE_HAS_LIBDRM)
 
     if (mEGLDisplay == EGL_NO_DISPLAY)
@@ -422,6 +425,10 @@ EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
                 return EGL_NO_DISPLAY;
             break;
         case EGL_PLATFORM_GBM_KHR:
+            if (!hasExtension("EGL_KHR_platform_gbm") && !hasExtension("EGL_MESA_platform_gbm"))
+            {
+                return EGL_NO_DISPLAY;
+            }
             break;
         default:
             UNREACHABLE();

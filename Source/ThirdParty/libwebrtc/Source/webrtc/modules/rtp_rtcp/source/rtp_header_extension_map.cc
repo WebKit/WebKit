@@ -79,14 +79,13 @@ RtpHeaderExtensionMap::RtpHeaderExtensionMap(bool extmap_allow_mixed)
 }
 
 RtpHeaderExtensionMap::RtpHeaderExtensionMap(
-    rtc::ArrayView<const RtpExtension> extensions)
+    ArrayView<const RtpExtension> extensions)
     : RtpHeaderExtensionMap(false) {
   for (const RtpExtension& extension : extensions)
     RegisterByUri(extension.id, extension.uri);
 }
 
-void RtpHeaderExtensionMap::Reset(
-    rtc::ArrayView<const RtpExtension> extensions) {
+void RtpHeaderExtensionMap::Reset(ArrayView<const RtpExtension> extensions) {
   for (auto& id : ids_)
     id = kInvalidId;
   for (const RtpExtension& extension : extensions)

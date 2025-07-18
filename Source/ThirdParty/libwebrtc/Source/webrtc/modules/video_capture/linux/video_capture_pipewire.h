@@ -44,7 +44,7 @@ class VideoCaptureModulePipeWire : public VideoCaptureImpl {
   void OnFormatChanged(const struct spa_pod* format);
   void ProcessBuffers();
 
-  const rtc::scoped_refptr<PipeWireSession> session_
+  const webrtc::scoped_refptr<PipeWireSession> session_
       RTC_GUARDED_BY(api_checker_);
   bool initialized_ RTC_GUARDED_BY(api_checker_);
   bool started_ RTC_GUARDED_BY(api_lock_);

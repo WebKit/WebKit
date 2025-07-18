@@ -36,7 +36,7 @@ namespace WTF {
 
 class ParallelEnvironment {
     WTF_MAKE_NONCOPYABLE(ParallelEnvironment);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParallelEnvironment);
 public:
     typedef void (*ThreadFunction)(void*);
 

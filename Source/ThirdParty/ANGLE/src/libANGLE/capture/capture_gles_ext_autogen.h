@@ -1416,6 +1416,28 @@ angle::CallCapture CaptureBufferStorageExternalEXT(const State &glState,
 
 // GL_EXT_float_blend
 
+// GL_EXT_fragment_shading_rate
+angle::CallCapture CaptureFramebufferShadingRateEXT(const State &glState,
+                                                    bool isCallValid,
+                                                    GLenum target,
+                                                    GLenum attachment,
+                                                    GLuint texture,
+                                                    GLint baseLayer,
+                                                    GLsizei numLayers,
+                                                    GLsizei texelWidth,
+                                                    GLsizei texelHeight);
+angle::CallCapture CaptureGetFragmentShadingRatesEXT(const State &glState,
+                                                     bool isCallValid,
+                                                     GLsizei samples,
+                                                     GLsizei maxCount,
+                                                     GLsizei *count,
+                                                     GLenum *shadingRates);
+angle::CallCapture CaptureShadingRateEXT(const State &glState, bool isCallValid, GLenum rate);
+angle::CallCapture CaptureShadingRateCombinerOpsEXT(const State &glState,
+                                                    bool isCallValid,
+                                                    GLenum combinerOp0,
+                                                    GLenum combinerOp1);
+
 // GL_EXT_geometry_shader
 angle::CallCapture CaptureFramebufferTextureEXT(const State &glState,
                                                 bool isCallValid,
@@ -4736,6 +4758,20 @@ void CaptureDrawElementsInstancedEXT_indices(const State &glState,
                                              const void *indices,
                                              GLsizei primcount,
                                              angle::ParamCapture *paramCapture);
+void CaptureGetFragmentShadingRatesEXT_count(const State &glState,
+                                             bool isCallValid,
+                                             GLsizei samples,
+                                             GLsizei maxCount,
+                                             GLsizei *count,
+                                             GLenum *shadingRates,
+                                             angle::ParamCapture *paramCapture);
+void CaptureGetFragmentShadingRatesEXT_shadingRates(const State &glState,
+                                                    bool isCallValid,
+                                                    GLsizei samples,
+                                                    GLsizei maxCount,
+                                                    GLsizei *count,
+                                                    GLenum *shadingRates,
+                                                    angle::ParamCapture *paramCapture);
 void CaptureCreateMemoryObjectsEXT_memoryObjectsPacked(const State &glState,
                                                        bool isCallValid,
                                                        GLsizei n,

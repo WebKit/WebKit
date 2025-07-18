@@ -88,6 +88,7 @@ struct EditorState {
     bool isInPlugin { false };
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
+    bool inputMethodUsesCorrectKeyEventOrder { false };
 #endif
 
     struct PostLayoutData {
@@ -163,6 +164,7 @@ struct EditorState {
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
         WebCore::ScrollOffset enclosingScrollOffset;
+        bool enclosingLayerUsesContentsLayer { false };
 #endif // PLATFORM(IOS_FAMILY)
     };
 

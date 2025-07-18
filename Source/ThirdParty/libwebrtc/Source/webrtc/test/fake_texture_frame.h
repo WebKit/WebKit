@@ -33,7 +33,7 @@ class FakeNativeBuffer : public VideoFrameBuffer {
   int height() const override;
 
  private:
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
+  scoped_refptr<I420BufferInterface> ToI420() override;
 
   const int width_;
   const int height_;

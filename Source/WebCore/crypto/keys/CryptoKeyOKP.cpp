@@ -27,6 +27,7 @@
 #include "CryptoKeyOKP.h"
 
 #include "CryptoAlgorithmRegistry.h"
+#include "ExceptionOr.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 

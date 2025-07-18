@@ -13,8 +13,10 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <cstdint>
 
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 

@@ -18,7 +18,7 @@ frames:
         0: transferFromImageBitmap
         1: (anonymous function)
         2: executeFrameFunction
-        3: (anonymous function)
+        3: performActions
       snapshot: <filtered>
   1: (duration)
     0: width

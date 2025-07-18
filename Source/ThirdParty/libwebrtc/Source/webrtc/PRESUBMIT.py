@@ -538,7 +538,7 @@ def CheckNoStreamUsageIsAdded(input_api,
         'std::ostream& F() {  // no-presubmit-check TODO(webrtc:8982)\n'
         '\n'
         'If you are adding new code, consider using '
-        'rtc::SimpleStringBuilder\n'
+        'webrtc::SimpleStringBuilder\n'
         '(in rtc_base/strings/string_builder.h).\n'
         'Affected files:\n')
     errors = []  # 2-element tuples with (file, line number)

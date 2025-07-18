@@ -12,15 +12,19 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <memory>
+#include <optional>
 
-#include "api/array_view.h"
+#include "api/audio/audio_processing.h"
+#include "modules/audio_processing/agc2/clipping_predictor.h"
 #include "modules/audio_processing/agc2/gain_map_internal.h"
 #include "modules/audio_processing/agc2/input_volume_stats_reporter.h"
+#include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -116,8 +120,8 @@ int GetSpeechLevelRmsErrorDb(float speech_level_dbfs,
   constexpr float kMaxSpeechLevelDbfs = 30.0f;
   RTC_DCHECK_GE(speech_level_dbfs, kMinSpeechLevelDbfs);
   RTC_DCHECK_LE(speech_level_dbfs, kMaxSpeechLevelDbfs);
-  speech_level_dbfs = rtc::SafeClamp<float>(
-      speech_level_dbfs, kMinSpeechLevelDbfs, kMaxSpeechLevelDbfs);
+  speech_level_dbfs = SafeClamp<float>(speech_level_dbfs, kMinSpeechLevelDbfs,
+                                       kMaxSpeechLevelDbfs);
 
   int rms_error_db = 0;
   if (speech_level_dbfs > target_range_max_dbfs) {
@@ -343,7 +347,7 @@ void MonoInputVolumeController::UpdateInputVolume(int rms_error_db) {
   // Prevent too large microphone input volume changes by clamping the RMS
   // error.
   rms_error_db =
-      rtc::SafeClamp(rms_error_db, -KMaxAbsRmsErrorDbfs, KMaxAbsRmsErrorDbfs);
+      SafeClamp(rms_error_db, -KMaxAbsRmsErrorDbfs, KMaxAbsRmsErrorDbfs);
   if (rms_error_db == 0) {
     return;
   }

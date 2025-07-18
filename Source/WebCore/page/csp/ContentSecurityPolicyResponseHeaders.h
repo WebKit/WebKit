@@ -52,17 +52,6 @@ public:
     ContentSecurityPolicyResponseHeaders isolatedCopy() &&;
 
     enum EmptyTag { Empty };
-    struct MarkableTraits {
-        static bool isEmptyValue(const ContentSecurityPolicyResponseHeaders& identifier)
-        {
-            return identifier.m_emptyForMarkable;
-        }
-
-        static ContentSecurityPolicyResponseHeaders emptyValue()
-        {
-            return ContentSecurityPolicyResponseHeaders(Empty);
-        }
-    };
 
     void addPolicyHeadersTo(ResourceResponse&) const;
 
@@ -74,6 +63,7 @@ public:
 private:
     friend bool operator==(const ContentSecurityPolicyResponseHeaders&, const ContentSecurityPolicyResponseHeaders&);
     friend class ContentSecurityPolicy;
+    friend struct MarkableTraits<ContentSecurityPolicyResponseHeaders>;
     ContentSecurityPolicyResponseHeaders(EmptyTag)
         : m_emptyForMarkable(true)
     { }
@@ -89,3 +79,20 @@ inline bool operator==(const ContentSecurityPolicyResponseHeaders&a, const Conte
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::ContentSecurityPolicyResponseHeaders> {
+    static bool isEmptyValue(const WebCore::ContentSecurityPolicyResponseHeaders& identifier)
+    {
+        return identifier.m_emptyForMarkable;
+    }
+
+    static WebCore::ContentSecurityPolicyResponseHeaders emptyValue()
+    {
+        return WebCore::ContentSecurityPolicyResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders::Empty);
+    }
+};
+
+} // namespace WTF

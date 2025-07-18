@@ -21,6 +21,7 @@
 #include "CryptoAlgorithmEd25519.h"
 
 #include "CryptoKeyOKP.h"
+#include "ExceptionOr.h"
 #include "GCryptUtilities.h"
 
 namespace WebCore {

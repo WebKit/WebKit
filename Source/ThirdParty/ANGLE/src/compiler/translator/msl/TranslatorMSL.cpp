@@ -1395,8 +1395,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         return false;
     }
 
-    const bool needsExplicitBoolCasts = compileOptions.addExplicitBoolCasts;
-    if (!AddExplicitTypeCasts(*this, *root, symbolEnv, needsExplicitBoolCasts))
+    if (!AddExplicitTypeCasts(*this, *root, symbolEnv))
     {
         return false;
     }

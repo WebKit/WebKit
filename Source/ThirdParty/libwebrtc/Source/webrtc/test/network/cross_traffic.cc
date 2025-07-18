@@ -12,13 +12,26 @@
 
 #include <math.h>
 
-#include <optional>
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <utility>
 
-#include "absl/memory/memory.h"
+#include "absl/functional/any_invocable.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/test/network_emulation/cross_traffic.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "cross_traffic.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/strings/string_builder.h"
+#include "system_wrappers/include/clock.h"
+#include "test/network/network_emulation.h"
+#include "test/scenario/column_printer.h"
 
 namespace webrtc {
 namespace test {
@@ -43,7 +56,7 @@ void RandomWalkCrossTraffic::Process(Timestamp at_time) {
   if (at_time - last_update_time_ >= config_.update_interval) {
     intensity_ += random_.Gaussian(config_.bias, config_.variance) *
                   sqrt((at_time - last_update_time_).seconds<double>());
-    intensity_ = rtc::SafeClamp(intensity_, 0.0, 1.0);
+    intensity_ = SafeClamp(intensity_, 0.0, 1.0);
     last_update_time_ = at_time;
   }
   pending_size_ += TrafficRate() * delta;
@@ -68,7 +81,7 @@ DataRate RandomWalkCrossTraffic::TrafficRate() const {
 ColumnPrinter RandomWalkCrossTraffic::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "random_walk_cross_traffic_rate",
-      [this](rtc::SimpleStringBuilder& sb) {
+      [this](SimpleStringBuilder& sb) {
         sb.AppendFormat("%.0lf", TrafficRate().bps() / 8.0);
       },
       32);
@@ -119,7 +132,7 @@ DataRate PulsedPeaksCrossTraffic::TrafficRate() const {
 ColumnPrinter PulsedPeaksCrossTraffic::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "pulsed_peaks_cross_traffic_rate",
-      [this](rtc::SimpleStringBuilder& sb) {
+      [this](SimpleStringBuilder& sb) {
         sb.AppendFormat("%.0lf", TrafficRate().bps() / 8.0);
       },
       32);
@@ -141,33 +154,34 @@ TcpMessageRouteImpl::TcpMessageRouteImpl(Clock* clock,
                       }) {}
 
 void TcpMessageRouteImpl::SendMessage(size_t size,
-                                      std::function<void()> on_received) {
-  task_queue_->PostTask([this, size, handler = std::move(on_received)] {
-    // If we are currently sending a message we won't reset the connection,
-    // we'll act as if the messages are sent in the same TCP stream. This is
-    // intended to simulate recreation of a TCP session for each message
-    // in the typical case while avoiding the complexity overhead of
-    // maintaining multiple virtual TCP sessions in parallel.
-    if (pending_.empty() && in_flight_.empty()) {
-      cwnd_ = 10;
-      ssthresh_ = INFINITY;
-    }
-    int64_t data_left = static_cast<int64_t>(size);
-    int64_t kMaxPacketSize = 1200;
-    int64_t kMinPacketSize = 4;
-    Message message{std::move(handler)};
-    while (data_left > 0) {
-      int64_t packet_size = std::min(data_left, kMaxPacketSize);
-      int fragment_id = next_fragment_id_++;
-      pending_.push_back(MessageFragment{
-          fragment_id,
-          static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
-      message.pending_fragment_ids.insert(fragment_id);
-      data_left -= packet_size;
-    }
-    messages_.emplace_back(message);
-    SendPackets(clock_->CurrentTime());
-  });
+                                      absl::AnyInvocable<void()> on_received) {
+  task_queue_->PostTask(
+      [this, size, handler = std::move(on_received)]() mutable {
+        // If we are currently sending a message we won't reset the connection,
+        // we'll act as if the messages are sent in the same TCP stream. This is
+        // intended to simulate recreation of a TCP session for each message
+        // in the typical case while avoiding the complexity overhead of
+        // maintaining multiple virtual TCP sessions in parallel.
+        if (pending_.empty() && in_flight_.empty()) {
+          cwnd_ = 10;
+          ssthresh_ = INFINITY;
+        }
+        int64_t data_left = static_cast<int64_t>(size);
+        int64_t kMaxPacketSize = 1200;
+        int64_t kMinPacketSize = 4;
+        Message message{std::move(handler)};
+        while (data_left > 0) {
+          int64_t packet_size = std::min(data_left, kMaxPacketSize);
+          int fragment_id = next_fragment_id_++;
+          pending_.push_back(MessageFragment{
+              fragment_id,
+              static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
+          message.pending_fragment_ids.insert(fragment_id);
+          data_left -= packet_size;
+        }
+        messages_.emplace_back(std::move(message));
+        SendPackets(clock_->CurrentTime());
+      });
 }
 
 void TcpMessageRouteImpl::OnRequest(TcpPacket packet_info) {

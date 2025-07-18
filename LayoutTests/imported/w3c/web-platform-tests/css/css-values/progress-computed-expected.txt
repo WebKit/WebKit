@@ -5,8 +5,8 @@ PASS progress(sign(-10px) * 10px, (10px - 10px), 10px * progress(1deg, 0deg, 1de
 PASS calc(progress(100px, 0px, 50px) * 10px + 100px) should be used-value-equivalent to 110px
 PASS calc(progress(100, 0, sign(50px))) should be used-value-equivalent to 1
 PASS calc(progress(abs(5%), hypot(3%, 4%), 10%)) should be used-value-equivalent to 0
-PASS progress(1000em, 10em, 110em) should be used-value-equivalent to 1
-PASS scale(progress(1000em, 10rem, 110em)) should be used-value-equivalent to scale(1)
+PASS progress(50em, 10em, 110em) should be used-value-equivalent to 0.4
+PASS scale(progress(50em, 10rem, 110em)) should be used-value-equivalent to scale(1)
 PASS scale(progress(0em, 0rem, 0em)) should be used-value-equivalent to scale(0)
 PASS scale(progress(sign(1em - 1rem) * 1ex, 0rem, 0em)) should be used-value-equivalent to scale(0)
 PASS calc(progress(1, 0, 1) * 10px) should be used-value-equivalent to 10px

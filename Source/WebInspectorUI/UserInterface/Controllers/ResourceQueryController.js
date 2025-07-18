@@ -74,7 +74,7 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.QueryContr
                     specialCharacterIndices: this._findSpecialCharacterIndicesInDisplayName(displayName),
                 };
 
-                let url = resource.url;
+                let url = resource.url || resource.sourceURL;
                 cachedData.url = {
                     searchString: url.toLowerCase(),
                     specialCharacterIndices: this._findSpecialCharacterIndicesInURL(url),

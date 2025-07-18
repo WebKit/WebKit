@@ -210,6 +210,8 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) WebCore::IntDegrees _deviceOrientationIgnoringOverrides;
 
+- (void)_setObscuredInsetsInternal:(UIEdgeInsets)obscuredInsets;
+
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
@@ -224,8 +226,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;
 
-- (void)_overrideZoomScaleParametersWithMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale allowUserScaling:(BOOL)allowUserScaling;
-- (void)_clearOverrideZoomScaleParameters;
+@property (nonatomic, setter=_setForcesInitialScaleFactor:) BOOL _forcesInitialScaleFactor;
 
 - (void)_setPointerTouchCompatibilitySimulatorEnabled:(BOOL)enabled;
 

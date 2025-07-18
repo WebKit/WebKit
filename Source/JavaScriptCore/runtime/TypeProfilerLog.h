@@ -41,7 +41,7 @@ class TypeProfilerLog {
     WTF_MAKE_TZONE_ALLOCATED(TypeProfilerLog);
 public:
     struct LogEntry {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LogEntry);
     public:
         friend class LLIntOffsetsExtractor;
 

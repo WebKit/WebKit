@@ -32,8 +32,8 @@ class ProtectionBitrateCalculatorTest : public ::testing::Test {
 
   class ProtectionCallback : public VCMProtectionCallback {
    public:
-    int ProtectionRequest(const FecProtectionParams* delta_params,
-                          const FecProtectionParams* key_params,
+    int ProtectionRequest(const FecProtectionParams* /* delta_params */,
+                          const FecProtectionParams* /* key_params */,
                           uint32_t* sent_video_rate_bps,
                           uint32_t* sent_nack_rate_bps,
                           uint32_t* sent_fec_rate_bps) override {
@@ -42,7 +42,7 @@ class ProtectionBitrateCalculatorTest : public ::testing::Test {
       *sent_fec_rate_bps = fec_rate_bps_;
       return 0;
     }
-    void SetRetransmissionMode(int retransmission_mode) {}
+    void SetRetransmissionMode(int /* retransmission_mode */) {}
 
     uint32_t fec_rate_bps_ = 0;
     uint32_t nack_rate_bps_ = 0;

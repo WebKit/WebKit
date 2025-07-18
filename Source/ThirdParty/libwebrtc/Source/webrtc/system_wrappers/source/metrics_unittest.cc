@@ -63,11 +63,11 @@ TEST_F(MetricsTest, RtcHistogramEnumeration_AddSample) {
 
 TEST_F(MetricsTest, RtcHistogramBoolean_AddSample) {
   const std::string kName = "Boolean";
-  const int kSample = 0;
-  RTC_HISTOGRAM_BOOLEAN(kName, kSample);
+  const int kSampleZero = 0;
+  RTC_HISTOGRAM_BOOLEAN(kName, kSampleZero);
   EXPECT_EQ(1, metrics::NumSamples(kName));
-  EXPECT_EQ(1, metrics::NumEvents(kName, kSample));
-  EXPECT_THAT(metrics::Samples(kName), ElementsAre(Pair(kSample, 1)));
+  EXPECT_EQ(1, metrics::NumEvents(kName, kSampleZero));
+  EXPECT_THAT(metrics::Samples(kName), ElementsAre(Pair(kSampleZero, 1)));
 }
 
 TEST_F(MetricsTest, RtcHistogramCountsSparse_AddSample) {

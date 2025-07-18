@@ -1,0 +1,3 @@
+
+PASS <model> resolves the ready promises of all models created at the same time.
+

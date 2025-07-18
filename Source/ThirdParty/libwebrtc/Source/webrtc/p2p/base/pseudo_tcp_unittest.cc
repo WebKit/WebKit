@@ -14,21 +14,28 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/crypto_random.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/memory_stream.h"
+#include "rtc_base/stream.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/wait_until.h"
 
-using ::cricket::PseudoTcp;
+using ::testing::IsTrue;
+using ::webrtc::PseudoTcp;
 using ::webrtc::ScopedTaskSafety;
 using ::webrtc::TaskQueueBase;
 using ::webrtc::TimeDelta;
@@ -37,18 +44,20 @@ static const int kConnectTimeoutMs = 10000;  // ~3 * default RTO of 3000ms
 static const int kTransferTimeoutMs = 15000;
 static const int kBlockSize = 4096;
 
-class PseudoTcpForTest : public cricket::PseudoTcp {
+class PseudoTcpForTest : public webrtc::PseudoTcp {
  public:
-  PseudoTcpForTest(cricket::IPseudoTcpNotify* notify, uint32_t conv)
-      : PseudoTcp(notify, conv) {}
+  PseudoTcpForTest(webrtc::IPseudoTcpNotify* notify, uint32_t conv)
+      : webrtc::PseudoTcp(notify, conv) {}
 
-  bool isReceiveBufferFull() const { return PseudoTcp::isReceiveBufferFull(); }
+  bool isReceiveBufferFull() const {
+    return webrtc::PseudoTcp::isReceiveBufferFull();
+  }
 
-  void disableWindowScale() { PseudoTcp::disableWindowScale(); }
+  void disableWindowScale() { webrtc::PseudoTcp::disableWindowScale(); }
 };
 
 class PseudoTcpTestBase : public ::testing::Test,
-                          public cricket::IPseudoTcpNotify {
+                          public webrtc::IPseudoTcpNotify {
  public:
   PseudoTcpTestBase()
       : local_(this, 1),
@@ -61,11 +70,11 @@ class PseudoTcpTestBase : public ::testing::Test,
         loss_(0) {
     // Set use of the test RNG to get predictable loss patterns. Otherwise,
     // this test would occasionally get really unlucky loss and time out.
-    rtc::SetRandomTestMode(true);
+    webrtc::SetRandomTestMode(true);
   }
   ~PseudoTcpTestBase() {
     // Put it back for the next test.
-    rtc::SetRandomTestMode(false);
+    webrtc::SetRandomTestMode(false);
   }
   // If true, both endpoints will send the "connect" segment simultaneously,
   // rather than `local_` sending it followed by a response from `remote_`.
@@ -158,7 +167,7 @@ class PseudoTcpTestBase : public ::testing::Test,
       return WR_SUCCESS;
     }
     // Randomly drop the desired percentage of packets.
-    if (rtc::CreateRandomId() % 100 < static_cast<uint32_t>(loss_)) {
+    if (webrtc::CreateRandomId() % 100 < static_cast<uint32_t>(loss_)) {
       RTC_LOG(LS_VERBOSE) << "Randomly dropping packet, size=" << len;
       return WR_SUCCESS;
     }
@@ -205,13 +214,13 @@ class PseudoTcpTestBase : public ::testing::Test,
         TimeDelta::Millis(interval));
   }
 
-  rtc::AutoThread main_thread_;
+  webrtc::AutoThread main_thread_;
   PseudoTcpForTest local_;
   PseudoTcpForTest remote_;
   ScopedTaskSafety local_timer_;
   ScopedTaskSafety remote_timer_;
-  rtc::MemoryStream send_stream_;
-  rtc::MemoryStream recv_stream_;
+  webrtc::MemoryStream send_stream_;
+  webrtc::MemoryStream recv_stream_;
   bool have_connected_;
   bool have_disconnected_;
   int local_mtu_;
@@ -235,19 +244,25 @@ class PseudoTcpTest : public PseudoTcpTestBase {
       uint8_t ch = static_cast<uint8_t>(i);
       size_t written;
       int error;
-      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
+      send_stream_.Write(webrtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
     // Prepare the receive stream.
     recv_stream_.ReserveSize(size);
     // Connect and wait until connected.
-    start = rtc::Time32();
+    start = webrtc::Time32();
     EXPECT_EQ(0, Connect());
-    EXPECT_TRUE_WAIT(have_connected_, kConnectTimeoutMs);
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_connected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kConnectTimeoutMs)}),
+                webrtc::IsRtcOk());
     // Sending will start from OnTcpWriteable and complete when all data has
     // been received.
-    EXPECT_TRUE_WAIT(have_disconnected_, kTransferTimeoutMs);
-    elapsed = rtc::Time32() - start;
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_disconnected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kTransferTimeoutMs)}),
+                webrtc::IsRtcOk());
+    elapsed = webrtc::Time32() - start;
     recv_stream_.GetSize(&received);
     // Ensure we closed down OK and we got the right data.
     // TODO(?): Ensure the errors are cleared properly.
@@ -301,7 +316,7 @@ class PseudoTcpTest : public PseudoTcpTestBase {
         size_t written;
         int error;
         recv_stream_.Write(
-            rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
+            webrtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
             written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
@@ -315,9 +330,9 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     do {
       send_stream_.GetPosition(&position);
       int error;
-      if (send_stream_.Read(
-              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), kBlockSize),
-              tosend, error) != rtc::SR_EOS) {
+      if (send_stream_.Read(webrtc::MakeArrayView(
+                                reinterpret_cast<uint8_t*>(block), kBlockSize),
+                            tosend, error) != webrtc::SR_EOS) {
         sent = local_.Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -335,16 +350,16 @@ class PseudoTcpTest : public PseudoTcpTestBase {
   }
 
  private:
-  rtc::MemoryStream send_stream_;
-  rtc::MemoryStream recv_stream_;
+  webrtc::MemoryStream send_stream_;
+  webrtc::MemoryStream recv_stream_;
 };
 
 class PseudoTcpTestPingPong : public PseudoTcpTestBase {
  public:
   PseudoTcpTestPingPong()
       : iterations_remaining_(0),
-        sender_(NULL),
-        receiver_(NULL),
+        sender_(nullptr),
+        receiver_(nullptr),
         bytes_per_send_(0) {}
   void SetBytesPerSend(int bytes) { bytes_per_send_ = bytes; }
   void TestPingPong(int size, int iterations) {
@@ -358,19 +373,25 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
       uint8_t ch = static_cast<uint8_t>(i);
       size_t written;
       int error;
-      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
+      send_stream_.Write(webrtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
     // Prepare the receive stream.
     recv_stream_.ReserveSize(size);
     // Connect and wait until connected.
-    start = rtc::Time32();
+    start = webrtc::Time32();
     EXPECT_EQ(0, Connect());
-    EXPECT_TRUE_WAIT(have_connected_, kConnectTimeoutMs);
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_connected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kConnectTimeoutMs)}),
+                webrtc::IsRtcOk());
     // Sending will start from OnTcpWriteable and stop when the required
     // number of iterations have completed.
-    EXPECT_TRUE_WAIT(have_disconnected_, kTransferTimeoutMs);
-    elapsed = rtc::TimeSince(start);
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_disconnected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kTransferTimeoutMs)}),
+                webrtc::IsRtcOk());
+    elapsed = webrtc::TimeSince(start);
     RTC_LOG(LS_INFO) << "Performed " << iterations << " pings in " << elapsed
                      << " ms";
   }
@@ -424,8 +445,8 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
         size_t written;
         int error;
         recv_stream_.Write(
-            rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(block),
-                               received),
+            webrtc::MakeArrayView(reinterpret_cast<const uint8_t*>(block),
+                                  received),
             written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
@@ -441,8 +462,8 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
       tosend = bytes_per_send_ ? bytes_per_send_ : sizeof(block);
       int error;
       if (send_stream_.Read(
-              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), tosend),
-              tosend, error) != rtc::SR_EOS) {
+              webrtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), tosend),
+              tosend, error) != webrtc::SR_EOS) {
         sent = sender_->Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -479,7 +500,7 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
       uint8_t ch = static_cast<uint8_t>(i);
       size_t written;
       int error;
-      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
+      send_stream_.Write(webrtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
 
@@ -488,10 +509,16 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
 
     // Connect and wait until connected.
     EXPECT_EQ(0, Connect());
-    EXPECT_TRUE_WAIT(have_connected_, kConnectTimeoutMs);
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_connected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kConnectTimeoutMs)}),
+                webrtc::IsRtcOk());
 
     TaskQueueBase::Current()->PostTask([this] { WriteData(); });
-    EXPECT_TRUE_WAIT(have_disconnected_, kTransferTimeoutMs);
+    EXPECT_THAT(webrtc::WaitUntil(
+                    [&] { return have_disconnected_; }, IsTrue(),
+                    {.timeout = webrtc::TimeDelta::Millis(kTransferTimeoutMs)}),
+                webrtc::IsRtcOk());
 
     ASSERT_EQ(2u, send_position_.size());
     ASSERT_EQ(2u, recv_position_.size());
@@ -518,9 +545,9 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
 
  private:
   // IPseudoTcpNotify interface
-  virtual void OnTcpReadable(PseudoTcp* tcp) {}
+  virtual void OnTcpReadable(PseudoTcp* /* tcp */) {}
 
-  virtual void OnTcpWriteable(PseudoTcp* tcp) {}
+  virtual void OnTcpWriteable(PseudoTcp* /* tcp */) {}
 
   void ReadUntilIOPending() {
     char block[kBlockSize];
@@ -533,7 +560,7 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
         size_t written;
         int error;
         recv_stream_.Write(
-            rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
+            webrtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
             written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
@@ -560,9 +587,9 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
       send_stream_.GetPosition(&position);
       int error;
       if (send_stream_.Read(
-              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block),
-                                 sizeof(block)),
-              tosend, error) != rtc::SR_EOS) {
+              webrtc::MakeArrayView(reinterpret_cast<uint8_t*>(block),
+                                    sizeof(block)),
+              tosend, error) != webrtc::SR_EOS) {
         sent = local_.Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -581,8 +608,8 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     if (packets_in_flight_ > 0) {
       // If there are packet tasks, attempt to continue sending after giving
       // those packets time to process, which should free up the send buffer.
-      rtc::Thread::Current()->PostDelayedTask([this] { WriteData(); },
-                                              TimeDelta::Millis(10));
+      webrtc::Thread::Current()->PostDelayedTask([this] { WriteData(); },
+                                                 TimeDelta::Millis(10));
     } else {
       if (!remote_.isReceiveBufferFull()) {
         RTC_LOG(LS_ERROR) << "This shouldn't happen - the send buffer is full, "
@@ -598,8 +625,8 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
   }
 
  private:
-  rtc::MemoryStream send_stream_;
-  rtc::MemoryStream recv_stream_;
+  webrtc::MemoryStream send_stream_;
+  webrtc::MemoryStream recv_stream_;
 
   std::vector<size_t> send_position_;
   std::vector<size_t> recv_position_;

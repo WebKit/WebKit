@@ -29,6 +29,7 @@
 #include "AnimationTimelinesController.h"
 #include "CSSNumericFactory.h"
 #include "CSSPropertyParserConsumer+Timeline.h"
+#include "CSSValuePair.h"
 #include "Document.h"
 #include "Element.h"
 #include "LegacyRenderSVGModelObject.h"
@@ -70,9 +71,9 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     return viewTimeline;
 }
 
-Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
+Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, const ViewTimelineInsetItem& insetItem)
 {
-    return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
+    return adoptRef(*new ViewTimeline(name, axis, insetItem));
 }
 
 ViewTimeline::ViewTimeline(ScrollAxis axis)
@@ -80,9 +81,9 @@ ViewTimeline::ViewTimeline(ScrollAxis axis)
 {
 }
 
-ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
+ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, const ViewTimelineInsetItem& insetItem)
     : ScrollTimeline(name, axis)
-    , m_insets(WTFMove(insets))
+    , m_insets(insetItem)
 {
 }
 
@@ -637,6 +638,11 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData:
     case StickinessAdjustmentData::StickinessLocation::AfterExit: ts << "AfterExit"_s; break;
     }
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ViewTimeline& timeline)
+{
+    return ts << timeline.name() << ' ' << timeline.axis() << ' ' << timeline.insets();
 }
 
 } // namespace WebCore

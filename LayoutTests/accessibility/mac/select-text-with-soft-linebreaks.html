@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="width: 200px;">
+    <!-- Note that these additional spaces, \n, tab characters are intentional to add whitespace that gets collapsed. -->
+    <p id="paragraph" role="group">The planets,   ordered from \tclosest to farther from the Sun, is  Mercury, \nVenus, Earth, Mars,     Jupiter, Saturn, Uranus, and Neptune.</p>
+</div>
+    
+<script>
+var output = "This test ensures setting text selection round-trips correctly for text that has soft linebreaks and collapsed whitespace.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    let range = document.createRange();
+    range.setStart(document.getElementById("paragraph").firstChild, 101);
+    range.setEnd(document.getElementById("paragraph").firstChild, 109);
+    window.getSelection().addRange(range);
+
+    var selectedMarkerRange;
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    setTimeout(async function() {
+        await waitFor(() => {
+            selectedMarkerRange = paragraph.selectedTextMarkerRange();
+            return paragraph.stringForTextMarkerRange(selectedMarkerRange) === "Jupiter";
+        });
+
+        // Re-set the selected text marker range with the range we already have, which should result in Jupiter remaining the selected text.
+        paragraph.setSelectedTextMarkerRange(selectedMarkerRange);
+        // If our implementation behaves incorrectly, this will result in some text that isn't "Jupiter" being selected,
+        // meaning our round-trip of selected text marker ranges is not right. Wait some time to allow the bug to happen
+        // in case our implementation is wrong.
+        await sleep(100);
+        output += await expectAsync("window.getSelection().toString()", "'Jupiter'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

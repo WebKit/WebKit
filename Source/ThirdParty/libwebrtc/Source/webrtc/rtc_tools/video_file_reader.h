@@ -35,14 +35,14 @@ class Video : public RefCountInterface {
     typedef int& reference;
     typedef std::input_iterator_tag iterator_category;
 
-    Iterator(const rtc::scoped_refptr<const Video>& video, size_t index);
+    Iterator(const scoped_refptr<const Video>& video, size_t index);
     Iterator(const Iterator& other);
     Iterator(Iterator&& other);
     Iterator& operator=(Iterator&&);
     Iterator& operator=(const Iterator&);
     ~Iterator();
 
-    rtc::scoped_refptr<I420BufferInterface> operator*() const;
+    scoped_refptr<I420BufferInterface> operator*() const;
     bool operator==(const Iterator& other) const;
     bool operator!=(const Iterator& other) const;
 
@@ -50,7 +50,7 @@ class Video : public RefCountInterface {
     Iterator& operator++();
 
    private:
-    rtc::scoped_refptr<const Video> video_;
+    scoped_refptr<const Video> video_;
     size_t index_;
   };
 
@@ -60,21 +60,20 @@ class Video : public RefCountInterface {
   virtual int width() const = 0;
   virtual int height() const = 0;
   virtual size_t number_of_frames() const = 0;
-  virtual rtc::scoped_refptr<I420BufferInterface> GetFrame(
-      size_t index) const = 0;
+  virtual scoped_refptr<I420BufferInterface> GetFrame(size_t index) const = 0;
 };
 
-rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name);
+scoped_refptr<Video> OpenY4mFile(const std::string& file_name);
 
-rtc::scoped_refptr<Video> OpenYuvFile(const std::string& file_name,
-                                      int width,
-                                      int height);
+scoped_refptr<Video> OpenYuvFile(const std::string& file_name,
+                                 int width,
+                                 int height);
 
 // This is a helper function for the two functions above. It reads the file
 // extension to determine whether it is a .yuv or a .y4m file.
-rtc::scoped_refptr<Video> OpenYuvOrY4mFile(const std::string& file_name,
-                                           int width,
-                                           int height);
+scoped_refptr<Video> OpenYuvOrY4mFile(const std::string& file_name,
+                                      int width,
+                                      int height);
 
 }  // namespace test
 }  // namespace webrtc

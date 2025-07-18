@@ -182,6 +182,7 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
     m_delegateMethods.webViewDidClose = [delegate respondsToSelector:@selector(webViewDidClose:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
+    m_delegateMethods.webViewWillEnterFullscreen = [delegate respondsToSelector:@selector(_webViewWillEnterFullscreen:)];
     m_delegateMethods.webViewDidEnterFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterFullscreen:)];
     m_delegateMethods.webViewDidExitFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitFullscreen:)];
 #if PLATFORM(IOS_FAMILY)
@@ -1580,6 +1581,22 @@ void UIDelegate::UIClient::fullscreenMayReturnToInline(WebPageProxy*)
         return;
     
     [delegate _webViewFullscreenMayReturnToInline:uiDelegate->m_webView.get().get()];
+}
+
+void UIDelegate::UIClient::willEnterFullscreen(WebPageProxy*)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate)
+        return;
+
+    if (!uiDelegate->m_delegateMethods.webViewWillEnterFullscreen)
+        return;
+
+    RetainPtr delegate = uiDelegatePrivate();
+    if (!delegate)
+        return;
+
+    [delegate _webViewWillEnterFullscreen:uiDelegate->m_webView.get().get()];
 }
 
 void UIDelegate::UIClient::didEnterFullscreen(WebPageProxy*)

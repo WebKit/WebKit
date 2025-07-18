@@ -39,6 +39,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGStringList.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -63,7 +64,7 @@ static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
     Vector<float> result;
 
     for (auto keyTime : keyTimes) {
-        keyTime = keyTime.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        keyTime = keyTime.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
 
         bool ok;
         float time = keyTime.toFloat(ok);
@@ -171,7 +172,7 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         newValue.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.trim(isASCIIWhitespace<UChar>).toString());
+            m_values.append(innerValue.trim(isASCIIWhitespace<char16_t>).toString());
         });
         updateAnimationMode();
         break;

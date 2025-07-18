@@ -475,6 +475,8 @@ public:
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlockingForPage(std::optional<WebPageProxyIdentifier>) const;
 
+    void setDefaultRequestTimeoutInterval(double);
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
@@ -542,7 +544,7 @@ private:
 
     void addWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier, WebPageNetworkParameters&&);
     void removeWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier);
-    void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(size_t)>&&);
+    void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(uint64_t)>&&);
 
 #if HAVE(NW_PROXY_CONFIG)
     void clearProxyConfigData(PAL::SessionID);

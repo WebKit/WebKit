@@ -134,6 +134,7 @@ void DesktopFrame::CopyFrameInfoFrom(const DesktopFrame& other) {
   set_top_left(other.top_left());
   set_icc_profile(other.icc_profile());
   set_may_contain_cursor(other.may_contain_cursor());
+  set_device_scale_factor(other.device_scale_factor());
 }
 
 void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
@@ -144,6 +145,7 @@ void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
   set_top_left(other->top_left());
   set_icc_profile(other->icc_profile());
   set_may_contain_cursor(other->may_contain_cursor());
+  set_device_scale_factor(other->device_scale_factor());
 }
 
 bool DesktopFrame::FrameDataIsBlack() const {

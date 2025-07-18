@@ -39,10 +39,10 @@ namespace WebCore {
 class WebAnimation;
 
 struct ResolvedEffectTiming {
-    MarkableDouble currentIteration;
+    Markable<double> currentIteration;
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    MarkableDouble transformedProgress;
-    MarkableDouble simpleIterationProgress;
+    Markable<double> transformedProgress;
+    Markable<double> simpleIterationProgress;
     TimingFunction::Before before;
 };
 

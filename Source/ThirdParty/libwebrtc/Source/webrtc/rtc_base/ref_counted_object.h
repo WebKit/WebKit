@@ -88,9 +88,11 @@ class FinalRefCountedObject final : public T {
 
 // Backwards compatibe aliases.
 // TODO: https://issues.webrtc.org/42225969 - deprecate and remove.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 namespace rtc {
 using ::webrtc::FinalRefCountedObject;
 using ::webrtc::RefCountedObject;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_REF_COUNTED_OBJECT_H_

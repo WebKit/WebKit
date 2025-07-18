@@ -1,0 +1,26 @@
+Inactive label Do you like coffee?
+And checkboxes?
+Disabled checkbox
+Disabled input
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (interaction (136.62,18) width=162.38 height=27)
+        (clipPath move to (0,8), add line to (0,8), add curve to (0,3.58) (3.58,0) (8,0), add line to (126.32,0), add line to (126.32,0), add curve to (130.74,0) (134.32,3.58) (134.32,8), add line to (134.32,19), add line to (134.32,19), add curve to (134.32,23.42) (130.74,27) (126.32,27), add line to (8,27), add line to (8,27), add curve to (3.58,27) (0,23.42) (0,19), close subpath, move to (146.38,13), add line to (146.38,13), add curve to (146.38,8.58) (149.96,5) (154.38,5), add line to (154.38,5), add line to (154.38,5), add curve to (158.80,5) (162.38,8.58) (162.38,13), add line to (162.38,13), add line to (162.38,13), add curve to (162.38,17.42) (158.80,21) (154.38,21), add line to (154.38,21), add line to (154.38,21), add curve to (149.96,21) (146.38,17.42) (146.38,13), close subpath),
+        (interaction (30,52) width=260 height=42)
+        (cornerRadius 16.00)])
+      )
+    )
+  )
+)
+

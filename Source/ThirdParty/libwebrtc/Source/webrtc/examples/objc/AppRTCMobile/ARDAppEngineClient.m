@@ -18,18 +18,16 @@
 #import "ARDUtilities.h"
 
 // TODO(tkchin): move these to a configuration object.
-static NSString * const kARDRoomServerHostUrl =
-    @"https://appr.tc";
-static NSString * const kARDRoomServerJoinFormat =
-    @"https://appr.tc/join/%@";
-static NSString * const kARDRoomServerJoinFormatLoopback =
+static NSString *const kARDRoomServerHostUrl = @"https://appr.tc";
+static NSString *const kARDRoomServerJoinFormat = @"https://appr.tc/join/%@";
+static NSString *const kARDRoomServerJoinFormatLoopback =
     @"https://appr.tc/join/%@?debug=loopback";
-static NSString * const kARDRoomServerMessageFormat =
+static NSString *const kARDRoomServerMessageFormat =
     @"https://appr.tc/message/%@/%@";
-static NSString * const kARDRoomServerLeaveFormat =
+static NSString *const kARDRoomServerLeaveFormat =
     @"https://appr.tc/leave/%@/%@";
 
-static NSString * const kARDAppEngineClientErrorDomain = @"ARDAppEngineClient";
+static NSString *const kARDAppEngineClientErrorDomain = @"ARDAppEngineClient";
 static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
 
 @implementation ARDAppEngineClient
@@ -47,8 +45,7 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
     urlString =
         [NSString stringWithFormat:kARDRoomServerJoinFormatLoopback, roomId];
   } else {
-    urlString =
-        [NSString stringWithFormat:kARDRoomServerJoinFormat, roomId];
+    urlString = [NSString stringWithFormat:kARDRoomServerJoinFormat, roomId];
   }
 
   NSURL *roomURL = [NSURL URLWithString:urlString];
@@ -57,18 +54,20 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   request.HTTPMethod = @"POST";
   [NSURLConnection
        sendAsyncRequest:request
-      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
+      completionHandler:^(
+          NSURLResponse *response __unused, NSData *data, NSError *error) {
         if (error) {
           if (completionHandler) {
             completionHandler(nil, error);
           }
           return;
         }
-        ARDJoinResponse *joinResponse = [ARDJoinResponse responseFromJSONData:data];
+        ARDJoinResponse *joinResponse =
+            [ARDJoinResponse responseFromJSONData:data];
         if (!joinResponse) {
           if (completionHandler) {
-            NSError *error = [[self class] badResponseError];
-            completionHandler(nil, error);
+            NSError *err = [[self class] badResponseError];
+            completionHandler(nil, err);
           }
           return;
         }
@@ -87,36 +86,37 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   NSParameterAssert(roomId.length);
   NSParameterAssert(clientId.length);
 
-  NSData *data = [message JSONData];
+  NSData *messageData = [message JSONData];
   NSString *urlString =
-      [NSString stringWithFormat:
-          kARDRoomServerMessageFormat, roomId, clientId];
+      [NSString stringWithFormat:kARDRoomServerMessageFormat, roomId, clientId];
   NSURL *url = [NSURL URLWithString:urlString];
   RTCLog(@"C->RS POST: %@", message);
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
   request.HTTPMethod = @"POST";
-  request.HTTPBody = data;
-  [NSURLConnection
-       sendAsyncRequest:request
-      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
-        if (error) {
-          if (completionHandler) {
-            completionHandler(nil, error);
-          }
-          return;
-        }
-        ARDMessageResponse *messageResponse = [ARDMessageResponse responseFromJSONData:data];
-        if (!messageResponse) {
-          if (completionHandler) {
-            NSError *error = [[self class] badResponseError];
-            completionHandler(nil, error);
-          }
-          return;
-        }
-        if (completionHandler) {
-          completionHandler(messageResponse, nil);
-        }
-      }];
+  request.HTTPBody = messageData;
+  [NSURLConnection sendAsyncRequest:request
+                  completionHandler:^(NSURLResponse *response __unused,
+                                      NSData *data,
+                                      NSError *responseError) {
+                    if (responseError) {
+                      if (completionHandler) {
+                        completionHandler(nil, responseError);
+                      }
+                      return;
+                    }
+                    ARDMessageResponse *messageResponse =
+                        [ARDMessageResponse responseFromJSONData:data];
+                    if (!messageResponse) {
+                      if (completionHandler) {
+                        NSError *err = [[self class] badResponseError];
+                        completionHandler(nil, err);
+                      }
+                      return;
+                    }
+                    if (completionHandler) {
+                      completionHandler(messageResponse, nil);
+                    }
+                  }];
 }
 
 - (void)leaveRoomWithRoomId:(NSString *)roomId
@@ -139,7 +139,8 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   dispatch_semaphore_t sem = dispatch_semaphore_create(0);
   [NSURLConnection
        sendAsyncRequest:request
-      completionHandler:^(NSURLResponse *response __unused, NSData *data __unused, NSError *e) {
+      completionHandler:^(
+          NSURLResponse *response __unused, NSData *data __unused, NSError *e) {
         if (e) {
           error = e;
         }
@@ -148,7 +149,9 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
 
   dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
   if (error) {
-    RTCLogError(@"Error leaving room %@ on room server: %@", roomId, error.localizedDescription);
+    RTCLogError(@"Error leaving room %@ on room server: %@",
+                roomId,
+                error.localizedDescription);
     if (completionHandler) {
       completionHandler(error);
     }
@@ -163,12 +166,12 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
 #pragma mark - Private
 
 + (NSError *)badResponseError {
-  NSError *error =
-      [[NSError alloc] initWithDomain:kARDAppEngineClientErrorDomain
-                                 code:kARDAppEngineClientErrorBadResponse
-                             userInfo:@{
-    NSLocalizedDescriptionKey: @"Error parsing response.",
-  }];
+  NSError *error = [[NSError alloc]
+      initWithDomain:kARDAppEngineClientErrorDomain
+                code:kARDAppEngineClientErrorBadResponse
+            userInfo:@{
+              NSLocalizedDescriptionKey : @"Error parsing response.",
+            }];
   return error;
 }
 

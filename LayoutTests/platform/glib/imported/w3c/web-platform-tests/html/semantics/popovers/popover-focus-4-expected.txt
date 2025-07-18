@@ -1,0 +1,7 @@
+Toggle popover
+
+
+FAIL Cases where the next focus candidate isn't in the direct parent scope with popovertarget invocation assert_equals: initial invoker should be focused, nested popover invoker is skipped since it is disabled expected Element node <button tabindex="0" popovertarget="no-focus-candidate-p"... but got Element node <button tabindex="0">focusable element</button>
+FAIL Cases where the next focus candidate isn't in the direct parent scope with command/commandfor invocation assert_equals: initial invoker should be focused, nested popover invoker is skipped since it is disabled expected Element node <button tabindex="0" commandfor="no-focus-candidate-p" co... but got Element node <button tabindex="0">focusable element</button>
+FAIL Cases where the next focus candidate isn't in the direct parent scope with imperative invocation assert_equals: initial invoker should be focused, nested popover invoker is skipped since it is disabled expected Element node <button tabindex="0">Toggle popover</button> but got Element node <button tabindex="0">focusable element</button>
+

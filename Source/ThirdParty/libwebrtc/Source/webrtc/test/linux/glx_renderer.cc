@@ -18,7 +18,7 @@ namespace webrtc {
 namespace test {
 
 GlxRenderer::GlxRenderer(size_t width, size_t height)
-    : width_(width), height_(height), display_(NULL), context_(NULL) {
+    : width_(width), height_(height), display_(nullptr), context_(nullptr) {
   RTC_DCHECK_GT(width, 0);
   RTC_DCHECK_GT(height, 0);
 }
@@ -28,7 +28,7 @@ GlxRenderer::~GlxRenderer() {
 }
 
 bool GlxRenderer::Init(const char* window_title) {
-  if ((display_ = XOpenDisplay(NULL)) == NULL) {
+  if ((display_ = XOpenDisplay(nullptr)) == nullptr) {
     Destroy();
     return false;
   }
@@ -41,13 +41,13 @@ bool GlxRenderer::Init(const char* window_title) {
       GLX_BLUE_SIZE,    4,        GLX_DEPTH_SIZE, 16, None,
   };
 
-  if ((vi = glXChooseVisual(display_, screen, attr_list)) == NULL) {
+  if ((vi = glXChooseVisual(display_, screen, attr_list)) == nullptr) {
     Destroy();
     return false;
   }
 
-  context_ = glXCreateContext(display_, vi, 0, true);
-  if (context_ == NULL) {
+  context_ = glXCreateContext(display_, vi, nullptr, true);
+  if (context_ == nullptr) {
     Destroy();
     return false;
   }
@@ -64,7 +64,7 @@ bool GlxRenderer::Init(const char* window_title) {
   XFree(vi);
 
   XSetStandardProperties(display_, window_, window_title, window_title, None,
-                         NULL, 0, NULL);
+                         nullptr, 0, nullptr);
 
   Atom wm_delete = XInternAtom(display_, "WM_DELETE_WINDOW", True);
   if (wm_delete != None) {
@@ -78,7 +78,7 @@ bool GlxRenderer::Init(const char* window_title) {
     return false;
   }
   GlRenderer::Init();
-  if (!glXMakeCurrent(display_, None, NULL)) {
+  if (!glXMakeCurrent(display_, None, nullptr)) {
     Destroy();
     return false;
   }
@@ -88,17 +88,17 @@ bool GlxRenderer::Init(const char* window_title) {
 }
 
 void GlxRenderer::Destroy() {
-  if (context_ != NULL) {
+  if (context_ != nullptr) {
     glXMakeCurrent(display_, window_, context_);
     GlRenderer::Destroy();
-    glXMakeCurrent(display_, None, NULL);
+    glXMakeCurrent(display_, None, nullptr);
     glXDestroyContext(display_, context_);
-    context_ = NULL;
+    context_ = nullptr;
   }
 
-  if (display_ != NULL) {
+  if (display_ != nullptr) {
     XCloseDisplay(display_);
-    display_ = NULL;
+    display_ = nullptr;
   }
 }
 
@@ -109,7 +109,7 @@ GlxRenderer* GlxRenderer::Create(const char* window_title,
   if (!glx_renderer->Init(window_title)) {
     // TODO(pbos): Add GLX-failed warning here?
     delete glx_renderer;
-    return NULL;
+    return nullptr;
   }
   return glx_renderer;
 }
@@ -121,12 +121,12 @@ void GlxRenderer::Resize(size_t width, size_t height) {
     abort();
   }
   GlRenderer::ResizeViewport(width_, height_);
-  if (!glXMakeCurrent(display_, None, NULL)) {
+  if (!glXMakeCurrent(display_, None, nullptr)) {
     abort();
   }
 
   XSizeHints* size_hints = XAllocSizeHints();
-  if (size_hints == NULL) {
+  if (size_hints == nullptr) {
     abort();
   }
   size_hints->flags = PAspect;
@@ -141,7 +141,7 @@ void GlxRenderer::Resize(size_t width, size_t height) {
   XConfigureWindow(display_, window_, CWWidth | CWHeight, &wc);
 }
 
-void GlxRenderer::OnFrame(const webrtc::VideoFrame& frame) {
+void GlxRenderer::OnFrame(const VideoFrame& frame) {
   if (static_cast<size_t>(frame.width()) != width_ ||
       static_cast<size_t>(frame.height()) != height_) {
     Resize(static_cast<size_t>(frame.width()),
@@ -167,7 +167,7 @@ void GlxRenderer::OnFrame(const webrtc::VideoFrame& frame) {
   GlRenderer::OnFrame(frame);
   glXSwapBuffers(display_, window_);
 
-  if (!glXMakeCurrent(display_, None, NULL)) {
+  if (!glXMakeCurrent(display_, None, nullptr)) {
     abort();
   }
 }

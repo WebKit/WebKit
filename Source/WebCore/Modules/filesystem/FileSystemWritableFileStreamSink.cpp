@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystemWritableFileStreamSink.h"
 
+#include "Exception.h"
+#include "ExceptionOr.h"
 #include "FileSystemFileHandle.h"
 #include "FileSystemWritableFileStream.h"
 #include "FileSystemWriteCloseReason.h"
@@ -34,6 +36,7 @@
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSString.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 

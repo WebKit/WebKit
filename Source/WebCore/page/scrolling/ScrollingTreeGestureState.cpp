@@ -82,6 +82,7 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
     case PlatformWheelEventPhase::Changed:
     case PlatformWheelEventPhase::Stationary:
     case PlatformWheelEventPhase::None:
+    case PlatformWheelEventPhase::WillBegin:
         break;
     }
 
@@ -101,6 +102,7 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
     case PlatformWheelEventPhase::Changed:
     case PlatformWheelEventPhase::Stationary:
     case PlatformWheelEventPhase::None:
+    case PlatformWheelEventPhase::WillBegin:
         break;
     }
 }

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Document;
+class FloatRect;
 class FontCascade;
 class LayoutPoint;
 class Node;

@@ -282,12 +282,6 @@ static bool shouldAutofocus(const Element& element)
     return allAncestorsAreSameOrigin;
 }
 
-static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>& elementIdentifiersMap()
-{
-    static MainThreadNeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>> map;
-    return map;
-}
-
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, { }));
@@ -303,11 +297,6 @@ Element::~Element()
 {
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
-
-    if (hasStateFlag(StateFlag::HasElementIdentifier)) [[unlikely]]
-        elementIdentifiersMap().remove(*this);
-    else
-        ASSERT(!elementIdentifiersMap().contains(*this));
 
     ASSERT(!is<HTMLImageElement>(*this) || !intersectionObserverDataIfExists());
     disconnectFromIntersectionObservers();
@@ -440,7 +429,7 @@ void Element::setTabIndexForBindings(int value)
     setIntegralAttribute(tabindexAttr, value);
 }
 
-bool Element::isKeyboardFocusable(KeyboardEvent*) const
+bool Element::isKeyboardFocusable(const FocusEventData&) const
 {
     if (!isFocusable() || shouldBeIgnoredInSequentialFocusNavigation() || tabIndexSetExplicitly().value_or(0) < 0)
         return false;
@@ -630,7 +619,7 @@ bool Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
     return simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickSource::UserAgent);
 }
 
-Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
 {
     switch (type) {
     case CloningOperation::SelfOnly:
@@ -646,7 +635,7 @@ Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, 
     return cloneElementWithChildren(document, registry);
 }
 
-void Element::cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry* registry)
+void Element::cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry* registry) const
 {
     RefPtr oldShadowRoot = this->shadowRoot();
     if (!oldShadowRoot || !oldShadowRoot->isClonable())
@@ -664,7 +653,7 @@ void Element::cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry*
     oldShadowRoot->cloneChildNodes(newHost.document(), clonedShadowRoot->usesNullCustomElementRegistry() ? nullptr : registry, clonedShadowRoot);
 }
 
-Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElementRegistry* registry) const
 {
     Ref clone = cloneElementWithoutChildren(document, registry);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
@@ -673,7 +662,7 @@ Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElement
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElementRegistry* registry) const
 {
     Ref clone = cloneElementWithoutAttributesAndChildren(document, registry);
 
@@ -689,7 +678,7 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry* registry) const
 {
     return document.createElement(tagQName(), false, registry);
 }
@@ -1581,6 +1570,23 @@ int Element::clientHeight()
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble());
     }
     return 0;
+}
+
+double Element::currentCSSZoom()
+{
+    Ref document = this->document();
+
+    document->updateStyleIfNeeded();
+
+    float initialZoom = 1.0f;
+    if (RefPtr frame = document->frame()) {
+        if (!document->printing())
+            initialZoom = frame->pageZoomFactor();
+    }
+
+    if (CheckedPtr renderer = this->renderer())
+        return renderer->style().usedZoom() / initialZoom;
+    return 1.0;
 }
 
 ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
@@ -3298,7 +3304,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     return false;
 }
 
-ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, CustomElementRegistryKind registryKind)
+ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::optional<CustomElementRegistryKind> registryKind)
 {
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { ExceptionCode::TypeError };
@@ -3317,6 +3323,8 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, Custo
     }
     RefPtr registry = init.customElementRegistry;
     auto scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::No;
+    if (!registryKind)
+        registryKind = !registry && usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window;
     if (registryKind == CustomElementRegistryKind::Null) {
         ASSERT(!registry);
         scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::Yes;
@@ -3324,7 +3332,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, Custo
         ASSERT(registryKind == CustomElementRegistryKind::Window);
         scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::Yes;
     } else
-        registry = document().customElementRegistry();
+        registry = CustomElementRegistry::registryForElement(*this);
     Ref shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
         init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
         init.clonable ? ShadowRoot::Clonable::Yes : ShadowRoot::Clonable::No,
@@ -3626,6 +3634,13 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
             builder.append(" ..."_s);
         builder.append('\'');
     }
+}
+
+String Element::attributesForDescription() const
+{
+    StringBuilder builder;
+    appendAttributes(builder, *this);
+    return builder.toString();
 }
 
 String Element::description() const
@@ -4006,7 +4021,7 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
     if (RefPtr element = autoFocusDelegate(target, trigger))
         return element;
     for (Ref element : descendantsOfType<Element>(target)) {
-        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable(nullptr))
+        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable({ }))
             return element;
 
         switch (trigger) {
@@ -4092,7 +4107,7 @@ void Element::focus(const FocusOptions& options)
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->checkedFocusController()->setFocusedElement(newTarget.get(), frame, optionsWithVisibility))
+        if (!page->focusController().setFocusedElement(newTarget.get(), frame, optionsWithVisibility))
             return;
     }
 
@@ -4160,7 +4175,7 @@ void Element::blur()
 {
     if (treeScope().focusedElementInScope() == this) {
         if (RefPtr frame = document().frame())
-            frame->page()->checkedFocusController()->setFocusedElement(nullptr, *frame);
+            frame->protectedPage()->focusController().setFocusedElement(nullptr, *frame);
         else
             protectedDocument()->setFocusedElement(nullptr);
     }
@@ -6024,23 +6039,6 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
         }
     }
     return animations;
-}
-
-ElementIdentifier Element::identifier() const
-{
-    return elementIdentifiersMap().ensure(const_cast<Element&>(*this), [&] {
-        setStateFlag(StateFlag::HasElementIdentifier);
-        return ElementIdentifier::generate();
-    }).iterator->value;
-}
-
-Element* Element::fromIdentifier(ElementIdentifier identifier)
-{
-    for (auto& [element, elementIdentifier] : elementIdentifiersMap()) {
-        if (elementIdentifier == identifier)
-            return element.ptr();
-    }
-    return nullptr;
 }
 
 StylePropertyMap* Element::attributeStyleMap()

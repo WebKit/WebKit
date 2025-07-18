@@ -34,6 +34,7 @@
 #include "CanvasRenderingContext2DBase.h"
 
 #include "BitmapImage.h"
+#include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
 #include "CSSMarkup.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
@@ -81,6 +82,7 @@
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include "WebCodecsVideoFrame.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -288,7 +290,7 @@ bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer
 #if USE(SKIA)
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
 {
-    if (RefPtr buffer = canvasBase().buffer())
+    if (auto buffer = canvasBase().buffer())
         return buffer->layerContentsDisplayDelegate();
     return nullptr;
 }
@@ -1146,7 +1148,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         return;
 
     // If gradient size is zero, then paint nothing.
-    RefPtr gradient = c->fillGradient();
+    auto gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1189,7 +1191,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         return;
 
     // If gradient size is zero, then paint nothing.
-    RefPtr gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1361,7 +1363,7 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     // from the HTML5 Canvas spec:
     // If x0 = x1 and y0 = y1, then the linear gradient must paint nothing
     // If x0 = x1 and y0 = y1 and r0 = r1, then the radial gradient must paint nothing
-    RefPtr gradient = c->fillGradient();
+    auto gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1413,7 +1415,7 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
         return;
 
     // If gradient size is zero, then paint nothing.
-    RefPtr gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1621,7 +1623,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     if (imageElement.allowsOrientationOverride()) {
         if (CheckedPtr renderer = imageElement.renderer())
             orientation = renderer->style().imageOrientation().orientation();
-        else if (CheckedPtr computedStyle = imageElement.computedStyle())
+        else if (auto* computedStyle = imageElement.computedStyle())
             orientation = computedStyle->imageOrientation().orientation();
     }
 
@@ -2274,8 +2276,8 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 {
     if (!canvas.width() || !canvas.height())
         return Exception { ExceptionCode::InvalidStateError };
+    auto* copiedImage = canvas.copiedImage();
 
-    RefPtr copiedImage = canvas.copiedImage();
     if (!copiedImage)
         return Exception { ExceptionCode::InvalidStateError };
     
@@ -2440,7 +2442,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this))
         return paintContext->ensureDrawingContext();
-    if (RefPtr buffer = canvasBase().buffer())
+    if (auto* buffer = canvasBase().buffer())
         return &buffer->context();
     return nullptr;
 }
@@ -2799,7 +2801,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
         return false;
 
     // If gradient size is zero, nothing would be painted.
-    RefPtr gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (!fill && gradient && gradient->isZeroSize())
         return false;
 
@@ -2810,7 +2812,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
     return true;
 }
 
-static inline bool isSpaceThatNeedsReplacing(UChar c)
+static inline bool isSpaceThatNeedsReplacing(char16_t c)
 {
     // According to specification all space characters should be replaced with 0x0020 space character.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-preparation-algorithm
@@ -2828,7 +2830,7 @@ String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
         return text;
 
     unsigned textLength = text.length();
-    Vector<UChar> charVector(textLength);
+    Vector<char16_t> charVector(textLength);
     StringView(text).getCharacters(charVector.mutableSpan());
 
     charVector[i++] = ' ';
@@ -3092,7 +3094,7 @@ std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesti
 
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
 {
-    if (RefPtr buffer = canvasBase().buffer()) {
+    if (auto* buffer = canvasBase().buffer()) {
         buffer->ensureBackendCreated();
         if (buffer->hasBackend())
             return buffer->renderingMode();
@@ -3186,8 +3188,8 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
-    CheckedRef fontCascade = fontProxy()->fontCascade();
-    double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, fontCascade.ptr());
+    auto& fontCascade = fontProxy()->fontCascade();
+    double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, &fontCascade);
 
     modifiableState().letterSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setLetterSpacing(Length(pixels, LengthType::Fixed));
@@ -3214,8 +3216,8 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
-    CheckedRef fontCascade = fontProxy()->fontCascade();
-    double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, fontCascade.ptr());
+    auto& fontCascade = fontProxy()->fontCascade();
+    double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, &fontCascade);
 
     modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setWordSpacing(Length(pixels, LengthType::Fixed));

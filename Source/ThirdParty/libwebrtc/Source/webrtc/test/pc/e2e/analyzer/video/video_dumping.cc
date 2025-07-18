@@ -70,7 +70,7 @@ class BroadcastingFrameWriter final : public test::VideoFrameWriter {
       : delegates_(std::move(delegates)) {}
   ~BroadcastingFrameWriter() override { Close(); }
 
-  bool WriteFrame(const webrtc::VideoFrame& frame) override {
+  bool WriteFrame(const VideoFrame& frame) override {
     for (auto& delegate : delegates_) {
       if (!delegate->WriteFrame(frame)) {
         return false;

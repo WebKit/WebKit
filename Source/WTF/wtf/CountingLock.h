@@ -56,7 +56,7 @@ namespace WTF {
 
 class CountingLock final {
     WTF_MAKE_NONCOPYABLE(CountingLock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CountingLock);
 
     typedef unsigned LockType;
     

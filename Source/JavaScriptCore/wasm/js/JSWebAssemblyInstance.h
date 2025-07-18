@@ -78,7 +78,7 @@ public:
 
     static Identifier createPrivateModuleKey();
 
-    static JSWebAssemblyInstance* tryCreate(VM&, Structure*, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Wasm::CreationMode);
+    static JSWebAssemblyInstance* tryCreate(VM&, Structure*, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Wasm::CreationMode, RefPtr<SourceProvider>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -132,6 +132,8 @@ public:
     void updateSoftStackLimit(void* softStackLimit) { m_softStackLimit = softStackLimit; }
 
     Wasm::Module& module() const { return m_module.get(); }
+    SourceTaintedOrigin taintedness() const { return m_sourceProvider->sourceTaintedOrigin(); }
+    URL sourceURL() const { return m_sourceProvider->sourceOrigin().url(); }
     Wasm::CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memoryMode()); }
     Wasm::Table* table(unsigned);
     void setTable(unsigned, Ref<Wasm::Table>&&);
@@ -299,7 +301,7 @@ public:
     void* faultPC() const { return m_faultPC; }
 
 private:
-    JSWebAssemblyInstance(VM&, Structure*, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
+    JSWebAssemblyInstance(VM&, Structure*, JSWebAssemblyModule*, WebAssemblyModuleRecord*, RefPtr<SourceProvider>&&);
     ~JSWebAssemblyInstance();
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
@@ -316,6 +318,7 @@ private:
     CagedPtr<Gigacage::Primitive, void> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     const Ref<Wasm::Module> m_module;
+    RefPtr<SourceProvider> m_sourceProvider;
 
     CallFrame* m_temporaryCallFrame { nullptr };
     Wasm::Global::Value* m_globals { nullptr };

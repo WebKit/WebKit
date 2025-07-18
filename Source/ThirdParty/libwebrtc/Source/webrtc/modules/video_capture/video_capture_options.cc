@@ -10,6 +10,9 @@
 
 #include "modules/video_capture/video_capture_options.h"
 
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+
 #if defined(WEBRTC_USE_PIPEWIRE)
 #include "modules/video_capture/linux/pipewire_session.h"
 #endif
@@ -32,7 +35,7 @@ void VideoCaptureOptions::Init(Callback* callback) {
 #if defined(WEBRTC_USE_PIPEWIRE)
   if (allow_pipewire_) {
     pipewire_session_ =
-        rtc::make_ref_counted<videocapturemodule::PipeWireSession>();
+        webrtc::make_ref_counted<videocapturemodule::PipeWireSession>();
     pipewire_session_->Init(callback, pipewire_fd_);
     return;
   }
@@ -46,7 +49,7 @@ void VideoCaptureOptions::Init(Callback* callback) {
 }
 
 #if defined(WEBRTC_USE_PIPEWIRE)
-rtc::scoped_refptr<videocapturemodule::PipeWireSession>
+webrtc::scoped_refptr<videocapturemodule::PipeWireSession>
 VideoCaptureOptions::pipewire_session() {
   return pipewire_session_;
 }

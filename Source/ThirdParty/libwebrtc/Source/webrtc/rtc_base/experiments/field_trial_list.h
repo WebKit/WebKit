@@ -75,7 +75,7 @@ class FieldTrialList : public FieldTrialListBase {
 
     std::vector<T> new_values_;
 
-    for (const absl::string_view token : rtc::split(str_value.value(), '|')) {
+    for (const absl::string_view token : split(str_value.value(), '|')) {
       std::optional<T> value = ParseTypedParameter<T>(token);
       if (value) {
         new_values_.push_back(*value);

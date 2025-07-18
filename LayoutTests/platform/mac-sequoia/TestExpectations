@@ -1,0 +1,52 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only
+### occurs on Sequoia, you should probably use the platform/mac/TestExpectations file, NOT this one.
+###
+
+# -- The below has different, expected behavior on Tahoe than Sequoia --
+# -- Please put new failure expectations for Sequoia at the bottom of the file. --
+
+# rdar://155468206 ([Tahoe] 4 WebKit layout tests need support for new attributed string attributes.)
+accessibility/mac/attributed-string/attributed-string-for-range-with-options.html [ Pass ]
+accessibility/mac/attributed-string/attributed-string-for-range.html [ Pass ]
+accessibility/mac/attributed-string/attributed-string-text-styling.html [ Pass ]
+accessibility/mac/dynamic-style.html [ Pass ]
+
+# rdar://154886047 (REGRESSION(Liquid Glass): Rebaseline? [ OS 26 ] 5X imported/w3c/web-platform-tests/css/css-view-transitions/ (Layout-Tests) are constant ImageOnlyFailures)
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-new.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-offscreen-new.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-offscreen-new.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-and-left-of-viewport-partially-onscreen-new.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-transform-position-fixed.html [ Pass ]
+
+# rdar://154889639 (REGRESSION(Liquid Glass): [ OS 26 ] fast/forms/datalist/datalist-fallback-content.html is a constant ImageOnlyFailure)
+fast/forms/datalist/datalist-fallback-content.html [ Pass ]
+
+# rdar://154990654 (REGRESSION(Liquid Glass): [ Tahoe ] 4X fast/forms/switch/zoom-approximates-transform (layout-tests) are constant ImageOnlyFailures)
+fast/forms/switch/zoom-approximates-transform-rtl.html [ Pass ]
+fast/forms/switch/zoom-approximates-transform-vertical-lr.html [ Pass ] 
+fast/forms/switch/zoom-approximates-transform-vertical-rl.html [ Pass ] 
+fast/forms/switch/zoom-approximates-transform.html [ Pass ] 
+
+# rdar://154997421 (REGRESSION(Liquid Glass): [ Tahoe ] 5X fast/forms/range (layout-tests) are constant failures
+fast/forms/range/input-appearance-range-rtl.html [ Pass ]
+fast/forms/range/slider-in-multi-column.html [ Pass ]
+
+# Tests which pass only with form control refresh enabled (support added in Tahoe)
+fast/forms/appearance-default-button.html  [ Skip ]
+fast/forms/form-control-refresh [ Skip ]
+imported/w3c/web-platform-tests/css/css-ui/button-author-level-padding-applies.html [ Skip ]
+
+# -- The above has different, expected behavior on Tahoe than Sequoia --
+# -- New failure expectations for Sequoia below this point only!! --
+
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only
+### occurs on Sequoia, you should probably use the platform/mac/TestExpectations file, NOT this one.
+###
+### DO NOT PUT ANYTHING BELOW THIS LINE

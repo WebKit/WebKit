@@ -1,8 +1,0 @@
-CONSOLE MESSAGE:
-texData first 4 texels:
-  [7e, 7f, 5d, a6]
-  [64, 14, 58, 72]
-  [22, 27, 66, 79]
-  [9e, 00, 88, fe]
-
-

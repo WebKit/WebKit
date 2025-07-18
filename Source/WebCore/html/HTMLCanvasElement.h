@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
+#include "PlatformDynamicRangeLimit.h"
 #include <memory>
 #include <wtf/Forward.h>
 
@@ -134,6 +135,8 @@ public:
 
     bool needsPreparationForDisplay();
     void prepareForDisplay();
+    void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
+    WEBCORE_EXPORT std::optional<double> getContextEffectiveDynamicRangeLimitValue() const;
 
     void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
     bool isSnapshotting() const { return m_isSnapshotting; }
@@ -190,6 +193,7 @@ private:
     bool m_isSnapshotting { false };
 
     std::unique_ptr<CanvasRenderingContext> m_context;
+    PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 

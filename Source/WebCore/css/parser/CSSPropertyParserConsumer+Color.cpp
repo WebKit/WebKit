@@ -969,7 +969,7 @@ static std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimitM
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
 
-    CSS::DynamicRangeLimitMixParameters::Vector resultBuilder;
+    CSS::DynamicRangeLimitMixParameters::Container resultBuilder;
 
     do {
         auto component = consumeUnresolvedDynamicRangeLimitMixComponent(args, propertyParserState);

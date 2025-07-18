@@ -10,36 +10,38 @@
 
 #include "rtc_base/physical_socket_server.h"
 
-#include <signal.h>
-
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 
-#include "rtc_base/gunit.h"
+#include "api/test/rtc_error_matchers.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network_monitor.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/socket_unittest.h"
 #include "rtc_base/test_utils.h"
 #include "rtc_base/thread.h"
-#include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
-
-namespace rtc {
+#include "test/wait_until.h"
 
 #define MAYBE_SKIP_IPV4                        \
-  if (!HasIPv4Enabled()) {                     \
+  if (!::webrtc::HasIPv4Enabled()) {           \
     RTC_LOG(LS_INFO) << "No IPv4... skipping"; \
     return;                                    \
   }
 
 #define MAYBE_SKIP_IPV6                        \
-  if (!HasIPv6Enabled()) {                     \
+  if (!::webrtc::HasIPv6Enabled()) {           \
     RTC_LOG(LS_INFO) << "No IPv6... skipping"; \
     return;                                    \
   }
+
+namespace webrtc {
 
 class PhysicalSocketTest;
 
@@ -128,7 +130,7 @@ class PhysicalSocketTest : public SocketTest {
   void WritableAfterPartialWrite(const IPAddress& loopback);
 
   FakePhysicalSocketServer server_;
-  rtc::AutoSocketServerThread thread_;
+  AutoSocketServerThread thread_;
   bool fail_accept_;
   int max_send_size_;
 };
@@ -198,7 +200,7 @@ TEST_F(PhysicalSocketTest, TestConnectFailIPv4) {
 }
 
 void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
-  webrtc::testing::StreamSink sink;
+  testing::StreamSink sink;
   SocketAddress accept_addr;
 
   // Create two clients.
@@ -223,7 +225,7 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
   EXPECT_EQ(Socket::CS_CONNECTING, server->GetState());
 
   // Ensure no pending server connections, since we haven't done anything yet.
-  EXPECT_FALSE(sink.Check(server.get(), webrtc::testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
@@ -234,12 +236,14 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(Socket::CS_CONNECTING, client1->GetState());
-  EXPECT_FALSE(sink.Check(client1.get(), webrtc::testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client1.get(), webrtc::testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client1.get(), testing::SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client1.get(), testing::SSE_CLOSE));
 
   // Server has pending connection, try to accept it (will fail).
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), webrtc::testing::SSE_READ)),
-                   kTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return (sink.Check(server.get(), testing::SSE_READ)); },
+                ::testing::IsTrue()),
+      IsRtcOk());
   // Simulate "::accept" returning an error.
   SetFailAccept(true);
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
@@ -247,7 +251,7 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
   ASSERT_TRUE(accept_addr.IsNil());
 
   // Ensure no more pending server connections.
-  EXPECT_FALSE(sink.Check(server.get(), webrtc::testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
@@ -258,12 +262,14 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(Socket::CS_CONNECTING, client2->GetState());
-  EXPECT_FALSE(sink.Check(client2.get(), webrtc::testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client2.get(), webrtc::testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client2.get(), testing::SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client2.get(), testing::SSE_CLOSE));
 
   // Server has pending connection, try to accept it (will succeed).
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), webrtc::testing::SSE_READ)),
-                   kTimeout);
+  EXPECT_THAT(
+      WaitUntil([&] { return (sink.Check(server.get(), testing::SSE_READ)); },
+                ::testing::IsTrue()),
+      IsRtcOk());
   SetFailAccept(false);
   std::unique_ptr<Socket> accepted2(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted2);
@@ -532,4 +538,4 @@ TEST_F(PhysicalSocketTest, UdpSocketRecvTimestampUseRtcEpochIPv6) {
   SocketTest::TestUdpSocketRecvTimestampUseRtcEpochIPv6();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

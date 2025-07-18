@@ -103,7 +103,7 @@ private:
 
     bool supportsFocus() const final;
 
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isPluginElement() const final;
     bool canLoadScriptURL(const URL&) const final;
 

@@ -302,6 +302,9 @@ public:
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     virtual bool setNeedsDisplayIfEDRHeadroomExceeds(float);
+
+    virtual void setTonemappingEnabled(bool);
+    virtual bool tonemappingEnabled() const;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

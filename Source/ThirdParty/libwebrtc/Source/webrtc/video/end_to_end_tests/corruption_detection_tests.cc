@@ -23,7 +23,7 @@
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
@@ -91,7 +91,7 @@ TEST_F(
       constexpr int kMaxIterations = 200;
       bool corruption_score_reported = false;
       for (int i = 0; i < kMaxIterations; ++i) {
-        SleepMs(10);
+        Thread::SleepMs(10);
         VideoReceiveStreamInterface::Stats stats;
         SendTask(task_queue_, [&]() {
           ASSERT_EQ(receive_streams_.size(), 1u);

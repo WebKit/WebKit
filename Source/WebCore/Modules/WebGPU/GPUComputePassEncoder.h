@@ -80,6 +80,8 @@ public:
 private:
     GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&&, WebGPU::Device&);
 
+    Ref<WebGPU::ComputePassEncoder> protectedBacking() { return m_backing; }
+
     Ref<WebGPU::ComputePassEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
 };

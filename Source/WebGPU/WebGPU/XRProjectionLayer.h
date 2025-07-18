@@ -41,7 +41,7 @@ class CommandEncoder;
 class Device;
 
 class XRProjectionLayer : public RefCountedAndCanMakeWeakPtr<XRProjectionLayer>, public WGPUXRProjectionLayerImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayer);
 public:
     static Ref<XRProjectionLayer> create(Device& device)
     {

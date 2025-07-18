@@ -110,8 +110,7 @@ class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCountedAndCanMakeThreadS
 public:
     static Ref<AudioSession> create();
     static void setSharedSession(Ref<AudioSession>&&);
-    static AudioSession& sharedSession();
-    static Ref<AudioSession> protectedSharedSession() { return sharedSession(); }
+    static AudioSession& singleton();
 
     static bool enableMediaPlayback();
 

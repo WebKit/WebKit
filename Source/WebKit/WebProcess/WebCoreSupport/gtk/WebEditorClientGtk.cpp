@@ -31,7 +31,6 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/markup.h>
 #include <WebPage.h>
-#include <variant>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
@@ -51,7 +50,7 @@ bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, const String& co
 
 bool WebEditorClient::executePendingEditorCommands(LocalFrame& frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
-    Vector<std::variant<Editor::Command, String>> commands;
+    Vector<Variant<Editor::Command, String>> commands;
     for (auto& commandString : pendingEditorCommands) {
         if (commandString.startsWith("Gtk"_s))
             commands.append(commandString);

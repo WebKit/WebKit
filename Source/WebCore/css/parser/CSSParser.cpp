@@ -33,6 +33,7 @@
 
 #include "CSSAtRuleID.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValuesRule.h"
 #include "CSSKeyframeRule.h"
@@ -70,6 +71,7 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "MutableCSSSelector.h"
+#include "NodeInlines.h"
 #include "NestingLevelIncrementer.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"

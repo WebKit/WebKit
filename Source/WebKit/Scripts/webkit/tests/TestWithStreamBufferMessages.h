@@ -61,11 +61,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_stream;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_stream;
     }
 
 private:
-    const IPC::StreamConnectionBuffer& m_stream;
+    SUPPRESS_FORWARD_DECL_MEMBER const IPC::StreamConnectionBuffer& m_stream;
 };
 
 } // namespace TestWithStreamBuffer

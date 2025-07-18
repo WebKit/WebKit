@@ -55,6 +55,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
 #include "UserAgentParts.h"

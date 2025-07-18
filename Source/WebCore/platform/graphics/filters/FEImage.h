@@ -35,7 +35,7 @@ class Image;
 class ImageBuffer;
 
 class FEImage final : public FilterEffect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEImage);
 public:
     WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);

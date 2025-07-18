@@ -108,7 +108,7 @@ EchoControlMobileImpl::EchoControlMobileImpl()
 EchoControlMobileImpl::~EchoControlMobileImpl() {}
 
 void EchoControlMobileImpl::ProcessRenderAudio(
-    rtc::ArrayView<const int16_t> packed_render_audio) {
+    ArrayView<const int16_t> packed_render_audio) {
   RTC_DCHECK(stream_properties_);
 
   size_t buffer_index = 0;
@@ -191,9 +191,9 @@ int EchoControlMobileImpl::ProcessCaptureAudio(AudioBuffer* audio,
       split_bands = nullptr;
     }
 
-    if (noisy == NULL) {
+    if (noisy == nullptr) {
       noisy = clean;
-      clean = NULL;
+      clean = nullptr;
     }
     for (size_t render = 0; render < stream_properties_->num_reverse_channels;
          ++render) {

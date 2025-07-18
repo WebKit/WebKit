@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-namespace rtc {
+namespace webrtc {
 
 // Returns total CPU time of a current process in nanoseconds.
 // Time base is unknown, therefore use only to calculate deltas.
@@ -23,6 +23,15 @@ int64_t GetProcessCpuTimeNanos();
 // Time base is unknown, therefore use only to calculate deltas.
 int64_t GetThreadCpuTimeNanos();
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::GetProcessCpuTimeNanos;
+using ::webrtc::GetThreadCpuTimeNanos;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_CPU_TIME_H_

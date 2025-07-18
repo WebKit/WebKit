@@ -10,13 +10,18 @@
 
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
-#include <memory>
-
+#include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/pcc/pcc_factory.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
+#include "test/scenario/scenario_config.h"
 
 using ::testing::AllOf;
 using ::testing::Field;

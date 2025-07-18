@@ -85,6 +85,9 @@ using data from registry_xml.py and gl.xml.
 | [GL_NV_fence](https://khronos.org/registry/OpenGL/extensions/NV/NV_fence.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_float_blend](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_float_blend.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |
 | [GL_EXT_frag_depth](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_frag_depth.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_EXT_fragment_shading_rate](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_fragment_shading_rate.txt) |  |  |  |  |  |  |  |
+| [GL_EXT_fragment_shading_rate_attachment](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_fragment_shading_rate_attachment.txt) |  |  |  |  |  |  |  |
+| [GL_EXT_fragment_shading_rate_primitive](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_fragment_shading_rate_primitive.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/ANGLE/ANGLE_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_MESA_framebuffer_flip_y](https://khronos.org/registry/OpenGL/extensions/MESA/MESA_framebuffer_flip_y.txt) |  |  |  |  |  |  |  |

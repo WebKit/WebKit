@@ -13,9 +13,9 @@
 #include <bitset>
 #include <cstdint>
 #include <optional>
+#include <variant>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/variant.h"
 #include "api/rtp_headers.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/color_space.h"
@@ -38,11 +38,11 @@ struct RTPVideoHeaderLegacyGeneric {
   uint16_t picture_id;
 };
 
-using RTPVideoTypeHeader = absl::variant<absl::monostate,
-                                         RTPVideoHeaderVP8,
-                                         RTPVideoHeaderVP9,
-                                         RTPVideoHeaderH264,
-                                         RTPVideoHeaderLegacyGeneric>;
+using RTPVideoTypeHeader = std::variant<std::monostate,
+                                        RTPVideoHeaderVP8,
+                                        RTPVideoHeaderVP9,
+                                        RTPVideoHeaderH264,
+                                        RTPVideoHeaderLegacyGeneric>;
 
 struct RTPVideoHeader {
   struct GenericDescriptorInfo {
@@ -98,7 +98,7 @@ struct RTPVideoHeader {
 
   // Required for automatic corruption detection.
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       frame_instrumentation_data;
 };
 

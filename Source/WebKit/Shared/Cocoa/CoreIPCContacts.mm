@@ -78,10 +78,9 @@ RetainPtr<id> CoreIPCCNPostalAddress::toID() const
 }
 
 CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
+    : m_identifier { contact.identifier }
+    , m_personContactType { contact.contactType == CNContactTypePerson }
 {
-    m_identifier = contact.identifier;
-    m_contactType = contact.contactType;
-
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNamePrefixKey()] && contact.namePrefix)
         m_namePrefix = contact.namePrefix;
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactGivenNameKey()] && contact.givenName)
@@ -145,11 +144,6 @@ CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
     }
 }
 
-bool CoreIPCCNContact::isValidCNContactType(NSInteger proposedType)
-{
-    return proposedType == CNContactTypePerson || proposedType == CNContactTypeOrganization;
-}
-
 static RetainPtr<NSArray> nsArrayFromVectorOfLabeledValues(const Vector<CoreIPCContactLabeledValue>& labeledValues)
 {
     return createNSArray(labeledValues, [] (auto& labeledValue) -> RetainPtr<id> {
@@ -164,7 +158,7 @@ static RetainPtr<NSArray> nsArrayFromVectorOfLabeledValues(const Vector<CoreIPCC
 RetainPtr<id> CoreIPCCNContact::toID() const
 {
     RetainPtr<CNMutableContact> result = adoptNS([[PAL::getCNMutableContactClass() alloc] initWithIdentifier:m_identifier.createNSString().get()]);
-    result.get().contactType = (CNContactType)m_contactType;
+    result.get().contactType = m_personContactType ? CNContactTypePerson : CNContactTypeOrganization;
 
     if (!m_namePrefix.isNull())
         result.get().namePrefix = m_namePrefix.createNSString().get();

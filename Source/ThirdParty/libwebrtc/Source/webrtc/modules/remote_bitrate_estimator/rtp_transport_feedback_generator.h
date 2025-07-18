@@ -11,13 +11,14 @@
 #ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_RTP_TRANSPORT_FEEDBACK_GENERATOR_H_
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_RTP_TRANSPORT_FEEDBACK_GENERATOR_H_
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 #include "api/units/data_rate.h"
-#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
@@ -37,9 +38,6 @@ class RtpTransportFeedbackGenerator {
   virtual TimeDelta Process(Timestamp now) = 0;
 
   virtual void OnSendBandwidthEstimateChanged(DataRate estimate) = 0;
-
-  // Overhead from transport layers below RTP. Ie, IP, SRTP.
-  virtual void SetTransportOverhead(DataSize overhead_per_packet) = 0;
 };
 
 }  // namespace webrtc

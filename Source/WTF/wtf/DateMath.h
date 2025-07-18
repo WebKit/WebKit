@@ -58,7 +58,7 @@ enum class TimeType : uint8_t {
 };
 
 struct LocalTimeOffset {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LocalTimeOffset);
 
     LocalTimeOffset() = default;
     constexpr LocalTimeOffset(bool isDST, int offset)

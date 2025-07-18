@@ -34,7 +34,7 @@ class ExampleVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   ~ExampleVideoQualityAnalyzer() override;
 
   void Start(std::string test_case_name,
-             rtc::ArrayView<const std::string> peer_names,
+             ArrayView<const std::string> peer_names,
              int max_threads_count) override;
   uint16_t OnFrameCaptured(absl::string_view peer_name,
                            const std::string& stream_label,

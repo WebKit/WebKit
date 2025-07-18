@@ -170,18 +170,24 @@ declare_args() {
   rtc_build_with_neon =
       (current_cpu == "arm" && arm_use_neon) || current_cpu == "arm64"
 
-  # Enable this to build OpenH264 encoder/FFmpeg decoder. This is supported on
-  # all platforms except Android and iOS. Because FFmpeg can be built
-  # with/without H.264 support, `ffmpeg_branding` has to separately be set to a
-  # value that includes H.264, for example "Chrome". If FFmpeg is built without
-  # H.264, compilation succeeds but `H264DecoderImpl` fails to initialize.
+  # Enable this to build OpenH264 encoder/FFmpeg decoder. When building WebRTC
+  # as part of Chromium, this is delegated to `media_use_openh264`. When
+  # building WebRTC as a standalone library, this is supported on all platforms
+  # except Android and iOS. Because FFmpeg can be built with/without H.264
+  # support, `ffmpeg_branding` has to separately be set to a value that
+  # includes H.264, for example "Chrome". If FFmpeg is built without H.264,
+  # compilation succeeds but `H264DecoderImpl` fails to initialize.
   # CHECK THE OPENH264, FFMPEG AND H.264 LICENSES/PATENTS BEFORE BUILDING.
   # http://www.openh264.org, https://www.ffmpeg.org/
   #
   # Enabling H264 when building with MSVC is currently not supported, see
   # bugs.webrtc.org/9213#c13 for more info.
-  rtc_use_h264 =
-      proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
+  if (build_with_chromium) {
+    rtc_use_h264 = media_use_openh264
+  } else {
+    rtc_use_h264 =
+        proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
+  }
 
   # Use system OpenH264
   rtc_system_openh264 = false
@@ -264,6 +270,11 @@ declare_args() {
 
   # When true, include the Perfetto library.
   rtc_use_perfetto = false
+
+  # When true allows exports from deprecated namespaces.
+  # This will be set to false on Jun 23 2025. See bugs.webrtc.org/42232595
+  # for details.
+  rtc_allow_deprecated_namespaces = true
 }
 
 if (!build_with_mozilla) {
@@ -287,11 +298,6 @@ declare_args() {
   rtc_libvpx_build_vp9 = !build_with_mozilla
   rtc_build_opus = !build_with_mozilla
   rtc_build_ssl = !build_with_mozilla
-
-  # Disable libevent task queue unconditionally.
-  # TODO: bugs.webrtc.org/42224654 clean the flags up.
-  rtc_enable_libevent = false
-  rtc_build_libevent = false
 
   # Excluded in Chromium since its prerequisites don't require Pulse Audio.
   rtc_include_pulse_audio = !build_with_chromium
@@ -328,6 +334,9 @@ declare_args() {
 
   # Set this to true to disable webrtc metrics.
   rtc_disable_metrics = false
+
+  # Enables an experimental rust version of base64 for building and testing.
+  rtc_rusty_base64 = true
 }
 
 declare_args() {
@@ -375,6 +384,7 @@ if (is_mac || is_ios) {
 
 if (build_with_chromium) {
   rtc_use_perfetto = true
+  rtc_allow_deprecated_namespaces = false
 }
 
 # Global public configuration that should be applied to all WebRTC targets. You
@@ -525,13 +535,18 @@ template("rtc_test") {
       public_configs += invoker.public_configs
     }
     if (!build_with_chromium && is_android) {
+      use_default_launcher = false
       android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
       use_raw_android_executable = false
       min_sdk_version = 21
-      target_sdk_version = 23
+      target_sdk_version = 24
       deps += [
         "//build/android/gtest_apk:native_test_instrumentation_test_runner_java",
+        webrtc_root + "sdk/android:native_test_jni_onload",
+        webrtc_root + "sdk/android:base_java",
         webrtc_root + "test:native_test_java",
+        webrtc_root + "test:native_test_support",
+        "//third_party/jni_zero:jni_zero_java",
       ]
     }
 
@@ -584,6 +599,12 @@ template("rtc_source_set") {
     forward_variables_from(invoker, [ "visibility" ])
     if (!defined(visibility)) {
       visibility = webrtc_default_visibility
+    }
+
+    if (defined(invoker.sources)) {
+      nonheader_sources = filter_include(invoker.sources, [ "*.cc" ])
+      assert(nonheader_sources == [],
+             "rtc_source_set shall not contain cc files")
     }
 
     # What's your poison?
@@ -1211,21 +1232,11 @@ if (is_android) {
                                "visibility",
                              ])
 
-      errorprone_args = []
-
-      # Treat warnings as errors.
-      errorprone_args += [ "-Werror" ]
-
       # Add any arguments defined by the invoker.
       if (defined(invoker.errorprone_args)) {
-        errorprone_args += invoker.errorprone_args
+        errorprone_args = invoker.errorprone_args
       }
 
-      if (!defined(deps)) {
-        deps = []
-      }
-
-      no_build_hooks = true
       not_needed([ "android_manifest" ])
     }
   }
@@ -1240,16 +1251,6 @@ if (is_android) {
                                "suppressed_configs",
                                "visibility",
                              ])
-
-      # Treat warnings as errors.
-      errorprone_args = []
-      errorprone_args += [ "-Werror" ]
-
-      if (!defined(deps)) {
-        deps = []
-      }
-
-      no_build_hooks = true
     }
   }
 
@@ -1263,16 +1264,7 @@ if (is_android) {
                                "suppressed_configs",
                                "visibility",
                              ])
-
-      # Treat warnings as errors.
-      errorprone_args = []
-      errorprone_args += [ "-Werror" ]
-
-      if (!defined(deps)) {
-        deps = []
-      }
-
-      no_build_hooks = true
+      deps += [ "//third_party/jni_zero:jni_zero_java" ]
     }
   }
 }

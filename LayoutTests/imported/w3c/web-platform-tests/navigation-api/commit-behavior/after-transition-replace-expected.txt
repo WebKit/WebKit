@@ -1,6 +1,0 @@
-
-FAIL { commit: 'after-transition' } for a replace navigation, reject before commit assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a replace navigation, reject after commit assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a replace navigation, explicit commit() assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a replace navigation, commit when handler resolves assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-

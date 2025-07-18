@@ -314,7 +314,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 class ExecutableAllocator : private ExecutableAllocatorBase {
     // This does not need to be TZONE_ALLOCATED because it is only used as a singleton, and
     // is only allocated once long before any script is executed.
-    WTF_MAKE_FAST_ALLOCATED(ExecutableAllocator);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExecutableAllocator);
 public:
     using Base = ExecutableAllocatorBase;
 
@@ -365,7 +365,7 @@ private:
 class ExecutableAllocator : public ExecutableAllocatorBase {
     // This does not need to be TZONE_ALLOCATED because it is only used as a singleton, and
     // is only allocated once long before any script is executed.
-    WTF_MAKE_FAST_ALLOCATED(ExecutableAllocator);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExecutableAllocator);
 public:
     static ExecutableAllocator& singleton();
     static void initialize();

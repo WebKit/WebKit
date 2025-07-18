@@ -1,4 +1,6 @@
 //@ if $memoryLimited then skip else requireOptions("--verifyGC=0") end
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 

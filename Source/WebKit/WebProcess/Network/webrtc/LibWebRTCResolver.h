@@ -49,7 +49,7 @@ public:
     LibWebRTCResolver() = default;
     ~LibWebRTCResolver();
 
-    void start(const rtc::SocketAddress&, Function<void()>&&) final;
+    void start(const webrtc::SocketAddress&, Function<void()>&&) final;
 
 private:
     friend class WebRTCResolver;
@@ -58,16 +58,16 @@ private:
     const webrtc::AsyncDnsResolverResult& result() const final;
 
     // webrtc::AsyncDnsResolverResult
-    bool GetResolvedAddress(int family, rtc::SocketAddress*) const final;
+    bool GetResolvedAddress(int family, webrtc::SocketAddress*) const final;
     int GetError() const { return m_error; }
 
     void setError(int);
-    void setResolvedAddress(Vector<rtc::IPAddress>&&);
+    void setResolvedAddress(Vector<webrtc::IPAddress>&&);
 
     static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
 
-    Vector<rtc::IPAddress> m_addresses;
-    rtc::SocketAddress m_addressToResolve;
+    Vector<webrtc::IPAddress> m_addresses;
+    webrtc::SocketAddress m_addressToResolve;
     Function<void()> m_callback;
     int m_error { 0 };
     uint16_t m_port { 0 };

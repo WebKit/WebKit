@@ -372,7 +372,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_TestPromiseRejectionEventConstructor, (JSGl
 
 JSC::GCClient::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm, "JSDOMWindow"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForDOMWindow.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDOMWindow = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForDOMWindow.get(); },

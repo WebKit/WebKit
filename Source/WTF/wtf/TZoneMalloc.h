@@ -35,32 +35,32 @@
 #include <wtf/FastMalloc.h>
 
 // class allocators with FastMalloc fallback if TZoneHeap is disabled.
-#define WTF_MAKE_TZONE_ALLOCATED(name) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
+#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // struct allocators with FastMalloc fallback if TZoneHeap is disabled.
-#define WTF_MAKE_STRUCT_TZONE_ALLOCATED(name) WTF_MAKE_STRUCT_FAST_ALLOCATED
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(name)
 
 // template allocators with FastMalloc fallback if TZoneHeap is disabled.
-#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(name) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
+#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // special class (e.g. those used with CompactPtr) allocators with FastMalloc fallback if TZoneHeap is disabled.
-#define WTF_MAKE_COMPACT_TZONE_ALLOCATED(name) WTF_MAKE_FAST_COMPACT_ALLOCATED
-#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_COMPACT_ALLOCATED
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
 
 #if USE(SYSTEM_MALLOC) || !USE(ISO_MALLOC)
 
 // class allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
+#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // template allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE(name) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // class allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_FAST_COMPACT_ALLOCATED
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_COMPACT_ALLOCATED
+#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
+#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
 
 // template implementation to go with WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE
 // if TZoneHeap and IsoHeap are disabled. This should be added immediately after the
@@ -107,6 +107,7 @@
 #else // !USE(SYSTEM_MALLOC) && USE(TZONE_MALLOC)
 
 #include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 
 #if !BUSE(TZONE)
 #error "TZones enabled in WTF, but not enabled in bmalloc"

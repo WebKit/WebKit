@@ -10,17 +10,24 @@
 
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 
+#include <cstdint>
+#include <cstdio>
+#include <memory>
 #include <optional>
 #include <string>
 
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/system/file_wrapper.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
+#include "external/webrtc/webrtc/modules/audio_coding/audio_network_adaptor/config.pb.h"
 #include "external/webrtc/webrtc/modules/audio_coding/audio_network_adaptor/debug_dump.pb.h"
 #else
+#include "modules/audio_coding/audio_network_adaptor/config.pb.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump.pb.h"
 #endif
 #endif
@@ -38,7 +45,7 @@ void DumpEventToFile(const Event& event, FileWrapper* dump_file) {
   RTC_CHECK(dump_file->is_open());
   std::string dump_data;
   event.SerializeToString(&dump_data);
-  int32_t size = rtc::checked_cast<int32_t>(event.ByteSizeLong());
+  int32_t size = checked_cast<int32_t>(event.ByteSizeLong());
   dump_file->Write(&size, sizeof(size));
   dump_file->Write(dump_data.data(), dump_data.length());
 }

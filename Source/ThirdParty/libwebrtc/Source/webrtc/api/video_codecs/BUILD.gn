@@ -12,7 +12,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-rtc_source_set("scalability_mode") {
+rtc_library("scalability_mode") {
   visibility = [ "*" ]
   sources = [
     "scalability_mode.cc",
@@ -25,7 +25,7 @@ rtc_source_set("scalability_mode") {
   ]
 }
 
-rtc_source_set("scalability_mode_helper") {
+rtc_library("scalability_mode_helper") {
   visibility = [ "*" ]
   sources = [
     "scalability_mode_helper.cc",
@@ -86,7 +86,6 @@ rtc_library("video_codecs_api") {
     "../../modules/video_coding:codec_globals_headers",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
-    "../../rtc_base:macromagic",
     "../../rtc_base:refcount",
     "../../rtc_base:stringutils",
     "../../rtc_base/system:rtc_export",
@@ -276,6 +275,7 @@ rtc_source_set("video_decoder_factory_template_dav1d_adapter") {
   deps = [
     ":video_codecs_api",
     "../../modules/video_coding/codecs/av1:dav1d_decoder",
+    "../environment",
   ]
 }
 
@@ -300,7 +300,6 @@ rtc_source_set("video_encoder_interface") {
     "../../api/video_codecs:video_codecs_api",
     "../../rtc_base:rtc_numerics",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -314,7 +313,6 @@ rtc_source_set("video_encoder_factory_interface") {
     "../../api/video:resolution",
     "../../rtc_base:rtc_numerics",
     "../video:video_frame",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -346,7 +344,6 @@ rtc_library("simple_encoder_wrapper") {
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/strings:string_view",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -392,7 +389,6 @@ rtc_library("libaom_av1_encoder_factory") {
     "../video:video_frame",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/cleanup",
-    "//third_party/abseil-cpp/absl/types:variant",
     "//third_party/libaom",
   ]
 }
@@ -424,7 +420,6 @@ rtc_library("libaom_av1_encoder_factory_test") {
     "../units:time_delta",
     "../units:timestamp",
     "../video:encoded_image",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 

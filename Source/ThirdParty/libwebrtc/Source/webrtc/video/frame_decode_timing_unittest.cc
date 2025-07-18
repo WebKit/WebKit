@@ -14,9 +14,13 @@
 
 #include <optional>
 
+#include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/video_coding/timing/timing.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_map.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
@@ -31,10 +35,10 @@ using ::testing::Optional;
 
 namespace {
 
-class FakeVCMTiming : public webrtc::VCMTiming {
+class FakeVCMTiming : public VCMTiming {
  public:
   explicit FakeVCMTiming(Clock* clock, const FieldTrialsView& field_trials)
-      : webrtc::VCMTiming(clock, field_trials) {}
+      : VCMTiming(clock, field_trials) {}
 
   Timestamp RenderTime(uint32_t frame_timestamp, Timestamp now) const override {
     RTC_DCHECK(render_time_map_.contains(frame_timestamp));

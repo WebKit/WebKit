@@ -46,7 +46,7 @@ public:
     ~InspectorScriptProfilerAgent() final;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // ScriptProfilerBackendDispatcherHandler
@@ -63,8 +63,8 @@ private:
     void trackingComplete();
     void stopSamplingWhenDisconnecting();
 
-    std::unique_ptr<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<ScriptProfilerBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<ScriptProfilerBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
     bool m_tracking { false };
 #if ENABLE(SAMPLING_PROFILER)

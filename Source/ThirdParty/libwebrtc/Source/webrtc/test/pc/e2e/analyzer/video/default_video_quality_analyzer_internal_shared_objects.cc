@@ -15,7 +15,7 @@
 namespace webrtc {
 
 std::string InternalStatsKey::ToString() const {
-  rtc::StringBuilder out;
+  StringBuilder out;
   out << "stream=" << stream << "_sender=" << sender
       << "_receiver=" << receiver;
   return out.str();

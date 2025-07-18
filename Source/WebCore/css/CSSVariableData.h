@@ -37,7 +37,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 class CSSVariableData : public RefCounted<CSSVariableData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSVariableData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSVariableData, CSSVariableData);
 public:
     static Ref<CSSVariableData> create(const CSSParserTokenRange& range, const CSSParserContext& context = strictCSSParserContext())
     {

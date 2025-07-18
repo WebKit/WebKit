@@ -28,6 +28,76 @@ class DOMUtils
 
         return details;
     }
+
+    // Create a details widget with the specified `summaryText` as the collapsed content.
+    // The `contentBuilder` function is called (with `this` unbound) when the widget is
+    // expanded. The DOM node returned by the builder is installed as the expanded
+    // content. The content is built only once when the widget is first expanded.
+    static createLazyDetails(summaryText, contentBuilder)
+    {
+        let details = document.createElement('details');
+
+        let summary = document.createElement('summary');
+        summary.textContent = summaryText;
+        details.appendChild(summary);
+
+        let content = document.createElement('div');
+        let loading = document.createElement('p');
+        loading.textContent = 'Loading...';
+        content.appendChild(loading);
+        details.appendChild(content);
+
+        let contentLoaded = false;
+        details.addEventListener('toggle', () => {
+            if (details.open && !contentLoaded) {
+                let loadedContent;
+                try {
+                    loadedContent = contentBuilder();
+                } catch (e) {
+                    loadedContent = document.createElement('p');
+                    loadedContent.textContent = e;
+                };
+                content.firstChild.replaceWith(loadedContent);
+                contentLoaded = true;
+            }
+        });
+        return details;
+    }
+
+    // Place the domNode into a container div with a 'close' button.
+    // The result can be added as a child to the Details section.
+    static detailsPanelWith(domNode)
+    {
+        let panel = document.createElement('div');
+        panel.className = 'panel';
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'x';
+        closeButton.className = 'close-button';
+        closeButton.addEventListener('click', function() {
+            panel.parentElement.removeChild(panel);
+        });
+        panel.appendChild(closeButton)
+        panel.appendChild(domNode);
+        return panel;
+    }
+
+    static scrollIntoViewIfNeeded(element)
+    {
+        const rect = element.getBoundingClientRect();
+        const isVisible = (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= window.innerHeight &&
+            rect.right <= window.innerWidth
+        );
+
+        if (!isVisible) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+    }
 };
 
 // Heap Inspector Helpers
@@ -64,6 +134,18 @@ class HeapInspectorUtils
         return result;
     }
 
+    static nodeNameAndIdOnly(node)
+    {
+        let nodeSpan = document.createElement('span');
+        nodeSpan.innerHTML = node.className + `<a class="node-id" href="#">${node.id}</a>`
+        let anchor = nodeSpan.querySelector('a');
+        anchor.onclick = function(event) {
+            event.preventDefault();
+            inspector.exploreNodeId(node.id);
+        };
+        return nodeSpan;
+    }
+
     static spanForNode(inspector, node, showPathButton)
     {
         let nodeSpan = document.createElement('span');
@@ -75,12 +157,17 @@ class HeapInspectorUtils
 
         let wrappedAddressString = node.wrappedAddress ? `wrapped ${node.wrappedAddress}` : '';
 
-        let nodeHTML = node.className + ` <span class="node-id">${node.id}</span> <span class="node-address">cell ${node.address} ${wrappedAddressString}</span> <span class="node-size retained-size">(retains ${HeapInspectorUtils.humanReadableSize(node.retainedSize)})</span>`;
+        let nodeHTML = node.className + `<a class="node-id" href="#">${node.id}</a> <span class="node-address">cell ${node.address} ${wrappedAddressString}</span> <span class="node-size retained-size">(retains ${HeapInspectorUtils.humanReadableSize(node.retainedSize)})</span>`;
     
         if (node.label.length)
             nodeHTML += ` <span class="node-label">“${node.label}”</span>`;
     
         nodeSpan.innerHTML = nodeHTML;
+        let anchor = nodeSpan.querySelector('a');
+        anchor.onclick = function(event) {
+            event.preventDefault();
+            inspector.exploreNodeId(node.id);
+        };
 
         if (node.gcRoot || node.markedRoot) {
             let gcRootSpan = document.createElement('span');
@@ -96,8 +183,28 @@ class HeapInspectorUtils
             }, false);
             nodeSpan.appendChild(showAllPathsAnchor);
         }
+        let dominators = this.dominatorIdsOfNode(node, inspector.snapshot);
+        if (dominators.length > 0) {
+            let mySpan = document.createElement('span');
+            mySpan.textContent = ' dominators: [' + dominators.join(', ') + ']';
+            nodeSpan.appendChild(mySpan);
+        }
     
         return nodeSpan;
+    }
+
+    static dominatorIdsOfNode(node, snapshot)
+    {
+        let result = [];
+        let here = node;
+        let isFirst = true;
+        while (here.id != 0) {
+            if (!isFirst) result.push(here.id);
+            isFirst = false;
+            let dominatorId = here.dominatorNodeIdentifier;
+            here = snapshot.nodeWithIdentifier(Number(dominatorId));
+        }
+        return result;
     }
 
     static spanForEdge(snapshot, edge)
@@ -232,43 +339,45 @@ class HeapSnapshotInspector
     {
         DOMUtils.removeAllChildren(this.containerElement);
         
+        // All objects by type
         this.objectByTypeContainer = document.createElement('section');
         this.objectByTypeContainer.id = 'all-objects-by-type';
-
         let header = document.createElement('h1');
         header.textContent = 'All Objects by Type'
         this.objectByTypeContainer.appendChild(header);
         
+        // Roots
         this.rootsContainer =  document.createElement('section');
         this.rootsContainer.id = 'roots';
         header = document.createElement('h1');
         header.textContent = 'Roots'
         this.rootsContainer.appendChild(header);
 
+        // Important objects
         this.pathsToRootsContainer =  document.createElement('section');
         this.pathsToRootsContainer.id = 'paths-to-roots';
         header = document.createElement('h1');
-        header.textContent = 'Paths to roots'
+        header.textContent = 'Important objects'
         this.pathsToRootsContainer.appendChild(header);
 
-        this.allPathsContainer =  document.createElement('section');
-        this.allPathsContainer.id = 'all-paths';
+        // Details
+        this.details =  document.createElement('section');
+        this.details.id = 'details';
         header = document.createElement('h1');
-        header.textContent = 'All paths to…'
-        this.allPathsContainer.appendChild(header);
+        header.textContent = 'Details'
+        this.details.appendChild(header);
         let clearAllButton = document.createElement('button');
+        clearAllButton.id = 'details-clear-all';
         clearAllButton.innerText = 'Clear All';
         clearAllButton.addEventListener("click", () => {
-            let header = this.allPathsContainer.childNodes[0];
-            let clearAllButton = this.allPathsContainer.childNodes[1];
-            DOMUtils.removeAllChildren(this.allPathsContainer);
-            this.allPathsContainer.appendChild(header);
-            this.allPathsContainer.appendChild(clearAllButton);
+            let header = this.details.childNodes[0];
+            DOMUtils.removeAllChildren(this.details);
+            this.details.appendChild(header);
         });
-        this.allPathsContainer.appendChild(clearAllButton);
+        header.appendChild(clearAllButton);
 
+        this.containerElement.appendChild(this.details);
         this.containerElement.appendChild(this.pathsToRootsContainer);
-        this.containerElement.appendChild(this.allPathsContainer);
         this.containerElement.appendChild(this.rootsContainer);
         this.containerElement.appendChild(this.objectByTypeContainer);
 
@@ -278,12 +387,145 @@ class HeapSnapshotInspector
         this.nodePathDetailsWeakMap = new WeakMap()
     }
 
+    dominatorInfo(className)
+    {
+        let dominators = {};
+        let functions = HeapSnapshot.instancesWithClassName(this.snapshot, className);
+        for (var node of functions) {
+            let dominatorId = node.dominatorNodeIdentifier;
+            let count = dominators[dominatorId];
+            count = count === undefined ? 1 : count + 1;
+            dominators[dominatorId] = count;
+        }
+        return dominators;
+    }
+
+    dominatorSummary(className)
+    {
+        let summary = document.createElement('section');
+        summary.className = 'dominator-summary';
+        let dominators = this.dominatorInfo(className);
+        let entries = Object.entries(dominators).sort(([,a], [,b]) => b - a);  // Sort by value (descending)
+        let i = 0;
+        for (const [id, count] of entries) {
+            let node = this.snapshot.nodeWithIdentifier(Number(id));
+            let entry = document.createElement('p');
+            entry.textContent = `${count} dominated by `;
+            entry.appendChild(HeapInspectorUtils.nodeNameAndIdOnly(node));
+            summary.appendChild(entry);
+            i++;
+            if (i > 50) {
+                let ellipsis = document.createElement('p');
+                ellipsis.textContent = '...';
+                summary.appendChild(ellipsis);
+                break;
+            }
+        }
+        return summary;
+    }
+
+    widgetWithDominatorSummary(className)
+    {
+        let self = this;
+        let count = this.snapshot._categories[className]?.count ?? 0;
+        return DOMUtils.createLazyDetails(`Dominator summary of ${className} (${count} instances)`, function () {
+            return self.dominatorSummary(className);
+        });
+    }
+
+    // Produce a DOM node expandable into the shortest path from GC roots to the node with the given ID.
+    widgetWithPathToNodeWithId(id)
+    {
+        let node = this.snapshot.nodeWithIdentifier(id);
+        let shortestPath = this.snapshot.shortestGCRootPath(id).reverse();
+
+        let details = DOMUtils.createDetails('Shortest path to ');
+        let summary = details.firstChild;
+        summary.appendChild(HeapInspectorUtils.spanForNode(this, node, true));
+        summary.appendChild(document.createTextNode('—'));
+        summary.appendChild(HeapInspectorUtils.summarySpanForPath(this, shortestPath));
+
+        let pathList = document.createElement('ul');
+        pathList.className = 'path';
+
+        let isNode = true;
+        let currItem = undefined;
+        for (let item of shortestPath) {
+            if (isNode) {
+                currItem = document.createElement('li');
+                currItem.appendChild(HeapInspectorUtils.spanForNode(this, item));
+                pathList.appendChild(currItem);
+            } else {
+                currItem.appendChild(HeapInspectorUtils.spanForEdge(this.snapshot, item));
+                currItem = undefined;
+            }
+            isNode = !isNode;
+        }
+
+        details.appendChild(pathList);
+        return details;
+    }
+
+    widgetExpandableToImmedidatelyRetained(id, prefixText='')
+    {
+        let node = this.snapshot.nodeWithIdentifier(id);
+        let self = this;
+        let details = DOMUtils.createLazyDetails(prefixText, function() {
+            let retained = self.snapshot.retainedNodes(id);
+            let list = document.createElement('div');
+            for (let each of retained.retainedNodes) {
+                list.appendChild(self.widgetExpandableToImmedidatelyRetained(each.id));
+            }
+            return list;
+        });
+        let summary = details.firstChild;
+        summary.appendChild(HeapInspectorUtils.spanForNode(this, node));
+        return details;
+    }
+
+    widgetExpandableToImmedidateOwners(id, prefixText='')
+    {
+        let node = this.snapshot.nodeWithIdentifier(id);
+        let self = this;
+        let details = DOMUtils.createLazyDetails(prefixText, function() {
+            let owners = self.snapshot.retainers(id);
+            let list = document.createElement('div');
+            for (let each of owners.retainers) {
+                list.appendChild(self.widgetExpandableToImmedidateOwners(each.id));
+            }
+            return list;
+        });
+        let summary = details.firstChild;
+        summary.appendChild(HeapInspectorUtils.spanForNode(this, node));
+        return details;
+    }
+
+    // Add to the details area an explorer panel for a node with the given ID.
+    exploreNodeId(id)
+    {
+        let retained = this.widgetWithPathToNodeWithId(id);
+        let explorer = DOMUtils.detailsPanelWith(retained);
+        explorer.appendChild(this.widgetExpandableToImmedidateOwners(id, 'Owners of '));
+        explorer.appendChild(this.widgetExpandableToImmedidatelyRetained(id, 'Owned by '));
+        this.details.appendChild(explorer);
+        DOMUtils.scrollIntoViewIfNeeded(explorer);
+    }
+
+    // Add to the details area a widget with a summary of immediate dominators of instances of the given type.
+    showDominatorsOfType(typeName)
+    {
+        let widget = this.widgetWithDominatorSummary(typeName);
+        let panel = DOMUtils.detailsPanelWith(widget);
+        this.details.appendChild(panel);
+        DOMUtils.scrollIntoViewIfNeeded(panel);
+    }
+
     buildAllObjectsByType()
     {
         let categories = this.snapshot._categories;
         let categoryNames = Object.keys(categories).sort();
     
-        for (var categoryName of categoryNames) {
+        for (let categoryName of categoryNames) {
             let category = categories[categoryName];
 
             let details = DOMUtils.createDetails(`${category.className} (${category.count})`);
@@ -292,6 +534,16 @@ class HeapSnapshotInspector
             let sizeElement = summaryElement.appendChild(document.createElement('span'));
             sizeElement.className = 'retained-size';
             sizeElement.textContent = ' ' + HeapInspectorUtils.humanReadableSize(category.retainedSize);
+
+            let dominatorsButton = document.createElement('button');
+            dominatorsButton.className = 'type-show-dominators';
+            dominatorsButton.textContent = 'Dominators';
+            dominatorsButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                inspector.showDominatorsOfType(categoryName);
+            }, false);
+            summaryElement.appendChild(dominatorsButton);
+
             
             let instanceListElement = document.createElement('ul');
             instanceListElement.className = 'instance-list';
@@ -362,9 +614,6 @@ class HeapSnapshotInspector
         if (instances.length == 0)
             return;
 
-        let header = document.createElement('h2');
-        header.textContent = 'Shortest paths to all ' + type + 's';
-    
         let detailsContainer = document.createElement('section')
         detailsContainer.className = 'path';
 
@@ -398,17 +647,7 @@ class HeapSnapshotInspector
             detailsContainer.appendChild(details);
         }
 
-        this.pathsToRootsContainer.appendChild(header);
         this.pathsToRootsContainer.appendChild(detailsContainer);
-    }
-
-    addClearButtonToDetailsNode(details)
-    {
-        let summary = details.firstChild;
-        let clearButton = document.createElement('button');
-        clearButton.innerText = 'Clear';
-        clearButton.addEventListener("click", () => this.allPathsContainer.removeChild(details));
-        summary.appendChild(clearButton);
     }
 
     populatePathDetailsOnDemand(pathDetails)
@@ -447,7 +686,6 @@ class HeapSnapshotInspector
         let summary = details.firstChild;
         summary.appendChild(document.createTextNode(`${paths.length} path${paths.length > 1 ? 's' : ''} to `));
         summary.appendChild(HeapInspectorUtils.spanForNode(this, node, false));
-        this.addClearButtonToDetailsNode(details);
 
         let detailsContainer = document.createElement('section')
         detailsContainer.className = 'path';
@@ -479,7 +717,9 @@ class HeapSnapshotInspector
         }
     
         details.appendChild(detailsContainer);
-        this.allPathsContainer.appendChild(details);
+        let panel = DOMUtils.detailsPanelWith(details);
+        this.details.appendChild(panel);
+        DOMUtils.scrollIntoViewIfNeeded(panel);
     }
 
 };

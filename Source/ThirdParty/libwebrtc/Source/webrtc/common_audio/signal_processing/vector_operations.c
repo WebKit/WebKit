@@ -10,70 +10,70 @@
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 
-void WebRtcSpl_ReverseOrderMultArrayElements(int16_t *out, const int16_t *in,
-                                             const int16_t *win,
+void WebRtcSpl_ReverseOrderMultArrayElements(int16_t* out,
+                                             const int16_t* in,
+                                             const int16_t* win,
                                              size_t vector_length,
-                                             int16_t right_shifts)
-{
-    size_t i;
-    int16_t *outptr = out;
-    const int16_t *inptr = in;
-    const int16_t *winptr = win;
-    for (i = 0; i < vector_length; i++)
-    {
-      *outptr++ = (int16_t)((*inptr++ * *winptr--) >> right_shifts);
-    }
+                                             int16_t right_shifts) {
+  size_t i;
+  int16_t* outptr = out;
+  const int16_t* inptr = in;
+  const int16_t* winptr = win;
+  for (i = 0; i < vector_length; i++) {
+    *outptr++ = (int16_t)((*inptr++ * *winptr--) >> right_shifts);
+  }
 }
 
-void WebRtcSpl_ElementwiseVectorMult(int16_t *out, const int16_t *in,
-                                     const int16_t *win, size_t vector_length,
-                                     int16_t right_shifts)
-{
-    size_t i;
-    int16_t *outptr = out;
-    const int16_t *inptr = in;
-    const int16_t *winptr = win;
-    for (i = 0; i < vector_length; i++)
-    {
-      *outptr++ = (int16_t)((*inptr++ * *winptr++) >> right_shifts);
-    }
+void WebRtcSpl_ElementwiseVectorMult(int16_t* out,
+                                     const int16_t* in,
+                                     const int16_t* win,
+                                     size_t vector_length,
+                                     int16_t right_shifts) {
+  size_t i;
+  int16_t* outptr = out;
+  const int16_t* inptr = in;
+  const int16_t* winptr = win;
+  for (i = 0; i < vector_length; i++) {
+    *outptr++ = (int16_t)((*inptr++ * *winptr++) >> right_shifts);
+  }
 }
 
-void WebRtcSpl_AddVectorsAndShift(int16_t *out, const int16_t *in1,
-                                  const int16_t *in2, size_t vector_length,
-                                  int16_t right_shifts)
-{
-    size_t i;
-    int16_t *outptr = out;
-    const int16_t *in1ptr = in1;
-    const int16_t *in2ptr = in2;
-    for (i = vector_length; i > 0; i--)
-    {
-        (*outptr++) = (int16_t)(((*in1ptr++) + (*in2ptr++)) >> right_shifts);
-    }
+void WebRtcSpl_AddVectorsAndShift(int16_t* out,
+                                  const int16_t* in1,
+                                  const int16_t* in2,
+                                  size_t vector_length,
+                                  int16_t right_shifts) {
+  size_t i;
+  int16_t* outptr = out;
+  const int16_t* in1ptr = in1;
+  const int16_t* in2ptr = in2;
+  for (i = vector_length; i > 0; i--) {
+    (*outptr++) = (int16_t)(((*in1ptr++) + (*in2ptr++)) >> right_shifts);
+  }
 }
 
-void WebRtcSpl_AddAffineVectorToVector(int16_t *out, const int16_t *in,
-                                       int16_t gain, int32_t add_constant,
+void WebRtcSpl_AddAffineVectorToVector(int16_t* out,
+                                       const int16_t* in,
+                                       int16_t gain,
+                                       int32_t add_constant,
                                        int16_t right_shifts,
-                                       size_t vector_length)
-{
-    size_t i;
+                                       size_t vector_length) {
+  size_t i;
 
-    for (i = 0; i < vector_length; i++)
-    {
-      out[i] += (int16_t)((in[i] * gain + add_constant) >> right_shifts);
-    }
+  for (i = 0; i < vector_length; i++) {
+    out[i] += (int16_t)((in[i] * gain + add_constant) >> right_shifts);
+  }
 }
 
-void WebRtcSpl_AffineTransformVector(int16_t *out, const int16_t *in,
-                                     int16_t gain, int32_t add_constant,
-                                     int16_t right_shifts, size_t vector_length)
-{
-    size_t i;
+void WebRtcSpl_AffineTransformVector(int16_t* out,
+                                     const int16_t* in,
+                                     int16_t gain,
+                                     int32_t add_constant,
+                                     int16_t right_shifts,
+                                     size_t vector_length) {
+  size_t i;
 
-    for (i = 0; i < vector_length; i++)
-    {
-      out[i] = (int16_t)((in[i] * gain + add_constant) >> right_shifts);
-    }
+  for (i = 0; i < vector_length; i++) {
+    out[i] = (int16_t)((in[i] * gain + add_constant) >> right_shifts);
+  }
 }

@@ -100,7 +100,7 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
 }
 
 // Returns whether the snap point is changed or not
-bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis, ElementIdentifier boxID)
+bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis, NodeIdentifier boxID)
 {
     auto snapOffsets = snapOffsetsForAxis(axis);
     
@@ -127,9 +127,9 @@ Vector<SnapOffset<LayoutUnit>> ScrollSnapAnimatorState::currentlySnappedOffsetsF
     return currentlySnappedOffsets;
 }
 
-HashSet<ElementIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const
+HashSet<NodeIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const
 {
-    HashSet<ElementIdentifier> snappedBoxIDs;
+    HashSet<NodeIdentifier> snappedBoxIDs;
         
     for (auto offset : horizontalOffsets) {
         if (!offset.snapTargetID)
@@ -163,7 +163,7 @@ void ScrollSnapAnimatorState::updateCurrentlySnappedBoxes()
     m_currentlySnappedBoxes = currentlySnappedBoxes(horizontalOffsets, verticalOffsets);
 }
 
-static ElementIdentifier chooseBoxToResnapTo(const HashSet<ElementIdentifier>& snappedBoxes, const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets)
+static NodeIdentifier chooseBoxToResnapTo(const HashSet<NodeIdentifier>& snappedBoxes, const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets)
 {
     ASSERT(snappedBoxes.size());
 

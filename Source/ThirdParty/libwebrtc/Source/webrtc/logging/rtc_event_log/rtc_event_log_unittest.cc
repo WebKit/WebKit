@@ -234,7 +234,7 @@ class RtcEventLogSession
   const RtcEventLog::EncodingType encoding_type_;
   test::EventGenerator gen_;
   test::EventVerifier verifier_;
-  rtc::ScopedFakeClock clock_;
+  ScopedFakeClock clock_;
   std::string temp_filename_;
   MemoryLogStorage log_storage_;
   std::unique_ptr<LogWriterFactoryInterface> log_output_factory_;
@@ -343,9 +343,9 @@ void RtcEventLogSession::WriteVideoSendConfigs(size_t video_send_streams,
   clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
   uint32_t ssrc = prng_.Rand<uint32_t>();
   outgoing_extensions_.emplace_back(ssrc, all_extensions);
-  auto event = gen_.NewVideoSendStreamConfig(ssrc, all_extensions);
-  event_log->Log(event->Copy());
-  video_send_config_list_.push_back(std::move(event));
+  auto first_event = gen_.NewVideoSendStreamConfig(ssrc, all_extensions);
+  event_log->Log(first_event->Copy());
+  video_send_config_list_.push_back(std::move(first_event));
   for (size_t i = 1; i < video_send_streams; i++) {
     clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
     do {
@@ -391,14 +391,14 @@ void RtcEventLogSession::WriteLog(EventCounts count,
       clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
       event_log->StartLogging(log_output_factory_->Create(temp_filename_),
                               output_period_ms_);
-      start_time_us_ = rtc::TimeMicros();
-      utc_start_time_us_ = rtc::TimeUTCMicros();
+      start_time_us_ = TimeMicros();
+      utc_start_time_us_ = TimeUTCMicros();
     }
 
     clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
     size_t selection = prng_.Rand(remaining_events - 1);
-    first_timestamp_ms_ = std::min(first_timestamp_ms_, rtc::TimeMillis());
-    last_timestamp_ms_ = std::max(last_timestamp_ms_, rtc::TimeMillis());
+    first_timestamp_ms_ = std::min(first_timestamp_ms_, TimeMillis());
+    last_timestamp_ms_ = std::max(last_timestamp_ms_, TimeMillis());
 
     if (selection < count.alr_states) {
       auto event = gen_.NewAlrState();
@@ -605,7 +605,7 @@ void RtcEventLogSession::WriteLog(EventCounts count,
   }
 
   event_log->StopLogging();
-  stop_time_us_ = rtc::TimeMicros();
+  stop_time_us_ = TimeMicros();
 
   ASSERT_EQ(count.total_nonconfig_events(), static_cast<size_t>(0));
 }
@@ -952,8 +952,8 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
   std::replace(test_name.begin(), test_name.end(), '/', '_');
   const std::string temp_filename = test::OutputPath() + test_name;
 
-  std::unique_ptr<rtc::ScopedFakeClock> fake_clock =
-      std::make_unique<rtc::ScopedFakeClock>();
+  std::unique_ptr<ScopedFakeClock> fake_clock =
+      std::make_unique<ScopedFakeClock>();
   fake_clock->SetTime(Timestamp::Seconds(kStartTimeSeconds));
 
   // Create a scope for the TQ and event log factories.
@@ -978,12 +978,12 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
           i, kStartBitrate + i * 1000));
       fake_clock->AdvanceTime(TimeDelta::Millis(10));
     }
-    start_time_us = rtc::TimeMicros();
-    utc_start_time_us = rtc::TimeUTCMicros();
+    start_time_us = TimeMicros();
+    utc_start_time_us = TimeUTCMicros();
     log->StartLogging(log_output_factory_->Create(temp_filename),
                       RtcEventLog::kImmediateOutput);
     fake_clock->AdvanceTime(TimeDelta::Millis(10));
-    stop_time_us = rtc::TimeMicros();
+    stop_time_us = TimeMicros();
     log->StopLogging();
   }
 
@@ -1017,7 +1017,7 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
   // recreate the clock. However we must ensure that the old fake_clock is
   // destroyed before the new one is created, so we have to reset() first.
   fake_clock.reset();
-  fake_clock = std::make_unique<rtc::ScopedFakeClock>();
+  fake_clock = std::make_unique<ScopedFakeClock>();
   fake_clock->SetTime(Timestamp::Millis(first_timestamp_ms));
   for (size_t i = 1; i < probe_success_events.size(); i++) {
     fake_clock->AdvanceTime(TimeDelta::Millis(10));

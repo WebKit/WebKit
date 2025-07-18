@@ -826,7 +826,7 @@ void MediaElementSession::showPlaybackTargetPicker()
     }
 #endif
 
-    auto& audioSession = AudioSession::sharedSession();
+    auto& audioSession = AudioSession::singleton();
     document->showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element), audioSession.routeSharingPolicy(), audioSession.routingContextUID());
 }
 

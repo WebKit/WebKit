@@ -61,7 +61,7 @@ protected:
     ~FormattingState();
 
 private:
-    LayoutState& m_layoutState;
+    const CheckedRef<LayoutState> m_layoutState;
     HashMap<const Box*, IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     Type m_type;
@@ -70,7 +70,7 @@ private:
 inline void FormattingState::setIntrinsicWidthConstraintsForBox(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidthConstraints)
 {
     ASSERT(!m_intrinsicWidthConstraintsForBoxes.contains(&layoutBox));
-    ASSERT(&m_layoutState.formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)) == this);
+    ASSERT(&m_layoutState->formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)) == this);
     m_intrinsicWidthConstraintsForBoxes.set(&layoutBox, intrinsicWidthConstraints);
 }
 
@@ -82,7 +82,7 @@ inline void FormattingState::clearIntrinsicWidthConstraints(const Box& layoutBox
 
 inline std::optional<IntrinsicWidthConstraints> FormattingState::intrinsicWidthConstraintsForBox(const Box& layoutBox) const
 {
-    ASSERT(&m_layoutState.formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)) == this);
+    ASSERT(&m_layoutState->formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)) == this);
     auto iterator = m_intrinsicWidthConstraintsForBoxes.find(&layoutBox);
     if (iterator == m_intrinsicWidthConstraintsForBoxes.end())
         return { };

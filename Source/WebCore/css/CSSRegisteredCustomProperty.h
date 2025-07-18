@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct CSSRegisteredCustomProperty {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSRegisteredCustomProperty);
 
     AtomString name;
     CSSCustomPropertySyntax syntax;

@@ -16,7 +16,7 @@ if (rtc_enable_protobuf) {
     proto_out_dir = "api/test/network_emulation/"
   }
 
-  rtc_source_set("schedulable_network_node_builder") {
+  rtc_library("schedulable_network_node_builder") {
     visibility = [ "*" ]
     sources = [
       "schedulable_network_node_builder.cc",
@@ -38,12 +38,13 @@ rtc_library("network_emulation") {
 
   sources = [
     "cross_traffic.h",
+    "ecn_marking_counter.cc",
+    "ecn_marking_counter.h",
     "network_emulation_interfaces.cc",
     "network_emulation_interfaces.h",
   ]
 
   deps = [
-    "../..:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:copy_on_write_buffer",
     "../../../rtc_base:ip_address",
@@ -51,11 +52,12 @@ rtc_library("network_emulation") {
     "../../../rtc_base:net_helpers",
     "../../../rtc_base:socket_address",
     "../../numerics",
-    "../../task_queue",
+    "../../transport:ecn_marking",
     "../../units:data_rate",
     "../../units:data_size",
     "../../units:time_delta",
     "../../units:timestamp",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
   ]
 }
 
@@ -71,7 +73,6 @@ rtc_library("create_cross_traffic") {
   deps = [
     ":network_emulation",
     "../..:network_emulation_manager_api",
-    "../../../rtc_base/task_utils:repeating_task",
     "../../../test/network:emulated_network",
   ]
 }

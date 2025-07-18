@@ -16,7 +16,7 @@
 
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Finds data location within a TURN Channel Message or TURN Send Indication
 // message.
@@ -25,6 +25,14 @@ bool RTC_EXPORT UnwrapTurnPacket(const uint8_t* packet,
                                  size_t* content_position,
                                  size_t* content_size);
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::UnwrapTurnPacket;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_TURN_UTILS_H_

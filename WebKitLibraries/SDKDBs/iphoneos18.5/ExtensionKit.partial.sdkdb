@@ -1,0 +1,232 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "EXAppExtensionBrowserViewController",
+     "super": "UIViewController",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeXPCConnectionWithError:"}
+     ],
+     "linkage": "exported",
+     "name": "EXHostViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "placeholderView", "name": "placeholderView", "setter": "setPlaceholderView:"}
+     ],
+     "super": "UIViewController",
+     "unavailable": true
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "hostViewControllerDidActivate:", "optional": true},
+      {"access": "public", "name": "hostViewControllerWillDeactivate:error:", "optional": true}
+     ],
+     "name": "EXHostViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    }
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "EXAppExtensionBrowserViewController",
+     "super": "UIViewController",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeXPCConnectionWithError:"}
+     ],
+     "linkage": "exported",
+     "name": "EXHostViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "placeholderView", "name": "placeholderView", "setter": "setPlaceholderView:"}
+     ],
+     "super": "UIViewController",
+     "unavailable": true
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "hostViewControllerDidActivate:", "optional": true},
+      {"access": "public", "name": "hostViewControllerWillDeactivate:error:", "optional": true}
+     ],
+     "name": "EXHostViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    }
+   ],
+   "target": "arm64e-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV05_makeE04withACSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV16debugDescriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV16debugDescriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV2id7content12onConnectionACSS_xycSbSo15NSXPCConnectionCctc7SwiftUI4ViewRzlufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV4bodys5NeverOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV4bodys5NeverOvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVAA0daE0AAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVAA0daE0AAWP"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVN"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVs28CustomDebugStringConvertibleAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVN"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV0A10Foundation0caE0AAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV6accept10connectionSbSo15NSXPCConnectionC_tF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV_13configurationACxyXA_q_SgtcAA0caD0Rz0A10Foundation0caE0R_r0_lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVyACxyXAcAA0caD0RzlufC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneMp"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP05_makeD04withAA09PrimitivecaD0VSgSS_tFTj"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP05_makeD04withAA09PrimitivecaD0VSgSS_tFTq"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4BodyAC_AaBTn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4body4BodyQzvgTj"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4body4BodyQzvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5ScenePAAE05_makeD04withAA09PrimitivecaD0VSgSS_tF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV05_makeE04withAA09PrimitivedaE0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvpQOMQ"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV7erasingACx_tcAA0daE0RzlufC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVAA0daE0AAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVAA0daE0AAWP"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA0P0A3KitAD0cA18SceneConfigurationV0F0RtzrlE4mainyyKFZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s4Body12ExtensionKit03AppB5ScenePTl"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE05_makeD04withAA09PrimitivecaD0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE4bodys5NeverOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE4bodys5NeverOvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSayxG12ExtensionKit03AppA5SceneA2bCRzlMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSayxG12ExtensionKit03AppA5SceneA2bCRzlWP"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD07sceneIDAE0D10Foundation03AppD8IdentityV_SStcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvs", "unavailable": true},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKit03AppB5SceneACMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKit03AppB5SceneACWP"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE10_makeScene4withAC012PrimitiveAppbE0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvg"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvpMV"}
+   ],
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV05_makeE04withACSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV16debugDescriptionSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV16debugDescriptionSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV2id7content12onConnectionACSS_xycSbSo15NSXPCConnectionCctc7SwiftUI4ViewRzlufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV4bodys5NeverOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneV4bodys5NeverOvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVAA0daE0AAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVAA0daE0AAWP"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVN"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit012PrimitiveAppA5SceneVs28CustomDebugStringConvertibleAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA12SceneBuilderVN"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV0A10Foundation0caE0AAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV6accept10connectionSbSo15NSXPCConnectionC_tF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationV_13configurationACxyXA_q_SgtcAA0caD0Rz0A10Foundation0caE0R_r0_lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA18SceneConfigurationVyACxyXAcAA0caD0RzlufC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneMp"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP05_makeD04withAA09PrimitivecaD0VSgSS_tFTj"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP05_makeD04withAA09PrimitivecaD0VSgSS_tFTq"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4BodyAC_AaBTn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4body4BodyQzvgTj"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneP4body4BodyQzvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5ScenePAAE05_makeD04withAA09PrimitivecaD0VSgSS_tF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit03AppA5SceneTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV05_makeE04withAA09PrimitivedaE0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV4bodyQrvpQOMQ"},
+    {"access": "public", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneV7erasingACx_tcAA0daE0RzlufC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVAA0daE0AAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVAA0daE0AAWP"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s12ExtensionKit07_AnyAppA5SceneVN"},
+    {"access": "public", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA0P0A3KitAD0cA18SceneConfigurationV0F0RtzrlE4mainyyKFZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s4Body12ExtensionKit03AppB5ScenePTl"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE05_makeD04withAA09PrimitivecaD0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE4bodys5NeverOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSa12ExtensionKitAA03AppA5SceneRzlE4bodys5NeverOvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSayxG12ExtensionKit03AppA5SceneA2bCRzlMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSayxG12ExtensionKit03AppA5SceneA2bCRzlWP"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD00D10Foundation03AppD8IdentityVvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV03appD07sceneIDAE0D10Foundation03AppD8IdentityV_SStcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationV7sceneIDSSvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13ConfigurationVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo20EXHostViewControllerC12ExtensionKitE13configurationAbCE13ConfigurationVSgvs", "unavailable": true},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKit03AppB5SceneACMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKit03AppB5SceneACWP"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE10_makeScene4withAC012PrimitiveAppbE0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvg"},
+    {"access": "public", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvpMV"}
+   ],
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

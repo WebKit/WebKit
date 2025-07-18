@@ -17,7 +17,7 @@
 
 // This file contains constants related to media.
 
-namespace cricket {
+namespace webrtc {
 
 extern const int kVideoCodecClockrate;
 
@@ -47,7 +47,6 @@ extern const char kCodecParamNotInNameValueFormat[];
 extern const char kOpusCodecName[];
 extern const char kL16CodecName[];
 extern const char kG722CodecName[];
-extern const char kIlbcCodecName[];
 extern const char kPcmuCodecName[];
 extern const char kPcmaCodecName[];
 extern const char kCnCodecName[];
@@ -62,6 +61,7 @@ extern const char kCodecParamSPropStereo[];
 extern const char kCodecParamStereo[];
 extern const char kCodecParamUseInbandFec[];
 extern const char kCodecParamUseDtx[];
+extern const char kCodecParamCbr[];
 extern const char kCodecParamMaxAverageBitrate[];
 extern const char kCodecParamMaxPlaybackRate[];
 extern const char kCodecParamPerLayerPictureLossIndication[];
@@ -158,6 +158,7 @@ extern const char kAv1FmtpTier[];
 
 extern const int kDefaultVideoMaxFramerate;
 extern const int kDefaultVideoMaxQpVpx;
+extern const int kDefaultVideoMaxQpAv1;
 extern const int kDefaultVideoMaxQpH26x;
 
 extern const size_t kConferenceMaxNumSpatialLayers;
@@ -166,6 +167,109 @@ extern const size_t kConferenceDefaultNumTemporalLayers;
 
 extern const char kApplicationSpecificBandwidth[];
 extern const char kTransportSpecificBandwidth[];
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace cricket {
+using ::webrtc::kApplicationSpecificBandwidth;
+using ::webrtc::kAv1CodecName;
+using ::webrtc::kAv1FmtpLevelIdx;
+using ::webrtc::kAv1FmtpProfile;
+using ::webrtc::kAv1FmtpTier;
+using ::webrtc::kCnCodecName;
+using ::webrtc::kCodecParamAssociatedCodecName;
+using ::webrtc::kCodecParamAssociatedPayloadType;
+using ::webrtc::kCodecParamCbr;
+using ::webrtc::kCodecParamMaxAverageBitrate;
+using ::webrtc::kCodecParamMaxBitrate;
+using ::webrtc::kCodecParamMaxPlaybackRate;
+using ::webrtc::kCodecParamMaxPTime;
+using ::webrtc::kCodecParamMaxQuantization;
+using ::webrtc::kCodecParamMinBitrate;
+using ::webrtc::kCodecParamMinPTime;
+using ::webrtc::kCodecParamNotInNameValueFormat;
+using ::webrtc::kCodecParamPerLayerPictureLossIndication;
+using ::webrtc::kCodecParamPTime;
+using ::webrtc::kCodecParamRtxTime;
+using ::webrtc::kCodecParamSPropStereo;
+using ::webrtc::kCodecParamStartBitrate;
+using ::webrtc::kCodecParamStereo;
+using ::webrtc::kCodecParamUseDtx;
+using ::webrtc::kCodecParamUseInbandFec;
+using ::webrtc::kComfortNoiseCodecName;
+using ::webrtc::kConferenceDefaultNumTemporalLayers;
+using ::webrtc::kConferenceMaxNumSpatialLayers;
+using ::webrtc::kConferenceMaxNumTemporalLayers;
+using ::webrtc::kDefaultVideoMaxFramerate;
+using ::webrtc::kDefaultVideoMaxQpAv1;
+using ::webrtc::kDefaultVideoMaxQpH26x;
+using ::webrtc::kDefaultVideoMaxQpVpx;
+using ::webrtc::kDtmfCodecName;
+using ::webrtc::kFlexfecCodecName;
+using ::webrtc::kFlexfecFmtpRepairWindow;
+using ::webrtc::kG722CodecName;
+using ::webrtc::kH264CodecName;
+using ::webrtc::kH264FmtpLevelAsymmetryAllowed;
+using ::webrtc::kH264FmtpPacketizationMode;
+using ::webrtc::kH264FmtpProfileLevelId;
+using ::webrtc::kH264FmtpSpropParameterSets;
+using ::webrtc::kH264FmtpSpsPpsIdrInKeyframe;
+using ::webrtc::kH264ProfileLevelConstrainedBaseline;
+using ::webrtc::kH264ProfileLevelConstrainedHigh;
+using ::webrtc::kH265CodecName;
+using ::webrtc::kH265FmtpInteropConstraints;
+using ::webrtc::kH265FmtpLevelId;
+using ::webrtc::kH265FmtpProfileCompatibilityIndicator;
+using ::webrtc::kH265FmtpProfileId;
+using ::webrtc::kH265FmtpProfileSpace;
+using ::webrtc::kH265FmtpTierFlag;
+using ::webrtc::kH265FmtpTxMode;
+using ::webrtc::kHighSystemCpuThreshold;
+using ::webrtc::kL16CodecName;
+using ::webrtc::kLowSystemCpuThreshold;
+using ::webrtc::kMultiplexCodecName;
+using ::webrtc::kOpusCodecName;
+using ::webrtc::kOpusDefaultMaxPlaybackRate;
+using ::webrtc::kOpusDefaultMaxPTime;
+using ::webrtc::kOpusDefaultMinPTime;
+using ::webrtc::kOpusDefaultPTime;
+using ::webrtc::kOpusDefaultSPropStereo;
+using ::webrtc::kOpusDefaultStereo;
+using ::webrtc::kOpusDefaultUseDtx;
+using ::webrtc::kOpusDefaultUseInbandFec;
+using ::webrtc::kPacketizationParamRaw;
+using ::webrtc::kParamValueEmpty;
+using ::webrtc::kParamValueTrue;
+using ::webrtc::kPcmaCodecName;
+using ::webrtc::kPcmuCodecName;
+using ::webrtc::kPreferredMaxPTime;
+using ::webrtc::kPreferredMinPTime;
+using ::webrtc::kPreferredSPropStereo;
+using ::webrtc::kPreferredStereo;
+using ::webrtc::kPreferredUseInbandFec;
+using ::webrtc::kProcessCpuThreshold;
+using ::webrtc::kRedCodecName;
+using ::webrtc::kRtcpFbCcmParamFir;
+using ::webrtc::kRtcpFbNackParamPli;
+using ::webrtc::kRtcpFbParamCcm;
+using ::webrtc::kRtcpFbParamLntf;
+using ::webrtc::kRtcpFbParamNack;
+using ::webrtc::kRtcpFbParamRemb;
+using ::webrtc::kRtcpFbParamRrtr;
+using ::webrtc::kRtcpFbParamTransportCc;
+using ::webrtc::kRtxCodecName;
+using ::webrtc::kTransportSpecificBandwidth;
+using ::webrtc::kUlpfecCodecName;
+using ::webrtc::kVideoCodecClockrate;
+using ::webrtc::kVideoMtu;
+using ::webrtc::kVideoRtpRecvBufferSize;
+using ::webrtc::kVideoRtpSendBufferSize;
+using ::webrtc::kVp8CodecName;
+using ::webrtc::kVp9CodecName;
+using ::webrtc::kVP9ProfileId;
 }  // namespace cricket
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // MEDIA_BASE_MEDIA_CONSTANTS_H_

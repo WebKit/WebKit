@@ -32,37 +32,33 @@ class InputVolumeStatsReporterTest
  protected:
   InputVolumeType InputVolumeType() const { return GetParam(); }
   std::string VolumeLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "OnChange")
+    return (StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "OnChange")
         .str();
   }
   std::string DecreaseRateLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
-            << VolumeTypeLabel() << "DecreaseRate")
+    return (StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "DecreaseRate")
         .str();
   }
   std::string DecreaseAverageLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
+    return (StringBuilder(kLabelPrefix)
             << VolumeTypeLabel() << "DecreaseAverage")
         .str();
   }
   std::string IncreaseRateLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
-            << VolumeTypeLabel() << "IncreaseRate")
+    return (StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "IncreaseRate")
         .str();
   }
   std::string IncreaseAverageLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
+    return (StringBuilder(kLabelPrefix)
             << VolumeTypeLabel() << "IncreaseAverage")
         .str();
   }
   std::string UpdateRateLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
-            << VolumeTypeLabel() << "UpdateRate")
+    return (StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "UpdateRate")
         .str();
   }
   std::string UpdateAverageLabel() const {
-    return (rtc::StringBuilder(kLabelPrefix)
-            << VolumeTypeLabel() << "UpdateAverage")
+    return (StringBuilder(kLabelPrefix) << VolumeTypeLabel() << "UpdateAverage")
         .str();
   }
 

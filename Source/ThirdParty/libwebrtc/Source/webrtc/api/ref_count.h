@@ -22,7 +22,7 @@ namespace webrtc {
 // you're borrowing someone else's reference. (A newly created object is a
 // special case: the reference count is zero on construction, and the code that
 // creates the object should immediately call AddRef(), bringing the reference
-// count from zero to one, e.g., by constructing an rtc::scoped_refptr).
+// count from zero to one, e.g., by constructing an webrtc::scoped_refptr).
 //
 // AddRef() creates a new reference to the object.
 //
@@ -41,9 +41,9 @@ namespace webrtc {
 // result of another thread calling Release().
 //
 // Calling AddRef() and Release() manually is discouraged. It's recommended to
-// use rtc::scoped_refptr to manage all pointers to reference counted objects.
-// Note that rtc::scoped_refptr depends on compile-time duck-typing; formally
-// implementing the below RefCountInterface is not required.
+// use webrtc::scoped_refptr to manage all pointers to reference counted
+// objects. Note that webrtc::scoped_refptr depends on compile-time duck-typing;
+// formally implementing the below RefCountInterface is not required.
 
 enum class RefCountReleaseStatus { kDroppedLastRef, kOtherRefsRemained };
 

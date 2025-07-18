@@ -127,7 +127,9 @@ void RealtimeIncomingSourceGStreamer::forEachClient(Function<void(GstElement*)>&
 
 void RealtimeIncomingSourceGStreamer::handleUpstreamEvent(GRefPtr<GstEvent>&& event)
 {
-    RELEASE_ASSERT(m_bin);
+    if (!m_bin)
+        return;
+
     GST_DEBUG_OBJECT(m_bin.get(), "Handling %" GST_PTR_FORMAT, event.get());
     auto pad = adoptGRef(gst_element_get_static_pad(m_sink.get(), "sink"));
     gst_pad_push_event(pad.get(), event.leakRef());
@@ -135,7 +137,9 @@ void RealtimeIncomingSourceGStreamer::handleUpstreamEvent(GRefPtr<GstEvent>&& ev
 
 bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query)
 {
-    RELEASE_ASSERT(m_bin);
+    if (!m_bin)
+        return false;
+
     GST_DEBUG_OBJECT(m_bin.get(), "Handling %" GST_PTR_FORMAT, query);
     auto pad = adoptGRef(gst_element_get_static_pad(m_sink.get(), "sink"));
     return gst_pad_peer_query(pad.get(), query);
@@ -176,17 +180,11 @@ GstPadProbeReturn RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElem
 
     forEachClient([&](auto* appsrc) {
         auto pad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
-        GRefPtr eventCopy(event);
-        GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client %" GST_PTR_FORMAT, eventCopy.get(), appsrc);
-        gst_pad_push_event(pad.get(), eventCopy.leakRef());
+        GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client %" GST_PTR_FORMAT, event.get(), appsrc);
+        gst_pad_push_event(pad.get(), event.ref());
     });
 
     return GST_PAD_PROBE_OK;
-}
-
-void RealtimeIncomingSourceGStreamer::tearDown()
-{
-    notImplemented();
 }
 
 #undef GST_CAT_DEFAULT

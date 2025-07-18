@@ -22,10 +22,12 @@
 #include "config.h"
 #include "SVGFEFloodElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "FEFlood.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGRenderStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 

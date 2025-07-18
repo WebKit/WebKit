@@ -34,14 +34,14 @@ namespace aec3 {
 void MatchedFilterCore_NEON(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            webrtc::ArrayView<const float> x,
+                            webrtc::ArrayView<const float> y,
+                            webrtc::ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulation_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory);
+                            webrtc::ArrayView<float> accumulated_error,
+                            webrtc::ArrayView<float> scratch_memory);
 
 #endif
 
@@ -51,27 +51,27 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 void MatchedFilterCore_SSE2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            ArrayView<const float> x,
+                            ArrayView<const float> y,
+                            ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory);
+                            ArrayView<float> accumulated_error,
+                            ArrayView<float> scratch_memory);
 
 // Filter core for the matched filter that is optimized for AVX2.
 void MatchedFilterCore_AVX2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            ArrayView<const float> x,
+                            ArrayView<const float> y,
+                            ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory);
+                            ArrayView<float> accumulated_error,
+                            ArrayView<float> scratch_memory);
 
 #endif
 
@@ -79,16 +79,16 @@ void MatchedFilterCore_AVX2(size_t x_start_index,
 void MatchedFilterCore(size_t x_start_index,
                        float x2_sum_threshold,
                        float smoothing,
-                       rtc::ArrayView<const float> x,
-                       rtc::ArrayView<const float> y,
-                       rtc::ArrayView<float> h,
+                       ArrayView<const float> x,
+                       ArrayView<const float> y,
+                       ArrayView<float> h,
                        bool* filters_updated,
                        float* error_sum,
                        bool compute_accumulation_error,
-                       rtc::ArrayView<float> accumulated_error);
+                       ArrayView<float> accumulated_error);
 
 // Find largest peak of squared values in array.
-size_t MaxSquarePeakIndex(rtc::ArrayView<const float> h);
+size_t MaxSquarePeakIndex(ArrayView<const float> h);
 
 }  // namespace aec3
 
@@ -126,7 +126,7 @@ class MatchedFilter {
 
   // Updates the correlation with the values in the capture buffer.
   void Update(const DownsampledRenderBuffer& render_buffer,
-              rtc::ArrayView<const float> capture,
+              ArrayView<const float> capture,
               bool use_slow_smoothing);
 
   // Resets the matched filter.

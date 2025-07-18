@@ -13,6 +13,13 @@
 #include <ctype.h>
 #include <string.h>
 
+#include <cstdint>
+#include <string>
+
+#include "api/dtmf_sender_interface.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -57,13 +64,12 @@ bool GetDtmfCode(char tone, int* code) {
   return true;
 }
 
-rtc::scoped_refptr<DtmfSender> DtmfSender::Create(
-    TaskQueueBase* signaling_thread,
-    DtmfProviderInterface* provider) {
+scoped_refptr<DtmfSender> DtmfSender::Create(TaskQueueBase* signaling_thread,
+                                             DtmfProviderInterface* provider) {
   if (!signaling_thread) {
     return nullptr;
   }
-  return rtc::make_ref_counted<DtmfSender>(signaling_thread, provider);
+  return make_ref_counted<DtmfSender>(signaling_thread, provider);
 }
 
 DtmfSender::DtmfSender(TaskQueueBase* signaling_thread,

@@ -22,7 +22,7 @@ namespace webrtc {
 class OutputRateCalculator {
  public:
   virtual int CalculateOutputRateFromRange(
-      rtc::ArrayView<const int> preferred_sample_rates) = 0;
+      ArrayView<const int> preferred_sample_rates) = 0;
 
   virtual ~OutputRateCalculator() {}
 };

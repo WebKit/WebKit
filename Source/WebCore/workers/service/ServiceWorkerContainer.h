@@ -32,6 +32,7 @@
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "MessageEvent.h"
+#include "NavigatorBase.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
 #include "SWClientConnection.h"
@@ -46,7 +47,6 @@
 namespace WebCore {
 
 class DeferredPromise;
-class NavigatorBase;
 class ServiceWorker;
 class TrustedScriptURL;
 
@@ -106,7 +106,7 @@ public:
 
     bool isStopped() const { return m_isStopped; };
 
-    NavigatorBase* navigator() { return &m_navigator; }
+    NavigatorBase& navigator() { return m_navigator; }
 
     using VoidPromise = DOMPromiseDeferred<void>;
     using NavigationPreloadStatePromise = DOMPromiseDeferred<IDLDictionary<NavigationPreloadState>>;
@@ -118,6 +118,8 @@ public:
     void addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, Ref<DeferredPromise>&&);
     void removeCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, Ref<DeferredPromise>&&);
     void cookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Ref<DeferredPromise>&&);
+
+    void whenRegisterJobsAreFinished(CompletionHandler<void()>&&);
 
 private:
     ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
@@ -155,7 +157,7 @@ private:
 
     std::unique_ptr<ReadyPromise> m_readyPromise;
 
-    NavigatorBase& m_navigator;
+    const CheckedRef<NavigatorBase> m_navigator;
 
     RefPtr<SWClientConnection> m_swConnection;
 
@@ -176,6 +178,7 @@ private:
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
     bool m_shouldDeferMessageEvents { false };
     Vector<MessageEvent::MessageEventWithStrongData> m_deferredMessageEvents;
+    CompletionHandler<void()> m_whenRegisterJobsAreFinished;
 };
 
 } // namespace WebCore

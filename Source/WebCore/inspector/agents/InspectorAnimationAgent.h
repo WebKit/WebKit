@@ -60,7 +60,7 @@ public:
     ~InspectorAnimationAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // AnimationBackendDispatcherHandler
@@ -93,8 +93,8 @@ private:
 
     void stopTrackingStyleOriginatedAnimation(StyleOriginatedAnimation&);
 
-    std::unique_ptr<Inspector::AnimationFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::AnimationFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     WeakRef<Page> m_inspectedPage;
@@ -108,7 +108,7 @@ private:
     Timer m_animationDestroyedTimer;
 
     struct TrackedStyleOriginatedAnimationData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TrackedStyleOriginatedAnimationData);
         Inspector::Protocol::Animation::AnimationId trackingAnimationId;
         ComputedEffectTiming lastComputedTiming;
     };

@@ -11,28 +11,31 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/sequence_checker.h"
-#include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/transport/rtp/dependency_descriptor.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
-#include "api/video/video_frame_type.h"
 #include "api/video/video_layers_allocation.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 #include "modules/rtp_rtcp/source/active_decode_targets_helper.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -43,6 +46,7 @@
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -84,7 +88,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
     bool enable_retransmit_all_layers = false;
     std::optional<int> red_payload_type;
     const FieldTrialsView* field_trials = nullptr;
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer;
+    scoped_refptr<FrameTransformerInterface> frame_transformer;
     TaskQueueFactory* task_queue_factory = nullptr;
   };
 
@@ -101,7 +105,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
                  std::optional<VideoCodecType> codec_type,
                  uint32_t rtp_timestamp,
                  Timestamp capture_time,
-                 rtc::ArrayView<const uint8_t> payload,
+                 ArrayView<const uint8_t> payload,
                  size_t encoder_output_size,
                  RTPVideoHeader video_header,
                  TimeDelta expected_retransmission_time,
@@ -196,7 +200,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
 
   // These members should only be accessed from within SendVideo() to avoid
   // potential race conditions.
-  rtc::RaceChecker send_checker_;
+  RaceChecker send_checker_;
   int32_t retransmission_settings_ RTC_GUARDED_BY(send_checker_);
   VideoRotation last_rotation_ RTC_GUARDED_BY(send_checker_);
   std::optional<ColorSpace> last_color_space_ RTC_GUARDED_BY(send_checker_);
@@ -250,12 +254,8 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
   // targets bitmask should be attached to the dependency descriptor.
   ActiveDecodeTargetsHelper active_decode_targets_tracker_;
 
-  const rtc::scoped_refptr<RTPSenderVideoFrameTransformerDelegate>
+  const scoped_refptr<RTPSenderVideoFrameTransformerDelegate>
       frame_transformer_delegate_;
-
-  // Whether to do two-pass packetization for AV1 which leads to a set of
-  // packets with more even size distribution.
-  const bool enable_av1_even_split_;
 };
 
 }  // namespace webrtc

@@ -3690,6 +3690,69 @@ TEST_P(MultisampledRenderToTextureTest, DrawNonMultisampledThenMultisampled)
     ASSERT_GL_NO_ERROR();
 }
 
+// Draw multisampled triangle with different sample counts on one single FBO. This test makes use of
+// different sample results for different sample location to distinguish whether sample count truly
+// changed or not.
+TEST_P(MultisampledRenderToTextureTest, DrawMultisampledDifferentSamplesOneFBO)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+    constexpr GLsizei kSize = 64;
+
+    GLsizei maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    ANGLE_SKIP_TEST_IF(maxSamples <= 4);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+
+    std::array<GLfloat, 16> attribPosData = {1, 1,  0.5, 1, -1, 1,  0.5, 1,
+                                             1, -1, 0.5, 1, -1, -1, 0.5, 1};
+    const uint16_t indices[]              = {0, 1, 2};
+
+    // Refer to Vulkan spec Standard Sample Locations
+    const GLColor kExpected4(128, 0, 0, 255);
+    const GLColor kExpected8(159, 0, 0, 255);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    ANGLE_GL_PROGRAM(drawColorTriangle, essl1_shaders::vs::Simple(),
+                     essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColorTriangle);
+
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColorTriangle, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    GLint positionUniformLocation =
+        glGetAttribLocation(drawColorTriangle, angle::essl1_shaders::PositionAttrib());
+    ASSERT_NE(positionUniformLocation, -1);
+    glEnableVertexAttribArray(positionUniformLocation);
+    glVertexAttribPointer(positionUniformLocation, 4, GL_FLOAT, GL_FALSE, 0, attribPosData.data());
+
+    // First set sample count to 4.
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, 4);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_COLOR_NEAR(kSize / 2 - 1, kSize / 2, kExpected4, 1);
+
+    // Then set sample count to 8 without changing FBO.
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, 8);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_COLOR_NEAR(kSize / 2 - 1, kSize / 2, kExpected8, 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Draw multisampled, draw multisampled with another sample count, repeat.  This tests the same
 // texture being bound as multisampled-render-to-texture with different sample counts to two FBOs.
 TEST_P(MultisampledRenderToTextureTest, DrawMultisampledDifferentSamples)

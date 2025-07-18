@@ -68,7 +68,7 @@ class ScratchBuffer final : public CanMakeThreadSafeCheckedPtr<ScratchBuffer> {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScratchBuffer);
 public:
     ScratchBuffer()
-        : m_purgeTimer(RunLoop::main(), this, &ScratchBuffer::purgeTimerFired)
+        : m_purgeTimer(RunLoop::mainSingleton(), this, &ScratchBuffer::purgeTimerFired)
     {
     }
 

@@ -1,0 +1,46 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "authorizeWithLocalizedReason:inPresentationContext:completion:"}
+     ],
+     "interface": "LARight",
+     "introduced": "16",
+     "name": "UI"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LAPresentationContext"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "authorizeWithLocalizedReason:inPresentationContext:completion:"}
+     ],
+     "interface": "LARight",
+     "introduced": "16",
+     "name": "UI"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LAPresentationContext"}
+   ]
+  },
+  {
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

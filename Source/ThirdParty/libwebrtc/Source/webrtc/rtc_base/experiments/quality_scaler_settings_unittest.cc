@@ -17,7 +17,7 @@ namespace webrtc {
 namespace {
 
 TEST(QualityScalerSettingsTest, ValuesNotSetByDefault) {
-  webrtc::test::ScopedKeyValueConfig field_trials("");
+  test::ScopedKeyValueConfig field_trials("");
   const auto settings = QualityScalerSettings(field_trials);
   EXPECT_FALSE(settings.MinFrames());
   EXPECT_FALSE(settings.InitialScaleFactor());

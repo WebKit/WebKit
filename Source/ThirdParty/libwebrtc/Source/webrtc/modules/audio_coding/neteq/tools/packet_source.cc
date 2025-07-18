@@ -10,6 +10,8 @@
 
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 
+#include <cstdint>
+
 namespace webrtc {
 namespace test {
 

@@ -23,14 +23,14 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
+#include "rtc_base/socket_address_pair.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
 
-namespace rtc {
+namespace webrtc {
 
 class VirtualSocketPacket;
 class VirtualSocketServer;
-class SocketAddressPair;
 
 // Implements the socket interface using the virtual network. Packets are
 // passed in tasks using the thread of the socket server.
@@ -86,10 +86,9 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
   // Removes stale packets from the network. Returns current size.
   size_t PurgeNetworkPackets(int64_t cur_time);
 
-  void PostPacket(webrtc::TimeDelta delay,
-                  std::unique_ptr<VirtualSocketPacket> packet);
-  void PostConnect(webrtc::TimeDelta delay, const SocketAddress& remote_addr);
-  void PostDisconnect(webrtc::TimeDelta delay);
+  void PostPacket(TimeDelta delay, std::unique_ptr<VirtualSocketPacket> packet);
+  void PostConnect(TimeDelta delay, const SocketAddress& remote_addr);
+  void PostDisconnect(TimeDelta delay);
 
  private:
   // Struct shared with pending tasks that may outlive VirtualSocket.
@@ -120,7 +119,7 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
     AcceptResult Accept();
 
     bool AddPacket(std::unique_ptr<VirtualSocketPacket> packet);
-    void PostConnect(webrtc::TimeDelta delay, const SocketAddress& remote_addr);
+    void PostConnect(TimeDelta delay, const SocketAddress& remote_addr);
 
    private:
     enum class Signal { kNone, kReadEvent, kConnectEvent };
@@ -132,7 +131,7 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
     void MaybeSignalReadEvent();
     Signal Connect(PostedConnects::iterator remote_addr_it);
 
-    webrtc::Mutex mutex_;
+    Mutex mutex_;
     VirtualSocket& socket_;
     bool alive_ RTC_GUARDED_BY(mutex_) = true;
     // Flag indicating if async Task to signal SignalReadEvent is posted.
@@ -286,10 +285,10 @@ class VirtualSocketServer : public SocketServer {
 
   // SocketServer:
   void SetMessageQueue(Thread* queue) override;
-  bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
+  bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
 
-  void SetDelayOnAddress(const rtc::SocketAddress& address, int delay_ms) {
+  void SetDelayOnAddress(const SocketAddress& address, int delay_ms) {
     delay_by_ip_[address.ipaddr()] = delay_ms;
   }
 
@@ -300,8 +299,8 @@ class VirtualSocketServer : public SocketServer {
   // If SetAlternativeLocalAddress(A, B) is called, then when something
   // attempts to bind a socket to address A, it will get a socket bound to
   // address B instead.
-  void SetAlternativeLocalAddress(const rtc::IPAddress& address,
-                                  const rtc::IPAddress& alternative);
+  void SetAlternativeLocalAddress(const IPAddress& address,
+                                  const IPAddress& alternative);
 
   typedef std::pair<double, double> Point;
   typedef std::vector<Point> Function;
@@ -453,7 +452,7 @@ class VirtualSocketServer : public SocketServer {
   IPAddress default_source_address_v4_;
   IPAddress default_source_address_v6_;
 
-  mutable webrtc::Mutex mutex_;
+  mutable Mutex mutex_;
 
   uint32_t bandwidth_ RTC_GUARDED_BY(mutex_);
   uint32_t network_capacity_ RTC_GUARDED_BY(mutex_);
@@ -466,8 +465,8 @@ class VirtualSocketServer : public SocketServer {
   // Used for testing.
   uint32_t sent_packets_ RTC_GUARDED_BY(mutex_) = 0;
 
-  std::map<rtc::IPAddress, int> delay_by_ip_;
-  std::map<rtc::IPAddress, rtc::IPAddress> alternative_address_mapping_;
+  std::map<IPAddress, int> delay_by_ip_;
+  std::map<IPAddress, IPAddress> alternative_address_mapping_;
   std::unique_ptr<Function> delay_dist_;
 
   double drop_prob_ RTC_GUARDED_BY(mutex_);
@@ -479,6 +478,14 @@ class VirtualSocketServer : public SocketServer {
   bool sending_blocked_ RTC_GUARDED_BY(mutex_) = false;
 };
 
-}  // namespace rtc
+}  // namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::VirtualSocketServer;
+}
+#endif  //  WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_VIRTUAL_SOCKET_SERVER_H_

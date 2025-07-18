@@ -57,7 +57,7 @@ FAIL .webkit-box 10 assert_equals:
       <option>XXXXXXX</option>
     </select>
   </div>
-height expected 50 but got 180
+height expected 50 but got 160
 PASS .webkit-box 11
 FAIL .webkit-box 12 assert_equals:
 <div class="webkit-box">

@@ -14,7 +14,9 @@
 
 #include <limits>
 #include <optional>
+#include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/priority.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "rtc_base/byte_buffer.h"
@@ -25,7 +27,7 @@ using webrtc::StreamId;
 
 class SctpUtilsTest : public ::testing::Test {
  public:
-  void VerifyOpenMessageFormat(const rtc::CopyOnWriteBuffer& packet,
+  void VerifyOpenMessageFormat(const webrtc::CopyOnWriteBuffer& packet,
                                const std::string& label,
                                const webrtc::DataChannelInit& config) {
     uint8_t message_type;
@@ -35,7 +37,7 @@ class SctpUtilsTest : public ::testing::Test {
     uint16_t label_length;
     uint16_t protocol_length;
 
-    rtc::ByteBufferReader buffer(packet);
+    webrtc::ByteBufferReader buffer(packet);
     ASSERT_TRUE(buffer.ReadUInt8(&message_type));
     EXPECT_EQ(0x03, message_type);
 
@@ -87,7 +89,7 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithOrderedReliable) {
   std::string label = "abc";
   config.protocol = "y";
 
-  rtc::CopyOnWriteBuffer packet;
+  webrtc::CopyOnWriteBuffer packet;
   ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
@@ -111,7 +113,7 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmitTime) {
   config.maxRetransmitTime = 10;
   config.protocol = "y";
 
-  rtc::CopyOnWriteBuffer packet;
+  webrtc::CopyOnWriteBuffer packet;
   ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
@@ -134,7 +136,7 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmits) {
   config.maxRetransmits = 10;
   config.protocol = "y";
 
-  rtc::CopyOnWriteBuffer packet;
+  webrtc::CopyOnWriteBuffer packet;
   ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
@@ -157,7 +159,7 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithPriority) {
   config.protocol = "y";
   config.priority = webrtc::PriorityValue(webrtc::Priority::kVeryLow);
 
-  rtc::CopyOnWriteBuffer packet;
+  webrtc::CopyOnWriteBuffer packet;
   ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
@@ -173,11 +175,11 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithPriority) {
 }
 
 TEST_F(SctpUtilsTest, WriteParseAckMessage) {
-  rtc::CopyOnWriteBuffer packet;
+  webrtc::CopyOnWriteBuffer packet;
   webrtc::WriteDataChannelOpenAckMessage(&packet);
 
   uint8_t message_type;
-  rtc::ByteBufferReader buffer(packet);
+  webrtc::ByteBufferReader buffer(packet);
   ASSERT_TRUE(buffer.ReadUInt8(&message_type));
   EXPECT_EQ(0x02, message_type);
 
@@ -185,28 +187,27 @@ TEST_F(SctpUtilsTest, WriteParseAckMessage) {
 }
 
 TEST_F(SctpUtilsTest, TestIsOpenMessage) {
-  rtc::CopyOnWriteBuffer open(1);
+  webrtc::CopyOnWriteBuffer open(1);
   open.MutableData()[0] = 0x03;
   EXPECT_TRUE(webrtc::IsOpenMessage(open));
 
-  rtc::CopyOnWriteBuffer openAck(1);
+  webrtc::CopyOnWriteBuffer openAck(1);
   openAck.MutableData()[0] = 0x02;
   EXPECT_FALSE(webrtc::IsOpenMessage(openAck));
 
-  rtc::CopyOnWriteBuffer invalid(1);
+  webrtc::CopyOnWriteBuffer invalid(1);
   invalid.MutableData()[0] = 0x01;
   EXPECT_FALSE(webrtc::IsOpenMessage(invalid));
 
-  rtc::CopyOnWriteBuffer empty;
+  webrtc::CopyOnWriteBuffer empty;
   EXPECT_FALSE(webrtc::IsOpenMessage(empty));
 }
 
 TEST(SctpSidTest, Basics) {
   // These static asserts are mostly here to aid with readability (i.e. knowing
   // what these constants represent).
-  static_assert(cricket::kMinSctpSid == 0, "Min stream id should be 0");
-  static_assert(cricket::kMaxSctpSid <= cricket::kSpecMaxSctpSid, "");
-  static_assert(
-      cricket::kSpecMaxSctpSid == std::numeric_limits<uint16_t>::max(),
-      "Max legal sctp stream value should be 0xffff");
+  static_assert(webrtc::kMinSctpSid == 0, "Min stream id should be 0");
+  static_assert(webrtc::kMaxSctpSid <= webrtc::kSpecMaxSctpSid, "");
+  static_assert(webrtc::kSpecMaxSctpSid == std::numeric_limits<uint16_t>::max(),
+                "Max legal sctp stream value should be 0xffff");
 }

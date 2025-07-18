@@ -72,9 +72,9 @@ protected:
 
 private:
     Markable<FloatRect> m_objectBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
+    mutable Markable<FloatRect> m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
-    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_accurateRepaintBoundingBox;
+    mutable Markable<FloatRect> m_accurateRepaintBoundingBox;
 
     bool m_needsBoundariesUpdate { true };
     bool m_repaintIsSuspendedForChildrenDuringLayout { false };

@@ -10,8 +10,8 @@
 #include "modules/video_coding/svc/scalability_structure_key_svc.h"
 
 #include <bitset>
+#include <cstdint>
 #include <optional>
-#include <utility>
 #include <vector>
 
 #include "api/transport/rtp/dependency_descriptor.h"
@@ -19,7 +19,6 @@
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 

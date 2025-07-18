@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: Problem parsing d="M 0 1 stroke-dashoffset="
+This test passes if it doesn't crash.
+
+

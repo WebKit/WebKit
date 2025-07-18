@@ -78,14 +78,14 @@ private:
 
     RefPtr<ArrayBuffer> m_authenticatorData;
     RefPtr<ArrayBuffer> m_signature;
-    RefPtr<ArrayBuffer> m_userHandle;
+    const RefPtr<ArrayBuffer> m_userHandle;
 
     String m_name;
     String m_displayName;
     String m_group;
     bool m_synchronizable;
     size_t m_numberOfCredentials { 0 };
-    RetainPtr<SecAccessControlRef> m_accessControl;
+    const RetainPtr<SecAccessControlRef> m_accessControl;
     RetainPtr<LAContext> m_laContext;
     RefPtr<ArrayBuffer> m_largeBlob;
     String m_accessGroup;

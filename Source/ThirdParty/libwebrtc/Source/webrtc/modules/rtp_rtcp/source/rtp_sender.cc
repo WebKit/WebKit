@@ -199,19 +199,17 @@ RTPSender::~RTPSender() {
   // to understand performance attributes and possibly remove locks.
 }
 
-rtc::ArrayView<const RtpExtensionSize> RTPSender::FecExtensionSizes() {
-  return rtc::MakeArrayView(kFecOrPaddingExtensionSizes,
-                            arraysize(kFecOrPaddingExtensionSizes));
+ArrayView<const RtpExtensionSize> RTPSender::FecExtensionSizes() {
+  return MakeArrayView(kFecOrPaddingExtensionSizes,
+                       arraysize(kFecOrPaddingExtensionSizes));
 }
 
-rtc::ArrayView<const RtpExtensionSize> RTPSender::VideoExtensionSizes() {
-  return rtc::MakeArrayView(kVideoExtensionSizes,
-                            arraysize(kVideoExtensionSizes));
+ArrayView<const RtpExtensionSize> RTPSender::VideoExtensionSizes() {
+  return MakeArrayView(kVideoExtensionSizes, arraysize(kVideoExtensionSizes));
 }
 
-rtc::ArrayView<const RtpExtensionSize> RTPSender::AudioExtensionSizes() {
-  return rtc::MakeArrayView(kAudioExtensionSizes,
-                            arraysize(kAudioExtensionSizes));
+ArrayView<const RtpExtensionSize> RTPSender::AudioExtensionSizes() {
+  return MakeArrayView(kAudioExtensionSizes, arraysize(kAudioExtensionSizes));
 }
 
 void RTPSender::SetExtmapAllowMixed(bool extmap_allow_mixed) {
@@ -327,7 +325,8 @@ int32_t RTPSender::ReSendPacket(uint16_t packet_id) {
   return packet_size;
 }
 
-void RTPSender::OnReceivedAckOnSsrc(int64_t extended_highest_sequence_number) {
+void RTPSender::OnReceivedAckOnSsrc(
+    int64_t /* extended_highest_sequence_number */) {
   MutexLock lock(&send_mutex_);
   bool update_required = !ssrc_has_acked_;
   ssrc_has_acked_ = true;
@@ -337,7 +336,7 @@ void RTPSender::OnReceivedAckOnSsrc(int64_t extended_highest_sequence_number) {
 }
 
 void RTPSender::OnReceivedAckOnRtxSsrc(
-    int64_t extended_highest_sequence_number) {
+    int64_t /* extended_highest_sequence_number */) {
   MutexLock lock(&send_mutex_);
   bool update_required = !rtx_ssrc_has_acked_;
   rtx_ssrc_has_acked_ = true;
@@ -419,15 +418,15 @@ std::vector<std::unique_ptr<RtpPacketToSend>> RTPSender::GeneratePadding(
       max_packet_size_ - max_padding_fec_packet_header_;
   if (audio_configured_) {
     // Allow smaller padding packets for audio.
-    padding_bytes_in_packet = rtc::SafeClamp<size_t>(
-        bytes_left, kMinAudioPaddingLength,
-        rtc::SafeMin(max_payload_size, kMaxPaddingLength));
+    padding_bytes_in_packet =
+        SafeClamp<size_t>(bytes_left, kMinAudioPaddingLength,
+                          SafeMin(max_payload_size, kMaxPaddingLength));
   } else {
     // Always send full padding packets. This is accounted for by the
     // RtpPacketSender, which will make sure we don't send too much padding even
     // if a single packet is larger than requested.
     // We do this to avoid frequently sending small packets on higher bitrates.
-    padding_bytes_in_packet = rtc::SafeMin(max_payload_size, kMaxPaddingLength);
+    padding_bytes_in_packet = SafeMin(max_payload_size, kMaxPaddingLength);
   }
 
   while (bytes_left > 0) {
@@ -516,7 +515,7 @@ size_t RTPSender::ExpectedPerPacketOverhead() const {
 }
 
 std::unique_ptr<RtpPacketToSend> RTPSender::AllocatePacket(
-    rtc::ArrayView<const uint32_t> csrcs) {
+    ArrayView<const uint32_t> csrcs) {
   MutexLock lock(&send_mutex_);
   RTC_DCHECK_LE(csrcs.size(), kRtpCsrcSize);
   if (csrcs.size() > max_num_csrcs_) {
@@ -652,9 +651,9 @@ static void CopyHeaderAndExtensionsToRtxPacket(const RtpPacketToSend& packet,
       continue;
     }
 
-    rtc::ArrayView<const uint8_t> source = packet.FindExtension(extension);
+    ArrayView<const uint8_t> source = packet.FindExtension(extension);
 
-    rtc::ArrayView<uint8_t> destination =
+    ArrayView<uint8_t> destination =
         rtx_packet->AllocateExtension(extension, source.size());
 
     // Could happen if any:

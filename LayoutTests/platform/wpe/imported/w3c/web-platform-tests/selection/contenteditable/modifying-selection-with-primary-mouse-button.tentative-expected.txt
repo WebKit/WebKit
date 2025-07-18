@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: Error: assert_true: Selection should be modified before pointerup event expected true got false
-CONSOLE MESSAGE: Error: assert_true: Selection should be modified before mouseup event expected true got false
+CONSOLE MESSAGE: Error: assert_equals: Selection should be modified to extend the range before pointerup event  expected Text node "first span." but got Element node <div contenteditable=""><span id="span1">first span.</spa...
+CONSOLE MESSAGE: Error: assert_equals: Selection should be modified to extend the range before mouseup event  expected Text node "first span." but got Element node <div contenteditable=""><span id="span1">first span.</spa...
 first span.
 second span.
 link.
 
-Harness Error (FAIL), message = Error: assert_true: Selection should be modified before mouseup event expected true got false
+Harness Error (FAIL), message = Error: assert_equals: Selection should be modified to extend the range before mouseup event  expected Text node "first span." but got Element node <div contenteditable=""><span id="span1">first span.</spa...
 
 PASS Primary click should set focus to clicked editable element and collapse selection around the clicked point
 PASS Primary click should move caret in an editable element
@@ -12,5 +12,5 @@ PASS Primary click shouldn't move caret in an editable element if the default of
 PASS Primary click shouldn't move caret in an editable element if the default of pointerdown event is prevented
 FAIL Shift + Primary click should extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
 FAIL Shift + Primary click in a link shouldn't extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
-FAIL Primary mouse button down should move caret, and primary mouse button up should extend the selection assert_equals: Selection#anchorOffset should stay in the second <span> element which mousedown occurred on expected (undefined) undefined but got (number) 5
+FAIL Primary mouse button down should move caret, and primary mouse button up should extend the selection assert_equals: Selection#anchorOffset should stay in the second <span> element which mousedown occurred on expected (undefined) undefined but got (number) 0
 

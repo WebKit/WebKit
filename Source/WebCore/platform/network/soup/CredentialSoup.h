@@ -61,7 +61,7 @@ public:
         CredentialPersistence persistence;
     };
 
-    using IPCData = std::variant<NonPlatformData, PlatformData>;
+    using IPCData = Variant<NonPlatformData, PlatformData>;
     WEBCORE_EXPORT static Credential fromIPCData(IPCData&&);
     WEBCORE_EXPORT IPCData ipcData() const;
 

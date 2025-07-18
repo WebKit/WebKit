@@ -72,11 +72,9 @@ class LossBasedBweV2 {
 
   void SetAcknowledgedBitrate(DataRate acknowledged_bitrate);
   void SetMinMaxBitrate(DataRate min_bitrate, DataRate max_bitrate);
-  void UpdateBandwidthEstimate(
-      rtc::ArrayView<const PacketResult> packet_results,
-      DataRate delay_based_estimate,
-      bool in_alr);
-  bool PaceAtLossBasedEstimate() const;
+  void UpdateBandwidthEstimate(ArrayView<const PacketResult> packet_results,
+                               DataRate delay_based_estimate,
+                               bool in_alr);
 
   // For unit testing only.
   void SetBandwidthEstimate(DataRate bandwidth_estimate);
@@ -195,7 +193,7 @@ class LossBasedBweV2 {
   void NewtonsMethodUpdate(ChannelParameters& channel_parameters) const;
 
   // Returns false if no observation was created.
-  bool PushBackObservation(rtc::ArrayView<const PacketResult> packet_results);
+  bool PushBackObservation(ArrayView<const PacketResult> packet_results);
   bool IsEstimateIncreasingWhenLossLimited(DataRate old_estimate,
                                            DataRate new_estimate);
   bool IsInLossLimitedState() const;

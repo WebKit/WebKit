@@ -234,7 +234,7 @@
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
+        RunLoop::mainSingleton().dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
             ASSERT(_didRequestMerchantSessionCompletion);
 
             RefPtr presenter = _presenter.get();

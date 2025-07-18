@@ -10,15 +10,19 @@
 
 #include "modules/rtp_rtcp/source/rtcp_transceiver.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include "absl/cleanup/cleanup.h"
+#include "absl/functional/any_invocable.h"
 #include "api/units/timestamp.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
+#include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/event.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -79,7 +83,7 @@ void RtcpTransceiver::SetReadyToSend(bool ready) {
   task_queue_->PostTask([ptr, ready] { ptr->SetReadyToSend(ready); });
 }
 
-void RtcpTransceiver::ReceivePacket(rtc::CopyOnWriteBuffer packet) {
+void RtcpTransceiver::ReceivePacket(CopyOnWriteBuffer packet) {
   RTC_CHECK(rtcp_transceiver_);
   RtcpTransceiverImpl* ptr = rtcp_transceiver_.get();
   Timestamp now = clock_->CurrentTime();

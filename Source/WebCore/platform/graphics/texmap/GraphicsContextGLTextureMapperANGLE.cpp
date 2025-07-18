@@ -40,6 +40,7 @@
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
 #if USE(GSTREAMER)
+#include "VideoFrameContentHint.h"
 #include "VideoFrameGStreamer.h"
 #endif
 #endif
@@ -126,7 +127,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 
 RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
 {
-    return readRenderingResults();
+    return readRenderingResultsForPainting();
 }
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
@@ -185,8 +186,12 @@ bool GraphicsContextGLTextureMapperANGLE::copyTextureFromVideoFrame(VideoFrame&,
 RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFrame(SurfaceBuffer)
 {
 #if USE(GSTREAMER)
-    if (auto pixelBuffer = readCompositedResults())
-        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::Rotation::UpsideDown, MediaTime::invalidTime(), { }, 30, true, { });
+    if (auto pixelBuffer = readCompositedResults()) {
+        VideoFrameGStreamer::CreateOptions options;
+        options.rotation = VideoFrameGStreamer::Rotation::UpsideDown;
+        options.isMirrored = true;
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { }, 30, options);
+    }
 #endif
     return nullptr;
 }

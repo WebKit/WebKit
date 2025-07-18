@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CryptoAlgorithmAESCFB.h"
 
+#include "ExceptionOr.h"
+
 namespace WebCore {
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCFB::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&)

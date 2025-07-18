@@ -12,6 +12,8 @@
 
 #include <stddef.h>
 
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "pc/audio_track.h"
 #include "pc/test/fake_video_track_source.h"
 #include "pc/video_track.h"
@@ -23,8 +25,8 @@ static const char kStreamId1[] = "local_stream_1";
 static const char kVideoTrackId[] = "dummy_video_cam_1";
 static const char kAudioTrackId[] = "dummy_microphone_1";
 
-using rtc::scoped_refptr;
 using ::testing::Exactly;
+using webrtc::scoped_refptr;
 
 namespace webrtc {
 
@@ -54,16 +56,16 @@ class MediaStreamTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     stream_ = MediaStream::Create(kStreamId1);
-    ASSERT_TRUE(stream_.get() != NULL);
+    ASSERT_TRUE(stream_.get() != nullptr);
 
     video_track_ = VideoTrack::Create(
-        kVideoTrackId, FakeVideoTrackSource::Create(), rtc::Thread::Current());
-    ASSERT_TRUE(video_track_.get() != NULL);
+        kVideoTrackId, FakeVideoTrackSource::Create(), Thread::Current());
+    ASSERT_TRUE(video_track_.get() != nullptr);
     EXPECT_EQ(MediaStreamTrackInterface::kLive, video_track_->state());
 
     audio_track_ = AudioTrack::Create(kAudioTrackId, nullptr);
 
-    ASSERT_TRUE(audio_track_.get() != NULL);
+    ASSERT_TRUE(audio_track_.get() != nullptr);
     EXPECT_EQ(MediaStreamTrackInterface::kLive, audio_track_->state());
 
     EXPECT_TRUE(stream_->AddTrack(video_track_));
@@ -80,7 +82,7 @@ class MediaStreamTest : public ::testing::Test {
     EXPECT_FALSE(track->enabled());
   }
 
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   scoped_refptr<MediaStreamInterface> stream_;
   scoped_refptr<AudioTrackInterface> audio_track_;
   scoped_refptr<VideoTrackInterface> video_track_;
@@ -134,8 +136,8 @@ TEST_F(MediaStreamTest, RemoveTrack) {
   EXPECT_EQ(0u, stream_->GetVideoTracks().size());
   EXPECT_EQ(0u, stream_->GetVideoTracks().size());
 
-  EXPECT_FALSE(stream_->RemoveTrack(rtc::scoped_refptr<AudioTrackInterface>()));
-  EXPECT_FALSE(stream_->RemoveTrack(rtc::scoped_refptr<VideoTrackInterface>()));
+  EXPECT_FALSE(stream_->RemoveTrack(scoped_refptr<AudioTrackInterface>()));
+  EXPECT_FALSE(stream_->RemoveTrack(scoped_refptr<VideoTrackInterface>()));
 }
 
 TEST_F(MediaStreamTest, ChangeVideoTrack) {

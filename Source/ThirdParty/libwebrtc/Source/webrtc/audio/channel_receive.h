@@ -11,38 +11,38 @@
 #ifndef AUDIO_CHANNEL_RECEIVE_H_
 #define AUDIO_CHANNEL_RECEIVE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/call/audio_sink.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
+#include "api/crypto/frame_decryptor_interface.h"
 #include "api/environment/environment.h"
 #include "api/frame_transformer_interface.h"
 #include "api/neteq/neteq_factory.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
 #include "api/transport/rtp/rtp_source.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "call/syncable.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "modules/rtp_rtcp/source/source_tracker.h"
-
-// TODO(solenberg, nisse): This file contains a few NOLINT marks, to silence
-// warnings about use of unsigned short.
-// These need cleanup, in a separate cl.
-
-namespace rtc {
-class TimestampWrapAroundHandler;
-}
 
 namespace webrtc {
 
 class AudioDeviceModule;
-class FrameDecryptorInterface;
 class PacketRouter;
 class RateLimiter;
 class ReceiveStatistics;
@@ -50,15 +50,15 @@ class RtpPacketReceived;
 class RtpRtcp;
 
 struct CallReceiveStatistics {
-  int cumulativeLost;
-  unsigned int jitterSamples;
+  int packets_lost = 0;
+  uint32_t jitter_ms = 0;
   int64_t payload_bytes_received = 0;
   int64_t header_and_padding_bytes_received = 0;
-  int packetsReceived;
+  int packets_received = 0;
   uint32_t nacks_sent = 0;
   // The capture NTP time (in local timebase) of the first played out audio
   // frame.
-  int64_t capture_start_ntp_time_ms_;
+  int64_t capture_start_ntp_time_ms = 0;
   // The timestamp at which the last packet was received, i.e. the time of the
   // local clock when it was received - not the RTP timestamp of that packet.
   // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-lastpacketreceivedtimestamp
@@ -77,7 +77,7 @@ struct CallReceiveStatistics {
   uint64_t sender_reports_reports_count = 0;
   std::optional<TimeDelta> round_trip_time;
   TimeDelta total_round_trip_time = TimeDelta::Zero();
-  int round_trip_time_measurements;
+  int round_trip_time_measurements = 0;
 };
 
 namespace voe {
@@ -153,22 +153,15 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
 
   virtual std::vector<RtpSource> GetSources() const = 0;
 
-  // Associate to a send channel.
-  // Used for obtaining RTT for a receive-only channel.
-  virtual void SetAssociatedSendChannel(
-      const ChannelSendInterface* channel) = 0;
-
   // Sets a frame transformer between the depacketizer and the decoder, to
   // transform the received frames before decoding them.
   virtual void SetDepacketizerToDecoderFrameTransformer(
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface>
-          frame_transformer) = 0;
+      scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) = 0;
 
   virtual void SetFrameDecryptor(
-      rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) = 0;
+      scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) = 0;
 
   virtual void OnLocalSsrcChange(uint32_t local_ssrc) = 0;
-  virtual uint32_t GetLocalSsrc() const = 0;
 };
 
 std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
@@ -182,11 +175,11 @@ std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
     bool jitter_buffer_fast_playout,
     int jitter_buffer_min_delay_ms,
     bool enable_non_sender_rtt,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+    scoped_refptr<AudioDecoderFactory> decoder_factory,
     std::optional<AudioCodecPairId> codec_pair_id,
-    rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor,
+    scoped_refptr<FrameDecryptorInterface> frame_decryptor,
     const webrtc::CryptoOptions& crypto_options,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+    scoped_refptr<FrameTransformerInterface> frame_transformer);
 
 }  // namespace voe
 }  // namespace webrtc

@@ -396,7 +396,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedAndIndexedSetterThrowingExceptionConstructor
 
 JSC::GCClient::IsoSubspace* JSTestNamedAndIndexedSetterThrowingException::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedAndIndexedSetterThrowingException, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedAndIndexedSetterThrowingException, UseCustomHeapCellType::No>(vm, "JSTestNamedAndIndexedSetterThrowingException"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedAndIndexedSetterThrowingException.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedAndIndexedSetterThrowingException = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException.get(); },

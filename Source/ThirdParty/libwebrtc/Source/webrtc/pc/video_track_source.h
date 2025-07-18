@@ -46,19 +46,19 @@ class RTC_EXPORT VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
 
   bool GetStats(Stats* stats) override { return false; }
 
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+  void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                       const VideoSinkWants& wants) override;
+  void RemoveSink(VideoSinkInterface<VideoFrame>* sink) override;
 
   bool SupportsEncodedOutput() const override { return false; }
   void GenerateKeyFrame() override {}
   void AddEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+      VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
   void RemoveEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+      VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
 
  protected:
-  virtual rtc::VideoSourceInterface<VideoFrame>* source() = 0;
+  virtual VideoSourceInterface<VideoFrame>* source() = 0;
 
  private:
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_thread_checker_{

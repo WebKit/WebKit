@@ -2,94 +2,32 @@
 FAIL :shift_left_abstract:inputSource="const";vectorize="_undef_" assert_unreached:
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 12 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     48:49: shift left value must be less than the bit width of the shifted value, which is 64
-    49:26: shift left value must be less than the bit width of the shifted value, which is 64
-    50:45: shift left value must be less than the bit width of the shifted value, which is 64
-    53:49: shift left value must be less than the bit width of the shifted value, which is 64
-    54:26: shift left value must be less than the bit width of the shifted value, which is 64
-    55:45: shift left value must be less than the bit width of the shifted value, which is 64
-    58:49: shift left value must be less than the bit width of the shifted value, which is 64
-    59:26: shift left value must be less than the bit width of the shifted value, which is 64
-    60:45: shift left value must be less than the bit width of the shifted value, which is 64
-    63:49: shift left value must be less than the bit width of the shifted value, which is 64
-    64:26: shift left value must be less than the bit width of the shifted value, which is 64
-    65:45: shift left value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :shift_left_abstract:inputSource="const";vectorize=2 assert_unreached:
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 12 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     48:61: shift left value must be less than the bit width of the shifted value, which is 64
-    49:35: shift left value must be less than the bit width of the shifted value, which is 64
-    50:57: shift left value must be less than the bit width of the shifted value, which is 64
-    53:61: shift left value must be less than the bit width of the shifted value, which is 64
-    54:35: shift left value must be less than the bit width of the shifted value, which is 64
-    55:57: shift left value must be less than the bit width of the shifted value, which is 64
-    58:61: shift left value must be less than the bit width of the shifted value, which is 64
-    59:35: shift left value must be less than the bit width of the shifted value, which is 64
-    60:57: shift left value must be less than the bit width of the shifted value, which is 64
-    63:61: shift left value must be less than the bit width of the shifted value, which is 64
-    64:35: shift left value must be less than the bit width of the shifted value, which is 64
-    65:57: shift left value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :shift_left_abstract:inputSource="const";vectorize=3 assert_unreached:
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 18 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     48:64: shift left value must be less than the bit width of the shifted value, which is 64
-    49:38: shift left value must be less than the bit width of the shifted value, which is 64
-    50:60: shift left value must be less than the bit width of the shifted value, which is 64
-    53:64: shift left value must be less than the bit width of the shifted value, which is 64
-    54:38: shift left value must be less than the bit width of the shifted value, which is 64
-    55:60: shift left value must be less than the bit width of the shifted value, which is 64
-    58:64: shift left value must be less than the bit width of the shifted value, which is 64
-    59:38: shift left value must be less than the bit width of the shifted value, which is 64
-    60:60: shift left value must be less than the bit width of the shifted value, which is 64
-    63:64: shift left value must be less than the bit width of the shifted value, which is 64
-    64:38: shift left value must be less than the bit width of the shifted value, which is 64
-    65:60: shift left value must be less than the bit width of the shifted value, which is 64
-    68:64: shift left value must be less than the bit width of the shifted value, which is 64
-    69:38: shift left value must be less than the bit width of the shifted value, which is 64
-    70:60: shift left value must be less than the bit width of the shifted value, which is 64
-    73:64: shift left value must be less than the bit width of the shifted value, which is 64
-    74:38: shift left value must be less than the bit width of the shifted value, which is 64
-    75:60: shift left value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :shift_left_abstract:inputSource="const";vectorize=4 assert_unreached:
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 24 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     38:67: shift left value must be less than the bit width of the shifted value, which is 64
-    39:41: shift left value must be less than the bit width of the shifted value, which is 64
-    40:63: shift left value must be less than the bit width of the shifted value, which is 64
-    43:67: shift left value must be less than the bit width of the shifted value, which is 64
-    44:41: shift left value must be less than the bit width of the shifted value, which is 64
-    45:63: shift left value must be less than the bit width of the shifted value, which is 64
-    48:67: shift left value must be less than the bit width of the shifted value, which is 64
-    49:41: shift left value must be less than the bit width of the shifted value, which is 64
-    50:63: shift left value must be less than the bit width of the shifted value, which is 64
-    53:67: shift left value must be less than the bit width of the shifted value, which is 64
-    54:41: shift left value must be less than the bit width of the shifted value, which is 64
-    55:63: shift left value must be less than the bit width of the shifted value, which is 64
-    58:67: shift left value must be less than the bit width of the shifted value, which is 64
-    59:41: shift left value must be less than the bit width of the shifted value, which is 64
-    60:63: shift left value must be less than the bit width of the shifted value, which is 64
-    63:67: shift left value must be less than the bit width of the shifted value, which is 64
-    64:41: shift left value must be less than the bit width of the shifted value, which is 64
-    65:63: shift left value must be less than the bit width of the shifted value, which is 64
-    68:67: shift left value must be less than the bit width of the shifted value, which is 64
-    69:41: shift left value must be less than the bit width of the shifted value, which is 64
-    70:63: shift left value must be less than the bit width of the shifted value, which is 64
-    73:67: shift left value must be less than the bit width of the shifted value, which is 64
-    74:41: shift left value must be less than the bit width of the shifted value, which is 64
-    75:63: shift left value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
@@ -178,22 +116,8 @@ FAIL :shift_right_abstract:inputSource="const";vectorize="_undef_" assert_unreac
       at (elided: only 2 shown)
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: only 2 shown)
-  - EXCEPTION: Error: Unexpected validation error occurred: 15 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     48:49: shift right value must be less than the bit width of the shifted value, which is 64
-    49:26: shift right value must be less than the bit width of the shifted value, which is 64
-    50:45: shift right value must be less than the bit width of the shifted value, which is 64
-    53:49: shift right value must be less than the bit width of the shifted value, which is 64
-    54:26: shift right value must be less than the bit width of the shifted value, which is 64
-    55:45: shift right value must be less than the bit width of the shifted value, which is 64
-    58:49: shift right value must be less than the bit width of the shifted value, which is 64
-    59:26: shift right value must be less than the bit width of the shifted value, which is 64
-    60:45: shift right value must be less than the bit width of the shifted value, which is 64
-    63:49: shift right value must be less than the bit width of the shifted value, which is 64
-    64:26: shift right value must be less than the bit width of the shifted value, which is 64
-    65:45: shift right value must be less than the bit width of the shifted value, which is 64
-    68:50: shift right value must be less than the bit width of the shifted value, which is 64
-    69:26: shift right value must be less than the bit width of the shifted value, which is 64
-    70:46: shift right value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
@@ -216,25 +140,8 @@ FAIL :shift_right_abstract:inputSource="const";vectorize=2 assert_unreached:
       at (elided: only 2 shown)
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: only 2 shown)
-  - EXCEPTION: Error: Unexpected validation error occurred: 18 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     48:61: shift right value must be less than the bit width of the shifted value, which is 64
-    49:35: shift right value must be less than the bit width of the shifted value, which is 64
-    50:57: shift right value must be less than the bit width of the shifted value, which is 64
-    53:61: shift right value must be less than the bit width of the shifted value, which is 64
-    54:35: shift right value must be less than the bit width of the shifted value, which is 64
-    55:57: shift right value must be less than the bit width of the shifted value, which is 64
-    58:61: shift right value must be less than the bit width of the shifted value, which is 64
-    59:35: shift right value must be less than the bit width of the shifted value, which is 64
-    60:57: shift right value must be less than the bit width of the shifted value, which is 64
-    63:61: shift right value must be less than the bit width of the shifted value, which is 64
-    64:35: shift right value must be less than the bit width of the shifted value, which is 64
-    65:57: shift right value must be less than the bit width of the shifted value, which is 64
-    68:61: shift right value must be less than the bit width of the shifted value, which is 64
-    69:35: shift right value must be less than the bit width of the shifted value, which is 64
-    70:57: shift right value must be less than the bit width of the shifted value, which is 64
-    73:61: shift right value must be less than the bit width of the shifted value, which is 64
-    74:35: shift right value must be less than the bit width of the shifted value, which is 64
-    75:57: shift right value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
@@ -253,25 +160,8 @@ FAIL :shift_right_abstract:inputSource="const";vectorize=3 assert_unreached:
       at (elided: only 2 shown)
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: only 2 shown)
-  - EXCEPTION: Error: Unexpected validation error occurred: 18 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     363:65: shift right value must be less than the bit width of the shifted value, which is 64
-    364:38: shift right value must be less than the bit width of the shifted value, which is 64
-    365:61: shift right value must be less than the bit width of the shifted value, which is 64
-    368:65: shift right value must be less than the bit width of the shifted value, which is 64
-    369:38: shift right value must be less than the bit width of the shifted value, which is 64
-    370:61: shift right value must be less than the bit width of the shifted value, which is 64
-    373:65: shift right value must be less than the bit width of the shifted value, which is 64
-    374:38: shift right value must be less than the bit width of the shifted value, which is 64
-    375:61: shift right value must be less than the bit width of the shifted value, which is 64
-    378:65: shift right value must be less than the bit width of the shifted value, which is 64
-    379:38: shift right value must be less than the bit width of the shifted value, which is 64
-    380:61: shift right value must be less than the bit width of the shifted value, which is 64
-    383:65: shift right value must be less than the bit width of the shifted value, which is 64
-    384:38: shift right value must be less than the bit width of the shifted value, which is 64
-    385:61: shift right value must be less than the bit width of the shifted value, which is 64
-    388:65: shift right value must be less than the bit width of the shifted value, which is 64
-    389:38: shift right value must be less than the bit width of the shifted value, which is 64
-    390:61: shift right value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
@@ -286,31 +176,8 @@ FAIL :shift_right_abstract:inputSource="const";vectorize=4 assert_unreached:
       at (elided: only 2 shown)
   - EXPECTATION FAILED: Pipeline Creation Error, validation:
       at (elided: only 2 shown)
-  - EXCEPTION: Error: Unexpected validation error occurred: 24 errors generated while compiling the shader:
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     358:68: shift right value must be less than the bit width of the shifted value, which is 64
-    359:41: shift right value must be less than the bit width of the shifted value, which is 64
-    360:64: shift right value must be less than the bit width of the shifted value, which is 64
-    363:68: shift right value must be less than the bit width of the shifted value, which is 64
-    364:41: shift right value must be less than the bit width of the shifted value, which is 64
-    365:64: shift right value must be less than the bit width of the shifted value, which is 64
-    368:68: shift right value must be less than the bit width of the shifted value, which is 64
-    369:41: shift right value must be less than the bit width of the shifted value, which is 64
-    370:64: shift right value must be less than the bit width of the shifted value, which is 64
-    373:68: shift right value must be less than the bit width of the shifted value, which is 64
-    374:41: shift right value must be less than the bit width of the shifted value, which is 64
-    375:64: shift right value must be less than the bit width of the shifted value, which is 64
-    378:68: shift right value must be less than the bit width of the shifted value, which is 64
-    379:41: shift right value must be less than the bit width of the shifted value, which is 64
-    380:64: shift right value must be less than the bit width of the shifted value, which is 64
-    383:68: shift right value must be less than the bit width of the shifted value, which is 64
-    384:41: shift right value must be less than the bit width of the shifted value, which is 64
-    385:64: shift right value must be less than the bit width of the shifted value, which is 64
-    388:68: shift right value must be less than the bit width of the shifted value, which is 64
-    389:41: shift right value must be less than the bit width of the shifted value, which is 64
-    390:64: shift right value must be less than the bit width of the shifted value, which is 64
-    393:68: shift right value must be less than the bit width of the shifted value, which is 64
-    394:41: shift right value must be less than the bit width of the shifted value, which is 64
-    395:64: shift right value must be less than the bit width of the shifted value, which is 64
     TestFailedButDeviceReusable@
     @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code

@@ -10,14 +10,24 @@
 
 #include "video/buffered_frame_decryptor.h"
 
-#include <map>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <vector>
 
+#include "api/crypto/frame_decryptor_interface.h"
+#include "api/make_ref_counted.h"
+#include "api/rtp_packet_infos.h"
+#include "api/scoped_refptr.h"
 #include "api/test/mock_frame_decryptor.h"
-#include "modules/video_coding/packet_buffer.h"
-#include "system_wrappers/include/clock.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
@@ -88,7 +98,7 @@ class BufferedFrameDecryptorTest : public ::testing::Test,
     decrypted_frame_call_count_ = 0;
     decryption_status_change_count_ = 0;
     seq_num_ = 0;
-    mock_frame_decryptor_ = rtc::make_ref_counted<MockFrameDecryptor>();
+    mock_frame_decryptor_ = make_ref_counted<MockFrameDecryptor>();
     buffered_frame_decryptor_ =
         std::make_unique<BufferedFrameDecryptor>(this, this, field_trials_);
     buffered_frame_decryptor_->SetFrameDecryptor(mock_frame_decryptor_);
@@ -98,7 +108,7 @@ class BufferedFrameDecryptorTest : public ::testing::Test,
 
   test::ScopedKeyValueConfig field_trials_;
   std::vector<uint8_t> fake_packet_data_;
-  rtc::scoped_refptr<MockFrameDecryptor> mock_frame_decryptor_;
+  scoped_refptr<MockFrameDecryptor> mock_frame_decryptor_;
   std::unique_ptr<BufferedFrameDecryptor> buffered_frame_decryptor_;
   size_t decrypted_frame_call_count_;
   size_t decryption_status_change_count_ = 0;

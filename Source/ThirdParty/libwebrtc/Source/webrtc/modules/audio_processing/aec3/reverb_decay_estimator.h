@@ -29,7 +29,7 @@ class ReverbDecayEstimator {
   explicit ReverbDecayEstimator(const EchoCanceller3Config& config);
   ~ReverbDecayEstimator();
   // Updates the decay estimate.
-  void Update(rtc::ArrayView<const float> filter,
+  void Update(ArrayView<const float> filter,
               const std::optional<float>& filter_quality,
               int filter_delay_blocks,
               bool usable_linear_filter,
@@ -47,8 +47,8 @@ class ReverbDecayEstimator {
   void Dump(ApmDataDumper* data_dumper) const;
 
  private:
-  void EstimateDecay(rtc::ArrayView<const float> filter, int peak_block);
-  void AnalyzeFilter(rtc::ArrayView<const float> filter);
+  void EstimateDecay(ArrayView<const float> filter, int peak_block);
+  void AnalyzeFilter(ArrayView<const float> filter);
 
   void ResetDecayEstimation();
 

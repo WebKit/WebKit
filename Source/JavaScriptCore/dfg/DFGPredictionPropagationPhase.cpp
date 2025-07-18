@@ -42,9 +42,8 @@ class PredictionPropagationPhase : public Phase {
 public:
     PredictionPropagationPhase(Graph& graph)
         : Phase(graph, "prediction propagation"_s)
-        , m_tupleSpeculations(graph.m_tupleData.size())
+        , m_tupleSpeculations(graph.m_tupleData.size(), SpecNone)
     {
-        m_tupleSpeculations.fill(SpecNone);
     }
     
     bool run()

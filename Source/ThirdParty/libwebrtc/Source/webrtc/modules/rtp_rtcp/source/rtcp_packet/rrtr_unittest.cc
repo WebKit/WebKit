@@ -10,6 +10,11 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gtest.h"
 
 using webrtc::rtcp::Rrtr;

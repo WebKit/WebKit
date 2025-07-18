@@ -15,11 +15,13 @@
 #include <memory>
 #include <vector>
 
-#include "api/sequence_checker.h"
+#include "absl/base/nullability.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/time_controller.h"
-#include "rtc_base/ip_address.h"
 #include "rtc_base/network.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
 #include "test/network/network_emulation.h"
@@ -27,34 +29,23 @@
 namespace webrtc {
 namespace test {
 
-// Framework assumes that rtc::NetworkManager is called from network thread.
-class EmulatedNetworkManager : public rtc::NetworkManagerBase,
-                               public sigslot::has_slots<>,
-                               public EmulatedNetworkManagerInterface {
+class EmulatedNetworkManager : public EmulatedNetworkManagerInterface {
  public:
-  EmulatedNetworkManager(TimeController* time_controller,
-                         TaskQueueForTest* task_queue,
-                         EndpointsContainer* endpoints_container);
+  EmulatedNetworkManager(TimeController* absl_nonnull time_controller,
+                         TaskQueueBase* absl_nonnull task_queue,
+                         EndpointsContainer* absl_nonnull endpoints_container);
+  ~EmulatedNetworkManager() override;
 
-  void EnableEndpoint(EmulatedEndpointImpl* endpoint);
-  void DisableEndpoint(EmulatedEndpointImpl* endpoint);
+  void UpdateNetworks();
 
-  // NetworkManager interface. All these methods are supposed to be called from
-  // the same thread.
-  void StartUpdating() override;
-  void StopUpdating() override;
-
-  // We don't support any address interfaces in the network emulation framework.
-  std::vector<const rtc::Network*> GetAnyAddressNetworks() override {
-    return {};
+  Thread* absl_nonnull network_thread() override {
+    return network_thread_.get();
   }
-
-  // EmulatedNetworkManagerInterface API
-  rtc::Thread* network_thread() override { return network_thread_.get(); }
-  rtc::NetworkManager* network_manager() override { return this; }
-  rtc::PacketSocketFactory* packet_socket_factory() override {
-    return packet_socket_factory_.get();
+  SocketFactory* absl_nonnull socket_factory() override {
+    return socket_server_;
   }
+  absl_nonnull std::unique_ptr<NetworkManager> ReleaseNetworkManager() override;
+
   std::vector<EmulatedEndpoint*> endpoints() const override {
     return endpoints_container_->GetEndpoints();
   }
@@ -62,19 +53,21 @@ class EmulatedNetworkManager : public rtc::NetworkManagerBase,
       std::function<void(EmulatedNetworkStats)> stats_callback) const override;
 
  private:
-  void UpdateNetworksOnce();
-  void MaybeSignalNetworksChanged();
+  class NetworkManagerImpl;
 
-  TaskQueueForTest* const task_queue_;
-  const EndpointsContainer* const endpoints_container_;
-  // The `network_thread_` must outlive `packet_socket_factory_`, because they
-  // both refer to a socket server that is owned by `network_thread_`. Both
-  // pointers are assigned only in the constructor, but the way they are
-  // initialized unfortunately doesn't work with const std::unique_ptr<...>.
-  std::unique_ptr<rtc::Thread> network_thread_;
-  std::unique_ptr<rtc::PacketSocketFactory> packet_socket_factory_;
-  bool sent_first_update_ RTC_GUARDED_BY(network_thread_);
-  int start_count_ RTC_GUARDED_BY(network_thread_);
+  TaskQueueBase* absl_nonnull const task_queue_;
+  const EndpointsContainer* absl_nonnull const endpoints_container_;
+
+  // Socket server is owned by the `network_thread_'
+  SocketServer* absl_nonnull const socket_server_;
+
+  const absl_nonnull std::unique_ptr<Thread> network_thread_;
+  absl_nullable std::unique_ptr<NetworkManagerImpl> network_manager_;
+
+  // Keep pointer to the network manager when it is extracted to be injected
+  // into PeerConnectionFactory. That is brittle and may crash if a test would
+  // try to use emulated network after related PeerConnectionFactory is deleted.
+  NetworkManagerImpl* absl_nonnull const network_manager_ptr_;
 };
 
 }  // namespace test

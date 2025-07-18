@@ -10,7 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 
-#include <limits>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
 #include "rtc_base/random.h"
 #include "test/gtest.h"

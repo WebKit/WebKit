@@ -14,9 +14,11 @@
 #include <string>
 
 #include "api/make_ref_counted.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/ref_count.h"
+#include "api/ref_count.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/thread.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::DoAll;
@@ -43,9 +45,7 @@ class FakeInterface : public RefCountInterface {
 // Implementation of the test interface.
 class Fake : public FakeInterface {
  public:
-  static rtc::scoped_refptr<Fake> Create() {
-    return rtc::make_ref_counted<Fake>();
-  }
+  static scoped_refptr<Fake> Create() { return make_ref_counted<Fake>(); }
   // Used to verify destructor is called on the correct thread.
   MOCK_METHOD(void, Destroy, ());
 
@@ -95,7 +95,7 @@ class SignalingProxyTest : public ::testing::Test {
 
  protected:
   void SetUp() override {
-    signaling_thread_ = rtc::Thread::Create();
+    signaling_thread_ = Thread::Create();
     ASSERT_TRUE(signaling_thread_->Start());
     fake_ = Fake::Create();
     fake_signaling_proxy_ =
@@ -103,9 +103,9 @@ class SignalingProxyTest : public ::testing::Test {
   }
 
  protected:
-  std::unique_ptr<rtc::Thread> signaling_thread_;
-  rtc::scoped_refptr<FakeInterface> fake_signaling_proxy_;
-  rtc::scoped_refptr<Fake> fake_;
+  std::unique_ptr<Thread> signaling_thread_;
+  scoped_refptr<FakeInterface> fake_signaling_proxy_;
+  scoped_refptr<Fake> fake_;
 };
 
 TEST_F(SignalingProxyTest, SignalingThreadDestructor) {
@@ -182,8 +182,8 @@ class ProxyTest : public ::testing::Test {
 
  protected:
   void SetUp() override {
-    signaling_thread_ = rtc::Thread::Create();
-    worker_thread_ = rtc::Thread::Create();
+    signaling_thread_ = Thread::Create();
+    worker_thread_ = Thread::Create();
     ASSERT_TRUE(signaling_thread_->Start());
     ASSERT_TRUE(worker_thread_->Start());
     fake_ = Fake::Create();
@@ -192,10 +192,10 @@ class ProxyTest : public ::testing::Test {
   }
 
  protected:
-  std::unique_ptr<rtc::Thread> signaling_thread_;
-  std::unique_ptr<rtc::Thread> worker_thread_;
-  rtc::scoped_refptr<FakeInterface> fake_proxy_;
-  rtc::scoped_refptr<Fake> fake_;
+  std::unique_ptr<Thread> signaling_thread_;
+  std::unique_ptr<Thread> worker_thread_;
+  scoped_refptr<FakeInterface> fake_proxy_;
+  scoped_refptr<Fake> fake_;
 };
 
 TEST_F(ProxyTest, WorkerThreadDestructor) {

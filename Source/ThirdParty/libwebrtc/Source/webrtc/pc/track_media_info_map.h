@@ -40,36 +40,33 @@ class TrackMediaInfoMap {
   // Takes ownership of the "infos". Does not affect the lifetime of the senders
   // or receivers, but TrackMediaInfoMap will keep their associated tracks alive
   // through reference counting until the map is destroyed.
-  void Initialize(
-      std::optional<cricket::VoiceMediaInfo> voice_media_info,
-      std::optional<cricket::VideoMediaInfo> video_media_info,
-      rtc::ArrayView<rtc::scoped_refptr<RtpSenderInternal>> rtp_senders,
-      rtc::ArrayView<rtc::scoped_refptr<RtpReceiverInternal>> rtp_receivers);
+  void Initialize(std::optional<VoiceMediaInfo> voice_media_info,
+                  std::optional<VideoMediaInfo> video_media_info,
+                  ArrayView<scoped_refptr<RtpSenderInternal>> rtp_senders,
+                  ArrayView<scoped_refptr<RtpReceiverInternal>> rtp_receivers);
 
-  const std::optional<cricket::VoiceMediaInfo>& voice_media_info() const {
+  const std::optional<VoiceMediaInfo>& voice_media_info() const {
     RTC_DCHECK(is_initialized_);
     return voice_media_info_;
   }
-  const std::optional<cricket::VideoMediaInfo>& video_media_info() const {
+  const std::optional<VideoMediaInfo>& video_media_info() const {
     RTC_DCHECK(is_initialized_);
     return video_media_info_;
   }
 
-  const cricket::VoiceSenderInfo* GetVoiceSenderInfoBySsrc(uint32_t ssrc) const;
-  const cricket::VoiceReceiverInfo* GetVoiceReceiverInfoBySsrc(
-      uint32_t ssrc) const;
-  const cricket::VideoSenderInfo* GetVideoSenderInfoBySsrc(uint32_t ssrc) const;
-  const cricket::VideoReceiverInfo* GetVideoReceiverInfoBySsrc(
-      uint32_t ssrc) const;
+  const VoiceSenderInfo* GetVoiceSenderInfoBySsrc(uint32_t ssrc) const;
+  const VoiceReceiverInfo* GetVoiceReceiverInfoBySsrc(uint32_t ssrc) const;
+  const VideoSenderInfo* GetVideoSenderInfoBySsrc(uint32_t ssrc) const;
+  const VideoReceiverInfo* GetVideoReceiverInfoBySsrc(uint32_t ssrc) const;
 
-  rtc::scoped_refptr<AudioTrackInterface> GetAudioTrack(
-      const cricket::VoiceSenderInfo& voice_sender_info) const;
-  rtc::scoped_refptr<AudioTrackInterface> GetAudioTrack(
-      const cricket::VoiceReceiverInfo& voice_receiver_info) const;
-  rtc::scoped_refptr<VideoTrackInterface> GetVideoTrack(
-      const cricket::VideoSenderInfo& video_sender_info) const;
-  rtc::scoped_refptr<VideoTrackInterface> GetVideoTrack(
-      const cricket::VideoReceiverInfo& video_receiver_info) const;
+  scoped_refptr<AudioTrackInterface> GetAudioTrack(
+      const VoiceSenderInfo& voice_sender_info) const;
+  scoped_refptr<AudioTrackInterface> GetAudioTrack(
+      const VoiceReceiverInfo& voice_receiver_info) const;
+  scoped_refptr<VideoTrackInterface> GetVideoTrack(
+      const VideoSenderInfo& video_sender_info) const;
+  scoped_refptr<VideoTrackInterface> GetVideoTrack(
+      const VideoReceiverInfo& video_receiver_info) const;
 
   // TODO(hta): Remove this function, and redesign the callers not to need it.
   // It is not going to work if a track is attached multiple times, and
@@ -80,23 +77,19 @@ class TrackMediaInfoMap {
 
  private:
   bool is_initialized_ = false;
-  std::optional<cricket::VoiceMediaInfo> voice_media_info_;
-  std::optional<cricket::VideoMediaInfo> video_media_info_;
+  std::optional<VoiceMediaInfo> voice_media_info_;
+  std::optional<VideoMediaInfo> video_media_info_;
   // These maps map info objects to their corresponding tracks. They are always
   // the inverse of the maps above. One info object always maps to only one
   // track. The use of scoped_refptr<> here ensures the tracks outlive
   // TrackMediaInfoMap.
-  std::map<const cricket::VoiceSenderInfo*,
-           rtc::scoped_refptr<AudioTrackInterface>>
+  std::map<const VoiceSenderInfo*, scoped_refptr<AudioTrackInterface>>
       audio_track_by_sender_info_;
-  std::map<const cricket::VoiceReceiverInfo*,
-           rtc::scoped_refptr<AudioTrackInterface>>
+  std::map<const VoiceReceiverInfo*, scoped_refptr<AudioTrackInterface>>
       audio_track_by_receiver_info_;
-  std::map<const cricket::VideoSenderInfo*,
-           rtc::scoped_refptr<VideoTrackInterface>>
+  std::map<const VideoSenderInfo*, scoped_refptr<VideoTrackInterface>>
       video_track_by_sender_info_;
-  std::map<const cricket::VideoReceiverInfo*,
-           rtc::scoped_refptr<VideoTrackInterface>>
+  std::map<const VideoReceiverInfo*, scoped_refptr<VideoTrackInterface>>
       video_track_by_receiver_info_;
   // Map of tracks to attachment IDs.
   // Necessary because senders and receivers live on the signaling thread,
@@ -105,10 +98,10 @@ class TrackMediaInfoMap {
   // thread jumping.
   std::map<const MediaStreamTrackInterface*, int> attachment_id_by_track_;
   // These maps map SSRCs to the corresponding voice or video info objects.
-  std::map<uint32_t, cricket::VoiceSenderInfo*> voice_info_by_sender_ssrc_;
-  std::map<uint32_t, cricket::VoiceReceiverInfo*> voice_info_by_receiver_ssrc_;
-  std::map<uint32_t, cricket::VideoSenderInfo*> video_info_by_sender_ssrc_;
-  std::map<uint32_t, cricket::VideoReceiverInfo*> video_info_by_receiver_ssrc_;
+  std::map<uint32_t, VoiceSenderInfo*> voice_info_by_sender_ssrc_;
+  std::map<uint32_t, VoiceReceiverInfo*> voice_info_by_receiver_ssrc_;
+  std::map<uint32_t, VideoSenderInfo*> video_info_by_sender_ssrc_;
+  std::map<uint32_t, VideoReceiverInfo*> video_info_by_receiver_ssrc_;
 };
 
 }  // namespace webrtc

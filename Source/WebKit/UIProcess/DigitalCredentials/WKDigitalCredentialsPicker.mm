@@ -36,8 +36,10 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WKWebView.h"
+#import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/ConsoleTypes.h>
 #import <Security/SecTrust.h>
 #import <WebCore/DigitalCredentialRequest.h>
 #import <WebCore/DigitalCredentialsProtocols.h>
@@ -59,6 +61,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringCommon.h>
 #import <wtf/text/WTFString.h>
@@ -403,6 +406,18 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         RetainPtr debugDescription = error.userInfo[NSDebugDescriptionErrorKey] ?: error.userInfo[NSLocalizedDescriptionKey];
         LOG(DigitalCredentials, "Internal error: %@", debugDescription ? debugDescription.get() : @"Unknown error with no description.");
         break;
+    }
+
+    if (_page) {
+        String consoleMessage = exceptionData.message;
+        RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
+        if ([debugDescription length])
+            consoleMessage = makeString(consoleMessage, " ("_s, String(debugDescription.get()), ")"_s);
+
+        auto targetFrameID = _page->focusedFrame() ? _page->focusedFrame()->frameID() : _page->mainFrame()->frameID();
+        auto logLevel = exceptionData.code == ExceptionCode::AbortError ? MessageLevel::Warning : MessageLevel::Error;
+
+        _page->addConsoleMessage(targetFrameID, MessageSource::JS, logLevel, makeString("Digital Credential request failed: "_s, consoleMessage));
     }
 
     [self completeWith:makeUnexpected(exceptionData)];

@@ -26,6 +26,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
+#include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
 #include "Font.h"
 #include "FrameSelection.h"
@@ -397,7 +398,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
         result += maxCharWidth - charWidth;
 
     if (includesDecoration)
-        result += inputElement().decorationWidth();
+        result += inputElement().decorationWidth(result);
 
     if (auto* innerRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr)
         result += innerRenderer->endPaddingWidthForCaret();

@@ -56,7 +56,6 @@ Animation::Animation()
     , m_allowsDiscreteTransitionsSet(false)
     , m_rangeStartSet(false)
     , m_rangeEndSet(false)
-    , m_isNone(false)
     , m_delayFilled(false)
     , m_directionFilled(false)
     , m_durationFilled(false)
@@ -102,7 +101,6 @@ Animation::Animation(const Animation& o)
     , m_allowsDiscreteTransitionsSet(o.m_allowsDiscreteTransitionsSet)
     , m_rangeStartSet(o.m_rangeStartSet)
     , m_rangeEndSet(o.m_rangeEndSet)
-    , m_isNone(o.m_isNone)
     , m_delayFilled(o.m_delayFilled)
     , m_directionFilled(o.m_directionFilled)
     , m_durationFilled(o.m_durationFilled)
@@ -147,8 +145,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_compositeOperationSet == other.m_compositeOperationSet
         && m_allowsDiscreteTransitionsSet == other.m_allowsDiscreteTransitionsSet
         && m_rangeStartSet == other.m_rangeStartSet
-        && m_rangeEndSet == other.m_rangeEndSet
-        && m_isNone == other.m_isNone;
+        && m_rangeEndSet == other.m_rangeEndSet;
 
     if (!result)
         return false;

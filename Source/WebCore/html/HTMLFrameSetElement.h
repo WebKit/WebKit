@@ -24,6 +24,8 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "Length.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {

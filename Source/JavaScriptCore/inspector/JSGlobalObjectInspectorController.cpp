@@ -66,7 +66,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(JSGlobalObjectInspectorController);
 
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
-    , m_injectedScriptManager(makeUnique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
+    , m_injectedScriptManager(makeUniqueRef<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
@@ -119,7 +119,7 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
     m_strongGlobalObject.set(m_globalObject.vm(), &m_globalObject);
 
     // FIXME: change this to notify agents which frontend has connected (by id).
-    m_agents.didCreateFrontendAndBackend(nullptr, nullptr);
+    m_agents.didCreateFrontendAndBackend();
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_augmentingClient)
@@ -268,7 +268,7 @@ VM& JSGlobalObjectInspectorController::vm()
 void JSGlobalObjectInspectorController::registerAlternateAgent(std::unique_ptr<InspectorAgentBase> agent)
 {
     // FIXME: change this to notify agents which frontend has connected (by id).
-    agent->didCreateFrontendAndBackend(nullptr, nullptr);
+    agent->didCreateFrontendAndBackend();
 
     m_agents.append(WTFMove(agent));
 }
@@ -301,9 +301,9 @@ JSAgentContext JSGlobalObjectInspectorController::jsAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        *m_injectedScriptManager,
-        m_frontendRouter.get(),
-        m_backendDispatcher.get()
+        m_injectedScriptManager,
+        m_frontendRouter,
+        m_backendDispatcher
     };
 
     JSAgentContext context = {

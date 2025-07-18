@@ -10,30 +10,34 @@
 
 #include "media/sctp/sctp_transport_factory.h"
 
+#include <memory>
+
 #include "api/environment/environment.h"
+#include "media/sctp/sctp_transport_internal.h"
+#include "p2p/dtls/dtls_transport_internal.h"
 #include "rtc_base/system/unused.h"
+#include "rtc_base/thread.h"
 
 #ifdef WEBRTC_HAVE_DCSCTP
 #include "media/sctp/dcsctp_transport.h"  // nogncheck
 #endif
 
-namespace cricket {
+namespace webrtc {
 
-SctpTransportFactory::SctpTransportFactory(rtc::Thread* network_thread)
+SctpTransportFactory::SctpTransportFactory(Thread* network_thread)
     : network_thread_(network_thread) {
   RTC_UNUSED(network_thread_);
 }
 
 std::unique_ptr<SctpTransportInternal>
-SctpTransportFactory::CreateSctpTransport(
-    const webrtc::Environment& env,
-    rtc::PacketTransportInternal* transport) {
+SctpTransportFactory::CreateSctpTransport(const Environment& env,
+                                          DtlsTransportInternal* transport) {
   std::unique_ptr<SctpTransportInternal> result;
 #ifdef WEBRTC_HAVE_DCSCTP
   result = std::unique_ptr<SctpTransportInternal>(
-      new webrtc::DcSctpTransport(env, network_thread_, transport));
+      new DcSctpTransport(env, network_thread_, transport));
 #endif
   return result;
 }
 
-}  // namespace cricket
+}  // namespace webrtc

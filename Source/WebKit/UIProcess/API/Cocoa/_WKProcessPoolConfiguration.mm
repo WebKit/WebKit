@@ -400,10 +400,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setMemoryFootprintNotificationThresholds:(NSArray<NSNumber *> *)thresholds
 {
-    Vector<size_t> sizes;
+    Vector<uint64_t> sizes;
     sizes.reserveCapacity(thresholds.count);
     for (NSNumber *threshold in thresholds)
-        sizes.append(static_cast<size_t>(threshold.unsignedLongLongValue));
+        sizes.append(static_cast<uint64_t>(threshold.unsignedLongLongValue));
     _processPoolConfiguration->setMemoryFootprintNotificationThresholds(WTFMove(sizes));
 }
 

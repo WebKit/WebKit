@@ -259,7 +259,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     if (RefPtr page = frame->page())
         resultAsString = page->applyLinkDecorationFiltering(resultAsString, LinkDecorationFilteringTrigger::Paste);
 
-    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->document(), resultAsString, type));
+    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->protectedDocument().get(), resultAsString, type));
 }
 
 Clipboard::SessionIsValid Clipboard::updateSessionValidity()
@@ -283,10 +283,11 @@ void Clipboard::write(const Vector<Ref<ClipboardItem>>& items, Ref<DeferredPromi
         return;
     }
 
-    if (auto existingWriter = std::exchange(m_activeItemWriter, ItemWriter::create(*this, WTFMove(promise))))
+    Ref newActiveItemWriter = ItemWriter::create(*this, WTFMove(promise));
+    if (RefPtr existingWriter = std::exchange(m_activeItemWriter, newActiveItemWriter.copyRef()))
         existingWriter->invalidate();
 
-    m_activeItemWriter->write(items);
+    newActiveItemWriter->write(items);
 }
 
 void Clipboard::didResolveOrReject(Clipboard::ItemWriter& writer)
@@ -324,7 +325,7 @@ void Clipboard::ItemWriter::write(const Vector<Ref<ClipboardItem>>& items)
     m_dataToWrite.fill(std::nullopt, items.size());
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
-        items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = Ref { *this }, index] (auto data) {
+        Ref { items[index] }->collectDataForWriting(Ref { *m_clipboard }.get(), [this, protectedThis = Ref { *this }, index](auto data) {
             protectedThis->setData(WTFMove(data), index);
             if (!--m_pendingItemCount)
                 didSetAllData();
@@ -352,7 +353,8 @@ void Clipboard::ItemWriter::setData(std::optional<PasteboardCustomData>&& data, 
 
 void Clipboard::ItemWriter::didSetAllData()
 {
-    if (!m_promise)
+    RefPtr promise = m_promise;
+    if (!promise)
         return;
 
     auto newChangeCount = m_pasteboard->changeCount();
@@ -375,7 +377,7 @@ void Clipboard::ItemWriter::didSetAllData()
     }
 
     m_pasteboard->writeCustomData(WTFMove(customData));
-    m_promise->resolve();
+    promise->resolve();
     m_promise = nullptr;
 
     if (auto clipboard = std::exchange(m_clipboard, nullptr))
@@ -384,7 +386,7 @@ void Clipboard::ItemWriter::didSetAllData()
 
 void Clipboard::ItemWriter::reject()
 {
-    if (auto promise = std::exchange(m_promise, nullptr))
+    if (RefPtr promise = std::exchange(m_promise, nullptr))
         promise->reject(ExceptionCode::NotAllowedError);
 
     if (auto clipboard = std::exchange(m_clipboard, nullptr))

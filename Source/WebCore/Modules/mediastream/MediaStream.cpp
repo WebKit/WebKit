@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DocumentInlines.h"
 #include "Event.h"
 #include "EventNames.h"

@@ -500,7 +500,7 @@ int AccessibilityObjectAtspi::characterAtOffset(int offset) const
     return g_utf8_get_char(g_utf8_offset_to_pointer(utf8Text.data(), offset));
 }
 
-std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar character, int index) const
+std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(char16_t character, int index) const
 {
     auto utf16Text = text();
     unsigned start = 0;
@@ -519,7 +519,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar characte
     return UTF16OffsetToUTF8(mapping, offset);
 }
 
-std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(UChar character, unsigned offset) const
+std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(char16_t character, unsigned offset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
@@ -793,9 +793,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         addAttributeIfNeeded("invisible"_s, style.visibility() == Visibility::Hidden ? "true"_s : "false"_s);
         addAttributeIfNeeded("editable"_s, m_coreObject->canSetValueAttribute() ? "true"_s : "false"_s);
         addAttributeIfNeeded("direction"_s, style.writingMode().isBidiLTR() ? "ltr"_s : "rtl"_s);
-
-        if (!style.textIndent().isUndefined())
-            addAttributeIfNeeded("indent"_s, makeString(valueForLength(style.textIndent(), m_coreObject->size().width()).toInt()));
+        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate(style.textIndent().length, m_coreObject->size().width())));
 
         switch (style.textAlign()) {
         case TextAlignMode::Start:

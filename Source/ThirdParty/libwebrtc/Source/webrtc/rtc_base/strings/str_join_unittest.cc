@@ -33,11 +33,11 @@ TEST(StrJoinTest, CanJoinNumbersFromArray) {
 TEST(StrJoinTest, CanFormatElementsWhileJoining) {
   std::vector<std::pair<std::string, std::string>> pairs = {
       {"hello", "world"}, {"foo", "bar"}, {"fum", "gazonk"}};
-  std::string s = StrJoin(pairs, ",",
-                          [&](rtc::StringBuilder& sb,
-                              const std::pair<std::string, std::string>& p) {
-                            sb << p.first << "=" << p.second;
-                          });
+  std::string s = StrJoin(
+      pairs, ",",
+      [&](StringBuilder& sb, const std::pair<std::string, std::string>& p) {
+        sb << p.first << "=" << p.second;
+      });
   EXPECT_EQ(s, "hello=world,foo=bar,fum=gazonk");
 }
 

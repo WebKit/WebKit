@@ -137,9 +137,7 @@ int PCMDaemonMain(int argc, const char** argv)
 #if ENABLE(CFPREFS_DIRECT_MODE)
         _CFPrefsSetDirectModeEnabled(YES);
 #endif
-#if HAVE(CF_PREFS_SET_READ_ONLY)
         _CFPrefsSetReadOnly(YES);
-#endif
         enterSandbox();
         startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond"_s, connectionAdded, connectionRemoved, connectionEventHandler);
         if (startActivity)

@@ -46,7 +46,7 @@ public:
     RetainPtr<PKPayment> pkPayment() const;
 
 private:
-    RetainPtr<PKPayment> m_pkPayment;
+    const RetainPtr<PKPayment> m_pkPayment;
 };
 
 }

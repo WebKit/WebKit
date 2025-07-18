@@ -97,6 +97,10 @@ class LibvpxVp9Encoder : public VideoEncoder {
   bool ExplicitlyConfiguredSpatialLayers() const;
   bool SetSvcRates(const VideoBitrateAllocation& bitrate_allocation);
 
+  // Adjust sclaing factors assuming that the top active SVC layer
+  // will be the input resolution.
+  void AdjustScalingFactorsForTopActiveLayer();
+
   // Configures which spatial layers libvpx should encode according to
   // configuration provided by svc_controller_.
   void EnableSpatialLayer(int sid);
@@ -123,13 +127,15 @@ class LibvpxVp9Encoder : public VideoEncoder {
 
   size_t SteadyStateSize(int sid, int tid);
 
-  void MaybeRewrapRawWithFormat(vpx_img_fmt fmt);
+  void MaybeRewrapRawWithFormat(const vpx_img_fmt fmt,
+                                unsigned int width,
+                                unsigned int height);
   // Prepares `raw_` to reference image data of `buffer`, or of mapped or scaled
   // versions of `buffer`. Returns the buffer that got referenced as a result,
   // allowing the caller to keep a reference to it until after encoding has
   // finished. On failure to convert the buffer, null is returned.
-  rtc::scoped_refptr<VideoFrameBuffer> PrepareBufferForProfile0(
-      rtc::scoped_refptr<VideoFrameBuffer> buffer);
+  scoped_refptr<VideoFrameBuffer> PrepareBufferForProfile0(
+      scoped_refptr<VideoFrameBuffer> buffer);
 
   const Environment env_;
   const std::unique_ptr<LibvpxInterface> libvpx_;
@@ -158,7 +164,6 @@ class LibvpxVp9Encoder : public VideoEncoder {
   bool layer_deactivation_requires_key_frame_;
   bool is_svc_;
   InterLayerPredMode inter_layer_pred_;
-  bool external_ref_control_;
   const bool trusted_rate_controller_;
   vpx_svc_frame_drop_t svc_drop_frame_;
   bool first_frame_in_picture_;
@@ -190,6 +195,10 @@ class LibvpxVp9Encoder : public VideoEncoder {
 
   FramerateControllerDeprecated variable_framerate_controller_;
 
+  // Original scaling factors for all configured layers active and inactive.
+  // `svc_config_` stores factors ignoring top inactive layers.
+  std::vector<int> scaling_factors_num_, scaling_factors_den_;
+
   const struct QualityScalerExperiment {
     int low_qp;
     int high_qp;
@@ -197,7 +206,6 @@ class LibvpxVp9Encoder : public VideoEncoder {
   } quality_scaler_experiment_;
   static QualityScalerExperiment ParseQualityScalerConfig(
       const FieldTrialsView& trials);
-  const bool external_ref_ctrl_;
 
   // Flags that can affect speed vs quality tradeoff, and are configureable per
   // resolution ranges.

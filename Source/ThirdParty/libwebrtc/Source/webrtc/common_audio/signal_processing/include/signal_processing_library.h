@@ -40,7 +40,7 @@
 #define WEBRTC_SPL_MUL_16_U16(a, b) ((int32_t)(int16_t)(a) * (uint16_t)(b))
 
 // clang-format off
-// clang-format would choose some identation
+// clang-format would choose some indentation
 // leading to presubmit error (cpplint.py)
 #ifndef WEBRTC_ARCH_ARM_V7
 // For ARMv7 platforms, these are inline functions in spl_inl_armv7.h
@@ -1141,7 +1141,7 @@ void WebRtcSpl_SynthesisQMF(const int16_t* low_band,
 // meaning that the first sample of `in_vector` is copied to the last sample of
 // the `out_vector`. The procedure continues until the last sample of
 // `in_vector` has been copied to the first sample of `out_vector`. This
-// creates a reversed vector. Used in e.g. prediction in iLBC.
+// creates a reversed vector.
 //
 // Input:
 //      - in_vector     : Pointer to the first sample in a int16_t vector

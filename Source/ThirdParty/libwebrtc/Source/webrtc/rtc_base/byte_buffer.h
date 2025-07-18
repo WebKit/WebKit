@@ -23,7 +23,7 @@
 #include "rtc_base/byte_order.h"
 
 // Reads/Writes from/to buffer using network byte order (big endian)
-namespace rtc {
+namespace webrtc {
 
 template <class BufferClassT>
 class ByteBufferWriterT {
@@ -41,8 +41,8 @@ class ByteBufferWriterT {
   const value_type* Data() const { return buffer_.data(); }
   size_t Length() const { return buffer_.size(); }
   size_t Capacity() const { return buffer_.capacity(); }
-  rtc::ArrayView<const value_type> DataView() const {
-    return rtc::MakeArrayView(Data(), Length());
+  ArrayView<const value_type> DataView() const {
+    return MakeArrayView(Data(), Length());
   }
   // Accessor that returns a string_view, independent of underlying type.
   // Intended to provide access for existing users that expect char*
@@ -61,21 +61,21 @@ class ByteBufferWriterT {
     WriteBytesInternal(reinterpret_cast<const value_type*>(&val), 1);
   }
   void WriteUInt16(uint16_t val) {
-    uint16_t v = HostToNetwork16(val);
+    uint16_t v = webrtc::HostToNetwork16(val);
     WriteBytesInternal(reinterpret_cast<const value_type*>(&v), 2);
   }
   void WriteUInt24(uint32_t val) {
-    uint32_t v = HostToNetwork32(val);
+    uint32_t v = webrtc::HostToNetwork32(val);
     value_type* start = reinterpret_cast<value_type*>(&v);
     ++start;
     WriteBytesInternal(start, 3);
   }
   void WriteUInt32(uint32_t val) {
-    uint32_t v = HostToNetwork32(val);
+    uint32_t v = webrtc::HostToNetwork32(val);
     WriteBytesInternal(reinterpret_cast<const value_type*>(&v), 4);
   }
   void WriteUInt64(uint64_t val) {
-    uint64_t v = HostToNetwork64(val);
+    uint64_t v = webrtc::HostToNetwork64(val);
     WriteBytesInternal(reinterpret_cast<const value_type*>(&v), 8);
   }
   // Serializes an unsigned varint in the format described by
@@ -97,6 +97,7 @@ class ByteBufferWriterT {
                        val.size());
   }
   // Write an array of bytes (uint8_t)
+  [[deprecated("issues.webrtc.org/4225170 - use Write(ArrayView)")]]
   void WriteBytes(const uint8_t* val, size_t len) {
     WriteBytesInternal(reinterpret_cast<const value_type*>(val), len);
   }
@@ -156,7 +157,7 @@ class ByteBufferWriter : public ByteBufferWriterT<BufferT<uint8_t>> {
 class ByteBufferReader {
  public:
   explicit ByteBufferReader(
-      rtc::ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
+      ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
 
   explicit ByteBufferReader(const ByteBufferWriter& buf);
 
@@ -167,8 +168,8 @@ class ByteBufferReader {
   // Returns number of unprocessed bytes.
   size_t Length() const { return end_ - start_; }
   // Returns a view of the unprocessed data. Does not move current position.
-  rtc::ArrayView<const uint8_t> DataView() const {
-    return rtc::ArrayView<const uint8_t>(bytes_ + start_, end_ - start_);
+  ArrayView<const uint8_t> DataView() const {
+    return ArrayView<const uint8_t>(bytes_ + start_, end_ - start_);
   }
 
   // Read a next value from the buffer. Return false if there isn't
@@ -180,7 +181,7 @@ class ByteBufferReader {
   bool ReadUInt64(uint64_t* val);
   bool ReadUVarint(uint64_t* val);
   // Copies the val.size() next bytes into val.data().
-  bool ReadBytes(rtc::ArrayView<uint8_t> val);
+  bool ReadBytes(ArrayView<uint8_t> val);
   // Appends next `len` bytes from the buffer to `val`. Returns false
   // if there is less than `len` bytes left.
   bool ReadString(std::string* val, size_t len);
@@ -204,6 +205,16 @@ class ByteBufferReader {
   size_t end_;
 };
 
+}  //  namespace webrtc
+
+// Re-export symbols from the webrtc namespace for backwards compatibility.
+// TODO(bugs.webrtc.org/4222596): Remove once all references are updated.
+#ifdef WEBRTC_ALLOW_DEPRECATED_NAMESPACES
+namespace rtc {
+using ::webrtc::ByteBufferReader;
+using ::webrtc::ByteBufferWriter;
+using ::webrtc::ByteBufferWriterT;
 }  // namespace rtc
+#endif  // WEBRTC_ALLOW_DEPRECATED_NAMESPACES
 
 #endif  // RTC_BASE_BYTE_BUFFER_H_

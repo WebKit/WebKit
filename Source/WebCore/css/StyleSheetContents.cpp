@@ -608,7 +608,7 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();
             auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, request.url(), ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester(), loader.frame().isMainFrame()), *documentLoader);
-            if (results.summary.blockedLoad || results.summary.madeHTTPS)
+            if (results.shouldBlock() || results.summary.madeHTTPS)
                 return true;
         }
 #else

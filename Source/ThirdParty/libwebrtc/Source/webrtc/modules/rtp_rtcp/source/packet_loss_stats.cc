@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <iterator>
+#include <set>
 #include <vector>
 
 #include "rtc_base/checks.h"

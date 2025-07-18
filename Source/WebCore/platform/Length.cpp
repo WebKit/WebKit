@@ -29,9 +29,8 @@
 #include "CalculationCategory.h"
 #include "CalculationTree.h"
 #include "CalculationValue.h"
+#include "CalculationValueMap.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -48,7 +47,7 @@ struct SameSizeAsLength {
 };
 static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
-static Length parseLength(std::span<const UChar> data)
+static Length parseLength(std::span<const char16_t> data)
 {
     if (data.empty())
         return Length(1, LengthType::Relative);
@@ -70,7 +69,7 @@ static Length parseLength(std::span<const UChar> data)
         ++i;
 
     bool ok;
-    UChar next = (i < data.size()) ? data[i] : ' ';
+    char16_t next = (i < data.size()) ? data[i] : ' ';
     if (next == '%') {
         // IE quirk: accept decimal fractions for percentages.
         double r = charactersToDouble(data.first(doubleLength), &ok);
@@ -86,7 +85,7 @@ static Length parseLength(std::span<const UChar> data)
     return Length(0, LengthType::Relative);
 }
 
-static unsigned countCharacter(StringImpl& string, UChar character)
+static unsigned countCharacter(StringImpl& string, char16_t character)
 {
     unsigned count = 0;
     unsigned length = string.length();
@@ -127,95 +126,16 @@ UniqueArray<Length> newLengthArray(const String& string, int& len)
     return r;
 }
 
-class CalculationValueMap {
-public:
-    CalculationValueMap();
-
-    unsigned insert(Ref<CalculationValue>&&);
-    void ref(unsigned handle);
-    void deref(unsigned handle);
-
-    CalculationValue& get(unsigned handle) const;
-
-private:
-    struct Entry {
-        uint64_t referenceCountMinusOne { 0 };
-        RefPtr<CalculationValue> value;
-        Entry() = default;
-        Entry(Ref<CalculationValue>&&);
-    };
-
-    unsigned m_nextAvailableHandle;
-    HashMap<unsigned, Entry> m_map;
-};
-
-inline CalculationValueMap::Entry::Entry(Ref<CalculationValue>&& value)
-    : value(WTFMove(value))
-{
-}
-
-inline CalculationValueMap::CalculationValueMap()
-    : m_nextAvailableHandle(1)
-{
-}
-    
-inline unsigned CalculationValueMap::insert(Ref<CalculationValue>&& value)
-{
-    ASSERT(m_nextAvailableHandle);
-
-    Entry entry(WTFMove(value));
-
-    // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
-    // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
-    while (!m_map.isValidKey(m_nextAvailableHandle) || !m_map.add(m_nextAvailableHandle, entry).isNewEntry)
-        ++m_nextAvailableHandle;
-
-    return m_nextAvailableHandle++;
-}
-
-inline CalculationValue& CalculationValueMap::get(unsigned handle) const
-{
-    ASSERT(m_map.contains(handle));
-
-    return *m_map.find(handle)->value.value;
-}
-
-inline void CalculationValueMap::ref(unsigned handle)
-{
-    ASSERT(m_map.contains(handle));
-
-    ++m_map.find(handle)->value.referenceCountMinusOne;
-}
-
-inline void CalculationValueMap::deref(unsigned handle)
-{
-    ASSERT(m_map.contains(handle));
-
-    auto it = m_map.find(handle);
-    if (it->value.referenceCountMinusOne) {
-        --it->value.referenceCountMinusOne;
-        return;
-    }
-
-    m_map.remove(it);
-}
-
-static CalculationValueMap& calculationValues()
-{
-    static NeverDestroyed<CalculationValueMap> map;
-    return map;
-}
-
 Length::Length(Ref<CalculationValue>&& value)
     : m_type(LengthType::Calculated)
 {
-    m_calculationValueHandle = calculationValues().insert(WTFMove(value));
+    m_calculationValueHandle = CalculationValueMap::calculationValues().insert(WTFMove(value));
 }
 
 CalculationValue& Length::calculationValue() const
 {
     ASSERT(isCalculated());
-    return calculationValues().get(m_calculationValueHandle);
+    return CalculationValueMap::calculationValues().get(m_calculationValueHandle);
 }
 
 Ref<CalculationValue> Length::protectedCalculationValue() const
@@ -226,13 +146,13 @@ Ref<CalculationValue> Length::protectedCalculationValue() const
 void Length::ref() const
 {
     ASSERT(isCalculated());
-    calculationValues().ref(m_calculationValueHandle);
+    CalculationValueMap::calculationValues().ref(m_calculationValueHandle);
 }
 
 void Length::deref() const
 {
     ASSERT(isCalculated());
-    calculationValues().deref(m_calculationValueHandle);
+    CalculationValueMap::calculationValues().deref(m_calculationValueHandle);
 }
 
 LengthType Length::typeFromIndex(const IPCData& data)

@@ -22,7 +22,7 @@ SharedDesktopFrame::~SharedDesktopFrame() {}
 std::unique_ptr<SharedDesktopFrame> SharedDesktopFrame::Wrap(
     std::unique_ptr<DesktopFrame> desktop_frame) {
   return std::unique_ptr<SharedDesktopFrame>(new SharedDesktopFrame(
-      rtc::scoped_refptr<Core>(new Core(std::move(desktop_frame)))));
+      scoped_refptr<Core>(new Core(std::move(desktop_frame)))));
 }
 
 SharedDesktopFrame* SharedDesktopFrame::Wrap(DesktopFrame* desktop_frame) {
@@ -47,7 +47,7 @@ bool SharedDesktopFrame::IsShared() {
   return !core_->HasOneRef();
 }
 
-SharedDesktopFrame::SharedDesktopFrame(rtc::scoped_refptr<Core> core)
+SharedDesktopFrame::SharedDesktopFrame(scoped_refptr<Core> core)
     : DesktopFrame((*core)->size(),
                    (*core)->stride(),
                    (*core)->data(),

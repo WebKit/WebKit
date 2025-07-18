@@ -110,7 +110,7 @@ private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
     static RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> createWeakObserver(CaptionUserPreferencesMediaAF*);
 
-    RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_observer;
+    const RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_observer;
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

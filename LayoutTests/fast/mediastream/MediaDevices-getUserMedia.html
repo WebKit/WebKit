@@ -61,6 +61,8 @@
                 shouldBeEqualToString("stream.getVideoTracks()[0].getSettings().facingMode", "user");
                 shouldBe("stream.getAudioTracks().length", "0");
 
+                stream.getTracks().forEach(t => t.stop());
+
                 audioConstraints = {
                     sampleRate: {
                         min: .6,
@@ -82,6 +84,8 @@
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                stream.getTracks().forEach(t => t.stop());
+
                 videoConstraints = {
                     facingMode: {
                         exact: ['user']
@@ -97,6 +101,8 @@
 
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "0");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 videoConstraints = {
                     width: {
@@ -119,6 +125,8 @@
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                stream.getTracks().forEach(t => t.stop());
+
                 audioConstraints = {
                     sampleRate: {
                         min: 44100,
@@ -138,6 +146,8 @@
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                stream.getTracks().forEach(t => t.stop());
+
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4);");
             }
@@ -148,6 +158,8 @@
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                stream.getTracks().forEach(t => t.stop());
+
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
             }
@@ -157,6 +169,8 @@
                 testPassed("Stream 1 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "0");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")

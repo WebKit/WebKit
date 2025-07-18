@@ -10,10 +10,15 @@
 
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -24,6 +29,7 @@ AudioDecoderPcm16B::AudioDecoderPcm16B(int sample_rate_hz, size_t num_channels)
              sample_rate_hz == 32000 || sample_rate_hz == 48000)
       << "Unsupported sample rate " << sample_rate_hz;
   RTC_DCHECK_GE(num_channels, 1);
+  RTC_DCHECK_LE(num_channels, AudioDecoder::kMaxNumberOfChannels);
 }
 
 void AudioDecoderPcm16B::Reset() {}
@@ -53,9 +59,9 @@ int AudioDecoderPcm16B::DecodeInternal(const uint8_t* encoded,
 }
 
 std::vector<AudioDecoder::ParseResult> AudioDecoderPcm16B::ParsePayload(
-    rtc::Buffer&& payload,
+    Buffer&& payload,
     uint32_t timestamp) {
-  const int samples_per_ms = rtc::CheckedDivExact(sample_rate_hz_, 1000);
+  const int samples_per_ms = CheckedDivExact(sample_rate_hz_, 1000);
   return LegacyEncodedAudioFrame::SplitBySamples(
       this, std::move(payload), timestamp, samples_per_ms * 2 * num_channels_,
       samples_per_ms);

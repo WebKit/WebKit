@@ -12,9 +12,13 @@ rtc_source_set("environment") {
   visibility = [ "*" ]
   sources = [ "environment.h" ]
   deps = [
+    "..:field_trials_view",
     "..:refcountedbase",
     "..:scoped_refptr",
     "../../rtc_base/system:rtc_export",
+    "../../system_wrappers",
+    "../rtc_event_log",
+    "../task_queue",
     "//third_party/abseil-cpp/absl/base:nullability",
   ]
 }

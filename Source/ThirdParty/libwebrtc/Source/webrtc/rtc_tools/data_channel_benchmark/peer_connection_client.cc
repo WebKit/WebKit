@@ -50,10 +50,10 @@ class SetLocalDescriptionObserverAdapter
     : public webrtc::SetLocalDescriptionObserverInterface {
  public:
   using Callback = std::function<void(webrtc::RTCError)>;
-  static rtc::scoped_refptr<SetLocalDescriptionObserverAdapter> Create(
+  static webrtc::scoped_refptr<SetLocalDescriptionObserverAdapter> Create(
       Callback callback) {
-    return rtc::scoped_refptr<SetLocalDescriptionObserverAdapter>(
-        new rtc::RefCountedObject<SetLocalDescriptionObserverAdapter>(
+    return webrtc::scoped_refptr<SetLocalDescriptionObserverAdapter>(
+        new webrtc::RefCountedObject<SetLocalDescriptionObserverAdapter>(
             std::move(callback)));
   }
 
@@ -73,10 +73,10 @@ class SetRemoteDescriptionObserverAdapter
     : public webrtc::SetRemoteDescriptionObserverInterface {
  public:
   using Callback = std::function<void(webrtc::RTCError)>;
-  static rtc::scoped_refptr<SetRemoteDescriptionObserverAdapter> Create(
+  static webrtc::scoped_refptr<SetRemoteDescriptionObserverAdapter> Create(
       Callback callback) {
-    return rtc::scoped_refptr<SetRemoteDescriptionObserverAdapter>(
-        new rtc::RefCountedObject<SetRemoteDescriptionObserverAdapter>(
+    return webrtc::scoped_refptr<SetRemoteDescriptionObserverAdapter>(
+        new webrtc::RefCountedObject<SetRemoteDescriptionObserverAdapter>(
             std::move(callback)));
   }
 
@@ -98,11 +98,11 @@ class CreateSessionDescriptionObserverAdapter
   using Success = std::function<void(webrtc::SessionDescriptionInterface*)>;
   using Failure = std::function<void(webrtc::RTCError)>;
 
-  static rtc::scoped_refptr<CreateSessionDescriptionObserverAdapter> Create(
+  static webrtc::scoped_refptr<CreateSessionDescriptionObserverAdapter> Create(
       Success success,
       Failure failure) {
-    return rtc::scoped_refptr<CreateSessionDescriptionObserverAdapter>(
-        new rtc::RefCountedObject<CreateSessionDescriptionObserverAdapter>(
+    return webrtc::scoped_refptr<CreateSessionDescriptionObserverAdapter>(
+        new webrtc::RefCountedObject<CreateSessionDescriptionObserverAdapter>(
             std::move(success), std::move(failure)));
   }
 
@@ -128,15 +128,15 @@ class CreateSessionDescriptionObserverAdapter
 namespace webrtc {
 
 PeerConnectionClient::PeerConnectionClient(
-    webrtc::PeerConnectionFactoryInterface* factory,
-    webrtc::SignalingInterface* signaling)
+    PeerConnectionFactoryInterface* factory,
+    SignalingInterface* signaling)
     : signaling_(signaling) {
   signaling_->OnIceCandidate(
-      [&](std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
+      [&](std::unique_ptr<IceCandidateInterface> candidate) {
         AddIceCandidate(std::move(candidate));
       });
   signaling_->OnRemoteDescription(
-      [&](std::unique_ptr<webrtc::SessionDescriptionInterface> sdp) {
+      [&](std::unique_ptr<SessionDescriptionInterface> sdp) {
         SetRemoteDescription(std::move(sdp));
       });
   InitializePeerConnection(factory);
@@ -146,13 +146,13 @@ PeerConnectionClient::~PeerConnectionClient() {
   Disconnect();
 }
 
-rtc::scoped_refptr<PeerConnectionFactoryInterface>
-PeerConnectionClient::CreateDefaultFactory(rtc::Thread* signaling_thread) {
-  auto factory = webrtc::CreatePeerConnectionFactory(
+scoped_refptr<PeerConnectionFactoryInterface>
+PeerConnectionClient::CreateDefaultFactory(Thread* signaling_thread) {
+  auto factory = CreatePeerConnectionFactory(
       /*network_thread=*/nullptr, /*worker_thread=*/nullptr,
       /*signaling_thread*/ signaling_thread,
-      /*default_adm=*/nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
-      webrtc::CreateBuiltinAudioDecoderFactory(),
+      /*default_adm=*/nullptr, CreateBuiltinAudioEncoderFactory(),
+      CreateBuiltinAudioDecoderFactory(),
       std::make_unique<VideoEncoderFactoryTemplate<
           LibvpxVp8EncoderTemplateAdapter, LibvpxVp9EncoderTemplateAdapter,
           OpenH264EncoderTemplateAdapter, LibaomAv1EncoderTemplateAdapter>>(),
@@ -170,17 +170,17 @@ PeerConnectionClient::CreateDefaultFactory(rtc::Thread* signaling_thread) {
 }
 
 bool PeerConnectionClient::InitializePeerConnection(
-    webrtc::PeerConnectionFactoryInterface* factory) {
+    PeerConnectionFactoryInterface* factory) {
   RTC_CHECK(factory)
       << "Must call InitializeFactory before InitializePeerConnection";
 
-  webrtc::PeerConnectionInterface::RTCConfiguration config;
-  webrtc::PeerConnectionInterface::IceServer server;
+  PeerConnectionInterface::RTCConfiguration config;
+  PeerConnectionInterface::IceServer server;
   server.urls.push_back(kStunServer);
   config.servers.push_back(server);
-  config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+  config.sdp_semantics = SdpSemantics::kUnifiedPlan;
 
-  webrtc::PeerConnectionDependencies dependencies(this);
+  PeerConnectionDependencies dependencies(this);
   auto result =
       factory->CreatePeerConnectionOrError(config, std::move(dependencies));
 
@@ -199,8 +199,7 @@ bool PeerConnectionClient::StartPeerConnection() {
   RTC_LOG(LS_INFO) << "Creating offer";
 
   peer_connection_->SetLocalDescription(
-      SetLocalDescriptionObserverAdapter::Create([this](
-                                                     webrtc::RTCError error) {
+      SetLocalDescriptionObserverAdapter::Create([this](RTCError error) {
         if (error.ok())
           signaling_->SendDescription(peer_connection_->local_description());
       }));
@@ -210,7 +209,7 @@ bool PeerConnectionClient::StartPeerConnection() {
 
 bool PeerConnectionClient::IsConnected() {
   return peer_connection_->peer_connection_state() ==
-         webrtc::PeerConnectionInterface::PeerConnectionState::kConnected;
+         PeerConnectionInterface::PeerConnectionState::kConnected;
 }
 
 // Disconnect from the call.
@@ -234,11 +233,11 @@ void PeerConnectionClient::DeletePeerConnection() {
 }
 
 void PeerConnectionClient::OnIceConnectionChange(
-    webrtc::PeerConnectionInterface::IceConnectionState new_state) {
-  if (new_state == webrtc::PeerConnectionInterface::IceConnectionState::
-                       kIceConnectionCompleted) {
+    PeerConnectionInterface::IceConnectionState new_state) {
+  if (new_state ==
+      PeerConnectionInterface::IceConnectionState::kIceConnectionCompleted) {
     RTC_LOG(LS_INFO) << "State is updating to connected";
-  } else if (new_state == webrtc::PeerConnectionInterface::IceConnectionState::
+  } else if (new_state == PeerConnectionInterface::IceConnectionState::
                               kIceConnectionDisconnected) {
     RTC_LOG(LS_INFO) << "Disconnecting from peer";
     Disconnect();
@@ -246,19 +245,19 @@ void PeerConnectionClient::OnIceConnectionChange(
 }
 
 void PeerConnectionClient::OnIceGatheringChange(
-    webrtc::PeerConnectionInterface::IceGatheringState new_state) {
-  if (new_state == webrtc::PeerConnectionInterface::kIceGatheringComplete) {
+    PeerConnectionInterface::IceGatheringState new_state) {
+  if (new_state == PeerConnectionInterface::kIceGatheringComplete) {
     RTC_LOG(LS_INFO) << "Client is ready to receive remote SDP";
   }
 }
 
 void PeerConnectionClient::OnIceCandidate(
-    const webrtc::IceCandidateInterface* candidate) {
+    const IceCandidateInterface* candidate) {
   signaling_->SendIceCandidate(candidate);
 }
 
 void PeerConnectionClient::OnDataChannel(
-    rtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
+    scoped_refptr<DataChannelInterface> channel) {
   RTC_LOG(LS_INFO) << __FUNCTION__ << " remote datachannel created";
   if (on_data_channel_callback_)
     on_data_channel_callback_(channel);
@@ -266,8 +265,7 @@ void PeerConnectionClient::OnDataChannel(
 }
 
 void PeerConnectionClient::SetOnDataChannel(
-    std::function<void(rtc::scoped_refptr<webrtc::DataChannelInterface>)>
-        callback) {
+    std::function<void(scoped_refptr<DataChannelInterface>)> callback) {
   on_data_channel_callback_ = callback;
 }
 
@@ -275,28 +273,27 @@ void PeerConnectionClient::OnNegotiationNeededEvent(uint32_t event_id) {
   RTC_LOG(LS_INFO) << "OnNegotiationNeededEvent";
 
   peer_connection_->SetLocalDescription(
-      SetLocalDescriptionObserverAdapter::Create([this](
-                                                     webrtc::RTCError error) {
+      SetLocalDescriptionObserverAdapter::Create([this](RTCError error) {
         if (error.ok())
           signaling_->SendDescription(peer_connection_->local_description());
       }));
 }
 
 bool PeerConnectionClient::SetRemoteDescription(
-    std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
+    std::unique_ptr<SessionDescriptionInterface> desc) {
   RTC_LOG(LS_INFO) << "SetRemoteDescription";
   auto type = desc->GetType();
 
   peer_connection_->SetRemoteDescription(
       std::move(desc),
-      SetRemoteDescriptionObserverAdapter::Create([&](webrtc::RTCError) {
+      SetRemoteDescriptionObserverAdapter::Create([&](RTCError) {
         RTC_LOG(LS_INFO) << "SetRemoteDescription done";
 
-        if (type == webrtc::SdpType::kOffer) {
+        if (type == SdpType::kOffer) {
           // Got an offer from the remote, need to set an answer and send it.
           peer_connection_->SetLocalDescription(
               SetLocalDescriptionObserverAdapter::Create(
-                  [this](webrtc::RTCError error) {
+                  [this](RTCError error) {
                     if (error.ok())
                       signaling_->SendDescription(
                           peer_connection_->local_description());
@@ -308,7 +305,7 @@ bool PeerConnectionClient::SetRemoteDescription(
 }
 
 void PeerConnectionClient::AddIceCandidate(
-    std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
+    std::unique_ptr<IceCandidateInterface> candidate) {
   RTC_LOG(LS_INFO) << "AddIceCandidate";
 
   peer_connection_->AddIceCandidate(

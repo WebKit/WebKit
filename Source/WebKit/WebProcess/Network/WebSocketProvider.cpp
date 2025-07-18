@@ -54,7 +54,7 @@ Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTranspo
         WebCore::WebTransportSessionPromise::Producer producer;
         Ref<WebCore::WebTransportSessionPromise> promise = producer.promise();
 
-        RunLoop::protectedMain()->dispatch([
+        RunLoop::mainSingleton().dispatch([
             contextID = context.identifier(),
             producer = WTFMove(producer),
             webPageProxyID = m_webPageProxyID,
@@ -62,7 +62,7 @@ Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTranspo
             client = ThreadSafeWeakPtr { client },
             url = crossThreadCopy(url)
         ] mutable {
-            WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WTFMove(client), url, webPageProxyID, origin)->whenSettled(RunLoop::protectedMain(), [producer = WTFMove(producer)] (auto&& result) mutable {
+            WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WTFMove(client), url, webPageProxyID, origin)->whenSettled(RunLoop::mainSingleton(), [producer = WTFMove(producer)] (auto&& result) mutable {
                 if (!result)
                     producer.reject();
                 else

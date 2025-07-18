@@ -740,6 +740,9 @@ void VertexArray::onBind(const Context *context)
     }
 
     mDirtyBits.set(DIRTY_BIT_LOST_OBSERVATION);
+    // Always reset mIndexRangeInlineCache since we lost buffer observation while unbind
+    mIndexRangeInlineCache = {};
+
     onStateChange(angle::SubjectMessage::ContentsChanged);
 }
 
@@ -812,8 +815,8 @@ void VertexArray::onBindingChanged(const Context *context, int incr)
 void VertexArray::setDependentDirtyBits(bool contentsChanged,
                                         VertexArrayBufferBindingMask bufferBindingMask)
 {
-    DirtyBits dirtyBits(contentsChanged ? (bufferBindingMask.to_ulong() << DIRTY_BIT_BUFFER_DATA_0)
-                                        : (bufferBindingMask.to_ulong() << DIRTY_BIT_BINDING_0));
+    DirtyBits dirtyBits(contentsChanged ? (bufferBindingMask.bits() << DIRTY_BIT_BUFFER_DATA_0)
+                                        : (bufferBindingMask.bits() << DIRTY_BIT_BINDING_0));
     ASSERT(!mDirtyBitsGuard.valid() || (mDirtyBitsGuard.value() & dirtyBits) == dirtyBits);
     mDirtyBits |= dirtyBits;
 

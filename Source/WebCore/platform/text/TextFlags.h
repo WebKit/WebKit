@@ -176,24 +176,34 @@ struct FontVariantAlternatesValues {
 
     friend void add(Hasher&, const FontVariantAlternatesValues&);
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const FontVariantAlternatesValues& value)
-        {
-            return value.m_isEmpty;
-        }
-
-        static FontVariantAlternatesValues emptyValue()
-        {
-            FontVariantAlternatesValues emptyValue;
-            emptyValue.m_isEmpty = true;
-            return emptyValue;
-        }
-    };
-
 private:
-    friend MarkableTraits;
+    friend struct MarkableTraits<FontVariantAlternatesValues>;
+
     bool m_isEmpty { false };
 };
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::FontVariantAlternatesValues> {
+    static bool isEmptyValue(const WebCore::FontVariantAlternatesValues& value)
+    {
+        return value.m_isEmpty;
+    }
+
+    static WebCore::FontVariantAlternatesValues emptyValue()
+    {
+        WebCore::FontVariantAlternatesValues emptyValue;
+        emptyValue.m_isEmpty = true;
+        return emptyValue;
+    }
+};
+
+} // namespace WTF
+
+namespace WebCore {
 
 class FontVariantAlternates {
     using Values = FontVariantAlternatesValues;

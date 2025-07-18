@@ -89,7 +89,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
-    RunLoop::protectedMain()->dispatch([this, requestedSessionIdentifier = sessionIdentifier.createNSString(), configuration = WTFMove(configuration)] {
+    RunLoop::mainSingleton().dispatch([this, requestedSessionIdentifier = sessionIdentifier.createNSString(), configuration = WTFMove(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
             [m_delegate.get() _processPool:m_processPool.get().get() didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
     });
@@ -99,7 +99,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
 // http://webkit.org/b/221933
 void AutomationClient::requestedDebuggablesToWakeUp()
 {
-    RunLoop::protectedMain()->dispatch([this] {
+    RunLoop::mainSingleton().dispatch([this] {
         if (m_delegateMethods.requestedDebuggablesToWakeUp)
             [m_delegate.get() _processPoolDidRequestInspectorDebuggablesToWakeUp:m_processPool.get().get()];
     });

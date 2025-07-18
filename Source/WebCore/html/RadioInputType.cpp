@@ -185,9 +185,9 @@ void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
     dispatchSimulatedClickIfActive(event);
 }
 
-bool RadioInputType::isKeyboardFocusable(KeyboardEvent* event) const
+bool RadioInputType::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    if (!InputType::isKeyboardFocusable(event))
+    if (!InputType::isKeyboardFocusable(focusEventData))
         return false;
 
     RefPtr element = this->element();

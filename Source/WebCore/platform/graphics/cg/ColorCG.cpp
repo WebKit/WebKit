@@ -40,6 +40,7 @@
 
 namespace WebCore {
 static RetainPtr<CGColorRef> createCGColor(const Color&);
+static RetainPtr<CGColorRef> createSDRCGColorForColorspace(const Color&, const DestinationColorSpace&);
 }
 
 namespace WTF {
@@ -48,6 +49,12 @@ template<>
 RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>::createValueForKey(const WebCore::Color& color)
 {
     return WebCore::createCGColor(color);
+}
+
+template<>
+RetainPtr<CGColorRef> TinyLRUCachePolicy<std::pair<WebCore::Color, std::optional<WebCore::DestinationColorSpace>>, RetainPtr<CGColorRef>>::createValueForKey(const std::pair<WebCore::Color, std::optional<WebCore::DestinationColorSpace>>& colorAndColorSpace)
+{
+    return WebCore::createSDRCGColorForColorspace(colorAndColorSpace.first, *colorAndColorSpace.second);
 }
 
 } // namespace WTF
@@ -210,6 +217,25 @@ RetainPtr<CGColorRef> cachedCGColor(const Color& color)
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color);
+}
+
+RetainPtr<CGColorRef> createSDRCGColorForColorspace(const Color& color, const DestinationColorSpace& colorSpace)
+{
+    RetainPtr result = cachedCGColor(color);
+    RetainPtr standardRangeColorSpace = adoptCF(CGColorSpaceCreateCopyWithStandardRange(colorSpace.platformColorSpace()));
+    return adoptCF(CGColorCreateCopyByMatchingToColorSpace(standardRangeColorSpace.get(), kCGRenderingIntentDefault, result.get(), nullptr));
+}
+
+RetainPtr<CGColorRef> cachedSDRCGColorForColorspace(const Color& color, const DestinationColorSpace& colorSpace)
+{
+    if (!colorSpace.usesExtendedRange() || color.tryGetAsSRGBABytes())
+        return cachedCGColor(color);
+
+    static Lock cachedSDRColorLock;
+    Locker locker { cachedSDRColorLock };
+
+    static NeverDestroyed<TinyLRUCache<std::pair<Color, std::optional<DestinationColorSpace>>, RetainPtr<CGColorRef>, 32>> cache;
+    return cache.get().get(std::make_pair(color, colorSpace));
 }
 
 ColorComponents<float, 4> platformConvertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)

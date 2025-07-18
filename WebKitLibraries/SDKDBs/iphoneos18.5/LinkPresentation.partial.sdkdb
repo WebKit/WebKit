@@ -1,0 +1,166 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LPErrorUnknown"},
+      {"access": "public", "name": "LPErrorMetadataFetchFailed"},
+      {"access": "public", "name": "LPErrorMetadataFetchCancelled"},
+      {"access": "public", "name": "LPErrorMetadataFetchTimedOut"},
+      {"access": "public", "introduced": "17", "name": "LPErrorMetadataFetchNotAllowed"}
+     ],
+     "introduced": "13",
+     "name": "LPErrorCode"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_LPErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPLinkMetadata",
+     "properties": [
+      {"access": "public", "getter": "originalURL", "name": "originalURL", "setter": "setOriginalURL:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "iconProvider", "name": "iconProvider", "setter": "setIconProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "videoProvider", "name": "videoProvider", "setter": "setVideoProvider:"},
+      {"access": "public", "getter": "remoteVideoURL", "name": "remoteVideoURL", "setter": "setRemoteVideoURL:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoder:", "unavailable": true},
+      {"access": "public", "name": "encodeWithCoder:", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithMetadata:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPLinkView",
+     "properties": [
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"}
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startFetchingMetadataForURL:completionHandler:"},
+      {"access": "public", "introduced": "15", "name": "startFetchingMetadataForRequest:completionHandler:"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPMetadataProvider",
+     "properties": [
+      {"access": "public", "getter": "shouldFetchSubresources", "name": "shouldFetchSubresources", "setter": "setShouldFetchSubresources:"},
+      {"access": "public", "getter": "timeout", "name": "timeout", "setter": "setTimeout:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LPErrorCode"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "LPErrorUnknown"},
+      {"access": "public", "name": "LPErrorMetadataFetchFailed"},
+      {"access": "public", "name": "LPErrorMetadataFetchCancelled"},
+      {"access": "public", "name": "LPErrorMetadataFetchTimedOut"},
+      {"access": "public", "introduced": "17", "name": "LPErrorMetadataFetchNotAllowed"}
+     ],
+     "introduced": "13",
+     "name": "LPErrorCode"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_LPErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPLinkMetadata",
+     "properties": [
+      {"access": "public", "getter": "originalURL", "name": "originalURL", "setter": "setOriginalURL:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "iconProvider", "name": "iconProvider", "setter": "setIconProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "videoProvider", "name": "videoProvider", "setter": "setVideoProvider:"},
+      {"access": "public", "getter": "remoteVideoURL", "name": "remoteVideoURL", "setter": "setRemoteVideoURL:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoder:", "unavailable": true},
+      {"access": "public", "name": "encodeWithCoder:", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithMetadata:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPLinkView",
+     "properties": [
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"}
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startFetchingMetadataForURL:completionHandler:"},
+      {"access": "public", "introduced": "15", "name": "startFetchingMetadataForRequest:completionHandler:"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "LPMetadataProvider",
+     "properties": [
+      {"access": "public", "getter": "shouldFetchSubresources", "name": "shouldFetchSubresources", "setter": "setShouldFetchSubresources:"},
+      {"access": "public", "getter": "timeout", "name": "timeout", "setter": "setTimeout:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios18.5",
+   "typedefs": [
+    {"access": "public", "name": "LPErrorCode"}
+   ]
+  },
+  {
+   "target": "arm64-apple-ios18.5"
+  },
+  {
+   "target": "arm64e-apple-ios18.5"
+  }
+ ],
+ "version": "1.0"
+}

@@ -62,6 +62,7 @@
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include "WillChangeData.h"
+#include <wtf/IndexedRange.h>
 
 namespace WebCore {
 
@@ -402,9 +403,6 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     // first item in the list.
     if (currentAnimationList) {
         for (auto& currentAnimation : makeReversedRange(*currentAnimationList)) {
-            if (!currentAnimation->isValidAnimation())
-                continue;
-
             auto& animationName = currentAnimation->name().name;
             if (animationName == noneAtom() || animationName.isEmpty())
                 continue;
@@ -896,18 +894,15 @@ void Styleable::updateCSSScrollTimelines(const RenderStyle* currentStyle, const 
         auto& currentTimelineNames = afterChangeStyle.scrollTimelineNames();
         auto& currentTimelineAxes = afterChangeStyle.scrollTimelineAxes();
         auto numberOfAxes = currentTimelineAxes.size();
-        for (size_t i = 0; i < currentTimelineNames.size(); ++i) {
-            auto& name = currentTimelineNames[i];
-            auto axis = numberOfAxes ? currentTimelineAxes[i % numberOfAxes] : ScrollAxis::Block;
-            styleOriginatedTimelinesController->registerNamedScrollTimeline(name, *this, axis);
-        }
+        for (auto [i, name] : indexedRange(currentTimelineNames))
+            styleOriginatedTimelinesController->registerNamedScrollTimeline(name.value.value, *this, currentTimelineAxes[i % numberOfAxes]);
 
         if (!currentStyle)
             return;
 
         for (auto& previousTimelineName : currentStyle->scrollTimelineNames()) {
             if (!currentTimelineNames.contains(previousTimelineName))
-                styleOriginatedTimelinesController->unregisterNamedTimeline(previousTimelineName, *this);
+                styleOriginatedTimelinesController->unregisterNamedTimeline(previousTimelineName.value.value, *this);
         }
     };
 
@@ -945,19 +940,15 @@ void Styleable::updateCSSViewTimelines(const RenderStyle* currentStyle, const Re
         auto& currentTimelineInsets = afterChangeStyle.viewTimelineInsets();
         auto numberOfAxes = currentTimelineAxes.size();
         auto numberOfInsets = currentTimelineInsets.size();
-        for (size_t i = 0; i < currentTimelineNames.size(); ++i) {
-            auto& name = currentTimelineNames[i];
-            auto axis = numberOfAxes ? currentTimelineAxes[i % numberOfAxes] : ScrollAxis::Block;
-            auto insets = numberOfInsets ? ViewTimelineInsets(currentTimelineInsets[i % numberOfInsets]) : ViewTimelineInsets();
-            styleOriginatedTimelinesController->registerNamedViewTimeline(name, *this, axis, WTFMove(insets));
-        }
+        for (auto [i, name] : indexedRange(currentTimelineNames))
+            styleOriginatedTimelinesController->registerNamedViewTimeline(name.value.value, *this, currentTimelineAxes[i % numberOfAxes], currentTimelineInsets[i % numberOfInsets]);
 
         if (!currentStyle)
             return;
 
         for (auto& previousTimelineName : currentStyle->viewTimelineNames()) {
             if (!currentTimelineNames.contains(previousTimelineName))
-                styleOriginatedTimelinesController->unregisterNamedTimeline(previousTimelineName, *this);
+                styleOriginatedTimelinesController->unregisterNamedTimeline(previousTimelineName.value.value, *this);
         }
     };
 
@@ -1006,6 +997,5 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const WeakStyleable& styleable)
     ts << styleable.element() << ", "_s << styleable.pseudoElementIdentifier();
     return ts;
 }
-
 
 } // namespace WebCore

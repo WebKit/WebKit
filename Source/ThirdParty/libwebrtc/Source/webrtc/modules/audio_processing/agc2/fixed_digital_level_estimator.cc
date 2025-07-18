@@ -113,8 +113,7 @@ std::array<float, kSubFramesInFrame> FixedDigitalLevelEstimator::ComputeLevel(
 void FixedDigitalLevelEstimator::SetSamplesPerChannel(
     size_t samples_per_channel) {
   samples_in_frame_ = static_cast<int>(samples_per_channel);
-  samples_in_sub_frame_ =
-      rtc::CheckedDivExact(samples_in_frame_, kSubFramesInFrame);
+  samples_in_sub_frame_ = CheckedDivExact(samples_in_frame_, kSubFramesInFrame);
   CheckParameterCombination();
 }
 

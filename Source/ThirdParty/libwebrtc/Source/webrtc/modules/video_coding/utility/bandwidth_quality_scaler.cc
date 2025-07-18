@@ -10,17 +10,17 @@
 
 #include "modules/video_coding/utility/bandwidth_quality_scaler.h"
 
-#include <algorithm>
-#include <memory>
-#include <utility>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
-#include "api/video/video_adaptation_reason.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/numerics/exp_filter.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/experiments/encoder_info_settings.h"
+#include "rtc_base/rate_statistics.h"
 #include "rtc_base/weak_ptr.h"
 
 namespace webrtc {
@@ -92,10 +92,12 @@ void BandwidthQualityScaler::ReportEncodeInfo(int frame_size_bytes,
 
 void BandwidthQualityScaler::SetResolutionBitrateLimits(
     const std::vector<VideoEncoder::ResolutionBitrateLimits>&
-        resolution_bitrate_limits) {
+        resolution_bitrate_limits,
+    VideoCodecType codec_type) {
   if (resolution_bitrate_limits.empty()) {
-    resolution_bitrate_limits_ = EncoderInfoSettings::
-        GetDefaultSinglecastBitrateLimitsWhenQpIsUntrusted();
+    resolution_bitrate_limits_ =
+        EncoderInfoSettings::GetDefaultSinglecastBitrateLimitsWhenQpIsUntrusted(
+            codec_type);
   } else {
     resolution_bitrate_limits_ = resolution_bitrate_limits;
   }

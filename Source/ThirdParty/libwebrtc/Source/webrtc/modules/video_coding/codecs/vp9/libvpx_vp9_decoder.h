@@ -14,10 +14,15 @@
 
 #ifdef RTC_ENABLE_VP9
 
+#include <cstdint>
+
+#include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
-#include "vpx/vp8cx.h"
+#include "vpx/vpx_codec.h"
+#include "vpx/vpx_image.h"
 
 namespace webrtc {
 

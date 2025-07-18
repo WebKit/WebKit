@@ -33,11 +33,11 @@ namespace {
 // Helper function for AdjustColors(). This functions calculates a single output
 // row for y with the given color coefficients. The u/v channels are assumed to
 // be subsampled by a factor of 2, which is the case of I420.
-void CalculateYChannel(rtc::ArrayView<const uint8_t> y_data,
-                       rtc::ArrayView<const uint8_t> u_data,
-                       rtc::ArrayView<const uint8_t> v_data,
+void CalculateYChannel(ArrayView<const uint8_t> y_data,
+                       ArrayView<const uint8_t> u_data,
+                       ArrayView<const uint8_t> v_data,
                        const std::array<float, 4>& coeff,
-                       rtc::ArrayView<uint8_t> output) {
+                       ArrayView<uint8_t> output) {
   RTC_CHECK_EQ(y_data.size(), output.size());
   // Each u/v element represents two y elements. Make sure we have enough to
   // cover the Y values.
@@ -72,11 +72,11 @@ void CalculateYChannel(rtc::ArrayView<const uint8_t> y_data,
 // Helper function for AdjustColors(). This functions calculates a single output
 // row for either u or v, with the given color coefficients. Y, U, and V are
 // assumed to be the same size, i.e. no subsampling.
-void CalculateUVChannel(rtc::ArrayView<const uint8_t> y_data,
-                        rtc::ArrayView<const uint8_t> u_data,
-                        rtc::ArrayView<const uint8_t> v_data,
+void CalculateUVChannel(ArrayView<const uint8_t> y_data,
+                        ArrayView<const uint8_t> u_data,
+                        ArrayView<const uint8_t> v_data,
                         const std::array<float, 4>& coeff,
-                        rtc::ArrayView<uint8_t> output) {
+                        ArrayView<uint8_t> output) {
   RTC_CHECK_EQ(y_data.size(), u_data.size());
   RTC_CHECK_EQ(y_data.size(), v_data.size());
   RTC_CHECK_EQ(y_data.size(), output.size());
@@ -92,7 +92,7 @@ void CalculateUVChannel(rtc::ArrayView<const uint8_t> y_data,
 
 // Convert a frame to four vectors consisting of [y, u, v, 1].
 std::vector<std::vector<uint8_t>> FlattenYuvData(
-    const rtc::scoped_refptr<I420BufferInterface>& frame) {
+    const scoped_refptr<I420BufferInterface>& frame) {
   std::vector<std::vector<uint8_t>> result(
       4, std::vector<uint8_t>(frame->ChromaWidth() * frame->ChromaHeight()));
 
@@ -128,8 +128,8 @@ ColorTransformationMatrix VectorToColorMatrix(
 }  // namespace
 
 ColorTransformationMatrix CalculateColorTransformationMatrix(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame) {
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame) {
   IncrementalLinearLeastSquares incremental_lls;
   incremental_lls.AddObservations(FlattenYuvData(test_frame),
                                   FlattenYuvData(reference_frame));
@@ -137,8 +137,8 @@ ColorTransformationMatrix CalculateColorTransformationMatrix(
 }
 
 ColorTransformationMatrix CalculateColorTransformationMatrix(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video) {
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video) {
   RTC_CHECK_GE(reference_video->number_of_frames(),
                test_video->number_of_frames());
 
@@ -152,13 +152,13 @@ ColorTransformationMatrix CalculateColorTransformationMatrix(
   return VectorToColorMatrix(incremental_lls.GetBestSolution());
 }
 
-rtc::scoped_refptr<Video> AdjustColors(
+scoped_refptr<Video> AdjustColors(
     const ColorTransformationMatrix& color_transformation,
-    const rtc::scoped_refptr<Video>& video) {
+    const scoped_refptr<Video>& video) {
   class ColorAdjustedVideo : public Video {
    public:
     ColorAdjustedVideo(const ColorTransformationMatrix& color_transformation,
-                       const rtc::scoped_refptr<Video>& video)
+                       const scoped_refptr<Video>& video)
         : color_transformation_(color_transformation), video_(video) {}
 
     int width() const override { return video_->width(); }
@@ -167,24 +167,23 @@ rtc::scoped_refptr<Video> AdjustColors(
       return video_->number_of_frames();
     }
 
-    rtc::scoped_refptr<I420BufferInterface> GetFrame(
-        size_t index) const override {
+    scoped_refptr<I420BufferInterface> GetFrame(size_t index) const override {
       return AdjustColors(color_transformation_, video_->GetFrame(index));
     }
 
    private:
     const ColorTransformationMatrix color_transformation_;
-    const rtc::scoped_refptr<Video> video_;
+    const scoped_refptr<Video> video_;
   };
 
-  return rtc::make_ref_counted<ColorAdjustedVideo>(color_transformation, video);
+  return make_ref_counted<ColorAdjustedVideo>(color_transformation, video);
 }
 
-rtc::scoped_refptr<I420BufferInterface> AdjustColors(
+scoped_refptr<I420BufferInterface> AdjustColors(
     const ColorTransformationMatrix& color_matrix,
-    const rtc::scoped_refptr<I420BufferInterface>& frame) {
+    const scoped_refptr<I420BufferInterface>& frame) {
   // Allocate I420 buffer that will hold the color adjusted frame.
-  rtc::scoped_refptr<I420Buffer> adjusted_frame =
+  scoped_refptr<I420Buffer> adjusted_frame =
       I420Buffer::Create(frame->width(), frame->height());
 
   // Create a downscaled Y plane with the same size as the U/V planes to
@@ -199,13 +198,13 @@ rtc::scoped_refptr<I420BufferInterface> AdjustColors(
   // Fill in the adjusted data row by row.
   for (int y = 0; y < frame->height(); ++y) {
     const int half_y = y / 2;
-    rtc::ArrayView<const uint8_t> y_row(frame->DataY() + frame->StrideY() * y,
-                                        frame->width());
-    rtc::ArrayView<const uint8_t> u_row(
-        frame->DataU() + frame->StrideU() * half_y, frame->ChromaWidth());
-    rtc::ArrayView<const uint8_t> v_row(
-        frame->DataV() + frame->StrideV() * half_y, frame->ChromaWidth());
-    rtc::ArrayView<uint8_t> output_y_row(
+    ArrayView<const uint8_t> y_row(frame->DataY() + frame->StrideY() * y,
+                                   frame->width());
+    ArrayView<const uint8_t> u_row(frame->DataU() + frame->StrideU() * half_y,
+                                   frame->ChromaWidth());
+    ArrayView<const uint8_t> v_row(frame->DataV() + frame->StrideV() * half_y,
+                                   frame->ChromaWidth());
+    ArrayView<uint8_t> output_y_row(
         adjusted_frame->MutableDataY() + adjusted_frame->StrideY() * y,
         frame->width());
 
@@ -213,13 +212,13 @@ rtc::scoped_refptr<I420BufferInterface> AdjustColors(
 
     // Chroma channels only exist every second row for I420.
     if (y % 2 == 0) {
-      rtc::ArrayView<const uint8_t> downscaled_y_row(
+      ArrayView<const uint8_t> downscaled_y_row(
           downscaled_y_plane.data() + frame->ChromaWidth() * half_y,
           frame->ChromaWidth());
-      rtc::ArrayView<uint8_t> output_u_row(
+      ArrayView<uint8_t> output_u_row(
           adjusted_frame->MutableDataU() + adjusted_frame->StrideU() * half_y,
           frame->ChromaWidth());
-      rtc::ArrayView<uint8_t> output_v_row(
+      ArrayView<uint8_t> output_v_row(
           adjusted_frame->MutableDataV() + adjusted_frame->StrideV() * half_y,
           frame->ChromaWidth());
 

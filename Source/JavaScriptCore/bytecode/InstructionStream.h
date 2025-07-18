@@ -42,7 +42,7 @@ struct InstructionStreamBufferMalloc final : public InstructionStreamMalloc {
 
 template<typename InstructionType>
 class InstructionStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InstructionStream);
 
     template<typename> friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
@@ -59,7 +59,7 @@ public:
 private:
     template<class InstructionBuffer>
     class BaseRef {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BaseRef);
 
         template<typename> friend class InstructionStream;
 

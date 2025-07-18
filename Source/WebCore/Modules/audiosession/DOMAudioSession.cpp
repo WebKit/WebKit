@@ -77,12 +77,12 @@ Ref<DOMAudioSession> DOMAudioSession::create(ScriptExecutionContext* context)
 DOMAudioSession::DOMAudioSession(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
 {
-    AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
+    AudioSession::singleton().addInterruptionObserver(*this);
 }
 
 DOMAudioSession::~DOMAudioSession()
 {
-    AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
+    AudioSession::singleton().removeInterruptionObserver(*this);
 }
 
 ExceptionOr<void> DOMAudioSession::setType(Type type)
@@ -101,7 +101,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     page->setAudioSessionType(type);
 
     auto categoryOverride = fromDOMAudioSessionType(type);
-    AudioSession::protectedSharedSession()->setCategoryOverride(categoryOverride);
+    AudioSession::singleton().setCategoryOverride(categoryOverride);
 
     if (categoryOverride == AudioSessionCategory::None)
         PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary();
@@ -126,10 +126,10 @@ DOMAudioSession::Type DOMAudioSession::type() const
 
 static DOMAudioSession::State computeAudioSessionState()
 {
-    if (AudioSession::sharedSession().isInterrupted())
+    if (AudioSession::singleton().isInterrupted())
         return DOMAudioSession::State::Interrupted;
 
-    if (!AudioSession::sharedSession().isActive())
+    if (!AudioSession::singleton().isActive())
         return DOMAudioSession::State::Inactive;
 
     return DOMAudioSession::State::Active;

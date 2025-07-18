@@ -1,9 +1,9 @@
 Name: General Purpose FFT (Fast Fourier/Cosine/Sine Transform) Package
 Short Name: fft4g
 URL: http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html
-Version: 0
+Version: N/A
 Date: 2018-06-19
-License: Custome license
+License: LicenseRef-takuya-ooura
 License File: LICENSE
 Security Critical: yes
 Shipped: yes

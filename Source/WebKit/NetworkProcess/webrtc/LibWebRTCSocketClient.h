@@ -37,7 +37,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/TZoneMalloc.h>
 
-namespace rtc {
+namespace webrtc {
 class AsyncPacketSocket;
 struct SentPacket;
 typedef int64_t PacketTime;
@@ -48,7 +48,7 @@ namespace WebKit {
 class LibWebRTCSocketClient final : public NetworkRTCProvider::Socket, public sigslot::has_slots<> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocketClient);
 public:
-    LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type, Ref<IPC::Connection>&&);
+    LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, std::unique_ptr<webrtc::AsyncPacketSocket>&&, Type, Ref<IPC::Connection>&&);
 
 private:
     WebCore::LibWebRTCSocketIdentifier identifier() const final { return m_identifier; }
@@ -56,20 +56,20 @@ private:
     void close() final;
 
     void setOption(int option, int value) final;
-    void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
+    void sendTo(std::span<const uint8_t>, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&) final;
 
-    void signalReadPacket(rtc::AsyncPacketSocket*, const unsigned char*, size_t, const rtc::SocketAddress&, int64_t);
-    void signalSentPacket(rtc::AsyncPacketSocket*, const rtc::SentPacket&);
-    void signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress&);
-    void signalConnect(rtc::AsyncPacketSocket*);
-    void signalClose(rtc::AsyncPacketSocket*, int);
+    void signalReadPacket(webrtc::AsyncPacketSocket*, const unsigned char*, size_t, const webrtc::SocketAddress&, int64_t);
+    void signalSentPacket(webrtc::AsyncPacketSocket*, const webrtc::SentPacketInfo&);
+    void signalAddressReady(webrtc::AsyncPacketSocket*, const webrtc::SocketAddress&);
+    void signalConnect(webrtc::AsyncPacketSocket*);
+    void signalClose(webrtc::AsyncPacketSocket*, int);
 
     void signalAddressReady();
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Type m_type;
     CheckedRef<NetworkRTCProvider> m_rtcProvider;
-    std::unique_ptr<rtc::AsyncPacketSocket> m_socket;
+    std::unique_ptr<webrtc::AsyncPacketSocket> m_socket;
     const Ref<IPC::Connection> m_connection;
     int m_sendError { 0 };
 };

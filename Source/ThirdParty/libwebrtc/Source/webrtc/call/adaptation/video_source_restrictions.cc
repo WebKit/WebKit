@@ -11,7 +11,11 @@
 #include "call/adaptation/video_source_restrictions.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <limits>
+#include <optional>
+#include <string>
+#include <utility>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
@@ -39,7 +43,7 @@ VideoSourceRestrictions::VideoSourceRestrictions(
 }
 
 std::string VideoSourceRestrictions::ToString() const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "{";
   if (max_frame_rate_)
     ss << " max_fps=" << max_frame_rate_.value();

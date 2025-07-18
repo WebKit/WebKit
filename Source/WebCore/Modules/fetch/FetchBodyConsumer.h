@@ -46,7 +46,7 @@ class FormData;
 class ReadableStream;
 
 class FetchBodyConsumer final : public CanMakeCheckedPtr<FetchBodyConsumer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FetchBodyConsumer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchBodyConsumer);
 public:
     enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };
@@ -93,6 +93,9 @@ public:
 private:
     Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);
     void resetConsumePromise();
+
+    RefPtr<ReadableStreamToSharedBufferSink> protectedSink() { return m_sink; }
+    RefPtr<FormDataConsumer> protectedFormDataConsumer() { return m_formDataConsumer; }
 
     Type m_type;
     SharedBufferBuilder m_buffer;

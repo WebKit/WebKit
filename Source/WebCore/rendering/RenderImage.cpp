@@ -306,18 +306,6 @@ LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> e
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
-LayoutUnit RenderImage::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    LayoutUnit offset;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (isMultiRepresentationHEIC()) {
-        auto metrics = style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
-        offset = LayoutUnit::fromFloatRound(metrics.descent);
-    }
-#endif
-    return RenderBox::baselinePosition(firstLine, direction, linePositionMode) - offset;
-}
-
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
@@ -780,7 +768,7 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
     if (!contentBoxRect().contains(localRect))
         return false;
-    FillBox backgroundClip = style().backgroundClip();
+    auto backgroundClip = style().backgroundClip();
     // Background paints under borders.
     if (backgroundClip == FillBox::BorderBox && style().hasBorder() && !borderObscuresBackground())
         return false;
@@ -788,12 +776,10 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if ((backgroundClip == FillBox::BorderBox || backgroundClip == FillBox::PaddingBox) && style().hasPadding())
         return false;
     // Object-fit may leave parts of the content box empty.
-    ObjectFit objectFit = style().objectFit();
-    if (objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
+    if (auto objectFit = style().objectFit(); objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
         return false;
 
-    LengthPoint objectPosition = style().objectPosition();
-    if (objectPosition != RenderStyle::initialObjectPosition())
+    if (style().objectPosition() != RenderStyle::initialObjectPosition())
         return false;
 
     // Check for image with alpha.
@@ -897,8 +883,8 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
 
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
-        if (style().aspectRatioType() == AspectRatioType::AutoAndRatio && !isShowingAltText())
-            intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
+        if (style().aspectRatio().isAutoAndRatio() && !isShowingAltText())
+            intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth().value, style().aspectRatioLogicalHeight().value);
         else
             intrinsicRatio = { 1.0, 1.0 };
         return;

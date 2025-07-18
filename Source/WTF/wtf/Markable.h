@@ -41,6 +41,8 @@
 
 namespace WTF {
 
+template<typename> struct MarkableTraits { };
+
 // Example:
 //     enum class Type { Value1, Value2, Value3 };
 //     Markable<Type, EnumMarkableTraits<Type, 42>> optional;
@@ -62,7 +64,11 @@ struct EnumMarkableTraits {
     }
 };
 
-template<typename IntegralType, IntegralType constant = 0>
+template<typename T>
+requires(std::is_enum_v<T>)
+struct MarkableTraits<T> : EnumMarkableTraits<T> { };
+
+template<typename IntegralType, IntegralType constant>
 struct IntegralMarkableTraits {
     static_assert(std::is_integral<IntegralType>::value);
     constexpr static bool isEmptyValue(IntegralType value)
@@ -76,15 +82,21 @@ struct IntegralMarkableTraits {
     }
 };
 
-struct FloatMarkableTraits {
-    constexpr static bool isEmptyValue(float value)
+template<typename T>
+requires(std::is_integral_v<T>)
+struct MarkableTraits<T> : IntegralMarkableTraits<T, static_cast<T>(-1)> { };
+
+template<typename T>
+requires(std::is_floating_point_v<T>)
+struct MarkableTraits<T> {
+    constexpr static bool isEmptyValue(T value)
     {
-        return value != value;
+        return std::isnan(value);
     }
 
-    constexpr static float emptyValue()
+    constexpr static T emptyValue()
     {
-        return std::numeric_limits<float>::quiet_NaN();
+        return std::numeric_limits<T>::quiet_NaN();
     }
 };
 
@@ -96,7 +108,7 @@ struct FloatMarkableTraits {
 // Otherwise, you should use Optional.
 template<typename T, typename Traits>
 class Markable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Markable);
 public:
     constexpr Markable()
         : m_value(Traits::emptyValue())

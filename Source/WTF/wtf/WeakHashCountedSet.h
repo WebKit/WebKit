@@ -31,7 +31,7 @@ namespace WTF {
 
 template<typename Value, typename WeakPtrImpl = DefaultWeakPtrImpl>
 class WeakHashCountedSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakHashCountedSet);
 private:
     using ImplType = WeakHashMap<Value, unsigned, WeakPtrImpl>;
 public:

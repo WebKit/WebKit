@@ -16,6 +16,7 @@
 #include "absl/strings/string_view.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -25,6 +26,10 @@ enum class ScalabilityModeResolutionRatio {
 };
 
 static constexpr char kDefaultScalabilityModeStr[] = "L1T2";
+
+// Scalability mode to be used if falling back to default scalability mode is
+// unsupported.
+static constexpr char kNoLayeringScalabilityModeStr[] = "L1T1";
 
 RTC_EXPORT std::optional<ScalabilityMode> MakeScalabilityMode(
     int num_spatial_layers,

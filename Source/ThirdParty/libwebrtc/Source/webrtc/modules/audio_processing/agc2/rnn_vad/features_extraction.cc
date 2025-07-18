@@ -50,8 +50,8 @@ void FeaturesExtractor::Reset() {
 }
 
 bool FeaturesExtractor::CheckSilenceComputeFeatures(
-    rtc::ArrayView<const float, kFrameSize10ms24kHz> samples,
-    rtc::ArrayView<float, kFeatureVectorSize> feature_vector) {
+    ArrayView<const float, kFrameSize10ms24kHz> samples,
+    ArrayView<float, kFeatureVectorSize> feature_vector) {
   // Pre-processing.
   if (use_high_pass_filter_) {
     std::array<float, kFrameSize10ms24kHz> samples_filtered;

@@ -67,7 +67,7 @@ function ValidateCommitFormat() {
     }
 }
 
-async function GenerateCompareLink() {
+async function GenerateCompareLink(validateCommits=false) {
     const commitOne = document.getElementById('commit1').value;
     const commitTwo = document.getElementById('commit2').value;
     const message = document.getElementById('compareMessage');
@@ -76,7 +76,7 @@ async function GenerateCompareLink() {
         message.innerHTML = ErrorMessage(`${commitOne} is not a valid commit format<br>`);
     } else if (!VALID_REF_RE.test(commitTwo)) {
         message.innerHTML = ErrorMessage(`${commitTwo} is not a valid commit format<br>`);
-    } else {
+    } else if (validateCommits == true) {
         try {
             const commitOneData = await GetCommit(commitOne);
             const commitTwoData = await GetCommit(commitTwo);
@@ -85,6 +85,8 @@ async function GenerateCompareLink() {
             console.error(error);
             message.innerHTML = ErrorMessage(`${error.message}<br>`);
         }
+    } else {
+        return COMMIT_URL + 'compare/' + commitOne + '...' + commitTwo;
     }
     return;
 }
@@ -97,16 +99,22 @@ async function CopyCompareLink() {
                 const compareLink = await GenerateCompareLink();
                 if (compareLink) {
                     const message = document.getElementById('compareMessage');
-                    message.innerHTML = `<a href="${compareLink}"> ${compareLink} </a> copied to clipboard!`;
+                    message.innerHTML = `Copied to clipboard!`;
                     resolve(compareLink);
                 }
             })
         })
     ]);
+
+    const formattedLink = await GenerateCompareLink(true);
+    if (formattedLink) {
+        const message = document.getElementById('compareMessage');
+        message.innerHTML = message.innerHTML + `<br><a href="${formattedLink}"> ${formattedLink} </a>`;
+    }
 }
 
 async function CompareRedirect() {
-    let compareLink = await GenerateCompareLink();
+    let compareLink = await GenerateCompareLink(true);
     if (compareLink) {
         window.location.href = compareLink;
     }

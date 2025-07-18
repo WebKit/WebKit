@@ -68,8 +68,8 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
 {
     ASSERT(endY > startY);
 
-    Ref srcPixelBuffer = *paintingData.srcPixelBuffer;
-    Ref dstPixelBuffer = *paintingData.dstPixelBuffer;
+    const auto& srcPixelBuffer = *paintingData.srcPixelBuffer;
+    auto& dstPixelBuffer = *paintingData.dstPixelBuffer;
 
     const int radiusX = paintingData.radiusX;
     const int radiusY = paintingData.radiusY;
@@ -100,7 +100,7 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
             if (x > radiusX)
                 extrema.removeAt(0);
 
-            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer->bytes().subspan(pixelArrayIndex(x, y, width)));
+            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width)));
             destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
         }
     }
@@ -147,9 +147,9 @@ void FEMorphologySoftwareApplier::applyPlatform(const PaintingData& paintingData
 
 bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
@@ -163,7 +163,7 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     auto absoluteRadius = flooredIntSize(filter.scaledByFilterScale(radius));
 
     if (isDegenerate(absoluteRadius)) {
-        input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
@@ -171,18 +171,18 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     int radiusY = std::min(effectDrawingRect.height() - 1, absoluteRadius.height());
 
     if (isDegenerate({ radiusX, radiusY })) {
-        input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
-    RefPtr sourcePixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
+    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     PaintingData paintingData;
     paintingData.type = m_effect->morphologyOperator();
-    paintingData.srcPixelBuffer = WTFMove(sourcePixelBuffer);
-    paintingData.dstPixelBuffer = WTFMove(destinationPixelBuffer);
+    paintingData.srcPixelBuffer = &*sourcePixelBuffer;
+    paintingData.dstPixelBuffer = destinationPixelBuffer;
     paintingData.width = effectDrawingRect.width();
     paintingData.height = effectDrawingRect.height();
     paintingData.radiusX = radiusX;

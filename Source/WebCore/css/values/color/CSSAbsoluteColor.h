@@ -42,7 +42,7 @@ template<typename D, unsigned Index> using AbsoluteColorComponent = GetCSSColorP
 
 template<typename D>
 struct AbsoluteColor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(AbsoluteColor);
 
     using Descriptor = D;
 

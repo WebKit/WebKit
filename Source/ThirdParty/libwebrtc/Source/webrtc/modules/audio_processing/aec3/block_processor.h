@@ -18,6 +18,7 @@
 
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/echo_remover.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
@@ -28,18 +29,21 @@ namespace webrtc {
 // Class for performing echo cancellation on 64 sample blocks of audio data.
 class BlockProcessor {
  public:
-  static BlockProcessor* Create(const EchoCanceller3Config& config,
-                                int sample_rate_hz,
-                                size_t num_render_channels,
-                                size_t num_capture_channels);
+  static std::unique_ptr<BlockProcessor> Create(
+      const Environment& env,
+      const EchoCanceller3Config& config,
+      int sample_rate_hz,
+      size_t num_render_channels,
+      size_t num_capture_channels);
   // Only used for testing purposes.
-  static BlockProcessor* Create(
+  static std::unique_ptr<BlockProcessor> Create(
+      const Environment& env,
       const EchoCanceller3Config& config,
       int sample_rate_hz,
       size_t num_render_channels,
       size_t num_capture_channels,
       std::unique_ptr<RenderDelayBuffer> render_buffer);
-  static BlockProcessor* Create(
+  static std::unique_ptr<BlockProcessor> Create(
       const EchoCanceller3Config& config,
       int sample_rate_hz,
       size_t num_render_channels,

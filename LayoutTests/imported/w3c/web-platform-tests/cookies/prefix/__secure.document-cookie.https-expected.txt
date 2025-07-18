@@ -1,14 +1,14 @@
 
 PASS __Secure: Secure origin: Should not set 'Path=/;'
-FAIL __SeCuRe: Secure origin: Should not set 'Path=/;' assert_equals: `__SeCuRe-prefixtestcookie=0.6024020825942948` in `document.cookie` expected false but got true
+FAIL __SeCuRe: Secure origin: Should not set 'Path=/;' assert_equals: `__SeCuRe-prefixtestcookie=foo2` in `document.cookie` expected false but got true
 PASS __Secure: Secure origin: Should set 'Secure; Path=/;'
 PASS __SeCuRe: Secure origin: Should set 'Secure; Path=/;'
 PASS __Secure: Secure origin: Should not set 'Path=/;MaxAge=10'
-FAIL __SeCuRe: Secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: `__SeCuRe-prefixtestcookie=0.8654057676521862` in `document.cookie` expected false but got true
+FAIL __SeCuRe: Secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: `__SeCuRe-prefixtestcookie=foo6` in `document.cookie` expected false but got true
 PASS __Secure: Secure origin: Should set 'Secure; Path=/;MaxAge=10'
 PASS __SeCuRe: Secure origin: Should set 'Secure; Path=/;MaxAge=10'
 PASS __Secure: Secure origin: Should not set 'Path=/;domain=localhost'
-FAIL __SeCuRe: Secure origin: Should not set 'Path=/;domain=localhost' assert_equals: `__SeCuRe-prefixtestcookie=0.9063855693384636` in `document.cookie` expected false but got true
+FAIL __SeCuRe: Secure origin: Should not set 'Path=/;domain=localhost' assert_equals: `__SeCuRe-prefixtestcookie=foo10` in `document.cookie` expected false but got true
 PASS __Secure: Secure origin: Should set 'Secure; Path=/;domain=localhost'
 PASS __SeCuRe: Secure origin: Should set 'Secure; Path=/;domain=localhost'
 

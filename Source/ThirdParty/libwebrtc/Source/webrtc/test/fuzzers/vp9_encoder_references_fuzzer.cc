@@ -131,8 +131,9 @@ class FrameValidator : public EncodedImageCallback {
     }
   }
 
-  void CheckGenericReferences(rtc::ArrayView<const int64_t> frame_dependencies,
-                              const GenericFrameInfo& generic_info) const {
+  void CheckGenericReferences(
+      webrtc::ArrayView<const int64_t> frame_dependencies,
+      const GenericFrameInfo& generic_info) const {
     for (int64_t dependency_frame_id : frame_dependencies) {
       RTC_CHECK_GE(dependency_frame_id, 0);
       const LayerFrame& dependency = Frame(dependency_frame_id);
@@ -142,7 +143,7 @@ class FrameValidator : public EncodedImageCallback {
   }
 
   void CheckGenericAndCodecSpecificReferencesAreConsistent(
-      rtc::ArrayView<const int64_t> frame_dependencies,
+      webrtc::ArrayView<const int64_t> frame_dependencies,
       const CodecSpecificInfo& info,
       const LayerFrame& layer_frame) const {
     const CodecSpecificInfoVP9& vp9_info = info.codecSpecific.VP9;
@@ -151,7 +152,7 @@ class FrameValidator : public EncodedImageCallback {
     RTC_CHECK_EQ(generic_info.spatial_id, layer_frame.spatial_id);
     RTC_CHECK_EQ(generic_info.temporal_id, layer_frame.temporal_id);
     auto picture_id_diffs =
-        rtc::MakeArrayView(vp9_info.p_diff, vp9_info.num_ref_pics);
+        webrtc::MakeArrayView(vp9_info.p_diff, vp9_info.num_ref_pics);
     RTC_CHECK_EQ(
         frame_dependencies.size(),
         picture_id_diffs.size() + (vp9_info.inter_layer_predicted ? 1 : 0));
@@ -192,7 +193,6 @@ class FieldTrials : public FieldTrialsView {
   ~FieldTrials() override = default;
   std::string Lookup(absl::string_view key) const override {
     static constexpr absl::string_view kBinaryFieldTrials[] = {
-        "WebRTC-Vp9ExternalRefCtrl",
         "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation",
     };
     for (size_t i = 0; i < ABSL_ARRAYSIZE(kBinaryFieldTrials); ++i) {
@@ -548,7 +548,7 @@ static_assert(DropBelow(0b1101, /*sid=*/3, 4) == false, "");
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  FuzzDataHelper helper(rtc::MakeArrayView(data, size));
+  FuzzDataHelper helper(webrtc::MakeArrayView(data, size));
 
   FrameValidator validator;
   FieldTrials field_trials(helper);
@@ -600,21 +600,24 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
             // Don't encode disabled spatial layers.
             continue;
           }
-          bool drop = true;
-          switch (state.frame_drop.framedrop_mode) {
-            case FULL_SUPERFRAME_DROP:
-              drop = encode_spatial_layers == 0;
-              break;
-            case LAYER_DROP:
-              drop = (encode_spatial_layers & (1 << sid)) == 0;
-              break;
-            case CONSTRAINED_LAYER_DROP:
-              drop = DropBelow(encode_spatial_layers, sid,
-                               state.config.ss_number_layers);
-              break;
-            case CONSTRAINED_FROM_ABOVE_DROP:
-              drop = DropAbove(encode_spatial_layers, sid);
-              break;
+          bool drop = false;
+          // Never drop keyframe.
+          if (frame_types[0] != VideoFrameType::kVideoFrameKey) {
+            switch (state.frame_drop.framedrop_mode) {
+              case FULL_SUPERFRAME_DROP:
+                drop = encode_spatial_layers == 0;
+                break;
+              case LAYER_DROP:
+                drop = (encode_spatial_layers & (1 << sid)) == 0;
+                break;
+              case CONSTRAINED_LAYER_DROP:
+                drop = DropBelow(encode_spatial_layers, sid,
+                                 state.config.ss_number_layers);
+                break;
+              case CONSTRAINED_FROM_ABOVE_DROP:
+                drop = DropAbove(encode_spatial_layers, sid);
+                break;
+            }
           }
           if (!drop) {
             state.layer_id.spatial_layer_id = sid;

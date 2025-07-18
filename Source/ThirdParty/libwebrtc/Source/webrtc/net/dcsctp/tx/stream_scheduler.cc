@@ -44,7 +44,7 @@ std::optional<SendQueue::DataToSend> StreamScheduler::Produce(
                        << ", active="
                        << webrtc::StrJoin(
                               active_streams_, ", ",
-                              [&](rtc::StringBuilder& sb, const auto& p) {
+                              [&](webrtc::StringBuilder& sb, const auto& p) {
                                 sb << *p->stream_id() << "@"
                                    << *p->next_finish_time();
                               });

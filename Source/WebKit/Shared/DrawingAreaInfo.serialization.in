@@ -22,17 +22,6 @@
 
 using WebKit::ActivityStateChangeID = uint64_t;
 
-enum class WebKit::DrawingAreaType : uint8_t {
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
-    TiledCoreAnimation,
+#if ENABLE(TILED_CA_DRAWING_AREA)
+enum class WebKit::DrawingAreaType : bool
 #endif
-#if PLATFORM(COCOA)
-    RemoteLayerTree,
-#endif
-#if !PLATFORM(COCOA) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
-    CoordinatedGraphics,
-#endif
-#if USE(GRAPHICS_LAYER_WC)
-    WC,
-#endif
-};

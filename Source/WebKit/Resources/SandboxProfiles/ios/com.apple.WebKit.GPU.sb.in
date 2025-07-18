@@ -514,7 +514,8 @@
 (asset-access 'with-media-playback)
 
 (allow file-read*
-    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7"))
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7")
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font8"))
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read

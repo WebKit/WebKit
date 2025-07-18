@@ -126,7 +126,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     translate = resolveCalculateValuesForTransformOperation(Style::toPlatform(style.translate()), borderBoxSize);
     scale = resolveCalculateValuesForTransformOperation(Style::toPlatform(style.scale()), borderBoxSize);
     rotate = resolveCalculateValuesForTransformOperation(Style::toPlatform(style.rotate()), borderBoxSize);
-    transformOrigin = resolveCalculateValuesFor(style.transformOriginXY(), borderBoxSize);
+    transformOrigin = resolveCalculateValuesFor(Style::toPlatform(style.transformOrigin().xy()), borderBoxSize);
     offsetPath = Style::toPlatform(style.offsetPath());
     offsetPosition = resolveCalculateValuesFor(Style::toPlatform(style.offsetPosition()), borderBoxSize);
     offsetAnchor = resolveCalculateValuesFor(Style::toPlatform(style.offsetAnchor()), borderBoxSize);
