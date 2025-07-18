@@ -45,6 +45,7 @@ enum class InspectorBackendClientDeveloperPreference : uint8_t {
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
     NeedsSiteSpecificQuirks,
+    SiteIsolationDebugOverlay,
 };
 
 class InspectorBackendClient {

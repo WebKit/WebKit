@@ -499,6 +499,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
 
+        engineeringSettingsView.addSeparator();
+
+        let siteIsolationGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Site Isolation:"));
+        siteIsolationGroup.addSetting(WI.settings.engineeringShowSiteIsolationDebugOverlay, WI.unlocalizedString("Show Debug Overlay"));
+
         this.addSettingsView(engineeringSettingsView);
     }
 

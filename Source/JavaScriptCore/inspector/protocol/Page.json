@@ -20,7 +20,8 @@
                 "ScriptEnabled",
                 "ShowDebugBorders",
                 "ShowRepaintCounter",
-                "WebSecurityEnabled"
+                "WebSecurityEnabled",
+                "SiteIsolationDebugOverlay"
             ]
         },
         {

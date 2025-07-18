@@ -237,6 +237,12 @@ WI.contentLoaded = function()
     WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged, WI);
     WI.settings.experimentalAllowInspectingInspector.addEventListener(WI.Setting.Event.Changed, WI._allowInspectingInspectorSettingChanged, WI);
 
+    if (WI.engineeringSettingsAllowed()) {
+        WI.settings.engineeringShowSiteIsolationDebugOverlay.addEventListener(WI.Setting.Event.Changed, function() {
+            WI.mainTarget.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.SiteIsolationDebugOverlay, WI.settings.engineeringShowSiteIsolationDebugOverlay.value);
+        });
+    }
+
     function setTabSize() {
         document.body.style.tabSize = WI.settings.tabSize.value;
     }
@@ -632,6 +638,10 @@ WI.initializeTarget = function(target)
                 // FIXME <rdar://105244623> iOS platforms without a matching legacy protocol definition will fall back to the local macOS protocol definition.
                 console.error(error);
             });
+
+        // COMPATIBILITY (iOS 18.0): Page.Setting.SiteIsolationDebugOverlay did not yet exist.
+        if (target.hasCommand("Page.overrideSetting") && InspectorBackend.Enum.Page.Setting.SiteIsolationDebugOverlay)
+            target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.SiteIsolationDebugOverlay, WI.settings.engineeringShowSiteIsolationDebugOverlay.value);
     }
 };
 

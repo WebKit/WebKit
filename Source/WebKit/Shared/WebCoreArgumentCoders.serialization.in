@@ -8025,6 +8025,7 @@ enum class WebCore::InspectorBackendClientDeveloperPreference : uint8_t {
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
     NeedsSiteSpecificQuirks,
+    SiteIsolationDebugOverlay,
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {

@@ -50,6 +50,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/DebugOverlayRegions.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
 #include <pal/text/TextEncoding.h>
@@ -793,6 +794,19 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBacke
     case InspectorBackendClient::DeveloperPreference::NeedsSiteSpecificQuirks:
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->protectedPreferences()->setNeedsSiteSpecificQuirksInspectorOverride(overrideValue);
+        return;
+
+    case InspectorBackendClient::DeveloperPreference::SiteIsolationDebugOverlay:
+        if (RefPtr inspectedPage = m_inspectedPage.get()) {
+            auto siteIsolationRegion = static_cast<uint32_t>(DebugOverlayRegions::SiteIsolationRegion);
+            auto debugOverlayRegions = inspectedPage->protectedPreferences()->visibleDebugOverlayRegions();
+            if (overrideValue && overrideValue.value())
+                debugOverlayRegions |= siteIsolationRegion;
+            else
+                debugOverlayRegions &= ~siteIsolationRegion;
+
+            inspectedPage->protectedPreferences()->setVisibleDebugOverlayRegions(debugOverlayRegions);
+        }
         return;
     }
 

@@ -411,6 +411,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::ITPDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::MockCaptureDevicesEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::NeedsSiteSpecificQuirks, std::nullopt);
+    m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::SiteIsolationDebugOverlay, std::nullopt);
 
     return { };
 }
@@ -511,6 +512,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Ins
 
     case Inspector::Protocol::Page::Setting::ShowRepaintCounter:
         inspectedPageSettings.setShowRepaintCounterInspectorOverride(value);
+        return { };
+
+    case Inspector::Protocol::Page::Setting::SiteIsolationDebugOverlay:
+        m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::SiteIsolationDebugOverlay, value);
         return { };
 
     case Inspector::Protocol::Page::Setting::WebSecurityEnabled:

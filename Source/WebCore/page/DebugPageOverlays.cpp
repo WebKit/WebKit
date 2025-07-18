@@ -715,16 +715,17 @@ void SiteIsolationOverlay::drawRect(PageOverlay&, GraphicsContext& context, cons
     fontDescription.setWeight(FontSelectionValue(500));
     FontCascade font(WTFMove(fontDescription));
     font.update(nullptr);
+    context.setFillColor(Color::black);
 
     for (RefPtr frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->virtualView())
             continue;
         auto frameView = frame->virtualView();
-        auto debugStr = makeString(is<RemoteFrame>(frame) ? "remote("_s : "local("_s, frame->frameID().toUInt64(), ')');
-        TextRun textRun = TextRun(debugStr);
-        context.setFillColor(Color::black);
 
-        context.drawText(font, textRun, FloatPoint { static_cast<float>(frameView->x()), static_cast<float>(frameView->y() + 12) });
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame)) {
+            auto textRun = TextRun(makeString("frameID="_s, frame->frameID().toUInt64(), ", processID="_s, getCurrentProcessID(), ", url="_s, localFrame->document()->url().string()));
+            context.drawText(font, textRun, FloatPoint { static_cast<float>(frameView->x()), static_cast<float>(frameView->y() + 12) });
+        }
     }
 }
 
