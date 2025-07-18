@@ -4024,7 +4024,7 @@ class GenerateStyleBuilderGenerated:
         to.write(f"        previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
         to.write(f"        child = previousChild->next();")
         to.write(f"    }}")
-        to.write(f"    child->{property.codegen_properties.fill_layer_setter}(parent->{property.codegen_properties.fill_layer_getter}());")
+        to.write(f"    child->{property.codegen_properties.fill_layer_setter}(forwardInheritedValue(parent->{property.codegen_properties.fill_layer_getter}()));")
         to.write(f"    previousChild = child;")
         to.write(f"    child = previousChild->next();")
         to.write(f"}}")

@@ -107,8 +107,6 @@ inline FillBox RenderStyle::backgroundOrigin() const { return backgroundLayers()
 inline FillRepeatXY RenderStyle::backgroundRepeat() const { return backgroundLayers().repeat(); }
 inline const LengthSize& RenderStyle::backgroundSizeLength() const { return backgroundLayers().sizeLength(); }
 inline FillSizeType RenderStyle::backgroundSizeType() const { return backgroundLayers().sizeType(); }
-inline const Length& RenderStyle::backgroundXPosition() const { return backgroundLayers().xPosition(); }
-inline const Length& RenderStyle::backgroundYPosition() const { return backgroundLayers().yPosition(); }
 inline const Style::BlockEllipsis& RenderStyle::blockEllipsis() const { return m_rareInheritedData->blockEllipsis; }
 inline BlockStepAlign RenderStyle::blockStepAlign() const { return static_cast<BlockStepAlign>(m_nonInheritedData->rareData->blockStepAlign); }
 inline BlockStepInsert RenderStyle::blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
@@ -432,7 +430,7 @@ inline Style::MaximumSize RenderStyle::initialMaxSize() { return CSS::Keyword::N
 inline Style::MinimumSize RenderStyle::initialMinSize() { return CSS::Keyword::Auto { }; }
 constexpr NBSPMode RenderStyle::initialNBSPMode() { return NBSPMode::Normal; }
 constexpr ObjectFit RenderStyle::initialObjectFit() { return ObjectFit::Fill; }
-inline LengthPoint RenderStyle::initialObjectPosition() { return { { 50.0f, LengthType::Percent }, { 50.0f, LengthType::Percent } }; }
+inline Style::ObjectPosition RenderStyle::initialObjectPosition() { return { 50_css_percentage, 50_css_percentage }; }
 inline Style::OffsetAnchor RenderStyle::initialOffsetAnchor() { return CSS::Keyword::Auto { }; }
 inline Style::OffsetDistance RenderStyle::initialOffsetDistance() { return 0_css_px; }
 inline Style::OffsetPath RenderStyle::initialOffsetPath() { return CSS::Keyword::None { }; }
@@ -449,8 +447,9 @@ constexpr OverscrollBehavior RenderStyle::initialOverscrollBehaviorY() { return 
 inline Style::PaddingEdge RenderStyle::initialPadding() { return 0_css_px; }
 constexpr PaintOrder RenderStyle::initialPaintOrder() { return PaintOrder::Normal; }
 inline Style::Perspective RenderStyle::initialPerspective() { return CSS::Keyword::None { }; }
-inline Length RenderStyle::initialPerspectiveOriginX() { return { 50.0f, LengthType::Percent }; }
-inline Length RenderStyle::initialPerspectiveOriginY() { return { 50.0f, LengthType::Percent }; }
+inline Style::PerspectiveOrigin RenderStyle::initialPerspectiveOrigin() { return { initialPerspectiveOriginX(), initialPerspectiveOriginY() }; }
+inline Style::PerspectiveOriginX RenderStyle::initialPerspectiveOriginX() { return 50_css_percentage; }
+inline Style::PerspectiveOriginY RenderStyle::initialPerspectiveOriginY() { return 50_css_percentage; }
 constexpr PointerEvents RenderStyle::initialPointerEvents() { return PointerEvents::Auto; }
 constexpr PositionType RenderStyle::initialPosition() { return PositionType::Static; }
 inline std::optional<Style::ScopedName> RenderStyle::initialPositionAnchor() { return { }; }
@@ -516,8 +515,10 @@ constexpr TransformBox RenderStyle::initialTransformBox() { return TransformBox:
 inline Style::Rotate RenderStyle::initialRotate() { return CSS::Keyword::None { }; }
 inline Style::Scale RenderStyle::initialScale() { return CSS::Keyword::None { }; }
 inline Style::Translate RenderStyle::initialTranslate() { return CSS::Keyword::None { }; }
-inline Length RenderStyle::initialTransformOriginX() { return { 50.0f, LengthType::Percent }; }
-inline Length RenderStyle::initialTransformOriginY() { return { 50.0f, LengthType::Percent }; }
+inline Style::TransformOrigin RenderStyle::initialTransformOrigin() { return { initialTransformOriginX(), initialTransformOriginY(), initialTransformOriginZ() }; }
+inline Style::TransformOriginX RenderStyle::initialTransformOriginX() { return 50_css_percentage; }
+inline Style::TransformOriginY RenderStyle::initialTransformOriginY() { return 50_css_percentage; }
+inline Style::TransformOriginZ RenderStyle::initialTransformOriginZ() { return 0_css_px; }
 constexpr TransformStyle3D RenderStyle::initialTransformStyle3D() { return TransformStyle3D::Flat; }
 constexpr UnicodeBidi RenderStyle::initialUnicodeBidi() { return UnicodeBidi::Normal; }
 constexpr UserDrag RenderStyle::initialUserDrag() { return UserDrag::Auto; }
@@ -629,8 +630,6 @@ inline FillBox RenderStyle::maskOrigin() const { return maskLayers().origin(); }
 inline FillRepeatXY RenderStyle::maskRepeat() const { return maskLayers().repeat(); }
 inline const LengthSize& RenderStyle::maskSizeLength() const { return maskLayers().sizeLength(); }
 inline FillSizeType RenderStyle::maskSizeType() const { return maskLayers().sizeType(); }
-inline const Length& RenderStyle::maskXPosition() const { return maskLayers().xPosition(); }
-inline const Length& RenderStyle::maskYPosition() const { return maskLayers().yPosition(); }
 inline MathStyle RenderStyle::mathStyle() const { return static_cast<MathStyle>(m_rareInheritedData->mathStyle); }
 inline const Style::MaximumSize& RenderStyle::maxHeight() const { return m_nonInheritedData->boxData->maxHeight(); }
 inline size_t RenderStyle::maxLines() const { return m_nonInheritedData->rareData->maxLines; }
@@ -640,7 +639,7 @@ inline const Style::MinimumSize& RenderStyle::minWidth() const { return m_nonInh
 inline NBSPMode RenderStyle::nbspMode() const { return static_cast<NBSPMode>(m_rareInheritedData->nbspMode); }
 inline const Style::CustomPropertyData& RenderStyle::nonInheritedCustomProperties() const { return m_nonInheritedData->rareData->customProperties.get(); }
 inline ObjectFit RenderStyle::objectFit() const { return static_cast<ObjectFit>(m_nonInheritedData->miscData->objectFit); }
-inline const LengthPoint& RenderStyle::objectPosition() const { return m_nonInheritedData->miscData->objectPosition; }
+inline const Style::ObjectPosition& RenderStyle::objectPosition() const { return m_nonInheritedData->miscData->objectPosition; }
 inline const Style::OffsetAnchor& RenderStyle::offsetAnchor() const { return m_nonInheritedData->rareData->offsetAnchor; }
 inline const Style::OffsetDistance& RenderStyle::offsetDistance() const { return m_nonInheritedData->rareData->offsetDistance; }
 inline const Style::OffsetPath& RenderStyle::offsetPath() const { return m_nonInheritedData->rareData->offsetPath; }
@@ -675,9 +674,9 @@ inline const LengthSize& RenderStyle::pageSize() const { return m_nonInheritedDa
 inline PageSizeType RenderStyle::pageSizeType() const { return static_cast<PageSizeType>(m_nonInheritedData->rareData->pageSizeType); }
 inline PaintOrder RenderStyle::paintOrder() const { return static_cast<PaintOrder>(m_rareInheritedData->paintOrder); }
 inline const Style::Perspective& RenderStyle::perspective() const { return m_nonInheritedData->rareData->perspective; }
-inline LengthPoint RenderStyle::perspectiveOrigin() const { return m_nonInheritedData->rareData->perspectiveOrigin(); }
-inline const Length& RenderStyle::perspectiveOriginX() const { return m_nonInheritedData->rareData->perspectiveOriginX; }
-inline const Length& RenderStyle::perspectiveOriginY() const { return m_nonInheritedData->rareData->perspectiveOriginY; }
+inline const Style::PerspectiveOrigin& RenderStyle::perspectiveOrigin() const { return m_nonInheritedData->rareData->perspectiveOrigin; }
+inline const Style::PerspectiveOriginX& RenderStyle::perspectiveOriginX() const { return m_nonInheritedData->rareData->perspectiveOrigin.x; }
+inline const Style::PerspectiveOriginY& RenderStyle::perspectiveOriginY() const { return m_nonInheritedData->rareData->perspectiveOrigin.y; }
 inline const std::optional<Style::ScopedName>& RenderStyle::positionAnchor() const { return m_nonInheritedData->rareData->positionAnchor; }
 inline std::optional<PositionArea> RenderStyle::positionArea() const { return m_nonInheritedData->rareData->positionArea; }
 inline Style::PositionTryOrder RenderStyle::positionTryOrder() const { return static_cast<Style::PositionTryOrder>(m_nonInheritedData->rareData->positionTryOrder); }
@@ -754,10 +753,10 @@ inline const Style::InsetEdge& RenderStyle::top() const { return m_nonInheritedD
 inline OptionSet<TouchAction> RenderStyle::touchActions() const { return m_nonInheritedData->rareData->touchActions; }
 inline const TransformOperations& RenderStyle::transform() const { return m_nonInheritedData->miscData->transform->operations; }
 inline TransformBox RenderStyle::transformBox() const { return m_nonInheritedData->miscData->transform->transformBox; }
-inline const Length& RenderStyle::transformOriginX() const { return m_nonInheritedData->miscData->transform->x; }
-inline LengthPoint RenderStyle::transformOriginXY() const { return m_nonInheritedData->miscData->transform->originXY(); }
-inline const Length& RenderStyle::transformOriginY() const { return m_nonInheritedData->miscData->transform->y; }
-inline float RenderStyle::transformOriginZ() const { return m_nonInheritedData->miscData->transform->z; }
+inline const Style::TransformOrigin& RenderStyle::transformOrigin() const { return m_nonInheritedData->miscData->transform->origin; }
+inline const Style::TransformOriginX& RenderStyle::transformOriginX() const { return transformOrigin().x; }
+inline const Style::TransformOriginY& RenderStyle::transformOriginY() const { return transformOrigin().y; }
+inline const Style::TransformOriginZ& RenderStyle::transformOriginZ() const { return transformOrigin().z; }
 inline TransformStyle3D RenderStyle::transformStyle3D() const { return static_cast<TransformStyle3D>(m_nonInheritedData->rareData->transformStyle3D); }
 inline const AnimationList* RenderStyle::transitions() const { return m_nonInheritedData->miscData->transitions.get(); }
 inline AnimationList* RenderStyle::transitions() { return m_nonInheritedData->miscData->transitions.get(); }

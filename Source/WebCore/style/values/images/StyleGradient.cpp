@@ -642,7 +642,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     };
 }
 
-static inline float positionFromValue(const LengthPercentage<>& coordinate, float widthOrHeight)
+static inline float positionFromValue(LengthWrapperBaseDerived auto const& coordinate, float widthOrHeight)
 {
     return evaluate(coordinate, widthOrHeight);
 }

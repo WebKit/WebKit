@@ -538,10 +538,10 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
         break;
     }
 
-    LengthPoint objectPosition = style().objectPosition();
+    auto& objectPosition = style().objectPosition();
 
-    LayoutUnit xOffset = minimumValueForLength(objectPosition.x, contentRect.width() - finalRect.width());
-    LayoutUnit yOffset = minimumValueForLength(objectPosition.y, contentRect.height() - finalRect.height());
+    LayoutUnit xOffset = Style::evaluate(objectPosition.x, contentRect.width() - finalRect.width());
+    LayoutUnit yOffset = Style::evaluate(objectPosition.y, contentRect.height() - finalRect.height());
 
     finalRect.move(xOffset, yOffset);
 

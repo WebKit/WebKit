@@ -299,7 +299,7 @@ private:
 
     static CoordinatePair toCoordinatePair(FloatPoint p)
     {
-        return toPosition(p).value;
+        return { LengthPercentage<>::Dimension { p.x() }, LengthPercentage<>::Dimension { p.y() } };
     }
 
     static Position absoluteOffsetPoint(FloatPoint p)

@@ -239,8 +239,6 @@ public:
     static Ref<CSSValue> convertFillLayerBlendMode(ExtractorState&, BlendMode);
     static Ref<CSSValue> convertFillLayerClip(ExtractorState&, FillBox);
     static Ref<CSSValue> convertFillLayerOrigin(ExtractorState&, FillBox);
-    static Ref<CSSValue> convertFillLayerXPosition(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSValue> convertFillLayerYPosition(ExtractorState&, const WebCore::Length&);
     static Ref<CSSValue> convertFillLayerRepeat(ExtractorState&, FillRepeatXY);
     static Ref<CSSValue> convertFillLayerBackgroundSize(ExtractorState&, FillSize);
     static Ref<CSSValue> convertFillLayerMaskSize(ExtractorState&, FillSize);
@@ -1517,16 +1515,6 @@ inline Ref<CSSValue> ExtractorConverter::convertFillLayerClip(ExtractorState& st
 inline Ref<CSSValue> ExtractorConverter::convertFillLayerOrigin(ExtractorState& state, FillBox origin)
 {
     return convert(state, origin);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertFillLayerXPosition(ExtractorState& state, const WebCore::Length& xPosition)
-{
-    return convertLength(state, xPosition);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertFillLayerYPosition(ExtractorState& state, const WebCore::Length& yPosition)
-{
-    return convertLength(state, yPosition);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertFillLayerRepeat(ExtractorState& state, FillRepeatXY repeat)

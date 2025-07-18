@@ -155,8 +155,6 @@ public:
     static void serializeFillLayerBlendMode(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, BlendMode);
     static void serializeFillLayerClip(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillBox);
     static void serializeFillLayerOrigin(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillBox);
-    static void serializeFillLayerXPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
-    static void serializeFillLayerYPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WebCore::Length&);
     static void serializeFillLayerRepeat(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillRepeatXY);
     static void serializeFillLayerBackgroundSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillSize);
     static void serializeFillLayerMaskSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FillSize);
@@ -1673,16 +1671,6 @@ inline void ExtractorSerializer::serializeFillLayerClip(ExtractorState& state, S
 inline void ExtractorSerializer::serializeFillLayerOrigin(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillBox origin)
 {
     serialize(state, builder, context, origin);
-}
-
-inline void ExtractorSerializer::serializeFillLayerXPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& xPosition)
-{
-    serializeLength(state, builder, context, xPosition);
-}
-
-inline void ExtractorSerializer::serializeFillLayerYPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const WebCore::Length& yPosition)
-{
-    serializeLength(state, builder, context, yPosition);
 }
 
 inline void ExtractorSerializer::serializeFillLayerRepeat(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, FillRepeatXY repeat)

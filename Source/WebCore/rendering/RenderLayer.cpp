@@ -2285,7 +2285,7 @@ FloatPoint RenderLayer::perspectiveOrigin() const
 {
     if (!renderer().hasTransformRelatedProperty())
         return { };
-    return floatPointForLengthPoint(renderer().style().perspectiveOrigin(), renderer().transformReferenceBoxRect(renderer().style()).size());
+    return Style::evaluate(renderer().style().perspectiveOrigin(), renderer().transformReferenceBoxRect(renderer().style()).size());
 }
 
 static inline bool isContainerForPositioned(RenderLayer& layer, PositionType position, bool establishesTopLayer)

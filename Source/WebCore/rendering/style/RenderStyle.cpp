@@ -1414,8 +1414,7 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
         if (usedTransformStyle3D() != other.usedTransformStyle3D()
             || m_nonInheritedData->rareData->backfaceVisibility != other.m_nonInheritedData->rareData->backfaceVisibility
             || m_nonInheritedData->rareData->perspective != other.m_nonInheritedData->rareData->perspective
-            || m_nonInheritedData->rareData->perspectiveOriginX != other.m_nonInheritedData->rareData->perspectiveOriginX
-            || m_nonInheritedData->rareData->perspectiveOriginY != other.m_nonInheritedData->rareData->perspectiveOriginY
+            || m_nonInheritedData->rareData->perspectiveOrigin != other.m_nonInheritedData->rareData->perspectiveOrigin
             || m_nonInheritedData->rareData->overscrollBehaviorX != other.m_nonInheritedData->rareData->overscrollBehaviorX
             || m_nonInheritedData->rareData->overscrollBehaviorY != other.m_nonInheritedData->rareData->overscrollBehaviorY)
             return true;
@@ -1616,11 +1615,11 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaTransformData = [&](auto& first, auto& second) {
-        if (first.x != second.x)
+        if (first.origin.x != second.origin.x)
             changingProperties.m_properties.set(CSSPropertyTransformOriginX);
-        if (first.y != second.y)
+        if (first.origin.y != second.origin.y)
             changingProperties.m_properties.set(CSSPropertyTransformOriginY);
-        if (first.z != second.z)
+        if (first.origin.z != second.origin.z)
             changingProperties.m_properties.set(CSSPropertyTransformOriginZ);
         if (first.transformBox != second.transformBox)
             changingProperties.m_properties.set(CSSPropertyTransformBox);
@@ -1875,9 +1874,9 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyContainIntrinsicWidth);
         if (first.containIntrinsicHeight != second.containIntrinsicHeight)
             changingProperties.m_properties.set(CSSPropertyContainIntrinsicHeight);
-        if (first.perspectiveOriginX != second.perspectiveOriginX)
+        if (first.perspectiveOrigin.x != second.perspectiveOrigin.x)
             changingProperties.m_properties.set(CSSPropertyPerspectiveOriginX);
-        if (first.perspectiveOriginY != second.perspectiveOriginY)
+        if (first.perspectiveOrigin.y != second.perspectiveOrigin.y)
             changingProperties.m_properties.set(CSSPropertyPerspectiveOriginY);
         if (first.initialLetter != second.initialLetter)
             changingProperties.m_properties.set(CSSPropertyWebkitInitialLetter);
@@ -2380,7 +2379,7 @@ bool RenderStyle::affectedByTransformOrigin() const
 
 FloatPoint RenderStyle::computePerspectiveOrigin(const FloatRect& boundingBox) const
 {
-    return boundingBox.location() + floatPointForLengthPoint(perspectiveOrigin(), boundingBox.size());
+    return boundingBox.location() + Style::evaluate(perspectiveOrigin(), boundingBox.size());
 }
 
 void RenderStyle::applyPerspective(TransformationMatrix& transform, const FloatPoint& originTranslate) const
@@ -2402,8 +2401,8 @@ void RenderStyle::applyPerspective(TransformationMatrix& transform, const FloatP
 FloatPoint3D RenderStyle::computeTransformOrigin(const FloatRect& boundingBox) const
 {
     FloatPoint3D originTranslate;
-    originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(transformOriginXY(), boundingBox.size()));
-    originTranslate.setZ(transformOriginZ());
+    originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(Style::toPlatform(transformOrigin().xy()), boundingBox.size()));
+    originTranslate.setZ(transformOriginZ().value);
     return originTranslate;
 }
 
@@ -2476,8 +2475,8 @@ void RenderStyle::setPageScaleTransform(float scale)
         return;
 
     setTransform(TransformOperations { ScaleTransformOperation::create(scale, scale, TransformOperation::Type::Scale) });
-    setTransformOriginX(Length(0, LengthType::Fixed));
-    setTransformOriginY(Length(0, LengthType::Fixed));
+    setTransformOriginX(0_css_px);
+    setTransformOriginY(0_css_px);
 }
 
 StyleImage* RenderStyle::listStyleImage() const

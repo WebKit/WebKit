@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "LengthPoint.h"
 #include "RenderStyleConstants.h"
+#include "StyleTransformOrigin.h"
 #include "TransformOperations.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -47,12 +47,8 @@ public:
 
     bool hasTransform() const { return operations.size(); }
 
-    LengthPoint originXY() const { return { x, y }; }
-
     TransformOperations operations;
-    Length x;
-    Length y;
-    float z;
+    Style::TransformOrigin origin;
     TransformBox transformBox;
 
 private:

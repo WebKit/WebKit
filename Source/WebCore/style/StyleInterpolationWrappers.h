@@ -336,32 +336,6 @@ private:
     OptionSet<Flags> m_flags;
 };
 
-class LengthPointWrapper : public WrapperWithGetter<const LengthPoint&> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LengthPointWrapper, Animation);
-public:
-    LengthPointWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
-        : WrapperWithGetter(property, getter)
-        , m_setter(setter)
-    {
-    }
-
-    bool requiresInterpolationForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
-    {
-        auto fromLengthPoint = value(from);
-        auto toLengthPoint = value(to);
-        return lengthsRequireInterpolationForAccumulativeIteration(fromLengthPoint.x, toLengthPoint.x)
-            || lengthsRequireInterpolationForAccumulativeIteration(fromLengthPoint.y, toLengthPoint.y);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        (destination.*m_setter)(blendFunc(value(from), value(to), context));
-    }
-
-private:
-    void (RenderStyle::*m_setter)(LengthPoint);
-};
-
 template<typename T>
 class LengthVariantWrapper final : public WrapperWithGetter<const T&> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LengthVariantWrapper, Animation);
@@ -1891,40 +1865,51 @@ private:
     void (FillLayer::*m_setter)(T);
 };
 
-class FillLayerPositionWrapper final : public FillLayerWrapperWithGetter<const WebCore::Length&> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FillLayerPositionWrapper, Animation);
+template<typename StyleType>
+class FillLayerStyleTypeWrapper final : public FillLayerWrapperBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FillLayerStyleTypeWrapper, Animation);
 public:
-    FillLayerPositionWrapper(CSSPropertyID property, const WebCore::Length& (FillLayer::*lengthGetter)() const, void (FillLayer::*lengthSetter)(WebCore::Length))
-        : FillLayerWrapperWithGetter(property, lengthGetter)
-        , m_lengthSetter(lengthSetter)
+    FillLayerStyleTypeWrapper(CSSPropertyID property, const StyleType& (FillLayer::*getter)() const, void (FillLayer::*setter)(StyleType&&))
+        : FillLayerWrapperBase(property)
+        , m_getter(getter)
+        , m_setter(setter)
     {
     }
 
-private:
-    bool equals(const FillLayer* a, const FillLayer* b) const final
+    bool equals(const FillLayer* from, const FillLayer* to) const override
     {
-        if (a == b)
+        if (from == to)
             return true;
-        if (!a || !b)
+        if (!from || !to)
             return false;
-        return value(a) == value(b);
+        return Style::equalsForBlending(value(from), value(to));
     }
 
-    void interpolate(FillLayer* destination, const FillLayer* from, const FillLayer* to, const Context& context) const final
+    bool canInterpolate(const FillLayer* from, const FillLayer* to) const override final
     {
-        auto fromLength = value(from);
-        auto toLength = value(to);
-        (destination->*m_lengthSetter)(blendFunc(fromLength, toLength, context));
+        return Style::canBlend(value(from), value(to));
+    }
+
+    void interpolate(FillLayer* destination, const FillLayer* from, const FillLayer* to, const Context& context) const override final
+    {
+        (destination->*m_setter)(Style::blend(value(from), value(to), context));
     }
 
 #if !LOG_DISABLED
-    void log(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
+    void log(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const override final
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
-    void (FillLayer::*m_lengthSetter)(WebCore::Length);
+private:
+    const StyleType& value(const FillLayer* layer) const
+    {
+        return (layer->*m_getter)();
+    }
+
+    const StyleType& (FillLayer::*m_getter)() const;
+    void (FillLayer::*m_setter)(StyleType&&);
 };
 
 template<typename T>
@@ -2042,11 +2027,11 @@ public:
         switch (property) {
         case CSSPropertyBackgroundPositionX:
         case CSSPropertyWebkitMaskPositionX:
-            m_fillLayerWrapper = makeUnique<FillLayerPositionWrapper>(property, &FillLayer::xPosition, &FillLayer::setXPosition);
+            m_fillLayerWrapper = makeUnique<FillLayerStyleTypeWrapper<FillPositionX>>(property, &FillLayer::xPosition, &FillLayer::setXPosition);
             break;
         case CSSPropertyBackgroundPositionY:
         case CSSPropertyWebkitMaskPositionY:
-            m_fillLayerWrapper = makeUnique<FillLayerPositionWrapper>(property, &FillLayer::yPosition, &FillLayer::setYPosition);
+            m_fillLayerWrapper = makeUnique<FillLayerStyleTypeWrapper<FillPositionY>>(property, &FillLayer::yPosition, &FillLayer::setYPosition);
             break;
         case CSSPropertyBackgroundSize:
         case CSSPropertyWebkitBackgroundSize:

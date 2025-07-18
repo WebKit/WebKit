@@ -94,6 +94,7 @@
 #include "StylePerspective.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
@@ -135,9 +136,6 @@ public:
     static TabSize convertTabSize(BuilderState&, const CSSValue&);
     template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
     template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
-    static LengthPoint convertPosition(BuilderState&, const CSSValue&);
-    static WebCore::Length convertPositionComponentX(BuilderState&, const CSSValue&);
-    static WebCore::Length convertPositionComponentY(BuilderState&, const CSSValue&);
     static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
     static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
@@ -354,30 +352,6 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
         ASSERT_NOT_REACHED();
         return 0;
     }
-}
-
-inline LengthPoint BuilderConverter::convertPosition(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionValue = requiredDowncast<CSSPositionValue>(builderState, value);
-    if (!positionValue)
-        return RenderStyle::initialObjectPosition();
-    return toPlatform(toStyle(positionValue->position(), builderState));
-}
-
-inline WebCore::Length BuilderConverter::convertPositionComponentX(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionXValue = requiredDowncast<CSSPositionXValue>(builderState, value);
-    if (!positionXValue)
-        return { };
-    return toPlatform(toStyle(positionXValue->position(), builderState));
-}
-
-inline WebCore::Length BuilderConverter::convertPositionComponentY(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionYValue = requiredDowncast<CSSPositionYValue>(builderState, value);
-    if (!positionYValue)
-        return { };
-    return toPlatform(toStyle(positionYValue->position(), builderState));
 }
 
 inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine(BuilderState&, const CSSValue& value)

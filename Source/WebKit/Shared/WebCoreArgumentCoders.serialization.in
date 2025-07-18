@@ -3224,14 +3224,21 @@ using WebCore::Style::ShapeCommand = Variant<WebCore::Style::MoveCommand, WebCor
 };
 
 header: <WebCore/StylePosition.h>
+[CustomHeader, Nested] struct WebCore::Style::PositionX {
+    Variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData();
+};
+[CustomHeader, Nested] struct WebCore::Style::PositionY {
+    Variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData();
+};
 [CustomHeader, Nested] struct WebCore::Style::Position {
-    WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll> value;
+    WebCore::Style::PositionX x;
+    WebCore::Style::PositionY y;
 };
 [CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionHorizontal {
-    WebCore::Style::LengthPercentageAll offset;
+    WebCore::Style::PositionX offset;
 };
 [CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionVertical {
-    WebCore::Style::LengthPercentageAll offset;
+    WebCore::Style::PositionY offset;
 };
 
 header: <WebCore/StyleGradient.h>

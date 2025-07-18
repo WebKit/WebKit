@@ -27,6 +27,7 @@
 #include "CSSPrimitiveKeywordList.h"
 #include "Length.h"
 #include "LengthFunctions.h"
+#include "StylePrimitiveNumericTypes+Platform.h"
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleValueTypes.h"
 #include <wtf/text/TextStream.h>
@@ -70,6 +71,8 @@ template<typename Numeric, CSS::PrimitiveKeyword... Ks> struct LengthWrapperBase
 
     LengthWrapperBase(Fixed fixed) : m_value(fixed.value, WebCore::LengthType::Fixed) { }
     LengthWrapperBase(Percentage percent) : m_value(percent.value, WebCore::LengthType::Percent) { }
+    LengthWrapperBase(Specified&& specified) : m_value(toPlatform(WTFMove(specified))) { }
+    LengthWrapperBase(const Specified& specified) : m_value(toPlatform(specified)) { }
 
     LengthWrapperBase(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : m_value(static_cast<float>(literal.value), WebCore::LengthType::Fixed) { }
     LengthWrapperBase(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : m_value(static_cast<float>(literal.value), WebCore::LengthType::Percent) { }
@@ -78,6 +81,10 @@ template<typename Numeric, CSS::PrimitiveKeyword... Ks> struct LengthWrapperBase
     explicit LengthWrapperBase(const WebCore::Length& other) : m_value(other) { validate(m_value); }
 
     explicit LengthWrapperBase(WTF::HashTableEmptyValueType token) : m_value(token) { }
+
+    // IPC Support
+    explicit LengthWrapperBase(WebCore::Length::IPCData&& data) : m_value { WTFMove(data) } { validate(m_value); }
+    WebCore::Length::IPCData ipcData() const { return m_value.ipcData(); }
 
     ALWAYS_INLINE bool isFixed() const { return m_value.type() == WebCore::LengthType::Fixed; }
     ALWAYS_INLINE bool isPercent() const { return m_value.type() == WebCore::LengthType::Percent; }

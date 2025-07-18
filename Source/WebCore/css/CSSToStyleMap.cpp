@@ -223,7 +223,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
         layer.setXPosition(FillLayer::initialFillXPosition(layer.type()));
         return;
     }
-    layer.setXPosition(Style::BuilderConverter::convertPositionComponentX(m_builderState, value));
+    layer.setXPosition(Style::toStyleFromCSSValue<Style::PositionX>(m_builderState, value));
 }
 
 void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -232,7 +232,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
         layer.setYPosition(FillLayer::initialFillYPosition(layer.type()));
         return;
     }
-    layer.setYPosition(Style::BuilderConverter::convertPositionComponentY(m_builderState, value));
+    layer.setYPosition(Style::toStyleFromCSSValue<Style::PositionY>(m_builderState, value));
 }
 
 void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)

@@ -304,6 +304,9 @@ struct OffsetPosition;
 struct OffsetRotate;
 struct PaddingEdge;
 struct Perspective;
+struct Position;
+struct PositionX;
+struct PositionY;
 struct PositionTryFallback;
 struct PreferredSize;
 struct ProgressTimelineAxes;
@@ -320,6 +323,7 @@ struct TextEmphasisStyle;
 struct TextIndent;
 struct TextShadow;
 struct TextUnderlineOffset;
+struct TransformOrigin;
 struct Translate;
 struct ViewTimelineInsets;
 struct ViewTimelines;
@@ -336,10 +340,18 @@ using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentag
 using BoxShadows = Shadows<BoxShadow>;
 using InsetBox = MinimallySerializingSpaceSeparatedRectEdges<InsetEdge>;
 using MarginBox = MinimallySerializingSpaceSeparatedRectEdges<MarginEdge>;
+using ObjectPosition = Position;
 using PaddingBox = MinimallySerializingSpaceSeparatedRectEdges<PaddingEdge>;
+using PerspectiveOrigin = Position;
+using PerspectiveOriginX = PositionX;
+using PerspectiveOriginY = PositionY;
 using ScrollMarginBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollMarginEdge>;
 using ScrollPaddingBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollPaddingEdge>;
 using TextShadows = Shadows<TextShadow>;
+using TransformOriginX = PositionX;
+using TransformOriginXY = Position;
+using TransformOriginY = PositionY;
+using TransformOriginZ = Length<>;
 }
 
 constexpr auto PublicPseudoIDBits = 17;
@@ -714,8 +726,6 @@ public:
     inline FillAttachment backgroundAttachment() const;
     inline FillBox backgroundClip() const;
     inline FillBox backgroundOrigin() const;
-    inline const Length& backgroundXPosition() const;
-    inline const Length& backgroundYPosition() const;
     inline FillSizeType backgroundSizeType() const;
     inline const LengthSize& backgroundSizeLength() const;
     inline FillLayer& ensureBackgroundLayers();
@@ -728,8 +738,6 @@ public:
     inline CompositeOperator maskComposite() const;
     inline FillBox maskClip() const;
     inline FillBox maskOrigin() const;
-    inline const Length& maskXPosition() const;
-    inline const Length& maskYPosition() const;
     inline FillSizeType maskSizeType() const;
     inline const LengthSize& maskSizeLength() const;
     inline FillLayer& ensureMaskLayers();
@@ -952,10 +960,10 @@ public:
 
     inline const TransformOperations& transform() const;
     inline bool hasTransform() const;
-    inline const Length& transformOriginX() const;
-    inline const Length& transformOriginY() const;
-    inline float transformOriginZ() const;
-    inline LengthPoint transformOriginXY() const;
+    inline const Style::TransformOrigin& transformOrigin() const;
+    inline const Style::TransformOriginX& transformOriginX() const;
+    inline const Style::TransformOriginY& transformOriginY() const;
+    inline const Style::TransformOriginZ& transformOriginZ() const;
 
     inline TransformBox transformBox() const;
 
@@ -987,7 +995,7 @@ public:
     inline TableLayoutType tableLayout() const;
 
     inline ObjectFit objectFit() const;
-    inline const LengthPoint& objectPosition() const;
+    inline const Style::ObjectPosition& objectPosition() const;
 
     // Return true if any transform related property (currently transform, translate, scale, rotate, transformStyle3D or perspective)
     // indicates that we are transforming. The usedTransformStyle3D is not used here because in many cases (such as for deciding
@@ -1080,9 +1088,9 @@ public:
     inline const Style::Perspective& perspective() const;
     inline float usedPerspective() const;
     inline bool hasPerspective() const;
-    inline const Length& perspectiveOriginX() const;
-    inline const Length& perspectiveOriginY() const;
-    inline LengthPoint perspectiveOrigin() const;
+    inline const Style::PerspectiveOrigin& perspectiveOrigin() const;
+    inline const Style::PerspectiveOriginX& perspectiveOriginX() const;
+    inline const Style::PerspectiveOriginY& perspectiveOriginY() const;
 
     inline const LengthSize& pageSize() const;
     inline PageSizeType pageSizeType() const;
@@ -1394,11 +1402,7 @@ public:
     void setMaskBorderHorizontalRule(NinePieceImageRule);
     void setMaskBorderVerticalRule(NinePieceImageRule);
 
-    inline void setMaskXPosition(Length&&);
-    inline void setMaskYPosition(Length&&);
     inline void setMaskRepeat(FillRepeatXY);
-
-    inline void setMaskSize(LengthSize);
 
     void setBorderCollapse(BorderCollapse collapse) { m_inheritedFlags.borderCollapse = static_cast<unsigned>(collapse); }
     void setHorizontalBorderSpacing(float);
@@ -1573,9 +1577,10 @@ public:
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
 
     inline void setTransform(TransformOperations&&);
-    inline void setTransformOriginX(Length&&);
-    inline void setTransformOriginY(Length&&);
-    inline void setTransformOriginZ(float);
+    inline void setTransformOrigin(Style::TransformOrigin&&);
+    inline void setTransformOriginX(Style::TransformOriginX&&);
+    inline void setTransformOriginY(Style::TransformOriginY&&);
+    inline void setTransformOriginZ(Style::TransformOriginZ&&);
     inline void setTransformBox(TransformBox);
 
     inline void setRotate(Style::Rotate&&);
@@ -1590,7 +1595,7 @@ public:
     inline void setTextEmphasisPosition(OptionSet<TextEmphasisPosition>);
 
     inline void setObjectFit(ObjectFit);
-    inline void setObjectPosition(LengthPoint);
+    inline void setObjectPosition(Style::ObjectPosition&&);
 
     inline void setRubyPosition(RubyPosition);
     inline void setRubyAlign(RubyAlign);
@@ -1636,8 +1641,9 @@ public:
     inline void setTransformStyleForcedToFlat(bool);
     inline void setBackfaceVisibility(BackfaceVisibility);
     inline void setPerspective(Style::Perspective&&);
-    inline void setPerspectiveOriginX(Length&&);
-    inline void setPerspectiveOriginY(Length&&);
+    inline void setPerspectiveOrigin(Style::PerspectiveOrigin&&);
+    inline void setPerspectiveOriginX(Style::PerspectiveOriginX&&);
+    inline void setPerspectiveOriginY(Style::PerspectiveOriginY&&);
     inline void setPageSize(LengthSize);
     inline void setPageSizeType(PageSizeType);
     inline void resetPageSizeType();
@@ -1957,7 +1963,7 @@ public:
     static constexpr TextCombine initialTextCombine();
     static constexpr TextOrientation initialTextOrientation();
     static constexpr ObjectFit initialObjectFit();
-    static inline LengthPoint initialObjectPosition();
+    static inline Style::ObjectPosition initialObjectPosition();
     static constexpr EmptyCell initialEmptyCells();
     static constexpr ListStylePosition initialListStylePosition();
     static inline Style::ListStyleType initialListStyleType();
@@ -2075,19 +2081,21 @@ public:
     static inline Style::GapGutter initialColumnGap();
     static inline Style::GapGutter initialRowGap();
     static inline TransformOperations initialTransform();
-    static inline Length initialTransformOriginX();
-    static inline Length initialTransformOriginY();
+    static inline Style::TransformOrigin initialTransformOrigin();
+    static inline Style::TransformOriginX initialTransformOriginX();
+    static inline Style::TransformOriginY initialTransformOriginY();
+    static inline Style::TransformOriginZ initialTransformOriginZ();
     static constexpr TransformBox initialTransformBox();
     static inline Style::Rotate initialRotate();
     static inline Style::Scale initialScale();
     static inline Style::Translate initialTranslate();
     static constexpr PointerEvents initialPointerEvents();
-    static float initialTransformOriginZ() { return 0; }
     static constexpr TransformStyle3D initialTransformStyle3D();
     static constexpr BackfaceVisibility initialBackfaceVisibility();
     static inline Style::Perspective initialPerspective();
-    static inline Length initialPerspectiveOriginX();
-    static inline Length initialPerspectiveOriginY();
+    static inline Style::PerspectiveOrigin initialPerspectiveOrigin();
+    static inline Style::PerspectiveOriginX initialPerspectiveOriginX();
+    static inline Style::PerspectiveOriginY initialPerspectiveOriginY();
     static inline Style::Color initialBackgroundColor();
     static inline Style::Color initialTextEmphasisColor();
     static inline Style::TextEmphasisStyle initialTextEmphasisStyle();
