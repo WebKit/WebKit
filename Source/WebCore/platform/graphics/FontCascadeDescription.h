@@ -74,6 +74,7 @@ public:
     FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
     static FontSelectionValue lighterWeight(FontSelectionValue);
     static FontSelectionValue bolderWeight(FontSelectionValue);
+    float usedZoom() const { return m_zoom; }
 
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily() == monospaceFamily; }
@@ -110,6 +111,7 @@ public:
     }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
+    void setUsedZoom(float zoom) { m_zoom = zoom; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     bool familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
@@ -165,6 +167,7 @@ private:
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
     // True if a web page specifies a non-generic font family as the first font family.
     unsigned m_isSpecifiedFont : 1;
+    float m_zoom { 1.0f };
 };
 
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
@@ -176,7 +179,8 @@ inline bool FontCascadeDescription::operator==(const FontCascadeDescription& oth
         && m_kerning == other.m_kerning
         && m_keywordSize == other.m_keywordSize
         && m_fontSmoothing == other.m_fontSmoothing
-        && m_isSpecifiedFont == other.m_isSpecifiedFont;
+        && m_isSpecifiedFont == other.m_isSpecifiedFont
+        && m_zoom == other.m_zoom;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontCascadeDescription&);

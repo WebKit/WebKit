@@ -233,6 +233,7 @@ void BuilderState::updateFontForZoomChange()
         return;
 
     setFontDescriptionFontSize(m_style.fontDescription().specifiedSize());
+    m_style.mutableFontDescriptionWithoutUpdate().setUsedZoom(m_style.usedZoom());
 }
 
 void BuilderState::updateFontForGenericFamilyChange()

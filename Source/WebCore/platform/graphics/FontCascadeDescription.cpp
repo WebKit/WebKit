@@ -56,6 +56,7 @@ struct SameSizeAsFontCascadeDescription {
     unsigned bitfields2 : 22;
     void* array;
     float size2;
+    float size3;
     unsigned bitfields3 : 10;
 };
 static_assert(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), "FontCascadeDescription should stay small");

@@ -189,17 +189,33 @@ float FontCascade::letterSpacing() const
 
 float FontCascade::wordSpacing() const
 {
+    float spacing = 0;
     switch (m_spacing.word.type()) {
     case LengthType::Fixed:
-        return m_spacing.word.value();
+        spacing = m_spacing.word.value();
+        break;
     case LengthType::Percent:
+        // NO zoom for percentages per spec
         return m_spacing.word.percent() / 100 * size();
     case LengthType::Calculated:
-        return m_spacing.word.nonNanCalculatedValue(size());
-    default:
+        spacing = m_spacing.word.nonNanCalculatedValue(size());
+        break;
+    case LengthType::Relative:
+    case LengthType::Auto:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FitContent:
+    case LengthType::Undefined:
+    case LengthType::Content:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::Normal:
+    case LengthType::FillAvailable:
         ASSERT_NOT_REACHED();
         return 0;
     }
+
+    return spacing * m_fontDescription.usedZoom();
 }
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
