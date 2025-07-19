@@ -92,15 +92,6 @@ static_assert(areCanonicallyEquivalentCharArgReg == GPRInfo::returnValueGPR);
 #endif
 #endif
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-// This enhancement allows us to advance the index by 2 when we read a non-BMP surrogate pair, but fail to match.
-// The way it works is that we initialize the firstCharacterAdditionalReadSize register to an initial sentinal value.
-// When reading a possible surrogate pair, we change firstCharacterAdditionalReadSize from the sentinal to 0 if we read
-// a BMP (16-bit) character or 1 if the read value is a non-BMP. Once changed from the sentinel value, we don't change
-// again during the next read. We add firstCharacterAdditionalReadSize to index for the next iteration on a failed
-// match and when setting the the possible new match start location.
-constexpr static int32_t additionalReadSizeSentinel = 0x4;
-#endif
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreBitmap);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreFastCandidates);
@@ -445,6 +436,17 @@ void tryReadUnicodeCharSlowImpl(CCallHelpers& jit)
 
     // if it is surrogate pair, we already handled it in the inlined code.
 
+#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+        if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization)
+            jit.move(MacroAssembler::TrustedImm32(1), regs.firstCharacterAdditionalReadSize);
+#endif
+
+    if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
+        jit.ret();
+    else
+        haveResult.append(jit.jump());
+
+    notSurrogatePair.link(&jit);
     // Check if we can return the dangling surrogate or if it is part of a valid pair where the leading surrogate
     // that is offset one character before the load pointer.
     jit.and32(MacroAssembler::TrustedImm32(0xffff), regs.unicodeAndSubpatternIdTemp);
@@ -452,7 +454,7 @@ void tryReadUnicodeCharSlowImpl(CCallHelpers& jit)
     // If so fall through, otherwise perform other dangling checks.
     checkForDanglingSurrogates.append(jit.branch32(MacroAssembler::Equal, regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0xdc00)));
 
-    isBMP.link(jit);
+    isBMP.link(&jit);
     jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
@@ -462,14 +464,17 @@ void tryReadUnicodeCharSlowImpl(CCallHelpers& jit)
     }
 #endif
 
-    jit.ret();
+    if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
+        jit.ret();
+    else
+        haveResult.append(jit.jump());
 
     checkForDanglingSurrogates.link(&jit);
     // Remove the second character that we loaded.
     jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
     MacroAssembler::Label checkForDanglingSurrogatesLabel(&jit);
 
-    // Can ew read the prior character?
+    // Can we read the prior character?
     jit.subPtr(MacroAssembler::TrustedImm32(2), regs.regUnicodeInputAndTrail);
     // If not, we branch to return the dangling surrogate.
     bmpDone.append(jit.branchPtr(MacroAssembler::Below, regs.regUnicodeInputAndTrail, regs.input));
@@ -3233,6 +3238,12 @@ class YarrGenerator final : public YarrJITInfo {
 
                 termMatchTargets.append(MatchTargets());
 
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+                // Always set to zero.
+                if (m_useFirstNonBMPCharacterOptimization)
+                    m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
+#endif
+
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
@@ -3241,11 +3252,6 @@ class YarrGenerator final : public YarrJITInfo {
                 // set as appropriate to this alternative.
                 op.m_reentry = m_jit.label();
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                // Clear first character read size so it can be set on the first read.
-                if (m_useFirstNonBMPCharacterOptimization)
-                    m_jit.move(MacroAssembler::TrustedImm32(additionalReadSizeSentinel), m_regs.firstCharacterAdditionalReadSize);
-#endif
 
                 // Emit fast skip path with stride if we have BoyerMooreInfo.
                 if (op.m_bmInfo) {
