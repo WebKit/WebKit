@@ -30,6 +30,7 @@
 #include "CachedResource.h"
 #include <wtf/OptionSet.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 
 namespace WebCore::ContentExtensions {
 
@@ -38,7 +39,8 @@ enum class ActionCondition : uint32_t {
     IfTopURL = 0x40000,
     UnlessTopURL = 0x80000,
     IfFrameURL = 0x140000,
-    UnlessFrameURL = 0x180000
+    UnlessFrameURL = 0x180000,
+    IfAncestorSubframeURL = 0x1C0000
 };
 static constexpr uint32_t ActionConditionMask = 0x1C0000;
 
@@ -110,6 +112,7 @@ struct ResourceLoadInfo {
     OptionSet<ResourceType> type;
     bool mainFrameContext { false };
     RequestMethod requestMethod { RequestMethod::None };
+    Vector<URL> ancestorSubframeURLs { };
 
     bool isThirdParty() const;
     ResourceFlags getResourceFlags() const;
