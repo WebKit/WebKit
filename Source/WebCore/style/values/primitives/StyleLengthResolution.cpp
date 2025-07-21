@@ -397,7 +397,7 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
     // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
     // as well as enforcing the implicit "smart minimum."
-    if (conversionData.computingFontSize() || isFontOrRootFontRelativeLength(lengthUnit))
+    if (conversionData.computingFontSize())
         return value;
 
     return value * conversionData.zoom();
