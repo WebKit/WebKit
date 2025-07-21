@@ -350,6 +350,13 @@ class RadarClient(object):
         self.parent.request_count += 1
         return list(self.parent.milestones.values())
 
+    def milestone_associations_for_component_id(self, component_id, milestone_id=None, category_id=None, event_id=None, tentpole_id=None, include_closed=False):
+        for m in self.parent.milestones.values():
+            if m.id == milestone_id:
+                milestone = m
+                break
+        return RadarModel.MilestoneAssociations(milestone=milestone)
+
     def find_components(self, request_data):
         self.parent.request_count += 1
 
@@ -498,7 +505,8 @@ class Radar(Base, ContextStack):
             pass
 
     class Component(object):
-        def __init__(self, name, description, version):
+        def __init__(self, name, description, version, id=1):
+            self.id = id
             self.name = name
             self.description = description
             self.version = version
@@ -559,6 +567,7 @@ class Radar(Base, ContextStack):
     class Milestone(object):
         def __init__(
             self, name,
+            id=1,
             isClosed=False,
             isRestricted=False, restrictedAccessGroups=None,
             isProtected=False, protectedAccessGroups=None,
@@ -567,6 +576,7 @@ class Radar(Base, ContextStack):
             isTentpoleRequired=False, tentpoles=None,
         ):
             self.name = name['name'] if isinstance(name, dict) else name
+            self.id = id
             self.isClosed = isClosed
             self.isRestricted = isRestricted
             self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
