@@ -29,16 +29,15 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
-// MallocPtr is a smart pointer class that calls fastFree in its destructor.
-// It is intended to be used for pointers where the C++ lifetime semantics
-// (calling constructors and destructors) is not desired. 
-
 namespace WTF {
 
-// We shouldn't use this class in new code and should just use std::unique_ptr. It's the same when T has no destructor and MallocPtr is likely the wrong
-// container if T does.
-// FIXME: Remove this class https://bugs.webkit.org/show_bug.cgi?id=294022
+// MallocPtr is a smart pointer associated with a particular allocator,
+// for situations where calling C++ destructors is not required.
+// The referent type {T} must be trivially destructible.
+// The owned memory is freed by calling {Malloc}::free().
 template<typename T, typename Malloc = FastMalloc> class MallocPtr {
+    static_assert(std::is_trivially_destructible_v<T>);
+
     WTF_MAKE_NONCOPYABLE(MallocPtr);
 public:
     MallocPtr() = default;
