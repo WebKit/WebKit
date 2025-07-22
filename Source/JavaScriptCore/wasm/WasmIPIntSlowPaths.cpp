@@ -145,7 +145,7 @@ static inline RefPtr<Wasm::JITCallee> jitCompileAndSetHeuristics(Wasm::IPIntCall
     if (compile) {
         Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
         if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
-            auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
+            auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->lowerTierInfo(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
             Wasm::ensureWorklist().enqueue(plan.get());
             if (!Options::useConcurrentJIT() || !Options::useWasmIPInt()) [[unlikely]]
                 plan->waitForCompletion();
@@ -198,7 +198,7 @@ static inline Expected<RefPtr<Wasm::JITCallee>, Wasm::Plan::Error> jitCompileSIM
 
     Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
     ASSERT(instance->module().moduleInformation().usesSIMD(functionIndex));
-    auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
+    auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->lowerTierInfo(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
     Wasm::ensureWorklist().enqueue(plan.get());
     plan->waitForCompletion();
     if (plan->failed())

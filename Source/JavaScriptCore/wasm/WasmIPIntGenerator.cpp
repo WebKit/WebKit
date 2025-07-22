@@ -3004,6 +3004,8 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     m_metadata->m_maxFrameSizeInV128 += m_metadata->m_numAlignedRethrowSlots / 2;
     m_metadata->m_maxFrameSizeInV128 += m_maxStackSize;
 
+    m_metadata->m_maxExpressionStackSize = m_maxStackSize;
+
     return WTFMove(m_metadata);
 }
 

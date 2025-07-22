@@ -246,6 +246,7 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, FunctionSpac
     , m_numRethrowSlotsToAlloc(generator.m_numAlignedRethrowSlots)
     , m_numLocals(generator.m_numLocals)
     , m_numArgumentsOnStack(generator.m_numArgumentsOnStack)
+    , m_maxExpressionStackSize(generator.m_maxExpressionStackSize)
     , m_maxFrameSizeInV128(generator.m_maxFrameSizeInV128)
     , m_tierUpCounter(WTFMove(generator.m_tierUpCounter))
 {

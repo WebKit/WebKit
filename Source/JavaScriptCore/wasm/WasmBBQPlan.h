@@ -52,9 +52,9 @@ class BBQPlan final : public Plan {
 public:
     using Base = Plan;
 
-    static Ref<BBQPlan> create(VM& vm, Ref<ModuleInformation>&& info, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
+    static Ref<BBQPlan> create(VM& vm, Ref<ModuleInformation>&& info, FunctionCodeIndex functionIndex, const LowerTierInformation& lowerTierInfo, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
     {
-        return adoptRef(*new BBQPlan(vm, WTFMove(info), functionIndex, hasExceptionHandlers, WTFMove(calleeGroup), WTFMove(completionTask)));
+        return adoptRef(*new BBQPlan(vm, WTFMove(info), functionIndex, lowerTierInfo, WTFMove(calleeGroup), WTFMove(completionTask)));
     }
 
     bool hasWork() const final { return !m_completed; }
@@ -65,7 +65,7 @@ public:
 
 
 private:
-    BBQPlan(VM&, Ref<ModuleInformation>&&, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&&, CompletionTask&&);
+    BBQPlan(VM&, Ref<ModuleInformation>&&, FunctionCodeIndex functionIndex, const LowerTierInformation&, Ref<CalleeGroup>&&, CompletionTask&&);
 
     bool dumpDisassembly(CompilationContext&, LinkBuffer&, FunctionCodeIndex functionIndex, const TypeDefinition&, FunctionSpaceIndex functionIndexSpace);
 
@@ -80,7 +80,7 @@ private:
     const Ref<CalleeGroup> m_calleeGroup;
     FunctionCodeIndex m_functionIndex;
     bool m_completed { false };
-    std::optional<bool> m_hasExceptionHandlers;
+    LowerTierInformation m_lowerTierInfo;
 };
 
 

@@ -430,6 +430,10 @@ private:
 };
 #endif
 
+struct LowerTierInformation {
+    std::optional<unsigned> maxExpressionStackSize;
+    std::optional<bool> hasExceptionHandlers;
+};
 
 class IPIntCallee final : public Callee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(IPIntCallee);
@@ -449,6 +453,15 @@ public:
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
     unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
+    unsigned maxExpressionStackSize() const { return m_maxExpressionStackSize; }
+
+    LowerTierInformation lowerTierInfo() const
+    {
+        return {
+            .maxExpressionStackSize = maxExpressionStackSize(),
+            .hasExceptionHandlers = hasExceptionHandlers(),
+        };
+    }
 
     const TypeDefinition& signature(unsigned index) const
     {
@@ -485,6 +498,7 @@ private:
     unsigned m_numRethrowSlotsToAlloc;
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
+    unsigned m_maxExpressionStackSize;
     unsigned m_maxFrameSizeInV128;
 
     IPIntTierUpCounter m_tierUpCounter;
@@ -509,6 +523,14 @@ public:
     const FixedVector<Type>& constantTypes() const { return m_constantTypes; }
     const FixedVector<uint64_t>& constants() const { return m_constants; }
     const WasmInstructionStream& instructions() const { return *m_instructions; }
+
+    LowerTierInformation lowerTierInfo() const
+    {
+        return {
+            .maxExpressionStackSize = std::nullopt,
+            .hasExceptionHandlers = hasExceptionHandlers(),
+        };
+    }
 
     ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
     ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
