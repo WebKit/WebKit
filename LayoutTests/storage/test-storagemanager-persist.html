@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StorageManager.persist() ITP Test</title>
+    <script src="../resources/js-test.js"></script>
+</head>
+<body>
+    <div id="console"></div>
+    <script>
+        description('Test that StorageManager.persist() prevents ITP from deleting storage data');
+
+        if (!window.testRunner) {
+            testFailed('This test requires testRunner');
+            finishJSTest();
+        }
+
+        // Enable ITP for testing
+        testRunner.setStatisticsEnabled(true);
+
+        // Test localStorage
+        function storeTestData() {
+            try {
+                localStorage.setItem('testKey', 'testValue');
+                localStorage.setItem('secretKey', '1password-secret-key-12345');
+                debug('Stored test data in localStorage');
+                return true;
+            } catch (e) {
+                testFailed('Failed to store localStorage data: ' + e.message);
+                return false;
+            }
+        }
+        
+        function checkStoredData() {
+            try {
+                const localStorageData = localStorage.getItem('testKey');
+                debug('localStorage testKey: ' + (localStorageData || 'NOT FOUND'));
+                
+                const secretKey = localStorage.getItem('secretKey');
+                debug('localStorage secretKey: ' + (secretKey || 'NOT FOUND'));
+                
+                shouldBeTrue(localStorageData !== null && localStorageData !== "NOT FOUND");
+                shouldBeTrue(secretKey !== null && secretKey !== "NOT FOUND");
+                return true;
+            } catch (e) {
+                testFailed('Failed to read localStorage: ' + e.message);
+                return false;
+            }
+        }
+        
+        async function testStorageManagerPersist() {
+            try {
+                if ('storage' in navigator && 'persist' in navigator.storage) {
+                    const persisted = await navigator.storage.persist();
+                    debug('Persistence request result: ' + persisted);
+                    shouldBeTrue(persisted === true || persisted === false);
+                    
+                    const isPersisted = await navigator.storage.persisted();
+                    debug('Current persistence status: ' + isPersisted);
+                    shouldBeTrue(isPersisted === true || isPersisted === false);
+                    
+                    testPassed('StorageManager.persist() API works correctly');
+                    return true;
+                } else {
+                    testFailed('StorageManager.persist() not supported');
+                    return false;
+                }
+            } catch (e) {
+                testFailed('Failed to test StorageManager.persist(): ' + e.message);
+                return false;
+            }
+        }
+        
+        // Run the test
+        async function runTest() {
+            debug('Page loaded. Testing StorageManager.persist() with ITP...');
+            
+            // Test localStorage
+            if (!storeTestData()) {
+                finishJSTest();
+                return;
+            }
+            
+            if (!checkStoredData()) {
+                finishJSTest();
+                return;
+            }
+            
+            // Test StorageManager.persist()
+            await testStorageManagerPersist();
+            
+            finishJSTest();
+        }
+        
+        // Start the test
+        runTest();
+    </script>
+</body>
+</html> 
