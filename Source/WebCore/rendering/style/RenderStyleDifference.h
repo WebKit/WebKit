@@ -42,6 +42,9 @@ namespace WebCore {
 #define LOG_IF_DIFFERENT_WITH_CAST(type, name) \
     do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), static_cast<type>(name), static_cast<type>(other.name)); } while (0)
 
+#define LOG_IF_DIFFERENT_WITH_CONSTRUCTION(type, name) \
+    do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), type(name), type(other.name)); } while (0)
+
 #define LOG_RAW_OPTIONSET_IF_DIFFERENT(type, name) \
     do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), OptionSet<type>::fromRaw(name), OptionSet<type>::fromRaw(other.name)); } while (0)
 

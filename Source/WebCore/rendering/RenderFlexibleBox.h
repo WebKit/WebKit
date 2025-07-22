@@ -290,7 +290,7 @@ private:
     void trimMainAxisMarginEnd(const FlexLayoutItem&);
     void trimCrossAxisMarginStart(const FlexLayoutItem&);
     void trimCrossAxisMarginEnd(const FlexLayoutItem&);
-    bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
+    bool isChildEligibleForMarginTrim(Style::MarginTrim::Value, const RenderBox&) const final;
     bool canFitItemWithTrimmedMarginEnd(const FlexLayoutItem&, LayoutUnit sumHypotheticalMainSize, LayoutUnit lineBreakLength) const;
     void removeMarginEndFromFlexSizes(FlexLayoutItem&, LayoutUnit& sumFlexBaseSize, LayoutUnit& sumHypotheticalMainSize) const;
 

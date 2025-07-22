@@ -29,6 +29,7 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "StyleImage.h"
+#include "StylePrimitiveKeywordSet+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleReflection.h"
 #include "StyleResolver.h"
@@ -49,7 +50,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , maxLines(RenderStyle::initialMaxLines())
     , overflowContinue(RenderStyle::initialOverflowContinue())
     , touchActions(RenderStyle::initialTouchActions())
-    , marginTrim(RenderStyle::initialMarginTrim())
     , contain(RenderStyle::initialContainment())
     , initialLetter(RenderStyle::initialInitialLetter())
     , marquee(StyleMarqueeData::create())
@@ -143,6 +143,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , usesAnchorFunctions(false)
     , anchorFunctionScrollCompensatedAxes(0)
     , isPopoverInvoker(false)
+    , marginTrim(RenderStyle::initialMarginTrim().toRaw())
 {
 }
 
@@ -155,7 +156,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , maxLines(o.maxLines)
     , overflowContinue(o.overflowContinue)
     , touchActions(o.touchActions)
-    , marginTrim(o.marginTrim)
     , contain(o.contain)
     , initialLetter(o.initialLetter)
     , marquee(o.marquee)
@@ -249,6 +249,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , usesAnchorFunctions(o.usesAnchorFunctions)
     , anchorFunctionScrollCompensatedAxes(o.anchorFunctionScrollCompensatedAxes)
     , isPopoverInvoker(o.isPopoverInvoker)
+    , marginTrim(o.marginTrim)
 {
 }
 
@@ -268,7 +269,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && maxLines == o.maxLines
         && overflowContinue == o.overflowContinue
         && touchActions == o.touchActions
-        && marginTrim == o.marginTrim
         && contain == o.contain
         && initialLetter == o.initialLetter
         && marquee == o.marquee
@@ -361,7 +361,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollbarWidth == o.scrollbarWidth
         && usesAnchorFunctions == o.usesAnchorFunctions
         && anchorFunctionScrollCompensatedAxes == o.anchorFunctionScrollCompensatedAxes
-        && isPopoverInvoker == o.isPopoverInvoker;
+        && isPopoverInvoker == o.isPopoverInvoker
+        && marginTrim == o.marginTrim;
 }
 
 OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
@@ -406,7 +407,6 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT(overflowContinue);
 
     LOG_IF_DIFFERENT(touchActions);
-    LOG_IF_DIFFERENT(marginTrim);
     LOG_IF_DIFFERENT(contain);
 
     LOG_IF_DIFFERENT(initialLetter);
@@ -536,6 +536,8 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT_WITH_CAST(bool, usesAnchorFunctions);
     LOG_IF_DIFFERENT_WITH_CAST(bool, anchorFunctionScrollCompensatedAxes);
     LOG_IF_DIFFERENT_WITH_CAST(bool, isPopoverInvoker);
+
+    LOG_IF_DIFFERENT_WITH_CONSTRUCTION(Style::MarginTrim, marginTrim);
 }
 #endif // !LOG_DISABLED
 

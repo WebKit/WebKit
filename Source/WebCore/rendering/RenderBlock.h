@@ -105,7 +105,7 @@ public:
     bool hasMarginBeforeQuirk(const RenderBox& child) const;
     bool hasMarginAfterQuirk(const RenderBox& child) const;
 
-    virtual bool shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType /* marginSide */, const RenderElement&) const { return true; }
+    virtual bool shouldChildInlineMarginContributeToContainerIntrinsicSize(Style::MarginTrim::Value /* marginSide */, const RenderElement&) const { return true; }
 
     void markOutOfFlowBoxesForLayout();
     void markForPaginationRelayoutIfNeeded() override;
@@ -198,7 +198,10 @@ public:
     void setMarginEndForChild(RenderBox& child, LayoutUnit value) const { child.setMarginEnd(value, writingMode()); }
     void setMarginBeforeForChild(RenderBox& child, LayoutUnit value) const { child.setMarginBefore(value, writingMode()); }
     void setMarginAfterForChild(RenderBox& child, LayoutUnit value) const { child.setMarginAfter(value, writingMode()); }
-    void setTrimmedMarginForChild(RenderBox& child, MarginTrimType);
+    void setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::BlockStart);
+    void setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::BlockEnd);
+    void setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::InlineStart);
+    void setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::InlineEnd);
     LayoutUnit collapsedMarginBeforeForChild(const RenderBox& child) const;
     LayoutUnit collapsedMarginAfterForChild(const RenderBox& child) const;
 

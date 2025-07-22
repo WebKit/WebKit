@@ -1683,14 +1683,14 @@ LineDecorationStyle::LineDecorationStyle(RenderObject& renderer)
 {
     const auto& style = renderer.style();
     auto decor = style.textDecorationLineInEffect();
-    if (decor & TextDecorationLine::Underline || decor & TextDecorationLine::LineThrough) {
+    if (decor & CSS::Keyword::Underline { } || decor & CSS::Keyword::LineThrough { }) {
         auto decorationStyles = TextDecorationPainter::stylesForRenderer(renderer, decor);
-        if (decor & TextDecorationLine::Underline) {
+        if (decor & CSS::Keyword::Underline { }) {
             hasUnderline = true;
             underlineColor = decorationStyles.underline.color;
         }
 
-        if (decor & TextDecorationLine::LineThrough) {
+        if (decor & CSS::Keyword::LineThrough { }) {
             hasLinethrough = true;
             linethroughColor = decorationStyles.linethrough.color;
         }

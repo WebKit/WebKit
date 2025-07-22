@@ -4653,9 +4653,9 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         }
     } else {
         auto decoration = style->textDecorationLineInEffect();
-        if (decoration & TextDecorationLine::LineThrough)
+        if (decoration & CSS::Keyword::LineThrough { })
             attributes.hasStrikeThrough = true;
-        if (decoration & TextDecorationLine::Underline)
+        if (decoration & CSS::Keyword::Underline { })
             attributes.hasUnderline = true;
     }
 

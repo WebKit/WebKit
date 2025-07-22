@@ -78,7 +78,6 @@
 #include "StyleFlexBasis.h"
 #include "StyleInset.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
-#include "StyleLineBoxContain.h"
 #include "StyleMargin.h"
 #include "StyleMaximumSize.h"
 #include "StyleMinimumSize.h"
@@ -92,6 +91,7 @@
 #include "StylePerspective.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
+#include "StylePrimitiveKeywordSet+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
@@ -134,7 +134,6 @@ public:
     static TabSize convertTabSize(BuilderState&, const CSSValue&);
     template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
     template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
-    static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
     static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T, CSSValueID> static T convertNumberOrKeyword(BuilderState&, const CSSValue&);
@@ -159,7 +158,6 @@ public:
     static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
     static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
-    static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
     static RefPtr<ShapeValue> convertShapeValue(BuilderState&, const CSSValue&);
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
@@ -208,8 +206,6 @@ public:
 
     static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
 
-    static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
-
     static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
@@ -219,7 +215,6 @@ public:
 
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
-    static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
 
     static size_t convertMaxLines(BuilderState&, const CSSValue&);
 
@@ -345,16 +340,6 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
         ASSERT_NOT_REACHED();
         return 0;
     }
-}
-
-inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine(BuilderState&, const CSSValue& value)
-{
-    auto result = RenderStyle::initialTextDecorationLine();
-    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
-        for (auto& currentValue : *list)
-            result.add(fromCSSValue<TextDecorationLine>(currentValue));
-    }
-    return result;
 }
 
 inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderState&, const CSSValue& value)
@@ -755,68 +740,6 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
     }
 
     return width;
-}
-
-inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(BuilderState& builderState, const CSSValue& value)
-{
-    if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        switch (primitive->valueID()) {
-        case CSSValueNone:
-            return { };
-        case CSSValueBlock:
-            return LineBoxContain::Block;
-        case CSSValueInline:
-            return LineBoxContain::Inline;
-        case CSSValueFont:
-            return LineBoxContain::Font;
-        case CSSValueGlyphs:
-            return LineBoxContain::Glyphs;
-        case CSSValueReplaced:
-            return LineBoxContain::Replaced;
-        case CSSValueInlineBox:
-            return LineBoxContain::InlineBox;
-        case CSSValueInitialLetter:
-            return LineBoxContain::InitialLetter;
-        default:
-            builderState.setCurrentPropertyInvalidAtComputedValueTime();
-            return { };
-        }
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    OptionSet<LineBoxContain> result;
-    for (Ref primitive : *list) {
-        switch (primitive->valueID()) {
-        case CSSValueBlock:
-            result.add(LineBoxContain::Block);
-            break;
-        case CSSValueInline:
-            result.add(LineBoxContain::Inline);
-            break;
-        case CSSValueFont:
-            result.add(LineBoxContain::Font);
-            break;
-        case CSSValueGlyphs:
-            result.add(LineBoxContain::Glyphs);
-            break;
-        case CSSValueReplaced:
-            result.add(LineBoxContain::Replaced);
-            break;
-        case CSSValueInlineBox:
-            result.add(LineBoxContain::InlineBox);
-            break;
-        case CSSValueInitialLetter:
-            result.add(LineBoxContain::InitialLetter);
-            break;
-        default:
-            builderState.setCurrentPropertyInvalidAtComputedValueTime();
-            return { };
-        }
-    }
-    return result;
 }
 
 inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& builderState, const CSSValue& value)
@@ -1354,41 +1277,6 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
     return result;
 }
 
-inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(BuilderState&, const CSSValue& value)
-{
-    // See if value is "block" or "inline" before trying to parse a list
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueBlock)
-            return { MarginTrimType::BlockStart, MarginTrimType::BlockEnd };
-        if (primitiveValue->valueID() == CSSValueInline)
-            return { MarginTrimType::InlineStart, MarginTrimType::InlineEnd };
-    }
-    auto list = dynamicDowncast<CSSValueList>(value);
-    if (!list || !list->size())
-        return RenderStyle::initialMarginTrim();
-    OptionSet<MarginTrimType> marginTrim;
-    for (auto& item : *list) {
-        if (item.valueID() == CSSValueBlock)
-            marginTrim.add({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd });
-        if (item.valueID() == CSSValueInline)
-            marginTrim.add({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd });
-    }
-    if (!marginTrim.isEmpty())
-        return marginTrim;
-    for (auto& item : *list) {
-        if (item.valueID() == CSSValueBlockStart)
-            marginTrim.add(MarginTrimType::BlockStart);
-        if (item.valueID() == CSSValueBlockEnd)
-            marginTrim.add(MarginTrimType::BlockEnd);
-        if (item.valueID() == CSSValueInlineStart)
-            marginTrim.add(MarginTrimType::InlineStart);
-        if (item.valueID() == CSSValueInlineEnd)
-            marginTrim.add(MarginTrimType::InlineEnd);
-    }
-    ASSERT(list->size() <= 4);
-    return marginTrim;
-}
-
 inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(BuilderState&, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
@@ -1857,23 +1745,6 @@ inline std::optional<PositionArea> BuilderConverter::convertPositionArea(Builder
     }
 
     return area;
-}
-
-inline OptionSet<PositionVisibility> BuilderConverter::convertPositionVisibility(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueAlways)
-        return { };
-
-    auto maybeList = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!maybeList)
-        return { };
-    auto list = *maybeList;
-
-    OptionSet<PositionVisibility> result;
-    for (const auto& value : list)
-        result.add(fromCSSValue<PositionVisibility>(value));
-
-    return result;
 }
 
 inline size_t BuilderConverter::convertMaxLines(BuilderState& builderState, const CSSValue& value)

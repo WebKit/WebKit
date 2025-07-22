@@ -1450,7 +1450,7 @@ void RenderBox::clearOverridingLogicalWidthForFlexBasisComputation()
         gOverridingLogicalWidthMapForFlexBasisComputation->remove(*this);
 }
 
-void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
+void RenderBox::markMarginAsTrimmed(Style::MarginTrim newTrimmedMargin)
 {
     auto& rareData = ensureRareData();
     rareData.trimmedMargins = rareData.trimmedMargins | newTrimmedMargin;
@@ -1462,13 +1462,13 @@ void RenderBox::clearTrimmedMarginsMarkings()
     ensureRareData().trimmedMargins = { };
 }
 
-bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) const
+bool RenderBox::hasTrimmedMargin(std::optional<Style::MarginTrim::Value> marginTrim) const
 {
     if (!isInFlow())
         return false;
     if (!hasRareData())
         return false;
-    return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
+    return marginTrim ? rareData().trimmedMargins.contains(*marginTrim) : !rareData().trimmedMargins.isEmpty();
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const
@@ -2733,10 +2733,10 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
 
     // Margin calculations.
     if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
-        computedValues.m_margins.m_start = computeOrTrimInlineMargin(containingBlock, MarginTrimType::BlockStart, [&] {
+        computedValues.m_margins.m_start = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::BlockStart { }, [&] {
             return Style::evaluateMinimum(styleToUse.marginStart(), containerLogicalWidth);
         });
-        computedValues.m_margins.m_end = computeOrTrimInlineMargin(containingBlock, MarginTrimType::BlockEnd, [&] {
+        computedValues.m_margins.m_end = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::BlockEnd { }, [&] {
             return Style::evaluateMinimum(styleToUse.marginEnd(), containerLogicalWidth);
         });
     } else {
@@ -2792,10 +2792,10 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, Lay
     auto& marginStartLength = style().marginStart();
     auto& marginEndLength = style().marginEnd();
     LayoutUnit availableSizeForResolvingMargin = isOrthogonalElement ? containingBlockLogicalWidthForContent() : availableLogicalWidth;
-    marginStart = computeOrTrimInlineMargin(*container, MarginTrimType::InlineStart, [&] {
+    marginStart = computeOrTrimInlineMargin(*container, CSS::Keyword::InlineStart { }, [&] {
         return Style::evaluateMinimum(marginStartLength, availableSizeForResolvingMargin);
     });
-    marginEnd = computeOrTrimInlineMargin(*container, MarginTrimType::InlineEnd, [&] {
+    marginEnd = computeOrTrimInlineMargin(*container, CSS::Keyword::InlineEnd { }, [&] {
         return Style::evaluateMinimum(marginEndLength, availableSizeForResolvingMargin);
     });
     return availableLogicalWidth - marginStart - marginEnd;
@@ -3084,7 +3084,7 @@ bool RenderBox::sizesPreferredLogicalWidthToFitContent() const
 }
 
 template<typename Function>
-LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, NOESCAPE const Function& computeInlineMargin) const
+LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlock, Style::MarginTrim::Value marginSide, NOESCAPE const Function& computeInlineMargin) const
 {
     if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
         // FIXME(255434): This should be set when the margin is being trimmed
@@ -3092,7 +3092,7 @@ LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlo
         // be done at this level within RenderBox. We should be able to leave the 
         // trimming responsibility to each of those contexts and not need to
         // do any of it here (trimming the margin and setting the rare data bit)
-        if (isGridItem() && (marginSide == MarginTrimType::InlineStart || marginSide == MarginTrimType::InlineEnd))
+        if (isGridItem() && Style::MarginTrim::inlineTrims().contains(marginSide))
             const_cast<RenderBox&>(*this).markMarginAsTrimmed(marginSide);
         return 0_lu;
     }
@@ -3113,10 +3113,10 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
 
     if (isInline()) {
         // Inline blocks/tables don't have their margins increased.
-        marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
+        marginStart = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineStart { }, [&] {
             return Style::evaluateMinimum(marginStartLength, containerWidth);
         });
-        marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
+        marginEnd = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineStart { }, [&] {
             return Style::evaluateMinimum(marginEndLength, containerWidth);
         });
         return;
@@ -3139,13 +3139,13 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         auto alignModeCenter = containingBlock.style().textAlign() == TextAlignMode::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
         if (marginAutoCenter || alignModeCenter) {
             // Other browsers center the margin box for align=center elements so we match them here.
-            marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
+            marginStart = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineStart { }, [&] {
                 LayoutUnit marginStartWidth = Style::evaluateMinimum(marginStartLength, containerWidthForMarginAuto);
                 LayoutUnit marginEndWidth = Style::evaluateMinimum(marginEndLength, containerWidthForMarginAuto);
                 LayoutUnit centeredMarginBoxStart = std::max<LayoutUnit>(0, (containerWidthForMarginAuto - childWidth - marginStartWidth - marginEndWidth) / 2);
                 return centeredMarginBoxStart + marginStartWidth;
             });
-            marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
+            marginEnd = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineEnd { }, [&] {
                 LayoutUnit marginEndWidth = Style::evaluateMinimum(marginEndLength, containerWidthForMarginAuto);
                 return containerWidthForMarginAuto - childWidth - marginStart + marginEndWidth;
             });
@@ -3163,10 +3163,10 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         auto pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == TextAlignMode::WebKitLeft)
             || (containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == TextAlignMode::WebKitRight));
         if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidthForMarginAuto) {
-            marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
+            marginEnd = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineEnd { }, [&] {
                 return Style::evaluate(marginEndLength, containerWidthForMarginAuto);
             });
-            marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
+            marginStart = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineStart { }, [&] {
                 return containerWidthForMarginAuto - childWidth - marginEnd;
             });
             return true;
@@ -3178,10 +3178,10 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     
     // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3). In that case
     // auto margins will just turn into 0.
-    marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
+    marginStart = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineStart { }, [&] {
         return Style::evaluateMinimum(marginStartLength, containerWidth);
     });
-    marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
+    marginEnd = computeOrTrimInlineMargin(containingBlock, CSS::Keyword::InlineEnd { }, [&] {
         return Style::evaluateMinimum(marginEndLength, containerWidth);
     });
 }
@@ -4184,8 +4184,8 @@ void RenderBox::computeBlockDirectionMargins(const RenderBlock& containingBlock,
     // Margins are calculated with respect to the logical width of
     // the containing block (8.3)
     LayoutUnit cw = containingBlockLogicalWidthForContent();
-    marginBefore = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, MarginTrimType::BlockStart);
-    marginAfter = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, MarginTrimType::BlockEnd); 
+    marginBefore = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, CSS::Keyword::BlockStart { });
+    marginAfter = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, CSS::Keyword::BlockEnd { });
 }
 
 void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containingBlock)
@@ -4197,10 +4197,10 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containing
     containingBlock.setMarginAfterForChild(*this, marginAfter);
 }
 
-LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, MarginTrimType marginSide) const
+LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, Style::MarginTrim::Value marginSide) const
 {
     
-    ASSERT(marginSide == MarginTrimType::BlockStart || marginSide == MarginTrimType::BlockEnd);
+    ASSERT(marginSide == CSS::Keyword::BlockStart { } || marginSide == CSS::Keyword::BlockEnd { });
     if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
         // FIXME(255434): This should be set when the margin is being trimmed
         // within the context of its layout system (block, flex, grid) and should not 
@@ -4212,7 +4212,7 @@ LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox
         return 0_lu;
     }
     
-    return marginSide == MarginTrimType::BlockStart
+    return marginSide == CSS::Keyword::BlockStart { }
         ? Style::evaluateMinimum(style().marginBefore(containingBlock.writingMode()), availableSpace)
         : Style::evaluateMinimum(style().marginAfter(containingBlock.writingMode()), availableSpace);
 }

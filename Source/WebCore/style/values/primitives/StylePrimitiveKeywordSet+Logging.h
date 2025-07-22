@@ -24,18 +24,33 @@
 
 #pragma once
 
-#include "CSSPrimitiveValueMappings.h"
+#include "CSSPrimitiveKeywordSet.h"
 #include "StyleValueTypes.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 
-template<typename T> requires std::is_enum_v<T> struct CSSValueConversion<T> {
-    T operator()(BuilderState&, const CSSValue& value)
-    {
-        return fromCSSValueID<T>(value.valueID());
-    }
-};
+template<CSS::PrimitiveKeywordSetDerived T> TextStream& operator<<(TextStream& ts, const T& value)
+{
+    if (!value)
+        return ts << '[' << T::emptyCase << ']';
+
+    ts << '[';
+
+    bool listEmpty = true;
+    auto appendKeyword = [&](auto keyword) {
+        if (value.contains(keyword)) {
+            if (!listEmpty)
+                ts << ' ';
+            ts << keyword;
+            listEmpty = false;
+        }
+    };
+    WTF::apply([&](const auto& ...x) { (appendKeyword(x), ...); }, T::Keywords::tuple);
+
+    return ts << ']';
+}
 
 } // namespace Style
 } // namespace WebCore

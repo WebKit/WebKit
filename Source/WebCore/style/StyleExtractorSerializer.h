@@ -32,6 +32,7 @@
 #include "ColorSerialization.h"
 #include "StyleExtractorConverter.h"
 #include "StylePrimitiveKeyword+Serialization.h"
+#include "StylePrimitiveKeywordSet+Serialization.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -89,7 +90,6 @@ public:
     static void serializeImageOrNone(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StyleImage*);
     static void serializeGlyphOrientation(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GlyphOrientation);
     static void serializeGlyphOrientationOrAuto(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, GlyphOrientation);
-    static void serializeMarginTrim(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<MarginTrimType>);
     static void serializeShapeValue(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ShapeValue*);
     static void serializeDPath(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const StylePathData*);
     static void serializeStrokeDashArray(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<WebCore::Length>&);
@@ -114,12 +114,10 @@ public:
     static void serializeTabSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TabSize&);
     static void serializeScrollSnapType(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapType&);
     static void serializeScrollSnapAlign(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapAlign&);
-    static void serializeLineBoxContain(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<Style::LineBoxContain>);
     static void serializeWebkitRubyPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, RubyPosition);
     static void serializePosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const LengthPoint&);
     static void serializeTouchAction(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TouchAction>);
     static void serializeTextTransform(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextTransform>);
-    static void serializeTextDecorationLine(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextDecorationLine>);
     static void serializeTextUnderlinePosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextUnderlinePosition>);
     static void serializeTextEmphasisPosition(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<TextEmphasisPosition>);
     static void serializeSpeakAs(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<SpeakAs>);
@@ -134,7 +132,6 @@ public:
     static void serializePositionAnchor(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const std::optional<ScopedName>&);
     static void serializePositionArea(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const std::optional<PositionArea>&);
     static void serializeNameScope(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const NameScope&);
-    static void serializePositionVisibility(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<PositionVisibility>);
 
     // MARK: FillLayer serializations
 
@@ -678,44 +675,6 @@ inline void ExtractorSerializer::serializeGlyphOrientationOrAuto(ExtractorState&
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline void ExtractorSerializer::serializeMarginTrim(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<MarginTrimType> marginTrim)
-{
-    if (marginTrim.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    // Try to serialize into one of the "block" or "inline" shorthands
-    if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }) && !marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd })) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Block { });
-        return;
-    }
-    if (marginTrim.containsAll({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) && !marginTrim.containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd })) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Inline { });
-        return;
-    }
-    if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd, MarginTrimType::InlineStart, MarginTrimType::InlineEnd })) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Block { });
-        builder.append(' ');
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Inline { });
-        return;
-    }
-
-    bool listEmpty = true;
-    auto appendOption = [&](MarginTrimType test, CSSValueID value) {
-        if (marginTrim.contains(test)) {
-            if (!listEmpty)
-                builder.append(' ');
-            builder.append(nameLiteralForSerialization(value));
-            listEmpty = false;
-        }
-    };
-    appendOption(MarginTrimType::BlockStart, CSSValueBlockStart);
-    appendOption(MarginTrimType::InlineStart, CSSValueInlineStart);
-    appendOption(MarginTrimType::BlockEnd, CSSValueBlockEnd);
-    appendOption(MarginTrimType::InlineEnd, CSSValueInlineEnd);
-}
-
 inline void ExtractorSerializer::serializeShapeValue(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const ShapeValue* shapeValue)
 {
     if (!shapeValue) {
@@ -1106,31 +1065,6 @@ inline void ExtractorSerializer::serializeScrollSnapAlign(ExtractorState& state,
     serialize(state, builder, context, alignment.inlineAlign);
 }
 
-inline void ExtractorSerializer::serializeLineBoxContain(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<Style::LineBoxContain> lineBoxContain)
-{
-    if (!lineBoxContain) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    bool listEmpty = true;
-    auto appendOption = [&](LineBoxContain test, CSSValueID value) {
-        if (lineBoxContain.contains(test)) {
-            if (!listEmpty)
-                builder.append(' ');
-            builder.append(nameLiteralForSerialization(value));
-            listEmpty = false;
-        }
-    };
-    appendOption(LineBoxContain::Block, CSSValueBlock);
-    appendOption(LineBoxContain::Inline, CSSValueInline);
-    appendOption(LineBoxContain::Font, CSSValueFont);
-    appendOption(LineBoxContain::Glyphs, CSSValueGlyphs);
-    appendOption(LineBoxContain::Replaced, CSSValueReplaced);
-    appendOption(LineBoxContain::InlineBox, CSSValueInlineBox);
-    appendOption(LineBoxContain::InitialLetter, CSSValueInitialLetter);
-}
-
 inline void ExtractorSerializer::serializeWebkitRubyPosition(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, RubyPosition position)
 {
     switch (position) {
@@ -1213,26 +1147,6 @@ inline void ExtractorSerializer::serializeTextTransform(ExtractorState& state, S
     };
     appendOption(TextTransform::FullWidth, CSSValueFullWidth);
     appendOption(TextTransform::FullSizeKana, CSSValueFullSizeKana);
-
-    if (listEmpty)
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-}
-
-inline void ExtractorSerializer::serializeTextDecorationLine(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<TextDecorationLine> textDecorationLine)
-{
-    // Blink value is ignored.
-    bool listEmpty = true;
-    auto appendOption = [&](TextDecorationLine test, CSSValueID value) {
-        if (textDecorationLine & test) {
-            if (!listEmpty)
-                builder.append(' ');
-            builder.append(nameLiteralForSerialization(value));
-            listEmpty = false;
-        }
-    };
-    appendOption(TextDecorationLine::Underline, CSSValueUnderline);
-    appendOption(TextDecorationLine::Overline, CSSValueOverline);
-    appendOption(TextDecorationLine::LineThrough, CSSValueLineThrough);
 
     if (listEmpty)
         serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
@@ -1509,25 +1423,6 @@ inline void ExtractorSerializer::serializeNameScope(ExtractorState& state, Strin
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-inline void ExtractorSerializer::serializePositionVisibility(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<PositionVisibility> positionVisibility)
-{
-    bool listEmpty = true;
-    auto appendOption = [&](PositionVisibility test, CSSValueID value) {
-        if (positionVisibility & test) {
-            if (!listEmpty)
-                builder.append(' ');
-            builder.append(nameLiteralForSerialization(value));
-            listEmpty = false;
-        }
-    };
-    appendOption(PositionVisibility::AnchorsValid, CSSValueAnchorsValid);
-    appendOption(PositionVisibility::AnchorsVisible, CSSValueAnchorsVisible);
-    appendOption(PositionVisibility::NoOverflow, CSSValueNoOverflow);
-
-    if (listEmpty)
-        serializationForCSS(builder, context, state.style, CSS::Keyword::Always { });
 }
 
 // MARK: - FillLayer serializations

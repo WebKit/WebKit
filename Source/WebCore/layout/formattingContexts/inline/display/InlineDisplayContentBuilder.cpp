@@ -1020,14 +1020,14 @@ static float logicalBottomForTextDecorationContent(const InlineDisplay::Boxes& b
     for (auto& displayBox : boxes) {
         if (displayBox.isRootInlineBox())
             continue;
-        if (!displayBox.style().textDecorationLineInEffect().contains(TextDecorationLine::Underline))
+        if (!displayBox.style().textDecorationLineInEffect().contains(CSS::Keyword::Underline { }))
             continue;
         if (displayBox.isText() || displayBox.style().textDecorationSkipInk() == TextDecorationSkipInk::None) {
             auto contentLogicalBottom = isHorizontalWritingMode ? displayBox.bottom() : displayBox.right();
             logicalBottom = logicalBottom ? std::max(*logicalBottom, contentLogicalBottom) : contentLogicalBottom;
         }
     }
-    // This function is not called unless there's at least one run on the line with TextDecorationLine::Underline.
+    // This function is not called unless there's at least one run on the line with TextDecorationLine CSS::Keyword::Underline.
     ASSERT(logicalBottom);
     return logicalBottom.value_or(0.f);
 }
@@ -1051,7 +1051,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
             continue;
 
         auto decorationOverflow = [&] {
-            if (!textDecorations.contains(TextDecorationLine::Underline))
+            if (!textDecorations.contains(CSS::Keyword::Underline { }))
                 return inkOverflowForDecorations(parentStyle);
 
             if (!logicalBottomForTextDecoration)

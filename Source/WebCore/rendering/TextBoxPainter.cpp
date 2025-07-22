@@ -577,7 +577,7 @@ static inline float computedLinethroughCenter(const RenderStyle& styleToUse, flo
     return center - textDecorationThickness / 2;
 }
 
-static inline OptionSet<TextDecorationLine> computedTextDecorationType(const RenderStyle& style, const TextDecorationPainter::Styles& textDecorationStyles)
+static inline Style::TextDecorationLine computedTextDecorationType(const RenderStyle& style, const TextDecorationPainter::Styles& textDecorationStyles)
 {
     auto textDecorations = style.textDecorationLineInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(textDecorationStyles));
@@ -606,8 +606,8 @@ static inline bool isDecoratingBoxForBackground(const InlineIterator::InlineBox&
         // <font> and <a> are always considered decorating boxes.
         return true;
     }
-    return styleToUse.textDecorationLine().containsAny({ TextDecorationLine::Underline, TextDecorationLine::Overline })
-        || (inlineBox.isRootInlineBox() && styleToUse.textDecorationLineInEffect().containsAny({ TextDecorationLine::Underline, TextDecorationLine::Overline }));
+    return styleToUse.textDecorationLine().containsAny({ CSS::Keyword::Underline { }, CSS::Keyword::Overline { } })
+        || (inlineBox.isRootInlineBox() && styleToUse.textDecorationLineInEffect().containsAny({ CSS::Keyword::Underline { }, CSS::Keyword::Overline { } }));
 }
 
 void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxList& decoratingBoxList, const InlineIterator::TextBoxIterator& textBox, FloatPoint textBoxLocation, const TextDecorationPainter::Styles& overrideDecorationStyle)
@@ -679,7 +679,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
         auto computedBackgroundDecorationGeometry = [&] {
             auto textDecorationThickness = computedTextDecorationThickness(decoratingBox.style, m_document.deviceScaleFactor());
             auto underlineOffset = [&] {
-                if (!computedTextDecorationType.contains(TextDecorationLine::Underline))
+                if (!computedTextDecorationType.contains(CSS::Keyword::Underline { }))
                     return 0.f;
                 auto baseOffset = underlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style);
                 auto wavyOffset = decoratingBox.textDecorationStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
@@ -687,7 +687,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
             };
             auto autoTextDecorationThickness = computedAutoTextDecorationThickness(decoratingBox.style, m_document.deviceScaleFactor());
             auto overlineOffset = [&] {
-                if (!computedTextDecorationType.contains(TextDecorationLine::Overline))
+                if (!computedTextDecorationType.contains(CSS::Keyword::Overline { }))
                     return 0.f;
                 auto baseOffset = overlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style);
                 baseOffset += (autoTextDecorationThickness - textDecorationThickness);
@@ -733,7 +733,7 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
         return textDecorations;
     }();
 
-    if (!computedTextDecorationType.contains(TextDecorationLine::LineThrough))
+    if (!computedTextDecorationType.contains(CSS::Keyword::LineThrough { }))
         return;
 
     if (m_isCombinedText)

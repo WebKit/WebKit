@@ -73,18 +73,18 @@ inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, 
 inline bool InlineLevelBox::mayStretchLineBox() const
 {
     if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Block, WebCore::Style::LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::InitialLetter, WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ CSS::Keyword::Block { }, CSS::Keyword::Inline { } }) || (hasContent() && m_style.lineBoxContain.containsAny({ CSS::Keyword::InitialLetter { }, CSS::Keyword::Font { }, CSS::Keyword::Glyphs { } }));
 
     if (isAtomicInlineBox())
-        return m_style.lineBoxContain.contains(WebCore::Style::LineBoxContain::Replaced);
+        return m_style.lineBoxContain.contains(CSS::Keyword::Replaced { });
 
     if (isInlineBox()) {
         // Either the inline box itself is included or its text content through Glyph and Font.
-        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Inline, WebCore::Style::LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ CSS::Keyword::Inline { }, CSS::Keyword::InlineBox { } }) || (hasContent() && m_style.lineBoxContain.containsAny({ CSS::Keyword::Font { }, CSS::Keyword::Glyphs { } }));
     }
 
     if (isLineBreakBox())
-        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Inline, WebCore::Style::LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ CSS::Keyword::Inline { }, CSS::Keyword::InlineBox { } }) || (hasContent() && m_style.lineBoxContain.containsAny({ CSS::Keyword::Font { }, CSS::Keyword::Glyphs { } }));
 
     return true;
 }

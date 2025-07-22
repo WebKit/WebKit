@@ -266,7 +266,7 @@ private:
     void resetAutoMarginsAndLogicalTopInColumnAxis(RenderBox& child);
     void updateAutoMarginsInColumnAxisIfNeeded(RenderBox&);
     void updateAutoMarginsInRowAxisIfNeeded(RenderBox&);
-    bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
+    bool isChildEligibleForMarginTrim(Style::MarginTrim::Value, const RenderBox&) const final;
 
     std::optional<LayoutUnit> firstLineBaseline() const final;
     std::optional<LayoutUnit> lastLineBaseline() const final;

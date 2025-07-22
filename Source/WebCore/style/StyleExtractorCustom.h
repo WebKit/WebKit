@@ -483,7 +483,7 @@ template<CSSPropertyID propertyID> void extractZoomAdjustedInsetSerialization(Ex
 using PhysicalDirection = BoxSide;
 using FlowRelativeDirection = LogicalBoxSide;
 
-inline MarginTrimType toMarginTrimType(const RenderBox& renderer, PhysicalDirection direction)
+inline Style::MarginTrim::Value toMarginTrim(const RenderBox& renderer, PhysicalDirection direction)
 {
     auto formattingContextRootStyle = [](const RenderBox& renderer) -> const RenderStyle& {
         if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
@@ -494,28 +494,28 @@ inline MarginTrimType toMarginTrimType(const RenderBox& renderer, PhysicalDirect
 
     switch (mapSidePhysicalToLogical(formattingContextRootStyle(renderer).writingMode(), direction)) {
     case FlowRelativeDirection::BlockStart:
-        return MarginTrimType::BlockStart;
+        return CSS::Keyword::BlockStart { };
     case FlowRelativeDirection::BlockEnd:
-        return MarginTrimType::BlockEnd;
+        return CSS::Keyword::BlockEnd { };
     case FlowRelativeDirection::InlineStart:
-        return MarginTrimType::InlineStart;
+        return CSS::Keyword::InlineStart { };
     case FlowRelativeDirection::InlineEnd:
-        return MarginTrimType::InlineEnd;
+        return CSS::Keyword::InlineEnd { };
     default:
         ASSERT_NOT_REACHED();
-        return MarginTrimType::BlockStart;
+        return CSS::Keyword::BlockStart { };
     }
 }
 
-inline bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimType marginTrimType)
+inline bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, Style::MarginTrim::Value marginTrim)
 {
     // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
     // 1.) The layout system the box is in has this logic (setting the rare data bit for this
     // specific margin) implemented
     // 2.) The block container/flexbox/grid has this margin specified in its margin-trim style
-    // If marginTrimType is empty we will check if any of the supported margins are in the style
+    // If marginTrim is empty we will check if any of the supported margins are in the style
     if (renderer.isFlexItem() || renderer.isGridItem())
-        return renderer.parent()->style().marginTrim().contains(marginTrimType);
+        return renderer.parent()->style().marginTrim().contains(marginTrim);
 
     // Even though margin-trim is not inherited, it is possible for nested block level boxes
     // to get placed at the block-start of an containing block ancestor which does have margin-trim.
@@ -1763,7 +1763,7 @@ inline void ExtractorCustom::extractLeftSerialization(ExtractorState& state, Str
 inline Ref<CSSValue> ExtractorCustom::extractMarginTop(ExtractorState& state)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockStart) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Top)))
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::BlockStart { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Top)))
         return ExtractorConverter::convertNumberAsPixels(state, box->marginTop());
     return extractZoomAdjustedMarginValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(state);
 }
@@ -1771,7 +1771,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginTop(ExtractorState& state)
 inline void ExtractorCustom::extractMarginTopSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockStart) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Top))) {
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::BlockStart { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Top))) {
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, box->marginTop());
         return;
     }
@@ -1782,7 +1782,7 @@ inline void ExtractorCustom::extractMarginTopSerialization(ExtractorState& state
 inline Ref<CSSValue> ExtractorCustom::extractMarginRight(ExtractorState& state)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Right)))
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::InlineEnd { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Right)))
         return ExtractorConverter::convertNumberAsPixels(state, box->marginRight());
 
     auto& marginRight = state.style.marginRight();
@@ -1803,7 +1803,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginRight(ExtractorState& state)
 inline void ExtractorCustom::extractMarginRightSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Right))) {
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::InlineEnd { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Right))) {
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, box->marginRight());
         return;
     }
@@ -1829,7 +1829,7 @@ inline void ExtractorCustom::extractMarginRightSerialization(ExtractorState& sta
 inline Ref<CSSValue> ExtractorCustom::extractMarginBottom(ExtractorState& state)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockEnd) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Bottom)))
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::BlockEnd { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Bottom)))
         return ExtractorConverter::convertNumberAsPixels(state, box->marginBottom());
     return extractZoomAdjustedMarginValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(state);
 }
@@ -1837,7 +1837,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginBottom(ExtractorState& state)
 inline void ExtractorCustom::extractMarginBottomSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockEnd) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Bottom))) {
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::BlockEnd { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Bottom))) {
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, box->marginBottom());
         return;
     }
@@ -1848,7 +1848,7 @@ inline void ExtractorCustom::extractMarginBottomSerialization(ExtractorState& st
 inline Ref<CSSValue> ExtractorCustom::extractMarginLeft(ExtractorState& state)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineStart) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Left)))
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::InlineStart { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Left)))
         return ExtractorConverter::convertNumberAsPixels(state, box->marginLeft());
     return extractZoomAdjustedMarginValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(state);
 }
@@ -1856,7 +1856,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginLeft(ExtractorState& state)
 inline void ExtractorCustom::extractMarginLeftSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
-    if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineStart) && box->hasTrimmedMargin(toMarginTrimType(*box, PhysicalDirection::Left))) {
+    if (box && rendererCanHaveTrimmedMargin(*box, CSS::Keyword::InlineStart { }) && box->hasTrimmedMargin(toMarginTrim(*box, PhysicalDirection::Left))) {
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, box->marginLeft());
         return;
     }

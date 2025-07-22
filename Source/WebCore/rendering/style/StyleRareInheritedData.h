@@ -30,8 +30,8 @@
 #include "StyleBlockEllipsis.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
-#include "StyleLineBoxContain.h"
 #include "StyleDynamicRangeLimit.h"
+#include "StyleLineBoxContain.h"
 #include "StyleListStyleType.h"
 #include "StyleQuotes.h"
 #include "StyleScrollbarColor.h"
@@ -147,7 +147,7 @@ public:
     PREFERRED_TYPE(TextCombine) unsigned textCombine : 1;
     PREFERRED_TYPE(TextEmphasisPosition) unsigned textEmphasisPosition : 4;
     PREFERRED_TYPE(TextUnderlinePosition) unsigned textUnderlinePosition : 4;
-    PREFERRED_TYPE(OptionSet<Style::LineBoxContain>) unsigned lineBoxContain: 7;
+    PREFERRED_TYPE(Style::LineBoxContain) unsigned lineBoxContain: Style::LineBoxContain::bits;
     PREFERRED_TYPE(ImageOrientation) unsigned imageOrientation : 1;
     PREFERRED_TYPE(ImageRendering) unsigned imageRendering : 3;
     PREFERRED_TYPE(LineSnap) unsigned lineSnap : 2;

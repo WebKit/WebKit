@@ -364,6 +364,7 @@ class GenerationContext:
         to.write(f"template<CSSValueID C> struct Constant {{\n")
         to.write(f"    static constexpr auto value = C;\n")
         to.write(f"    constexpr bool operator==(const Constant<C>&) const = default;\n")
+        to.write(f"    constexpr bool operator==(CSSValueID other) const {{ return value == other; }}\n")
         to.write(f"}};\n\n")
 
         to.write(f"namespace CSS::Keyword {{\n\n")

@@ -47,7 +47,6 @@
 #include "StyleGridItemData.h"
 #include "StyleGridTrackSizingDirection.h"
 #include "StyleInheritedData.h"
-#include "StyleLineBoxContain.h"
 #include "StyleMarqueeData.h"
 #include "StyleMiscNonInheritedData.h"
 #include "StyleMultiColData.h"
@@ -55,6 +54,7 @@
 #include "StyleRareInheritedData.h"
 #include "StyleRareNonInheritedData.h"
 #include "StyleSurroundData.h"
+#include "StyleTextDecorationLine.h"
 #include "StyleTransformData.h"
 #include "StyleVisitedLinkColorData.h"
 #include "UnicodeBidi.h"
@@ -413,7 +413,7 @@ inline const IntSize& RenderStyle::initialLetter() const { return m_nonInherited
 inline int RenderStyle::initialLetterDrop() const { return initialLetter().width(); }
 inline int RenderStyle::initialLetterHeight() const { return initialLetter().height(); }
 constexpr LineAlign RenderStyle::initialLineAlign() { return LineAlign::None; }
-constexpr OptionSet<Style::LineBoxContain> RenderStyle::initialLineBoxContain() { return { Style::LineBoxContain::Block, Style::LineBoxContain::Inline, Style::LineBoxContain::Replaced }; }
+constexpr Style::LineBoxContain RenderStyle::initialLineBoxContain() { return { CSS::Keyword::Block { }, CSS::Keyword::Inline { }, CSS::Keyword::Replaced { } }; }
 constexpr LineBreak RenderStyle::initialLineBreak() { return LineBreak::Auto; }
 constexpr LineClampValue RenderStyle::initialLineClamp() { return { }; }
 inline const AtomString& RenderStyle::initialLineGrid() { return nullAtom(); }
@@ -421,7 +421,7 @@ constexpr LineSnap RenderStyle::initialLineSnap() { return LineSnap::None; }
 constexpr ListStylePosition RenderStyle::initialListStylePosition() { return ListStylePosition::Outside; }
 inline Style::ListStyleType RenderStyle::initialListStyleType() { return CSS::Keyword::Disc { }; }
 inline Style::MarginEdge RenderStyle::initialMargin() { return 0_css_px; }
-constexpr OptionSet<MarginTrimType> RenderStyle::initialMarginTrim() { return { }; }
+constexpr Style::MarginTrim RenderStyle::initialMarginTrim() { return CSS::Keyword::None { }; }
 constexpr MarqueeBehavior RenderStyle::initialMarqueeBehavior() { return MarqueeBehavior::Scroll; }
 constexpr MarqueeDirection RenderStyle::initialMarqueeDirection() { return MarqueeDirection::Auto; }
 inline Length RenderStyle::initialMarqueeIncrement() { return { 6, LengthType::Fixed }; }
@@ -456,7 +456,7 @@ inline std::optional<Style::ScopedName> RenderStyle::initialPositionAnchor() { r
 inline std::optional<PositionArea> RenderStyle::initialPositionArea() { return { }; }
 inline FixedVector<Style::PositionTryFallback> RenderStyle::initialPositionTryFallbacks() { return { }; }
 constexpr Style::PositionTryOrder RenderStyle::initialPositionTryOrder() { return Style::PositionTryOrder::Normal; }
-constexpr OptionSet<PositionVisibility> RenderStyle::initialPositionVisibility() { return PositionVisibility::AnchorsVisible; }
+constexpr Style::PositionVisibility RenderStyle::initialPositionVisibility() { return CSS::Keyword::AnchorsVisible { }; }
 constexpr PrintColorAdjust RenderStyle::initialPrintColorAdjust() { return PrintColorAdjust::Economy; }
 inline Style::Quotes RenderStyle::initialQuotes() { return CSS::Keyword::Auto { }; }
 constexpr Order RenderStyle::initialRTLOrdering() { return Order::Logical; }
@@ -488,7 +488,7 @@ constexpr TextAlignLast RenderStyle::initialTextAlignLast() { return TextAlignLa
 constexpr TextBoxTrim RenderStyle::initialTextBoxTrim() { return TextBoxTrim::None; }
 constexpr TextCombine RenderStyle::initialTextCombine() { return TextCombine::None; }
 inline Style::Color RenderStyle::initialTextDecorationColor() { return Style::Color::currentColor(); }
-constexpr OptionSet<TextDecorationLine> RenderStyle::initialTextDecorationLine() { return { }; }
+constexpr Style::TextDecorationLine RenderStyle::initialTextDecorationLine() { return CSS::Keyword::None { }; }
 constexpr TextDecorationSkipInk RenderStyle::initialTextDecorationSkipInk() { return TextDecorationSkipInk::Auto; }
 constexpr TextDecorationStyle RenderStyle::initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
 inline Style::TextDecorationThickness RenderStyle::initialTextDecorationThickness() { return CSS::Keyword::Auto { }; }
@@ -574,7 +574,7 @@ inline const Style::InsetEdge& RenderStyle::left() const { return m_nonInherited
 inline float RenderStyle::letterSpacing() const { return m_inheritedData->fontData->fontCascade.letterSpacing(); }
 inline const FontCascade& RenderStyle::fontCascade() const { return m_inheritedData->fontData->fontCascade; }
 inline LineAlign RenderStyle::lineAlign() const { return static_cast<LineAlign>(m_rareInheritedData->lineAlign); }
-inline OptionSet<Style::LineBoxContain> RenderStyle::lineBoxContain() const { return OptionSet<Style::LineBoxContain>::fromRaw(m_rareInheritedData->lineBoxContain); }
+inline Style::LineBoxContain RenderStyle::lineBoxContain() const { return Style::LineBoxContain::fromRaw( m_rareInheritedData->lineBoxContain); }
 inline LineBreak RenderStyle::lineBreak() const { return static_cast<LineBreak>(m_rareInheritedData->lineBreak); }
 inline const LineClampValue& RenderStyle::lineClamp() const { return m_nonInheritedData->rareData->lineClamp; }
 inline const AtomString& RenderStyle::lineGrid() const { return m_rareInheritedData->lineGrid; }
@@ -609,7 +609,7 @@ inline const Style::MarginEdge& RenderStyle::marginRight() const { return m_nonI
 inline const Style::MarginEdge& RenderStyle::marginStart() const { return marginStart(writingMode()); }
 inline const Style::MarginEdge& RenderStyle::marginStart(const WritingMode writingMode) const { return m_nonInheritedData->surroundData->margin.start(writingMode); }
 inline const Style::MarginEdge& RenderStyle::marginTop() const { return m_nonInheritedData->surroundData->margin.top(); }
-inline OptionSet<MarginTrimType> RenderStyle::marginTrim() const { return m_nonInheritedData->rareData->marginTrim; }
+inline Style::MarginTrim RenderStyle::marginTrim() const { return Style::MarginTrim(m_nonInheritedData->rareData->marginTrim); }
 inline MarqueeBehavior RenderStyle::marqueeBehavior() const { return static_cast<MarqueeBehavior>(m_nonInheritedData->rareData->marquee->behavior); }
 inline MarqueeDirection RenderStyle::marqueeDirection() const { return static_cast<MarqueeDirection>(m_nonInheritedData->rareData->marquee->direction); }
 inline const Length& RenderStyle::marqueeIncrement() const { return m_nonInheritedData->rareData->marquee->increment; }
@@ -682,7 +682,7 @@ inline const Style::PerspectiveOriginY& RenderStyle::perspectiveOriginY() const 
 inline const std::optional<Style::ScopedName>& RenderStyle::positionAnchor() const { return m_nonInheritedData->rareData->positionAnchor; }
 inline std::optional<PositionArea> RenderStyle::positionArea() const { return m_nonInheritedData->rareData->positionArea; }
 inline Style::PositionTryOrder RenderStyle::positionTryOrder() const { return static_cast<Style::PositionTryOrder>(m_nonInheritedData->rareData->positionTryOrder); }
-inline OptionSet<PositionVisibility> RenderStyle::positionVisibility() const { return OptionSet<PositionVisibility>::fromRaw(m_nonInheritedData->rareData->positionVisibility); }
+inline Style::PositionVisibility RenderStyle::positionVisibility() const { return Style::PositionVisibility(m_nonInheritedData->rareData->positionVisibility); }
 inline bool RenderStyle::preserveNewline() const { return preserveNewline(whiteSpaceCollapse()); }
 inline bool RenderStyle::preserves3D() const { return usedTransformStyle3D() == TransformStyle3D::Preserve3D; }
 inline const Style::Quotes& RenderStyle::quotes() const { return m_rareInheritedData->quotes; }
@@ -727,11 +727,11 @@ inline TextAlignLast RenderStyle::textAlignLast() const { return static_cast<Tex
 inline TextBoxTrim RenderStyle::textBoxTrim() const { return static_cast<TextBoxTrim>(m_nonInheritedData->rareData->textBoxTrim); }
 inline TextCombine RenderStyle::textCombine() const { return static_cast<TextCombine>(m_rareInheritedData->textCombine); }
 inline const Style::Color& RenderStyle::textDecorationColor() const { return m_nonInheritedData->rareData->textDecorationColor; }
-inline OptionSet<TextDecorationLine> RenderStyle::textDecorationLine() const { return OptionSet<TextDecorationLine>::fromRaw(m_nonInheritedFlags.textDecorationLine); }
+inline Style::TextDecorationLine RenderStyle::textDecorationLine() const { return Style::TextDecorationLine(m_nonInheritedFlags.textDecorationLine); }
+inline Style::TextDecorationLine RenderStyle::textDecorationLineInEffect() const { return Style::TextDecorationLine(m_inheritedFlags.textDecorationLineInEffect); }
 inline TextDecorationSkipInk RenderStyle::textDecorationSkipInk() const { return static_cast<TextDecorationSkipInk>(m_rareInheritedData->textDecorationSkipInk); }
 inline TextDecorationStyle RenderStyle::textDecorationStyle() const { return static_cast<TextDecorationStyle>(m_nonInheritedData->rareData->textDecorationStyle); }
 inline const Style::TextDecorationThickness& RenderStyle::textDecorationThickness() const { return m_nonInheritedData->rareData->textDecorationThickness; }
-inline OptionSet<TextDecorationLine> RenderStyle::textDecorationLineInEffect() const { return OptionSet<TextDecorationLine>::fromRaw(m_inheritedFlags.textDecorationLineInEffect); }
 inline const Style::Color& RenderStyle::textEmphasisColor() const { return m_rareInheritedData->textEmphasisColor; }
 inline const Style::TextEmphasisStyle& RenderStyle::textEmphasisStyle() const { return m_rareInheritedData->textEmphasisStyle; }
 inline OptionSet<TextEmphasisPosition> RenderStyle::textEmphasisPosition() const { return OptionSet<TextEmphasisPosition>::fromRaw(m_rareInheritedData->textEmphasisPosition); }

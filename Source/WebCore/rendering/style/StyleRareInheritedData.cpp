@@ -29,6 +29,7 @@
 #include "RenderStyleDifference.h"
 #include "StyleFilterData.h"
 #include "StyleImage.h"
+#include "StylePrimitiveKeywordSet+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
 
@@ -460,7 +461,7 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
     LOG_IF_DIFFERENT_WITH_CAST(TextEmphasisPosition, textEmphasisPosition);
     LOG_IF_DIFFERENT_WITH_CAST(TextUnderlinePosition, textUnderlinePosition);
 
-    LOG_RAW_OPTIONSET_IF_DIFFERENT(Style::LineBoxContain, lineBoxContain);
+    LOG_IF_DIFFERENT_WITH_CONSTRUCTION(Style::LineBoxContain, lineBoxContain);
 
     LOG_IF_DIFFERENT_WITH_CAST(ImageOrientation, imageOrientation);
     LOG_IF_DIFFERENT_WITH_CAST(ImageRendering, imageRendering);

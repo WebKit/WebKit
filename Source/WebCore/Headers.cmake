@@ -2752,6 +2752,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/align/StyleGapGutter.h
 
     style/values/anchor-position/StyleAnchorName.h
+    style/values/anchor-position/StylePositionVisibility.h
 
     style/values/borders/StyleBorderRadius.h
     style/values/borders/StyleBoxShadow.h
@@ -2759,6 +2760,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/borders/StyleShadow.h
 
     style/values/box/StyleMargin.h
+    style/values/box/StyleMarginTrim.h
     style/values/box/StylePadding.h
 
     style/values/color/StyleColor.h
@@ -2868,6 +2870,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/text/StyleTextIndent.h
 
+    style/values/text-decoration/StyleTextDecorationLine.h
     style/values/text-decoration/StyleTextDecorationThickness.h
     style/values/text-decoration/StyleTextEmphasisStyle.h
     style/values/text-decoration/StyleTextShadow.h

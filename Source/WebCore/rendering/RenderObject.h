@@ -30,6 +30,7 @@
 #include "PlatformLayerIdentifier.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyleConstants.h"
+#include "StyleMarginTrim.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -1286,7 +1287,7 @@ private:
         bool hasOutlineAutoAncestor { false };
         // Dirty bit was set with MarkingBehavior::MarkOnlyThis
         bool preferredLogicalWidthsNeedUpdateIsMarkOnlyThis { false };
-        OptionSet<MarginTrimType> trimmedMargins;
+        Style::MarginTrim trimmedMargins;
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;

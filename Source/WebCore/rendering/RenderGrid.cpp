@@ -1965,21 +1965,20 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& gridItem)
     }
 }
 
-bool RenderGrid::isChildEligibleForMarginTrim(MarginTrimType marginTrimType, const RenderBox& gridItem) const
+bool RenderGrid::isChildEligibleForMarginTrim(Style::MarginTrim::Value marginTrim, const RenderBox& gridItem) const
 {
-    ASSERT(style().marginTrim().contains(marginTrimType));
+    ASSERT(style().marginTrim().contains(marginTrim));
 
-    auto isTrimmingBlockDirection = marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
+    auto isTrimmingBlockDirection = marginTrim == CSS::Keyword::BlockStart { } || marginTrim == CSS::Keyword::BlockEnd { };
     auto itemGridSpan = isTrimmingBlockDirection ? currentGrid().gridItemSpanIgnoringCollapsedTracks(gridItem, Style::GridTrackSizingDirection::Rows) : currentGrid().gridItemSpanIgnoringCollapsedTracks(gridItem, Style::GridTrackSizingDirection::Columns);
-    switch (marginTrimType) {
-    case MarginTrimType::BlockStart:
-    case MarginTrimType::InlineStart:
+
+    if (marginTrim == CSS::Keyword::BlockStart { } || marginTrim == CSS::Keyword::InlineStart { })
         return !itemGridSpan.startLine();
-    case MarginTrimType::BlockEnd:
+    if (marginTrim == CSS::Keyword::BlockEnd { })
         return itemGridSpan.endLine() == currentGrid().numTracks(Style::GridTrackSizingDirection::Rows);
-    case MarginTrimType::InlineEnd:
+    if (marginTrim == CSS::Keyword::InlineEnd { })
         return itemGridSpan.endLine() == currentGrid().numTracks(Style::GridTrackSizingDirection::Columns);
-    }
+
     ASSERT_NOT_REACHED();
     return false;
 }

@@ -666,14 +666,6 @@ enum class TextTransform : uint8_t {
 };
 constexpr auto maxTextTransformValue = TextTransform::FullWidth;
 
-enum class TextDecorationLine : uint8_t {
-    Underline     = 1 << 0,
-    Overline      = 1 << 1,
-    LineThrough   = 1 << 2,
-    Blink         = 1 << 3,
-};
-constexpr auto maxTextDecorationLineValue = TextDecorationLine::Blink;
-
 enum class TextDecorationStyle : uint8_t {
     Solid,
     Double,
@@ -719,13 +711,6 @@ enum class TextBoxTrim : uint8_t {
     TrimStart,
     TrimEnd,
     TrimBoth
-};
-
-enum class MarginTrimType : uint8_t {
-    BlockStart = 1 << 0,
-    BlockEnd = 1 << 1,
-    InlineStart = 1 << 2,
-    InlineEnd = 1 << 3
 };
 
 enum class TextEdgeType : uint8_t {
@@ -1233,12 +1218,6 @@ enum class FieldSizing : bool {
     Content
 };
 
-enum class PositionVisibility : uint8_t {
-    AnchorsValid   = 1 << 0,
-    AnchorsVisible = 1 << 1,
-    NoOverflow     = 1 << 2
-};
-
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 constexpr float defaultMiterLimit = 4;
@@ -1304,7 +1283,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, LineAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, LineBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, LineSnap);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStylePosition);
-WTF::TextStream& operator<<(WTF::TextStream&, MarginTrimType);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);
@@ -1318,7 +1296,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, OverflowWrap);
 WTF::TextStream& operator<<(WTF::TextStream&, PaintOrder);
 WTF::TextStream& operator<<(WTF::TextStream&, PointerEvents);
 WTF::TextStream& operator<<(WTF::TextStream&, PositionType);
-WTF::TextStream& operator<<(WTF::TextStream&, PositionVisibility);
 WTF::TextStream& operator<<(WTF::TextStream&, PrintColorAdjust);
 WTF::TextStream& operator<<(WTF::TextStream&, PseudoId);
 WTF::TextStream& operator<<(WTF::TextStream&, QuoteType);
@@ -1338,7 +1315,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignLast);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
-WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationLine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisFill);

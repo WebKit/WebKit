@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,14 +32,14 @@
 namespace WebCore {
 namespace Style {
 
-// <'-webkit-line-box-contain'> = none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]
-// Non-standard
-struct LineBoxContain : CSS::PrimitiveKeywordSet<LineBoxContain, CSS::Keyword::None, CSS::Keyword::Block, CSS::Keyword::Inline, CSS::Keyword::Font, CSS::Keyword::Glyphs, CSS::Keyword::Replaced, CSS::Keyword::InlineBox, CSS::Keyword::InitialLetter> {
+// <'text-decoration-line'> = none | [ underline || overline || line-through || blink ]
+// https://www.w3.org/TR/css-text-decor-3/#propdef-text-decoration-line
+struct TextDecorationLine : CSS::PrimitiveKeywordSet<TextDecorationLine, CSS::Keyword::None, CSS::Keyword::Underline, CSS::Keyword::Overline, CSS::Keyword::LineThrough, CSS::Keyword::Blink> {
     using Base::Base;
 };
-static_assert(sizeof(LineBoxContain) == 1);
+static_assert(sizeof(TextDecorationLine) == 1);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::LineBoxContain)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextDecorationLine)

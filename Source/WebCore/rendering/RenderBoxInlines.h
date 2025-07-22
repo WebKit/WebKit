@@ -67,7 +67,7 @@ inline int RenderBox::scrollbarLogicalHeight() const { return writingMode().isHo
 inline int RenderBox::scrollbarLogicalWidth() const { return writingMode().isHorizontal() ? verticalScrollbarWidth() : horizontalScrollbarHeight(); }
 inline void RenderBox::setLogicalLocation(LayoutPoint location) { setLocation(writingMode().isHorizontal() ? location : location.transposedPoint()); }
 inline void RenderBox::setLogicalSize(LayoutSize size) { setSize(writingMode().isHorizontal() ? size : size.transposedSize()); }
-inline bool RenderBox::shouldTrimChildMargin(MarginTrimType type, const RenderBox& child) const { return style().marginTrim().contains(type) && isChildEligibleForMarginTrim(type, child); }
+inline bool RenderBox::shouldTrimChildMargin(Style::MarginTrim::Value marginTrim, const RenderBox& child) const { return style().marginTrim().contains(marginTrim) && isChildEligibleForMarginTrim(marginTrim, child); }
 inline bool RenderBox::stretchesToViewport() const { return document().inQuirksMode() && style().logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isDocumentElementRenderer() || isBody()) && !shouldComputeLogicalHeightFromAspectRatio() && !isInline(); }
 inline bool RenderBox::isColumnSpanner() const { return style().columnSpan() == ColumnSpan::All; }
 

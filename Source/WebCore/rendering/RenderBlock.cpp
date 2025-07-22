@@ -846,9 +846,9 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     auto& marginLeft = child.style().marginStart(writingMode());
     auto& marginRight = child.style().marginEnd(writingMode());
     LayoutUnit margin;
-    if (auto fixedMarginLeft = marginLeft.tryFixed(); fixedMarginLeft && !shouldTrimChildMargin(MarginTrimType::InlineStart, child))
+    if (auto fixedMarginLeft = marginLeft.tryFixed(); fixedMarginLeft && !shouldTrimChildMargin(CSS::Keyword::InlineStart { }, child))
         margin += fixedMarginLeft->value;
-    if (auto fixedMarginRight = marginRight.tryFixed(); fixedMarginRight && !shouldTrimChildMargin(MarginTrimType::InlineEnd, child))
+    if (auto fixedMarginRight = marginRight.tryFixed(); fixedMarginRight && !shouldTrimChildMargin(CSS::Keyword::InlineEnd { }, child))
         margin += fixedMarginRight->value;
     return margin;
 }
@@ -2905,28 +2905,28 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
     return false;
 }
 
-void RenderBlock::setTrimmedMarginForChild(RenderBox &child, MarginTrimType marginTrimType)
+void RenderBlock::setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::BlockStart keyword)
 {
-    switch (marginTrimType) {
-    case MarginTrimType::BlockStart:
-        setMarginBeforeForChild(child, 0_lu);
-        child.markMarginAsTrimmed(MarginTrimType::BlockStart);
-        break;
-    case MarginTrimType::BlockEnd:
-        setMarginAfterForChild(child, 0_lu);
-        child.markMarginAsTrimmed(MarginTrimType::BlockEnd);
-        break;
-    case MarginTrimType::InlineStart:
-        setMarginStartForChild(child, 0_lu);
-        child.markMarginAsTrimmed(MarginTrimType::InlineStart);
-        break;
-    case MarginTrimType::InlineEnd:
-        setMarginEndForChild(child, 0_lu);
-        child.markMarginAsTrimmed(MarginTrimType::InlineEnd);
-        break;
-    default:
-        ASSERT_NOT_IMPLEMENTED_YET();
-    }
+    setMarginBeforeForChild(child, 0_lu);
+    child.markMarginAsTrimmed(keyword);
+}
+
+void RenderBlock::setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::BlockEnd keyword)
+{
+    setMarginAfterForChild(child, 0_lu);
+    child.markMarginAsTrimmed(keyword);
+}
+
+void RenderBlock::setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::InlineStart keyword)
+{
+    setMarginStartForChild(child, 0_lu);
+    child.markMarginAsTrimmed(keyword);
+}
+
+void RenderBlock::setTrimmedMarginForChild(RenderBox& child, CSS::Keyword::InlineEnd keyword)
+{
+    setMarginEndForChild(child, 0_lu);
+    child.markMarginAsTrimmed(keyword);
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const

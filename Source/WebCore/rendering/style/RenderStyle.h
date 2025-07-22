@@ -163,7 +163,6 @@ enum class LineCap : uint8_t;
 enum class LineJoin : uint8_t;
 enum class LineSnap : uint8_t;
 enum class ListStylePosition : bool;
-enum class MarginTrimType : uint8_t;
 enum class MarqueeBehavior : uint8_t;
 enum class MarqueeDirection : uint8_t;
 enum class MathStyle : bool;
@@ -183,7 +182,6 @@ enum class PaintOrder : uint8_t;
 enum class PaintType : uint8_t;
 enum class PointerEvents : uint8_t;
 enum class PositionType : uint8_t;
-enum class PositionVisibility : uint8_t;
 enum class PrintColorAdjust : bool;
 enum class PseudoId : uint32_t;
 enum class Resize : uint8_t;
@@ -203,7 +201,6 @@ enum class TextAlignLast : uint8_t;
 enum class TextAlignMode : uint8_t;
 enum class TextBoxTrim : uint8_t;
 enum class TextCombine : bool;
-enum class TextDecorationLine : uint8_t;
 enum class TextDecorationSkipInk : uint8_t;
 enum class TextDecorationStyle : uint8_t;
 enum class TextEmphasisPosition : uint8_t;
@@ -286,8 +283,10 @@ struct GridTemplateAreas;
 struct GridTemplateList;
 struct GridTrackSizes;
 struct InsetEdge;
+struct LineBoxContain;
 struct ListStyleType;
 struct MarginEdge;
+struct MarginTrim;
 struct MaximumSize;
 struct MinimumSize;
 struct OffsetAnchor;
@@ -298,6 +297,7 @@ struct OffsetRotate;
 struct PaddingEdge;
 struct Perspective;
 struct Position;
+struct PositionVisibility;
 struct PositionX;
 struct PositionY;
 struct PositionTryFallback;
@@ -314,6 +314,7 @@ struct ScrollPaddingEdge;
 struct ScrollTimelines;
 struct ScrollbarColor;
 struct ScrollbarGutter;
+struct TextDecorationLine;
 struct TextDecorationThickness;
 struct TextEmphasisStyle;
 struct TextIndent;
@@ -329,7 +330,6 @@ struct ViewTransitionName;
 
 enum class Change : uint8_t;
 enum class GridTrackSizingDirection : bool;
-enum class LineBoxContain : uint8_t;
 enum class PositionTryOrder : uint8_t;
 enum class ScrollBehavior : bool;
 enum class WebkitOverflowScrolling : bool;
@@ -681,8 +681,8 @@ public:
     inline TextAlignLast textAlignLast() const;
     inline TextGroupAlign textGroupAlign() const;
     inline OptionSet<TextTransform> textTransform() const;
-    inline OptionSet<TextDecorationLine> textDecorationLineInEffect() const;
-    inline OptionSet<TextDecorationLine> textDecorationLine() const;
+    inline Style::TextDecorationLine textDecorationLineInEffect() const;
+    inline Style::TextDecorationLine textDecorationLine() const;
     inline TextDecorationStyle textDecorationStyle() const;
     inline TextDecorationSkipInk textDecorationSkipInk() const;
     inline OptionSet<TextUnderlinePosition> textUnderlinePosition() const;
@@ -695,7 +695,7 @@ public:
     TextEdge textBoxEdge() const;
     TextEdge lineFitEdge() const;
 
-    inline OptionSet<MarginTrimType> marginTrim() const;
+    inline Style::MarginTrim marginTrim() const;
 
     const Length& computedLetterSpacing() const;
     const Length& computedWordSpacing() const;
@@ -1100,7 +1100,7 @@ public:
     inline const LengthSize& pageSize() const;
     inline PageSizeType pageSizeType() const;
 
-    inline OptionSet<Style::LineBoxContain> lineBoxContain() const;
+    inline Style::LineBoxContain lineBoxContain() const;
     inline const LineClampValue& lineClamp() const;
     inline const Style::BlockEllipsis& blockEllipsis() const;
     inline size_t maxLines() const;
@@ -1344,9 +1344,9 @@ public:
     void setTextAlign(TextAlignMode v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
     inline void setTextAlignLast(TextAlignLast);
     inline void setTextGroupAlign(TextGroupAlign);
-    inline void addToTextDecorationLineInEffect(OptionSet<TextDecorationLine>);
-    inline void setTextDecorationLineInEffect(OptionSet<TextDecorationLine>);
-    inline void setTextDecorationLine(OptionSet<TextDecorationLine>);
+    inline void addToTextDecorationLineInEffect(Style::TextDecorationLine);
+    inline void setTextDecorationLineInEffect(Style::TextDecorationLine);
+    inline void setTextDecorationLine(Style::TextDecorationLine);
     inline void setTextDecorationStyle(TextDecorationStyle);
     inline void setTextDecorationSkipInk(TextDecorationSkipInk);
     inline void setTextDecorationThickness(Style::TextDecorationThickness&&);
@@ -1365,7 +1365,7 @@ public:
     void setTextBoxEdge(TextEdge);
     void setLineFitEdge(TextEdge);
 
-    inline void setMarginTrim(OptionSet<MarginTrimType>);
+    inline void setMarginTrim(Style::MarginTrim);
 
 #if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length&&);
@@ -1650,7 +1650,7 @@ public:
     inline void setPageSizeType(PageSizeType);
     inline void resetPageSizeType();
 
-    inline void setLineBoxContain(OptionSet<Style::LineBoxContain>);
+    inline void setLineBoxContain(Style::LineBoxContain);
     inline void setLineClamp(LineClampValue);
     
     inline void setMaxLines(size_t);
@@ -1981,7 +1981,7 @@ public:
     static inline Style::InsetEdge initialInset();
     static inline Length initialRadius();
     static inline Style::MarginEdge initialMargin();
-    static constexpr OptionSet<MarginTrimType> initialMarginTrim();
+    static constexpr Style::MarginTrim initialMarginTrim();
     static inline Style::PaddingEdge initialPadding();
     static inline Style::TextIndent initialTextIndent();
     static constexpr TextBoxTrim initialTextBoxTrim();
@@ -1996,7 +1996,7 @@ public:
     static constexpr TextAlignMode initialTextAlign();
     static constexpr TextAlignLast initialTextAlignLast();
     static constexpr TextGroupAlign initialTextGroupAlign();
-    static constexpr OptionSet<TextDecorationLine> initialTextDecorationLine();
+    static constexpr Style::TextDecorationLine initialTextDecorationLine();
     static constexpr TextDecorationStyle initialTextDecorationStyle();
     static constexpr TextDecorationSkipInk initialTextDecorationSkipInk();
     static constexpr OptionSet<TextUnderlinePosition> initialTextUnderlinePosition();
@@ -2095,7 +2095,7 @@ public:
     static constexpr RubyPosition initialRubyPosition();
     static constexpr RubyAlign initialRubyAlign();
     static constexpr RubyOverhang initialRubyOverhang();
-    static constexpr OptionSet<Style::LineBoxContain> initialLineBoxContain();
+    static constexpr Style::LineBoxContain initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();
     static StyleImage* initialBorderImageSource() { return nullptr; }
@@ -2328,9 +2328,9 @@ public:
     const FixedVector<Style::PositionTryFallback>& positionTryFallbacks() const;
     void setPositionTryFallbacks(FixedVector<Style::PositionTryFallback>&&);
 
-    static constexpr OptionSet<PositionVisibility> initialPositionVisibility();
-    inline OptionSet<PositionVisibility> positionVisibility() const;
-    inline void setPositionVisibility(OptionSet<PositionVisibility>);
+    static constexpr Style::PositionVisibility initialPositionVisibility();
+    inline Style::PositionVisibility positionVisibility() const;
+    inline void setPositionVisibility(Style::PositionVisibility);
 
     inline bool insideDefaultButton() const;
     inline void setInsideDefaultButton(bool);
