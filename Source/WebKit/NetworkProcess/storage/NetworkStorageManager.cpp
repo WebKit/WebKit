@@ -525,7 +525,8 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
         bool removed = removeOriginStorageManagerIfPossible(origin);
         if (!removed)
             record.isActive = true;
-        if (!record.isPersisted && persistedInternal(WebCore::ClientOrigin { origin.topOrigin, origin.topOrigin }))
+        // Check if either the top-level origin or the client origin has persistence permission
+        if (!record.isPersisted && (persistedInternal(WebCore::ClientOrigin { origin.topOrigin, origin.topOrigin }) || persistedInternal(origin)))
             record.isPersisted = true;
     }
 
@@ -1178,6 +1179,12 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet
     for (auto& origin : getAllOrigins()) {
         if (!filter(origin))
             continue;
+
+        // Check if this origin has persistence permission before deleting
+        if (persistedInternal(origin)) {
+            RELEASE_LOG(Storage, "NetworkStorageManager::deleteDataOnDisk skipping deletion for persisted origin %s", origin.clientOrigin.host().utf8().data());
+            continue;
+        }
 
         {
             CheckedRef originStorageManager = this->originStorageManager(origin);
