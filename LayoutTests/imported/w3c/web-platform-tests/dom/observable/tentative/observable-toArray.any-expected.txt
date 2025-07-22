@@ -1,8 +1,10 @@
+CONSOLE MESSAGE: Error: custom error
+CONSOLE MESSAGE: Error: custom error
 
-FAIL toArray(): basic next/complete promise_test: Unhandled rejection with value: object "TypeError: observable.toArray is not a function. (In 'observable.toArray()', 'observable.toArray' is undefined)"
-FAIL toArray(): first error() rejects promise; subsequent error()s report the exceptions assert_equals: expected object "Error: custom error" but got object "TypeError: observable.toArray is not a function. (In 'observable.toArray()', 'observable.toArray' is undefined)"
-FAIL toArray(): complete() resolves promise; subsequent error()s report the exceptions promise_test: Unhandled rejection with value: object "TypeError: observable.toArray is not a function. (In 'observable.toArray()', 'observable.toArray' is undefined)"
-FAIL toArray(): Subscribing with an aborted signal returns an immediately rejected promise promise_test: Unhandled rejection with value: object "TypeError: observable.toArray is not a function. (In 'observable.toArray({signal: AbortSignal.abort()})', 'observable.toArray' is undefined)"
-FAIL toArray(): Aborting the passed-in signal rejects the returned promise promise_test: Unhandled rejection with value: object "TypeError: observable.toArray is not a function. (In 'observable.toArray({signal: controller.signal})', 'observable.toArray' is undefined)"
-FAIL Operator Promise abort ordering promise_test: Unhandled rejection with value: object "TypeError: observable.toArray is not a function. (In 'observable.toArray({signal: controller.signal})', 'observable.toArray' is undefined)"
+PASS toArray(): basic next/complete
+PASS toArray(): first error() rejects promise; subsequent error()s report the exceptions
+PASS toArray(): complete() resolves promise; subsequent error()s report the exceptions
+PASS toArray(): Subscribing with an aborted signal returns an immediately rejected promise
+PASS toArray(): Aborting the passed-in signal rejects the returned promise
+PASS Operator Promise abort ordering
 

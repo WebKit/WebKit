@@ -43,6 +43,7 @@
 #include "InternalObserverReduce.h"
 #include "InternalObserverSome.h"
 #include "InternalObserverTake.h"
+#include "InternalObserverToArray.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSSubscriptionObserverCallback.h"
 #include "MapperCallback.h"
@@ -139,6 +140,11 @@ Ref<Observable> Observable::inspect(ScriptExecutionContext& context, std::option
             return create(createSubscriberCallbackInspect(context, *this, WTFMove(inspector)));
         }
     );
+}
+
+void Observable::toArray(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorToArray(context, *this, options, WTFMove(promise));
 }
 
 void Observable::first(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
