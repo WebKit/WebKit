@@ -1,5 +1,3 @@
-//@ requireOptions("--useMathSumPreciseMethod=1")
-
 // Copyright (C) 2024 Kevin Gibbons. All rights reserved.
 // This code is governed by the BSD license found in the https://github.com/tc39/test262/blob/main/LICENSE file.
 
@@ -8,7 +6,7 @@ function shouldBe(actual, expected) {
         throw new Error(`Bad value: ${actual}!`);
 }
 
-for (var i = 0; i < testLoopCount; i++) {
+for (var i = 0; i < 1e4; i++) {
     shouldBe(Math.sumPrecise([1, 2, 3]), 6);
     shouldBe(Math.sumPrecise([1e308]), 1e308);
     shouldBe(Math.sumPrecise([1e308, -1e308]), 0);
