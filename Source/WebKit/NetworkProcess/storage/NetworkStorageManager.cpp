@@ -311,7 +311,7 @@ void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection&
 void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
-    
+
     if (!m_connections.remove(connection))
         return;
 
@@ -366,7 +366,7 @@ void NetworkStorageManager::includeOriginInBackupIfNecessary(OriginStorageManage
 
     if (WallTime::now() - originFileCreationTimestamp.value() < m_backupExclusionPeriod)
         return;
-    
+
     FileSystem::setExcludedFromBackup(manager.path(), false);
     manager.markIncludedInBackup();
 }

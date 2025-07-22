@@ -29,15 +29,15 @@
                 return false;
             }
         }
-        
+
         function checkStoredData() {
             try {
                 const localStorageData = localStorage.getItem('testKey');
                 debug('localStorage testKey: ' + (localStorageData || 'NOT FOUND'));
-                
+
                 const secretKey = localStorage.getItem('secretKey');
                 debug('localStorage secretKey: ' + (secretKey || 'NOT FOUND'));
-                
+
                 shouldBeTrue(localStorageData !== null && localStorageData !== "NOT FOUND");
                 shouldBeTrue(secretKey !== null && secretKey !== "NOT FOUND");
                 return true;
@@ -46,18 +46,18 @@
                 return false;
             }
         }
-        
+
         async function testStorageManagerPersist() {
             try {
                 if ('storage' in navigator && 'persist' in navigator.storage) {
                     const persisted = await navigator.storage.persist();
                     debug('Persistence request result: ' + persisted);
                     shouldBeTrue(persisted === true || persisted === false);
-                    
+
                     const isPersisted = await navigator.storage.persisted();
                     debug('Current persistence status: ' + isPersisted);
                     shouldBeTrue(isPersisted === true || isPersisted === false);
-                    
+
                     testPassed('StorageManager.persist() API works correctly');
                     return true;
                 } else {
@@ -69,30 +69,30 @@
                 return false;
             }
         }
-        
+
         // Run the test
         async function runTest() {
             debug('Page loaded. Testing StorageManager.persist() with ITP...');
-            
+
             // Test localStorage
             if (!storeTestData()) {
                 finishJSTest();
                 return;
             }
-            
+
             if (!checkStoredData()) {
                 finishJSTest();
                 return;
             }
-            
+
             // Test StorageManager.persist()
             await testStorageManagerPersist();
-            
+
             finishJSTest();
         }
-        
+
         // Start the test
         runTest();
     </script>
 </body>
-</html> 
+</html>
