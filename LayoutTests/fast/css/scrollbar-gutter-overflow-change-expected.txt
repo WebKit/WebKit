@@ -1,0 +1,2 @@
+PASS
+When scrollbar-gutter: stable is set, the content width remains the same even when overflow changes from auto to hidden, because the gutter area is preserved and not removed with the scrollbar
