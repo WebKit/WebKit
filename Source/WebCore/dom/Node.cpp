@@ -73,6 +73,7 @@
 #include "PointerEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
@@ -1412,7 +1413,16 @@ void Node::setManuallyAssignedSlot(HTMLSlotElement* slotElement)
     else if (RefPtr text = dynamicDowncast<Text>(*this))
         RenderTreeUpdater::tearDownRenderer(*text);
 
+    auto* oldSlotElement = manuallyAssignedSlot();
+    std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
+    std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
+
     ensureRareData().setManuallyAssignedSlot(slotElement);
+
+    if (oldSlotElement)
+        oldInvalidation.emplace(*oldSlotElement, CSSSelector::PseudoClass::HasSlotted, oldSlotElement->hasFlattenedSlottedContent());
+    if (slotElement)
+        newInvalidation.emplace(*slotElement, CSSSelector::PseudoClass::HasSlotted, slotElement->hasFlattenedSlottedContent());
 
     InspectorInstrumentation::didChangeAssignedSlot(*this);
 }

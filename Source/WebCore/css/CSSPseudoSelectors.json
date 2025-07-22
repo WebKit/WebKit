@@ -131,6 +131,9 @@
         "future": {
             "conditional": "ENABLE(VIDEO)"
         },
+        "has-slotted": {
+          "settings-flag": "cssHasSlottedEnabled"
+        },
         "has": {
             "argument": "required"
         },

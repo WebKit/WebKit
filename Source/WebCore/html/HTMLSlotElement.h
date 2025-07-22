@@ -56,6 +56,9 @@ public:
     bool isInInsertedIntoAncestor() const { return m_isInInsertedIntoAncestor; }
 
     void updateAccessibilityOnSlotChange() const;
+
+    bool hasFlattenedSlottedContent() const;
+
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
 

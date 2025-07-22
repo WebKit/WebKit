@@ -29,6 +29,7 @@
 #include "ElementInlines.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -311,8 +312,13 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
     RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
     shadowRootHost->invalidateStyleForSubtree();
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+
     auto assignedNodes = std::exchange(slot->assignedNodes, { });
     m_slotAssignmentsIsValid = false;
+
+    if (auto* slotElement = slot->element.get())
+        styleInvalidation.emplace(*slotElement, CSSSelector::PseudoClass::HasSlotted, slotElement->hasFlattenedSlottedContent());
 
     if (RefPtr slotElement = findFirstSlotElement(*slot)) {
         if (shadowRoot.shouldFireSlotchangeEvent())
@@ -390,9 +396,14 @@ void NamedSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot&)
     if (!slot || slot->assignedNodes.isEmpty())
         return;
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+
     slot->assignedNodes.removeFirstMatching([&node](const auto& item) {
         return item.get() == &node;
     });
+
+    if (auto* slotElement = slot->element.get())
+        styleInvalidation.emplace(*slotElement, CSSSelector::PseudoClass::HasSlotted, slotElement->hasFlattenedSlottedContent());
 
     InspectorInstrumentation::didChangeAssignedSlot(node);
 }
@@ -441,15 +452,21 @@ void NamedSlotAssignment::assignSlots(ShadowRoot& shadowRoot)
 void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
 {
     ASSERT(!slotName.isNull());
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (slotName == defaultSlotName()) {
         auto defaultSlotEntry = m_slots.find(defaultSlotName());
-        if (defaultSlotEntry != m_slots.end())
+        if (defaultSlotEntry != m_slots.end()) {
             defaultSlotEntry->value->assignedNodes.append(child);
+            if (auto* slotElement = defaultSlotEntry->value->element.get())
+                styleInvalidation.emplace(*slotElement, CSSSelector::PseudoClass::HasSlotted, slotElement->hasFlattenedSlottedContent());
+        }
     } else {
         auto addResult = m_slots.ensure(slotName, [] {
             return makeUnique<Slot>();
         });
         addResult.iterator->value->assignedNodes.append(child);
+        if (auto* slotElement = addResult.iterator->value->element.get())
+            styleInvalidation.emplace(*slotElement, CSSSelector::PseudoClass::HasSlotted, slotElement->hasFlattenedSlottedContent());
     }
 
     InspectorInstrumentation::didChangeAssignedSlot(child);
@@ -618,5 +635,4 @@ void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&)
 }
 
 }
-
 

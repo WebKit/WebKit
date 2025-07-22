@@ -1135,7 +1135,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::VolumeLocked:
             return matchesVolumeLockedPseudoClass(element);
 #endif
-
+        case CSSSelector::PseudoClass::HasSlotted:
+            return matchesHasSlottedPseudoClass(element);
         case CSSSelector::PseudoClass::Scope: {
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope.get();
             auto match = &element == contextualReferenceNode;
