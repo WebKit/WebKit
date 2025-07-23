@@ -25,6 +25,7 @@ async function runTest() {
         
         finishJSTest();
     } catch (error) {
+        debug(`FAIL: failed with error ${error.message}`);
         finishJSTest();
     }
 }
