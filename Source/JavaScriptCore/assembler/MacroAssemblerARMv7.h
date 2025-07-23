@@ -2120,25 +2120,27 @@ public:
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-        // Convert into dest.
+        // Fast path: hardware conversion.
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
 
-        // Calculate 2x dest.  If the value potentially underflowed, it will have
+        // Check for overflow/underflow/NaN/Infinity.
+        // Calculate 2x dest. If the value potentially underflowed, it will have
         // clamped to 0x80000000, so 2x dest is zero in this case. In the case of
         // overflow the result will be equal to -2.
         Jump underflow = branchAdd32(Zero, dest, dest, scratch);
         Jump noOverflow = branch32(NotEqual, scratch, TrustedImm32(-2));
 
-        // For BranchIfTruncateSuccessful, we branch if 'noOverflow' jumps.
+        // If the conversion was successful, continue on the fast path.
         underflow.link(this);
         if (branchType == BranchIfTruncateSuccessful)
             return noOverflow;
 
-        // We'll reach the current point in the code on failure, so plant a
-        // jump here & link the success case.
+        // Slow path: call the C++ helper for JS ToInt32 semantics.
         Jump failure = jump();
         noOverflow.link(this);
+        // Place the C call here (pseudo-code, actual call will be inserted by the JIT slow path generator):
+        // callOperationWithoutExceptionCheck(operationToInt32, dest, src);
         return failure;
     }
 

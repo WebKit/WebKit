@@ -2869,9 +2869,9 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             else
 #endif
             {
-                silentSpillAllRegisters(resultGpr);
-                callOperationWithoutExceptionCheck(operationToInt32, resultGpr, fpr);
-                silentFillAllRegisters();
+                Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, resultGpr, BranchIfTruncateFailed);
+                addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+                    hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGpr, fpr));
             }
 
             converted.append(jump());
@@ -2928,9 +2928,9 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
                 unboxDouble(tagGPR, payloadGPR, fpr);
 
-                silentSpillAllRegisters(resultGpr);
-                callOperationWithoutExceptionCheck(operationToInt32, resultGpr, fpr);
-                silentFillAllRegisters();
+                Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, resultGpr, BranchIfTruncateFailed);
+                addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+                    hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGpr, fpr));
 
                 converted.append(jump());
 
