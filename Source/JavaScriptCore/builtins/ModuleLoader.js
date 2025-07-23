@@ -171,12 +171,8 @@ function requestFetch(entry, parameters, fetcher)
         });
     }
 
-    // Hook point.
-    // 2. Loader.fetch
-    //     https://whatwg.github.io/loader/#browser-fetch
-    //     Take the key and fetch the resource actually.
-    //     For example, JavaScriptCore shell can provide the hook fetching the resource
-    //     from the local file system.
+    // Fix for bug 242740: Set the fetch promise immediately to prevent race conditions
+    // when multiple modules simultaneously import the same module
     var fetchPromise = this.fetch(entry.key, parameters, fetcher).then((source) => {
         @setStateToMax(entry, @ModuleInstantiate);
         return source;
@@ -196,14 +192,15 @@ function requestInstantiate(entry, parameters, fetcher)
     if (entry.instantiate)
         return entry.instantiate;
 
+    // Fix for bug 242740: Set the instantiate promise immediately to prevent race conditions
+    // when multiple modules simultaneously import the same module with top-level await
     var instantiatePromise = (async () => {
         var source = await this.requestFetch(entry, parameters, fetcher);
         // https://html.spec.whatwg.org/#fetch-a-single-module-script
         // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
         // Instantiation won't be retried.
-        if (entry.instantiate)
+        if (entry.instantiate && entry.instantiate !== instantiatePromise)
             return await entry.instantiate;
-        entry.instantiate = instantiatePromise;
 
         var key = entry.key;
         var moduleRecord = await this.parseModule(key, source);
@@ -222,6 +219,9 @@ function requestInstantiate(entry, parameters, fetcher)
         @setStateToMax(entry, @ModuleSatisfy);
         return entry;
     })();
+    
+    // Set the instantiate promise immediately to prevent race conditions
+    entry.instantiate = instantiatePromise;
     return instantiatePromise;
 }
 

@@ -1,0 +1,27 @@
+Top-level await simultaneous import bug 242740
+
+This test reproduces the bug where multiple modules simultaneously importing a module with top-level await causes a ReferenceError.
+
+Starting test...
+Testing simultaneous imports...
+Module loading started...
+Module setup completed
+Module loaded successfully
+Module loading started...
+Module setup completed
+Module loaded successfully
+Import 1 result: module-loaded
+Import 2 result: module-loaded
+✅ Test passed: Both imports returned the same result
+Testing multiple modules importing the same module...
+Module loading started...
+Module setup completed
+Module loaded successfully
+Import1: Module imported successfully
+Import2: Module imported successfully
+Import3: Module imported successfully
+Import1 result: import-successful
+Import2 result: import-successful
+Import3 result: import-successful
+✅ Test passed: All modules imported successfully
+All tests completed 

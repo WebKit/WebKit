@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Top-level await simultaneous import bug 242740</title>
+</head>
+<body>
+    <h1>Simple Top-level await simultaneous import bug 242740</h1>
+    <p>This test reproduces the exact issue mentioned in the bug report comments.</p>
+    <div id="output"></div>
+
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        function log(message) {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toISOString()}] ${message}`;
+            output.appendChild(div);
+            console.log(message);
+        }
+
+        log('Starting simple test...');
+
+        // This reproduces the exact issue from comment #8 in the bug report
+        async function testSimpleCase() {
+            log('Testing simple case from bug report comment #8...');
+            
+            try {
+                // This should log "one" and "two" after 1 second, but Safari logs "two" immediately
+                const promise1 = import('./top-level-await-simultaneous-import-bug-242740-simple-module.js')
+                    .then(() => {
+                        log('one');
+                        return 'one';
+                    });
+                
+                const promise2 = import('./top-level-await-simultaneous-import-bug-242740-simple-module.js')
+                    .then(() => {
+                        log('two');
+                        return 'two';
+                    });
+                
+                const [result1, result2] = await Promise.all([promise1, promise2]);
+                
+                log(`Results: ${result1}, ${result2}`);
+                
+                if (result1 === 'one' && result2 === 'two') {
+                    log('✅ Test passed: Both imports completed correctly');
+                } else {
+                    log('❌ Test failed: Unexpected results');
+                }
+            } catch (error) {
+                log(`❌ Test failed with error: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        // Run the test
+        testSimpleCase().then(() => {
+            log('Simple test completed');
+        }).catch((error) => {
+            log(`Simple test failed: ${error.message}`);
+            console.error(error);
+        });
+    </script>
+</body>
+</html> 
