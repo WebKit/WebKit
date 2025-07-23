@@ -241,10 +241,10 @@ bool HTMLPlugInElement::supportsFocus() const
     return renderer && !renderer->isPluginUnavailable();
 }
 
-RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
-        return m_pluginReplacement->createElementRenderer(*this, WTFMove(style), insertionPosition);
+        return RenderElement::createFor(*this, WTFMove(style));
 
     return createRenderer<RenderEmbeddedObject>(*this, WTFMove(style));
 }
