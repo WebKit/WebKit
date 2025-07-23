@@ -9,4 +9,4 @@ FAIL result.default should be simple-module-loaded. Threw exception ReferenceErr
 Timing test passed: Module object is properly synchronized
 PASS successfullyParsed is true
 
-TEST COMPLETE 
+TEST COMPLETE
