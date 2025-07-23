@@ -30,7 +30,6 @@ async function runTests() {
         
         shouldBeEqualToString('result1.default', 'module-loaded');
         shouldBeEqualToString('result2.default', 'module-loaded');
-        log('✅ Simultaneous imports test passed');
 
         // Test case 2: Multiple modules importing the same module
         log('Testing multiple modules importing the same module...');
@@ -48,13 +47,11 @@ async function runTests() {
         shouldBeEqualToString('import1.default', 'import-successful');
         shouldBeEqualToString('import2.default', 'import-successful');
         shouldBeEqualToString('import3.default', 'import-successful');
-        log('✅ Multiple modules test passed');
 
         log('All tests completed successfully');
         finishJSTest();
     } catch (error) {
-        log(`❌ Test failed with error: ${error.message}`);
-        console.error(error);
+        debug(`FAIL: failed with error ${error.message}`);
         finishJSTest();
     }
 }
