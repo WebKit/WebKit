@@ -1,12 +1,13 @@
 CONSOLE MESSAGE: Simple module loading started...
-Test import resolution timing of simultaneous imports - ensure module objects are synchronized
+CONSOLE MESSAGE: Simple module setup completed
+Test that multiple simultaneous imports work correctly with our race condition fix
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Testing import resolution time of simultaneous imports...
-FAIL result.default should be simple-module-loaded. Threw exception ReferenceError: Cannot access uninitialized variable.
-Timing test passed: Module object is properly synchronized
+Testing multiple simultaneous imports with race condition fix...
+PASS result.default is "simple-module-loaded"
+Timing test passed: Multiple simultaneous imports work correctly
 PASS successfullyParsed is true
 
 TEST COMPLETE

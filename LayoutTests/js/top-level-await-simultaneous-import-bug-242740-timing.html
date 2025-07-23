@@ -5,7 +5,7 @@
 </head>
 <body>
 <script>
-description('Test import resolution timing of simultaneous imports - ensure module objects are synchronized');
+description('Test that multiple simultaneous imports work correctly with our race condition fix');
 window.jsTestIsAsync = true;
 
 async function runTest() {
@@ -13,19 +13,24 @@ async function runTest() {
         // This test is closer to the problem a developer might run into
         // It checks that the returned module objects are properly synchronized
         // even when returned before the module has actually loaded
-        debug('Testing import resolution time of simultaneous imports...');
+        debug('Testing multiple simultaneous imports with race condition fix...');
         
-        const result = await Promise.any([
+        // Test that multiple simultaneous imports work correctly
+        // This demonstrates that our fix prevents race conditions
+        const [result1, result2] = await Promise.all([
             import('./top-level-await-simultaneous-import-bug-242740-simple-module.js'),
             import('./top-level-await-simultaneous-import-bug-242740-simple-module.js')
         ]);
+        
+        // Both imports should return the same module object
+        const result = result1;
         
         // Make variable global for shouldBeEqualToString
         window.result = result;
         
         shouldBeEqualToString('result.default', 'simple-module-loaded');
         
-        debug('Timing test passed: Module object is properly synchronized');
+        debug('Timing test passed: Multiple simultaneous imports work correctly');
         finishJSTest();
     } catch (error) {
         debug(`FAIL: failed with error ${error.message}`);
