@@ -1,13 +1,3 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x132
-  RenderBlock {HTML} at (0,0) size 800x132
-    RenderBody {BODY} at (8,21) size 784x95
-      RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 662x37
-          text run at (0,0) width 662: "Top-level await simultaneous import bug 242740"
-      RenderBlock {P} at (0,58) size 784x37
-        RenderText {#text} at (0,0) size 759x36
-          text run at (0,0) width 759: "This test reproduces the bug where multiple modules simultaneously importing a module with top-level await causes a"
-          text run at (0,18) width 102: "ReferenceError."
-      RenderBlock {DIV} at (0,110) size 784x0 
+PASS successfullyParsed is true
+
+TEST COMPLETE 

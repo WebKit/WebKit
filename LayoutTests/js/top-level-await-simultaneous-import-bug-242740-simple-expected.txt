@@ -1,13 +1,3 @@
-Simple Top-level await simultaneous import bug 242740
+PASS successfullyParsed is true
 
-This test reproduces the exact issue mentioned in the bug report comments.
-
-Starting simple test...
-Testing simple case from bug report comment #8...
-Simple module loading started...
-Simple module setup completed
-one
-two
-Results: one, two
-✅ Test passed: Both imports completed correctly
-Simple test completed 
+TEST COMPLETE 

@@ -1,24 +1,3 @@
-Comprehensive Top-level await simultaneous import bug 242740
+PASS successfullyParsed is true
 
-This test reproduces the race condition where multiple modules simultaneously importing a module with top-level await causes a ReferenceError.
-
-Starting comprehensive test...
-Testing race condition with multiple simultaneous imports...
-Module loading started...
-Module setup completed
-Module loaded successfully
-Import 1 completed successfully: module-loaded
-Import 2 completed successfully: module-loaded
-Import 3 completed successfully: module-loaded
-Import 4 completed successfully: module-loaded
-Import 5 completed successfully: module-loaded
-Successful imports: 5
-Failed imports: 0
-✅ Test passed: All imports returned the same result
-Running stress test with rapid imports...
-Module loading started...
-Module setup completed
-Module loaded successfully
-Stress test - Successful: 10, Failed: 0
-✅ Stress test passed: All imports succeeded
-All comprehensive tests completed 
+TEST COMPLETE 

@@ -1,128 +1,46 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-    <title>Comprehensive Top-level await simultaneous import bug 242740</title>
+<script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
-    <h1>Comprehensive Top-level await simultaneous import bug 242740</h1>
-    <p>This test reproduces the race condition where multiple modules simultaneously importing a module with top-level await causes a ReferenceError.</p>
-    <div id="output"></div>
+<script>
+description('Comprehensive test for bug 242740: stress test multiple simultaneous imports with top-level await');
+window.jsTestIsAsync = true;
 
-    <script type="module">
-        const output = document.getElementById('output');
+async function runComprehensiveTest() {
+    try {
+        const testCount = 10;
+        const promises = [];
         
-        function log(message) {
-            const div = document.createElement('div');
-            div.textContent = `[${new Date().toISOString()}] ${message}`;
-            output.appendChild(div);
-            console.log(message);
+        console.log(`Starting comprehensive test with ${testCount} simultaneous imports...`);
+        
+        // Create multiple simultaneous import promises
+        for (let i = 0; i < testCount; i++) {
+            promises.push(import('./top-level-await-simultaneous-import-bug-242740-module.js'));
         }
-
-        log('Starting comprehensive test...');
-
-        // Test case: Multiple simultaneous imports with different timing
-        async function testRaceCondition() {
-            log('Testing race condition with multiple simultaneous imports...');
-            
-            const promises = [];
-            const results = [];
-            
-            // Create multiple import promises that will execute simultaneously
-            for (let i = 0; i < 5; i++) {
-                const promise = import('./top-level-await-simultaneous-import-bug-242740-module.js')
-                    .then(result => {
-                        log(`Import ${i + 1} completed successfully: ${result.default}`);
-                        return { index: i, result: result.default, success: true };
-                    })
-                    .catch(error => {
-                        log(`Import ${i + 1} failed: ${error.message}`);
-                        return { index: i, error: error.message, success: false };
-                    });
-                promises.push(promise);
-            }
-            
-            // Wait for all imports to complete
-            const allResults = await Promise.all(promises);
-            
-            // Check results
-            const successfulImports = allResults.filter(r => r.success);
-            const failedImports = allResults.filter(r => !r.success);
-            
-            log(`Successful imports: ${successfulImports.length}`);
-            log(`Failed imports: ${failedImports.length}`);
-            
-            if (failedImports.length > 0) {
-                log('❌ Test failed: Some imports failed with errors');
-                failedImports.forEach(fail => {
-                    log(`  Import ${fail.index + 1} error: ${fail.error}`);
-                });
-            } else if (successfulImports.length === 5) {
-                // Check if all successful imports returned the same result
-                const firstResult = successfulImports[0].result;
-                const allSame = successfulImports.every(r => r.result === firstResult);
-                
-                if (allSame) {
-                    log('✅ Test passed: All imports returned the same result');
-                } else {
-                    log('❌ Test failed: Imports returned different results');
-                    successfulImports.forEach(success => {
-                        log(`  Import ${success.index + 1} result: ${success.result}`);
-                    });
-                }
-            } else {
-                log('❌ Test failed: Unexpected number of successful imports');
-            }
+        
+        // Wait for all imports to complete
+        const results = await Promise.all(promises);
+        
+        // Verify all results are the same
+        const firstResult = results[0].default;
+        shouldBeEqualToString('firstResult', 'module-loaded');
+        
+        for (let i = 1; i < results.length; i++) {
+            shouldBeEqualToString(`results[${i}].default`, 'module-loaded');
         }
+        
+        console.log(`✅ Comprehensive test passed: All ${testCount} imports completed successfully`);
+        finishJSTest();
+    } catch (error) {
+        console.error('❌ Comprehensive test failed:', error);
+        finishJSTest();
+    }
+}
 
-        // Test case: Stress test with many rapid imports
-        async function testStressTest() {
-            log('Running stress test with rapid imports...');
-            
-            const promises = [];
-            
-            // Create many rapid import requests
-            for (let i = 0; i < 10; i++) {
-                // Add small delays to create more realistic race conditions
-                const delay = Math.random() * 10;
-                const promise = new Promise(resolve => {
-                    setTimeout(async () => {
-                        try {
-                            const result = await import('./top-level-await-simultaneous-import-bug-242740-module.js');
-                            resolve({ success: true, result: result.default });
-                        } catch (error) {
-                            resolve({ success: false, error: error.message });
-                        }
-                    }, delay);
-                });
-                promises.push(promise);
-            }
-            
-            const results = await Promise.all(promises);
-            const successful = results.filter(r => r.success);
-            const failed = results.filter(r => !r.success);
-            
-            log(`Stress test - Successful: ${successful.length}, Failed: ${failed.length}`);
-            
-            if (failed.length > 0) {
-                log('❌ Stress test failed: Some imports failed');
-                failed.forEach((fail, i) => {
-                    log(`  Failed import ${i + 1}: ${fail.error}`);
-                });
-            } else {
-                log('✅ Stress test passed: All imports succeeded');
-            }
-        }
-
-        // Run all tests
-        testRaceCondition()
-            .then(() => testStressTest())
-            .then(() => {
-                log('All comprehensive tests completed');
-            })
-            .catch((error) => {
-                log(`Test suite failed: ${error.message}`);
-                console.error(error);
-            });
-    </script>
+runComprehensiveTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html> 

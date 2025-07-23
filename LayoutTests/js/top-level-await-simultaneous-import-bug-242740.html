@@ -1,84 +1,57 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-    <title>Top-level await simultaneous import bug 242740</title>
+<script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
-    <h1>Top-level await simultaneous import bug 242740</h1>
-    <p>This test reproduces the bug where multiple modules simultaneously importing a module with top-level await causes a ReferenceError.</p>
-    <div id="output"></div>
+<script>
+description('Test that multiple modules can simultaneously import a module with top-level await without ReferenceError');
+window.jsTestIsAsync = true;
 
-    <script type="module">
-        const output = document.getElementById('output');
-        
-        function log(message) {
-            const div = document.createElement('div');
-            div.textContent = `[${new Date().toISOString()}] ${message}`;
-            output.appendChild(div);
-            console.log(message);
-        }
+let testResults = [];
 
-        log('Starting test...');
+function log(message) {
+    testResults.push(message);
+    console.log(message);
+}
 
+async function runTests() {
+    try {
         // Test case 1: Simple simultaneous imports
-        async function testSimultaneousImports() {
-            log('Testing simultaneous imports...');
-            
-            try {
-                const [result1, result2] = await Promise.all([
-                    import('./top-level-await-simultaneous-import-bug-242740-module.js'),
-                    import('./top-level-await-simultaneous-import-bug-242740-module.js')
-                ]);
-                
-                log(`Import 1 result: ${result1.default}`);
-                log(`Import 2 result: ${result2.default}`);
-                
-                if (result1.default === result2.default && result1.default === 'module-loaded') {
-                    log('✅ Test passed: Both imports returned the same result');
-                } else {
-                    log('❌ Test failed: Imports returned different results');
-                }
-            } catch (error) {
-                log(`❌ Test failed with error: ${error.message}`);
-                console.error(error);
-            }
-        }
+        log('Testing simultaneous imports...');
+        const [result1, result2] = await Promise.all([
+            import('./top-level-await-simultaneous-import-bug-242740-module.js'),
+            import('./top-level-await-simultaneous-import-bug-242740-module.js')
+        ]);
+        
+        shouldBeEqualToString('result1.default', 'module-loaded');
+        shouldBeEqualToString('result2.default', 'module-loaded');
+        log('✅ Simultaneous imports test passed');
 
         // Test case 2: Multiple modules importing the same module
-        async function testMultipleModules() {
-            log('Testing multiple modules importing the same module...');
-            
-            try {
-                const [result1, result2, result3] = await Promise.all([
-                    import('./top-level-await-simultaneous-import-bug-242740-import1.js'),
-                    import('./top-level-await-simultaneous-import-bug-242740-import2.js'),
-                    import('./top-level-await-simultaneous-import-bug-242740-import3.js')
-                ]);
-                
-                log(`Import1 result: ${result1.default}`);
-                log(`Import2 result: ${result2.default}`);
-                log(`Import3 result: ${result3.default}`);
-                
-                if (result1.default === result2.default && result2.default === result3.default && result1.default === 'import-successful') {
-                    log('✅ Test passed: All modules imported successfully');
-                } else {
-                    log('❌ Test failed: Modules returned different results');
-                }
-            } catch (error) {
-                log(`❌ Test failed with error: ${error.message}`);
-                console.error(error);
-            }
-        }
+        log('Testing multiple modules importing the same module...');
+        const [import1, import2, import3] = await Promise.all([
+            import('./top-level-await-simultaneous-import-bug-242740-import1.js'),
+            import('./top-level-await-simultaneous-import-bug-242740-import2.js'),
+            import('./top-level-await-simultaneous-import-bug-242740-import3.js')
+        ]);
+        
+        shouldBeEqualToString('import1.default', 'import-successful');
+        shouldBeEqualToString('import2.default', 'import-successful');
+        shouldBeEqualToString('import3.default', 'import-successful');
+        log('✅ Multiple modules test passed');
 
-        // Run tests
-        testSimultaneousImports().then(() => {
-            return testMultipleModules();
-        }).then(() => {
-            log('All tests completed');
-        }).catch((error) => {
-            log(`Test suite failed: ${error.message}`);
-            console.error(error);
-        });
-    </script>
+        log('All tests completed successfully');
+        finishJSTest();
+    } catch (error) {
+        log(`❌ Test failed with error: ${error.message}`);
+        console.error(error);
+        finishJSTest();
+    }
+}
+
+runTests();
+</script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html> 
