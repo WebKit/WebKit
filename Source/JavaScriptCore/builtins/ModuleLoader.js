@@ -565,13 +565,13 @@ async function loadModule(key, parameters, fetcher)
 }
 
 @visibility=PrivateRecursive
-function linkAndEvaluateModule(key, fetcher)
+async function linkAndEvaluateModule(key, fetcher)
 {
     "use strict";
 
     var entry = this.ensureRegistered(key);
     this.link(entry, fetcher);
-    return this.moduleEvaluation(entry, fetcher);
+    return await this.moduleEvaluation(entry, fetcher);
 }
 
 @visibility=PrivateRecursive
