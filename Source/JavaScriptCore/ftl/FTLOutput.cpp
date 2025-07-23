@@ -337,13 +337,17 @@ LValue Output::doubleMin(LValue lhs, LValue rhs)
     return m_block->appendNew<B3::Value>(m_proc, B3::FMin, origin(), lhs, rhs);
 }
 
-LValue Output::doubleToInt32(LValue value)
+LValue Output::doubleToInt32WithOverflowHandling(LValue value)
 {
     PatchpointValue* result = patchpoint(Int32);
     result->append(value, ValueRep::SomeRegister);
     result->setGenerator(
         [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
+#if CPU(ARM64)
+            jit.convertDoubleToInt32UsingJavaScriptSemantics(params[1].fpr(), params[0].gpr());
+#else
+            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+#endif
         });
     result->effects = Effects::none();
     return result;
