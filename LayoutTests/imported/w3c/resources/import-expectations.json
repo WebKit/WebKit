@@ -322,7 +322,7 @@
     "web-platform-tests/touch-events": "import",
     "web-platform-tests/trust-tokens": "skip",
     "web-platform-tests/trusted-types": "import",
-    "web-platform-tests/ua-client-hints": "skip",
+    "web-platform-tests/ua-client-hints": "import",
     "web-platform-tests/uievents": "import",
     "web-platform-tests/upgrade-insecure-requests": "import",
     "web-platform-tests/url": "import",

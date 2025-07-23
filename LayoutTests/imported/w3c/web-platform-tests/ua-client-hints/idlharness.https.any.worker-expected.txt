@@ -1,0 +1,40 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorUA: member names are unique
+PASS WorkerNavigator includes NavigatorUA: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS WorkerNavigator includes NavigatorID: member names are unique
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
+FAIL NavigatorUAData interface: existence and properties of interface object assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface object length assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface object name assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: attribute brands assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: attribute mobile assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: attribute platform assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: operation getHighEntropyValues(sequence<DOMString>) assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData interface: operation toJSON() assert_own_property: self does not have own property "NavigatorUAData" expected property "NavigatorUAData" missing
+FAIL NavigatorUAData must be primary interface of navigator.userAgentData assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of navigator.userAgentData assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: navigator.userAgentData must inherit property "brands" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: navigator.userAgentData must inherit property "mobile" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: navigator.userAgentData must inherit property "platform" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: navigator.userAgentData must inherit property "getHighEntropyValues(sequence<DOMString>)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: calling getHighEntropyValues(sequence<DOMString>) on navigator.userAgentData with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: navigator.userAgentData must inherit property "toJSON()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL NavigatorUAData interface: toJSON operation on navigator.userAgentData undefined is not an object (evaluating 'memberHolderObject.toJSON')
+FAIL WorkerNavigator interface: attribute userAgentData assert_true: The prototype object must have a property "userAgentData" expected true got false
+FAIL WorkerNavigator interface: navigator must inherit property "userAgentData" with the proper type assert_inherits: property "userAgentData" not found in prototype chain
+

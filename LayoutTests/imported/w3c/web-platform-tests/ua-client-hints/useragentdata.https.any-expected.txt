@@ -1,0 +1,9 @@
+
+FAIL tests for navigator.userAgentData undefined is not an object (evaluating 'navigator.userAgentData.brands')
+FAIL test NavigatorUAData.toJSON() output undefined is not an object (evaluating 'navigator.userAgentData.toJSON')
+FAIL getHighEntropyValues() should return low-entropy hints by default (1). undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+FAIL getHighEntropyValues() should return low-entropy hints by default (2). undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+FAIL getHighEntropyValues() should return low-entropy hints by default (3). undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+FAIL getHighEntropyValues() should return low-entropy hints by default (4). undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+FAIL Arch should be one of two permitted values. undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+

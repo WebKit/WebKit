@@ -1,0 +1,3 @@
+
+FAIL Platform version and wow64-ness on Linux should be fixed values undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')
+
