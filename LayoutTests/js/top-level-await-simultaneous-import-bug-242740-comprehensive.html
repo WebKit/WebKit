@@ -23,8 +23,11 @@ async function runComprehensiveTest() {
         // Wait for all imports to complete
         const results = await Promise.all(promises);
         
+        // Make variables global for shouldBeEqualToString
+        window.results = results;
+        window.firstResult = results[0].default;
+        
         // Verify all results are the same
-        const firstResult = results[0].default;
         shouldBeEqualToString('firstResult', 'module-loaded');
         
         for (let i = 1; i < results.length; i++) {

@@ -1,3 +1,25 @@
+CONSOLE MESSAGE: Testing simultaneous imports...
+CONSOLE MESSAGE: Module loading started...
+CONSOLE MESSAGE: Module setup completed
+CONSOLE MESSAGE: Module loaded successfully
+CONSOLE MESSAGE: âœ… Simultaneous imports test passed
+CONSOLE MESSAGE: Testing multiple modules importing the same module...
+CONSOLE MESSAGE: Import1: Module imported successfully
+CONSOLE MESSAGE: Import2: Module imported successfully
+CONSOLE MESSAGE: Import3: Module imported successfully
+CONSOLE MESSAGE: âœ… Multiple modules test passed
+CONSOLE MESSAGE: All tests completed successfully
+Test that multiple modules can simultaneously import a module with top-level await without ReferenceError
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result1.default is "module-loaded"
+PASS result2.default is "module-loaded"
+PASS import1.default is "import-successful"
+PASS import2.default is "import-successful"
+PASS import3.default is "import-successful"
 PASS successfullyParsed is true
 
-TEST COMPLETE 
+TEST COMPLETE
+

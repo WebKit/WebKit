@@ -24,6 +24,10 @@ async function runTests() {
             import('./top-level-await-simultaneous-import-bug-242740-module.js')
         ]);
         
+        // Make variables global for shouldBeEqualToString
+        window.result1 = result1;
+        window.result2 = result2;
+        
         shouldBeEqualToString('result1.default', 'module-loaded');
         shouldBeEqualToString('result2.default', 'module-loaded');
         log('✅ Simultaneous imports test passed');
@@ -35,6 +39,11 @@ async function runTests() {
             import('./top-level-await-simultaneous-import-bug-242740-import2.js'),
             import('./top-level-await-simultaneous-import-bug-242740-import3.js')
         ]);
+        
+        // Make variables global for shouldBeEqualToString
+        window.import1 = import1;
+        window.import2 = import2;
+        window.import3 = import3;
         
         shouldBeEqualToString('import1.default', 'import-successful');
         shouldBeEqualToString('import2.default', 'import-successful');

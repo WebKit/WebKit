@@ -16,6 +16,10 @@ async function runTest() {
             import('./top-level-await-simultaneous-import-bug-242740-simple-module.js')
         ]);
         
+        // Make variables global for shouldBeEqualToString
+        window.module1 = module1;
+        window.module2 = module2;
+        
         shouldBeEqualToString('module1.default', 'simple-module-loaded');
         shouldBeEqualToString('module2.default', 'simple-module-loaded');
         
