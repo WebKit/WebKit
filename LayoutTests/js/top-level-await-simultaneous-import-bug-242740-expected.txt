@@ -1,27 +1,13 @@
-Top-level await simultaneous import bug 242740
-
-This test reproduces the bug where multiple modules simultaneously importing a module with top-level await causes a ReferenceError.
-
-Starting test...
-Testing simultaneous imports...
-Module loading started...
-Module setup completed
-Module loaded successfully
-Module loading started...
-Module setup completed
-Module loaded successfully
-Import 1 result: module-loaded
-Import 2 result: module-loaded
-✅ Test passed: Both imports returned the same result
-Testing multiple modules importing the same module...
-Module loading started...
-Module setup completed
-Module loaded successfully
-Import1: Module imported successfully
-Import2: Module imported successfully
-Import3: Module imported successfully
-Import1 result: import-successful
-Import2 result: import-successful
-Import3 result: import-successful
-✅ Test passed: All modules imported successfully
-All tests completed 
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x132
+  RenderBlock {HTML} at (0,0) size 800x132
+    RenderBody {BODY} at (8,21) size 784x95
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 662x37
+          text run at (0,0) width 662: "Top-level await simultaneous import bug 242740"
+      RenderBlock {P} at (0,58) size 784x37
+        RenderText {#text} at (0,0) size 759x36
+          text run at (0,0) width 759: "This test reproduces the bug where multiple modules simultaneously importing a module with top-level await causes a"
+          text run at (0,18) width 102: "ReferenceError."
+      RenderBlock {DIV} at (0,110) size 784x0 
