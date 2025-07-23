@@ -193,7 +193,11 @@ function requestInstantiate(entry, parameters, fetcher)
         return entry.instantiate;
 
     // Fix for bug 242740: Set the instantiate promise immediately to prevent race conditions
-    // when multiple modules simultaneously import the same module with top-level await
+    // when multiple modules simultaneously import the same module with top-level await.
+    // Note: This fix addresses the race condition in the instantiation phase. There remains
+    // an edge case where Promise.any() or similar patterns may return module objects before
+    // top-level await has completed, causing ReferenceError for uninitialized variables.
+    // This is documented in the timing test: top-level-await-simultaneous-import-bug-242740-timing.html
     var instantiatePromise = (async () => {
         var source = await this.requestFetch(entry, parameters, fetcher);
         // https://html.spec.whatwg.org/#fetch-a-single-module-script
