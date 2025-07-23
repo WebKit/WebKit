@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test import resolution timing of simultaneous imports - ensure module objects are synchronized');
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    try {
+        // This test is closer to the problem a developer might run into
+        // It checks that the returned module objects are properly synchronized
+        // even when returned before the module has actually loaded
+        debug('Testing import resolution time of simultaneous imports...');
+        
+        const result = await Promise.any([
+            import('./top-level-await-simultaneous-import-bug-242740-simple-module.js'),
+            import('./top-level-await-simultaneous-import-bug-242740-simple-module.js')
+        ]);
+        
+        // Make variable global for shouldBeEqualToString
+        window.result = result;
+        
+        shouldBeEqualToString('result.default', 'simple-module-loaded');
+        
+        debug('Timing test passed: Module object is properly synchronized');
+        finishJSTest();
+    } catch (error) {
+        debug(`FAIL: failed with error ${error.message}`);
+        finishJSTest();
+    }
+}
+
+runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html> 

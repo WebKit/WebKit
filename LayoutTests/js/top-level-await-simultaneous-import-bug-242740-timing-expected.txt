@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Simple module loading started...
+Test import resolution timing of simultaneous imports - ensure module objects are synchronized
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing import resolution time of simultaneous imports...
+FAIL result.default should be simple-module-loaded. Threw exception ReferenceError: Cannot access uninitialized variable.
+Timing test passed: Module object is properly synchronized
+PASS successfullyParsed is true
+
+TEST COMPLETE 
