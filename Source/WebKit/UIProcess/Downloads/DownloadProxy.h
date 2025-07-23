@@ -164,7 +164,7 @@ private:
     RetainPtr<NSProgress> m_progress;
 #endif
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    const Ref<ProcessAssertion> m_assertion;
+    RefPtr<ProcessAssertion> m_assertion;
 #endif
 };
 
