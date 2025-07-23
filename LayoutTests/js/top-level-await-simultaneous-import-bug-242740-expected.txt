@@ -2,12 +2,7 @@ CONSOLE MESSAGE: Testing simultaneous imports...
 CONSOLE MESSAGE: Module loading started...
 CONSOLE MESSAGE: Module setup completed
 CONSOLE MESSAGE: Module loaded successfully
-CONSOLE MESSAGE: âœ… Simultaneous imports test passed
 CONSOLE MESSAGE: Testing multiple modules importing the same module...
-CONSOLE MESSAGE: Import1: Module imported successfully
-CONSOLE MESSAGE: Import2: Module imported successfully
-CONSOLE MESSAGE: Import3: Module imported successfully
-CONSOLE MESSAGE: âœ… Multiple modules test passed
 CONSOLE MESSAGE: All tests completed successfully
 Test that multiple modules can simultaneously import a module with top-level await without ReferenceError
 

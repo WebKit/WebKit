@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: Simple module loading started...
 CONSOLE MESSAGE: Simple module setup completed
-CONSOLE MESSAGE: âœ… Simple test passed: No ReferenceError occurred
 Test simple case of bug 242740: simultaneous imports of module with top-level await
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

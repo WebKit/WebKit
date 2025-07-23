@@ -1,8 +1,6 @@
-CONSOLE MESSAGE: Starting comprehensive test with 10 simultaneous imports...
 CONSOLE MESSAGE: Module loading started...
 CONSOLE MESSAGE: Module setup completed
 CONSOLE MESSAGE: Module loaded successfully
-CONSOLE MESSAGE: âœ… Comprehensive test passed: All 10 imports completed successfully
 Comprehensive test for bug 242740: stress test multiple simultaneous imports with top-level await
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
