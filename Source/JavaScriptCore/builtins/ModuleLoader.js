@@ -517,8 +517,12 @@ async function asyncModuleEvaluation(entry, fetcher, dependencies)
     var resumeMode = @GeneratorResumeModeNormal;
     while (true) {
         var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
-        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
-            return;
+        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting) {
+            // Wait for the top-level await to complete before returning
+            // This ensures the module is fully evaluated before the import promise resolves
+            await Promise.resolve();
+            continue;
+        }
 
         try {
             awaitedValue = await awaitedValue;
