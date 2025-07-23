@@ -13,8 +13,6 @@ async function runComprehensiveTest() {
         const testCount = 10;
         const promises = [];
         
-        console.log(`Starting comprehensive test with ${testCount} simultaneous imports...`);
-        
         // Create multiple simultaneous import promises
         for (let i = 0; i < testCount; i++) {
             promises.push(import('./top-level-await-simultaneous-import-bug-242740-module.js'));
@@ -34,10 +32,9 @@ async function runComprehensiveTest() {
             shouldBeEqualToString(`results[${i}].default`, 'module-loaded');
         }
         
-        console.log(`✅ Comprehensive test passed: All ${testCount} imports completed successfully`);
         finishJSTest();
     } catch (error) {
-        console.error('❌ Comprehensive test failed:', error);
+        debug(`FAIL: failed with error ${error.message}`);
         finishJSTest();
     }
 }
