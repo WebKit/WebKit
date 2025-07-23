@@ -134,8 +134,22 @@ void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, Comp
 void WebCookieManager::setCookie(PAL::SessionID sessionID, const Vector<Cookie>& cookies, uint64_t cookiesVersion, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = protectedProcess()->storageSession(sessionID)) {
-        for (auto& cookie : cookies)
-            storageSession->setCookie(cookie);
+        // Use setCookies with URL context when possible to ensure proper cookie storage
+        // This fixes Bug 279079 where WebDriver cookies weren't being stored properly
+        for (auto& cookie : cookies) {
+            // Construct a URL from the cookie domain to provide context for proper cookie storage
+            URL cookieURL;
+            if (!cookie.domain.isEmpty()) {
+                String scheme = cookie.secure ? "https"_s : "http"_s;
+                cookieURL = URL(scheme + "://"_s + cookie.domain + "/"_s);
+            } else {
+                // Fallback to a default URL if no domain is specified
+                cookieURL = URL("http://localhost/"_s);
+            }
+
+            // Use setCookies with URL context to ensure proper libsoup API usage
+            storageSession->setCookies({ cookie }, cookieURL, cookieURL);
+        }
         storageSession->setCookiesVersion(cookiesVersion);
     } else
         RELEASE_LOG_ERROR(Storage, "%p - WebCookieManager::setCookie failed to set cookies and version (%" PRIu64 ") for session %" PRIu64, this, cookiesVersion, sessionID.toUInt64());

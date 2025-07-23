@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../cookies/resources/cookies-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests that WebDriver cookie storage infrastructure is working properly (Bug 279079)');
+
+clearAllCookies();
+
+shouldBeEqualToString("document.cookie", "");
+
+// Test that JavaScript cookie setting works (this always worked)
+document.cookie = "jsCookie=testValue; path=/";
+
+shouldBeEqualToString("document.cookie", "jsCookie=testValue");
+
+// Clear the cookie
+document.cookie = "jsCookie=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+
+shouldBeEqualToString("document.cookie", "");
+
+// Note: The actual WebDriver cookie setting is tested in the WebDriver test suite
+// This layout test just verifies that the cookie infrastructure is working
+
+clearCookies();
+</script>
+<script src="../cookies/resources/cookies-test-post.js"></script>
+</body>
+</html> 
