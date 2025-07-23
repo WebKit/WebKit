@@ -23,7 +23,6 @@ async function runTest() {
         shouldBeEqualToString('module1.default', 'simple-module-loaded');
         shouldBeEqualToString('module2.default', 'simple-module-loaded');
         
-        console.log('✅ Simple test passed: No ReferenceError occurred');
         finishJSTest();
     } catch (error) {
         console.error('❌ Simple test failed:', error);
