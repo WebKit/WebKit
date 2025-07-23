@@ -27,36 +27,14 @@
 
 #if ENABLE(VIDEO)
 
-#include "TrackPrivateBaseEnums.h"
-#include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class TrackPrivateBaseClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TrackPrivateBaseClient> : std::true_type { };
-}
 
 namespace WebCore {
 
-using TrackID = uint64_t;
-
-class TrackPrivateBaseClient : public CanMakeWeakPtr<TrackPrivateBaseClient> {
-public:
-    using Task = Function<void()>;
-    using Dispatcher = Function<void(Task&&)>;
-
-    virtual ~TrackPrivateBaseClient() = default;
-    enum Type { Text, Audio, Video };
-    virtual constexpr Type type() const = 0;
-    virtual void idChanged(TrackID) = 0;
-    virtual void labelChanged(const AtomString&) = 0;
-    virtual void languageChanged(const AtomString&) = 0;
-    virtual void willRemove() = 0;
-    virtual void readyStateChanged(TrackPrivateBaseReadyState) = 0;
+enum class TrackPrivateBaseReadyState : uint8_t {
+    None,
+    Loading,
+    Loaded,
+    Error,
 };
 
 }

@@ -38,6 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateMediaSourceAVFObjC);
 AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track)
     : m_impl(AVTrackPrivateAVFObjCImpl::create(track))
 {
+    m_readyState = m_impl->readyState();
     resetPropertiesFromTrack();
 }
 
@@ -62,6 +63,16 @@ void AudioTrackPrivateMediaSourceAVFObjC::setEnabled(bool enabled)
         return;
 
     AudioTrackPrivateAVF::setEnabled(enabled);
+}
+
+void AudioTrackPrivateMediaSourceAVFObjC::trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState readyState)
+{
+    setReadyState(readyState);
+}
+
+void AudioTrackPrivateMediaSourceAVFObjC::audioTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformAudioTrackConfiguration&& configuration)
+{
+    setConfiguration(WTFMove(configuration));
 }
 
 }

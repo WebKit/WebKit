@@ -57,7 +57,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AVTrackPrivateAVFObjCImpl);
 
-static NSArray* assetTrackConfigurationKeyNames()
+static NSArray<NSString *> *assetTrackConfigurationKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:@"formatDescriptions", @"estimatedDataRate", @"nominalFrameRate", nil];
     return keys;
@@ -111,10 +111,16 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
 
 void AVTrackPrivateAVFObjCImpl::initializationCompleted()
 {
-    if (m_audioTrackConfigurationObserver)
-        (*m_audioTrackConfigurationObserver)();
-    if (m_videoTrackConfigurationObserver)
-        (*m_videoTrackConfigurationObserver)();
+    Ref protectedThis = *this;
+    if (RefPtr audioClient = m_audioTrackClient.get()) {
+        audioClient->trackReadyStateChanged(protectedThis, ReadyState::Loaded);
+        audioClient->audioTrackConfigurationChanged(protectedThis, audioTrackConfiguration());
+    }
+
+    if (RefPtr videoClient = m_videoTrackClient.get()) {
+        videoClient->trackReadyStateChanged(protectedThis, ReadyState::Loaded);
+        videoClient->videoTrackConfigurationChanged(protectedThis, videoTrackConfiguration());
+    }
 }
 
 bool AVTrackPrivateAVFObjCImpl::enabled() const
@@ -468,6 +474,25 @@ std::optional<SpatialVideoMetadata> AVTrackPrivateAVFObjCImpl::spatialVideoMetad
 std::optional<VideoProjectionMetadata> AVTrackPrivateAVFObjCImpl::videoProjectionMetadata() const
 {
     return videoProjectionMetadataFromFormatDescription(formatDescriptionFor(*this).get());
+}
+
+auto AVTrackPrivateAVFObjCImpl::readyState() const -> ReadyState
+{
+    RetainPtr assetTrack = assetTrackFor(*this);
+    bool anyLoading = false;
+    for (NSString *keyName in assetTrackConfigurationKeyNames()) {
+        auto status = [assetTrack statusOfValueForKey:keyName error:nil];
+        if (status == AVKeyValueStatusUnknown || status == AVKeyValueStatusCancelled)
+            return ReadyState::None;
+        if (status == AVKeyValueStatusFailed)
+            return ReadyState::Error;
+        if (status == AVKeyValueStatusLoading) {
+            anyLoading = true;
+            continue;
+        }
+        ASSERT(status == AVKeyValueStatusLoaded);
+    }
+    return anyLoading ? ReadyState::Loading : ReadyState::Loaded;
 }
 
 }

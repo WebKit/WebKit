@@ -54,9 +54,9 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& 
 
 VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&& impl)
     : m_impl(WTFMove(impl))
-    , m_videoTrackConfigurationObserver([this] { videoTrackConfigurationChanged(); })
 {
-    m_impl->setVideoTrackConfigurationObserver(m_videoTrackConfigurationObserver);
+    m_readyState = m_impl->readyState();
+    m_impl->setVideoTrackClient(this);
     resetPropertiesFromTrack();
 }
 
@@ -85,11 +85,6 @@ void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
     setConfiguration(WTFMove(newConfiguration));
 }
 
-void VideoTrackPrivateAVFObjC::videoTrackConfigurationChanged()
-{
-    setConfiguration(m_impl->videoTrackConfiguration());
-}
-
 AVPlayerItemTrack* VideoTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
@@ -110,7 +105,17 @@ void VideoTrackPrivateAVFObjC::setSelected(bool enabled)
     VideoTrackPrivateAVF::setSelected(enabled);
     m_impl->setEnabled(enabled);
 }
-    
+
+void VideoTrackPrivateAVFObjC::trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState readyState)
+{
+    setReadyState(readyState);
+}
+
+void VideoTrackPrivateAVFObjC::videoTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformVideoTrackConfiguration&& configuration)
+{
+    setConfiguration(WTFMove(configuration));
+}
+
 }
 
 #endif

@@ -79,6 +79,7 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
+    void readyStateChanged(WebCore::TrackPrivateBaseReadyState) final;
 
     AudioTrackPrivateRemoteConfiguration configuration();
     void configurationChanged();

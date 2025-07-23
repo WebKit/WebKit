@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,36 @@
 
 #pragma once
 
-#include "AVTrackPrivateAVFObjCImplClient.h"
-#include "AudioTrackPrivateAVF.h"
-#include <wtf/TZoneMalloc.h>
+#if ENABLE(VIDEO)
 
-#if ENABLE(MEDIA_SOURCE)
-
-OBJC_CLASS AVAssetTrack;
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl;
-class SourceBufferPrivateAVFObjC;
+struct PlatformAudioTrackConfiguration;
+struct PlatformVideoTrackConfiguration;
+enum class TrackPrivateBaseReadyState : uint8_t;
 
-class AudioTrackPrivateMediaSourceAVFObjC final
-    : public AudioTrackPrivateAVF
-    , public AVTrackPrivateAVFObjCImplAudioClient {
-    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateMediaSourceAVFObjC);
-    WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaSourceAVFObjC)
+class AVTrackPrivateAVFObjCImplClient : public AbstractRefCountedAndCanMakeWeakPtr<AVTrackPrivateAVFObjCImplClient> {
 public:
-    static Ref<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack *track)
-    {
-        return adoptRef(*new AudioTrackPrivateMediaSourceAVFObjC(track));
-    }
+    virtual ~AVTrackPrivateAVFObjCImplClient() = default;
 
-    virtual ~AudioTrackPrivateMediaSourceAVFObjC();
-
-    void setEnabled(bool) final;
-
-    AVAssetTrack* assetTrack();
-
-    void ref() const final { AudioTrackPrivateAVF::ref(); }
-    void deref() const final { AudioTrackPrivateAVF::deref(); }
-
-private:
-    explicit AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack*);
-    
-    void resetPropertiesFromTrack();
-    void trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState) final;
-    void audioTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformAudioTrackConfiguration&&) final;
-
-    const Ref<AVTrackPrivateAVFObjCImpl> m_impl;
+    using ReadyState = TrackPrivateBaseReadyState;
+    virtual void trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState) = 0;
 };
 
+class AVTrackPrivateAVFObjCImplVideoClient : public AVTrackPrivateAVFObjCImplClient {
+public:
+    virtual ~AVTrackPrivateAVFObjCImplVideoClient() = default;
+    virtual void videoTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformVideoTrackConfiguration&&) = 0;
+};
+
+class AVTrackPrivateAVFObjCImplAudioClient : public AVTrackPrivateAVFObjCImplClient {
+public:
+    virtual ~AVTrackPrivateAVFObjCImplAudioClient() = default;
+    virtual void audioTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformAudioTrackConfiguration&&) = 0;
+};
 }
 
-#endif // ENABLE(MEDIA_SOURCE)
+#endif // ENABLE(VIDEO)

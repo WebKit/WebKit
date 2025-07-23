@@ -43,6 +43,7 @@ namespace WebCore {
 class TextTrack;
 class TextTrackCue;
 class TextTrackCueList;
+enum class TrackPrivateBaseReadyState : uint8_t;
 
 class TextTrackClient : public CanMakeWeakPtr<TextTrackClient> {
 public:
@@ -57,6 +58,7 @@ public:
     virtual void textTrackAddCue(TextTrack&, TextTrackCue&) { }
     virtual void textTrackRemoveCue(TextTrack&, TextTrackCue&) { }
     virtual void willRemoveTextTrack(TextTrack&) { }
+    virtual void textTrackReadyStateChanged(TextTrack&, TrackPrivateBaseReadyState) { }
 };
 
 }

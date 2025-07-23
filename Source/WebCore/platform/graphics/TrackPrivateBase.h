@@ -31,6 +31,8 @@
 
 #include "ScriptExecutionContextIdentifier.h"
 #include "TrackPrivateBaseClient.h"
+#include "TrackPrivateBaseEnums.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
@@ -80,6 +82,18 @@ public:
     enum class Type { Video, Audio, Text };
     virtual Type type() const = 0;
 
+    using ReadyState = TrackPrivateBaseReadyState;
+    void setReadyState(ReadyState readyState)
+    {
+        if (m_readyState == readyState)
+            return;
+        m_readyState = readyState;
+        notifyClients([readyState](auto& client) {
+            client.readyStateChanged(readyState);
+        });
+    }
+    ReadyState readyState() const { return m_readyState; };
+
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
@@ -115,6 +129,8 @@ protected:
     using ClientRecord = std::tuple<RefPtr<SharedDispatcher>, WeakPtr<TrackPrivateBaseClient>, bool /* is main thread */>;
     Vector<ClientRecord> m_clients WTF_GUARDED_BY_LOCK(m_lock);
 
+    ReadyState m_readyState { ReadyState::Loaded };
+
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
     uint64_t m_logIdentifier { 0 };
@@ -122,5 +138,9 @@ protected:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<> WEBCORE_EXPORT bool isValidEnum<WebCore::TrackPrivateBaseReadyState>(std::underlying_type_t<WebCore::TrackPrivateBaseReadyState>);
+} // namespace WTF
 
 #endif

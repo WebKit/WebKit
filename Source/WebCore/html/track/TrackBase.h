@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ContextDestructionObserver.h"
+#include "TrackPrivateBaseEnums.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,6 +42,7 @@ class TrackListBase;
 class TrackPrivateBase;
 class TrackPrivateBaseClient;
 using TrackID = uint64_t;
+using TrackBaseReadyState = TrackPrivateBaseReadyState;
 
 class TrackBase
     : public RefCounted<TrackBase>
@@ -78,6 +80,10 @@ public:
 
     virtual bool enabled() const = 0;
 
+    using ReadyState = TrackBaseReadyState;
+    ReadyState readyState() const { return m_readyState; }
+    void setReadyState(ReadyState readyState) { m_readyState = readyState; }
+
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
@@ -108,6 +114,7 @@ private:
     int m_uniqueId;
     AtomString m_id;
     TrackID m_trackId { 0 };
+    ReadyState m_readyState { ReadyState::None };
     AtomString m_label;
     AtomString m_language;
     AtomString m_validBCP47Language;

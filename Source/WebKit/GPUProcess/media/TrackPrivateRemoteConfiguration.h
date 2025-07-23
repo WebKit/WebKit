@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include <WebCore/TrackBase.h>
+#include <WebCore/TrackPrivateBase.h>
 #include <wtf/MediaTime.h>
 
 namespace WebKit {
@@ -38,6 +39,8 @@ struct TrackPrivateRemoteConfiguration {
     String language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
+    WebCore::TrackPrivateBaseReadyState readyState { WebCore::TrackPrivateBaseReadyState::None };
+
 };
 
 } // namespace WebKit

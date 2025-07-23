@@ -61,27 +61,25 @@ RemoteTextTrackProxy::~RemoteTextTrackProxy()
     m_trackPrivate->removeClient(m_clientId);
 }
 
-TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
+TextTrackPrivateRemoteConfiguration RemoteTextTrackProxy::configuration()
 {
-    static NeverDestroyed<TextTrackPrivateRemoteConfiguration> configuration;
-
-    configuration->trackId = m_trackPrivate->id();
-    configuration->label = m_trackPrivate->label();
-    configuration->language = m_trackPrivate->language();
-    configuration->trackIndex = m_trackPrivate->trackIndex();
-    configuration->inBandMetadataTrackDispatchType = m_trackPrivate->inBandMetadataTrackDispatchType();
-    configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
-
-    configuration->cueFormat = m_trackPrivate->cueFormat();
-    configuration->isClosedCaptions = m_trackPrivate->isClosedCaptions();
-    configuration->isSDH = m_trackPrivate->isSDH();
-    configuration->containsOnlyForcedSubtitles = m_trackPrivate->containsOnlyForcedSubtitles();
-    configuration->isMainProgramContent = m_trackPrivate->isMainProgramContent();
-    configuration->isEasyToRead = m_trackPrivate->isEasyToRead();
-    configuration->isDefault = m_trackPrivate->isDefault();
-    configuration->kind = m_trackPrivate->kind();
-
-    return configuration.get();
+    return {
+        m_trackPrivate->id(),
+        m_trackPrivate->label(),
+        m_trackPrivate->language(),
+        m_trackPrivate->inBandMetadataTrackDispatchType(),
+        m_trackPrivate->startTimeVariance(),
+        m_trackPrivate->trackIndex(),
+        m_trackPrivate->readyState(),
+        m_trackPrivate->cueFormat(),
+        m_trackPrivate->kind(),
+        m_trackPrivate->isClosedCaptions(),
+        m_trackPrivate->isSDH(),
+        m_trackPrivate->containsOnlyForcedSubtitles(),
+        m_trackPrivate->isMainProgramContent(),
+        m_trackPrivate->isEasyToRead(),
+        m_trackPrivate->isDefault(),
+    };
 }
 
 void RemoteTextTrackProxy::configurationChanged()
@@ -93,6 +91,11 @@ void RemoteTextTrackProxy::configurationChanged()
 void RemoteTextTrackProxy::willRemove()
 {
     ASSERT_NOT_REACHED();
+}
+
+void RemoteTextTrackProxy::readyStateChanged(WebCore::TrackPrivateBaseReadyState)
+{
+    configurationChanged();
 }
 
 void RemoteTextTrackProxy::idChanged(TrackID)

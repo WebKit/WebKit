@@ -41,6 +41,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioTrackCl
 namespace WebCore {
 
 class AudioTrack;
+enum class TrackPrivateBaseReadyState : uint8_t;
 
 class AudioTrackClient : public CanMakeWeakPtr<AudioTrackClient> {
 public:
@@ -52,6 +53,7 @@ public:
     virtual void audioTrackLanguageChanged(AudioTrack&) { }
     virtual void audioTrackConfigurationChanged(AudioTrack&) { }
     virtual void willRemoveAudioTrack(AudioTrack&) { }
+    virtual void audioTrackReadyStateChanged(AudioTrack&, TrackPrivateBaseReadyState) { }
 };
 
 }

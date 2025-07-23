@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "AVTrackPrivateAVFObjCImplClient.h"
 #include "AudioTrackPrivateAVF.h"
-#include <wtf/Observer.h>
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetTrack;
@@ -42,8 +42,11 @@ namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl;
 class MediaSelectionOptionAVFObjC;
+struct PlatformAudioTrackConfiguration;
 
-class AudioTrackPrivateAVFObjC : public AudioTrackPrivateAVF {
+class AudioTrackPrivateAVFObjC
+    : public AudioTrackPrivateAVF
+    , public AVTrackPrivateAVFObjCImplAudioClient {
     WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateAVFObjC);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVFObjC)
 public:
@@ -72,6 +75,9 @@ public:
 
     MediaSelectionOptionAVFObjC* mediaSelectionOption();
 
+    void ref() const final { AudioTrackPrivateAVF::ref(); }
+    void deref() const final { AudioTrackPrivateAVF::deref(); }
+
 private:
     friend class MediaPlayerPrivateAVFoundationObjC;
     AudioTrackPrivateAVFObjC(AVPlayerItemTrack*);
@@ -80,11 +86,10 @@ private:
     AudioTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&&);
 
     void resetPropertiesFromTrack();
-    void audioTrackConfigurationChanged();
-    const Ref<AVTrackPrivateAVFObjCImpl> m_impl;
+    void trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState) final;
+    void audioTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformAudioTrackConfiguration&&) final;
 
-    using AudioTrackConfigurationObserver = Observer<void()>;
-    AudioTrackConfigurationObserver m_audioTrackConfigurationObserver;
+    const Ref<AVTrackPrivateAVFObjCImpl> m_impl;
 };
 
 }

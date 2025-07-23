@@ -26,6 +26,7 @@
 #ifndef VideoTrackPrivateMediaSourceAVFObjC_h
 #define VideoTrackPrivateMediaSourceAVFObjC_h
 
+#include "AVTrackPrivateAVFObjCImplClient.h"
 #include "IntSize.h"
 #include "VideoTrackPrivateAVF.h"
 #include <wtf/TZoneMalloc.h>
@@ -40,7 +41,9 @@ namespace WebCore {
 class AVTrackPrivateAVFObjCImpl;
 class SourceBufferPrivateAVFObjC;
 
-class VideoTrackPrivateMediaSourceAVFObjC final : public VideoTrackPrivateAVF {
+class VideoTrackPrivateMediaSourceAVFObjC final
+    : public VideoTrackPrivateAVF
+    , public AVTrackPrivateAVFObjCImplVideoClient {
     WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateMediaSourceAVFObjC);
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaSourceAVFObjC)
 public:
@@ -55,9 +58,14 @@ public:
 
     FloatSize naturalSize() const;
 
+    void ref() const final { VideoTrackPrivateAVF::ref(); }
+    void deref() const final { VideoTrackPrivateAVF::deref(); }
+
 private:
     explicit VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack*);
-    
+
+    void trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState);
+    void videoTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformVideoTrackConfiguration&&);
     void resetPropertiesFromTrack();
 
     const Ref<AVTrackPrivateAVFObjCImpl> m_impl;

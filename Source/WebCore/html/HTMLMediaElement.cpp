@@ -4995,7 +4995,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
     //   - Thess are all done by the media engine.
 
     // 6. Set the new text track's readiness state to loaded.
-    textTrack->setReadinessState(TextTrack::Loaded);
+    textTrack->setReadyState(TextTrack::ReadyState::Loaded);
 
     // 7. Set the new text track's mode to the mode consistent with the user's preferences and the requirements of
     // the relevant specification for the data.
@@ -5186,7 +5186,7 @@ ExceptionOr<Ref<TextTrack>> HTMLMediaElement::addTextTrack(const AtomString& kin
     addTextTrack(track.copyRef());
 
     // ... its text track readiness state to the text track loaded state ...
-    track->setReadinessState(TextTrack::Loaded);
+    track->setReadyState(TextTrack::ReadyState::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
     track->setMode(TextTrack::Mode::Hidden);
@@ -7721,7 +7721,7 @@ bool HTMLMediaElement::hasClosedCaptions() const
 
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
         auto& track = *m_textTracks->item(i);
-        if (track.readinessState() == TextTrack::FailedToLoad)
+        if (track.readyState() == TextTrack::ReadyState::Error)
             continue;
         if (track.kind() == TextTrack::Kind::Captions || track.kind() == TextTrack::Kind::Subtitles)
             return true;
@@ -7743,25 +7743,25 @@ bool HTMLMediaElement::textTracksAreReady() const
     // in the disabled state when the element's resource selection algorithm last started now
     // have a text track readiness state of loaded or failed to load.
     for (unsigned i = 0; i < m_textTracksWhenResourceSelectionBegan.size(); ++i) {
-        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading
-            || m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::NotLoaded)
+        if (m_textTracksWhenResourceSelectionBegan[i]->readyState() == TextTrack::ReadyState::Loading
+            || m_textTracksWhenResourceSelectionBegan[i]->readyState() == TextTrack::ReadyState::None)
             return false;
     }
 
     return true;
 }
 
-void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
+void HTMLMediaElement::textTrackReadyStateChanged(TextTrack& track, TrackPrivateBaseReadyState readyState)
 {
-    if (track->readinessState() != TextTrack::Loading
-        && track->mode() != TextTrack::Mode::Disabled) {
+    if (readyState != TextTrack::ReadyState::Loading
+        && track.mode() != TextTrack::Mode::Disabled) {
         // The display trees exist as long as the track is active, in this case,
         // and if the same track is loaded again (for example if the src attribute was changed),
         // cues can be accumulated with the old ones, that's why they needs to be flushed
         updateTextTrackDisplay();
     }
-    if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
-        if (track->readinessState() != TextTrack::Loading)
+    if (m_player && m_textTracksWhenResourceSelectionBegan.contains(&track)) {
+        if (track.readyState() != TextTrack::ReadyState::Loading)
             setReadyState(m_player->readyState());
     }
 }

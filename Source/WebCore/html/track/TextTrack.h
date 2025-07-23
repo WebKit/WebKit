@@ -78,10 +78,6 @@ public:
     Mode mode() const;
     virtual void setMode(Mode);
 
-    enum ReadinessState { NotLoaded = 0, Loading = 1, Loaded = 2, FailedToLoad = 3 };
-    ReadinessState readinessState() const { return m_readinessState; }
-    void setReadinessState(ReadinessState state) { m_readinessState = state; }
-
     TextTrackCueList* cues();
     RefPtr<TextTrackCueList> protectedCues();
     TextTrackCueList* activeCues() const;
@@ -179,7 +175,6 @@ private:
     Mode m_mode { Mode::Disabled };
     Kind m_kind;
     TextTrackType m_trackType;
-    ReadinessState m_readinessState { NotLoaded };
     std::optional<int> m_trackIndex;
     std::optional<int> m_renderedTrackIndex;
     bool m_hasBeenConfigured { false };

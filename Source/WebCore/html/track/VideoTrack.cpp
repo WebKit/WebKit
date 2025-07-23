@@ -175,6 +175,14 @@ void VideoTrack::willRemove()
     });
 }
 
+void VideoTrack::readyStateChanged(ReadyState readyState)
+{
+    setReadyState(readyState);
+    m_clients.forEach([this, readyState] (auto& client) {
+        client.videoTrackReadyStateChanged(*this, readyState);
+    });
+}
+
 void VideoTrack::setKind(const AtomString& kind)
 {
     // 10.1 kind, on setting:

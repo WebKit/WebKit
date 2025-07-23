@@ -145,4 +145,21 @@ WTFLogChannel& TrackPrivateBase::logChannel() const
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> bool isValidEnum<WebCore::TrackPrivateBaseReadyState>(std::underlying_type_t<WebCore::TrackPrivateBaseReadyState> value)
+{
+    switch (value) {
+    case enumToUnderlyingType(WebCore::TrackPrivateBaseReadyState::None):
+    case enumToUnderlyingType(WebCore::TrackPrivateBaseReadyState::Loading):
+    case enumToUnderlyingType(WebCore::TrackPrivateBaseReadyState::Loaded):
+    case enumToUnderlyingType(WebCore::TrackPrivateBaseReadyState::Error):
+        return true;
+    default:
+        return false;
+    }
+}
+
+}
+
 #endif

@@ -68,6 +68,7 @@ VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
             m_trackPrivate->language(),
             m_trackPrivate->startTimeVariance(),
             m_trackPrivate->trackIndex(),
+            m_trackPrivate->readyState(),
         },
         m_trackPrivate->selected(),
         m_trackPrivate->kind(),
@@ -84,6 +85,11 @@ void RemoteVideoTrackProxy::updateConfiguration()
 void RemoteVideoTrackProxy::willRemove()
 {
     ASSERT_NOT_REACHED();
+}
+
+void RemoteVideoTrackProxy::readyStateChanged(WebCore::TrackPrivateBaseReadyState)
+{
+    updateConfiguration();
 }
 
 void RemoteVideoTrackProxy::selectedChanged(bool selected)

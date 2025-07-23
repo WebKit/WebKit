@@ -485,7 +485,7 @@ public:
 
     void captionPreferencesChanged();
     using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
-    void textTrackReadyStateChanged(TextTrack*);
+    void textTrackReadyStateChanged(TextTrack&, TrackBaseReadyState) override;
     void updateTextTrackRepresentationImageIfNeeded();
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;

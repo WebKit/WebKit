@@ -69,6 +69,7 @@ AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
             m_trackPrivate->language(),
             m_trackPrivate->startTimeVariance(),
             m_trackPrivate->trackIndex(),
+            m_trackPrivate->readyState(),
         },
         m_trackPrivate->enabled(),
         m_trackPrivate->kind(),
@@ -87,6 +88,11 @@ void RemoteAudioTrackProxy::configurationChanged()
 void RemoteAudioTrackProxy::willRemove()
 {
     ASSERT_NOT_REACHED();
+}
+
+void RemoteAudioTrackProxy::readyStateChanged(WebCore::TrackPrivateBaseReadyState)
+{
+    configurationChanged();
 }
 
 void RemoteAudioTrackProxy::enabledChanged(bool enabled)

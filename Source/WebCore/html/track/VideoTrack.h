@@ -87,6 +87,7 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
+    void readyStateChanged(ReadyState) final;
 
     bool enabled() const final { return selected(); }
 

@@ -173,6 +173,14 @@ void InbandTextTrack::willRemove()
     });
 }
 
+void InbandTextTrack::readyStateChanged(ReadyState readyState)
+{
+    setReadyState(readyState);
+    m_clients.forEach([this, readyState] (auto& client) {
+        client.textTrackReadyStateChanged(*this, readyState);
+    });
+}
+
 void InbandTextTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {

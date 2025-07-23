@@ -29,6 +29,7 @@ struct WebKit::TextTrackPrivateRemoteConfiguration {
     String inBandMetadataTrackDispatchType;
     MediaTime startTimeVariance;
     int trackIndex;
+    WebCore::TrackPrivateBase::ReadyState readyState;
 
     WebCore::InbandTextTrackPrivate::CueFormat cueFormat;
     WebCore::InbandTextTrackPrivate::Kind kind;

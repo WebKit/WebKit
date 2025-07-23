@@ -92,6 +92,7 @@ void VideoTrackPrivateRemote::updateConfiguration(VideoTrackPrivateRemoteConfigu
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.kind;
+    setReadyState(configuration.readyState);
     setConfiguration(WTFMove(configuration.trackConfiguration));
     VideoTrackPrivate::setSelected(configuration.selected);
 }

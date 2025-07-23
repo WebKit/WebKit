@@ -5452,6 +5452,8 @@
 		CD722A132D693CFF00F2E1E7 /* SpatialAudioExperienceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = CD722A0D2D6917B400F2E1E7 /* SpatialAudioExperienceHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD7D33441C7A123F00041293 /* PixelBufferConformerCV.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD7D5E0D2E21871400F6CAB4 /* AVTrackPrivateAVFObjCImplClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D5E0C2E21871400F6CAB4 /* AVTrackPrivateAVFObjCImplClient.h */; };
+		CD7D5E0F2E21FB3A00F6CAB4 /* TrackPrivateBaseEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D5E0E2E21FB3A00F6CAB4 /* TrackPrivateBaseEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */; };
 		CD814C2B2996B903005A780A /* ElementIteratorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD814C2A2996B903005A780A /* ElementIteratorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD814C2D2996BAD2005A780A /* ElementAncestorIteratorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD814C2C2996BAD2005A780A /* ElementAncestorIteratorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19458,6 +19460,8 @@
 		CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelBufferConformerCV.h; sourceTree = "<group>"; };
 		CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreVideoSoftLink.cpp; sourceTree = "<group>"; };
 		CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreVideoSoftLink.h; sourceTree = "<group>"; };
+		CD7D5E0C2E21871400F6CAB4 /* AVTrackPrivateAVFObjCImplClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVTrackPrivateAVFObjCImplClient.h; sourceTree = "<group>"; };
+		CD7D5E0E2E21FB3A00F6CAB4 /* TrackPrivateBaseEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPrivateBaseEnums.h; sourceTree = "<group>"; };
 		CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridLineNamesValue.cpp; sourceTree = "<group>"; };
 		CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridLineNamesValue.h; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
@@ -22542,6 +22546,7 @@
 				CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */,
 				CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */,
 				CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */,
+				CD7D5E0C2E21871400F6CAB4 /* AVTrackPrivateAVFObjCImplClient.h */,
 				CDB704591F7465A1003923DF /* CDMFairPlayStreaming.cpp */,
 				CDB704581F7465A1003923DF /* CDMFairPlayStreaming.h */,
 				CD318621199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.h */,
@@ -34577,6 +34582,7 @@
 				076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */,
 				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				CD1F9B1B27024BC100617EB6 /* TrackPrivateBaseClient.h */,
+				CD7D5E0E2E21FB3A00F6CAB4 /* TrackPrivateBaseEnums.h */,
 				7209C47E2931C86400633C0D /* TransparencyLayerContextSwitcher.cpp */,
 				7209C47F2931C86400633C0D /* TransparencyLayerContextSwitcher.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
@@ -40794,6 +40800,7 @@
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
 				41F898F628ED702A0070549C /* AvcEncoderConfig.h in Headers */,
 				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
+				CD7D5E0D2E21871400F6CAB4 /* AVTrackPrivateAVFObjCImplClient.h in Headers */,
 				41C7678C2D004D030014EB38 /* AVVideoCaptureSource.h in Headers */,
 				2936BF5C21D69E4B004A8FC9 /* AXCoreObject.h in Headers */,
 				486B8DC72A043C0600E00E73 /* AXGeometryManager.h in Headers */,
@@ -45696,6 +45703,7 @@
 				BE88E0C21715CE2600658D98 /* TrackListBase.h in Headers */,
 				BE913D80181EF92400DCB09E /* TrackPrivateBase.h in Headers */,
 				CD1F9B1C27024BC200617EB6 /* TrackPrivateBaseClient.h in Headers */,
+				CD7D5E0F2E21FB3A00F6CAB4 /* TrackPrivateBaseEnums.h in Headers */,
 				FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */,
 				516071321BD8308B00DBC4F2 /* TransactionOperation.h in Headers */,
 				CD3EEF4125799FD9006563BB /* TransferFunction.h in Headers */,

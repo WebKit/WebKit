@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "AVTrackPrivateAVFObjCImplClient.h"
 #include "VideoTrackPrivateAVF.h"
-#include <wtf/Observer.h>
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetTrack;
@@ -42,8 +42,11 @@ namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl;
 class MediaSelectionOptionAVFObjC;
+struct PlatformVideoTrackConfiguration;
 
-class VideoTrackPrivateAVFObjC final : public VideoTrackPrivateAVF {
+class VideoTrackPrivateAVFObjC final
+    : public VideoTrackPrivateAVF
+    , public AVTrackPrivateAVFObjCImplVideoClient {
     WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateAVFObjC);
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVFObjC)
 public:
@@ -70,6 +73,9 @@ public:
 
     MediaSelectionOptionAVFObjC* mediaSelectionOption();
 
+    void ref() const final { VideoTrackPrivateAVF::ref(); }
+    void deref() const final { VideoTrackPrivateAVF::deref(); }
+
 private:
     friend class MediaPlayerPrivateAVFoundationObjC;
     explicit VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
@@ -78,11 +84,9 @@ private:
     explicit VideoTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&&);
 
     void resetPropertiesFromTrack();
-    void videoTrackConfigurationChanged();
+    void trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState) final;
+    void videoTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformVideoTrackConfiguration&&) final;
     const Ref<AVTrackPrivateAVFObjCImpl> m_impl;
-
-    using VideoTrackConfigurationObserver = Observer<void()>;
-    VideoTrackConfigurationObserver m_videoTrackConfigurationObserver;
 };
 
 }

@@ -40,6 +40,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateMediaSourceAVFObjC);
 VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track)
     : m_impl(AVTrackPrivateAVFObjCImpl::create(track))
 {
+    m_readyState = m_impl->readyState();
+    m_impl->setVideoTrackClient(this);
     resetPropertiesFromTrack();
 }
 
@@ -63,6 +65,16 @@ AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack() const
 FloatSize VideoTrackPrivateMediaSourceAVFObjC::naturalSize() const
 {
     return FloatSize([assetTrack() naturalSize]);
+}
+
+void VideoTrackPrivateMediaSourceAVFObjC::trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState readyState)
+{
+    setReadyState(readyState);
+}
+
+void VideoTrackPrivateMediaSourceAVFObjC::videoTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformVideoTrackConfiguration&& configuration)
+{
+    setConfiguration(WTFMove(configuration));
 }
 
 }

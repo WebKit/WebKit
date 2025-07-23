@@ -70,6 +70,7 @@ private:
     void labelChanged(const AtomString&) override;
     void languageChanged(const AtomString&) override;
     void willRemove() override;
+    void readyStateChanged(ReadyState) override;
 
     void addDataCue(const MediaTime&, const MediaTime&, std::span<const uint8_t>) override { ASSERT_NOT_REACHED(); }
 

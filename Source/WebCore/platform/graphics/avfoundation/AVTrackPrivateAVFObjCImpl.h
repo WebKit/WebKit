@@ -28,12 +28,12 @@
 
 #if ENABLE(VIDEO)
 
+#include "AVTrackPrivateAVFObjCImplClient.h"
 #include "AudioTrackPrivate.h"
 #include "InbandTextTrackPrivate.h"
 #include "PlatformVideoColorSpace.h"
 #include "SpatialVideoMetadata.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/Observer.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
@@ -72,6 +72,9 @@ public:
     static Ref<AVTrackPrivateAVFObjCImpl> create(MediaSelectionOptionAVFObjC& option) { return adoptRef(*new AVTrackPrivateAVFObjCImpl(option)); }
     ~AVTrackPrivateAVFObjCImpl();
 
+    void setVideoTrackClient(WeakPtr<AVTrackPrivateAVFObjCImplVideoClient>&& client) { m_videoTrackClient = WTFMove(client); }
+    void setAudioTrackClient(WeakPtr<AVTrackPrivateAVFObjCImplAudioClient>&& client) { m_audioTrackClient = WTFMove(client); }
+
     AVPlayerItemTrack* playerItemTrack() const { return m_playerItemTrack.get(); }
     AVAssetTrack* assetTrack() const { return m_assetTrack.get(); }
     MediaSelectionOptionAVFObjC* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
@@ -95,12 +98,10 @@ public:
     static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);
 
     PlatformVideoTrackConfiguration videoTrackConfiguration() const;
-    using VideoTrackConfigurationObserver = Observer<void()>;
-    void setVideoTrackConfigurationObserver(VideoTrackConfigurationObserver& observer) { m_videoTrackConfigurationObserver = observer; }
-
     PlatformAudioTrackConfiguration audioTrackConfiguration() const;
-    using AudioTrackConfigurationObserver = Observer<void()>;
-    void setAudioTrackConfigurationObserver(AudioTrackConfigurationObserver& observer) { m_audioTrackConfigurationObserver = observer; }
+
+    using ReadyState = TrackPrivateBase::ReadyState;
+    ReadyState readyState() const;
 
 private:
     AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
@@ -124,8 +125,8 @@ private:
     const RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
     const RefPtr<MediaSelectionOptionAVFObjC> m_mediaSelectionOption;
     const RetainPtr<AVAssetTrack> m_assetTrack;
-    WeakPtr<VideoTrackConfigurationObserver> m_videoTrackConfigurationObserver;
-    WeakPtr<AudioTrackConfigurationObserver> m_audioTrackConfigurationObserver;
+    WeakPtr<AVTrackPrivateAVFObjCImplVideoClient> m_videoTrackClient;
+    WeakPtr<AVTrackPrivateAVFObjCImplAudioClient> m_audioTrackClient;
 };
 
 }

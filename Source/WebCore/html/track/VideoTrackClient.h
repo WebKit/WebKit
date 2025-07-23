@@ -41,6 +41,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::VideoTrackCl
 namespace WebCore {
 
 class VideoTrack;
+enum class TrackPrivateBaseReadyState : uint8_t;
 
 class VideoTrackClient : public CanMakeWeakPtr<VideoTrackClient> {
 public:
@@ -52,6 +53,7 @@ public:
     virtual void videoTrackSelectedChanged(VideoTrack&) { }
     virtual void videoTrackConfigurationChanged(VideoTrack&) { }
     virtual void willRemoveVideoTrack(VideoTrack&) { }
+    virtual void videoTrackReadyStateChanged(VideoTrack&, TrackPrivateBaseReadyState) { }
 };
 
 } // namespace WebCore

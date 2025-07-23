@@ -196,6 +196,14 @@ void AudioTrack::willRemove()
     });
 }
 
+void AudioTrack::readyStateChanged(ReadyState readyState)
+{
+    setReadyState(readyState);
+    m_clients.forEach([this, readyState] (auto& client) {
+        client.audioTrackReadyStateChanged(*this, readyState);
+    });
+}
+
 void AudioTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {

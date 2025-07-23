@@ -269,22 +269,23 @@ void HTMLTrackElement::didCompleteLoad(LoadStatus status)
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-// NOTE: The values in the TextTrack::ReadinessState enum must stay in sync with those in HTMLTrackElement::ReadyState.
-static_assert(HTMLTrackElement::NONE == static_cast<HTMLTrackElement::ReadyState>(TextTrack::NotLoaded), "TextTrackEnumNotLoaded is wrong. Should be HTMLTrackElementEnumNONE");
-static_assert(HTMLTrackElement::LOADING == static_cast<HTMLTrackElement::ReadyState>(TextTrack::Loading), "TextTrackEnumLoading is wrong. Should be HTMLTrackElementEnumLOADING");
-static_assert(HTMLTrackElement::LOADED == static_cast<HTMLTrackElement::ReadyState>(TextTrack::Loaded), "TextTrackEnumLoaded is wrong. Should be HTMLTrackElementEnumLOADED");
-static_assert(HTMLTrackElement::TRACK_ERROR == static_cast<HTMLTrackElement::ReadyState>(TextTrack::FailedToLoad), "TextTrackEnumFailedToLoad is wrong. Should be HTMLTrackElementEnumTRACK_ERROR");
+// NOTE: The values in the TextTrack::ReadyState enum must stay in sync with those in HTMLTrackElement::ReadyState.
+static_assert(HTMLTrackElement::NONE == static_cast<HTMLTrackElement::ReadyState>(TextTrack::ReadyState::None), "TextTrackEnumNotLoaded is wrong. Should be HTMLTrackElementEnumNONE");
+static_assert(HTMLTrackElement::LOADING == static_cast<HTMLTrackElement::ReadyState>(TextTrack::ReadyState::Loading), "TextTrackEnumLoading is wrong. Should be HTMLTrackElementEnumLOADING");
+static_assert(HTMLTrackElement::LOADED == static_cast<HTMLTrackElement::ReadyState>(TextTrack::ReadyState::Loaded), "TextTrackEnumLoaded is wrong. Should be HTMLTrackElementEnumLOADED");
+static_assert(HTMLTrackElement::TRACK_ERROR == static_cast<HTMLTrackElement::ReadyState>(TextTrack::ReadyState::Error), "TextTrackEnumFailedToLoad is wrong. Should be HTMLTrackElementEnumTRACK_ERROR");
 
 void HTMLTrackElement::setReadyState(ReadyState state)
 {
-    track().setReadinessState(static_cast<TextTrack::ReadinessState>(state));
+    TextTrack::ReadyState readyState = static_cast<TextTrack::ReadyState>(state);
+    track().setReadyState(readyState);
     if (auto parent = mediaElement())
-        parent->textTrackReadyStateChanged(m_track.ptr());
+        parent->textTrackReadyStateChanged(m_track, readyState);
 }
 
 HTMLTrackElement::ReadyState HTMLTrackElement::readyState() const
 {
-    return static_cast<ReadyState>(m_track->readinessState());
+    return static_cast<ReadyState>(m_track->readyState());
 }
 
 const AtomString& HTMLTrackElement::mediaElementCrossOriginAttribute() const

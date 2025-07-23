@@ -88,8 +88,9 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
+    void readyStateChanged(WebCore::TrackPrivateBaseReadyState) final;
 
-    TextTrackPrivateRemoteConfiguration& configuration();
+    TextTrackPrivateRemoteConfiguration configuration();
     void configurationChanged();
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;

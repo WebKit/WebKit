@@ -85,6 +85,7 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
+    void readyStateChanged(ReadyState) final;
 
     void updateKindFromPrivate();
     void updateConfigurationFromPrivate();

@@ -103,6 +103,8 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
     m_isMainProgramContent = configuration.isMainProgramContent;
     m_isEasyToRead = configuration.isEasyToRead;
     m_isDefault = configuration.isDefault;
+
+    setReadyState(configuration.readyState);
 }
 
 void TextTrackPrivateRemote::addGenericCue(Ref<InbandGenericCue> cue)

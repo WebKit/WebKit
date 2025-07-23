@@ -40,6 +40,7 @@ struct TextTrackPrivateRemoteConfiguration {
     String inBandMetadataTrackDispatchType;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
+    WebCore::TrackPrivateBase::ReadyState readyState { WebCore::TrackPrivateBase::ReadyState::None };
 
     WebCore::InbandTextTrackPrivate::CueFormat cueFormat { WebCore::InbandTextTrackPrivate::CueFormat::Generic };
     WebCore::InbandTextTrackPrivate::Kind kind { WebCore::InbandTextTrackPrivate::Kind::None };

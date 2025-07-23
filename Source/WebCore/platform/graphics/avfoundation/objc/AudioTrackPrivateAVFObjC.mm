@@ -52,9 +52,9 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& 
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&& impl)
     : m_impl(WTFMove(impl))
-    , m_audioTrackConfigurationObserver([this] { audioTrackConfigurationChanged(); })
 {
-    m_impl->setAudioTrackConfigurationObserver(m_audioTrackConfigurationObserver);
+    m_readyState = m_impl->readyState();
+    m_impl->setAudioTrackClient(this);
     resetPropertiesFromTrack();
 }
 
@@ -85,11 +85,6 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     setConfiguration(WTFMove(newConfiguration));
 }
 
-void AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged()
-{
-    setConfiguration(m_impl->audioTrackConfiguration());
-}
-
 AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
@@ -109,6 +104,16 @@ void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
 {
     AudioTrackPrivateAVF::setEnabled(enabled);
     m_impl->setEnabled(enabled);
+}
+
+void AudioTrackPrivateAVFObjC::trackReadyStateChanged(const AVTrackPrivateAVFObjCImpl&, ReadyState readyState)
+{
+    setReadyState(readyState);
+}
+
+void AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged(const AVTrackPrivateAVFObjCImpl&, PlatformAudioTrackConfiguration&& configuration)
+{
+    setConfiguration(WTFMove(configuration));
 }
 
 }
