@@ -481,7 +481,7 @@ function link(entry, fetcher)
 // Module semantics.
 
 @visibility=PrivateRecursive
-async function moduleEvaluation(entry, fetcher)
+function moduleEvaluation(entry, fetcher)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     "use strict";
@@ -498,12 +498,12 @@ async function moduleEvaluation(entry, fetcher)
         for (var i = 0, length = dependencies.length; i < length; ++i) {
             var dependency = dependencies[i];
             @assert(!dependency.isAsync);
-            await this.moduleEvaluation(dependency, fetcher);
+            this.moduleEvaluation(dependency, fetcher);
         }
 
         this.evaluate(entry.key, entry.module, fetcher);
     } else
-        return await this.asyncModuleEvaluation(entry, fetcher, dependencies);
+        return this.asyncModuleEvaluation(entry, fetcher, dependencies);
 }
 
 @visibility=PrivateRecursive
