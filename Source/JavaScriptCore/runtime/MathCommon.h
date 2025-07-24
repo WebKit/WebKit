@@ -38,6 +38,7 @@ constexpr int32_t maxExponentForIntegerMathPow = 1000;
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMathPow, double, (double x, double y));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationToInt32UsingJavaScriptSemantics, UCPUStrictInt32, (double));
 
 consteval double maxSafeInteger()
 {
