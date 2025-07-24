@@ -1533,13 +1533,13 @@ RefPtr<WebCore::Icon> WebExtension::sidebarIcon(WebCore::FloatSize idealSize)
     return nullptr;
 }
 
-const String& WebExtension::sidebarDocumentPath()
+const std::optional<String>& WebExtension::sidebarDocumentPath()
 {
     populateSidebarPropertiesIfNeeded();
     return m_sidebarDocumentPath;
 }
 
-const String& WebExtension::sidebarTitle()
+const std::optional<String>& WebExtension::sidebarTitle()
 {
     populateSidebarPropertiesIfNeeded();
     return m_sidebarTitle;
@@ -1561,27 +1561,27 @@ void WebExtension::populateSidebarPropertiesIfNeeded()
     // sidebarAction documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/sidebar_action
 
     if (RefPtr sidebarActionObject = manifestObject->getObject(sidebarActionManifestKey)) {
-        populateSidebarActionProperties(sidebarActionObject);
+        populateSidebarActionProperties(*sidebarActionObject);
         return;
     }
 
     if (RefPtr sidePanelObject = manifestObject->getObject(sidePanelManifestKey))
-        populateSidePanelProperties(sidePanelObject);
+        populateSidePanelProperties(*sidePanelObject);
 }
 
 void WebExtension::populateSidebarActionProperties(const JSON::Object& sidebarActionObject)
 {
     // FIXME: <https://webkit.org/b/276833> implement sidebar icon parsing
-    m_sidebarIconsCache = nullptr;
+    m_sidebarIconsCache = std::nullopt;
     m_sidebarTitle = sidebarActionObject.getString(sidebarActionTitleManifestKey);
     m_sidebarDocumentPath = sidebarActionObject.getString(sidebarActionPathManifestKey);
 }
 
 void WebExtension::populateSidePanelProperties(const JSON::Object& sidePanelObject)
 {
-    // Since sidePanel cannot set a default title or icon from the manifest, setting these to null here is intentional.
-    m_sidebarIconsCache = nullptr;
-    m_sidebarTitle = nullString();
+    // Since sidePanel cannot set a default title or icon from the manifest, setting these to nullopt here is intentional.
+    m_sidebarIconsCache = std::nullopt;
+    m_sidebarTitle = std::nullopt;
     m_sidebarDocumentPath = sidePanelObject.getString(sidePanelPathManifestKey);
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)

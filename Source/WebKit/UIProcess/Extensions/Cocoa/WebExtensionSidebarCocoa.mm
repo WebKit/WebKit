@@ -158,7 +158,7 @@ using WTF::WeakPtr;
 
     _webExtensionSidebar = sidebar;
     self.view = sidebar.webView();
-    self.title = extensionContext.value()->extension().displayName();
+    self.title = extensionContext.value()->extension().displayName().createNSString().get();
 
     return self;
 }
@@ -228,17 +228,7 @@ namespace WebKit {
 static NSString * const fallbackPath = @"about:blank";
 static NSString * const fallbackTitle = @"";
 
-static std::optional<String> getDefaultSidebarTitleFromExtension(WebExtension& extension)
-{
-    return toOptional(extension.sidebarTitle());
-}
-
-static std::optional<String> getDefaultSidebarPathFromExtension(WebExtension& extension)
-{
-    return toOptional(extension.sidebarDocumentPath());
-}
-
-static std::optional<RefPtr<JSON::Value>> getDefaultIconsDictFromExtension(WebExtension& extensions)
+static std::optional<Ref<JSON::Object>> getDefaultIconsDictFromExtension(WebExtension& extensions)
 {
     // FIXME: <https://webkit.org/b/276833> implement this
     return std::nullopt;
@@ -258,8 +248,8 @@ WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, std::opti
     // if this is the default action, initialize with default sidebar path / title if present
     if (isDefaultSidebar()) {
         auto& extension = context.extension();
-        m_titleOverride = getDefaultSidebarTitleFromExtension(extension);
-        m_sidebarPathOverride = getDefaultSidebarPathFromExtension(extension);
+        m_titleOverride = extension.sidebarTitle();
+        m_sidebarPathOverride = extension.sidebarDocumentPath();
         m_iconsOverride = getDefaultIconsDictFromExtension(extension);
         m_isEnabled = true;
     }
@@ -309,37 +299,40 @@ void WebExtensionSidebar::propertiesDidChange()
         notifyDelegateOfPropertyUpdate();
 }
 
-RefPtr<WebCore::Icon> WebExtensionSidebar::icon(WebCore::FloatSize size)
+std::optional<Ref<WebCore::Icon>> WebExtensionSidebar::icon(WebCore::FloatSize size)
 {
     if (!extensionContext())
-        return nil;
+        return std::nullopt;
 
     auto& context = extensionContext().value().get();
     return m_iconsOverride
-        .and_then([&](RefPtr<JSON::Value> icons) -> std::optional<RefPtr<WebCore::Icon>> {
-            return toOptional(context.extension().bestIcon(icons, size, [](NSError *error) { }));
+        .and_then([&](Ref<JSON::Object> icons) -> std::optional<Ref<WebCore::Icon>> {
+            return toOptional(context.extension().bestIcon(icons.ptr(), size, [](Ref<API::Error> error) { }));
         })
-        .or_else([&] -> std::optional<RefPtr<WebCore::Icon>> {
-            return parent().transform([&](auto const& parent) { return parent.get().icon(size); });
+        .or_else([&] -> std::optional<Ref<WebCore::Icon>> {
+            return parent().and_then([&](auto const& parent) {
+                return parent.get().icon(size);
+            });
         })
         // using .or_else(..).value() is more efficient than value_or, since value_or will evaluate its argument
         // regardless of whether or not it's used. by switching to or_else(..).value() we instead lazily evaluate
         // the fallback value
-        .or_else([&] { return std::optional { context.extension().actionIcon(size) }; })
-        .value();
+        .or_else([&] {
+            return toOptional(context.extension().actionIcon(size));
+        });
 }
 
-void WebExtensionSidebar::setIconsDictionary(RefPtr<JSON::Object> icons)
+void WebExtensionSidebar::setIconsDictionary(std::optional<Ref<JSON::Object>> icons)
 {
-    if (!icons || !icons.count) {
+    if (!icons || !icons.value()->size()) {
         m_iconsOverride = std::nullopt;
         return;
     }
 
-    if (m_iconsOverride && m_iconsOverride.value() == icons)
+    if (m_iconsOverride && m_iconsOverride.value() == icons.value())
         return;
 
-    m_iconsOverride = icons;
+    m_iconsOverride = WTFMove(icons);
     propertiesDidChange();
 }
 
@@ -353,7 +346,7 @@ String WebExtensionSidebar::title() const
 void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
 {
     if (!titleOverride && isDefaultSidebar() && extensionContext())
-        m_titleOverride = getDefaultSidebarTitleFromExtension(extensionContext().value()->extension());
+        m_titleOverride = extensionContext().value()->extension().sidebarTitle();
     else
         m_titleOverride = titleOverride;
 
@@ -383,7 +376,7 @@ String WebExtensionSidebar::sidebarPath() const
 void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)
 {
     if (!sidebarPath && isDefaultSidebar() && extensionContext())
-        m_sidebarPathOverride = getDefaultSidebarPathFromExtension(extensionContext().value()->extension());
+        m_sidebarPathOverride = extensionContext().value()->extension().sidebarDocumentPath();
     else
         m_sidebarPathOverride = sidebarPath;
 
@@ -482,7 +475,7 @@ WKWebView *WebExtensionSidebar::webView()
     auto *webViewConfiguration = context->webViewConfiguration(WebExtensionContext::WebViewPurpose::Sidebar);
     m_webView = [[_WKWebExtensionSidebarWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionSidebar:*this];
     m_webView.get().inspectable = context->isInspectable();
-    m_webView.get().accessibilityLabel = title();
+    m_webView.get().accessibilityLabel = title().createNSString().get();
     m_webViewDelegate = [[_WKWebExtensionSidebarWebViewDelegate alloc] initWithWebExtensionSidebar:*this];
     m_webView.get().navigationDelegate = m_webViewDelegate.get();
 
@@ -545,7 +538,7 @@ void WebExtensionSidebar::reloadWebView()
         return;
 
     auto url = URL { extensionContext().value()->baseURL(), sidebarPath() };
-    [m_webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [m_webView loadRequest:[NSURLRequest requestWithURL:url.createNSURL().get()]];
 }
 
 }

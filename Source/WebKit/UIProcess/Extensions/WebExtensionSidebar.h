@@ -38,6 +38,7 @@ using SidebarViewControllerType = NSViewController;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 #include "APIObject.h"
+#include <WebCore/Icon.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -81,8 +82,8 @@ public:
     void propertiesDidChange();
 
     /// `icon()` will return the overridden icon of this sidebar, or the icon of the first parent sidebar in which the icon is set
-    RefPtr<WebCore::Icon> icon(WebCore::FloatSize);
-    void setIconsDictionary(RefPtr<JSON::Object>);
+    std::optional<Ref<WebCore::Icon>> icon(WebCore::FloatSize);
+    void setIconsDictionary(std::optional<Ref<JSON::Object>>);
 
     /// `title()` will return the overridden title of this sidebar, or the title of the first parent sidebar in which the title is set
     String title() const;
@@ -130,7 +131,7 @@ private:
 
     void reloadWebView();
 
-    std::optional<RefPtr<JSON::Object>> m_iconsOverride;
+    std::optional<Ref<JSON::Object>> m_iconsOverride;
     std::optional<String> m_titleOverride;
     std::optional<String> m_sidebarPathOverride;
     std::optional<bool> m_isEnabled;

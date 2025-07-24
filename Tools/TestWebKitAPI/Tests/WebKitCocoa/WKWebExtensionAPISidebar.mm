@@ -132,7 +132,7 @@ class WKWebExtensionAPISidebar : public testing::Test {
 protected:
     WKWebExtensionAPISidebar()
     {
-        sidebarConfig = WKWebExtensionControllerConfiguration.nonPersistantConfiguration;
+        sidebarConfig = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
         if (!sidebarConfig.webViewConfiguration)
             sidebarConfig.webViewConfiguration = [[WKWebViewConfiguration alloc] init];
 

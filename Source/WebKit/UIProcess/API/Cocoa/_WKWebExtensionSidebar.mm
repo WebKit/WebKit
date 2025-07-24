@@ -53,12 +53,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (NSString *)title
 {
-    return _webExtensionSidebar->title();
+    return _webExtensionSidebar->title().createNSString().get();
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return WebKit::toCocoaImage(_webExtensionSidebar->icon(WebCore::FloatSize(size)));
+    return _webExtensionSidebar->icon(WebCore::FloatSize(size))
+        .transform([](Ref<WebCore::Icon> icon) { return WebKit::toCocoaImage(icon.ptr()); })
+        .value_or(nullptr);
 }
 
 - (SidebarViewControllerType *)viewController

@@ -35,9 +35,7 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-using SidebarError = RetainPtr<NSString>;
-// In this variant, `monostate` indicates that we have neither a window or tab identifier, but no error
-using ParseResult = Variant<std::monostate, WebExtensionTabIdentifier, WebExtensionWindowIdentifier, SidebarError>;
+using ParseResult = Expected<std::optional<Variant<WebExtensionTabIdentifier, WebExtensionWindowIdentifier>>, WebExtensionError>;
 
 template<typename T, typename VARIANT_T>
 struct isVariantMember;
@@ -52,14 +50,31 @@ std::optional<OptType> toOptional(Variant<Types...>& variant)
     return std::nullopt;
 }
 
-template<typename VariantType>
-SidebarError indicatesError(const VariantType& variant)
+template<typename OptType, typename ErrorType, typename... Types>
+std::optional<OptType> toOptional(Expected<Variant<Types...>, ErrorType>& expected)
 {
-    static_assert(isVariantMember<SidebarError, VariantType>::value);
+    if (!expected.has_value())
+        return std::nullopt;
+    auto variant = WTFMove(expected.value());
+    if (std::holds_alternative<OptType>(variant))
+        return WTFMove(std::get<OptType>(variant));
+    return std::nullopt;
+}
 
-    if (std::holds_alternative<SidebarError>(variant))
-        return WTFMove(std::get<SidebarError>(variant));
-    return nil;
+template<typename OptType, typename ErrorType>
+std::optional<OptType> toOptional(Expected<OptType, ErrorType>& expected)
+{
+    if (!expected.has_value())
+        return std::nullopt;
+    return WTFMove(expected.value());
+}
+
+template<typename SuccessType>
+RetainPtr<NSString> indicatesError(const Expected<SuccessType, WebExtensionError>& result)
+{
+    if (result.has_value())
+        return nil;
+    return WTFMove(result.error().createNSString());
 }
 
 class WebExtensionAPISidebarAction : public WebExtensionAPIObject, public JSWebExtensionWrappable {
