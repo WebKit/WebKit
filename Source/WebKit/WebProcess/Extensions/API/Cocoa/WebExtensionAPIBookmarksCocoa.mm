@@ -261,7 +261,24 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
 
 void WebExtensionAPIBookmarks::getChildren(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    WebProcess::singleton().sendWithAsyncReply(
+        Messages::WebExtensionContext::BookmarksGetChildren(bookmarkIdentifier),
+        [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error().createNSString().get());
+                return;
+            }
+            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
+
+            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
+            for (const auto& node : resultVector)
+                [resultArray addObject:toAPI(node)];
+
+            callback->call(resultArray);
+        },
+
+        extensionContext().identifier()
+    );
 }
 
 void WebExtensionAPIBookmarks::getRecent(long long numberOfItems, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -294,7 +311,30 @@ void WebExtensionAPIBookmarks::getRecent(long long numberOfItems, Ref<WebExtensi
 
 void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    WebProcess::singleton().sendWithAsyncReply(
+        Messages::WebExtensionContext::BookmarksGetSubTree(bookmarkIdentifier),
+        [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error().createNSString().get());
+                return;
+            }
+
+            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
+            const WebExtensionBookmarksParameters& subtreeRootNode = resultVector[0];
+            if (!subtreeRootNode.children) {
+                callback->call(@[], nil);
+                return;
+            }
+
+            NSMutableArray *childrenArray = [NSMutableArray arrayWithCapacity:subtreeRootNode.children->size()];
+            for (const auto& childNode : *subtreeRootNode.children)
+                [childrenArray addObject:toAPI(childNode)];
+
+            callback->call(childrenArray);
+        },
+
+        extensionContext().identifier()
+    );
 }
 
 void WebExtensionAPIBookmarks::getTree(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -317,7 +357,42 @@ void WebExtensionAPIBookmarks::getTree(Ref<WebExtensionCallbackHandler>&& callba
 
 void WebExtensionAPIBookmarks::get(NSObject *idOrIdList, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    Vector<String> bookmarkIds;
+
+    if ([idOrIdList isKindOfClass:[NSString class]]) {
+        bookmarkIds.append(static_cast<NSString *>(idOrIdList));
+    } else if ([idOrIdList isKindOfClass:[NSArray class]]) {
+        for (NSString *bookmarkId in static_cast<NSArray<NSString *> *>(idOrIdList)) {
+            if (![bookmarkId isKindOfClass:[NSString class]] || !bookmarkId.length) {
+                *outExceptionString = @"Each item in the ID list must be a non-empty string.";
+                return;
+            }
+            bookmarkIds.append(bookmarkId);
+        }
+    } else {
+        *outExceptionString = @"The first argument must be a string or an array of strings.";
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(
+        Messages::WebExtensionContext::BookmarksGet(bookmarkIds),
+        [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error().createNSString().get());
+                return;
+            }
+
+            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
+
+            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
+            for (const auto& node : resultVector)
+                [resultArray addObject:toAPI(node)];
+
+            callback->call(resultArray);
+        },
+
+        extensionContext().identifier()
+    );
 }
 
 void WebExtensionAPIBookmarks::move(NSString *bookmarkIdentifier, NSDictionary *destination, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
