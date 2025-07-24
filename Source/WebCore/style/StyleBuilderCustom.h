@@ -155,6 +155,18 @@ inline WebkitLineGrid forwardInheritedValue(const WebkitLineGrid& value) { auto 
 inline BorderImageSource forwardInheritedValue(const BorderImageSource& value) { auto copy = value; return copy; }
 inline MaskBorderSource forwardInheritedValue(const MaskBorderSource& value) { auto copy = value; return copy; }
 
+inline WebCore::Length adjustInheritedLengthForZoom(const WebCore::Length& parentValue, const BuilderState& builderState)
+{
+    float parentZoom = builderState.parentStyle().usedZoom();
+    float currentZoom = builderState.style().usedZoom();
+
+    if (currentZoom == parentZoom)
+        return parentValue;
+
+    float zoomRatio = currentZoom / parentZoom;
+    return WebCore::Length(parentValue.value() * zoomRatio, parentValue.type());
+}
+
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {
 public:
@@ -211,6 +223,8 @@ public:
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
+    static void applyValueWordSpacing(BuilderState&, CSSValue&);
+
 
 #if ENABLE(DARK_MODE_CSS)
     static void applyValueColorScheme(BuilderState&, CSSValue&);
@@ -393,7 +407,7 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Width)
 
 inline void BuilderCustom::applyInheritWordSpacing(BuilderState& builderState)
 {
-    builderState.style().setWordSpacing(forwardInheritedValue(builderState.parentStyle().computedWordSpacing()));
+    builderState.style().setWordSpacing(adjustInheritedLengthForZoom(builderState.parentStyle().computedWordSpacing(), builderState));
 }
 
 inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
@@ -437,6 +451,23 @@ inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, C
 {
     maybeUpdateFontForLetterSpacing(builderState, value);
     builderState.style().setLetterSpacing(BuilderConverter::convertTextLengthOrNormal(builderState, value));
+}
+
+inline void BuilderCustom::applyValueWordSpacing(BuilderState& builderState, CSSValue& value)
+{
+    auto length = BuilderConverter::convertTextLengthOrNormal(builderState, value);
+
+    // computeNonCalcLengthDouble skips zoom for all relative units
+    // We need to manually apply zoom here to ensure consistent behavior with px units
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->isFontRelativeLength()) {
+            float zoom = builderState.style().usedZoom();
+            if (zoom != 1.0f)
+                length = WebCore::Length(length.value() * zoom, length.type());
+        }
+    }
+
+    builderState.style().setWordSpacing(WTFMove(length));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

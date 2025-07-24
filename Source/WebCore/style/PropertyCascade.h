@@ -104,6 +104,7 @@ public:
 
 private:
     void buildCascade();
+    void injectUnsetForZoomAffectedProperties();
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, IsImportant);

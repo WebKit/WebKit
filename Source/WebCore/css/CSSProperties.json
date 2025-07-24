@@ -8435,7 +8435,7 @@
                 "animation-wrapper": "LengthWrapper",
                 "animation-wrapper-requires-additional-parameters": ["{ LengthWrapper::Flags::IsLengthPercentage }"],
                 "animation-wrapper-requires-computed-getter": true,
-                "style-builder-custom": "Inherit",
+                "style-builder-custom": "Inherit|Value",
                 "style-builder-converter": "TextLengthOrNormal",
                 "style-extractor-custom": true,
                 "sink-priority": true,

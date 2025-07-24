@@ -94,6 +94,8 @@ void PropertyCascade::buildCascade()
             cascadeLevelsWithImportant.add(cascadeLevel);
     }
 
+    injectUnsetForZoomAffectedProperties();
+
     if (m_positionTryFallbackProperties)
         addPositionTryFallbackProperties();
 
@@ -104,6 +106,30 @@ void PropertyCascade::buildCascade()
     }
 
     sortLogicalGroupPropertyIDs();
+}
+
+void PropertyCascade::injectUnsetForZoomAffectedProperties()
+{
+    static const CSSPropertyID zoomAffectedProperties[] = {
+        CSSPropertyWordSpacing,
+    };
+
+    auto unsetValue = CSSPrimitiveValue::create(CSSValueUnset);
+    auto properties = MutableStyleProperties::create();
+
+    for (auto propertyID : zoomAffectedProperties) {
+        if (!CSSProperty::isInheritedProperty(propertyID))
+            continue;
+
+        if (hasNormalProperty(propertyID))
+            continue;
+
+        properties->setProperty(propertyID, unsetValue);
+    }
+
+    MatchedProperties matchedProperties { properties.get() };
+
+    addMatch(matchedProperties, CascadeLevel::UserAgent, IsImportant::No);
 }
 
 void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
