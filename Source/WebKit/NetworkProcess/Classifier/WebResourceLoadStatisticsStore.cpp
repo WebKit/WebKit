@@ -40,7 +40,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
-#include "WebProcessProxy.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/DiagnosticLoggingClient.h>

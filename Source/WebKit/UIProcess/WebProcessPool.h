@@ -28,17 +28,12 @@
 #include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
-#include "GPUProcessProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
-#include "NetworkProcessProxy.h"
-#include "ProcessThrottler.h"
-#include "VisitedLinkStore.h"
 #include "WebContextClient.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessProxy.h"
-#include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -117,10 +112,13 @@ class PowerSourceNotifier;
 
 namespace WebKit {
 
+class GPUProcessProxy;
 class LockdownModeObserver;
+class NetworkProcessProxy;
 class PerActivityStateCPUUsageSampler;
 class SuspendedPageProxy;
 class UIGamepad;
+class VisitedLinkStore;
 class WebAutomationSession;
 class WebBackForwardCache;
 class WebCompiledContentRuleList;
@@ -128,6 +126,7 @@ class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
 class WebProcessCache;
+class WebsiteDataStore;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 struct NetworkProcessCreationParameters;
@@ -400,7 +399,7 @@ public:
     GPUProcessProxy& ensureGPUProcess();
     Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
-    RefPtr<GPUProcessProxy> protectedGPUProcess() const { return gpuProcess(); }
+    RefPtr<GPUProcessProxy> protectedGPUProcess() const;
 #endif
 
 #if ENABLE(MODEL_PROCESS)

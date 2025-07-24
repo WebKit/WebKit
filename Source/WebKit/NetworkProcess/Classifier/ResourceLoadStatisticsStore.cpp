@@ -34,7 +34,6 @@
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "StorageAccessStatus.h"
-#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/CookieJar.h>

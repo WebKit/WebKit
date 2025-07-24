@@ -65,6 +65,7 @@
 #include "UIGamepad.h"
 #include "UIGamepadProvider.h"
 #include "UIProcessLogInitialization.h"
+#include "VisitedLinkStore.h"
 #include "WKAPICast.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
@@ -581,6 +582,12 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 #endif
     ensureProtectedGPUProcess()->createGPUProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
+
+RefPtr<GPUProcessProxy> WebProcessPool::protectedGPUProcess() const
+{
+    return gpuProcess();
+}
+
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)

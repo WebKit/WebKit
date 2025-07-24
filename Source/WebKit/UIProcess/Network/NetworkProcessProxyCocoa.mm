@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkProcessProxy.h"
 
+#import "GPUProcessProxy.h"
 #import "LaunchServicesDatabaseXPCConstants.h"
 #import "NetworkProcessMessages.h"
 #import "PageClient.h"

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PreferenceObserver.h"
 
+#import "GPUProcessProxy.h"
 #import "WebProcessPool.h"
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 #import <wtf/WeakObjCPtr.h>

@@ -57,6 +57,7 @@
 #include "AuthenticationDecisionListener.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "DownloadProxy.h"
+#include "GPUProcessProxy.h"
 #include "GeolocationPermissionRequestProxy.h"
 #include "JavaScriptEvaluationResult.h"
 #include "LegacySessionStateCoding.h"

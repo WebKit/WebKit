@@ -37,6 +37,7 @@
 #include "DownloadProxy.h"
 #include "GPUProcessProxy.h"
 #include "LegacyGlobalSettings.h"
+#include "VisitedLinkStore.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKContextConfigurationRef.h"

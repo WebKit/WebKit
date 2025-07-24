@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "BrowsingContextGroup.h"
 #include "Logging.h"
+#include "VisitedLinkStore.h"
 #include "WebInspectorUtilities.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"

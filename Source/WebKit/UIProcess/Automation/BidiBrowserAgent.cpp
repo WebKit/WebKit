@@ -30,6 +30,7 @@
 
 #include "AutomationProtocolObjects.h"
 #include "BidiUserContext.h"
+#include "GPUProcessProxy.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProtocolObjects.h"

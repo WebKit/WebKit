@@ -34,8 +34,6 @@
 
 namespace WebKit {
 
-class WebProcessProxy;
-
 class DisplayLinkProcessProxyClient final : public DisplayLink::Client {
 public:
     WTF_MAKE_TZONE_ALLOCATED(DisplayLinkProcessProxyClient);

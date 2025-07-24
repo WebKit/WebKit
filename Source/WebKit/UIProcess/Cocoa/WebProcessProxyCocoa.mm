@@ -31,6 +31,7 @@
 #import "CodeSigning.h"
 #import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
+#import "GPUProcessProxy.h"
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferReference.h"

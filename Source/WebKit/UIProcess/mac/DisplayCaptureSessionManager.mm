@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #import "APIPageConfiguration.h"
+#import "GPUProcessProxy.h"
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import "WKWebViewInternal.h"

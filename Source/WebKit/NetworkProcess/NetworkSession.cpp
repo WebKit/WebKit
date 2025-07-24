@@ -48,7 +48,6 @@
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
-#include "WebProcessProxy.h"
 #include "WebSWOriginStore.h"
 #include "WebSWRegistrationStore.h"
 #include "WebSharedWorkerServer.h"

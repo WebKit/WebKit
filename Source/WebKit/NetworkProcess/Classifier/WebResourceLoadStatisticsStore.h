@@ -63,7 +63,6 @@ namespace WebKit {
 class NetworkSession;
 class ResourceLoadStatisticsStore;
 class WebFrameProxy;
-class WebProcessProxy;
 enum class CanRequestStorageAccessWithoutUserInteraction : bool;
 enum class DidFilterKnownLinkDecoration : bool;
 enum class ShouldGrandfatherStatistics : bool;

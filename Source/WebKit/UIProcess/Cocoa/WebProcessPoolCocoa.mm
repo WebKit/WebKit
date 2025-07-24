@@ -34,6 +34,7 @@
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
 #import "ExtensionCapabilityGranter.h"
+#import "GPUProcessProxy.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "LockdownModeObserver.h"
 #import "Logging.h"
