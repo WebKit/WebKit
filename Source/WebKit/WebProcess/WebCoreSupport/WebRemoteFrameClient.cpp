@@ -38,6 +38,7 @@
 #include <WebCore/NodeInlines.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/ResourceError.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -87,8 +88,10 @@ void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request)
     // FIXME: action.request and request are probably duplicate information. <rdar://116203126>
     // FIXME: Get more parameters correct and add tests for each one. <rdar://116203354>
     dispatchDecidePolicyForNavigationAction(action, action.originalRequest(), ResourceResponse(), nullptr, { }, { }, { }, { }, IsPerformingHTTPFallback::No, { }, PolicyDecisionMode::Asynchronous, [protectedFrame = Ref { m_frame }, request = WTFMove(request)] (PolicyAction policyAction) mutable {
-        // WebPage::loadRequest will make this load happen if needed.
-        // FIXME: What if PolicyAction::Ignore is sent. Is everything in the right state? We probably need to make sure the load event still happens on the parent frame. <rdar://116203453>
+        if (policyAction == PolicyAction::Ignore) {
+            ResourceError error(errorDomainWebKitInternal, 0, request.resourceRequest().url(), "Load cancelled by policy action"_s, ResourceError::Type::Cancellation);
+            protectedFrame->send(Messages::WebPageProxy::DidCancelNavigationByPolicy(protectedFrame->info(), request.resourceRequest(), error));
+        }
     });
 }
 

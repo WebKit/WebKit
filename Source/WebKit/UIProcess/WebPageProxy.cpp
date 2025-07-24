@@ -8287,6 +8287,28 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTFMove(listener));
 }
 
+void WebPageProxy::didCancelNavigationByPolicy(IPC::Connection& connection, FrameInfoData&& frameInfo, ResourceRequest&& request, ResourceError&& error)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+    if (!frame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (process != frame->process())
+        return;
+
+    MESSAGE_CHECK_URL(process, request.url());
+    MESSAGE_CHECK_URL(process, error.failingURL());
+
+    // Inform navigation client of error to trigger WKNavigationDelegate callback and an error event on the iframe
+    // which should clean up state. No provisional frame as we fail before we create one.
+    // Pass nullptr for Navigation* as we never created an object because it was cancelled.
+    if (m_loaderClient)
+        m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, *frame, nullptr, error, nullptr);
+    else
+        m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+}
+
 void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
