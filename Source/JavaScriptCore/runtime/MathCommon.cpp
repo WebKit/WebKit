@@ -459,29 +459,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32,
     return toUCPUStrictInt32(toIntImpl<int32_t, ToIntMode::Int32AfterSensibleConversionAttempt>(number));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32UsingJavaScriptSemantics, UCPUStrictInt32, (double value))
-{
-#if CPU(ARM64)
-    // Use ARM64-specific method for JavaScript semantics
-    // Check for NaN
-    if (std::isnan(value))
-        return toUCPUStrictInt32(0);
 
-    // Check for overflow (values outside int32 range)
-    if (value < static_cast<double>(INT32_MIN) || value > static_cast<double>(INT32_MAX)) {
-        // For JavaScript semantics, overflow should wrap around
-        // Convert to uint32 first, then to int32
-        uint32_t uint32Value = static_cast<uint32_t>(value);
-        return toUCPUStrictInt32(static_cast<int32_t>(uint32Value));
-    }
-
-    // Normal case - value is in range
-    return toUCPUStrictInt32(static_cast<int32_t>(value));
-#else
-    // Fallback to standard conversion for other architectures
-    return toUCPUStrictInt32(JSC::toInt32(value));
-#endif
-}
 
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
 static inline bool isStrictInt32(double value)
