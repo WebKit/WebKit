@@ -31,6 +31,10 @@
 #include "config.h"
 #import "WebExtensionAPIBookmarks.h"
 #import "CocoaHelpers.h"
+#import "MessageSenderInlines.h"
+#import "WebExtensionBookmarksParameters.h"
+#import "WebExtensionContextMessages.h"
+#import "WebProcess.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
@@ -63,6 +67,31 @@ static NSString *toWebAPI(WebExtensionAPIBookmarks::BookmarkTreeNodeType type, N
 
     return folderKey;
 }
+static NSDictionary *toAPI(const WebExtensionBookmarksParameters& node)
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+
+    dictionary[idKey] = node.nodeId.createNSString().get();
+    dictionary[indexKey] = @(node.index);
+    dictionary[titleKey] = node.title.createNSString().get();
+
+    if (node.parentId)
+        dictionary[parentIdKey] = node.parentId->createNSString().get();
+    dictionary[typeKey] = @"folder";
+    if (node.url && !node.url->isEmpty()) {
+        dictionary[urlKey] = node.url->createNSString().get();
+        dictionary[typeKey] = @"bookmark";
+    }
+
+    if (node.children) {
+        NSMutableArray *childrenArray = [NSMutableArray array];
+        for (const auto& childNode : *node.children)
+            [childrenArray addObject:toAPI(childNode)];
+        dictionary[childrenKey] = childrenArray;
+    }
+
+    return dictionary;
+}
 
 static NSDictionary *toWebAPI(const WebExtensionAPIBookmarks::MockBookmarkNode& node)
 {
@@ -76,7 +105,7 @@ static NSDictionary *toWebAPI(const WebExtensionAPIBookmarks::MockBookmarkNode& 
         typeKey: toWebAPI(node.type, node.url.createNSString().get())
     };
 
-    NSMutableDictionary *tempNode = baseNodeDict.mutableCopy;
+    NSMutableDictionary *tempNode = baseNodeDictionary.mutableCopy;
 
     NSMutableArray *childrenArray = [NSMutableArray array];
     if (node.type == WebExtensionAPIBookmarks::BookmarkTreeNodeType::Folder) {
@@ -140,6 +169,8 @@ void WebExtensionAPIBookmarks::initializeMockBookmarksInternal()
     }
 }
 
+static int s_nextInternalBookmarkNodeId = 100;
+
 void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     if (m_mockBookmarks.isEmpty())
@@ -176,7 +207,7 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
     }
 
     Ref newNode = MockBookmarkNode::create();
-    newNode->id = bookmark[idKey];
+    newNode->id = String::number(s_nextInternalBookmarkNodeId++);
     newNode->url = bookmark[urlKey];
     newNode->title = bookmark[titleKey];
     newNode->parentId = bookmark[parentIdKey] ? bookmark[parentIdKey] : bookmarksRootId;
@@ -208,7 +239,24 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
         [](const Ref<MockBookmarkNode>& a, const Ref<MockBookmarkNode>& b) {
             return a->index < b->index;
         });
-    callback->call(toWebAPI(newNode));
+    const std::optional<String>& parentmockId = parentId;
+    const std::optional<String>& title = newNode->title;
+    const std::optional<String>& url = newNode->url;
+
+    std::optional<uint64_t> index = (newNode->index);
+    WebProcess::singleton().sendWithAsyncReply(
+        Messages::WebExtensionContext::BookmarksCreate(parentmockId, index, url, title),
+        [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error().createNSString().get());
+                return;
+            }
+            auto createdNode = result.value();
+            NSDictionary* newNodeDictionary = toAPI(createdNode);
+            callback->call(newNodeDictionary);
+        },
+        extensionContext().identifier()
+    );
 }
 
 void WebExtensionAPIBookmarks::getChildren(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -251,22 +299,20 @@ void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebE
 
 void WebExtensionAPIBookmarks::getTree(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    if (m_mockBookmarks.isEmpty())
-        initializeMockBookmarksInternal();
+    WebProcess::singleton().sendWithAsyncReply(
+        Messages::WebExtensionContext::BookmarksGetTree(),
+        [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error().createNSString().get());
+                return;
+            }
 
-    auto rootNodeOptional = m_mockBookmarks.getOptional(bookmarksRootId);
-    if (!rootNodeOptional) {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), nullString(), @"root not found").createNSString().autorelease();
-        return;
-    }
-
-    if (auto rootOptional = m_mockBookmarks.getOptional(bookmarksRootId)) {
-        Ref finalTreeRoot = rootOptional.value();
-        NSDictionary *rootDict = toWebAPI(finalTreeRoot);
-        NSArray* resultArray = [NSArray arrayWithObject:rootDict];
-        callback->call(resultArray);
-    }
+            auto rootNode = result.value();
+            NSDictionary* rootDictionary = toAPI(rootNode);
+            callback->call(rootDictionary);
+        },
+        extensionContext().identifier()
+    );
 }
 
 void WebExtensionAPIBookmarks::get(NSObject *idOrIdList, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)

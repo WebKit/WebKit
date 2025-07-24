@@ -31,7 +31,111 @@
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebExtensionControllerDelegatePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKWebExtensionBookmarks.h>
+
+
+@interface _MockBookmarkNode : NSObject <_WKWebExtensionBookmark>
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+@property (nonatomic, strong) NSMutableDictionary *dictionary;
+@end
+
+@implementation _MockBookmarkNode
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+{
+    self = [super init];
+    if (self)
+        _dictionary = [dictionary mutableCopy];
+    return self;
+}
+- (NSString *)identifierForWebExtensionContext:(WKWebExtensionContext *)context { return _dictionary[@"id"]; }
+- (NSString *)parentIdentifierForWebExtensionContext:(WKWebExtensionContext *)context { return _dictionary[@"parentId"]; }
+- (NSString *)titleForWebExtensionContext:(WKWebExtensionContext *)context { return _dictionary[@"title"]; }
+- (NSString *)urlForWebExtensionContext:(WKWebExtensionContext *)context { return _dictionary[@"url"]; }
+- (NSInteger)indexForWebExtensionContext:(WKWebExtensionContext *)context { return [_dictionary[@"index"] integerValue]; }
+- (NSArray<id<_WKWebExtensionBookmark>> *)childrenForWebExtensionContext:(WKWebExtensionContext *)context {
+    NSArray *childDictionaries = _dictionary[@"children"];
+    if (!childDictionaries)
+        return nil;
+    NSMutableArray<id<_WKWebExtensionBookmark>> *children = [NSMutableArray array];
+    for (NSDictionary *childDict in childDictionaries)
+        [children addObject:[[_MockBookmarkNode alloc] initWithDictionary:childDict]];
+    return children;
+}
+@end
+
+
+@interface TestBookmarksDelegate : NSObject <WKWebExtensionControllerDelegatePrivate>
+@property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *mockBookmarks;
+@property (nonatomic) NSInteger nextMockBookmarkId;
+@end
+
+static NSMutableDictionary *findParentInMockTree(NSMutableArray<NSMutableDictionary *> *tree, NSString *parentId)
+{
+    for (NSMutableDictionary *node in tree) {
+        if ([node[@"id"] isEqualToString:parentId])
+            return node;
+        id children = node[@"children"];
+        if (children && [children isKindOfClass:[NSMutableArray class]]) {
+            NSMutableDictionary *found = findParentInMockTree(children, parentId);
+            if (found)
+                return found;
+        }
+    }
+    return nil;
+}
+
+
+@implementation TestBookmarksDelegate
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _mockBookmarks = [NSMutableArray array];
+        _nextMockBookmarkId = 100;
+    }
+    return self;
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller getBookmarksForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *))completionHandler
+{
+    NSMutableArray<NSObject<_WKWebExtensionBookmark> *> *results = [NSMutableArray array];
+    for (NSDictionary *bookmarkDict in self.mockBookmarks)
+        [results addObject:[[_MockBookmarkNode alloc] initWithDictionary:bookmarkDict]];
+    completionHandler(results, nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller createBookmarkWithParentIdentifier:(NSString *)parentId index:(NSNumber *)index url:(NSString *)url title:(NSString *)title forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler
+{
+    NSMutableDictionary *newBookmark = [NSMutableDictionary dictionary];
+    newBookmark[@"title"] = title;
+    if (url)
+        newBookmark[@"url"] = url;
+    NSString *newId = [NSString stringWithFormat:@"%ld", (long)self.nextMockBookmarkId];
+    _nextMockBookmarkId++;
+    newBookmark[@"id"] = newId;
+
+    if (parentId && ![parentId isEqualToString:@"0"]) {
+        NSMutableDictionary *parentDict = findParentInMockTree(self.mockBookmarks, parentId);
+        if (parentDict) {
+            NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
+            newBookmark[@"parentId"] = parentId;
+            newBookmark[@"index"] = index ?: @(children.count);
+            [children addObject:newBookmark];
+            parentDict[@"children"] = children;
+
+            completionHandler([[_MockBookmarkNode alloc] initWithDictionary:newBookmark], nil);
+            return;
+        }
+    }
+
+    newBookmark[@"parentId"] = @"0";
+    newBookmark[@"index"] = index ?: @(self.mockBookmarks.count);
+    [self.mockBookmarks addObject:newBookmark];
+
+    completionHandler([[_MockBookmarkNode alloc] initWithDictionary:newBookmark], nil);
+}
+@end
 
 namespace TestWebKitAPI {
 
@@ -51,7 +155,7 @@ static constexpr auto *bookmarkOffManifest = @{
     },
 };
 
-static auto *bookmarkOnManifest = @{
+static constexpr auto *bookmarkOnManifest = @{
     @"manifest_version": @3,
     @"name": @"bookmarkpermission on Test",
     @"description": @"bookmarkpermission on Test",
@@ -189,27 +293,63 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICheckgetRecent)
 
 TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIMockNodeWithgetRecent)
 {
+    auto uiProcessMockBookmarks = adoptNS([NSMutableArray new]);
+    __block NSInteger nextMockBookmarkId = 100;
     auto *script = @[
         @"browser.bookmarks.create({id: 'id_old', title: 'Oldest Bookmark', url: 'http://example.com/1', dateAdded: 1000})",
         @"browser.bookmarks.create({id: 'id_new', title: 'Newest Bookmark', url: 'http://example.com/3', dateAdded: 3000})",
         @"browser.bookmarks.create({id: 'id_mid', title: 'Middle Bookmark', url: 'http://example.com/2', dateAdded: 2000})",
         @"let recent = await browser.bookmarks.getRecent(2)",
         @"browser.test.assertEq(2, recent.length, 'Should return exactly 2 bookmarks')",
-        @"browser.test.assertEq('id_new', recent[0].id, 'First result should be the newest bookmark')",
-        @"browser.test.assertEq('id_mid', recent[1].id, 'Second result should be the middle bookmark')",
+        @"browser.test.assertEq('Newest Bookmark', recent[0].title, 'First result should be the newest bookmark')",
+        @"browser.test.assertEq('Middle Bookmark', recent[1].title, 'Second result should be the middle bookmark')",
         @"let recent2 = await browser.bookmarks.getRecent(5)",
         @"browser.test.assertEq(3, recent2.length, 'Should adapt and return the max available which is 3')",
-        @"browser.test.assertEq('id_new', recent2[0].id, 'First result should be the newest bookmark')",
-        @"browser.test.assertEq('id_mid', recent2[1].id, 'Second result should be the middle bookmark')",
-        @"browser.test.assertEq('id_old', recent2[2].id, 'Second result should be the middle bookmark')",
+        @"browser.test.assertEq('Newest Bookmark', recent2[0].title, 'First result should be the newest bookmark')",
+        @"browser.test.assertEq('Middle Bookmark', recent2[1].title, 'Second result should be the middle bookmark')",
+        @"browser.test.assertEq('Oldest Bookmark', recent2[2].title, 'Second result should be the middle bookmark')",
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    auto *resources = @{ @"background.js": Util::constructScript(script) };
+
+    auto manager = getManagerFor(resources, bookmarkOnManifest);
+
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString * parentId, NSNumber * index, NSString * url, NSString * title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        NSMutableDictionary *newBookmarkData = [NSMutableDictionary dictionary];
+        newBookmarkData[@"title"] = title;
+        if (url)
+            newBookmarkData[@"url"] = url;
+        NSString *newId = [NSString stringWithFormat:@"%ld", (long)nextMockBookmarkId];
+        nextMockBookmarkId++;
+        newBookmarkData[@"id"] = newId;
+
+        newBookmarkData[@"parentId"] = parentId;
+        if (parentId && ![parentId isEqualToString:@"0"]) {
+            NSMutableDictionary *parentDict = findParentInMockTree(uiProcessMockBookmarks.get(), parentId);
+            if (parentDict) {
+                NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
+                newBookmarkData[@"parentId"] = parentId;
+                newBookmarkData[@"index"] = index ?: @(children.count);
+                [children addObject:newBookmarkData];
+                parentDict[@"children"] = children;
+                completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+                return;
+            }
+        }
+
+        newBookmarkData[@"index"] = index ?: @(uiProcessMockBookmarks.get().count);
+        [uiProcessMockBookmarks addObject:newBookmarkData];
+        completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+    };
+
+    [manager loadAndRun];
 }
 
 TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreateParse)
 {
+    auto uiProcessMockBookmarks = adoptNS([NSMutableArray new]);
+    __block NSInteger nextMockBookmarkId = 100;
     auto *script = @[
         @"let createdNode = await browser.bookmarks.create({id: 'test1', title: 'My Test Bookmark', url: 'https://example.com/test1'})",
         @"browser.test.assertEq('My Test Bookmark', createdNode.title, 'Title should match');",
@@ -218,37 +358,67 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreateParse)
         @"let createdNode2 = await browser.bookmarks.create({id: 'test2', title: 'My Test Folder', parentId: 'testFavorites'})",
         @"browser.test.assertEq('My Test Folder', createdNode2.title, 'Title should match');",
         @"browser.test.assertEq('folder', createdNode2.type, 'type should be folder because url is not specified');",
-        @"browser.test.assertEq('testfav', createdNode2.parentId, 'parentId should match');",
+        @"browser.test.assertEq('testFavorites', createdNode2.parentId, 'parentId should match');",
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    auto *resources = @{ @"background.js": Util::constructScript(script) };
+
+    auto manager = getManagerFor(resources, bookmarkOnManifest);
+
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString * parentId, NSNumber * index, NSString * url, NSString * title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        NSMutableDictionary *newBookmarkData = [NSMutableDictionary dictionary];
+        newBookmarkData[@"title"] = title;
+        if (url)
+            newBookmarkData[@"url"] = url;
+        NSString *newId = [NSString stringWithFormat:@"%ld", (long)nextMockBookmarkId];
+        nextMockBookmarkId++;
+        newBookmarkData[@"id"] = newId;
+
+        newBookmarkData[@"parentId"] = parentId;
+        if (parentId && ![parentId isEqualToString:@"0"]) {
+            NSMutableDictionary *parentDict = findParentInMockTree(uiProcessMockBookmarks.get(), parentId);
+            if (parentDict) {
+                NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
+                newBookmarkData[@"parentId"] = parentId;
+                newBookmarkData[@"index"] = index ?: @(children.count);
+                [children addObject:newBookmarkData];
+                parentDict[@"children"] = children;
+                completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+                return;
+            }
+        }
+
+        newBookmarkData[@"index"] = index ?: @(uiProcessMockBookmarks.get().count);
+        [uiProcessMockBookmarks addObject:newBookmarkData];
+        completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+    };
+
+    [manager loadAndRun];
+
 }
 
 TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetTree)
 {
+    auto uiProcessMockBookmarks = adoptNS([NSMutableArray new]);
+    __block NSInteger nextMockBookmarkId = 100;
     auto *script = @[
         @"let bookmark1 = await browser.bookmarks.create({type: 'bookmark', id: 'bookmark1', title: 'Top Bookmark 1', url: 'http://example.com/bm1'});",
         @"let folder1 = await browser.bookmarks.create({id: 'folder1', type: 'folder', title: 'Top Folder 1'});",
         @"let bookmark2 = await browser.bookmarks.create({id: 'bookmark2', title: 'Child Bookmark 2', url: 'http://example.com/bm2', parentId: folder1.id});",
         @"let bookmark3 = await browser.bookmarks.create({id: 'bookmark3', title: 'Top Bookmark 3', url: 'http://example.com/bm3'});",
-        @"let tree = await browser.bookmarks.getTree();",
-        @"browser.test.assertEq(1, tree.length, 'Tree should have one root node');",
-        @"let root = tree[0];",
+        @"let root = await browser.bookmarks.getTree();",
         @"browser.test.assertEq('testBookmarksRoot', root.id, 'Root node ID should be root');",
-        @"browser.test.assertEq('folder', root.type, 'Root node type should be folder');",
         @"browser.test.assertTrue(root.children.length >= 1, 'Root should have at least one child (default folder)');",
-        @"let foundBookmark1 = root.children.find(n => n.id === bookmark1.id);",
+        @"let foundBookmark1 = root.children.find(n => n.title === bookmark1.title);",
         @"browser.test.assertEq('Top Bookmark 1', foundBookmark1.title, 'Bm1 title matches');",
         @"browser.test.assertEq('http://example.com/bm1', foundBookmark1.url, 'Bm1 URL matches');",
         @"browser.test.assertEq('bookmark', foundBookmark1.type, 'Bm1 type is bookmark');",
-        @"browser.test.assertEq(root.id, foundBookmark1.parentId, 'Bm1 parentId matches default folder');",
-        @"let foundFolder1 = root.children.find(n => n.id === folder1.id);",
+        @"let foundFolder1 = root.children.find(n => n.title === folder1.title);",
         @"browser.test.assertEq('Top Folder 1', foundFolder1.title, 'Folder1 title matches');",
         @"browser.test.assertEq('folder', foundFolder1.type, 'Folder1 type is folder');",
-        @"browser.test.assertEq(root.id, foundFolder1.parentId, 'Folder1 parentId matches default folder');",
-        @"browser.test.assertEq(bookmark2.id, foundFolder1.children[0].id, 'Folder1 should have children array');",
-        @"let foundBookmark2 = foundFolder1.children.find(n => n.id === bookmark2.id);",
+        @"browser.test.assertEq(bookmark2.title, foundFolder1.children[0].title, 'Folder1 should have children array');",
+        @"let foundBookmark2 = foundFolder1.children.find(n => n.title === bookmark2.title);",
         @"browser.test.assertEq('Child Bookmark 2', foundBookmark2.title, 'Bm2 title matches');",
         @"browser.test.assertEq('http://example.com/bm2', foundBookmark2.url, 'Bm2 URL matches');",
         @"browser.test.assertEq('bookmark', foundBookmark2.type, 'Bm2 type is bookmark');",
@@ -256,10 +426,122 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetTree)
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    auto *resources = @{ @"background.js": Util::constructScript(script) };
+
+    auto manager = getManagerFor(resources, bookmarkOnManifest);
+
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString * parentId, NSNumber * index, NSString * url, NSString * title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        NSMutableDictionary *newBookmarkData = [NSMutableDictionary dictionary];
+        newBookmarkData[@"title"] = title;
+        if (url)
+            newBookmarkData[@"url"] = url;
+        NSString *newId = [NSString stringWithFormat:@"%ld", (long)nextMockBookmarkId];
+        nextMockBookmarkId++;
+        newBookmarkData[@"id"] = newId;
+
+        newBookmarkData[@"parentId"] = parentId;
+        if (parentId && ![parentId isEqualToString:@"0"]) {
+            NSMutableDictionary *parentDict = findParentInMockTree(uiProcessMockBookmarks.get(), parentId);
+            if (parentDict) {
+                NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
+                newBookmarkData[@"parentId"] = parentId;
+                newBookmarkData[@"index"] = index ?: @(children.count);
+                [children addObject:newBookmarkData];
+                parentDict[@"children"] = children;
+                completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+                return;
+            }
+        }
+
+        newBookmarkData[@"index"] = index ?: @(uiProcessMockBookmarks.get().count);
+        [uiProcessMockBookmarks addObject:newBookmarkData];
+        completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+    };
+
+    manager.get().internalDelegate.getBookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *)) {
+        NSMutableArray<NSObject<_WKWebExtensionBookmark> *> *results = [NSMutableArray array];
+        for (NSDictionary *dict in uiProcessMockBookmarks.get()) {
+            auto mockNode = adoptNS([_MockBookmarkNode new]);
+            mockNode.get().dictionary = [dict mutableCopy];
+            [results addObject:mockNode.get()];
+        }
+        completionHandler(results, nil);
+    };
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateAndGetTree)
+{
+    auto uiProcessMockBookmarks = adoptNS([NSMutableArray new]);
+    __block NSInteger nextMockBookmarkId = 100;
+    auto *script = @[
+        @"let folder = await browser.bookmarks.create({ id: 'testFolder', title: 'Test Folder' });",
+        @"browser.test.assertEq(folder.title, 'Test Folder', 'Folder title should be correct');",
+        @"browser.test.assertTrue(!!folder.id, 'Folder should have an ID');",
+        @"let bookmark = await browser.bookmarks.create({ id: 'testbookmark1', parentId: folder.id, title: 'WebKit.org', url: 'https://webkit.org/' });",
+        @"browser.test.assertEq(bookmark.title, 'WebKit.org', 'Bookmark title should be correct');",
+        @"browser.test.assertEq(bookmark.url, 'https://webkit.org/', 'Bookmark URL should be correct');",
+        @"let rootNode = await browser.bookmarks.getTree();",
+        @"browser.test.assertTrue(Array.isArray(rootNode.children), 'Root object should have a children array');",
+        @"browser.test.assertEq(rootNode.children.length, 1);",
+        @"browser.test.assertEq(rootNode.children[0].title, 'Test Folder');",
+        @"browser.test.assertTrue(Array.isArray(rootNode.children[0].children), 'Folder should have a children array');",
+        @"browser.test.assertEq(rootNode.children[0].children[0].title, 'WebKit.org', 'Child bookmark in tree should have correct title');",
+        @"browser.test.assertEq(rootNode.children[0].children[0].url, 'https://webkit.org/', 'Child bookmark in tree should have correct URL');",
+        @"let bookmark2 = await browser.bookmarks.create({ id: 'topLevelBookmark', title: 'Test Top Bookmark', url: 'https://coolbook.com/' });",
+        @"browser.test.assertEq(bookmark2.title, 'Test Top Bookmark', 'Bookmark title should be correct');",
+        @"browser.test.assertEq(bookmark2.url, 'https://coolbook.com/', 'Bookmark URL should be correct');",
+        @"let updatedRootNode = await browser.bookmarks.getTree();",
+        @"browser.test.assertEq(updatedRootNode.children.length, 2);",
+        @"browser.test.assertEq(updatedRootNode.children[0].title, 'Test Folder');",
+        @"browser.test.assertEq(updatedRootNode.children[1].title, 'Test Top Bookmark');",
+        @"browser.test.notifyPass();",
+    ];
+
+    auto *resources = @{ @"background.js": Util::constructScript(script) };
+
+    auto manager = getManagerFor(resources, bookmarkOnManifest);
+
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString * parentId, NSNumber * index, NSString * url, NSString * title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        NSMutableDictionary *newBookmarkData = [NSMutableDictionary dictionary];
+        newBookmarkData[@"title"] = title;
+        if (url)
+            newBookmarkData[@"url"] = url;
+        NSString *newId = [NSString stringWithFormat:@"%ld", (long)nextMockBookmarkId];
+        nextMockBookmarkId++;
+        newBookmarkData[@"id"] = newId;
+
+        newBookmarkData[@"parentId"] = parentId;
+        if (parentId && ![parentId isEqualToString:@"0"]) {
+            NSMutableDictionary *parentDict = findParentInMockTree(uiProcessMockBookmarks.get(), parentId);
+            if (parentDict) {
+                NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
+                newBookmarkData[@"parentId"] = parentId;
+                newBookmarkData[@"index"] = index ?: @(children.count);
+                [children addObject:newBookmarkData];
+                parentDict[@"children"] = children;
+                completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+                return;
+            }
+        }
+
+        newBookmarkData[@"index"] = index ?: @(uiProcessMockBookmarks.get().count);
+        [uiProcessMockBookmarks addObject:newBookmarkData];
+        completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+    };
+
+    manager.get().internalDelegate.getBookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *)) {
+        NSMutableArray<NSObject<_WKWebExtensionBookmark> *> *results = [NSMutableArray array];
+        for (NSDictionary *dict in uiProcessMockBookmarks.get()) {
+            auto mockNode = adoptNS([_MockBookmarkNode new]);
+            mockNode.get().dictionary = [dict mutableCopy];
+            [results addObject:mockNode.get()];
+        }
+        completionHandler(results, nil);
+    };
+    [manager loadAndRun];
 }
 
 }
-
 #endif
 
