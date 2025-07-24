@@ -2883,13 +2883,10 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
         isCritical = overCriticalMemoryThreshold();
         if (isCritical) {
-            // Fix for Bug 283898: When in critical memory mode, be more aggressive about GC
-            // by using a smaller eden size. This ensures we trigger GC sooner when memory is critical.
-            // First, ensure critical eden size doesn't exceed normal eden size
+            // Fix for Bug 283898: Ensure critical eden size doesn't exceed normal eden size
+            // This prevents the case where critical mode allows more allocation than normal mode
             size_t maxEdenSizeWhenCritical = std::min(m_maxEdenSizeWhenCritical, m_maxEdenSize);
-            // Then, make critical mode more restrictive by using at most 50% of the normal eden size
-            size_t criticalEdenSize = std::min(maxEdenSizeWhenCritical, m_maxEdenSize / 2);
-            bytesAllowedThisCycle = std::min(criticalEdenSize, bytesAllowedThisCycle);
+            bytesAllowedThisCycle = std::min(maxEdenSizeWhenCritical, bytesAllowedThisCycle);
         }
 #endif
 
