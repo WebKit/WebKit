@@ -94,6 +94,7 @@ struct WindowPostMessageOptions;
 
 enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class NavigationHistoryBehavior : uint8_t;
+enum class IncludeTargetOrigin : bool { No, Yes };
 
 using IntDegrees = int32_t;
 
@@ -223,6 +224,14 @@ public:
     ExceptionOr<PushManager&> pushManager();
 #endif
 
+    String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
+    void printErrorMessage(const String& message) const;
+    // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
+    // when its document is no longer the document that is displayed in its
+    // frame), we would like to zero out m_frame to avoid being confused
+    // by the document that is currently active in m_frame.
+    bool isCurrentlyDisplayedInFrame() const;
+
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);
 
@@ -231,6 +240,8 @@ protected:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::DOMWindow; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    bool isInsecureScriptAccess(LocalDOMWindow& activeWindow, const String& urlString);
+    bool setLocationSecurityChecks(LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState navigationState);
 
 private:
     GlobalWindowIdentifier m_identifier;

@@ -39,6 +39,7 @@
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "UserGestureIndicator.h"
+#include "page/DOMWindow.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -135,26 +136,16 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
 
 void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, SetLocationLocking locking, CanNavigateState navigationState)
 {
-    ASSERT(navigationState != CanNavigateState::Unchecked);
-    // FIXME: Add some or all of the security checks in LocalDOMWindow::setLocation. <rdar://116500603>
-    // FIXME: Refactor this duplicate code to share with LocalDOMWindow::setLocation. <rdar://116500603>
-
-    RefPtr activeDocument = activeWindow.document();
-    if (!activeDocument)
-        return;
-
-    RefPtr frame = this->frame();
-    if (navigationState != CanNavigateState::Able) [[unlikely]]
-        navigationState = activeDocument->canNavigate(frame.get(), completedURL);
-    if (navigationState == CanNavigateState::Unable)
+    if (!setLocationSecurityChecks(activeWindow, completedURL, navigationState))
         return;
 
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
-    frame->protectedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
+    RefPtr frame = this->frame();
+    frame->protectedNavigationScheduler()->scheduleLocationChange(*activeWindow.document(), activeWindow.document()->securityOrigin(),
         // FIXME: What if activeDocument()->frame() is 0?
-        completedURL, activeDocument->frame()->loader().outgoingReferrer(),
+        completedURL, activeWindow.document()->frame()->loader().outgoingReferrer(),
         lockHistory, lockBackForwardList,
         historyHandling);
 }

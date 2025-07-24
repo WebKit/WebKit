@@ -51,6 +51,7 @@
 #include "WebKitPoint.h"
 #include "WindowProxy.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -85,6 +86,126 @@ Location& DOMWindow::location()
     if (!m_location)
         m_location = Location::create(*this);
     return *m_location;
+}
+
+bool DOMWindow::isCurrentlyDisplayedInFrame() const
+{
+    RefPtr frame = this->frame();
+    return frame && frame->window() == this;
+}
+
+bool DOMWindow::isInsecureScriptAccess(LocalDOMWindow& activeWindow, const String& urlString)
+{
+    if (!WTF::protocolIsJavaScript(urlString))
+        return false;
+
+    // If this LocalDOMWindow isn't currently active in the Frame, then there's no
+    // way we should allow the access.
+    // FIXME: Remove this check if we're able to disconnect LocalDOMWindow from
+    // Frame on navigation: https://bugs.webkit.org/show_bug.cgi?id=62054
+    if (isCurrentlyDisplayedInFrame()) {
+        // FIXME: Is there some way to eliminate the need for a separate "activeWindow == this" check?
+        if (&activeWindow == this)
+            return false;
+
+        if (this->document().hasException())
+            return true;
+        RefPtr document = this->document().returnValue();
+        if (!document)
+            return true;
+        // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
+        // Can we name the SecurityOrigin function better to make this more clear?
+        if (activeWindow.document()->protectedSecurityOrigin()->isSameOriginDomain(document->protectedSecurityOrigin()))
+            return false;
+    }
+
+    printErrorMessage(crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
+    return true;
+}
+
+
+String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
+{
+    const URL& activeWindowURL = activeWindow.document()->url();
+    if (activeWindowURL.isNull())
+        return String();
+
+    RefPtr document = documentIfLocal();
+    if (!document)
+        return String("No target document"_s);
+    Ref activeOrigin = activeWindow.document()->securityOrigin();
+    Ref targetOrigin = document->securityOrigin();
+    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin));
+
+    // FIXME: This message, and other console messages, have extra newlines. Should remove them.
+    String message;
+    if (includeTargetOrigin == IncludeTargetOrigin::Yes)
+        message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a frame with origin \""_s, targetOrigin->toString(), "\". "_s);
+    else
+        message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a cross-origin frame. "_s);
+
+    // Sandbox errors: Use the origin of the frames' location, rather than their actual origin (since we know that at least one will be "null").
+    URL activeURL = activeWindow.document()->url();
+    URL targetURL = document->url();
+    if (document->isSandboxed(SandboxFlag::Origin) || activeWindow.document()->isSandboxed(SandboxFlag::Origin)) {
+        if (includeTargetOrigin == IncludeTargetOrigin::Yes)
+            message = makeString("Blocked a frame at \""_s, SecurityOrigin::create(activeURL).get().toString(), "\" from accessing a frame at \""_s, SecurityOrigin::create(targetURL).get().toString(), "\". "_s);
+        else
+            message = makeString("Blocked a frame at \""_s, SecurityOrigin::create(activeURL).get().toString(), "\" from accessing a cross-origin frame. "_s);
+
+        if (document->isSandboxed(SandboxFlag::Origin) && activeWindow.document()->isSandboxed(SandboxFlag::Origin))
+            return makeString("Sandbox access violation: "_s, message, " Both frames are sandboxed and lack the \"allow-same-origin\" flag."_s);
+        if (document->isSandboxed(SandboxFlag::Origin))
+            return makeString("Sandbox access violation: "_s, message, " The frame being accessed is sandboxed and lacks the \"allow-same-origin\" flag."_s);
+        return makeString("Sandbox access violation: "_s, message, " The frame requesting access is sandboxed and lacks the \"allow-same-origin\" flag."_s);
+    }
+
+    if (includeTargetOrigin == IncludeTargetOrigin::Yes) {
+        // Protocol errors: Use the URL's protocol rather than the origin's protocol so that we get a useful message for non-heirarchal URLs like 'data:'.
+        if (targetOrigin->protocol() != activeOrigin->protocol())
+            return makeString(message, " The frame requesting access has a protocol of \""_s, activeURL.protocol(), "\", the frame being accessed has a protocol of \""_s, targetURL.protocol(), "\". Protocols must match.\n"_s);
+
+        // 'document.domain' errors.
+        if (targetOrigin->domainWasSetInDOM() && activeOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame requesting access set \"document.domain\" to \""_s, activeOrigin->domain(), "\", the frame being accessed set it to \""_s, targetOrigin->domain(), "\". Both must set \"document.domain\" to the same value to allow access."_s);
+        if (activeOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame requesting access set \"document.domain\" to \""_s, activeOrigin->domain(), "\", but the frame being accessed did not. Both must set \"document.domain\" to the same value to allow access."_s);
+        if (targetOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame being accessed set \"document.domain\" to \""_s, targetOrigin->domain(), "\", but the frame requesting access did not. Both must set \"document.domain\" to the same value to allow access."_s);
+    }
+
+    // Default.
+    return makeString(message, "Protocols, domains, and ports must match."_s);
+}
+
+void DOMWindow::printErrorMessage(const String& message) const
+{
+    if (message.isEmpty())
+        return;
+
+    if (CheckedPtr pageConsole = console())
+        pageConsole->addMessage(MessageSource::JS, MessageLevel::Error, message);
+}
+
+bool DOMWindow::setLocationSecurityChecks(LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState navigationState)
+{
+    ASSERT(navigationState != CanNavigateState::Unchecked);
+
+    RefPtr activeDocument = activeWindow.document();
+    if (!activeDocument)
+        return false;
+
+    RefPtr frame = this->frame();
+    if (!frame)
+        return false;
+    if (navigationState != CanNavigateState::Able) [[unlikely]]
+        navigationState = activeDocument->canNavigate(frame.get(), completedURL);
+    if (navigationState == CanNavigateState::Unable)
+        return false;
+    if (isInsecureScriptAccess(activeWindow, completedURL.string()))
+        return false;
+
+    return true;
 }
 
 bool DOMWindow::closed() const
