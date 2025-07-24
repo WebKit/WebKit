@@ -270,7 +270,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
     attributedStringSetFont(attrString, style.fontCascade().primaryFont()->getCTFont(), range);
 
     auto decor = style.textDecorationLineInEffect();
-    if (decor & TextDecorationLine::Underline)
+    if (decor & CSS::Keyword::Underline { })
         attributedStringSetNumber(attrString, AccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.

@@ -841,7 +841,7 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
         if (inlineItem.isText()) {
             auto& styleToUse = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
             candidateContentHeight = std::max<InlineLayoutUnit>(candidateContentHeight, styleToUse.computedLineHeight());
-        } else if (inlineItem.isAtomicInlineBox() && lineBoxContain.contains(Style::LineBoxContain::Replaced))
+        } else if (inlineItem.isAtomicInlineBox() && lineBoxContain.contains(CSS::Keyword::Replaced { }))
             candidateContentHeight = std::max(candidateContentHeight, InlineLayoutUnit { formattingContext().geometryForBox(inlineItem.layoutBox()).marginBoxHeight() });
     }
     if (candidateContentHeight <= m_lineLogicalRect.height())

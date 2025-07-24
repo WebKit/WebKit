@@ -1613,7 +1613,7 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
         if (!anchored)
             return false;
 
-        if (style.positionVisibility().contains(PositionVisibility::AnchorsVisible)) {
+        if (style.positionVisibility().contains(CSS::Keyword::AnchorsVisible { })) {
             // "If the box has a default anchor box but that anchor box is invisible or clipped by intervening boxes, the box’s visibility property computes to force-hidden."
             if (AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxes(*anchored))
                 return true;

@@ -24,16 +24,32 @@
 
 #pragma once
 
-#include "CSSPrimitiveValueMappings.h"
+#include "CSSPrimitiveKeywordSet.h"
+#include "CSSSerializationContext.h"
+#include "StylePrimitiveKeyword+Serialization.h"
 #include "StyleValueTypes.h"
 
 namespace WebCore {
 namespace Style {
 
-template<typename T> requires std::is_enum_v<T> struct CSSValueConversion<T> {
-    T operator()(BuilderState&, const CSSValue& value)
+template<CSS::PrimitiveKeywordSetDerived T> struct Serialize<T> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const T& value)
     {
-        return fromCSSValueID<T>(value.valueID());
+        if (!value) {
+            serializationForCSS(builder, context, style, T::emptyCase);
+            return;
+        }
+
+        bool listEmpty = true;
+        auto appendKeyword = [&](auto keyword) {
+            if (value.contains(keyword)) {
+                if (!listEmpty)
+                    builder.append(' ');
+                serializationForCSS(builder, context, style, keyword);
+                listEmpty = false;
+            }
+        };
+        WTF::apply([&](const auto& ...x) { (appendKeyword(x), ...); }, T::Keywords::tuple);
     }
 };
 

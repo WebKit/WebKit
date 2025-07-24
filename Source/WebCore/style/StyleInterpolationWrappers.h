@@ -37,6 +37,7 @@
 #include "AnimationMalloc.h"
 #include "StyleInterpolationFunctions.h"
 #include "StyleInterpolationWrapperBase.h"
+#include "StylePrimitiveKeywordSet+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>

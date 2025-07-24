@@ -152,16 +152,16 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
+void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle)
 {
-    auto paintDecoration = [&] (auto decoration, auto underlineStyle, auto& color, auto& rect) {
+    auto paintDecoration = [&](Style::TextDecorationLine decoration, auto underlineStyle, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
 
         auto strokeStyle = textDecorationStyleToStrokeStyle(underlineStyle);
 
         if (underlineStyle == TextDecorationStyle::Wavy)
             strokeWavyTextDecoration(m_context, rect, decorationGeometry.wavyStrokeParameters);
-        else if (decoration == TextDecorationLine::Underline || decoration == TextDecorationLine::Overline) {
+        else if (decoration == CSS::Keyword::Underline { } || decoration == CSS::Keyword::Overline { }) {
             if ((style.textDecorationSkipInk() == TextDecorationSkipInk::Auto
                 || style.textDecorationSkipInk() == TextDecorationSkipInk::All)
                 && !m_writingMode.isVerticalTypographic()) {
@@ -184,9 +184,9 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
             ASSERT_NOT_REACHED();
     };
 
-    auto areLinesOpaque = !m_isPrinting && (!decorationType.contains(TextDecorationLine::Underline) || decorationStyle.underline.color.isOpaque())
-        && (!decorationType.contains(TextDecorationLine::Overline) || decorationStyle.overline.color.isOpaque())
-        && (!decorationType.contains(TextDecorationLine::LineThrough) || decorationStyle.linethrough.color.isOpaque());
+    auto areLinesOpaque = !m_isPrinting && (!decorationType.contains(CSS::Keyword::Underline { }) || decorationStyle.underline.color.isOpaque())
+        && (!decorationType.contains(CSS::Keyword::Overline { }) || decorationStyle.overline.color.isOpaque())
+        && (!decorationType.contains(CSS::Keyword::LineThrough { }) || decorationStyle.linethrough.color.isOpaque());
 
     float extraOffset = 0.f;
     auto boxOrigin = decorationGeometry.boxOrigin;
@@ -211,19 +211,19 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
     // These decorations should match the visual overflows computed in visualOverflowForDecorations().
     auto underlineRect = FloatRect { boxOrigin, FloatSize { decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness } };
     auto overlineRect = underlineRect;
-    if (decorationType.contains(TextDecorationLine::Underline))
+    if (decorationType.contains(CSS::Keyword::Underline { }))
         underlineRect.move(0.f, decorationGeometry.underlineOffset);
-    if (decorationType.contains(TextDecorationLine::Overline))
+    if (decorationType.contains(CSS::Keyword::Overline { }))
         overlineRect.move(0.f, decorationGeometry.overlineOffset);
 
     auto draw = [&](const Style::TextShadow* shadow) {
-        if (decorationType.contains(TextDecorationLine::Underline) && !underlineRect.isEmpty())
-            paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
-        if (decorationType.contains(TextDecorationLine::Overline) && !overlineRect.isEmpty())
-            paintDecoration(TextDecorationLine::Overline, decorationStyle.overline.decorationStyle, decorationStyle.overline.color, overlineRect);
+        if (decorationType.contains(CSS::Keyword::Underline { }) && !underlineRect.isEmpty())
+            paintDecoration(CSS::Keyword::Underline { }, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
+        if (decorationType.contains(CSS::Keyword::Overline { }) && !overlineRect.isEmpty())
+            paintDecoration(CSS::Keyword::Overline { }, decorationStyle.overline.decorationStyle, decorationStyle.overline.color, overlineRect);
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
-        if (shadow && decorationType.contains(TextDecorationLine::LineThrough))
+        if (shadow && decorationType.contains(CSS::Keyword::LineThrough { }))
             paintLineThrough({ boxOrigin, decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness, decorationGeometry.linethroughCenter, decorationGeometry.wavyStrokeParameters }, Color::transparentBlack, decorationStyle);
     };
 
@@ -275,27 +275,27 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
         m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
 }
 
-static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId)
+static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId)
 {
-    auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecorationLine> decorations) {
+    auto extractDecorations = [&] (const RenderStyle& style, Style::TextDecorationLine decorations) {
         if (decorations.isEmpty())
             return;
 
         auto color = TextDecorationPainter::decorationColor(style, paintBehavior);
         auto decorationStyle = style.textDecorationStyle();
 
-        if (decorations.contains(TextDecorationLine::Underline)) {
-            remainingDecorations.remove(TextDecorationLine::Underline);
+        if (decorations.contains(CSS::Keyword::Underline { })) {
+            remainingDecorations.remove(CSS::Keyword::Underline { });
             result.underline.color = color;
             result.underline.decorationStyle = decorationStyle;
         }
-        if (decorations.contains(TextDecorationLine::Overline)) {
-            remainingDecorations.remove(TextDecorationLine::Overline);
+        if (decorations.contains(CSS::Keyword::Overline { })) {
+            remainingDecorations.remove(CSS::Keyword::Overline { });
             result.overline.color = color;
             result.overline.decorationStyle = decorationStyle;
         }
-        if (decorations.contains(TextDecorationLine::LineThrough)) {
-            remainingDecorations.remove(TextDecorationLine::LineThrough);
+        if (decorations.contains(CSS::Keyword::LineThrough { })) {
+            remainingDecorations.remove(CSS::Keyword::LineThrough { });
             result.linethrough.color = color;
             result.linethrough.decorationStyle = decorationStyle;
         }
@@ -345,7 +345,7 @@ Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet
     return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor, paintBehavior);
 }
 
-auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId) -> Styles
+auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, Style::TextDecorationLine requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId) -> Styles
 {
     if (requestedDecorations.isEmpty())
         return { };
@@ -357,15 +357,15 @@ auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, Opti
     return result;
 }
 
-OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)
+Style::TextDecorationLine TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)
 {
-    OptionSet<TextDecorationLine> decorations;
+    Style::TextDecorationLine decorations;
     if (style.underline.color.isValid())
-        decorations.add(TextDecorationLine::Underline);
+        decorations.add(CSS::Keyword::Underline { });
     if (style.overline.color.isValid())
-        decorations.add(TextDecorationLine::Overline);
+        decorations.add(CSS::Keyword::Overline { });
     if (style.linethrough.color.isValid())
-        decorations.add(TextDecorationLine::LineThrough);
+        decorations.add(CSS::Keyword::LineThrough { });
     return decorations;
 }
 

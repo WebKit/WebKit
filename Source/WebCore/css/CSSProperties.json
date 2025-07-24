@@ -10273,7 +10273,7 @@
                 "initial-letter"
             ],
             "codegen-properties": {
-                "style-converter": "LineBoxContain",
+                "style-converter": "StyleType<LineBoxContain>",
                 "parser-grammar": "none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]"
             },
             "status": {
@@ -10814,10 +10814,10 @@
                 }
             ],
             "codegen-properties": {
-                "style-converter": "TextDecorationLine",
                 "aliases": [
                     "-webkit-text-decoration-line"
                 ],
+                "style-converter": "StyleType<TextDecorationLine>",
                 "parser-grammar": "none | [ underline || overline || line-through || blink ]@(no-single-item-opt)",
                 "parser-exported": true
             },
@@ -10959,7 +10959,7 @@
             "inherited": true,
             "codegen-properties": {
                 "skip-style-builder": true,
-                "style-extractor-converter": "TextDecorationLine",
+                "style-extractor-converter": "StyleType<TextDecorationLine>",
                 "render-style-name-for-methods": "TextDecorationLineInEffect",
                 "parser-grammar": "none | [ underline || overline || line-through || blink ]@(no-single-item-opt)",
                 "comment": "FIXME: Should this be an alias of text-decoration-line?"
@@ -12295,7 +12295,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssAnchorPositioningPositionVisibilityEnabled",
-                "style-converter": "PositionVisibility",
+                "style-converter": "StyleType<PositionVisibility>",
                 "parser-grammar": "always | [ anchors-valid || anchors-visible || no-overflow ]@(no-single-item-opt)"
             },
             "specification": {

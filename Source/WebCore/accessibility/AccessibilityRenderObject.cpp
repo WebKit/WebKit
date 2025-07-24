@@ -2888,7 +2888,7 @@ bool AccessibilityRenderObject::hasUnderline() const
     if (!m_renderer)
         return false;
     
-    return m_renderer->style().textDecorationLineInEffect().contains(TextDecorationLine::Underline);
+    return m_renderer->style().textDecorationLineInEffect().contains(CSS::Keyword::Underline { });
 }
 
 String AccessibilityRenderObject::secureFieldValue() const

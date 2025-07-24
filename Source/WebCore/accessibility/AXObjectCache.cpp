@@ -2217,10 +2217,10 @@ void AXObjectCache::onStyleChange(RenderText& renderText, StyleDifference differ
 
     auto oldDecor = oldStyle->textDecorationLineInEffect();
     auto newDecor = newStyle.textDecorationLineInEffect();
-    if ((oldDecor & TextDecorationLine::Underline) != (newDecor & TextDecorationLine::Underline))
+    if ((oldDecor & CSS::Keyword::Underline { }) != (newDecor & CSS::Keyword::Underline { }))
         tree->queueNodeUpdate(object->objectID(), { AXProperty::HasUnderline });
 
-    if ((oldDecor & TextDecorationLine::LineThrough) != (newDecor & TextDecorationLine::LineThrough))
+    if ((oldDecor & CSS::Keyword::LineThrough { }) != (newDecor & CSS::Keyword::LineThrough { }))
         tree->queueNodeUpdate(object->objectID(), { AXProperty::HasLinethrough });
 
     if (oldStyle->textDecorationColor() != newStyle.textDecorationColor())

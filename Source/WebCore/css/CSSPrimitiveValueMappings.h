@@ -1221,12 +1221,6 @@ template<> constexpr TextJustify fromCSSValueID(CSSValueID valueID)
     return TextJustify::Auto;
 }
 
-#define TYPE TextDecorationLine
-#define FOR_EACH(CASE) CASE(Underline) CASE(Overline) CASE(LineThrough) CASE(Blink)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
 #define TYPE TextDecorationStyle
 #define FOR_EACH(CASE) CASE(Solid) CASE(Double) CASE(Dotted) CASE(Dashed) CASE(Wavy)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
@@ -2615,12 +2609,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE Style::PositionTryOrder
 #define FOR_EACH(CASE) CASE(Normal) CASE(MostWidth) CASE(MostHeight) CASE(MostBlockSize) CASE(MostInlineSize)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
-#define TYPE PositionVisibility
-#define FOR_EACH(CASE) CASE(AnchorsValid) CASE(AnchorsVisible) CASE(NoOverflow)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

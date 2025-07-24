@@ -1176,17 +1176,6 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecorationLine line)
-{
-    switch (line) {
-    case TextDecorationLine::Underline: ts << "underline"_s; break;
-    case TextDecorationLine::Overline: ts << "overline"_s; break;
-    case TextDecorationLine::LineThrough: ts << "line-through"_s; break;
-    case TextDecorationLine::Blink: ts << "blink"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, TextDecorationSkipInk skip)
 {
     switch (skip) {
@@ -1512,16 +1501,6 @@ TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
     case OverflowContinue::Discard:
         ts << "discard"_s;
         break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, PositionVisibility positionVisibility)
-{
-    switch (positionVisibility) {
-    case PositionVisibility::AnchorsValid: ts << "anchors-valid"; break;
-    case PositionVisibility::AnchorsVisible: ts << "anchors-visible"; break;
-    case PositionVisibility::NoOverflow: ts << "no-overflow"; break;
     }
     return ts;
 }

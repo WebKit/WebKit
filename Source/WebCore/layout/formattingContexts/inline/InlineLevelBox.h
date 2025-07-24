@@ -30,6 +30,7 @@
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
 #include "LengthFunctions.h"
+#include "StyleLineBoxContain.h"
 #include "StyleTextEdge.h"
 #include <wtf/OptionSet.h>
 
@@ -169,7 +170,7 @@ private:
         TextBoxTrim textBoxTrim;
         TextEdge textBoxEdge;
         TextEdge lineFitEdge;
-        OptionSet<WebCore::Style::LineBoxContain> lineBoxContain;
+        WebCore::Style::LineBoxContain lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
     };

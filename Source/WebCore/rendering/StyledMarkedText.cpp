@@ -49,15 +49,15 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     auto decorationStyle = pseudoElementStyle->textDecorationStyle();
     auto decorations = pseudoElementStyle->textDecorationLineInEffect();
 
-    if (decorations.contains(TextDecorationLine::Underline)) {
+    if (decorations.contains(CSS::Keyword::Underline { })) {
         style.textDecorationStyles.underline.color = color;
         style.textDecorationStyles.underline.decorationStyle = decorationStyle;
     }
-    if (decorations.contains(TextDecorationLine::Overline)) {
+    if (decorations.contains(CSS::Keyword::Overline { })) {
         style.textDecorationStyles.overline.color = color;
         style.textDecorationStyles.overline.decorationStyle = decorationStyle;
     }
-    if (decorations.contains(TextDecorationLine::LineThrough)) {
+    if (decorations.contains(CSS::Keyword::LineThrough { })) {
         style.textDecorationStyles.linethrough.color = color;
         style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
     }
@@ -158,15 +158,15 @@ static TextDecorationPainter::Styles computeStylesForTextDecorations(const TextD
 
     auto textDecorationStyles = previousTextDecorationStyles;
 
-    if (textDecorations.contains(TextDecorationLine::Underline)) {
+    if (textDecorations.contains(CSS::Keyword::Underline { })) {
         textDecorationStyles.underline.color = currentTextDecorationStyles.underline.color;
         textDecorationStyles.underline.decorationStyle = currentTextDecorationStyles.underline.decorationStyle;
     }
-    if (textDecorations.contains(TextDecorationLine::Overline)) {
+    if (textDecorations.contains(CSS::Keyword::Overline { })) {
         textDecorationStyles.overline.color = currentTextDecorationStyles.overline.color;
         textDecorationStyles.overline.decorationStyle = currentTextDecorationStyles.overline.decorationStyle;
     }
-    if (textDecorations.contains(TextDecorationLine::LineThrough)) {
+    if (textDecorations.contains(CSS::Keyword::LineThrough { })) {
         textDecorationStyles.linethrough.color = currentTextDecorationStyles.linethrough.color;
         textDecorationStyles.linethrough.decorationStyle = currentTextDecorationStyles.linethrough.decorationStyle;
     }

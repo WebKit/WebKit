@@ -24,16 +24,29 @@
 
 #pragma once
 
-#include "CSSPrimitiveValueMappings.h"
+#include "CSSPrimitiveKeywordSet.h"
+#include "CSSValueList.h"
+#include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StyleValueTypes.h"
 
 namespace WebCore {
 namespace Style {
 
-template<typename T> requires std::is_enum_v<T> struct CSSValueConversion<T> {
-    T operator()(BuilderState&, const CSSValue& value)
+template<CSS::PrimitiveKeywordSetDerived T> struct CSSValueCreation<T> {
+    auto operator()(CSSValuePool& pool, const RenderStyle& style, const T& value) -> Ref<CSSValue>
     {
-        return fromCSSValueID<T>(value.valueID());
+        if (!value)
+            return createCSSValue(pool, style, T::emptyCase);
+
+        CSSValueListBuilder list;
+
+        auto appendKeyword = [&](auto keyword) {
+            if (value.contains(keyword))
+                list.append(createCSSValue(pool, style, keyword));
+        };
+        WTF::apply([&](const auto& ...x) { (appendKeyword(x), ...); }, T::Keywords::tuple);
+
+        return CSSValueList::createSpaceSeparated(WTFMove(list));
     }
 };
 

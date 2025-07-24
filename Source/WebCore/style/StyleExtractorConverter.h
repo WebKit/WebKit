@@ -91,7 +91,6 @@
 #include "StyleFilterProperty.h"
 #include "StyleFlexBasis.h"
 #include "StyleInset.h"
-#include "StyleLineBoxContain.h"
 #include "StyleMargin.h"
 #include "StyleMaximumSize.h"
 #include "StyleMinimumSize.h"
@@ -101,6 +100,7 @@
 #include "StylePerspective.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
+#include "StylePrimitiveKeywordSet+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleReflection.h"
@@ -193,12 +193,10 @@ public:
     static Ref<CSSValue> convertTabSize(ExtractorState&, const TabSize&);
     static Ref<CSSValue> convertScrollSnapType(ExtractorState&, const ScrollSnapType&);
     static Ref<CSSValue> convertScrollSnapAlign(ExtractorState&, const ScrollSnapAlign&);
-    static Ref<CSSValue> convertLineBoxContain(ExtractorState&, OptionSet<Style::LineBoxContain>);
     static Ref<CSSValue> convertWebkitRubyPosition(ExtractorState&, RubyPosition);
     static Ref<CSSValue> convertPosition(ExtractorState&, const LengthPoint&);
     static Ref<CSSValue> convertTouchAction(ExtractorState&, OptionSet<TouchAction>);
     static Ref<CSSValue> convertTextTransform(ExtractorState&, OptionSet<TextTransform>);
-    static Ref<CSSValue> convertTextDecorationLine(ExtractorState&, OptionSet<TextDecorationLine>);
     static Ref<CSSValue> convertTextUnderlinePosition(ExtractorState&, OptionSet<TextUnderlinePosition>);
     static Ref<CSSValue> convertTextEmphasisPosition(ExtractorState&, OptionSet<TextEmphasisPosition>);
     static Ref<CSSValue> convertSpeakAs(ExtractorState&, OptionSet<SpeakAs>);
@@ -214,7 +212,6 @@ public:
     static Ref<CSSValue> convertPositionArea(ExtractorState&, const PositionArea&);
     static Ref<CSSValue> convertPositionArea(ExtractorState&, const std::optional<PositionArea>&);
     static Ref<CSSValue> convertNameScope(ExtractorState&, const NameScope&);
-    static Ref<CSSValue> convertPositionVisibility(ExtractorState&, OptionSet<PositionVisibility>);
 
     // MARK: FillLayer conversions
 
@@ -913,29 +910,6 @@ inline Ref<CSSValue> ExtractorConverter::convertScrollSnapAlign(ExtractorState& 
     );
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertLineBoxContain(ExtractorState&, OptionSet<Style::LineBoxContain> lineBoxContain)
-{
-    if (!lineBoxContain)
-        return CSSPrimitiveValue::create(CSSValueNone);
-
-    CSSValueListBuilder list;
-    if (lineBoxContain.contains(LineBoxContain::Block))
-        list.append(CSSPrimitiveValue::create(CSSValueBlock));
-    if (lineBoxContain.contains(LineBoxContain::Inline))
-        list.append(CSSPrimitiveValue::create(CSSValueInline));
-    if (lineBoxContain.contains(LineBoxContain::Font))
-        list.append(CSSPrimitiveValue::create(CSSValueFont));
-    if (lineBoxContain.contains(LineBoxContain::Glyphs))
-        list.append(CSSPrimitiveValue::create(CSSValueGlyphs));
-    if (lineBoxContain.contains(LineBoxContain::Replaced))
-        list.append(CSSPrimitiveValue::create(CSSValueReplaced));
-    if (lineBoxContain.contains(LineBoxContain::InlineBox))
-        list.append(CSSPrimitiveValue::create(CSSValueInlineBox));
-    if (lineBoxContain.contains(LineBoxContain::InitialLetter))
-        list.append(CSSPrimitiveValue::create(CSSValueInitialLetter));
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
 inline Ref<CSSValue> ExtractorConverter::convertWebkitRubyPosition(ExtractorState&, RubyPosition position)
 {
     return CSSPrimitiveValue::create([&] {
@@ -997,21 +971,6 @@ inline Ref<CSSValue> ExtractorConverter::convertTextTransform(ExtractorState&, O
     if (textTransform.contains(TextTransform::FullSizeKana))
         list.append(CSSPrimitiveValue::create(CSSValueFullSizeKana));
 
-    if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertTextDecorationLine(ExtractorState&, OptionSet<TextDecorationLine> textDecorationLine)
-{
-    // Blink value is ignored.
-    CSSValueListBuilder list;
-    if (textDecorationLine & TextDecorationLine::Underline)
-        list.append(CSSPrimitiveValue::create(CSSValueUnderline));
-    if (textDecorationLine & TextDecorationLine::Overline)
-        list.append(CSSPrimitiveValue::create(CSSValueOverline));
-    if (textDecorationLine & TextDecorationLine::LineThrough)
-        list.append(CSSPrimitiveValue::create(CSSValueLineThrough));
     if (list.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
     return CSSValueList::createSpaceSeparated(WTFMove(list));
@@ -1379,22 +1338,6 @@ inline Ref<CSSValue> ExtractorConverter::convertNameScope(ExtractorState&, const
 
     ASSERT_NOT_REACHED();
     return CSSPrimitiveValue::create(CSSValueNone);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertPositionVisibility(ExtractorState&, OptionSet<PositionVisibility> positionVisibility)
-{
-    CSSValueListBuilder list;
-    if (positionVisibility & PositionVisibility::AnchorsValid)
-        list.append(CSSPrimitiveValue::create(CSSValueAnchorsValid));
-    if (positionVisibility & PositionVisibility::AnchorsVisible)
-        list.append(CSSPrimitiveValue::create(CSSValueAnchorsVisible));
-    if (positionVisibility & PositionVisibility::NoOverflow)
-        list.append(CSSPrimitiveValue::create(CSSValueNoOverflow));
-
-    if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueAlways);
-
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 // MARK: - FillLayer conversions

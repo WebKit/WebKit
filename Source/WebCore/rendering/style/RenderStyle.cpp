@@ -51,9 +51,11 @@
 #include "StyleExtractor.h"
 #include "StyleImage.h"
 #include "StyleInheritedData.h"
+#include "StylePrimitiveKeywordSet+Logging.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "StyleTextDecorationLine.h"
 #include "StyleTextEdge.h"
 #include "StyleTreeResolver.h"
 #include "TransformOperationData.h"
@@ -108,7 +110,7 @@ static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle
 
 static_assert(PublicPseudoIDBits == enumToUnderlyingType(PseudoId::FirstInternalPseudoId) - enumToUnderlyingType(PseudoId::FirstPublicPseudoId));
 
-static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorationLineBits));
+static_assert(static_cast<unsigned>(Style::TextDecorationLine::bits) == TextDecorationLineBits);
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
@@ -3794,7 +3796,7 @@ void RenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonIn
     LOG_IF_DIFFERENT(usesContainerUnits);
     LOG_IF_DIFFERENT(useTreeCountingFunctions);
 
-    LOG_IF_DIFFERENT_WITH_CAST(TextDecorationLine, textDecorationLine);
+    LOG_IF_DIFFERENT_WITH_CONSTRUCTION(Style::TextDecorationLine, textDecorationLine);
 
     LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
     LOG_IF_DIFFERENT(disallowsFastPathInheritance);
@@ -3821,7 +3823,7 @@ void RenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const Inherite
     LOG_IF_DIFFERENT_WITH_CAST(TextWrapStyle, textWrapStyle);
 
     LOG_RAW_OPTIONSET_IF_DIFFERENT(TextTransform, textTransform);
-    LOG_RAW_OPTIONSET_IF_DIFFERENT(TextDecorationLine, textDecorationLineInEffect);
+    LOG_IF_DIFFERENT_WITH_CONSTRUCTION(Style::TextDecorationLine, textDecorationLineInEffect);
 
     LOG_IF_DIFFERENT_WITH_CAST(PointerEvents, pointerEvents);
     LOG_IF_DIFFERENT_WITH_CAST(Visibility, visibility);

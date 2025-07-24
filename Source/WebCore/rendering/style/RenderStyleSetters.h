@@ -46,7 +46,7 @@ namespace WebCore {
 
 template<typename T, typename U> inline bool compareEqual(const T& a, const U& b) { return a == b; }
 
-inline void RenderStyle::addToTextDecorationLineInEffect(OptionSet<TextDecorationLine> value) { m_inheritedFlags.textDecorationLineInEffect |= static_cast<unsigned>(value.toRaw()); }
+inline void RenderStyle::addToTextDecorationLineInEffect(Style::TextDecorationLine value) { m_inheritedFlags.textDecorationLineInEffect |= static_cast<unsigned>(value.toRaw()); }
 inline void RenderStyle::clearAnimations() { m_nonInheritedData.access().miscData.access().animations = nullptr; }
 inline void RenderStyle::clearBackgroundLayers() { m_nonInheritedData.access().backgroundData.access().background = FillLayer::create(FillLayerType::Background); }
 inline void RenderStyle::clearMaskLayers() { m_nonInheritedData.access().miscData.access().mask = FillLayer::create(FillLayerType::Mask); }
@@ -205,7 +205,7 @@ inline void RenderStyle::setJustifySelf(const StyleSelfAlignmentData& data) { SE
 inline void RenderStyle::setJustifySelfPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().justifySelf.setPosition(position); }
 inline void RenderStyle::setLeft(Style::InsetEdge&& edge) { SET_NESTED(m_nonInheritedData, surroundData, inset.left(), WTFMove(edge)); }
 inline void RenderStyle::setLineAlign(LineAlign alignment) { SET(m_rareInheritedData, lineAlign, static_cast<unsigned>(alignment)); }
-inline void RenderStyle::setLineBoxContain(OptionSet<Style::LineBoxContain> c) { SET(m_rareInheritedData, lineBoxContain, c.toRaw()); }
+inline void RenderStyle::setLineBoxContain(Style::LineBoxContain c) { SET(m_rareInheritedData, lineBoxContain, c.toRaw()); }
 inline void RenderStyle::setLineBreak(LineBreak rule) { SET(m_rareInheritedData, lineBreak, static_cast<unsigned>(rule)); }
 inline void RenderStyle::setLineClamp(LineClampValue value) { SET_NESTED(m_nonInheritedData, rareData, lineClamp, value); }
 inline void RenderStyle::setLineGrid(const AtomString& name) { SET(m_rareInheritedData, lineGrid, name); }
@@ -264,7 +264,7 @@ inline void RenderStyle::setPerspectiveOriginY(Style::PerspectiveOriginY&& origi
 inline void RenderStyle::setPositionAnchor(const std::optional<Style::ScopedName>& anchor) { SET_NESTED(m_nonInheritedData, rareData, positionAnchor, anchor); }
 inline void RenderStyle::setPositionArea(std::optional<PositionArea> value) { SET_NESTED(m_nonInheritedData, rareData, positionArea, value); }
 inline void RenderStyle::setPositionTryOrder(Style::PositionTryOrder order) { SET_NESTED(m_nonInheritedData, rareData, positionTryOrder, static_cast<unsigned>(order)); }
-inline void RenderStyle::setPositionVisibility(OptionSet<PositionVisibility> value) { SET_NESTED(m_nonInheritedData, rareData, positionVisibility, value.toRaw()); }
+inline void RenderStyle::setPositionVisibility(Style::PositionVisibility value) { SET_NESTED(m_nonInheritedData, rareData, positionVisibility, value.toRaw()); }
 inline void RenderStyle::setResize(Resize r) { SET_NESTED(m_nonInheritedData, miscData, resize, static_cast<unsigned>(r)); }
 inline void RenderStyle::setRight(Style::InsetEdge&& edge) { SET_NESTED(m_nonInheritedData, surroundData, inset.right(), WTFMove(edge)); }
 inline void RenderStyle::setRotate(Style::Rotate&& rotate) { SET_NESTED(m_nonInheritedData, rareData, rotate, WTFMove(rotate)); }
@@ -295,11 +295,11 @@ inline void RenderStyle::setTextAlignLast(TextAlignLast value) { SET(m_rareInher
 inline void RenderStyle::setTextBoxTrim(TextBoxTrim value) { SET_NESTED(m_nonInheritedData, rareData, textBoxTrim, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextCombine(TextCombine value) { SET(m_rareInheritedData, textCombine, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextDecorationColor(Style::Color&& color) { SET_NESTED(m_nonInheritedData, rareData, textDecorationColor, WTFMove(color)); }
-inline void RenderStyle::setTextDecorationLine(OptionSet<TextDecorationLine> value) { m_nonInheritedFlags.textDecorationLine = value.toRaw(); }
+inline void RenderStyle::setTextDecorationLine(Style::TextDecorationLine value) { m_nonInheritedFlags.textDecorationLine = value.toRaw(); }
+inline void RenderStyle::setTextDecorationLineInEffect(Style::TextDecorationLine value) { m_inheritedFlags.textDecorationLineInEffect = value.toRaw(); }
 inline void RenderStyle::setTextDecorationSkipInk(TextDecorationSkipInk skipInk) { SET(m_rareInheritedData, textDecorationSkipInk, static_cast<unsigned>(skipInk)); }
 inline void RenderStyle::setTextDecorationStyle(TextDecorationStyle value) { SET_NESTED(m_nonInheritedData, rareData, textDecorationStyle, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextDecorationThickness(Style::TextDecorationThickness&& textDecorationThickness) { SET_NESTED(m_nonInheritedData, rareData, textDecorationThickness, WTFMove(textDecorationThickness)); }
-inline void RenderStyle::setTextDecorationLineInEffect(OptionSet<TextDecorationLine> value) { m_inheritedFlags.textDecorationLineInEffect = value.toRaw(); }
 inline void RenderStyle::setTextEmphasisColor(Style::Color&& c) { SET(m_rareInheritedData, textEmphasisColor, WTFMove(c)); }
 inline void RenderStyle::setTextEmphasisStyle(Style::TextEmphasisStyle&& style) { SET(m_rareInheritedData, textEmphasisStyle, style); }
 inline void RenderStyle::setTextEmphasisPosition(OptionSet<TextEmphasisPosition> position) { SET(m_rareInheritedData, textEmphasisPosition, static_cast<unsigned>(position.toRaw())); }
