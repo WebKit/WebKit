@@ -1,0 +1,14 @@
+Test that StorageManager.persist() prevents ITP from deleting storage data
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Page loaded. Testing StorageManager.persist() with ITP...
+Stored test data in localStorage
+localStorage testKey: testValue
+localStorage secretKey: 1password-secret-key-12345
+StorageManager.persist() not supported on this platform (e.g., WebKit1)
+PASS StorageManager.persist() not supported - expected on WebKit1
+PASS successfullyParsed is true
+
+TEST COMPLETE 
