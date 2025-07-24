@@ -190,7 +190,6 @@ public:
     static Ref<CSSValue> convertTextBoxEdge(ExtractorState&, const TextEdge&);
     static Ref<CSSValue> convertPositionTryFallbacks(ExtractorState&, const FixedVector<PositionTryFallback>&);
     static Ref<CSSValue> convertWillChange(ExtractorState&, const WillChangeData*);
-    static Ref<CSSValue> convertBlockStepSize(ExtractorState&, std::optional<WebCore::Length>);
     static Ref<CSSValue> convertTabSize(ExtractorState&, const TabSize&);
     static Ref<CSSValue> convertScrollSnapType(ExtractorState&, const ScrollSnapType&);
     static Ref<CSSValue> convertScrollSnapAlign(ExtractorState&, const ScrollSnapAlign&);
@@ -883,13 +882,6 @@ inline Ref<CSSValue> ExtractorConverter::convertWillChange(ExtractorState&, cons
         }
     }
     return CSSValueList::createCommaSeparated(WTFMove(list));
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertBlockStepSize(ExtractorState& state, std::optional<WebCore::Length> blockStepSize)
-{
-    if (blockStepSize)
-        return convertLength(state, *blockStepSize);
-    return CSSPrimitiveValue::create(CSSValueNone);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertTabSize(ExtractorState&, const TabSize& tabSize)

@@ -1095,8 +1095,8 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
         child.layout();
 
     auto& childStyle = child.style();
-    if (auto blockStepSizeForChild = childStyle.blockStepSize(); blockStepSizeForChild && BlockStepSizing::childHasSupportedStyle(childStyle))
-        performBlockStepSizing(child, LayoutUnit(blockStepSizeForChild->value()));
+    if (auto blockStepSizeForChild = childStyle.blockStepSize().tryLength(); blockStepSizeForChild && BlockStepSizing::childHasSupportedStyle(childStyle))
+        performBlockStepSizing(child, LayoutUnit(blockStepSizeForChild->value));
 
     // Cache if we are at the top of the block right now.
     bool atBeforeSideOfBlock = marginInfo.atBeforeSideOfBlock();

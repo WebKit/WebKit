@@ -37,6 +37,7 @@
 #include "ScrollTypes.h"
 #include "ShapeValue.h"
 #include "StyleAnchorName.h"
+#include "StyleBlockStepSize.h"
 #include "StyleClip.h"
 #include "StyleClipPath.h"
 #include "StyleColor.h"
@@ -236,7 +237,7 @@ public:
     std::optional<PositionArea> positionArea;
     FixedVector<Style::PositionTryFallback> positionTryFallbacks;
 
-    std::optional<Length> blockStepSize;
+    Style::BlockStepSize blockStepSize;
     PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;
     PREFERRED_TYPE(BlockStepInsert) unsigned blockStepInsert : 2;
     PREFERRED_TYPE(BlockStepRound) unsigned blockStepRound : 2;

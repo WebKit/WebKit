@@ -268,6 +268,7 @@ class CustomPropertyRegistry;
 struct AnchorNames;
 struct AspectRatio;
 struct BlockEllipsis;
+struct BlockStepSize;
 struct BorderRadius;
 struct BoxShadow;
 struct Clip;
@@ -2285,9 +2286,9 @@ public:
     inline void setOverflowAnchor(OverflowAnchor);
     static constexpr OverflowAnchor initialOverflowAnchor();
 
-    static inline std::optional<Length> initialBlockStepSize();
-    inline std::optional<Length> blockStepSize() const;
-    inline void setBlockStepSize(std::optional<Length>);
+    static inline Style::BlockStepSize initialBlockStepSize();
+    inline const Style::BlockStepSize& blockStepSize() const;
+    inline void setBlockStepSize(Style::BlockStepSize&&);
 
     static constexpr BlockStepAlign initialBlockStepAlign();
     inline BlockStepAlign blockStepAlign() const;

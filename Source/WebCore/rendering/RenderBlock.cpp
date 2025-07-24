@@ -1354,7 +1354,7 @@ bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(con
         || style.containsLayout()
         || style.containerType() != ContainerType::Normal
         || WebCore::shouldApplyPaintContainment(style, *protectedElement())
-        || (style.isDisplayBlockLevel() && style.blockStepSize());
+        || (style.isDisplayBlockLevel() && !style.blockStepSize().isNone());
 }
 
 bool RenderBlock::establishesIndependentFormattingContext() const

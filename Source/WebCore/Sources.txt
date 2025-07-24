@@ -3205,6 +3205,7 @@ style/values/primitives/StylePrimitiveNumericTypes+Conversions.cpp
 style/values/primitives/StyleRatio.cpp
 style/values/primitives/StyleURL.cpp
 style/values/primitives/StyleUnevaluatedCalculation.cpp
+style/values/rhythm/StyleBlockStepSize.cpp
 style/values/scroll-animations/StyleProgressTimelineName.cpp
 style/values/scroll-animations/StyleViewTimelineInsets.cpp
 style/values/scroll-snap/StyleScrollMargin.cpp

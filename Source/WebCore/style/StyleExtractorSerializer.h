@@ -110,7 +110,6 @@ public:
     static void serializeTextBoxEdge(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TextEdge&);
     static void serializePositionTryFallbacks(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FixedVector<PositionTryFallback>&);
     static void serializeWillChange(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const WillChangeData*);
-    static void serializeBlockStepSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, std::optional<WebCore::Length>);
     static void serializeTabSize(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const TabSize&);
     static void serializeScrollSnapType(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapType&);
     static void serializeScrollSnapAlign(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const ScrollSnapAlign&);
@@ -1056,16 +1055,6 @@ inline void ExtractorSerializer::serializeWillChange(ExtractorState& state, Stri
         }
     }
     builder.append(CSSValueList::createCommaSeparated(WTFMove(list))->cssText(context));
-}
-
-inline void ExtractorSerializer::serializeBlockStepSize(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, std::optional<WebCore::Length> blockStepSize)
-{
-    if (!blockStepSize) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    serializeLength(state, builder, context, *blockStepSize);
 }
 
 inline void ExtractorSerializer::serializeTabSize(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext& context, const TabSize& tabSize)

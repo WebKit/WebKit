@@ -221,6 +221,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/overflow"
     "${WEBCORE_DIR}/style/values/position"
     "${WEBCORE_DIR}/style/values/primitives"
+    "${WEBCORE_DIR}/style/values/rhythm"
     "${WEBCORE_DIR}/style/values/scroll-animations"
     "${WEBCORE_DIR}/style/values/scroll-snap"
     "${WEBCORE_DIR}/style/values/scrollbars"

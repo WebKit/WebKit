@@ -2343,8 +2343,8 @@ inline void ExtractorCustom::extractBackgroundPositionShorthandSerialization(Ext
 inline RefPtr<CSSValue> ExtractorCustom::extractBlockStepShorthand(ExtractorState& state)
 {
     CSSValueListBuilder list;
-    if (auto blockStepSize = state.style.blockStepSize())
-        list.append(ExtractorConverter::convertLength(state, *blockStepSize));
+    if (auto blockStepSize = state.style.blockStepSize(); blockStepSize != RenderStyle::initialBlockStepSize())
+        list.append(ExtractorConverter::convertStyleType(state, blockStepSize));
 
     if (auto blockStepInsert = state.style.blockStepInsert(); blockStepInsert != RenderStyle::initialBlockStepInsert())
         list.append(ExtractorConverter::convert(state, blockStepInsert));
@@ -2365,10 +2365,10 @@ inline void ExtractorCustom::extractBlockStepShorthandSerialization(ExtractorSta
 {
     bool listEmpty = true;
 
-    if (auto blockStepSize = state.style.blockStepSize()) {
+    if (auto blockStepSize = state.style.blockStepSize(); blockStepSize != RenderStyle::initialBlockStepSize()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serializeLength(state, builder, context, *blockStepSize);
+        ExtractorSerializer::serializeStyleType(state, builder, context, blockStepSize);
         listEmpty = false;
     }
 

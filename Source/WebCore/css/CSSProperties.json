@@ -359,9 +359,8 @@
             "initial": "none",
             "codegen-properties": {
                 "settings-flag": "cssRhythmicSizingEnabled",
-                "animation-wrapper": "OptionalLengthWrapper",
-                "animation-wrapper-requires-additional-parameters": ["{ OptionalLengthWrapper::Flags::NegativeLengthsAreInvalid }"],
-                "style-converter": "BlockStepSize",
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<BlockStepSize>",
                 "parser-grammar": "none | <length [0,inf]>",
                 "parser-exported": true
             },

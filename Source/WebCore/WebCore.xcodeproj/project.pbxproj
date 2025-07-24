@@ -4844,6 +4844,7 @@
 		BC0929AB2E2AA30A002ACB2C /* StyleScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929A82E2AA1D6002ACB2C /* StyleScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0929AF2E2AA652002ACB2C /* StyleWebKitTouchCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929AC2E2AA595002ACB2C /* StyleWebKitTouchCallout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0929B22E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929B12E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC092A772E300E5D002ACB2C /* StyleBlockStepSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC092A752E300E57002ACB2C /* StyleBlockStepSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10137C25C3624B00DC773C /* ColorModels.h in Headers */ = {isa = PBXBuildFile; fileRef = BC10137B25C3624B00DC773C /* ColorModels.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10137F25C3631600DC773C /* ColorTransferFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC10137E25C3631600DC773C /* ColorTransferFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB45F317D8E39200444446 /* RenderBlockFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18000,6 +18001,8 @@
 		BC0929B12E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWebKitOverflowScrolling.h; sourceTree = "<group>"; };
 		BC092A0C2E2D75E6002ACB2C /* StyleTextDecorationThickness.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextDecorationThickness.cpp; sourceTree = "<group>"; };
 		BC092A1B2E2DBC36002ACB2C /* StyleViewTransitionName.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleViewTransitionName.cpp; sourceTree = "<group>"; };
+		BC092A752E300E57002ACB2C /* StyleBlockStepSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBlockStepSize.h; sourceTree = "<group>"; };
+		BC092A782E3010BA002ACB2C /* StyleBlockStepSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBlockStepSize.cpp; sourceTree = "<group>"; };
 		BC0CA74C264AED0A004FDC62 /* PixelBufferConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelBufferConversion.h; sourceTree = "<group>"; };
 		BC0CA74D264AED0A004FDC62 /* PixelBufferConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PixelBufferConversion.cpp; sourceTree = "<group>"; };
 		BC10137B25C3624B00DC773C /* ColorModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorModels.h; sourceTree = "<group>"; };
@@ -34813,6 +34816,15 @@
 			path = content;
 			sourceTree = "<group>";
 		};
+		BC092A762E300E57002ACB2C /* rhythm */ = {
+			isa = PBXGroup;
+			children = (
+				BC092A782E3010BA002ACB2C /* StyleBlockStepSize.cpp */,
+				BC092A752E300E57002ACB2C /* StyleBlockStepSize.h */,
+			);
+			path = rhythm;
+			sourceTree = "<group>";
+		};
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
@@ -35598,6 +35610,7 @@
 				BC966B362E274F530028A7AF /* overflow */,
 				BC9ABA182DECC6AE00F7E52D /* position */,
 				BCB271F22CC0156E00265123 /* primitives */,
+				BC092A762E300E57002ACB2C /* rhythm */,
 				BC2A0F062E12F810003CBA0E /* scroll-animations */,
 				BC2C0C262D2C5D2B00FCFBA0 /* scroll-snap */,
 				BC966B242E2726200028A7AF /* scrollbars */,
@@ -45163,6 +45176,7 @@
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BCB2720A2CC1F1DB00265123 /* StyleBasicShape.h in Headers */,
 				DDCF765D2C7F85E2005DDAFF /* StyleBlockEllipsis.h in Headers */,
+				BC092A772E300E5D002ACB2C /* StyleBlockStepSize.h in Headers */,
 				BCB2720F2CC1F1F100265123 /* StyleBorderRadius.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
 				BC3CC2272DE79F4F0032971C /* StyleBoxShadow.h in Headers */,

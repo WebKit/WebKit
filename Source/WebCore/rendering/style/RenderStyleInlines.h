@@ -110,7 +110,7 @@ inline const Style::BlockEllipsis& RenderStyle::blockEllipsis() const { return m
 inline BlockStepAlign RenderStyle::blockStepAlign() const { return static_cast<BlockStepAlign>(m_nonInheritedData->rareData->blockStepAlign); }
 inline BlockStepInsert RenderStyle::blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
 inline BlockStepRound RenderStyle::blockStepRound() const { return static_cast<BlockStepRound>(m_nonInheritedData->rareData->blockStepRound); }
-inline std::optional<Length> RenderStyle::blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; }
+inline const Style::BlockStepSize& RenderStyle::blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; }
 inline const BorderData& RenderStyle::border() const { return m_nonInheritedData->surroundData->border; }
 inline const BorderValue& RenderStyle::borderBottom() const { return border().bottom(); }
 inline const Style::Color& RenderStyle::borderBottomColor() const { return border().bottom().color(); }
@@ -343,7 +343,7 @@ inline Style::BlockEllipsis RenderStyle::initialBlockEllipsis() { return CSS::Ke
 constexpr BlockStepAlign RenderStyle::initialBlockStepAlign() { return BlockStepAlign::Auto; }
 constexpr BlockStepInsert RenderStyle::initialBlockStepInsert() { return BlockStepInsert::MarginBox; }
 constexpr BlockStepRound RenderStyle::initialBlockStepRound() { return BlockStepRound::Up; }
-inline std::optional<Length> RenderStyle::initialBlockStepSize() { return std::nullopt; }
+inline Style::BlockStepSize RenderStyle::initialBlockStepSize() { return CSS::Keyword::None { }; }
 constexpr BorderCollapse RenderStyle::initialBorderCollapse() { return BorderCollapse::Separate; }
 inline Style::BorderRadiusValue RenderStyle::initialBorderRadius() { return { 0_css_px, 0_css_px }; }
 constexpr BorderStyle RenderStyle::initialBorderStyle() { return BorderStyle::None; }

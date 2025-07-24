@@ -213,8 +213,6 @@ public:
     static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
-    static std::optional<WebCore::Length> convertBlockStepSize(BuilderState&, const CSSValue&);
-
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
 
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
@@ -1438,13 +1436,6 @@ inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState& builde
         }
     }
     return options;
-}
-
-inline std::optional<WebCore::Length> BuilderConverter::convertBlockStepSize(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return { };
-    return convertLength(builderState, value);
 }
 
 inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState& builderState, const CSSValue& value)

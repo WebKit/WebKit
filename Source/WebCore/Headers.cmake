@@ -2831,6 +2831,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/primitives/StyleURL.h
     style/values/primitives/StyleUnevaluatedCalculation.h
 
+    style/values/rhythm/StyleBlockStepSize.h
+
     style/values/scroll-animations/StyleProgressTimelineAxes.h
     style/values/scroll-animations/StyleProgressTimelineName.h
     style/values/scroll-animations/StyleScrollTimelines.h
