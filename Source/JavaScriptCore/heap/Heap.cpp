@@ -456,6 +456,10 @@ Heap::Heap(VM& vm, HeapType heapType)
     size_t memoryAboveCriticalThreshold = static_cast<size_t>(static_cast<double>(m_ramSize) * (1.0 - Options::criticalGCMemoryThreshold()));
     m_maxEdenSizeWhenCritical = memoryAboveCriticalThreshold / 4;
 
+    // Assert that critical eden size is not larger than normal eden size (Bug 283898)
+    // This ensures proper garbage collection triggering
+    ASSERT(m_maxEdenSizeWhenCritical <= m_maxEdenSize || !m_maxEdenSize);
+
     Locker locker { *m_threadLock };
     m_thread = adoptRef(new HeapThread(locker, *this));
 }
@@ -2878,8 +2882,15 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
         bool isCritical = false;
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
         isCritical = overCriticalMemoryThreshold();
-        if (isCritical)
-            bytesAllowedThisCycle = std::min(m_maxEdenSizeWhenCritical, bytesAllowedThisCycle);
+        if (isCritical) {
+            // Fix for Bug 283898: When in critical memory mode, be more aggressive about GC
+            // by using a smaller eden size. This ensures we trigger GC sooner when memory is critical.
+            // First, ensure critical eden size doesn't exceed normal eden size
+            size_t maxEdenSizeWhenCritical = std::min(m_maxEdenSizeWhenCritical, m_maxEdenSize);
+            // Then, make critical mode more restrictive by using at most 50% of the normal eden size
+            size_t criticalEdenSize = std::min(maxEdenSizeWhenCritical, m_maxEdenSize / 2);
+            bytesAllowedThisCycle = std::min(criticalEdenSize, bytesAllowedThisCycle);
+        }
 #endif
 
         size_t bytesAllocatedThisCycle = totalBytesAllocatedThisCycle();
