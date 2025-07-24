@@ -32,8 +32,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 // This is a concurrent hash-based set for pointers. It's optimized for:
@@ -107,7 +105,11 @@ private:
         unsigned size; // This is immutable.
         unsigned mask; // This is immutable.
         Atomic<unsigned> load;
-        Atomic<void*> array[1];
+
+        std::span<Atomic<void*>> span() { return unsafeMakeSpan(m_array, std::max(size, 1u)); }
+
+    private:
+        Atomic<void*> m_array[1];
     };
     
     static unsigned hash(const void* ptr)
@@ -139,8 +141,9 @@ private:
         unsigned mask = table->mask;
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
+        auto span = table->span();
         for (;;) {
-            void* entry = table->array[index].loadRelaxed();
+            void* entry = span[index].loadRelaxed();
             if (!entry)
                 return false;
             if (entry == ptr)
@@ -157,8 +160,9 @@ private:
         unsigned mask = table->mask;
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
+        auto span = table->span();
         for (;;) {
-            void* entry = table->array[index].loadRelaxed();
+            void* entry = span[index].loadRelaxed();
             if (!entry)
                 return addSlow(table, mask, startIndex, index, ptr);
             if (entry == ptr)
@@ -184,5 +188,3 @@ private:
 } // namespace WTF
 
 using WTF::ConcurrentPtrHashSet;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

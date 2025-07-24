@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/ConcurrentPtrHashSet.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 ConcurrentPtrHashSet::ConcurrentPtrHashSet()
@@ -74,8 +72,9 @@ bool ConcurrentPtrHashSet::addSlow(Table* table, unsigned mask, unsigned startIn
     if (table->load.exchangeAdd(1) >= table->maxLoad())
         return resizeAndAdd(ptr);
     
+    auto span = table->span();
     for (;;) {
-        void* oldEntry = table->array[index].compareExchangeStrong(nullptr, ptr);
+        void* oldEntry = span[index].compareExchangeStrong(nullptr, ptr);
         if (!oldEntry) {
             if (m_table.load() != table) {
                 // We added an entry to an old table! We need to reexecute the add on the new table.
@@ -128,17 +127,18 @@ void ConcurrentPtrHashSet::resizeIfNecessary()
     m_table.store(&m_stubTable);
 
     std::unique_ptr<Table> newTable = Table::create(table->size * 2);
+    auto newTableSpan = newTable->span();
     unsigned mask = newTable->mask;
     unsigned load = 0;
-    for (unsigned i = 0; i < table->size; ++i) {
-        void* ptr = table->array[i].loadRelaxed();
+    for (auto& item : table->span()) {
+        void* ptr = item.loadRelaxed();
         if (!ptr)
             continue;
         
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
         for (;;) {
-            Atomic<void*>& entryRef = newTable->array[index];
+            auto& entryRef = newTableSpan[index];
             void* entry = entryRef.loadRelaxed();
             if (!entry) {
                 entryRef.storeRelaxed(ptr);
@@ -185,12 +185,12 @@ bool ConcurrentPtrHashSet::resizeAndAdd(void* ptr)
 
 std::unique_ptr<ConcurrentPtrHashSet::Table> ConcurrentPtrHashSet::Table::create(unsigned size)
 {
-    std::unique_ptr<ConcurrentPtrHashSet::Table> result(new (fastMalloc(OBJECT_OFFSETOF(Table, array) + sizeof(Atomic<void*>) * size)) Table());
+    std::unique_ptr<ConcurrentPtrHashSet::Table> result(new (fastMalloc(OBJECT_OFFSETOF(Table, m_array) + sizeof(Atomic<void*>) * size)) Table());
     result->size = size;
     result->mask = size - 1;
     result->load.storeRelaxed(0);
-    for (unsigned i = 0; i < size; ++i)
-        result->array[i].storeRelaxed(nullptr);
+    for (auto& item : result->span())
+        item.storeRelaxed(nullptr);
     return result;
 }
 
@@ -203,9 +203,7 @@ void ConcurrentPtrHashSet::Table::initializeStub()
     size = 0;
     mask = 0;
     load.storeRelaxed(stubDefaultLoadValue);
-    array[0].storeRelaxed(nullptr);
+    span()[0].storeRelaxed(nullptr);
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
