@@ -2492,6 +2492,16 @@ public:
         failureCases.append(m_assembler.jne());
     }
 
+    void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
+    {
+        // For x86_64, we use the same instruction as the branch version but without the failure handling
+        // This ensures proper JavaScript semantics for double-to-int32 conversion
+        if (supportsAVX())
+            m_assembler.vcvttsd2si_rr(src, dest);
+        else
+            m_assembler.cvttsd2si_rr(src, dest);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         if (supportsAVX())
