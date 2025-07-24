@@ -179,7 +179,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     bool shouldDispatchEventToScripts = hasRelevantEventListener(document, event);
 
     RefPtr window = document->window();
-    std::optional<LocalDOMWindow::PerformanceEventTimingCandidate> pendingEventTiming;
+    std::optional<PerformanceEventTiming::Candidate> pendingEventTiming;
     if (typeInfo.isInCategory(EventCategory::EventTimingEligible) && window && document->settings().eventTimingEnabled() && event.isTrusted())
         pendingEventTiming = window->initializeEventTimingEntry(event, typeInfo);
     auto finalizeEntry(WTF::makeScopeExit([&, event = Ref(event)] {

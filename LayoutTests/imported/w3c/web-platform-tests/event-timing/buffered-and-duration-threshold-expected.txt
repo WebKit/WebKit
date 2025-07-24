@@ -1,4 +1,4 @@
 Click me
 
-FAIL PerformanceObserver buffering independent of durationThreshold assert_implements: Event Timing is not supported. undefined
+PASS PerformanceObserver buffering independent of durationThreshold
 

@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL Event Timing only times certain types of trusted event. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing only times certain types of trusted event.
 

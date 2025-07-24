@@ -1761,6 +1761,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageOverlayController.h
     page/PagePasteboardContext.h
     page/PartitionedSecurityOrigin.h
+    page/PerformanceEntry.h
+    page/PerformanceEventTiming.h
     page/PerformanceLogging.h
     page/PerformanceLoggingClient.h
     page/PointerCaptureController.h

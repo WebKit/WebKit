@@ -98,6 +98,7 @@
 #include "PageConsoleClient.h"
 #include "PageTransitionEvent.h"
 #include "Performance.h"
+#include "PerformanceEventTiming.h"
 #include "PerformanceNavigationTiming.h"
 #include "PermissionsPolicy.h"
 #include "PlatformStrategies.h"
@@ -139,6 +140,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/Language.h>
@@ -2462,26 +2464,26 @@ void LocalDOMWindow::finishedLoading()
     }
 }
 
-LocalDOMWindow::PerformanceEventTimingCandidate LocalDOMWindow::initializeEventTimingEntry(const Event& event, EventTypeInfo typeInfo)
+PerformanceEventTiming::Candidate LocalDOMWindow::initializeEventTimingEntry(const Event& event, EventTypeInfo typeInfo)
 {
-    LOG_WITH_STREAM(PerformanceTimeline, stream << "Initializing event timing entry of type " << event.type());
     // FIXME: implement InteractionId logic
-    auto processingStart = performance().now();
-    return PerformanceEventTimingCandidate {
+    auto processingStart = performance().nowInReducedResolutionSeconds();
+    LOG_WITH_STREAM(PerformanceTimeline, stream << "Initializing event timing entry (type=" << event.type() << ") at t=" << processingStart);
+    return PerformanceEventTiming::Candidate {
         .typeInfo = typeInfo,
         .cancelable = event.cancelable(),
         // Account for event.timeStamp() unreliability (based on wall clock):
-        .startTime =  std::min(processingStart, performance().relativeTimeFromTimeOriginInReducedResolution(event.timeStamp())),
+        .startTime =  std::min(processingStart, performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(event.timeStamp())),
         .processingStart = processingStart
     };
 }
 
-void LocalDOMWindow::finalizeEventTimingEntry(const PerformanceEventTimingCandidate& entry, const Event& event)
+void LocalDOMWindow::finalizeEventTimingEntry(const PerformanceEventTiming::Candidate& entry, const Event& event)
 {
     m_performanceEventTimingCandidates.append(entry);
     // FIXME: implement InteractionId logic
     m_performanceEventTimingCandidates.last().target = event.target();
-    m_performanceEventTimingCandidates.last().processingEnd = performance().now();
+    m_performanceEventTimingCandidates.last().processingEnd = performance().nowInReducedResolutionSeconds();
 }
 
 void LocalDOMWindow::dispatchPendingEventTimingEntries()
@@ -2489,13 +2491,12 @@ void LocalDOMWindow::dispatchPendingEventTimingEntries()
     if (m_performanceEventTimingCandidates.isEmpty())
         return;
 
-    LOG_WITH_STREAM(PerformanceTimeline, stream << "Dispatching " << m_performanceEventTimingCandidates.size() << " event timing entries");
-    for (auto &candidateEntry : m_performanceEventTimingCandidates) {
+    auto renderingTime = performance().nowInReducedResolutionSeconds();
+    LOG_WITH_STREAM(PerformanceTimeline, stream << "Dispatching " << m_performanceEventTimingCandidates.size() << " event timing entries at t=" << renderingTime);
+    for (auto& candidateEntry : m_performanceEventTimingCandidates) {
         performance().countEvent(candidateEntry.typeInfo.type());
-        // FIXME: calculate duration and ignore if < 16ms
-        // FIXME: dispatch to relevant performance observers
-        // FIXME: first-input handling
-        // FIXME: if duration > 104ms and buffer is not full, add to buffer
+        auto duration = renderingTime - candidateEntry.startTime;
+        performance().processEventEntry(candidateEntry, duration);
     }
     m_performanceEventTimingCandidates.clear();
 }

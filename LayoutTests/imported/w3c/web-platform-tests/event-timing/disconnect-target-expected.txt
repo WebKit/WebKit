@@ -1,4 +1,4 @@
 ClickMe
 
-FAIL Event Timing: when target is disconnected, entry.target returns null. assert_implements: Event Timing is not supported. undefined
+FAIL Event Timing: when target is disconnected, entry.target returns null. assert_equals: There should be a single first-input entry expected 1 but got 0
 

@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "Performance.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,7 +52,8 @@ public:
         Measure     = 1 << 2,
         Resource    = 1 << 3,
         Paint       = 1 << 4,
-        Event       = 1 << 5
+        Event       = 1 << 5,
+        FirstInput  = 1 << 6
     };
 
     virtual Type performanceEntryType() const = 0;

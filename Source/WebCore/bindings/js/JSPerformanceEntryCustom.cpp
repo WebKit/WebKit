@@ -63,7 +63,9 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<P
         return createWrapper<PerformanceResourceTiming>(globalObject, WTFMove(entry));
     case PerformanceEntry::Type::Paint:
         return createWrapper<PerformancePaintTiming>(globalObject, WTFMove(entry));
-    case PerformanceEntry::Type::Event:
+    case PerformanceEntry::Type::Event: [[fallthrough]];
+    case PerformanceEntry::Type::FirstInput:
+        return createWrapper<PerformanceEventTiming>(globalObject, WTFMove(entry));
         return createWrapper<PerformanceEventTiming>(globalObject, WTFMove(entry));
     }
 

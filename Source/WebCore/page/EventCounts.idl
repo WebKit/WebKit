@@ -29,5 +29,9 @@
     Exposed=Window,
     EnabledBySetting=EventTimingEnabled
 ] interface EventCounts {
-    readonly maplike<DOMString, unsigned long long>;
+    // FIXME: EventCounts' methods and operations should
+    // be provided by maplike instead:
+    // readonly maplike<DOMString, unsigned long long>;
+    unsigned long long get(DOMString type);
+    readonly attribute unsigned long long size;
 };

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Performance.h"
 #include "PerformanceEntry.h"
 #include "PerformanceObserverCallback.h"
 #include "dom/DOMHighResTimeStamp.h"
@@ -71,6 +72,7 @@ public:
 
     bool isRegistered() const { return m_registered; }
     PerformanceObserverCallback& callback() { return m_callback.get(); }
+    Seconds durationThreshold() const { return m_durationThreshold; }
 
 private:
     PerformanceObserver(ScriptExecutionContext&, Ref<PerformanceObserverCallback>&&);
@@ -84,6 +86,7 @@ private:
     bool m_registered { false };
     bool m_isTypeObserver { false };
     bool m_hasNavigationTiming { false };
+    Seconds m_durationThreshold = PerformanceEventTiming::defaultDurationThreshold;
 };
 
 } // namespace WebCore

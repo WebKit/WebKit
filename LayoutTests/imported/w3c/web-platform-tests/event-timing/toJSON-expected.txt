@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL Test toJSON() in PerformanceEventTiming. assert_implements: Event Timing is not supported. undefined
+PASS Test toJSON() in PerformanceEventTiming.
 

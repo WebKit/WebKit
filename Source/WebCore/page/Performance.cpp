@@ -43,6 +43,7 @@
 #include "ExceptionOr.h"
 #include "LocalFrame.h"
 #include "PerformanceEntry.h"
+#include "PerformanceEventTiming.h"
 #include "PerformanceMarkOptions.h"
 #include "PerformanceMeasureOptions.h"
 #include "PerformanceNavigation.h"
@@ -54,6 +55,7 @@
 #include "PerformanceUserTiming.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "dom/DOMHighResTimeStamp.h"
 #include <ranges>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -127,10 +129,14 @@ Seconds Performance::timeResolution()
     return timePrecision;
 }
 
+Seconds Performance::relativeTimeFromTimeOriginInReducedResolutionSeconds(MonotonicTime timestamp) const
+{
+    return reduceTimeResolution(timestamp - m_timeOrigin);
+}
+
 DOMHighResTimeStamp Performance::relativeTimeFromTimeOriginInReducedResolution(MonotonicTime timestamp) const
 {
-    Seconds seconds = timestamp - m_timeOrigin;
-    return reduceTimeResolution(seconds).milliseconds();
+    return relativeTimeFromTimeOriginInReducedResolutionSeconds(timestamp).milliseconds();
 }
 
 MonotonicTime Performance::monotonicTimeFromRelativeTime(DOMHighResTimeStamp relativeTime) const
@@ -267,6 +273,12 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
     if (entryType == "paint"_s && m_firstContentfulPaint)
         entries.append(*m_firstContentfulPaint);
 
+    if (entryType == "event"_s)
+        entries.appendVector(m_eventTimingBuffer);
+
+    if (entryType == "first-input"_s && m_firstInput)
+        entries.append(*m_firstInput);
+
     if (m_userTiming) {
         if (entryType.isNull() || entryType == "mark"_s)
             entries.appendVector(m_userTiming->getMarks());
@@ -279,6 +291,30 @@ void Performance::countEvent(EventType type)
 {
     ASSERT(isMainThread());
     eventCounts()->add(type);
+}
+
+void Performance::processEventEntry(PerformanceEventTiming::Candidate& candidate, Seconds duration)
+{
+    // FIXME: handle firstInput based on InteractionId
+    if (!m_firstInput) {
+        m_firstInput = PerformanceEventTiming::create(candidate, duration, true);
+        queueEntry(*m_firstInput);
+    }
+
+    if (duration < minDurationCutoffBeforeRounding)
+        return;
+
+    // FIXME: early return more often by keeping track of m_observers; we
+    // should keep track of the minimum defaultThreshold and whether any
+    // observers are interested in 'event' entries:
+    if (duration <= defaultDurationCutoffBeforeRounding && !m_observers.size())
+        return;
+
+    auto entry = PerformanceEventTiming::create(candidate, duration);
+    if (m_eventTimingBuffer.size() < m_eventTimingBufferSize && duration > defaultDurationCutoffBeforeRounding)
+        m_eventTimingBuffer.append(entry);
+
+    queueEntry(entry);
 }
 
 void Performance::clearResourceTimings()
@@ -485,7 +521,11 @@ void Performance::queueEntry(PerformanceEntry& entry)
 {
     bool shouldScheduleTask = false;
     for (auto& observer : m_observers) {
-        if (observer->typeFilter().contains(entry.performanceEntryType())) {
+        bool isObserverInterested = observer->typeFilter().contains(entry.performanceEntryType());
+        if (entry.performanceEntryType() == PerformanceEntry::Type::Event && entry.duration() < observer->durationThreshold().milliseconds())
+            isObserverInterested = false;
+
+        if (isObserverInterested) {
             observer->queueEntry(entry);
             shouldScheduleTask = true;
         }

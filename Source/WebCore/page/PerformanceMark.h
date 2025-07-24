@@ -26,6 +26,8 @@
 #pragma once
 
 #include "PerformanceEntry.h"
+#include "PerformanceMarkOptions.h"
+#include "dom/ExceptionOr.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

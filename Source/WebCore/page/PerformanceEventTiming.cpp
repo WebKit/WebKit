@@ -26,31 +26,54 @@
 #include "config.h"
 #include "PerformanceEventTiming.h"
 
+#include "Document.h"
+#include "DocumentInlines.h"
+#include "EventTargetInlines.h"
+#include "Node.h"
+#include <cmath>
+
 namespace WebCore {
 
-PerformanceEntry::Type PerformanceEventTiming::performanceEntryType() const
+Ref<PerformanceEventTiming> PerformanceEventTiming::create(const Candidate& candidate, Seconds duration, bool isFirst)
 {
-    return Type::Event;
+    return adoptRef(*new PerformanceEventTiming(candidate, duration, isFirst));
 }
 
-double PerformanceEventTiming::processingStart() const
-{
-    return 0;
-}
+PerformanceEventTiming::PerformanceEventTiming(const Candidate& candidate, Seconds duration, bool isFirst)
+    : PerformanceEntry(eventNames().eventNameFromEventType(candidate.typeInfo.type()), candidate.startTime.milliseconds(), candidate.startTime.milliseconds() + 8*std::round(duration.milliseconds() / 8))
+    , m_isFirst(isFirst)
+    , m_cancelable(candidate.cancelable)
+    , m_processingStart(candidate.processingStart)
+    , m_processingEnd(candidate.processingEnd)
+    , m_target(candidate.target)
+{ }
 
-double PerformanceEventTiming::processingEnd() const
-{
-    return 0;
-}
-
-bool PerformanceEventTiming::cancelable() const
-{
-    return false;
-}
+PerformanceEventTiming::~PerformanceEventTiming() = default;
 
 Node* PerformanceEventTiming::target() const
 {
-    return nullptr;
+    if (!m_target || !m_target->isNode())
+        return nullptr;
+
+    RefPtr<Node> node = downcast<Node>((m_target));
+    if (!node)
+        return nullptr;
+
+    Ref document = node->document();
+    if (!node->isConnected() || !document->isFullyActive())
+        return nullptr;
+
+    return node.get();
+}
+
+PerformanceEntry::Type PerformanceEventTiming::performanceEntryType() const
+{
+    return m_isFirst ? Type::FirstInput : Type::Event;
+}
+
+ASCIILiteral PerformanceEventTiming::entryType() const
+{
+    return m_isFirst ? "first-input"_s : "event"_s;
 }
 
 unsigned PerformanceEventTiming::interactionId() const

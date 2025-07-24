@@ -27,6 +27,7 @@
 #include "PerformanceNavigationTiming.h"
 
 #include "CachedResource.h"
+#include "Performance.h"
 #include "ResourceTiming.h"
 
 namespace WebCore {

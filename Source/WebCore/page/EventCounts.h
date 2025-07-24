@@ -44,6 +44,10 @@ public:
     void initializeMapLike(DOMMapAdapter&);
     void add(EventType);
 
+    // FIXME: get() and size() should be provided by the maplike interface
+    unsigned get(const String& type) const;
+    unsigned size() const { return m_counts.size(); };
+
 private:
     WeakRef<Performance, Performance::WeakPtrImplType> m_performance;
     std::array<unsigned, EventNames::timedEvents.size()> m_counts { };

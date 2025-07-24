@@ -1824,7 +1824,7 @@
 		480A2F532CDFC1F800407331 /* AccessibilitySpinButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 480A2F512CDFC1F800407331 /* AccessibilitySpinButtonPart.h */; };
 		4822970E29C8EBC00033A126 /* RegionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4822970C29C8EBC00033A126 /* RegionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4822FD1D2E2A7FA1004CAFF9 /* EventCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 4822FD1B2E2A7FA1004CAFF9 /* EventCounts.h */; };
-		4822FD232E2A8058004CAFF9 /* PerformanceEventTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 4822FD212E2A8058004CAFF9 /* PerformanceEventTiming.h */; };
+		4822FD232E2A8058004CAFF9 /* PerformanceEventTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 4822FD212E2A8058004CAFF9 /* PerformanceEventTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		486B8DC72A043C0600E00E73 /* AXGeometryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 486B8DC62A043C0600E00E73 /* AXGeometryManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48B0242A2B2A65AA0083D122 /* AXTextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = 48B024282B2A65AA0083D122 /* AXTextRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48B5BF3729CA691700FEBE3B /* AccessibilityRegionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 48B5BF3529CA691700FEBE3B /* AccessibilityRegionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3438,7 +3438,7 @@
 		86AA52712937ADB50065399E /* TextManipulationItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AA52702937ADB40065399E /* TextManipulationItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86AA527C2937BD620065399E /* TextManipulationToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AA527B2937BD610065399E /* TextManipulationToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86BBA9F02987EBF300A78986 /* ImageBufferBackendParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BBA9EF2987EBF100A78986 /* ImageBufferBackendParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */; };
+		86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D1969629A674390083B077 /* ServiceWorkerImportedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D1969529A674390083B077 /* ServiceWorkerImportedScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D196DD29ACE0930083B077 /* TextManipulationItemIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D196DC29ACE0920083B077 /* TextManipulationItemIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D982F7125C154000AD9E3D /* DocumentEventTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D982F6125C154000AD9E3D /* DocumentEventTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };

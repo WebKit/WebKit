@@ -26,35 +26,49 @@
 
 #pragma once
 
+#include "DOMHighResTimeStamp.h"
+#include "EventNames.h"
 #include "PerformanceEntry.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class EventTarget;
 class Node;
 
 class PerformanceEventTiming final : public PerformanceEntry {
 public:
+    struct Candidate {
+        EventTypeInfo typeInfo;
+        bool cancelable { false };
+        Seconds startTime { 0 };
+        Seconds processingStart { 0 };
+        Seconds processingEnd { 0 };
+        RefPtr<EventTarget> target { nullptr };
+    };
+    static Ref<PerformanceEventTiming> create(const Candidate&, Seconds duration, bool isFirst = false);
+    ~PerformanceEventTiming();
 
-    static Ref<PerformanceEventTiming> create()
-    {
-        return adoptRef(*new PerformanceEventTiming());
-    }
-
-    ~PerformanceEventTiming() = default;
-
-    double processingStart() const;
-    double processingEnd() const;
-    bool cancelable() const;
+    DOMHighResTimeStamp processingStart() const { return m_processingStart.milliseconds(); }
+    DOMHighResTimeStamp processingEnd() const { return m_processingEnd.milliseconds(); }
+    bool cancelable() const { return m_cancelable; }
     Node* target() const;
     unsigned interactionId() const;
-    ASCIILiteral entryType() const final { return "event"_s; }
 
-protected:
-    PerformanceEventTiming();
+    Type performanceEntryType() const final;
+    ASCIILiteral entryType() const final;
+
+    static constexpr Seconds durationResolution = Seconds::fromMilliseconds(8);
+    static constexpr Seconds minimumDurationThreshold = Seconds::fromMilliseconds(16);
+    static constexpr Seconds defaultDurationThreshold = Seconds::fromMilliseconds(104);
 
 private:
-    Type performanceEntryType() const final;
+    PerformanceEventTiming(const Candidate&, Seconds duration, bool isFirst);
+    bool m_isFirst;
+    bool m_cancelable;
+    Seconds m_processingStart;
+    Seconds m_processingEnd;
+    RefPtr<EventTarget> m_target;
 };
 
 } // namespace WebCore

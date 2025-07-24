@@ -98,6 +98,9 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
             std::stable_sort(oldEnd, end, PerformanceEntry::startTimeCompareLessThan);
             std::inplace_merge(begin, oldEnd, end, PerformanceEntry::startTimeCompareLessThan);
         }
+        if (init.durationThreshold)
+            m_durationThreshold = std::max(PerformanceEventTiming::minimumDurationThreshold, Seconds::fromMilliseconds(*init.durationThreshold));
+
         m_typeFilter.add(filter);
     }
 
@@ -150,17 +153,22 @@ void PerformanceObserver::deliver()
 
 Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& context)
 {
-    Vector<String> entryTypes = {
-        "mark"_s,
-        "measure"_s,
-        "navigation"_s,
-    };
+    RefPtr document = dynamicDowncast<Document>(context);
+    Vector<String> entryTypes;
 
-    if (RefPtr document = dynamicDowncast<Document>(context); document && document->supportsPaintTiming())
+    if (document && document->settings().eventTimingEnabled()) {
+        entryTypes.append("event"_s);
+        entryTypes.append("first-input"_s);
+    }
+
+    entryTypes.append("mark"_s);
+    entryTypes.append("measure"_s);
+    entryTypes.append("navigation"_s);
+
+    if (document && document->supportsPaintTiming())
         entryTypes.append("paint"_s);
 
     entryTypes.append("resource"_s);
-
     return entryTypes;
 }
 

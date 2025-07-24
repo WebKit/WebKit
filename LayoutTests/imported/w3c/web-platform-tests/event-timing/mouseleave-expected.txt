@@ -1,5 +1,5 @@
 Outside target!
 Target
 
-FAIL Event Timing mouseleave. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'performance.eventCounts.get')"
+PASS Event Timing mouseleave.
 

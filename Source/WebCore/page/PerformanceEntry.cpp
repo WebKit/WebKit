@@ -51,6 +51,7 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
 
     if (entryType == "mark"_s)
         return std::optional<Type>(Type::Mark);
+
     if (entryType == "measure"_s)
         return std::optional<Type>(Type::Measure);
 
@@ -59,6 +60,12 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
 
     if (entryType == "paint"_s)
         return std::optional<Type>(Type::Paint);
+
+    if (entryType == "event"_s)
+        return std::optional<Type>(Type::Event);
+
+    if (entryType == "first-input"_s)
+        return std::optional<Type>(Type::FirstInput);
 
     return std::nullopt;
 }

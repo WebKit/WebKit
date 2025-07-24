@@ -43,6 +43,13 @@ void EventCounts::add(EventType type)
     ++m_counts[index];
 }
 
+unsigned EventCounts::get(const String& type) const
+{
+    auto typeInfo = eventNames().typeInfoForEvent(AtomString(type));
+    size_t index = std::ranges::lower_bound(EventNames::timedEvents, typeInfo.type()) - EventNames::timedEvents.begin();
+    return m_counts[index];
+}
+
 void EventCounts::initializeMapLike(DOMMapAdapter& map)
 {
     auto& eventNamesObject = eventNames();
