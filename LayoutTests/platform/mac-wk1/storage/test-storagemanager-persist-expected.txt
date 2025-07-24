@@ -7,8 +7,18 @@ Page loaded. Testing StorageManager.persist() with ITP...
 Stored test data in localStorage
 localStorage testKey: testValue
 localStorage secretKey: 1password-secret-key-12345
-StorageManager.persist() not supported on this platform (e.g., WebKit1)
-PASS StorageManager.persist() not supported - expected on WebKit1
+WARN: shouldBe() expects function or string arguments
+PASS true is true
+WARN: shouldBe() expects function or string arguments
+PASS true is true
+Persistence request result: false
+WARN: shouldBe() expects function or string arguments
+PASS true is true
+Current persistence status: false
+WARN: shouldBe() expects function or string arguments
+PASS true is true
+PASS StorageManager.persist() API works correctly
 PASS successfullyParsed is true
 
-TEST COMPLETE 
+TEST COMPLETE
+

@@ -14,8 +14,10 @@
             finishJSTest();
         }
 
-        // Enable ITP for testing
-        testRunner.setStatisticsEnabled(true);
+        // Enable ITP for testing (only if available)
+        if (testRunner.setStatisticsEnabled) {
+            testRunner.setStatisticsEnabled(true);
+        }
 
         // Test localStorage
         function storeTestData() {
