@@ -51,7 +51,7 @@ enum class PACKeyType {
     FOR_EACH_BASE_WTF_PTRTAG(v) \
     FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
 
-enum PtrTag : uintptr_t {
+enum class PtrTag : uintptr_t {
     NoPtrTag = 0, // Note: We use the 0 tag for temporarily holding the return PC during JSC's arity fixup.
     CFunctionPtrTag,
 };
@@ -63,9 +63,9 @@ template<PtrTag tag, typename PtrType>
 ALWAYS_INLINE static PtrType tagNativeCodePtrImpl(PtrType ptr)
 {
 #if CPU(ARM64E)
-    if constexpr (tag == NoPtrTag)
+    if constexpr (tag == PtrTag::NoPtrTag)
         return ptr;
-    if constexpr (tag == CFunctionPtrTag)
+    if constexpr (tag == PtrTag::CFunctionPtrTag)
         return ptrauth_sign_unauthenticated(ptr, ptrauth_key_function_pointer, 0);
     return ptrauth_sign_unauthenticated(ptr, ptrauth_key_process_dependent_code, tag);
 #else
@@ -77,9 +77,9 @@ template<PtrTag tag, typename PtrType>
 ALWAYS_INLINE static PtrType untagNativeCodePtrImpl(PtrType ptr)
 {
 #if CPU(ARM64E)
-    if constexpr (tag == NoPtrTag)
+    if constexpr (tag == PtrTag::NoPtrTag)
         return ptr;
-    if constexpr (tag == CFunctionPtrTag)
+    if constexpr (tag == PtrTag::CFunctionPtrTag)
         return __builtin_ptrauth_auth(ptr, ptrauth_key_function_pointer, 0);
     return __builtin_ptrauth_auth(ptr, ptrauth_key_process_dependent_code, tag);
 #else
@@ -135,10 +135,10 @@ constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 
 #define WTF_DECLARE_PTRTAG(tag) \
     constexpr PtrTag tag = static_cast<PtrTag>(WTF_PTRTAG_HASH(#tag)); \
-    static_assert(tag != NoPtrTag && tag != CFunctionPtrTag);
+    static_assert(tag != PtrTag::NoPtrTag && tag != PtrTag::CFunctionPtrTag);
 
-static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0));
-static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1));
+static_assert(static_cast<uintptr_t>(PtrTag::NoPtrTag) == static_cast<uintptr_t>(0));
+static_assert(static_cast<uintptr_t>(PtrTag::CFunctionPtrTag) == static_cast<uintptr_t>(1));
 
 FOR_EACH_ADDITIONAL_WTF_PTRTAG(WTF_DECLARE_PTRTAG)
 
@@ -234,7 +234,7 @@ inline PtrType tagCodePtrImpl(PtrType ptr)
 {
     if (!ptr)
         return nullptr;
-    WTF_PTRTAG_ASSERT(tagAction, ptr, NoPtrTag, removeCodePtrTag(ptr) == ptr);
+    WTF_PTRTAG_ASSERT(tagAction, ptr, PtrTag::NoPtrTag, removeCodePtrTag(ptr) == ptr);
     return PtrTagTraits<tag>::tagCodePtr(ptr);
 }
 
@@ -269,18 +269,18 @@ inline PtrType untagCodePtr(PtrType ptr) { return untagCodePtrImpl<PtrTagAction:
 template<PtrTagAction tagAction, PtrTag oldTag, PtrTag newTag, typename PtrType>
 inline PtrType retagCodePtrImplHelper(PtrType ptr)
 {
-    if constexpr (oldTag == newTag || (oldTag == NoPtrTag && newTag == NoPtrTag))
+    if constexpr (oldTag == newTag || (oldTag == PtrTag::NoPtrTag && newTag == PtrTag::NoPtrTag))
         return ptr;
-    if constexpr (newTag == NoPtrTag)
+    if constexpr (newTag == PtrTag::NoPtrTag)
         return untagCodePtrImpl<tagAction, oldTag>(ptr);
-    if constexpr (oldTag == NoPtrTag)
+    if constexpr (oldTag == PtrTag::NoPtrTag)
         return tagCodePtrImpl<tagAction, newTag>(ptr);
 #if CPU(ARM64E)
     if constexpr (PtrTagTraits<oldTag>::isSpecialized || PtrTagTraits<newTag>::isSpecialized)
         return tagCodePtrImpl<tagAction, newTag>(untagCodePtrImpl<tagAction, oldTag>(ptr));
-    if constexpr (oldTag == CFunctionPtrTag)
+    if constexpr (oldTag == PtrTag::CFunctionPtrTag)
         return ptrauth_auth_and_resign(ptr, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag);
-    if constexpr (newTag == CFunctionPtrTag)
+    if constexpr (newTag == PtrTag::CFunctionPtrTag)
         return ptrauth_auth_and_resign(ptr, ptrauth_key_process_dependent_code, oldTag, ptrauth_key_function_pointer, 0);
     return ptrauth_auth_and_resign(ptr, ptrauth_key_process_dependent_code, oldTag, ptrauth_key_process_dependent_code, newTag);
 #else
@@ -312,7 +312,7 @@ template<typename PtrType>
 void assertIsCFunctionPtr(PtrType value)
 {
     void* ptr = std::bit_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, CFunctionPtrTag, ptr == (tagCodePtrImpl<PtrTagAction::NoAssert, CFunctionPtrTag>(removeCodePtrTag(ptr))));
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, PtrTag::CFunctionPtrTag, ptr == (tagCodePtrImpl<PtrTagAction::NoAssert, PtrTag::CFunctionPtrTag>(removeCodePtrTag(ptr))));
 }
 
 template<typename PtrType>
@@ -326,7 +326,7 @@ template<typename PtrType>
 void assertIsNotTagged(PtrType value)
 {
     void* ptr = std::bit_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, NoPtrTag, ptr == removeCodePtrTag(ptr));
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, PtrTag::NoPtrTag, ptr == removeCodePtrTag(ptr));
 }
 
 template<PtrTag tag, typename PtrType>
@@ -344,7 +344,7 @@ template<PtrTag tag, typename PtrType>
 bool isTaggedWith(PtrType value)
 {
     void* ptr = std::bit_cast<void*>(value);
-    if (tag == NoPtrTag)
+    if (tag == PtrTag::NoPtrTag)
         return ptr == removeCodePtrTag(ptr);
     return PtrTagTraits<tag>::isTagged(ptr);
 }
@@ -368,8 +368,8 @@ inline PtrType tagCFunctionPtrImpl(PtrType ptr)
 {
     if (!ptr)
         return nullptr;
-    WTF_PTRTAG_ASSERT(tagAction, ptr, CFunctionPtrTag, ptr == (tagCodePtrImpl<PtrTagAction::NoAssert, CFunctionPtrTag>(removeCodePtrTag(ptr))));
-    return retagCodePtrImpl<tagAction, CFunctionPtrTag, tag>(ptr);
+    WTF_PTRTAG_ASSERT(tagAction, ptr, PtrTag::CFunctionPtrTag, ptr == (tagCodePtrImpl<PtrTagAction::NoAssert, PtrTag::CFunctionPtrTag>(removeCodePtrTag(ptr))));
+    return retagCodePtrImpl<tagAction, PtrTag::CFunctionPtrTag, tag>(ptr);
 }
 
 template<typename T, PtrTag tag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
@@ -399,7 +399,7 @@ inline PtrType untagCFunctionPtrImpl(PtrType ptr)
     if (!ptr)
         return nullptr;
     WTF_PTRTAG_ASSERT(tagAction, ptr, tag, ptr == (tagCodePtrImpl<PtrTagAction::NoAssert, tag>(removeCodePtrTag(ptr))));
-    return retagCodePtrImpl<tagAction, tag, CFunctionPtrTag>(ptr);
+    return retagCodePtrImpl<tagAction, tag, PtrTag::CFunctionPtrTag>(ptr);
 }
 
 template<typename T, PtrTag tag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
@@ -590,8 +590,8 @@ inline IntType untagInt(IntType ptrInt, PtrTag tag)
 
 } // namespace WTF
 
-using WTF::CFunctionPtrTag;
-using WTF::NoPtrTag;
+using WTF::PtrTag::CFunctionPtrTag;
+using WTF::PtrTag::NoPtrTag;
 using WTF::PACKeyType;
 using WTF::PlatformRegistersLRPtrTag;
 using WTF::PlatformRegistersPCPtrTag;

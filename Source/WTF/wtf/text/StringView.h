@@ -860,7 +860,7 @@ public:
     bool operator==(const Iterator&) const;
 
 private:
-    enum PositionTag { AtEnd };
+    enum class PositionTag { AtEnd };
     Iterator(const SplitResult&);
     Iterator(const SplitResult&, PositionTag);
 
@@ -1105,7 +1105,7 @@ inline auto StringView::SplitResult::begin() const -> Iterator
 
 inline auto StringView::SplitResult::end() const -> Iterator
 {
-    return Iterator { *this, Iterator::AtEnd };
+    return Iterator { *this, Iterator::PositionTag::AtEnd };
 }
 
 inline StringView::SplitResult::Iterator::Iterator(const SplitResult& result)

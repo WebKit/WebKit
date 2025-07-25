@@ -33,7 +33,7 @@
 namespace WTF {
 namespace double_conversion {
 
-enum FastDtoaMode {
+enum class FastDtoaMode {
   // Computes the shortest representation of the given input. The returned
   // result will be the most accurate number of this length. Longer
   // representations might be more accurate.

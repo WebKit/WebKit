@@ -139,7 +139,7 @@ public:
     static ObjectIdentifierGeneric generate()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal(), AssumeValidIdValue };
+        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal(), AssumeValidId::AssumeValidIdValue };
     }
 
     static void enableGenerationProtection()
@@ -163,14 +163,14 @@ private:
     friend struct MarkableTraits<ObjectIdentifierGeneric>;
     template<typename U, typename V> friend struct ObjectIdentifierGenericHash;
 
-    enum AssumeValidId { AssumeValidIdValue };
+    enum class AssumeValidId { AssumeValidIdValue };
     explicit constexpr ObjectIdentifierGeneric(RawValue identifier, AssumeValidId)
         : ObjectIdentifierGenericBase<RawValue>(identifier)
     {
         ASSERT(!!identifier);
     }
 
-    enum InvalidId { InvalidIdValue };
+    enum class InvalidId { InvalidIdValue };
     ObjectIdentifierGeneric(InvalidId)
     {
     }
@@ -181,7 +181,7 @@ private:
 template<typename T, typename ThreadSafety, typename RawValue>
 struct MarkableTraits<ObjectIdentifierGeneric<T, ThreadSafety, RawValue>> {
     static bool isEmptyValue(ObjectIdentifierGeneric<T, ThreadSafety, RawValue> identifier) { return !identifier.toRawValue(); }
-    static constexpr ObjectIdentifierGeneric<T, ThreadSafety, RawValue> emptyValue() { return ObjectIdentifierGeneric<T, ThreadSafety, RawValue>::InvalidIdValue; }
+    static constexpr ObjectIdentifierGeneric<T, ThreadSafety, RawValue> emptyValue() { return ObjectIdentifierGeneric<T, ThreadSafety, RawValue>::InvalidId::InvalidIdValue; }
 };
 
 template<typename T, typename RawValue> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue>;
@@ -220,7 +220,7 @@ template<typename T, typename U, typename V> struct HashTraits<ObjectIdentifierG
     using PeekType = std::optional<ValueType>;
     using TakeType = std::optional<ValueType>;
 
-    static ValueType emptyValue() { return ValueType { ValueType::InvalidIdValue }; }
+    static ValueType emptyValue() { return ValueType { ValueType::InvalidId::InvalidIdValue }; }
     static bool isEmptyValue(ValueType value) { return value.isHashTableEmptyValue(); }
 
     static PeekType peek(ValueType identifier)

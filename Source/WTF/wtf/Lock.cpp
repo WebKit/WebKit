@@ -57,7 +57,7 @@ void Lock::unlockSlow()
     // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorithm may cause allocations.
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Unfair);
+    DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fairness::Unfair);
 }
 
 void Lock::unlockFairlySlow()
@@ -66,7 +66,7 @@ void Lock::unlockFairlySlow()
     // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorithm may cause allocations.
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fair);
+    DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fairness::Fair);
 }
 
 void Lock::safepointSlow()

@@ -48,7 +48,7 @@ class RedBlackTree final {
 private:
     static constexpr unsigned s_maximumTreeDepth = 128;
 
-    enum Color {
+    enum class Color {
         Red = 1,
         Black
     };
@@ -141,13 +141,13 @@ public:
         Color color() const
         {
             if (m_parentAndRed & 1)
-                return Red;
-            return Black;
+                return Color::Red;
+            return Color::Black;
         }
         
         void setColor(Color value)
         {
-            if (value == Red)
+            if (value == Color::Red)
                 m_parentAndRed |= 1;
             else
                 m_parentAndRed &= ~static_cast<uintptr_t>(1);
@@ -167,18 +167,18 @@ public:
     {
         x->reset();
         treeInsert(x);
-        x->setColor(Red);
+        x->setColor(Color::Red);
 
         unsigned depth = 0;
-        while (x != m_root && x->parent()->color() == Red) {
+        while (x != m_root && x->parent()->color() == Color::Red) {
             RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (x->parent() == x->parent()->parent()->left()) {
                 NodeType* y = x->parent()->parent()->right();
-                if (y && y->color() == Red) {
+                if (y && y->color() == Color::Red) {
                     // Case 1
-                    x->parent()->setColor(Black);
-                    y->setColor(Black);
-                    x->parent()->parent()->setColor(Red);
+                    x->parent()->setColor(Color::Black);
+                    y->setColor(Color::Black);
+                    x->parent()->parent()->setColor(Color::Red);
                     x = x->parent()->parent();
                 } else {
                     if (x == x->parent()->right()) {
@@ -187,18 +187,18 @@ public:
                         leftRotate(x);
                     }
                     // Case 3
-                    x->parent()->setColor(Black);
-                    x->parent()->parent()->setColor(Red);
+                    x->parent()->setColor(Color::Black);
+                    x->parent()->parent()->setColor(Color::Red);
                     rightRotate(x->parent()->parent());
                 }
             } else {
                 // Same as "then" clause with "right" and "left" exchanged.
                 NodeType* y = x->parent()->parent()->left();
-                if (y && y->color() == Red) {
+                if (y && y->color() == Color::Red) {
                     // Case 1
-                    x->parent()->setColor(Black);
-                    y->setColor(Black);
-                    x->parent()->parent()->setColor(Red);
+                    x->parent()->setColor(Color::Black);
+                    y->setColor(Color::Black);
+                    x->parent()->parent()->setColor(Color::Red);
                     x = x->parent()->parent();
                 } else {
                     if (x == x->parent()->left()) {
@@ -207,14 +207,14 @@ public:
                         rightRotate(x);
                     }
                     // Case 3
-                    x->parent()->setColor(Black);
-                    x->parent()->parent()->setColor(Red);
+                    x->parent()->setColor(Color::Black);
+                    x->parent()->parent()->setColor(Color::Red);
                     leftRotate(x->parent()->parent());
                 }
             }
         }
 
-        m_root->setColor(Black);
+        m_root->setColor(Color::Black);
     }
 
     NodeType* remove(NodeType* z)
@@ -254,7 +254,7 @@ public:
         }
             
         if (y != z) {
-            if (y->color() == Black)
+            if (y->color() == Color::Black)
                 removeFixup(x, xParent);
             
             y->setParent(z->parent());
@@ -275,7 +275,7 @@ public:
                 ASSERT(m_root == z);
                 m_root = y;
             }
-        } else if (y->color() == Black)
+        } else if (y->color() == Color::Black)
             removeFixup(x, xParent);
 
         return z;
@@ -439,7 +439,7 @@ private:
         ASSERT(!z->left());
         ASSERT(!z->right());
         ASSERT(!z->parent());
-        ASSERT(z->color() == Red);
+        ASSERT(z->color() == Color::Red);
         
         NodeType* y = nullptr;
         NodeType* x = m_root;
@@ -533,7 +533,7 @@ private:
     void removeFixup(NodeType* x, NodeType* xParent)
     {
         unsigned depth = 0;
-        while (x != m_root && (!x || x->color() == Black)) {
+        while (x != m_root && (!x || x->color() == Color::Black)) {
             RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (x == xParent->left()) {
                 // Note: the text points out that w can not be null.
@@ -542,32 +542,32 @@ private:
                 // red-black tree.
                 NodeType* w = xParent->right();
                 ASSERT(w); // x's sibling should not be null.
-                if (w->color() == Red) {
+                if (w->color() == Color::Red) {
                     // Case 1
-                    w->setColor(Black);
-                    xParent->setColor(Red);
+                    w->setColor(Color::Black);
+                    xParent->setColor(Color::Red);
                     leftRotate(xParent);
                     w = xParent->right();
                 }
-                if ((!w->left() || w->left()->color() == Black)
-                    && (!w->right() || w->right()->color() == Black)) {
+                if ((!w->left() || w->left()->color() == Color::Black)
+                    && (!w->right() || w->right()->color() == Color::Black)) {
                     // Case 2
-                    w->setColor(Red);
+                    w->setColor(Color::Red);
                     x = xParent;
                     xParent = x->parent();
                 } else {
-                    if (!w->right() || w->right()->color() == Black) {
+                    if (!w->right() || w->right()->color() == Color::Black) {
                         // Case 3
-                        w->left()->setColor(Black);
-                        w->setColor(Red);
+                        w->left()->setColor(Color::Black);
+                        w->setColor(Color::Red);
                         rightRotate(w);
                         w = xParent->right();
                     }
                     // Case 4
                     w->setColor(xParent->color());
-                    xParent->setColor(Black);
+                    xParent->setColor(Color::Black);
                     if (w->right())
-                        w->right()->setColor(Black);
+                        w->right()->setColor(Color::Black);
                     leftRotate(xParent);
                     x = m_root;
                     xParent = x->parent();
@@ -582,32 +582,32 @@ private:
                 // red-black tree.
                 NodeType* w = xParent->left();
                 ASSERT(w); // x's sibling should not be null.
-                if (w->color() == Red) {
+                if (w->color() == Color::Red) {
                     // Case 1
-                    w->setColor(Black);
-                    xParent->setColor(Red);
+                    w->setColor(Color::Black);
+                    xParent->setColor(Color::Red);
                     rightRotate(xParent);
                     w = xParent->left();
                 }
-                if ((!w->right() || w->right()->color() == Black)
-                    && (!w->left() || w->left()->color() == Black)) {
+                if ((!w->right() || w->right()->color() == Color::Black)
+                    && (!w->left() || w->left()->color() == Color::Black)) {
                     // Case 2
-                    w->setColor(Red);
+                    w->setColor(Color::Red);
                     x = xParent;
                     xParent = x->parent();
                 } else {
-                    if (!w->left() || w->left()->color() == Black) {
+                    if (!w->left() || w->left()->color() == Color::Black) {
                         // Case 3
-                        w->right()->setColor(Black);
-                        w->setColor(Red);
+                        w->right()->setColor(Color::Black);
+                        w->setColor(Color::Red);
                         leftRotate(w);
                         w = xParent->left();
                     }
                     // Case 4
                     w->setColor(xParent->color());
-                    xParent->setColor(Black);
+                    xParent->setColor(Color::Black);
                     if (w->left())
-                        w->left()->setColor(Black);
+                        w->left()->setColor(Color::Black);
                     rightRotate(xParent);
                     x = m_root;
                     xParent = x->parent();
@@ -615,7 +615,7 @@ private:
             }
         }
         if (x)
-            x->setColor(Black);
+            x->setColor(Color::Black);
     }
 
     NodeType* m_root;

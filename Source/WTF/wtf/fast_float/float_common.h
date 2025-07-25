@@ -14,11 +14,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace fast_float {
 
-enum chars_format {
+enum class chars_format {
   scientific = 1 << 0,
   fixed = 1 << 2,
   hex = 1 << 3,
-  general = fixed | scientific
+  general = static_cast<int>(chars_format::fixed) | static_cast<int>(chars_format::scientific)
 };
 
 template <typename UC>

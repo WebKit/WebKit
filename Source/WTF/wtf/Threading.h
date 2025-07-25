@@ -326,7 +326,7 @@ protected:
 
     static const char* normalizeThreadName(const char* threadName);
 
-    enum JoinableState : uint8_t {
+    enum class JoinableState : uint8_t {
         // The default thread state. The thread can be joined on.
         Joinable,
 
@@ -341,9 +341,9 @@ protected:
     };
 
     JoinableState joinableState() const { return m_joinableState; }
-    void didBecomeDetached() { m_joinableState = Detached; }
+    void didBecomeDetached() { m_joinableState = JoinableState::Detached; }
     void didExit();
-    void didJoin() { m_joinableState = Joined; }
+    void didJoin() { m_joinableState = JoinableState::Joined; }
     bool hasExited() const { return m_didExit; }
 
     // These functions are only called from ThreadGroup.
@@ -372,7 +372,7 @@ protected:
 
     static Lock s_allThreadsLock;
 
-    JoinableState m_joinableState { Joinable };
+    JoinableState m_joinableState { JoinableState::Joinable };
     bool m_isShuttingDown : 1 { false };
     bool m_didExit : 1 { false };
     bool m_isDestroyedOnce : 1 { false };

@@ -1214,41 +1214,41 @@ static bool isIPv4Address(StringView string)
 
 bool URL::isIPv6Address(StringView string)
 {
-    enum SkipState { None, WillSkip, Skipping, Skipped, Final };
-    auto skipState = None;
+    enum class SkipState { None, WillSkip, Skipping, Skipped, Final };
+    auto skipState = SkipState::None;
     auto count = 0;
 
     for (const auto hextet : string.splitAllowingEmptyEntries(':')) {
-        if (count >= 8 || skipState == Final)
+        if (count >= 8 || skipState == SkipState::Final)
             return false;
 
         const auto length = hextet.length();
         if (!length) {
             // :: may be used anywhere to skip 1 to 8 hextets, but only once.
-            if (skipState == Skipped)
+            if (skipState == SkipState::Skipped)
                 return false;
 
-            if (skipState == None)
-                skipState = !count ? WillSkip : Skipping;
-            else if (skipState == WillSkip)
-                skipState = Skipping;
+            if (skipState == SkipState::None)
+                skipState = !count ? SkipState::WillSkip : SkipState::Skipping;
+            else if (skipState == SkipState::WillSkip)
+                skipState = SkipState::Skipping;
             else
-                skipState = Final;
+                skipState = SkipState::Final;
             continue;
         }
 
-        if (skipState == WillSkip)
+        if (skipState == SkipState::WillSkip)
             return false;
 
-        if (skipState == Skipping)
-            skipState = Skipped;
+        if (skipState == SkipState::Skipping)
+            skipState = SkipState::Skipped;
 
         if (length > 4) {
             // An IPv4 address may be used in place of the final two hextets.
-            if ((skipState == None && count != 6) || (skipState == Skipped && count >= 6) || !isIPv4Address(hextet))
+            if ((skipState == SkipState::None && count != 6) || (skipState == SkipState::Skipped && count >= 6) || !isIPv4Address(hextet))
                 return false;
 
-            skipState = Final;
+            skipState = SkipState::Final;
             continue;
         }
 
@@ -1261,7 +1261,7 @@ bool URL::isIPv6Address(StringView string)
         count++;
     }
 
-    return (count == 8 && skipState == None) || skipState == Skipped || skipState == Final;
+    return (count == 8 && skipState == SkipState::None) || skipState == SkipState::Skipped || skipState == SkipState::Final;
 }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)

@@ -179,7 +179,7 @@ int Thread::waitForCompletion()
         LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
 
     Locker locker { m_mutex };
-    ASSERT(joinableState() == Joinable);
+    ASSERT(joinableState() == JoinableState::Joinable);
 
     // The thread has already exited, do nothing.
     // The thread hasn't exited yet, so don't clean anything up. Just signal that we've already joined on it so that it will clean up after itself.

@@ -50,7 +50,7 @@ public:
     {
     }
 
-    enum PushResult { Empty, NonEmpty };
+    enum class PushResult { Empty, NonEmpty };
     PushResult add(T&& element)
     {
         Node* newNode = new Node();
@@ -64,7 +64,7 @@ public:
             return true;
         });
 
-        return oldHead == nullptr ? Empty : NonEmpty;
+        return oldHead == nullptr ? PushResult::Empty : PushResult::NonEmpty;
     }
 
     // CONSUMER FUNCTIONS: Everything below here is only safe to call from the consumer thread.

@@ -143,7 +143,7 @@ inline bool isPointerTypeAlignmentOkay(Type*)
 
 namespace WTF {
 
-enum CheckMoveParameterTag { CheckMoveParameter };
+enum class CheckMoveParameterTag { CheckMoveParameter };
 
 static constexpr size_t KB = 1024;
 static constexpr size_t MB = 1024 * 1024;
@@ -220,7 +220,7 @@ constexpr IntType toTwosComplement(IntType integer)
     return static_cast<IntType>((~static_cast<UnsignedIntType>(integer)) + static_cast<UnsignedIntType>(1));
 }
 
-enum BinarySearchMode {
+enum class BinarySearchMode {
     KeyMustBePresentInArray,
     KeyMightNotBePresentInArray,
     ReturnAdjacentElementIfKeyIsNotPresent
@@ -246,18 +246,18 @@ inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType
             offset += (pos + 1);
         }
 
-        ASSERT(mode != KeyMustBePresentInArray || size);
+        ASSERT(mode != BinarySearchMode::KeyMustBePresentInArray || size);
     }
     
-    if (mode == KeyMightNotBePresentInArray && !size)
+    if (mode == BinarySearchMode::KeyMightNotBePresentInArray && !size)
         return 0;
     
     ArrayElementType* result = &array[offset];
 
-    if (mode == KeyMightNotBePresentInArray && key != extractKey(result))
+    if (mode == BinarySearchMode::KeyMightNotBePresentInArray && key != extractKey(result))
         return 0;
 
-    if (mode == KeyMustBePresentInArray) {
+    if (mode == BinarySearchMode::KeyMustBePresentInArray) {
         ASSERT(size == 1);
         ASSERT(key == extractKey(result));
     }
@@ -269,38 +269,38 @@ inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* binarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMustBePresentInArray>(array, size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::KeyMustBePresentInArray>(array, size, key, extractKey);
 }
 
 // Return zero if the element is not found.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* tryBinarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMightNotBePresentInArray>(array, size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::KeyMightNotBePresentInArray>(array, size, key, extractKey);
 }
 
 // Return the element that is either to the left, or the right, of where the element would have been found.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* approximateBinarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, ReturnAdjacentElementIfKeyIsNotPresent>(array, size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::ReturnAdjacentElementIfKeyIsNotPresent>(array, size, key, extractKey);
 }
 
 // Variants of the above that use const.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* binarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMustBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::KeyMustBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* tryBinarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMightNotBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::KeyMightNotBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
 inline ArrayElementType* approximateBinarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
-    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, ReturnAdjacentElementIfKeyIsNotPresent>(const_cast<ArrayType&>(array), size, key, extractKey);
+    return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, BinarySearchMode::ReturnAdjacentElementIfKeyIsNotPresent>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
 
 template<typename VectorType, typename ElementType>
@@ -1493,7 +1493,7 @@ ALWAYS_INLINE std::weak_ordering weakOrderingCast(std::partial_ordering ordering
 
 } // namespace WTF
 
-#define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
+#define WTFMove(value) std::move<WTF::CheckMoveParameterTag::CheckMoveParameter>(value)
 
 namespace WTF {
 namespace detail {

@@ -55,7 +55,7 @@ struct CodePtrBase {
 public:
     // We need to declare this in this non-template base. Otherwise, every use of
     // AlreadyTaggedValueTag will require a specialized template qualification.
-    enum AlreadyTaggedValueTag { AlreadyTaggedValue };
+    enum class AlreadyTaggedValueTag { AlreadyTaggedValue };
 
     friend bool operator==(CodePtrBase, CodePtrBase) = default;
 
@@ -124,12 +124,12 @@ public:
 
     template<typename Out, typename... In, FunctionAttributes otherAttr>
     CodePtr(const FunctionPtr<tag, Out(In...), otherAttr>& other)
-        : CodePtr(AlreadyTaggedValue, other.taggedPtr())
+        : CodePtr(AlreadyTaggedValueTag::AlreadyTaggedValue, other.taggedPtr())
     { }
 
     template<PtrTag otherTag, typename Out, typename... In, FunctionAttributes otherAttr>
     CodePtr(const FunctionPtr<otherTag, Out(In...), otherAttr>& other)
-        : CodePtr(AlreadyTaggedValue, other.template retaggedPtr<tag>())
+        : CodePtr(AlreadyTaggedValueTag::AlreadyTaggedValue, other.template retaggedPtr<tag>())
     { }
 #endif
 
@@ -138,7 +138,7 @@ public:
         ASSERT(ptr);
         ASSERT_VALID_CODE_POINTER(ptr);
         assertIsTaggedWith<tag>(ptr);
-        return CodePtr(AlreadyTaggedValue, ptr);
+        return CodePtr(AlreadyTaggedValueTag::AlreadyTaggedValue, ptr);
     }
 
     static CodePtr fromUntaggedPtr(void* ptr)
@@ -146,7 +146,7 @@ public:
         ASSERT(ptr);
         ASSERT_VALID_CODE_POINTER(ptr);
         assertIsNotTagged(ptr);
-        return CodePtr(AlreadyTaggedValue, tagCodePtr<tag>(ptr));
+        return CodePtr(AlreadyTaggedValueTag::AlreadyTaggedValue, tagCodePtr<tag>(ptr));
     }
 
     template<PtrTag newTag>
@@ -154,7 +154,7 @@ public:
     {
         if (!m_value)
             return CodePtr<newTag, attr>();
-        return CodePtr<newTag, attr>(AlreadyTaggedValue, retaggedPtr<newTag>());
+        return CodePtr<newTag, attr>(AlreadyTaggedValueTag::AlreadyTaggedValue, retaggedPtr<newTag>());
     }
 
     constexpr UntypedFunc untypedFunc() const { return decodeFunc(m_value); }

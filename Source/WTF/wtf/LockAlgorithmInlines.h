@@ -84,12 +84,12 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<Lo
             ParkingLot::compareAndPark(&lock, currentValue);
         if (parkResult.wasUnparked) {
             switch (static_cast<Token>(parkResult.token)) {
-            case DirectHandoff:
+            case Token::DirectHandoff:
                 // The lock was never released. It was handed to us directly by the thread that did
                 // unlock(). This means we're done!
                 RELEASE_ASSERT(isLocked(lock));
                 return;
-            case BargingOpportunity:
+            case Token::BargingOpportunity:
                 // This is the common case. The thread that called unlock() has released the lock,
                 // and we have been woken up so that we may get an opportunity to grab the lock. But
                 // other threads may barge, so the best that we can do is loop around and try again.
@@ -134,7 +134,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
                 // so we should still see both bits set right now.
                 ASSERT((lock.load() & mask) == (isHeldBit | hasParkedBit));
                 
-                if (result.didUnparkThread && (fairness == Fair || result.timeToBeFair)) {
+                if (result.didUnparkThread && (fairness == Fairness::Fair || result.timeToBeFair)) {
                     // We don't unlock anything. Instead, we hand the lock to the thread that was
                     // waiting.
                     lock.transaction(
@@ -145,7 +145,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
                             value = newValue;
                             return true;
                         });
-                    return DirectHandoff;
+                    return static_cast<intptr_t>(Token::DirectHandoff);
                 }
                 
                 lock.transaction(
@@ -156,7 +156,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
                             value |= hasParkedBit;
                         return true;
                     });
-                return BargingOpportunity;
+                return static_cast<intptr_t>(Token::BargingOpportunity);
             });
         return;
     }

@@ -71,7 +71,7 @@ class FunctionPtrBase {
 public:
     // We need to declare this in this non-template base. Otherwise, every use of
     // AlreadyTaggedValueTag will require a specialized template qualification.
-    enum AlreadyTaggedValueTag { AlreadyTaggedValue };
+    enum class AlreadyTaggedValueTag { AlreadyTaggedValue };
 
     friend bool operator==(FunctionPtrBase, FunctionPtrBase) = default;
 };
@@ -120,7 +120,7 @@ public:
     FunctionPtr<otherTag, Out(In...), attr> retagged() const
     {
         static_assert(tag != otherTag);
-        return FunctionPtr<otherTag, Out(In...), attr>(AlreadyTaggedValue, retaggedPtr<otherTag>());
+        return FunctionPtr<otherTag, Out(In...), attr>(AlreadyTaggedValueTag::AlreadyTaggedValue, retaggedPtr<otherTag>());
     }
 
     constexpr void* taggedPtr() const { return reinterpret_cast<void*>(m_ptr); }

@@ -33,7 +33,7 @@ namespace WTF {
 class OSAllocator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OSAllocator);
 public:
-    enum Usage {
+    enum class Usage {
         UnknownUsage = -1,
         FastMallocPages = VM_TAG_FOR_TCMALLOC_MEMORY,
         JSJITCodePages = VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY,
@@ -43,14 +43,14 @@ public:
     // The memory returned by this cannot be released as on Windows there's no guaranteed API to
     // get an aligned address and the size + alignment then rounding trick cannot release the unused parts
     // due to how the Windows syscalls work.
-    WTF_EXPORT_PRIVATE static void* tryReserveUncommittedAligned(size_t size, size_t alignment, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveUncommittedAligned(size_t size, size_t alignment, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
 
     // These methods are symmetric; reserveUncommitted allocates VM in an uncommitted state,
     // releaseDecommitted should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a decommitted state. reserveUncommitted returns to
     // you memory that is zeroed.
-    WTF_EXPORT_PRIVATE static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
-    WTF_EXPORT_PRIVATE static void* tryReserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* reserveUncommitted(size_t, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveUncommitted(size_t, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     WTF_EXPORT_PRIVATE static void releaseDecommitted(void*, size_t);
 
     // These methods are symmetric; they commit or decommit a region of VM (uncommitted VM should
@@ -62,20 +62,20 @@ public:
     // These methods are symmetric; reserveAndCommit allocates VM in an committed state,
     // decommitAndRelease should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a committed state.
-    WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
-    WTF_EXPORT_PRIVATE static void* tryReserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveAndCommit(size_t, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     static void decommitAndRelease(void* base, size_t size);
 
     // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than
     // committing/decommitting the entire region additional parameters allow a subregion to be
     // specified.
-    WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t reserveSize, size_t commitSize, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false);
+    WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t reserveSize, size_t commitSize, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false);
 
     // Reallocate an existing, committed allocation.
     // The prior allocation must be fully comitted, and the new size will also be fully committed.
     // This interface is provided since it may be possible to optimize this operation on some platforms.
     template<typename T>
-    static T* reallocateCommitted(T*, size_t oldSize, size_t newSize, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false);
+    static T* reallocateCommitted(T*, size_t oldSize, size_t newSize, Usage = Usage::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false);
 
     // Hint to the OS that an address range is not expected to be accessed anytime soon.
     WTF_EXPORT_PRIVATE static void hintMemoryNotNeededSoon(void*, size_t);

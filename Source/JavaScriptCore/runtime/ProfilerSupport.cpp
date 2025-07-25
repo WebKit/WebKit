@@ -98,7 +98,7 @@ ProfilerSupport::ProfilerSupport()
         auto* file = fdopen(m_fd, "wb");
         RELEASE_ASSERT(file);
 
-        m_fileStream = makeUnique<FilePrintStream>(file, FilePrintStream::Adopt);
+        m_fileStream = makeUnique<FilePrintStream>(file, FilePrintStream::AdoptionMode::Adopt);
         RELEASE_ASSERT(m_fileStream);
     }
 }

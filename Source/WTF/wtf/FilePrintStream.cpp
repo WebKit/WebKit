@@ -36,7 +36,7 @@ FilePrintStream::FilePrintStream(FILE* file, AdoptionMode adoptionMode)
 
 FilePrintStream::~FilePrintStream()
 {
-    if (m_adoptionMode == Borrow)
+    if (m_adoptionMode == AdoptionMode::Borrow)
         return;
     fclose(m_file);
 }

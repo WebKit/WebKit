@@ -96,7 +96,7 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
   uint64_t significand;
   int exponent;
   bool lower_boundary_is_closer;
-  if (mode == BIGNUM_DTOA_SHORTEST_SINGLE) {
+  if (mode == BignumDtoaMode::BIGNUM_DTOA_SHORTEST_SINGLE) {
     float f = static_cast<float>(v);
     ASSERT(f == v);
     significand = Single(f).Significand();
@@ -108,7 +108,7 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
     lower_boundary_is_closer = Double(v).LowerBoundaryIsCloser();
   }
   bool need_boundary_deltas =
-      (mode == BIGNUM_DTOA_SHORTEST || mode == BIGNUM_DTOA_SHORTEST_SINGLE);
+      (mode == BignumDtoaMode::BIGNUM_DTOA_SHORTEST || mode == BignumDtoaMode::BIGNUM_DTOA_SHORTEST_SINGLE);
 
   bool is_even = (significand & 1) == 0;
   int normalized_exponent = NormalizedExponent(significand, exponent);
@@ -119,7 +119,7 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
   // The requested digits correspond to the digits after the point. If the
   // number is much too small, then there is no need in trying to get any
   // digits.
-  if (mode == BIGNUM_DTOA_FIXED && -estimated_power - 1 > requested_digits) {
+  if (mode == BignumDtoaMode::BIGNUM_DTOA_FIXED && -estimated_power - 1 > requested_digits) {
     buffer[0] = '\0';
     length = 0;
     // Set decimal-point to -requested_digits. This is what Gay does.
@@ -147,14 +147,14 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
   // We now have v = (numerator / denominator) * 10^(decimal_point-1), and
   //  1 <= (numerator + delta_plus) / denominator < 10
   switch (mode) {
-    case BIGNUM_DTOA_SHORTEST:
-    case BIGNUM_DTOA_SHORTEST_SINGLE:
+    case BignumDtoaMode::BIGNUM_DTOA_SHORTEST:
+    case BignumDtoaMode::BIGNUM_DTOA_SHORTEST_SINGLE:
       GenerateShortestDigits(numerator, denominator, delta_minus, delta_plus, is_even, buffer, length);
       break;
-    case BIGNUM_DTOA_FIXED:
+    case BignumDtoaMode::BIGNUM_DTOA_FIXED:
       BignumToFixed(requested_digits, decimal_point, numerator, denominator, buffer, length);
       break;
-    case BIGNUM_DTOA_PRECISION:
+    case BignumDtoaMode::BIGNUM_DTOA_PRECISION:
       GenerateCountedDigits(requested_digits, decimal_point, numerator, denominator, buffer, length);
       break;
     default:

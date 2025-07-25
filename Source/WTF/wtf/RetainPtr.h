@@ -149,7 +149,7 @@ public:
     template<typename U> friend constexpr RetainPtr<RetainPtrType<U>> adoptNS(U NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
 private:
-    enum AdoptTag { Adopt };
+    enum class AdoptTag { Adopt };
     constexpr RetainPtr(PtrType ptr, AdoptTag) : m_ptr(ptr) { }
 
 #if __has_feature(objc_arc)
@@ -300,13 +300,13 @@ template<typename T, typename U> constexpr bool operator==(const RetainPtr<T>& a
 template<typename T> constexpr RetainPtr<RetainPtrType<T>> adoptCF(T CF_RELEASES_ARGUMENT ptr)
 {
     static_assert(!IsNSType<T>, "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
-    return { ptr, RetainPtr<RetainPtrType<T>>::Adopt };
+    return { ptr, RetainPtr<RetainPtrType<T>>::AdoptTag::Adopt };
 }
 
 template<typename T> constexpr RetainPtr<RetainPtrType<T>> adoptNS(T NS_RELEASES_ARGUMENT ptr)
 {
     static_assert(IsNSType<T>, "Don't use adoptNS with Core Foundation pointer types, use adoptCF.");
-    return { ptr, RetainPtr<RetainPtrType<T>>::Adopt };
+    return { ptr, RetainPtr<RetainPtrType<T>>::AdoptTag::Adopt };
 }
 
 template<typename T> inline RetainPtr<RetainPtrType<T>> retainPtr(T ptr)

@@ -26,7 +26,7 @@
 
 namespace WTF {
 
-enum HexConversionMode { Lowercase, Uppercase };
+enum class HexConversionMode { Lowercase, Uppercase };
 
 namespace Internal {
 
@@ -34,7 +34,7 @@ inline const std::array<LChar, 16>& hexDigitsForMode(HexConversionMode mode)
 {
     static constexpr std::array<LChar, 16> lowercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     static constexpr std::array<LChar, 16> uppercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
+    return mode == HexConversionMode::Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
 }
 
 WTF_EXPORT_PRIVATE std::span<LChar> appendHex(std::span<LChar> buffer, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
@@ -56,7 +56,7 @@ struct HexNumberBuffer {
     std::span<const LChar> span() const LIFETIME_BOUND { return std::span { buffer }.last(length); }
 };
 
-template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned minimumDigits = 0, HexConversionMode mode = Uppercase)
+template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned minimumDigits = 0, HexConversionMode mode = HexConversionMode::Uppercase)
 {
     // Each byte can generate up to two digits.
     HexNumberBuffer buffer;
@@ -97,4 +97,4 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, HexNumberBuffer);
 using WTF::hex;
 using WTF::toHexCString;
 using WTF::toHexString;
-using WTF::Lowercase;
+using WTF::HexConversionMode::Lowercase;

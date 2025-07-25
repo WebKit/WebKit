@@ -167,7 +167,7 @@ void setDataFile(const char* path)
     if (!file) {
         // Use placement new; this makes it easier to use dataLog() to debug
         // fastMalloc.
-        file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
+        file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::AdoptionMode::Borrow);
     }
 
     setvbuf(file->file(), nullptr, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.

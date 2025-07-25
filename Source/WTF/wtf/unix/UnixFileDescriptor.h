@@ -80,7 +80,7 @@ public:
 
     UnixFileDescriptor duplicate() const
     {
-        return UnixFileDescriptor { m_value, Duplicate };
+        return UnixFileDescriptor { m_value, DuplicationTag::Duplicate };
     }
 
     int release() WARN_UNUSED_RETURN { return std::exchange(m_value, -1); }

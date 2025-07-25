@@ -32,12 +32,12 @@ namespace WTF {
 
 class FilePrintStream final : public PrintStream {
 public:
-    enum AdoptionMode {
+    enum class AdoptionMode {
         Adopt,
         Borrow
     };
     
-    FilePrintStream(FILE*, AdoptionMode = Adopt);
+    FilePrintStream(FILE*, AdoptionMode = AdoptionMode::Adopt);
     WTF_EXPORT_PRIVATE ~FilePrintStream() final;
     
     WTF_EXPORT_PRIVATE static std::unique_ptr<FilePrintStream> open(const char* filename, const char* mode);
