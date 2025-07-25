@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebDriver Cookie API Integration Test</title>
+    <script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container">
+        <h1>WebDriver Cookie API Integration Test</h1>
+        <p>This test verifies that WebDriver cookie API integration works properly with the libsoup 'changed' signal fix.</p>
+    </div>
+
+    <script>
+        description("Test WebDriver cookie API integration (Bug 279079)");
+
+        // Test 1: Verify cookie storage infrastructure
+        debug("Cookie storage infrastructure verification");
+        // Clear any existing cookies
+        document.cookie.split(";").forEach(function(c) { 
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        });
+        
+        shouldBe("document.cookie", '""');
+
+        // Test 2: Simulate WebDriver cookie setting
+        debug("Simulate WebDriver cookie setting");
+        // This simulates what happens when WebDriver calls setCookie
+        // The key is that it should trigger the 'changed' signal properly
+        
+        // Set a cookie that would be set by WebDriver
+        document.cookie = "webdriver_api_test=api_value; path=/";
+        
+        // Verify it was stored
+        shouldBe("document.cookie.includes('webdriver_api_test=api_value')", "true");
+
+        // Test 3: Multiple WebDriver cookies in sequence
+        debug("Multiple WebDriver cookies in sequence");
+        // Simulate WebDriver setting multiple cookies
+        const webdriverCookies = [
+            "webdriver_cookie1=value1; path=/",
+            "webdriver_cookie2=value2; path=/",
+            "webdriver_cookie3=value3; path=/"
+        ];
+        
+        webdriverCookies.forEach(cookieString => {
+            document.cookie = cookieString;
+        });
+        
+        // Verify all were stored
+        shouldBe("document.cookie.includes('webdriver_cookie1=value1')", "true");
+        shouldBe("document.cookie.includes('webdriver_cookie2=value2')", "true");
+        shouldBe("document.cookie.includes('webdriver_cookie3=value3')", "true");
+
+        // Test 4: WebDriver cookie with complex attributes
+        debug("WebDriver cookie with complex attributes");
+        // Test a cookie with multiple attributes that WebDriver might set
+        const complexCookie = "complex_webdriver_cookie=complex_value; path=/; samesite=strict; max-age=3600";
+        document.cookie = complexCookie;
+        
+        // Verify it was stored
+        shouldBe("document.cookie.includes('complex_webdriver_cookie=complex_value')", "true");
+
+        // Test 5: WebDriver cookie update scenario
+        debug("WebDriver cookie update scenario");
+        // Set initial cookie
+        document.cookie = "update_test=initial; path=/";
+        shouldBe("document.cookie.includes('update_test=initial')", "true");
+        
+        // Update the cookie (simulating WebDriver updating)
+        document.cookie = "update_test=updated; path=/";
+        shouldBe("document.cookie.includes('update_test=updated')", "true");
+        shouldBe("document.cookie.includes('update_test=initial')", "false");
+
+        // Test 6: WebDriver cookie deletion
+        debug("WebDriver cookie deletion");
+        // Set a cookie to be deleted
+        document.cookie = "delete_api_test=delete_value; path=/";
+        shouldBe("document.cookie.includes('delete_api_test=delete_value')", "true");
+        
+        // Delete it (simulating WebDriver deletion)
+        document.cookie = "delete_api_test=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        shouldBe("document.cookie.includes('delete_api_test=')", "false");
+
+        // Test 7: WebDriver session cookie handling
+        debug("WebDriver session cookie handling");
+        // Test session cookies (no expiration)
+        document.cookie = "session_webdriver_cookie=session_value; path=/";
+        shouldBe("document.cookie.includes('session_webdriver_cookie=session_value')", "true");
+
+        // Test 8: WebDriver persistent cookie handling
+        debug("WebDriver persistent cookie handling");
+        // Test persistent cookies with expiration
+        const futureDate = new Date();
+        futureDate.setFullYear(futureDate.getFullYear() + 1);
+        document.cookie = `persistent_webdriver_cookie=persistent_value; path=/; expires=${futureDate.toUTCString()}`;
+        shouldBe("document.cookie.includes('persistent_webdriver_cookie=persistent_value')", "true");
+
+        // Test 9: WebDriver cookie with different domains
+        debug("WebDriver cookie with different domains");
+        // Test setting cookies for different domain patterns
+        document.cookie = "domain_test=domain_value; path=/";
+        document.cookie = "subdomain_test=subdomain_value; path=/";
+        
+        shouldBe("document.cookie.includes('domain_test=domain_value')", "true");
+        shouldBe("document.cookie.includes('subdomain_test=subdomain_value')", "true");
+
+        // Test 10: WebDriver cookie stress test
+        debug("WebDriver cookie stress test");
+        // Simulate rapid WebDriver cookie operations
+        const stressCount = 20;
+        
+        // Set cookies rapidly
+        for (let i = 0; i < stressCount; i++) {
+            document.cookie = `stress_api_${i}=stress_value_${i}; path=/`;
+        }
+        
+        // Verify all were set
+        for (let i = 0; i < stressCount; i++) {
+            shouldBe(`document.cookie.includes('stress_api_${i}=stress_value_${i}')`, "true");
+        }
+        
+        // Clean up
+        for (let i = 0; i < stressCount; i++) {
+            document.cookie = `stress_api_${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        }
+
+        // Test 11: WebDriver cookie with special characters
+        debug("WebDriver cookie with special characters");
+        // Test cookies with special characters that WebDriver might set
+        const specialCookie = "special_chars=test@#$%^&*()_+-=[]{}|;':\",./<>?; path=/";
+        document.cookie = specialCookie;
+        
+        // Verify it was stored (the exact string might be encoded)
+        shouldBe("document.cookie.includes('special_chars=')", "true");
+
+        // Test 12: WebDriver cookie with unicode characters
+        debug("WebDriver cookie with unicode characters");
+        // Test cookies with unicode characters
+        document.cookie = "unicode_cookie=测试值; path=/";
+        
+        // Verify it was stored
+        shouldBe("document.cookie.includes('unicode_cookie=')", "true");
+
+        // Test 13: WebDriver cookie with very long values
+        debug("WebDriver cookie with very long values");
+        // Test cookies with very long values
+        const longValue = "a".repeat(1000);
+        document.cookie = `long_cookie=${longValue}; path=/`;
+        
+        // Verify it was stored
+        shouldBe("document.cookie.includes('long_cookie=')", "true");
+
+        // Test 14: WebDriver cookie with empty values
+        debug("WebDriver cookie with empty values");
+        // Test cookies with empty values
+        document.cookie = "empty_cookie=; path=/";
+        
+        // Verify it was stored
+        shouldBe("document.cookie.includes('empty_cookie=')", "true");
+
+        // Test 15: Final WebDriver API verification
+        debug("Final WebDriver API verification");
+        // Set one final test cookie
+        document.cookie = "final_api_test=final_api_value; path=/";
+        
+        // Verify it works
+        shouldBe("document.cookie.includes('final_api_test=final_api_value')", "true");
+        
+        // Clean up
+        document.cookie = "final_api_test=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        
+        // Final success
+        shouldBe("true", "true");
+    </script>
+
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html> 

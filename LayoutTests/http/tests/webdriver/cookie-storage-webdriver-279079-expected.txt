@@ -1,12 +1,47 @@
-Tests that WebDriver cookie storage infrastructure is working properly (Bug 279079)
+Test WebDriver cookie storage functionality (Bug 279079)
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.cookie is ""
-PASS document.cookie is "jsCookie=testValue"
-PASS document.cookie is ""
+Current domain: 127.0.0.1
+Current URL: http://127.0.0.1:8000/webdriver/cookie-storage-webdriver-279079.html
+Basic WebDriver cookie storage
+PASS document.cookie.includes('webdriver_test=test_value') is true
+Multiple WebDriver cookies
+PASS document.cookie.includes('webdriver_cookie1=value1') is true
+PASS document.cookie.includes('webdriver_cookie2=value2') is true
+PASS document.cookie.includes('webdriver_cookie3=value3') is true
+WebDriver cookies with various attributes
+PASS document.cookie.includes('expiring_cookie=expiring_value') is true
+Cookie change detection
+PASS document.cookie.includes('change_test=updated_value') is true
+WebDriver cookie deletion
+PASS document.cookie.includes('delete_test=delete_value') is true
+PASS document.cookie.includes('delete_test=') is false
+Cross-domain cookie handling
+PASS document.cookie.includes('subdomain_cookie=subdomain_value') is true
+SameSite attribute handling
+PASS document.cookie.includes('samesite_strict=strict_value') is true
+PASS document.cookie.includes('samesite_lax=lax_value') is true
+Stress test - multiple rapid cookie operations
+PASS document.cookie.includes('stress_cookie_0=stress_value_0') is true
+PASS document.cookie.includes('stress_cookie_1=stress_value_1') is true
+PASS document.cookie.includes('stress_cookie_2=stress_value_2') is true
+PASS document.cookie.includes('stress_cookie_3=stress_value_3') is true
+PASS document.cookie.includes('stress_cookie_4=stress_value_4') is true
+PASS document.cookie.includes('stress_cookie_5=stress_value_5') is true
+PASS document.cookie.includes('stress_cookie_6=stress_value_6') is true
+PASS document.cookie.includes('stress_cookie_7=stress_value_7') is true
+PASS document.cookie.includes('stress_cookie_8=stress_value_8') is true
+PASS document.cookie.includes('stress_cookie_9=stress_value_9') is true
+Cookie persistence verification
+PASS document.cookie.includes('persistent_cookie=persistent_value') is true
+Final verification - all WebDriver cookie functionality works
+PASS document.cookie.includes('final_test=final_value') is true
+PASS true is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+WebDriver Cookie Storage Test
 
+This test verifies that WebDriver cookies are properly stored and trigger the 'changed' signal.

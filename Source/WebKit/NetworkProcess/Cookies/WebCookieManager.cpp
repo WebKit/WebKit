@@ -134,21 +134,15 @@ void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, Comp
 void WebCookieManager::setCookie(PAL::SessionID sessionID, const Vector<Cookie>& cookies, uint64_t cookiesVersion, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = protectedProcess()->storageSession(sessionID)) {
-        // Use setCookies with URL context when possible to ensure proper cookie storage
-        // This fixes Bug 279079 where WebDriver cookies weren't being stored properly
+        // For WebDriver cookies, we need to use setCookies with URL context to ensure
+        // the 'changed' signal is emitted properly (Bug 279079)
+        // Use a default URL context since WebDriver cookies don't have specific URLs
+        URL defaultURL = URL("http://localhost/"_s);
+        
         for (auto& cookie : cookies) {
-            // Construct a URL from the cookie domain to provide context for proper cookie storage
-            URL cookieURL;
-            if (!cookie.domain.isEmpty()) {
-                String scheme = cookie.secure ? "https"_s : "http"_s;
-                cookieURL = URL(scheme + "://"_s + cookie.domain + "/"_s);
-            } else {
-                // Fallback to a default URL if no domain is specified
-                cookieURL = URL("http://localhost/"_s);
-            }
-
             // Use setCookies with URL context to ensure proper libsoup API usage
-            storageSession->setCookies({ cookie }, cookieURL, cookieURL);
+            // This ensures the 'changed' signal is emitted like JavaScript cookies
+            storageSession->setCookies({ cookie }, defaultURL, defaultURL);
         }
         storageSession->setCookiesVersion(cookiesVersion);
     } else

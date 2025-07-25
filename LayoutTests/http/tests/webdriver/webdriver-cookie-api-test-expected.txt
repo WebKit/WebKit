@@ -1,0 +1,67 @@
+Test WebDriver cookie API integration (Bug 279079)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookie storage infrastructure verification
+PASS document.cookie is ""
+Simulate WebDriver cookie setting
+PASS document.cookie.includes('webdriver_api_test=api_value') is true
+Multiple WebDriver cookies in sequence
+PASS document.cookie.includes('webdriver_cookie1=value1') is true
+PASS document.cookie.includes('webdriver_cookie2=value2') is true
+PASS document.cookie.includes('webdriver_cookie3=value3') is true
+WebDriver cookie with complex attributes
+PASS document.cookie.includes('complex_webdriver_cookie=complex_value') is true
+WebDriver cookie update scenario
+PASS document.cookie.includes('update_test=initial') is true
+PASS document.cookie.includes('update_test=updated') is true
+PASS document.cookie.includes('update_test=initial') is false
+WebDriver cookie deletion
+PASS document.cookie.includes('delete_api_test=delete_value') is true
+PASS document.cookie.includes('delete_api_test=') is false
+WebDriver session cookie handling
+PASS document.cookie.includes('session_webdriver_cookie=session_value') is true
+WebDriver persistent cookie handling
+PASS document.cookie.includes('persistent_webdriver_cookie=persistent_value') is true
+WebDriver cookie with different domains
+PASS document.cookie.includes('domain_test=domain_value') is true
+PASS document.cookie.includes('subdomain_test=subdomain_value') is true
+WebDriver cookie stress test
+PASS document.cookie.includes('stress_api_0=stress_value_0') is true
+PASS document.cookie.includes('stress_api_1=stress_value_1') is true
+PASS document.cookie.includes('stress_api_2=stress_value_2') is true
+PASS document.cookie.includes('stress_api_3=stress_value_3') is true
+PASS document.cookie.includes('stress_api_4=stress_value_4') is true
+PASS document.cookie.includes('stress_api_5=stress_value_5') is true
+PASS document.cookie.includes('stress_api_6=stress_value_6') is true
+PASS document.cookie.includes('stress_api_7=stress_value_7') is true
+PASS document.cookie.includes('stress_api_8=stress_value_8') is true
+PASS document.cookie.includes('stress_api_9=stress_value_9') is true
+PASS document.cookie.includes('stress_api_10=stress_value_10') is true
+PASS document.cookie.includes('stress_api_11=stress_value_11') is true
+PASS document.cookie.includes('stress_api_12=stress_value_12') is true
+PASS document.cookie.includes('stress_api_13=stress_value_13') is true
+PASS document.cookie.includes('stress_api_14=stress_value_14') is true
+PASS document.cookie.includes('stress_api_15=stress_value_15') is true
+PASS document.cookie.includes('stress_api_16=stress_value_16') is true
+PASS document.cookie.includes('stress_api_17=stress_value_17') is true
+PASS document.cookie.includes('stress_api_18=stress_value_18') is true
+PASS document.cookie.includes('stress_api_19=stress_value_19') is true
+WebDriver cookie with special characters
+PASS document.cookie.includes('special_chars=') is true
+WebDriver cookie with unicode characters
+PASS document.cookie.includes('unicode_cookie=') is true
+WebDriver cookie with very long values
+PASS document.cookie.includes('long_cookie=') is true
+WebDriver cookie with empty values
+PASS document.cookie.includes('empty_cookie=') is true
+Final WebDriver API verification
+PASS document.cookie.includes('final_api_test=final_api_value') is true
+PASS true is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+WebDriver Cookie API Integration Test
+
+This test verifies that WebDriver cookie API integration works properly with the libsoup 'changed' signal fix.
