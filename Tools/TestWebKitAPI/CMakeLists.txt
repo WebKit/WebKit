@@ -349,6 +349,7 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/WKString.cpp
         Tests/WebKit/WKStringJSString.cpp
         Tests/WebKit/WKURL.cpp
+        Tests/WebKit/WebDriverCookies.cpp
         Tests/WebKit/WillSendSubmitEvent.cpp
     )
 
