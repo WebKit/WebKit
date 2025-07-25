@@ -93,7 +93,7 @@ TEST_F(WebDriverCookieTest, BasicWebDriverCookieStorage)
 
     // Create a WebDriver cookie directly
     SoupCookie* cookie = soup_cookie_new("webdriver_test_cookie", "webdriver_test_value",
-                                         "127.0.0.1", "/", -1);
+        "127.0.0.1", "/", -1);
 
     // Set cookie through WebKit cookie manager (simulates WebDriver path)
     webkit_cookie_manager_add_cookie(m_cookieManager, cookie, nullptr, nullptr, nullptr);
@@ -159,7 +159,7 @@ TEST_F(WebDriverCookieTest, WebDriverCookieDOMConsistency)
 
     // Set a cookie through WebDriver path
     SoupCookie* cookie = soup_cookie_new("webdriver_dom_test", "dom_test_value",
-                                         "127.0.0.1", "/", -1);
+        "127.0.0.1", "/", -1);
     webkit_cookie_manager_add_cookie(m_cookieManager, cookie, nullptr, nullptr, nullptr);
 
     // Load a page and check if cookie is accessible via document.cookie
