@@ -137,7 +137,5 @@ enum class ViewStabilityFlag : uint8_t;
 - (double)_initialScaleFactor;
 - (double)_contentZoomScale;
 - (double)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale;
-#if ENABLE(MODEL_PROCESS)
-- (void)_setWebViewTransform3DForModel:(CGFloat)newScale;
-#endif
+
 @end

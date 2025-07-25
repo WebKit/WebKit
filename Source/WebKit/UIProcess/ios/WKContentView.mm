@@ -1085,15 +1085,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     return [_webView _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
 }
 
-#if ENABLE(MODEL_PROCESS)
-- (void)_setWebViewTransform3DForModel:(CGFloat)newScale
-{
-    CATransform3D newTransform = self.transform3D;
-    newTransform.m33 = newScale;
-    self.transform3D = newTransform;
-}
-#endif
-
 - (void)_applicationWillResignActive:(NSNotification*)notification
 {
     _page->applicationWillResignActive();

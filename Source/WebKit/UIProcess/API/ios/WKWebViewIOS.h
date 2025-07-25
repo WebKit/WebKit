@@ -236,6 +236,7 @@ enum class TapHandlingResult : uint8_t;
 
 #if ENABLE(MODEL_PROCESS)
 - (void)_willInvalidateDraggedModelWithContainerView:(UIView *)containerView;
+- (void)_setWebViewTransform3DForModel:(CGFloat)newScale;
 #endif
 
 - (BOOL)_isInStableState:(UIScrollView *)scrollView;
