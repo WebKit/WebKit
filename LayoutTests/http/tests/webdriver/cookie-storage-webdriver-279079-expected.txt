@@ -8,4 +8,5 @@ PASS document.cookie is "jsCookie=testValue"
 PASS document.cookie is ""
 PASS successfullyParsed is true
 
-TEST COMPLETE 
+TEST COMPLETE
+
