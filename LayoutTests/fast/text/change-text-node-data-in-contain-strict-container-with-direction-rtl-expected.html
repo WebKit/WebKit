@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body {
+        font-size: 0px;
+    }
+    span {
+        display: inline-block;
+        background: silver;
+        width: 100px;
+        height: 100px;
+        margin: 20px;
+        font-size: 25px;
+        contain: strict;
+        line-height: 1;
+        white-space: pre;
+        direction: rtl;
+    }
+    .first-line::first-line {
+        font-size: 35px;
+    }
+  </style>
+  <body>
+    <div>
+      <span>baar</span>
+      <span>baarbaar baarbaar</span>
+      <span>baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar</span>
+      <span>baar baar baar baar</span>
+      <span>baar</span>
+      <span>b &#x55e8;</span>
+      <span>baar&#9;baar&#9;baar&#9;baar</span>
+      <span>baar&#10;baar&#10;baar&#10;baar</span>
+    </div>
+    <div>
+      <span class="first-line">baar</span>
+      <span class="first-line">baarbaar baarbaar</span>
+      <span class="first-line">baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar</span>
+      <span class="first-line">baar baar baar baar</span>
+      <span class="first-line">baar</span>
+      <span class="first-line">b &#x55e8;</span>
+      <span class="first-line">baar&#9;baar&#9;baar&#9;baar</span>
+      <span class="first-line">baar&#10;baar&#10;baar&#10;baar</span>
+    </div>
+  </body>
+</html>

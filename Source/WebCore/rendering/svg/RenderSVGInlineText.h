@@ -76,7 +76,7 @@ private:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
 
-    void setTextInternal(const String&, bool force) final;
+    void setTextInternal(const String&, bool force, bool) final;
 
     float m_scalingFactor;
     FontCascade m_scaledFont;
