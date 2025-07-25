@@ -516,6 +516,7 @@ public:
     bool isRemovingData() const { return!!m_removeDataTaskCounter.value(); }
     uint64_t cookiesVersion() const { return m_cookiesVersion; }
     void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
+    void setWebDriverCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
 
 private:
     enum class ForceReinitialization : bool { No, Yes };

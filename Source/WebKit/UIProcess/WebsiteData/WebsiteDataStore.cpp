@@ -2906,4 +2906,9 @@ void WebsiteDataStore::setCookies(Vector<WebCore::Cookie>&& cookies, CompletionH
     protectedNetworkProcess()->sendWithAsyncReply(Messages::WebCookieManager::SetCookie(m_sessionID, WTFMove(cookies), ++m_cookiesVersion), WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::setWebDriverCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void()>&& completionHandler)
+{
+    protectedNetworkProcess()->sendWithAsyncReply(Messages::WebCookieManager::SetWebDriverCookie(m_sessionID, WTFMove(cookies), ++m_cookiesVersion), WTFMove(completionHandler));
+}
+
 } // namespace WebKit

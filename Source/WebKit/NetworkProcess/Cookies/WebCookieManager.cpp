@@ -134,11 +134,22 @@ void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, Comp
 void WebCookieManager::setCookie(PAL::SessionID sessionID, const Vector<Cookie>& cookies, uint64_t cookiesVersion, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = protectedProcess()->storageSession(sessionID)) {
+        for (auto& cookie : cookies)
+            storageSession->setCookie(cookie);
+        storageSession->setCookiesVersion(cookiesVersion);
+    } else
+        RELEASE_LOG_ERROR(Storage, "%p - WebCookieManager::setCookie failed to set cookies and version (%" PRIu64 ") for session %" PRIu64, this, cookiesVersion, sessionID.toUInt64());
+    completionHandler();
+}
+
+void WebCookieManager::setWebDriverCookie(PAL::SessionID sessionID, const Vector<Cookie>& cookies, uint64_t cookiesVersion, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr storageSession = protectedProcess()->storageSession(sessionID)) {
         // For WebDriver cookies, we need to use setCookies with URL context to ensure
         // the 'changed' signal is emitted properly (Bug 279079)
         // Use a default URL context since WebDriver cookies don't have specific URLs
         URL defaultURL = URL("http://localhost/"_s);
-
+        
         for (auto& cookie : cookies) {
             // Use setCookies with URL context to ensure proper libsoup API usage
             // This ensures the 'changed' signal is emitted like JavaScript cookies
@@ -146,7 +157,7 @@ void WebCookieManager::setCookie(PAL::SessionID sessionID, const Vector<Cookie>&
         }
         storageSession->setCookiesVersion(cookiesVersion);
     } else
-        RELEASE_LOG_ERROR(Storage, "%p - WebCookieManager::setCookie failed to set cookies and version (%" PRIu64 ") for session %" PRIu64, this, cookiesVersion, sessionID.toUInt64());
+        RELEASE_LOG_ERROR(Storage, "%p - WebCookieManager::setWebDriverCookie failed to set cookies and version (%" PRIu64 ") for session %" PRIu64, this, cookiesVersion, sessionID.toUInt64());
     completionHandler();
 }
 

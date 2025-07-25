@@ -1575,8 +1575,9 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!parsedSameSite, InvalidParameter, "The parameter 'sameSite' has an unknown value."_s);
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
-    Ref cookieStore = page->protectedWebsiteDataStore()->cookieStore();
-    cookieStore->setCookies({ cookie }, [callback = WTFMove(callback)]() {
+    // For WebDriver cookies, use the WebDriver-specific method that ensures proper
+    // cookie storage with URL context (Bug 279079)
+    page->protectedWebsiteDataStore()->setWebDriverCookies({ cookie }, [callback = WTFMove(callback)]() {
         callback({ });
     });
 }
