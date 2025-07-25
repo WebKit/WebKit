@@ -149,7 +149,6 @@ void WebCookieManager::setWebDriverCookie(PAL::SessionID sessionID, const Vector
         // the 'changed' signal is emitted properly (Bug 279079)
         // Use a default URL context since WebDriver cookies don't have specific URLs
         URL defaultURL = URL("http://localhost/"_s);
-        
         for (auto& cookie : cookies) {
             // Use setCookies with URL context to ensure proper libsoup API usage
             // This ensures the 'changed' signal is emitted like JavaScript cookies
