@@ -56,7 +56,7 @@
 
         // Test 4: WebDriver cookie with complex attributes DOM visibility
         debug("WebDriver cookie with complex attributes DOM visibility");
-        document.cookie = "complex_webdriver_cookie=complex_value; path=/; secure=false";
+        document.cookie = "complex_webdriver_cookie=complex_value; path=/";
         shouldBe("document.cookie.includes('complex_webdriver_cookie=complex_value')", "true");
 
         // Test 5: WebDriver cookie update scenario DOM visibility

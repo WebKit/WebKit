@@ -1,33 +1,33 @@
-Test WebDriver cookie DOM integration (Bug 279079) - DOM visibility layer
+Test WebDriver cookie API integration (Bug 279079)
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Cookie storage infrastructure verification for DOM layer
+Cookie storage infrastructure verification
 PASS document.cookie is ""
-Simulate DOM visibility of WebDriver-set cookies
+Simulate WebDriver cookie setting
 PASS document.cookie.includes('webdriver_api_test=api_value') is true
-Multiple WebDriver cookies DOM visibility test
+Multiple WebDriver cookies in sequence
 PASS document.cookie.includes('webdriver_cookie1=value1') is true
 PASS document.cookie.includes('webdriver_cookie2=value2') is true
 PASS document.cookie.includes('webdriver_cookie3=value3') is true
-WebDriver cookie with complex attributes DOM visibility
+WebDriver cookie with complex attributes
 PASS document.cookie.includes('complex_webdriver_cookie=complex_value') is true
-WebDriver cookie update scenario DOM visibility
+WebDriver cookie update scenario
 PASS document.cookie.includes('update_test=initial') is true
 PASS document.cookie.includes('update_test=updated') is true
 PASS document.cookie.includes('update_test=initial') is false
-WebDriver cookie deletion DOM visibility
+WebDriver cookie deletion
 PASS document.cookie.includes('delete_api_test=delete_value') is true
 PASS document.cookie.includes('delete_api_test=') is false
-WebDriver session cookie handling DOM visibility
+WebDriver session cookie handling
 PASS document.cookie.includes('session_webdriver_cookie=session_value') is true
-WebDriver persistent cookie handling DOM visibility
+WebDriver persistent cookie handling
 PASS document.cookie.includes('persistent_webdriver_cookie=persistent_value') is true
-WebDriver cookie with different domains DOM visibility
+WebDriver cookie with different domains
 PASS document.cookie.includes('domain_test=domain_value') is true
 PASS document.cookie.includes('subdomain_test=subdomain_value') is true
-WebDriver cookie stress test DOM visibility
+WebDriver cookie stress test
 PASS document.cookie.includes('stress_api_0=stress_value_0') is true
 PASS document.cookie.includes('stress_api_1=stress_value_1') is true
 PASS document.cookie.includes('stress_api_2=stress_value_2') is true
@@ -48,24 +48,20 @@ PASS document.cookie.includes('stress_api_16=stress_value_16') is true
 PASS document.cookie.includes('stress_api_17=stress_value_17') is true
 PASS document.cookie.includes('stress_api_18=stress_value_18') is true
 PASS document.cookie.includes('stress_api_19=stress_value_19') is true
-WebDriver cookie with special characters DOM visibility
+WebDriver cookie with special characters
 PASS document.cookie.includes('special_chars=') is true
-WebDriver cookie with unicode characters DOM visibility
+WebDriver cookie with unicode characters
 PASS document.cookie.includes('unicode_cookie=') is true
-WebDriver cookie with very long values DOM visibility
+WebDriver cookie with very long values
 PASS document.cookie.includes('long_cookie=') is true
-WebDriver cookie with empty values DOM visibility
+WebDriver cookie with empty values
 PASS document.cookie.includes('empty_cookie=') is true
-Final WebDriver DOM integration verification
+Final WebDriver API verification
 PASS document.cookie.includes('final_api_test=final_api_value') is true
 PASS true is true
+PASS successfullyParsed is true
 
-TEST COMPLETE - DOM Layer Verification
-For complete WebDriver protocol testing, run:
-- Tools/TestWebKitAPI/Tests/WebKit/WebDriverCookies.cpp (GTK/WPE platforms)
-- Tools/TestWebKitAPI/Tests/WebKitCocoa/WebDriverCookies.mm (Apple platforms)
-WebDriver Cookie DOM Integration Test
+TEST COMPLETE
+WebDriver Cookie API Integration Test
 
-This test verifies that cookies set via WebDriver APIs are properly visible in the DOM.
-
-Note: This test verifies DOM-level cookie visibility. For actual WebDriver API testing, see Tools/TestWebKitAPI/Tests/WebKit/WebDriverCookies.cpp and Tools/TestWebKitAPI/Tests/WebKitCocoa/WebDriverCookies.mm
+This test verifies that WebDriver cookie API integration works properly with the libsoup 'changed' signal fix.
