@@ -89,6 +89,7 @@ public:
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, Buffer& destination, uint64_t destinationOffset, uint64_t size) HAS_SWIFTCXX_THUNK;
     void copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize) HAS_SWIFTCXX_THUNK;
     void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize) HAS_SWIFTCXX_THUNK;
+    void copyTextureToBufferWithSwizzling(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize);
     void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize) HAS_SWIFTCXX_THUNK;
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> existingEncoder = nil) HAS_SWIFTCXX_THUNK;
     void clearBuffer(Buffer&, uint64_t offset, uint64_t size);
@@ -116,7 +117,10 @@ public:
 #endif
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
+    id<MTLComputeCommandEncoder> ensureComputeCommandEncoder();
     void finalizeBlitCommandEncoder();
+    void finalizeComputeCommandEncoder() HAS_SWIFTCXX_THUNK;
+
     static void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger, const Device&, id<MTLBlitCommandEncoder>);
     static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, const Device&, id<MTLBlitCommandEncoder>);
     void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger) HAS_SWIFTCXX_THUNK;
@@ -177,6 +181,7 @@ private PUBLIC_IN_WEBGPU_SWIFT:
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLCommandEncoder> m_existingCommandEncoder { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
+    id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
     NSString* m_lastErrorString { nil };
     uint64_t m_debugGroupStackSize { 0 };
     ThreadSafeWeakPtr<CommandBuffer> m_cachedCommandBuffer;

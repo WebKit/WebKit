@@ -133,6 +133,7 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const { return m_canvasBacking; }
+    bool needsSwizzleForCopyTextureToBuffer() const;
 
     bool waitForCommandBufferCompletion();
     void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);

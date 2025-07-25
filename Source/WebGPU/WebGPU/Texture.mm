@@ -3765,6 +3765,31 @@ void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t
     m_sharedEventSignalValue = completionEvent.second;
 }
 
+bool Texture::needsSwizzleForCopyTextureToBuffer() const
+{
+    // Only canvas-backed textures (IOSurfaces) can have format mismatches
+    if (!m_canvasBacking)
+        return false;
+
+    // Check if we have an RGBA WebGPU format but BGRA Metal format
+    // This happens when IOSurfaces (which are natively BGRA) back RGBA WebGPU textures
+    MTLPixelFormat actualMetalFormat = m_texture.pixelFormat;
+
+    // Check for RGBA8 -> BGRA8 mismatch
+    if (m_format == WGPUTextureFormat_RGBA8Unorm && actualMetalFormat == MTLPixelFormatBGRA8Unorm)
+        return true;
+    if (m_format == WGPUTextureFormat_RGBA8UnormSrgb && actualMetalFormat == MTLPixelFormatBGRA8Unorm_sRGB)
+        return true;
+
+    // RGBA16Float might also be affected depending on IOSurface support
+    if (m_format == WGPUTextureFormat_RGBA16Float && actualMetalFormat == MTLPixelFormatBGRA8Unorm)
+        return true;
+
+    // Future: Could add more format mismatches here if needed
+
+    return false;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

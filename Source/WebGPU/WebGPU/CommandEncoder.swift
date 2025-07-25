@@ -134,6 +134,7 @@ extension WebGPU.CommandEncoder {
         }
 
         finalizeBlitCommandEncoder()
+        finalizeComputeCommandEncoder()
 
         let commandBuffer = m_commandBuffer
         m_commandBuffer = nil

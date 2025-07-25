@@ -103,6 +103,7 @@ static MTLStoreAction storeAction(WGPUStoreOp storeOp, bool hasResolveTarget = f
 
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, copyBufferToTexture, void, const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&);
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, copyTextureToBuffer, void, const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&);
+DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, finalizeComputeCommandEncoder, void);
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, copyTextureToTexture, void, const WGPUImageCopyTexture&, const WGPUImageCopyTexture&, const WGPUExtent3D&);
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, beginRenderPass, Ref<RenderPassEncoder>, const WGPURenderPassDescriptor&);
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, beginComputePass, Ref<WebGPU::ComputePassEncoder>, const WGPUComputePassDescriptor&);
@@ -226,6 +227,40 @@ void CommandEncoder::finalizeBlitCommandEncoder()
 
     endEncoding(m_blitCommandEncoder);
     m_blitCommandEncoder = nil;
+    setExistingEncoder(nil);
+}
+
+id<MTLComputeCommandEncoder> CommandEncoder::ensureComputeCommandEncoder()
+{
+    if (m_commandBuffer.status >= MTLCommandBufferStatusEnqueued) {
+        m_computeCommandEncoder = nil;
+        return nil;
+    }
+
+    if (m_computeCommandEncoder) {
+        if (encoderIsCurrent(m_computeCommandEncoder))
+            return m_computeCommandEncoder;
+
+        finalizeComputeCommandEncoder();
+    }
+
+    if (!protectedDevice()->isValid())
+        return nil;
+
+    MTLComputePassDescriptor *descriptor = [MTLComputePassDescriptor new];
+    m_computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:descriptor];
+    setExistingEncoder(m_computeCommandEncoder);
+
+    return m_computeCommandEncoder;
+}
+
+void CommandEncoder::finalizeComputeCommandEncoder()
+{
+    if (!encoderIsCurrent(m_computeCommandEncoder))
+        return;
+
+    endEncoding(m_computeCommandEncoder);
+    m_computeCommandEncoder = nil;
     setExistingEncoder(nil);
 }
 
@@ -1524,6 +1559,12 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         return;
     }
 
+    // Check if we need BGRA→RGBA swizzling due to IOSurface format mismatch
+    if (sourceTexture->needsSwizzleForCopyTextureToBuffer()) {
+        copyTextureToBufferWithSwizzling(source, destination, copySize);
+        return;
+    }
+
     Ref apiDestinationBuffer = fromAPI(destination.buffer);
     sourceTexture->setCommandEncoder(*this);
     apiDestinationBuffer->setCommandEncoder(*this);
@@ -1738,6 +1779,160 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         ASSERT_NOT_REACHED();
         return;
     }
+}
+
+void CommandEncoder::copyTextureToBufferWithSwizzling(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
+{
+    // This method handles BGRA→RGBA swizzling using a compute shader
+    // Called when sourceTexture->needsSwizzleForCopyTextureToBuffer() returns true
+
+    if (source.nextInChain || destination.nextInChain || destination.layout.nextInChain)
+        return;
+
+    if (!prepareTheEncoderState()) {
+        GENERATE_INVALID_ENCODER_STATE_ERROR();
+        return;
+    }
+
+    Ref sourceTexture = fromAPI(source.texture);
+    Ref apiDestinationBuffer = fromAPI(destination.buffer);
+
+    sourceTexture->setCommandEncoder(*this);
+    apiDestinationBuffer->setCommandEncoder(*this);
+    apiDestinationBuffer->indirectBufferInvalidated(*this);
+    if (sourceTexture->isDestroyed() || apiDestinationBuffer->isDestroyed())
+        return;
+
+    // Ensure texture is cleared before copy (WebGPU requirement)
+    for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
+        auto originZPlusLayer = checkedSum<NSUInteger>(source.origin.z, layer);
+        if (originZPlusLayer.hasOverflowed())
+            return;
+        NSUInteger sourceSlice = sourceTexture->dimension() == WGPUTextureDimension_3D ? 0 : originZPlusLayer.value();
+        if (!sourceTexture->previouslyCleared(source.mipLevel, sourceSlice))
+            clearTextureIfNeeded(source, sourceSlice);
+    }
+
+    // Create inline Metal compute shader for BGRA→RGBA swizzling
+    static NSString* const swizzleShaderSource = @"#include <metal_stdlib>\n"
+        "using namespace metal;\n"
+        "kernel void bgraToRgbaSwizzle(\n"
+        "    texture2d<float, access::read> sourceTexture [[texture(0)]],\n"
+        "    device uchar* destinationBuffer [[buffer(0)]],\n"
+        "    constant uint& bytesPerRow [[buffer(1)]],\n"
+        "    constant uint& copyWidth [[buffer(2)]],\n"
+        "    constant uint& copyHeight [[buffer(3)]],\n"
+        "    constant uint& mipLevel [[buffer(4)]],\n"
+        "    constant uint& originX [[buffer(5)]],\n"
+        "    constant uint& originY [[buffer(6)]],\n"
+        "    uint2 gid [[thread_position_in_grid]]\n"
+        ") {\n"
+        "    if (gid.x >= copyWidth || gid.y >= copyHeight)\n"
+        "        return;\n"
+        "    uint2 textureCoord = uint2(gid.x + originX, gid.y + originY);\n"
+        "    float4 bgraPixel = sourceTexture.read(textureCoord, mipLevel);\n"
+        "    uchar4 rgbaPixel = uchar4(\n"
+        "        uchar(bgraPixel.b * 255.0 + 0.5),\n"
+        "        uchar(bgraPixel.g * 255.0 + 0.5),\n"
+        "        uchar(bgraPixel.r * 255.0 + 0.5),\n"
+        "        uchar(bgraPixel.a * 255.0 + 0.5)\n"
+        "    );\n"
+        "    uint bufferIndex = (gid.y * bytesPerRow) + (gid.x * 4);\n"
+        "    destinationBuffer[bufferIndex + 0] = rgbaPixel.r;\n"
+        "    destinationBuffer[bufferIndex + 1] = rgbaPixel.g;\n"
+        "    destinationBuffer[bufferIndex + 2] = rgbaPixel.b;\n"
+        "    destinationBuffer[bufferIndex + 3] = rgbaPixel.a;\n"
+        "}";
+
+    // Get compute encoder
+    id<MTLComputeCommandEncoder> computeEncoder = ensureComputeCommandEncoder();
+    if (!computeEncoder) {
+        makeInvalid(@"Failed to create compute command encoder for swizzling");
+        return;
+    }
+
+    // Create compute pipeline state
+    static id<MTLComputePipelineState> pipelineState = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSError* error = nil;
+        id<MTLLibrary> library = [protectedDevice()->device() newLibraryWithSource:swizzleShaderSource options:nil error:&error];
+        if (!library) {
+            NSLog(@"Failed to create Metal library for swizzling: %@", error);
+            return;
+        }
+
+        id<MTLFunction> kernelFunction = [library newFunctionWithName:@"bgraToRgbaSwizzle"];
+        if (!kernelFunction) {
+            NSLog(@"Failed to find swizzle kernel function");
+            return;
+        }
+
+        pipelineState = [protectedDevice()->device() newComputePipelineStateWithFunction:kernelFunction error:&error];
+        if (!pipelineState)
+            NSLog(@"Failed to create compute pipeline state for swizzling: %@", error);
+    });
+
+    if (!pipelineState) {
+        makeInvalid(@"Failed to create compute pipeline for swizzling");
+        return;
+    }
+
+    // Set up compute pass
+    [computeEncoder setComputePipelineState:pipelineState];
+    [computeEncoder setTexture:sourceTexture->texture() atIndex:0];
+    [computeEncoder setBuffer:apiDestinationBuffer->buffer() offset:destination.layout.offset atIndex:0];
+
+    // Pass parameters to compute shader
+    uint32_t bytesPerRow = destination.layout.bytesPerRow;
+    if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
+        bytesPerRow = copySize.width * 4; // 4 bytes per RGBA pixel
+    [computeEncoder setBytes:&bytesPerRow length:sizeof(bytesPerRow) atIndex:1];
+
+    uint32_t copyWidthParam = copySize.width;
+    [computeEncoder setBytes:&copyWidthParam length:sizeof(copyWidthParam) atIndex:2];
+
+    uint32_t copyHeightParam = copySize.height;
+    [computeEncoder setBytes:&copyHeightParam length:sizeof(copyHeightParam) atIndex:3];
+
+    uint32_t mipLevelParam = source.mipLevel;
+    [computeEncoder setBytes:&mipLevelParam length:sizeof(mipLevelParam) atIndex:4];
+
+    uint32_t originXParam = source.origin.x;
+    [computeEncoder setBytes:&originXParam length:sizeof(originXParam) atIndex:5];
+
+    uint32_t originYParam = source.origin.y;
+    [computeEncoder setBytes:&originYParam length:sizeof(originYParam) atIndex:6];
+
+    // Handle multi-layer copies (2D array textures or 3D textures)
+    NSUInteger destinationBytesPerImage = destination.layout.rowsPerImage;
+    if (destinationBytesPerImage == WGPU_COPY_STRIDE_UNDEFINED)
+        destinationBytesPerImage = copySize.height;
+    destinationBytesPerImage *= bytesPerRow;
+
+    for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
+        // Update texture slice for array textures
+        uint32_t sourceSlice = sourceTexture->dimension() == WGPUTextureDimension_3D ? 0 : (source.origin.z + layer);
+        uint32_t sourceZ = sourceTexture->dimension() == WGPUTextureDimension_3D ? (source.origin.z + layer) : 0;
+
+        // For 3D textures, we need to update the origin.z parameter
+        if (sourceTexture->dimension() == WGPUTextureDimension_3D) {
+            uint32_t originZParam = sourceZ;
+            [computeEncoder setBytes:&originZParam length:sizeof(originZParam) atIndex:7];
+        }
+
+        // Update buffer offset for this layer
+        NSUInteger layerOffset = layer * destinationBytesPerImage;
+        [computeEncoder setBuffer:apiDestinationBuffer->buffer() offset:destination.layout.offset + layerOffset atIndex:0];
+
+        // Dispatch threads for this layer
+        MTLSize threadgroupSize = MTLSizeMake(16, 16, 1);
+        MTLSize gridSize = MTLSizeMake(copySize.width, copySize.height, 1);
+
+        [computeEncoder dispatchThreads:gridSize threadsPerThreadgroup:threadgroupSize];
+    }
+
+    // Note: We don't finalize the compute encoder here - it will be finalized when the command buffer is finished
 }
 
 static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
@@ -2169,7 +2364,7 @@ void CommandEncoder::pushDebugGroup(String&& groupLabel)
         GENERATE_INVALID_ENCODER_STATE_ERROR();
         return;
     }
-    
+
     finalizeBlitCommandEncoder();
 
     ++m_debugGroupStackSize;
