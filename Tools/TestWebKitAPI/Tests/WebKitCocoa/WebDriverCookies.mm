@@ -93,10 +93,10 @@ public:
         // Clean up any existing cookies
         auto dataStore = [WKWebsiteDataStore defaultDataStore];
         [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes]
-                       modifiedSince:[NSDate distantPast]
-                   completionHandler:^{
-                       webDriverCookieOperationCompleted = true;
-                   }];
+            modifiedSince:[NSDate distantPast]
+            completionHandler:^{
+                webDriverCookieOperationCompleted = true;
+            }];
 
         Util::run(&webDriverCookieOperationCompleted);
         webDriverCookieOperationCompleted = false;
@@ -216,9 +216,8 @@ TEST_F(WebDriverCookieTest, WebDriverCookieObserverSignaling)
         auto cookie = [NSHTTPCookie cookieWithProperties:properties];
         [cookieStore setCookie:cookie completionHandler:^{
             expectedCallbacks--;
-            if (expectedCallbacks == 0) {
+            if (!expectedCallbacks)
                 webDriverCookieOperationCompleted = true;
-            }
         }];
     }
 
@@ -260,7 +259,7 @@ TEST_F(WebDriverCookieTest, WebDriverCookieDOMConsistency)
 
     // Load a page and check if cookie is accessible via document.cookie
     [webView loadHTMLString:@"<html><body><script>window.testResult = document.cookie.includes('webdriver_dom_consistency_test=dom_consistency_value');</script></body></html>"
-                    baseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+        baseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
     [webView _test_waitForDidFinishNavigation];
 
     // Check if cookie is visible in DOM
@@ -298,9 +297,8 @@ TEST_F(WebDriverCookieTest, WebDriverCookieStressTest)
 
         [cookieStore setCookie:cookie completionHandler:^{
             operationsCompleted++;
-            if (operationsCompleted == numCookies) {
+            if (operationsCompleted == numCookies)
                 webDriverCookieOperationCompleted = true;
-            }
         }];
     }
 
@@ -318,9 +316,8 @@ TEST_F(WebDriverCookieTest, WebDriverCookieStressTest)
 
         NSUInteger stressCookieCount = 0;
         for (NSHTTPCookie *cookie in cookies) {
-            if ([cookie.name hasPrefix:@"webdriver_stress_"]) {
+            if ([cookie.name hasPrefix:@"webdriver_stress_"])
                 stressCookieCount++;
-            }
         }
         EXPECT_EQ(stressCookieCount, numCookies);
 
