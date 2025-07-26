@@ -4845,6 +4845,8 @@
 		BC0929AB2E2AA30A002ACB2C /* StyleScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929A82E2AA1D6002ACB2C /* StyleScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0929AF2E2AA652002ACB2C /* StyleWebKitTouchCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929AC2E2AA595002ACB2C /* StyleWebKitTouchCallout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0929B22E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0929B12E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC092AFA2E33DBE9002ACB2C /* StyleStrokeWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC092AF72E33DBDF002ACB2C /* StyleStrokeWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC092AFE2E33E8FD002ACB2C /* StyleLineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC092AFB2E33E2E9002ACB2C /* StyleLineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10137C25C3624B00DC773C /* ColorModels.h in Headers */ = {isa = PBXBuildFile; fileRef = BC10137B25C3624B00DC773C /* ColorModels.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10137F25C3631600DC773C /* ColorTransferFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC10137E25C3631600DC773C /* ColorTransferFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB45F317D8E39200444446 /* RenderBlockFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17999,6 +18001,10 @@
 		BC092A042E2D5110002ACB2C /* StyleCursor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCursor.cpp; sourceTree = "<group>"; };
 		BC092A0C2E2D75E6002ACB2C /* StyleTextDecorationThickness.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextDecorationThickness.cpp; sourceTree = "<group>"; };
 		BC092A1B2E2DBC36002ACB2C /* StyleViewTransitionName.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleViewTransitionName.cpp; sourceTree = "<group>"; };
+		BC092AF72E33DBDF002ACB2C /* StyleStrokeWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleStrokeWidth.h; sourceTree = "<group>"; };
+		BC092AF82E33DBDF002ACB2C /* StyleStrokeWidth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleStrokeWidth.cpp; sourceTree = "<group>"; };
+		BC092AFB2E33E2E9002ACB2C /* StyleLineWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleLineWidth.h; sourceTree = "<group>"; };
+		BC092AFC2E33E2E9002ACB2C /* StyleLineWidth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleLineWidth.cpp; sourceTree = "<group>"; };
 		BC0CA74C264AED0A004FDC62 /* PixelBufferConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelBufferConversion.h; sourceTree = "<group>"; };
 		BC0CA74D264AED0A004FDC62 /* PixelBufferConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PixelBufferConversion.cpp; sourceTree = "<group>"; };
 		BC10137B25C3624B00DC773C /* ColorModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorModels.h; sourceTree = "<group>"; };
@@ -34816,6 +34822,24 @@
 			path = ui;
 			sourceTree = "<group>";
 		};
+		BC092AF92E33DBDF002ACB2C /* fill-stroke */ = {
+			isa = PBXGroup;
+			children = (
+				BC092AF82E33DBDF002ACB2C /* StyleStrokeWidth.cpp */,
+				BC092AF72E33DBDF002ACB2C /* StyleStrokeWidth.h */,
+			);
+			path = "fill-stroke";
+			sourceTree = "<group>";
+		};
+		BC092AFD2E33E2E9002ACB2C /* backgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				BC092AFC2E33E2E9002ACB2C /* StyleLineWidth.cpp */,
+				BC092AFB2E33E2E9002ACB2C /* StyleLineWidth.h */,
+			);
+			path = backgrounds;
+			sourceTree = "<group>";
+		};
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
@@ -35579,6 +35603,7 @@
 			children = (
 				BC2A0D6F2E08687E003CBA0E /* align */,
 				BC2A0EF82E1214CD003CBA0E /* anchor-position */,
+				BC092AFD2E33E2E9002ACB2C /* backgrounds */,
 				BC23BAAD2D6E345B0069A80B /* borders */,
 				BC9ABA142DECC1CA00F7E52D /* box */,
 				BC4AF4272CFA23040037C65C /* color */,
@@ -35587,6 +35612,7 @@
 				BC0929B82E2AB817002ACB2C /* content */,
 				BC966B412E280AA30028A7AF /* counter-styles */,
 				BCD2C6F42D0F4CE400F77591 /* easing */,
+				BC092AF92E33DBDF002ACB2C /* fill-stroke */,
 				BC3078BC2D020FA000630D75 /* filter-effects */,
 				BC675B6A2DEE8B8200AD4D79 /* flexbox */,
 				BCD9F0072E1AEC5700D1C3DF /* grid */,
@@ -45239,6 +45265,7 @@
 				E47127CB163438AE00ED6F5A /* StyleInvalidator.h in Headers */,
 				BC2A0D5A2E0791C7003CBA0E /* StyleLengthWrapper.h in Headers */,
 				BC2387AC2D8744E100698102 /* StyleLineBoxContain.h in Headers */,
+				BC092AFE2E33E8FD002ACB2C /* StyleLineWidth.h in Headers */,
 				4C96385829BF4A51003E5741 /* StyleListStyleType.h in Headers */,
 				BC9ABA1A2DED228100F7E52D /* StyleMargin.h in Headers */,
 				BC5EB72A0E81DE8100B25965 /* StyleMarqueeData.h in Headers */,
@@ -45322,6 +45349,7 @@
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				E46B72512B61141D00A1F9B5 /* StyleSheetContentsCache.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
+				BC092AFA2E33DBE9002ACB2C /* StyleStrokeWidth.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				1C73A71521857587004CCEA5 /* StyleTextDecorationThickness.h in Headers */,
 				DD1C779029354C77003BD79B /* StyleTextEdge.h in Headers */,

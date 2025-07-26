@@ -206,7 +206,7 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (style().outlineWidth())
+    if (!style().outlineWidth().isZero())
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 

@@ -158,7 +158,7 @@ public:
     static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
     static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
-    static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
+    static Style::LineWidth convertTextStrokeWidth(BuilderState&, const CSSValue&);
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
     static RefPtr<ShapeValue> convertShapeValue(BuilderState&, const CSSValue&);
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
@@ -725,11 +725,11 @@ inline IntSize BuilderConverter::convertInitialLetter(BuilderState& builderState
     };
 }
 
-inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState, const CSSValue& value)
+inline Style::LineWidth BuilderConverter::convertTextStrokeWidth(BuilderState& builderState, const CSSValue& value)
 {
     auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
-        return { };
+        return 0_css_px;
 
     float width = 0;
     switch (primitiveValue->valueID()) {
@@ -751,10 +751,10 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
     }
     default:
         ASSERT_NOT_REACHED();
-        return 0;
+        return 0_css_px;
     }
 
-    return width;
+    return Style::LineWidth { width };
 }
 
 inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(BuilderState& builderState, const CSSValue& value)

@@ -35,6 +35,7 @@ template<typename> class ExceptionOr;
 
 namespace Style {
 struct PreferredSize;
+struct StrokeWidth;
 }
 
 class SVGLengthContext {
@@ -54,6 +55,7 @@ public:
 
     float valueForLength(const Length&, SVGLengthMode = SVGLengthMode::Other);
     float valueForLength(const Style::PreferredSize&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::StrokeWidth&, SVGLengthMode = SVGLengthMode::Other);
 
     ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;

@@ -672,7 +672,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (!areaElementStyle)
         return;
 
-    float outlineWidth = areaElementStyle->outlineWidth();
+    float outlineWidth = Style::evaluate(areaElementStyle->outlineWidth());
     if (!outlineWidth)
         return;
 

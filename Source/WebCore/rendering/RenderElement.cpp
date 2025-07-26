@@ -1496,7 +1496,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineRightInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset()) };
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowRightInsetExtent = [&] {
@@ -1540,7 +1540,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineBottomInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset()) };
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowBottomInsetExtent = [&]() -> LayoutUnit {
@@ -2101,22 +2101,22 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 
 static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
 {
-    context.drawFocusRing(path, style.outlineWidth(), color);
+    context.drawFocusRing(path, Style::evaluate(style.outlineWidth()), color);
 }
 
 static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
 {
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, 0, style.outlineWidth(), color);
+    context.drawFocusRing(rects, 0, Style::evaluate(style.outlineWidth()), color);
 #else
-    context.drawFocusRing(rects, style.outlineOffset(), style.outlineWidth(), color);
+    context.drawFocusRing(rects, Style::evaluate(style.outlineOffset()), Style::evaluate(style.outlineWidth()), color);
 #endif
 }
 
 void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle& style, const Vector<LayoutRect>& focusRingRects) const
 {
     ASSERT(style.outlineStyle() == OutlineStyle::Auto);
-    float outlineOffset = style.outlineOffset();
+    float outlineOffset = Style::evaluate(style.outlineOffset());
     Vector<FloatRect> pixelSnappedFocusRingRects;
     float deviceScaleFactor = document().deviceScaleFactor();
     for (auto rect : focusRingRects) {

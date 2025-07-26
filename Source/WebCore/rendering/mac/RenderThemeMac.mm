@@ -1478,7 +1478,7 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element* e
 
     // Override border.
     style.resetBorder();
-    const short borderWidth = 2 * style.usedZoom();
+    auto borderWidth = 2_css_px * style.usedZoom();
     style.setBorderLeftWidth(borderWidth);
     style.setBorderLeftStyle(BorderStyle::Inset);
     style.setBorderRightWidth(borderWidth);
@@ -1701,7 +1701,7 @@ Style::MinimumSizePair RenderThemeMac::minimumControlSize(StyleAppearance appear
     }
 }
 
-LengthBox RenderThemeMac::controlBorder(StyleAppearance appearance, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor, const Element* element) const
+Style::LineWidthBox RenderThemeMac::controlBorder(StyleAppearance appearance, const FontCascade& font, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled())
@@ -1713,7 +1713,7 @@ LengthBox RenderThemeMac::controlBorder(StyleAppearance appearance, const FontCa
     case StyleAppearance::ColorWell:
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
-        return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
+        return Style::LineWidthBox { 0_css_px, zoomedBox.right(), 0_css_px, zoomedBox.left() };
     default:
         return RenderTheme::controlBorder(appearance, font, zoomedBox, zoomFactor, element);
     }

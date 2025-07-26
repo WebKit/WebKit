@@ -26,13 +26,20 @@
 #include "config.h"
 #include "OutlineValue.h"
 
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
+float OutlineValue::size() const
+{
+    return std::max<float>(0, Style::evaluate(m_width) + Style::evaluate(m_offset));
+}
+
 bool OutlineValue::nonZero() const
 {
-    return width() && style() != OutlineStyle::None;
+    return !width().isZero() && style() != OutlineStyle::None;
 }
 
 bool OutlineValue::isTransparent() const

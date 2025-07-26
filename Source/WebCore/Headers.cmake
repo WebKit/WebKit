@@ -2754,6 +2754,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/anchor-position/StyleAnchorName.h
 
+    style/values/backgrounds/StyleLineWidth.h
+
     style/values/borders/StyleBorderRadius.h
     style/values/borders/StyleBoxShadow.h
     style/values/borders/StyleCornerShapeValue.h
@@ -2777,6 +2779,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/content/StyleQuotes.h
 
     style/values/counter-styles/StyleCounterStyle.h
+
+    style/values/fill-stroke/StyleStrokeWidth.h
 
     style/values/flexbox/StyleFlexBasis.h
 

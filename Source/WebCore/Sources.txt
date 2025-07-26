@@ -3138,6 +3138,7 @@ style/StyleUpdate.cpp
 style/Styleable.cpp
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
+style/values/backgrounds/StyleLineWidth.cpp
 style/values/borders/StyleBorderRadius.cpp
 style/values/borders/StyleBoxShadow.cpp
 style/values/borders/StyleCornerShapeValue.cpp
@@ -3162,6 +3163,7 @@ style/values/easing/StyleEasingFunction.cpp
 style/values/easing/StyleLinearEasingFunction.cpp
 style/values/easing/StyleSpringEasingFunction.cpp
 style/values/easing/StyleStepsEasingFunction.cpp
+style/values/fill-stroke/StyleStrokeWidth.cpp
 style/values/filter-effects/StyleAppleColorFilterProperty.cpp
 style/values/filter-effects/StyleAppleInvertLightnessFunction.cpp
 style/values/filter-effects/StyleBlurFunction.cpp

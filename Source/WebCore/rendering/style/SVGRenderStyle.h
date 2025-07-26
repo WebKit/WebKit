@@ -291,7 +291,7 @@ inline const Length& RenderStyle::strokeDashOffset() const { return svgStyle().s
 inline float RenderStyle::strokeOpacity() const { return svgStyle().strokeOpacity(); }
 inline const Style::SVGPaint& RenderStyle::stroke() const { return svgStyle().stroke(); }
 inline const Style::SVGPaint& RenderStyle::visitedLinkStroke() const { return svgStyle().visitedLinkStroke(); }
-inline const Length& RenderStyle::strokeWidth() const { return m_rareInheritedData->strokeWidth; }
+inline const Style::StrokeWidth& RenderStyle::strokeWidth() const { return m_rareInheritedData->strokeWidth; }
 inline const Length& RenderStyle::x() const { return svgStyle().x(); }
 inline const Length& RenderStyle::y() const { return svgStyle().y(); }
 

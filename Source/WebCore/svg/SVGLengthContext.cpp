@@ -36,6 +36,7 @@
 #include "SVGSVGElement.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleStrokeWidth.h"
 #include <numbers>
 #include <wtf/MathExtras.h>
 
@@ -143,6 +144,25 @@ float SVGLengthContext::valueForLength(const Style::PreferredSize& size, SVGLeng
         },
         [&](const auto&) -> float {
             return 0;
+        }
+    );
+}
+
+float SVGLengthContext::valueForLength(const Style::StrokeWidth& strokeWidth, SVGLengthMode lengthMode)
+{
+    return WTF::switchOn(strokeWidth,
+        [&](const Style::StrokeWidth::Fixed& fixed) -> float {
+            return fixed.value;
+        },
+        [&](const Style::StrokeWidth::Percentage& percentage) -> float {
+            auto result = convertValueFromPercentageToUserUnits(percentage.value / 100, lengthMode);
+            if (result.hasException())
+                return 0;
+            return result.releaseReturnValue();
+        },
+        [&](const Style::StrokeWidth::Calc& calc) -> float {
+            auto viewportSize = this->viewportSize().value_or(FloatSize { });
+            return Style::evaluate(calc, dimensionForLengthMode(lengthMode, viewportSize));
         }
     );
 }

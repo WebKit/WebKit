@@ -69,9 +69,13 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
     }
 
     constexpr bool isZero() const { return !value; }
+    constexpr bool isPositive() const { return value > 0; }
+    constexpr bool isNegative() const { return value < 0; }
 
     constexpr bool operator==(const PrimitiveNumeric&) const = default;
-    constexpr bool operator==(ResolvedValueType other) const { return value == other; };
+    constexpr bool operator==(ResolvedValueType other) const { return value == other; }
+
+    constexpr auto operator<=>(const PrimitiveNumeric&) const = default;
 
 private:
     template<typename> friend struct PrimitiveNumericMarkableTraits;

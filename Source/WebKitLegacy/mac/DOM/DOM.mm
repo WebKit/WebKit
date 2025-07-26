@@ -447,9 +447,9 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto& style = renderer->style();
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
-    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
-    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
-    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
+    boundingBox.move(Style::evaluate(style.borderLeftWidth()), Style::evaluate(style.borderTopWidth()));
+    boundingBox.setWidth(boundingBox.width() - Style::evaluate(style.borderLeftWidth()) - Style::evaluate(style.borderRightWidth()));
+    boundingBox.setHeight(boundingBox.height() - Style::evaluate(style.borderBottomWidth()) - Style::evaluate(style.borderTopWidth()));
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(FloatQuad(boundingBox));

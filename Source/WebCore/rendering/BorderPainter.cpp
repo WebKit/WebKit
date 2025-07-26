@@ -39,6 +39,7 @@
 #include "RenderBox.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
 namespace WebCore {
@@ -307,8 +308,8 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
-    auto outlineWidth = LayoutUnit { styleToUse.outlineWidth() };
-    auto outlineOffset = LayoutUnit { styleToUse.outlineOffset() };
+    auto outlineWidth = LayoutUnit { Style::evaluate(styleToUse.outlineWidth()) };
+    auto outlineOffset = LayoutUnit { Style::evaluate(styleToUse.outlineOffset()) };
 
     auto outerRect = paintRect;
     outerRect.inflate(outlineOffset + outlineWidth);
@@ -349,8 +350,8 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
     }
 
     auto& styleToUse = m_renderer->style();
-    auto outlineOffset = styleToUse.outlineOffset();
-    auto outlineWidth = styleToUse.outlineWidth();
+    auto outlineOffset = Style::evaluate(styleToUse.outlineOffset());
+    auto outlineWidth = Style::evaluate(styleToUse.outlineWidth());
     auto deviceScaleFactor = document().deviceScaleFactor();
 
     Vector<FloatRect> pixelSnappedRects;

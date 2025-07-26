@@ -39,7 +39,7 @@ public:
     }
 
     CollapsedBorderValue(const BorderValue& border, const Color& color, BorderPrecedence precedence)
-        : m_width(LayoutUnit(border.nonZero() ? border.width() : 0))
+        : m_width(LayoutUnit(border.nonZero() ? Style::evaluate(border.width()) : 0))
         , m_color(color)
         , m_style(static_cast<unsigned>(border.style()))
         , m_precedence(static_cast<unsigned>(precedence))

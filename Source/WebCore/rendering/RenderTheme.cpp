@@ -98,10 +98,7 @@ namespace WebCore {
 using namespace CSS::Literals;
 using namespace HTMLNames;
 
-RenderTheme::RenderTheme()
-{
-}
-
+RenderTheme::RenderTheme() = default;
 RenderTheme::~RenderTheme() = default;
 
 StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const RenderStyle& parentStyle, const Element* element, StyleAppearance autoAppearance) const
@@ -839,7 +836,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorWithColorFilter(CSSPropertyColor),
-        style->borderWidth()
+        Style::evaluate(style->borderWidth())
     };
 }
 
@@ -1362,7 +1359,7 @@ Style::MinimumSizePair RenderTheme::minimumControlSize(StyleAppearance appearanc
     return { WTFMove(resultWidth), WTFMove(resultHeight) };
 }
 
-LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float, const Element*) const
+Style::LineWidthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float, const Element*) const
 {
     switch (appearance) {
     case StyleAppearance::PushButton:
@@ -1370,7 +1367,7 @@ LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCasca
     case StyleAppearance::SearchField:
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio:
-        return LengthBox(0);
+        return Style::LineWidthBox { 0_css_px };
     default:
         return zoomedBox;
     }
@@ -1381,10 +1378,9 @@ LengthBox RenderTheme::controlBorder(StyleAppearance appearance, const FontCasca
 void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
 {
     auto appearance = style.usedAppearance();
-
-    LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
     CheckedRef fontCascade = style.fontCascade();
-    borderBox = controlBorder(appearance, fontCascade.get(), borderBox, style.usedZoom(), element);
+
+    auto borderBox = controlBorder(appearance, fontCascade.get(), style.borderWidth(), style.usedZoom(), element);
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
@@ -1395,31 +1391,31 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     };
     // Transpose for vertical writing mode:
     if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
-        borderBox = LengthBox(borderBox.left().value(), borderBox.top().value(), borderBox.right().value(), borderBox.bottom().value());
+        borderBox = Style::LineWidthBox { borderBox.left(), borderBox.top(), borderBox.right(), borderBox.bottom() };
 
-    if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
-        if (borderBox.top().value())
-            style.setBorderTopWidth(borderBox.top().value());
+    if (Style::evaluate(borderBox.top()) != static_cast<int>(Style::evaluate(style.borderTopWidth()))) {
+        if (!borderBox.top().isZero())
+            style.setBorderTopWidth(borderBox.top());
         else
             style.resetBorderTop();
     }
-    if (borderBox.right().value() != static_cast<int>(style.borderRightWidth())) {
-        if (borderBox.right().value())
-            style.setBorderRightWidth(borderBox.right().value());
+    if (Style::evaluate(borderBox.right()) != static_cast<int>(Style::evaluate(style.borderRightWidth()))) {
+        if (!borderBox.right().isZero())
+            style.setBorderRightWidth(borderBox.right());
         else
             style.resetBorderRight();
     }
-    if (borderBox.bottom().value() != static_cast<int>(style.borderBottomWidth())) {
-        style.setBorderBottomWidth(borderBox.bottom().value());
-        if (borderBox.bottom().value())
-            style.setBorderBottomWidth(borderBox.bottom().value());
+    if (Style::evaluate(borderBox.bottom()) != static_cast<int>(Style::evaluate(style.borderBottomWidth()))) {
+        style.setBorderBottomWidth(borderBox.bottom());
+        if (!borderBox.bottom().isZero())
+            style.setBorderBottomWidth(borderBox.bottom());
         else
             style.resetBorderBottom();
     }
-    if (borderBox.left().value() != static_cast<int>(style.borderLeftWidth())) {
-        style.setBorderLeftWidth(borderBox.left().value());
-        if (borderBox.left().value())
-            style.setBorderLeftWidth(borderBox.left().value());
+    if (Style::evaluate(borderBox.left()) != static_cast<int>(Style::evaluate(style.borderLeftWidth()))) {
+        style.setBorderLeftWidth(borderBox.left());
+        if (!borderBox.left().isZero())
+            style.setBorderLeftWidth(borderBox.left());
         else
             style.resetBorderLeft();
     }

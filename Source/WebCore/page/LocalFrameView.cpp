@@ -2440,7 +2440,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         if (!border->isVisible())
             return samplingRect;
 
-        auto borderWidth = border->width();
+        auto borderWidth = Style::evaluate(border->width());
         if (borderWidth > thinBorderWidth)
             return samplingRect;
 

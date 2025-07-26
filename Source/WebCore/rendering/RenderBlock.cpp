@@ -369,9 +369,15 @@ bool RenderBlock::paddingBoxLogicaHeightChanged(const RenderStyle& oldStyle, con
     auto scrollbarHeightDidChange = [&] (auto orientation) {
         return (orientation == ScrollbarOrientation::Vertical ? includeVerticalScrollbarSize() : includeHorizontalScrollbarSize()) && oldStyle.scrollbarWidth() != newStyle.scrollbarWidth();
     };
-    if (newStyle.writingMode().isHorizontal())
-        return oldStyle.borderTopWidth() != newStyle.borderTopWidth() || oldStyle.borderBottomWidth() != newStyle.borderBottomWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
-    return oldStyle.borderLeftWidth() != newStyle.borderLeftWidth() || oldStyle.borderRightWidth() != newStyle.borderRightWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
+    if (newStyle.writingMode().isHorizontal()) {
+        return oldStyle.borderTopWidth() != newStyle.borderTopWidth()
+            || oldStyle.borderBottomWidth() != newStyle.borderBottomWidth()
+            || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
+    }
+
+    return oldStyle.borderLeftWidth() != newStyle.borderLeftWidth()
+        || oldStyle.borderRightWidth() != newStyle.borderRightWidth()
+        || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
 }
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -246,10 +246,10 @@ Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxMode
 {
     auto& style = renderer.style();
 
-    auto borderLeft = LayoutUnit { style.borderLeftWidth() };
-    auto borderRight = LayoutUnit { style.borderRightWidth() };
-    auto borderTop = LayoutUnit { style.borderTopWidth() };
-    auto borderBottom = LayoutUnit { style.borderBottomWidth() };
+    auto borderLeft = LayoutUnit { Style::evaluate(style.borderLeftWidth()) };
+    auto borderRight = LayoutUnit { Style::evaluate(style.borderRightWidth()) };
+    auto borderTop = LayoutUnit { Style::evaluate(style.borderTopWidth()) };
+    auto borderBottom = LayoutUnit { Style::evaluate(style.borderBottomWidth()) };
 
     if (!isIntrinsicWidthMode)
         adjustBorderForTableAndFieldset(renderer, borderLeft, borderRight, borderTop, borderBottom);

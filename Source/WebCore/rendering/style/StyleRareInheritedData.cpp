@@ -75,8 +75,9 @@ static_assert(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsSt
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRareInheritedData);
 
 StyleRareInheritedData::StyleRareInheritedData()
-    : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
+    : usedZoom(RenderStyle::initialZoom())
     , listStyleImage(RenderStyle::initialListStyleImage())
+    , textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , textStrokeColor(RenderStyle::initialTextStrokeColor())
     , textFillColor(RenderStyle::initialTextFillColor())
     , textEmphasisColor(RenderStyle::initialTextEmphasisColor())
@@ -90,7 +91,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , dynamicRangeLimit(RenderStyle::initialDynamicRangeLimit())
     , textShadow(RenderStyle::initialTextShadow())
     , cursorImages(RenderStyle::initialCursor().images)
-    , usedZoom(RenderStyle::initialZoom())
     , textEmphasisStyle(RenderStyle::initialTextEmphasisStyle())
     , textIndent(RenderStyle::initialTextIndent())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
@@ -174,8 +174,9 @@ StyleRareInheritedData::StyleRareInheritedData()
 
 inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     : RefCounted<StyleRareInheritedData>()
-    , textStrokeWidth(o.textStrokeWidth)
+    , usedZoom(o.usedZoom)
     , listStyleImage(o.listStyleImage)
+    , textStrokeWidth(o.textStrokeWidth)
     , textStrokeColor(o.textStrokeColor)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
@@ -189,7 +190,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , dynamicRangeLimit(o.dynamicRangeLimit)
     , textShadow(o.textShadow)
     , cursorImages(o.cursorImages)
-    , usedZoom(o.usedZoom)
     , textEmphasisStyle(o.textEmphasisStyle)
     , textIndent(o.textIndent)
     , textUnderlineOffset(o.textUnderlineOffset)
@@ -288,8 +288,9 @@ StyleRareInheritedData::~StyleRareInheritedData() = default;
 
 bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 {
-    return textStrokeColor == o.textStrokeColor
+    return usedZoom == o.usedZoom
         && textStrokeWidth == o.textStrokeWidth
+        && textStrokeColor == o.textStrokeColor
         && textFillColor == o.textFillColor
         && textEmphasisColor == o.textEmphasisColor
         && visitedLinkTextStrokeColor == o.visitedLinkTextStrokeColor
@@ -305,7 +306,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #endif
         && textShadow == o.textShadow
         && cursorImages == o.cursorImages
-        && usedZoom == o.usedZoom
         && textEmphasisStyle == o.textEmphasisStyle
         && textIndent == o.textIndent
         && textUnderlineOffset == o.textUnderlineOffset
@@ -402,9 +402,12 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
 {
     customProperties->dumpDifferences(ts, other.customProperties);
 
-    LOG_IF_DIFFERENT(textStrokeWidth);
+    LOG_IF_DIFFERENT(usedZoom);
 
     LOG_IF_DIFFERENT(listStyleImage);
+
+    LOG_IF_DIFFERENT(textStrokeWidth);
+
     LOG_IF_DIFFERENT(textStrokeColor);
     LOG_IF_DIFFERENT(textFillColor);
     LOG_IF_DIFFERENT(textEmphasisColor);
@@ -425,8 +428,6 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
     LOG_IF_DIFFERENT(textShadow);
 
     LOG_IF_DIFFERENT(cursorImages);
-
-    LOG_IF_DIFFERENT(usedZoom);
 
     LOG_IF_DIFFERENT(textEmphasisStyle);
     LOG_IF_DIFFERENT(textIndent);

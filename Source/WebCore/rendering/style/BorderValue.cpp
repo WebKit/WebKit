@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BorderValue.h"
 
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

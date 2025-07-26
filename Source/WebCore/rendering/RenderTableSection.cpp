@@ -697,7 +697,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth { 0_css_px };
 
     const BorderValue& sb = style().borderBefore(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
@@ -738,7 +738,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), false);
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), false);
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderAfter() const
@@ -747,7 +747,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth { 0_css_px };
 
     const BorderValue& sb = style().borderAfter(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
@@ -788,7 +788,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), true);
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), true);
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderStart() const
@@ -797,7 +797,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth { 0_css_px };
 
     const BorderValue& sb = style().borderStart(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
@@ -831,7 +831,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), table()->writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), table()->writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTableSection::calcOuterBorderEnd() const
@@ -840,7 +840,7 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth;
+    Style::LineWidth borderWidth { 0_css_px };
 
     const BorderValue& sb = style().borderEnd(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
@@ -874,7 +874,7 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     }
     if (allHidden)
         return -1;
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), !table()->writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), !table()->writingMode().isInlineFlipped());
 }
 
 void RenderTableSection::recalcOuterBorder()
@@ -1177,18 +1177,18 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
     switch (borderSide) {
     case BoxSide::Top:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderTop().width())), BoxSide::Top, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(Style::evaluate(style.borderTop().width()))), BoxSide::Top, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
         break;
     case BoxSide::Bottom:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y() + rowGroupRect.height(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderBottom().width())), BoxSide::Bottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(Style::evaluate(style.borderBottom().width()))), BoxSide::Bottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
         break;
     case BoxSide::Left:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderLeft().width()),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(Style::evaluate(style.borderLeft().width())),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Left, CSSPropertyBorderLeftColor, style.borderLeftStyle(), table()->style().borderLeftStyle());
         break;
     case BoxSide::Right:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderRight().width()),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(Style::evaluate(style.borderRight().width())),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Right, CSSPropertyBorderRightColor, style.borderRightStyle(), table()->style().borderRightStyle());
         break;
     default:

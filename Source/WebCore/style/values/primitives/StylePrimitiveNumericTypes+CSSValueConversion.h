@@ -45,7 +45,7 @@ template<auto R, typename V> struct CSSValueConversion<Integer<R, V>> {
     {
         RefPtr protectedValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
         if (!protectedValue)
-            return 0_css_px;
+            return 0_css_integer;
         return { protectedValue->resolveAsNumber<V>(builderState.cssToLengthConversionData()) };
     }
 };

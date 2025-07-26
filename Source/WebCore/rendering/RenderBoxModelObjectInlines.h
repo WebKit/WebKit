@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-inline LayoutUnit RenderBoxModelObject::borderAfter() const { return LayoutUnit(style().borderAfterWidth()); }
+inline LayoutUnit RenderBoxModelObject::borderAfter() const { return LayoutUnit(Style::evaluate(style().borderAfterWidth())); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingAfter() const { return borderAfter() + paddingAfter(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalHeight() const { return borderAndPaddingBefore() + borderAndPaddingAfter(); }
@@ -34,17 +34,17 @@ inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalLeft() const { re
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalRight() const { return writingMode().isHorizontal() ? borderRight() + paddingRight() : borderBottom() + paddingBottom(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingStart() const { return borderStart() + paddingStart(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingEnd() const { return borderEnd() + paddingEnd(); }
-inline LayoutUnit RenderBoxModelObject::borderBefore() const { return LayoutUnit(style().borderBeforeWidth()); }
-inline LayoutUnit RenderBoxModelObject::borderBottom() const { return LayoutUnit(style().borderBottomWidth()); }
-inline LayoutUnit RenderBoxModelObject::borderEnd() const { return LayoutUnit(style().borderEndWidth()); }
-inline LayoutUnit RenderBoxModelObject::borderLeft() const { return LayoutUnit(style().borderLeftWidth()); }
+inline LayoutUnit RenderBoxModelObject::borderBefore() const { return LayoutUnit(Style::evaluate(style().borderBeforeWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderBottom() const { return LayoutUnit(Style::evaluate(style().borderBottomWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderEnd() const { return LayoutUnit(Style::evaluate(style().borderEndWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderLeft() const { return LayoutUnit(Style::evaluate(style().borderLeftWidth())); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalHeight() const { return borderBefore() + borderAfter(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalLeft() const { return writingMode().isHorizontal() ? borderLeft() : borderTop(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalRight() const { return writingMode().isHorizontal() ? borderRight() : borderBottom(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalWidth() const { return borderStart() + borderEnd(); }
-inline LayoutUnit RenderBoxModelObject::borderRight() const { return LayoutUnit(style().borderRightWidth()); }
-inline LayoutUnit RenderBoxModelObject::borderStart() const { return LayoutUnit(style().borderStartWidth()); }
-inline LayoutUnit RenderBoxModelObject::borderTop() const { return LayoutUnit(style().borderTopWidth()); }
+inline LayoutUnit RenderBoxModelObject::borderRight() const { return LayoutUnit(Style::evaluate(style().borderRightWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderStart() const { return LayoutUnit(Style::evaluate(style().borderStartWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderTop() const { return LayoutUnit(Style::evaluate(style().borderTopWidth())); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingAfter()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBefore()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBottom()); }
@@ -81,10 +81,10 @@ inline LayoutUnit RenderBoxModelObject::verticalBorderExtent() const { return bo
 inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
 {
     return {
-        LayoutUnit(style().borderTopWidth()),
-        LayoutUnit(style().borderRightWidth()),
-        LayoutUnit(style().borderBottomWidth()),
-        LayoutUnit(style().borderLeftWidth())
+        LayoutUnit(Style::evaluate(style().borderTopWidth())),
+        LayoutUnit(Style::evaluate(style().borderRightWidth())),
+        LayoutUnit(Style::evaluate(style().borderBottomWidth())),
+        LayoutUnit(Style::evaluate(style().borderLeftWidth())),
     };
 }
 

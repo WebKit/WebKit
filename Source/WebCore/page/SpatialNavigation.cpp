@@ -521,9 +521,9 @@ LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode& containerNode, boo
         // the rect of the focused element.
         if (ignoreBorder) {
             auto& style = renderer->style();
-            rect.move(style.borderLeftWidth(), style.borderTopWidth());
-            rect.setWidth(rect.width() - style.borderLeftWidth() - style.borderRightWidth());
-            rect.setHeight(rect.height() - style.borderTopWidth() - style.borderBottomWidth());
+            rect.move(Style::evaluate(style.borderLeftWidth()), Style::evaluate(style.borderTopWidth()));
+            rect.setWidth(rect.width() - Style::evaluate(style.borderLeftWidth()) - Style::evaluate(style.borderRightWidth()));
+            rect.setHeight(rect.height() - Style::evaluate(style.borderTopWidth()) - Style::evaluate(style.borderBottomWidth()));
         }
         return rect;
     }

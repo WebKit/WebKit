@@ -206,7 +206,7 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, const RenderElement
     ASSERT(styleImage->isLoaded(renderer));
 
     LayoutBoxExtent sourceSlices = computeSlices(source, imageSlices(), styleImage->imageScaleFactor());
-    LayoutBoxExtent destinationSlices = computeSlices(destination.size(), borderSlices(), style.borderWidth(), sourceSlices);
+    LayoutBoxExtent destinationSlices = computeSlices(destination.size(), borderSlices(), Style::evaluate(style.borderWidth()), sourceSlices);
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 

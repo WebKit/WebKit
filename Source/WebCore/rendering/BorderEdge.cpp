@@ -30,6 +30,7 @@
 #include "LayoutUnit.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
@@ -48,9 +49,10 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
 
 BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges, LayoutSize inflation, bool setColorsToBlack)
 {
-    auto constructBorderEdge = [&](float width, float inflation, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
+    auto constructBorderEdge = [&](Style::LineWidth width, float inflation, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : style.visitedDependentColorWithColorFilter(borderColorProperty);
-        auto inflatedWidth = width ? width + inflation : width;
+        auto evaluatedWidth = Style::evaluate(width);
+        auto inflatedWidth = evaluatedWidth ? evaluatedWidth + inflation : evaluatedWidth;
         return BorderEdge(inflatedWidth, color, borderStyle, !setColorsToBlack && isTransparent, isPresent, deviceScaleFactor);
     };
 
@@ -66,7 +68,7 @@ BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderSt
 {
     auto color = style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     auto isTransparent = color.isValid() && !color.isVisible();
-    auto size = style.outlineWidth();
+    auto size = Style::evaluate(style.outlineWidth());
     return {
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },

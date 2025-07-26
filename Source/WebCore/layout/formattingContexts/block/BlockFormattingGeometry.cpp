@@ -327,10 +327,10 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
         return fixedValue(style.marginStart()).value_or(0)
-            + LayoutUnit { style.borderLeftWidth() }
+            + LayoutUnit { Style::evaluate(style.borderLeftWidth()) }
             + fixedValue(style.paddingLeft()).value_or(0)
             + fixedValue(style.paddingRight()).value_or(0)
-            + LayoutUnit { style.borderRightWidth() }
+            + LayoutUnit { Style::evaluate(style.borderRightWidth()) }
             + fixedValue(style.marginEnd()).value_or(0);
     };
 

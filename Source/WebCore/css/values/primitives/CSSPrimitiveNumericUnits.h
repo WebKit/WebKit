@@ -53,7 +53,7 @@ struct ValueLiteral {
 
     // Synthesize all comparison and equality operators.
 
-    auto operator<=>(const ValueLiteral&) const = default;
+    constexpr auto operator<=>(const ValueLiteral&) const = default;
 
     // Support unary operators.
 
