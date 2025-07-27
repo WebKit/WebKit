@@ -242,28 +242,28 @@ static RetainPtr<IOSurfaceRef> createSurface(IntSize size, IOSurface::Name name,
     switch (format) {
     case IOSurface::Format::BGRX:
     case IOSurface::Format::BGRA:
-        options = optionsFor32BitSurface(size, 'BGRA', name);
+        options = optionsFor32BitSurface(size, kCVPixelFormatType_32BGRA, name);
         break;
     case IOSurface::Format::YUV422:
-        options = optionsForBiplanarSurface(size, '422f', 1, 1, name);
+        options = optionsForBiplanarSurface(size, kCVPixelFormatType_422YpCbCr8BiPlanarFullRange, 1, 1, name);
         break;
     case IOSurface::Format::RGBX:
     case IOSurface::Format::RGBA:
-        options = optionsFor32BitSurface(size, 'RGBA', name);
+        options = optionsFor32BitSurface(size, kCVPixelFormatType_32RGBA, name);
         break;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case IOSurface::Format::RGB10:
-        options = optionsFor32BitSurface(size, 'w30r', name);
+        options = optionsFor32BitSurface(size, kCVPixelFormatType_30RGBLEPackedWideGamut, name);
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case IOSurface::Format::RGB10A8:
-        options = optionsForBiplanarSurface(size, 'b3a8', 4, 1, name);
+        options = optionsForBiplanarSurface(size, kCVPixelFormatType_30RGBLE_8A_BiPlanar, 4, 1, name);
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case IOSurface::Format::RGBA16F:
-        options = optionsFor64BitSurface(size, 'RGhA', name);
+        options = optionsFor64BitSurface(size, kCVPixelFormatType_64RGBAHalf, name);
         break;
 #endif
     }
@@ -295,27 +295,27 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
 static std::optional<IOSurface::UsedFormat> formatFromSurface(IOSurfaceRef surface)
 {
     unsigned pixelFormat = IOSurfaceGetPixelFormat(surface);
-    if (pixelFormat == 'BGRA')
+    if (pixelFormat == kCVPixelFormatType_32BGRA)
         return IOSurface::UsedFormat { IOSurface::Format::BGRA, UseLosslessCompression::No };
 
-    if (pixelFormat == '422f')
+    if (pixelFormat == kCVPixelFormatType_422YpCbCr8BiPlanarFullRange)
         return IOSurface::UsedFormat { IOSurface::Format::YUV422, UseLosslessCompression::No };
 
-    if (pixelFormat == 'RGBA')
+    if (pixelFormat == kCVPixelFormatType_32RGBA)
         return IOSurface::UsedFormat { IOSurface::Format::RGBA, UseLosslessCompression::No };
 
 #if ENABLE(PIXEL_FORMAT_RGB10)
-    if (pixelFormat == 'w30r')
+    if (pixelFormat == kCVPixelFormatType_30RGBLEPackedWideGamut)
         return IOSurface::UsedFormat { IOSurface::Format::RGB10, UseLosslessCompression::No };
 #endif
 
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
-    if (pixelFormat == 'b3a8')
+    if (pixelFormat == kCVPixelFormatType_30RGBLE_8A_BiPlanar)
         return IOSurface::UsedFormat { IOSurface::Format::RGB10A8, UseLosslessCompression::No };
 #endif
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (pixelFormat == 'RGhA')
+    if (pixelFormat == kCVPixelFormatType_64RGBAHalf)
         return IOSurface::UsedFormat { IOSurface::Format::RGBA16F, UseLosslessCompression::No };
 #endif
 

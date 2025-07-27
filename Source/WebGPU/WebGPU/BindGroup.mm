@@ -273,10 +273,10 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return biplanarFormat(plane);
 
     case kCVPixelFormatType_422YpCbCr10:     /* Component Y'CbCr 10-bit 4:2:2 */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR8_422_1P) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_444YpCbCr10:     /* Component Y'CbCr 10-bit 4:4:4 */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_444_1P) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_420YpCbCr8Planar:   /* Planar Component Y'CbCr 8-bit 4:2:0.  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrPlanar struct */
         return biplanarFormat(plane);
@@ -362,17 +362,17 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return MTLPixelFormatDepth32Float;
 
     case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:2:0, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_420_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:2:2, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:4:4, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_444_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:2:0, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:2:2, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:4:4, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_444_2P) : MTLPixelFormatInvalid;
     case kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar: /* first and second planes as per 420YpCbCr8BiPlanarVideoRange (420v), alpha 8 bits in third plane full-range.  No CVPlanarPixelBufferInfo struct. */
         return biplanarFormat(plane);
 
@@ -399,10 +399,10 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return biplanarFormat(plane);
 
     case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarVideoRange: /* Lossless-compressed-packed form of case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_420_2P_PACKED) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_Lossless_422YpCbCr10PackedBiPlanarVideoRange: /* Lossless-compressed form of case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P_PACKED) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_Lossy_32BGRA: /* Lossy-compressed form of case kCVPixelFormatType_32BGRA. No CVPlanarPixelBufferInfo struct.  */
         return MTLPixelFormatBGRA8Unorm;
@@ -412,10 +412,10 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return biplanarFormat(plane);
 
     case kCVPixelFormatType_Lossy_420YpCbCr10PackedBiPlanarVideoRange: /* Lossy-compressed form of case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_420_2P_PACKED_PQ) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_Lossy_422YpCbCr10PackedBiPlanarVideoRange: /* Lossy-compressed form of kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
-        return biplanarFormat(plane);
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P_PACKED) : MTLPixelFormatInvalid;
 
     case kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange:
         return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_420_2P_PACKED) : MTLPixelFormatInvalid;
@@ -520,7 +520,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         auto format0 = metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle, supportsExtendedFormats);
         if (format0 != MTLPixelFormatInvalid)
             status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format0, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
-        auto format1 = metalPixelFormat(pixelBuffer, 1, firstPlaneSwizzle, supportsExtendedFormats);
+        auto format1 = metalPixelFormat(pixelBuffer, 1, secondPlaneSwizzle, supportsExtendedFormats);
         if (format1 != MTLPixelFormatInvalid)
             status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format1, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
     }

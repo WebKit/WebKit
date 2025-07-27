@@ -35,6 +35,14 @@ DECLARE_SYSTEM_HEADER
 #import <Metal/MTLResource_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #else
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_420_2P = static_cast<MTLPixelFormat>(500);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_1P = static_cast<MTLPixelFormat>(501);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_2P = static_cast<MTLPixelFormat>(502);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_444_2P = static_cast<MTLPixelFormat>(503);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_1P = static_cast<MTLPixelFormat>(504);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P = static_cast<MTLPixelFormat>(505);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P = static_cast<MTLPixelFormat>(506);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P = static_cast<MTLPixelFormat>(507);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PACKED = static_cast<MTLPixelFormat>(508);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PACKED = static_cast<MTLPixelFormat>(509);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPixelFormat>(510);
