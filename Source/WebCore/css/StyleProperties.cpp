@@ -71,8 +71,11 @@ String serializeLonghandValue(const CSS::SerializationContext& context, CSSPrope
     case CSSPropertyStrokeOpacity:
         // FIXME: Handle this when creating the CSSValue for opacity, to be consistent with other CSS value serialization quirks.
         // Opacity percentage values serialize as a fraction in the range 0-1, not "%".
-        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage())
+        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage()) {
+            if (primitive->isCalculated())
+                return makeString("calc("_s, primitive->resolveAsPercentageDeprecated() / 100, ")"_s);
             return makeString(primitive->resolveAsPercentageDeprecated() / 100);
+        }
         break;
     default:
         break;
