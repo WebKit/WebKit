@@ -68,7 +68,7 @@ private:
     IPC::Connection& connection() const;
     Ref<IPC::Connection> protectedConnection() const;
 
-    WeakRef<WebProcess> m_process;
+    const WeakRef<WebProcess> m_process;
 
     class Source;
     friend class Source;
