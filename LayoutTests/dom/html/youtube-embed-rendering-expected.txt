@@ -1,0 +1,15 @@
+Blocked access to external URL https://www.youtube.com/embed/UF8uR6Z6KLc
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x370
+  RenderBlock {HTML} at (0,0) size 800x370
+    RenderBody {BODY} at (8,8) size 784x354
+      RenderInline {EMBED} at (0,336) size 300x18
+        RenderBlock {DIV} at (0,0) size 300x354
+          RenderIFrame {IFRAME} at (0,0) size 300x350
+            layer at (0,0) size 300x350
+              RenderView at (0,0) size 300x350
+            layer at (0,0) size 300x350
+              RenderBlock {HTML} at (0,0) size 300x350
+                RenderBody {BODY} at (8,8) size 284x334
+      RenderText {#text} at (0,0) size 0x0

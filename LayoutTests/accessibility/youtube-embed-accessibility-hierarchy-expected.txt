@@ -1,0 +1,6 @@
+Blocked access to external URL https://www.youtube.com/embed/UF8uR6Z6KLc
+This test verifies that we don't hang when building the accessibility tree with a YouTube embed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
