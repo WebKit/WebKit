@@ -46,6 +46,29 @@ enum class PixelFormat : uint8_t {
 
 enum class UseLosslessCompression : bool { No, Yes };
 
+inline constexpr unsigned bytesPerPixel(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+        return 4;
+    case PixelFormat::BGRX8:
+        return 3;
+    case PixelFormat::BGRA8:
+        return 4;
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+        return 4;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        return 8;
+#endif
+    }
+}
+
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);
 
 }

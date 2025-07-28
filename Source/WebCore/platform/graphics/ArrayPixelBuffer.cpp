@@ -26,7 +26,28 @@
 #include "config.h"
 #include "ArrayPixelBuffer.h"
 
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
+
 namespace WebCore {
+
+RefPtr<ArrayPixelBuffer> ArrayPixelBuffer::tryCreate(const PixelBufferFormat& pixelBufferFormat, const IntSize& size)
+{
+    switch (pixelBufferFormat.pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRA8:
+        ASSERT(supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return ByteArrayPixelBuffer::tryCreate(pixelBufferFormat, size);
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        ASSERT(supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return Float16ArrayPixelBuffer::tryCreate(pixelBufferFormat, size);
+#endif
+    default:
+        ASSERT(!supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return nullptr;
+    }
+}
 
 ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBufferView>&& data)
     : PixelBuffer(format, size, data->mutableSpan())

@@ -60,9 +60,13 @@ ImageBufferCGBackend::ImageBufferCGBackend(const Parameters& parameters, std::un
 
 ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
-unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
+unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize, ImageBufferPixelFormat imageBufferPixelFormat)
 {
     ASSERT(!backendSize.isEmpty());
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (imageBufferPixelFormat == ImageBufferPixelFormat::RGBA16F)
+        return CheckedUint32(backendSize.width()) * 8;
+#endif
     return CheckedUint32(backendSize.width()) * 4;
 }
 

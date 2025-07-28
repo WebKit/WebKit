@@ -3931,8 +3931,10 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
     bool isCanvasLargeEnoughToForceCompositing = true;
 #if !USE(COMPOSITING_FOR_SMALL_CANVASES)
     RefPtr canvas = downcast<HTMLCanvasElement>(renderer.element());
-    auto canvasArea = canvas->size().area<RecordOverflow>();
-    isCanvasLargeEnoughToForceCompositing = !canvasArea.hasOverflowed() && canvasArea >= canvasAreaThresholdRequiringCompositing;
+    if (RefPtr renderingContext = canvas->renderingContext(); !renderingContext->isHDR()) {
+        auto canvasArea = canvas->size().area<RecordOverflow>();
+        isCanvasLargeEnoughToForceCompositing = !canvasArea.hasOverflowed() && canvasArea >= canvasAreaThresholdRequiringCompositing;
+    }
 #endif
 
     CanvasCompositingStrategy compositingStrategy = canvasCompositingStrategy(renderer);

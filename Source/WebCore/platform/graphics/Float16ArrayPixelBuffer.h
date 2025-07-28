@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class Float16ArrayPixelBuffer final: public ArrayPixelBuffer {
+class Float16ArrayPixelBuffer final : public ArrayPixelBuffer {
 public:
     WEBCORE_EXPORT static Ref<Float16ArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Float16Array&);
     WEBCORE_EXPORT static std::optional<Ref<Float16ArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const Float16> data);
@@ -47,6 +47,8 @@ public:
     Type type() const override { return Type::Float16Array; }
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 
+    static constexpr unsigned bytesPerPixel = 8;
+
 private:
     Float16ArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Float16Array>&&);
 };
@@ -55,6 +57,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Float16ArrayPixelBuffer)
     static bool isType(const WebCore::PixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array; }
+    static bool isType(const WebCore::ArrayPixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)

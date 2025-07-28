@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
 size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize, parameters.bufferFormat.pixelFormat));
 }
 
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
@@ -104,7 +104,7 @@ GraphicsContext& ImageBufferCGBitmapBackend::context()
 
 unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
 {
-    return calculateBytesPerRow(m_parameters.backendSize);
+    return calculateBytesPerRow(m_parameters.backendSize, m_parameters.bufferFormat.pixelFormat);
 }
 
 bool ImageBufferCGBitmapBackend::canMapBackingStore() const

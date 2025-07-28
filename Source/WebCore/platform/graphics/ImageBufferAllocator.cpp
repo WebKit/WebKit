@@ -27,6 +27,7 @@
 #include "ImageBufferAllocator.h"
 
 #include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 #include "ImageBuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -44,6 +45,8 @@ RefPtr<ImageBuffer> ImageBufferAllocator::createImageBuffer(const FloatSize& siz
 
 RefPtr<PixelBuffer> ImageBufferAllocator::createPixelBuffer(const PixelBufferFormat& format, const IntSize& size) const
 {
+    if (format.pixelFormat == PixelFormat::RGBA16F)
+        return Float16ArrayPixelBuffer::tryCreate(format, size);
     return ByteArrayPixelBuffer::tryCreate(format, size);
 }
 

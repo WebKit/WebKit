@@ -58,16 +58,16 @@ IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& 
     return backendSize;
 }
 
-unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize)
+unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize, ImageBufferPixelFormat imageBufferPixelFormat)
 {
-    unsigned bytesPerRow = ImageBufferCGBackend::calculateBytesPerRow(backendSize);
+    unsigned bytesPerRow = ImageBufferCGBackend::calculateBytesPerRow(backendSize, imageBufferPixelFormat);
     size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
     return (bytesPerRow + alignmentMask) & ~alignmentMask;
 }
 
 size_t ImageBufferIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize, parameters.bufferFormat.pixelFormat));
 }
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)

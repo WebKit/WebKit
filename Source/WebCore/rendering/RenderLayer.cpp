@@ -5987,8 +5987,8 @@ static bool rendererHasHDRContent(const RenderElement& renderer)
                 return true;
         }
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    } else if (CheckedPtr canavsRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer)) {
-        if (auto* renderingContext = canavsRenderer->canvasElement().renderingContext()) {
+    } else if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer)) {
+        if (auto* renderingContext = canvasRenderer->canvasElement().renderingContext()) {
             if (renderingContext->isHDR())
                 return true;
         }

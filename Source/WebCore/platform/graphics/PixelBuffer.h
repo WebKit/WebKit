@@ -75,6 +75,7 @@ public:
 protected:
     WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, std::span<uint8_t> bytes);
 
+private:
     PixelBufferFormat m_format;
     IntSize m_size;
 

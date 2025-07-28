@@ -45,6 +45,8 @@ public:
     Type type() const override { return Type::ByteArray; }
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 
+    static constexpr unsigned bytesPerPixel = 4;
+
 private:
     ByteArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
 };
@@ -53,4 +55,5 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ByteArrayPixelBuffer)
     static bool isType(const WebCore::PixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::ByteArray; }
+    static bool isType(const WebCore::ArrayPixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::ByteArray; }
 SPECIALIZE_TYPE_TRAITS_END()

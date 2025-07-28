@@ -108,7 +108,7 @@ ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, cons
 
 RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
-    return ByteArrayPixelBuffer::tryCreate(m_format, size);
+    return ByteArrayPixelBuffer::tryCreate(format(), size);
 }
 
 } // namespace WebCore

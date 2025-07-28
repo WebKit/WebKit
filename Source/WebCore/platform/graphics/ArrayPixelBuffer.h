@@ -33,6 +33,8 @@ namespace WebCore {
 
 class ArrayPixelBuffer : public PixelBuffer {
 public:
+    static RefPtr<ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+
     WEBCORE_EXPORT virtual ~ArrayPixelBuffer();
 
     JSC::ArrayBufferView& data() const LIFETIME_BOUND { return m_data.get(); }

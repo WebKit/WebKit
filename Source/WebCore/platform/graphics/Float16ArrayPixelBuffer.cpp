@@ -110,7 +110,7 @@ Float16ArrayPixelBuffer::Float16ArrayPixelBuffer(const PixelBufferFormat& format
 
 RefPtr<PixelBuffer> Float16ArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
-    return Float16ArrayPixelBuffer::tryCreate(m_format, size);
+    return Float16ArrayPixelBuffer::tryCreate(format(), size);
 }
 
 } // namespace WebCore
